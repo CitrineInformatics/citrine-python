@@ -84,9 +84,9 @@ class MaterialTemplate(DataConcepts, Resource['MaterialTemplate'], TaurusMateria
 
         Returns
         -------
-        dict
-            The serialized material template, but its properties are now a list of object pairs
-            of the form [PropertyTemplate, Bounds].
+        None
+            The serialized measurement template is modified so that its
+             properties are [PropertyTemplate, Bounds].
 
         """
         if 'properties' in data and len(data['properties']) != 0:
