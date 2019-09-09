@@ -40,3 +40,14 @@ class Unauthorized(NonRetryableException):
         super().__init__()
         self.url = path
 
+
+class WorkflowConflictException(NonRetryableException):
+    """There is a conflict preventing the workflow from being executed. (http status 409)."""
+
+    pass
+
+
+class WorkflowNotReadyException(RetryableException):
+    """The workflow is not ready to be executed. i.e. still validating. (http status 425)."""
+
+    pass

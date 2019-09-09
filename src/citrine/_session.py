@@ -6,6 +6,8 @@ from citrine.exceptions import (
     NotFound,
     Unauthorized,
     UnauthorizedRefreshToken,
+    WorkflowConflictException,
+    WorkflowNotReadyException,
 )
 
 import jwt
@@ -85,12 +87,20 @@ class Session(requests.Session):
             elif response.status_code == 404:
                 self.logger.warning('%s %s %s', response.status_code, method, path)
                 raise NotFound(path)
+            elif response.status_code == 409:
+                self.logger.warning('%s %s %s', response.status_code, method, path)
+                raise WorkflowConflictException(response.text)
+            elif response.status_code == 425:
+                self.logger.warning('%s %s %s', response.status_code, method, path)
+                msg = 'Cant execute at this time. Try again later. Error: {}'.format(response.text)
+                raise WorkflowNotReadyException(msg)
             else:
                 self.logger.error('%s %s %s', response.status_code, method, path)
                 raise Exception(response.text)
 
     def get_resource(self, path: str, *args, **kwargs) -> dict:
         """GET a particular resource as JSON."""
+        # TODO: Fix this return value (possibly list)
         return self.checked_request('GET', path, *args, **kwargs).json()
 
     def post_resource(self, path: str, json: dict, *args, **kwargs) -> dict:

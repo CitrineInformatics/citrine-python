@@ -2,6 +2,10 @@
 from typing import Optional, Dict
 
 from citrine._session import Session
+from citrine.resources.capability import CapabilityCollection
+from citrine.resources.processor import ProcessorCollection
+from citrine.resources.predictor import PredictorCollection
+from citrine.resources.workflow import WorkflowCollection
 from citrine.resources.dataset import DatasetCollection
 from citrine.resources.condition_template import ConditionTemplateCollection
 from citrine.resources.parameter_template import ParameterTemplateCollection
@@ -47,6 +51,26 @@ class Project(Resource['Project']):
 
     def _path(self):
         return '/projects/{project_id}'.format(**{"project_id": self.uid})
+
+    @property
+    def capabilities(self) -> CapabilityCollection:
+        """Return a resource representing all visible capabilities."""
+        return CapabilityCollection(self.uid, self.session)
+
+    @property
+    def processors(self) -> ProcessorCollection:
+        """Return a resource representing all visible processors."""
+        return ProcessorCollection(self.uid, self.session)
+
+    @property
+    def predictors(self) -> PredictorCollection:
+        """Return a resource representing all visible predictors."""
+        return PredictorCollection(self.uid, self.session)
+
+    @property
+    def workflows(self) -> WorkflowCollection:
+        """Return a resource representing all visible workflows."""
+        return WorkflowCollection(self.uid, self.session)
 
     @property
     def datasets(self) -> DatasetCollection:
