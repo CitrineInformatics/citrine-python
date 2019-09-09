@@ -1,0 +1,16 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+pytest = "*"
+pylint = "*"
+flake8 = "*"
+flake8-docstrings = "*"
+pydocstyle = "==3.0.0"
+sphinx = "*"
+sphinxcontrib-apidoc = "*"
+
+[packages]
+citrine = {editable = true,path = "."}
