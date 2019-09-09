@@ -99,7 +99,7 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
         Parameters
         ----------
         data: dict
-            A dictionary corresponding to a serialized object
+            A dictionary corresponding to a serialized object.
 
         Returns
         -------
@@ -328,7 +328,7 @@ class DataConceptsCollection(Collection[ResourceType]):
         Parameters
         ----------
         uid: Union[UUID, str]
-            The Citrine ID
+            The Citrine ID.
 
         Returns
         -------
@@ -416,7 +416,7 @@ class DataConceptsCollection(Collection[ResourceType]):
         Parameters
         ----------
         name: str
-            case-insensitive object name prefix to search
+            case-insensitive object name prefix to search.
         exact: bool
             Set to True to change prefix search to exact search (but still case-insensitive).
             Default is False.

@@ -31,7 +31,7 @@ class MaterialSpec(DataConcepts, Resource['MaterialSpec'], TaurusMaterialSpec):
     notes: str, optional
         Long-form notes about the material spec.
     process: ProcessSpec
-        Process that produces this material
+        Process that produces this material.
     properties: List[PropertyAndConditions], optional
         Properties of the material, along with an optional list of conditions under which
         those properties are measured.

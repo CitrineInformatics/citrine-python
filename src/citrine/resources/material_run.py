@@ -35,7 +35,7 @@ class MaterialRun(DataConcepts, Resource['MaterialRun'], TaurusMaterialRun):
     notes: str, optional
         Long-form notes about the material run.
     process: ProcessSpec
-        Process that produces this material
+        Process that produces this material.
     sample_type: str, optional
         The form of this sample. Optionals are "experimental", "virtual", "production", or
         "unknown." Default is "unknown."
