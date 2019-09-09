@@ -25,10 +25,13 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
 
     DataConcepts must be extended along with `Resource`.
 
-    Attributes
+    Parameters
     ----------
     typ: str
         A string denoting what type of DataConcepts class a particular instantiation is.
+
+    Attributes
+    ----------
     session: Session
         The Citrine session used to connect to the database.
 

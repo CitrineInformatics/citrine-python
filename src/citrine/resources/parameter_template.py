@@ -19,16 +19,16 @@ class ParameterTemplate(DataConcepts, Resource['ParameterTemplate'], TaurusParam
     ----------
     name: str
         The name of the parameter template.
-    description: str
+    bounds: BaseBounds
+        Bounds circumscribe the values that are valid according to this parameter template.
+    description: str, optional
         A long-form description of the parameter template.
-    uids: Map[str, str]
+    uids: Map[str, str], optional
         A collection of unique identifiers, each a key-value pair. The key is the "scope"
         and the value is the identifier. The scope "id" is reserved for the internal Citrine ID,
         which will always be a uuid4.
-    tags: List[str]
+    tags: List[str], optional
         A set of tags for this parameter template. Tags can be used for filtering.
-    bounds: BaseBounds
-        Bounds circumscribe the values that are valid according to this template.
 
     """
 

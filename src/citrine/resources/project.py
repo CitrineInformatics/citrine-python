@@ -36,7 +36,7 @@ class Project(Resource['Project']):
         Name of the project.
     description: str
         Long-form description of the project.
-    session: Session
+    session: Session, optional
         The Citrine session used to connect to the database.
 
     Attributes
@@ -164,7 +164,7 @@ class ProjectCollection(Collection[Project]):
 
     Parameters
     ----------
-    session: Session
+    session: Session, optional
         The Citrine session used to connect to the database.
 
     """

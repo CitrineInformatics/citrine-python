@@ -20,7 +20,7 @@ class User(Serializable['User']):
         Position of the user.
     is_admin: bool
         Whether or not the user is an administrator
-    session: Session
+    session: Session, optional
         Citrine session used to connect to the database.
 
     """

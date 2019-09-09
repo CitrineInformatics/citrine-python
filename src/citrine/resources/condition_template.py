@@ -19,16 +19,16 @@ class ConditionTemplate(DataConcepts, Resource['ConditionTemplate'], TaurusCondi
     ----------
     name: str
         The name of the condition template.
-    description: str
+    bounds: BaseBounds
+        Bounds circumscribe the values that are valid according to this condition template.
+    description: str, optional
         A long-form description of the condition template.
-    uids: Map[str, str]
+    uids: Map[str, str], optional
         A collection of unique identifiers, each a key-value pair. The key is the "scope"
         and the value is the identifier. The scope "id" is reserved for the internal Citrine ID,
         which will always be a uuid4.
-    tags: List[str]
+    tags: List[str], optional
         A set of tags for this condition template. Tags can be used for filtering.
-    bounds: BaseBounds
-        Bounds circumscribe the values that are valid according to this template.
 
     """
     _response_key = TaurusConditionTemplate.typ  # 'condition_template'

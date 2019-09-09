@@ -31,23 +31,23 @@ class MeasurementTemplate(DataConcepts, Resource['MeasurementTemplate'],
     ----------
     name: str
         The name of the measurement template.
-    description: str
+    description: str, optional
         Long-form description of the measurement template.
-    uids: Map[str, str]
+    uids: Map[str, str], optional
         A collection of unique identifiers, each a key-value pair. The key is the "scope"
         and the value is the identifier. The scope "id" is reserved for the internal Citrine ID,
         which will always be a uuid4.
-    tags: List[str]
+    tags: List[str], optional
         A set of tags for this measurement template. Tags can be used for filtering.
-    conditions: List[ConditionTemplate or List[ConditionTemplate, Bounds]]
+    conditions: List[ConditionTemplate or List[ConditionTemplate, Bounds]], optional
         Templates for associated conditions. Each template can be provided by itself, or as a list
         with the second entry being a separate, *more restrictive* Bounds object that defines
         the limits of the value for this condition.
-    parameters: List[ParameterTemplate or List[ParameterTemplate, Bounds]]
+    parameters: List[ParameterTemplate or List[ParameterTemplate, Bounds]], optional
         Templates for associated parameters. Each template can be provided by itself, or as a list
         with the second entry being a separate, *more restrictive* Bounds object that defines
         the limits of the value for this parameter.
-    properties: List[PropertyTemplate or List[PropertyTemplate, Bounds]]
+    properties: List[PropertyTemplate or List[PropertyTemplate, Bounds]], optional
         Templates for associated properties. Each template can be provided by itself, or as a list
         with the second entry being a separate, *more restrictive* Bounds object that defines
         the limits of the value for this property.
@@ -101,7 +101,7 @@ class MeasurementTemplate(DataConcepts, Resource['MeasurementTemplate'],
         ----------
         data: dict
             A serialized material template
-        session: Session
+        session: Session, optional
             Citrine session used to connect to the database.
 
         Returns
