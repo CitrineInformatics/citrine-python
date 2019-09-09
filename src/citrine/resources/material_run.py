@@ -72,8 +72,7 @@ class MaterialRun(DataConcepts, Resource['MaterialRun'], TaurusMaterialRun):
                  process: Optional[TaurusProcessRun] = None,
                  sample_type: Optional[str] = "unknown",
                  spec: Optional[TaurusMaterialSpec] = None,
-                 file_links: Optional[List[FileLink]] = None,
-                 measurements: Optional[List[TaurusMeasurementRun]] = None):
+                 file_links: Optional[List[FileLink]] = None):
         DataConcepts.__init__(self, TaurusMaterialRun.typ)
         TaurusMaterialRun.__init__(self, name=name, uids=set_default_uid(uids),
                                    tags=tags, process=process,
