@@ -204,7 +204,7 @@ class ProjectCollection(Collection[Project]):
         name: str
             Name of the project to be created.
         description: str
-            Long-form description of the project to be created
+            Long-form description of the project to be created.
 
         """
         return super().register(Project(name, description))

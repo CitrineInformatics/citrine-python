@@ -33,13 +33,13 @@ class IngredientRun(DataConcepts, Resource['IngredientRun'], TaurusIngredientRun
     material: MaterialRun
         Material that this ingredient is.
     mass_fraction: ContinuousValue, optional
-        The mass fraction of the ingredient in the process
+        The mass fraction of the ingredient in the process.
     volume_fraction: ContinuousValue, optional
-        The volume fraction of the ingredient in the process
+        The volume fraction of the ingredient in the process.
     number_fraction: ContinuousValue, optional
-        The number fraction of the ingredient in the process
+        The number fraction of the ingredient in the process.
     absolute_quantity: ContinuousValue, optional
-        The absolute quantity of the ingredient in the process
+        The absolute quantity of the ingredient in the process.
     unique_label: str, optional
         Label on the ingredient that is unique within the process that contains it.
     labels: List[str], optional

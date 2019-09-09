@@ -217,7 +217,7 @@ class DatasetCollection(Collection[Dataset]):
         Parameters
         ----------
         model: Dataset
-            The dataset to register
+            The dataset to register.
 
         Returns
         -------

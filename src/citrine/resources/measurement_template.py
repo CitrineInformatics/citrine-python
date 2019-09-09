@@ -101,7 +101,7 @@ class MeasurementTemplate(DataConcepts, Resource['MeasurementTemplate'],
         Parameters
         ----------
         data: dict
-            A serialized material template
+            A serialized material template.
         session: Session, optional
             Citrine session used to connect to the database.
 
