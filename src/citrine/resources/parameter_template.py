@@ -28,7 +28,7 @@ class ParameterTemplate(DataConcepts, Resource['ParameterTemplate'], TaurusParam
         and the value is the identifier. The scope "id" is reserved for the internal Citrine ID,
         which will always be a uuid4.
     tags: List[str], optional
-        A set of tags for this parameter template. Tags can be used for filtering.
+        A set of tags. Tags can be used for filtering.
 
     """
 

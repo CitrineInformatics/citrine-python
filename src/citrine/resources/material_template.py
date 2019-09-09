@@ -34,7 +34,7 @@ class MaterialTemplate(DataConcepts, Resource['MaterialTemplate'], TaurusMateria
         and the value is the identifier. The scope "id" is reserved for the internal Citrine ID,
         which will always be a uuid4.
     tags: List[str], optional
-        A set of tags for this material template. Tags can be used for filtering.
+        A set of tags. Tags can be used for filtering.
     properties: List[PropertyTemplate or List[PropertyTemplate, Bounds]], optional
         Templates for associated properties. Each template can be provided by itself, or as a list
         with the second entry being a separate, *more restrictive* Bounds object that defines
@@ -73,7 +73,7 @@ class MaterialTemplate(DataConcepts, Resource['MaterialTemplate'], TaurusMateria
     @classmethod
     def _build_child_objects(cls, data: dict, session: Session = None):
         """
-        Build the property templates and bounds
+        Build the property templates and bounds.
 
         Parameters
         ----------

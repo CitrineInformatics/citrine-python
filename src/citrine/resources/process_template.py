@@ -35,7 +35,7 @@ class ProcessTemplate(DataConcepts, Resource['ProcessTemplate'], TaurusProcessTe
         and the value is the identifier. The scope "id" is reserved for the internal Citrine ID,
         which will always be a uuid4.
     tags: List[str], optional
-        A set of tags for this process template. Tags can be used for filtering.
+        A set of tags. Tags can be used for filtering.
     conditions: List[ConditionTemplate or List[ConditionTemplate, Bounds]], optional
         Templates for associated conditions. Each template can be provided by itself, or as a list
         with the second entry being a separate, *more restrictive* Bounds object that defines
@@ -87,7 +87,7 @@ class ProcessTemplate(DataConcepts, Resource['ProcessTemplate'], TaurusProcessTe
     @classmethod
     def _build_child_objects(cls, data: dict, session: Session = None):
         """
-        Build the condition and parameter templates and bounds
+        Build the condition and parameter templates and bounds.
 
         Parameters
         ----------

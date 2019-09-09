@@ -15,7 +15,41 @@ from taurus.entity.value.continuous_value import ContinuousValue
 
 
 class IngredientRun(DataConcepts, Resource['IngredientRun'], TaurusIngredientRun):
-    """An ingredient run."""
+    """
+    An ingredient run.
+
+    Ingredients annotate a material with information about its usage in a process.
+
+    Parameters
+    ----------
+    uids: Map[str, str], optional
+        A collection of unique identifiers, each a key-value pair. The key is the "scope"
+        and the value is the identifier. The scope "id" is reserved for the internal Citrine ID,
+        which will always be a uuid4.
+    tags: List[str], optional
+        A set of tags. Tags can be used for filtering.
+    notes: str, optional
+        Long-form notes about the ingredient run.
+    material: MaterialRun
+        Material that this ingredient is.
+    mass_fraction: ContinuousValue, optional
+        The mass fraction of the ingredient in the process
+    volume_fraction: ContinuousValue, optional
+        The volume fraction of the ingredient in the process
+    number_fraction: ContinuousValue, optional
+        The number fraction of the ingredient in the process
+    absolute_quantity: ContinuousValue, optional
+        The absolute quantity of the ingredient in the process
+    unique_label: str, optional
+        Label on the ingredient that is unique within the process that contains it.
+    labels: List[str], optional
+        Additional labels on the ingredient that must be unique.
+    spec: IngredientSpec
+        The specification of which this ingredient is a realization.
+    file_links: List[FileLink], optional
+        Links to associated files, with resource paths into the files API.
+
+    """
 
     _response_key = TaurusIngredientRun.typ  # 'ingredient_run'
 

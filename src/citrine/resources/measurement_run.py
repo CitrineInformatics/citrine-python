@@ -17,7 +17,37 @@ from taurus.entity.object.measurement_spec import MeasurementSpec as TaurusMeasu
 
 
 class MeasurementRun(DataConcepts, Resource['MeasurementRun'], TaurusMeasurementRun):
-    """A measurement run."""
+    """
+    A measurement run.
+
+    Parameters
+    ----------
+    name: str
+        Name of the measurement run.
+    uids: Map[str, str], optional
+        A collection of unique identifiers, each a key-value pair. The key is the "scope"
+        and the value is the identifier. The scope "id" is reserved for the internal Citrine ID,
+        which will always be a uuid4.
+    tags: List[str], optional
+        A set of tags. Tags can be used for filtering.
+    notes: str, optional
+        Long-form notes about the measurement run.
+    conditions: List[Condition], optional
+        Conditions under which this measurement run occurs.
+    parameters: List[Parameter], optional
+        Parameters of this measurement run.
+    properties: List[Property], optional
+        Properties that are measured during this measurement run.
+    spec: MeasurementSpec
+        The measurement specification of which this is an instance.
+    material: MaterialRun
+        The material run being measured.
+    spec: MaterialSpec
+        The material specification of which this is an instance.
+    file_links: List[FileLink], optional
+        Links to associated files, with resource paths into the files API.
+
+    """
 
     _response_key = TaurusMeasurementRun.typ  # 'measurement_run'
 

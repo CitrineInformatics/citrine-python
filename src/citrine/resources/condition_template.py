@@ -28,9 +28,10 @@ class ConditionTemplate(DataConcepts, Resource['ConditionTemplate'], TaurusCondi
         and the value is the identifier. The scope "id" is reserved for the internal Citrine ID,
         which will always be a uuid4.
     tags: List[str], optional
-        A set of tags for this condition template. Tags can be used for filtering.
+        A set of tags. Tags can be used for filtering.
 
     """
+
     _response_key = TaurusConditionTemplate.typ  # 'condition_template'
 
     name = String('name')

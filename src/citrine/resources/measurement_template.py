@@ -38,7 +38,7 @@ class MeasurementTemplate(DataConcepts, Resource['MeasurementTemplate'],
         and the value is the identifier. The scope "id" is reserved for the internal Citrine ID,
         which will always be a uuid4.
     tags: List[str], optional
-        A set of tags for this measurement template. Tags can be used for filtering.
+        A set of tags. Tags can be used for filtering.
     conditions: List[ConditionTemplate or List[ConditionTemplate, Bounds]], optional
         Templates for associated conditions. Each template can be provided by itself, or as a list
         with the second entry being a separate, *more restrictive* Bounds object that defines
@@ -53,6 +53,7 @@ class MeasurementTemplate(DataConcepts, Resource['MeasurementTemplate'],
         the limits of the value for this property.
 
     """
+
     _response_key = TaurusMeasurementTemplate.typ  # 'measurement_template'
 
     name = String('name')
@@ -95,7 +96,7 @@ class MeasurementTemplate(DataConcepts, Resource['MeasurementTemplate'],
     @classmethod
     def _build_child_objects(cls, data: dict, session: Session = None):
         """
-        Build the condition, parameter, and property templates and bounds
+        Build the condition, parameter, and property templates and bounds.
 
         Parameters
         ----------
