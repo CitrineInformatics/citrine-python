@@ -20,8 +20,39 @@ from taurus.entity.link_by_uid import LinkByUID
 
 class MeasurementTemplate(DataConcepts, Resource['MeasurementTemplate'],
                           TaurusMeasurementTemplate):
-    """A measurement template."""
+    """
+    A measurement template.
 
+    Measurement templates are collections of condition, parameter and property templates that
+    constrain the values of a measurement's condition, parameter and property attributes, and
+    provide a common structure for describing similar measurements.
+
+    Parameters
+    ----------
+    name: str
+        The name of the measurement template.
+    description: str
+        Long-form description of the measurement template.
+    uids: Map[str, str]
+        A collection of unique identifiers, each a key-value pair. The key is the "scope"
+        and the value is the identifier. The scope "id" is reserved for the internal Citrine ID,
+        which will always be a uuid4.
+    tags: List[str]
+        A set of tags for this measurement template. Tags can be used for filtering.
+    conditions: List[ConditionTemplate or List[ConditionTemplate, Bounds]]
+        Templates for associated conditions. Each template can be provided by itself, or as a list
+        with the second entry being a separate, *more restrictive* Bounds object that defines
+        the limits of the value for this condition.
+    parameters: List[ParameterTemplate or List[ParameterTemplate, Bounds]]
+        Templates for associated parameters. Each template can be provided by itself, or as a list
+        with the second entry being a separate, *more restrictive* Bounds object that defines
+        the limits of the value for this parameter.
+    properties: List[PropertyTemplate or List[PropertyTemplate, Bounds]]
+        Templates for associated properties. Each template can be provided by itself, or as a list
+        with the second entry being a separate, *more restrictive* Bounds object that defines
+        the limits of the value for this property.
+
+    """
     _response_key = TaurusMeasurementTemplate.typ  # 'measurement_template'
 
     name = String('name')
@@ -63,6 +94,24 @@ class MeasurementTemplate(DataConcepts, Resource['MeasurementTemplate'],
 
     @classmethod
     def _build_child_objects(cls, data: dict, session: Session = None):
+        """
+        Build the condition, parameter, and property templates and bounds
+
+        Parameters
+        ----------
+        data: dict
+            A serialized material template
+        session: Session
+            Citrine session used to connect to the database.
+
+        Returns
+        -------
+        dict
+            The serialized material template, but its conditions are now a list of object pairs
+            of the form [ConditionTemplate, Bounds], the parameters are
+            [ParameterTemplate, Bounds], and the properties are [PropertyTemplate, Bounds]
+
+        """
         if 'properties' in data and len(data['properties']) != 0:
             data['properties'] = [[PropertyTemplate.build(prop[0].as_dict()),
                                    loads(dumps(prop[1]))] for prop in data['properties']]

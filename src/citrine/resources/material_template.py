@@ -16,7 +16,31 @@ from taurus.entity.link_by_uid import LinkByUID
 
 
 class MaterialTemplate(DataConcepts, Resource['MaterialTemplate'], TaurusMaterialTemplate):
-    """A material template."""
+    """
+    A material template.
+
+    Material templates are collections of property templates that constrain the values of
+    a material's property attributes, and provide a common structure for describing similar
+    materials.
+
+    Parameters
+    ----------
+    name: str
+        The name of the material template.
+    description: str
+        Long-form description of the material template.
+    uids: Map[str, str]
+        A collection of unique identifiers, each a key-value pair. The key is the "scope"
+        and the value is the identifier. The scope "id" is reserved for the internal Citrine ID,
+        which will always be a uuid4.
+    tags: List[str]
+        A set of tags for this material template. Tags can be used for filtering.
+    properties: List[PropertyTemplate or List[PropertyTemplate, Bounds]]
+        Templates for associated properties. Each template can be provided by itself, or as a list
+        with the second entry being a separate, *more restrictive* Bounds object that defines
+        the limits of the value for this property.
+
+    """
 
     _response_key = TaurusMaterialTemplate.typ  # 'material_template'
 
@@ -48,6 +72,23 @@ class MaterialTemplate(DataConcepts, Resource['MaterialTemplate'], TaurusMateria
 
     @classmethod
     def _build_child_objects(cls, data: dict, session: Session = None):
+        """
+        Build the property templates and bounds
+
+        Parameters
+        ----------
+        data: dict
+            A serialized material template
+        session: Session
+            Citrine session used to connect to the database.
+
+        Returns
+        -------
+        dict
+            The serialized material template, but its properties are now a list of object pairs
+            of the form [PropertyTemplate, Bounds].
+
+        """
         if 'properties' in data and len(data['properties']) != 0:
             # Each entry in the list data['properties'] has a property template as the 1st entry
             # and a base bounds as the 2nd entry. They are built in different ways.
