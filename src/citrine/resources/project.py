@@ -49,6 +49,7 @@ class Project(Resource['Project']):
         Time the project was created, in seconds since epoch.
 
     """
+
     _response_key = 'project'
 
     name = properties.String('name')

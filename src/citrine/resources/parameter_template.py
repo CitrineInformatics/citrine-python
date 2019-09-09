@@ -12,7 +12,25 @@ from taurus.entity.bounds.base_bounds import BaseBounds
 
 
 class ParameterTemplate(DataConcepts, Resource['ParameterTemplate'], TaurusParameterTemplate):
-    """A parameter template."""
+    """
+    A parameter template.
+
+    Parameters
+    ----------
+    name: str
+        The name of the parameter template.
+    description: str
+        A long-form description of the parameter template.
+    uids: Map[str, str]
+        A collection of unique identifiers, each a key-value pair. The key is the "scope"
+        and the value is the identifier. The scope "id" is reserved for the internal Citrine ID,
+        which will always be a uuid4.
+    tags: List[str]
+        A set of tags for this parameter template. Tags can be used for filtering.
+    bounds: BaseBounds
+        Bounds circumscribe the values that are valid according to this template.
+
+    """
 
     _response_key = TaurusParameterTemplate.typ  # 'parameter_template'
 
