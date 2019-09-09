@@ -1,4 +1,4 @@
-"""Resources that represent both individual and collections of projects."""
+"""Resources that represent both individual and collections of users."""
 from typing import Optional
 
 from citrine._serialization import properties
@@ -48,7 +48,7 @@ class User(Serializable['User']):
 
 
 class UserCollection:
-    """Represents the collection of all projects as well as the resources belonging to it."""
+    """Represents the collection of all users."""
 
     __path_template__ = '/users'
     _response_key = 'users'
