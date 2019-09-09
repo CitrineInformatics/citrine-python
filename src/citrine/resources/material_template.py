@@ -85,7 +85,7 @@ class MaterialTemplate(DataConcepts, Resource['MaterialTemplate'], TaurusMateria
         Returns
         -------
         None
-            The serialized measurement template is modified so that its
+            The serialized material template is modified so that its
              properties are [PropertyTemplate, Bounds].
 
         """
