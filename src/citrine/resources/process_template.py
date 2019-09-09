@@ -98,9 +98,9 @@ class ProcessTemplate(DataConcepts, Resource['ProcessTemplate'], TaurusProcessTe
 
         Returns
         -------
-        dict
-            The serialized material template, but its conditions are now a list of object pairs
-            of the form [ConditionTemplate, Bounds], and the parameters are
+        None
+            The serialized material template is modified so that its conditions are now a list
+            of object pairs of the form [ConditionTemplate, Bounds], and the parameters are
             [ParameterTemplate, Bounds].
 
         """

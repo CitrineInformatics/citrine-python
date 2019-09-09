@@ -107,10 +107,10 @@ class MeasurementTemplate(DataConcepts, Resource['MeasurementTemplate'],
 
         Returns
         -------
-        dict
-            The serialized material template, but its conditions are now a list of object pairs
-            of the form [ConditionTemplate, Bounds], the parameters are
-            [ParameterTemplate, Bounds], and the properties are [PropertyTemplate, Bounds]
+        None
+            The serialized measurement template is modified so that its conditions are now a list
+            of object pairs of the form [ConditionTemplate, Bounds], the parameters are
+            [ParameterTemplate, Bounds], and the properties are [PropertyTemplate, Bounds].
 
         """
         if 'properties' in data and len(data['properties']) != 0:

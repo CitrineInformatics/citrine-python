@@ -115,7 +115,9 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
     @classmethod
     def _build_child_objects(cls, data: dict, session: Session = None) -> dict:
         """
-        Build the data concepts objects that this object points to.
+        Build the data concepts objects that this serialized object points to.
+
+        This method modifies the serialized object in place.
 
         Parameters
         ----------
@@ -126,9 +128,9 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
 
         Returns
         -------
-        dict
-            The serialized object, but all of its dictionary values that are themselves serialized
-            objects have been deserialized into the objects themselves.
+        None
+            The serialized object is modified so that all of its dictionary values that are
+            themselves serialized objects have been deserialized .
 
         """
         def _is_dc(prop_type: Property) -> bool:
@@ -159,7 +161,6 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
                             .build(data[key].as_dict())
                         if isinstance(data[key], DataConcepts):
                             data[key].session = session
-        return data
 
     @classmethod
     def get_type(cls, data) -> Type[Serializable]:
