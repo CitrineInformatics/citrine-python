@@ -7,6 +7,7 @@ from citrine.exceptions import (
     Unauthorized,
     WorkflowConflictException,
     WorkflowNotReadyException,
+    RetryableException
 )
 from citrine._session import Session
 
