@@ -2,12 +2,12 @@
 from typing import List, Type
 from uuid import UUID
 
-from citrine.informatics.dimensions import Dimension
 from citrine._rest.resource import Resource
 from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
 from citrine._serialization.serializable import Serializable
 from citrine._session import Session
+from citrine.informatics.dimensions import Dimension
 
 __all__ = ['Capability', 'ProductCapability']
 
