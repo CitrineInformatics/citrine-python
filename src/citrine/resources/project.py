@@ -2,7 +2,7 @@
 from typing import Optional, Dict
 
 from citrine._session import Session
-from citrine.resources.capability import CapabilityCollection
+from citrine.resources.design_space import DesignSpaceCollection
 from citrine.resources.processor import ProcessorCollection
 from citrine.resources.predictor import PredictorCollection
 from citrine.resources.workflow import WorkflowCollection
@@ -77,9 +77,9 @@ class Project(Resource['Project']):
         return '/projects/{project_id}'.format(**{"project_id": self.uid})
 
     @property
-    def capabilities(self) -> CapabilityCollection:
-        """Return a resource representing all visible capabilities."""
-        return CapabilityCollection(self.uid, self.session)
+    def design_spaces(self) -> DesignSpaceCollection:
+        """Return a resource representing all visible design spaces."""
+        return DesignSpaceCollection(self.uid, self.session)
 
     @property
     def processors(self) -> ProcessorCollection:

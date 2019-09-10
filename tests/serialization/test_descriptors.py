@@ -1,4 +1,4 @@
-"""Tests for citrine.informatics.capabilities serialization."""
+"""Tests for citrine.informatics.descriptors serialization."""
 import pytest
 
 from citrine.informatics.descriptors import RealDescriptor, Descriptor
@@ -6,7 +6,7 @@ from citrine.informatics.descriptors import RealDescriptor, Descriptor
 
 @pytest.fixture
 def valid_data():
-    """Produce valid capability data."""
+    """Produce valid descriptor data."""
     return dict(
         type='Real',
         descriptor_key='alpha',
