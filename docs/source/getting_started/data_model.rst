@@ -5,8 +5,8 @@ Data Model
 Overview
 --------
 
-The Citrine python client is built on our NextGen data model, (name of package TBD).
-(name) is a format that links together materials, the processes that produced them, and the measurements that characterize them.
+The Citrine python client is built on our NextGen data model, (codename taurus).
+Taurus is a format that links together materials, the processes that produced them, and the measurements that characterize them.
 Complete documentation can be found in the `data model docs`.
 This page presents a broad overview.
 

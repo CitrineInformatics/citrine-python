@@ -20,10 +20,33 @@ from taurus.entity.template.attribute_template import AttributeTemplate
 
 
 class DataConcepts(PolymorphicSerializable['DataConcepts']):
-    """An abstract data concepts object. Must be extended along with Resource."""
+    """
+    An abstract data concepts object.
+
+    DataConcepts must be extended along with `Resource`.
+
+    Parameters
+    ----------
+    typ: str
+        A string denoting what type of DataConcepts class a particular instantiation is.
+
+    Attributes
+    ----------
+    session: Session
+        The Citrine session used to connect to the database.
+
+    """
 
     _local_keys = ['type']
+    """list of str: keys that appear in the serialized dictionary but not in the object itself."""
+
     class_dict = dict()
+    """
+    Dict[str, class]: dictionary from the type key to the class for every class \
+    that extends DataConcepts.
+
+    Only populated if the :func:`get_type` method is invoked.
+    """
 
     def __init__(self, typ: str):
         self.typ = typ
@@ -31,7 +54,25 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
 
     @classmethod
     def build(cls, data: dict, session: Session = None):
-        """Build a data concepts object from a dictionary."""
+        """
+        Build a data concepts object from a dictionary.
+
+        This is an internal method, and should not be called directly by users.
+
+        Parameters
+        ----------
+        data: dict
+            A dictionary representing the serialized object. The dictionary must have a 'type'
+            field and its value must correspond to class that is invoking this method.
+        session: Session
+            the Citrine session to assign to the built object.
+
+        Returns
+        -------
+        DataConcepts
+            An object corresponding to a data concepts resource.
+
+        """
         if 'type' in data and data['type'] == LinkByUID.typ:
             return loads(dumps(data))
 
@@ -54,6 +95,17 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
 
         Local keys are not meant to be serialized or passed to the class constructor.
         Note that this method modifies the input dictionary.
+
+        Parameters
+        ----------
+        data: dict
+            A dictionary corresponding to a serialized object.
+
+        Returns
+        -------
+        dict
+            The serialized object with local keys removed.
+
         """
         for key in cls._local_keys:
             if key in data:
@@ -62,7 +114,25 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
 
     @classmethod
     def _build_child_objects(cls, data: dict, session: Session = None) -> dict:
-        """Build the data concepts objects that this object points to."""
+        """
+        Build the data concepts objects that this serialized object points to.
+
+        This method modifies the serialized object in place.
+
+        Parameters
+        ----------
+        data: dict
+            A serialized data concepts object.
+        session: Session
+            Citrine session used to connect to the database.
+
+        Returns
+        -------
+        None
+            The serialized object is modified so that all of its dictionary values that are
+            themselves serialized objects have been deserialized .
+
+        """
         def _is_dc(prop_type: Property) -> bool:
             """Determine if a property is a DataConcepts object or LinkByUID."""
             if isinstance(prop_type, LinkOrElse):
@@ -91,11 +161,26 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
                             .build(data[key].as_dict())
                         if isinstance(data[key], DataConcepts):
                             data[key].session = session
-        return data
 
     @classmethod
     def get_type(cls, data) -> Type[Serializable]:
-        """Return the subtype."""
+        """
+        Determine the class of a serialized object.
+
+        The data dictionary must have a 'type' key whose value corresponds to the response key
+        of one of the classes that extends :class:`DataConcepts`.
+
+        Parameters
+        ----------
+        data: dict
+            A dictionary corresponding to a serialized data concepts object of unknown type.
+
+        Returns
+        -------
+        class
+            The class corresponding to data.
+
+        """
         if len(DataConcepts.class_dict) == 0:
             DataConcepts._make_class_dict()
         return DataConcepts.class_dict[data['type']]
@@ -139,7 +224,22 @@ ResourceType = TypeVar('ResourceType', bound='DataConcepts')
 
 
 class DataConceptsCollection(Collection[ResourceType]):
-    """A collection of one kind of data concepts object."""
+    """
+    A collection of one kind of data concepts object.
+
+    Parameters
+    ----------
+    project_id: UUID
+        The uid of the project that this collection belongs to.
+    dataset_id: UUID
+        The uid of the dataset that this collection belongs to. If None then the collection
+        ranges over all datasets in the project. Note that this is only allowed for certain
+        actions. For example, you can use :func:`filter_by_tags` to search over all datasets,
+        but when using :func:`register` to upload or update an object, a dataset must be specified.
+    session: Session
+        The Citrine session used to connect to the database.
+
+    """
 
     def __init__(self, project_id: UUID, dataset_id: UUID, session: Session):
         self.project_id = project_id
@@ -153,17 +253,56 @@ class DataConceptsCollection(Collection[ResourceType]):
         pass
 
     def build(self, data: dict) -> ResourceType:
-        """Build an object of type ResourceType."""
+        """
+        Build an object of type ResourceType from a serialized dictionary.
+
+        This is an internal method, and should not be called directly by users.
+
+        Parameters
+        ----------
+        data: dict
+            A serialized data model object.
+
+        Returns
+        -------
+        DataConcepts
+            A data model object built from the dictionary.
+
+        """
         data_concepts_object = self.get_type().build(data)
         data_concepts_object.session = self.session
         return data_concepts_object
 
     def list(self):
-        """List all visible elements of the collection."""
+        """
+        List all visible elements of the collection.
+
+        Returns
+        -------
+        List[DataConcepts]
+            Every object in this collection.
+
+        """
         return self.filter_by_tags([])
 
     def register(self, model: ResourceType):
-        """Create a new element of the collection by registering an existing object."""
+        """
+        Create a new element of the collection or update an existing element.
+
+        If the input model has a Citrine ID that corresponds to an existing object in the
+        database, then that object will be updated. Otherwise a new object will be created.
+
+        Parameters
+        ----------
+        model: DataConcepts
+            The DataConcepts object.
+
+        Returns
+        -------
+        DataConcepts
+            A copy of the registered object as it now exists in the database.
+
+        """
         if self.dataset_id is None:
             raise RuntimeError("Must specify a dataset in order to register a data model object.")
         path = self._get_path()
@@ -183,7 +322,20 @@ class DataConceptsCollection(Collection[ResourceType]):
         return full_model
 
     def get(self, uid: Union[UUID, str]) -> ResourceType:
-        """Get the element of the collection with Citrine ID equal to uid."""
+        """
+        Get the element of the collection with Citrine ID equal to uid.
+
+        Parameters
+        ----------
+        uid: Union[UUID, str]
+            The Citrine ID.
+
+        Returns
+        -------
+        DataConcepts
+            An object with Citrine ID equal to uid.
+
+        """
         if self.dataset_id is None:
             raise RuntimeError("Must specify a dataset in order to get a data model object.")
         path = self._get_path() + "/id/{}".format(uid)
@@ -192,9 +344,19 @@ class DataConceptsCollection(Collection[ResourceType]):
 
     def filter_by_tags(self, tags: List[str]):
         """
-        Get all objects in the collection or those that match any one of a list of tags.
+        Get all objects in the collection that match any one of a list of tags.
 
-        :param tags: a list of strings, each one a tag that an object can match.
+        Parameters
+        ----------
+        tags: List[str]
+            a list of strings, each one a tag that an object can match.
+
+        Returns
+        -------
+        List[DataConcepts]
+            Every object in this collection that matches one of the tags.
+            See (insert link) for a discussion of how to match on tags.
+
         """
         params = {'tags': tags}
         if self.dataset_id is not None:
@@ -209,10 +371,26 @@ class DataConceptsCollection(Collection[ResourceType]):
                                    attribute_bounds: Dict[Union[AttributeTemplate, LinkByUID],
                                                           BaseBounds]):
         """
-        Get all objects with attributes within certain bounds.
+        Get all objects in the collection with attributes within certain bounds.
 
-        Currently, only one attribute and one bounds on that attribute is supported.
-        :param attribute_bounds: a dictionary from attributes to the bounds on that attribute.
+        Currently only one attribute and one bounds on that attribute is supported.
+
+        Parameters
+        ----------
+        attribute_bounds: Dict[Union[AttributeTemplate, LinkByUID], BaseBounds]
+            A dictionary from attributes to the bounds on that attribute.
+            Each attribute may be represented as an AttributeTemplate or as a LinkByUID,
+            but in either case there must be a uid and it must correspond to an
+            AttributeTemplate that exists in the database.
+            Only the uid is passed, so if you would like to update an attribute template you
+            must register that change to the database before you can use it to filter.
+
+        Returns
+        -------
+        List[DataConcepts]
+            List of all objects in this collection that both have the specified attribute
+            and have values within the specified bounds.
+
         """
         assert isinstance(attribute_bounds, dict) and len(attribute_bounds) == 1
 
@@ -233,11 +411,21 @@ class DataConceptsCollection(Collection[ResourceType]):
 
     def filter_by_name(self, name: str, exact: bool = False):
         """
-        Get all object with specified name in this dataset.
+        Get all objects with specified name in this dataset.
 
-        :param name: case-insensitive object name prefix to search
-        :param exact: set to True to change prefix search to exact search
-            (but still case-insensitive)
+        Parameters
+        ----------
+        name: str
+            case-insensitive object name prefix to search.
+        exact: bool
+            Set to True to change prefix search to exact search (but still case-insensitive).
+            Default is False.
+
+        Returns
+        -------
+        List[DataConcepts]
+            List of every object in this collection whose `name` matches the search term.
+
         """
         if self.dataset_id is None:
             raise RuntimeError("Must specify a dataset to filter by name.")

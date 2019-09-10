@@ -1,4 +1,4 @@
-"""Resources that represent both individual and collections of projects."""
+"""Resources that represent both individual and collections of users."""
 from typing import Optional
 
 from citrine._serialization import properties
@@ -7,7 +7,23 @@ from citrine._serialization.serializable import Serializable
 
 
 class User(Serializable['User']):
-    """A Citrine User."""
+    """
+    A Citrine User.
+
+    Parameters
+    ----------
+    screen_name: str
+        Screen name of the user.
+    email: str
+        Email address of the user.
+    position: str
+        Position of the user.
+    is_admin: bool
+        Whether or not the user is an administrator.
+    session: Session, optional
+        Citrine session used to connect to the database.
+
+    """
 
     uid = properties.Optional(properties.UUID, 'id')
     screen_name = properties.String('screenName')
@@ -32,7 +48,7 @@ class User(Serializable['User']):
 
 
 class UserCollection:
-    """Represents the collection of all projects as well as the resources belonging to it."""
+    """Represents the collection of all users."""
 
     __path_template__ = '/users'
     _response_key = 'users'

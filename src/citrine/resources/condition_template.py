@@ -12,7 +12,25 @@ from taurus.entity.bounds.base_bounds import BaseBounds
 
 
 class ConditionTemplate(DataConcepts, Resource['ConditionTemplate'], TaurusConditionTemplate):
-    """A condition template."""
+    """
+    A condition template.
+
+    Parameters
+    ----------
+    name: str
+        The name of the condition template.
+    bounds: BaseBounds
+        Bounds circumscribe the values that are valid according to this condition template.
+    description: str, optional
+        A long-form description of the condition template.
+    uids: Map[str, str], optional
+        A collection of unique identifiers, each a key-value pair. The key is the "scope"
+        and the value is the identifier. The scope "id" is reserved for the internal Citrine ID,
+        which will always be a uuid4.
+    tags: List[str], optional
+        A set of tags. Tags can be used for filtering.
+
+    """
 
     _response_key = TaurusConditionTemplate.typ  # 'condition_template'
 

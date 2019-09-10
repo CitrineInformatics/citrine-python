@@ -102,7 +102,8 @@ a condition template ``temperature_template``, a parameter template ``wavelength
 
     buy_toluene_run = solvents.process_runs.register(ProcessRun("Buy 1 liter of toluene", tags=["lot2019-140B"], spec=buy_toluene_spec))
     toluene = solvents.material_runs.register(MaterialRun("Toluene", process=buy_toluene_run, spec=toluene_spec))
-    refractive_index_run = solvents.measurement_runs.register(MeasurementRun("Index of refraction", spec=refractive_index_spec,
+    refractive_index_run = solvents.measurement_runs.register(MeasurementRun("Index of refraction",
+        spec=refractive_index_spec, material=toluene,
         conditions=[Condition("Room temperature", template=temperature_template, value=NominalReal(24, 'degC'))],
         parameters=[Parameter("Optical wavelength", template=wavelength_template, value=NominalReal(633, 'nm'))],
         properties=[Property("Refractive index", template=refractive_index_template, value=NominalReal(1.49, 'dimensionless'))]))
