@@ -19,7 +19,38 @@ from taurus.client.json_encoder import loads
 
 
 class MaterialRun(DataConcepts, Resource['MaterialRun'], TaurusMaterialRun):
-    """A material run."""
+    """
+    A material run.
+
+    Parameters
+    ----------
+    name: str
+        Name of the material run.
+    uids: Map[str, str], optional
+        A collection of unique identifiers, each a key-value pair. The key is the "scope"
+        and the value is the identifier. The scope "id" is reserved for the internal Citrine ID,
+        which will always be a uuid4.
+    tags: List[str], optional
+        A set of tags. Tags can be used for filtering.
+    notes: str, optional
+        Long-form notes about the material run.
+    process: ProcessSpec
+        Process that produces this material.
+    sample_type: str, optional
+        The form of this sample. Optionals are "experimental", "virtual", "production", or
+        "unknown." Default is "unknown."
+    spec: MaterialSpec
+        The material specification of which this is an instance.
+    file_links: List[FileLink], optional
+        Links to associated files, with resource paths into the files API.
+
+    Attributes
+    ----------
+    measurements: List[MeasurementRun], optional
+        Measurements performed on this material. The link is established by creating the
+        measurement run and settings its `material` field to this material run.
+
+    """
 
     _response_key = TaurusMaterialRun.typ  # 'material_run'
 
@@ -41,8 +72,7 @@ class MaterialRun(DataConcepts, Resource['MaterialRun'], TaurusMaterialRun):
                  process: Optional[TaurusProcessRun] = None,
                  sample_type: Optional[str] = "unknown",
                  spec: Optional[TaurusMaterialSpec] = None,
-                 file_links: Optional[List[FileLink]] = None,
-                 measurements: Optional[List[TaurusMeasurementRun]] = None):
+                 file_links: Optional[List[FileLink]] = None):
         DataConcepts.__init__(self, TaurusMaterialRun.typ)
         TaurusMaterialRun.__init__(self, name=name, uids=set_default_uid(uids),
                                    tags=tags, process=process,

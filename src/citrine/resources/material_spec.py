@@ -15,7 +15,32 @@ from taurus.entity.template.material_template import MaterialTemplate as TaurusM
 
 
 class MaterialSpec(DataConcepts, Resource['MaterialSpec'], TaurusMaterialSpec):
-    """A material spec."""
+    """
+    A material specification.
+
+    Parameters
+    ----------
+    name: str
+        Name of the material spec.
+    uids: Map[str, str], optional
+        A collection of unique identifiers, each a key-value pair. The key is the "scope"
+        and the value is the identifier. The scope "id" is reserved for the internal Citrine ID,
+        which will always be a uuid4.
+    tags: List[str], optional
+        A set of tags. Tags can be used for filtering.
+    notes: str, optional
+        Long-form notes about the material spec.
+    process: ProcessSpec
+        Process that produces this material.
+    properties: List[PropertyAndConditions], optional
+        Properties of the material, along with an optional list of conditions under which
+        those properties are measured.
+    template: MaterialTemplate, optional
+        A template bounding the valid values for this material's properties.
+    file_links: List[FileLink], optional
+        Links to associated files, with resource paths into the files API.
+
+    """
 
     _response_key = TaurusMaterialSpec.typ  # 'material_spec'
 

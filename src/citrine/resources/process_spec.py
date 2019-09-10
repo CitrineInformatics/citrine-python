@@ -16,7 +16,41 @@ from taurus.entity.template.process_template import ProcessTemplate as TaurusPro
 
 
 class ProcessSpec(DataConcepts, Resource['ProcessSpec'], TaurusProcessSpec):
-    """A process spec."""
+    """
+    A process specification.
+
+    Processes transform zero or more input materials into exactly one output material.
+
+    Parameters
+    ----------
+    name: str
+        Name of the process spec.
+    uids: Map[str, str], optional
+        A collection of unique identifiers, each a key-value pair. The key is the "scope"
+        and the value is the identifier. The scope "id" is reserved for the internal Citrine ID,
+        which will always be a uuid4.
+    tags: List[str], optional
+        A set of tags. Tags can be used for filtering.
+    notes: str, optional
+        Long-form notes about the process spec.
+    conditions: List[Condition], optional
+        Conditions under which this process spec occurs.
+    parameters: List[Parameter], optional
+        Parameters of this process spec.
+    ingredients: List[IngredientSpec], optional
+        Ingredient specs that act as inputs to this process spec.
+    template: ProcessTemplate, optional
+        A template bounding the valid values for this process's parameters and conditions.
+    file_links: List[FileLink], optional
+        Links to associated files, with resource paths into the files API.
+
+    Attributes
+    ----------
+    output_material: MaterialSpec
+        The material spec that this process spec produces. The link is established by creating
+        the material spec and settings its `process` field to this process spec.
+
+    """
 
     _response_key = TaurusProcessSpec.typ  # 'process_spec"
 
