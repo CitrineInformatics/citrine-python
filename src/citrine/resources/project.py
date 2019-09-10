@@ -24,7 +24,31 @@ from citrine._serialization import properties
 
 
 class Project(Resource['Project']):
-    """A Citrine Project."""
+    """
+    A Citrine Project.
+
+    A project is a collection of datasets, some of which belong directly to the project
+    and some of which have been shared with the project.
+
+    Parameters
+    ----------
+    name: str
+        Name of the project.
+    description: str
+        Long-form description of the project.
+    session: Session, optional
+        The Citrine session used to connect to the database.
+
+    Attributes
+    ----------
+    uid: UUID
+        Unique uuid4 identifier of this project.
+    status: str
+        Status of the project.
+    created_at: int
+        Time the project was created, in seconds since epoch.
+
+    """
 
     _response_key = 'project'
 
@@ -135,7 +159,15 @@ class Project(Resource['Project']):
 
 
 class ProjectCollection(Collection[Project]):
-    """Represents the collection of all projects as well as the resources belonging to it."""
+    """
+    Represents the collection of all projects as well as the resources belonging to it.
+
+    Parameters
+    ----------
+    session: Session, optional
+        The Citrine session used to connect to the database.
+
+    """
 
     _path_template = '/projects'
     _individual_key = 'project'
@@ -145,11 +177,34 @@ class ProjectCollection(Collection[Project]):
         self.session = session
 
     def build(self, data) -> Project:
-        """Build an individual project."""
+        """
+        Build an individual project from a dictionary.
+
+        Parameters
+        ----------
+        data: dict
+            A dictionary representing the project.
+
+        Returns
+        -------
+        Project
+            The project created from data.
+
+        """
         project = Project.build(data)
         project.session = self.session
         return project
 
     def register(self, name: str, description: Optional[str] = None) -> Project:
-        """Create a new project."""
+        """
+        Create and upload new project.
+
+        Parameters
+        ----------
+        name: str
+            Name of the project to be created.
+        description: str
+            Long-form description of the project to be created.
+
+        """
         return super().register(Project(name, description))

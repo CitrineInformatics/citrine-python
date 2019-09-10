@@ -1,7 +1,6 @@
 from typing import Generic, TypeVar
 
 
-
 Self = TypeVar('Self', bound='Serializable')
 
 

@@ -7,7 +7,23 @@ from citrine._serialization.serializable import Serializable
 
 
 class User(Serializable['User']):
-    """A Citrine User."""
+    """
+    A Citrine User.
+
+    Parameters
+    ----------
+    screen_name: str
+        Screen name of the user.
+    email: str
+        Email address of the user.
+    position: str
+        Position of the user.
+    is_admin: bool
+        Whether or not the user is an administrator.
+    session: Session, optional
+        Citrine session used to connect to the database.
+
+    """
 
     uid = properties.Optional(properties.UUID, 'id')
     screen_name = properties.String('screenName')
