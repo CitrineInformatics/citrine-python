@@ -16,7 +16,32 @@ from taurus.entity.template.measurement_template import \
 
 
 class MeasurementSpec(DataConcepts, Resource['MeasurementSpec'], TaurusMeasurementSpec):
-    """A measurement spec."""
+    """
+    A measurement specification.
+
+    Parameters
+    ----------
+    name: str
+        Name of the measurement spec.
+    uids: Map[str, str], optional
+        A collection of unique identifiers, each a key-value pair. The key is the "scope"
+        and the value is the identifier. The scope "id" is reserved for the internal Citrine ID,
+        which will always be a uuid4.
+    tags: List[str], optional
+        A set of tags. Tags can be used for filtering.
+    notes: str, optional
+        Long-form notes about the measurement spec.
+    conditions: List[Condition], optional
+        Conditions under which this measurement spec occurs.
+    parameters: List[Parameter], optional
+        Parameters of this measurement spec.
+    template: MeasurementTemplate
+        A template bounding the valid values for the measurement's properties, parameters,
+        and conditions.
+    file_links: List[FileLink], optional
+        Links to associated files, with resource paths into the files API.
+
+    """
 
     _response_key = TaurusMeasurementSpec.typ  # 'measurement_spec'
 

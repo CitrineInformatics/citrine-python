@@ -17,7 +17,35 @@ from taurus.entity.link_by_uid import LinkByUID
 
 
 class ProcessTemplate(DataConcepts, Resource['ProcessTemplate'], TaurusProcessTemplate):
-    """A process template."""
+    """
+    A process template.
+
+    Process templates are collections of condition and parameter templates that constrain the
+    values of a measurement's condition and parameter attributes, and provide a common structure
+    for describing similar measurements.
+
+    Parameters
+    ----------
+    name: str
+        The name of the process template.
+    description: str, optional
+        Long-form description of the process template.
+    uids: Map[str, str], optional
+        A collection of unique identifiers, each a key-value pair. The key is the "scope"
+        and the value is the identifier. The scope "id" is reserved for the internal Citrine ID,
+        which will always be a uuid4.
+    tags: List[str], optional
+        A set of tags. Tags can be used for filtering.
+    conditions: List[ConditionTemplate or List[ConditionTemplate, Bounds]], optional
+        Templates for associated conditions. Each template can be provided by itself, or as a list
+        with the second entry being a separate, *more restrictive* Bounds object that defines
+        the limits of the value for this condition.
+    parameters: List[ParameterTemplate or List[ParameterTemplate, Bounds]], optional
+        Templates for associated parameters. Each template can be provided by itself, or as a list
+        with the second entry being a separate, *more restrictive* Bounds object that defines
+        the limits of the value for this parameter.
+
+    """
 
     _response_key = TaurusProcessTemplate.typ  # 'process_template'
 
@@ -58,6 +86,24 @@ class ProcessTemplate(DataConcepts, Resource['ProcessTemplate'], TaurusProcessTe
 
     @classmethod
     def _build_child_objects(cls, data: dict, session: Session = None):
+        """
+        Build the condition and parameter templates and bounds.
+
+        Parameters
+        ----------
+        data: dict
+            A serialized material template.
+        session: Session, optional
+            Citrine session used to connect to the database.
+
+        Returns
+        -------
+        None
+            The serialized process template is modified so that its conditions are now a list
+            of object pairs of the form [ConditionTemplate, Bounds], and the parameters are
+            [ParameterTemplate, Bounds].
+
+        """
         if 'conditions' in data and len(data['conditions']) != 0:
             data['conditions'] = [[ConditionTemplate.build(prop[0].as_dict()),
                                    loads(dumps(prop[1]))] for prop in data['conditions']]
