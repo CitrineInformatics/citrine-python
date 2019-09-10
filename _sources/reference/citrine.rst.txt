@@ -1,0 +1,26 @@
+citrine package
+===============
+
+Subpackages
+-----------
+
+.. toctree::
+
+   citrine.attributes
+   citrine.resources
+
+Submodules
+----------
+
+.. toctree::
+
+   citrine.citrine
+   citrine.exceptions
+
+Module contents
+---------------
+
+.. automodule:: citrine
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -1,0 +1,7 @@
+citrine.attributes.parameter module
+===================================
+
+.. automodule:: citrine.attributes.parameter
+   :members:
+   :undoc-members:
+   :show-inheritance:

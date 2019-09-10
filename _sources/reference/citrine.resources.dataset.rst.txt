@@ -1,0 +1,7 @@
+citrine.resources.dataset module
+================================
+
+.. automodule:: citrine.resources.dataset
+   :members:
+   :undoc-members:
+   :show-inheritance:

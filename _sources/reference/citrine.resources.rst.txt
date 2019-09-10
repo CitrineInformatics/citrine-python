@@ -1,0 +1,35 @@
+citrine.resources package
+=========================
+
+Submodules
+----------
+
+.. toctree::
+
+   citrine.resources.condition_template
+   citrine.resources.data_concepts
+   citrine.resources.dataset
+   citrine.resources.ingredient_run
+   citrine.resources.ingredient_spec
+   citrine.resources.material_run
+   citrine.resources.material_spec
+   citrine.resources.material_template
+   citrine.resources.measurement_run
+   citrine.resources.measurement_spec
+   citrine.resources.measurement_template
+   citrine.resources.parameter_template
+   citrine.resources.process_run
+   citrine.resources.process_spec
+   citrine.resources.process_template
+   citrine.resources.project
+   citrine.resources.property_template
+   citrine.resources.response
+   citrine.resources.user
+
+Module contents
+---------------
+
+.. automodule:: citrine.resources
+   :members:
+   :undoc-members:
+   :show-inheritance:

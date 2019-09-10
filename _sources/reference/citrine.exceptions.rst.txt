@@ -1,0 +1,7 @@
+citrine.exceptions module
+=========================
+
+.. automodule:: citrine.exceptions
+   :members:
+   :undoc-members:
+   :show-inheritance:

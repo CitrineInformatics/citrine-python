@@ -1,0 +1,343 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>citrine.resources.data_concepts module &#8212; Citrine Python 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-citrine.resources.data_concepts">
+<span id="citrine-resources-data-concepts-module"></span><h1>citrine.resources.data_concepts module<a class="headerlink" href="#module-citrine.resources.data_concepts" title="Permalink to this headline">¶</a></h1>
+<p>Top-level class for all data concepts objects and collections thereof.</p>
+<dl class="class">
+<dt id="citrine.resources.data_concepts.DataConcepts">
+<em class="property">class </em><code class="sig-prename descclassname">citrine.resources.data_concepts.</code><code class="sig-name descname">DataConcepts</code><span class="sig-paren">(</span><em class="sig-param">typ: str</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.data_concepts.DataConcepts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.polymorphic_serializable.PolymorphicSerializable</span></code></p>
+<p>An abstract data concepts object.</p>
+<p>DataConcepts must be extended along with <cite>Resource</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>typ</strong> (<em>str</em>) – A string denoting what type of DataConcepts class a particular instantiation is.</p>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="citrine.resources.data_concepts.DataConcepts.session">
+<code class="sig-name descname">session</code><a class="headerlink" href="#citrine.resources.data_concepts.DataConcepts.session" title="Permalink to this definition">¶</a></dt>
+<dd><p>The Citrine session used to connect to the database.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>Session</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="citrine.resources.data_concepts.DataConcepts.as_dict">
+<code class="sig-name descname">as_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; dict<a class="headerlink" href="#citrine.resources.data_concepts.DataConcepts.as_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dump to a dictionary (useful for interoperability with taurus).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="citrine.resources.data_concepts.DataConcepts.build">
+<em class="property">classmethod </em><code class="sig-name descname">build</code><span class="sig-paren">(</span><em class="sig-param">data: dict</em>, <em class="sig-param">session: citrine._session.Session = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.data_concepts.DataConcepts.build" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build a data concepts object from a dictionary.</p>
+<p>This is an internal method, and should not be called directly by users.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>dict</em>) – A dictionary representing the serialized object. The dictionary must have a ‘type’
+field and its value must correspond to class that is invoking this method.</p></li>
+<li><p><strong>session</strong> (<em>Session</em>) – the Citrine session to assign to the built object.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>An object corresponding to a data concepts resource.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#citrine.resources.data_concepts.DataConcepts" title="citrine.resources.data_concepts.DataConcepts">DataConcepts</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.resources.data_concepts.DataConcepts.class_dict">
+<code class="sig-name descname">class_dict</code><em class="property"> = {}</em><a class="headerlink" href="#citrine.resources.data_concepts.DataConcepts.class_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>dictionary from the type key to the class for every class     that extends DataConcepts.</p>
+<p>Only populated if the <a class="reference internal" href="#citrine.resources.data_concepts.DataConcepts.get_type" title="citrine.resources.data_concepts.DataConcepts.get_type"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_type()</span></code></a> method is invoked.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>Dict[str, class]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="citrine.resources.data_concepts.DataConcepts.get_type">
+<em class="property">classmethod </em><code class="sig-name descname">get_type</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span> &#x2192; Type[citrine._serialization.serializable.Serializable]<a class="headerlink" href="#citrine.resources.data_concepts.DataConcepts.get_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine the class of a serialized object.</p>
+<p>The data dictionary must have a ‘type’ key whose value corresponds to the response key
+of one of the classes that extends <a class="reference internal" href="#citrine.resources.data_concepts.DataConcepts" title="citrine.resources.data_concepts.DataConcepts"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataConcepts</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>dict</em>) – A dictionary corresponding to a serialized data concepts object of unknown type.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The class corresponding to data.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>class</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="citrine.resources.data_concepts.DataConceptsCollection">
+<em class="property">class </em><code class="sig-prename descclassname">citrine.resources.data_concepts.</code><code class="sig-name descname">DataConceptsCollection</code><span class="sig-paren">(</span><em class="sig-param">project_id: uuid.UUID</em>, <em class="sig-param">dataset_id: uuid.UUID</em>, <em class="sig-param">session: citrine._session.Session</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.data_concepts.DataConceptsCollection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.collection.Collection</span></code></p>
+<p>A collection of one kind of data concepts object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>project_id</strong> (<em>UUID</em>) – The uid of the project that this collection belongs to.</p></li>
+<li><p><strong>dataset_id</strong> (<em>UUID</em>) – The uid of the dataset that this collection belongs to. If None then the collection
+ranges over all datasets in the project. Note that this is only allowed for certain
+actions. For example, you can use <a class="reference internal" href="#citrine.resources.data_concepts.DataConceptsCollection.filter_by_tags" title="citrine.resources.data_concepts.DataConceptsCollection.filter_by_tags"><code class="xref py py-func docutils literal notranslate"><span class="pre">filter_by_tags()</span></code></a> to search over all datasets,
+but when using <a class="reference internal" href="#citrine.resources.data_concepts.DataConceptsCollection.register" title="citrine.resources.data_concepts.DataConceptsCollection.register"><code class="xref py py-func docutils literal notranslate"><span class="pre">register()</span></code></a> to upload or update an object, a dataset must be specified.</p></li>
+<li><p><strong>session</strong> (<em>Session</em>) – The Citrine session used to connect to the database.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="method">
+<dt id="citrine.resources.data_concepts.DataConceptsCollection.build">
+<code class="sig-name descname">build</code><span class="sig-paren">(</span><em class="sig-param">data: dict</em><span class="sig-paren">)</span> &#x2192; ResourceType<a class="headerlink" href="#citrine.resources.data_concepts.DataConceptsCollection.build" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build an object of type ResourceType from a serialized dictionary.</p>
+<p>This is an internal method, and should not be called directly by users.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>dict</em>) – A serialized data model object.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A data model object built from the dictionary.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#citrine.resources.data_concepts.DataConcepts" title="citrine.resources.data_concepts.DataConcepts">DataConcepts</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="citrine.resources.data_concepts.DataConceptsCollection.filter_by_attribute_bounds">
+<code class="sig-name descname">filter_by_attribute_bounds</code><span class="sig-paren">(</span><em class="sig-param">attribute_bounds: Dict[Union[taurus.entity.template.attribute_template.AttributeTemplate, taurus.entity.link_by_uid.LinkByUID], taurus.entity.bounds.base_bounds.BaseBounds]</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.data_concepts.DataConceptsCollection.filter_by_attribute_bounds" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all objects in the collection with attributes within certain bounds.</p>
+<p>Currently only one attribute and one bounds on that attribute is supported.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>attribute_bounds</strong> (<em>Dict</em><em>[</em><em>Union</em><em>[</em><em>AttributeTemplate</em><em>, </em><em>LinkByUID</em><em>]</em><em>, </em><em>BaseBounds</em><em>]</em>) – A dictionary from attributes to the bounds on that attribute.
+Each attribute may be represented as an AttributeTemplate or as a LinkByUID,
+but in either case there must be a uid and it must correspond to an
+AttributeTemplate that exists in the database.
+Only the uid is passed, so if you would like to update an attribute template you
+must register that change to the database before you can use it to filter.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>List of all objects in this collection that both have the specified attribute
+and have values within the specified bounds.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>List[<a class="reference internal" href="#citrine.resources.data_concepts.DataConcepts" title="citrine.resources.data_concepts.DataConcepts">DataConcepts</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="citrine.resources.data_concepts.DataConceptsCollection.filter_by_name">
+<code class="sig-name descname">filter_by_name</code><span class="sig-paren">(</span><em class="sig-param">name: str</em>, <em class="sig-param">exact: bool = False</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.data_concepts.DataConceptsCollection.filter_by_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all objects with specified name in this dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – case-insensitive object name prefix to search.</p></li>
+<li><p><strong>exact</strong> (<em>bool</em>) – Set to True to change prefix search to exact search (but still case-insensitive).
+Default is False.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>List of every object in this collection whose <cite>name</cite> matches the search term.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>List[<a class="reference internal" href="#citrine.resources.data_concepts.DataConcepts" title="citrine.resources.data_concepts.DataConcepts">DataConcepts</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="citrine.resources.data_concepts.DataConceptsCollection.filter_by_tags">
+<code class="sig-name descname">filter_by_tags</code><span class="sig-paren">(</span><em class="sig-param">tags: List[str]</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.data_concepts.DataConceptsCollection.filter_by_tags" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all objects in the collection that match any one of a list of tags.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>tags</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – a list of strings, each one a tag that an object can match.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Every object in this collection that matches one of the tags.
+See (insert link) for a discussion of how to match on tags.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>List[<a class="reference internal" href="#citrine.resources.data_concepts.DataConcepts" title="citrine.resources.data_concepts.DataConcepts">DataConcepts</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="citrine.resources.data_concepts.DataConceptsCollection.get">
+<code class="sig-name descname">get</code><span class="sig-paren">(</span><em class="sig-param">uid: Union[uuid.UUID, str]</em><span class="sig-paren">)</span> &#x2192; ResourceType<a class="headerlink" href="#citrine.resources.data_concepts.DataConceptsCollection.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the element of the collection with Citrine ID equal to uid.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>uid</strong> (<em>Union</em><em>[</em><em>UUID</em><em>, </em><em>str</em><em>]</em>) – The Citrine ID.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>An object with Citrine ID equal to uid.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#citrine.resources.data_concepts.DataConcepts" title="citrine.resources.data_concepts.DataConcepts">DataConcepts</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="citrine.resources.data_concepts.DataConceptsCollection.get_type">
+<em class="property">abstract classmethod </em><code class="sig-name descname">get_type</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; Type[citrine._serialization.serializable.Serializable]<a class="headerlink" href="#citrine.resources.data_concepts.DataConceptsCollection.get_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the resource type in the collection.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="citrine.resources.data_concepts.DataConceptsCollection.list">
+<code class="sig-name descname">list</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.data_concepts.DataConceptsCollection.list" title="Permalink to this definition">¶</a></dt>
+<dd><p>List all visible elements of the collection.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Every object in this collection.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>List[<a class="reference internal" href="#citrine.resources.data_concepts.DataConcepts" title="citrine.resources.data_concepts.DataConcepts">DataConcepts</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="citrine.resources.data_concepts.DataConceptsCollection.register">
+<code class="sig-name descname">register</code><span class="sig-paren">(</span><em class="sig-param">model: ResourceType</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.data_concepts.DataConceptsCollection.register" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new element of the collection or update an existing element.</p>
+<p>If the input model has a Citrine ID that corresponds to an existing object in the
+database, then that object will be updated. Otherwise a new object will be created.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>model</strong> (<a class="reference internal" href="#citrine.resources.data_concepts.DataConcepts" title="citrine.resources.data_concepts.DataConcepts"><em>DataConcepts</em></a>) – The DataConcepts object.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A copy of the registered object as it now exists in the database.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#citrine.resources.data_concepts.DataConcepts" title="citrine.resources.data_concepts.DataConcepts">DataConcepts</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Citrine Python</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/index.html">1. Getting Started</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Citrine Informatics.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/reference/citrine.resources.data_concepts.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,167 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>citrine.resources.property_template module &#8212; Citrine Python 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-citrine.resources.property_template">
+<span id="citrine-resources-property-template-module"></span><h1>citrine.resources.property_template module<a class="headerlink" href="#module-citrine.resources.property_template" title="Permalink to this headline">¶</a></h1>
+<p>Resources that represent property templates.</p>
+<dl class="class">
+<dt id="citrine.resources.property_template.PropertyTemplate">
+<em class="property">class </em><code class="sig-prename descclassname">citrine.resources.property_template.</code><code class="sig-name descname">PropertyTemplate</code><span class="sig-paren">(</span><em class="sig-param">name: str</em>, <em class="sig-param">bounds: taurus.entity.bounds.base_bounds.BaseBounds</em>, <em class="sig-param">uids: Optional[Dict[str</em>, <em class="sig-param">str]] = None</em>, <em class="sig-param">description: Optional[str] = None</em>, <em class="sig-param">tags: Optional[List[str]] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.property_template.PropertyTemplate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConcepts" title="citrine.resources.data_concepts.DataConcepts"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.resources.data_concepts.DataConcepts</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.resource.Resource</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">taurus.entity.template.property_template.PropertyTemplate</span></code></p>
+<p>A property template.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – The name of the property template.</p></li>
+<li><p><strong>bounds</strong> (<em>BaseBounds</em>) – Bounds circumscribe the values that are valid according to this property template.</p></li>
+<li><p><strong>description</strong> (<em>str</em><em>, </em><em>optional</em>) – A long-form description of the property template.</p></li>
+<li><p><strong>uids</strong> (<em>Map</em><em>[</em><em>str</em><em>, </em><em>str</em><em>]</em><em>, </em><em>optional</em>) – A collection of unique identifiers, each a key-value pair. The key is the “scope”
+and the value is the identifier. The scope “id” is reserved for the internal Citrine ID,
+which will always be a uuid4.</p></li>
+<li><p><strong>tags</strong> (<em>List</em><em>[</em><em>str</em><em>]</em><em>, </em><em>optional</em>) – A set of tags for this property template. Tags can be used for filtering.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="citrine.resources.property_template.PropertyTemplate.bounds">
+<code class="sig-name descname">bounds</code><em class="property"> = None</em><a class="headerlink" href="#citrine.resources.property_template.PropertyTemplate.bounds" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.resources.property_template.PropertyTemplate.description">
+<code class="sig-name descname">description</code><em class="property"> = None</em><a class="headerlink" href="#citrine.resources.property_template.PropertyTemplate.description" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.resources.property_template.PropertyTemplate.name">
+<code class="sig-name descname">name</code><em class="property"> = None</em><a class="headerlink" href="#citrine.resources.property_template.PropertyTemplate.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.resources.property_template.PropertyTemplate.tags">
+<code class="sig-name descname">tags</code><em class="property"> = None</em><a class="headerlink" href="#citrine.resources.property_template.PropertyTemplate.tags" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.resources.property_template.PropertyTemplate.typ">
+<code class="sig-name descname">typ</code><em class="property"> = None</em><a class="headerlink" href="#citrine.resources.property_template.PropertyTemplate.typ" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.resources.property_template.PropertyTemplate.uids">
+<code class="sig-name descname">uids</code><em class="property"> = None</em><a class="headerlink" href="#citrine.resources.property_template.PropertyTemplate.uids" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="citrine.resources.property_template.PropertyTemplateCollection">
+<em class="property">class </em><code class="sig-prename descclassname">citrine.resources.property_template.</code><code class="sig-name descname">PropertyTemplateCollection</code><span class="sig-paren">(</span><em class="sig-param">project_id: uuid.UUID</em>, <em class="sig-param">dataset_id: uuid.UUID</em>, <em class="sig-param">session: citrine._session.Session</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.property_template.PropertyTemplateCollection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConceptsCollection" title="citrine.resources.data_concepts.DataConceptsCollection"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.resources.data_concepts.DataConceptsCollection</span></code></a></p>
+<p>A collection of property templates.</p>
+<dl class="method">
+<dt id="citrine.resources.property_template.PropertyTemplateCollection.get_type">
+<em class="property">classmethod </em><code class="sig-name descname">get_type</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; Type[citrine.resources.property_template.PropertyTemplate]<a class="headerlink" href="#citrine.resources.property_template.PropertyTemplateCollection.get_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the resource type in the collection.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Citrine Python</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/index.html">1. Getting Started</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Citrine Informatics.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/reference/citrine.resources.property_template.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,7 @@
+citrine.resources.process\_spec module
+======================================
+
+.. automodule:: citrine.resources.process_spec
+   :members:
+   :undoc-members:
+   :show-inheritance:

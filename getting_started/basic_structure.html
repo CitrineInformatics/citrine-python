@@ -1,0 +1,142 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>1.1. Structure of the Citrine Python Client &#8212; Citrine Python 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="1.2. Using the Citrine Python Client" href="basic_functionality.html" />
+    <link rel="prev" title="1. Getting Started" href="index.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="structure-of-the-citrine-python-client">
+<h1>1.1. Structure of the Citrine Python Client<a class="headerlink" href="#structure-of-the-citrine-python-client" title="Permalink to this headline">¶</a></h1>
+<p>There are three basic types of resources in the Citrine python client.</p>
+<div class="section" id="projects">
+<h2>1.1.1. Projects<a class="headerlink" href="#projects" title="Permalink to this headline">¶</a></h2>
+<p>A project is the basic unit of collaboration on the Citrine platform.
+It can contain all of the resources described below.
+If a user is a member of a project then they have access to <strong>all</strong> of the resources that are in that project or have been shared with that project.</p>
+</div>
+<div class="section" id="datasets">
+<h2>1.1.2. Datasets<a class="headerlink" href="#datasets" title="Permalink to this headline">¶</a></h2>
+<p>A dataset is a collection of <a class="reference internal" href="#data-model-objects-label"><span class="std std-ref">Data Model Objects</span></a>.
+It is the basic unit of granulatiry with regards to access: a user with read/write access on a dataset can read/write <strong>all</strong> of the resources in that dataset.
+A dataset is associated with a project; anybody who has read/write access on that project will also have read/write access on its datasets.</p>
+<p>How to best organize your data into datasets is up to you, as it makes actions like the following possible:</p>
+<ul class="simple">
+<li><p>When searching for objects that meet some criterion, you can limit your search to a particular dataset.</p></li>
+<li><p>You can share a dataset with another project.</p></li>
+</ul>
+</div>
+<div class="section" id="data-model-objects">
+<span id="data-model-objects-label"></span><h2>1.1.3. Data Model Objects<a class="headerlink" href="#data-model-objects" title="Permalink to this headline">¶</a></h2>
+<p>Data model objects are realizations of the objects that make up our <a class="reference internal" href="data_model.html"><span class="doc">data model</span></a>.
+Examples might include the template for a drying process or a specific powder diffraction measurement done on a specific aluminum sample.
+Data model objects are associated with a dataset.
+A data model object can link to other data model objects, some of which may be in <em>different</em> datasets that themselves could be in different projects.
+For example, you could have a dataset that contains a set of zinc alloys and another dataset that contains a set of measurements on those alloys.
+If those datasets are in different projects then it is possible that some users are able to view the measurements but not the materials, or vice-versa.</p>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Citrine Python</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">1. Getting Started</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">1.1. Structure of the Citrine Python Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="basic_functionality.html">1.2. Using the Citrine Python Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_model.html">1.3. Data Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="code_examples.html">1.4. Code Examples</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">1. Getting Started</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">1. Getting Started</a></li>
+      <li>Next: <a href="basic_functionality.html" title="next chapter">1.2. Using the Citrine Python Client</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Citrine Informatics.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/getting_started/basic_structure.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

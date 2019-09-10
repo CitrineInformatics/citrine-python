@@ -1,0 +1,146 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>citrine.exceptions module &#8212; Citrine Python 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-citrine.exceptions">
+<span id="citrine-exceptions-module"></span><h1>citrine.exceptions module<a class="headerlink" href="#module-citrine.exceptions" title="Permalink to this headline">¶</a></h1>
+<p>Citrine-specific exceptions.</p>
+<dl class="exception">
+<dt id="citrine.exceptions.CitrineException">
+<em class="property">exception </em><code class="sig-prename descclassname">citrine.exceptions.</code><code class="sig-name descname">CitrineException</code><a class="headerlink" href="#citrine.exceptions.CitrineException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>The base exception class for Citrine-Python exceptions.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="citrine.exceptions.NonRetryableException">
+<em class="property">exception </em><code class="sig-prename descclassname">citrine.exceptions.</code><code class="sig-name descname">NonRetryableException</code><a class="headerlink" href="#citrine.exceptions.NonRetryableException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#citrine.exceptions.CitrineException" title="citrine.exceptions.CitrineException"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.exceptions.CitrineException</span></code></a></p>
+<p>Indicates that a non-retryable error occurred.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="citrine.exceptions.NotFound">
+<em class="property">exception </em><code class="sig-prename descclassname">citrine.exceptions.</code><code class="sig-name descname">NotFound</code><span class="sig-paren">(</span><em class="sig-param">path: str</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.exceptions.NotFound" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#citrine.exceptions.NonRetryableException" title="citrine.exceptions.NonRetryableException"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.exceptions.NonRetryableException</span></code></a></p>
+<p>A particular url was not found. (http status 404).</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="citrine.exceptions.RetryableException">
+<em class="property">exception </em><code class="sig-prename descclassname">citrine.exceptions.</code><code class="sig-name descname">RetryableException</code><a class="headerlink" href="#citrine.exceptions.RetryableException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#citrine.exceptions.CitrineException" title="citrine.exceptions.CitrineException"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.exceptions.CitrineException</span></code></a></p>
+<p>Indicates an error occurred but it is retryable.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="citrine.exceptions.Unauthorized">
+<em class="property">exception </em><code class="sig-prename descclassname">citrine.exceptions.</code><code class="sig-name descname">Unauthorized</code><span class="sig-paren">(</span><em class="sig-param">path: str</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.exceptions.Unauthorized" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#citrine.exceptions.NonRetryableException" title="citrine.exceptions.NonRetryableException"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.exceptions.NonRetryableException</span></code></a></p>
+<p>The user is unauthorized to make this api call. (http status 401).</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="citrine.exceptions.UnauthorizedRefreshToken">
+<em class="property">exception </em><code class="sig-prename descclassname">citrine.exceptions.</code><code class="sig-name descname">UnauthorizedRefreshToken</code><a class="headerlink" href="#citrine.exceptions.UnauthorizedRefreshToken" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#citrine.exceptions.NonRetryableException" title="citrine.exceptions.NonRetryableException"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.exceptions.NonRetryableException</span></code></a></p>
+<p>The token used to refresh authentication is invalid.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Citrine Python</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/index.html">1. Getting Started</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Citrine Informatics.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/reference/citrine.exceptions.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

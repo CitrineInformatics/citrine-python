@@ -1,0 +1,7 @@
+citrine.resources.ingredient\_spec module
+=========================================
+
+.. automodule:: citrine.resources.ingredient_spec
+   :members:
+   :undoc-members:
+   :show-inheritance:

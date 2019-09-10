@@ -1,0 +1,319 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>citrine.resources.project module &#8212; Citrine Python 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-citrine.resources.project">
+<span id="citrine-resources-project-module"></span><h1>citrine.resources.project module<a class="headerlink" href="#module-citrine.resources.project" title="Permalink to this headline">¶</a></h1>
+<p>Resources that represent both individual and collections of projects.</p>
+<dl class="class">
+<dt id="citrine.resources.project.Project">
+<em class="property">class </em><code class="sig-prename descclassname">citrine.resources.project.</code><code class="sig-name descname">Project</code><span class="sig-paren">(</span><em class="sig-param">name: str</em>, <em class="sig-param">description: Optional[str] = None</em>, <em class="sig-param">session: Optional[citrine._session.Session] = &lt;citrine._session.Session object&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.project.Project" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.resource.Resource</span></code></p>
+<p>A Citrine Project.</p>
+<p>A project is a collection of datasets, some of which belong directly to the project
+and some of which have been shared with the project.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – Name of the project.</p></li>
+<li><p><strong>description</strong> (<em>str</em>) – Long-form description of the project.</p></li>
+<li><p><strong>session</strong> (<em>Session</em><em>, </em><em>optional</em>) – The Citrine session used to connect to the database.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="citrine.resources.project.Project.uid">
+<code class="sig-name descname">uid</code><a class="headerlink" href="#citrine.resources.project.Project.uid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unique uuid4 identifier of this project.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>UUID</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.resources.project.Project.status">
+<code class="sig-name descname">status</code><a class="headerlink" href="#citrine.resources.project.Project.status" title="Permalink to this definition">¶</a></dt>
+<dd><p>Status of the project.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.resources.project.Project.created_at">
+<code class="sig-name descname">created_at</code><a class="headerlink" href="#citrine.resources.project.Project.created_at" title="Permalink to this definition">¶</a></dt>
+<dd><p>Time the project was created, in seconds since epoch.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="citrine.resources.project.Project.condition_templates">
+<em class="property">property </em><code class="sig-name descname">condition_templates</code><a class="headerlink" href="#citrine.resources.project.Project.condition_templates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a resource representing all condition templates in this dataset.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">created_at</code><em class="property"> = None</em></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="citrine.resources.project.Project.datasets">
+<em class="property">property </em><code class="sig-name descname">datasets</code><a class="headerlink" href="#citrine.resources.project.Project.datasets" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a resource representing all visible datasets.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.resources.project.Project.description">
+<code class="sig-name descname">description</code><em class="property"> = None</em><a class="headerlink" href="#citrine.resources.project.Project.description" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="citrine.resources.project.Project.ingredient_runs">
+<em class="property">property </em><code class="sig-name descname">ingredient_runs</code><a class="headerlink" href="#citrine.resources.project.Project.ingredient_runs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a resource representing all ingredient runs in this dataset.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="citrine.resources.project.Project.ingredient_specs">
+<em class="property">property </em><code class="sig-name descname">ingredient_specs</code><a class="headerlink" href="#citrine.resources.project.Project.ingredient_specs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a resource representing all ingredient specs in this dataset.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="citrine.resources.project.Project.material_runs">
+<em class="property">property </em><code class="sig-name descname">material_runs</code><a class="headerlink" href="#citrine.resources.project.Project.material_runs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a resource representing all material runs in this dataset.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="citrine.resources.project.Project.material_specs">
+<em class="property">property </em><code class="sig-name descname">material_specs</code><a class="headerlink" href="#citrine.resources.project.Project.material_specs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a resource representing all material specs in this dataset.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="citrine.resources.project.Project.material_templates">
+<em class="property">property </em><code class="sig-name descname">material_templates</code><a class="headerlink" href="#citrine.resources.project.Project.material_templates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a resource representing all material templates in this dataset.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="citrine.resources.project.Project.measurement_runs">
+<em class="property">property </em><code class="sig-name descname">measurement_runs</code><a class="headerlink" href="#citrine.resources.project.Project.measurement_runs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a resource representing all measurement runs in this dataset.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="citrine.resources.project.Project.measurement_specs">
+<em class="property">property </em><code class="sig-name descname">measurement_specs</code><a class="headerlink" href="#citrine.resources.project.Project.measurement_specs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a resource representing all measurement specs in this dataset.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="citrine.resources.project.Project.measurement_templates">
+<em class="property">property </em><code class="sig-name descname">measurement_templates</code><a class="headerlink" href="#citrine.resources.project.Project.measurement_templates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a resource representing all measurement templates in this dataset.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.resources.project.Project.name">
+<code class="sig-name descname">name</code><em class="property"> = None</em><a class="headerlink" href="#citrine.resources.project.Project.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="citrine.resources.project.Project.parameter_templates">
+<em class="property">property </em><code class="sig-name descname">parameter_templates</code><a class="headerlink" href="#citrine.resources.project.Project.parameter_templates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a resource representing all parameter templates in this dataset.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="citrine.resources.project.Project.process_runs">
+<em class="property">property </em><code class="sig-name descname">process_runs</code><a class="headerlink" href="#citrine.resources.project.Project.process_runs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a resource representing all process runs in this dataset.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="citrine.resources.project.Project.process_specs">
+<em class="property">property </em><code class="sig-name descname">process_specs</code><a class="headerlink" href="#citrine.resources.project.Project.process_specs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a resource representing all process specs in this dataset.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="citrine.resources.project.Project.process_templates">
+<em class="property">property </em><code class="sig-name descname">process_templates</code><a class="headerlink" href="#citrine.resources.project.Project.process_templates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a resource representing all process templates in this dataset.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="citrine.resources.project.Project.property_templates">
+<em class="property">property </em><code class="sig-name descname">property_templates</code><a class="headerlink" href="#citrine.resources.project.Project.property_templates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a resource representing all property templates in this dataset.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="citrine.resources.project.Project.share">
+<code class="sig-name descname">share</code><span class="sig-paren">(</span><em class="sig-param">project_id: str</em>, <em class="sig-param">resource_type: str</em>, <em class="sig-param">resource_id: str</em><span class="sig-paren">)</span> &#x2192; Dict[str, str]<a class="headerlink" href="#citrine.resources.project.Project.share" title="Permalink to this definition">¶</a></dt>
+<dd><p>Share a resource with another project.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">status</code><em class="property"> = None</em></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">uid</code><em class="property"> = None</em></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="citrine.resources.project.ProjectCollection">
+<em class="property">class </em><code class="sig-prename descclassname">citrine.resources.project.</code><code class="sig-name descname">ProjectCollection</code><span class="sig-paren">(</span><em class="sig-param">session: citrine._session.Session = &lt;citrine._session.Session object&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.project.ProjectCollection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.collection.Collection</span></code></p>
+<p>Represents the collection of all projects as well as the resources belonging to it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>session</strong> (<em>Session</em><em>, </em><em>optional</em>) – The Citrine session used to connect to the database.</p>
+</dd>
+</dl>
+<dl class="method">
+<dt id="citrine.resources.project.ProjectCollection.build">
+<code class="sig-name descname">build</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span> &#x2192; citrine.resources.project.Project<a class="headerlink" href="#citrine.resources.project.ProjectCollection.build" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build an individual project from a dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>dict</em>) – A dictionary representing the project.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The project created from data.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#citrine.resources.project.Project" title="citrine.resources.project.Project">Project</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="citrine.resources.project.ProjectCollection.register">
+<code class="sig-name descname">register</code><span class="sig-paren">(</span><em class="sig-param">name: str</em>, <em class="sig-param">description: Optional[str] = None</em><span class="sig-paren">)</span> &#x2192; citrine.resources.project.Project<a class="headerlink" href="#citrine.resources.project.ProjectCollection.register" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create and upload new project.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – Name of the project to be created.</p></li>
+<li><p><strong>description</strong> (<em>str</em>) – Long-form description of the project to be created.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Citrine Python</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/index.html">1. Getting Started</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Citrine Informatics.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/reference/citrine.resources.project.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

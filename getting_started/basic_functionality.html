@@ -1,0 +1,170 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>1.2. Using the Citrine Python Client &#8212; Citrine Python 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="1.3. Data Model" href="data_model.html" />
+    <link rel="prev" title="1.1. Structure of the Citrine Python Client" href="basic_structure.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="using-the-citrine-python-client">
+<h1>1.2. Using the Citrine Python Client<a class="headerlink" href="#using-the-citrine-python-client" title="Permalink to this headline">¶</a></h1>
+<p>The Citrine python client creates, reads, updates, and deletes <a class="reference internal" href="basic_structure.html"><span class="doc">resources</span></a> using the Citrine product API.</p>
+<div class="section" id="creating">
+<h2>1.2.1. Creating<a class="headerlink" href="#creating" title="Permalink to this headline">¶</a></h2>
+<p>To create a resource, initialize it as you would any other python object. For example,</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.resources.process_spec</span> <span class="kn">import</span> <span class="n">ProcessSpec</span>
+<span class="n">buy_electrolyte_spec</span> <span class="o">=</span> <span class="n">ProcessSpec</span><span class="p">(</span><span class="s2">&quot;Buy ammonium chloride&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>creates a process spec with the display name “Buy ammonium chloride” and no other information.</p>
+<p>To persist a resource in the database, you must upload it using the <code class="docutils literal notranslate"><span class="pre">register</span></code> command.
+The following command uploads this process spec to the dataset <code class="docutils literal notranslate"><span class="pre">battery_dataset_1</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">battery_dataset_1</span><span class="o">.</span><span class="n">process_specs</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">buy_electrolyte_spec</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>You must specify the dataset, because all process specs are <a class="reference internal" href="basic_structure.html#data-model-objects-label"><span class="std std-ref">associated with a dataset</span></a>, and the collection type, in this case <code class="docutils literal notranslate"><span class="pre">.process_specs</span></code>.
+The command <code class="docutils literal notranslate"><span class="pre">battery_dataset_1.material_runs.register(buy_electrolyte_spec)</span></code>, which attempts to register a process spec to the collection of material runs, will result in an error.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">register</span></code> command returns a copy of the resource as it now exists in the database.
+The database may decorate the object with additional information, such as a unique identifier string that you can use to retrieve it in the future.</p>
+</div>
+<div class="section" id="reading">
+<span id="functionality-reading-label"></span><h2>1.2.2. Reading<a class="headerlink" href="#reading" title="Permalink to this headline">¶</a></h2>
+<p>There are several ways to retrieve a resource from the database.</p>
+<div class="section" id="get">
+<h3>1.2.2.1. Get<a class="headerlink" href="#get" title="Permalink to this headline">¶</a></h3>
+<p>Get retrieves a specific resource with a known unique identifier string.
+If the project <code class="docutils literal notranslate"><span class="pre">ceramic_resistors_project</span></code> has a dataset with an id that you have saved as <code class="docutils literal notranslate"><span class="pre">special_dataset_id</span></code>, then you could retrieve it with:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ceramic_resistors_project</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">special_dataset_id</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="list">
+<h3>1.2.2.2. List<a class="headerlink" href="#list" title="Permalink to this headline">¶</a></h3>
+<p>List returns an iterator of every resource in a collection.
+To list every material spec in the dataset <code class="docutils literal notranslate"><span class="pre">standard_glasses_dataset</span></code>, use the command:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">standard_glasses_dataset</span><span class="o">.</span><span class="n">material_specs</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>You can instead broaden the scope of the search to an entire project.
+The command <code class="docutils literal notranslate"><span class="pre">lens_project.material_specs.list()</span></code> will list every material spec in every dataset that <code class="docutils literal notranslate"><span class="pre">lens_project</span></code> has read access to.</p>
+</div>
+<div class="section" id="filter">
+<h3>1.2.2.3. Filter<a class="headerlink" href="#filter" title="Permalink to this headline">¶</a></h3>
+<p>Filter lies somewhere between Get and List, returning only those objects that meet a given criterion.
+There are currently two ways to filter, and they only work on data model objects: <a class="reference internal" href="../reference/citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConceptsCollection.filter_by_tags" title="citrine.resources.data_concepts.DataConceptsCollection.filter_by_tags"><code class="xref py py-func docutils literal notranslate"><span class="pre">filter_by_tags()</span></code></a> and <a class="reference internal" href="../reference/citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConceptsCollection.filter_by_attribute_bounds" title="citrine.resources.data_concepts.DataConceptsCollection.filter_by_attribute_bounds"><code class="xref py py-func docutils literal notranslate"><span class="pre">filter_by_attribute_bounds()</span></code></a>.
+As with List, filter can be scoped to a dataset or to a project.</p>
+</div>
+</div>
+<div class="section" id="updating">
+<h2>1.2.3. Updating<a class="headerlink" href="#updating" title="Permalink to this headline">¶</a></h2>
+<p>TBD</p>
+</div>
+<div class="section" id="deleting">
+<h2>1.2.4. Deleting<a class="headerlink" href="#deleting" title="Permalink to this headline">¶</a></h2>
+<p>TBD</p>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Citrine Python</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">1. Getting Started</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="basic_structure.html">1.1. Structure of the Citrine Python Client</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">1.2. Using the Citrine Python Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_model.html">1.3. Data Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="code_examples.html">1.4. Code Examples</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">1. Getting Started</a><ul>
+      <li>Previous: <a href="basic_structure.html" title="previous chapter">1.1. Structure of the Citrine Python Client</a></li>
+      <li>Next: <a href="data_model.html" title="next chapter">1.3. Data Model</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Citrine Informatics.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/getting_started/basic_functionality.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

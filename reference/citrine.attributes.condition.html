@@ -1,0 +1,162 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>citrine.attributes.condition module &#8212; Citrine Python 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-citrine.attributes.condition">
+<span id="citrine-attributes-condition-module"></span><h1>citrine.attributes.condition module<a class="headerlink" href="#module-citrine.attributes.condition" title="Permalink to this headline">¶</a></h1>
+<p>A resource that represents a condition attribute.</p>
+<dl class="class">
+<dt id="citrine.attributes.condition.Condition">
+<em class="property">class </em><code class="sig-prename descclassname">citrine.attributes.condition.</code><code class="sig-name descname">Condition</code><span class="sig-paren">(</span><em class="sig-param">name: str</em>, <em class="sig-param">notes: Optional[str] = None</em>, <em class="sig-param">value: Optional[taurus.entity.value.base_value.BaseValue] = None</em>, <em class="sig-param">template: Optional[taurus.entity.template.condition_template.ConditionTemplate] = None</em>, <em class="sig-param">origin: Optional[str] = 'unknown'</em>, <em class="sig-param">file_links: Optional[List[taurus.entity.file_link.FileLink]] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.attributes.condition.Condition" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConcepts" title="citrine.resources.data_concepts.DataConcepts"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.resources.data_concepts.DataConcepts</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">taurus.entity.attribute.condition.Condition</span></code></p>
+<p>A condition attribute.</p>
+<p>Conditions are environmental variables (typically measured) that may affect a process
+or measurement: e.g., temperature, pressure.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – Required name of the condition. Each condition within an object must have a unique name.</p></li>
+<li><p><strong>notes</strong> (<em>str</em>) – Optional free-form notes about the condition.</p></li>
+<li><p><strong>value</strong> (<em>BaseValue</em>) – The value of the condition.</p></li>
+<li><p><strong>template</strong> (<a class="reference internal" href="citrine.resources.condition_template.html#citrine.resources.condition_template.ConditionTemplate" title="citrine.resources.condition_template.ConditionTemplate"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConditionTemplate</span></code></a>) – Condition template that defines the allowed bounds of this condition. If a template
+and value are both present then the value must be within the template bounds.</p></li>
+<li><p><strong>origin</strong> (<em>str</em>) – The origin of the condition. Must be one of “measured”, “predicted”, “summary”,
+“specified”, “computed”, or “unknown.” Default is “unknown.”</p></li>
+<li><p><strong>file_links</strong> (<em>List</em><em>[</em><em>FileLink</em><em>]</em>) – Links to files associated with the condition.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="citrine.attributes.condition.Condition.file_links">
+<code class="sig-name descname">file_links</code><em class="property"> = None</em><a class="headerlink" href="#citrine.attributes.condition.Condition.file_links" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.attributes.condition.Condition.name">
+<code class="sig-name descname">name</code><em class="property"> = None</em><a class="headerlink" href="#citrine.attributes.condition.Condition.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.attributes.condition.Condition.notes">
+<code class="sig-name descname">notes</code><em class="property"> = None</em><a class="headerlink" href="#citrine.attributes.condition.Condition.notes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.attributes.condition.Condition.origin">
+<code class="sig-name descname">origin</code><em class="property"> = 'unknown'</em><a class="headerlink" href="#citrine.attributes.condition.Condition.origin" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.attributes.condition.Condition.template">
+<code class="sig-name descname">template</code><em class="property"> = None</em><a class="headerlink" href="#citrine.attributes.condition.Condition.template" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.attributes.condition.Condition.typ">
+<code class="sig-name descname">typ</code><em class="property"> = 'condition'</em><a class="headerlink" href="#citrine.attributes.condition.Condition.typ" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.attributes.condition.Condition.value">
+<code class="sig-name descname">value</code><em class="property"> = None</em><a class="headerlink" href="#citrine.attributes.condition.Condition.value" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Citrine Python</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/index.html">1. Getting Started</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Citrine Informatics.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/reference/citrine.attributes.condition.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

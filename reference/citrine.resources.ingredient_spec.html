@@ -1,0 +1,204 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>citrine.resources.ingredient_spec module &#8212; Citrine Python 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-citrine.resources.ingredient_spec">
+<span id="citrine-resources-ingredient-spec-module"></span><h1>citrine.resources.ingredient_spec module<a class="headerlink" href="#module-citrine.resources.ingredient_spec" title="Permalink to this headline">¶</a></h1>
+<p>Resources that represent ingredient spec data objects.</p>
+<dl class="class">
+<dt id="citrine.resources.ingredient_spec.IngredientSpec">
+<em class="property">class </em><code class="sig-prename descclassname">citrine.resources.ingredient_spec.</code><code class="sig-name descname">IngredientSpec</code><span class="sig-paren">(</span><em class="sig-param">uids: Optional[Dict[str</em>, <em class="sig-param">str]] = None</em>, <em class="sig-param">tags: Optional[List[str]] = None</em>, <em class="sig-param">notes: Optional[str] = None</em>, <em class="sig-param">material: Optional[citrine.resources.material_spec.MaterialSpec] = None</em>, <em class="sig-param">mass_fraction: Optional[taurus.entity.value.continuous_value.ContinuousValue] = None</em>, <em class="sig-param">volume_fraction: Optional[taurus.entity.value.continuous_value.ContinuousValue] = None</em>, <em class="sig-param">number_fraction: Optional[taurus.entity.value.continuous_value.ContinuousValue] = None</em>, <em class="sig-param">absolute_quantity: Optional[taurus.entity.value.continuous_value.ContinuousValue] = None</em>, <em class="sig-param">unique_label: Optional[str] = None</em>, <em class="sig-param">labels: Optional[List[str]] = None</em>, <em class="sig-param">file_links: Optional[List[taurus.entity.file_link.FileLink]] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.ingredient_spec.IngredientSpec" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConcepts" title="citrine.resources.data_concepts.DataConcepts"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.resources.data_concepts.DataConcepts</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.resource.Resource</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">taurus.entity.object.ingredient_spec.IngredientSpec</span></code></p>
+<p>An ingredient specification.</p>
+<p>Ingredients annotate a material with information about its usage in a process.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>uids</strong> (<em>Map</em><em>[</em><em>str</em><em>, </em><em>str</em><em>]</em><em>, </em><em>optional</em>) – A collection of unique identifiers, each a key-value pair. The key is the “scope”
+and the value is the identifier. The scope “id” is reserved for the internal Citrine ID,
+which will always be a uuid4.</p></li>
+<li><p><strong>tags</strong> (<em>List</em><em>[</em><em>str</em><em>]</em><em>, </em><em>optional</em>) – A set of tags. Tags can be used for filtering.</p></li>
+<li><p><strong>notes</strong> (<em>str</em><em>, </em><em>optional</em>) – Long-form notes about the ingredient spec.</p></li>
+<li><p><strong>material</strong> (<a class="reference internal" href="citrine.resources.material_spec.html#citrine.resources.material_spec.MaterialSpec" title="citrine.resources.material_spec.MaterialSpec"><em>MaterialSpec</em></a>) – Material that this ingredient is.</p></li>
+<li><p><strong>mass_fraction</strong> (<em>ContinuousValue</em><em>, </em><em>optional</em>) – The mass fraction of the ingredient in the process.</p></li>
+<li><p><strong>volume_fraction</strong> (<em>ContinuousValue</em><em>, </em><em>optional</em>) – The volume fraction of the ingredient in the process.</p></li>
+<li><p><strong>number_fraction</strong> (<em>ContinuousValue</em><em>, </em><em>optional</em>) – The number fraction of the ingredient in the process.</p></li>
+<li><p><strong>absolute_quantity</strong> (<em>ContinuousValue</em><em>, </em><em>optional</em>) – The absolute quantity of the ingredient in the process.</p></li>
+<li><p><strong>unique_label</strong> (<em>str</em><em>, </em><em>optional</em>) – Label on the ingredient that is unique within the process that contains it.</p></li>
+<li><p><strong>labels</strong> (<em>List</em><em>[</em><em>str</em><em>]</em><em>, </em><em>optional</em>) – Additional labels on the ingredient that must be unique.</p></li>
+<li><p><strong>file_links</strong> (<em>List</em><em>[</em><em>FileLink</em><em>]</em><em>, </em><em>optional</em>) – Links to associated files, with resource paths into the files API.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="citrine.resources.ingredient_spec.IngredientSpec.absolute_quantity">
+<code class="sig-name descname">absolute_quantity</code><em class="property"> = None</em><a class="headerlink" href="#citrine.resources.ingredient_spec.IngredientSpec.absolute_quantity" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.resources.ingredient_spec.IngredientSpec.file_links">
+<code class="sig-name descname">file_links</code><em class="property"> = None</em><a class="headerlink" href="#citrine.resources.ingredient_spec.IngredientSpec.file_links" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.resources.ingredient_spec.IngredientSpec.labels">
+<code class="sig-name descname">labels</code><em class="property"> = None</em><a class="headerlink" href="#citrine.resources.ingredient_spec.IngredientSpec.labels" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.resources.ingredient_spec.IngredientSpec.mass_fraction">
+<code class="sig-name descname">mass_fraction</code><em class="property"> = None</em><a class="headerlink" href="#citrine.resources.ingredient_spec.IngredientSpec.mass_fraction" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.resources.ingredient_spec.IngredientSpec.material">
+<code class="sig-name descname">material</code><em class="property"> = None</em><a class="headerlink" href="#citrine.resources.ingredient_spec.IngredientSpec.material" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.resources.ingredient_spec.IngredientSpec.notes">
+<code class="sig-name descname">notes</code><em class="property"> = None</em><a class="headerlink" href="#citrine.resources.ingredient_spec.IngredientSpec.notes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.resources.ingredient_spec.IngredientSpec.number_fraction">
+<code class="sig-name descname">number_fraction</code><em class="property"> = None</em><a class="headerlink" href="#citrine.resources.ingredient_spec.IngredientSpec.number_fraction" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.resources.ingredient_spec.IngredientSpec.tags">
+<code class="sig-name descname">tags</code><em class="property"> = None</em><a class="headerlink" href="#citrine.resources.ingredient_spec.IngredientSpec.tags" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.resources.ingredient_spec.IngredientSpec.typ">
+<code class="sig-name descname">typ</code><em class="property"> = None</em><a class="headerlink" href="#citrine.resources.ingredient_spec.IngredientSpec.typ" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.resources.ingredient_spec.IngredientSpec.uids">
+<code class="sig-name descname">uids</code><em class="property"> = None</em><a class="headerlink" href="#citrine.resources.ingredient_spec.IngredientSpec.uids" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.resources.ingredient_spec.IngredientSpec.unique_label">
+<code class="sig-name descname">unique_label</code><em class="property"> = None</em><a class="headerlink" href="#citrine.resources.ingredient_spec.IngredientSpec.unique_label" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.resources.ingredient_spec.IngredientSpec.volume_fraction">
+<code class="sig-name descname">volume_fraction</code><em class="property"> = None</em><a class="headerlink" href="#citrine.resources.ingredient_spec.IngredientSpec.volume_fraction" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="citrine.resources.ingredient_spec.IngredientSpecCollection">
+<em class="property">class </em><code class="sig-prename descclassname">citrine.resources.ingredient_spec.</code><code class="sig-name descname">IngredientSpecCollection</code><span class="sig-paren">(</span><em class="sig-param">project_id: uuid.UUID</em>, <em class="sig-param">dataset_id: uuid.UUID</em>, <em class="sig-param">session: citrine._session.Session</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.ingredient_spec.IngredientSpecCollection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConceptsCollection" title="citrine.resources.data_concepts.DataConceptsCollection"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.resources.data_concepts.DataConceptsCollection</span></code></a></p>
+<p>Represents the collection of all ingredient specs associated with a dataset.</p>
+<dl class="method">
+<dt id="citrine.resources.ingredient_spec.IngredientSpecCollection.get_type">
+<em class="property">classmethod </em><code class="sig-name descname">get_type</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; Type[citrine.resources.ingredient_spec.IngredientSpec]<a class="headerlink" href="#citrine.resources.ingredient_spec.IngredientSpecCollection.get_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the resource type in the collection.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Citrine Python</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/index.html">1. Getting Started</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Citrine Informatics.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/reference/citrine.resources.ingredient_spec.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

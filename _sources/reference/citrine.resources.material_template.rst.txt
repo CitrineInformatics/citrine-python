@@ -1,0 +1,7 @@
+citrine.resources.material\_template module
+===========================================
+
+.. automodule:: citrine.resources.material_template
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -1,0 +1,172 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>1.3. Data Model &#8212; Citrine Python 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="1.4. Code Examples" href="code_examples.html" />
+    <link rel="prev" title="1.2. Using the Citrine Python Client" href="basic_functionality.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="data-model">
+<h1>1.3. Data Model<a class="headerlink" href="#data-model" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="overview">
+<h2>1.3.1. Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
+<p>The Citrine python client is built on our NextGen data model, (codename taurus).
+Taurus is a format that links together materials, the processes that produced them, and the measurements that characterize them.
+Complete documentation can be found in the <cite>data model docs</cite>.
+This page presents a broad overview.</p>
+</div>
+<div class="section" id="the-basic-objects-processes-materials-measurements">
+<h2>1.3.2. The Basic Objects: Processes, Materials, Measurements<a class="headerlink" href="#the-basic-objects-processes-materials-measurements" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>A process is an action that creates a material, possibly using some input ingredients.</p></li>
+<li><p>A material represents a sample, either physical or virtual.</p></li>
+<li><p>A measurement characterizes a sample, either physically or computationally.</p></li>
+<li><p>An ingredient is a material and its amount that is used as an input to a process.</p></li>
+</ul>
+<p>The links between objects must be established in a specific direction.
+A process specifies its input ingredients, but does not specify the material it produces.
+A material specifies the process that creates it, but does not specify what measurements are done on it or how it is used as an ingredient.
+Measurements and ingredients specify the material that they relate to.</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>First create the process, <em>then</em> create the material, then create any measurements on or ingredients derived from that material.</p>
+</div>
+<p>We make a first class distinction between intent (specs) and reality (runs).
+The same spec can be used to create many runs.
+For example, you might create a single material spec for 10 cm silicon wafers and hundreds of associated material runs, one representing each physical sample produced.</p>
+<p>It is often expected that a run and its spec will agree with each other but that is not enforced.
+A measurement spec on the silicon wafers might state that the property “mass” is expected to have a value of 36.6 +/- 0.1 grams, but the measurement run on one sample has a value of 37.5 grams.
+That is OK and <em>should</em> be recorded.
+Materials science is messy and reality does not always align with our intent.
+That’s why we’ve made our data model flexible.</p>
+</div>
+<div class="section" id="attributes">
+<h2>1.3.3. Attributes<a class="headerlink" href="#attributes" title="Permalink to this headline">¶</a></h2>
+<p>Properties are characteristics of a material that could be measured, e.g. chemical composition, density, yield strength.
+Conditions are the environmental variables (typically measured) that may affect a process or measurement: e.g. Temperature, Pressure.
+Parameters are the non-environmental variables (typically specified and controlled) that may affect a process or measurement: e.g. oven dial temperature position for a kiln firing, magnification for a measurement taken with a SEM.</p>
+<p>Each type of object can be assigned some subset of these attributes.
+For example, process specs have optional conditions and parameters but not properties.
+For more information, please see the documentation related to each data object.</p>
+</div>
+<div class="section" id="templates-and-validation">
+<h2>1.3.4. Templates and Validation<a class="headerlink" href="#templates-and-validation" title="Permalink to this headline">¶</a></h2>
+<p>Templates provide a controlled vocabulary that establishes what attributes you expect objects to have and what the bounds on those attributes are.
+Attribute templates constrain a property, parameter, or condition to be within certain bounds.
+Object templates contain a list of attribute templates that a process, material, or measurement may not violate.
+If you attempt to upload an object with an attribute value that is outside of its associated bounds, you will receive a detailed error message.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Templates let you put guardrails on your objects, but they are not rigidly constraining.
+An object does <em>not</em> need to have an attribute for every one of the attribute templates in its object template.
+An object may have attributes with templates that do not exist in its object template; in fact, it may have attributes with no template at all.</p>
+</div>
+<p>Attribute templates should be narrowly scoped and very permissive.
+For example, “Temperature is between 20 and 24 degC” is a bad template: temperature is generic and 20-24 degC is too strict.
+“Room temperature during drying is between 0 and 100 degC” is better because it is more specific and contains all reasonable values of room temperature.</p>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Citrine Python</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">1. Getting Started</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="basic_structure.html">1.1. Structure of the Citrine Python Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="basic_functionality.html">1.2. Using the Citrine Python Client</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">1.3. Data Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="code_examples.html">1.4. Code Examples</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">1. Getting Started</a><ul>
+      <li>Previous: <a href="basic_functionality.html" title="previous chapter">1.2. Using the Citrine Python Client</a></li>
+      <li>Next: <a href="code_examples.html" title="next chapter">1.4. Code Examples</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Citrine Informatics.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/getting_started/data_model.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

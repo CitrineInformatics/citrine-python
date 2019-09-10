@@ -1,0 +1,7 @@
+citrine.resources.measurement\_template module
+==============================================
+
+.. automodule:: citrine.resources.measurement_template
+   :members:
+   :undoc-members:
+   :show-inheritance:
