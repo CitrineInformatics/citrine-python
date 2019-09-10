@@ -14,7 +14,6 @@ z = RealDescriptor("z", 0, 100, "")
 def valid_paraboloid_data():
     """Produce valid data used for these tests."""
     return dict(
-        module_type='PREDICTOR',
         status='INVALID',
         status_info=['Something is wrong', 'Very wrong'],
         display_name='my predictor',
@@ -34,7 +33,6 @@ def valid_paraboloid_data():
 def valid_simple_ml_data():
     """Produce valid data used for these tests."""
     return dict(
-        module_type='PREDICTOR',
         status='VALID',
         status_info=[],
         display_name='ML predictor',
