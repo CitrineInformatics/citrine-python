@@ -1,4 +1,4 @@
-"""Tools for working with Capabilities."""
+"""Tools for working with design spaces."""
 from typing import List, Type
 from uuid import UUID
 
@@ -9,10 +9,10 @@ from citrine._serialization.serializable import Serializable
 from citrine._session import Session
 from citrine.informatics.dimensions import Dimension
 
-__all__ = ['Capability', 'ProductCapability']
+__all__ = ['DesignSpace', 'ProductDesignSpace']
 
 
-class Capability(PolymorphicSerializable['Capability']):
+class DesignSpace(PolymorphicSerializable['DesignSpace']):
     """A module representing a material domain."""
 
     _response_key = None
@@ -20,11 +20,11 @@ class Capability(PolymorphicSerializable['Capability']):
     @classmethod
     def get_type(cls, data) -> Type[Serializable]:
         """Return the sole currently implemented subtype."""
-        return ProductCapability
+        return ProductDesignSpace
 
 
-class ProductCapability(Resource['ProductCapability'], Capability):
-    """Capability composed of an outer product of univariate dimensions."""
+class ProductDesignSpace(Resource['ProductDesignSpace'], DesignSpace):
+    """Design space composed of an outer product of univariate dimensions."""
 
     _response_key = None
 
@@ -58,4 +58,4 @@ class ProductCapability(Resource['ProductCapability'], Capability):
         return data
 
     def __str__(self):
-        return '<ProductCapability {!r}>'.format(self.name)
+        return '<ProductDesignSpace {!r}>'.format(self.name)

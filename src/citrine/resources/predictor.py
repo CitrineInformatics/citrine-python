@@ -1,4 +1,4 @@
-"""Resources that represent both collections of capabilities."""
+"""Resources that represent both collections of predictors."""
 from uuid import UUID
 from typing import TypeVar
 

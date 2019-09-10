@@ -1,4 +1,4 @@
-"""Tools for working with Capabilities."""
+"""Tools for working with design workflows."""
 from typing import Type, Optional
 from uuid import UUID
 
@@ -33,7 +33,7 @@ class DesignWorkflow(Resource['DesignWorkflow'], Workflow):
     )
 
     # TODO: Figure out how to make these fields richer/use actual objects
-    capability_id = properties.UUID('modules.capability_id')
+    design_space_id = properties.UUID('modules.design_space_id')
     processor_id = properties.UUID('modules.processor_id')
     predictor_id = properties.UUID('modules.predictor_id')
 
@@ -42,13 +42,13 @@ class DesignWorkflow(Resource['DesignWorkflow'], Workflow):
     # be to have all objects have a context object, but that also seems to have downsides.
     def __init__(self,
                  name: str,
-                 capability_id: UUID,
+                 design_space_id: UUID,
                  processor_id: UUID,
                  predictor_id: UUID,
                  project_id: Optional[UUID] = None,
                  session: Session = Session()):
         self.name = name
-        self.capability_id = capability_id
+        self.design_space_id = design_space_id
         self.processor_id = processor_id
         self.predictor_id = predictor_id
         self.project_id = project_id
