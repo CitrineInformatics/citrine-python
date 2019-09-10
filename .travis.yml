@@ -7,4 +7,4 @@ install:
   - pip install -U -r test_requirements.txt
   - pip install --no-deps -e .
 script:
-  - pytest --flake8 --cov-report term-missing --cov-report term:skip-covered --cov-fail-under=92 -s -r .
+  - pytest --flake8 --cov=src/ --cov-report term-missing --cov-report term:skip-covered --cov-fail-under=83 -s -r .

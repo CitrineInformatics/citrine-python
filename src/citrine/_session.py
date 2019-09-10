@@ -2,6 +2,9 @@ from os import environ
 from typing import Optional
 from logging import getLogger
 from datetime import datetime, timedelta
+
+from requests import Response
+
 from citrine.exceptions import (
     NotFound,
     Unauthorized,
@@ -72,13 +75,10 @@ class Session(requests.Session):
             self.logger.info('%s %s %s', response.status_code, method, path)
             return response
         else:
-            try:
-                stacktrace = response.json().get('debug_stacktrace')
-                if stacktrace:
-                    self.logger.error('Response arrived with stacktrace:')
-                    self.logger.error(stacktrace)
-            except ValueError:
-                pass
+            stacktrace = self._extract_response_stacktrace(response)
+            if stacktrace is not None:
+                self.logger.error('Response arrived with stacktrace:')
+                self.logger.error(stacktrace)
             if response.status_code == 401:
                 self.logger.error('%s %s %s', response.status_code, method, path)
                 raise Unauthorized(path)
@@ -88,6 +88,16 @@ class Session(requests.Session):
             else:
                 self.logger.error('%s %s %s', response.status_code, method, path)
                 raise Exception(response.text)
+
+    @staticmethod
+    def _extract_response_stacktrace(response: Response) -> Optional[str]:
+        try:
+            json_value = response.json()
+            if isinstance(json_value, dict):
+                return json_value.get('debug_stacktrace')
+        except ValueError:
+            pass
+        return None
 
     def get_resource(self, path: str, *args, **kwargs) -> dict:
         """GET a particular resource as JSON."""
