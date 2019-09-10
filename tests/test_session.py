@@ -42,8 +42,11 @@ class SessionTests(unittest.TestCase):
         err_json_dict_resp.json = mock.Mock()
         err_json_dict_resp.json.return_value = {'debug_stacktrace': 'foo'}
         self.assertEqual(Session()._extract_response_stacktrace(err_json_dict_resp), 'foo')
-        err_json_dict_resp = mock.Mock()
-        err_json_dict_resp.json = mock.Mock()
-        err_json_dict_resp.json.return_value = 'a string deserialized from json'
-        self.assertIsNone(Session()._extract_response_stacktrace(err_json_dict_resp))
+        err_json_str_resp = mock.Mock()
+        err_json_str_resp.json = mock.Mock()
+        err_json_str_resp.json.return_value = 'a string deserialized from json'
+        self.assertIsNone(Session()._extract_response_stacktrace(err_json_str_resp))
+        err_str_resp = mock.Mock()
+        err_str_resp.json.side_effect = ValueError
+        self.assertIsNone(Session()._extract_response_stacktrace(err_str_resp))
 
