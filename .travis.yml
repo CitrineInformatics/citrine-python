@@ -18,7 +18,7 @@ deploy:
   keep_history: true
   local_dir: ./docs/_build/html/
   on:
-    branch: develop
+    branch: feature/docs-deployment
 env:
   global:
     secure: mrgwW/6fiEBrkTNmKIBraJP4JS0/3ANqKU2Wr6R2HH8M93h6VIoWgyWFqxfVZW2+0EqF42DBUxeDGeVNOKWSLYCUjITGAStbsbdysBUqyvHDP/uXEmHL7ijpziLnRT+UvWjYK1QFjO8SPOMx9TJoexFw0mQIfYUdOr42JWh6Dl0sZAEet5zlkvcXj1UCHqZX4uclQQiUedvFQPNM/a2Xit0bPh+vg6Q/4tnP2iUTCRNpff1b3TPYXTcLH31YCqVH6/AYG72LSEclYiju7ayVIyki4aDSIP+h5f0EIN9880fyeCh5cqTLomVFULpkCECL3Quv2EbijwOSWuaTwRFD8k/A5oi4h5SZDs0Ufb/mrPeLYCxcDP3lttB2Tqo/ZWQyKMY/idH9reDd2CWy3vJeCHCD9mOwkB52GqP+OdvU6LBSQp5P/vaC/Snq180TK3sRN+O+06tz6MFk+PSHMtNtDzgXkjwkfZiQea3SNhG6kf0LUHbbsZQfMEnHcy/w138rLTZNMwugc18zYplbqpJwjzZA0kcNDIehmLKbKOsIB/43ABD96bK7ymzLXZC0WGjPEVrjjS6qGrSvTM8IF9uDzGcf/sY1Yj0YjA1UNTGVQ0NbiFaJhqtZvK+c6IOf+N/c7zKldQah0J8mgDsslpnfaf/XNkiblz2dMUdxhg4fOiQ=
