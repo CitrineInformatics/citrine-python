@@ -9,7 +9,6 @@ from citrine.informatics.processors import Processor, GridProcessor, EnumeratedP
 def valid_grid_data():
     """Valid GridProcessor data."""
     return dict(
-        module_type='PROCESSOR',
         status='READY',
         status_info=['Things are looking good'],
         display_name='my processor',
@@ -28,7 +27,6 @@ def valid_grid_data():
 def valid_enumerated_data():
     """Valid EnumeratedProcessor data."""
     return dict(
-        module_type='PROCESSOR',
         status='READY',
         status_info=['valid'],
         display_name='my enumerated processor',

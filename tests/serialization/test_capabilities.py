@@ -11,7 +11,6 @@ from citrine.informatics.dimensions import ContinuousDimension, EnumeratedDimens
 def valid_data():
     """Produce valid capability data."""
     return dict(
-        module_type='CAPABILITY',
         status='VALIDATING',
         status_info=None,
         display_name='my capability',
