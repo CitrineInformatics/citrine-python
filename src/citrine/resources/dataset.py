@@ -24,7 +24,42 @@ from citrine.resources.file_link import FileCollection
 
 
 class Dataset(Resource['Dataset']):
-    """A dataset."""
+    """
+    A collection of data objects.
+
+    Datasets are the basic unit of access control. A user with read access to a dataset can view
+    every object in that dataset. A user with write access to a dataset can create, update,
+    and delete objects in the dataset.
+
+    Parameters
+    ----------
+    name: str
+        Name of the dataset. Can be used for searching.
+    summary: str
+        A summary of this dataset.
+    description: str
+        Long-form description of the dataset.
+
+    Attributes
+    ----------
+    uid: UUID
+        Unique uuid4 identifier of this dataset.
+    deleted: bool
+        Flag indicating whether or not this dataset has been deleted.
+    created_by: UUID
+        ID of the user who created the dataset.
+    updated_by: UUID
+        ID of the user who last updated the dataset.
+    deleted_by: UUID
+        ID of the user who deleted the dataset, if it is deleted.
+    create_time: int
+        Time the dataset was created, in seconds since epoch.
+    update_time: int
+        Time the dataset was most recently updated, in seconds since epoch.
+    delete_time: int
+        Time the dataset was deleted, in seconds since epoch, if it is deleted.
+
+    """
 
     _response_key = 'dataset'
 
@@ -136,7 +171,17 @@ class Dataset(Resource['Dataset']):
 
 
 class DatasetCollection(Collection[Dataset]):
-    """Represents the collection of all datasets associated with a project."""
+    """
+    Represents the collection of all datasets associated with a project.
+
+    Parameters
+    ----------
+    project_id: UUID
+        Unique ID of the project this dataset collection belongs to.
+    session: Session
+        The Citrine session used to connect to the database.
+
+    """
 
     _path_template = 'projects/{project_id}/datasets'
     _individual_key = None
@@ -147,7 +192,20 @@ class DatasetCollection(Collection[Dataset]):
         self.session: Session = session
 
     def build(self, data: dict) -> Dataset:
-        """Build an individual dataset."""
+        """
+        Build an individual dataset from a dictionary.
+
+        Parameters
+        ----------
+        data: dict
+            A dictionary representing the dataset.
+
+        Returns
+        -------
+        Dataset
+            The dataset created from data.
+
+        """
         dataset = Dataset.build(data)
         dataset.project_id = self.project_id
         dataset.session = self.session
@@ -161,6 +219,16 @@ class DatasetCollection(Collection[Dataset]):
         response is not assumed to come in a dictionary with a single entry 'dataset'.
         Both of these behaviors are in contrast to the behavior of projects. Eventually they
         will be unified in the backend, and one register() method will suffice.
+
+        Parameters
+        ----------
+        model: Dataset
+            The dataset to register.
+
+        Returns
+        -------
+        Dataset
+            A copy of the registered dataset as it now exists in the database.
 
         """
         path = self._get_path()

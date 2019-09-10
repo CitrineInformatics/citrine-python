@@ -39,4 +39,3 @@ class Unauthorized(NonRetryableException):
     def __init__(self, path: str):
         super().__init__()
         self.url = path
-
