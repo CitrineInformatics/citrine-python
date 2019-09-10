@@ -51,7 +51,7 @@ def valid_data():
             'description': 'a long description',
             'tags': []
         },
-        file_links=[{'type': 'file_link', 'filename': 'Cake spec', 'link': 'specs/cake.txt'}],
+        file_links=[{'type': 'file_link', 'filename': 'Cake spec', 'url': 'specs/cake.txt'}],
         type='process_spec'
     )
 
