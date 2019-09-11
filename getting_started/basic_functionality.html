@@ -77,13 +77,24 @@ The command <code class="docutils literal notranslate"><span class="pre">lens_pr
 <div class="section" id="filter">
 <h3>1.2.2.3. Filter<a class="headerlink" href="#filter" title="Permalink to this headline">¶</a></h3>
 <p>Filter lies somewhere between Get and List, returning only those objects that meet a given criterion.
-There are currently two ways to filter, and they only work on data model objects: <a class="reference internal" href="../reference/citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConceptsCollection.filter_by_tags" title="citrine.resources.data_concepts.DataConceptsCollection.filter_by_tags"><code class="xref py py-func docutils literal notranslate"><span class="pre">filter_by_tags()</span></code></a> and <a class="reference internal" href="../reference/citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConceptsCollection.filter_by_attribute_bounds" title="citrine.resources.data_concepts.DataConceptsCollection.filter_by_attribute_bounds"><code class="xref py py-func docutils literal notranslate"><span class="pre">filter_by_attribute_bounds()</span></code></a>.
-As with List, filter can be scoped to a dataset or to a project.</p>
+There are currently three ways to filter, and they only work on data model objects:
+<a class="reference internal" href="../reference/citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConceptsCollection.filter_by_tags" title="citrine.resources.data_concepts.DataConceptsCollection.filter_by_tags"><code class="xref py py-func docutils literal notranslate"><span class="pre">filter_by_tags()</span></code></a>,
+<a class="reference internal" href="../reference/citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConceptsCollection.filter_by_attribute_bounds" title="citrine.resources.data_concepts.DataConceptsCollection.filter_by_attribute_bounds"><code class="xref py py-func docutils literal notranslate"><span class="pre">filter_by_attribute_bounds()</span></code></a>,
+and <a class="reference internal" href="../reference/citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConceptsCollection.filter_by_name" title="citrine.resources.data_concepts.DataConceptsCollection.filter_by_name"><code class="xref py py-func docutils literal notranslate"><span class="pre">filter_by_name()</span></code></a>.
+Filtering by tags or attribute bounds can be scoped to a dataset or to a project.
+Filtering by name must be scoped to a dataset.</p>
 </div>
 </div>
 <div class="section" id="updating">
 <h2>1.2.3. Updating<a class="headerlink" href="#updating" title="Permalink to this headline">¶</a></h2>
-<p>TBD</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">register</span></code> command is also used to update an object. The following code creates and persists
+a process spec <code class="docutils literal notranslate"><span class="pre">sintering</span></code> to a dataset <code class="docutils literal notranslate"><span class="pre">tungsten_dataset</span></code>, then updates it locally
+and persists that update.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sintering</span> <span class="o">=</span> <span class="n">tungsten_dataset</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">ProcessSpec</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Sinter a powder&quot;</span><span class="p">))</span>
+<span class="n">sintering</span><span class="o">.</span><span class="n">notes</span> <span class="o">=</span> <span class="s2">&quot;Forgot to add notes!&quot;</span>
+<span class="n">tungsten_dataset</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">sintering</span><span class="p">)</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="deleting">
 <h2>1.2.4. Deleting<a class="headerlink" href="#deleting" title="Permalink to this headline">¶</a></h2>

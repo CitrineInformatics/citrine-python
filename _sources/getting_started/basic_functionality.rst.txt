@@ -63,13 +63,25 @@ Filter
 ^^^^^^
 
 Filter lies somewhere between Get and List, returning only those objects that meet a given criterion.
-There are currently two ways to filter, and they only work on data model objects: :func:`~citrine.resources.data_concepts.DataConceptsCollection.filter_by_tags` and :func:`~citrine.resources.data_concepts.DataConceptsCollection.filter_by_attribute_bounds`.
-As with List, filter can be scoped to a dataset or to a project.
+There are currently three ways to filter, and they only work on data model objects:
+:func:`~citrine.resources.data_concepts.DataConceptsCollection.filter_by_tags`,
+:func:`~citrine.resources.data_concepts.DataConceptsCollection.filter_by_attribute_bounds`,
+and :func:`~citrine.resources.data_concepts.DataConceptsCollection.filter_by_name`.
+Filtering by tags or attribute bounds can be scoped to a dataset or to a project.
+Filtering by name must be scoped to a dataset.
 
 Updating
 --------
 
-TBD
+The ``register`` command is also used to update an object. The following code creates and persists
+a process spec ``sintering`` to a dataset ``tungsten_dataset``, then updates it locally
+and persists that update.
+
+.. code-block:: python
+
+    sintering = tungsten_dataset.register(ProcessSpec(name="Sinter a powder"))
+    sintering.notes = "Forgot to add notes!"
+    tungsten_dataset.register(sintering)
 
 Deleting
 --------
