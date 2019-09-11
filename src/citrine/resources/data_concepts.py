@@ -379,6 +379,7 @@ class DataConceptsCollection(Collection[ResourceType]):
         ----------
         attribute_bounds: Dict[Union[AttributeTemplate, LinkByUID], BaseBounds]
             A dictionary from attributes to the bounds on that attribute.
+            Currently only real and integer bounds are supported.
             Each attribute may be represented as an AttributeTemplate or as a LinkByUID,
             but in either case there must be a uid and it must correspond to an
             AttributeTemplate that exists in the database.

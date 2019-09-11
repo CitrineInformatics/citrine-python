@@ -32,7 +32,8 @@ release = '0.0.1'
 # ones.
 extensions = [
     'sphinxcontrib.apidoc',
-    'sphinx.ext.napoleon'
+    'sphinx.ext.napoleon',
+    'sphinx.ext.intersphinx'
 ]
 
 # Use the sphinxcontrib.apidoc extension to wire in the sphinx-apidoc invocation
@@ -44,6 +45,10 @@ apidoc_module_dir = '../../src'
 apidoc_output_dir = 'reference'
 apidoc_excluded_paths = ['tests']
 apidoc_separate_modules = True
+
+# Use intersphinx to link to classes in Sphinx docs for other libraries
+# See: https://www.sphinx-doc.org/en/master/usage/extensions/intersphinx.html
+intersphinx_mapping = {'taurus': ('https://citrineinformatics.github.io/taurus/', None)}
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
