@@ -21,6 +21,9 @@ class FileLink(Resource['FileLink'], TaurusFileLink):
     def __init__(self, filename, url):
         TaurusFileLink.__init__(self, filename, url)
 
+    def __str__(self):
+        return '<File link {!r}>'.format(self.filename)
+
 
 class FileCollection(Collection[FileLink]):
     """Represents the collection of all file links associated with a dataset."""
