@@ -26,7 +26,6 @@ class FileCollection(Collection[FileLink]):
     """Represents the collection of all file links associated with a dataset."""
 
     _path_template = 'projects/{project_id}/datasets/{dataset_id}/files'
-    _dataset_agnostic_path_template = 'projects/{project_id}/files'
     _individual_key = 'file'
     _collection_key = 'files'
 
@@ -48,7 +47,7 @@ class FileCollection(Collection[FileLink]):
         file_path: str
             The path to the file on the local computer.
         dest_name: str, optional
-            The name the file will have after being uploaded. If unspecifiied, the local name of
+            The name the file will have after being uploaded. If unspecified, the local name of
             the file will be used. That is, the file at "/Users/me/diagram.pdf" will be uploaded
             with the name "diagram.pdf".
 
@@ -80,19 +79,20 @@ class FileCollection(Collection[FileLink]):
         }
         # POST request creates space in S3 for the file and returns AWS-related information
         # (such as temporary credentials) that allow the file to be uploaded.
-        upload_data = self.session.post_resource(path=path, json=upload_json)
+        upload_response = self.session.post_resource(path=path, json=upload_json)
 
         # Extract all relevant information from the POST response
         try:
-            region_name = upload_data['s3_region']
-            aws_access_key_id = upload_data['temporary_credentials']['access_key_id']
-            aws_secret_access_key = upload_data['temporary_credentials']['secret_access_key']
-            aws_session_token = upload_data['temporary_credentials']['session_token']
-            bucket = upload_data['s3_bucket']
-            object_key = upload_data['uploads'][0]['s3_key']
-            upload_id = upload_data['uploads'][0]['upload_id']
+            region_name = upload_response['s3_region']
+            aws_access_key_id = upload_response['temporary_credentials']['access_key_id']
+            aws_secret_access_key = upload_response['temporary_credentials']['secret_access_key']
+            aws_session_token = upload_response['temporary_credentials']['session_token']
+            bucket = upload_response['s3_bucket']
+            object_key = upload_response['uploads'][0]['s3_key']
+            upload_id = upload_response['uploads'][0]['upload_id']
         except KeyError:
-            raise RuntimeError("Amazon S3 response is missing some fields: {}".format(upload_data))
+            raise RuntimeError("Upload response is missing some fields: "
+                               "{}".format(upload_response))
 
         s3_client = boto3_client('s3',
                                  region_name=region_name,
@@ -101,11 +101,11 @@ class FileCollection(Collection[FileLink]):
                                  aws_session_token=aws_session_token)
         with open(file_path, 'rb') as f:
             try:
-                upload_response = s3_client.put_object(Bucket=bucket, Key=object_key, Body=f)
+                upload_s3_response = s3_client.put_object(Bucket=bucket, Key=object_key, Body=f)
             except ClientError as e:
                 raise RuntimeError("Upload of file {} failed with the following "
                                    "exception: {}".format(file_path, e))
-            s3_version = upload_response['VersionId']
+            s3_version = upload_s3_response['VersionId']
             path = self._get_path() + "/uploads/{}/complete".format(upload_id)
             self.session.put_resource(path=path, json={'s3_version': s3_version})
 
