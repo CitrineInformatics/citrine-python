@@ -79,7 +79,7 @@ def test_simple_deserialization(valid_data):
                            allowed_unique_labels=['a unique label'])
     assert process_spec.name == 'Process 1'
     assert process_spec.notes == 'make sure to use oven mitts'
-    assert process_spec.file_links == [FileLink('Cake spec', 'specs/cake.txt')]
+    assert process_spec.file_links == [FileLink('cake_recipe.txt', 'www.baking.com')]
     assert process_spec.typ == 'process_spec'
 
 
