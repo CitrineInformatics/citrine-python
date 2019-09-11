@@ -31,7 +31,7 @@ class FileCollection(Collection[FileLink]):
     def build(self, data: dict) -> FileLink:
         return FileLink.build(data)
 
-    def upload(self, file_path, dest_name=None):
+    def upload(self, file_path, dest_name=None) -> FileLink:
         """
         Uploads a file to the dataset.
 
@@ -43,6 +43,11 @@ class FileCollection(Collection[FileLink]):
             The name the file will have after being uploaded. If unspecifiied, the local name of
             the file will be used. That is, the file at "/Users/me/diagram.pdf" will be uploaded
             with the name "diagram.pdf".
+
+        Returns
+        -------
+        FileLink
+            The filename and url of the uploaded object.
 
         """
         if not os.path.isfile(file_path):
@@ -92,6 +97,12 @@ class FileCollection(Collection[FileLink]):
             except ClientError as e:
                 raise RuntimeError("Upload of file {} failed with the following "
                                    "exception: {}".format(file_path, e))
-            s3_version = upload_response['VersionId']  # Somehow get the s3 version of this object
-            path = self._get_path() + "/{}/complete".format(upload_id)
-            self.session.put_resource(path=path, data={'s3_version': s3_version})
+            s3_version = upload_response['VersionId']
+            path = self._get_path() + "/uploads/{}/complete".format(upload_id)
+            self.session.put_resource(path=path, json={'s3_version': s3_version})
+
+        file_link_dict = {
+            'filename': dest_name,
+            'url': self._get_path(object_key)
+        }
+        return FileLink.build(file_link_dict)
