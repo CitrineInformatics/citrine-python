@@ -50,7 +50,8 @@ class ParaboloidPredictor(Serializable['ParaboloidPredictor'], Predictor):
         serializable=False
     )
 
-    # NOTE: This could go here or in _post_dump - it's unclear which is better right now
+    # NOTE: These could go here or in _post_dump - it's unclear which is better right now
+    module_type = properties.String('module_type', default='PREDICTOR')
     schema_id = properties.UUID('schema_id', default=UUID('ff26b280-8a8b-46ab-b7aa-0c73ff84b0fd'))
 
     def __init__(self,
@@ -91,7 +92,8 @@ class SimpleMLPredictor(Serializable['SimplePredictor'], Predictor):
         serializable=False
     )
 
-    # NOTE: This could go here or in _post_dump - it's unclear which is better right now
+    # NOTE: These could go here or in _post_dump - it's unclear which is better right now
+    module_type = properties.String('module_type', default='PREDICTOR')
     schema_id = properties.UUID('schema_id', default=UUID('08d20e5f-e329-4de0-a90a-4b5e36b91703'))
 
     def __init__(self,
