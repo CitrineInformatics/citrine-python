@@ -6,6 +6,7 @@ from boto3 import client as boto3_client
 from botocore.exceptions import ClientError
 
 from taurus.entity.file_link import FileLink as TaurusFileLink
+from citrine._serialization.properties import String
 from citrine._rest.collection import Collection
 from citrine._rest.resource import Resource
 from citrine._session import Session
@@ -14,7 +15,11 @@ from citrine._session import Session
 class FileLink(Resource['FileLink'], TaurusFileLink):
     """Resource that stores the name and url of an external file."""
 
-    pass
+    filename = String('filename')
+    url = String('url')
+
+    def __init__(self, filename, url):
+        TaurusFileLink.__init__(self, filename, url)
 
 
 class FileCollection(Collection[FileLink]):
