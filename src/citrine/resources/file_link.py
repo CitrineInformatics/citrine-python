@@ -12,6 +12,8 @@ from citrine._session import Session
 
 
 class FileLink(Resource['FileLink'], TaurusFileLink):
+    """Resource that stores the name and url of an external file."""
+
     pass
 
 
@@ -29,6 +31,7 @@ class FileCollection(Collection[FileLink]):
         self.session = session
 
     def build(self, data: dict) -> FileLink:
+        """Build an instance of FileLink."""
         return FileLink.build(data)
 
     def upload(self, file_path, dest_name=None) -> FileLink:

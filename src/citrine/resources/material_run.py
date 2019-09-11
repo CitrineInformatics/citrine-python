@@ -12,7 +12,6 @@ from citrine._serialization.properties import Optional as PropertyOptional
 from taurus.client.json_encoder import TaurusEncoder
 from taurus.entity.file_link import FileLink
 from taurus.entity.object.process_run import ProcessRun as TaurusProcessRun
-from taurus.entity.object.measurement_run import MeasurementRun as TaurusMeasurementRun
 from taurus.entity.object.material_run import MaterialRun as TaurusMaterialRun
 from taurus.entity.object.material_spec import MaterialSpec as TaurusMaterialSpec
 from taurus.client.json_encoder import loads
