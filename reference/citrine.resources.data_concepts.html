@@ -158,8 +158,10 @@ but when using <a class="reference internal" href="#citrine.resources.data_conce
 <p>Currently only one attribute and one bounds on that attribute is supported.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>attribute_bounds</strong> (<em>Dict</em><em>[</em><em>Union</em><em>[</em><em>AttributeTemplate</em><em>, </em><em>LinkByUID</em><em>]</em><em>, </em><em>BaseBounds</em><em>]</em>) – A dictionary from attributes to the bounds on that attribute.
-Each attribute may be represented as an AttributeTemplate or as a LinkByUID,
+<dd class="field-odd"><p><strong>attribute_bounds</strong> (Dict[Union[AttributeTemplate,         <a class="reference external" href="https://citrineinformatics.github.io/taurus/reference/taurus.entity.link_by_uid.html#taurus.entity.link_by_uid.LinkByUID" title="(in Taurus)"><code class="xref py py-class docutils literal notranslate"><span class="pre">LinkByUID</span></code></a>],         <a class="reference external" href="https://citrineinformatics.github.io/taurus/reference/taurus.entity.bounds.base_bounds.html#taurus.entity.bounds.base_bounds.BaseBounds" title="(in Taurus)"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseBounds</span></code></a>]) – A dictionary from attributes to the bounds on that attribute.
+Currently only real and integer bounds are supported.
+Each attribute may be represented as an AttributeTemplate (PropertyTemplate,
+ParameterTemplate, or ConditionTemplate) or as a LinkByUID,
 but in either case there must be a uid and it must correspond to an
 AttributeTemplate that exists in the database.
 Only the uid is passed, so if you would like to update an attribute template you
