@@ -19,7 +19,7 @@ class ConditionTemplate(DataConcepts, Resource['ConditionTemplate'], TaurusCondi
     ----------
     name: str
         The name of the condition template.
-    bounds: BaseBounds
+    bounds: :py:class:`BaseBounds <taurus.entity.bounds.base_bounds.BaseBounds>`
         Bounds circumscribe the values that are valid according to this condition template.
     description: str, optional
         A long-form description of the condition template.
