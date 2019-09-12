@@ -2,8 +2,7 @@
 from uuid import UUID
 import os
 import mimetypes
-from boto3 import client as boto3_client
-from botocore.exceptions import ClientError
+import boto3
 
 from taurus.entity.file_link import FileLink as TaurusFileLink
 from citrine._rest.collection import Collection
@@ -81,17 +80,14 @@ class FileCollection(Collection[FileLink]):
         except KeyError:
             raise RuntimeError("Amazon S3 response is missing some fields: {}".format(upload_data))
 
-        s3_client = boto3_client('s3',
+        s3_client = boto3.client('s3',
                                  region_name=region_name,
                                  aws_access_key_id=aws_access_key_id,
                                  aws_secret_access_key=aws_secret_access_key,
                                  aws_session_token=aws_session_token)
         with open(file_path, 'rb') as f:
-            try:
-                upload_response = s3_client.put_object(Bucket=bucket, Key=object_key, Body=f)
-            except ClientError as e:
-                raise RuntimeError("Upload of file {} failed with the following "
-                                   "exception: {}".format(file_path, e))
-            s3_version = upload_response['VersionId']  # Somehow get the s3 version of this object
+            s3_client.upload_fileobj(f, bucket, object_key)
+
+            s3_version = ''  # Somehow get the s3 version of this object
             path = self._get_path() + "/{}/complete".format(upload_id)
             self.session.put_resource(path=path, data={'s3_version': s3_version})
