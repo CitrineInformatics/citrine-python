@@ -1,0 +1,37 @@
+pipeline {
+    agent any
+    stages {
+        stage("Build and push sphinx documentation") {
+            steps {
+                withCredentials([string(credentialsId: 'read-write-documentation-server-role', variable: 'READ_WRITE_DOCUMENTATION_SERVER_ROLE')]) {
+                    withCredentials([string(credentialsId: 'documentation_server', variable: 'DOCUMENTATION_SERVER')]) {
+                        withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'aws-jenkins-development', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
+                            sh '''
+                                documentation_server=$(echo $DOCUMENTATION_SERVER)
+                                documentation_server_role=$(echo $READ_WRITE_DOCUMENTATION_SERVER_ROLE)
+
+                                aws sts get-caller-identity
+                                aws sts assume-role --role-arn $READ_WRITE_DOCUMENTATION_SERVER_ROLE --role-session-name push-doc-session
+
+                                docker build -f scripts/Dockerfile.docs -t citrine-python/docs:latest .
+                                docker container create --name citrine-python-docs-extractor citrine-python/docs:latest
+
+                                mkdir tmp/
+                                docker container cp citrine-python-docs-extractor:/opt/app/docs/_build/html/ tmp/
+
+                                aws s3 cp tmp/html/ s3://${documentation_server}/citrine-python/ --recursive --acl public-read
+                            '''
+                        }
+                    }
+                }
+            }
+        }
+    }
+    post {
+        always {
+            sh '''
+                docker container rm citrine-python-docs-extractor
+            '''
+        }
+    }
+}
