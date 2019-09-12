@@ -36,11 +36,13 @@ class ProcessTemplate(DataConcepts, Resource['ProcessTemplate'], TaurusProcessTe
         which will always be a uuid4.
     tags: List[str], optional
         A set of tags. Tags can be used for filtering.
-    conditions: List[ConditionTemplate] or List[ConditionTemplate, :py:class:`BaseBounds <taurus.entity.bounds.base_bounds.BaseBounds>`], optional
+    conditions: List[ConditionTemplate] or List[ConditionTemplate, \
+    :py:class:`BaseBounds <taurus.entity.bounds.base_bounds.BaseBounds>`], optional
         Templates for associated conditions. Each template can be provided by itself, or as a list
         with the second entry being a separate, *more restrictive* Bounds object that defines
         the limits of the value for this condition.
-    parameters: List[ParameterTemplate] or List[ParameterTemplate, :py:class:`BaseBounds <taurus.entity.bounds.base_bounds.BaseBounds>`], optional
+    parameters: List[ParameterTemplate] or List[ParameterTemplate, \
+    :py:class:`BaseBounds <taurus.entity.bounds.base_bounds.BaseBounds>`], optional
         Templates for associated parameters. Each template can be provided by itself, or as a list
         with the second entry being a separate, *more restrictive* Bounds object that defines
         the limits of the value for this parameter.
@@ -100,10 +102,10 @@ class ProcessTemplate(DataConcepts, Resource['ProcessTemplate'], TaurusProcessTe
         -------
         None
             The serialized process template is modified so that its conditions are now a list
-            of object pairs of the form
-            [ConditionTemplate, :py:class:`BaseBounds <taurus.entity.bounds.base_bounds.BaseBounds>`],
-            and the parameters are
-            [ParameterTemplate, :py:class:`BaseBounds <taurus.entity.bounds.base_bounds.BaseBounds>`].
+            of object pairs of the form [ConditionTemplate,
+            :py:class:`BaseBounds <taurus.entity.bounds.base_bounds.BaseBounds>`],
+            and the parameters are [ParameterTemplate,
+            :py:class:`BaseBounds <taurus.entity.bounds.base_bounds.BaseBounds>`].
 
         """
         if 'conditions' in data and len(data['conditions']) != 0:

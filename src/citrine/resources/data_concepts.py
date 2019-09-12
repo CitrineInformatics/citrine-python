@@ -377,7 +377,9 @@ class DataConceptsCollection(Collection[ResourceType]):
 
         Parameters
         ----------
-        attribute_bounds: Dict[Union[AttributeTemplate, :py:class:`LinkByUID <taurus.entity.link_by_uid.LinkByUID>`], :py:class:`BaseBounds <taurus.entity.bounds.base_bounds.BaseBounds>`]
+        attribute_bounds: Dict[Union[AttributeTemplate, \
+        :py:class:`LinkByUID <taurus.entity.link_by_uid.LinkByUID>`], \
+        :py:class:`BaseBounds <taurus.entity.bounds.base_bounds.BaseBounds>`]
             A dictionary from attributes to the bounds on that attribute.
             Currently only real and integer bounds are supported.
             Each attribute may be represented as an AttributeTemplate (PropertyTemplate,
