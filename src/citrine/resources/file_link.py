@@ -53,20 +53,9 @@ class FileCollection(Collection[FileLink]):
         extension = os.path.splitext(file_path)[1]
         mimeType = mimetypes.types_map[extension]
         upload_json = {
-            'files': [
-                {
-                    'file_name': dest_name,
-                    'metadata': dict(),
-                    'mime_type': mimeType,
-                    'size': os.stat(file_path).st_size
-                }
-            ]
+            'filename': dest_name,
+            'metadata': dict(),
+            'mimeType': mimeType,
+            'size': str(os.stat(file_path).st_size)
         }
-        upload_data = self.session.post_resource(path=path, json=upload_json)
-
-        upload_id = upload_data['uploads'][0]['upload_id']
-        path = self._get_path() + "/{}".format(upload_id)
-        with open(file_path, 'rb') as f:
-            file_data = f
-            foo = self.session.put_resource(path=path, data={'files': [file_data]}, params={'s3_version': upload_data})
-            print(foo)
+        self.session.post_resource(path=path, json=upload_json)
