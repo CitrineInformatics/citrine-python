@@ -2,7 +2,6 @@
 from uuid import UUID
 import os
 import mimetypes
-import boto3
 
 from taurus.entity.file_link import FileLink as TaurusFileLink
 from citrine._rest.collection import Collection
@@ -48,7 +47,6 @@ class FileCollection(Collection[FileLink]):
             raise ValueError("No file at specified path {}".format(file_path))
 
         if not dest_name:
-            # Use the file name as a default dest_name
             dest_name = os.path.basename(file_path)
 
         path = self._get_path() + "/uploads"
@@ -64,30 +62,11 @@ class FileCollection(Collection[FileLink]):
                 }
             ]
         }
-        # POST request creates space in S3 for the file and returns AWS-related information
-        # (such as temporary credentials) that allow the file to be uploaded.
         upload_data = self.session.post_resource(path=path, json=upload_json)
 
-        # Extract all relevant information from the POST response
-        try:
-            region_name = upload_data['s3_region']
-            aws_access_key_id = upload_data['temporary_credentials']['access_key_id']
-            aws_secret_access_key = upload_data['temporary_credentials']['secret_access_key']
-            aws_session_token = upload_data['temporary_credentials']['session_token']
-            bucket = upload_data['s3_bucket']
-            object_key = upload_data['uploads'][0]['s3_key']
-            upload_id = upload_data['uploads'][0]['upload_id']
-        except KeyError:
-            raise RuntimeError("Amazon S3 response is missing some fields: {}".format(upload_data))
-
-        s3_client = boto3.client('s3',
-                                 region_name=region_name,
-                                 aws_access_key_id=aws_access_key_id,
-                                 aws_secret_access_key=aws_secret_access_key,
-                                 aws_session_token=aws_session_token)
+        upload_id = upload_data['uploads'][0]['upload_id']
+        path = self._get_path() + "/{}".format(upload_id)
         with open(file_path, 'rb') as f:
-            s3_client.upload_fileobj(f, bucket, object_key)
-
-            s3_version = ''  # Somehow get the s3 version of this object
-            path = self._get_path() + "/{}/complete".format(upload_id)
-            self.session.put_resource(path=path, data={'s3_version': s3_version})
+            file_data = f
+            foo = self.session.put_resource(path=path, data={'files': [file_data]}, params={'s3_version': upload_data})
+            print(foo)
