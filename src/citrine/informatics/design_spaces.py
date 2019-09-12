@@ -1,5 +1,5 @@
 """Tools for working with design spaces."""
-from typing import List, Type
+from typing import Any, List, Mapping, Type
 from uuid import UUID
 
 from citrine._rest.resource import Resource
@@ -7,9 +7,10 @@ from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
 from citrine._serialization.serializable import Serializable
 from citrine._session import Session
+from citrine.informatics.descriptors import Descriptor
 from citrine.informatics.dimensions import Dimension
 
-__all__ = ['DesignSpace', 'ProductDesignSpace']
+__all__ = ['DesignSpace', 'ProductDesignSpace', 'EnumeratedDesignSpace']
 
 
 class DesignSpace(PolymorphicSerializable['DesignSpace']):
@@ -19,8 +20,11 @@ class DesignSpace(PolymorphicSerializable['DesignSpace']):
 
     @classmethod
     def get_type(cls, data) -> Type[Serializable]:
-        """Return the sole currently implemented subtype."""
-        return ProductDesignSpace
+        """Return the subtype."""
+        return {
+            'Univariate': ProductDesignSpace,
+            'EnumeratedDesignSpace': EnumeratedDesignSpace,
+        }[data['config']['type']]
 
 
 class ProductDesignSpace(Resource['ProductDesignSpace'], DesignSpace):
@@ -60,3 +64,46 @@ class ProductDesignSpace(Resource['ProductDesignSpace'], DesignSpace):
 
     def __str__(self):
         return '<ProductDesignSpace {!r}>'.format(self.name)
+
+
+class EnumeratedDesignSpace(Resource['EnumeratedDesignSpace'], DesignSpace):
+    """Design space composed of enumerated items."""
+
+    _response_key = None
+
+    uid = properties.Optional(properties.UUID, 'id', serializable=False)
+    name = properties.String('config.name')
+    description = properties.Optional(properties.String(), 'config.description')
+    descriptors = properties.List(properties.Object(Descriptor), 'config.descriptors')
+    data = properties.List(properties.Mapping(properties.String, properties.Raw), 'config.data')
+
+    typ = properties.String('config.type', default='EnumeratedDesignSpace', deserializable=False)
+    status = properties.String('status', serializable=False)
+    status_info = properties.Optional(
+        properties.List(properties.String()),
+        'status_info',
+        serializable=False
+    )
+
+    # NOTE: These could go here or in _post_dump - it's unclear which is better right now
+    module_type = properties.String('module_type', default='DESIGN_SPACE')
+    schema_id = properties.UUID('schema_id', default=UUID('f3907a58-aa46-462c-8837-a5aa9605e79e'))
+
+    def __init__(self,
+                 name: str,
+                 description: str,
+                 descriptors: List[Descriptor],
+                 data: List[Mapping[str, Any]],
+                 session: Session = Session()):
+        self.name: str = name
+        self.description: str = description
+        self.descriptors: List[Descriptor] = descriptors
+        self.data: List[Mapping[str, Any]] = data
+        self.session: Session = session
+
+    def _post_dump(self, data: dict) -> dict:
+        data['display_name'] = data['config']['name']
+        return data
+
+    def __str__(self):
+        return '<EnumeratedDesignSpace {!r}>'.format(self.name)
