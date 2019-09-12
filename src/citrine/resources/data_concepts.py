@@ -377,10 +377,11 @@ class DataConceptsCollection(Collection[ResourceType]):
 
         Parameters
         ----------
-        attribute_bounds: Dict[Union[AttributeTemplate, LinkByUID], BaseBounds]
+        attribute_bounds: Dict[Union[AttributeTemplate, :py:class:`LinkByUID <taurus.entity.link_by_uid.LinkByUID>`], :py:class:`BaseBounds <taurus.entity.bounds.base_bounds.BaseBounds>`]
             A dictionary from attributes to the bounds on that attribute.
             Currently only real and integer bounds are supported.
-            Each attribute may be represented as an AttributeTemplate or as a LinkByUID,
+            Each attribute may be represented as an AttributeTemplate (PropertyTemplate,
+            ParameterTemplate, or ConditionTemplate) or as a LinkByUID,
             but in either case there must be a uid and it must correspond to an
             AttributeTemplate that exists in the database.
             Only the uid is passed, so if you would like to update an attribute template you
