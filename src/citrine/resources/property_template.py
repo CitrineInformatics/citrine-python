@@ -19,7 +19,7 @@ class PropertyTemplate(DataConcepts, Resource['PropertyTemplate'], TaurusPropert
     ----------
     name: str
         The name of the property template.
-    bounds: BaseBounds
+    bounds: :py:class:`BaseBounds <taurus.entity.bounds.base_bounds.BaseBounds>`
         Bounds circumscribe the values that are valid according to this property template.
     description: str, optional
         A long-form description of the property template.

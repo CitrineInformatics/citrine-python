@@ -39,15 +39,18 @@ class MeasurementTemplate(DataConcepts, Resource['MeasurementTemplate'],
         which will always be a uuid4.
     tags: List[str], optional
         A set of tags. Tags can be used for filtering.
-    conditions: List[ConditionTemplate or List[ConditionTemplate, Bounds]], optional
+    conditions: List[ConditionTemplate] or List[ConditionTemplate, \
+    :py:class:`BaseBounds <taurus.entity.bounds.base_bounds.BaseBounds>`], optional
         Templates for associated conditions. Each template can be provided by itself, or as a list
         with the second entry being a separate, *more restrictive* Bounds object that defines
         the limits of the value for this condition.
-    parameters: List[ParameterTemplate or List[ParameterTemplate, Bounds]], optional
+    parameters: List[ParameterTemplate] or List[ParameterTemplate, \
+    :py:class:`BaseBounds <taurus.entity.bounds.base_bounds.BaseBounds>`], optional
         Templates for associated parameters. Each template can be provided by itself, or as a list
         with the second entry being a separate, *more restrictive* Bounds object that defines
         the limits of the value for this parameter.
-    properties: List[PropertyTemplate or List[PropertyTemplate, Bounds]], optional
+    properties: List[PropertyTemplate] or List[PropertyTemplate, \
+    :py:class:`BaseBounds <taurus.entity.bounds.base_bounds.BaseBounds>`], optional
         Templates for associated properties. Each template can be provided by itself, or as a list
         with the second entry being a separate, *more restrictive* Bounds object that defines
         the limits of the value for this property.

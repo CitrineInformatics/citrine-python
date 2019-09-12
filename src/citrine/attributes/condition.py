@@ -25,7 +25,7 @@ class Condition(DataConcepts, Serializable['Condition'], TaurusCondition):
         Required name of the condition. Each condition within an object must have a unique name.
     notes: str
         Optional free-form notes about the condition.
-    value: BaseValue
+    value: :py:class:`BaseValue <taurus.entity.value.base_value.BaseValue>`
         The value of the condition.
     template: :class:`ConditionTemplate <citrine.resources.condition_template.ConditionTemplate>`
         Condition template that defines the allowed bounds of this condition. If a template
