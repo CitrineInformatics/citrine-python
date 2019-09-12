@@ -63,7 +63,7 @@ def valid_enumerated_data():
         id=str(uuid.uuid4()),
         config=dict(
             type='EnumeratedDesignSpace',
-            name='my enumerated design space ',
+            name='my enumerated design space',
             description='enumerates some things',
             descriptors=[
                 dict(
