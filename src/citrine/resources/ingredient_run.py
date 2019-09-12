@@ -32,13 +32,17 @@ class IngredientRun(DataConcepts, Resource['IngredientRun'], TaurusIngredientRun
         Long-form notes about the ingredient run.
     material: MaterialRun
         Material that this ingredient is.
-    mass_fraction: ContinuousValue, optional
+    mass_fraction: :py:class:`ContinuousValue \
+    <taurus.entity.value.continuous_value.ContinuousValue>`, optional
         The mass fraction of the ingredient in the process.
-    volume_fraction: ContinuousValue, optional
+    volume_fraction: :py:class:`ContinuousValue \
+    <taurus.entity.value.continuous_value.ContinuousValue>`, optional
         The volume fraction of the ingredient in the process.
-    number_fraction: ContinuousValue, optional
+    number_fraction: :py:class:`ContinuousValue \
+    <taurus.entity.value.continuous_value.ContinuousValue>`, optional
         The number fraction of the ingredient in the process.
-    absolute_quantity: ContinuousValue, optional
+    absolute_quantity: :py:class:`ContinuousValue \
+    <taurus.entity.value.continuous_value.ContinuousValue>`, optional
         The absolute quantity of the ingredient in the process.
     name: str, optional
         Label on the ingredient that is unique within the process that contains it.

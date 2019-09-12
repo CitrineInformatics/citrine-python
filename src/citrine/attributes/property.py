@@ -26,7 +26,7 @@ class Property(DataConcepts, Serializable['Property'], TaurusProperty):
         Required name of the property. Each property within an object must have a unique name.
     notes: str
         Optional free-form notes about the property.
-    value: BaseValue
+    value: :py:class:`BaseValue <taurus.entity.value.base_value.BaseValue>`
         The value of the property.
     template: :class:`PropertyTemplate <citrine.resources.property_template.PropertyTemplate>`
         Property template that defines the allowed bounds of this property. If a template

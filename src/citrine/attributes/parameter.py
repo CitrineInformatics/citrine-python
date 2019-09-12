@@ -26,7 +26,7 @@ class Parameter(DataConcepts, Serializable['Parameter'], TaurusParameter):
         Required name of the parameter. Each parameter within an object must have a unique name.
     notes: str
         Optional free-form notes about the parameter.
-    value: BaseValue
+    value: :py:class:`BaseValue <taurus.entity.value.base_value.BaseValue>`
         The value of the parameter.
     template: :class:`ParameterTemplate <citrine.resources.parameter_template.ParameterTemplate>`
         Parameter template that defines the allowed bounds of this parameter. If a template
