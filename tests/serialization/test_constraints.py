@@ -46,7 +46,7 @@ def test_categorical_dumps(categorical_constraint):
     result = categorical_constraint.dump()
     assert result['type'] == 'Categorical'
     assert result['descriptor_key'] == 'x'
-    assert result['acceptable_categories'] == ['y', 'z']
+    assert result['acceptable_classes'] == ['y', 'z']
 
 
 def test_get_categorical_type(categorical_constraint):
