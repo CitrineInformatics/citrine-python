@@ -15,6 +15,7 @@ from citrine._utils.functions import (
     validate_type, scrub_none,
     replace_objects_with_links, get_object_id)
 from taurus.client.json_encoder import loads, dumps, LinkByUID
+from taurus.entity.dict_serializable import DictSerializable
 from taurus.entity.bounds.base_bounds import BaseBounds
 from taurus.entity.template.attribute_template import AttributeTemplate
 
@@ -192,7 +193,7 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
                                 elem.session = session
                     else:
                         elem = DataConcepts._get_field(data_with_soft_links, key)
-                        data[key] = DataConcepts.get_type(elem.as_dict()).build(elem)
+                        data[key] = DataConcepts.get_type(elem).build(elem)
                         if isinstance(data[key], DataConcepts):
                             data[key].session = session
 
@@ -241,7 +242,7 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
         ----------
         data: dict
             A dictionary corresponding to a serialized data concepts object of unknown type.
-            The method will also work if `data` is a deserialized Taurus object.
+            This method will also work if data is a deserialized Taurus object.
 
         Returns
         -------
@@ -251,8 +252,9 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
         """
         if len(DataConcepts.class_dict) == 0:
             DataConcepts._make_class_dict()
-        key = DataConcepts._get_field(data, 'type')
-        return DataConcepts.class_dict[key]
+        if isinstance(data, DictSerializable):
+            data = data.as_dict()
+        return DataConcepts.class_dict[data['type']]
 
     @staticmethod
     def _make_class_dict():
