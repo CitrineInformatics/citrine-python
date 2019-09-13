@@ -55,15 +55,18 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
     @classmethod
     def build(cls, data: dict, session: Session = None):
         """
-        Build a data concepts object from a dictionary.
+        Build a data concepts object from a dictionary or from a Taurus object.
 
         This is an internal method, and should not be called directly by users.
 
         Parameters
         ----------
         data: dict
-            A dictionary representing the serialized object. The dictionary must have a 'type'
-            field and its value must correspond to class that is invoking this method.
+            A representation of the object. It must be possible to put this dictionary through
+            the loads/dumps cycle of the Taurus
+            :py:mod:`JSON encoder <taurus.client.json_encoder>`. The ensuing dictionary must
+            have a `type` field that corresponds to the response key of this class or of
+            :py:class:`LinkByUID <taurus.entity.link_by_uid.LinkByUID>`.
         session: Session
             the Citrine session to assign to the built object.
 
@@ -73,19 +76,21 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
             An object corresponding to a data concepts resource.
 
         """
-        if 'type' in data and data['type'] == LinkByUID.typ:
-            return loads(dumps(data))
-
-        data_copy = deepcopy(data)
-        data_copy = validate_type(data_copy, cls._response_key)
         # Running through a taurus loads/dumps cycle validates all of the fields and ensures
-        # the object is now in a well-defined format
-        data_concepts_dict = loads(dumps(data_copy)).as_dict()
-        cls._remove_local_keys(data_concepts_dict)
-        cls._build_child_objects(data_concepts_dict)
+        # the object is now a dictionary with a well-understood structure
+        data_copy_dict = loads(dumps(deepcopy(data))).as_dict()
+        # Check the type--it should either correspond to LinkByUID to to this class.
+        if 'type' in data_copy_dict and data_copy_dict['type'] == LinkByUID.typ:
+            return loads(dumps(data_copy_dict))
+        data_copy_dict = validate_type(data_copy_dict, cls._response_key)
 
-        data_concepts_object = cls(**data_concepts_dict)
+        cls._remove_local_keys(data_copy_dict)
+        cls._build_child_objects(data_copy_dict)
+
+        data_concepts_object = cls(**data_copy_dict)
         data_concepts_object.session = session
+
+        cls._build_soft_linked_objects(data_concepts_object, data, session)
         return data_concepts_object
 
     @classmethod
@@ -122,15 +127,15 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
         Parameters
         ----------
         data: dict
-            A serialized data concepts object.
+            A data concepts object as a serialized dictionary.
         session: Session
             Citrine session used to connect to the database.
 
         Returns
         -------
         None
-            The serialized object is modified so that all of its dictionary values that are
-            themselves serialized objects have been deserialized .
+            The data concepts object is modified so that all of its values or fields are
+            deserialized as DataConcepts objects.
 
         """
         def _is_dc(prop_type: Property) -> bool:
@@ -161,6 +166,39 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
                             .build(data[key].as_dict())
                         if isinstance(data[key], DataConcepts):
                             data[key].session = session
+
+    @classmethod
+    def _build_soft_linked_objects(cls, obj, obj_with_soft_links, session: Session = None):
+        """
+        Build the data concepts objects that this object has soft links to.
+
+        Object A has a "soft link" to object B with field name 'b' if A.b = B, but the field
+        is skipped upon serialization. We therefore cannot know about the link if we serialize
+        and then deserialize A. But if we have some other representation that encodes the
+        existence of these soft-links, then we can re-create them.
+
+        This method is to be sparingly implemented, and the details will depend on the specific
+        soft-link.
+
+        This method modifies the object in place.
+
+        Parameters
+        ----------
+        obj: DataConcepts
+            A data concepts object that might be missing some soft links
+        obj_with_soft_links: dict or \
+        :py:class:`DictSerializable <taurus.entity.dict_serializable.DictSerializable>`
+            A representation of obj in which the knowledge of the soft-links is somehow encoded.
+        session: Session, optional
+            Citrine session used to connect to the database.
+
+        Returns
+        -------
+        None
+            The data concepts object is modified so that all of its soft-links are populated.
+
+        """
+        pass
 
     @classmethod
     def get_type(cls, data) -> Type[Serializable]:
@@ -377,9 +415,13 @@ class DataConceptsCollection(Collection[ResourceType]):
 
         Parameters
         ----------
-        attribute_bounds: Dict[Union[AttributeTemplate, LinkByUID], BaseBounds]
+        attribute_bounds: Dict[Union[AttributeTemplate, \
+        :py:class:`LinkByUID <taurus.entity.link_by_uid.LinkByUID>`], \
+        :py:class:`BaseBounds <taurus.entity.bounds.base_bounds.BaseBounds>`]
             A dictionary from attributes to the bounds on that attribute.
-            Each attribute may be represented as an AttributeTemplate or as a LinkByUID,
+            Currently only real and integer bounds are supported.
+            Each attribute may be represented as an AttributeTemplate (PropertyTemplate,
+            ParameterTemplate, or ConditionTemplate) or as a LinkByUID,
             but in either case there must be a uid and it must correspond to an
             AttributeTemplate that exists in the database.
             Only the uid is passed, so if you would like to update an attribute template you
