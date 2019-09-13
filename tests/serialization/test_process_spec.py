@@ -47,7 +47,7 @@ def valid_data():
                 ]
             ],
             'allowed_labels': ['a', 'b'],
-            'allowed_unique_labels': ['a unique label'],
+            'allowed_names': ['a name'],
             'description': 'a long description',
             'tags': []
         },
@@ -76,7 +76,7 @@ def test_simple_deserialization(valid_data):
                            ],
                            description='a long description',
                            allowed_labels=['a', 'b'],
-                           allowed_unique_labels=['a unique label'])
+                           allowed_names=['a name'])
     assert process_spec.name == 'Process 1'
     assert process_spec.notes == 'make sure to use oven mitts'
     assert process_spec.file_links == [FileLink('cake_recipe.txt', 'www.baking.com')]

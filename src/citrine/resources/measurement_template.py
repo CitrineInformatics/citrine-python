@@ -120,11 +120,11 @@ class MeasurementTemplate(DataConcepts, Resource['MeasurementTemplate'],
             data['properties'] = [[PropertyTemplate.build(prop[0].as_dict()),
                                    loads(dumps(prop[1]))] for prop in data['properties']]
         if 'conditions' in data and len(data['conditions']) != 0:
-            data['conditions'] = [[ConditionTemplate.build(prop[0].as_dict()),
-                                   loads(dumps(prop[1]))] for prop in data['conditions']]
+            data['conditions'] = [[ConditionTemplate.build(cond[0].as_dict()),
+                                   loads(dumps(cond[1]))] for cond in data['conditions']]
         if 'parameters' in data and len(data['parameters']) != 0:
-            data['parameters'] = [[ParameterTemplate.build(prop[0].as_dict()),
-                                   loads(dumps(prop[1]))] for prop in data['parameters']]
+            data['parameters'] = [[ParameterTemplate.build(param[0].as_dict()),
+                                   loads(dumps(param[1]))] for param in data['parameters']]
 
     def __str__(self):
         return '<Measurement template {!r}>'.format(self.name)
