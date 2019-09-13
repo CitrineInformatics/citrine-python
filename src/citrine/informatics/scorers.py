@@ -1,7 +1,7 @@
 """Tools for working with Scorers."""
 from typing import List, Any, Optional
 
-from citrine.informatics.objectives import ScalarMaxObjective
+from citrine.informatics.objectives import Objective
 from citrine.informatics.constraints import Constraint
 
 from citrine._serialization import properties
@@ -25,7 +25,7 @@ class MLIScorer(Serializable['MLIScorer'], Scorer):
     name = properties.String('name')
     description = properties.String('description')
     baselines = properties.List(properties.Float, 'baselines')
-    objectives = properties.List(properties.Object(ScalarMaxObjective), 'objectives')
+    objectives = properties.List(properties.Object(Objective), 'objectives')
     constraints = properties.List(properties.Object(Constraint), 'constraints')
     typ = properties.String('type', default='MLI')
 
@@ -34,7 +34,7 @@ class MLIScorer(Serializable['MLIScorer'], Scorer):
                  description: str,
                  objectives: List[Any],
                  baselines: List[float],
-                 constraints: List[Any] = [],
+                 constraints: List[Any] = (),
                  session: Optional[Session] = None):
         self.name: str = name
         self.description: str = description
