@@ -79,13 +79,13 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
         # Running through a taurus loads/dumps cycle validates all of the fields and ensures
         # the object is now a dictionary with a well-understood structure
         data_copy_dict = loads(dumps(deepcopy(data))).as_dict()
-        # Check the type--it should either correspond to LinkByUID to to this class.
+        # Check the type--it should either correspond to LinkByUID or to this class.
         if 'type' in data_copy_dict and data_copy_dict['type'] == LinkByUID.typ:
             return loads(dumps(data_copy_dict))
-        data_copy_dict = validate_type(data_copy_dict, cls._response_key)
+        validate_type(data_copy_dict, cls._response_key)
 
         cls._remove_local_keys(data_copy_dict)
-        cls._build_child_objects(data_copy_dict)
+        cls._build_child_objects(data_copy_dict, data)
 
         data_concepts_object = cls(**data_copy_dict)
         data_concepts_object.session = session
@@ -117,8 +117,34 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
                 del data[key]
         return data
 
+    @staticmethod
+    def _get_field(data, field: str):
+        """
+        Get the value of a field from something that might be a dictionary or might be an object.
+
+        Parameters
+        ----------
+        data: dict or object
+            foo
+        field: str
+            The name of the field
+
+        Returns
+        -------
+        Any
+            The value associated with `field` in `data`
+
+        """
+        if isinstance(data, dict):
+            return data.get(field)
+        elif isinstance(data, object):
+            return getattr(data, field, None)
+        else:
+            TypeError("Expected data to be a dictionary or object, instead got {}".format(data))
+
     @classmethod
-    def _build_child_objects(cls, data: dict, session: Session = None) -> dict:
+    def _build_child_objects(cls, data: dict, data_with_soft_links,
+                             session: Session = None) -> dict:
         """
         Build the data concepts objects that this serialized object points to.
 
@@ -128,6 +154,9 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
         ----------
         data: dict
             A data concepts object as a serialized dictionary.
+        data_with_soft_links: dict or \
+        :py:class:`DictSerializable <taurus.entity.dict_serializable.DictSerializable>`
+            A representation of data in which the knowledge of the soft-links is somehow encoded.
         session: Session
             Citrine session used to connect to the database.
 
@@ -156,14 +185,14 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
             if _is_dc(field):
                 if data.get(key):
                     if isinstance(data[key], List):
-                        data[key] = [DataConcepts.get_type(elem.as_dict())
-                                     .build(elem.as_dict()) for elem in data[key]]
+                        data[key] = [DataConcepts.get_type(elem).build(elem) for
+                                     elem in DataConcepts._get_field(data_with_soft_links, key)]
                         for elem in data[key]:
                             if isinstance(elem, DataConcepts):
                                 elem.session = session
                     else:
-                        data[key] = DataConcepts.get_type(data[key].as_dict()) \
-                            .build(data[key].as_dict())
+                        elem = DataConcepts._get_field(data_with_soft_links, key)
+                        data[key] = DataConcepts.get_type(elem.as_dict()).build(elem)
                         if isinstance(data[key], DataConcepts):
                             data[key].session = session
 
@@ -212,6 +241,7 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
         ----------
         data: dict
             A dictionary corresponding to a serialized data concepts object of unknown type.
+            The method will also work if `data` is a deserialized Taurus object.
 
         Returns
         -------
@@ -221,7 +251,8 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
         """
         if len(DataConcepts.class_dict) == 0:
             DataConcepts._make_class_dict()
-        return DataConcepts.class_dict[data['type']]
+        key = DataConcepts._get_field(data, 'type')
+        return DataConcepts.class_dict[key]
 
     @staticmethod
     def _make_class_dict():
