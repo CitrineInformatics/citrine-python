@@ -70,23 +70,28 @@ def test_process_attachment():
 
 def test_nested_serialization():
     """Create a bunch of nested objects and make sure that nothing breaks."""
+
+    # helper
+    def make_ingredient(material: MaterialRun):
+        return IngredientRun(name=material.name, material=material)
+
     icing = ProcessRun(name="Icing")
     cake = MaterialRun(name='Final cake', process=icing)
 
-    cake.process.ingredients.append(IngredientRun(material=MaterialRun('Baked Cake')))
-    cake.process.ingredients.append(IngredientRun(material=MaterialRun('Frosting')))
+    cake.process.ingredients.append(make_ingredient(MaterialRun('Baked Cake')))
+    cake.process.ingredients.append(make_ingredient(MaterialRun('Frosting')))
 
     baked = cake.process.ingredients[0].material
     baked.process = ProcessRun(name='Baking')
-    baked.process.ingredients.append(IngredientRun(material=MaterialRun('Batter')))
+    baked.process.ingredients.append(make_ingredient(MaterialRun('Batter')))
 
     batter = baked.process.ingredients[0].material
     batter.process = ProcessRun(name='Mixing batter')
 
-    batter.process.ingredients.append(IngredientRun(material=MaterialRun('Butter')))
-    batter.process.ingredients.append(IngredientRun(material=MaterialRun('Sugar')))
-    batter.process.ingredients.append(IngredientRun(material=MaterialRun('Flour')))
-    batter.process.ingredients.append(IngredientRun(material=MaterialRun('Milk')))
+    batter.process.ingredients.append(make_ingredient(material=MaterialRun('Butter')))
+    batter.process.ingredients.append(make_ingredient(material=MaterialRun('Sugar')))
+    batter.process.ingredients.append(make_ingredient(material=MaterialRun('Flour')))
+    batter.process.ingredients.append(make_ingredient(material=MaterialRun('Milk')))
 
     print(cake.dump())
 
