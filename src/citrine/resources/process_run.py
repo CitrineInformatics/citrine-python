@@ -6,7 +6,6 @@ from citrine._rest.resource import Resource
 from citrine._serialization.properties import String, Mapping, Object, LinkOrElse
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Optional as PropertyOptional
-from citrine.resources.ingredient_run import IngredientRun
 from citrine.resources.data_concepts import DataConcepts, DataConceptsCollection
 from taurus.entity.file_link import FileLink
 from citrine.attributes.condition import Condition

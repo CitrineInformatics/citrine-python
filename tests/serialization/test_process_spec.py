@@ -25,7 +25,6 @@ def valid_data():
                                'units': 'dimensionless', 'type': 'uniform_real'}
                      }],
         conditions=[],
-        ingredients=[],
         template={
             'name': 'the template',
             'uids': {'id': str(uuid4())},
@@ -65,7 +64,6 @@ def test_simple_deserialization(valid_data):
                                                           value=UniformReal(195, 205, ''),
                                                           origin='specified')
     assert process_spec.conditions == []
-    assert process_spec.ingredients == []
     assert process_spec.template == \
            ProcessTemplate('the template', uids={'id': valid_data['template']['uids']['id']},
                            parameters=[
