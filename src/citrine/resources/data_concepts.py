@@ -81,7 +81,7 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
         data_copy_dict = loads(dumps(deepcopy(data))).as_dict()
         # Check the type--it should either correspond to LinkByUID to to this class.
         if 'type' in data_copy_dict and data_copy_dict['type'] == LinkByUID.typ:
-            return data_copy_dict
+            return loads(dumps(data_copy_dict))
         data_copy_dict = validate_type(data_copy_dict, cls._response_key)
 
         cls._remove_local_keys(data_copy_dict)
