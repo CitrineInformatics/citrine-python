@@ -94,7 +94,7 @@ class FileCollection(Collection[FileLink]):
             object_key = upload_response['uploads'][0]['s3_key']
             upload_id = upload_response['uploads'][0]['upload_id']
         except KeyError:
-            raise RuntimeError("Upload response is missing some fields: "
+            raise RuntimeError("Upload initiation response is missing some fields: "
                                "{}".format(upload_response))
 
         s3_client = boto3_client('s3',
@@ -110,10 +110,16 @@ class FileCollection(Collection[FileLink]):
                                    "exception: {}".format(file_path, e))
             s3_version = upload_s3_response['VersionId']
             path = self._get_path() + "/uploads/{}/complete".format(upload_id)
-            self.session.put_resource(path=path, json={'s3_version': s3_version})
+            complete_response = self.session.put_resource(path=path, json={'s3_version': s3_version})
 
+        try:
+            file_id = complete_response['file_info']['file_id']
+            version = complete_response['file_info']['version']
+        except KeyError:
+            raise RuntimeError("Upload completion response is missing some "
+                               "fields: {}".format(complete_response))
         file_link_dict = {
             'filename': dest_name,
-            'url': self._get_path(object_key)
+            'url': self._get_path(file_id) + '/versions/{}'.format(version)
         }
         return FileLink.build(file_link_dict)
