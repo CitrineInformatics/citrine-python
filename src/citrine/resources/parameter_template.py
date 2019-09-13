@@ -19,7 +19,7 @@ class ParameterTemplate(DataConcepts, Resource['ParameterTemplate'], TaurusParam
     ----------
     name: str
         The name of the parameter template.
-    bounds: BaseBounds
+    bounds: :py:class:`BaseBounds <taurus.entity.bounds.base_bounds.BaseBounds>`
         Bounds circumscribe the values that are valid according to this parameter template.
     description: str, optional
         A long-form description of the parameter template.
