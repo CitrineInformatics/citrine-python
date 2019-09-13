@@ -60,7 +60,7 @@ class ProcessTemplate(DataConcepts, Resource['ProcessTemplate'], TaurusProcessTe
     parameters = PropertyOptional(PropertyList(
         MixedList([LinkOrElse, Object(BaseBounds)])), 'parameters')
     allowed_labels = PropertyOptional(PropertyList(String()), 'allowed_labels')
-    allowed_unique_labels = PropertyOptional(PropertyList(String()), 'allowed_unique_labels')
+    allowed_names = PropertyOptional(PropertyList(String()), 'allowed_names')
     typ = String('type')
 
     def __init__(self,
@@ -77,14 +77,14 @@ class ProcessTemplate(DataConcepts, Resource['ProcessTemplate'], TaurusProcessTe
                                                                     BaseBounds]]
                                                      ]]] = None,
                  allowed_labels: Optional[List[str]] = None,
-                 allowed_unique_labels: Optional[List[str]] = None,
+                 allowed_names: Optional[List[str]] = None,
                  description: Optional[str] = None,
                  tags: Optional[List[str]] = None):
         DataConcepts.__init__(self, TaurusProcessTemplate.typ)
         TaurusProcessTemplate.__init__(self, name=name, uids=set_default_uid(uids),
                                        conditions=conditions, parameters=parameters, tags=tags,
                                        description=description, allowed_labels=allowed_labels,
-                                       allowed_unique_labels=allowed_unique_labels)
+                                       allowed_names=allowed_names)
 
     @classmethod
     def _build_child_objects(cls, data: dict, session: Session = None):

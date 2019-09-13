@@ -32,7 +32,7 @@ def test_object_template_serde():
 
     proc_template = ProcessTemplate("Make an object", parameters=[index_template],
                                     conditions=[pressure_template], allowed_labels=["Label"],
-                                    allowed_unique_labels=["first sample", "second sample"])
+                                    allowed_names=["first sample", "second sample"])
     assert ProcessTemplate.build(proc_template.dump()) == proc_template
 
     # Check that serde still works if the template is a LinkByUID
