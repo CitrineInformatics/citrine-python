@@ -1,6 +1,6 @@
 """Top-level class for all data concepts objects and collections thereof."""
 from uuid import UUID
-from typing import TypeVar, Type, List, Dict, Union
+from typing import TypeVar, Type, List, Dict, Union, Optional
 from copy import deepcopy
 from abc import abstractmethod
 
@@ -273,9 +273,16 @@ class DataConceptsCollection(Collection[ResourceType]):
         data_concepts_object.session = self.session
         return data_concepts_object
 
-    def list(self):
+    def list(self, page: Optional[int] = None, per_page: Optional[int] = None):
         """
         List all visible elements of the collection.
+
+        Parameters
+        ----------
+        page: Optional[int]
+            The page of results to list, 1-indexed (i.e. the first page is page=1)
+        per_page: Optional[int]
+            The number of results to list per page
 
         Returns
         -------
@@ -283,7 +290,7 @@ class DataConceptsCollection(Collection[ResourceType]):
             Every object in this collection.
 
         """
-        return self.filter_by_tags([])
+        return self.filter_by_tags([], page, per_page)
 
     def register(self, model: ResourceType):
         """
@@ -342,7 +349,8 @@ class DataConceptsCollection(Collection[ResourceType]):
         data = self.session.get_resource(path)
         return self.build(data)
 
-    def filter_by_tags(self, tags: List[str]):
+    def filter_by_tags(self, tags: List[str],
+                       page: Optional[int] = None, per_page: Optional[int] = None):
         """
         Get all objects in the collection that match any one of a list of tags.
 
@@ -350,6 +358,10 @@ class DataConceptsCollection(Collection[ResourceType]):
         ----------
         tags: List[str]
             a list of strings, each one a tag that an object can match.
+        page: Optional[int]
+            The page of results to list, 1-indexed (i.e. the first page is page=1)
+        per_page: Optional[int]
+            The number of results to list per page
 
         Returns
         -------
@@ -361,15 +373,20 @@ class DataConceptsCollection(Collection[ResourceType]):
         params = {'tags': tags}
         if self.dataset_id is not None:
             params['dataset_id'] = str(self.dataset_id)
+        if page is not None:
+            params['page'] = page
+        if per_page is not None:
+            params['per_page'] = per_page
 
         response = self.session.get_resource(
             self._get_path(ignore_dataset=True),
             params=params)
         return [self.build(content) for content in response["contents"]]
 
-    def filter_by_attribute_bounds(self,
-                                   attribute_bounds: Dict[Union[AttributeTemplate, LinkByUID],
-                                                          BaseBounds]):
+    def filter_by_attribute_bounds(
+            self,
+            attribute_bounds: Dict[Union[AttributeTemplate, LinkByUID], BaseBounds],
+            page: Optional[int] = None, per_page: Optional[int] = None):
         """
         Get all objects in the collection with attributes within certain bounds.
 
@@ -388,6 +405,10 @@ class DataConceptsCollection(Collection[ResourceType]):
             AttributeTemplate that exists in the database.
             Only the uid is passed, so if you would like to update an attribute template you
             must register that change to the database before you can use it to filter.
+        page: Optional[int]
+            The page of results to list, 1-indexed (i.e. the first page is page=1)
+        per_page: Optional[int]
+            The number of results to list per page
 
         Returns
         -------
@@ -406,6 +427,10 @@ class DataConceptsCollection(Collection[ResourceType]):
         params = {}
         if self.dataset_id is not None:
             params['dataset_id'] = str(self.dataset_id)
+        if page is not None:
+            params['page'] = page
+        if per_page is not None:
+            params['per_page'] = per_page
 
         response = self.session.post_resource(
             self._get_path(ignore_dataset=True) + "/filter-by-attribute-bounds",
@@ -413,7 +438,8 @@ class DataConceptsCollection(Collection[ResourceType]):
             params=params)
         return [self.build(content) for content in response["contents"]]
 
-    def filter_by_name(self, name: str, exact: bool = False):
+    def filter_by_name(self, name: str, exact: bool = False,
+                       page: Optional[int] = None, per_page: Optional[int] = None):
         """
         Get all objects with specified name in this dataset.
 
@@ -424,6 +450,10 @@ class DataConceptsCollection(Collection[ResourceType]):
         exact: bool
             Set to True to change prefix search to exact search (but still case-insensitive).
             Default is False.
+        page: Optional[int]
+            The page of results to list, 1-indexed (i.e. the first page is page=1)
+        per_page: Optional[int]
+            The number of results to list per page
 
         Returns
         -------
@@ -434,6 +464,10 @@ class DataConceptsCollection(Collection[ResourceType]):
         if self.dataset_id is None:
             raise RuntimeError("Must specify a dataset to filter by name.")
         params = {'dataset_id': str(self.dataset_id), 'name': name, 'exact': exact}
+        if page is not None:
+            params['page'] = page
+        if per_page is not None:
+            params['per_page'] = per_page
         response = self.session.get_resource(
             # "Ignoring" dataset because it is in the query params (and required)
             self._get_path(ignore_dataset=True) + "/filter-by-name",
