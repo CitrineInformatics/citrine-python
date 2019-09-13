@@ -95,8 +95,30 @@ class MaterialRunCollection(DataConceptsCollection[MaterialRun]):
         """Return the resource type in the collection."""
         return MaterialRun
 
-    def get_history(self, scope, id):
-        """Get the history associated with a material."""
+    def get_history(self, scope, id) -> Type[MaterialRun]:
+        """
+        Get the history associated with a material.
+
+        The history contains every single process, ingredient, measurement, and material that
+        went into creating this particular material run. The returned object is a material run
+        with all of its fields fully populated.
+
+        Parameters
+        ----------
+        scope: str
+            The scope used to locate the material.
+        id: str
+            The unique id corresponding to `scope`. The lookup will be most efficient if you use
+            the Citrine ID (scope='id') of the material.
+
+        Returns
+        -------
+        MaterialRun
+            A material run that has all of its fields fully populated with the processes,
+            ingredients, measurements, and other materials that were involved in the history
+            of the object.
+
+        """
         base_path = os.path.dirname(self._get_path(ignore_dataset=True))
         path = base_path + "/material-history/{}/{}".format(scope, id)
         data = self.session.get_resource(path)
