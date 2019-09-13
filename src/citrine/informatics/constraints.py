@@ -1,10 +1,10 @@
 """Tools for working with Constraints."""
 from typing import List, Optional
 
-from citrine._session import Session
 from citrine._serialization import properties
-from citrine._serialization.serializable import Serializable
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
+from citrine._serialization.serializable import Serializable
+from citrine._session import Session
 
 __all__ = ['Constraint', 'ScalarRangeConstraint', 'CategoricalConstraint']
 

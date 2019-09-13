@@ -35,13 +35,13 @@ def test_scalar_range_dumps(scalar_range_constraint):
     assert result['max_inclusive']
 
 
-def test_get_scalar_max_type(scalar_range_constraint):
+def test_get_scalar_range_type(scalar_range_constraint):
     result = scalar_range_constraint.dump()
     typ = Constraint.get_type(result)
     assert typ == ScalarRangeConstraint
 
 
-def test_scalar_min_dumps(categorical_constraint):
+def test_categorical_dumps(categorical_constraint):
     """Ensure values are persisted through deser."""
     result = categorical_constraint.dump()
     assert result['type'] == 'Categorical'
@@ -49,7 +49,7 @@ def test_scalar_min_dumps(categorical_constraint):
     assert result['acceptable_categories'] == ['y', 'z']
 
 
-def test_get_scalar_min_type(categorical_constraint):
+def test_get_categorical_type(categorical_constraint):
     result = categorical_constraint.dump()
     typ = Constraint.get_type(result)
     assert typ == CategoricalConstraint
