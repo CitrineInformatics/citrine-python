@@ -51,7 +51,7 @@ def valid_data():
             'description': 'a long description',
             'tags': []
         },
-        file_links=[{'type': 'file_link', 'filename': 'Cake spec', 'url': 'specs/cake.txt'}],
+        file_links=[{'type': 'file_link', 'filename': 'cake_recipe.txt', 'url': 'www.baking.com'}],
         type='process_spec'
     )
 
@@ -79,7 +79,7 @@ def test_simple_deserialization(valid_data):
                            allowed_unique_labels=['a unique label'])
     assert process_spec.name == 'Process 1'
     assert process_spec.notes == 'make sure to use oven mitts'
-    assert process_spec.file_links == [FileLink('Cake spec', 'specs/cake.txt')]
+    assert process_spec.file_links == [FileLink('cake_recipe.txt', 'www.baking.com')]
     assert process_spec.typ == 'process_spec'
 
 
