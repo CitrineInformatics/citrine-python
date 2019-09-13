@@ -34,8 +34,8 @@ def test_soft_process_ingredient_attachment():
     vinegar = MaterialSpec("vinegar")
     baking_soda = MaterialSpec("baking soda")
     eruption = ProcessSpec("Volcano eruption")
-    vinegar_sample = IngredientSpec(material=vinegar, process=eruption)
-    baking_soda_sample = IngredientSpec(material=baking_soda)
+    vinegar_sample = IngredientSpec("a bit of vinegar", material=vinegar, process=eruption)
+    baking_soda_sample = IngredientSpec("a bit of NaOh", material=baking_soda)
     baking_soda_sample.process = eruption
     assert set(eruption.ingredients) == {vinegar_sample, baking_soda_sample}, \
         "Creating an ingredient for a process did not auto-populate that process's ingredient list"

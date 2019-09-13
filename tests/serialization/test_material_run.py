@@ -113,8 +113,10 @@ def test_measurement_material_connection_rehydration():
 
     process_spec = TaurusProcessSpec("Transformative process")
     process = TaurusProcessRun("Transformative process", spec=process_spec)
-    ingredient_spec = TaurusIngredientSpec(material=starting_mat_spec, process=process_spec)
-    ingredient = TaurusIngredientRun(material=starting_mat, process=process, spec=ingredient_spec)
+    ingredient_spec = TaurusIngredientSpec(name="ingredient", material=starting_mat_spec,
+                                           process=process_spec)
+    ingredient = TaurusIngredientRun(name="ingredient", material=starting_mat, process=process,
+                                     spec=ingredient_spec)
 
     ending_mat_spec = TaurusMaterialSpec("ending material", process=process_spec)
     ending_mat = TaurusMaterialRun("ending material", process=process, spec=ending_mat_spec)

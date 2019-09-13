@@ -77,6 +77,7 @@ class IngredientRun(DataConcepts, Resource['IngredientRun'], TaurusIngredientRun
     typ = String('type')
 
     def __init__(self,
+                 name: str,
                  uids: Optional[Dict[str, str]] = None,
                  tags: Optional[List[str]] = None,
                  notes: Optional[str] = None,
@@ -86,7 +87,6 @@ class IngredientRun(DataConcepts, Resource['IngredientRun'], TaurusIngredientRun
                  volume_fraction: Optional[ContinuousValue] = None,
                  number_fraction: Optional[ContinuousValue] = None,
                  absolute_quantity: Optional[ContinuousValue] = None,
-                 name: Optional[str] = None,
                  labels: Optional[List[str]] = None,
                  spec: Optional[TaurusIngredientSpec] = None,
                  file_links: Optional[List[FileLink]] = None):

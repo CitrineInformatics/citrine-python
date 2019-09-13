@@ -73,6 +73,7 @@ class IngredientSpec(DataConcepts, Resource['IngredientSpec'], TaurusIngredientS
     typ = String('type')
 
     def __init__(self,
+                 name: str,
                  uids: Optional[Dict[str, str]] = None,
                  tags: Optional[List[str]] = None,
                  notes: Optional[str] = None,
@@ -82,7 +83,6 @@ class IngredientSpec(DataConcepts, Resource['IngredientSpec'], TaurusIngredientS
                  volume_fraction: Optional[ContinuousValue] = None,
                  number_fraction: Optional[ContinuousValue] = None,
                  absolute_quantity: Optional[ContinuousValue] = None,
-                 name: Optional[str] = None,
                  labels: Optional[List[str]] = None,
                  file_links: Optional[List[FileLink]] = None):
         DataConcepts.__init__(self, TaurusIngredientSpec.typ)
