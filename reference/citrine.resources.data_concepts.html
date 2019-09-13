@@ -64,13 +64,16 @@
 <dl class="method">
 <dt id="citrine.resources.data_concepts.DataConcepts.build">
 <em class="property">classmethod </em><code class="sig-name descname">build</code><span class="sig-paren">(</span><em class="sig-param">data: dict</em>, <em class="sig-param">session: citrine._session.Session = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.data_concepts.DataConcepts.build" title="Permalink to this definition">¶</a></dt>
-<dd><p>Build a data concepts object from a dictionary.</p>
+<dd><p>Build a data concepts object from a dictionary or from a Taurus object.</p>
 <p>This is an internal method, and should not be called directly by users.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<em>dict</em>) – A dictionary representing the serialized object. The dictionary must have a ‘type’
-field and its value must correspond to class that is invoking this method.</p></li>
+<li><p><strong>data</strong> (<em>dict</em>) – A representation of the object. It must be possible to put this dictionary through
+the loads/dumps cycle of the Taurus
+<a class="reference external" href="https://citrineinformatics.github.io/taurus/reference/taurus.client.json_encoder.html#module-taurus.client.json_encoder" title="(in Taurus)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">JSON</span> <span class="pre">encoder</span></code></a>. The ensuing dictionary must
+have a <cite>type</cite> field that corresponds to the response key of this class or of
+<a class="reference external" href="https://citrineinformatics.github.io/taurus/reference/taurus.entity.link_by_uid.html#taurus.entity.link_by_uid.LinkByUID" title="(in Taurus)"><code class="xref py py-class docutils literal notranslate"><span class="pre">LinkByUID</span></code></a>.</p></li>
 <li><p><strong>session</strong> (<em>Session</em>) – the Citrine session to assign to the built object.</p></li>
 </ul>
 </dd>
