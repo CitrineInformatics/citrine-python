@@ -131,14 +131,10 @@ class ProcessRun(DataConcepts, Resource['ProcessRun'], TaurusProcessRun):
         for ingredient in ingredients:
             # Cycle through ingredients and if they are not LinkByUID, build them and then
             # set their `process` field to obj
-            if isinstance(ingredient, DictSerializable):
-                if isinstance(ingredient, LinkByUID):
-                    pass
-                setattr(ingredient, 'process', None)
-            elif isinstance(ingredient, dict):
-                if ingredient.get('type') == LinkByUID.typ:
-                    pass
-                ingredient['process'] = None
+            assert isinstance(ingredient, DictSerializable)
+            if isinstance(ingredient, LinkByUID):
+                pass
+            setattr(ingredient, 'process', None)
             ingredient_object = IngredientRun.build(ingredient, session)
             setattr(ingredient_object, 'process', obj)
         return

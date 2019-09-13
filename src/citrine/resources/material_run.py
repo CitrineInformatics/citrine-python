@@ -130,14 +130,10 @@ class MaterialRun(DataConcepts, Resource['MaterialRun'], TaurusMaterialRun):
         for meas in measurements:
             # Cycle through measurements and if they are not LinkByUID, build them and then
             # set their `material` field to obj
-            if isinstance(meas, DictSerializable):
-                if isinstance(meas, LinkByUID):
-                    pass
-                setattr(meas, 'material', None)
-            elif isinstance(meas, dict):
-                if meas.get('type') == LinkByUID.typ:
-                    pass
-                meas['material'] = None
+            assert isinstance(meas, DictSerializable)
+            if isinstance(meas, LinkByUID):
+                pass
+            setattr(meas, 'material', None)
             meas_object = MeasurementRun.build(meas, session)
             setattr(meas_object, 'material', obj)
         return
