@@ -15,5 +15,4 @@ sphinxcontrib-apidoc = "*"
 [packages]
 citrine = {editable = true,path = "."}
 taurus = {git = "https://github.com/CitrineInformatics/taurus.git", editable = true, ref="develop"}
-boto3 = "*"
-botocore = "*"
+

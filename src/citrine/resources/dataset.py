@@ -20,7 +20,6 @@ from citrine.resources.material_run import MaterialRunCollection
 from citrine.resources.material_spec import MaterialSpecCollection
 from citrine.resources.ingredient_run import IngredientRunCollection
 from citrine.resources.ingredient_spec import IngredientSpecCollection
-from citrine.resources.file_link import FileCollection
 
 
 class Dataset(Resource['Dataset']):
@@ -163,11 +162,6 @@ class Dataset(Resource['Dataset']):
     def ingredient_specs(self) -> IngredientSpecCollection:
         """Return a resource representing all ingredient specs in this dataset."""
         return IngredientSpecCollection(self.project_id, self.uid, self.session)
-
-    @property
-    def files(self) -> FileCollection:
-        """Return a resource representing all files in the dataset."""
-        return FileCollection(self.project_id, self.uid, self.session)
 
 
 class DatasetCollection(Collection[Dataset]):
