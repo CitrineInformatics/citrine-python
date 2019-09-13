@@ -86,7 +86,7 @@ class ProcessSpec(DataConcepts, Resource['ProcessSpec'], TaurusProcessSpec):
         return '<Process spec {!r}>'.format(self.name)
 
     @classmethod
-    def _build_soft_linked_objects(cls, obj, obj_with_soft_links, session: Session = None):
+    def _build_discarded_objects(cls, obj, obj_with_soft_links, session: Session = None):
         """
         Build the IngredientSpec objects that this ProcessSpec has soft links to.
 
@@ -116,28 +116,10 @@ class ProcessSpec(DataConcepts, Resource['ProcessSpec'], TaurusProcessSpec):
             The ProcessSpec object is modified so that it has links to its IngredientSpecs.
 
         """
-        ingredients = None
-        # Get the ingredients list, if it exists.
-        if isinstance(obj_with_soft_links, dict):
-            if obj_with_soft_links.get('ingredients'):
-                ingredients = obj_with_soft_links['ingredients']
-        if isinstance(obj_with_soft_links, DictSerializable):
-            if hasattr(obj_with_soft_links, 'ingredients'):
-                ingredients = getattr(obj_with_soft_links, 'ingredients')
-        if ingredients is None:
-            return
-
         from citrine.resources.ingredient_spec import IngredientSpec
-        for ingredient in ingredients:
-            # Cycle through ingredients and if they are not LinkByUID, build them and then
-            # set their `process` field to obj
-            assert isinstance(ingredient, DictSerializable)
-            if isinstance(ingredient, LinkByUID):
-                pass
-            setattr(ingredient, 'process', None)
-            ingredient_object = IngredientSpec.build(ingredient, session)
-            setattr(ingredient_object, 'process', obj)
-        return
+        DataConcepts._build_list_of_soft_links(
+            obj, obj_with_soft_links, field='ingredients', reverse_field='process',
+            linked_type=IngredientSpec, session=session)
 
 
 class ProcessSpecCollection(DataConceptsCollection[ProcessSpec]):
