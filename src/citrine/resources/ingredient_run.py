@@ -47,7 +47,7 @@ class IngredientRun(DataConcepts, Resource['IngredientRun'], TaurusIngredientRun
     absolute_quantity: :py:class:`ContinuousValue \
     <taurus.entity.value.continuous_value.ContinuousValue>`, optional
         The absolute quantity of the ingredient in the process.
-    unique_label: str, optional
+    name: str, optional
         Label on the ingredient that is unique within the process that contains it.
     labels: List[str], optional
         Additional labels on the ingredient that must be unique.
@@ -70,7 +70,7 @@ class IngredientRun(DataConcepts, Resource['IngredientRun'], TaurusIngredientRun
     number_fraction = PropertyOptional(Object(ContinuousValue), 'number_fraction')
     absolute_quantity = PropertyOptional(
         Object(ContinuousValue), 'absolute_quantity')
-    unique_label = PropertyOptional(String(), 'unique_label')
+    name = String('name')
     labels = PropertyOptional(PropertyList(String()), 'labels')
     spec = PropertyOptional(LinkOrElse(), 'spec')
     file_links = PropertyOptional(PropertyList(Object(FileLink)), 'file_links')
@@ -86,7 +86,7 @@ class IngredientRun(DataConcepts, Resource['IngredientRun'], TaurusIngredientRun
                  volume_fraction: Optional[ContinuousValue] = None,
                  number_fraction: Optional[ContinuousValue] = None,
                  absolute_quantity: Optional[ContinuousValue] = None,
-                 unique_label: Optional[str] = None,
+                 name: Optional[str] = None,
                  labels: Optional[List[str]] = None,
                  spec: Optional[TaurusIngredientSpec] = None,
                  file_links: Optional[List[FileLink]] = None):
@@ -96,10 +96,10 @@ class IngredientRun(DataConcepts, Resource['IngredientRun'], TaurusIngredientRun
                                      mass_fraction=mass_fraction, volume_fraction=volume_fraction,
                                      number_fraction=number_fraction,
                                      absolute_quantity=absolute_quantity, labels=labels,
-                                     unique_label=unique_label, spec=spec, file_links=file_links)
+                                     name=name, spec=spec, file_links=file_links)
 
     def __str__(self):
-        return '<Ingredient run {!r}>'.format(self.unique_label)
+        return '<Ingredient run {!r}>'.format(self.name)
 
 
 class IngredientRunCollection(DataConceptsCollection[IngredientRun]):
