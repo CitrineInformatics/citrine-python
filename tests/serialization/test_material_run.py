@@ -3,12 +3,15 @@ import pytest
 from uuid import uuid4
 
 from citrine.resources.material_run import MaterialRun
+from citrine.resources.measurement_spec import MeasurementSpec
 from citrine.resources.process_run import ProcessRun
 from citrine.resources.ingredient_run import IngredientRun
 from citrine.resources.measurement_run import MeasurementRun
 from taurus.client.json_encoder import LinkByUID
 from taurus.client.json_encoder import loads, dumps
-
+from taurus.entity.object import MeasurementRun as TaurusMeasurementRun
+from taurus.entity.object import MaterialRun as TaurusMaterialRun
+from taurus.entity.object import MeasurementSpec as TaurusMeasurementSpec
 
 @pytest.fixture
 def valid_data():
@@ -67,22 +70,42 @@ def test_process_attachment():
 
 def test_nested_serialization():
     """Create a bunch of nested objects and make sure that nothing breaks."""
+
+    # helper
+    def make_ingredient(material: MaterialRun):
+        return IngredientRun(name=material.name, material=material)
+
     icing = ProcessRun(name="Icing")
     cake = MaterialRun(name='Final cake', process=icing)
 
-    cake.process.ingredients.append(IngredientRun(material=MaterialRun('Baked Cake')))
-    cake.process.ingredients.append(IngredientRun(material=MaterialRun('Frosting')))
+    cake.process.ingredients.append(make_ingredient(MaterialRun('Baked Cake')))
+    cake.process.ingredients.append(make_ingredient(MaterialRun('Frosting')))
 
     baked = cake.process.ingredients[0].material
     baked.process = ProcessRun(name='Baking')
-    baked.process.ingredients.append(IngredientRun(material=MaterialRun('Batter')))
+    baked.process.ingredients.append(make_ingredient(MaterialRun('Batter')))
 
     batter = baked.process.ingredients[0].material
     batter.process = ProcessRun(name='Mixing batter')
 
-    batter.process.ingredients.append(IngredientRun(material=MaterialRun('Butter')))
-    batter.process.ingredients.append(IngredientRun(material=MaterialRun('Sugar')))
-    batter.process.ingredients.append(IngredientRun(material=MaterialRun('Flour')))
-    batter.process.ingredients.append(IngredientRun(material=MaterialRun('Milk')))
+    batter.process.ingredients.append(make_ingredient(material=MaterialRun('Butter')))
+    batter.process.ingredients.append(make_ingredient(material=MaterialRun('Sugar')))
+    batter.process.ingredients.append(make_ingredient(material=MaterialRun('Flour')))
+    batter.process.ingredients.append(make_ingredient(material=MaterialRun('Milk')))
 
     print(cake.dump())
+
+
+def test_measurement_material_connection_rehydration():
+    """Test that fully-linked Taurus object can be built as fully-linked Citrine-python object."""
+    mat = TaurusMaterialRun("material")
+    meas_spec = TaurusMeasurementSpec("measurement spec")
+    meas = TaurusMeasurementRun("measurement", spec=meas_spec, material=mat)
+
+    copy_mat = MaterialRun.build(mat)
+    assert isinstance(copy_mat, MaterialRun), "copy of mat should be a MaterialRun"
+    assert len(copy_mat.measurements) == 1, "copy of mat should have one measurement"
+    assert isinstance(copy_mat.measurements[0], MeasurementRun), \
+        "copy of mat should have a measurement that is a MeasurementRun"
+    assert isinstance(copy_mat.measurements[0].spec, MeasurementSpec), \
+        "copy of mat should have a measurement run that has a spec that is a MeasurementSpec"

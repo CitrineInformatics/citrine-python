@@ -36,11 +36,13 @@ class ProcessTemplate(DataConcepts, Resource['ProcessTemplate'], TaurusProcessTe
         which will always be a uuid4.
     tags: List[str], optional
         A set of tags. Tags can be used for filtering.
-    conditions: List[ConditionTemplate or List[ConditionTemplate, Bounds]], optional
+    conditions: List[ConditionTemplate] or List[ConditionTemplate, \
+    :py:class:`BaseBounds <taurus.entity.bounds.base_bounds.BaseBounds>`], optional
         Templates for associated conditions. Each template can be provided by itself, or as a list
         with the second entry being a separate, *more restrictive* Bounds object that defines
         the limits of the value for this condition.
-    parameters: List[ParameterTemplate or List[ParameterTemplate, Bounds]], optional
+    parameters: List[ParameterTemplate] or List[ParameterTemplate, \
+    :py:class:`BaseBounds <taurus.entity.bounds.base_bounds.BaseBounds>`], optional
         Templates for associated parameters. Each template can be provided by itself, or as a list
         with the second entry being a separate, *more restrictive* Bounds object that defines
         the limits of the value for this parameter.
@@ -58,7 +60,7 @@ class ProcessTemplate(DataConcepts, Resource['ProcessTemplate'], TaurusProcessTe
     parameters = PropertyOptional(PropertyList(
         MixedList([LinkOrElse, Object(BaseBounds)])), 'parameters')
     allowed_labels = PropertyOptional(PropertyList(String()), 'allowed_labels')
-    allowed_unique_labels = PropertyOptional(PropertyList(String()), 'allowed_unique_labels')
+    allowed_names = PropertyOptional(PropertyList(String()), 'allowed_names')
     typ = String('type')
 
     def __init__(self,
@@ -75,14 +77,14 @@ class ProcessTemplate(DataConcepts, Resource['ProcessTemplate'], TaurusProcessTe
                                                                     BaseBounds]]
                                                      ]]] = None,
                  allowed_labels: Optional[List[str]] = None,
-                 allowed_unique_labels: Optional[List[str]] = None,
+                 allowed_names: Optional[List[str]] = None,
                  description: Optional[str] = None,
                  tags: Optional[List[str]] = None):
         DataConcepts.__init__(self, TaurusProcessTemplate.typ)
         TaurusProcessTemplate.__init__(self, name=name, uids=set_default_uid(uids),
                                        conditions=conditions, parameters=parameters, tags=tags,
                                        description=description, allowed_labels=allowed_labels,
-                                       allowed_unique_labels=allowed_unique_labels)
+                                       allowed_names=allowed_names)
 
     @classmethod
     def _build_child_objects(cls, data: dict, session: Session = None):
@@ -100,16 +102,18 @@ class ProcessTemplate(DataConcepts, Resource['ProcessTemplate'], TaurusProcessTe
         -------
         None
             The serialized process template is modified so that its conditions are now a list
-            of object pairs of the form [ConditionTemplate, Bounds], and the parameters are
-            [ParameterTemplate, Bounds].
+            of object pairs of the form [ConditionTemplate,
+            :py:class:`BaseBounds <taurus.entity.bounds.base_bounds.BaseBounds>`],
+            and the parameters are [ParameterTemplate,
+            :py:class:`BaseBounds <taurus.entity.bounds.base_bounds.BaseBounds>`].
 
         """
         if 'conditions' in data and len(data['conditions']) != 0:
-            data['conditions'] = [[ConditionTemplate.build(prop[0].as_dict()),
-                                   loads(dumps(prop[1]))] for prop in data['conditions']]
+            data['conditions'] = [[ConditionTemplate.build(cond[0].as_dict()),
+                                   loads(dumps(cond[1]))] for cond in data['conditions']]
         if 'parameters' in data and len(data['parameters']) != 0:
-            data['parameters'] = [[ParameterTemplate.build(prop[0].as_dict()),
-                                   loads(dumps(prop[1]))] for prop in data['parameters']]
+            data['parameters'] = [[ParameterTemplate.build(param[0].as_dict()),
+                                   loads(dumps(param[1]))] for param in data['parameters']]
 
     def __str__(self):
         return '<Process template {!r}>'.format(self.name)

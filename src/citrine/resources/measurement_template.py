@@ -39,15 +39,18 @@ class MeasurementTemplate(DataConcepts, Resource['MeasurementTemplate'],
         which will always be a uuid4.
     tags: List[str], optional
         A set of tags. Tags can be used for filtering.
-    conditions: List[ConditionTemplate or List[ConditionTemplate, Bounds]], optional
+    conditions: List[ConditionTemplate] or List[ConditionTemplate, \
+    :py:class:`BaseBounds <taurus.entity.bounds.base_bounds.BaseBounds>`], optional
         Templates for associated conditions. Each template can be provided by itself, or as a list
         with the second entry being a separate, *more restrictive* Bounds object that defines
         the limits of the value for this condition.
-    parameters: List[ParameterTemplate or List[ParameterTemplate, Bounds]], optional
+    parameters: List[ParameterTemplate] or List[ParameterTemplate, \
+    :py:class:`BaseBounds <taurus.entity.bounds.base_bounds.BaseBounds>`], optional
         Templates for associated parameters. Each template can be provided by itself, or as a list
         with the second entry being a separate, *more restrictive* Bounds object that defines
         the limits of the value for this parameter.
-    properties: List[PropertyTemplate or List[PropertyTemplate, Bounds]], optional
+    properties: List[PropertyTemplate] or List[PropertyTemplate, \
+    :py:class:`BaseBounds <taurus.entity.bounds.base_bounds.BaseBounds>`], optional
         Templates for associated properties. Each template can be provided by itself, or as a list
         with the second entry being a separate, *more restrictive* Bounds object that defines
         the limits of the value for this property.
@@ -117,11 +120,11 @@ class MeasurementTemplate(DataConcepts, Resource['MeasurementTemplate'],
             data['properties'] = [[PropertyTemplate.build(prop[0].as_dict()),
                                    loads(dumps(prop[1]))] for prop in data['properties']]
         if 'conditions' in data and len(data['conditions']) != 0:
-            data['conditions'] = [[ConditionTemplate.build(prop[0].as_dict()),
-                                   loads(dumps(prop[1]))] for prop in data['conditions']]
+            data['conditions'] = [[ConditionTemplate.build(cond[0].as_dict()),
+                                   loads(dumps(cond[1]))] for cond in data['conditions']]
         if 'parameters' in data and len(data['parameters']) != 0:
-            data['parameters'] = [[ParameterTemplate.build(prop[0].as_dict()),
-                                   loads(dumps(prop[1]))] for prop in data['parameters']]
+            data['parameters'] = [[ParameterTemplate.build(param[0].as_dict()),
+                                   loads(dumps(param[1]))] for param in data['parameters']]
 
     def __str__(self):
         return '<Measurement template {!r}>'.format(self.name)

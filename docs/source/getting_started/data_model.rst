@@ -7,7 +7,7 @@ Overview
 
 The Citrine python client is built on our NextGen data model, (codename taurus).
 Taurus is a format that links together materials, the processes that produced them, and the measurements that characterize them.
-Complete documentation can be found in the `data model docs`.
+Complete documentation can be found in the `data model docs <https://citrineinformatics.github.io/taurus/>`_.
 This page presents a broad overview.
 
 The Basic Objects: Processes, Materials, Measurements
