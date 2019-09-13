@@ -12,6 +12,10 @@ from taurus.client.json_encoder import loads, dumps
 from taurus.entity.object import MeasurementRun as TaurusMeasurementRun
 from taurus.entity.object import MaterialRun as TaurusMaterialRun
 from taurus.entity.object import MeasurementSpec as TaurusMeasurementSpec
+from taurus.entity.object import ProcessSpec as TaurusProcessSpec
+from taurus.entity.object import ProcessRun as TaurusProcessRun
+from taurus.entity.object.ingredient_spec import IngredientSpec as TaurusIngredientSpec
+from taurus.entity.object.ingredient_run import IngredientRun as TaurusIngredientRun
 
 @pytest.fixture
 def valid_data():
@@ -93,14 +97,40 @@ def test_nested_serialization():
 
 def test_measurement_material_connection_rehydration():
     """Test that fully-linked Taurus object can be built as fully-linked Citrine-python object."""
-    mat = TaurusMaterialRun("material")
+    starting_mat = TaurusMaterialRun("starting material")
     meas_spec = TaurusMeasurementSpec("measurement spec")
-    meas = TaurusMeasurementRun("measurement", spec=meas_spec, material=mat)
+    meas1 = TaurusMeasurementRun("measurement on starting material",
+                                 spec=meas_spec, material=starting_mat)
 
-    copy_mat = MaterialRun.build(mat)
-    assert isinstance(copy_mat, MaterialRun), "copy of mat should be a MaterialRun"
-    assert len(copy_mat.measurements) == 1, "copy of mat should have one measurement"
-    assert isinstance(copy_mat.measurements[0], MeasurementRun), \
-        "copy of mat should have a measurement that is a MeasurementRun"
-    assert isinstance(copy_mat.measurements[0].spec, MeasurementSpec), \
-        "copy of mat should have a measurement run that has a spec that is a MeasurementSpec"
+    process = TaurusProcessRun("Transformative process")
+    ingredient = TaurusIngredientRun(material=starting_mat, process=process)
+
+    ending_mat = TaurusMaterialRun("ending material", process=process)
+    meas2 = TaurusMeasurementRun("measurement on ending material",
+                                 spec=meas_spec, material=ending_mat)
+
+    copy = MaterialRun.build(ending_mat)
+    assert isinstance(copy, MaterialRun), "copy of starting_mat should be a MaterialRun"
+    assert len(copy.measurements) == 1, "copy of starting_mat should have one measurement"
+    assert isinstance(copy.measurements[0], MeasurementRun), \
+        "copy of starting_mat should have a measurement that is a MeasurementRun"
+    assert isinstance(copy.measurements[0].spec, MeasurementSpec), \
+        "copy of starting_mat should have a measurement that has a spec that is a MeasurementSpec"
+    assert isinstance(copy.process, ProcessRun), "copy of starting_mat should have a process"
+    assert len(copy.process.ingredients) == 1, \
+        "copy of starting_mat should have a process with one ingredient"
+
+    copy_ingredient = copy.process.ingredients[0]
+    assert isinstance(copy_ingredient, IngredientRun), \
+        "copy of starting_mat should have a process with an ingredient that is an IngredientRun"
+    assert isinstance(copy_ingredient.material, MaterialRun), \
+        "copy of starting_mat should have a process with an ingredient that links to a MaterialRun"
+    assert len(copy_ingredient.material.measurements) == 1, \
+        "copy of starting_mat should have a process with an ingredient derived from a material " \
+        "that has one measurement performed on it"
+    assert isinstance(copy_ingredient.material.measurements[0], MeasurementRun), \
+        "copy of starting_mat should have a process with an ingredient derived from a material " \
+        "that has one measurement that gets deserialized as a MeasurementRun"
+    assert isinstance(copy_ingredient.material.measurements[0].spec, MeasurementSpec), \
+        "copy of starting_mat should have a process with an ingredient derived from a material " \
+        "that has one measurement that has a spec"
