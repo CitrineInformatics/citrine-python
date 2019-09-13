@@ -37,8 +37,6 @@ class ProcessRun(DataConcepts, Resource['ProcessRun'], TaurusProcessRun):
         Conditions under which this process run occurs.
     parameters: List[Parameter], optional
         Parameters of this process run.
-    ingredients: List[IngredientRun], optional
-        Ingredient runs that act as inputs to this process run.
     spec: ProcessSpec
         Spec for this process run.
     file_links: List[FileLink], optional
@@ -50,6 +48,10 @@ class ProcessRun(DataConcepts, Resource['ProcessRun'], TaurusProcessRun):
         The material run that this process run produces. The link is established by creating
         the material run and settings its `process` field to this process run.
 
+    ingredients: List[IngredientRun]
+        Ingredient runs that act as inputs to this process run. The link is established by
+        creating each ingredient run and setting its `process` field to this process run.
+
     """
 
     _response_key = TaurusProcessRun.typ  # 'process_run'
@@ -60,8 +62,6 @@ class ProcessRun(DataConcepts, Resource['ProcessRun'], TaurusProcessRun):
     notes = PropertyOptional(String(), 'notes')
     conditions = PropertyOptional(PropertyList(Object(Condition)), 'conditions')
     parameters = PropertyOptional(PropertyList(Object(Parameter)), 'parameters')
-    ingredients = PropertyOptional(
-        PropertyList(LinkOrElse()), 'ingredients')
     spec = PropertyOptional(LinkOrElse(), 'spec')
     file_links = PropertyOptional(PropertyList(Object(FileLink)), 'file_links')
     typ = String('type')
@@ -73,14 +73,12 @@ class ProcessRun(DataConcepts, Resource['ProcessRun'], TaurusProcessRun):
                  notes: Optional[str] = None,
                  conditions: Optional[List[Condition]] = None,
                  parameters: Optional[List[Parameter]] = None,
-                 ingredients: Optional[List[IngredientRun]] = None,
                  spec: Optional[TaurusProcessSpec] = None,
                  file_links: Optional[List[FileLink]] = None):
         DataConcepts.__init__(self, TaurusProcessRun.typ)
         TaurusProcessRun.__init__(self, name=name, uids=set_default_uid(uids),
                                   tags=tags, conditions=conditions, parameters=parameters,
-                                  ingredients=ingredients, spec=spec,
-                                  file_links=file_links, notes=notes)
+                                  spec=spec, file_links=file_links, notes=notes)
 
     def __str__(self):
         return '<Process run {!r}>'.format(self.name)

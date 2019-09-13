@@ -37,8 +37,6 @@ class ProcessSpec(DataConcepts, Resource['ProcessSpec'], TaurusProcessSpec):
         Conditions under which this process spec occurs.
     parameters: List[Parameter], optional
         Parameters of this process spec.
-    ingredients: List[IngredientSpec], optional
-        Ingredient specs that act as inputs to this process spec.
     template: ProcessTemplate, optional
         A template bounding the valid values for this process's parameters and conditions.
     file_links: List[FileLink], optional
@@ -50,6 +48,10 @@ class ProcessSpec(DataConcepts, Resource['ProcessSpec'], TaurusProcessSpec):
         The material spec that this process spec produces. The link is established by creating
         the material spec and settings its `process` field to this process spec.
 
+    ingredients: List[IngredientSpec], optional
+        Ingredient specs that act as inputs to this process spec. The link is established by
+        creating each ingredient spec and setting its `process` field to this process spec.
+
     """
 
     _response_key = TaurusProcessSpec.typ  # 'process_spec"
@@ -60,8 +62,6 @@ class ProcessSpec(DataConcepts, Resource['ProcessSpec'], TaurusProcessSpec):
     notes = PropertyOptional(String(), 'notes')
     conditions = PropertyOptional(PropertyList(Object(Condition)), 'conditions')
     parameters = PropertyOptional(PropertyList(Object(Parameter)), 'parameters')
-    ingredients = PropertyOptional(
-        PropertyList(LinkOrElse()), 'ingredients')
     template = PropertyOptional(LinkOrElse(), 'template')
     file_links = PropertyOptional(PropertyList(Object(FileLink)), 'file_links')
     typ = String('type')
@@ -73,14 +73,12 @@ class ProcessSpec(DataConcepts, Resource['ProcessSpec'], TaurusProcessSpec):
                  notes: Optional[str] = None,
                  conditions: Optional[List[Condition]] = None,
                  parameters: Optional[List[Parameter]] = None,
-                 ingredients: Optional[List[IngredientSpec]] = None,
                  template: Optional[TaurusProcessTemplate] = None,
                  file_links: Optional[List[FileLink]] = None):
         DataConcepts.__init__(self, TaurusProcessSpec.typ)
         TaurusProcessSpec.__init__(self, name=name, uids=set_default_uid(uids),
                                    tags=tags, conditions=conditions, parameters=parameters,
-                                   ingredients=ingredients, template=template,
-                                   file_links=file_links, notes=notes)
+                                   template=template, file_links=file_links, notes=notes)
 
     def __str__(self):
         return '<Process spec {!r}>'.format(self.name)
