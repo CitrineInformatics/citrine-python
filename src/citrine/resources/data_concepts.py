@@ -64,7 +64,7 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
         data: dict
             A representation of the object. It must be possible to put this dictionary through
             the loads/dumps cycle of the Taurus
-            :py:module:`JSON encoder <taurus.client.json_encoder>`. The ensuing dictionary must
+            :py:mod:`JSON encoder <taurus.client.json_encoder>`. The ensuing dictionary must
             have a `type` field that corresponds to the response key of this class or of
             :py:class:`LinkByUID <taurus.entity.link_by_uid.LinkByUID>`.
         session: Session
