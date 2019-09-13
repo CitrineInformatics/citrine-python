@@ -1,13 +1,12 @@
 """Tools for working with Scorers."""
-from typing import List, Any, Optional, Sequence
-
-from citrine.informatics.objectives import Objective
-from citrine.informatics.constraints import Constraint
+from typing import List, Optional
 
 from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
 from citrine._serialization.serializable import Serializable
 from citrine._session import Session
+from citrine.informatics.constraints import Constraint
+from citrine.informatics.objectives import Objective
 
 
 class Scorer(PolymorphicSerializable['Scorer']):
