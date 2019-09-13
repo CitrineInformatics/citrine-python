@@ -22,7 +22,7 @@ def valid_data():
         volume_fraction=None,
         number_fraction=None,
         absolute_quantity=None,
-        unique_label='flour',
+        name='flour',
         labels=['fine', 'bleached'],
         spec=None,
         file_links=[],
@@ -41,7 +41,7 @@ def test_simple_deserialization(valid_data):
     assert ingredient_run.volume_fraction is None
     assert ingredient_run.number_fraction is None
     assert ingredient_run.absolute_quantity is None
-    assert ingredient_run.unique_label == 'flour'
+    assert ingredient_run.name == 'flour'
     assert ingredient_run.labels == ['fine', 'bleached']
     assert ingredient_run.spec is None
     assert ingredient_run.file_links == []
@@ -63,7 +63,7 @@ def test_material_attachment():
     """
     flour = MaterialRun("flour", sample_type='unknown')
     flour_ingredient = IngredientRun(material=flour, absolute_quantity=NominalReal(500, 'g'),
-                                     unique_label='500 g flour')
+                                     name='500 g flour')
 
     flour_ingredient_copy = IngredientRun.build(flour_ingredient.dump())
     assert flour_ingredient_copy == flour_ingredient
