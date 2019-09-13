@@ -47,9 +47,9 @@ def test_list_validation():
     mat = MaterialRun("A material")
     with pytest.raises(TypeError):
         # labels must be a list of string, but contains an int
-        IngredientRun(material=mat, labels=["Label 1", 17])
+        IngredientRun(material=mat, labels=["Label 1", 17], name="foo")
 
-    ingredient = IngredientRun(material=mat, labels=["Label 1", "label 2"])
+    ingredient = IngredientRun(material=mat, labels=["Label 1", "label 2"], name="foo")
     with pytest.raises(TypeError):
         # cannot append an int to a list of strings
         ingredient.labels.append(17)

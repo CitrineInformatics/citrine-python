@@ -66,7 +66,7 @@ class IngredientRun(DataConcepts, Resource['IngredientRun'], TaurusIngredientRun
     number_fraction = PropertyOptional(Object(ContinuousValue), 'number_fraction')
     absolute_quantity = PropertyOptional(
         Object(ContinuousValue), 'absolute_quantity')
-    name = PropertyOptional(String(), 'name')
+    name = String('name')
     labels = PropertyOptional(PropertyList(String()), 'labels')
     spec = PropertyOptional(LinkOrElse(), 'spec')
     file_links = PropertyOptional(PropertyList(Object(FileLink)), 'file_links')
