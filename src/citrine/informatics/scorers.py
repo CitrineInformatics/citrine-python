@@ -1,5 +1,5 @@
 """Tools for working with Scorers."""
-from typing import List, Any, Optional
+from typing import List, Any, Optional, Sequence
 
 from citrine.informatics.objectives import Objective
 from citrine.informatics.constraints import Constraint
@@ -32,15 +32,15 @@ class MLIScorer(Serializable['MLIScorer'], Scorer):
     def __init__(self,
                  name: str,
                  description: str,
-                 objectives: List[Any],
+                 objectives: List[Objective],
                  baselines: List[float],
-                 constraints: List[Any] = (),
+                 constraints: Optional[List[Constraint]] = None,
                  session: Optional[Session] = None):
         self.name: str = name
         self.description: str = description
-        self.objectives: List[Any] = objectives
-        self.constraints: List[Any] = constraints
+        self.objectives: List[Objective] = objectives
         self.baselines: List[float] = baselines
+        self.constraints: List[Constraint] = constraints or []
         self.session: Optional[Session] = session
 
     def __str__(self):
