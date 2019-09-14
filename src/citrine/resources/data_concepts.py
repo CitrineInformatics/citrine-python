@@ -288,7 +288,6 @@ class DataConceptsCollection(Collection[ResourceType]):
     @abstractmethod
     def get_type(cls) -> Type[Serializable]:
         """Return the resource type in the collection."""
-        pass
 
     def build(self, data: dict) -> ResourceType:
         """
