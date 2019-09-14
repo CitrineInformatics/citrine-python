@@ -53,3 +53,24 @@ class SessionTests(unittest.TestCase):
         session.get_resource.return_value = {'projects': [project_dict]}
         projects_iterator = project_collection.list()
         assert next(projects_iterator).dump() == project_dict
+
+    def test_project_has_collections(self):
+        """Check that a project has all expected collections."""
+        session = mock.Mock()
+        project = Project.build(project_dict)
+        project.session = session
+        assert project.datasets.project_id == project.uid
+        assert project.property_templates.project_id == project.uid
+        assert project.condition_templates.project_id == project.uid
+        assert project.parameter_templates.project_id == project.uid
+        assert project.material_templates.project_id == project.uid
+        assert project.process_templates.project_id == project.uid
+        assert project.measurement_templates.project_id == project.uid
+        assert project.process_runs.project_id == project.uid
+        assert project.process_specs.project_id == project.uid
+        assert project.material_runs.project_id == project.uid
+        assert project.material_specs.project_id == project.uid
+        assert project.measurement_runs.project_id == project.uid
+        assert project.measurement_specs.project_id == project.uid
+        assert project.ingredient_runs.project_id == project.uid
+        assert project.ingredient_specs.project_id == project.uid
