@@ -34,7 +34,6 @@ class Collection(Generic[ResourceType]):
     @abstractmethod
     def build(self, data: dict):
         """Build an individual element of the collection."""
-        pass
 
     def get(self, uid: Union[UUID, str]) -> ResourceType:
         """Get a particular element of the collection."""
