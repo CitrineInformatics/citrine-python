@@ -1,6 +1,6 @@
-import unittest
 from uuid import UUID
 
+import pytest
 from taurus.entity.bounds.integer_bounds import IntegerBounds
 
 from citrine.resources.material_run import MaterialRunCollection
@@ -8,139 +8,133 @@ from tests.utils.session import FakeSession, FakeCall
 from tests.utils.factories import MaterialRunFactory, MaterialRunDataFactory, LinkByUIDFactory
 
 
-class TestMaterialRunCollection(unittest.TestCase):
+@pytest.fixture
+def session() -> FakeSession:
+    return FakeSession()
 
-    def setUp(self):
-        self.session = FakeSession()
-        self.collection = MaterialRunCollection(
-            project_id=UUID('6b608f78-e341-422c-8076-35adc8828545'),
-            dataset_id=UUID('8da51e93-8b55-4dd3-8489-af8f65d4ad9a'),
-            session=self.session
-        )
 
-    def test_register_material_run(self):
-        # Given
-        self.session.set_response(MaterialRunDataFactory(name='Test MR 123'))
-        material_run = MaterialRunFactory()
+@pytest.fixture
+def collection(session) -> MaterialRunCollection:
+    return MaterialRunCollection(
+        project_id=UUID('6b608f78-e341-422c-8076-35adc8828545'),
+        dataset_id=UUID('8da51e93-8b55-4dd3-8489-af8f65d4ad9a'),
+        session=session
+    )
 
-        # When
-        registered = self.collection.register(material_run)
 
-        # Then
-        self.assertEqual("<Material run 'Test MR 123'>", str(registered))
+def test_register_material_run(collection, session):
+    # Given
+    session.set_response(MaterialRunDataFactory(name='Test MR 123'))
+    material_run = MaterialRunFactory()
 
-    def test_get_history(self):
-        # Given
-        self.session.set_response({
-            'context': 'Ignored',
-            'root': MaterialRunDataFactory(name='Historic MR')
-        })
+    # When
+    registered = collection.register(material_run)
 
-        # When
-        run = self.collection.get_history('id', '1234')
+    # Then
+    assert "<Material run 'Test MR 123'>" == str(registered)
 
-        # Then
-        self.assertEqual(1, self.session.num_calls)
-        self.assertEqual(
-            FakeCall('GET', f'projects/{self.collection.project_id}/material-history/id/1234'),
-            self.session.last_call
-        )
-        self.assertEqual('Historic MR', run.name)
 
-    def test_get_material_run(self):
-        # Given
-        run_data = MaterialRunDataFactory(name='Cake 2')
-        mr_id = run_data['uids']['id']
-        self.session.set_response(run_data)
+def test_get_history(collection, session):
+    # Given
+    session.set_response({
+        'context': 'Ignored',
+        'root': MaterialRunDataFactory(name='Historic MR')
+    })
 
-        # When
-        run = self.collection.get(mr_id)
+    # When
+    run = collection.get_history('id', '1234')
 
-        # Then
-        self.assertEqual(1, self.session.num_calls)
-        self.assertEqual(
-            FakeCall('GET', f'projects/{self.collection.project_id}/datasets/{self.collection.dataset_id}/material-runs/id/{mr_id}'),
-            self.session.last_call
-        )
-        self.assertEqual('Cake 2', run.name)
+    # Then
+    assert 1 == session.num_calls
+    assert FakeCall('GET', f'projects/{collection.project_id}/material-history/id/1234') == session.last_call
+    assert 'Historic MR' == run.name
 
-    def test_list_material_runs(self):
-        # Given
-        sample_run = MaterialRunDataFactory()
-        self.session.set_response({
-            'contents': [sample_run]
-        })
 
-        # When
-        runs = self.collection.list()
+def test_get_material_run(collection, session):
+    # Given
+    run_data = MaterialRunDataFactory(name='Cake 2')
+    mr_id = run_data['uids']['id']
+    session.set_response(run_data)
 
-        # Then
-        self.assertEqual(1, self.session.num_calls)
-        self.assertEqual(
-            FakeCall(
-                method='GET',
-                path=f'projects/{self.collection.project_id}/material-runs',
-                params={
-                    'dataset_id': str(self.collection.dataset_id),
-                    'tags': []
-                }
-            ),
-            self.session.last_call
-        )
+    # When
+    run = collection.get(mr_id)
 
-        self.assertEqual(1, len(runs))
-        self.assertEqual(sample_run['uids'], runs[0].uids)
+    # Then
+    assert 1 == session.num_calls
+    expected_call = FakeCall(
+        method='GET',
+        path=f'projects/{collection.project_id}/datasets/{collection.dataset_id}/material-runs/id/{mr_id}'
+    )
+    assert expected_call == session.last_call
+    assert 'Cake 2' == run.name
 
-    def test_filter_by_name(self):
-        # Given
-        sample_run = MaterialRunDataFactory()
-        self.session.set_response({
-            'contents': [sample_run]
-        })
 
-        # When
-        runs = self.collection.filter_by_name('test run')
+def test_list_material_runs(collection, session):
+    # Given
+    sample_run = MaterialRunDataFactory()
+    session.set_response({
+        'contents': [sample_run]
+    })
 
-        # Then
-        self.assertEqual(1, self.session.num_calls)
-        self.assertEqual(
-            FakeCall(
-                method='GET',
-                path=f'projects/{self.collection.project_id}/material-runs/filter-by-name',
-                params={
-                    'dataset_id': str(self.collection.dataset_id),
-                    'name': 'test run',
-                    'exact': False
-                }
-            ),
-            self.session.last_call
-        )
+    # When
+    runs = collection.list()
 
-        self.assertEqual(1, len(runs))
-        self.assertEqual(sample_run['uids'], runs[0].uids)
+    # Then
+    assert 1 == session.num_calls
+    expected_call = FakeCall(
+        method='GET',
+        path=f'projects/{collection.project_id}/material-runs',
+        params={
+            'dataset_id': str(collection.dataset_id),
+            'tags': []
+        }
+    )
+    assert expected_call == session.last_call
+    assert 1 == len(runs)
+    assert sample_run['uids'] == runs[0].uids
 
-    def test_filter_by_attribute_bounds(self):
-        # Given
-        sample_run = MaterialRunDataFactory()
-        self.session.set_response({
-            'contents': [sample_run]
-        })
-        link = LinkByUIDFactory()
-        bounds = { link: IntegerBounds(1, 5) }
 
-        # When
-        runs = self.collection.filter_by_attribute_bounds(bounds)
+def test_filter_by_name(collection, session):
+    # Given
+    sample_run = MaterialRunDataFactory()
+    session.set_response({'contents': [sample_run]})
 
-        # Then
-        self.assertEqual(1, self.session.num_calls)
-        self.assertEqual(
-            FakeCall(
-                method='POST',
-                path=f'projects/{self.collection.project_id}/material-runs/filter-by-attribute-bounds',
-                json={'attribute_bounds': {link.id: {'lower_bound': 1, 'upper_bound': 5, 'type': 'integer_bounds'}}}
-            ),
-            self.session.last_call
-        )
+    # When
+    runs = collection.filter_by_name('test run')
 
-        self.assertEqual(1, len(runs))
-        self.assertEqual(sample_run['uids'], runs[0].uids)
+    # Then
+    assert 1 == session.num_calls
+    expected_call = FakeCall(
+        method='GET',
+        path=f'projects/{collection.project_id}/material-runs/filter-by-name',
+        params={
+            'dataset_id': str(collection.dataset_id),
+            'name': 'test run',
+            'exact': False
+        }
+    )
+    assert expected_call == session.last_call
+    assert 1 == len(runs)
+    assert sample_run['uids'] == runs[0].uids
+
+
+def test_filter_by_attribute_bounds(collection, session):
+    # Given
+    sample_run = MaterialRunDataFactory()
+    session.set_response({'contents': [sample_run]})
+    link = LinkByUIDFactory()
+    bounds = {link: IntegerBounds(1, 5)}
+
+    # When
+    runs = collection.filter_by_attribute_bounds(bounds)
+
+    # Then
+    assert 1 == session.num_calls
+    expected_call = FakeCall(
+        method='POST',
+        path=f'projects/{collection.project_id}/material-runs/filter-by-attribute-bounds',
+        json={'attribute_bounds': {link.id: {'lower_bound': 1, 'upper_bound': 5, 'type': 'integer_bounds'}}}
+    )
+    assert expected_call == session.last_call
+    assert 1 == len(runs)
+    assert sample_run['uids'] == runs[0].uids
