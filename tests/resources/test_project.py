@@ -4,7 +4,7 @@ from dateutil.parser import parse
 
 from citrine.resources.project import Project, ProjectCollection
 from tests.utils.factories import ProjectDataFactory
-from tests.utils.session import FakeCall, FakeSession
+from tests.utils.session import FakeSession, FakeCall
 
 
 @pytest.fixture
