@@ -7,6 +7,7 @@
 import factory
 from taurus.entity.link_by_uid import LinkByUID
 
+from citrine.resources.dataset import Dataset
 from citrine.resources.material_run import MaterialRun
 
 
@@ -15,7 +16,21 @@ class ProjectDataFactory(factory.DictFactory):
     name = factory.Faker('company')
     description = factory.Faker('catch_phrase')
     status = 'CREATED'
-    created_at = 0
+    created_at = None
+
+
+class DatasetDataFactory(factory.DictFactory):
+    uid = factory.Faker('uuid4')
+    name = factory.Faker('company')
+    summary = factory.Faker('catch_phrase')
+    description = factory.Faker('bs')
+    deleted = False
+    created_by = factory.Faker('uuid4')
+    updated_by = factory.Faker('uuid4')
+    deleted_by = factory.Faker('uuid4')
+    create_time = None
+    update_time = None
+    delete_time = None
 
 
 class IDDataFactory(factory.DictFactory):
@@ -60,3 +75,12 @@ class MaterialRunFactory(factory.Factory):
     sample_type = 'experimental'
     spec = None
     file_links = []
+
+
+class DatasetFactory(factory.Factory):
+    class Meta:
+        model = Dataset
+
+    name = factory.Faker('company')
+    summary = factory.Faker('catch_phrase')
+    description = factory.Faker('bs')
