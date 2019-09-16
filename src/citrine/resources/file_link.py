@@ -3,6 +3,7 @@ from uuid import UUID
 import os
 import mimetypes
 from boto3 import client as boto3_client
+import requests
 from botocore.exceptions import ClientError
 
 from taurus.entity.file_link import FileLink as TaurusFileLink
@@ -18,11 +19,31 @@ class FileLink(Resource['FileLink'], TaurusFileLink):
     filename = String('filename')
     url = String('url')
 
-    def __init__(self, filename, url):
+    def __init__(self, filename: str, url: str):
         TaurusFileLink.__init__(self, filename, url)
 
     def __str__(self):
         return '<File link {!r}>'.format(self.filename)
+
+    def download(self, dest_path: str, session: Session):
+        """
+        Download the file associated with this file link.
+
+        Parameters
+        ----------
+        dest_path: str
+            foo
+
+        Returns
+        -------
+        none
+        """
+        path = self.url + '/content-link'
+        foo = session.get_resource(path)
+        url = foo['pre_signed_read_link']
+        params = {'s3_bucket': foo['s3_bucket'], 's3_key': foo['s3_key'],
+                  's3_version': foo['s3_version']}
+        requests.get(url, params=params)
 
 
 class FileCollection(Collection[FileLink]):
@@ -74,7 +95,6 @@ class FileCollection(Collection[FileLink]):
             'files': [
                 {
                     'file_name': dest_name,
-                    'metadata': dict(),
                     'mime_type': mimeType,
                     'size': os.stat(file_path).st_size
                 }
@@ -91,6 +111,7 @@ class FileCollection(Collection[FileLink]):
             aws_secret_access_key = upload_response['temporary_credentials']['secret_access_key']
             aws_session_token = upload_response['temporary_credentials']['session_token']
             bucket = upload_response['s3_bucket']
+            region = upload_response["s3_region"]
             object_key = upload_response['uploads'][0]['s3_key']
             upload_id = upload_response['uploads'][0]['upload_id']
         except KeyError:
@@ -104,7 +125,11 @@ class FileCollection(Collection[FileLink]):
                                  aws_session_token=aws_session_token)
         with open(file_path, 'rb') as f:
             try:
-                upload_s3_response = s3_client.put_object(Bucket=bucket, Key=object_key, Body=f)
+                upload_s3_response = s3_client.put_object(
+                    Bucket=bucket,
+                    Key=object_key,
+                    Body=f,
+                    Metadata={"X-Citrine-Upload-Id": upload_id})
             except ClientError as e:
                 raise RuntimeError("Upload of file {} failed with the following "
                                    "exception: {}".format(file_path, e))
