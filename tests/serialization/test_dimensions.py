@@ -1,4 +1,4 @@
-"""Tests for citrine.informatics.capabilities serialization."""
+"""Tests for citrine.informatics.dimensions serialization."""
 import uuid
 
 import pytest

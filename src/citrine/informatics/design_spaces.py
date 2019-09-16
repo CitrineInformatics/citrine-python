@@ -1,18 +1,18 @@
-"""Tools for working with Capabilities."""
+"""Tools for working with design spaces."""
 from typing import List, Type
 from uuid import UUID
 
-from citrine.informatics.dimensions import Dimension
 from citrine._rest.resource import Resource
 from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
 from citrine._serialization.serializable import Serializable
 from citrine._session import Session
+from citrine.informatics.dimensions import Dimension
 
-__all__ = ['Capability', 'ProductCapability']
+__all__ = ['DesignSpace', 'ProductDesignSpace']
 
 
-class Capability(PolymorphicSerializable['Capability']):
+class DesignSpace(PolymorphicSerializable['DesignSpace']):
     """A module representing a material domain."""
 
     _response_key = None
@@ -20,11 +20,11 @@ class Capability(PolymorphicSerializable['Capability']):
     @classmethod
     def get_type(cls, data) -> Type[Serializable]:
         """Return the sole currently implemented subtype."""
-        return ProductCapability
+        return ProductDesignSpace
 
 
-class ProductCapability(Resource['ProductCapability'], Capability):
-    """Capability composed of an outer product of univariate dimensions."""
+class ProductDesignSpace(Resource['ProductDesignSpace'], DesignSpace):
+    """Design space composed of an outer product of univariate dimensions."""
 
     _response_key = None
 
@@ -41,7 +41,7 @@ class ProductCapability(Resource['ProductCapability'], Capability):
     )
 
     # NOTE: These could go here or in _post_dump - it's unclear which is better right now
-    module_type = properties.String('module_type', default='CAPABILITY')
+    module_type = properties.String('module_type', default='DESIGN_SPACE')
     schema_id = properties.UUID('schema_id', default=UUID('6c16d694-d015-42a7-b462-8ef299473c9a'))
 
     def __init__(self,
@@ -59,4 +59,4 @@ class ProductCapability(Resource['ProductCapability'], Capability):
         return data
 
     def __str__(self):
-        return '<ProductCapability {!r}>'.format(self.name)
+        return '<ProductDesignSpace {!r}>'.format(self.name)

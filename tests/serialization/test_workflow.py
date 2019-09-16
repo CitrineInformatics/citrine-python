@@ -13,7 +13,7 @@ def valid_data():
         status='READY',
         status_info=['Things are looking good'],
         modules=dict(
-            capability_id=str(uuid4()),
+            design_space_id=str(uuid4()),
             processor_id=str(uuid4()),
             predictor_id=str(uuid4()),
         )
@@ -26,7 +26,7 @@ def valid_serialization_output(valid_data):
 def test_simple_deserialization(valid_data):
     """Ensure a deserialized DesignWorkflow looks sane."""
     workflow: DesignWorkflow = DesignWorkflow.build(valid_data)
-    assert workflow.capability_id == UUID(valid_data['modules']['capability_id'])
+    assert workflow.design_space_id == UUID(valid_data['modules']['design_space_id'])
     assert workflow.processor_id == UUID(valid_data['modules']['processor_id'])
     assert workflow.predictor_id == UUID(valid_data['modules']['predictor_id'])
 
@@ -34,7 +34,7 @@ def test_simple_deserialization(valid_data):
 def test_polymorphic_deserialization(valid_data):
     """Ensure a polymorphically deserialized designWorkflow looks sane."""
     workflow: DesignWorkflow = Workflow.build(valid_data)
-    assert workflow.capability_id == UUID(valid_data['modules']['capability_id'])
+    assert workflow.design_space_id == UUID(valid_data['modules']['design_space_id'])
     assert workflow.processor_id == UUID(valid_data['modules']['processor_id'])
     assert workflow.predictor_id == UUID(valid_data['modules']['predictor_id'])
 

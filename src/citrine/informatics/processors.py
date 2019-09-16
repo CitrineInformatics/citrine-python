@@ -91,7 +91,7 @@ class EnumeratedProcessor(Serializable['EnumeratedProcessor'], Processor):
                  session: Optional[Session] = None):
         self.name: str = name
         self.description: str = description
-        self.max_size: int = max_size or 2**31 - 1  # = 2147483647 (max 32-bit integer)
+        self.max_size: int = max_size or 2 ** 31 - 1  # = 2147483647 (max 32-bit integer)
         self.session: Optional[Session] = session
 
     def _post_dump(self, data: dict) -> dict:
