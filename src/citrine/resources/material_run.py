@@ -160,9 +160,9 @@ class MaterialRunCollection(DataConceptsCollection[MaterialRun]):
         """
         Get the history associated with a material.
 
-        The history contains every single process, ingredient, measurement, and material that
-        went into creating this particular material run. The returned object is a material run
-        with all of its fields fully populated.
+        The history contains every single every process, ingredient and material that went into
+        the root material as well as the measurements that were performed on all of those
+        materials. The returned object is a material run with all of its fields fully populated.
 
         Parameters
         ----------

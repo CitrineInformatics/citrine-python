@@ -75,9 +75,9 @@ Get Material History
 ^^^^^^^^^^^^^^^^^^^^
 
 Starting with a specific root :class:`MaterialRun <citrine.resources.material_run.MaterialRun>`,
-you can retrieve the complete material history--every process, ingredient, material, and measurement
-that that went into the root material and that you have read access to. The method is
-:func:`~citrine.resources.material_run.MaterialRunCollection.get_history`,
+you can retrieve the complete material history--every process, ingredient and material that went
+into the root material, as well as the measurements that were performed on all of those materials
+The method is :func:`~citrine.resources.material_run.MaterialRunCollection.get_history`,
 and it requires you to know a unique identifier (scope/id pair) for the material.
 
 Updating
