@@ -4,8 +4,8 @@ from uuid import UUID
 from taurus.entity.bounds.integer_bounds import IntegerBounds
 
 from citrine.resources.material_run import MaterialRunCollection
-from ..utils.session import FakeSession, FakeCall
-from ..utils.factories import MaterialRunFactory, MaterialRunDataFactory, LinkByUIDFactory
+from tests.utils.session import FakeSession, FakeCall
+from tests.utils.factories import MaterialRunFactory, MaterialRunDataFactory, LinkByUIDFactory
 
 
 class TestMaterialRunCollection(unittest.TestCase):
@@ -144,9 +144,3 @@ class TestMaterialRunCollection(unittest.TestCase):
 
         self.assertEqual(1, len(runs))
         self.assertEqual(sample_run['uids'], runs[0].uids)
-
-
-
-
-
-

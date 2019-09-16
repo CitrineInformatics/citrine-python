@@ -13,7 +13,7 @@ from taurus.entity.object import MeasurementRun as TaurusMeasurementRun
 from taurus.entity.object import MaterialRun as TaurusMaterialRun
 from taurus.entity.object import MeasurementSpec as TaurusMeasurementSpec
 
-from ..utils.factories import MaterialRunDataFactory
+from tests.utils.factories import MaterialRunDataFactory
 
 
 def test_simple_deserialization():

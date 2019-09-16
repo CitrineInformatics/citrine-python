@@ -3,7 +3,7 @@ from dateutil.parser import parse
 
 from citrine.resources.project import Project, ProjectCollection
 from tests.utils.factories import ProjectDataFactory
-from ..utils.session import FakeCall, FakeSession
+from tests.utils.session import FakeCall, FakeSession
 
 
 class TestProject(unittest.TestCase):
