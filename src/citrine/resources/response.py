@@ -1,6 +1,9 @@
 class Response:
-    """Model for REST calls that return only responses (e.g. DELETE). This assumes nothing
-    other than that the response has an HTTP status code attached to it."""
+    """
+    Model for REST calls that return only responses (e.g. DELETE).
+
+    This assumes nothing other than that the response has an HTTP status code attached to it.
+    """
 
     def __init__(self, status_code: int = None, body: dict = None):
         self.status_code = status_code
