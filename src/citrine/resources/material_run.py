@@ -5,12 +5,15 @@ import json
 
 from citrine._utils.functions import set_default_uid
 from citrine._rest.resource import Resource
+from citrine._session import Session
 from citrine.resources.data_concepts import DataConcepts, DataConceptsCollection
 from citrine._serialization.properties import String, LinkOrElse, Mapping, Object
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Optional as PropertyOptional
 from taurus.client.json_encoder import TaurusEncoder
+from taurus.entity.dict_serializable import DictSerializable
 from taurus.entity.file_link import FileLink
+from taurus.entity.link_by_uid import LinkByUID
 from taurus.entity.object.process_run import ProcessRun as TaurusProcessRun
 from taurus.entity.object.material_run import MaterialRun as TaurusMaterialRun
 from taurus.entity.object.material_spec import MaterialSpec as TaurusMaterialSpec
@@ -81,6 +84,64 @@ class MaterialRun(DataConcepts, Resource['MaterialRun'], TaurusMaterialRun):
     def __str__(self):
         return '<Material run {!r}>'.format(self.name)
 
+    @classmethod
+    def _build_soft_linked_objects(cls, obj, obj_with_soft_links, session: Session = None):
+        """
+        Build the MeasurementRun objects that this MaterialRun has soft links to.
+
+        The measurement runs are found in `obj_with_soft_link`
+
+        This method modifies the object in place.
+
+        Parameters
+        ----------
+        obj: MaterialRun
+            A MaterialRun object that might be missing some links to MeasurementRun objects.
+        obj_with_soft_links: dict or \
+        :py:class:`DictSerializable <taurus.entity.dict_serializable.DictSerializable>`
+            A representation of the MaterialRun in which the MeasurementRuns are encoded.
+            We consider both the possibility that this is a dictionary with a 'measurements' key
+            and that it is a
+            :py:class:`DictSerializable <taurus.entity.dict_serializable.DictSerializable>`
+            (presumably a
+            :py:class:`TaurusMeasurementRun <taurus.entity.measurement_run.MeasurementRun>`)
+            with a .measurements field.
+        session: Session, optional
+            Citrine session used to connect to the database.
+
+        Returns
+        -------
+        None
+            The MaterialRun object is modified so that it has links to its MeasurementRuns.
+
+        """
+        measurements = None
+        # Get the measurements list, if it exists.
+        if isinstance(obj_with_soft_links, dict):
+            if obj_with_soft_links.get('measurements'):
+                measurements = obj_with_soft_links['measurements']
+        if isinstance(obj_with_soft_links, DictSerializable):
+            if hasattr(obj_with_soft_links, 'measurements'):
+                measurements = getattr(obj_with_soft_links, 'measurements')
+        if measurements is None:
+            return
+
+        from citrine.resources.measurement_run import MeasurementRun
+        for meas in measurements:
+            # Cycle through measurements and if they are not LinkByUID, build them and then
+            # set their `material` field to obj
+            if isinstance(meas, DictSerializable):
+                if isinstance(meas, LinkByUID):
+                    pass
+                setattr(meas, 'material', None)
+            elif isinstance(meas, dict):
+                if meas.get('type') == LinkByUID.typ:
+                    pass
+                meas['material'] = None
+            meas_object = MeasurementRun.build(meas, session)
+            setattr(meas_object, 'material', obj)
+        return
+
 
 class MaterialRunCollection(DataConceptsCollection[MaterialRun]):
     """Represents the collection of all material runs associated with a dataset."""
@@ -125,4 +186,4 @@ class MaterialRunCollection(DataConceptsCollection[MaterialRun]):
         # Rehydrate a taurus object based on the data
         model = loads(json.dumps([data['context'], data['root']], cls=TaurusEncoder))
         # Convert taurus objects into citrine-python objects
-        return MaterialRun.build(model.as_dict())
+        return MaterialRun.build(model)
