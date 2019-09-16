@@ -9,7 +9,7 @@ def valid_data():
     """Return valid data used for these tests."""
     return {"type": "ingredient_run", "material":
         {"type": "link_by_uid", "id": "5c913611-c304-4254-bad2-4797c952a3b3", "scope": "ID"},
-            "spec": None, "unique_label": "Good Ingredient Run", "labels": [],
+            "spec": None, "name": "Good Ingredient Run", "labels": [],
             "mass_fraction": None, "volume_fraction": None, "number_fraction": None,
             "absolute_quantity": None,
             "uids": {
