@@ -121,8 +121,28 @@ measurement run and settings its <cite>material</cite> field to this material ru
 <p>Represents the collection of all material runs associated with a dataset.</p>
 <dl class="method">
 <dt id="citrine.resources.material_run.MaterialRunCollection.get_history">
-<code class="sig-name descname">get_history</code><span class="sig-paren">(</span><em class="sig-param">scope</em>, <em class="sig-param">id</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.material_run.MaterialRunCollection.get_history" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_history</code><span class="sig-paren">(</span><em class="sig-param">scope</em>, <em class="sig-param">id</em><span class="sig-paren">)</span> &#x2192; Type[citrine.resources.material_run.MaterialRun]<a class="headerlink" href="#citrine.resources.material_run.MaterialRunCollection.get_history" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the history associated with a material.</p>
+<p>The history contains every single every process, ingredient and material that went into
+the root material as well as the measurements that were performed on all of those
+materials. The returned object is a material run with all of its fields fully populated.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>scope</strong> (<em>str</em>) – The scope used to locate the material.</p></li>
+<li><p><strong>id</strong> (<em>str</em>) – The unique id corresponding to <cite>scope</cite>. The lookup will be most efficient if you use
+the Citrine ID (scope=’id’) of the material.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A material run that has all of its fields fully populated with the processes,
+ingredients, measurements, and other materials that were involved in the history
+of the object.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#citrine.resources.material_run.MaterialRun" title="citrine.resources.material_run.MaterialRun">MaterialRun</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">

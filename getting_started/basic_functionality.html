@@ -80,9 +80,17 @@ The command <code class="docutils literal notranslate"><span class="pre">lens_pr
 There are currently three ways to filter, and they only work on data model objects:
 <a class="reference internal" href="../reference/citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConceptsCollection.filter_by_tags" title="citrine.resources.data_concepts.DataConceptsCollection.filter_by_tags"><code class="xref py py-func docutils literal notranslate"><span class="pre">filter_by_tags()</span></code></a>,
 <a class="reference internal" href="../reference/citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConceptsCollection.filter_by_attribute_bounds" title="citrine.resources.data_concepts.DataConceptsCollection.filter_by_attribute_bounds"><code class="xref py py-func docutils literal notranslate"><span class="pre">filter_by_attribute_bounds()</span></code></a>,
-and <a class="reference internal" href="../reference/citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConceptsCollection.filter_by_name" title="citrine.resources.data_concepts.DataConceptsCollection.filter_by_name"><code class="xref py py-func docutils literal notranslate"><span class="pre">filter_by_name()</span></code></a>.
-Filtering by tags or attribute bounds can be scoped to a dataset or to a project.
+and <a class="reference internal" href="../reference/citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConceptsCollection.filter_by_name" title="citrine.resources.data_concepts.DataConceptsCollection.filter_by_name"><code class="xref py py-func docutils literal notranslate"><span class="pre">filter_by_name()</span></code></a>.</p>
+<p>Filtering by tags or attribute bounds can be scoped to a dataset or to a project.
 Filtering by name must be scoped to a dataset.</p>
+</div>
+<div class="section" id="get-material-history">
+<h3>1.2.2.4. Get Material History<a class="headerlink" href="#get-material-history" title="Permalink to this headline">¶</a></h3>
+<p>Starting with a specific root <a class="reference internal" href="../reference/citrine.resources.material_run.html#citrine.resources.material_run.MaterialRun" title="citrine.resources.material_run.MaterialRun"><code class="xref py py-class docutils literal notranslate"><span class="pre">MaterialRun</span></code></a>,
+you can retrieve the complete material history–every process, ingredient and material that went
+into the root material, as well as the measurements that were performed on all of those materials
+The method is <a class="reference internal" href="../reference/citrine.resources.material_run.html#citrine.resources.material_run.MaterialRunCollection.get_history" title="citrine.resources.material_run.MaterialRunCollection.get_history"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_history()</span></code></a>,
+and it requires you to know a unique identifier (scope/id pair) for the material.</p>
 </div>
 </div>
 <div class="section" id="updating">

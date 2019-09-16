@@ -129,6 +129,26 @@ a condition template <code class="docutils literal notranslate"><span class="pre
 </pre></div>
 </div>
 </div>
+<div class="section" id="getting-a-material-history">
+<h2>1.4.6. Getting a material history<a class="headerlink" href="#getting-a-material-history" title="Permalink to this headline">¶</a></h2>
+<p>Continuing the above example, the following code would retrieve the material history for toluene by using its Citrine ID.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">scope</span> <span class="o">=</span> <span class="s1">&#39;id&#39;</span>
+<span class="n">uid</span> <span class="o">=</span> <span class="n">toluene</span><span class="o">.</span><span class="n">uids</span><span class="p">[</span><span class="n">scope</span><span class="p">]</span>
+<span class="n">toluene_history</span> <span class="o">=</span> <span class="n">solvents</span><span class="o">.</span><span class="n">material_runs</span><span class="o">.</span><span class="n">get_history</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="n">scope</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="n">uid</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><cite>toluene_history</cite> is a MaterialRun that can be traced back to see its spec, the measurement performed on it,
+that measurement’s spec, the process that created it, and that process’s spec.
+The following statements are true:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">toluene_history</span><span class="o">.</span><span class="n">measurements</span> <span class="o">==</span> <span class="p">[</span><span class="n">refractive_index_run</span><span class="p">]</span>
+<span class="n">toluene_history</span><span class="o">.</span><span class="n">measurements</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">spec</span> <span class="o">==</span> <span class="n">refractive_index_spec</span>
+<span class="n">toluene_history</span><span class="o">.</span><span class="n">process</span> <span class="o">==</span> <span class="n">buy_toluene_run</span>
+<span class="n">toluene_history</span><span class="o">.</span><span class="n">process</span><span class="o">.</span><span class="n">spec</span> <span class="o">==</span> <span class="n">toluene_history</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">process</span> <span class="o">==</span> <span class="n">buy_toluene</span>
+</pre></div>
+</div>
+<p>Note that the material history does <em>not</em> include a reference to the ingredients derived from
+the material. Traversal “forward in time” is not possible.</p>
+</div>
 </div>
 
 
