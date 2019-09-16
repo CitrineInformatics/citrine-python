@@ -1,4 +1,5 @@
 from json import dumps
+from urllib.parse import urlencode
 
 
 class FakeCall:
@@ -6,19 +7,27 @@ class FakeCall:
     Encapsulates a call to a FakeSession
     """
 
-    def __init__(self, method, path, json=None):
+    def __init__(self, method, path, json=None, params: dict = None):
         self.method = method
         self.path = path
         self.json = json
+        self.params = params or {}
 
     def __str__(self) -> str:
-        return f'{self.method} {self.path} : {dumps(self.json)}'
+        path = self.path
+        if self.params:
+            path = f'{self.path}?{urlencode(self.params)}'
+
+        return f'{self.method} {path} : {dumps(self.json)}'
 
     def __eq__(self, other) -> bool:
         if not isinstance(other, FakeCall):
             return NotImplemented
 
-        return self.method == other.method and self.path == other.path and self.json == other.json
+        return self.method == other.method and \
+            self.path == other.path and \
+            self.json == other.json and \
+            self.params == other.params
 
 
 class FakeSession:
@@ -41,7 +50,7 @@ class FakeSession:
         return self.calls[-1]
 
     def get_resource(self, path: str, *args, **kwargs) -> dict:
-        self.calls.append(FakeCall('GET', path))
+        self.calls.append(FakeCall('GET', path, params=kwargs.get('params')))
         return self.response
 
     def post_resource(self, path: str, json: dict, *args, **kwargs) -> dict:

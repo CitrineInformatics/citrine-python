@@ -2,6 +2,7 @@ import unittest
 from dateutil.parser import parse
 
 from citrine.resources.project import Project, ProjectCollection
+from tests.utils.factories import ProjectDataFactory
 from ..utils.session import FakeCall, FakeSession
 
 
@@ -87,15 +88,12 @@ class TestProjectCollection(unittest.TestCase):
     def test_project_registration(self):
         # Given
         create_time = parse('2019-09-10T00:00:00+00:00')
-        project_dict = {
-            'uid': '16fd2706-8baf-433b-82eb-8c7fada847da',
-            'name': 'testing',
-            'description': 'A sample project',
-            'status': 'CREATED',
-            'created_at': int(create_time.timestamp() * 1000)   # The lib expects ms since epoch, which is really odd
-
-        }
-        self.session.set_response({'project': project_dict})
+        project_data = ProjectDataFactory(
+            name='testing',
+            description='A sample project',
+            created_at=int(create_time.timestamp() * 1000)  # The lib expects ms since epoch, which is really odd
+        )
+        self.session.set_response({'project': project_data})
 
         # When
         created_project = self.collection.register('testing')
