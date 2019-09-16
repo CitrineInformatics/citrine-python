@@ -13,7 +13,7 @@ class Response:
             return "No HTTP status available"
 
     def _get_body_string(self):
-        if self.body is None:
+        if self.body is not None:
             return str(self.body)
         else:
             return "No body available"
