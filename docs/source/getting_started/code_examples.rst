@@ -80,7 +80,7 @@ Imagine you purchase some toluene, measure its index of refraction, and then use
 The code below converts those actions into data model objects: the process of purchasing, the material of toluene,
 the optical measurement, and the use of the toluene as an ingredient in a subsequent process.
 Specs relate the intent and runs relate what actually happened, which may or may not be the same.
-This assumes that you have a dataset named ``solvents_dataset`` and that you havealready created or retrieved the following:
+This assumes that you have a dataset named ``solvents_dataset`` and that you have already created or retrieved the following:
 a process template ``purchase_template``, a material template ``toluene_template``, a measurement template ``refractive_index_template``,
 a process template ``reaction_template``, a condition template ``temperature_template``,
 a parameter template ``wavelength_template``, and a property template ``refractive_index_template``.
