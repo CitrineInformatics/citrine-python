@@ -25,6 +25,7 @@ class _Uploader(object):
         self.aws_secret_access_key = ''
         self.aws_session_token = ''
         self.object_key = ''
+        self.s3_version = ''
 
 
 class FileLink(Resource['FileLink'], TaurusFileLink):
@@ -107,14 +108,14 @@ class FileCollection(Collection[FileLink]):
         """
         path = self._get_path() + "/uploads"
         extension = os.path.splitext(file_path)[1]
-        mimeType = mimetypes.types_map[extension]
+        mime_type = mimetypes.types_map[extension]
+        file_size = os.stat(file_path).st_size
         upload_json = {
             'files': [
                 {
                     'file_name': dest_name,
-                    'metadata': dict(),
-                    'mime_type': mimeType,
-                    'size': os.stat(file_path).st_size
+                    'mime_type': mime_type,
+                    'size': file_size
                 }
             ]
         }

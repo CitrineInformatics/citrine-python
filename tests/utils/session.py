@@ -57,6 +57,10 @@ class FakeSession:
         self.calls.append(FakeCall('POST', path, json))
         return self.response
 
+    def put_resource(self, path: str, json: dict, *args, **kwargs) -> dict:
+        self.calls.append(FakeCall('PUT', path, json))
+        return self.response
+
     def delete_resource(self, path: str) -> dict:
         self.calls.append(FakeCall('DELETE', path))
         return self.response
