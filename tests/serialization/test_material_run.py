@@ -20,24 +20,12 @@ from taurus.entity.object import ProcessRun as TaurusProcessRun
 from taurus.entity.object.ingredient_spec import IngredientSpec as TaurusIngredientSpec
 from taurus.entity.object.ingredient_run import IngredientRun as TaurusIngredientRun
 
-@pytest.fixture
-def valid_data():
-    """Return valid data used for these tests."""
-    return dict(
-        uids={'id': str(uuid4())},
-        name='Cake 1',
-        tags=[],
-        notes=None,
-        process={'type': 'link_by_uid', 'scope': 'id', 'id': str(uuid4())},
-        sample_type='experimental',
-        spec=None,
-        file_links=[],
-        type='material_run'
-    )
+from tests.utils.factories import MaterialRunDataFactory
 
 
-def test_simple_deserialization(valid_data):
+def test_simple_deserialization():
     """Ensure that a deserialized Material Run looks sane."""
+    valid_data: dict = MaterialRunDataFactory(name='Cake 1')
     material_run: MaterialRun = MaterialRun.build(valid_data)
     assert material_run.uids == {'id': valid_data['uids']['id']}
     assert material_run.name == 'Cake 1'
@@ -51,8 +39,9 @@ def test_simple_deserialization(valid_data):
     assert material_run.typ == 'material_run'
 
 
-def test_serialization(valid_data):
+def test_serialization():
     """Ensure that a serialized Material Run looks sane."""
+    valid_data: dict = MaterialRunDataFactory()
     material_run: MaterialRun = MaterialRun.build(valid_data)
     serialized = material_run.dump()
     assert serialized == valid_data
