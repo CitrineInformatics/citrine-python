@@ -120,7 +120,7 @@ a parameter template ``wavelength_template``, and a property template ``refracti
         conditions=[Condition("Room temperature", template=temperature_template, value=NominalReal(24, 'degC'))],
         parameters=[Parameter("Optical wavelength", template=wavelength_template, value=NominalReal(633, 'nm'))],
         properties=[Property("Refractive index", template=refractive_index_template, value=NominalReal(1.49, 'dimensionless'))]))
-    reation_run = solvents_dataset.process_runs.register(
+    reaction_run = solvents_dataset.process_runs.register(
         ProcessRun("A chemical reaction", spec=reaction_spec))
     toluene_ingredient = solvents_dataset.ingredient_runs.register(
         IngredientRun("Toluene solvent", spec=toluene_ingredient_spec,
