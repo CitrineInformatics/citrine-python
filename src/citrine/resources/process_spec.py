@@ -3,14 +3,16 @@ from typing import Optional, Dict, List, Type
 
 from citrine._utils.functions import set_default_uid
 from citrine._rest.resource import Resource
+from citrine._session import Session
 from citrine._serialization.properties import String, Mapping, Object, LinkOrElse
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Optional as PropertyOptional
 from citrine.resources.data_concepts import DataConcepts, DataConceptsCollection
-from citrine.resources.ingredient_spec import IngredientSpec
-from taurus.entity.file_link import FileLink
 from citrine.attributes.condition import Condition
 from citrine.attributes.parameter import Parameter
+from taurus.entity.dict_serializable import DictSerializable
+from taurus.entity.link_by_uid import LinkByUID
+from taurus.entity.file_link import FileLink
 from taurus.entity.object.process_spec import ProcessSpec as TaurusProcessSpec
 from taurus.entity.template.process_template import ProcessTemplate as TaurusProcessTemplate
 
@@ -37,8 +39,6 @@ class ProcessSpec(DataConcepts, Resource['ProcessSpec'], TaurusProcessSpec):
         Conditions under which this process spec occurs.
     parameters: List[Parameter], optional
         Parameters of this process spec.
-    ingredients: List[IngredientSpec], optional
-        Ingredient specs that act as inputs to this process spec.
     template: ProcessTemplate, optional
         A template bounding the valid values for this process's parameters and conditions.
     file_links: List[FileLink], optional
@@ -50,6 +50,10 @@ class ProcessSpec(DataConcepts, Resource['ProcessSpec'], TaurusProcessSpec):
         The material spec that this process spec produces. The link is established by creating
         the material spec and settings its `process` field to this process spec.
 
+    ingredients: List[IngredientSpec], optional
+        Ingredient specs that act as inputs to this process spec. The link is established by
+        creating each ingredient spec and setting its `process` field to this process spec.
+
     """
 
     _response_key = TaurusProcessSpec.typ  # 'process_spec"
@@ -60,8 +64,6 @@ class ProcessSpec(DataConcepts, Resource['ProcessSpec'], TaurusProcessSpec):
     notes = PropertyOptional(String(), 'notes')
     conditions = PropertyOptional(PropertyList(Object(Condition)), 'conditions')
     parameters = PropertyOptional(PropertyList(Object(Parameter)), 'parameters')
-    ingredients = PropertyOptional(
-        PropertyList(LinkOrElse()), 'ingredients')
     template = PropertyOptional(LinkOrElse(), 'template')
     file_links = PropertyOptional(PropertyList(Object(FileLink)), 'file_links')
     typ = String('type')
@@ -73,17 +75,51 @@ class ProcessSpec(DataConcepts, Resource['ProcessSpec'], TaurusProcessSpec):
                  notes: Optional[str] = None,
                  conditions: Optional[List[Condition]] = None,
                  parameters: Optional[List[Parameter]] = None,
-                 ingredients: Optional[List[IngredientSpec]] = None,
                  template: Optional[TaurusProcessTemplate] = None,
                  file_links: Optional[List[FileLink]] = None):
         DataConcepts.__init__(self, TaurusProcessSpec.typ)
         TaurusProcessSpec.__init__(self, name=name, uids=set_default_uid(uids),
                                    tags=tags, conditions=conditions, parameters=parameters,
-                                   ingredients=ingredients, template=template,
-                                   file_links=file_links, notes=notes)
+                                   template=template, file_links=file_links, notes=notes)
 
     def __str__(self):
         return '<Process spec {!r}>'.format(self.name)
+
+    @classmethod
+    def _build_discarded_objects(cls, obj, obj_with_soft_links, session: Session = None):
+        """
+        Build the IngredientSpec objects that this ProcessSpec has soft links to.
+
+        The ingredient specs are found in `obj_with_soft_link`
+
+        This method modifies the object in place.
+
+        Parameters
+        ----------
+        obj: ProcessSpec
+            A ProcessSpec object that might be missing some links to IngredientSpec objects.
+        obj_with_soft_links: dict or \
+        :py:class:`DictSerializable <taurus.entity.dict_serializable.DictSerializable>`
+            A representation of the ProcessSpec in which the IngredientSpecs are encoded.
+            We consider both the possibility that this is a dictionary with an 'ingredients' key
+            and that it is a
+            :py:class:`DictSerializable <taurus.entity.dict_serializable.DictSerializable>`
+            (presumably a
+            :py:class:`TaurusProcessSpec <taurus.entity.process_spec.ProcessSpec>`)
+            with a .ingredients field.
+        session: Session, optional
+            Citrine session used to connect to the database.
+
+        Returns
+        -------
+        None
+            The ProcessSpec object is modified so that it has links to its IngredientSpecs.
+
+        """
+        from citrine.resources.ingredient_spec import IngredientSpec
+        DataConcepts._build_list_of_soft_links(
+            obj, obj_with_soft_links, field='ingredients', reverse_field='process',
+            linked_type=IngredientSpec, session=session)
 
 
 class ProcessSpecCollection(DataConceptsCollection[ProcessSpec]):

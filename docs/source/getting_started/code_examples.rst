@@ -73,11 +73,13 @@ Create a linked process, material, and measurement
 --------------------------------------------------
 
 Imagine you purchase some toluene, measure its index of refraction, and then use it as an ingredient in a chemical reaction.
-The code below converts those actions into data model objects: the process of purchasing, the material of toluene, the optical measurement, and the use of the toluene as an ingredient in a subsequent process.
+The code below converts those actions into data model objects: the process of purchasing, the material of toluene,
+the optical measurement, and the use of the toluene as an ingredient in a subsequent process.
 Specs relate the intent and runs relate what actually happened, which may or may not be the same.
 This assumes that you have already created or retrieved the following:
 a process template ``purchase_template``, a material template ``toluene_template``, a measurement template ``refractive_index_template``,
-a condition template ``temperature_template``, a parameter template ``wavelength_template``, and a property template ``refractive_index_template``.
+a process template ``reaction_template``, a condition template ``temperature_template``,
+a parameter template ``wavelength_template``, and a property template ``refractive_index_template``.
 
 .. code-block:: python
 
@@ -98,7 +100,9 @@ a condition template ``temperature_template``, a parameter template ``wavelength
     refractive_index_spec = solvents.measurement_specs.register(MeasurementSpec("Index of refraction", template=refractive_index_template,
         conditions=[Condition("Room temperature", template=temperature_template, value=NominalReal(22, 'degC'))],
         parameters=[Parameter("Optical wavelength", template=wavelength_template, value=NominalReal(633, 'nm'))]))
-    toluene_ingredient_spec = solvents.ingredient_specs.register(IngredientSpec("Toluene solvent", absolute_quantity=NominalReal(34, 'mL')))
+    reaction_spec = solvents.process_specs.register(ProcessSpec("A chemical reaction", template=reaction_template))
+    toluene_ingredient_spec = solvents.ingredient_specs.register(
+        IngredientSpec("Toluene solvent", material=toluene_spec, process=reaction_spec, absolute_quantity=NominalReal(34, 'mL')))
 
     buy_toluene_run = solvents.process_runs.register(ProcessRun("Buy 1 liter of toluene", tags=["lot2019-140B"], spec=buy_toluene_spec))
     toluene = solvents.material_runs.register(MaterialRun("Toluene", process=buy_toluene_run, spec=toluene_spec))
@@ -107,5 +111,31 @@ a condition template ``temperature_template``, a parameter template ``wavelength
         conditions=[Condition("Room temperature", template=temperature_template, value=NominalReal(24, 'degC'))],
         parameters=[Parameter("Optical wavelength", template=wavelength_template, value=NominalReal(633, 'nm'))],
         properties=[Property("Refractive index", template=refractive_index_template, value=NominalReal(1.49, 'dimensionless'))]))
-    toluene_ingredient = solvents.ingredient_runs.register(IngredientRun("Toluene solvent", absolute_quantity=NominalReal(40, 'mL'), notes="I poured too much!"))
+    reation_run = solvents.process_runs.register(ProcessRun("A chemical reaction", spec=reaction_spec))
+    toluene_ingredient = solvents.ingredient_runs.register(
+        IngredientRun("Toluene solvent", spec=toluene_ingredient_spec, material=toluene, process=reation_run, absolute_quantity=NominalReal(40, 'mL'), notes="I poured too much!"))
 
+Getting a material history
+--------------------------
+
+Continuing the above example, the following code would retrieve the material history for toluene by using its Citrine ID.
+
+.. code-block:: python
+
+    scope = 'id'
+    uid = toluene.uids[scope]
+    toluene_history = solvents.material_runs.get_history(scope=scope, id=uid)
+
+`toluene_history` is a MaterialRun that can be traced back to see its spec, the measurement performed on it,
+that measurement's spec, the process that created it, and that process's spec.
+The following statements are true:
+
+.. code-block:: python
+
+    toluene_history.measurements == [refractive_index_run]
+    toluene_history.measurements[0].spec == refractive_index_spec
+    toluene_history.process == buy_toluene_run
+    toluene_history.process.spec == toluene_history.spec.process == buy_toluene
+
+Note that the material history does *not* include a reference to the ingredients derived from
+the material. Traversal "forward in time" is not possible.
