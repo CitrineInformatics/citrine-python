@@ -17,11 +17,10 @@ class _Uploader(object):
 
     def __init__(self):
         self.bucket = ''
-        self.key = ''
+        self.object_key = ''
         self.upload_id = ''
         self.region_name = ''
         self.aws_access_key_id = ''
-        self.aws_secret_access_token = ''
         self.aws_secret_access_key = ''
         self.aws_session_token = ''
         self.object_key = ''
@@ -110,6 +109,7 @@ class FileCollection(Collection[FileLink]):
         extension = os.path.splitext(file_path)[1]
         mime_type = mimetypes.types_map[extension]
         file_size = os.stat(file_path).st_size
+        assert isinstance(file_size, int)
         upload_json = {
             'files': [
                 {
