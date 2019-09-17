@@ -18,6 +18,7 @@ def valid_data():
         material={'type': 'material_run', 'name': 'flour', 'uids': {'id': str(uuid4())},
                   'tags': [], 'file_links': [], 'notes': None,
                   'process': None, 'sample_type': 'unknown', 'spec': None},
+        process=None,
         mass_fraction={'type': 'normal_real', 'mean': 0.5, 'std': 0.1, 'units': 'dimensionless'},
         volume_fraction=None,
         number_fraction=None,
@@ -37,6 +38,7 @@ def test_simple_deserialization(valid_data):
     assert ingredient_run.tags == []
     assert ingredient_run.notes is None
     assert ingredient_run.material.dump() == valid_data['material']
+    assert ingredient_run.process is None
     assert ingredient_run.mass_fraction == NormalReal(0.5, 0.1, '')
     assert ingredient_run.volume_fraction is None
     assert ingredient_run.number_fraction is None
