@@ -85,7 +85,7 @@ class MaterialRun(DataConcepts, Resource['MaterialRun'], TaurusMaterialRun):
         return '<Material run {!r}>'.format(self.name)
 
     @classmethod
-    def _build_soft_linked_objects(cls, obj, obj_with_soft_links, session: Session = None):
+    def _build_discarded_objects(cls, obj, obj_with_soft_links, session: Session = None):
         """
         Build the MeasurementRun objects that this MaterialRun has soft links to.
 
@@ -115,32 +115,10 @@ class MaterialRun(DataConcepts, Resource['MaterialRun'], TaurusMaterialRun):
             The MaterialRun object is modified so that it has links to its MeasurementRuns.
 
         """
-        measurements = None
-        # Get the measurements list, if it exists.
-        if isinstance(obj_with_soft_links, dict):
-            if obj_with_soft_links.get('measurements'):
-                measurements = obj_with_soft_links['measurements']
-        if isinstance(obj_with_soft_links, DictSerializable):
-            if hasattr(obj_with_soft_links, 'measurements'):
-                measurements = getattr(obj_with_soft_links, 'measurements')
-        if measurements is None:
-            return
-
         from citrine.resources.measurement_run import MeasurementRun
-        for meas in measurements:
-            # Cycle through measurements and if they are not LinkByUID, build them and then
-            # set their `material` field to obj
-            if isinstance(meas, DictSerializable):
-                if isinstance(meas, LinkByUID):
-                    pass
-                setattr(meas, 'material', None)
-            elif isinstance(meas, dict):
-                if meas.get('type') == LinkByUID.typ:
-                    pass
-                meas['material'] = None
-            meas_object = MeasurementRun.build(meas, session)
-            setattr(meas_object, 'material', obj)
-        return
+        DataConcepts._build_list_of_soft_links(
+            obj, obj_with_soft_links, field='measurements', reverse_field='material',
+            linked_type=MeasurementRun, session=session)
 
 
 class MaterialRunCollection(DataConceptsCollection[MaterialRun]):
