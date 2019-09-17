@@ -34,9 +34,10 @@
 <span id="citrine-resources-response-module"></span><h1>citrine.resources.response module<a class="headerlink" href="#module-citrine.resources.response" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="citrine.resources.response.Response">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.resources.response.</code><code class="sig-name descname">Response</code><span class="sig-paren">(</span><em class="sig-param">message: str</em>, <em class="sig-param">status: str</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.response.Response" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">citrine.resources.response.</code><code class="sig-name descname">Response</code><span class="sig-paren">(</span><em class="sig-param">status_code: int = None</em>, <em class="sig-param">body: dict = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.response.Response" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Model for REST calls that return only responses (e.g. DELETE).</p>
+<p>This assumes nothing other than that the response has an HTTP status code attached to it.</p>
 </dd></dl>
 
 </div>
