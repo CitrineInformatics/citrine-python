@@ -1,4 +1,4 @@
-git+https://github.com/CitrineInformatics/taurus.git@feature/pla-1336-ingredients-to-processes
+git+https://github.com/CitrineInformatics/taurus.git@develop
 requests==2.22.0
 pyjwt==1.7.1
 arrow==0.14.5
