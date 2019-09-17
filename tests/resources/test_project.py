@@ -31,6 +31,19 @@ def test_string_representation(project):
     assert "<Project 'Test Project'>" == str(project)
 
 
+def test_global_share_posts_content(project, session):
+    project.global_share('Dataset', '2')
+    assert 1 == session.num_calls
+    expect_call = FakeCall(
+        method='POST',
+        path='/projects/16fd2706-8baf-433b-82eb-8c7fada847da/global-share',
+        json={
+            'resource': {'type': 'Dataset', 'id': '2'}
+        }
+    )
+    assert expect_call == session.last_call
+
+
 def test_share_posts_content(project, session):
     project.share('1', 'MaterialTemplate', '2')
 
