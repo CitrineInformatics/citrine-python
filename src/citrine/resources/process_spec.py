@@ -10,8 +10,6 @@ from citrine._serialization.properties import Optional as PropertyOptional
 from citrine.resources.data_concepts import DataConcepts, DataConceptsCollection
 from citrine.attributes.condition import Condition
 from citrine.attributes.parameter import Parameter
-from taurus.entity.dict_serializable import DictSerializable
-from taurus.entity.link_by_uid import LinkByUID
 from taurus.entity.file_link import FileLink
 from taurus.entity.object.process_spec import ProcessSpec as TaurusProcessSpec
 from taurus.entity.template.process_template import ProcessTemplate as TaurusProcessTemplate
