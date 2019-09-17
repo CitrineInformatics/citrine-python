@@ -222,14 +222,17 @@ See (insert link) for a discussion of how to match on tags.</p>
 
 <dl class="method">
 <dt id="citrine.resources.data_concepts.DataConceptsCollection.get">
-<code class="sig-name descname">get</code><span class="sig-paren">(</span><em class="sig-param">uid: Union[uuid.UUID, str]</em><span class="sig-paren">)</span> &#x2192; ResourceType<a class="headerlink" href="#citrine.resources.data_concepts.DataConceptsCollection.get" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the element of the collection with Citrine ID equal to uid.</p>
+<code class="sig-name descname">get</code><span class="sig-paren">(</span><em class="sig-param">uid: Union[uuid.UUID, str], scope: str = 'id'</em><span class="sig-paren">)</span> &#x2192; ResourceType<a class="headerlink" href="#citrine.resources.data_concepts.DataConceptsCollection.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the element of the collection with ID equal to uid.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>uid</strong> (<em>Union</em><em>[</em><em>UUID</em><em>, </em><em>str</em><em>]</em>) – The Citrine ID.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>uid</strong> (<em>Union</em><em>[</em><em>UUID</em><em>, </em><em>str</em><em>]</em>) – The ID.</p></li>
+<li><p><strong>scope</strong> (<em>str</em>) – The scope of the uid, defaults to Citrine scope (‘id’)</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>An object with Citrine ID equal to uid.</p>
+<dd class="field-even"><p>An object with specified scope and uid</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><a class="reference internal" href="#citrine.resources.data_concepts.DataConcepts" title="citrine.resources.data_concepts.DataConcepts">DataConcepts</a></p>
@@ -261,7 +264,7 @@ See (insert link) for a discussion of how to match on tags.</p>
 <dt id="citrine.resources.data_concepts.DataConceptsCollection.register">
 <code class="sig-name descname">register</code><span class="sig-paren">(</span><em class="sig-param">model: ResourceType</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.data_concepts.DataConceptsCollection.register" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a new element of the collection or update an existing element.</p>
-<p>If the input model has a Citrine ID that corresponds to an existing object in the
+<p>If the input model has an ID that corresponds to an existing object in the
 database, then that object will be updated. Otherwise a new object will be created.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
