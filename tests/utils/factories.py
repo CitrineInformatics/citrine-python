@@ -43,6 +43,12 @@ class LinkByUIDInputFactory(factory.DictFactory):
     scope = 'id'
 
 
+class FileLinkDataFactory(factory.DictFactory):
+    url = factory.Faker('www.citrine.io')
+    filename = factory.Faker('materials.txt')
+    type = 'file_link'
+
+
 class MaterialRunDataFactory(factory.DictFactory):
     uids = factory.SubFactory(IDDataFactory)
     name = factory.Faker('color_name')

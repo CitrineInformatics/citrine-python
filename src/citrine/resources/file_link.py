@@ -32,9 +32,11 @@ class FileLink(Resource['FileLink'], TaurusFileLink):
 
     filename = String('filename')
     url = String('url')
+    typ = String('type')
 
     def __init__(self, filename, url):
         TaurusFileLink.__init__(self, filename, url)
+        self.typ = TaurusFileLink.typ
 
     def __str__(self):
         return '<File link {!r}>'.format(self.filename)
@@ -202,8 +204,6 @@ class FileCollection(Collection[FileLink]):
         except KeyError:
             raise RuntimeError("Upload completion response is missing some "
                                "fields: {}".format(complete_response))
-        file_link_dict = {
-            'filename': dest_name,
-            'url': self._get_path(file_id) + '/versions/{}'.format(version)
-        }
-        return FileLink.build(file_link_dict)
+
+        url = self._get_path(file_id) + '/versions/{}'.format(version)
+        return FileLink(filename=dest_name, url=url)

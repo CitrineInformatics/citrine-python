@@ -5,6 +5,7 @@ from botocore.exceptions import ClientError
 
 from citrine.resources.file_link import FileCollection, FileLink, _Uploader
 from tests.utils.session import FakeSession
+from tests.utils.factories import FileLinkDataFactory
 
 
 @pytest.fixture
@@ -19,6 +20,21 @@ def collection(session) -> FileCollection:
         dataset_id=uuid4(),
         session=session
     )
+
+
+@pytest.fixture
+def valid_data() -> dict:
+    return FileLinkDataFactory(url='www.citrine.io', filename='materials.txt')
+
+
+def test_build_equivalence(collection, valid_data):
+    """Test that build() works the same whether called from FileLink or FileCollection."""
+    assert collection.build(valid_data).dump() == FileLink.build(valid_data).dump()
+
+
+def test_string_representation(valid_data):
+    """Test the string representation."""
+    assert str(FileLink.build(valid_data)) == '<File link \'materials.txt\'>'
 
 
 @pytest.fixture
