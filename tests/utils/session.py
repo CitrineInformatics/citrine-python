@@ -16,9 +16,9 @@ class FakeCall:
     def __str__(self) -> str:
         path = self.path
         if self.params:
-            path = f'{self.path}?{urlencode(self.params)}'
+            path = '{}?{}'.format(self.path, urlencode(self.params))
 
-        return f'{self.method} {path} : {dumps(self.json)}'
+        return '{} {} : {}'.format(self.method, path, dumps(self.json))
 
     def __eq__(self, other) -> bool:
         if not isinstance(other, FakeCall):

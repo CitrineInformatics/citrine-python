@@ -40,7 +40,7 @@ def test_register_dataset(collection, session):
 
     expected_call = FakeCall(
         method='POST',
-        path=f'projects/{collection.project_id}/datasets',
+        path='projects/{}/datasets'.format(collection.project_id),
         json={'name': name, 'summary': summary, 'description': description}
     )
     assert session.num_calls == 1

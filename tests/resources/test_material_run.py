@@ -46,7 +46,11 @@ def test_get_history(collection, session):
 
     # Then
     assert 1 == session.num_calls
-    assert FakeCall('GET', f'projects/{collection.project_id}/material-history/id/1234') == session.last_call
+    expected_call = FakeCall(
+        method='GET',
+        path='projects/{}/material-history/id/1234'.format(collection.project_id)
+    )
+    assert expected_call == session.last_call
     assert 'Historic MR' == run.name
 
 
@@ -63,7 +67,7 @@ def test_get_material_run(collection, session):
     assert 1 == session.num_calls
     expected_call = FakeCall(
         method='GET',
-        path=f'projects/{collection.project_id}/datasets/{collection.dataset_id}/material-runs/id/{mr_id}'
+        path='projects/{}/datasets/{}/material-runs/id/{}'.format(collection.project_id, collection.dataset_id, mr_id)
     )
     assert expected_call == session.last_call
     assert 'Cake 2' == run.name
@@ -83,7 +87,7 @@ def test_list_material_runs(collection, session):
     assert 1 == session.num_calls
     expected_call = FakeCall(
         method='GET',
-        path=f'projects/{collection.project_id}/material-runs',
+        path='projects/{}/material-runs'.format(collection.project_id),
         params={
             'dataset_id': str(collection.dataset_id),
             'tags': []
@@ -106,7 +110,7 @@ def test_filter_by_name(collection, session):
     assert 1 == session.num_calls
     expected_call = FakeCall(
         method='GET',
-        path=f'projects/{collection.project_id}/material-runs/filter-by-name',
+        path='projects/{}/material-runs/filter-by-name'.format(collection.project_id),
         params={
             'dataset_id': str(collection.dataset_id),
             'name': 'test run',
@@ -132,7 +136,7 @@ def test_filter_by_attribute_bounds(collection, session):
     assert 1 == session.num_calls
     expected_call = FakeCall(
         method='POST',
-        path=f'projects/{collection.project_id}/material-runs/filter-by-attribute-bounds',
+        path='projects/{}/material-runs/filter-by-attribute-bounds'.format(collection.project_id),
         json={'attribute_bounds': {link.id: {'lower_bound': 1, 'upper_bound': 5, 'type': 'integer_bounds'}}}
     )
     assert expected_call == session.last_call
