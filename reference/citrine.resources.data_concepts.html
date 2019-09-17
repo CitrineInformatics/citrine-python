@@ -106,7 +106,8 @@ have a <cite>type</cite> field that corresponds to the response key of this clas
 of one of the classes that extends <a class="reference internal" href="#citrine.resources.data_concepts.DataConcepts" title="citrine.resources.data_concepts.DataConcepts"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataConcepts</span></code></a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>data</strong> (<em>dict</em>) – A dictionary corresponding to a serialized data concepts object of unknown type.</p>
+<dd class="field-odd"><p><strong>data</strong> (<em>dict</em>) – A dictionary corresponding to a serialized data concepts object of unknown type.
+This method will also work if data is a deserialized Taurus object.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The class corresponding to data.</p>

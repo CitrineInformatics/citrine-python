@@ -35,7 +35,7 @@
 <p>Resources that represent process run data objects.</p>
 <dl class="class">
 <dt id="citrine.resources.process_run.ProcessRun">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.resources.process_run.</code><code class="sig-name descname">ProcessRun</code><span class="sig-paren">(</span><em class="sig-param">name: str</em>, <em class="sig-param">uids: Optional[Dict[str</em>, <em class="sig-param">str]] = None</em>, <em class="sig-param">tags: Optional[List[str]] = None</em>, <em class="sig-param">notes: Optional[str] = None</em>, <em class="sig-param">conditions: Optional[List[citrine.attributes.condition.Condition]] = None</em>, <em class="sig-param">parameters: Optional[List[citrine.attributes.parameter.Parameter]] = None</em>, <em class="sig-param">ingredients: Optional[List[citrine.resources.ingredient_run.IngredientRun]] = None</em>, <em class="sig-param">spec: Optional[taurus.entity.object.process_spec.ProcessSpec] = None</em>, <em class="sig-param">file_links: Optional[List[taurus.entity.file_link.FileLink]] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.process_run.ProcessRun" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">citrine.resources.process_run.</code><code class="sig-name descname">ProcessRun</code><span class="sig-paren">(</span><em class="sig-param">name: str</em>, <em class="sig-param">uids: Optional[Dict[str</em>, <em class="sig-param">str]] = None</em>, <em class="sig-param">tags: Optional[List[str]] = None</em>, <em class="sig-param">notes: Optional[str] = None</em>, <em class="sig-param">conditions: Optional[List[citrine.attributes.condition.Condition]] = None</em>, <em class="sig-param">parameters: Optional[List[citrine.attributes.parameter.Parameter]] = None</em>, <em class="sig-param">spec: Optional[taurus.entity.object.process_spec.ProcessSpec] = None</em>, <em class="sig-param">file_links: Optional[List[taurus.entity.file_link.FileLink]] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.process_run.ProcessRun" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConcepts" title="citrine.resources.data_concepts.DataConcepts"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.resources.data_concepts.DataConcepts</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.resource.Resource</span></code>, <a class="reference external" href="https://citrineinformatics.github.io/taurus/reference/taurus.entity.object.process_run.html#taurus.entity.object.process_run.ProcessRun" title="(in Taurus)"><code class="xref py py-class docutils literal notranslate"><span class="pre">taurus.entity.object.process_run.ProcessRun</span></code></a></p>
 <p>A process run.</p>
 <p>Processes transform zero or more input materials into exactly one output material.</p>
@@ -50,7 +50,6 @@ which will always be a uuid4.</p></li>
 <li><p><strong>notes</strong> (<em>str</em><em>, </em><em>optional</em>) – Long-form notes about the process run.</p></li>
 <li><p><strong>conditions</strong> (<em>List</em><em>[</em><a class="reference internal" href="citrine.attributes.condition.html#citrine.attributes.condition.Condition" title="citrine.attributes.condition.Condition"><em>Condition</em></a><em>]</em><em>, </em><em>optional</em>) – Conditions under which this process run occurs.</p></li>
 <li><p><strong>parameters</strong> (<em>List</em><em>[</em><a class="reference internal" href="citrine.attributes.parameter.html#citrine.attributes.parameter.Parameter" title="citrine.attributes.parameter.Parameter"><em>Parameter</em></a><em>]</em><em>, </em><em>optional</em>) – Parameters of this process run.</p></li>
-<li><p><strong>ingredients</strong> (<em>List</em><em>[</em><a class="reference internal" href="citrine.resources.ingredient_run.html#citrine.resources.ingredient_run.IngredientRun" title="citrine.resources.ingredient_run.IngredientRun"><em>IngredientRun</em></a><em>]</em><em>, </em><em>optional</em>) – Ingredient runs that act as inputs to this process run.</p></li>
 <li><p><strong>spec</strong> (<a class="reference internal" href="citrine.resources.process_spec.html#citrine.resources.process_spec.ProcessSpec" title="citrine.resources.process_spec.ProcessSpec"><em>ProcessSpec</em></a>) – Spec for this process run.</p></li>
 <li><p><strong>file_links</strong> (<em>List</em><em>[</em><em>FileLink</em><em>]</em><em>, </em><em>optional</em>) – Links to associated files, with resource paths into the files API.</p></li>
 </ul>
@@ -69,6 +68,18 @@ the material run and settings its <cite>process</cite> field to this process run
 </dd></dl>
 
 <dl class="attribute">
+<dt id="citrine.resources.process_run.ProcessRun.ingredients">
+<code class="sig-name descname">ingredients</code><a class="headerlink" href="#citrine.resources.process_run.ProcessRun.ingredients" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ingredient runs that act as inputs to this process run. The link is established by
+creating each ingredient run and setting its <cite>process</cite> field to this process run.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>List[<a class="reference internal" href="citrine.resources.ingredient_run.html#citrine.resources.ingredient_run.IngredientRun" title="citrine.resources.ingredient_run.IngredientRun">IngredientRun</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
 <dt id="citrine.resources.process_run.ProcessRun.conditions">
 <code class="sig-name descname">conditions</code><em class="property"> = None</em><a class="headerlink" href="#citrine.resources.process_run.ProcessRun.conditions" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -76,11 +87,6 @@ the material run and settings its <cite>process</cite> field to this process run
 <dl class="attribute">
 <dt id="citrine.resources.process_run.ProcessRun.file_links">
 <code class="sig-name descname">file_links</code><em class="property"> = None</em><a class="headerlink" href="#citrine.resources.process_run.ProcessRun.file_links" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="citrine.resources.process_run.ProcessRun.ingredients">
-<code class="sig-name descname">ingredients</code><em class="property"> = None</em><a class="headerlink" href="#citrine.resources.process_run.ProcessRun.ingredients" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">

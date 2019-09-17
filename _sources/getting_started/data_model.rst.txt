@@ -19,13 +19,16 @@ The Basic Objects: Processes, Materials, Measurements
 * An ingredient is a material and its amount that is used as an input to a process.
 
 The links between objects must be established in a specific direction.
-A process specifies its input ingredients, but does not specify the material it produces.
+An ingredient specifies both the material it is derived from and the process it is used in.
+A process does not specify either its input ingredients or the material it produces.
 A material specifies the process that creates it, but does not specify what measurements are done on it or how it is used as an ingredient.
-Measurements and ingredients specify the material that they relate to.
+Measurements specify the material that they are performed on.
 
 .. hint::
 
-    First create the process, *then* create the material, then create any measurements on or ingredients derived from that material.
+    First create the process, *then* create the output material, then create any measurements done on that material.
+    If the material is used as an ingredient in a subsequent process, first create the new process, then create the ingredient
+    that describes the materials role in the process.
 
 We make a first class distinction between intent (specs) and reality (runs).
 The same spec can be used to create many runs.
