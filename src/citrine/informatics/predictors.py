@@ -1,5 +1,5 @@
 """Tools for working with Predictors."""
-from typing import List, Optional, Type
+from typing import List, Optional, Type, Tuple
 from uuid import UUID
 
 from citrine._serialization import properties
@@ -7,6 +7,7 @@ from citrine._serialization.polymorphic_serializable import PolymorphicSerializa
 from citrine._serialization.serializable import Serializable
 from citrine._session import Session
 from citrine.informatics.descriptors import Descriptor
+from citrine.informatics.reports import Report
 
 __all__ = ['Predictor', 'ParaboloidPredictor', 'SimpleMLPredictor']
 
@@ -103,7 +104,8 @@ class SimpleMLPredictor(Serializable['SimplePredictor'], Predictor):
                  outputs: List[Descriptor],
                  latent_variables: List[Descriptor],
                  training_data: str,
-                 session: Optional[Session] = None):
+                 session: Optional[Session] = None,
+                 report: Optional[Report] = None):
         self.name: str = name
         self.description: str = description
         self.inputs: List[Descriptor] = inputs
@@ -111,6 +113,7 @@ class SimpleMLPredictor(Serializable['SimplePredictor'], Predictor):
         self.latent_variables: List[Descriptor] = latent_variables
         self.training_data: str = training_data
         self.session: Optional[Session] = session
+        self.report: Optional[Report] = report
 
     def _post_dump(self, data: dict) -> dict:
         data['display_name'] = data['config']['name']
