@@ -81,7 +81,7 @@ def test_list_material_runs(collection, session):
     })
 
     # When
-    runs = collection.list()
+    runs = collection.list(page=1, per_page=10)
 
     # Then
     assert 1 == session.num_calls
@@ -90,7 +90,9 @@ def test_list_material_runs(collection, session):
         path='projects/{}/material-runs'.format(collection.project_id),
         params={
             'dataset_id': str(collection.dataset_id),
-            'tags': []
+            'tags': [],
+            'page': 1,
+            'per_page': 10
         }
     )
     assert expected_call == session.last_call
@@ -104,7 +106,7 @@ def test_filter_by_name(collection, session):
     session.set_response({'contents': [sample_run]})
 
     # When
-    runs = collection.filter_by_name('test run')
+    runs = collection.filter_by_name('test run', page=1, per_page=10)
 
     # Then
     assert 1 == session.num_calls
@@ -114,7 +116,9 @@ def test_filter_by_name(collection, session):
         params={
             'dataset_id': str(collection.dataset_id),
             'name': 'test run',
-            'exact': False
+            'exact': False,
+            "page": 1,
+            "per_page": 10
         }
     )
     assert expected_call == session.last_call
@@ -130,14 +134,21 @@ def test_filter_by_attribute_bounds(collection, session):
     bounds = {link: IntegerBounds(1, 5)}
 
     # When
-    runs = collection.filter_by_attribute_bounds(bounds)
+    runs = collection.filter_by_attribute_bounds(bounds, page=1, per_page=10)
 
     # Then
     assert 1 == session.num_calls
     expected_call = FakeCall(
         method='POST',
         path='projects/{}/material-runs/filter-by-attribute-bounds'.format(collection.project_id),
-        json={'attribute_bounds': {link.id: {'lower_bound': 1, 'upper_bound': 5, 'type': 'integer_bounds'}}}
+        json={
+            'attribute_bounds': {
+                link.id: {'lower_bound': 1, 'upper_bound': 5, 'type': 'integer_bounds'}
+            },
+            "page": 1,
+            "per_page": 10,
+            "dataset_id": str(collection.dataset_id)
+        }
     )
     assert expected_call == session.last_call
     assert 1 == len(runs)

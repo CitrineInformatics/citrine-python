@@ -548,18 +548,16 @@ class DataConceptsCollection(Collection[ResourceType]):
             template_id = get_object_id(key)
             attribute_bounds_dict[template_id] = value.as_dict()
         body = {'attribute_bounds': attribute_bounds_dict}
-        params = {}
         if self.dataset_id is not None:
-            params['dataset_id'] = str(self.dataset_id)
+            body['dataset_id'] = str(self.dataset_id)
         if page is not None:
-            params['page'] = page
+            body['page'] = page
         if per_page is not None:
-            params['per_page'] = per_page
+            body['per_page'] = per_page
 
         response = self.session.post_resource(
             self._get_path(ignore_dataset=True) + "/filter-by-attribute-bounds",
-            json=body,
-            params=params)
+            json=body)
         return [self.build(content) for content in response["contents"]]
 
     def filter_by_name(self, name: str, exact: bool = False,
