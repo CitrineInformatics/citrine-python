@@ -1,5 +1,7 @@
 import pytest
 from uuid import uuid4
+from mock import patch, Mock
+from botocore.exceptions import ClientError
 
 from citrine.resources.file_link import FileCollection, FileLink, _Uploader
 from tests.utils.session import FakeSession
@@ -21,7 +23,7 @@ def collection(session) -> FileCollection:
 
 @pytest.fixture
 def uploader() -> _Uploader:
-    uploader = _Uploader
+    uploader = _Uploader()
     uploader.bucket = 'citrine-datasvc'
     uploader.key = '334455'
     uploader.upload_id = 'dea3a-555'
@@ -33,6 +35,36 @@ def uploader() -> _Uploader:
     uploader.object_key = '234787521--abcde'
     uploader.s3_version = '2'
     return uploader
+
+
+class MockClient(object):
+    """A mock version of the S3 client that has a put_object method."""
+
+    def __init__(self, put_object_output):
+        self.put_object_output = put_object_output
+
+    def put_object(self, *args, **kwargs):
+        """Return the expected output of the real client's put_object method."""
+        return self.put_object_output
+
+
+@patch('citrine.resources.file_link.open')
+def test_upload_file(_, collection, uploader):
+    """Test uploading a file."""
+    # A successful file upload sets uploader.s3_version
+    new_version = '3'
+    with patch('citrine.resources.file_link.boto3_client',
+               return_value=MockClient({'VersionId': new_version})):
+        new_uploader = collection._upload_file('foo.txt', uploader)
+        assert new_uploader.s3_version == new_version
+
+    # If the client throws a ClientError when attempting to upload, throw a RuntimeError
+    bad_client = Mock()
+    bad_client.put_object.side_effect = ClientError(error_response={}, operation_name='put')
+    with patch('citrine.resources.file_link.boto3_client',
+               return_value=bad_client):
+        with pytest.raises(RuntimeError):
+            collection._upload_file('foo.txt', uploader)
 
 
 def test_complete_upload(collection, session, uploader):
