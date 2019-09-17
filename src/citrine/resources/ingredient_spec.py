@@ -46,7 +46,7 @@ class IngredientSpec(DataConcepts, Resource['IngredientSpec'], TaurusIngredientS
     absolute_quantity: :py:class:`ContinuousValue \
     <taurus.entity.value.continuous_value.ContinuousValue>`, optional
         The absolute quantity of the ingredient in the process.
-    name: str, optional
+    name: str
         Label on the ingredient that is unique within the process that contains it.
     labels: List[str], optional
         Additional labels on the ingredient that must be unique.

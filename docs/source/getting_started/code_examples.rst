@@ -115,3 +115,27 @@ a parameter template ``wavelength_template``, and a property template ``refracti
     toluene_ingredient = solvents.ingredient_runs.register(
         IngredientRun("Toluene solvent", spec=toluene_ingredient_spec, material=toluene, process=reation_run, absolute_quantity=NominalReal(40, 'mL'), notes="I poured too much!"))
 
+Getting a material history
+--------------------------
+
+Continuing the above example, the following code would retrieve the material history for toluene by using its Citrine ID.
+
+.. code-block:: python
+
+    scope = 'id'
+    uid = toluene.uids[scope]
+    toluene_history = solvents.material_runs.get_history(scope=scope, id=uid)
+
+`toluene_history` is a MaterialRun that can be traced back to see its spec, the measurement performed on it,
+that measurement's spec, the process that created it, and that process's spec.
+The following statements are true:
+
+.. code-block:: python
+
+    toluene_history.measurements == [refractive_index_run]
+    toluene_history.measurements[0].spec == refractive_index_spec
+    toluene_history.process == buy_toluene_run
+    toluene_history.process.spec == toluene_history.spec.process == buy_toluene
+
+Note that the material history does *not* include a reference to the ingredients derived from
+the material. Traversal "forward in time" is not possible.
