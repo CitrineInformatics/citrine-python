@@ -70,4 +70,4 @@ class Collection(Generic[ResourceType]):
         """Delete a particular element of the collection."""
         url = self._get_path(uid)
         data = self.session.delete_resource(url)
-        return Response(**data)
+        return Response(body=data)
