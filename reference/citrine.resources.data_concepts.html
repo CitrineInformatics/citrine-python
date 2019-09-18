@@ -157,19 +157,23 @@ but when using <a class="reference internal" href="#citrine.resources.data_conce
 
 <dl class="method">
 <dt id="citrine.resources.data_concepts.DataConceptsCollection.filter_by_attribute_bounds">
-<code class="sig-name descname">filter_by_attribute_bounds</code><span class="sig-paren">(</span><em class="sig-param">attribute_bounds: Dict[Union[taurus.entity.template.attribute_template.AttributeTemplate, taurus.entity.link_by_uid.LinkByUID], taurus.entity.bounds.base_bounds.BaseBounds]</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.data_concepts.DataConceptsCollection.filter_by_attribute_bounds" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">filter_by_attribute_bounds</code><span class="sig-paren">(</span><em class="sig-param">attribute_bounds: Dict[Union[taurus.entity.template.attribute_template.AttributeTemplate, taurus.entity.link_by_uid.LinkByUID], taurus.entity.bounds.base_bounds.BaseBounds], page: Optional[int] = None, per_page: Optional[int] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.data_concepts.DataConceptsCollection.filter_by_attribute_bounds" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get all objects in the collection with attributes within certain bounds.</p>
 <p>Currently only one attribute and one bounds on that attribute is supported.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>attribute_bounds</strong> (Dict[Union[AttributeTemplate,         <a class="reference external" href="https://citrineinformatics.github.io/taurus/reference/taurus.entity.link_by_uid.html#taurus.entity.link_by_uid.LinkByUID" title="(in Taurus)"><code class="xref py py-class docutils literal notranslate"><span class="pre">LinkByUID</span></code></a>],         <a class="reference external" href="https://citrineinformatics.github.io/taurus/reference/taurus.entity.bounds.base_bounds.html#taurus.entity.bounds.base_bounds.BaseBounds" title="(in Taurus)"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseBounds</span></code></a>]) – A dictionary from attributes to the bounds on that attribute.
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>attribute_bounds</strong> (Dict[Union[AttributeTemplate,         <a class="reference external" href="https://citrineinformatics.github.io/taurus/reference/taurus.entity.link_by_uid.html#taurus.entity.link_by_uid.LinkByUID" title="(in Taurus)"><code class="xref py py-class docutils literal notranslate"><span class="pre">LinkByUID</span></code></a>],         <a class="reference external" href="https://citrineinformatics.github.io/taurus/reference/taurus.entity.bounds.base_bounds.html#taurus.entity.bounds.base_bounds.BaseBounds" title="(in Taurus)"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseBounds</span></code></a>]) – A dictionary from attributes to the bounds on that attribute.
 Currently only real and integer bounds are supported.
 Each attribute may be represented as an AttributeTemplate (PropertyTemplate,
 ParameterTemplate, or ConditionTemplate) or as a LinkByUID,
 but in either case there must be a uid and it must correspond to an
 AttributeTemplate that exists in the database.
 Only the uid is passed, so if you would like to update an attribute template you
-must register that change to the database before you can use it to filter.</p>
+must register that change to the database before you can use it to filter.</p></li>
+<li><p><strong>page</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>) – The page of results to list, 1-indexed (i.e. the first page is page=1)</p></li>
+<li><p><strong>per_page</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>) – The number of results to list per page</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>List of all objects in this collection that both have the specified attribute
@@ -183,7 +187,7 @@ and have values within the specified bounds.</p>
 
 <dl class="method">
 <dt id="citrine.resources.data_concepts.DataConceptsCollection.filter_by_name">
-<code class="sig-name descname">filter_by_name</code><span class="sig-paren">(</span><em class="sig-param">name: str</em>, <em class="sig-param">exact: bool = False</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.data_concepts.DataConceptsCollection.filter_by_name" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">filter_by_name</code><span class="sig-paren">(</span><em class="sig-param">name: str</em>, <em class="sig-param">exact: bool = False</em>, <em class="sig-param">page: Optional[int] = None</em>, <em class="sig-param">per_page: Optional[int] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.data_concepts.DataConceptsCollection.filter_by_name" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get all objects with specified name in this dataset.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -191,6 +195,8 @@ and have values within the specified bounds.</p>
 <li><p><strong>name</strong> (<em>str</em>) – case-insensitive object name prefix to search.</p></li>
 <li><p><strong>exact</strong> (<em>bool</em>) – Set to True to change prefix search to exact search (but still case-insensitive).
 Default is False.</p></li>
+<li><p><strong>page</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>) – The page of results to list, 1-indexed (i.e. the first page is page=1)</p></li>
+<li><p><strong>per_page</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>) – The number of results to list per page</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -204,11 +210,15 @@ Default is False.</p></li>
 
 <dl class="method">
 <dt id="citrine.resources.data_concepts.DataConceptsCollection.filter_by_tags">
-<code class="sig-name descname">filter_by_tags</code><span class="sig-paren">(</span><em class="sig-param">tags: List[str]</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.data_concepts.DataConceptsCollection.filter_by_tags" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">filter_by_tags</code><span class="sig-paren">(</span><em class="sig-param">tags: List[str], page: Optional[int] = None, per_page: Optional[int] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.data_concepts.DataConceptsCollection.filter_by_tags" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get all objects in the collection that match any one of a list of tags.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>tags</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – a list of strings, each one a tag that an object can match.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tags</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – a list of strings, each one a tag that an object can match.</p></li>
+<li><p><strong>page</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>) – The page of results to list, 1-indexed (i.e. the first page is page=1)</p></li>
+<li><p><strong>per_page</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>) – The number of results to list per page</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>Every object in this collection that matches one of the tags.
@@ -248,14 +258,20 @@ See (insert link) for a discussion of how to match on tags.</p>
 
 <dl class="method">
 <dt id="citrine.resources.data_concepts.DataConceptsCollection.list">
-<code class="sig-name descname">list</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.data_concepts.DataConceptsCollection.list" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">list</code><span class="sig-paren">(</span><em class="sig-param">page: Optional[int] = None</em>, <em class="sig-param">per_page: Optional[int] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.data_concepts.DataConceptsCollection.list" title="Permalink to this definition">¶</a></dt>
 <dd><p>List all visible elements of the collection.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>Every object in this collection.</p>
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>page</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>) – The page of results to list, 1-indexed (i.e. the first page is page=1)</p></li>
+<li><p><strong>per_page</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>) – The number of results to list per page</p></li>
+</ul>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>List[<a class="reference internal" href="#citrine.resources.data_concepts.DataConcepts" title="citrine.resources.data_concepts.DataConcepts">DataConcepts</a>]</p>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Every object in this collection.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>List[<a class="reference internal" href="#citrine.resources.data_concepts.DataConcepts" title="citrine.resources.data_concepts.DataConcepts">DataConcepts</a>]</p>
 </dd>
 </dl>
 </dd></dl>
