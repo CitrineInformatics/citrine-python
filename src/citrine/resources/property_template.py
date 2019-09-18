@@ -23,12 +23,14 @@ class PropertyTemplate(DataConcepts, Resource['PropertyTemplate'], TaurusPropert
         Bounds circumscribe the values that are valid according to this property template.
     description: str, optional
         A long-form description of the property template.
-    uids: Map[str, str], optional
-        A collection of unique identifiers, each a key-value pair. The key is the "scope"
-        and the value is the identifier. The scope "id" is reserved for the internal Citrine ID,
-        which will always be a uuid4.
-    tags: List[str], optional
-        A set of tags for this property template. Tags can be used for filtering.
+    uids: Map[str, str]
+        A collection of
+        `unique IDs <https://citrineinformatics.github.io/taurus-documentation/
+        specification/unique-identifiers/>`_.
+    tags: List[str]
+        `Tags <https://citrineinformatics.github.io/taurus-documentation/specification/tags/>`_
+        are hierarchical strings that store information about an entity. They can be used
+        for filtering and discoverability.
 
     """
 
