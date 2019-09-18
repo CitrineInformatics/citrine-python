@@ -60,12 +60,22 @@ class Property(typing.Generic[DeserializedType, SerializedType]):
         """Perform deserialization."""
 
     def deserialize_from_dict(self, data: dict) -> DeserializedType:
-        value = data.get(self.serialization_path, self.default)
+        value = data
+        fields = self.serialization_path.split('.')
+        for field in fields:
+            value = value.get(field, self.default)
         return self.deserialize(value)
 
     def serialize_to_dict(self, data: dict, value: DeserializedType) -> dict:
-        data[self.serialization_path] = self.serialize(value)
-        return data
+        if self.serialization_path is None:
+            raise ValueError('No serialization path set!')
+        else:
+            _data = data
+            fields = self.serialization_path.split('.')
+            for field in fields[:-1]:
+                _data = _data.setdefault(field, {})
+            _data[fields[-1]] = self.serialize(value)
+            return data
 
     def __get__(self, obj, objtype=None) -> DeserializedType:
         """Property getter, deferring to the getter of the parent class, if applicable."""
