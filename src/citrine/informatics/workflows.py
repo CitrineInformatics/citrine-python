@@ -8,6 +8,8 @@ from citrine._rest.resource import Resource
 from citrine._session import Session
 from citrine.resources.workflow_executions import WorkflowExecutionCollection
 
+__all__ = ['Workflow', 'DesignWorkflow']
+
 
 class Workflow(PolymorphicSerializable['Workflow']):
     """A Citrine Workflow."""
@@ -60,6 +62,6 @@ class DesignWorkflow(Resource['DesignWorkflow'], Workflow):
     @property
     def executions(self) -> WorkflowExecutionCollection:
         """Return a resource representing all visible executions of this workflow."""
-        if not hasattr(self, 'project_id'):
+        if getattr(self, 'project_id', None) is None:
             raise AttributeError('Cannot initialize execution without project reference!')
         return WorkflowExecutionCollection(self.project_id, self.uid, self.session)

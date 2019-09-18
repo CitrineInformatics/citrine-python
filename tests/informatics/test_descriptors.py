@@ -19,3 +19,8 @@ def test_deser_from_parent(descriptor):
     descriptor_data = descriptor.dump()
     descriptor_deserialized = Descriptor.build(descriptor_data)
     assert descriptor == descriptor_deserialized
+
+
+def test_invalid_eq(descriptor):
+    other = None
+    assert not descriptor == other
