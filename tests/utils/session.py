@@ -50,7 +50,7 @@ class FakeSession:
         return self.response
 
     def post_resource(self, path: str, json: dict, *args, **kwargs) -> dict:
-        self.calls.append(FakeCall('POST', path, json))
+        self.calls.append(FakeCall('POST', path, json, params=kwargs.get('params')))
         return self.response
 
     def put_resource(self, path: str, json: dict, *args, **kwargs) -> dict:

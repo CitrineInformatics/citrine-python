@@ -141,13 +141,15 @@ def test_filter_by_attribute_bounds(collection, session):
     expected_call = FakeCall(
         method='POST',
         path='projects/{}/material-runs/filter-by-attribute-bounds'.format(collection.project_id),
-        json={
-            'attribute_bounds': {
-                link.id: {'lower_bound': 1, 'upper_bound': 5, 'type': 'integer_bounds'}
-            },
+        params={
             "page": 1,
             "per_page": 10,
             "dataset_id": str(collection.dataset_id)
+        },
+        json={
+            'attribute_bounds': {
+                link.id: {'lower_bound': 1, 'upper_bound': 5, 'type': 'integer_bounds'}
+            }
         }
     )
     assert expected_call == session.last_call
