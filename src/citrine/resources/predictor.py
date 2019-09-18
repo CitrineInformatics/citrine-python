@@ -32,7 +32,7 @@ class PredictorCollection(Collection[Predictor]):
             try:
                 predictor.report = self._report_generator.get(data['id'])
             except CitrineException:
-                pass
+                predictor.report = None
         return predictor
 
     def register(self, model: CreationType) -> CreationType:
