@@ -9,6 +9,7 @@ Submodules
    citrine.resources.condition_template
    citrine.resources.data_concepts
    citrine.resources.dataset
+   citrine.resources.file_link
    citrine.resources.ingredient_run
    citrine.resources.ingredient_spec
    citrine.resources.material_run

@@ -1,0 +1,161 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>citrine.resources.file_link module &#8212; Citrine Python 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-citrine.resources.file_link">
+<span id="citrine-resources-file-link-module"></span><h1>citrine.resources.file_link module<a class="headerlink" href="#module-citrine.resources.file_link" title="Permalink to this headline">¶</a></h1>
+<p>A collection of FileLink objects.</p>
+<dl class="class">
+<dt id="citrine.resources.file_link.FileCollection">
+<em class="property">class </em><code class="sig-prename descclassname">citrine.resources.file_link.</code><code class="sig-name descname">FileCollection</code><span class="sig-paren">(</span><em class="sig-param">project_id: uuid.UUID</em>, <em class="sig-param">dataset_id: uuid.UUID</em>, <em class="sig-param">session: citrine._session.Session</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.file_link.FileCollection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.collection.Collection</span></code></p>
+<p>Represents the collection of all file links associated with a dataset.</p>
+<dl class="method">
+<dt id="citrine.resources.file_link.FileCollection.build">
+<code class="sig-name descname">build</code><span class="sig-paren">(</span><em class="sig-param">data: dict</em><span class="sig-paren">)</span> &#x2192; citrine.resources.file_link.FileLink<a class="headerlink" href="#citrine.resources.file_link.FileCollection.build" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build an instance of FileLink.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="citrine.resources.file_link.FileCollection.upload">
+<code class="sig-name descname">upload</code><span class="sig-paren">(</span><em class="sig-param">file_path: str</em>, <em class="sig-param">dest_name: str = None</em><span class="sig-paren">)</span> &#x2192; citrine.resources.file_link.FileLink<a class="headerlink" href="#citrine.resources.file_link.FileCollection.upload" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uploads a file to the dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file_path</strong> (<em>str</em>) – The path to the file on the local computer.</p></li>
+<li><p><strong>dest_name</strong> (<em>str</em><em>, </em><em>optional</em>) – The name the file will have after being uploaded. If unspecified, the local name of
+the file will be used. That is, the file at “/Users/me/diagram.pdf” will be uploaded
+with the name “diagram.pdf”.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The filename and url of the uploaded object.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#citrine.resources.file_link.FileLink" title="citrine.resources.file_link.FileLink">FileLink</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="citrine.resources.file_link.FileLink">
+<em class="property">class </em><code class="sig-prename descclassname">citrine.resources.file_link.</code><code class="sig-name descname">FileLink</code><span class="sig-paren">(</span><em class="sig-param">filename</em>, <em class="sig-param">url</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.file_link.FileLink" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.resource.Resource</span></code>, <a class="reference external" href="https://citrineinformatics.github.io/taurus/reference/taurus.entity.file_link.html#taurus.entity.file_link.FileLink" title="(in Taurus)"><code class="xref py py-class docutils literal notranslate"><span class="pre">taurus.entity.file_link.FileLink</span></code></a></p>
+<p>Resource that stores the name and url of an external file.</p>
+<dl class="attribute">
+<dt id="citrine.resources.file_link.FileLink.filename">
+<code class="sig-name descname">filename</code><em class="property"> = None</em><a class="headerlink" href="#citrine.resources.file_link.FileLink.filename" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.resources.file_link.FileLink.typ">
+<code class="sig-name descname">typ</code><em class="property"> = None</em><a class="headerlink" href="#citrine.resources.file_link.FileLink.typ" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.resources.file_link.FileLink.url">
+<code class="sig-name descname">url</code><em class="property"> = None</em><a class="headerlink" href="#citrine.resources.file_link.FileLink.url" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Citrine Python</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/index.html">1. Getting Started</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Citrine Informatics.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/reference/citrine.resources.file_link.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
