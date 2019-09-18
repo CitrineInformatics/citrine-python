@@ -28,7 +28,17 @@ class _Uploader:
 
 
 class FileLink(Resource['FileLink'], TaurusFileLink):
-    """Resource that stores the name and url of an external file."""
+    """
+    Resource that stores the name and url of an external file.
+
+    Parameters
+    ----------
+    filename: str
+        The name of the file.
+    url: str
+        URL that can be used to access the file.
+
+    """
 
     filename = String('filename')
     url = String('url')
@@ -60,9 +70,9 @@ class FileCollection(Collection[FileLink]):
         return FileLink.build(data)
 
     def list(self) -> Iterable[FileLink]:
-        url = self._get_path(ignore_dataset=False)
+        path = self._get_path(ignore_dataset=True)
         params = {'dataset_id': str(self.dataset_id)}
-        response = self.session.get_resource(path=url)
+        return self.session.get_resource(path=path, params=params)
 
     def upload(self, file_path: str, dest_name: str = None) -> FileLink:
         """
