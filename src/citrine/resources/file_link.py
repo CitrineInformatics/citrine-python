@@ -2,6 +2,7 @@
 from uuid import UUID
 import os
 import mimetypes
+from typing import Iterable
 from boto3 import client as boto3_client
 from botocore.exceptions import ClientError
 
@@ -45,6 +46,7 @@ class FileCollection(Collection[FileLink]):
     """Represents the collection of all file links associated with a dataset."""
 
     _path_template = 'projects/{project_id}/datasets/{dataset_id}/files'
+    _dataset_agnostic_path_template = 'projects/{project_id}/files'
     _individual_key = 'file'
     _collection_key = 'files'
 
@@ -56,6 +58,11 @@ class FileCollection(Collection[FileLink]):
     def build(self, data: dict) -> FileLink:
         """Build an instance of FileLink."""
         return FileLink.build(data)
+
+    def list(self) -> Iterable[FileLink]:
+        url = self._get_path(ignore_dataset=False)
+        params = {'dataset_id': str(self.dataset_id)}
+        response = self.session.get_resource(path=url)
 
     def upload(self, file_path: str, dest_name: str = None) -> FileLink:
         """
