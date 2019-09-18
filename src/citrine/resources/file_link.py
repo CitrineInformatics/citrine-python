@@ -12,7 +12,7 @@ from citrine._rest.resource import Resource
 from citrine._session import Session
 
 
-class _Uploader(object):
+class _Uploader:
     """Holds the many parameters that are generated and used during file upload."""
 
     def __init__(self):
@@ -23,7 +23,6 @@ class _Uploader(object):
         self.aws_access_key_id = ''
         self.aws_secret_access_key = ''
         self.aws_session_token = ''
-        self.object_key = ''
         self.s3_version = ''
 
 

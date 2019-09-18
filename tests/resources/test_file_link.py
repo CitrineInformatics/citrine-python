@@ -4,8 +4,8 @@ from mock import patch, Mock
 from botocore.exceptions import ClientError
 
 from citrine.resources.file_link import FileCollection, FileLink, _Uploader
-from tests.utils.session import FakeSession
-from tests.utils.factories import FileLinkDataFactory
+from tests.utils.session import FakeSession, FakeS3Client
+from tests.utils.factories import FileLinkDataFactory, _UploaderFactory
 
 
 @pytest.fixture
@@ -40,28 +40,7 @@ def test_string_representation(valid_data):
 @pytest.fixture
 def uploader() -> _Uploader:
     """An _Uploader object with all of its fields filled in."""
-    uploader = _Uploader()
-    uploader.bucket = 'citrine-datasvc'
-    uploader.object_key = '334455'
-    uploader.upload_id = 'dea3a-555'
-    uploader.region_name = 'us-west'
-    uploader.aws_access_key_id = 'sahgkjsgahnei'
-    uploader.aws_secret_access_key = 'kdydahkd78452978'
-    uploader.aws_session_token = 'sdfhuaf74yf783g4ofg7g3o'
-    uploader.object_key = '234787521--abcde'
-    uploader.s3_version = '2'
-    return uploader
-
-
-class MockClient(object):
-    """A mock version of the S3 client that has a put_object method."""
-
-    def __init__(self, put_object_output):
-        self.put_object_output = put_object_output
-
-    def put_object(self, *args, **kwargs):
-        """Return the expected output of the real client's put_object method."""
-        return self.put_object_output
+    return _UploaderFactory()
 
 
 @patch('citrine.resources.file_link.os.stat')
@@ -111,7 +90,7 @@ def test_upload_file(_, collection, uploader):
     # A successful file upload sets uploader.s3_version
     new_version = '3'
     with patch('citrine.resources.file_link.boto3_client',
-               return_value=MockClient({'VersionId': new_version})):
+               return_value=FakeS3Client({'VersionId': new_version})):
         new_uploader = collection._upload_file('foo.txt', uploader)
         assert new_uploader.s3_version == new_version
 
