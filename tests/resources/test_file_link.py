@@ -4,7 +4,7 @@ from mock import patch, Mock
 from botocore.exceptions import ClientError
 
 from citrine.resources.file_link import FileCollection, FileLink, _Uploader
-from tests.utils.session import FakeSession, FakeS3Client
+from tests.utils.session import FakeSession, FakeS3Client, FakeCall
 from tests.utils.factories import FileLinkDataFactory, _UploaderFactory
 
 
@@ -69,6 +69,7 @@ def test_upload_request(mock_stat, collection, session, uploader):
     }
     session.set_response(upload_request_response)
     new_uploader = collection._make_upload_request('foo.txt', 'foo.txt')
+    assert session.num_calls == 1
     assert new_uploader.bucket == uploader.bucket
     assert new_uploader.object_key == uploader.object_key
     assert new_uploader.upload_id == uploader.upload_id
@@ -108,6 +109,21 @@ def test_complete_upload(collection, session, uploader):
     dest_name = 'foo.txt'
     file_id = '12345'
     version = '13'
+
+    # This is the dictionary structure we expect from the upload completion request
+    complete_response = {
+        'file_info': {
+            'file_id': file_id,
+            'version': version
+        }
+    }
+    session.set_response(complete_response)
+    file_link = collection._complete_upload(dest_name, uploader)
+    assert session.num_calls == 1
+    url = 'projects/{}/datasets/{}/files/{}/versions/{}'\
+        .format(collection.project_id, collection.dataset_id, file_id, version)
+    assert file_link.dump() == FileLink(dest_name, url=url).dump()
+
     bad_complete_response = {
         'file_info': {
             'file_id': file_id
@@ -118,14 +134,32 @@ def test_complete_upload(collection, session, uploader):
         session.set_response(bad_complete_response)
         collection._complete_upload(dest_name, uploader)
 
-    complete_response = {
-        'file_info': {
-            'file_id': file_id,
-            'version': version
-        }
+
+def test_list_file_links(collection, session, valid_data):
+    valid_data = FileLinkDataFactory(url='www.citrine.io', filename='materials.txt')
+    # Modify this to be the actual dictionary returned by the backend
+    returned_data = {
+        'url': 'www.citrine.io',
+        'filename': 'materials.txt',
+        'type': 'file_link'
     }
-    session.set_response(complete_response)
-    file_link = collection._complete_upload(dest_name, uploader)
-    url = 'projects/{}/datasets/{}/files/{}/versions/{}'\
-        .format(collection.project_id, collection.dataset_id, file_id, version)
-    assert file_link.dump() == FileLink(dest_name, url=url).dump()
+    session.set_response({
+        'contents': [returned_data]
+    })
+
+    files_iterator = collection.list(page=1, per_page=15)
+    files = [file for file in files_iterator]
+
+    assert session.num_calls == 1
+    expected_call = FakeCall(
+        method='GET',
+        path='projects/{}/files'.format(collection.project_id),
+        params={
+            'dataset_id': str(collection.dataset_id),
+            'page': 1,
+            'per_page': 15
+        }
+    )
+    assert expected_call == session.last_call
+    assert len(files) == 1
+    assert files[0].dump() == FileLink.build(valid_data).dump()

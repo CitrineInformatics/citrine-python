@@ -2,7 +2,7 @@
 from uuid import UUID
 import os
 import mimetypes
-from typing import Iterable
+from typing import Iterable, Optional
 from boto3 import client as boto3_client
 from botocore.exceptions import ClientError
 
@@ -69,10 +69,34 @@ class FileCollection(Collection[FileLink]):
         """Build an instance of FileLink."""
         return FileLink.build(data)
 
-    def list(self) -> Iterable[FileLink]:
+    def list(self, page: Optional[int] = None,
+             per_page: Optional[int] = None) -> Iterable[FileLink]:
+        """
+        List all visible files in the collection.
+
+        Parameters
+        ---------
+        page: int, optional
+            The "page" of results to list. Default is the first page, which is 1.
+        per_page: int, optional
+            Max number of results to return. Default is 20.
+
+        Returns
+        -------
+        Iterable[FileLink]
+            FileLink objects in this collection.
+
+        """
         path = self._get_path(ignore_dataset=True)
         params = {'dataset_id': str(self.dataset_id)}
-        return self.session.get_resource(path=path, params=params)
+        if page is not None:
+            params["page"] = page
+        if per_page is not None:
+            params["per_page"] = per_page
+
+        response = self.session.get_resource(path=path, params=params)
+        # Modify this to work with what the backend actually returns
+        return [self.build(content) for content in response['contents']]
 
     def upload(self, file_path: str, dest_name: str = None) -> FileLink:
         """
