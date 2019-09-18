@@ -1,5 +1,5 @@
 """Tools for working with Predictors."""
-from typing import List, Optional, Type, Tuple
+from typing import List, Optional, Type
 from uuid import UUID
 
 from citrine._serialization import properties
