@@ -11,9 +11,7 @@ from citrine._serialization.properties import String, LinkOrElse, Mapping, Objec
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Optional as PropertyOptional
 from taurus.client.json_encoder import TaurusEncoder
-from taurus.entity.dict_serializable import DictSerializable
 from taurus.entity.file_link import FileLink
-from taurus.entity.link_by_uid import LinkByUID
 from taurus.entity.object.process_run import ProcessRun as TaurusProcessRun
 from taurus.entity.object.material_run import MaterialRun as TaurusMaterialRun
 from taurus.entity.object.material_spec import MaterialSpec as TaurusMaterialSpec
@@ -36,7 +34,7 @@ class MaterialRun(DataConcepts, Resource['MaterialRun'], TaurusMaterialRun):
         A set of tags. Tags can be used for filtering.
     notes: str, optional
         Long-form notes about the material run.
-    process: ProcessSpec
+    process: ProcessRun
         Process that produces this material.
     sample_type: str, optional
         The form of this sample. Optionals are "experimental", "virtual", "production", or

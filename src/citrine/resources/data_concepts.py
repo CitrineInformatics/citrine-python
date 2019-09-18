@@ -420,7 +420,7 @@ class DataConceptsCollection(Collection[ResourceType]):
         """
         Create a new element of the collection or update an existing element.
 
-        If the input model has a Citrine ID that corresponds to an existing object in the
+        If the input model has an ID that corresponds to an existing object in the
         database, then that object will be updated. Otherwise a new object will be created.
 
         Parameters
@@ -452,24 +452,26 @@ class DataConceptsCollection(Collection[ResourceType]):
         model.session = self.session
         return full_model
 
-    def get(self, uid: Union[UUID, str]) -> ResourceType:
+    def get(self, uid: Union[UUID, str], scope: str = 'id') -> ResourceType:
         """
-        Get the element of the collection with Citrine ID equal to uid.
+        Get the element of the collection with ID equal to uid.
 
         Parameters
         ----------
         uid: Union[UUID, str]
-            The Citrine ID.
+            The ID.
+        scope: str
+            The scope of the uid, defaults to Citrine scope ('id')
 
         Returns
         -------
         DataConcepts
-            An object with Citrine ID equal to uid.
+            An object with specified scope and uid
 
         """
         if self.dataset_id is None:
             raise RuntimeError("Must specify a dataset in order to get a data model object.")
-        path = self._get_path() + "/id/{}".format(uid)
+        path = self._get_path() + "/{}/{}".format(scope, uid)
         data = self.session.get_resource(path)
         return self.build(data)
 
