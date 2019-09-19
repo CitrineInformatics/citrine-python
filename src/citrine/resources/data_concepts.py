@@ -483,7 +483,8 @@ class DataConceptsCollection(Collection[ResourceType]):
         Parameters
         ----------
         tags: List[str]
-            a list of strings, each one a tag that an object can match.
+            A list of strings, each one a tag that an object can match. Currently
+            limited to a length of 1 or 0 (empty list does not filter).
         page: Optional[int]
             The page of results to list, 1-indexed (i.e. the first page is page=1)
         per_page: Optional[int]
@@ -496,6 +497,8 @@ class DataConceptsCollection(Collection[ResourceType]):
             See (insert link) for a discussion of how to match on tags.
 
         """
+        if len(tags) > 1:
+            raise NotImplementedError('Searching by multiple tags is not currently supported.')
         params = {'tags': tags}
         if self.dataset_id is not None:
             params['dataset_id'] = str(self.dataset_id)
