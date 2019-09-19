@@ -483,7 +483,7 @@ class DataConceptsCollection(Collection[ResourceType]):
         Parameters
         ----------
         tags: List[str]
-            A list of strings, each one a tag that an object can match. Currently,
+            A list of strings, each one a tag that an object can match. Currently
             limited to a length of 1 or 0 (empty list does not filter).
         page: Optional[int]
             The page of results to list, 1-indexed (i.e. the first page is page=1)
