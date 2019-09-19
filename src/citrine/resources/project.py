@@ -223,3 +223,6 @@ class ProjectCollection(Collection[Project]):
 
         """
         return super().register(Project(name, description))
+
+    def delete(self, uuid):
+        raise NotImplementedError("Delete is not supported for projects")
