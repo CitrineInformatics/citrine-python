@@ -52,7 +52,22 @@ class Collection(Generic[ResourceType]):
     def list(self,
              page: Optional[int] = None,
              per_page: Optional[int] = None) -> Iterable[ResourceType]:
-        """List all visible elements in the collection."""
+        """
+        List all visible elements in the collection.
+
+        Parameters
+        ---------
+        page: int, optional
+            The "page" of results to list. Default is the first page, which is 1.
+        per_page: int, optional
+            Max number of results to return. Default is 20.
+
+        Returns
+        -------
+        Iterable[ResourceType]
+            Resources in this collection.
+
+        """
         path = self._get_path()
 
         params = {}
