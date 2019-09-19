@@ -165,6 +165,14 @@ class Project(Resource['Project']):
             "resource": {"type": resource_type, "id": resource_id}
         })
 
+    def make_private(self,
+                     resource_type: str,
+                     resource_id: str) -> Dict[str, str]:
+        """Share a resource with the Global Project."""
+        return self.session.post_resource(self._path() + "/make-private", {
+            "resource": {"type": resource_type, "id": resource_id}
+        })
+
 class ProjectCollection(Collection[Project]):
     """
     Represents the collection of all projects as well as the resources belonging to it.
