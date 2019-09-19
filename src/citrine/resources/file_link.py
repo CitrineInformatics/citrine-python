@@ -99,14 +99,39 @@ class FileCollection(Collection[FileLink]):
             yield self.build(self._as_dict_from_resource(file))
 
     def _as_dict_from_resource(self, file: dict):
+        """
+        Convert a file link resource downloaded from the API into a FileLink dictionary.
+
+        This is necessary because the database resource contains additional information that is
+        not in the FileLink object, such as file size and the id of the user who uploaded the file.
+
+        Paramters
+        ---------
+        file: dict
+            A JSON dictionary corresponding to the file link as it is saved in the database.
+
+        Returns
+        -------
+        dict
+            A dictionary that can be built into a FileLink object.
+
+        """
         typ = 'file_link'
         filename = file['filename']
+
+        # The field 'versioned_url' contains some information necessary to construct a file path,
+        # but does not contain project and dataset id. It also contains extraneous information.
+        # We assert that the 'versioned_url' "picks up" where the collection path leaves off
+        # (at "/files"). We take what comes after "/files" and combine it with the collection path
+        # to create the file url.
         split_url = file['versioned_url'].split('/')
-        version = split_url[-1]
-        assert split_url[-2] == 'versions'
-        file_id = split_url[-3]
-        assert split_url[-4] == 'files'
-        url = self._get_path(file_id) + '/versions/{}'.format(version)
+        try:
+            split_collection_path = self._get_path().split('/')
+            overlap_index = split_url.index(split_collection_path[-1])
+        except ValueError:
+            raise ValueError("Versioned URL, '{}', cannot be joined with collection path "
+                             "'{}'".format(file['versioned_url'], self._get_path()))
+        url = '/'.join(split_collection_path + split_url[overlap_index + 1:])
         file_dict = {
             'url': url,
             'filename': filename,

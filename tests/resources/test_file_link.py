@@ -136,15 +136,15 @@ def test_complete_upload(collection, session, uploader):
 
 
 def test_list_file_links(collection, session, valid_data):
-    valid_data = FileLinkDataFactory(url='www.citrine.io', filename='materials.txt')
-    # Modify this to be the actual dictionary returned by the backend
+    file_id = str(uuid4())
+    version = str(uuid4())
+    filename = 'materials.txt'
     returned_data = {
-        'url': 'www.citrine.io',
-        'filename': 'materials.txt',
-        'type': 'file_link'
+        'filename': filename,
+        'versioned_url': "http://citrine.com/api/files/{}/versions/{}".format(file_id, version)
     }
     session.set_response({
-        'contents': [returned_data]
+        'files': [returned_data]
     })
 
     files_iterator = collection.list(page=1, per_page=15)
@@ -153,13 +153,27 @@ def test_list_file_links(collection, session, valid_data):
     assert session.num_calls == 1
     expected_call = FakeCall(
         method='GET',
-        path='projects/{}/files'.format(collection.project_id),
+        path=collection._get_path(),
         params={
-            'dataset_id': str(collection.dataset_id),
             'page': 1,
             'per_page': 15
         }
     )
     assert expected_call == session.last_call
     assert len(files) == 1
-    assert files[0].dump() == FileLink.build(valid_data).dump()
+    expected_url = "projects/{}/datasets/{}/files/{}/versions/{}".format(
+        collection.project_id, collection.dataset_id, file_id, version
+    )
+    expected_file = FileLinkDataFactory(url=expected_url, filename=filename)
+    assert files[0].dump() == FileLink.build(expected_file).dump()
+
+    bad_returned_data = {
+        'filename': filename,
+        'versioned_url': "http://citrine.com/api/file_version/{}".format(version)
+    }
+    session.set_response({
+        'files': [bad_returned_data]
+    })
+    with pytest.raises(ValueError):
+        files_iterator = collection.list(page=1, per_page=15)
+        [file for file in files_iterator]
