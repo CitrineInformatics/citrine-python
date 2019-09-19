@@ -172,6 +172,20 @@ def test_list_projects(collection, session):
     assert 5 == len(projects)
 
 
+def test_list_projects_with_page_params(collection, session):
+    # Given
+    project_data = ProjectDataFactory()
+    session.set_response({'projects': [project_data]})
+
+    # When
+    projects = list(collection.list(page=3, per_page=10))
+
+    # Then
+    assert 1 == session.num_calls
+    expected_call = FakeCall(method='GET', path='/projects', params={'page': 3, 'per_page': 10})
+    assert expected_call == session.last_call
+
+
 def test_delete_project(collection, session):
     # Given
     uid = '151199ec-e9aa-49a1-ac8e-da722aaf74c4'
