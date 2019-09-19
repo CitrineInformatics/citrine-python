@@ -96,7 +96,8 @@ class FileCollection(Collection[FileLink]):
         """Build an instance of FileLink."""
         return FileLink.build(data)
 
-    def list(self, page: Optional[int] = None,
+    def list(self, 
+             page: Optional[int] = None,
              per_page: Optional[int] = None) -> Iterable[FileLink]:
         """
         List all visible files in the collection.
@@ -104,9 +105,9 @@ class FileCollection(Collection[FileLink]):
         Parameters
         ---------
         page: int, optional
-            The "page" of results to list. Default is the first page, which is 1.
+            The "page" number of results to list. Default is the first page, which is 1.
         per_page: int, optional
-            Max number of results to return. Default is 20.
+            Max number of results to return for each call. Default is 20.
 
         Returns
         -------
