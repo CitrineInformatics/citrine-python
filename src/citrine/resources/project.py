@@ -160,7 +160,7 @@ class Project(Resource['Project']):
     def make_public(self,
                      resource_type: str,
                      resource_id: str) -> Dict[str, str]:
-        """Share a resource with the Global Project."""
+        """Make a resource publicly accessible."""
         return self.session.post_resource(self._path() + "/make-public", {
             "resource": {"type": resource_type, "id": resource_id}
         })
@@ -168,7 +168,7 @@ class Project(Resource['Project']):
     def make_private(self,
                      resource_type: str,
                      resource_id: str) -> Dict[str, str]:
-        """Share a resource with the Global Project."""
+        """Remove public access from a resource."""
         return self.session.post_resource(self._path() + "/make-private", {
             "resource": {"type": resource_type, "id": resource_id}
         })
