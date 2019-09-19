@@ -497,6 +497,8 @@ class DataConceptsCollection(Collection[ResourceType]):
             See (insert link) for a discussion of how to match on tags.
 
         """
+        # if type(tags) == str:
+        #     tags = [tags]
         if len(tags) > 1:
             raise NotImplementedError('Searching by multiple tags is not currently supported.')
         params = {'tags': tags}
