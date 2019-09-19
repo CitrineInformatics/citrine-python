@@ -48,6 +48,21 @@ def test_register_dataset(collection, session):
     assert name == dataset.name
 
 
+def test_list_datasets(collection, session):
+    # Given
+    datasets_data = DatasetDataFactory.create_batch(5)
+    session.set_response(datasets_data)
+
+    # When
+    datasets = list(collection.list())
+
+    # Then
+    assert 1 == session.num_calls
+    expected_call = FakeCall(method='GET', path='projects/{}/datasets'.format(collection.project_id))
+    assert expected_call == session.last_call
+    assert 5 == len(datasets)
+
+
 def test_string_representation(dataset):
     assert "<Dataset 'Test Dataset'>" == str(dataset)
 
