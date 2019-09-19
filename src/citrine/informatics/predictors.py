@@ -20,6 +20,7 @@ class Predictor(PolymorphicSerializable['Predictor']):
     _response_key = None
 
     def post_build(self, project_id: UUID, data: dict):
+        """Executes after a .build() is called in [[PredictorCollection]]."""
         return
 
     @classmethod
@@ -128,4 +129,5 @@ class SimpleMLPredictor(Serializable['SimplePredictor'], Predictor):
         return '<SimplePredictor {!r}>'.format(self.name)
 
     def post_build(self, project_id: UUID, data: dict):
+        """Creates the predictor report object."""
         self.report = ReportResource(project_id, self.session).get(data['id'])

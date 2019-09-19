@@ -1,5 +1,7 @@
 """Tests for citrine.informatics.processors."""
+import mock
 import pytest
+import uuid
 
 from citrine.informatics.descriptors import RealDescriptor
 from citrine.informatics.predictors import ParaboloidPredictor, SimpleMLPredictor
@@ -31,6 +33,8 @@ def test_paraboloid_initialization(paraboloid_predictor):
     assert paraboloid_predictor.description == 'does a thing'
     assert paraboloid_predictor.input_keys == [x, y]
     assert paraboloid_predictor.output_key == z
+    assert str(paraboloid_predictor) == '<ParaboloidPredictor \'my thing\'>'
+    assert not hasattr(paraboloid_predictor, 'report')
 
 
 def test_legacy_initialization(legacy_predictor):
@@ -44,3 +48,22 @@ def test_legacy_initialization(legacy_predictor):
     assert len(legacy_predictor.latent_variables) == 1
     assert legacy_predictor.latent_variables[0] == y
     assert legacy_predictor.training_data == 'training_data_key'
+    assert str(legacy_predictor) == '<SimplePredictor \'ML predictor\'>'
+    assert hasattr(legacy_predictor, 'report')
+
+
+def test_parabaloid_post_build(paraboloid_predictor):
+    """Ensures we can run post_build on a parabaloid predictor"""
+    assert paraboloid_predictor.post_build(uuid.uuid4(), dict()) is None
+
+
+def test_legacy_post_build(legacy_predictor):
+    """Ensures we get a report from a legacy predictor post_build call"""
+    assert legacy_predictor.report is None
+    session = mock.Mock()
+    session.get_resource.return_value = dict(status='OK', report=dict(), uid=uuid.uuid4())
+    legacy_predictor.session = session
+    legacy_predictor.post_build(uuid.uuid4(), dict(id=uuid.uuid4()))
+    assert session.get_resource.call_count == 1
+    assert legacy_predictor.report is not None
+    assert legacy_predictor.report.status == 'OK'

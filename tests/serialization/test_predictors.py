@@ -1,4 +1,4 @@
-"""Tests for citrine.informatics.processors serialization."""
+"""Tests for citrine.informatics.predictors serialization."""
 import pytest
 import uuid
 
@@ -48,6 +48,26 @@ def valid_simple_ml_data():
             outputs=[z.dump()],
             latent_variables=[y.dump()],
             training_data='training_data_key'
+        )
+    )
+
+
+@pytest.fixture
+def invalid_predictor_type_data():
+    """Produce valid data used for these tests."""
+    return dict(
+        module_type='PREDICTOR',
+        status='INVALID',
+        status_info=['Something is wrong', 'Very wrong'],
+        display_name='my predictor',
+        schema_id='ff26b280-8a8b-46ab-b7aa-0c73ff84b0fd',
+        id=str(uuid.uuid4()),
+        config=dict(
+            type='invalid',
+            name='my predictor',
+            description='does some things',
+            inputs=[x.dump(), y.dump()],
+            output=z.dump()
         )
     )
 
@@ -118,3 +138,9 @@ def test_legacy_serialization(valid_simple_ml_data):
     serialized = predictor.dump()
     serialized['id'] = valid_simple_ml_data['id']
     assert serialized == valid_serialization_output(valid_simple_ml_data)
+
+
+def test_invalid_predictor_type(invalid_predictor_type_data):
+    """Ensures we raise proper exception when an invalid type is used."""
+    with pytest.raises(ValueError):
+        Predictor.build(invalid_predictor_type_data)

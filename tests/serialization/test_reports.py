@@ -24,3 +24,9 @@ def test_generic_report_build(valid_report_data):
 def test_predictor_report_build(valid_report_data):
     report = PredictorReport.build(valid_report_data)
     assert report.status == 'OK'
+
+
+def test_predictor_report_dump(valid_report_data):
+    report = PredictorReport.build(valid_report_data)
+    json = report.dump()
+    assert json['report']['key2'] == 'value2'
