@@ -68,7 +68,7 @@ class FileCollection(Collection[FileLink]):
         """Build an instance of FileLink."""
         return FileLink.build(data)
 
-    def list(self, 
+    def list(self,
              page: Optional[int] = None,
              per_page: Optional[int] = None) -> Iterable[FileLink]:
         """
