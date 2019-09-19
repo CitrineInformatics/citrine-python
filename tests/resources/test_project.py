@@ -43,7 +43,7 @@ def test_make_resource_public_post_content(project, session):
     )
     assert expected_call == session.last_call
 
-def test_make_resource_public_post_content(project, session):
+def test_make_resource_private_post_content(project, session):
     project.make_private('MaterialTemplate', '2')
 
     assert 1 == session.num_calls
