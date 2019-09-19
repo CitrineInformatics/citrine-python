@@ -158,8 +158,8 @@ class Project(Resource['Project']):
         })
 
     def make_public(self,
-                     resource_type: str,
-                     resource_id: str) -> Dict[str, str]:
+                    resource_type: str,
+                    resource_id: str) -> Dict[str, str]:
         """Make a resource publicly accessible."""
         return self.session.post_resource(self._path() + "/make-public", {
             "resource": {"type": resource_type, "id": resource_id}
@@ -172,6 +172,7 @@ class Project(Resource['Project']):
         return self.session.post_resource(self._path() + "/make-private", {
             "resource": {"type": resource_type, "id": resource_id}
         })
+
 
 class ProjectCollection(Collection[Project]):
     """
@@ -225,4 +226,5 @@ class ProjectCollection(Collection[Project]):
         return super().register(Project(name, description))
 
     def delete(self, uuid):
+        """Delete the project with the provided uid."""
         raise NotImplementedError("Delete is not supported for projects")
