@@ -23,8 +23,9 @@ class PredictorCollection(Collection[Predictor]):
 
     def build(self, data: dict) -> Predictor:
         """Build an individual Predictor."""
-        predictor = Predictor.build(data)
+        predictor: Predictor = Predictor.build(data)
         predictor.session = self.session
+        predictor.post_build(self.project_id, data)
         return predictor
 
     def register(self, model: CreationType) -> CreationType:

@@ -7,6 +7,9 @@ from citrine._serialization.polymorphic_serializable import PolymorphicSerializa
 from citrine._serialization.serializable import Serializable
 from citrine._session import Session
 from citrine.informatics.descriptors import Descriptor
+from citrine.informatics.reports import Report
+from citrine.resources.report import ReportResource
+
 
 __all__ = ['Predictor', 'ParaboloidPredictor', 'SimpleMLPredictor']
 
@@ -15,6 +18,10 @@ class Predictor(PolymorphicSerializable['Predictor']):
     """Module that describes the ability to compute/predict properties of materials."""
 
     _response_key = None
+
+    def post_build(self, project_id: UUID, data: dict):
+        """Executes after a .build() is called in [[PredictorCollection]]."""
+        return
 
     @classmethod
     def get_type(cls, data) -> Type[Serializable]:
@@ -103,7 +110,8 @@ class SimpleMLPredictor(Serializable['SimplePredictor'], Predictor):
                  outputs: List[Descriptor],
                  latent_variables: List[Descriptor],
                  training_data: str,
-                 session: Optional[Session] = None):
+                 session: Optional[Session] = None,
+                 report: Optional[Report] = None):
         self.name: str = name
         self.description: str = description
         self.inputs: List[Descriptor] = inputs
@@ -111,6 +119,7 @@ class SimpleMLPredictor(Serializable['SimplePredictor'], Predictor):
         self.latent_variables: List[Descriptor] = latent_variables
         self.training_data: str = training_data
         self.session: Optional[Session] = session
+        self.report: Optional[Report] = report
 
     def _post_dump(self, data: dict) -> dict:
         data['display_name'] = data['config']['name']
@@ -118,3 +127,7 @@ class SimpleMLPredictor(Serializable['SimplePredictor'], Predictor):
 
     def __str__(self):
         return '<SimplePredictor {!r}>'.format(self.name)
+
+    def post_build(self, project_id: UUID, data: dict):
+        """Creates the predictor report object."""
+        self.report = ReportResource(project_id, self.session).get(data['id'])
