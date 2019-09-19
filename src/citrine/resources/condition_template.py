@@ -23,11 +23,11 @@ class ConditionTemplate(DataConcepts, Resource['ConditionTemplate'], TaurusCondi
         Bounds circumscribe the values that are valid according to this condition template.
     description: str, optional
         A long-form description of the condition template.
-    uids: Map[str, str]
+    uids: Map[str, str], optional
         A collection of
         `unique IDs <https://citrineinformatics.github.io/taurus-documentation/
         specification/unique-identifiers/>`_.
-    tags: List[str]
+    tags: List[str], optional
         `Tags <https://citrineinformatics.github.io/taurus-documentation/specification/tags/>`_
         are hierarchical strings that store information about an entity. They can be used
         for filtering and discoverability.

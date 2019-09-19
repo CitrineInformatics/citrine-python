@@ -26,11 +26,11 @@ class MaterialRun(DataConcepts, Resource['MaterialRun'], TaurusMaterialRun):
     ----------
     name: str
         Name of the material run.
-    uids: Map[str, str]
+    uids: Map[str, str], optional
         A collection of
         `unique IDs <https://citrineinformatics.github.io/taurus-documentation/
         specification/unique-identifiers/>`_.
-    tags: List[str]
+    tags: List[str], optional
         `Tags <https://citrineinformatics.github.io/taurus-documentation/specification/tags/>`_
         are hierarchical strings that store information about an entity. They can be used
         for filtering and discoverability.
