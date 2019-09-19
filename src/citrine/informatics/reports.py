@@ -23,9 +23,9 @@ class PredictorReport(Serializable['PredictorReport'], Report):
 
     uid = properties.Optional(properties.UUID, 'id', serializable=False)
     status = properties.String('status')
-    report = properties.Raw('report')
+    json = properties.Raw('report')
 
-    def __init__(self, status: str, report: dict, session: Optional[Session] = None):
+    def __init__(self, status: str, json: dict, session: Optional[Session] = None):
         self.status = status
-        self.report: dict = report
+        self.json: dict = json
         self.session: Optional[Session] = session

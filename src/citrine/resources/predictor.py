@@ -4,9 +4,7 @@ from typing import TypeVar
 
 from citrine._rest.collection import Collection
 from citrine._session import Session
-from citrine.exceptions import CitrineException
-from citrine.informatics.predictors import Predictor, SimpleMLPredictor
-from citrine.resources.report import ReportResource
+from citrine.informatics.predictors import Predictor
 
 CreationType = TypeVar('CreationType', bound=Predictor)
 
@@ -22,17 +20,12 @@ class PredictorCollection(Collection[Predictor]):
     def __init__(self, project_id: UUID, session: Session):
         self.project_id = project_id
         self.session: Session = session
-        self._report_generator = ReportResource(project_id, self.session)
 
     def build(self, data: dict) -> Predictor:
         """Build an individual Predictor."""
         predictor: Predictor = Predictor.build(data)
         predictor.session = self.session
-        if isinstance(predictor, SimpleMLPredictor):
-            try:
-                predictor.report = self._report_generator.get(data['id'])
-            except CitrineException:
-                predictor.report = None
+        predictor.post_build(self.project_id, data)
         return predictor
 
     def register(self, model: CreationType) -> CreationType:

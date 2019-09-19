@@ -8,6 +8,8 @@ from citrine._serialization.serializable import Serializable
 from citrine._session import Session
 from citrine.informatics.descriptors import Descriptor
 from citrine.informatics.reports import Report
+from citrine.resources.report import ReportResource
+
 
 __all__ = ['Predictor', 'ParaboloidPredictor', 'SimpleMLPredictor']
 
@@ -16,6 +18,9 @@ class Predictor(PolymorphicSerializable['Predictor']):
     """Module that describes the ability to compute/predict properties of materials."""
 
     _response_key = None
+
+    def post_build(self, project_id: UUID, data: dict):
+        return
 
     @classmethod
     def get_type(cls, data) -> Type[Serializable]:
@@ -121,3 +126,6 @@ class SimpleMLPredictor(Serializable['SimplePredictor'], Predictor):
 
     def __str__(self):
         return '<SimplePredictor {!r}>'.format(self.name)
+
+    def post_build(self, project_id: UUID, data: dict):
+        self.report = ReportResource(project_id, self.session).get(data['id'])
