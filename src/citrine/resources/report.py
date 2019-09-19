@@ -7,6 +7,7 @@ from uuid import UUID
 
 
 class ReportResource(Resource['ReportResource']):
+    """Defines a report resource to fetch."""
 
     _path_template = '/projects/{project_id}/modules/{module_id}/report'
 
@@ -15,6 +16,7 @@ class ReportResource(Resource['ReportResource']):
         self.session = session
 
     def get(self, module_id: UUID) -> Report:
+        """Gets a single report keyed on the module_id."""
         url_path = self._path_template.format(project_id=self.project_id, module_id=module_id)
         data = self.session.get_resource(url_path)
         report = Report.build(data)
