@@ -1,4 +1,5 @@
 import pytest
+import os
 from uuid import uuid4
 from mock import patch, Mock
 from botocore.exceptions import ClientError
@@ -181,3 +182,49 @@ def test_list_file_links(collection, session, valid_data):
     with pytest.raises(ValueError):
         files_iterator = collection.list(page=1, per_page=15)
         [file for file in files_iterator]
+
+
+@patch('citrine.resources.file_link.open')
+@patch('citrine.resources.file_link.requests.get')
+@patch('citrine.resources.file_link.os.path.split')
+@patch('citrine.resources.file_link.os.path.isdir')
+@patch('citrine.resources.file_link.os.mkdir')
+def test_file_download(mock_mkdir, mock_os_path_isdir, mock_os_path_split,
+                       mock_get, mock_open, session):
+    """
+    Test that downloading a file works as expected.
+
+    It should make the full file path if only a directory is given, make the directory if
+    it does not exist, make a call to get the pre-signed URL, and another to download.
+    """
+    # Given
+    filename = 'diagram.pdf'
+    url = "http://citrine.com/api/files/123/versions/456"
+    file = FileLink.build(FileLinkDataFactory(url=url, filename=filename))
+    pre_signed_url = "http://files.citrine.io/secret-codes/jiifema987pjfsda"  # arbitrary
+    session.set_response({
+        'pre_signed_read_link': pre_signed_url,
+    })
+    local_path = 'Users/me/some/new/directory/'
+
+    mock_os_path_split.return_value = (local_path, '')  # triggers appending filename to local_path
+    mock_os_path_isdir.return_value = False  # triggers mkdir
+    mock_get.return_value = '0101110110'  # arbitrary
+
+    # When
+    file.download(local_path, session)
+
+    # When
+    assert mock_os_path_isdir.call_count == 1
+    assert mock_os_path_split.call_count == 1
+    assert mock_mkdir.call_count == 1
+    assert mock_get.call_count == 1
+    assert mock_open.call_count == 1
+    # Mock write should be to path "local_path + filename"
+    assert mock_open.mock_calls[0].args[0] == local_path + filename
+
+    expected_call = FakeCall(
+        method='GET',
+        path=url + '/content-link'
+    )
+    assert expected_call == session.last_call

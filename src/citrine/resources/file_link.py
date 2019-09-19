@@ -52,25 +52,32 @@ class FileLink(Resource['FileLink'], TaurusFileLink):
     def __str__(self):
         return '<File link {!r}>'.format(self.filename)
 
-    def download(self, dest_path: str, session: Session):
+    def download(self, local_path: str, session: Session):
         """
         Download the file associated with this file link.
 
         Parameters
         ----------
-        dest_path: str
-            foo
+        local_path: str
+            Path to save file on the local computer. If `local_path` is a directory,
+            then the filename of this FileLink object will be appended to the path.
+        session: Session
+            The Citrine session used to connect to the database.
 
-        Returns
-        -------
-        none
         """
-        path = self.url + '/content-link'
-        foo = session.get_resource(path)
-        url = foo['pre_signed_read_link']
-        params = {'s3_bucket': foo['s3_bucket'], 's3_key': foo['s3_key'],
-                  's3_version': foo['s3_version']}
-        requests.get(url, params=params)
+        directory, filename = os.path.split(local_path)
+        if not filename:
+            filename = self.filename
+        if not os.path.isdir(directory):
+            os.mkdir(directory)
+        local_path = os.path.join(directory, filename)
+
+        content_link_path = self.url + '/content-link'  # get a pre-signed url
+        content_link_response = session.get_resource(content_link_path)
+        pre_signed_url = content_link_response['pre_signed_read_link']
+        content = requests.get(pre_signed_url)
+        with open(local_path, 'wb') as output_file:
+            output_file.write(content)
 
 
 class FileCollection(Collection[FileLink]):
