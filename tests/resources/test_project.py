@@ -150,3 +150,52 @@ def test_project_registration(collection, session):
     assert 'A sample project' == created_project.description
     assert 'CREATED' == created_project.status
     assert create_time == created_project.created_at
+
+
+def test_get_project(collection, session):
+    # Given
+    project_data = ProjectDataFactory(name='single project')
+    session.set_response({'project': project_data})
+
+    # When
+    created_project = collection.get(project_data['uid'])
+
+    # Then
+    assert 1 == session.num_calls
+    expected_call = FakeCall(
+        method='GET',
+        path='/projects/{}'.format(project_data['uid']),
+    )
+    assert expected_call == session.last_call
+    assert 'single project' == created_project.name
+
+
+def test_list_projects(collection, session):
+    # Given
+    projects_data = ProjectDataFactory.create_batch(5)
+    session.set_response({'projects': projects_data})
+
+    # When
+    projects = list(collection.list())
+
+    # Then
+    assert 1 == session.num_calls
+    expected_call = FakeCall(method='GET', path='/projects')
+    assert expected_call == session.last_call
+    assert 5 == len(projects)
+
+
+def test_delete_project(collection, session):
+    # Given
+    uid = '151199ec-e9aa-49a1-ac8e-da722aaf74c4'
+
+    # When
+    collection.delete(uid)
+
+    # Then
+    assert 1 == session.num_calls
+    expected_call = FakeCall(
+        method='DELETE',
+        path='/projects/{}'.format(uid),
+    )
+    assert expected_call == session.last_call

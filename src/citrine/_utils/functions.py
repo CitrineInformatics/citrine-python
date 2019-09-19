@@ -5,12 +5,6 @@ from uuid import uuid4, UUID
 from taurus.client.json_encoder import LinkByUID
 
 
-def setattrs(_self, **kwargs):
-    """Set a dictionary of attributes on an object."""
-    for k, v in kwargs.items():
-        setattr(_self, k, v)
-
-
 def set_default_uid(id_dict: Dict[str, str]) -> Dict[str, str]:
     """
     Validates a dictionary of ids, adding a default id if necessary.

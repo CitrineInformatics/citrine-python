@@ -11,9 +11,7 @@ from citrine._serialization.properties import String, LinkOrElse, Mapping, Objec
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Optional as PropertyOptional
 from taurus.client.json_encoder import TaurusEncoder
-from taurus.entity.dict_serializable import DictSerializable
 from taurus.entity.file_link import FileLink
-from taurus.entity.link_by_uid import LinkByUID
 from taurus.entity.object.process_run import ProcessRun as TaurusProcessRun
 from taurus.entity.object.material_run import MaterialRun as TaurusMaterialRun
 from taurus.entity.object.material_spec import MaterialSpec as TaurusMaterialSpec
@@ -29,14 +27,16 @@ class MaterialRun(DataConcepts, Resource['MaterialRun'], TaurusMaterialRun):
     name: str
         Name of the material run.
     uids: Map[str, str], optional
-        A collection of unique identifiers, each a key-value pair. The key is the "scope"
-        and the value is the identifier. The scope "id" is reserved for the internal Citrine ID,
-        which will always be a uuid4.
+        A collection of
+        `unique IDs <https://citrineinformatics.github.io/taurus-documentation/
+        specification/unique-identifiers/>`_.
     tags: List[str], optional
-        A set of tags. Tags can be used for filtering.
+        `Tags <https://citrineinformatics.github.io/taurus-documentation/specification/tags/>`_
+        are hierarchical strings that store information about an entity. They can be used
+        for filtering and discoverability.
     notes: str, optional
         Long-form notes about the material run.
-    process: ProcessSpec
+    process: ProcessRun
         Process that produces this material.
     sample_type: str, optional
         The form of this sample. Optionals are "experimental", "virtual", "production", or

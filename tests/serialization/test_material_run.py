@@ -1,7 +1,4 @@
 """Tests of the Material Run schema."""
-import pytest
-from uuid import uuid4
-
 from citrine.resources.material_run import MaterialRun
 from citrine.resources.material_spec import MaterialSpec
 from citrine.resources.measurement_spec import MeasurementSpec

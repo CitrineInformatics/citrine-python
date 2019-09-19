@@ -107,6 +107,10 @@ class Session(requests.Session):
         """POST to a particular resource as JSON."""
         return self.checked_request('POST', path, *args, json=json, **kwargs).json()
 
+    def put_resource(self, path: str, json: dict, *args, **kwargs) -> dict:
+        """PUT data given by some JSON at a particular resource."""
+        return self.checked_request('PUT', path, *args, json=json, **kwargs).json()
+
     def delete_resource(self, path: str) -> dict:
         """DELETE a particular resource as JSON."""
         return self.checked_request('DELETE', path).json()

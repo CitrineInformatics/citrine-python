@@ -10,9 +10,7 @@ from citrine._serialization.properties import Optional as PropertyOptional
 from citrine.resources.data_concepts import DataConcepts, DataConceptsCollection
 from citrine.attributes.condition import Condition
 from citrine.attributes.parameter import Parameter
-from taurus.entity.dict_serializable import DictSerializable
 from taurus.entity.file_link import FileLink
-from taurus.entity.link_by_uid import LinkByUID
 from taurus.entity.object.process_run import ProcessRun as TaurusProcessRun
 from taurus.entity.object.process_spec import ProcessSpec as TaurusProcessSpec
 
@@ -28,11 +26,13 @@ class ProcessRun(DataConcepts, Resource['ProcessRun'], TaurusProcessRun):
     name: str
         Name of the process run.
     uids: Map[str, str], optional
-        A collection of unique identifiers, each a key-value pair. The key is the "scope"
-        and the value is the identifier. The scope "id" is reserved for the internal Citrine ID,
-        which will always be a uuid4.
+        A collection of
+        `unique IDs <https://citrineinformatics.github.io/taurus-documentation/
+        specification/unique-identifiers/>`_.
     tags: List[str], optional
-        A set of tags. Tags can be used for filtering.
+        `Tags <https://citrineinformatics.github.io/taurus-documentation/specification/tags/>`_
+        are hierarchical strings that store information about an entity. They can be used
+        for filtering and discoverability.
     notes: str, optional
         Long-form notes about the process run.
     conditions: List[Condition], optional

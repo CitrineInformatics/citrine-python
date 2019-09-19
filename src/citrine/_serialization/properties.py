@@ -32,12 +32,12 @@ class Property(typing.Generic[DeserializedType, SerializedType]):
     @property
     @abstractmethod
     def underlying_types(self) -> typing.Union[DeserializedType, typing.Tuple[DeserializedType]]:
-        """Return the python types handled by this property"""
+        """Return the python types handled by this property."""
 
     @property
     @abstractmethod
     def serialized_types(self) -> typing.Union[SerializedType, typing.Tuple[SerializedType]]:
-        """Return the types used to serialize this property"""
+        """Return the types used to serialize this property."""
 
     def serialize(self, value: DeserializedType) -> SerializedType:
         if not isinstance(value, self.underlying_types):
@@ -53,11 +53,11 @@ class Property(typing.Generic[DeserializedType, SerializedType]):
 
     @abstractmethod
     def _serialize(self, value: DeserializedType) -> SerializedType:
-        """Perform serialization"""
+        """Perform serialization."""
 
     @abstractmethod
     def _deserialize(self, value: SerializedType) -> DeserializedType:
-        """Perform deserialization"""
+        """Perform deserialization."""
 
     def deserialize_from_dict(self, data: dict) -> DeserializedType:
         value = data

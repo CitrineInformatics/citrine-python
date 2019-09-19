@@ -3,9 +3,7 @@ from urllib.parse import urlencode
 
 
 class FakeCall:
-    """
-    Encapsulates a call to a FakeSession
-    """
+    """Encapsulates a call to a FakeSession."""
 
     def __init__(self, method, path, json=None, params: dict = None):
         self.method = method
@@ -31,9 +29,7 @@ class FakeCall:
 
 
 class FakeSession:
-    """
-    Fake version of Session used to test API interaction
-    """
+    """Fake version of Session used to test API interaction."""
     def __init__(self):
         self.calls = []
         self.response = {}
@@ -54,10 +50,24 @@ class FakeSession:
         return self.response
 
     def post_resource(self, path: str, json: dict, *args, **kwargs) -> dict:
-        self.calls.append(FakeCall('POST', path, json))
+        self.calls.append(FakeCall('POST', path, json, params=kwargs.get('params')))
+        return self.response
+
+    def put_resource(self, path: str, json: dict, *args, **kwargs) -> dict:
+        self.calls.append(FakeCall('PUT', path, json))
         return self.response
 
     def delete_resource(self, path: str) -> dict:
         self.calls.append(FakeCall('DELETE', path))
         return self.response
 
+
+class FakeS3Client:
+    """A fake version of the S3 client that has a put_object method."""
+
+    def __init__(self, put_object_output):
+        self.put_object_output = put_object_output
+
+    def put_object(self, *args, **kwargs):
+        """Return the expected output of the real client's put_object method."""
+        return self.put_object_output
