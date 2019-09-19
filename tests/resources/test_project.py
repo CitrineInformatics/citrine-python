@@ -30,29 +30,27 @@ def collection(session) -> ProjectCollection:
 def test_string_representation(project):
     assert "<Project 'Test Project'>" == str(project)
 
-
-def test_global_share_posts_content(project, session):
-    project.global_share('Dataset', '2')
-    assert 1 == session.num_calls
-    expect_call = FakeCall(
-        method='POST',
-        path='/projects/16fd2706-8baf-433b-82eb-8c7fada847da/global-share',
-        json={
-            'resource': {'type': 'Dataset', 'id': '2'}
-        }
-    )
-    assert expect_call == session.last_call
-
-
-def test_share_posts_content(project, session):
-    project.share('1', 'MaterialTemplate', '2')
+def test_make_resource_public_post_content(project, session):
+    project.make_public('MaterialTemplate', '2')
 
     assert 1 == session.num_calls
     expected_call = FakeCall(
         method='POST',
-        path='/projects/16fd2706-8baf-433b-82eb-8c7fada847da/share',
+        path='/projects/{}/make-public'.format(project.uid),
         json={
-            'project_id': '1',
+            'resource': {'type': 'MaterialTemplate', 'id': '2'}
+        }
+    )
+    assert expected_call == session.last_call
+
+def test_make_resource_public_post_content(project, session):
+    project.make_private('MaterialTemplate', '2')
+
+    assert 1 == session.num_calls
+    expected_call = FakeCall(
+        method='POST',
+        path='/projects/{}/make-private'.format(project.uid),
+        json={
             'resource': {'type': 'MaterialTemplate', 'id': '2'}
         }
     )
@@ -184,7 +182,7 @@ def test_list_projects(collection, session):
     assert expected_call == session.last_call
     assert 5 == len(projects)
 
-
+@pytest.mark.skip("Delete is not implemented yet")
 def test_delete_project(collection, session):
     # Given
     uid = '151199ec-e9aa-49a1-ac8e-da722aaf74c4'
