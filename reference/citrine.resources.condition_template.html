@@ -44,10 +44,11 @@
 <li><p><strong>name</strong> (<em>str</em>) – The name of the condition template.</p></li>
 <li><p><strong>bounds</strong> (<a class="reference external" href="https://citrineinformatics.github.io/taurus/reference/taurus.entity.bounds.base_bounds.html#taurus.entity.bounds.base_bounds.BaseBounds" title="(in Taurus)"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseBounds</span></code></a>) – Bounds circumscribe the values that are valid according to this condition template.</p></li>
 <li><p><strong>description</strong> (<em>str</em><em>, </em><em>optional</em>) – A long-form description of the condition template.</p></li>
-<li><p><strong>uids</strong> (<em>Map</em><em>[</em><em>str</em><em>, </em><em>str</em><em>]</em><em>, </em><em>optional</em>) – A collection of unique identifiers, each a key-value pair. The key is the “scope”
-and the value is the identifier. The scope “id” is reserved for the internal Citrine ID,
-which will always be a uuid4.</p></li>
-<li><p><strong>tags</strong> (<em>List</em><em>[</em><em>str</em><em>]</em><em>, </em><em>optional</em>) – A set of tags. Tags can be used for filtering.</p></li>
+<li><p><strong>uids</strong> (<em>Map</em><em>[</em><em>str</em><em>, </em><em>str</em><em>]</em><em>, </em><em>optional</em>) – A collection of
+<a class="reference external" href="https://citrineinformatics.github.io/taurus-documentation/specification/unique-identifiers/">unique IDs</a>.</p></li>
+<li><p><strong>tags</strong> (<em>List</em><em>[</em><em>str</em><em>]</em><em>, </em><em>optional</em>) – <a class="reference external" href="https://citrineinformatics.github.io/taurus-documentation/specification/tags/">Tags</a>
+are hierarchical strings that store information about an entity. They can be used
+for filtering and discoverability.</p></li>
 </ul>
 </dd>
 </dl>
