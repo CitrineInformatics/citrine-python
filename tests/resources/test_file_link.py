@@ -136,9 +136,12 @@ def test_complete_upload(collection, session, uploader):
 
 
 def test_list_file_links(collection, session, valid_data):
+    """Test that all files in a dataset can be turned into FileLink and listed."""
     file_id = str(uuid4())
     version = str(uuid4())
     filename = 'materials.txt'
+    # The actual response contains more fields, but these are the only ones we use.
+    # Crucial thing is that URL ends with "/files/file_id/versions/version"
     returned_data = {
         'filename': filename,
         'versioned_url': "http://citrine.com/api/files/{}/versions/{}".format(file_id, version)
@@ -167,6 +170,7 @@ def test_list_file_links(collection, session, valid_data):
     expected_file = FileLinkDataFactory(url=expected_url, filename=filename)
     assert files[0].dump() == FileLink.build(expected_file).dump()
 
+    # A response that does not have a URL of the expected form throws ValueError
     bad_returned_data = {
         'filename': filename,
         'versioned_url': "http://citrine.com/api/file_version/{}".format(version)
