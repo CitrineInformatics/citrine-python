@@ -67,8 +67,18 @@ There are currently three ways to filter, and they only work on data model objec
 :func:`~citrine.resources.data_concepts.DataConceptsCollection.filter_by_tags`,
 :func:`~citrine.resources.data_concepts.DataConceptsCollection.filter_by_attribute_bounds`,
 and :func:`~citrine.resources.data_concepts.DataConceptsCollection.filter_by_name`.
+
 Filtering by tags or attribute bounds can be scoped to a dataset or to a project.
 Filtering by name must be scoped to a dataset.
+
+Get Material History
+^^^^^^^^^^^^^^^^^^^^
+
+Starting with a specific root :class:`MaterialRun <citrine.resources.material_run.MaterialRun>`,
+you can retrieve the complete material history--every process, ingredient and material that went
+into the root material, as well as the measurements that were performed on all of those materials
+The method is :func:`~citrine.resources.material_run.MaterialRunCollection.get_history`,
+and it requires you to know a unique identifier (scope/id pair) for the material.
 
 Updating
 --------

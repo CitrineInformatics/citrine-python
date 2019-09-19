@@ -1,6 +1,6 @@
 """Top-level class for all data concepts objects and collections thereof."""
 from uuid import UUID
-from typing import TypeVar, Type, List, Dict, Union
+from typing import TypeVar, Type, List, Dict, Union, Optional
 from copy import deepcopy
 from abc import abstractmethod
 
@@ -15,6 +15,7 @@ from citrine._utils.functions import (
     validate_type, scrub_none,
     replace_objects_with_links, get_object_id)
 from taurus.client.json_encoder import loads, dumps, LinkByUID
+from taurus.entity.dict_serializable import DictSerializable
 from taurus.entity.bounds.base_bounds import BaseBounds
 from taurus.entity.template.attribute_template import AttributeTemplate
 
@@ -79,18 +80,18 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
         # Running through a taurus loads/dumps cycle validates all of the fields and ensures
         # the object is now a dictionary with a well-understood structure
         data_copy_dict = loads(dumps(deepcopy(data))).as_dict()
-        # Check the type--it should either correspond to LinkByUID to to this class.
+        # Check the type--it should either correspond to LinkByUID or to this class.
         if 'type' in data_copy_dict and data_copy_dict['type'] == LinkByUID.typ:
             return loads(dumps(data_copy_dict))
-        data_copy_dict = validate_type(data_copy_dict, cls._response_key)
+        validate_type(data_copy_dict, cls._response_key)
 
         cls._remove_local_keys(data_copy_dict)
-        cls._build_child_objects(data_copy_dict)
+        cls._build_child_objects(data_copy_dict, data)
 
         data_concepts_object = cls(**data_copy_dict)
         data_concepts_object.session = session
 
-        cls._build_soft_linked_objects(data_concepts_object, data, session)
+        cls._build_discarded_objects(data_concepts_object, data, session)
         return data_concepts_object
 
     @classmethod
@@ -117,8 +118,34 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
                 del data[key]
         return data
 
+    @staticmethod
+    def _get_field(data, field: str):
+        """
+        Get the value of a field from something that might be a dictionary or might be an object.
+
+        Parameters
+        ----------
+        data: dict or object
+            foo
+        field: str
+            The name of the field
+
+        Returns
+        -------
+        Any
+            The value associated with `field` in `data`
+
+        """
+        if isinstance(data, dict):
+            return data.get(field)
+        elif isinstance(data, object):
+            return getattr(data, field, None)
+        else:
+            TypeError("Expected data to be a dictionary or object, instead got {}".format(data))
+
     @classmethod
-    def _build_child_objects(cls, data: dict, session: Session = None) -> dict:
+    def _build_child_objects(cls, data: dict, data_with_soft_links,
+                             session: Session = None) -> dict:
         """
         Build the data concepts objects that this serialized object points to.
 
@@ -128,6 +155,9 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
         ----------
         data: dict
             A data concepts object as a serialized dictionary.
+        data_with_soft_links: dict or \
+        :py:class:`DictSerializable <taurus.entity.dict_serializable.DictSerializable>`
+            A representation of data in which the knowledge of the soft-links is somehow encoded.
         session: Session
             Citrine session used to connect to the database.
 
@@ -156,26 +186,21 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
             if _is_dc(field):
                 if data.get(key):
                     if isinstance(data[key], List):
-                        data[key] = [DataConcepts.get_type(elem.as_dict())
-                                     .build(elem.as_dict()) for elem in data[key]]
+                        data[key] = [DataConcepts.get_type(elem).build(elem) for
+                                     elem in DataConcepts._get_field(data_with_soft_links, key)]
                         for elem in data[key]:
                             if isinstance(elem, DataConcepts):
                                 elem.session = session
                     else:
-                        data[key] = DataConcepts.get_type(data[key].as_dict()) \
-                            .build(data[key].as_dict())
+                        elem = DataConcepts._get_field(data_with_soft_links, key)
+                        data[key] = DataConcepts.get_type(elem).build(elem)
                         if isinstance(data[key], DataConcepts):
                             data[key].session = session
 
     @classmethod
-    def _build_soft_linked_objects(cls, obj, obj_with_soft_links, session: Session = None):
+    def _build_discarded_objects(cls, obj, obj_with_soft_links, session: Session = None):
         """
-        Build the data concepts objects that this object has soft links to.
-
-        Object A has a "soft link" to object B with field name 'b' if A.b = B, but the field
-        is skipped upon serialization. We therefore cannot know about the link if we serialize
-        and then deserialize A. But if we have some other representation that encodes the
-        existence of these soft-links, then we can re-create them.
+        Possibly build objects that connect to obj but get removed during serialization.
 
         This method is to be sparingly implemented, and the details will depend on the specific
         soft-link.
@@ -195,10 +220,68 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
         Returns
         -------
         None
-            The data concepts object is modified so that all of its soft-links are populated.
+            The data concepts object is modified so that it has soft links to other objects.
 
         """
         pass
+
+    @staticmethod
+    def _build_list_of_soft_links(obj, obj_with_soft_links, field: str, reverse_field: str,
+                                  linked_type, session: Session = None):
+        """
+        Build the data concepts objects that this object has soft links to.
+
+        This method is a specific implementation of _build_discarded_objects() that works
+        for one particular type of discarded object--a list of soft links.
+        In this case, object A has a field `field` such that A.field is a list [B1, B2, ...],
+        but the field is skipped upon serialization. We therefore cannot know about the links
+        if we serialize and then deserialize A. But if obj_with_soft_links retains the list,
+        then we can build each Bi and and set Bi.a = A to populate the soft link.
+
+        This method modifies the object in place.
+
+        Parameters
+        ----------
+        obj: DataConcepts
+            A data concepts object that might be missing some soft links
+        obj_with_soft_links: dict or \
+        :py:class:`DictSerializable <taurus.entity.dict_serializable.DictSerializable>`
+            A representation of obj in which the knowledge of the soft-links is somehow encoded.
+        field: str
+            The name of the field that contains the list of soft links in obj.
+        reverse_field: str
+            The name of the field in the soft-linked objects that are used to refer back to obj.
+        linked_type: Type[DataConcepts]
+            The class of the soft-linked objects. Used for building them.
+        session: Session, optional
+            Citrine session used to connect to the database.
+
+        Returns
+        -------
+        None
+            The data concepts object is modified so that all of its soft-links are populated.
+
+        """
+        linked_objects = None
+        # Get the list of linked objects, if it exists.
+        if isinstance(obj_with_soft_links, dict):
+            if obj_with_soft_links.get(field):
+                linked_objects = obj_with_soft_links[field]
+        if isinstance(obj_with_soft_links, DictSerializable):
+            if hasattr(obj_with_soft_links, field):
+                linked_objects = getattr(obj_with_soft_links, field)
+        if linked_objects is None:
+            return
+
+        for linked_obj in linked_objects:
+            # Cycle through linked objects and if they are not LinkByUID, build them and then
+            # set their `reverse_field` field to obj
+            assert isinstance(linked_obj, DictSerializable)
+            if isinstance(linked_obj, LinkByUID):
+                pass
+            setattr(linked_obj, reverse_field, None)
+            meas_object = linked_type.build(linked_obj, session)
+            setattr(meas_object, reverse_field, obj)
 
     @classmethod
     def get_type(cls, data) -> Type[Serializable]:
@@ -212,6 +295,7 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
         ----------
         data: dict
             A dictionary corresponding to a serialized data concepts object of unknown type.
+            This method will also work if data is a deserialized Taurus object.
 
         Returns
         -------
@@ -221,6 +305,8 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
         """
         if len(DataConcepts.class_dict) == 0:
             DataConcepts._make_class_dict()
+        if isinstance(data, DictSerializable):
+            data = data.as_dict()
         return DataConcepts.class_dict[data['type']]
 
     @staticmethod
@@ -311,9 +397,16 @@ class DataConceptsCollection(Collection[ResourceType]):
         data_concepts_object.session = self.session
         return data_concepts_object
 
-    def list(self):
+    def list(self, page: Optional[int] = None, per_page: Optional[int] = None):
         """
         List all visible elements of the collection.
+
+        Parameters
+        ----------
+        page: Optional[int]
+            The page of results to list, 1-indexed (i.e. the first page is page=1)
+        per_page: Optional[int]
+            The number of results to list per page
 
         Returns
         -------
@@ -321,13 +414,13 @@ class DataConceptsCollection(Collection[ResourceType]):
             Every object in this collection.
 
         """
-        return self.filter_by_tags([])
+        return self.filter_by_tags([], page, per_page)
 
     def register(self, model: ResourceType):
         """
         Create a new element of the collection or update an existing element.
 
-        If the input model has a Citrine ID that corresponds to an existing object in the
+        If the input model has an ID that corresponds to an existing object in the
         database, then that object will be updated. Otherwise a new object will be created.
 
         Parameters
@@ -359,28 +452,31 @@ class DataConceptsCollection(Collection[ResourceType]):
         model.session = self.session
         return full_model
 
-    def get(self, uid: Union[UUID, str]) -> ResourceType:
+    def get(self, uid: Union[UUID, str], scope: str = 'id') -> ResourceType:
         """
-        Get the element of the collection with Citrine ID equal to uid.
+        Get the element of the collection with ID equal to uid.
 
         Parameters
         ----------
         uid: Union[UUID, str]
-            The Citrine ID.
+            The ID.
+        scope: str
+            The scope of the uid, defaults to Citrine scope ('id')
 
         Returns
         -------
         DataConcepts
-            An object with Citrine ID equal to uid.
+            An object with specified scope and uid
 
         """
         if self.dataset_id is None:
             raise RuntimeError("Must specify a dataset in order to get a data model object.")
-        path = self._get_path() + "/id/{}".format(uid)
+        path = self._get_path() + "/{}/{}".format(scope, uid)
         data = self.session.get_resource(path)
         return self.build(data)
 
-    def filter_by_tags(self, tags: List[str]):
+    def filter_by_tags(self, tags: List[str],
+                       page: Optional[int] = None, per_page: Optional[int] = None):
         """
         Get all objects in the collection that match any one of a list of tags.
 
@@ -388,6 +484,10 @@ class DataConceptsCollection(Collection[ResourceType]):
         ----------
         tags: List[str]
             a list of strings, each one a tag that an object can match.
+        page: Optional[int]
+            The page of results to list, 1-indexed (i.e. the first page is page=1)
+        per_page: Optional[int]
+            The number of results to list per page
 
         Returns
         -------
@@ -399,15 +499,20 @@ class DataConceptsCollection(Collection[ResourceType]):
         params = {'tags': tags}
         if self.dataset_id is not None:
             params['dataset_id'] = str(self.dataset_id)
+        if page is not None:
+            params['page'] = page
+        if per_page is not None:
+            params['per_page'] = per_page
 
         response = self.session.get_resource(
             self._get_path(ignore_dataset=True),
             params=params)
         return [self.build(content) for content in response["contents"]]
 
-    def filter_by_attribute_bounds(self,
-                                   attribute_bounds: Dict[Union[AttributeTemplate, LinkByUID],
-                                                          BaseBounds]):
+    def filter_by_attribute_bounds(
+            self,
+            attribute_bounds: Dict[Union[AttributeTemplate, LinkByUID], BaseBounds],
+            page: Optional[int] = None, per_page: Optional[int] = None):
         """
         Get all objects in the collection with attributes within certain bounds.
 
@@ -426,6 +531,10 @@ class DataConceptsCollection(Collection[ResourceType]):
             AttributeTemplate that exists in the database.
             Only the uid is passed, so if you would like to update an attribute template you
             must register that change to the database before you can use it to filter.
+        page: Optional[int]
+            The page of results to list, 1-indexed (i.e. the first page is page=1)
+        per_page: Optional[int]
+            The number of results to list per page
 
         Returns
         -------
@@ -444,14 +553,18 @@ class DataConceptsCollection(Collection[ResourceType]):
         params = {}
         if self.dataset_id is not None:
             params['dataset_id'] = str(self.dataset_id)
+        if page is not None:
+            params['page'] = page
+        if per_page is not None:
+            params['per_page'] = per_page
 
         response = self.session.post_resource(
             self._get_path(ignore_dataset=True) + "/filter-by-attribute-bounds",
-            json=body,
-            params=params)
+            json=body, params=params)
         return [self.build(content) for content in response["contents"]]
 
-    def filter_by_name(self, name: str, exact: bool = False):
+    def filter_by_name(self, name: str, exact: bool = False,
+                       page: Optional[int] = None, per_page: Optional[int] = None):
         """
         Get all objects with specified name in this dataset.
 
@@ -462,6 +575,10 @@ class DataConceptsCollection(Collection[ResourceType]):
         exact: bool
             Set to True to change prefix search to exact search (but still case-insensitive).
             Default is False.
+        page: Optional[int]
+            The page of results to list, 1-indexed (i.e. the first page is page=1)
+        per_page: Optional[int]
+            The number of results to list per page
 
         Returns
         -------
@@ -472,6 +589,10 @@ class DataConceptsCollection(Collection[ResourceType]):
         if self.dataset_id is None:
             raise RuntimeError("Must specify a dataset to filter by name.")
         params = {'dataset_id': str(self.dataset_id), 'name': name, 'exact': exact}
+        if page is not None:
+            params['page'] = page
+        if per_page is not None:
+            params['per_page'] = per_page
         response = self.session.get_resource(
             # "Ignoring" dataset because it is in the query params (and required)
             self._get_path(ignore_dataset=True) + "/filter-by-name",

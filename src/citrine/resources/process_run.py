@@ -3,14 +3,14 @@ from typing import List, Dict, Optional, Type
 
 from citrine._utils.functions import set_default_uid
 from citrine._rest.resource import Resource
+from citrine._session import Session
 from citrine._serialization.properties import String, Mapping, Object, LinkOrElse
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Optional as PropertyOptional
-from citrine.resources.ingredient_run import IngredientRun
 from citrine.resources.data_concepts import DataConcepts, DataConceptsCollection
-from taurus.entity.file_link import FileLink
 from citrine.attributes.condition import Condition
 from citrine.attributes.parameter import Parameter
+from taurus.entity.file_link import FileLink
 from taurus.entity.object.process_run import ProcessRun as TaurusProcessRun
 from taurus.entity.object.process_spec import ProcessSpec as TaurusProcessSpec
 
@@ -26,19 +26,19 @@ class ProcessRun(DataConcepts, Resource['ProcessRun'], TaurusProcessRun):
     name: str
         Name of the process run.
     uids: Map[str, str], optional
-        A collection of unique identifiers, each a key-value pair. The key is the "scope"
-        and the value is the identifier. The scope "id" is reserved for the internal Citrine ID,
-        which will always be a uuid4.
+        A collection of
+        `unique IDs <https://citrineinformatics.github.io/taurus-documentation/
+        specification/unique-identifiers/>`_.
     tags: List[str], optional
-        A set of tags. Tags can be used for filtering.
+        `Tags <https://citrineinformatics.github.io/taurus-documentation/specification/tags/>`_
+        are hierarchical strings that store information about an entity. They can be used
+        for filtering and discoverability.
     notes: str, optional
         Long-form notes about the process run.
     conditions: List[Condition], optional
         Conditions under which this process run occurs.
     parameters: List[Parameter], optional
         Parameters of this process run.
-    ingredients: List[IngredientRun], optional
-        Ingredient runs that act as inputs to this process run.
     spec: ProcessSpec
         Spec for this process run.
     file_links: List[FileLink], optional
@@ -50,6 +50,10 @@ class ProcessRun(DataConcepts, Resource['ProcessRun'], TaurusProcessRun):
         The material run that this process run produces. The link is established by creating
         the material run and settings its `process` field to this process run.
 
+    ingredients: List[IngredientRun]
+        Ingredient runs that act as inputs to this process run. The link is established by
+        creating each ingredient run and setting its `process` field to this process run.
+
     """
 
     _response_key = TaurusProcessRun.typ  # 'process_run'
@@ -60,8 +64,6 @@ class ProcessRun(DataConcepts, Resource['ProcessRun'], TaurusProcessRun):
     notes = PropertyOptional(String(), 'notes')
     conditions = PropertyOptional(PropertyList(Object(Condition)), 'conditions')
     parameters = PropertyOptional(PropertyList(Object(Parameter)), 'parameters')
-    ingredients = PropertyOptional(
-        PropertyList(LinkOrElse()), 'ingredients')
     spec = PropertyOptional(LinkOrElse(), 'spec')
     file_links = PropertyOptional(PropertyList(Object(FileLink)), 'file_links')
     typ = String('type')
@@ -73,17 +75,51 @@ class ProcessRun(DataConcepts, Resource['ProcessRun'], TaurusProcessRun):
                  notes: Optional[str] = None,
                  conditions: Optional[List[Condition]] = None,
                  parameters: Optional[List[Parameter]] = None,
-                 ingredients: Optional[List[IngredientRun]] = None,
                  spec: Optional[TaurusProcessSpec] = None,
                  file_links: Optional[List[FileLink]] = None):
         DataConcepts.__init__(self, TaurusProcessRun.typ)
         TaurusProcessRun.__init__(self, name=name, uids=set_default_uid(uids),
                                   tags=tags, conditions=conditions, parameters=parameters,
-                                  ingredients=ingredients, spec=spec,
-                                  file_links=file_links, notes=notes)
+                                  spec=spec, file_links=file_links, notes=notes)
 
     def __str__(self):
         return '<Process run {!r}>'.format(self.name)
+
+    @classmethod
+    def _build_discarded_objects(cls, obj, obj_with_soft_links, session: Session = None):
+        """
+        Build the IngredientRun objects that this ProcessRun has soft links to.
+
+        The ingredient runs are found in `obj_with_soft_link`
+
+        This method modifies the object in place.
+
+        Parameters
+        ----------
+        obj: ProcessRun
+            A ProcessRun object that might be missing some links to IngredientRun objects.
+        obj_with_soft_links: dict or \
+        :py:class:`DictSerializable <taurus.entity.dict_serializable.DictSerializable>`
+            A representation of the ProcessRun in which the IngredientRuns are encoded.
+            We consider both the possibility that this is a dictionary with an 'ingredients' key
+            and that it is a
+            :py:class:`DictSerializable <taurus.entity.dict_serializable.DictSerializable>`
+            (presumably a
+            :py:class:`TaurusProcessRun <taurus.entity.process_run.ProcessRun>`)
+            with a .ingredients field.
+        session: Session, optional
+            Citrine session used to connect to the database.
+
+        Returns
+        -------
+        None
+            The ProcessRun object is modified so that it has links to its IngredientRuns.
+
+        """
+        from citrine.resources.ingredient_run import IngredientRun
+        DataConcepts._build_list_of_soft_links(
+            obj, obj_with_soft_links, field='ingredients', reverse_field='process',
+            linked_type=IngredientRun, session=session)
 
 
 class ProcessRunCollection(DataConceptsCollection[ProcessRun]):

@@ -22,7 +22,6 @@ def valid_data():
                      'value': {'nominal': 203.0, 'units': 'dimensionless', 'type': 'nominal_real'}
                      }],
         parameters=[],
-        ingredients=[],
         spec={'type': 'process_spec', 'name': 'Spec for proc 1',
               'uids': {'id': str(uuid4())}, 'file_links': [], 'notes': None,
               'conditions': [{'type': 'condition', 'name': 'oven temp', 'origin': 'specified',
@@ -31,7 +30,7 @@ def valid_data():
                                         'lower_bound': 175, 'upper_bound': 225
                                         }
                               }],
-              'template': None, 'tags': [], 'parameters': [], 'ingredients': []
+              'template': None, 'tags': [], 'parameters': []
               },
         file_links=[],
         type='process_run'
@@ -47,7 +46,6 @@ def test_simple_deserialization(valid_data):
                                                          value=NominalReal(203.0, ''),
                                                          origin='measured')
     assert process_run.parameters == []
-    assert process_run.ingredients == []
     assert process_run.file_links == []
     assert process_run.template is None
     assert process_run.output_material is None

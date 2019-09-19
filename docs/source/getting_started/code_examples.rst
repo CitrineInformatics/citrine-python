@@ -33,12 +33,15 @@ Note that all resources are given descriptive names and summaries.
 
     from citrine.resources.project import Project
     from citrine.resources.dataset import Dataset
-    band_gaps_project = Project(name="Band gaps", description="Actual and DFT computed band gaps")
-    band_gaps_project = citrine.projects.register(band_gaps_project)
-    print("My new project has name {} and id {}".format(band_gaps_project.name, band_gaps_project.uid))
+    band_gaps_project = citrine.projects.register(name="Band gaps",
+        description="Actual and DFT computed band gaps")
+    print("My new project has name {} and id {}".format(
+        band_gaps_project.name, band_gaps_project.uid))
 
-    Strehlow_Cook_description = "Band gaps for elemental and binary semiconductors with phase and temperature of measurement. DOI 10.1063/1.3253115"
-    Strehlow_Cook_dataset = Dataset(display_name="Strehlow and Cook", summary="Strehlow and Cook band gaps", description=Strehlow_Cook_description)
+    Strehlow_Cook_description = "Band gaps for elemental and binary " \
+        "semiconductors with phase and temperature of measurement. DOI 10.1063/1.3253115"
+    Strehlow_Cook_dataset = Dataset(name="Strehlow and Cook",
+        summary="Strehlow and Cook band gaps", description=Strehlow_Cook_description)
     Strehlow_Cook_dataset = band_gaps_project.datasets.register(Strehlow_Cook_dataset)
 
 Find an existing Project and Dataset
@@ -52,7 +55,8 @@ For more information on retrieving resources, see :ref:`Reading Resources <funct
 
     project_name = "Copper oxides project"
     all_projects = citrine.projects.list()
-    copper_oxides_project = next((project for project in all_projects if project.name == project_name), None)
+    copper_oxides_project = next((project for project in all_projects
+        if project.name == project_name), None)
     assert copper_oxides_project is not None
     dataset_A = copper_oxides_project.datasets.get(uid=dataset_A_uid)
 
@@ -73,11 +77,13 @@ Create a linked process, material, and measurement
 --------------------------------------------------
 
 Imagine you purchase some toluene, measure its index of refraction, and then use it as an ingredient in a chemical reaction.
-The code below converts those actions into data model objects: the process of purchasing, the material of toluene, the optical measurement, and the use of the toluene as an ingredient in a subsequent process.
+The code below converts those actions into data model objects: the process of purchasing, the material of toluene,
+the optical measurement, and the use of the toluene as an ingredient in a subsequent process.
 Specs relate the intent and runs relate what actually happened, which may or may not be the same.
-This assumes that you have already created or retrieved the following:
+This assumes that you have a dataset named ``solvents_dataset`` and that you have already created or retrieved the following:
 a process template ``purchase_template``, a material template ``toluene_template``, a measurement template ``refractive_index_template``,
-a condition template ``temperature_template``, a parameter template ``wavelength_template``, and a property template ``refractive_index_template``.
+a process template ``reaction_template``, a condition template ``temperature_template``,
+a parameter template ``wavelength_template``, and a property template ``refractive_index_template``.
 
 .. code-block:: python
 
@@ -93,19 +99,54 @@ a condition template ``temperature_template``, a parameter template ``wavelength
     from citrine.resources.process_run import ProcessRun
     from citrine.resources.process_spec import ProcessSpec
 
-    buy_toluene_spec = solvents.process_specs.register(ProcessSpec("Buy toluene", template=purchase_template))
-    toluene_spec = solvents.material_specs.register(MaterialSpec("Toluene", process=buy_toluene_spec, template=toluene_template))
-    refractive_index_spec = solvents.measurement_specs.register(MeasurementSpec("Index of refraction", template=refractive_index_template,
+    buy_toluene_spec = solvents_dataset.process_specs.register(
+        ProcessSpec("Buy toluene", template=purchase_template))
+    toluene_spec = solvents_dataset.material_specs.register(
+        MaterialSpec("Toluene", process=buy_toluene_spec, template=toluene_template))
+    refractive_index_spec = solvents_dataset.measurement_specs.register(
+        MeasurementSpec("Index of refraction", template=refractive_index_template,
         conditions=[Condition("Room temperature", template=temperature_template, value=NominalReal(22, 'degC'))],
         parameters=[Parameter("Optical wavelength", template=wavelength_template, value=NominalReal(633, 'nm'))]))
-    toluene_ingredient_spec = solvents.ingredient_specs.register(IngredientSpec("Toluene solvent", absolute_quantity=NominalReal(34, 'mL')))
+    reaction_spec = solvents_dataset.process_specs.register(ProcessSpec("A chemical reaction", template=reaction_template))
+    toluene_ingredient_spec = solvents_dataset.ingredient_specs.register(
+        IngredientSpec("Toluene solvent", material=toluene_spec, process=reaction_spec, absolute_quantity=NominalReal(34, 'mL')))
 
-    buy_toluene_run = solvents.process_runs.register(ProcessRun("Buy 1 liter of toluene", tags=["lot2019-140B"], spec=buy_toluene_spec))
-    toluene = solvents.material_runs.register(MaterialRun("Toluene", process=buy_toluene_run, spec=toluene_spec))
-    refractive_index_run = solvents.measurement_runs.register(MeasurementRun("Index of refraction",
-        spec=refractive_index_spec, material=toluene,
+    buy_toluene_run = solvents_dataset.process_runs.register(
+        ProcessRun("Buy 1 liter of toluene", tags=["lot2019-140B"], spec=buy_toluene_spec))
+    toluene = solvents_dataset.material_runs.register(
+        MaterialRun("Toluene", process=buy_toluene_run, spec=toluene_spec))
+    refractive_index_run = solvents_dataset.measurement_runs.register(
+        MeasurementRun("Index of refraction", spec=refractive_index_spec, material=toluene,
         conditions=[Condition("Room temperature", template=temperature_template, value=NominalReal(24, 'degC'))],
         parameters=[Parameter("Optical wavelength", template=wavelength_template, value=NominalReal(633, 'nm'))],
         properties=[Property("Refractive index", template=refractive_index_template, value=NominalReal(1.49, 'dimensionless'))]))
-    toluene_ingredient = solvents.ingredient_runs.register(IngredientRun("Toluene solvent", absolute_quantity=NominalReal(40, 'mL'), notes="I poured too much!"))
+    reaction_run = solvents_dataset.process_runs.register(
+        ProcessRun("A chemical reaction", spec=reaction_spec))
+    toluene_ingredient = solvents_dataset.ingredient_runs.register(
+        IngredientRun("Toluene solvent", spec=toluene_ingredient_spec,
+        material=toluene, process=reation_run, absolute_quantity=NominalReal(40, 'mL'), notes="I poured too much!"))
 
+Getting a material history
+--------------------------
+
+Continuing the above example, the following code would retrieve the material history for toluene by using its Citrine ID.
+
+.. code-block:: python
+
+    scope = 'id'
+    uid = toluene.uids[scope]
+    toluene_history = solvents_dataset.material_runs.get_history(scope=scope, id=uid)
+
+`toluene_history` is a MaterialRun that can be traced back to see its spec, the measurement performed on it,
+that measurement's spec, the process that created it, and that process's spec.
+The following statements are true:
+
+.. code-block:: python
+
+    toluene_history.measurements == [refractive_index_run]
+    toluene_history.measurements[0].spec == refractive_index_spec
+    toluene_history.process == buy_toluene_run
+    toluene_history.process.spec == toluene_history.spec.process == buy_toluene
+
+Note that the material history does *not* include a reference to the ingredients derived from
+the material. Traversal "forward in time" is not possible.

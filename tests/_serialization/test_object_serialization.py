@@ -13,7 +13,7 @@ class UnserializableClass():
         self.foo = foo
 
 
-class TestClass(Serializable):
+class SampleClass(Serializable):
     """A class to stress the deser scheme's ability to handle objects."""
     prop_string = String('prop_string')
     prop_value = Object(BaseValue, 'prop_value')
@@ -27,14 +27,14 @@ class TestClass(Serializable):
 
 def test_taurus_object_serde():
     """Test that an unspecified taurus object can be serialized and deserialized."""
-    good_obj = TestClass("Can be serialized", NominalReal(17, ''))
-    copy = TestClass.build(good_obj.dump())
+    good_obj = SampleClass("Can be serialized", NominalReal(17, ''))
+    copy = SampleClass.build(good_obj.dump())
     assert copy.prop_value == good_obj.prop_value
     assert copy.prop_string == good_obj.prop_string
 
 
 def test_bad_object_serde():
     """Test that a 'mystery' object cannot be serialized."""
-    bad_obj = TestClass("Cannot be serialized", NominalReal(34, ''), UnserializableClass(1))
+    bad_obj = SampleClass("Cannot be serialized", NominalReal(34, ''), UnserializableClass(1))
     with pytest.raises(AttributeError):
         bad_obj.dump()

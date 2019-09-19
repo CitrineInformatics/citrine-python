@@ -11,9 +11,7 @@ from citrine._serialization.properties import String, LinkOrElse, Mapping, Objec
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Optional as PropertyOptional
 from taurus.client.json_encoder import TaurusEncoder
-from taurus.entity.dict_serializable import DictSerializable
 from taurus.entity.file_link import FileLink
-from taurus.entity.link_by_uid import LinkByUID
 from taurus.entity.object.process_run import ProcessRun as TaurusProcessRun
 from taurus.entity.object.material_run import MaterialRun as TaurusMaterialRun
 from taurus.entity.object.material_spec import MaterialSpec as TaurusMaterialSpec
@@ -29,14 +27,16 @@ class MaterialRun(DataConcepts, Resource['MaterialRun'], TaurusMaterialRun):
     name: str
         Name of the material run.
     uids: Map[str, str], optional
-        A collection of unique identifiers, each a key-value pair. The key is the "scope"
-        and the value is the identifier. The scope "id" is reserved for the internal Citrine ID,
-        which will always be a uuid4.
+        A collection of
+        `unique IDs <https://citrineinformatics.github.io/taurus-documentation/
+        specification/unique-identifiers/>`_.
     tags: List[str], optional
-        A set of tags. Tags can be used for filtering.
+        `Tags <https://citrineinformatics.github.io/taurus-documentation/specification/tags/>`_
+        are hierarchical strings that store information about an entity. They can be used
+        for filtering and discoverability.
     notes: str, optional
         Long-form notes about the material run.
-    process: ProcessSpec
+    process: ProcessRun
         Process that produces this material.
     sample_type: str, optional
         The form of this sample. Optionals are "experimental", "virtual", "production", or
@@ -85,7 +85,7 @@ class MaterialRun(DataConcepts, Resource['MaterialRun'], TaurusMaterialRun):
         return '<Material run {!r}>'.format(self.name)
 
     @classmethod
-    def _build_soft_linked_objects(cls, obj, obj_with_soft_links, session: Session = None):
+    def _build_discarded_objects(cls, obj, obj_with_soft_links, session: Session = None):
         """
         Build the MeasurementRun objects that this MaterialRun has soft links to.
 
@@ -115,32 +115,10 @@ class MaterialRun(DataConcepts, Resource['MaterialRun'], TaurusMaterialRun):
             The MaterialRun object is modified so that it has links to its MeasurementRuns.
 
         """
-        measurements = None
-        # Get the measurements list, if it exists.
-        if isinstance(obj_with_soft_links, dict):
-            if obj_with_soft_links.get('measurements'):
-                measurements = obj_with_soft_links['measurements']
-        if isinstance(obj_with_soft_links, DictSerializable):
-            if hasattr(obj_with_soft_links, 'measurements'):
-                measurements = getattr(obj_with_soft_links, 'measurements')
-        if measurements is None:
-            return
-
         from citrine.resources.measurement_run import MeasurementRun
-        for meas in measurements:
-            # Cycle through measurements and if they are not LinkByUID, build them and then
-            # set their `material` field to obj
-            if isinstance(meas, DictSerializable):
-                if isinstance(meas, LinkByUID):
-                    pass
-                setattr(meas, 'material', None)
-            elif isinstance(meas, dict):
-                if meas.get('type') == LinkByUID.typ:
-                    pass
-                meas['material'] = None
-            meas_object = MeasurementRun.build(meas, session)
-            setattr(meas_object, 'material', obj)
-        return
+        DataConcepts._build_list_of_soft_links(
+            obj, obj_with_soft_links, field='measurements', reverse_field='material',
+            linked_type=MeasurementRun, session=session)
 
 
 class MaterialRunCollection(DataConceptsCollection[MaterialRun]):
@@ -156,8 +134,30 @@ class MaterialRunCollection(DataConceptsCollection[MaterialRun]):
         """Return the resource type in the collection."""
         return MaterialRun
 
-    def get_history(self, scope, id):
-        """Get the history associated with a material."""
+    def get_history(self, scope, id) -> Type[MaterialRun]:
+        """
+        Get the history associated with a material.
+
+        The history contains every single every process, ingredient and material that went into
+        the root material as well as the measurements that were performed on all of those
+        materials. The returned object is a material run with all of its fields fully populated.
+
+        Parameters
+        ----------
+        scope: str
+            The scope used to locate the material.
+        id: str
+            The unique id corresponding to `scope`. The lookup will be most efficient if you use
+            the Citrine ID (scope='id') of the material.
+
+        Returns
+        -------
+        MaterialRun
+            A material run that has all of its fields fully populated with the processes,
+            ingredients, measurements, and other materials that were involved in the history
+            of the object.
+
+        """
         base_path = os.path.dirname(self._get_path(ignore_dataset=True))
         path = base_path + "/material-history/{}/{}".format(scope, id)
         data = self.session.get_resource(path)
