@@ -56,7 +56,6 @@ class FileCollection(Collection[FileLink]):
     """Represents the collection of all file links associated with a dataset."""
 
     _path_template = 'projects/{project_id}/datasets/{dataset_id}/files'
-    _dataset_agnostic_path_template = 'projects/{project_id}/files'
     _individual_key = 'file'
     _collection_key = 'files'
 
@@ -87,16 +86,33 @@ class FileCollection(Collection[FileLink]):
             FileLink objects in this collection.
 
         """
-        path = self._get_path(ignore_dataset=True)
-        params = {'dataset_id': str(self.dataset_id)}
+        path = self._get_path()
+        params = {}
         if page is not None:
             params["page"] = page
         if per_page is not None:
             params["per_page"] = per_page
 
         response = self.session.get_resource(path=path, params=params)
-        # Modify this to work with what the backend actually returns
-        return [self.build(content) for content in response['contents']]
+        collection = response[self._collection_key]
+        for file in collection:
+            yield self.build(self._as_dict_from_resource(file))
+
+    def _as_dict_from_resource(self, file: dict):
+        typ = 'file_link'
+        filename = file['filename']
+        split_url = file['versioned_url'].split('/')
+        version = split_url[-1]
+        assert split_url[-2] == 'versions'
+        file_id = split_url[-3]
+        assert split_url[-4] == 'files'
+        url = self._get_path(file_id) + '/versions/{}'.format(version)
+        file_dict = {
+            'url': url,
+            'filename': filename,
+            'type': typ
+        }
+        return file_dict
 
     def upload(self, file_path: str, dest_name: str = None) -> FileLink:
         """
