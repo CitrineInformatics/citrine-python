@@ -496,6 +496,8 @@ class DataConceptsCollection(Collection[ResourceType]):
             See (insert link) for a discussion of how to match on tags.
 
         """
+        if len(tags) > 1:
+            raise NotImplementedError('Searching by multiple tags is not currently supported.')
         params = {'tags': tags}
         if self.dataset_id is not None:
             params['dataset_id'] = str(self.dataset_id)
