@@ -100,6 +100,44 @@ def test_list_material_runs(collection, session):
     assert sample_run['uids'] == runs[0].uids
 
 
+def test_filter_by_tags(collection, session):
+    # Given
+    sample_run = MaterialRunDataFactory()
+    session.set_response({
+        'contents': [sample_run]
+    })
+
+    # When
+    runs = collection.filter_by_tags(tags=["color"], page=1, per_page=10)
+
+    # Then
+    assert 1 == session.num_calls
+    expected_call = FakeCall(
+        method='GET',
+        path='projects/{}/material-runs'.format(collection.project_id),
+        params={
+            'dataset_id': str(collection.dataset_id),
+            'tags': ["color"],
+            'page': 1,
+            'per_page': 10
+        }
+    )
+    assert expected_call == session.last_call
+    assert 1 == len(runs)
+    assert sample_run['uids'] == runs[0].uids
+
+    # When user gives a single string for tags, it should still work.
+    collection.filter_by_tags(tags="color", page=1, per_page=10)
+
+    # Then
+    assert session.num_calls == 2
+    assert session.last_call == expected_call
+
+    # When user gives multiple tags, should raise NotImplemented Error
+    with pytest.raises(NotImplementedError):
+        collection.filter_by_tags(tags=["color", "shape"])
+
+
 def test_filter_by_name(collection, session):
     # Given
     sample_run = MaterialRunDataFactory()
