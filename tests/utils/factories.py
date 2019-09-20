@@ -53,7 +53,7 @@ class FileLinkDataFactory(factory.DictFactory):
 class MaterialRunDataFactory(factory.DictFactory):
     uids = factory.SubFactory(IDDataFactory)
     name = factory.Faker('color_name')
-    tags = []
+    tags = ["color"]
     notes = None
     process = factory.SubFactory(LinkByUIDInputFactory)
     sample_type = 'experimental'
