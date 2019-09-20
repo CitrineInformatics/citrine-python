@@ -116,13 +116,17 @@ class Session(requests.Session):
         return self.checked_delete(path).json()
 
     def checked_post(self, path: str, json: dict, *args, **kwargs) -> None:
+        """Execute a POST request to a URL and utilize error filtering on the response."""
         return self.checked_request('POST', path, *args, json=json, **kwargs)
 
     def checked_put(self, path: str, json: dict, *args, **kwargs) -> None:
+        """Execute a PUT request to a URL and utilize error filtering on the response."""
         return self.checked_request('PUT', path, *args, json=json, **kwargs)
 
     def checked_delete(self, path: str) -> dict:
+        """Execute a DELETE request to a URL and utilize error filtering on the response."""
         return self.checked_request('DELETE', path)
 
     def checked_get(self, path: str, *args, **kwargs) -> dict:
+        """Execute a GET request to a URL and utilize error filtering on the response."""
         return self.checked_request('GET', path, *args, **kwargs)
