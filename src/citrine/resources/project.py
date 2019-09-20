@@ -157,6 +157,48 @@ class Project(Resource['Project']):
             "resource": {"type": resource_type, "id": resource_id}
         })
 
+    def make_public(self,
+                    resource: Resource) -> bool:
+        """
+        Grant public access to a resource owned by this project.
+
+        Parameters
+        ----------
+        resource: Resource
+            An instance of a resource owned by this project (e.g. a dataset).
+
+        Returns
+        -------
+        bool
+            True if the action was performed successfully
+
+        """
+        self.session.post_resource(self._path() + "/make-public", {
+            "resource": resource.as_entity_dict()
+        })
+        return True
+
+    def make_private(self,
+                     resource: Resource) -> bool:
+        """
+        Remove public access for a resource owned by this project.
+
+        Parameters
+        ----------
+        resource: Resource
+            An instance of a resource owned by this project (e.g. a dataset).
+
+        Returns
+        -------
+        bool
+            True if the action was performed successfully
+
+        """
+        self.session.post_resource(self._path() + "/make-private", {
+            "resource": resource.as_entity_dict()
+        })
+        return True
+
 
 class ProjectCollection(Collection[Project]):
     """
@@ -208,3 +250,7 @@ class ProjectCollection(Collection[Project]):
 
         """
         return super().register(Project(name, description))
+
+    def delete(self, uuid):
+        """Delete the project with the provided uid."""
+        raise NotImplementedError("Delete is not supported for projects")

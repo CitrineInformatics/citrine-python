@@ -8,4 +8,5 @@ Getting Started
     basic_structure
     basic_functionality
     data_model
+    public_access
     code_examples
