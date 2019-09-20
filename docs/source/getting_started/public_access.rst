@@ -19,6 +19,8 @@ using the :func:`~citrine.resources.project.Project.make_public` and :func:`~cit
 Example
 -------
 
+Assume you have a "band gaps project" with known ID, `band_gaps_project_id`, and an associated dataset with known ID, `strehlow_cook_dataset_id`.
+
 Making a dataset public:
 
 .. code-block:: python
