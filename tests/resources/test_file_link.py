@@ -1,11 +1,10 @@
 import pytest
-import os
 from uuid import uuid4
 from mock import patch, Mock
 from botocore.exceptions import ClientError
 
 from citrine.resources.file_link import FileCollection, FileLink, _Uploader
-from tests.utils.session import FakeSession, FakeS3Client, FakeCall
+from tests.utils.session import FakeSession, FakeS3Client, FakeCall, FakeRequestResponse
 from tests.utils.factories import FileLinkDataFactory, _UploaderFactory
 
 
@@ -190,7 +189,7 @@ def test_list_file_links(collection, session, valid_data):
 @patch('citrine.resources.file_link.os.path.isdir')
 @patch('citrine.resources.file_link.os.mkdir')
 def test_file_download(mock_mkdir, mock_os_path_isdir, mock_os_path_split,
-                       mock_get, mock_open, session):
+                       mock_get, mock_open, collection, session):
     """
     Test that downloading a file works as expected.
 
@@ -209,10 +208,10 @@ def test_file_download(mock_mkdir, mock_os_path_isdir, mock_os_path_split,
 
     mock_os_path_split.return_value = (local_path, '')  # triggers appending filename to local_path
     mock_os_path_isdir.return_value = False  # triggers mkdir
-    mock_get.return_value = '0101110110'  # arbitrary
+    mock_get.return_value = FakeRequestResponse('0101001')  # arbitrary
 
     # When
-    file.download(local_path, session)
+    collection.download(file, local_path)
 
     # When
     assert mock_os_path_isdir.call_count == 1

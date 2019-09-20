@@ -52,6 +52,10 @@ class FileLink(Resource['FileLink'], TaurusFileLink):
     def __str__(self):
         return '<File link {!r}>'.format(self.filename)
 
+    def as_dict(self) -> dict:
+        """Dump to a dictionary (useful for interoperability with taurus)."""
+        return self.dump()
+
     def download(self, local_path: str, session: Session):
         """
         Download the file associated with this file link.
@@ -179,7 +183,9 @@ class FileCollection(Collection[FileLink]):
         dest_name: str, optional
             The name the file will have after being uploaded. If unspecified, the local name of
             the file will be used. That is, the file at "/Users/me/diagram.pdf" will be uploaded
-            with the name "diagram.pdf".
+            with the name "diagram.pdf". File names **must be unique** within a dataset. If a file
+            is uploaded with the same `dest_name` as an existing file it will be considered
+            a new version of the existing file.
 
         Returns
         -------
@@ -318,3 +324,30 @@ class FileCollection(Collection[FileLink]):
 
         url = self._get_path(file_id) + '/versions/{}'.format(version)
         return FileLink(filename=dest_name, url=url)
+
+    def download(self, file_link: FileLink, local_path: str):
+        """
+        Download the file associated with a given FileLink to the local computer.
+
+        Parameters
+        ----------
+        file_link: FileLink
+            Resource referencing the external file.
+        local_path: str
+            Path to save file on the local computer. If `local_path` is a directory,
+            then the filename of this FileLink object will be appended to the path.
+
+        """
+        directory, filename = os.path.split(local_path)
+        if not filename:
+            filename = file_link.filename
+        if not os.path.isdir(directory):
+            os.mkdir(directory)
+        local_path = os.path.join(directory, filename)
+
+        content_link_path = file_link.url + '/content-link'  # get a pre-signed url
+        content_link_response = self.session.get_resource(content_link_path)
+        pre_signed_url = content_link_response['pre_signed_read_link']
+        download_response = requests.get(pre_signed_url)
+        with open(local_path, 'wb') as output_file:
+            output_file.write(download_response.content)
