@@ -14,7 +14,7 @@ Toggling Public Access
 ----------------------
 
 A dataset can be made public (or made private again) using the project from which it originates
-using the `make_public` and `make_private` methods on the project.
+using the :func:`~citrine.resources.project.Project.make_public` and :func:`~citrine.resources.project.Project.make_private` methods on the project.
 
 Example
 -------
