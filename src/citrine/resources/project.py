@@ -173,7 +173,7 @@ class Project(Resource['Project']):
             True if the action was performed successfully
 
         """
-        self.session.post_resource(self._path() + "/make-public", {
+        self.session.checked_post(self._path() + "/make-public", {
             "resource": resource.as_entity_dict()
         })
         return True
@@ -194,7 +194,7 @@ class Project(Resource['Project']):
             True if the action was performed successfully
 
         """
-        self.session.post_resource(self._path() + "/make-private", {
+        self.session.checked_post(self._path() + "/make-private", {
             "resource": resource.as_entity_dict()
         })
         return True

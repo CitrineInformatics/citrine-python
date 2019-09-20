@@ -101,16 +101,28 @@ class Session(requests.Session):
 
     def get_resource(self, path: str, *args, **kwargs) -> dict:
         """GET a particular resource as JSON."""
-        return self.checked_request('GET', path, *args, **kwargs).json()
+        return self.checked_get(path, *args, **kwargs).json
 
     def post_resource(self, path: str, json: dict, *args, **kwargs) -> dict:
         """POST to a particular resource as JSON."""
-        return self.checked_request('POST', path, *args, json=json, **kwargs).json()
+        return self.checked_post(path, json, *args, **kwargs).json()
 
     def put_resource(self, path: str, json: dict, *args, **kwargs) -> dict:
         """PUT data given by some JSON at a particular resource."""
-        return self.checked_request('PUT', path, *args, json=json, **kwargs).json()
+        return self.checked_put(path, *args, json=json, **kwargs).json()
 
     def delete_resource(self, path: str) -> dict:
         """DELETE a particular resource as JSON."""
-        return self.checked_request('DELETE', path).json()
+        return self.checked_delete(path).json()
+
+    def checked_post(self, path: str, json: dict, *args, **kwargs) -> None:
+        return self.checked_request('POST', path, *args, json=json, **kwargs)
+
+    def checked_put(self, path: str, json: dict, *args, **kwargs) -> None:
+        return self.checked_request('PUT', path, *args, json=json, **kwargs)
+
+    def checked_delete(self, path: str) -> dict:
+        return self.checked_request('DELETE', path)
+
+    def checked_get(self, path: str, *args, **kwargs) -> dict:
+        return self.checked_request('GET', path, *args, **kwargs)
