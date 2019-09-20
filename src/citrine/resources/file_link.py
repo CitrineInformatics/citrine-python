@@ -315,10 +315,11 @@ class FileCollection(Collection[FileLink]):
         if not filename:
             filename = file_link.filename
         if not os.path.isdir(directory):
-            os.mkdir(directory)
+            os.mkdirs(directory)
         local_path = os.path.join(directory, filename)
 
-        content_link_path = file_link.url + '/content-link'  # get a pre-signed url
+        # The "/content-link" route returns a pre-signed url to download the file.
+        content_link_path = file_link.url + '/content-link'
         content_link_response = self.session.get_resource(content_link_path)
         pre_signed_url = content_link_response['pre_signed_read_link']
         download_response = requests.get(pre_signed_url)
