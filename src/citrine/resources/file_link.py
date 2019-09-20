@@ -75,9 +75,9 @@ class FileLink(Resource['FileLink'], TaurusFileLink):
         content_link_path = self.url + '/content-link'  # get a pre-signed url
         content_link_response = session.get_resource(content_link_path)
         pre_signed_url = content_link_response['pre_signed_read_link']
-        content = requests.get(pre_signed_url)
+        download_response = requests.get(pre_signed_url)
         with open(local_path, 'wb') as output_file:
-            output_file.write(content)
+            output_file.write(download_response.content)
 
 
 class FileCollection(Collection[FileLink]):
