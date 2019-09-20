@@ -117,6 +117,40 @@ and some of which have been shared with the project.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="citrine.resources.project.Project.make_private">
+<code class="sig-name descname">make_private</code><span class="sig-paren">(</span><em class="sig-param">resource: citrine._rest.resource.Resource</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#citrine.resources.project.Project.make_private" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove public access for a resource owned by this project.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>resource</strong> (<em>Resource</em>) – An instance of a resource owned by this project (e.g. a dataset).</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>True if the action was performed successfully</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="citrine.resources.project.Project.make_public">
+<code class="sig-name descname">make_public</code><span class="sig-paren">(</span><em class="sig-param">resource: citrine._rest.resource.Resource</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#citrine.resources.project.Project.make_public" title="Permalink to this definition">¶</a></dt>
+<dd><p>Grant public access to a resource owned by this project.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>resource</strong> (<em>Resource</em>) – An instance of a resource owned by this project (e.g. a dataset).</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>True if the action was performed successfully</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
 <dt id="citrine.resources.project.Project.material_runs">
 <em class="property">property </em><code class="sig-name descname">material_runs</code><a class="headerlink" href="#citrine.resources.project.Project.material_runs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a resource representing all material runs in this dataset.</p>
@@ -230,6 +264,12 @@ and some of which have been shared with the project.</p>
 <dd class="field-odd"><p><a class="reference internal" href="#citrine.resources.project.Project" title="citrine.resources.project.Project">Project</a></p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="citrine.resources.project.ProjectCollection.delete">
+<code class="sig-name descname">delete</code><span class="sig-paren">(</span><em class="sig-param">uuid</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.project.ProjectCollection.delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete the project with the provided uid.</p>
 </dd></dl>
 
 <dl class="method">
