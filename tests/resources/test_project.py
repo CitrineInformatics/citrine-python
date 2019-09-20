@@ -1,8 +1,9 @@
-from uuid import UUID
+import uuid
 import pytest
 from dateutil.parser import parse
 
 from citrine.resources.project import Project, ProjectCollection
+from citrine.resources.dataset import Dataset
 from tests.utils.factories import ProjectDataFactory
 from tests.utils.session import FakeSession, FakeCall
 
@@ -18,7 +19,7 @@ def project(session) -> Project:
         name='Test Project',
         session=session
     )
-    project.uid = UUID('16fd2706-8baf-433b-82eb-8c7fada847da')
+    project.uid = uuid.UUID('16fd2706-8baf-433b-82eb-8c7fada847da')
     return project
 
 
@@ -30,17 +31,37 @@ def collection(session) -> ProjectCollection:
 def test_string_representation(project):
     assert "<Project 'Test Project'>" == str(project)
 
-
-def test_share_posts_content(project, session):
-    project.share('1', 'MaterialTemplate', '2')
+def test_make_resource_public_post_content(project, session):
+    dataset_id = str(uuid.uuid4())
+    dataset = project.datasets.build(dict(
+        id=dataset_id,
+        name="public dataset", summary="test", description="test"
+    ))
+    assert project.make_public(dataset)
 
     assert 1 == session.num_calls
     expected_call = FakeCall(
         method='POST',
-        path='/projects/16fd2706-8baf-433b-82eb-8c7fada847da/share',
+        path='/projects/{}/make-public'.format(project.uid),
         json={
-            'project_id': '1',
-            'resource': {'type': 'MaterialTemplate', 'id': '2'}
+            'resource': {'type': 'DATASET', 'id': dataset_id}
+        }
+    )
+    assert expected_call == session.last_call
+
+def test_make_resource_private_post_content(project, session):
+    dataset_id = str(uuid.uuid4())
+    dataset = project.datasets.build(dict(
+        id=dataset_id,
+        name="private dataset", summary="test", description="test"
+    ))
+    assert project.make_private(dataset)
+    assert 1 == session.num_calls
+    expected_call = FakeCall(
+        method='POST',
+        path='/projects/{}/make-private'.format(project.uid),
+        json={
+            'resource': {'type': 'DATASET', 'id': dataset_id}
         }
     )
     assert expected_call == session.last_call
@@ -171,7 +192,6 @@ def test_list_projects(collection, session):
     assert expected_call == session.last_call
     assert 5 == len(projects)
 
-
 def test_list_projects_with_page_params(collection, session):
     # Given
     project_data = ProjectDataFactory()
@@ -185,7 +205,7 @@ def test_list_projects_with_page_params(collection, session):
     expected_call = FakeCall(method='GET', path='/projects', params={'page': 3, 'per_page': 10})
     assert expected_call == session.last_call
 
-
+@pytest.mark.skip("Delete is not implemented yet")
 def test_delete_project(collection, session):
     # Given
     uid = '151199ec-e9aa-49a1-ac8e-da722aaf74c4'
