@@ -158,20 +158,20 @@ class Project(Resource['Project']):
         })
 
     def make_public(self,
-                    resource_type: str,
-                    resource_id: str) -> Dict[str, str]:
+                    resource: Resource) -> bool:
         """Make a resource publicly accessible."""
-        return self.session.post_resource(self._path() + "/make-public", {
-            "resource": {"type": resource_type, "id": resource_id}
+        self.session.post_resource(self._path() + "/make-public", {
+            "resource": resource.as_entity_dict()
         })
+        return True
 
     def make_private(self,
-                     resource_type: str,
-                     resource_id: str) -> Dict[str, str]:
+                     resource: Resource) -> bool:
         """Remove public access from a resource."""
-        return self.session.post_resource(self._path() + "/make-private", {
-            "resource": {"type": resource_type, "id": resource_id}
+        self.session.post_resource(self._path() + "/make-private", {
+            "resource": resource.as_entity_dict()
         })
+        return True
 
 
 class ProjectCollection(Collection[Project]):

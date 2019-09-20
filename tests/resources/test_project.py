@@ -1,8 +1,9 @@
-from uuid import UUID
+import uuid
 import pytest
 from dateutil.parser import parse
 
 from citrine.resources.project import Project, ProjectCollection
+from citrine.resources.dataset import Dataset
 from tests.utils.factories import ProjectDataFactory
 from tests.utils.session import FakeSession, FakeCall
 
@@ -18,7 +19,7 @@ def project(session) -> Project:
         name='Test Project',
         session=session
     )
-    project.uid = UUID('16fd2706-8baf-433b-82eb-8c7fada847da')
+    project.uid = uuid.UUID('16fd2706-8baf-433b-82eb-8c7fada847da')
     return project
 
 
@@ -31,27 +32,36 @@ def test_string_representation(project):
     assert "<Project 'Test Project'>" == str(project)
 
 def test_make_resource_public_post_content(project, session):
-    project.make_public('MaterialTemplate', '2')
+    dataset_id = str(uuid.uuid4())
+    dataset = project.datasets.build(dict(
+        id=dataset_id,
+        name="public dataset", summary="test", description="test"
+    ))
+    assert project.make_public(dataset)
 
     assert 1 == session.num_calls
     expected_call = FakeCall(
         method='POST',
         path='/projects/{}/make-public'.format(project.uid),
         json={
-            'resource': {'type': 'MaterialTemplate', 'id': '2'}
+            'resource': {'type': 'DATASET', 'id': dataset_id}
         }
     )
     assert expected_call == session.last_call
 
 def test_make_resource_private_post_content(project, session):
-    project.make_private('MaterialTemplate', '2')
-
+    dataset_id = str(uuid.uuid4())
+    dataset = project.datasets.build(dict(
+        id=dataset_id,
+        name="private dataset", summary="test", description="test"
+    ))
+    assert project.make_private(dataset)
     assert 1 == session.num_calls
     expected_call = FakeCall(
         method='POST',
         path='/projects/{}/make-private'.format(project.uid),
         json={
-            'resource': {'type': 'MaterialTemplate', 'id': '2'}
+            'resource': {'type': 'DATASET', 'id': dataset_id}
         }
     )
     assert expected_call == session.last_call
