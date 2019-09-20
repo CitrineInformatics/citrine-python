@@ -187,7 +187,7 @@ def test_list_file_links(collection, session, valid_data):
 @patch('citrine.resources.file_link.requests.get')
 @patch('citrine.resources.file_link.os.path.split')
 @patch('citrine.resources.file_link.os.path.isdir')
-@patch('citrine.resources.file_link.os.mkdir')
+@patch('citrine.resources.file_link.os.makedirs')
 def test_file_download(mock_mkdir, mock_os_path_isdir, mock_os_path_split,
                        mock_get, mock_open, collection, session):
     """
