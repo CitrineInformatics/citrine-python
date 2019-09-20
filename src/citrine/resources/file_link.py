@@ -315,7 +315,7 @@ class FileCollection(Collection[FileLink]):
         if not filename:
             filename = file_link.filename
         if not os.path.isdir(directory):
-            os.mkdirs(directory)
+            os.makedirs(directory)
         local_path = os.path.join(directory, filename)
 
         # The "/content-link" route returns a pre-signed url to download the file.
