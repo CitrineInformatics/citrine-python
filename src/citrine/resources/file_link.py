@@ -56,33 +56,6 @@ class FileLink(Resource['FileLink'], TaurusFileLink):
         """Dump to a dictionary (useful for interoperability with taurus)."""
         return self.dump()
 
-    def download(self, local_path: str, session: Session):
-        """
-        Download the file associated with this file link.
-
-        Parameters
-        ----------
-        local_path: str
-            Path to save file on the local computer. If `local_path` is a directory,
-            then the filename of this FileLink object will be appended to the path.
-        session: Session
-            The Citrine session used to connect to the database.
-
-        """
-        directory, filename = os.path.split(local_path)
-        if not filename:
-            filename = self.filename
-        if not os.path.isdir(directory):
-            os.mkdir(directory)
-        local_path = os.path.join(directory, filename)
-
-        content_link_path = self.url + '/content-link'  # get a pre-signed url
-        content_link_response = session.get_resource(content_link_path)
-        pre_signed_url = content_link_response['pre_signed_read_link']
-        download_response = requests.get(pre_signed_url)
-        with open(local_path, 'wb') as output_file:
-            output_file.write(download_response.content)
-
 
 class FileCollection(Collection[FileLink]):
     """Represents the collection of all file links associated with a dataset."""
