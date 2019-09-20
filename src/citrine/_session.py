@@ -101,7 +101,7 @@ class Session(requests.Session):
 
     def get_resource(self, path: str, *args, **kwargs) -> dict:
         """GET a particular resource as JSON."""
-        return self.checked_get(path, *args, **kwargs).json
+        return self.checked_get(path, *args, **kwargs).json()
 
     def post_resource(self, path: str, json: dict, *args, **kwargs) -> dict:
         """POST to a particular resource as JSON."""
