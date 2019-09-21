@@ -46,18 +46,30 @@ class FakeSession:
         return self.calls[-1]
 
     def get_resource(self, path: str, *args, **kwargs) -> dict:
+        return self.checked_get(path, *args, **kwargs)
+
+    def post_resource(self, path: str, json: dict, *args, **kwargs) -> dict:
+        return self.checked_post(path, json, *args, **kwargs)
+
+    def put_resource(self, path: str, json: dict, *args, **kwargs) -> dict:
+        return self.checked_put(path, json, *args, **kwargs)
+
+    def delete_resource(self, path: str) -> dict:
+        return self.checked_delete(path)
+
+    def checked_get(self, path: str, *args, **kwargs) -> dict:
         self.calls.append(FakeCall('GET', path, params=kwargs.get('params')))
         return self.response
 
-    def post_resource(self, path: str, json: dict, *args, **kwargs) -> dict:
+    def checked_post(self, path: str, json: dict, *args, **kwargs) -> dict:
         self.calls.append(FakeCall('POST', path, json, params=kwargs.get('params')))
         return self.response
 
-    def put_resource(self, path: str, json: dict, *args, **kwargs) -> dict:
+    def checked_put(self, path: str, json: dict, *args, **kwargs) -> dict:
         self.calls.append(FakeCall('PUT', path, json))
         return self.response
 
-    def delete_resource(self, path: str) -> dict:
+    def checked_delete(self, path: str) -> dict:
         self.calls.append(FakeCall('DELETE', path))
         return self.response
 
