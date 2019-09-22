@@ -1,7 +1,7 @@
 import pytest
 import arrow
 
-from citrine._serialization.properties import Integer, Property, String, Float, Datetime
+from citrine._serialization.properties import Integer, String, Float, Datetime
 from ._data import VALID_SERIALIZATIONS, VALID_STRINGS, INVALID_INSTANCES, INVALID_SERIALIZED_INSTANCES
 
 

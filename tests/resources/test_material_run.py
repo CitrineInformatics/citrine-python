@@ -193,3 +193,21 @@ def test_filter_by_attribute_bounds(collection, session):
     assert expected_call == session.last_call
     assert 1 == len(runs)
     assert sample_run['uids'] == runs[0].uids
+
+
+def test_delete_material_run(collection, session):
+    # Given
+    material_run_uid = '2d3a782f-aee7-41db-853c-36bf4bff0626'
+
+    # When
+    collection.delete(material_run_uid)
+
+    # Then
+    assert 1 == session.num_calls
+    expected_call = FakeCall(
+        method='DELETE',
+        path='projects/{}/datasets/{}/material-runs/{}'.format(collection.project_id, collection.dataset_id, material_run_uid),
+    )
+    assert expected_call == session.last_call
+
+
