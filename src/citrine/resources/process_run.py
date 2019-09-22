@@ -13,6 +13,7 @@ from citrine.attributes.parameter import Parameter
 from taurus.entity.file_link import FileLink
 from taurus.entity.object.process_run import ProcessRun as TaurusProcessRun
 from taurus.entity.object.process_spec import ProcessSpec as TaurusProcessSpec
+from taurus.entity.source.performed_source import PerformedSource
 
 
 class ProcessRun(DataConcepts, Resource['ProcessRun'], TaurusProcessRun):
@@ -43,6 +44,8 @@ class ProcessRun(DataConcepts, Resource['ProcessRun'], TaurusProcessRun):
         Spec for this process run.
     file_links: List[FileLink], optional
         Links to associated files, with resource paths into the files API.
+    source: PerformedSource, optional
+        Information about the person who performed the run and when.
 
     Attributes
     ----------
@@ -66,6 +69,7 @@ class ProcessRun(DataConcepts, Resource['ProcessRun'], TaurusProcessRun):
     parameters = PropertyOptional(PropertyList(Object(Parameter)), 'parameters')
     spec = PropertyOptional(LinkOrElse(), 'spec')
     file_links = PropertyOptional(PropertyList(Object(FileLink)), 'file_links')
+    source = PropertyOptional(Object(PerformedSource), "source")
     typ = String('type')
 
     def __init__(self,
@@ -76,11 +80,12 @@ class ProcessRun(DataConcepts, Resource['ProcessRun'], TaurusProcessRun):
                  conditions: Optional[List[Condition]] = None,
                  parameters: Optional[List[Parameter]] = None,
                  spec: Optional[TaurusProcessSpec] = None,
-                 file_links: Optional[List[FileLink]] = None):
+                 file_links: Optional[List[FileLink]] = None,
+                 source: Optional[PerformedSource] = None):
         DataConcepts.__init__(self, TaurusProcessRun.typ)
         TaurusProcessRun.__init__(self, name=name, uids=set_default_uid(uids),
                                   tags=tags, conditions=conditions, parameters=parameters,
-                                  spec=spec, file_links=file_links, notes=notes)
+                                  spec=spec, file_links=file_links, notes=notes, source=source)
 
     def __str__(self):
         return '<Process run {!r}>'.format(self.name)
