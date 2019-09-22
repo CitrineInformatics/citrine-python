@@ -14,6 +14,7 @@ from citrine.attributes.property import Property
 from taurus.entity.object.material_run import MaterialRun as TaurusMaterialRun
 from taurus.entity.object.measurement_run import MeasurementRun as TaurusMeasurementRun
 from taurus.entity.object.measurement_spec import MeasurementSpec as TaurusMeasurementSpec
+from taurus.entity.source.performed_source import PerformedSource
 
 
 class MeasurementRun(DataConcepts, Resource['MeasurementRun'], TaurusMeasurementRun):
@@ -48,7 +49,8 @@ class MeasurementRun(DataConcepts, Resource['MeasurementRun'], TaurusMeasurement
         The material specification of which this is an instance.
     file_links: List[FileLink], optional
         Links to associated files, with resource paths into the files API.
-
+    source: PerformedSource, optional
+        Information about the person who performed the run and when.
     """
 
     _response_key = TaurusMeasurementRun.typ  # 'measurement_run'
@@ -63,6 +65,7 @@ class MeasurementRun(DataConcepts, Resource['MeasurementRun'], TaurusMeasurement
     spec = PropertyOptional(LinkOrElse(), 'spec')
     material = PropertyOptional(LinkOrElse(), "material")
     file_links = PropertyOptional(PropertyList(Object(FileLink)), 'file_links')
+    source = PropertyOptional(Object(PerformedSource), "source")
     typ = String('type')
 
     def __init__(self,
@@ -75,13 +78,14 @@ class MeasurementRun(DataConcepts, Resource['MeasurementRun'], TaurusMeasurement
                  parameters: Optional[List[Parameter]] = None,
                  spec: Optional[TaurusMeasurementSpec] = None,
                  material: Optional[TaurusMaterialRun] = None,
-                 file_links: Optional[List[FileLink]] = None):
+                 file_links: Optional[List[FileLink]] = None,
+                 source: Optional[PerformedSource] = None):
         DataConcepts.__init__(self, TaurusMeasurementRun.typ)
         TaurusMeasurementRun.__init__(self, name=name, uids=set_default_uid(uids),
                                       material=material,
                                       tags=tags, conditions=conditions, properties=properties,
                                       parameters=parameters, spec=spec,
-                                      file_links=file_links, notes=notes)
+                                      file_links=file_links, notes=notes, source=source)
 
     def __str__(self):
         return '<Measurement run {!r}>'.format(self.name)

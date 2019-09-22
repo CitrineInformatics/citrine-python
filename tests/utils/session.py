@@ -83,3 +83,10 @@ class FakeS3Client:
     def put_object(self, *args, **kwargs):
         """Return the expected output of the real client's put_object method."""
         return self.put_object_output
+
+
+class FakeRequestResponse:
+    """A fake version of a requests.request() response."""
+
+    def __init__(self, content=None):
+        self.content = content
