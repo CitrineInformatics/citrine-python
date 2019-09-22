@@ -15,7 +15,7 @@ VALID_SERIALIZATIONS = [
 ]
 
 VALID_STRINGS = [
-    (properties.Property, 'hi', "<Property 'hi'>"),
+    (properties.Raw, 'hi', "<Property 'hi'>"),
     (properties.Integer, 'foo', "<Integer 'foo'>"),
     (properties.Float, 'bar', "<Float 'bar'>"),
     (properties.String, 'foobar', "<String 'foobar'>"),
