@@ -1,0 +1,147 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>1.5. Working With Files &#8212; Citrine Python 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="1.6. Code Examples" href="code_examples.html" />
+    <link rel="prev" title="1.4. Dataset Access Control" href="public_access.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="working-with-files">
+<h1>1.5. Working With Files<a class="headerlink" href="#working-with-files" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="overview">
+<h2>1.5.1. Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
+<p>It is often useful to associate files with your processes, materials, and measurements.
+These could be images output by a microscope in a proprietary format, a picture of how several
+samples are arranged on a hot plate, or anything else you would like to save.
+The association of a file with a resource is done using a
+<a class="reference internal" href="../reference/citrine.resources.file_link.html#citrine.resources.file_link.FileLink" title="citrine.resources.file_link.FileLink"><code class="xref py py-class docutils literal notranslate"><span class="pre">FileLink</span></code></a>,
+which is created when you upload a file. The <cite>FileLink</cite> can be associated with runs,
+specs, attributes and templates, all of which have a <cite>file_links</cite> field, and it can be used
+to download the file.</p>
+</div>
+<div class="section" id="uniqueness-and-versioning">
+<h2>1.5.2. Uniqueness and Versioning<a class="headerlink" href="#uniqueness-and-versioning" title="Permalink to this headline">¶</a></h2>
+<p>All FileLink objects are associated with a specific dataset, and they are given a <cite>filename</cite>
+when uploaded. The <cite>filename</cite> <strong>must be unique</strong> within the dataset. If you upload another file
+with the same <cite>filename</cite> it will be considered a new version of the same file. The old version
+is not deleted, but at the moment you can only download the latest version of a given FileLink.</p>
+</div>
+<div class="section" id="example">
+<h2>1.5.3. Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
+<p>Assume you have a dataset named <cite>dataset</cite> and a file at the location <cite>/Users/me/status_20190913.csv</cite>
+on your computer. The code below uploads the file and gives it the filename <cite>microscope_status_20190913.csv</cite>.
+It then downloads the file back to your computer at <cite>/Users/me/Downloads/settings.csv</cite>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">file_link</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">upload</span><span class="p">(</span>
+    <span class="s2">&quot;/Users/me/status_20190913.csv&quot;</span><span class="p">,</span> <span class="s2">&quot;microscope_status_20190913.csv&quot;</span><span class="p">)</span>
+<span class="n">dataset</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">download</span><span class="p">(</span><span class="n">file_link</span><span class="p">,</span>
+    <span class="s2">&quot;/Users/me/Downloads/settings.csv&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Citrine Python</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">1. Getting Started</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="basic_structure.html">1.1. Structure of the Citrine Python Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="basic_functionality.html">1.2. Using the Citrine Python Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_model.html">1.3. Data Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="public_access.html">1.4. Dataset Access Control</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">1.5. Working With Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="code_examples.html">1.6. Code Examples</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">1. Getting Started</a><ul>
+      <li>Previous: <a href="public_access.html" title="previous chapter">1.4. Dataset Access Control</a></li>
+      <li>Next: <a href="code_examples.html" title="next chapter">1.6. Code Examples</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Citrine Informatics.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/getting_started/working_with_files.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
