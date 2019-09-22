@@ -35,7 +35,7 @@
 <p>Resources that represent measurement run data objects.</p>
 <dl class="class">
 <dt id="citrine.resources.measurement_run.MeasurementRun">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.resources.measurement_run.</code><code class="sig-name descname">MeasurementRun</code><span class="sig-paren">(</span><em class="sig-param">name: str</em>, <em class="sig-param">uids: Optional[Dict[str</em>, <em class="sig-param">str]] = None</em>, <em class="sig-param">tags: Optional[List[str]] = None</em>, <em class="sig-param">notes: Optional[str] = None</em>, <em class="sig-param">conditions: Optional[List[citrine.attributes.condition.Condition]] = None</em>, <em class="sig-param">properties: Optional[List[citrine.attributes.property.Property]] = None</em>, <em class="sig-param">parameters: Optional[List[citrine.attributes.parameter.Parameter]] = None</em>, <em class="sig-param">spec: Optional[taurus.entity.object.measurement_spec.MeasurementSpec] = None</em>, <em class="sig-param">material: Optional[taurus.entity.object.material_run.MaterialRun] = None</em>, <em class="sig-param">file_links: Optional[List[taurus.entity.file_link.FileLink]] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.measurement_run.MeasurementRun" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">citrine.resources.measurement_run.</code><code class="sig-name descname">MeasurementRun</code><span class="sig-paren">(</span><em class="sig-param">name: str</em>, <em class="sig-param">uids: Optional[Dict[str</em>, <em class="sig-param">str]] = None</em>, <em class="sig-param">tags: Optional[List[str]] = None</em>, <em class="sig-param">notes: Optional[str] = None</em>, <em class="sig-param">conditions: Optional[List[citrine.attributes.condition.Condition]] = None</em>, <em class="sig-param">properties: Optional[List[citrine.attributes.property.Property]] = None</em>, <em class="sig-param">parameters: Optional[List[citrine.attributes.parameter.Parameter]] = None</em>, <em class="sig-param">spec: Optional[taurus.entity.object.measurement_spec.MeasurementSpec] = None</em>, <em class="sig-param">material: Optional[taurus.entity.object.material_run.MaterialRun] = None</em>, <em class="sig-param">file_links: Optional[List[taurus.entity.file_link.FileLink]] = None</em>, <em class="sig-param">source: Optional[taurus.entity.source.performed_source.PerformedSource] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.measurement_run.MeasurementRun" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConcepts" title="citrine.resources.data_concepts.DataConcepts"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.resources.data_concepts.DataConcepts</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.resource.Resource</span></code>, <a class="reference external" href="https://citrineinformatics.github.io/taurus/reference/taurus.entity.object.measurement_run.html#taurus.entity.object.measurement_run.MeasurementRun" title="(in Taurus)"><code class="xref py py-class docutils literal notranslate"><span class="pre">taurus.entity.object.measurement_run.MeasurementRun</span></code></a></p>
 <p>A measurement run.</p>
 <dl class="field-list simple">
@@ -55,6 +55,7 @@ for filtering and discoverability.</p></li>
 <li><p><strong>material</strong> (<a class="reference internal" href="citrine.resources.material_run.html#citrine.resources.material_run.MaterialRun" title="citrine.resources.material_run.MaterialRun"><em>MaterialRun</em></a>) – The material run being measured.</p></li>
 <li><p><strong>spec</strong> – The material specification of which this is an instance.</p></li>
 <li><p><strong>file_links</strong> (<em>List</em><em>[</em><a class="reference internal" href="citrine.resources.file_link.html#citrine.resources.file_link.FileLink" title="citrine.resources.file_link.FileLink"><em>FileLink</em></a><em>]</em><em>, </em><em>optional</em>) – Links to associated files, with resource paths into the files API.</p></li>
+<li><p><strong>source</strong> (<em>PerformedSource</em><em>, </em><em>optional</em>) – Information about the person who performed the run and when.</p></li>
 </ul>
 </dd>
 </dl>
@@ -91,6 +92,11 @@ for filtering and discoverability.</p></li>
 <dl class="attribute">
 <dt id="citrine.resources.measurement_run.MeasurementRun.properties">
 <code class="sig-name descname">properties</code><em class="property"> = None</em><a class="headerlink" href="#citrine.resources.measurement_run.MeasurementRun.properties" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.resources.measurement_run.MeasurementRun.source">
+<code class="sig-name descname">source</code><em class="property"> = None</em><a class="headerlink" href="#citrine.resources.measurement_run.MeasurementRun.source" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">

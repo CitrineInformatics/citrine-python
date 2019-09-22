@@ -35,7 +35,7 @@
 <p>Resources that represent process run data objects.</p>
 <dl class="class">
 <dt id="citrine.resources.process_run.ProcessRun">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.resources.process_run.</code><code class="sig-name descname">ProcessRun</code><span class="sig-paren">(</span><em class="sig-param">name: str</em>, <em class="sig-param">uids: Optional[Dict[str</em>, <em class="sig-param">str]] = None</em>, <em class="sig-param">tags: Optional[List[str]] = None</em>, <em class="sig-param">notes: Optional[str] = None</em>, <em class="sig-param">conditions: Optional[List[citrine.attributes.condition.Condition]] = None</em>, <em class="sig-param">parameters: Optional[List[citrine.attributes.parameter.Parameter]] = None</em>, <em class="sig-param">spec: Optional[taurus.entity.object.process_spec.ProcessSpec] = None</em>, <em class="sig-param">file_links: Optional[List[taurus.entity.file_link.FileLink]] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.process_run.ProcessRun" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">citrine.resources.process_run.</code><code class="sig-name descname">ProcessRun</code><span class="sig-paren">(</span><em class="sig-param">name: str</em>, <em class="sig-param">uids: Optional[Dict[str</em>, <em class="sig-param">str]] = None</em>, <em class="sig-param">tags: Optional[List[str]] = None</em>, <em class="sig-param">notes: Optional[str] = None</em>, <em class="sig-param">conditions: Optional[List[citrine.attributes.condition.Condition]] = None</em>, <em class="sig-param">parameters: Optional[List[citrine.attributes.parameter.Parameter]] = None</em>, <em class="sig-param">spec: Optional[taurus.entity.object.process_spec.ProcessSpec] = None</em>, <em class="sig-param">file_links: Optional[List[taurus.entity.file_link.FileLink]] = None</em>, <em class="sig-param">source: Optional[taurus.entity.source.performed_source.PerformedSource] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.process_run.ProcessRun" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConcepts" title="citrine.resources.data_concepts.DataConcepts"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.resources.data_concepts.DataConcepts</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.resource.Resource</span></code>, <a class="reference external" href="https://citrineinformatics.github.io/taurus/reference/taurus.entity.object.process_run.html#taurus.entity.object.process_run.ProcessRun" title="(in Taurus)"><code class="xref py py-class docutils literal notranslate"><span class="pre">taurus.entity.object.process_run.ProcessRun</span></code></a></p>
 <p>A process run.</p>
 <p>Processes transform zero or more input materials into exactly one output material.</p>
@@ -53,6 +53,7 @@ for filtering and discoverability.</p></li>
 <li><p><strong>parameters</strong> (<em>List</em><em>[</em><a class="reference internal" href="citrine.attributes.parameter.html#citrine.attributes.parameter.Parameter" title="citrine.attributes.parameter.Parameter"><em>Parameter</em></a><em>]</em><em>, </em><em>optional</em>) – Parameters of this process run.</p></li>
 <li><p><strong>spec</strong> (<a class="reference internal" href="citrine.resources.process_spec.html#citrine.resources.process_spec.ProcessSpec" title="citrine.resources.process_spec.ProcessSpec"><em>ProcessSpec</em></a>) – Spec for this process run.</p></li>
 <li><p><strong>file_links</strong> (<em>List</em><em>[</em><a class="reference internal" href="citrine.resources.file_link.html#citrine.resources.file_link.FileLink" title="citrine.resources.file_link.FileLink"><em>FileLink</em></a><em>]</em><em>, </em><em>optional</em>) – Links to associated files, with resource paths into the files API.</p></li>
+<li><p><strong>source</strong> (<em>PerformedSource</em><em>, </em><em>optional</em>) – Information about the person who performed the run and when.</p></li>
 </ul>
 </dd>
 </dl>
@@ -103,6 +104,11 @@ creating each ingredient run and setting its <cite>process</cite> field to this 
 <dl class="attribute">
 <dt id="citrine.resources.process_run.ProcessRun.parameters">
 <code class="sig-name descname">parameters</code><em class="property"> = None</em><a class="headerlink" href="#citrine.resources.process_run.ProcessRun.parameters" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.resources.process_run.ProcessRun.source">
+<code class="sig-name descname">source</code><em class="property"> = None</em><a class="headerlink" href="#citrine.resources.process_run.ProcessRun.source" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
