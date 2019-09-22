@@ -4,6 +4,7 @@ import os
 import mimetypes
 from typing import Iterable, Optional
 from boto3 import client as boto3_client
+import requests
 from botocore.exceptions import ClientError
 
 from taurus.entity.file_link import FileLink as TaurusFileLink
@@ -44,12 +45,16 @@ class FileLink(Resource['FileLink'], TaurusFileLink):
     url = String('url')
     typ = String('type')
 
-    def __init__(self, filename, url):
+    def __init__(self, filename: str, url: str):
         TaurusFileLink.__init__(self, filename, url)
         self.typ = TaurusFileLink.typ
 
     def __str__(self):
         return '<File link {!r}>'.format(self.filename)
+
+    def as_dict(self) -> dict:
+        """Dump to a dictionary (useful for interoperability with taurus)."""
+        return self.dump()
 
 
 class FileCollection(Collection[FileLink]):
@@ -151,7 +156,9 @@ class FileCollection(Collection[FileLink]):
         dest_name: str, optional
             The name the file will have after being uploaded. If unspecified, the local name of
             the file will be used. That is, the file at "/Users/me/diagram.pdf" will be uploaded
-            with the name "diagram.pdf".
+            with the name "diagram.pdf". File names **must be unique** within a dataset. If a file
+            is uploaded with the same `dest_name` as an existing file it will be considered
+            a new version of the existing file.
 
         Returns
         -------
@@ -210,6 +217,7 @@ class FileCollection(Collection[FileLink]):
 
         # Extract all relevant information from the upload request
         try:
+
             uploader.region_name = upload_request['s3_region']
             uploader.aws_access_key_id = upload_request['temporary_credentials']['access_key_id']
             uploader.aws_secret_access_key = \
@@ -289,3 +297,31 @@ class FileCollection(Collection[FileLink]):
 
         url = self._get_path(file_id) + '/versions/{}'.format(version)
         return FileLink(filename=dest_name, url=url)
+
+    def download(self, file_link: FileLink, local_path: str):
+        """
+        Download the file associated with a given FileLink to the local computer.
+
+        Parameters
+        ----------
+        file_link: FileLink
+            Resource referencing the external file.
+        local_path: str
+            Path to save file on the local computer. If `local_path` is a directory,
+            then the filename of this FileLink object will be appended to the path.
+
+        """
+        directory, filename = os.path.split(local_path)
+        if not filename:
+            filename = file_link.filename
+        if not os.path.isdir(directory):
+            os.makedirs(directory)
+        local_path = os.path.join(directory, filename)
+
+        # The "/content-link" route returns a pre-signed url to download the file.
+        content_link_path = file_link.url + '/content-link'
+        content_link_response = self.session.get_resource(content_link_path)
+        pre_signed_url = content_link_response['pre_signed_read_link']
+        download_response = requests.get(pre_signed_url)
+        with open(local_path, 'wb') as output_file:
+            output_file.write(download_response.content)
