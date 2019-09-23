@@ -10,11 +10,10 @@ from citrine._serialization.properties import Optional as PropertyOptional
 from citrine.resources.data_concepts import DataConcepts, DataConceptsCollection
 from citrine.attributes.condition import Condition
 from citrine.attributes.parameter import Parameter
-from taurus.entity.dict_serializable import DictSerializable
 from taurus.entity.file_link import FileLink
-from taurus.entity.link_by_uid import LinkByUID
 from taurus.entity.object.process_run import ProcessRun as TaurusProcessRun
 from taurus.entity.object.process_spec import ProcessSpec as TaurusProcessSpec
+from taurus.entity.source.performed_source import PerformedSource
 
 
 class ProcessRun(DataConcepts, Resource['ProcessRun'], TaurusProcessRun):
@@ -28,11 +27,13 @@ class ProcessRun(DataConcepts, Resource['ProcessRun'], TaurusProcessRun):
     name: str
         Name of the process run.
     uids: Map[str, str], optional
-        A collection of unique identifiers, each a key-value pair. The key is the "scope"
-        and the value is the identifier. The scope "id" is reserved for the internal Citrine ID,
-        which will always be a uuid4.
+        A collection of
+        `unique IDs <https://citrineinformatics.github.io/taurus-documentation/
+        specification/unique-identifiers/>`_.
     tags: List[str], optional
-        A set of tags. Tags can be used for filtering.
+        `Tags <https://citrineinformatics.github.io/taurus-documentation/specification/tags/>`_
+        are hierarchical strings that store information about an entity. They can be used
+        for filtering and discoverability.
     notes: str, optional
         Long-form notes about the process run.
     conditions: List[Condition], optional
@@ -43,6 +44,8 @@ class ProcessRun(DataConcepts, Resource['ProcessRun'], TaurusProcessRun):
         Spec for this process run.
     file_links: List[FileLink], optional
         Links to associated files, with resource paths into the files API.
+    source: PerformedSource, optional
+        Information about the person who performed the run and when.
 
     Attributes
     ----------
@@ -66,6 +69,7 @@ class ProcessRun(DataConcepts, Resource['ProcessRun'], TaurusProcessRun):
     parameters = PropertyOptional(PropertyList(Object(Parameter)), 'parameters')
     spec = PropertyOptional(LinkOrElse(), 'spec')
     file_links = PropertyOptional(PropertyList(Object(FileLink)), 'file_links')
+    source = PropertyOptional(Object(PerformedSource), "source")
     typ = String('type')
 
     def __init__(self,
@@ -76,11 +80,12 @@ class ProcessRun(DataConcepts, Resource['ProcessRun'], TaurusProcessRun):
                  conditions: Optional[List[Condition]] = None,
                  parameters: Optional[List[Parameter]] = None,
                  spec: Optional[TaurusProcessSpec] = None,
-                 file_links: Optional[List[FileLink]] = None):
+                 file_links: Optional[List[FileLink]] = None,
+                 source: Optional[PerformedSource] = None):
         DataConcepts.__init__(self, TaurusProcessRun.typ)
         TaurusProcessRun.__init__(self, name=name, uids=set_default_uid(uids),
                                   tags=tags, conditions=conditions, parameters=parameters,
-                                  spec=spec, file_links=file_links, notes=notes)
+                                  spec=spec, file_links=file_links, notes=notes, source=source)
 
     def __str__(self):
         return '<Process run {!r}>'.format(self.name)

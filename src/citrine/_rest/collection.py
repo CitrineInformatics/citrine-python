@@ -34,7 +34,6 @@ class Collection(Generic[ResourceType]):
     @abstractmethod
     def build(self, data: dict):
         """Build an individual element of the collection."""
-        pass
 
     def get(self, uid: Union[UUID, str]) -> ResourceType:
         """Get a particular element of the collection."""
@@ -50,11 +49,34 @@ class Collection(Generic[ResourceType]):
         data = data[self._individual_key] if self._individual_key else data
         return self.build(data)
 
-    def list(self) -> Iterable[ResourceType]:
-        """List all visible elements in the collection."""
-        # TODO: Handle paging
+    def list(self,
+             page: Optional[int] = None,
+             per_page: Optional[int] = None) -> Iterable[ResourceType]:
+        """
+        List all visible elements in the collection.
+
+        Parameters
+        ---------
+        page: int, optional
+            The "page" of results to list. Default is the first page, which is 1.
+        per_page: int, optional
+            Max number of results to return. Default is 20.
+
+        Returns
+        -------
+        Iterable[ResourceType]
+            Resources in this collection.
+
+        """
         path = self._get_path()
-        data = self.session.get_resource(path)
+
+        params = {}
+        if page is not None:
+            params["page"] = page
+        if per_page is not None:
+            params["per_page"] = per_page
+
+        data = self.session.get_resource(path, params=params)
         # A 'None' collection key implies response has a top-level array
         # of 'ResourceType'
         # TODO: Unify backend return values
