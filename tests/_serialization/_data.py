@@ -14,8 +14,26 @@ VALID_SERIALIZATIONS = [
     (properties.Datetime, arrow.get('2019-07-19T10:46:08+00:00').datetime, 1563533168000),
 ]
 
+
+class DummyProperty(properties.Property):
+    """This is a concrete sublcass that does not overwrite __str__ for base Property testing"""
+    @property
+    def underlying_types(self):
+        return None
+
+    @property
+    def serialized_types(self):
+        return None
+
+    def _serialize(self, value):
+        pass
+
+    def _deserialize(self, value):
+        pass
+
+
 VALID_STRINGS = [
-    (properties.Property, 'hi', "<Property 'hi'>"),
+    (DummyProperty, 'hi', "<Property 'hi'>"),
     (properties.Raw, 'hi', "<Raw 'hi'>"),
     (properties.Integer, 'foo', "<Integer 'foo'>"),
     (properties.Float, 'bar', "<Float 'bar'>"),
