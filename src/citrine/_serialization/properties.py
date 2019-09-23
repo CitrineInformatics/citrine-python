@@ -187,6 +187,9 @@ class Raw(Property[typing.Any, typing.Any]):
     def _serialize(cls, value: typing.Any) -> typing.Any:
         return value
 
+    def __str__(self):
+        return '<Raw {!r}>'.format(self.serialization_path)
+
 
 class String(Property[str, str]):
 
