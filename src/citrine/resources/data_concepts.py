@@ -1,6 +1,6 @@
 """Top-level class for all data concepts objects and collections thereof."""
 from uuid import UUID
-from typing import TypeVar, Type, List, Dict, Union
+from typing import TypeVar, Type, List, Dict, Union, Optional
 from copy import deepcopy
 from abc import abstractmethod
 
@@ -397,9 +397,16 @@ class DataConceptsCollection(Collection[ResourceType]):
         data_concepts_object.session = self.session
         return data_concepts_object
 
-    def list(self):
+    def list(self, page: Optional[int] = None, per_page: Optional[int] = None):
         """
         List all visible elements of the collection.
+
+        Parameters
+        ----------
+        page: Optional[int]
+            The page of results to list, 1-indexed (i.e. the first page is page=1)
+        per_page: Optional[int]
+            The number of results to list per page
 
         Returns
         -------
@@ -407,13 +414,13 @@ class DataConceptsCollection(Collection[ResourceType]):
             Every object in this collection.
 
         """
-        return self.filter_by_tags([])
+        return self.filter_by_tags([], page, per_page)
 
     def register(self, model: ResourceType):
         """
         Create a new element of the collection or update an existing element.
 
-        If the input model has a Citrine ID that corresponds to an existing object in the
+        If the input model has an ID that corresponds to an existing object in the
         database, then that object will be updated. Otherwise a new object will be created.
 
         Parameters
@@ -445,35 +452,43 @@ class DataConceptsCollection(Collection[ResourceType]):
         model.session = self.session
         return full_model
 
-    def get(self, uid: Union[UUID, str]) -> ResourceType:
+    def get(self, uid: Union[UUID, str], scope: str = 'id') -> ResourceType:
         """
-        Get the element of the collection with Citrine ID equal to uid.
+        Get the element of the collection with ID equal to uid.
 
         Parameters
         ----------
         uid: Union[UUID, str]
-            The Citrine ID.
+            The ID.
+        scope: str
+            The scope of the uid, defaults to Citrine scope ('id')
 
         Returns
         -------
         DataConcepts
-            An object with Citrine ID equal to uid.
+            An object with specified scope and uid
 
         """
         if self.dataset_id is None:
             raise RuntimeError("Must specify a dataset in order to get a data model object.")
-        path = self._get_path() + "/id/{}".format(uid)
+        path = self._get_path() + "/{}/{}".format(scope, uid)
         data = self.session.get_resource(path)
         return self.build(data)
 
-    def filter_by_tags(self, tags: List[str]):
+    def filter_by_tags(self, tags: List[str],
+                       page: Optional[int] = None, per_page: Optional[int] = None):
         """
         Get all objects in the collection that match any one of a list of tags.
 
         Parameters
         ----------
         tags: List[str]
-            a list of strings, each one a tag that an object can match.
+            A list of strings, each one a tag that an object can match. Currently
+            limited to a length of 1 or 0 (empty list does not filter).
+        page: Optional[int]
+            The page of results to list, 1-indexed (i.e. the first page is page=1)
+        per_page: Optional[int]
+            The number of results to list per page
 
         Returns
         -------
@@ -482,18 +497,27 @@ class DataConceptsCollection(Collection[ResourceType]):
             See (insert link) for a discussion of how to match on tags.
 
         """
+        if type(tags) == str:
+            tags = [tags]
+        if len(tags) > 1:
+            raise NotImplementedError('Searching by multiple tags is not currently supported.')
         params = {'tags': tags}
         if self.dataset_id is not None:
             params['dataset_id'] = str(self.dataset_id)
+        if page is not None:
+            params['page'] = page
+        if per_page is not None:
+            params['per_page'] = per_page
 
         response = self.session.get_resource(
             self._get_path(ignore_dataset=True),
             params=params)
         return [self.build(content) for content in response["contents"]]
 
-    def filter_by_attribute_bounds(self,
-                                   attribute_bounds: Dict[Union[AttributeTemplate, LinkByUID],
-                                                          BaseBounds]):
+    def filter_by_attribute_bounds(
+            self,
+            attribute_bounds: Dict[Union[AttributeTemplate, LinkByUID], BaseBounds],
+            page: Optional[int] = None, per_page: Optional[int] = None):
         """
         Get all objects in the collection with attributes within certain bounds.
 
@@ -512,6 +536,10 @@ class DataConceptsCollection(Collection[ResourceType]):
             AttributeTemplate that exists in the database.
             Only the uid is passed, so if you would like to update an attribute template you
             must register that change to the database before you can use it to filter.
+        page: Optional[int]
+            The page of results to list, 1-indexed (i.e. the first page is page=1)
+        per_page: Optional[int]
+            The number of results to list per page
 
         Returns
         -------
@@ -530,14 +558,18 @@ class DataConceptsCollection(Collection[ResourceType]):
         params = {}
         if self.dataset_id is not None:
             params['dataset_id'] = str(self.dataset_id)
+        if page is not None:
+            params['page'] = page
+        if per_page is not None:
+            params['per_page'] = per_page
 
         response = self.session.post_resource(
             self._get_path(ignore_dataset=True) + "/filter-by-attribute-bounds",
-            json=body,
-            params=params)
+            json=body, params=params)
         return [self.build(content) for content in response["contents"]]
 
-    def filter_by_name(self, name: str, exact: bool = False):
+    def filter_by_name(self, name: str, exact: bool = False,
+                       page: Optional[int] = None, per_page: Optional[int] = None):
         """
         Get all objects with specified name in this dataset.
 
@@ -548,6 +580,10 @@ class DataConceptsCollection(Collection[ResourceType]):
         exact: bool
             Set to True to change prefix search to exact search (but still case-insensitive).
             Default is False.
+        page: Optional[int]
+            The page of results to list, 1-indexed (i.e. the first page is page=1)
+        per_page: Optional[int]
+            The number of results to list per page
 
         Returns
         -------
@@ -558,6 +594,10 @@ class DataConceptsCollection(Collection[ResourceType]):
         if self.dataset_id is None:
             raise RuntimeError("Must specify a dataset to filter by name.")
         params = {'dataset_id': str(self.dataset_id), 'name': name, 'exact': exact}
+        if page is not None:
+            params['page'] = page
+        if per_page is not None:
+            params['per_page'] = per_page
         response = self.session.get_resource(
             # "Ignoring" dataset because it is in the query params (and required)
             self._get_path(ignore_dataset=True) + "/filter-by-name",

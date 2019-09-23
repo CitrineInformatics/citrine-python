@@ -37,6 +37,3 @@ def test_template_assignment():
     template = ProcessTemplate("Dry", conditions=[[humidity_template, RealBounds(0.5, 0.65, "")]])
     ProcessSpec("Dry a polymer", template=template, conditions=[
         Condition("Humidity", value=NominalReal(0.6, ""), template=humidity_template)])
-    with pytest.raises(RuntimeWarning):
-        ProcessSpec("Dry a polymer", template=template, conditions=[
-                   Condition("Humidity", value=NominalReal(0.7, ""))])

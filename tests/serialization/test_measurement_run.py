@@ -38,7 +38,12 @@ def valid_data():
         },
         spec=None,
         file_links=[],
-        type='measurement_run'
+        type='measurement_run',
+        source={
+            "type": "performed_source",
+            "performed_by": "Marie Curie",
+            "performed_date": "1898-07-01"
+        }
     )
 
 
