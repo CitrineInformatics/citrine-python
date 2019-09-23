@@ -23,7 +23,7 @@ def test_object_template_serde():
     assert copy_template == block_template
 
     # Tests below exercise similar code, but for measurement and process templates
-    pressure_template = ConditionTemplate("pressure", RealBounds(0.999, 1.001, 'atm'))
+    pressure_template = ConditionTemplate("pressure", RealBounds(0.1, 0.11, 'MPa'))
     index_template = ParameterTemplate("index", IntegerBounds(2, 10))
     meas_template = MeasurementTemplate("A measurement of length", properties=[length_template],
                                         conditions=[pressure_template], description="Description",
