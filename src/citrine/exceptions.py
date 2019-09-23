@@ -29,7 +29,7 @@ class NotFound(NonRetryableException):
     """A particular url was not found. (http status 404)."""
 
     def __init__(self, path: str):
-        super().__init__()
+        super().__init__(path)
         self.url = path
 
 
@@ -37,7 +37,7 @@ class Unauthorized(NonRetryableException):
     """The user is unauthorized to make this api call. (http status 401)."""
 
     def __init__(self, path: str):
-        super().__init__()
+        super().__init__(path)
         self.url = path
 
 

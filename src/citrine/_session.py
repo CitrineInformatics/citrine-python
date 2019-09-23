@@ -85,13 +85,13 @@ class Session(requests.Session):
                 self.logger.error('%s %s %s', response.status_code, method, path)
                 raise Unauthorized(path)
             elif response.status_code == 404:
-                self.logger.warning('%s %s %s', response.status_code, method, path)
+                self.logger.error('%s %s %s', response.status_code, method, path)
                 raise NotFound(path)
             elif response.status_code == 409:
-                self.logger.warning('%s %s %s', response.status_code, method, path)
+                self.logger.debug('%s %s %s', response.status_code, method, path)
                 raise WorkflowConflictException(response.text)
             elif response.status_code == 425:
-                self.logger.warning('%s %s %s', response.status_code, method, path)
+                self.logger.debug('%s %s %s', response.status_code, method, path)
                 msg = 'Cant execute at this time. Try again later. Error: {}'.format(response.text)
                 raise WorkflowNotReadyException(msg)
             else:
