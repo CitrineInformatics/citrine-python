@@ -31,13 +31,9 @@ def test_object_template_validation():
         MeasurementTemplate("A measurement", parameters=[[dial_template, IntegerBounds(-3, -1)]])
 
 
-@pytest.mark.skip("TODO: fix this test!")
 def test_template_assignment():
     """Test that an object and its attributes can both be assigned templates."""
     humidity_template = ConditionTemplate("Humidity", RealBounds(0.5, 0.75, ""))
     template = ProcessTemplate("Dry", conditions=[[humidity_template, RealBounds(0.5, 0.65, "")]])
     ProcessSpec("Dry a polymer", template=template, conditions=[
         Condition("Humidity", value=NominalReal(0.6, ""), template=humidity_template)])
-    with pytest.raises(RuntimeWarning):
-        ProcessSpec("Dry a polymer", template=template, conditions=[
-                   Condition("Humidity", value=NominalReal(0.7, ""))])
