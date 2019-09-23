@@ -13,7 +13,6 @@ class PolymorphicSerializable(Generic[SelfType]):
     @abstractmethod
     def get_type(cls, data) -> Type[Serializable]:
         """Get the underlying type based on given data."""
-        pass
 
     @classmethod
     def build(cls, data: dict) -> SelfType:

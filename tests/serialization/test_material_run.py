@@ -1,7 +1,4 @@
 """Tests of the Material Run schema."""
-import pytest
-from uuid import uuid4
-
 from citrine.resources.material_run import MaterialRun
 from citrine.resources.material_spec import MaterialSpec
 from citrine.resources.measurement_spec import MeasurementSpec
@@ -29,7 +26,7 @@ def test_simple_deserialization():
     material_run: MaterialRun = MaterialRun.build(valid_data)
     assert material_run.uids == {'id': valid_data['uids']['id']}
     assert material_run.name == 'Cake 1'
-    assert material_run.tags == []
+    assert material_run.tags == ["color"]
     assert material_run.notes is None
     assert material_run.process == LinkByUID('id', valid_data['process']['id'])
     assert material_run.sample_type == 'experimental'

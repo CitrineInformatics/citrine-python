@@ -30,11 +30,13 @@ class MaterialTemplate(DataConcepts, Resource['MaterialTemplate'], TaurusMateria
     description: str, optional
         Long-form description of the material template.
     uids: Map[str, str], optional
-        A collection of unique identifiers, each a key-value pair. The key is the "scope"
-        and the value is the identifier. The scope "id" is reserved for the internal Citrine ID,
-        which will always be a uuid4.
+        A collection of
+        `unique IDs <https://citrineinformatics.github.io/taurus-documentation/
+        specification/unique-identifiers/>`_.
     tags: List[str], optional
-        A set of tags. Tags can be used for filtering.
+        `Tags <https://citrineinformatics.github.io/taurus-documentation/specification/tags/>`_
+        are hierarchical strings that store information about an entity. They can be used
+        for filtering and discoverability.
     properties: List[PropertyTemplate] or List[PropertyTemplate, \
     :py:class:`BaseBounds <taurus.entity.bounds.base_bounds.BaseBounds>`], optional
         Templates for associated properties. Each template can be provided by itself, or as a list

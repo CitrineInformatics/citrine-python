@@ -33,7 +33,12 @@ def valid_data():
               'template': None, 'tags': [], 'parameters': []
               },
         file_links=[],
-        type='process_run'
+        type='process_run',
+        source={
+            "type": "performed_source",
+            "performed_by": "Marie Curie",
+            "performed_date": None
+        }
     )
 
 

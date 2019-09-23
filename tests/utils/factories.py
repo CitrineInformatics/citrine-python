@@ -7,6 +7,7 @@
 import factory
 from taurus.entity.link_by_uid import LinkByUID
 
+from citrine.resources.file_link import _Uploader
 from citrine.resources.dataset import Dataset
 from citrine.resources.material_run import MaterialRun
 
@@ -43,10 +44,16 @@ class LinkByUIDInputFactory(factory.DictFactory):
     scope = 'id'
 
 
+class FileLinkDataFactory(factory.DictFactory):
+    url = factory.Faker('www.citrine.io')
+    filename = factory.Faker('materials.txt')
+    type = 'file_link'
+
+
 class MaterialRunDataFactory(factory.DictFactory):
     uids = factory.SubFactory(IDDataFactory)
     name = factory.Faker('color_name')
-    tags = []
+    tags = ["color"]
     notes = None
     process = factory.SubFactory(LinkByUIDInputFactory)
     sample_type = 'experimental'
@@ -84,3 +91,19 @@ class DatasetFactory(factory.Factory):
     name = factory.Faker('company')
     summary = factory.Faker('catch_phrase')
     description = factory.Faker('bs')
+
+
+class _UploaderFactory(factory.Factory):
+    class Meta:
+        model = _Uploader
+
+    @factory.post_generation
+    def assign_values(obj, create, extracted):
+        obj.bucket = 'citrine-datasvc'
+        obj.object_key = '334455'
+        obj.upload_id = 'dea3a-555'
+        obj.region_name = 'us-west'
+        obj.aws_access_key_id = 'dkfjiejkcm'
+        obj.aws_secret_access_key = 'ifeemkdsfjeijie8759235u2wjr388'
+        obj.aws_session_token = 'fafjeijfi87834j87woa'
+        obj.s3_version = '2'

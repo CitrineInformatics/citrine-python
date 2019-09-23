@@ -38,13 +38,13 @@ def valid_data():
                          {
                              'type': 'condition',
                              'origin': 'specified',
-                             'name': 'light level',
+                             'name': 'temperature',
                              'template': None,
                              'notes': None,
                              'value': {
                                  'type': 'nominal_real',
-                                 'nominal': 100.0,
-                                 'units': 'lumen'
+                                 'nominal': 300.0,
+                                 'units': 'kelvin'
                              },
                              'file_links': []
                          }
@@ -67,8 +67,8 @@ def test_simple_deserialization(valid_data):
     assert material_spec.properties[0] == \
         PropertyAndConditions(Property("color", origin='specified',
                                        value=NominalCategorical("tan")),
-                              conditions=[Condition('light level', origin='specified',
-                                                    value=NominalReal(100, units='lm'))])
+                              conditions=[Condition('temperature', origin='specified',
+                                                    value=NominalReal(300, units='kelvin'))])
     assert material_spec.template is None
     assert material_spec.file_links == []
     assert material_spec.typ == 'material_spec'
