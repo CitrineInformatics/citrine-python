@@ -10,7 +10,6 @@ from citrine.informatics.descriptors import Descriptor
 from citrine.informatics.reports import Report
 from citrine.resources.report import ReportResource
 
-
 __all__ = ['Predictor', 'ParaboloidPredictor', 'SimpleMLPredictor']
 
 
@@ -66,12 +65,12 @@ class ParaboloidPredictor(Serializable['ParaboloidPredictor'], Predictor):
                  description: str,
                  input_descriptors: List[Descriptor],
                  output_descriptor: Descriptor,
-                 session: Optional[Session] = None):
+                 session: Session = Session()):
         self.name: str = name
         self.description: str = description
         self.input_keys: List[Descriptor] = input_descriptors
         self.output_key: Descriptor = output_descriptor
-        self.session: Optional[Session] = session
+        self.session: Session = session
 
     def _post_dump(self, data: dict) -> dict:
         data['display_name'] = data['config']['name']
@@ -110,16 +109,14 @@ class SimpleMLPredictor(Serializable['SimplePredictor'], Predictor):
                  outputs: List[Descriptor],
                  latent_variables: List[Descriptor],
                  training_data: str,
-                 session: Optional[Session] = None,
-                 report: Optional[Report] = None):
+                 session: Session = Session()):
         self.name: str = name
         self.description: str = description
         self.inputs: List[Descriptor] = inputs
         self.outputs: List[Descriptor] = outputs
         self.latent_variables: List[Descriptor] = latent_variables
         self.training_data: str = training_data
-        self.session: Optional[Session] = session
-        self.report: Optional[Report] = report
+        self.session: Session = session
 
     def _post_dump(self, data: dict) -> dict:
         data['display_name'] = data['config']['name']
@@ -130,4 +127,4 @@ class SimpleMLPredictor(Serializable['SimplePredictor'], Predictor):
 
     def post_build(self, project_id: UUID, data: dict):
         """Creates the predictor report object."""
-        self.report = ReportResource(project_id, self.session).get(data['id'])
+        self.report = lambda: ReportResource(project_id, self.session).get(data['id'])
