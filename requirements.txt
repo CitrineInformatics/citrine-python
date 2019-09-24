@@ -1,4 +1,4 @@
-taurus-citrine==0.1.0
+git+https://github.com/CitrineInformatics/taurus.git@develop
 requests==2.22.0
 pyjwt==1.7.1
 arrow==0.14.5
