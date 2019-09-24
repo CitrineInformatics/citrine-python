@@ -14,6 +14,33 @@ VALID_SERIALIZATIONS = [
     (properties.Datetime, arrow.get('2019-07-19T10:46:08+00:00').datetime, 1563533168000),
 ]
 
+
+class DummyProperty(properties.Property):
+    """This is a concrete sublcass that does not overwrite __str__ for base Property testing"""
+    @property
+    def underlying_types(self):
+        return None
+
+    @property
+    def serialized_types(self):
+        return None
+
+    def _serialize(self, value):
+        pass
+
+    def _deserialize(self, value):
+        pass
+
+
+VALID_STRINGS = [
+    (DummyProperty, 'hi', "<Property 'hi'>"),
+    (properties.Raw, 'hi', "<Raw 'hi'>"),
+    (properties.Integer, 'foo', "<Integer 'foo'>"),
+    (properties.Float, 'bar', "<Float 'bar'>"),
+    (properties.String, 'foobar', "<String 'foobar'>"),
+    (properties.Boolean, 'what', "<Boolean 'what'>"),
+]
+
 INVALID_INSTANCES = [
     (properties.Integer, 1.0),  # float != int
     (properties.Integer, "1"),
@@ -30,7 +57,7 @@ INVALID_INSTANCES = [
     (properties.Boolean, 'asdf'),
     (properties.UUID, str(uuid.uuid4())),  # string(uuid) != uuid
     (properties.UUID, 1.0),
-    (properties.Datetime, '2019-07-19T10:46:08.949682+00:00')  # str(datetime) != datetime
+    (properties.Datetime, '2019-07-19T10:46:08.949682+00:00'),  # str(datetime) != datetime
 ]
 
 INVALID_SERIALIZED_INSTANCES = [
@@ -38,6 +65,7 @@ INVALID_SERIALIZED_INSTANCES = [
     (properties.Integer, str(complex(1, 2))),
     (properties.Integer, True),
     (properties.Integer, 'asdf'),
+    (properties.Integer, 14.4),
     (properties.Float, str(complex(1,2))),
     (properties.Float, True),
     (properties.Float, 'asdf'),
@@ -48,5 +76,5 @@ INVALID_SERIALIZED_INSTANCES = [
     (properties.Boolean, 'asdf'),
     (properties.UUID, 'wrong-number-of-chars'),
     (properties.UUID, uuid.uuid4()),
-    (properties.Datetime, '2019-07-19T35:46:08.949682+99:99')  # nonsense time
+    (properties.Datetime, '2019-07-19T35:46:08.949682+99:99'),  # nonsense time
 ]
