@@ -31,6 +31,27 @@ def collection(session) -> ProjectCollection:
 def test_string_representation(project):
     assert "<Project 'Test Project'>" == str(project)
 
+
+def test_share_post_content(project, session):
+    # Given
+    dataset_id = str(uuid.uuid4())
+
+    # When
+    project.share(project.uid, 'DATASET', dataset_id)
+
+    # Then
+    assert 1 == session.num_calls
+    expected_call = FakeCall(
+        method='POST',
+        path='/projects/{}/share'.format(project.uid),
+        json={
+            'project_id': project.uid,
+            'resource': {'type': 'DATASET', 'id': dataset_id}
+        }
+    )
+    assert expected_call == session.last_call
+
+
 def test_make_resource_public_post_content(project, session):
     dataset_id = str(uuid.uuid4())
     dataset = project.datasets.build(dict(
@@ -48,6 +69,7 @@ def test_make_resource_public_post_content(project, session):
         }
     )
     assert expected_call == session.last_call
+
 
 def test_make_resource_private_post_content(project, session):
     dataset_id = str(uuid.uuid4())
@@ -192,31 +214,26 @@ def test_list_projects(collection, session):
     assert expected_call == session.last_call
     assert 5 == len(projects)
 
+
 def test_list_projects_with_page_params(collection, session):
     # Given
     project_data = ProjectDataFactory()
     session.set_response({'projects': [project_data]})
 
     # When
-    projects = list(collection.list(page=3, per_page=10))
+    list(collection.list(page=3, per_page=10))
 
     # Then
     assert 1 == session.num_calls
     expected_call = FakeCall(method='GET', path='/projects', params={'page': 3, 'per_page': 10})
     assert expected_call == session.last_call
 
-@pytest.mark.skip("Delete is not implemented yet")
+
 def test_delete_project(collection, session):
     # Given
     uid = '151199ec-e9aa-49a1-ac8e-da722aaf74c4'
 
     # When
-    collection.delete(uid)
+    with pytest.raises(NotImplementedError):
+        collection.delete(uid)
 
-    # Then
-    assert 1 == session.num_calls
-    expected_call = FakeCall(
-        method='DELETE',
-        path='/projects/{}'.format(uid),
-    )
-    assert expected_call == session.last_call

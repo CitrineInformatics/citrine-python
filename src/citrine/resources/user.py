@@ -44,7 +44,7 @@ class User(Serializable['User']):
         self.session: Optional[Session] = session
 
     def __str__(self):
-        return '<User {}>'.format(self.screen_name)
+        return '<User {!r}>'.format(self.screen_name)
 
 
 class UserCollection:

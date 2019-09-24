@@ -7,7 +7,7 @@ from taurus.entity.value.base_value import BaseValue
 from taurus.entity.value.nominal_real import NominalReal
 
 
-class UnserializableClass():
+class UnserializableClass:
     """A dummy class that has no clear serialization or deserialization method."""
     def __init__(self, foo):
         self.foo = foo
@@ -38,3 +38,7 @@ def test_bad_object_serde():
     bad_obj = SampleClass("Cannot be serialized", NominalReal(34, ''), UnserializableClass(1))
     with pytest.raises(AttributeError):
         bad_obj.dump()
+
+
+def test_object_str_representation():
+    assert "<Object[NominalReal] 'foo'>" == str(Object(NominalReal, 'foo'))
