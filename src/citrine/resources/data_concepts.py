@@ -226,7 +226,7 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
         pass
 
     @staticmethod
-    def _build_list_of_soft_links(obj, obj_with_soft_links, field: str, reverse_field: str,
+    def _build_list_of_soft_links(dc_obj, obj_with_soft_links, field: str, reverse_field: str,
                                   linked_type, session: Session = None):
         """
         Build the data concepts objects that this object has soft links to.
@@ -242,7 +242,7 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
 
         Parameters
         ----------
-        obj: DataConcepts
+        dc_obj: DataConcepts
             A data concepts object that might be missing some soft links
         obj_with_soft_links: dict or \
         :py:class:`DictSerializable <taurus.entity.dict_serializable.DictSerializable>`
@@ -259,7 +259,8 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
         Returns
         -------
         None
-            The data concepts object is modified so that all of its soft-links are populated.
+            The data concepts object, `dc_obj`, is modified so that all of its
+            soft-links are populated.
 
         """
         linked_objects = None
@@ -273,15 +274,21 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
         if linked_objects is None:
             return
 
+        # Cycle through linked objects in obj_with_soft_link and if they are not LinkByUID,
+        # build them and then set their `reverse_field` field to dc_obj
         for linked_obj in linked_objects:
-            # Cycle through linked objects and if they are not LinkByUID, build them and then
-            # set their `reverse_field` field to obj
             assert isinstance(linked_obj, DictSerializable)
             if isinstance(linked_obj, LinkByUID):
                 pass
+            # Sever the link between linked_obj and obj_with_soft_links.
+            # This prevents infinite loops in the next step.
             setattr(linked_obj, reverse_field, None)
-            meas_object = linked_type.build(linked_obj, session)
-            setattr(meas_object, reverse_field, obj)
+            # Build a DataConcepts instance of linked_obj
+            dc_linked_obj = linked_type.build(linked_obj, session)
+            # Establish the link between the DataConcepts instances of obj and linked_obj
+            setattr(dc_linked_obj, reverse_field, dc_obj)
+            # Re-establish the link between linked_obj and obj_with_soft_links
+            setattr(linked_obj, reverse_field, obj_with_soft_links)
 
     @classmethod
     def get_type(cls, data) -> Type[Serializable]:

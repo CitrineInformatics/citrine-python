@@ -130,13 +130,13 @@ class Integer(Property[int, SerializedInteger]):
 
     def _deserialize(self, value: SerializedInteger) -> int:
         if isinstance(value, bool):
-            raise AttributeError('value must be a Number, not a boolean.')
+            raise TypeError('value must be a Number, not a boolean.')
         else:
             return int(value)
 
     def _serialize(self, value: int) -> SerializedInteger:
         if isinstance(value, bool):
-            raise AttributeError('Boolean cannot be serialized to integer.')
+            raise TypeError('Boolean cannot be serialized to integer.')
         else:
             return value
 
@@ -165,6 +165,9 @@ class Float(Property[float, SerializedFloat]):
     def _serialize(cls, value: float) -> SerializedFloat:
         return value
 
+    def __str__(self):
+        return '<Float {!r}>'.format(self.serialization_path)
+
 
 class Raw(Property[typing.Any, typing.Any]):
 
@@ -183,6 +186,9 @@ class Raw(Property[typing.Any, typing.Any]):
     @classmethod
     def _serialize(cls, value: typing.Any) -> typing.Any:
         return value
+
+    def __str__(self):
+        return '<Raw {!r}>'.format(self.serialization_path)
 
 
 class String(Property[str, str]):
@@ -263,7 +269,7 @@ class Datetime(Property[datetime, int]):
         if isinstance(value, int):
             # Backend returns time as ms since epoch, but arrow expects seconds since epoch
             return arrow.get(value / 1000).datetime
-        raise ValueError("{} must be an int or a string".format(value))
+        raise TypeError("{} must be an int or a string".format(value))
 
     def _serialize(self, value: datetime) -> int:
         return int(arrow.get(value).float_timestamp * 1000)
