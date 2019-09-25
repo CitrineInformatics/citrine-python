@@ -51,3 +51,12 @@ class WorkflowNotReadyException(RetryableException):
     """The workflow is not ready to be executed. i.e. still validating. (http status 425)."""
 
     pass
+
+
+class ModuleRegistrationFailedException(NonRetryableException):
+    """A module failed to register."""
+
+    def __init__(self, moduleType: str, exc: Exception):
+        err = 'The "{0}" failed to register. {1}: {2}'.format(
+            moduleType, exc.__class__.__name__, str(exc))
+        super().__init__(err)
