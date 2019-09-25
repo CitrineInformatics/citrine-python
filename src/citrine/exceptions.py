@@ -57,5 +57,6 @@ class ModuleRegistrationFailedException(NonRetryableException):
     """A module failed to register."""
 
     def __init__(self, moduleType: str, exc: Exception):
-        err = f'The "{moduleType}" failed to register. {exc.__class__.__name__}: {str(exc)}'
+        err = 'The "{0}" failed to register. {1}: {2}'.format(
+            moduleType, exc.__class__.__name__, str(exc))
         super().__init__(err)
