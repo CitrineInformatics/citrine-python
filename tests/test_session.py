@@ -4,11 +4,9 @@ import unittest
 
 from citrine.exceptions import (
     NonRetryableException,
-    NotFound,
-    Unauthorized,
     WorkflowConflictException,
     WorkflowNotReadyException,
-    RetryableException
+    RetryableException,
 )
 
 from datetime import datetime, timedelta
