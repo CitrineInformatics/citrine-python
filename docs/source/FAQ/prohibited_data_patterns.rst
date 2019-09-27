@@ -5,7 +5,7 @@ Prohibited Data Patterns
 Summary
 =======
 
-This is a disclaimer on our end to let you know that there are some patterns that may corrupt your data and eliminate 
+This is a disclaimer on our end to let you know that there are some invalid usage patterns that are not prevented by the API but may corrupt your data and eliminate 
 some of the functionality the api and/or platform would otherwise provide.
 
 Cyclic data patterns
