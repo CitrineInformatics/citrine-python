@@ -86,7 +86,7 @@ def test_nested_serialization():
     batter.process.ingredients.append(make_ingredient(material=MaterialRun('Flour')))
     batter.process.ingredients.append(make_ingredient(material=MaterialRun('Milk')))
 
-    print(cake.dump())
+    cake.dump()
 
 
 def test_measurement_material_connection_rehydration():
