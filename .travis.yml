@@ -18,7 +18,7 @@ deploy:
     keep_history: true
     local_dir: ./docs/_build/html/
     on:
-      branch: master
+      branch: feature/docs-off-develop
   - provider: pypi
     user: "CitrineInformatics"
     password: "$PYPI_PASSWORD"
