@@ -49,6 +49,7 @@ def test_user_collection_creation():
 def test_user_registration(collection, session):
     # given
     user = UserDataFactory()
+
     session.set_response({'user': user})
 
     # When
@@ -76,24 +77,6 @@ def test_user_registration(collection, session):
     assert expected_call.json['email'] == created_user.email
     assert expected_call.json['position'] == created_user.position
     assert expected_call.json['is_admin'] == created_user.is_admin
-
-
-def test_me_endpoint(collection, session):
-    # Given
-    user = UserDataFactory()
-    session.set_response({'user': user})
-
-    # When
-    my_user = collection.me()
-
-    # Then
-    assert 1 == session.num_calls
-    expected_call = FakeCall(
-        method='GET',
-        path='/users/me'
-    )
-
-    assert expected_call == session.last_call
 
 
 def test_list_users(collection, session):
@@ -144,7 +127,9 @@ def test_delete_user(collection, session):
 def test_get_me(collection, session):
     # Given
     user = UserDataFactory()
-    session.set_response({"user": user})
+    user["id"] = user["uid"]
+    del user["uid"]
+    session.set_response(user)
 
     # When
     current_user = collection.me()
