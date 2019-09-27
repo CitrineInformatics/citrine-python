@@ -20,6 +20,7 @@ Table of Contents
    :numbered: 4
 
    getting_started/index
+   FAQ/index
 
 Indices and tables
 ==================
