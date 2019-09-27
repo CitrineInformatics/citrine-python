@@ -20,6 +20,14 @@ class ProjectDataFactory(factory.DictFactory):
     created_at = None
 
 
+class UserDataFactory(factory.DictFactory):
+    uid = factory.Faker('uuid4')
+    screen_name = factory.Faker('name')
+    position = factory.Faker('job')
+    email = factory.Faker('email')
+    is_admin = factory.Faker('boolean')
+
+
 class DatasetDataFactory(factory.DictFactory):
     uid = factory.Faker('uuid4')
     name = factory.Faker('company')
