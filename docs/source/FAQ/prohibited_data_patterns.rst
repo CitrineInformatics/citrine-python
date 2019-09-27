@@ -24,7 +24,7 @@ Data objects should **NOT** be linked in a cyclic pattern. Consider the followin
 In this example, the following steps occurred:
 
 1. A process was created
-2. A material was assigned the above process. (which makes it an output material to that process)
+2. A material was assigned the above process, which makes it an output material to that process.
 3. An ingredient was assigned the above material and process. (which makes it an input to that process belonging to that material)
 
 This is a cyclic pattern because the material is an output to the process, but the ingredient (from the same material) is an input to the same process. 
