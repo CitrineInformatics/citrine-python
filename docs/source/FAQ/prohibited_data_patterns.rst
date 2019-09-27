@@ -23,7 +23,7 @@ Data objects should **NOT** be linked in a cyclic pattern. Consider the followin
 
 In this example, the following steps occurred:
 
-1. A process was created
+1. A process was created.
 2. A material was assigned the above process, which makes it an output material to that process.
 3. An ingredient was assigned the above material and process. (which makes it an input to that process belonging to that material)
 
