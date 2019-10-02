@@ -115,7 +115,7 @@ class Session(requests.Session):
         """DELETE a particular resource as JSON."""
         return self.checked_delete(path).json()
 
-    def checked_post(self, path: str, json: dict, *args, **kwargs) -> None:
+    def checked_post(self, path: str, json: dict, *args, **kwargs) -> dict:
         """Execute a POST request to a URL and utilize error filtering on the response."""
         return self.checked_request('POST', path, *args, json=json, **kwargs)
 
@@ -128,5 +128,7 @@ class Session(requests.Session):
         return self.checked_request('DELETE', path)
 
     def checked_get(self, path: str, *args, **kwargs) -> dict:
-        """Execute a GET request to a URL and utilize error filtering on the response."""
+        """Execute a GET request to a URL and utilize error filtering on the response.
+        :rtype: object
+        """
         return self.checked_request('GET', path, *args, **kwargs)
