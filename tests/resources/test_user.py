@@ -117,7 +117,7 @@ def test_delete_user(collection, session):
     session.set_response({'message': 'User was deleted'})
     expected_call = FakeCall(
         method="DELETE",
-        path=f'/users/{user["uid"]}',
+        path='/users/{}'.format(user["uid"]),
     )
 
     assert 1 == session.num_calls
