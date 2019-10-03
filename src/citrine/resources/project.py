@@ -24,11 +24,6 @@ from citrine._serialization import properties
 from citrine.resources.user import User
 
 
-class ActionRoleResponse(NamedTuple):
-    role: str
-    actions: List[str]
-
-
 class Project(Resource['Project']):
     """
     A Citrine Project.
@@ -231,7 +226,7 @@ class Project(Resource['Project']):
         )
         return True
 
-    def remove_member(self, user_uid: str):
+    def remove_member(self, user_uid: str) -> bool:
         """
         Remove a User from a Project
 
