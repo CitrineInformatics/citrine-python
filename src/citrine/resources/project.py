@@ -207,8 +207,7 @@ class Project(Resource['Project']):
         Returns
         -------
         List[User]
-            Dict with key 'users' containing an array of User objects
-            These are the members of the current project
+            The members of the current project
 
         """
         return self.session.checked_get(self._path() + "/users")["users"]
@@ -219,7 +218,8 @@ class Project(Resource['Project']):
 
         Returns
         -------
-        Returns True if member successfully added
+        bool
+            Returns True if member successfully added
 
         """
         self.session.checked_post(
@@ -234,7 +234,8 @@ class Project(Resource['Project']):
 
         Returns
         -------
-        Returns True if user successfully removed
+        bool
+            Returns True if user successfully removed
 
         """
         self.session.checked_delete(
