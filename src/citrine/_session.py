@@ -128,8 +128,5 @@ class Session(requests.Session):
         return self.checked_request('DELETE', path)
 
     def checked_get(self, path: str, *args, **kwargs) -> dict:
-        """Execute a GET request to a URL and utilize error filtering on the response.
-
-        :rtype: object
-        """
+        """Execute a GET request to a URL and utilize error filtering on the response."""
         return self.checked_request('GET', path, *args, **kwargs)
