@@ -234,7 +234,7 @@ class Project(Resource['Project']):
 
         Returns
         -------
-        Returns True of user successfully removed
+        Returns True if user successfully removed
 
         """
         self.session.checked_delete(
