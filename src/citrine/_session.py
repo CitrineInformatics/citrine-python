@@ -129,6 +129,7 @@ class Session(requests.Session):
 
     def checked_get(self, path: str, *args, **kwargs) -> dict:
         """Execute a GET request to a URL and utilize error filtering on the response.
+
         :rtype: object
         """
         return self.checked_request('GET', path, *args, **kwargs)
