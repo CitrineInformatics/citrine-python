@@ -206,7 +206,7 @@ class Project(Resource['Project']):
 
         Returns
         -------
-        ListMemberResponse
+        List[User]
             Dict with key 'users' containing an array of User objects
             These are the members of the current project
 
