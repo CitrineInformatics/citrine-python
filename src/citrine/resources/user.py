@@ -48,9 +48,9 @@ class User(Resource['User']):
         return '<User {!r}>'.format(self.screen_name)
 
     def get(self):
-        """Retrieve a specific user from the database"""
+        """Retrieve a specific user from the database."""
         raise NotImplementedError("Get Not Implemented in Citrine Platform")
-    
+
 
 class UserCollection(Collection[User]):
     """Represents the collection of all users."""
@@ -64,7 +64,7 @@ class UserCollection(Collection[User]):
         self.session: Session = session
 
     def me(self):
-        """Get information about the current user"""
+        """Get information about the current user."""
         data = self.session.get_resource('{}/me'.format(self._path_template))
         return self.build(data)
 
@@ -92,6 +92,7 @@ class UserCollection(Collection[User]):
                  email: str,
                  position: str,
                  is_admin: bool) -> User:
+        """Register a New User."""
         return super().register(User(
             screen_name=screen_name,
             email=email,

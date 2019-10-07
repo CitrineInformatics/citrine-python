@@ -1,5 +1,5 @@
 """Resources that represent both individual and collections of projects."""
-from typing import Optional, Dict
+from typing import Optional, Dict, List
 
 from citrine._session import Session
 from citrine.resources.dataset import DatasetCollection
@@ -21,6 +21,7 @@ from citrine.resources.ingredient_spec import IngredientSpecCollection
 from citrine._rest.collection import Collection
 from citrine._rest.resource import Resource
 from citrine._serialization import properties
+from citrine.resources.user import User
 
 
 class Project(Resource['Project']):
@@ -197,6 +198,49 @@ class Project(Resource['Project']):
         self.session.checked_post(self._path() + "/make-private", {
             "resource": resource.as_entity_dict()
         })
+        return True
+
+    def list_members(self) -> List[User]:
+        """
+        List all of the users in the current project.
+
+        Returns
+        -------
+        List[User]
+            The members of the current project
+
+        """
+        return self.session.checked_get(self._path() + "/users")["users"]
+
+    def set_member(self, user_uid, role: str, actions: List[str]) -> bool:
+        """
+        Add a User to a Project with the given 'role' and 'actions'.
+
+        Returns
+        -------
+        bool
+            Returns True if member successfully added
+
+        """
+        self.session.checked_post(
+            self._path() + "/users/{}".format(user_uid),
+            {'role': role, 'actions': actions},
+        )
+        return True
+
+    def remove_member(self, user_uid: str) -> bool:
+        """
+        Remove a User from a Project.
+
+        Returns
+        -------
+        bool
+            Returns True if user successfully removed
+
+        """
+        self.session.checked_delete(
+            self._path() + "/users/{}".format(user_uid)
+        )
         return True
 
 
