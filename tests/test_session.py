@@ -1,7 +1,18 @@
 import jwt
 import pytest
+import unittest
+
+from citrine.exceptions import (
+    NonRetryableException,
+    WorkflowConflictException,
+    WorkflowNotReadyException,
+    RetryableException,
+)
+
 from datetime import datetime, timedelta
 import pytz
+import mock
+import requests
 import requests_mock
 from citrine._session import Session
 from citrine.exceptions import UnauthorizedRefreshToken, Unauthorized, NotFound
@@ -65,9 +76,51 @@ def test_get_no_refresh(session: Session):
 def test_get_not_found(session: Session):
     with requests_mock.Mocker() as m:
         m.get('http://citrine-testing.fake/api/v1/foo', status_code=404)
-
         with pytest.raises(NotFound):
             session.get_resource('/foo')
+
+class SessionTests(unittest.TestCase):
+    @mock.patch.object(Session, '_refresh_access_token')
+    @mock.patch.object(requests.Session, 'request')
+    def test_status_code_409(self, mock_request, _):
+        resp = mock.Mock()
+        resp.status_code = 409
+        mock_request.return_value = resp
+        with pytest.raises(NonRetryableException):
+            Session().checked_request('method', 'path')
+        with pytest.raises(WorkflowConflictException):
+            Session().checked_request('method', 'path')
+
+    @mock.patch.object(Session, '_refresh_access_token')
+    @mock.patch.object(requests.Session, 'request')
+    def test_status_code_425(self, mock_request, _):
+        resp = mock.Mock()
+        resp.status_code = 425
+        mock_request.return_value = resp
+        with pytest.raises(RetryableException):
+            Session().checked_request('method', 'path')
+        with pytest.raises(WorkflowNotReadyException):
+            Session().checked_request('method', 'path')
+
+    @mock.patch.object(Session, '_refresh_access_token')
+    @mock.patch.object(requests.Session, 'request')
+    def test_status_code_401(self, mock_request, _):
+        resp = mock.Mock()
+        resp.status_code = 401
+        mock_request.return_value = resp
+        with pytest.raises(NonRetryableException):
+            Session().checked_request('method', 'path')
+        with pytest.raises(Unauthorized):
+            Session().checked_request('method', 'path')
+
+    @mock.patch.object(Session, '_refresh_access_token')
+    @mock.patch.object(requests.Session, 'request')
+    def test_status_code_404(self, mock_request, _):
+        resp = mock.Mock()
+        resp.status_code = 404
+        mock_request.return_value = resp
+        with pytest.raises(NonRetryableException):
+            Session().checked_request('method', 'path')
 
 
 def test_post_refreshes_token_when_denied(session: Session):

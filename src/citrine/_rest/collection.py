@@ -2,6 +2,7 @@ from abc import abstractmethod
 from typing import Optional, Union, Generic, TypeVar, Iterable
 from uuid import UUID
 
+from citrine.exceptions import ModuleRegistrationFailedException, NonRetryableException
 from citrine.resources.response import Response
 
 
@@ -45,9 +46,12 @@ class Collection(Generic[ResourceType]):
     def register(self, model: CreationType) -> CreationType:
         """Create a new element of the collection by registering an existing resource."""
         path = self._get_path()
-        data = self.session.post_resource(path, model.dump())
-        data = data[self._individual_key] if self._individual_key else data
-        return self.build(data)
+        try:
+            data = self.session.post_resource(path, model.dump())
+            data = data[self._individual_key] if self._individual_key else data
+            return self.build(data)
+        except NonRetryableException as e:
+            raise ModuleRegistrationFailedException(model.__class__.__name__, e)
 
     def list(self,
              page: Optional[int] = None,
