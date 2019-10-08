@@ -2,7 +2,13 @@ import pytest
 import arrow
 
 from citrine._serialization.properties import Integer, String, Float, Datetime
-from ._data import VALID_SERIALIZATIONS, VALID_STRINGS, INVALID_INSTANCES, INVALID_SERIALIZED_INSTANCES
+from ._data import (
+    VALID_SERIALIZATIONS,
+    VALID_STRINGS,
+    INVALID_DESERIALIZATION_TYPES,
+    INVALID_INSTANCES,
+    INVALID_SERIALIZED_INSTANCES,
+)
 
 
 @pytest.mark.parametrize('prop_type,value,serialized', VALID_SERIALIZATIONS)
@@ -23,6 +29,13 @@ def test_invalid_property_serialization(prop_type, value):
 def test_invalid_property_deserialization(prop_type, serialized):
     prop = prop_type()
     with pytest.raises(Exception):
+        prop.deserialize(serialized)
+
+
+@pytest.mark.parametrize('prop_type,serialized', INVALID_DESERIALIZATION_TYPES)
+def test_invalid_deserialization_type(prop_type, serialized):
+    prop = prop_type()
+    with pytest.raises(ValueError):
         prop.deserialize(serialized)
 
 

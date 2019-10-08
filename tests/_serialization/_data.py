@@ -15,6 +15,16 @@ VALID_SERIALIZATIONS = [
 ]
 
 
+INVALID_DESERIALIZATION_TYPES = [
+    (properties.Integer, object()),
+    (properties.Float, object()),
+    (properties.String, 1),
+    (properties.Boolean, 3),
+    (properties.Boolean, 'False'),
+    (properties.UUID, '284e6cec'),
+]
+
+
 class DummyProperty(properties.Property):
     """This is a concrete sublcass that does not overwrite __str__ for base Property testing"""
     @property
