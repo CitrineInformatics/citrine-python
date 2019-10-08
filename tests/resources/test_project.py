@@ -4,7 +4,7 @@ from dateutil.parser import parse
 
 from citrine.resources.project import Project, ProjectCollection
 from citrine.resources.dataset import Dataset
-from tests.utils.factories import ProjectDataFactory
+from tests.utils.factories import ProjectDataFactory, UserDataFactory
 from tests.utils.session import FakeSession, FakeCall
 
 
@@ -237,3 +237,49 @@ def test_delete_project(collection, session):
     with pytest.raises(NotImplementedError):
         collection.delete(uid)
 
+
+def test_list_members(project, session):
+    # Given
+    user = UserDataFactory()
+    session.set_response({'users': [user]})
+
+    # When
+    project.list_members()
+
+    # Then
+    assert 1 == session.num_calls
+    expect_call = FakeCall(method='GET', path='/projects/{}/users'.format(project.uid))
+    assert expect_call == session.last_call
+
+
+def test_set_member(project, session):
+    # Given
+    user = UserDataFactory()
+    session.set_response({'actions': ["READ", "INVITE"], 'role': 'MEMBER'})
+
+    # When
+    project.set_member(user["uid"], 'MEMBER', ["READ", "INVITE"])
+
+    # Then
+    assert 1 == session.num_calls
+    expect_call = FakeCall(method="POST", path='/projects/{}/users/{}'.format(project.uid, user["uid"]), json={
+        "role": "MEMBER",
+        "actions": ["READ", "INVITE"]
+    })
+    assert expect_call == session.last_call
+
+
+def test_remove_member(project, session):
+    # Given
+    user = UserDataFactory()
+
+    # When
+    project.remove_member(user["uid"])
+
+    # Then
+    assert 1 == session.num_calls
+    expect_call = FakeCall(
+        method="DELETE",
+        path="/projects/{}/users/{}".format(project.uid, user["uid"])
+    )
+    assert expect_call == session.last_call
