@@ -11,6 +11,7 @@ from citrine._serialization.properties import (
     LinkOrElse,
     MixedList,
     Object,
+    Optional,
 )
 from ._data import (
     VALID_SERIALIZATIONS,
@@ -128,6 +129,11 @@ def test_mixed_list_cannot_serialize_larger_lists():
         ml.serialize([1, 2])
 
 
+def test_mixed_list_with_defaults():
+    ml = MixedList([Integer, Integer, Integer(default=100)])
+    assert [1, 2, 100] == ml.serialize([1, 2])
+
+
 def test_invalid_object_deserialize():
     class Foo:
         pass
@@ -153,3 +159,8 @@ def test_linkorelse_deserialize():
     loe = LinkOrElse()
     lbu = loe.deserialize({'type': LinkByUID.typ, 'scope': 'foo', 'id': uuid.uuid4()})
     assert isinstance(lbu, LinkByUID)
+
+
+def test_optional_repr():
+    opt = Optional(String)
+    assert '<Optional[<String None>] None>' == str(opt)

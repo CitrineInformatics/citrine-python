@@ -68,6 +68,7 @@ INVALID_INSTANCES = [
     (properties.UUID, str(uuid.uuid4())),  # string(uuid) != uuid
     (properties.UUID, 1.0),
     (properties.Datetime, '2019-07-19T10:46:08.949682+00:00'),  # str(datetime) != datetime
+    (properties.LinkOrElse, object())
 ]
 
 INVALID_SERIALIZED_INSTANCES = [
