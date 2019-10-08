@@ -141,3 +141,8 @@ def test_get_me(collection, session):
     )
     assert 1 == session.num_calls
     assert expected_call == session.last_call
+
+
+def test_user_get_not_implemented(user):
+    with pytest.raises(NotImplementedError):
+        user.get()

@@ -32,10 +32,13 @@ class FakeSession:
     """Fake version of Session used to test API interaction."""
     def __init__(self):
         self.calls = []
-        self.response = {}
+        self.responses = []
 
     def set_response(self, resp):
-        self.response = resp
+        self.responses = [resp]
+
+    def set_responses(self, *resps):
+        self.responses = list(resps)
 
     @property
     def num_calls(self) -> int:
@@ -59,19 +62,31 @@ class FakeSession:
 
     def checked_get(self, path: str, *args, **kwargs) -> dict:
         self.calls.append(FakeCall('GET', path, params=kwargs.get('params')))
-        return self.response
+        return self._get_response()
 
     def checked_post(self, path: str, json: dict, *args, **kwargs) -> dict:
         self.calls.append(FakeCall('POST', path, json, params=kwargs.get('params')))
-        return self.response
+        return self._get_response()
 
     def checked_put(self, path: str, json: dict, *args, **kwargs) -> dict:
         self.calls.append(FakeCall('PUT', path, json))
-        return self.response
+        return self._get_response()
 
     def checked_delete(self, path: str) -> dict:
         self.calls.append(FakeCall('DELETE', path))
-        return self.response
+        return self._get_response()
+
+    def _get_response(self):
+        """
+        Returns responses in order, repeating the final response indefinitely.
+        """
+        if not self.responses:
+            return {}
+
+        if len(self.responses) > 1:
+            return self.responses.pop(0)
+
+        return self.responses[0]
 
 
 class FakeS3Client:
