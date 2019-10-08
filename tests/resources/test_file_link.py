@@ -1,3 +1,5 @@
+from collections import namedtuple
+
 import pytest
 from uuid import uuid4
 from mock import patch, Mock
@@ -32,6 +34,11 @@ def test_build_equivalence(collection, valid_data):
     assert collection.build(valid_data).dump() == FileLink.build(valid_data).dump()
 
 
+def test_build_as_dict(collection, valid_data):
+    """Test that build() works the same whether called from FileLink or FileCollection."""
+    assert collection.build(valid_data).dump() == FileLink.build(valid_data).as_dict()
+
+
 def test_string_representation(valid_data):
     """Test the string representation."""
     assert str(FileLink.build(valid_data)) == '<File link \'materials.txt\'>'
@@ -41,6 +48,60 @@ def test_string_representation(valid_data):
 def uploader() -> _Uploader:
     """An _Uploader object with all of its fields filled in."""
     return _UploaderFactory()
+
+
+@patch('citrine.resources.file_link.boto3_client')
+@patch('citrine.resources.file_link.open')
+@patch('citrine.resources.file_link.os.stat')
+@patch('citrine.resources.file_link.os.path.isfile')
+def test_upload(mock_isfile, mock_stat, mock_open, mock_boto3_client, collection, session):
+    """Test signaling that an upload has completed and the creation of a FileLink object."""
+    StatStub = namedtuple('StatStub', ['st_size'])
+
+    mock_isfile.return_value = True
+    mock_stat.return_value = StatStub(st_size=22300)
+    mock_open.return_value.__enter__.return_value = 'Random file contents'
+    mock_boto3_client.return_value = FakeS3Client({'VersionId': '3'})
+
+    dest_name = 'foo.txt'
+    file_id = '12345'
+    version = '13'
+
+    # This is the dictionary structure we expect from the upload completion request
+    file_info_response = {
+        'file_info': {
+            'file_id': file_id,
+            'version': version
+        }
+    }
+    uploads_response = {
+        's3_region': 'us-east-1',
+        's3_bucket': 'temp-bucket',
+        'temporary_credentials': {
+            'access_key_id': '1234',
+            'secret_access_key': 'abbb8777',
+            'session_token': 'hefheuhuhhu83772333',
+        },
+        'uploads': [
+            {
+                's3_key': '66377378',
+                'upload_id': '111',
+            }
+        ]
+    }
+
+    session.set_responses(uploads_response, file_info_response)
+    file_link = collection.upload(dest_name)
+
+    assert session.num_calls == 2
+    url = 'projects/{}/datasets/{}/files/{}/versions/{}'\
+        .format(collection.project_id, collection.dataset_id, file_id, version)
+    assert file_link.dump() == FileLink(dest_name, url=url).dump()
+
+
+def test_upload_missing_file(collection):
+    with pytest.raises(ValueError):
+        collection.upload('this-file-does-not-exist.xls')
 
 
 @patch('citrine.resources.file_link.os.stat')
@@ -104,25 +165,10 @@ def test_upload_file(_, collection, uploader):
             collection._upload_file('foo.txt', uploader)
 
 
-def test_complete_upload(collection, session, uploader):
-    """Test signaling that an upload has completed and the creation of a FileLink object."""
+def test_upload_missing_version(collection, session, uploader):
     dest_name = 'foo.txt'
     file_id = '12345'
-    version = '13'
-
-    # This is the dictionary structure we expect from the upload completion request
-    complete_response = {
-        'file_info': {
-            'file_id': file_id,
-            'version': version
-        }
-    }
-    session.set_response(complete_response)
-    file_link = collection._complete_upload(dest_name, uploader)
-    assert session.num_calls == 1
-    url = 'projects/{}/datasets/{}/files/{}/versions/{}'\
-        .format(collection.project_id, collection.dataset_id, file_id, version)
-    assert file_link.dump() == FileLink(dest_name, url=url).dump()
+    version = '14'
 
     bad_complete_response = {
         'file_info': {
