@@ -248,8 +248,6 @@ class UUID(Property[uuid.UUID, str]):
         return uuid.UUID(value)
 
     def _serialize(self, value: uuid.UUID) -> str:
-        if not issubclass(type(value), uuid.UUID):
-            raise ValueError('Value {} is not a UUID'.format(value))
         return str(value)
 
 
@@ -468,12 +466,11 @@ class LinkOrElse(Property[typing.Union[Serializable, LinkByUID], dict]):
             return value.as_dict()
         elif isinstance(value, Serializable):
             return value.dump()
-        else:
-            raise TypeError("{} must be LinkByUID or Serializable, but is neither.".format(value))
 
     def _deserialize(self, value: dict):
         if 'type' in value and value['type'] == LinkByUID.typ:
             if 'scope' in value and 'id' in value:
+                value.pop('type')
                 return LinkByUID(**value)
             else:
                 raise ValueError("LinkByUID dictionary must have both scope and id fields")
