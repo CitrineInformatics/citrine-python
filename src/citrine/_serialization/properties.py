@@ -474,6 +474,7 @@ class LinkOrElse(Property[typing.Union[Serializable, LinkByUID], dict]):
     def _deserialize(self, value: dict):
         if 'type' in value and value['type'] == LinkByUID.typ:
             if 'scope' in value and 'id' in value:
+                value.pop('type')
                 return LinkByUID(**value)
             else:
                 raise ValueError("LinkByUID dictionary must have both scope and id fields")
