@@ -24,6 +24,14 @@ def scalar_min_objective() -> ScalarMinObjective:
     )
 
 
+def test_max_objective_repr(scalar_max_objective):
+    assert str(scalar_max_objective) == "<ScalarMaxObjective 'z'>"
+
+
+def test_min_objective_repr(scalar_min_objective):
+    assert str(scalar_min_objective) == "<ScalarMinObjective 'z'>"
+
+
 def test_scalar_max_initialization(scalar_max_objective):
     """Make sure the correct fields go to the correct places."""
     assert scalar_max_objective.descriptor_key == "z"

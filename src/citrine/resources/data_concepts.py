@@ -140,8 +140,6 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
             return data.get(field)
         elif isinstance(data, object):
             return getattr(data, field, None)
-        else:
-            TypeError("Expected data to be a dictionary or object, instead got {}".format(data))
 
     @classmethod
     def _build_child_objects(cls, data: dict, data_with_soft_links,

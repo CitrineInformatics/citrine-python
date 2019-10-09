@@ -37,6 +37,14 @@ def mei_scorer() -> MEIScorer:
     )
 
 
+def test_mli_repr(mli_scorer):
+    assert str(mli_scorer) == "<MLIScorer 'MLI(z)'>"
+
+
+def test_mei_repr(mei_scorer):
+    assert str(mei_scorer) == "<MEIScorer 'MEI(x)'>"
+
+
 def test_mli_initialization(mli_scorer):
     """Make sure the correct fields go to the correct places."""
     assert mli_scorer.name == 'MLI(z)'
