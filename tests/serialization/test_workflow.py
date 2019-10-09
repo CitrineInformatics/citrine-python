@@ -19,9 +19,11 @@ def valid_data():
         )
     )
 
+
 @pytest.fixture
 def valid_serialization_output(valid_data):
     return { x: y for x, y in valid_data.items() if x not in ['status', 'status_info']}
+
 
 def test_simple_deserialization(valid_data):
     """Ensure a deserialized DesignWorkflow looks sane."""
