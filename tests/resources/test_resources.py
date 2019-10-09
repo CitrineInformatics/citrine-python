@@ -19,7 +19,7 @@ from citrine.resources.property_template import PropertyTemplate, PropertyTempla
 from citrine.resources.response import Response
 from citrine.resources.workflow_executions import WorkflowExecution, WorkflowExecutionStatus
 
-arbirary_uuid = uuid.uuid4()
+arbitrary_uuid = uuid.uuid4()
 
 resource_string_data = [
     (IngredientRun, {'name': 'foo'}, "<Ingredient run 'foo'>"),
@@ -37,8 +37,8 @@ resource_string_data = [
     (ConditionTemplate, {'name': 'foo', 'bounds': RealBounds(0, 1, '')}, "<Condition template 'foo'>"),
     (Response, {'status_code': 200}, "<Response '200'>"),
     (WorkflowExecution,
-     {'uid': arbirary_uuid, 'project_id': arbirary_uuid, 'workflow_id': arbirary_uuid},
-     "<WorkflowExecution '{}'>".format(arbirary_uuid)),
+     {'uid': arbitrary_uuid, 'project_id': arbitrary_uuid, 'workflow_id': arbitrary_uuid},
+     "<WorkflowExecution '{}'>".format(arbitrary_uuid)),
     (WorkflowExecutionStatus, {'status': 'Failed', 'session': None}, "<WorkflowExecutionStatus 'Failed'>"),
 ]
 

@@ -73,7 +73,7 @@ class WorkflowExecutionCollection(Collection[WorkflowExecution]):
 
     def trigger(self, scorer: Scorer) -> WorkflowExecution:
         """Create a new workflow execution."""
-        return super().register(scorer)
+        return self.register(scorer)
 
 
 class WorkflowExecutionStatus(Resource['WorkflowExecutionStatus']):
