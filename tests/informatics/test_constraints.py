@@ -24,14 +24,6 @@ def categorical_constraint() -> CategoricalConstraint:
     )
 
 
-def test_scalar_range_repr(scalar_range_constraint):
-    assert str(scalar_range_constraint) == "<ScalarRangeConstraint 'z'>"
-
-
-def test_categorical_repr(categorical_constraint):
-    assert str(categorical_constraint) == "<CategoricalConstraint 'x'>"
-
-
 def test_scalar_range_initialization(scalar_range_constraint):
     """Make sure the correct fields go to the correct places."""
     assert scalar_range_constraint.descriptor_key == 'z'

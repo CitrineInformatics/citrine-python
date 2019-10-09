@@ -16,14 +16,6 @@ def enumerated_processor() -> EnumeratedProcessor:
     return EnumeratedProcessor('my enumerated thing', 'enumerates the things', 10)
 
 
-def test_grid_repr(grid_processor):
-    assert str(grid_processor) == "<GridProcessor 'my thing'>"
-
-
-def test_enumerated_repr(enumerated_processor):
-    assert str(enumerated_processor) == "<EnumeratedProcessor 'my enumerated thing'>"
-
-
 def test_grid_initialization(grid_processor):
     """Make sure the correct fields go to the correct places."""
     assert grid_processor.name == 'my thing'

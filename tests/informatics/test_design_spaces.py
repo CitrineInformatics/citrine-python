@@ -29,14 +29,6 @@ def enumerated_design_space() -> EnumeratedDesignSpace:
     return EnumeratedDesignSpace('enumerated', 'desc', descriptors=[x, color], data=data)
 
 
-def test_product_ds_repr(product_design_space):
-    assert str(product_design_space) == "<ProductDesignSpace 'my design space'>"
-
-
-def test_enumerated_ds_repr(enumerated_design_space):
-    assert str(enumerated_design_space) == "<EnumeratedDesignSpace 'enumerated'>"
-
-
 def test_product_initialization(product_design_space):
     """Make sure the correct fields go to the correct places."""
     assert product_design_space.name == 'my design space'
