@@ -1,3 +1,5 @@
+import uuid
+
 import pytest
 from taurus.entity.bounds.real_bounds import RealBounds
 
@@ -15,6 +17,9 @@ from citrine.resources.process_spec import ProcessSpec, ProcessSpecCollection
 from citrine.resources.process_template import ProcessTemplate, ProcessTemplateCollection
 from citrine.resources.property_template import PropertyTemplate, PropertyTemplateCollection
 from citrine.resources.response import Response
+from citrine.resources.workflow_executions import WorkflowExecution, WorkflowExecutionStatus
+
+arbirary_uuid = uuid.uuid4()
 
 resource_string_data = [
     (IngredientRun, {'name': 'foo'}, "<Ingredient run 'foo'>"),
@@ -30,7 +35,11 @@ resource_string_data = [
     (ProcessTemplate, {'name': 'foo'}, "<Process template 'foo'>"),
     (PropertyTemplate, {'name': 'foo', 'bounds': RealBounds(0, 1, '')}, "<Property template 'foo'>"),
     (ConditionTemplate, {'name': 'foo', 'bounds': RealBounds(0, 1, '')}, "<Condition template 'foo'>"),
-    (Response, {'status_code': 200}, "<Response '200'>")
+    (Response, {'status_code': 200}, "<Response '200'>"),
+    (WorkflowExecution,
+     {'uid': arbirary_uuid, 'project_id': arbirary_uuid, 'workflow_id': arbirary_uuid},
+     "<WorkflowExecution '{}'>".format(arbirary_uuid)),
+    (WorkflowExecutionStatus, {'status': 'Failed', 'session': None}, "<WorkflowExecutionStatus 'Failed'>"),
 ]
 
 resource_type_data = [

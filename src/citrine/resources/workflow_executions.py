@@ -29,7 +29,7 @@ class WorkflowExecution(Resource['WorkflowExecution']):
         self.session: Session = session
 
     def __str__(self):
-        return '<WorkflowExecution {!r}>'.format(self.uid)
+        return '<WorkflowExecution {!r}>'.format(str(self.uid))
 
     def _path(self):
         return '/projects/{project_id}/workflows/{workflow_id}/executions/{execution_id}'.format(
