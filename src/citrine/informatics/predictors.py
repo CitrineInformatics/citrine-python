@@ -11,7 +11,7 @@ from citrine.informatics.reports import Report
 from citrine.resources.report import ReportResource
 
 
-__all__ = ['Predictor', 'ParaboloidPredictor', 'SimpleMLPredictor']
+__all__ = ['Predictor', 'SimpleMLPredictor']
 
 
 class Predictor(PolymorphicSerializable['Predictor']):
@@ -27,7 +27,6 @@ class Predictor(PolymorphicSerializable['Predictor']):
     def get_type(cls, data) -> Type[Serializable]:
         """Return the subtype."""
         type_dict = {
-            "Paraboloid": ParaboloidPredictor,
             "Simple": SimpleMLPredictor
         }
         typ = type_dict.get(data['config']['type'])
@@ -39,46 +38,6 @@ class Predictor(PolymorphicSerializable['Predictor']):
                 '{} is not a valid predictor type. '
                 'Must be in {}.'.format(data['config']['type'], type_dict.keys())
             )
-
-
-class ParaboloidPredictor(Serializable['ParaboloidPredictor'], Predictor):
-    """A predictor that calculates a paraboloid using the values provided by the inputs."""
-
-    uid = properties.Optional(properties.UUID, 'id', serializable=False)
-    name = properties.String('config.name')
-    description = properties.Optional(properties.String(), 'config.description')
-    input_keys = properties.List(properties.Object(Descriptor), 'config.inputs')
-    output_key = properties.Object(Descriptor, 'config.output')
-    typ = properties.String('config.type', default='Paraboloid', deserializable=False)
-    status = properties.String('status', serializable=False)
-    status_info = properties.Optional(
-        properties.List(properties.String()),
-        'status_info',
-        serializable=False
-    )
-
-    # NOTE: These could go here or in _post_dump - it's unclear which is better right now
-    module_type = properties.String('module_type', default='PREDICTOR')
-    schema_id = properties.UUID('schema_id', default=UUID('ff26b280-8a8b-46ab-b7aa-0c73ff84b0fd'))
-
-    def __init__(self,
-                 name: str,
-                 description: str,
-                 input_descriptors: List[Descriptor],
-                 output_descriptor: Descriptor,
-                 session: Optional[Session] = None):
-        self.name: str = name
-        self.description: str = description
-        self.input_keys: List[Descriptor] = input_descriptors
-        self.output_key: Descriptor = output_descriptor
-        self.session: Optional[Session] = session
-
-    def _post_dump(self, data: dict) -> dict:
-        data['display_name'] = data['config']['name']
-        return data
-
-    def __str__(self):
-        return '<ParaboloidPredictor {!r}>'.format(self.name)
 
 
 class SimpleMLPredictor(Serializable['SimplePredictor'], Predictor):
