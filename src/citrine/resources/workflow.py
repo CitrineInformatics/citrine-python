@@ -28,7 +28,3 @@ class WorkflowCollection(Collection[Workflow]):
         workflow.session = self.session
         workflow.project_id = self.project_id
         return workflow
-
-    def register(self, model: CreationType) -> CreationType:
-        """Registers a Workflow."""
-        return super().register(model)
