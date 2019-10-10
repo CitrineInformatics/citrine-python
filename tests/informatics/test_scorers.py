@@ -47,7 +47,6 @@ def test_mli_initialization(mli_scorer):
     assert mli_scorer.constraints == []
 
 
-
 def test_mei_initialization(mei_scorer):
     """Make sure the correct fields go to the correct places."""
     assert mei_scorer.name == 'MEI(x)'

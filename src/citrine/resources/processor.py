@@ -25,7 +25,3 @@ class ProcessorCollection(Collection[Processor]):
         processor = Processor.build(data)
         processor.session = self.session
         return processor
-
-    def register(self, model: CreationType) -> CreationType:
-        """Registers a Processor."""
-        return super().register(model)

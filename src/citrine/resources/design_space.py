@@ -26,7 +26,3 @@ class DesignSpaceCollection(Collection[DesignSpace]):
         design_space = DesignSpace.build(data)
         design_space.session = self.session
         return design_space
-
-    def register(self, model: CreationType) -> CreationType:
-        """Registers a design space."""
-        return super().register(model)
