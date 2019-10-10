@@ -3,7 +3,6 @@ import uuid
 import pytest
 from taurus.entity.bounds.real_bounds import RealBounds
 
-from citrine.informatics.scorers import MLIScorer, MEIScorer
 from citrine.resources.condition_template import ConditionTemplate, ConditionTemplateCollection
 from citrine.resources.ingredient_run import IngredientRun, IngredientRunCollection
 from citrine.resources.ingredient_spec import IngredientSpec, IngredientSpecCollection
@@ -30,12 +29,6 @@ resource_string_data = [
     (MeasurementRun, {'name': 'foo'}, "<Measurement run 'foo'>"),
     (MeasurementSpec, {'name': 'foo'}, "<Measurement spec 'foo'>"),
     (MeasurementTemplate, {'name': 'foo'}, "<Measurement template 'foo'>"),
-    (MEIScorer,
-     {'name': 'foo', 'description': '','baselines': [], 'objectives': [], 'constraints': []},
-     "<MEIScorer 'foo'>"),
-    (MLIScorer,
-     {'name': 'foo', 'description': '','baselines': [], 'objectives': [], 'constraints': []},
-     "<MLIScorer 'foo'>"),
     (ParameterTemplate, {'name': 'foo', 'bounds': RealBounds(0, 1, '')}, "<Parameter template 'foo'>"),
     (ProcessRun, {'name': 'foo'}, "<Process run 'foo'>"),
     (ProcessSpec, {'name': 'foo'}, "<Process spec 'foo'>"),
