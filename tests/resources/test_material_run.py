@@ -3,7 +3,7 @@ from uuid import UUID
 import pytest
 from taurus.entity.bounds.integer_bounds import IntegerBounds
 
-from citrine.resources.material_run import MaterialRunCollection
+from citrine.resources.material_run import MaterialRunCollection, MaterialRun
 from tests.utils.session import FakeSession, FakeCall
 from tests.utils.factories import MaterialRunFactory, MaterialRunDataFactory, LinkByUIDFactory
 
@@ -211,3 +211,40 @@ def test_delete_material_run(collection, session):
     assert expected_call == session.last_call
 
 
+def test_build_discarded_objects_in_material_run():
+    # Note:  This is really here just for test coverage - couldn't figure out how to
+    #        get past the validation/serialization in MaterialRun.build - it might just be dead code
+    material_run = MaterialRunFactory()
+    material_run_data = MaterialRunDataFactory(
+        name='Test Run',
+        measurements=LinkByUIDFactory.create_batch(3)
+    )
+
+    MaterialRun._build_discarded_objects(material_run, material_run_data, None)
+
+
+def test_material_run_cannot_register_with_no_id(collection):
+    # Given
+    collection.dataset_id = None
+
+    # Then
+    with pytest.raises(RuntimeError):
+        collection.register(MaterialRunFactory())
+
+
+def test_material_run_cannot_get_with_no_id(collection):
+    # Given
+    collection.dataset_id = None
+
+    # Then
+    with pytest.raises(RuntimeError):
+        collection.get('123')
+
+
+def test_material_run_filter_by_name_with_no_id(collection):
+    # Given
+    collection.dataset_id = None
+
+    # Then
+    with pytest.raises(RuntimeError):
+        collection.filter_by_name('foo')
