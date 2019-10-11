@@ -71,6 +71,18 @@ def test_get_table_metadata(collection, session):
     assert retrieved_table.download_url == table["signed_download_url"]
 
 
+def test_init_table():
+    table = Table()
+    assert table.uid is None
+    assert table.version is None
+    assert table.download_url is None
+
+
+def test_str_serialization(table):
+    t = table("http://somewhere.cool")
+    assert "<Table {!r}>".format(t.uid) == str(t)
+
+
 def test_register_table(collection):
     with pytest.raises(RuntimeError):
         collection.register(Table.build(TableDataFactory()))
