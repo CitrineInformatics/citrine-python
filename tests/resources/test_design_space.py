@@ -17,6 +17,7 @@ def test_design_space_build():
             'description': 'For testing',
             'dimensions': [{
                 'type': 'ContinuousDimension',
+                'template_id': str(uuid.uuid4()),
                 'descriptor': {
                     'type': 'RealDescriptor',
                     'descriptor_key': 'foo',
@@ -28,6 +29,7 @@ def test_design_space_build():
             }],
         },
         'status': '',
+        'schema_id': '6c16d694-d015-42a7-b462-8ef299473c9a',
     }
 
     # When

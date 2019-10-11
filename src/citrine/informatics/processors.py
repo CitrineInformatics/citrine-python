@@ -82,7 +82,7 @@ class EnumeratedProcessor(Serializable['EnumeratedProcessor'], Processor):
 
     # NOTE: These could go here or in _post_dump - it's unclear which is better right now
     module_type = properties.String('module_type', default='PROCESSOR')
-    schema_id = properties.UUID('schema_id', default='307b88a2-fd50-4d27-ae91-b8d6282f68f7')
+    schema_id = properties.UUID('schema_id', default=UUID('307b88a2-fd50-4d27-ae91-b8d6282f68f7'))
 
     def __init__(self,
                  name: str,
