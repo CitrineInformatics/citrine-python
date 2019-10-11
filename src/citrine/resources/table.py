@@ -26,6 +26,7 @@ class Table(Resource['Table']):
         Version number of the Table
     download_url: int
         Url pointing to the location of the Table's contents
+
     """
 
     _response_key = 'table'

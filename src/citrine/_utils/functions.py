@@ -129,7 +129,18 @@ def object_to_link_by_uid(json: dict) -> dict:
 
 
 def rewrite_s3_links_locally(url: str) -> str:
-    """Rewrites 'localstack' hosts to localhost for testing."""
+    """
+    Rewrites 'localstack' hosts to localhost for testing.
+
+    This is required for dockerized environments. In docker environments,
+    virtual hosts are created with virtual port numbers.
+
+    localstack:4572 is an example of a virtualHost:virtualPort
+
+    In order to access dockerized servers from outside of docker, the
+    host:port space must be mapped onto localhost. For S3, this mapping is as follows:
+    localstack:4572 => localhost:9572
+    """
     parsed_url = urlparse(url)
     if parsed_url.netloc != "localstack:4572":
         return url
