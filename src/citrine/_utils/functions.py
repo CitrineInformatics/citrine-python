@@ -144,6 +144,5 @@ def write_file_locally(content, local_path: str):
         raise ValueError("A filename must be provided in the path")
     if not os.path.isdir(directory):
         os.makedirs(directory)
-    local_path = os.path.join(directory, filename)
     with open(local_path, 'wb') as output_file:
         output_file.write(content)

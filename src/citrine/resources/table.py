@@ -17,6 +17,15 @@ class Table(Resource['Table']):
     While data objects can represent complex materials data, the format
     is NOT conducive to analysis and machine learning. Tables, however,
     can be used to 'flatten' data objects into useful projections.
+
+    Attributes
+    ----------
+    uid: UUID
+        Unique uuid4 identifier of this project.
+    version: str
+        Version number of the Table
+    download_url: int
+        Url pointing to the location of the Table's contents
     """
 
     _response_key = 'table'
@@ -43,9 +52,9 @@ class Table(Resource['Table']):
 
 
 class TableCollection(Collection[Table]):
-    """Represents the collection of all tables assocated with a project."""
+    """Represents the collection of all tables associated with a project."""
 
-    _path_template = 'projects/{project_id}/tables/{table_id}/versions/{version}'
+    _path_template = 'projects/{project_id}/tables'
 
     def __init__(self, project_id: UUID, session: Session):
         self.project_id = project_id
@@ -53,11 +62,7 @@ class TableCollection(Collection[Table]):
 
     def get(self, uid: Union[UUID, str], version: int) -> Table:
         """Get a Table's metadata."""
-        path = self._path_template.format(
-            project_id=self.project_id,
-            table_id=uid,
-            version=version,
-        )
+        path = self._get_path(uid) + "/versions/{}".format(version)
         data = self.session.get_resource(path)
         return self.build(data)
 
@@ -70,4 +75,4 @@ class TableCollection(Collection[Table]):
 
     def register(self, model: Table) -> Table:
         """Tables cannot be created at this time."""
-        pass
+        raise NotImplementedError('Creating Tables is not supported at this time.')
