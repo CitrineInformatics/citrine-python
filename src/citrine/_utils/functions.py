@@ -129,7 +129,7 @@ def object_to_link_by_uid(json: dict) -> dict:
 
 
 def rewrite_s3_links_locally(url: str) -> str:
-    """Rewrites 'localstack' hosts to localhost for testing"""
+    """Rewrites 'localstack' hosts to localhost for testing."""
     parsed_url = urlparse(url)
     if parsed_url.netloc != "localstack:4572":
         return url
@@ -138,7 +138,7 @@ def rewrite_s3_links_locally(url: str) -> str:
 
 
 def write_file_locally(content, local_path: str):
-    """Take content from remote and ensure path exists"""
+    """Take content from remote and ensure path exists."""
     directory, filename = os.path.split(local_path)
     if filename == "":
         raise ValueError("A filename must be provided in the path")

@@ -1,4 +1,4 @@
-from typing import Union, Optional
+from typing import Union
 
 import requests
 
@@ -11,8 +11,7 @@ from citrine._utils.functions import rewrite_s3_links_locally, write_file_locall
 
 
 class Table(Resource['Table']):
-    """
-    A 2-dimensional projection of data
+    """A 2-dimensional projection of data.
 
     Tables are the basic unit used to flatten and manipulate data objects.
     While data objects can represent complex materials data, the format
@@ -26,7 +25,7 @@ class Table(Resource['Table']):
     version = properties.Optional(properties.Integer, 'version')
     download_url = properties.Optional(properties.String, 'signed_download_url')
 
-    def __init__(self, requests = None):
+    def __init__(self):
         self.uid = None
         self.version = None
         self.download_url = None
@@ -36,7 +35,7 @@ class Table(Resource['Table']):
         return '<Table {!r}>'.format(self.uid)
 
     def read(self, local_path):
-        """Read the Table file from S3"""
+        """Read the Table file from S3."""
         data_location = self.download_url
         data_location = rewrite_s3_links_locally(data_location)
         response = requests.get(data_location)
@@ -44,9 +43,7 @@ class Table(Resource['Table']):
 
 
 class TableCollection(Collection[Table]):
-    """
-    Represents the collection of all tables assocated with a project.
-    """
+    """Represents the collection of all tables assocated with a project."""
 
     _path_template = 'projects/{project_id}/tables/{table_id}/versions/{version}'
 
@@ -55,7 +52,7 @@ class TableCollection(Collection[Table]):
         self.session: Session = session
 
     def get(self, uid: Union[UUID, str], version: int) -> Table:
-        """Get a Table's metadata"""
+        """Get a Table's metadata."""
         path = self._path_template.format(
             project_id=self.project_id,
             table_id=uid,
@@ -65,18 +62,12 @@ class TableCollection(Collection[Table]):
         return self.build(data)
 
     def build(self, data: dict) -> Table:
-        """
-        Build an individual Table from a dictionary
-        """
-
+        """Build an individual Table from a dictionary."""
         table = Table.build(data)
         table.project_id = self.project_id
         table.session = self.session
         return table
 
     def register(self, model: Table) -> Table:
-        """
-        Tables cannot be created at this time.
-        """
+        """Tables cannot be created at this time."""
         pass
-
