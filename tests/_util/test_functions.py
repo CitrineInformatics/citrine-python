@@ -78,14 +78,11 @@ def test_rewrite_s3_links_locally():
 @patch("os.makedirs")
 def test_write_file_locally(mock_makedirs, mock_join, mock_isdir):
     mock_join.return_value = "/User/is/fake/myfile.pdf"
-    with patch('os.path.split') as mock_split:
-
-        with patch("builtins.open", mock_open()) as m:
-            mock_split.return_value = ("/User/is/fake", "myfile.pdf")
-            write_file_locally(b"something", "/User/is/fake/myfile.pdf")
-            assert m.call_args_list == [call('/User/is/fake/myfile.pdf', 'wb')]
-            handle = m()
-            handle.write.assert_called_once_with(b'something')
+    with patch("builtins.open", mock_open()) as m:
+        write_file_locally(b"something", "/User/is/fake/myfile.pdf")
+        assert m.call_args_list == [call('/User/is/fake/myfile.pdf', 'wb')]
+        handle = m()
+        handle.write.assert_called_once_with(b'something')
 
 
 def test_write_file_locally_fails_with_no_filename():
