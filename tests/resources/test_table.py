@@ -69,3 +69,8 @@ def test_get_table_metadata(collection, session):
     assert str(retrieved_table.uid) == table["id"]
     assert retrieved_table.version == table["version"]
     assert retrieved_table.download_url == table["signed_download_url"]
+
+
+def test_register_table(collection):
+    with pytest.raises(RuntimeError):
+        collection.register(Table.build(TableDataFactory()))
