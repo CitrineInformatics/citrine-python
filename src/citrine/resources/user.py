@@ -92,7 +92,7 @@ class UserCollection(Collection[User]):
                  email: str,
                  position: str,
                  is_admin: bool) -> User:
-        """Register a New User."""
+        """Register a User."""
         return super().register(User(
             screen_name=screen_name,
             email=email,
