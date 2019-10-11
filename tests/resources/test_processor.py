@@ -16,6 +16,7 @@ def test_processor_build():
             'max_size': 100,
         },
         'status': '',
+        'schema_id': '307b88a2-fd50-4d27-ae91-b8d6282f68f7',
     }
 
     # When
