@@ -21,6 +21,7 @@ from citrine.resources.ingredient_spec import IngredientSpecCollection
 from citrine._rest.collection import Collection
 from citrine._rest.resource import Resource
 from citrine._serialization import properties
+from citrine.resources.table import TableCollection
 
 
 class Project(Resource['Project']):
@@ -76,6 +77,11 @@ class Project(Resource['Project']):
     def datasets(self) -> DatasetCollection:
         """Return a resource representing all visible datasets."""
         return DatasetCollection(self.uid, self.session)
+
+    @property
+    def tables(self) -> TableCollection:
+        """Return a resource representing all visible Tables."""
+        return TableCollection(self.uid, self.session)
 
     @property
     def property_templates(self) -> PropertyTemplateCollection:
@@ -227,7 +233,7 @@ class ProjectCollection(Collection[Project]):
         data: dict
             A dictionary representing the project.
 
-        Returns
+        Return
         -------
         Project
             The project created from data.

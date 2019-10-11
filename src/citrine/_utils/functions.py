@@ -1,6 +1,8 @@
 from typing import Dict, Any
 from copy import deepcopy
+from urllib.parse import urlparse
 from uuid import uuid4, UUID
+import os
 
 from taurus.client.json_encoder import LinkByUID
 
@@ -124,3 +126,24 @@ def object_to_link_by_uid(json: dict) -> dict:
         return LinkByUID(scope, this_id).as_dict()
     else:
         return json
+
+
+def rewrite_s3_links_locally(url: str) -> str:
+    """Rewrites 'localstack' hosts to localhost for testing"""
+    parsed_url = urlparse(url)
+    if parsed_url.netloc != "localstack:4572":
+        return url
+    else:
+        return parsed_url._replace(netloc="localhost:9572").geturl()
+
+
+def write_file_locally(content, local_path: str):
+    """Take content from remote and ensure path exists"""
+    directory, filename = os.path.split(local_path)
+    if filename == "":
+        raise ValueError("A filename must be provided in the path")
+    if not os.path.isdir(directory):
+        os.makedirs(directory)
+    local_path = os.path.join(directory, filename)
+    with open(local_path, 'wb') as output_file:
+        output_file.write(content)

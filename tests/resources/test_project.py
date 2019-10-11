@@ -188,13 +188,13 @@ def test_get_project(collection, session):
     session.set_response({'project': project_data})
 
     # When
-    created_project = collection.get(project_data['uid'])
+    created_project = collection.get(project_data['id'])
 
     # Then
     assert 1 == session.num_calls
     expected_call = FakeCall(
         method='GET',
-        path='/projects/{}'.format(project_data['uid']),
+        path='/projects/{}'.format(project_data['id']),
     )
     assert expected_call == session.last_call
     assert 'single project' == created_project.name
