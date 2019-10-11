@@ -1,4 +1,5 @@
 """Tools for working with Predictors."""
+from abc import abstractmethod
 from typing import List, Optional, Type
 from uuid import UUID
 
@@ -19,9 +20,9 @@ class Predictor(PolymorphicSerializable['Predictor']):
 
     _response_key = None
 
+    @abstractmethod
     def post_build(self, project_id: UUID, data: dict):
         """Executes after a .build() is called in [[PredictorCollection]]."""
-        return
 
     @classmethod
     def get_type(cls, data) -> Type[Serializable]:

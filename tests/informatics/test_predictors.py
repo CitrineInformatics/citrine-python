@@ -47,8 +47,3 @@ def test_simple_post_build(simple_predictor):
     assert session.get_resource.call_count == 1
     assert simple_predictor.report is not None
     assert simple_predictor.report.status == 'OK'
-
-
-def test_base_post_build():
-    pred = Predictor()
-    assert pred.post_build(uuid.uuid4(), dict()) is None

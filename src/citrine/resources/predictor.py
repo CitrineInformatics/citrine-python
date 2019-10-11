@@ -27,7 +27,3 @@ class PredictorCollection(Collection[Predictor]):
         predictor.session = self.session
         predictor.post_build(self.project_id, data)
         return predictor
-
-    def register(self, model: CreationType) -> CreationType:
-        """Registers a Predictor."""
-        return super().register(model)
