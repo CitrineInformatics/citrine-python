@@ -54,8 +54,8 @@ class LinkByUIDInputFactory(factory.DictFactory):
 
 
 class FileLinkDataFactory(factory.DictFactory):
-    url = factory.Faker('www.citrine.io')
-    filename = factory.Faker('materials.txt')
+    url = factory.Faker('uri')
+    filename = factory.Faker('file_name')
     type = 'file_link'
 
 
