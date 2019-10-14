@@ -3,7 +3,7 @@ import pytest
 from dateutil.parser import parse
 
 from citrine.resources.project import Project, ProjectCollection
-from citrine.resources.dataset import Dataset
+from citrine.resources.table import TableCollection
 from tests.utils.factories import ProjectDataFactory, UserDataFactory
 from tests.utils.session import FakeSession, FakeCall
 
@@ -299,3 +299,7 @@ def test_remove_member(project, session):
         path="/projects/{}/users/{}".format(project.uid, user["id"])
     )
     assert expect_call == session.last_call
+
+
+def test_project_tables(project):
+    assert isinstance(project.tables, TableCollection)
