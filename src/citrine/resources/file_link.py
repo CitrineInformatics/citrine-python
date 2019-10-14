@@ -12,6 +12,7 @@ from citrine._serialization.properties import String
 from citrine._rest.collection import Collection
 from citrine._rest.resource import Resource
 from citrine._session import Session
+from citrine._utils.functions import write_file_locally
 
 
 class _Uploader:
@@ -314,8 +315,6 @@ class FileCollection(Collection[FileLink]):
         directory, filename = os.path.split(local_path)
         if not filename:
             filename = file_link.filename
-        if not os.path.isdir(directory):
-            os.makedirs(directory)
         local_path = os.path.join(directory, filename)
 
         # The "/content-link" route returns a pre-signed url to download the file.
@@ -323,5 +322,4 @@ class FileCollection(Collection[FileLink]):
         content_link_response = self.session.get_resource(content_link_path)
         pre_signed_url = content_link_response['pre_signed_read_link']
         download_response = requests.get(pre_signed_url)
-        with open(local_path, 'wb') as output_file:
-            output_file.write(download_response.content)
+        write_file_locally(download_response.content, local_path)
