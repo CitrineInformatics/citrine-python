@@ -112,12 +112,12 @@ def test_delete_user(collection, session):
     user = UserDataFactory()
 
     # When
-    collection.delete(user['uid'])
+    collection.delete(user['id'])
 
     session.set_response({'message': 'User was deleted'})
     expected_call = FakeCall(
         method="DELETE",
-        path='/users/{}'.format(user["uid"]),
+        path='/users/{}'.format(user["id"]),
     )
 
     assert 1 == session.num_calls
@@ -127,8 +127,8 @@ def test_delete_user(collection, session):
 def test_get_me(collection, session):
     # Given
     user = UserDataFactory()
-    user["id"] = user["uid"]
-    del user["uid"]
+    user["id"] = user["id"]
+    del user["id"]
     session.set_response(user)
 
     # When
