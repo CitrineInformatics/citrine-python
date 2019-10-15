@@ -14,7 +14,9 @@ __all__ = ['DesignSpace', 'ProductDesignSpace', 'EnumeratedDesignSpace']
 
 
 class DesignSpace(PolymorphicSerializable['DesignSpace']):
-    """A module representing a material domain."""
+    """A Citrine Design Space - an abstract type that returns the proper
+    subtype based on the 'type' value of the passed in dict.
+    """
 
     _response_key = None
 
@@ -28,7 +30,14 @@ class DesignSpace(PolymorphicSerializable['DesignSpace']):
 
 
 class ProductDesignSpace(Resource['ProductDesignSpace'], DesignSpace):
-    """Design space composed of an outer product of univariate dimensions."""
+    """Design space composed of an outer product of univariate dimensions (i.e. sets), either continuous or enumerated.
+
+    Keyword arguments:
+        name -- (str) the name of the design space
+        description -- (str) the description of the design space
+        dimensions -- (list[Dimension]) univariate dimensions that are factors of the design space; can be enumerated
+                      or continuous
+    """
 
     _response_key = None
 
@@ -67,7 +76,15 @@ class ProductDesignSpace(Resource['ProductDesignSpace'], DesignSpace):
 
 
 class EnumeratedDesignSpace(Resource['EnumeratedDesignSpace'], DesignSpace):
-    """Design space composed of enumerated items."""
+    """Design space composed of enumerated items.
+
+    Keyword arguments:
+        name -- (str) the name of the design space
+        description -- (str) the description of the design space
+        descriptors -- (list[Descriptor]) the list of descriptors included in the candidates of the design space
+        data  -- (list[dict]) list of dicts of the shape {<descriptor_key>: <descriptor_value>} where each dict
+                 corresponds to a candidate in the design space
+    """
 
     _response_key = None
 
