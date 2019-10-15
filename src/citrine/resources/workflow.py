@@ -15,7 +15,7 @@ class WorkflowCollection(Collection[Workflow]):
 
     _path_template = '/projects/{project_id}/workflows'
     _individual_key = None
-    _collection_key = 'Workflows'
+    _collection_key = 'entries'
     _resource = Workflow
 
     def __init__(self, project_id: UUID, session: Session):
