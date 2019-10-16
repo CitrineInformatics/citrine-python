@@ -95,7 +95,7 @@ class Collection(Generic[ResourceType]):
             except(KeyError, ValueError):
                 # TODO:  Right now this is a hack.  Clean this up soon.
                 # Module collections are not filtering on module type
-                # properly, so we care filtering client-side.
+                # properly, so we are filtering client-side.
                 pass
 
     def delete(self, uid: Union[UUID, str]) -> Response:
