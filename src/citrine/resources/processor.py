@@ -1,4 +1,4 @@
-"""Resources that represent both collections of processors."""
+"""Resources that represent collections of processors."""
 from uuid import UUID
 from typing import TypeVar
 
@@ -10,7 +10,13 @@ CreationType = TypeVar('CreationType', bound=Processor)
 
 
 class ProcessorCollection(Collection[Processor]):
-    """Represents the collection of all projects as well as the resources belonging to it."""
+    """Represents the collection of all processors for a project.
+
+    Parameters
+    ----------
+    project_id: UUID
+        the UUID of the project
+    """
 
     _path_template = '/projects/{project_id}/modules'
     _collection_key = 'entry'
