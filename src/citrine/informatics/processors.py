@@ -11,7 +11,9 @@ __all__ = ['Processor', 'GridProcessor', 'EnumeratedProcessor']
 
 
 class Processor(PolymorphicSerializable['Processor']):
-    """A Citrine Processor - an abstract type."""
+    """A Citrine Processor - an abstract type that returns the proper
+    subtype based on the 'type' value of the passed in dict.
+    """
 
     _response_key = None
 
@@ -25,7 +27,19 @@ class Processor(PolymorphicSerializable['Processor']):
 
 
 class GridProcessor(Serializable['GridProcessor'], Processor):
-    """A Citrine GridProcessor."""
+    """Generates a finite set of materials from the domain defined by the design space, then scans over the set of
+    materials. To create a finite set of materials from continuous dimensions, a uniform grid is created between the
+    bounds of the descriptor. The number of points is specified by `grid_sizes`.
+
+    Parameters
+    ----------
+    name: str
+        name of the processor
+    description: str
+        description of the processor
+    grid_sizes: dict[str, int]
+        the number of points to select along each dimension of the grid, by dimension name
+    """
 
     uid = properties.Optional(properties.UUID, 'id', serializable=False)
     name = properties.String('config.name')
@@ -66,7 +80,18 @@ class GridProcessor(Serializable['GridProcessor'], Processor):
 
 
 class EnumeratedProcessor(Serializable['EnumeratedProcessor'], Processor):
-    """A Citrine EnumeratedProcessor."""
+    """Process a design space by enumerating up to `max_size` materials from the domain and processing each
+    independently.
+
+    Parameters
+    ----------
+    name: str
+        name of the processor
+    description: str
+        description of the processor
+    max_size: int
+        maximum number of samples that can be enumerated over
+    """
 
     uid = properties.Optional(properties.UUID, 'id', serializable=False)
     name = properties.String('config.name')

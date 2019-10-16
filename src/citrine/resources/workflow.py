@@ -1,4 +1,4 @@
-"""Resources that represent both individual and collections of projects."""
+"""Resources that represent collections of Workflows."""
 from uuid import UUID
 from typing import TypeVar
 
@@ -11,7 +11,13 @@ CreationType = TypeVar('CreationType', bound=Workflow)
 
 
 class WorkflowCollection(Collection[Workflow]):
-    """Represents the collection of all Workflows as well as the resources belonging to it."""
+    """Represents the collection of all Workflows as well as the resources belonging to it.
+
+    Parameters
+    ----------
+    project_id: UUID
+        the UUID of the project
+    """
 
     _path_template = '/projects/{project_id}/workflows'
     _individual_key = None

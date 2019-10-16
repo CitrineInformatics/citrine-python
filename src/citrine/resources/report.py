@@ -7,7 +7,13 @@ from uuid import UUID
 
 
 class ReportResource(Resource['ReportResource']):
-    """Defines a report resource to fetch."""
+    """Defines a resource for fetching reports from a module.
+
+    Parameters
+    ----------
+    project_id: UUID
+        the UUID of the project
+    """
 
     _path_template = '/projects/{project_id}/modules/{module_id}/report'
 

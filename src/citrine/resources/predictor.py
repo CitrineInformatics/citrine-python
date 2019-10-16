@@ -1,4 +1,4 @@
-"""Resources that represent both collections of predictors."""
+"""Resources that represent collections of predictors."""
 from uuid import UUID
 from typing import TypeVar
 
@@ -10,7 +10,13 @@ CreationType = TypeVar('CreationType', bound=Predictor)
 
 
 class PredictorCollection(Collection[Predictor]):
-    """Represents the collection of all projects as well as the resources belonging to it."""
+    """Represents the collection of all predictors for a project.
+
+    Parameters
+    ----------
+    project_id: UUID
+        the UUID of the project
+    """
 
     _path_template = '/projects/{project_id}/modules'
     _individual_key = None

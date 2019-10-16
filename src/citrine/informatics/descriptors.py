@@ -7,7 +7,9 @@ from citrine._serialization import properties
 
 
 class Descriptor(PolymorphicSerializable['Descriptor']):
-    """An abstract descriptor type."""
+    """A Citrine Descriptor - an abstract type that returns the proper
+    subtype based on the 'type' value of the passed in dict.
+    """
 
     @classmethod
     def get_type(cls, data) -> Type[Serializable]:
@@ -20,7 +22,17 @@ class Descriptor(PolymorphicSerializable['Descriptor']):
 
 
 class RealDescriptor(Serializable['RealDescriptor'], Descriptor):
-    """A real descriptor."""
+    """Captures domain-specific context about the bounds of an integer-valued datum.
+
+    Parameters
+    ----------
+    key: str
+        the key corresponding to a descriptor
+    lower_bound: float
+        inclusive lower bound for valid real values
+    upper_bound: float
+        inclusive upper bound for valid real values
+    """
 
     key = properties.String('descriptor_key')
     lower_bound = properties.Float('lower_bound')
@@ -49,7 +61,15 @@ class RealDescriptor(Serializable['RealDescriptor'], Descriptor):
 
 
 class InorganicDescriptor(Serializable['InorganicDescriptor'], Descriptor):
-    """A real descriptor."""
+    """Captures domain-specific context about the chemical formula for an inorganic compound.
+
+    Parameters
+    ----------
+    key: str
+        the key corresponding to a descriptor
+    threshold: float
+        the threshold for valid chemical formulae. Users can think of this as a level of tolerance for typos and/or loss in interpreting a string input as a parseable chemical formula.
+    """
 
     key = properties.String('descriptor_key')
     threshold = properties.Float('threshold')
@@ -70,7 +90,15 @@ class InorganicDescriptor(Serializable['InorganicDescriptor'], Descriptor):
 
 
 class CategoricalDescriptor(Serializable['CategoricalDescriptor'], Descriptor):
-    """A categorical descriptor."""
+    """A descriptor to hold categorical variables. An exhaustive list of categorical values may be supplied.
+
+    Parameters
+    ----------
+    key: str
+        the key corresponding to a descriptor
+    categories: list[str]
+        possible categories for this descriptor
+    """
 
     key = properties.String('descriptor_key')
     type = properties.String('type', default='Categorical', deserializable=False)

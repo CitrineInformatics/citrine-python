@@ -16,7 +16,9 @@ __all__ = ['Predictor', 'SimpleMLPredictor']
 
 
 class Predictor(PolymorphicSerializable['Predictor']):
-    """Module that describes the ability to compute/predict properties of materials."""
+    """Module that describes the ability to compute/predict properties of materials. An abstract type that returns
+    the proper subtype based on the 'type' value of the passed in dict.
+    """
 
     _response_key = None
 
@@ -42,7 +44,23 @@ class Predictor(PolymorphicSerializable['Predictor']):
 
 
 class SimpleMLPredictor(Serializable['SimplePredictor'], Predictor):
-    """A predictor that predicts an output using a machine-learned model."""
+    """A predictor interface that builds a graphical model connecting the set of inputs through latent variables to the outputs. Supported complex inputs (such as chemical formulas) are auto-featurized and machine learning models are built for each latent variable and output.
+
+    Parameters
+    ----------
+    name: str
+        name of the configuration
+    description: str
+        the description of the predictor
+    inputs: list[Descriptor]
+        Descriptors that represent inputs to relations
+    outputs: list[Descriptor]
+        Descriptors that represent outputs of relations
+    latent_variables: list[Descriptor]
+        Descriptors that are predicted from inputs and used when predicting the outputs
+    training_data: str
+        UUID of the table that contains the training data
+    """
 
     uid = properties.Optional(properties.UUID, 'id', serializable=False)
     name = properties.String('config.name')
