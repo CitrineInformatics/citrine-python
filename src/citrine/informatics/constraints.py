@@ -75,7 +75,7 @@ class CategoricalConstraint(Serializable['CategoricalConstraint'], Constraint):
     descriptor_key: str
         the key corresponding to the associated Categorical descriptor
     acceptable_categories: list[str]
-        the names of the acceptable categories to constrain on
+        the names of the acceptable categories to constrain to
     """
 
     descriptor_key = properties.String('descriptor_key')
