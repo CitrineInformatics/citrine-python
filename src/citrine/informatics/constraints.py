@@ -26,7 +26,7 @@ class Constraint(PolymorphicSerializable['Constraint']):
 
 
 class ScalarRangeConstraint(Serializable['ScalarRangeConstraint'], Constraint):
-    """Specifies the material attributes that a user wishes to constrain in scalar format.
+    """Represents an inequality constraint on a scalar-valued material attribute.
 
     Keyword arguments:
         descriptor_key -- (str) the key corresponding to a descriptor
