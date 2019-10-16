@@ -68,7 +68,7 @@ class InorganicDescriptor(Serializable['InorganicDescriptor'], Descriptor):
     key: str
         the key corresponding to a descriptor
     threshold: float
-        the threshold for valid chemical formulae
+        the threshold for valid chemical formulae. Users can think of this as a level of tolerance for typos and/or loss in interpreting a string input as a parseable chemical formula.
     """
 
     key = properties.String('descriptor_key')
