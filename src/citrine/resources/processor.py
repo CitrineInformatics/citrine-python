@@ -13,7 +13,6 @@ class ProcessorCollection(Collection[Processor]):
     """Represents the collection of all projects as well as the resources belonging to it."""
 
     _path_template = '/projects/{project_id}/modules'
-    _collection_key = 'entry'
     _individual_key = None
 
     def __init__(self, project_id: UUID, session: Session):

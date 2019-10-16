@@ -2,6 +2,7 @@ import re
 
 from citrine.resources.response import Response
 
+
 def test_empty_response_repr():
     """Tests that the repr output expresses the absence of body and status code correctly."""
     resp = Response()
@@ -9,6 +10,7 @@ def test_empty_response_repr():
     no_status_code_found = re.search("No HTTP status available", resp.__repr__())
     assert no_body_found
     assert no_status_code_found
+
 
 def test_empty_body_present_code():
     """Tests that the repr output expresses the absence of body and presence of
@@ -18,6 +20,7 @@ def test_empty_body_present_code():
     status_code_found = re.search("404", resp_with_code.__repr__())
     assert no_body_found
     assert status_code_found
+
 
 def test_empty_body_present_code():
     """Tests that the repr output expresses the presence of body and presence of

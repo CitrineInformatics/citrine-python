@@ -13,7 +13,6 @@ class DesignSpaceCollection(Collection[DesignSpace]):
     """Represents the collection of all design spaces as well as the resources belonging to it."""
 
     _path_template = '/projects/{project_id}/modules'
-    _collection_key = 'entries'
     _individual_key = None
     _resource = DesignSpace
 
