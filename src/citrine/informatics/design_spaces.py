@@ -30,7 +30,7 @@ class DesignSpace(PolymorphicSerializable['DesignSpace']):
 
 
 class ProductDesignSpace(Resource['ProductDesignSpace'], DesignSpace):
-    """Design space composed of an outer product of univariate dimensions (i.e. sets), either continuous or enumerated.
+    """Design space composed of an outer product of univariate dimensions, either continuous or enumerated.
 
     Parameters
     ----------
