@@ -28,7 +28,7 @@ class RealDescriptor(Serializable['RealDescriptor'], Descriptor):
     ----------
     key: str
         the key corresponding to a descriptor
-    lower_bound: int
+    lower_bound: float
         inclusive lower bound for valid real values
     upper_bound: float
         inclusive upper bound for valid real values
