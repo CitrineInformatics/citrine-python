@@ -76,7 +76,7 @@ class ProductDesignSpace(Resource['ProductDesignSpace'], DesignSpace):
 
 
 class EnumeratedDesignSpace(Resource['EnumeratedDesignSpace'], DesignSpace):
-    """Design space composed of enumerated items.
+    """Design space composed of an explicit enumeration of candidate materials to score. Note that every candidate must have exactly the descriptors in the list populated (no more, no less) to be included. 
 
     Keyword arguments:
         name -- (str) the name of the design space
