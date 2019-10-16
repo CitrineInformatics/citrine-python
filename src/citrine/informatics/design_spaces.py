@@ -32,11 +32,14 @@ class DesignSpace(PolymorphicSerializable['DesignSpace']):
 class ProductDesignSpace(Resource['ProductDesignSpace'], DesignSpace):
     """Design space composed of an outer product of univariate dimensions (i.e. sets), either continuous or enumerated.
 
-    Keyword arguments:
-        name -- (str) the name of the design space
-        description -- (str) the description of the design space
-        dimensions -- (list[Dimension]) univariate dimensions that are factors of the design space; can be enumerated
-                      or continuous
+    Parameters
+    ----------
+    name:str
+        the name of the design space
+    description:str
+        the description of the design space
+    dimensions: list[Dimension]
+        univariate dimensions that are factors of the design space; can be enumerated or continuous
     """
 
     _response_key = None
@@ -78,12 +81,17 @@ class ProductDesignSpace(Resource['ProductDesignSpace'], DesignSpace):
 class EnumeratedDesignSpace(Resource['EnumeratedDesignSpace'], DesignSpace):
     """Design space composed of an explicit enumeration of candidate materials to score. Note that every candidate must have exactly the descriptors in the list populated (no more, no less) to be included. 
 
-    Keyword arguments:
-        name -- (str) the name of the design space
-        description -- (str) the description of the design space
-        descriptors -- (list[Descriptor]) the list of descriptors included in the candidates of the design space
-        data  -- (list[dict]) list of dicts of the shape {<descriptor_key>: <descriptor_value>} where each dict
-                 corresponds to a candidate in the design space
+    Parameters
+    ----------
+    name:str
+        the name of the design space
+    description:str
+        the description of the design space
+    descriptors: list[Descriptor]
+        the list of descriptors included in the candidates of the design space
+    data: list[dict]
+        list of dicts of the shape `{<descriptor_key>: <descriptor_value>}` where each dict corresponds to a candidate
+        in the design space
     """
 
     _response_key = None

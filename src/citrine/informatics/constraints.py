@@ -28,12 +28,18 @@ class Constraint(PolymorphicSerializable['Constraint']):
 class ScalarRangeConstraint(Serializable['ScalarRangeConstraint'], Constraint):
     """Represents an inequality constraint on a scalar-valued material attribute.
 
-    Keyword arguments:
-        descriptor_key -- (str) the key corresponding to a descriptor
-        min -- (int) the minimum value in the range
-        max -- (int) the maximum value in the range
-        min_inclusive -- (bool) if True, will include the min value in the range
-        max_inclusive -- (bool) if True, will include the max value in the range
+    Parameters
+    ----------
+    descriptor_key: str
+        the key corresponding to a descriptor
+    min: int
+        the minimum value in the range
+    max: int
+        the maximum value in the range
+    min_inclusive: bool
+        if True, will include the min value in the range
+    max_inclusive: bool
+        if True, will include the max value in the range
     """
 
     descriptor_key = properties.String('descriptor_key')
@@ -64,9 +70,12 @@ class ScalarRangeConstraint(Serializable['ScalarRangeConstraint'], Constraint):
 class CategoricalConstraint(Serializable['CategoricalConstraint'], Constraint):
     """Specifies the categorical material attributes that a user wishes to constrain.
 
-    Keyword arguments:
-        descriptor_key -- (string) the key corresponding to a descriptor
-        acceptable_categories -- (List[str]) the names of the acceptable categories to constrain on
+    Parameters
+    ----------
+    descriptor_key: str
+        the key corresponding to a descriptor
+    acceptable_categories: list[str]
+        the names of the acceptable categories to constrain on
     """
 
     descriptor_key = properties.String('descriptor_key')
