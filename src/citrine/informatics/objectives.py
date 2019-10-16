@@ -11,7 +11,9 @@ __all__ = ['Objective', 'ScalarMaxObjective', 'ScalarMinObjective']
 
 
 class Objective(PolymorphicSerializable['Objective']):
-    """A Citrine Objective - an abstract type."""
+    """A Citrine Objective - an abstract type that returns the proper
+    subtype based on the 'type' value of the passed in dict.
+    """
 
     _response_key = None
 
@@ -25,7 +27,17 @@ class Objective(PolymorphicSerializable['Objective']):
 
 
 class ScalarMaxObjective(Serializable['ScalarMaxObjective'], Objective):
-    """A Citrine ScalarMaxObjective."""
+    """Simple single-response maximization objective with optional bounds on the objective space.
+
+    Parameters
+    ----------
+    descriptor_key: str
+        the key from which to pull the values
+    lower_bound: float
+        the lower bound on the space, e.g. 0 for a non-negative property
+    upper_bound: float
+        the upper bound on the space, e.g. 0 for a non-positive property
+    """
 
     descriptor_key = properties.String('descriptor_key')
     lower_bound = properties.Optional(properties.Float, 'lower_bound')
@@ -47,7 +59,17 @@ class ScalarMaxObjective(Serializable['ScalarMaxObjective'], Objective):
 
 
 class ScalarMinObjective(Serializable['ScalarMinObjective'], Objective):
-    """A Citrine ScalarMinObjective."""
+    """Simple single-response minimization objective with optional bounds on the objective space.
+
+    Parameters
+    ----------
+    descriptor_key: str
+        the key from which to pull the values
+    lower_bound: float
+        the lower bound on the space, e.g. 0 for a non-negative property
+    upper_bound: float
+        the upper bound on the space, e.g. 0 for a non-positive property
+    """
 
     descriptor_key = properties.String('descriptor_key')
     lower_bound = properties.Optional(properties.Float, 'lower_bound')

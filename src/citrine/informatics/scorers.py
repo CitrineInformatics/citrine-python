@@ -12,7 +12,9 @@ __all__ = ['Scorer', 'MLIScorer', 'MEIScorer']
 
 
 class Scorer(PolymorphicSerializable['Scorer']):
-    """A Citrine Scorer."""
+    """A Citrine Scorer - an abstract type that returns the proper
+    subtype based on the 'type' value of the passed in dict.
+    """
 
     @classmethod
     def get_type(cls, data):
@@ -24,7 +26,21 @@ class Scorer(PolymorphicSerializable['Scorer']):
 
 
 class MLIScorer(Serializable['MLIScorer'], Scorer):
-    """A Citrine MLIScorer."""
+    """Evaluates the likelihood of scoring better than some baselines for given objectives.
+
+    Parameters
+    ----------
+    name: str
+        the name of the scorer
+    description: str
+        the description of the scorer
+    objectives: list[Objective]
+        objectives (e.g., maximize, minimize, tune, etc.)
+    baselines: list[float]
+        best-so-far values for the various objectives (there must be one for each objective)
+    constraints: list[Constraint]
+        constraints limiting the allowed values that material instances can have
+    """
 
     name = properties.String('name')
     description = properties.String('description')
@@ -52,7 +68,21 @@ class MLIScorer(Serializable['MLIScorer'], Scorer):
 
 
 class MEIScorer(Serializable['MEIScorer'], Scorer):
-    """A Citrine MEIScorer."""
+    """Evaluates the expected magnitude of improvement beyond some baselines for given objectives.
+
+    Parameters
+    ----------
+    name: str
+        the name of the scorer
+    description: str
+        the description of the scorer
+    objectives: list[Objective]
+        objectives (e.g., maximize, minimize, tune, etc.)
+    baselines: list[float]
+        best-so-far values for the various objectives (there must be one for each objective)
+    constraints: list[Constraint]
+        constraints limiting the allowed values that material instances can have
+    """
 
     name = properties.String('name')
     description = properties.String('description')

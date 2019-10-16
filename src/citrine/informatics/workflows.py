@@ -12,7 +12,9 @@ __all__ = ['Workflow', 'DesignWorkflow']
 
 
 class Workflow(PolymorphicSerializable['Workflow']):
-    """A Citrine Workflow."""
+    """A Citrine Workflow - an abstract type that returns the proper
+    subtype based on the 'type' value of the passed in dict.
+    """
 
     _response_key = None
 
@@ -23,7 +25,21 @@ class Workflow(PolymorphicSerializable['Workflow']):
 
 
 class DesignWorkflow(Resource['DesignWorkflow'], Workflow):
-    """Object that generates scored materials that may approach higher values of the score."""
+    """Object that generates scored materials that may approach higher values of the score.
+
+    Parameters
+    ----------
+    name: str
+        the name of the workflow
+    design_space_id: UUID
+        the UUID corresponding to the design space to use
+    processor_id: UUID
+        the UUID corresponding to the processor to use
+    predictor_id: UUID
+        the UUID corresponding to the predictor to use
+    project_id: UUID
+        the UUID corresponding to the project to use
+    """
 
     uid = properties.Optional(properties.UUID, 'id', serializable=False)
     name = properties.String('display_name')
