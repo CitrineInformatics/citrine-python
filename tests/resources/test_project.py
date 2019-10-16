@@ -231,6 +231,22 @@ def test_list_projects(collection, session):
     assert 5 == len(projects)
 
 
+def test_list_projects_filters_non_projects(collection, session):
+    # Given
+    projects_data = ProjectDataFactory.create_batch(5)
+    projects_data.append({'foo': 'not a project'})
+    session.set_response({'projects': projects_data})
+
+    # When
+    projects = list(collection.list())
+
+    # Then
+    assert 1 == session.num_calls
+    expected_call = FakeCall(method='GET', path='/projects')
+    assert expected_call == session.last_call
+    assert 5 == len(projects)   # The non-project data is filtered out
+
+
 def test_list_projects_with_page_params(collection, session):
     # Given
     project_data = ProjectDataFactory()

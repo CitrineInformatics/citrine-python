@@ -14,7 +14,6 @@ class PredictorCollection(Collection[Predictor]):
 
     _path_template = '/projects/{project_id}/modules'
     _individual_key = None
-    _collection_key = 'entries'
     _resource = Predictor
 
     def __init__(self, project_id: UUID, session: Session):
