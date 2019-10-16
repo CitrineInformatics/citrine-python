@@ -44,7 +44,7 @@ class Predictor(PolymorphicSerializable['Predictor']):
 
 
 class SimpleMLPredictor(Serializable['SimplePredictor'], Predictor):
-    """A predictor that predicts an output using a machine-learned model.
+    """A predictor interface that builds a graphical model connecting the set of inputs through latent variables to the outputs. Supported complex inputs (such as chemical formulas) are auto-featurized and machine learning models are built for each latent variable and output.
 
     Parameters
     ----------
