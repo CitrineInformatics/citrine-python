@@ -73,7 +73,7 @@ class CategoricalConstraint(Serializable['CategoricalConstraint'], Constraint):
     Parameters
     ----------
     descriptor_key: str
-        the key corresponding to a descriptor
+        the key corresponding to the associated Categorical descriptor
     acceptable_categories: list[str]
         the names of the acceptable categories to constrain on
     """
