@@ -214,7 +214,5 @@ def test_delete_material_run(collection, session):
             material_run_uid
         ),
     )
-    print(expected_call)
-    print(session.last_call)
     assert expected_call == session.last_call
 
