@@ -19,6 +19,8 @@ from taurus.entity.dict_serializable import DictSerializable
 from taurus.entity.bounds.base_bounds import BaseBounds
 from taurus.entity.template.attribute_template import AttributeTemplate
 
+from citrine.resources.response import Response
+
 
 class DataConcepts(PolymorphicSerializable['DataConcepts']):
     """
@@ -626,4 +628,4 @@ class DataConceptsCollection(Collection[ResourceType]):
         """
         path = self._get_path() + "/{}/{}".format(scope, uid)
         self.session.delete_resource(path)
-        return True
+        return Response(status_code=200)  # delete succeeded
