@@ -611,3 +611,19 @@ class DataConceptsCollection(Collection[ResourceType]):
             params=params,
         )
         return [self.build(content) for content in response["contents"]]
+
+    def delete(self, uid: Union[UUID, str], scope: str = 'id'):
+        """
+        Delete the element of the collection with ID equal to uid.
+
+        Parameters
+        ----------
+        uid: Union[UUID, str]
+            The ID.
+        scope: str
+            The scope of the uid, defaults to Citrine scope ('id')
+
+        """
+        path = self._get_path() + "/{}/{}".format(scope, uid)
+        self.session.delete_resource(path)
+        return True
