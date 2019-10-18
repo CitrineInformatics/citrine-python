@@ -2,7 +2,7 @@
 from typing import Optional
 from uuid import UUID
 
-from citrine.informatics.scorers import Scorer
+from citrine.informatics.scores import Score
 from citrine._rest.collection import Collection
 from citrine._rest.resource import Resource
 from citrine._serialization import properties
@@ -71,9 +71,9 @@ class WorkflowExecutionCollection(Collection[WorkflowExecution]):
         execution.workflow_id = self.workflow_id
         return execution
 
-    def trigger(self, scorer: Scorer) -> WorkflowExecution:
+    def trigger(self, score: Score) -> WorkflowExecution:
         """Create a new workflow execution."""
-        return self.register(scorer)
+        return self.register(score)
 
 
 class WorkflowExecutionStatus(Resource['WorkflowExecutionStatus']):

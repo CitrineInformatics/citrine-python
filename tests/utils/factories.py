@@ -7,7 +7,7 @@
 import factory
 from taurus.entity.link_by_uid import LinkByUID
 
-from citrine.informatics.scorers import MLIScorer
+from citrine.informatics.scores import MLIScore
 from citrine.resources.file_link import _Uploader
 from citrine.resources.dataset import Dataset
 from citrine.resources.material_run import MaterialRun
@@ -125,9 +125,9 @@ class _UploaderFactory(factory.Factory):
         obj.s3_version = '2'
 
 
-class MLIScorerFactory(factory.Factory):
+class MLIScoreFactory(factory.Factory):
     class Meta:
-        model = MLIScorer
+        model = MLIScore
 
     name = factory.Faker('bs')
     description = factory.Faker('catch_phrase')
