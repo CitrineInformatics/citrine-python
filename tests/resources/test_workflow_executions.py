@@ -4,7 +4,7 @@ import pytest
 
 from citrine.resources.workflow_executions import WorkflowExecutionCollection, WorkflowExecution, \
     WorkflowExecutionStatus
-from tests.utils.factories import MLIScorerFactory
+from tests.utils.factories import MLIScoreFactory
 from tests.utils.session import FakeSession, FakeCall
 
 
@@ -86,8 +86,8 @@ def test_trigger_workflow_execution(collection: WorkflowExecutionCollection, wor
     session.set_response(workflow_execution.dump())
 
     # When
-    scorer = MLIScorerFactory()
-    actual_execution = collection.trigger(scorer)
+    score = MLIScoreFactory()
+    actual_execution = collection.trigger(score)
 
     # Then
     assert actual_execution.uid == workflow_execution.uid
@@ -98,7 +98,7 @@ def test_trigger_workflow_execution(collection: WorkflowExecutionCollection, wor
     assert session.last_call == FakeCall(
         method='POST',
         path=expected_path,
-        json=scorer.dump()
+        json=score.dump()
     )
 
 

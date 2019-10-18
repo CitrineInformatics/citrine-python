@@ -1,4 +1,4 @@
-"""Tools for working with Scorers."""
+"""Tools for working with Scores."""
 from typing import List, Optional
 
 from citrine._serialization import properties
@@ -8,11 +8,11 @@ from citrine._session import Session
 from citrine.informatics.constraints import Constraint
 from citrine.informatics.objectives import Objective
 
-__all__ = ['Scorer', 'MLIScorer', 'MEIScorer']
+__all__ = ['Score', 'MLIScore', 'MEIScore']
 
 
-class Scorer(PolymorphicSerializable['Scorer']):
-    """A Citrine Scorer - an abstract type that returns the proper
+class Score(PolymorphicSerializable['Score']):
+    """A Citrine Score - an abstract type that returns the proper
     subtype based on the 'type' value of the passed in dict.
     """
 
@@ -20,20 +20,20 @@ class Scorer(PolymorphicSerializable['Scorer']):
     def get_type(cls, data):
         """Return the subtype."""
         return {
-            'MLI': MLIScorer,
-            'MEI': MEIScorer
+            'MLI': MLIScore,
+            'MEI': MEIScore
         }[data['type']]
 
 
-class MLIScorer(Serializable['MLIScorer'], Scorer):
+class MLIScore(Serializable['MLIScore'], Score):
     """Evaluates the likelihood of scoring better than some baselines for given objectives.
 
     Parameters
     ----------
     name: str
-        the name of the scorer
+        the name of the score
     description: str
-        the description of the scorer
+        the description of the score
     objectives: list[Objective]
         objectives (e.g., maximize, minimize, tune, etc.)
     baselines: list[float]
@@ -64,18 +64,18 @@ class MLIScorer(Serializable['MLIScorer'], Scorer):
         self.session: Optional[Session] = session
 
     def __str__(self):
-        return '<MLIScorer {!r}>'.format(self.name)
+        return '<MLIScore {!r}>'.format(self.name)
 
 
-class MEIScorer(Serializable['MEIScorer'], Scorer):
+class MEIScore(Serializable['MEIScore'], Score):
     """Evaluates the expected magnitude of improvement beyond some baselines for given objectives.
 
     Parameters
     ----------
     name: str
-        the name of the scorer
+        the name of the score
     description: str
-        the description of the scorer
+        the description of the score
     objectives: list[Objective]
         objectives (e.g., maximize, minimize, tune, etc.)
     baselines: list[float]
@@ -106,4 +106,4 @@ class MEIScorer(Serializable['MEIScorer'], Scorer):
         self.session: Optional[Session] = session
 
     def __str__(self):
-        return '<MEIScorer {!r}>'.format(self.name)
+        return '<MEIScore {!r}>'.format(self.name)

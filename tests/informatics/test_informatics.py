@@ -4,7 +4,7 @@ from citrine.informatics.constraints import ScalarRangeConstraint, CategoricalCo
 from citrine.informatics.design_spaces import ProductDesignSpace, EnumeratedDesignSpace
 from citrine.informatics.objectives import ScalarMaxObjective, ScalarMinObjective
 from citrine.informatics.processors import GridProcessor, EnumeratedProcessor
-from citrine.informatics.scorers import MLIScorer, MEIScorer
+from citrine.informatics.scores import MLIScore, MEIScore
 
 
 informatics_string_data = [
@@ -16,8 +16,8 @@ informatics_string_data = [
     (ScalarMinObjective('z', 1.0, 10.0), "<ScalarMinObjective 'z'>"),
     (GridProcessor('my thing', 'does a thing', dict(x=1)), "<GridProcessor 'my thing'>"),
     (EnumeratedProcessor('my enumerated thing', 'enumerates', 10), "<EnumeratedProcessor 'my enumerated thing'>"),
-    (MLIScorer("MLI(z)", "score for z", [], []), "<MLIScorer 'MLI(z)'>"),
-    (MEIScorer("MEI(x)", "score for x", [], [], []), "<MEIScorer 'MEI(x)'>"),
+    (MLIScore("MLI(z)", "score for z", [], []), "<MLIScore 'MLI(z)'>"),
+    (MEIScore("MEI(x)", "score for x", [], [], []), "<MEIScore 'MEI(x)'>"),
 ]
 
 
