@@ -4,7 +4,7 @@ from dateutil.parser import parse
 
 from citrine.resources.project import Project, ProjectCollection
 from citrine.resources.dataset import Dataset
-from tests.utils.factories import ProjectDataFactory
+from tests.utils.factories import ProjectDataFactory, UserDataFactory
 from tests.utils.session import FakeSession, FakeCall
 
 
@@ -188,13 +188,13 @@ def test_get_project(collection, session):
     session.set_response({'project': project_data})
 
     # When
-    created_project = collection.get(project_data['uid'])
+    created_project = collection.get(project_data['id'])
 
     # Then
     assert 1 == session.num_calls
     expected_call = FakeCall(
         method='GET',
-        path='/projects/{}'.format(project_data['uid']),
+        path='/projects/{}'.format(project_data['id']),
     )
     assert expected_call == session.last_call
     assert 'single project' == created_project.name
@@ -237,3 +237,49 @@ def test_delete_project(collection, session):
     with pytest.raises(NotImplementedError):
         collection.delete(uid)
 
+
+def test_list_members(project, session):
+    # Given
+    user = UserDataFactory()
+    session.set_response({'users': [user]})
+
+    # When
+    project.list_members()
+
+    # Then
+    assert 1 == session.num_calls
+    expect_call = FakeCall(method='GET', path='/projects/{}/users'.format(project.uid))
+    assert expect_call == session.last_call
+
+
+def test_set_member(project, session):
+    # Given
+    user = UserDataFactory()
+    session.set_response({'actions': ["READ", "INVITE"], 'role': 'MEMBER'})
+
+    # When
+    project.set_member(user["id"], 'MEMBER', ["READ", "INVITE"])
+
+    # Then
+    assert 1 == session.num_calls
+    expect_call = FakeCall(method="POST", path='/projects/{}/users/{}'.format(project.uid, user["id"]), json={
+        "role": "MEMBER",
+        "actions": ["READ", "INVITE"]
+    })
+    assert expect_call == session.last_call
+
+
+def test_remove_member(project, session):
+    # Given
+    user = UserDataFactory()
+
+    # When
+    project.remove_member(user["id"])
+
+    # Then
+    assert 1 == session.num_calls
+    expect_call = FakeCall(
+        method="DELETE",
+        path="/projects/{}/users/{}".format(project.uid, user["id"])
+    )
+    assert expect_call == session.last_call

@@ -9,10 +9,10 @@ def valid_data():
     """Return valid data used for these tests."""
     return dict(
         id=str(uuid4()),
-        screenName='bob',
+        screen_name='bob',
         position='the builder',
         email='bob@thebuilder.com',
-        isAdmin=True
+        is_admin=True
     )
 
 

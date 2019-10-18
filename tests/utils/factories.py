@@ -10,18 +10,33 @@ from taurus.entity.link_by_uid import LinkByUID
 from citrine.resources.file_link import _Uploader
 from citrine.resources.dataset import Dataset
 from citrine.resources.material_run import MaterialRun
+from random import randrange
 
 
 class ProjectDataFactory(factory.DictFactory):
-    uid = factory.Faker('uuid4')
+    id = factory.Faker('uuid4')
     name = factory.Faker('company')
     description = factory.Faker('catch_phrase')
     status = 'CREATED'
     created_at = None
 
 
+class UserDataFactory(factory.DictFactory):
+    id = factory.Faker('uuid4')
+    screen_name = factory.Faker('name')
+    position = factory.Faker('job')
+    email = factory.Faker('email')
+    is_admin = factory.Faker('boolean')
+
+
+class TableDataFactory(factory.DictFactory):
+    id = factory.Faker('uuid4')
+    version = randrange(10)
+    signed_download_url = factory.Faker('uri')
+
+
 class DatasetDataFactory(factory.DictFactory):
-    uid = factory.Faker('uuid4')
+    id = factory.Faker('uuid4')
     name = factory.Faker('company')
     summary = factory.Faker('catch_phrase')
     description = factory.Faker('bs')

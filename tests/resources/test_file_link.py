@@ -1,6 +1,8 @@
 import pytest
 from uuid import uuid4
-from mock import patch, Mock
+
+import requests_mock
+from mock import patch, Mock, call
 from botocore.exceptions import ClientError
 
 from citrine.resources.file_link import FileCollection, FileLink, _Uploader
@@ -183,13 +185,8 @@ def test_list_file_links(collection, session, valid_data):
         [file for file in files_iterator]
 
 
-@patch('citrine.resources.file_link.open')
-@patch('citrine.resources.file_link.requests.get')
-@patch('citrine.resources.file_link.os.path.split')
-@patch('citrine.resources.file_link.os.path.isdir')
-@patch('citrine.resources.file_link.os.makedirs')
-def test_file_download(mock_mkdir, mock_os_path_isdir, mock_os_path_split,
-                       mock_get, mock_open, collection, session):
+@patch("citrine.resources.file_link.write_file_locally")
+def test_file_download(mock_write_file_locally, collection, session):
     """
     Test that downloading a file works as expected.
 
@@ -206,24 +203,18 @@ def test_file_download(mock_mkdir, mock_os_path_isdir, mock_os_path_split,
     })
     local_path = 'Users/me/some/new/directory/'
 
-    mock_os_path_split.return_value = (local_path, '')  # triggers appending filename to local_path
-    mock_os_path_isdir.return_value = False  # triggers mkdir
-    mock_get.return_value = FakeRequestResponse('0101001')  # arbitrary
+    with requests_mock.mock() as mock_get:
+        mock_get.get(pre_signed_url, text='0101001')
 
-    # When
-    collection.download(file, local_path)
+        # When
+        collection.download(file, local_path)
 
-    # When
-    assert mock_os_path_isdir.call_count == 1
-    assert mock_os_path_split.call_count == 1
-    assert mock_mkdir.call_count == 1
-    assert mock_get.call_count == 1
-    assert mock_open.call_count == 1
-    # Mock write should be to path "local_path + filename"
-    assert mock_open.mock_calls[0].args[0] == local_path + filename
-
-    expected_call = FakeCall(
-        method='GET',
-        path=url + '/content-link'
-    )
-    assert expected_call == session.last_call
+        # When
+        assert mock_get.call_count == 1
+        expected_call = FakeCall(
+            method='GET',
+            path=url + '/content-link'
+        )
+        assert expected_call == session.last_call
+        assert mock_write_file_locally.call_count == 1
+        assert mock_write_file_locally.call_args == call(b'0101001', local_path + file.filename)
