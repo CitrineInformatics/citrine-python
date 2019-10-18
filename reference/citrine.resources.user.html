@@ -36,7 +36,7 @@
 <dl class="class">
 <dt id="citrine.resources.user.User">
 <em class="property">class </em><code class="sig-prename descclassname">citrine.resources.user.</code><code class="sig-name descname">User</code><span class="sig-paren">(</span><em class="sig-param">screen_name: str</em>, <em class="sig-param">email: str</em>, <em class="sig-param">position: str</em>, <em class="sig-param">is_admin: bool</em>, <em class="sig-param">session: Optional[citrine._session.Session] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.user.User" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.resource.Resource</span></code></p>
 <p>A Citrine User.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -53,6 +53,12 @@
 <dt id="citrine.resources.user.User.email">
 <code class="sig-name descname">email</code><em class="property"> = None</em><a class="headerlink" href="#citrine.resources.user.User.email" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="method">
+<dt id="citrine.resources.user.User.get">
+<code class="sig-name descname">get</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.user.User.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve a specific user from the database.</p>
+</dd></dl>
 
 <dl class="attribute">
 <dt id="citrine.resources.user.User.is_admin">
@@ -79,8 +85,37 @@
 <dl class="class">
 <dt id="citrine.resources.user.UserCollection">
 <em class="property">class </em><code class="sig-prename descclassname">citrine.resources.user.</code><code class="sig-name descname">UserCollection</code><span class="sig-paren">(</span><em class="sig-param">session: citrine._session.Session</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.user.UserCollection" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.collection.Collection</span></code></p>
 <p>Represents the collection of all users.</p>
+<dl class="method">
+<dt id="citrine.resources.user.UserCollection.build">
+<code class="sig-name descname">build</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.user.UserCollection.build" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build an individual user from a dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>dict</em>) – A dictionary representing the user.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The user created from data.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#citrine.resources.user.User" title="citrine.resources.user.User">User</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="citrine.resources.user.UserCollection.me">
+<code class="sig-name descname">me</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.user.UserCollection.me" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get information about the current user.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="citrine.resources.user.UserCollection.register">
+<code class="sig-name descname">register</code><span class="sig-paren">(</span><em class="sig-param">screen_name: str</em>, <em class="sig-param">email: str</em>, <em class="sig-param">position: str</em>, <em class="sig-param">is_admin: bool</em><span class="sig-paren">)</span> &#x2192; citrine.resources.user.User<a class="headerlink" href="#citrine.resources.user.UserCollection.register" title="Permalink to this definition">¶</a></dt>
+<dd><p>Register a User.</p>
+</dd></dl>
+
 </dd></dl>
 
 </div>

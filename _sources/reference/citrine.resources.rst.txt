@@ -25,6 +25,7 @@ Submodules
    citrine.resources.project
    citrine.resources.property_template
    citrine.resources.response
+   citrine.resources.table
    citrine.resources.user
 
 Module contents

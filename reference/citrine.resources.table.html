@@ -1,0 +1,194 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>citrine.resources.table module &#8212; Citrine Python 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-citrine.resources.table">
+<span id="citrine-resources-table-module"></span><h1>citrine.resources.table module<a class="headerlink" href="#module-citrine.resources.table" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="citrine.resources.table.Table">
+<em class="property">class </em><code class="sig-prename descclassname">citrine.resources.table.</code><code class="sig-name descname">Table</code><a class="headerlink" href="#citrine.resources.table.Table" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.resource.Resource</span></code></p>
+<p>A 2-dimensional projection of data.</p>
+<p>Tables are the basic unit used to flatten and manipulate data objects.
+While data objects can represent complex materials data, the format
+is NOT conducive to analysis and machine learning. Tables, however,
+can be used to ‘flatten’ data objects into useful projections.</p>
+<dl class="attribute">
+<dt id="citrine.resources.table.Table.uid">
+<code class="sig-name descname">uid</code><a class="headerlink" href="#citrine.resources.table.Table.uid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unique uuid4 identifier of this project.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>UUID</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.resources.table.Table.version">
+<code class="sig-name descname">version</code><a class="headerlink" href="#citrine.resources.table.Table.version" title="Permalink to this definition">¶</a></dt>
+<dd><p>Version number of the Table</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.resources.table.Table.download_url">
+<code class="sig-name descname">download_url</code><a class="headerlink" href="#citrine.resources.table.Table.download_url" title="Permalink to this definition">¶</a></dt>
+<dd><p>Url pointing to the location of the Table’s contents</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">download_url</code><em class="property"> = None</em></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="citrine.resources.table.Table.read">
+<code class="sig-name descname">read</code><span class="sig-paren">(</span><em class="sig-param">local_path</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.table.Table.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read the Table file from S3.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">uid</code><em class="property"> = None</em></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt>
+<code class="sig-name descname">version</code><em class="property"> = None</em></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="citrine.resources.table.TableCollection">
+<em class="property">class </em><code class="sig-prename descclassname">citrine.resources.table.</code><code class="sig-name descname">TableCollection</code><span class="sig-paren">(</span><em class="sig-param">project_id: citrine._serialization.properties.UUID</em>, <em class="sig-param">session: citrine._session.Session</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.table.TableCollection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.collection.Collection</span></code></p>
+<p>Represents the collection of all tables associated with a project.</p>
+<dl class="method">
+<dt id="citrine.resources.table.TableCollection.build">
+<code class="sig-name descname">build</code><span class="sig-paren">(</span><em class="sig-param">data: dict</em><span class="sig-paren">)</span> &#x2192; citrine.resources.table.Table<a class="headerlink" href="#citrine.resources.table.TableCollection.build" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build an individual Table from a dictionary.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="citrine.resources.table.TableCollection.get">
+<code class="sig-name descname">get</code><span class="sig-paren">(</span><em class="sig-param">uid: Union[citrine._serialization.properties.UUID, str], version: int</em><span class="sig-paren">)</span> &#x2192; citrine.resources.table.Table<a class="headerlink" href="#citrine.resources.table.TableCollection.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a Table’s metadata.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="citrine.resources.table.TableCollection.register">
+<code class="sig-name descname">register</code><span class="sig-paren">(</span><em class="sig-param">model: citrine.resources.table.Table</em><span class="sig-paren">)</span> &#x2192; citrine.resources.table.Table<a class="headerlink" href="#citrine.resources.table.TableCollection.register" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tables cannot be created at this time.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Citrine Python</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/index.html">1. Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">2. FAQ</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Citrine Informatics.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/reference/citrine.resources.table.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -117,6 +117,20 @@ and some of which have been shared with the project.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="citrine.resources.project.Project.list_members">
+<code class="sig-name descname">list_members</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; List[citrine.resources.user.User]<a class="headerlink" href="#citrine.resources.project.Project.list_members" title="Permalink to this definition">¶</a></dt>
+<dd><p>List all of the users in the current project.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The members of the current project</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>List[<a class="reference internal" href="citrine.resources.user.html#citrine.resources.user.User" title="citrine.resources.user.User">User</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
 <dt id="citrine.resources.project.Project.make_private">
 <code class="sig-name descname">make_private</code><span class="sig-paren">(</span><em class="sig-param">resource: citrine._rest.resource.Resource</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#citrine.resources.project.Project.make_private" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove public access for a resource owned by this project.</p>
@@ -222,6 +236,34 @@ and some of which have been shared with the project.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="citrine.resources.project.Project.remove_member">
+<code class="sig-name descname">remove_member</code><span class="sig-paren">(</span><em class="sig-param">user_uid: str</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#citrine.resources.project.Project.remove_member" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove a User from a Project.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Returns True if user successfully removed</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="citrine.resources.project.Project.set_member">
+<code class="sig-name descname">set_member</code><span class="sig-paren">(</span><em class="sig-param">user_uid, role: str, actions: List[str]</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#citrine.resources.project.Project.set_member" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a User to a Project with the given ‘role’ and ‘actions’.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Returns True if member successfully added</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
 <dt id="citrine.resources.project.Project.share">
 <code class="sig-name descname">share</code><span class="sig-paren">(</span><em class="sig-param">project_id: str</em>, <em class="sig-param">resource_type: str</em>, <em class="sig-param">resource_id: str</em><span class="sig-paren">)</span> &#x2192; Dict[str, str]<a class="headerlink" href="#citrine.resources.project.Project.share" title="Permalink to this definition">¶</a></dt>
 <dd><p>Share a resource with another project.</p>
@@ -231,6 +273,12 @@ and some of which have been shared with the project.</p>
 <dt>
 <code class="sig-name descname">status</code><em class="property"> = None</em></dt>
 <dd></dd></dl>
+
+<dl class="method">
+<dt id="citrine.resources.project.Project.tables">
+<em class="property">property </em><code class="sig-name descname">tables</code><a class="headerlink" href="#citrine.resources.project.Project.tables" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a resource representing all visible Tables.</p>
+</dd></dl>
 
 <dl class="attribute">
 <dt>
