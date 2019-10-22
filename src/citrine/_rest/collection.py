@@ -2,6 +2,7 @@ from abc import abstractmethod
 from typing import Optional, Union, Generic, TypeVar, Iterable
 from uuid import UUID
 
+from citrine.exceptions import ModuleRegistrationFailedException, NonRetryableException
 from citrine.resources.response import Response
 
 
@@ -19,8 +20,8 @@ class Collection(Generic[ResourceType]):
     _path_template: str = NotImplemented
     _dataset_agnostic_path_template: str = NotImplemented
     _individual_key: str = NotImplemented
-    _collection_key: str = NotImplemented
     _resource: ResourceType = NotImplemented
+    _collection_key: str = 'entries'
 
     def _get_path(self, uid: Optional[Union[UUID, str]] = None,
                   ignore_dataset: Optional[bool] = False) -> str:
@@ -45,9 +46,12 @@ class Collection(Generic[ResourceType]):
     def register(self, model: CreationType) -> CreationType:
         """Create a new element of the collection by registering an existing resource."""
         path = self._get_path()
-        data = self.session.post_resource(path, model.dump())
-        data = data[self._individual_key] if self._individual_key else data
-        return self.build(data)
+        try:
+            data = self.session.post_resource(path, model.dump())
+            data = data[self._individual_key] if self._individual_key else data
+            return self.build(data)
+        except NonRetryableException as e:
+            raise ModuleRegistrationFailedException(model.__class__.__name__, e)
 
     def list(self,
              page: Optional[int] = None,
@@ -86,7 +90,13 @@ class Collection(Generic[ResourceType]):
             collection = data[self._collection_key]
 
         for element in collection:
-            yield self.build(element)
+            try:
+                yield self.build(element)
+            except(KeyError, ValueError):
+                # TODO:  Right now this is a hack.  Clean this up soon.
+                # Module collections are not filtering on module type
+                # properly, so we are filtering client-side.
+                pass
 
     def delete(self, uid: Union[UUID, str]) -> Response:
         """Delete a particular element of the collection."""

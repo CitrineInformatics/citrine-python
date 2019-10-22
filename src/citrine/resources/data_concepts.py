@@ -142,8 +142,6 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
             return data.get(field)
         elif isinstance(data, object):
             return getattr(data, field, None)
-        else:
-            TypeError("Expected data to be a dictionary or object, instead got {}".format(data))
 
     @classmethod
     def _build_child_objects(cls, data: dict, data_with_soft_links,
@@ -281,7 +279,7 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
         for linked_obj in linked_objects:
             assert isinstance(linked_obj, DictSerializable)
             if isinstance(linked_obj, LinkByUID):
-                pass
+                continue
             # Sever the link between linked_obj and obj_with_soft_links.
             # This prevents infinite loops in the next step.
             setattr(linked_obj, reverse_field, None)
@@ -383,7 +381,6 @@ class DataConceptsCollection(Collection[ResourceType]):
     @abstractmethod
     def get_type(cls) -> Type[Serializable]:
         """Return the resource type in the collection."""
-        pass
 
     def build(self, data: dict) -> ResourceType:
         """

@@ -73,16 +73,19 @@ def test_object_to_link_by_uid_missing_uids():
 def test_rewrite_s3_links_locally():
     assert "http://localhost:9572" == rewrite_s3_links_locally("http://localstack:4572")
 
+
 @patch("os.path.isdir")
 @patch("os.path.join")
 @patch("os.makedirs")
 def test_write_file_locally(mock_makedirs, mock_join, mock_isdir):
+    mock_isdir.return_value = False
     mock_join.return_value = "/User/is/fake/myfile.pdf"
     with patch("builtins.open", mock_open()) as m:
         write_file_locally(b"something", "/User/is/fake/myfile.pdf")
         assert m.call_args_list == [call('/User/is/fake/myfile.pdf', 'wb')]
         handle = m()
         handle.write.assert_called_once_with(b'something')
+    mock_makedirs.assert_called_once_with("/User/is/fake")
 
 
 def test_write_file_locally_fails_with_no_filename():

@@ -15,6 +15,16 @@ VALID_SERIALIZATIONS = [
 ]
 
 
+INVALID_DESERIALIZATION_TYPES = [
+    (properties.Integer, object()),
+    (properties.Float, object()),
+    (properties.String, 1),
+    (properties.Boolean, 3),
+    (properties.Boolean, 'False'),
+    (properties.UUID, '284e6cec'),
+]
+
+
 class DummyProperty(properties.Property):
     """This is a concrete sublcass that does not overwrite __str__ for base Property testing"""
     @property
@@ -58,6 +68,7 @@ INVALID_INSTANCES = [
     (properties.UUID, str(uuid.uuid4())),  # string(uuid) != uuid
     (properties.UUID, 1.0),
     (properties.Datetime, '2019-07-19T10:46:08.949682+00:00'),  # str(datetime) != datetime
+    (properties.LinkOrElse, object())
 ]
 
 INVALID_SERIALIZED_INSTANCES = [
