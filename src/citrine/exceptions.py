@@ -1,5 +1,7 @@
 """Citrine-specific exceptions."""
 
+from requests import Response
+
 
 class CitrineException(Exception):
     """The base exception class for Citrine-Python exceptions."""
@@ -25,20 +27,39 @@ class UnauthorizedRefreshToken(NonRetryableException):
     pass
 
 
-class NotFound(NonRetryableException):
+class NonRetryableHttpException(NonRetryableException):
+    """An exception originating from an HTTP error encountered
+    during communication with a Citrine API."""
+
+    def __init__(self, path: str, response: Response):
+        super().__init__(path)
+        self.url = path
+        self.response_text = response.text
+        self.code = response.status_code
+        try:
+            resp_json = response.json()
+            from citrine.resources.api_error import ApiError
+            self.api_error = ApiError.from_dict(resp_json)
+        except ValueError:
+            self.api_error = None
+
+
+class NotFound(NonRetryableHttpException):
     """A particular url was not found. (http status 404)."""
 
-    def __init__(self, path: str):
-        super().__init__(path)
-        self.url = path
+    pass
 
 
-class Unauthorized(NonRetryableException):
+class Unauthorized(NonRetryableHttpException):
     """The user is unauthorized to make this api call. (http status 401)."""
 
-    def __init__(self, path: str):
-        super().__init__(path)
-        self.url = path
+    pass
+
+
+class BadRequest(NonRetryableHttpException):
+    """The user is trying to perform an invalid operation. (http status 400)."""
+
+    pass
 
 
 class WorkflowConflictException(NonRetryableException):
