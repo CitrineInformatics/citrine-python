@@ -1,3 +1,5 @@
+import json
+
 import jwt
 import pytest
 import unittest
@@ -7,7 +9,7 @@ from citrine.exceptions import (
     WorkflowConflictException,
     WorkflowNotReadyException,
     RetryableException,
-)
+    BadRequest)
 
 from datetime import datetime, timedelta
 import pytz
@@ -101,6 +103,28 @@ class SessionTests(unittest.TestCase):
             Session().checked_request('method', 'path')
         with pytest.raises(WorkflowNotReadyException):
             Session().checked_request('method', 'path')
+
+    @mock.patch.object(Session, '_refresh_access_token')
+    @mock.patch.object(requests.Session, 'request')
+    def test_status_code_400(self, mock_request, _):
+        resp = mock.Mock()
+        resp.status_code = 400
+        resp_json = {
+            'code': 400,
+            'message': 'a message',
+            'validation_errors': [
+                {
+                    'failure_message': 'you have failed',
+                },
+            ],
+        }
+        resp.json = lambda: resp_json
+        resp.text = json.dumps(resp_json)
+        mock_request.return_value = resp
+        with pytest.raises(BadRequest) as einfo:
+            Session().checked_request('method', 'path')
+        assert einfo.value.api_error.validation_errors[0].failure_message \
+            == resp_json['validation_errors'][0]['failure_message']
 
     @mock.patch.object(Session, '_refresh_access_token')
     @mock.patch.object(requests.Session, 'request')
