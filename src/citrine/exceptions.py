@@ -1,4 +1,5 @@
 """Citrine-specific exceptions."""
+from typing import Optional
 
 from requests import Response
 
@@ -28,19 +29,25 @@ class UnauthorizedRefreshToken(NonRetryableException):
 
 
 class NonRetryableHttpException(NonRetryableException):
-    """An exception originating from an HTTP error encountered
-    during communication with a Citrine API."""
+    """An exception originating from an HTTP error from a Citrine API."""
 
-    def __init__(self, path: str, response: Response):
+    def __init__(self, path: str, response: Optional[Response] = None):
         super().__init__(path)
         self.url = path
-        self.response_text = response.text
-        self.code = response.status_code
-        try:
-            resp_json = response.json()
-            from citrine.resources.api_error import ApiError
-            self.api_error = ApiError.from_dict(resp_json)
-        except ValueError:
+        if response:
+            self.response_text = response.text
+            self.code = response.status_code
+            try:
+                resp_json = response.json()
+                from citrine.resources.api_error import ApiError
+                self.api_error = ApiError.from_dict(resp_json)
+            # TODO: throw specific exception in DictSerializable when deserialization
+            #  fails due to from JSON keys
+            except (TypeError, ValueError):
+                self.api_error = None
+        else:
+            self.response_text = None
+            self.code = None
             self.api_error = None
 
 
