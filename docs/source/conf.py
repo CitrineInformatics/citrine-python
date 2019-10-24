@@ -58,7 +58,6 @@ templates_path = ['_templates']
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = []
 
-
 # -- Options for HTML output -------------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
@@ -72,3 +71,13 @@ html_theme = 'alabaster'
 html_static_path = ['_static']
 
 autodoc_mock_imports = [] #autodoc_mock_imports allows Spyinx to ignore any external modules listed in the array
+
+html_favicon = '_static/favicon.png'
+html_theme_options = {
+    'logo': 'logo.png',
+    'github_user': 'CitrineInformatics',
+    'github_repo': 'citrine-python',
+    'sidebar_collapse': False,
+    'head_font_family': ['Barlow', 'Helvetica', 'Arial', 'Sans-Serif'],
+    'font_family': ['Lusitana', 'Times New Roman', 'serif']
+}
