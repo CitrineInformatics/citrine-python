@@ -1,7 +1,4 @@
 """Citrine-specific exceptions."""
-from typing import Optional
-
-from requests import Response
 
 
 class CitrineException(Exception):
@@ -28,45 +25,20 @@ class UnauthorizedRefreshToken(NonRetryableException):
     pass
 
 
-class NonRetryableHttpException(NonRetryableException):
-    """An exception originating from an HTTP error from a Citrine API."""
-
-    def __init__(self, path: str, response: Optional[Response] = None):
-        super().__init__(path)
-        self.url = path
-        if response:
-            self.response_text = response.text
-            self.code = response.status_code
-            try:
-                resp_json = response.json()
-                from citrine.resources.api_error import ApiError
-                self.api_error = ApiError.from_dict(resp_json)
-            # TODO: throw specific exception in DictSerializable when deserialization
-            #  fails due to from JSON keys
-            except (TypeError, ValueError):
-                self.api_error = None
-        else:
-            self.response_text = None
-            self.code = None
-            self.api_error = None
-
-
-class NotFound(NonRetryableHttpException):
+class NotFound(NonRetryableException):
     """A particular url was not found. (http status 404)."""
 
-    pass
+    def __init__(self, path: str):
+        super().__init__(path)
+        self.url = path
 
 
-class Unauthorized(NonRetryableHttpException):
+class Unauthorized(NonRetryableException):
     """The user is unauthorized to make this api call. (http status 401)."""
 
-    pass
-
-
-class BadRequest(NonRetryableHttpException):
-    """The user is trying to perform an invalid operation. (http status 400)."""
-
-    pass
+    def __init__(self, path: str):
+        super().__init__(path)
+        self.url = path
 
 
 class WorkflowConflictException(NonRetryableException):
