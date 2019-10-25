@@ -25,6 +25,8 @@ class ApiError(DictSerializable):
     @classmethod
     def from_dict(cls, d):
         d = copy(d)
+        if 'debug_stacktrace' in d:
+            del d['debug_stacktrace']
         # TODO: deserialize to correct type automatically
         d['validation_errors'] = [ValidationError.from_dict(e) for e in d.get('validation_errors', [])]
         return cls(**d)

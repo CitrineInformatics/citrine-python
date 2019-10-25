@@ -34,13 +34,16 @@ class NonRetryableHttpException(NonRetryableException):
     def __init__(self, path: str, response: Optional[Response] = None):
         super().__init__(path)
         self.url = path
-        if response:
+        if response is not None:
             self.response_text = response.text
             self.code = response.status_code
             try:
                 resp_json = response.json()
-                from citrine.resources.api_error import ApiError
-                self.api_error = ApiError.from_dict(resp_json)
+                if isinstance(resp_json, dict):
+                    from citrine.resources.api_error import ApiError
+                    self.api_error = ApiError.from_dict(resp_json)
+                else:
+                    self.api_error = None
             # TODO: throw specific exception in DictSerializable when deserialization
             #  fails due to from JSON keys
             except (TypeError, ValueError):
