@@ -5,11 +5,12 @@ Projects and Users
 Overview
 --------
 
-Projects are containers for other resources, like datasets and modules. Access rights on resources inside a Project are
-managed, granted, and revoked at the Project level.
+Projects are containers for other resources, such as datasets and modules.
+Access rights on resources inside a Project are managed, granted, and revoked at the Project level.
 
-Users are literal users of the Citrine Platform. Users cannot directly access resources, but must instead be added to
-Projects. Through their membership in Projects, Users can access resources.
+Users are individuals using of the Citrine Platform.
+Users cannot directly access resources, but must instead be added to Projects.
+Through their membership in Projects, Users can access resources.
 
 This library presents several methods for managing Projects, Users, and user membership in Projects.
 
@@ -18,19 +19,18 @@ Listing Users in a Project
 ----------------------
 
 Users in a Project can be listed using the :func:`~citrine.resources.project.Project.list_members` method.
-The ProjectMember array returned from this method has the user's role in the project as well as a copy
-of the User and Project objects.
+The ProjectMember array returned from this method has the user's role in the project as well as a copy of the User and Project objects.
 
 Add User to a Project
 --------------------
 
 Users can be added to a Project. They will be granted READ access to resources in the Project and will be given the
-role "MEMBER". This can be accomplished with the :func:`~citrine.resources.project.Project.add_user` method.
+role "MEMBER". This is accomplished with the :func:`~citrine.resources.project.Project.add_user` method.
 
 Remove User from a Project
 -----------------------
 
-Users can also be removed from a Project. This can be achieved with the
+Users can also be removed from a Project. This is achieved with the
 :func:`~citrine.resources.project.Project.remove_user` method.
 
 Update User's Role in a Project

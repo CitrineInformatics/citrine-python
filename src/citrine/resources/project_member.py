@@ -10,6 +10,8 @@ class ProjectMember:
                  project: 'Project',
                  role: ROLES):
         self.user: User = user
+        # To avoid circular dependency, use forward-reference for type definition
+        # https://www.python.org/dev/peps/pep-0484/#forward-references
         self.project: 'Project' = project
         self.role: ROLES = role
 

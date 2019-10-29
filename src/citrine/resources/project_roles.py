@@ -1,5 +1,5 @@
 from typing import Union
 
-LEAD = "LEADs"
+LEAD = "LEAD"
 MEMBER = "MEMBER"
 ROLES = Union[LEAD, MEMBER]
