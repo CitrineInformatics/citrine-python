@@ -248,9 +248,11 @@ class Project(Resource['Project']):
 
     def update_user_role(self, user_uid: Union[str, UUID], role: ROLES, actions: ACTIONS = []):
         """
-        Update a User's role in the Project
+        Update a User's role and action permissions in the Project
 
         Valid roles are MEMBER or LEAD.
+
+        WRITE is the only action available for specification.
 
         Returns
         -------
