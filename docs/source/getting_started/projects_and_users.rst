@@ -33,7 +33,7 @@ Remove User from a Project
 Users can also be removed from a Project. This is achieved with the
 :func:`~citrine.resources.project.Project.remove_user` method.
 
-Update User's Role in a Project
+Update User's Role and Actions in a Project
 ---------------------------
 A user's role in a Project can be updated. The method
 :func:`~citrine.resources.project.Project.update_user_role` facilitates changing a User's role.
@@ -85,3 +85,14 @@ Changing the role of a User in a Project
 
     # Change User Role in Project
     project.update_user_role(user_id, LEAD)
+
+Specifying that a user is permitted the WRITE action in a Project
+
+.. code-block:: python
+
+    from project_roles import MEMBER, WRITE
+    user_id = "bed6f207-f15e-4aef-932d-87d99b2d6203"
+    project = citrine.projects.register(name="Your Project")
+
+    # Change User Role in Project
+    project.update_user_role(user_id, MEMBER, [WRITE])
