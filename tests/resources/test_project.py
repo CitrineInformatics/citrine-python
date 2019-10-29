@@ -6,7 +6,7 @@ from citrine.resources.project import Project, ProjectCollection
 from citrine.resources.table import TableCollection
 from citrine.resources.dataset import Dataset
 from citrine.resources.project_member import ProjectMember
-from citrine.resources.project_roles import MEMBER, LEAD
+from citrine.resources.project_roles import MEMBER, LEAD, WRITE
 from citrine.resources.user import User
 from tests.utils.factories import ProjectDataFactory, UserDataFactory
 from tests.utils.session import FakeSession, FakeCall
@@ -302,6 +302,21 @@ def test_update_user_role(project, session):
     assert 1 == session.num_calls
     expect_call = FakeCall(method="POST", path="/projects/{}/users/{}".format(project.uid, user["id"]),
                            json={'role': LEAD, 'actions': []})
+    assert expect_call == session.last_call
+    assert update_user_role_response is True
+
+def test_update_user_actions(project, session):
+    # Given
+    user = UserDataFactory()
+    session.set_response({'actions': ['READ'], 'role': 'LEAD'})
+
+    # When
+    update_user_role_response = project.update_user_role(user["id"], LEAD, [WRITE])
+
+    # Then
+    assert 1 == session.num_calls
+    expect_call = FakeCall(method="POST", path="/projects/{}/users/{}".format(project.uid, user["id"]),
+                           json={'role': LEAD, 'actions': [WRITE]})
     assert expect_call == session.last_call
     assert update_user_role_response is True
 
