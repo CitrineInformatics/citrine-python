@@ -11,7 +11,7 @@ from citrine.resources.dataset import DatasetCollection
 from citrine.resources.condition_template import ConditionTemplateCollection
 from citrine.resources.parameter_template import ParameterTemplateCollection
 from citrine.resources.project_member import ProjectMember
-from citrine.resources.project_roles import MEMBER, ROLES
+from citrine.resources.project_roles import MEMBER, ROLES, ACTIONS
 from citrine.resources.property_template import PropertyTemplateCollection
 from citrine.resources.material_template import MaterialTemplateCollection
 from citrine.resources.measurement_template import MeasurementTemplateCollection
@@ -246,7 +246,7 @@ class Project(Resource['Project']):
         members = self.session.get_resource(self._path() + "/users")["users"]
         return [ProjectMember(user=User.build(m), project=self, role=m["role"]) for m in members]
 
-    def update_user_role(self, user_uid: Union[str, UUID], role: ROLES):
+    def update_user_role(self, user_uid: Union[str, UUID], role: ROLES, actions: ACTIONS = []):
         """
         Update a User's role in the Project
 
@@ -257,7 +257,7 @@ class Project(Resource['Project']):
         bool
             Returns True if user role successfully updated
         """
-        self.session.checked_post(self._path() + "/users/{}".format(user_uid), {'role': role, 'actions': []})
+        self.session.checked_post(self._path() + "/users/{}".format(user_uid), {'role': role, 'actions': actions})
         return True
 
     def add_user(self, user_uid: Union[str, UUID]):
