@@ -1,5 +1,6 @@
 """Resources that represent both individual and collections of projects."""
-from typing import Optional, Dict, List
+from typing import Optional, Dict, List, Union
+from uuid import UUID
 
 from citrine._session import Session
 from citrine.resources.design_space import DesignSpaceCollection
@@ -9,6 +10,8 @@ from citrine.resources.workflow import WorkflowCollection
 from citrine.resources.dataset import DatasetCollection
 from citrine.resources.condition_template import ConditionTemplateCollection
 from citrine.resources.parameter_template import ParameterTemplateCollection
+from citrine.resources.project_member import ProjectMember
+from citrine.resources.project_roles import MEMBER, ROLES
 from citrine.resources.property_template import PropertyTemplateCollection
 from citrine.resources.material_template import MaterialTemplateCollection
 from citrine.resources.measurement_template import MeasurementTemplateCollection
@@ -230,35 +233,48 @@ class Project(Resource['Project']):
         })
         return True
 
-    def list_members(self) -> List[User]:
+    def list_members(self) -> List[ProjectMember]:
         """
-        List all of the users in the current project.
+        List all of the members in the current project.
 
         Returns
         -------
-        List[User]
+        List[ProjectMember]
             The members of the current project
 
         """
-        return self.session.checked_get(self._path() + "/users")["users"]
+        members = self.session.get_resource(self._path() + "/users")["users"]
+        return [ProjectMember(user=User.build(m), project=self, role=m["role"]) for m in members]
 
-    def set_member(self, user_uid, role: str, actions: List[str]) -> bool:
+    def update_user_role(self, user_uid: Union[str, UUID], role: ROLES):
         """
-        Add a User to a Project with the given 'role' and 'actions'.
+        Update a User's role in the Project
+
+        Valid roles are MEMBER or LEAD.
 
         Returns
         -------
         bool
-            Returns True if member successfully added
-
+            Returns True if user role successfully updated
         """
-        self.session.checked_post(
-            self._path() + "/users/{}".format(user_uid),
-            {'role': role, 'actions': actions},
-        )
+        self.session.checked_post(self._path() + "/users/{}".format(user_uid), {'role': role, 'actions': []})
         return True
 
-    def remove_member(self, user_uid: str) -> bool:
+    def add_user(self, user_uid: Union[str, UUID]):
+        """
+        Add a User to a Project
+
+        Adds User with MEMBER role to the Project. Use the update_user_rule method to change a User's role.
+
+        Returns
+        -------
+        bool
+            Returns True if user successfully added
+        """
+        self.session.checked_post(self._path() + "/users/{}".format(user_uid), {'role': MEMBER, 'actions': []})
+        return True
+
+    def remove_user(self, user_uid: Union[str, UUID]) -> bool:
         """
         Remove a User from a Project.
 

@@ -4,6 +4,10 @@ from dateutil.parser import parse
 
 from citrine.resources.project import Project, ProjectCollection
 from citrine.resources.table import TableCollection
+from citrine.resources.dataset import Dataset
+from citrine.resources.project_member import ProjectMember
+from citrine.resources.project_roles import MEMBER, LEAD
+from citrine.resources.user import User
 from tests.utils.factories import ProjectDataFactory, UserDataFactory
 from tests.utils.session import FakeSession, FakeCall
 
@@ -273,40 +277,59 @@ def test_delete_project(collection, session):
 def test_list_members(project, session):
     # Given
     user = UserDataFactory()
+    user["role"] = MEMBER
     session.set_response({'users': [user]})
 
     # When
-    project.list_members()
+    members = project.list_members()
 
     # Then
     assert 1 == session.num_calls
     expect_call = FakeCall(method='GET', path='/projects/{}/users'.format(project.uid))
     assert expect_call == session.last_call
+    assert isinstance(members[0], ProjectMember)
 
 
-def test_set_member(project, session):
+def test_update_user_role(project, session):
     # Given
     user = UserDataFactory()
-    session.set_response({'actions': ["READ", "INVITE"], 'role': 'MEMBER'})
+    session.set_response({'actions': [], 'role': 'LEAD'})
 
     # When
-    project.set_member(user["id"], 'MEMBER', ["READ", "INVITE"])
+    update_user_role_response = project.update_user_role(user["id"], LEAD)
+
+    # Then
+    assert 1 == session.num_calls
+    expect_call = FakeCall(method="POST", path="/projects/{}/users/{}".format(project.uid, user["id"]),
+                           json={'role': LEAD, 'actions': []})
+    assert expect_call == session.last_call
+    assert update_user_role_response is True
+
+
+def test_add_user(project, session):
+    # Given
+    user = UserDataFactory()
+    session.set_response({'actions': [], 'role': 'MEMBER'})
+
+    # When
+    add_user_response = project.add_user(user["id"])
 
     # Then
     assert 1 == session.num_calls
     expect_call = FakeCall(method="POST", path='/projects/{}/users/{}'.format(project.uid, user["id"]), json={
         "role": "MEMBER",
-        "actions": ["READ", "INVITE"]
+        "actions": []
     })
     assert expect_call == session.last_call
+    assert add_user_response is True
 
 
-def test_remove_member(project, session):
+def test_remove_user(project, session):
     # Given
     user = UserDataFactory()
 
     # When
-    project.remove_member(user["id"])
+    remove_user_response = project.remove_user(user["id"])
 
     # Then
     assert 1 == session.num_calls
@@ -315,6 +338,7 @@ def test_remove_member(project, session):
         path="/projects/{}/users/{}".format(project.uid, user["id"])
     )
     assert expect_call == session.last_call
+    assert remove_user_response is True
 
 
 def test_project_tables(project):
