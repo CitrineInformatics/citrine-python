@@ -1,0 +1,227 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>citrine.informatics.constraints module &#8212; Citrine Python 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-citrine.informatics.constraints">
+<span id="citrine-informatics-constraints-module"></span><h1>citrine.informatics.constraints module<a class="headerlink" href="#module-citrine.informatics.constraints" title="Permalink to this headline">¶</a></h1>
+<p>Tools for working with Constraints.</p>
+<dl class="class">
+<dt id="citrine.informatics.constraints.Constraint">
+<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.constraints.</code><code class="sig-name descname">Constraint</code><a class="headerlink" href="#citrine.informatics.constraints.Constraint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.polymorphic_serializable.PolymorphicSerializable</span></code></p>
+<p>A Citrine Constraint - an abstract type that returns the proper
+subtype based on the ‘type’ value of the passed in dict.</p>
+<dl class="method">
+<dt id="citrine.informatics.constraints.Constraint.get_type">
+<em class="property">classmethod </em><code class="sig-name descname">get_type</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.constraints.Constraint.get_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the subtype.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="citrine.informatics.constraints.ScalarRangeConstraint">
+<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.constraints.</code><code class="sig-name descname">ScalarRangeConstraint</code><span class="sig-paren">(</span><em class="sig-param">descriptor_key: str</em>, <em class="sig-param">max: Optional[float] = None</em>, <em class="sig-param">min: Optional[float] = None</em>, <em class="sig-param">min_inclusive: Optional[bool] = True</em>, <em class="sig-param">max_inclusive: Optional[bool] = True</em>, <em class="sig-param">session: Optional[citrine._session.Session] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.constraints.ScalarRangeConstraint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.informatics.constraints.Constraint" title="citrine.informatics.constraints.Constraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.constraints.Constraint</span></code></a></p>
+<p>Represents an inequality constraint on a scalar-valued material attribute.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>descriptor_key</strong> (<em>str</em>) – the key corresponding to a descriptor</p></li>
+<li><p><strong>min</strong> (<em>int</em>) – the minimum value in the range</p></li>
+<li><p><strong>max</strong> (<em>int</em>) – the maximum value in the range</p></li>
+<li><p><strong>min_inclusive</strong> (<em>bool</em>) – if True, will include the min value in the range</p></li>
+<li><p><strong>max_inclusive</strong> (<em>bool</em>) – if True, will include the max value in the range</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="citrine.informatics.constraints.ScalarRangeConstraint.descriptor_key">
+<code class="sig-name descname">descriptor_key</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.constraints.ScalarRangeConstraint.descriptor_key" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.constraints.ScalarRangeConstraint.max">
+<code class="sig-name descname">max</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.constraints.ScalarRangeConstraint.max" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.constraints.ScalarRangeConstraint.max_inclusive">
+<code class="sig-name descname">max_inclusive</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.constraints.ScalarRangeConstraint.max_inclusive" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.constraints.ScalarRangeConstraint.min">
+<code class="sig-name descname">min</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.constraints.ScalarRangeConstraint.min" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.constraints.ScalarRangeConstraint.min_inclusive">
+<code class="sig-name descname">min_inclusive</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.constraints.ScalarRangeConstraint.min_inclusive" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.constraints.ScalarRangeConstraint.typ">
+<code class="sig-name descname">typ</code><em class="property"> = 'ScalarRange'</em><a class="headerlink" href="#citrine.informatics.constraints.ScalarRangeConstraint.typ" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="citrine.informatics.constraints.CategoricalConstraint">
+<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.constraints.</code><code class="sig-name descname">CategoricalConstraint</code><span class="sig-paren">(</span><em class="sig-param">descriptor_key: str, acceptable_categories: List[str], session: Optional[citrine._session.Session] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.constraints.CategoricalConstraint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.informatics.constraints.Constraint" title="citrine.informatics.constraints.Constraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.constraints.Constraint</span></code></a></p>
+<p>Represents a constraint on a categorical material attribute to be one of a set of acceptable values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>descriptor_key</strong> (<em>str</em>) – the key corresponding to the associated Categorical descriptor</p></li>
+<li><p><strong>acceptable_categories</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – the names of the acceptable categories to constrain to</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="citrine.informatics.constraints.CategoricalConstraint.acceptable_categories">
+<code class="sig-name descname">acceptable_categories</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.constraints.CategoricalConstraint.acceptable_categories" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.constraints.CategoricalConstraint.descriptor_key">
+<code class="sig-name descname">descriptor_key</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.constraints.CategoricalConstraint.descriptor_key" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.constraints.CategoricalConstraint.typ">
+<code class="sig-name descname">typ</code><em class="property"> = 'Categorical'</em><a class="headerlink" href="#citrine.informatics.constraints.CategoricalConstraint.typ" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../index.html">
+    <img class="logo" src="../_static/logo.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=CitrineInformatics&repo=citrine-python&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/index.html">1. Getting Started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/basic_structure.html">1.1. Structure of the Citrine Python Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/basic_functionality.html">1.2. Using the Citrine Python Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/data_model.html">1.3. Data Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/public_access.html">1.4. Dataset Access Control</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/working_with_files.html">1.5. Working With Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/code_examples.html">1.6. Code Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">2. Workflows</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#modules">2.1. Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#design-workflows">2.2. Design workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#table-of-contents">2.3. Table of Contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">3. FAQ</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../FAQ/prohibited_data_patterns.html">3.1. Prohibited Data Patterns</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Citrine Informatics.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/reference/citrine.informatics.constraints.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

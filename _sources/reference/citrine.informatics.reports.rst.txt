@@ -1,0 +1,7 @@
+citrine.informatics.reports module
+==================================
+
+.. automodule:: citrine.informatics.reports
+   :members:
+   :undoc-members:
+   :show-inheritance:

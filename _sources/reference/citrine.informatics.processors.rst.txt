@@ -1,0 +1,7 @@
+citrine.informatics.processors module
+=====================================
+
+.. automodule:: citrine.informatics.processors
+   :members:
+   :undoc-members:
+   :show-inheritance:

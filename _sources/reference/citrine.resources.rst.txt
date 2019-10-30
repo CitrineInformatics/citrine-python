@@ -6,9 +6,11 @@ Submodules
 
 .. toctree::
 
+   citrine.resources.api_error
    citrine.resources.condition_template
    citrine.resources.data_concepts
    citrine.resources.dataset
+   citrine.resources.design_space
    citrine.resources.file_link
    citrine.resources.ingredient_run
    citrine.resources.ingredient_spec
@@ -19,14 +21,19 @@ Submodules
    citrine.resources.measurement_spec
    citrine.resources.measurement_template
    citrine.resources.parameter_template
+   citrine.resources.predictor
    citrine.resources.process_run
    citrine.resources.process_spec
    citrine.resources.process_template
+   citrine.resources.processor
    citrine.resources.project
    citrine.resources.property_template
+   citrine.resources.report
    citrine.resources.response
    citrine.resources.table
    citrine.resources.user
+   citrine.resources.workflow
+   citrine.resources.workflow_executions
 
 Module contents
 ---------------

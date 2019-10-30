@@ -1,0 +1,7 @@
+citrine.resources.api\_error module
+===================================
+
+.. automodule:: citrine.resources.api_error
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -1,0 +1,250 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>citrine.informatics.descriptors module &#8212; Citrine Python 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-citrine.informatics.descriptors">
+<span id="citrine-informatics-descriptors-module"></span><h1>citrine.informatics.descriptors module<a class="headerlink" href="#module-citrine.informatics.descriptors" title="Permalink to this headline">¶</a></h1>
+<p>Tools for working with Descriptors.</p>
+<dl class="class">
+<dt id="citrine.informatics.descriptors.CategoricalDescriptor">
+<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.descriptors.</code><code class="sig-name descname">CategoricalDescriptor</code><span class="sig-paren">(</span><em class="sig-param">key: str, categories: List[str]</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.descriptors.CategoricalDescriptor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.informatics.descriptors.Descriptor" title="citrine.informatics.descriptors.Descriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.descriptors.Descriptor</span></code></a></p>
+<p>A descriptor to hold categorical variables. An exhaustive list of categorical values may be supplied.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> (<em>str</em>) – the key corresponding to a descriptor</p></li>
+<li><p><strong>categories</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – possible categories for this descriptor</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="citrine.informatics.descriptors.CategoricalDescriptor.categories">
+<code class="sig-name descname">categories</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.descriptors.CategoricalDescriptor.categories" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.descriptors.CategoricalDescriptor.key">
+<code class="sig-name descname">key</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.descriptors.CategoricalDescriptor.key" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.descriptors.CategoricalDescriptor.type">
+<code class="sig-name descname">type</code><em class="property"> = 'Categorical'</em><a class="headerlink" href="#citrine.informatics.descriptors.CategoricalDescriptor.type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="citrine.informatics.descriptors.Descriptor">
+<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.descriptors.</code><code class="sig-name descname">Descriptor</code><a class="headerlink" href="#citrine.informatics.descriptors.Descriptor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.polymorphic_serializable.PolymorphicSerializable</span></code></p>
+<p>A Citrine Descriptor - an abstract type that returns the proper
+subtype based on the ‘type’ value of the passed in dict.</p>
+<dl class="method">
+<dt id="citrine.informatics.descriptors.Descriptor.get_type">
+<em class="property">classmethod </em><code class="sig-name descname">get_type</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span> &#x2192; Type[citrine._serialization.serializable.Serializable]<a class="headerlink" href="#citrine.informatics.descriptors.Descriptor.get_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the subtype.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="citrine.informatics.descriptors.InorganicDescriptor">
+<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.descriptors.</code><code class="sig-name descname">InorganicDescriptor</code><span class="sig-paren">(</span><em class="sig-param">key: str</em>, <em class="sig-param">threshold: float = 1.0</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.descriptors.InorganicDescriptor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.informatics.descriptors.Descriptor" title="citrine.informatics.descriptors.Descriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.descriptors.Descriptor</span></code></a></p>
+<p>Captures domain-specific context about the chemical formula for an inorganic compound.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> (<em>str</em>) – the key corresponding to a descriptor</p></li>
+<li><p><strong>threshold</strong> (<em>float</em>) – the threshold for valid chemical formulae. Users can think of this as a level of tolerance for typos and/or loss in interpreting a string input as a parseable chemical formula.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="citrine.informatics.descriptors.InorganicDescriptor.key">
+<code class="sig-name descname">key</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.descriptors.InorganicDescriptor.key" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.descriptors.InorganicDescriptor.threshold">
+<code class="sig-name descname">threshold</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.descriptors.InorganicDescriptor.threshold" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.descriptors.InorganicDescriptor.type">
+<code class="sig-name descname">type</code><em class="property"> = 'Inorganic'</em><a class="headerlink" href="#citrine.informatics.descriptors.InorganicDescriptor.type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="citrine.informatics.descriptors.RealDescriptor">
+<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.descriptors.</code><code class="sig-name descname">RealDescriptor</code><span class="sig-paren">(</span><em class="sig-param">key: str</em>, <em class="sig-param">lower_bound: float</em>, <em class="sig-param">upper_bound: float</em>, <em class="sig-param">units: str = ''</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.descriptors.RealDescriptor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.informatics.descriptors.Descriptor" title="citrine.informatics.descriptors.Descriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.descriptors.Descriptor</span></code></a></p>
+<p>Captures domain-specific context about the bounds of an integer-valued datum.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> (<em>str</em>) – the key corresponding to a descriptor</p></li>
+<li><p><strong>lower_bound</strong> (<em>float</em>) – inclusive lower bound for valid real values</p></li>
+<li><p><strong>upper_bound</strong> (<em>float</em>) – inclusive upper bound for valid real values</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="citrine.informatics.descriptors.RealDescriptor.key">
+<code class="sig-name descname">key</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.descriptors.RealDescriptor.key" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.descriptors.RealDescriptor.lower_bound">
+<code class="sig-name descname">lower_bound</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.descriptors.RealDescriptor.lower_bound" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.descriptors.RealDescriptor.type">
+<code class="sig-name descname">type</code><em class="property"> = 'Real'</em><a class="headerlink" href="#citrine.informatics.descriptors.RealDescriptor.type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.descriptors.RealDescriptor.units">
+<code class="sig-name descname">units</code><em class="property"> = ''</em><a class="headerlink" href="#citrine.informatics.descriptors.RealDescriptor.units" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.descriptors.RealDescriptor.upper_bound">
+<code class="sig-name descname">upper_bound</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.descriptors.RealDescriptor.upper_bound" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../index.html">
+    <img class="logo" src="../_static/logo.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=CitrineInformatics&repo=citrine-python&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/index.html">1. Getting Started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/basic_structure.html">1.1. Structure of the Citrine Python Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/basic_functionality.html">1.2. Using the Citrine Python Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/data_model.html">1.3. Data Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/public_access.html">1.4. Dataset Access Control</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/working_with_files.html">1.5. Working With Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/code_examples.html">1.6. Code Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">2. Workflows</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#modules">2.1. Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#design-workflows">2.2. Design workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#table-of-contents">2.3. Table of Contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">3. FAQ</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../FAQ/prohibited_data_patterns.html">3.1. Prohibited Data Patterns</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Citrine Informatics.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/reference/citrine.informatics.descriptors.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

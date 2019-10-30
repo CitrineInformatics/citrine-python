@@ -1,0 +1,7 @@
+citrine.informatics.dimensions module
+=====================================
+
+.. automodule:: citrine.informatics.dimensions
+   :members:
+   :undoc-members:
+   :show-inheritance:

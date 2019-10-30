@@ -1,0 +1,7 @@
+citrine.informatics.scores module
+=================================
+
+.. automodule:: citrine.informatics.scores
+   :members:
+   :undoc-members:
+   :show-inheritance:

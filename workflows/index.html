@@ -1,0 +1,203 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>2. Workflows &#8212; Citrine Python 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="2.3.1. Design spaces" href="design_spaces.html" />
+    <link rel="prev" title="1.6. Code Examples" href="../getting_started/code_examples.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="workflows">
+<span id="id1"></span><h1>2. Workflows<a class="headerlink" href="#workflows" title="Permalink to this headline">¶</a></h1>
+<p>The Citrine Platform provides tools to make data-driven decisions for materials research and development using artificial intelligence (AI) workflows.
+AI Workflows are composed of modules, which provide the ability to programmatically codify domain knowledge, research capabilities and experimental objectives.
+Workflows leverage data and domain knowledge to help materials researchers make traceable, data-driven decisions in pursuit of their research and development goals.
+These capabilities include generating candidates for sequential learning, identifying outliers or imputing missing values.</p>
+<div class="section" id="modules">
+<h2>2.1. Modules<a class="headerlink" href="#modules" title="Permalink to this headline">¶</a></h2>
+<p>Modules are re-usable computational tools used to construct workflows.
+The modules are dictate how the platform utilizes research data to generate computational results. There are 4 types of modules on the platform:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="design_spaces.html"><span class="doc">Design Spaces</span></a> define the domain of controllable experimental parameters, their allowable values and relevant bounds.</p></li>
+<li><dl class="simple">
+<dt><a class="reference internal" href="predictors.html"><span class="doc">Predictors</span></a> define relations between variables in a table of experimental data.</dt><dd><p>A predictor can be composed of machine-learned models and (coming soon) analytical relations.</p>
+</dd>
+</dl>
+</li>
+<li><p><a class="reference internal" href="processors.html"><span class="doc">Processors</span></a> define the method used to search the design space.
+The processor and design space are coupled: depending on the design space used, only a subset of processors are applicable.</p></li>
+<li><p><a class="reference internal" href="scores.html"><span class="doc">Scores</span></a> are used to rank materials for a set of objectives and constraints.</p></li>
+</ul>
+</div>
+<div class="section" id="design-workflows">
+<h2>2.2. Design workflows<a class="headerlink" href="#design-workflows" title="Permalink to this headline">¶</a></h2>
+<p>The <a class="reference internal" href="design_workflows.html"><span class="doc">design workflow</span></a> is the core AI workflow on the platform.
+This workflow generates scored candidates for sequential learning.
+It requires one of each of the modules listed above and executes in the following manner:</p>
+<ul class="simple">
+<li><p>Material candidates are pulled from the design space.</p></li>
+<li><p>The predictor adds additional information to the candidates.</p></li>
+<li><p>Enriched candidates are scored, and the processor selects the next batch of candidates to pull from the design space.</p></li>
+</ul>
+<p>After a given number of iterations, candidates are ranked according to their score and the best materials are returned.
+(Here, the best materials are those that are most likely to optimize an objective and satisfy a set of constraints.)</p>
+</div>
+<div class="section" id="table-of-contents">
+<h2>2.3. Table of Contents<a class="headerlink" href="#table-of-contents" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="design_spaces.html">2.3.1. Design spaces</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="design_spaces.html#product-design-space">2.3.1.1. Product design space</a></li>
+<li class="toctree-l2"><a class="reference internal" href="design_spaces.html#enumerated-design-space">2.3.1.2. Enumerated design space</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="predictors.html">2.3.2. Predictors</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="predictors.html#simple-ml-predictor">2.3.2.1. Simple ML predictor</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="predictor_reports.html">2.3.3. Predictor reports</a></li>
+<li class="toctree-l1"><a class="reference internal" href="processors.html">2.3.4. Processors</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="processors.html#enumerated-processor">2.3.4.1. Enumerated processor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="processors.html#grid-processor">2.3.4.2. Grid processor</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="scores.html">2.3.5. Scores</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="scores.html#maximum-expected-improvement">2.3.5.1. Maximum expected improvement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scores.html#maximum-likelihood-of-improvement">2.3.5.2. Maximum likelihood of improvement</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="design_workflows.html">2.3.6. Design workflows</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="design_workflows.html#registration-and-validation">2.3.6.1. Registration and validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="design_workflows.html#execution-and-results">2.3.6.2. Execution and results</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../index.html">
+    <img class="logo" src="../_static/logo.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=CitrineInformatics&repo=citrine-python&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/index.html">1. Getting Started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/basic_structure.html">1.1. Structure of the Citrine Python Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/basic_functionality.html">1.2. Using the Citrine Python Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/data_model.html">1.3. Data Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/public_access.html">1.4. Dataset Access Control</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/working_with_files.html">1.5. Working With Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/code_examples.html">1.6. Code Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">2. Workflows</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#modules">2.1. Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#design-workflows">2.2. Design workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#table-of-contents">2.3. Table of Contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">3. FAQ</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../FAQ/prohibited_data_patterns.html">3.1. Prohibited Data Patterns</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="../getting_started/code_examples.html" title="previous chapter">1.6. Code Examples</a></li>
+      <li>Next: <a href="design_spaces.html" title="next chapter">2.3.1. Design spaces</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Citrine Informatics.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/workflows/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

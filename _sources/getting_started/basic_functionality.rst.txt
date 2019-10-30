@@ -93,7 +93,32 @@ and persists that update.
     sintering.notes = "Forgot to add notes!"
     tungsten_dataset.register(sintering)
 
+
 Deleting
 --------
 
-TBD
+Deleting an object is a permanent action and cannot be undone, so do use caution when performing deletes!
+
+In order for a delete to be successful, the following circumstances must be true:
+
+1. The user has write access to the containing dataset
+2. Deleting the object won't invalidate or orphan other objects
+
+In the case that a delete fails, an error message will be returned indicating the point of failure.
+
+For example, any attempt to delete a ``MaterialSpec`` object that is referenced by a ``MaterialRun`` object will be unsuccessful because the ``MaterialRun`` would no longer have an associated ``MaterialSpec``.
+
+In this case, an error message will be returned with both the ``id`` of the referencing ``MaterialRun`` object *and* the ``id`` of its containing dataset.
+Should that ``MaterialRun`` itself be deleted, or associated with a different ``MaterialSpec`` object, the targeted ``MaterialSpec`` can then be deleted.
+
+Deleting uses this generalized approach:
+
+.. code-block:: python
+
+    dataset.object_type.delete(id)
+
+For example:
+
+.. code-block:: python
+
+    tungsten_dataset.material_specs.delete(id)

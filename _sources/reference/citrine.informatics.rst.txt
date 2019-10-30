@@ -1,0 +1,26 @@
+citrine.informatics package
+===========================
+
+Submodules
+----------
+
+.. toctree::
+
+   citrine.informatics.constraints
+   citrine.informatics.descriptors
+   citrine.informatics.design_spaces
+   citrine.informatics.dimensions
+   citrine.informatics.objectives
+   citrine.informatics.predictors
+   citrine.informatics.processors
+   citrine.informatics.reports
+   citrine.informatics.scores
+   citrine.informatics.workflows
+
+Module contents
+---------------
+
+.. automodule:: citrine.informatics
+   :members:
+   :undoc-members:
+   :show-inheritance:
