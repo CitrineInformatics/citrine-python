@@ -9,7 +9,9 @@ from citrine.exceptions import (
     NotFound,
     Unauthorized,
     UnauthorizedRefreshToken,
-)
+    WorkflowConflictException,
+    WorkflowNotReadyException,
+    BadRequest, CitrineException)
 
 import jwt
 import requests
@@ -79,15 +81,25 @@ class Session(requests.Session):
             if stacktrace is not None:
                 self.logger.error('Response arrived with stacktrace:')
                 self.logger.error(stacktrace)
-            if response.status_code == 401:
+            if response.status_code == 400:
                 self.logger.error('%s %s %s', response.status_code, method, path)
-                raise Unauthorized(path)
+                raise BadRequest(path, response)
+            elif response.status_code == 401:
+                self.logger.error('%s %s %s', response.status_code, method, path)
+                raise Unauthorized(path, response)
             elif response.status_code == 404:
-                self.logger.warning('%s %s %s', response.status_code, method, path)
-                raise NotFound(path)
+                self.logger.error('%s %s %s', response.status_code, method, path)
+                raise NotFound(path, response)
+            elif response.status_code == 409:
+                self.logger.debug('%s %s %s', response.status_code, method, path)
+                raise WorkflowConflictException(response.text)
+            elif response.status_code == 425:
+                self.logger.debug('%s %s %s', response.status_code, method, path)
+                msg = 'Cant execute at this time. Try again later. Error: {}'.format(response.text)
+                raise WorkflowNotReadyException(msg)
             else:
                 self.logger.error('%s %s %s', response.status_code, method, path)
-                raise Exception(response.text)
+                raise CitrineException(response.text)
 
     @staticmethod
     def _extract_response_stacktrace(response: Response) -> Optional[str]:
@@ -115,18 +127,18 @@ class Session(requests.Session):
         """DELETE a particular resource as JSON."""
         return self.checked_delete(path).json()
 
-    def checked_post(self, path: str, json: dict, *args, **kwargs) -> dict:
+    def checked_post(self, path: str, json: dict, *args, **kwargs) -> Response:
         """Execute a POST request to a URL and utilize error filtering on the response."""
         return self.checked_request('POST', path, *args, json=json, **kwargs)
 
-    def checked_put(self, path: str, json: dict, *args, **kwargs) -> None:
+    def checked_put(self, path: str, json: dict, *args, **kwargs) -> Response:
         """Execute a PUT request to a URL and utilize error filtering on the response."""
         return self.checked_request('PUT', path, *args, json=json, **kwargs)
 
-    def checked_delete(self, path: str) -> dict:
+    def checked_delete(self, path: str) -> Response:
         """Execute a DELETE request to a URL and utilize error filtering on the response."""
         return self.checked_request('DELETE', path)
 
-    def checked_get(self, path: str, *args, **kwargs) -> dict:
+    def checked_get(self, path: str, *args, **kwargs) -> Response:
         """Execute a GET request to a URL and utilize error filtering on the response."""
         return self.checked_request('GET', path, *args, **kwargs)

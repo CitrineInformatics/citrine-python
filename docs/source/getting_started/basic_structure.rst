@@ -15,7 +15,7 @@ Datasets
 --------
 
 A dataset is a collection of :ref:`data-model-objects-label`.
-It is the basic unit of granulatiry with regards to access: a user with read/write access on a dataset can read/write **all** of the resources in that dataset.
+It is the basic unit of granularity with regards to access: a user with read/write access on a dataset can read/write **all** of the resources in that dataset.
 A dataset is associated with a project; anybody who has read/write access on that project will also have read/write access on its datasets.
 
 

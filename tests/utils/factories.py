@@ -7,6 +7,7 @@
 import factory
 from taurus.entity.link_by_uid import LinkByUID
 
+from citrine.informatics.scores import MLIScore
 from citrine.resources.file_link import _Uploader
 from citrine.resources.dataset import Dataset
 from citrine.resources.material_run import MaterialRun
@@ -60,8 +61,8 @@ class LinkByUIDInputFactory(factory.DictFactory):
 
 
 class FileLinkDataFactory(factory.DictFactory):
-    url = factory.Faker('www.citrine.io')
-    filename = factory.Faker('materials.txt')
+    url = factory.Faker('uri')
+    filename = factory.Faker('file_name')
     type = 'file_link'
 
 
@@ -122,3 +123,14 @@ class _UploaderFactory(factory.Factory):
         obj.aws_secret_access_key = 'ifeemkdsfjeijie8759235u2wjr388'
         obj.aws_session_token = 'fafjeijfi87834j87woa'
         obj.s3_version = '2'
+
+
+class MLIScoreFactory(factory.Factory):
+    class Meta:
+        model = MLIScore
+
+    name = factory.Faker('bs')
+    description = factory.Faker('catch_phrase')
+    baselines = []
+    objectives = []
+    constraints = []

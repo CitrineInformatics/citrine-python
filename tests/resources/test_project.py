@@ -3,7 +3,7 @@ import pytest
 from dateutil.parser import parse
 
 from citrine.resources.project import Project, ProjectCollection
-from citrine.resources.dataset import Dataset
+from citrine.resources.table import TableCollection
 from tests.utils.factories import ProjectDataFactory, UserDataFactory
 from tests.utils.session import FakeSession, FakeCall
 
@@ -149,6 +149,22 @@ def test_ingredient_specs_get_project_id(project):
     assert project.uid == project.ingredient_specs.project_id
 
 
+def test_design_spaces_get_project_id(project):
+    assert project.uid == project.design_spaces.project_id
+
+
+def test_processors_get_project_id(project):
+    assert project.uid == project.processors.project_id
+
+
+def test_predictors_get_project_id(project):
+    assert project.uid == project.predictors.project_id
+
+
+def test_workflows_get_project_id(project):
+    assert project.uid == project.workflows.project_id
+
+
 def test_project_registration(collection, session):
     # Given
     create_time = parse('2019-09-10T00:00:00+00:00')
@@ -213,6 +229,22 @@ def test_list_projects(collection, session):
     expected_call = FakeCall(method='GET', path='/projects')
     assert expected_call == session.last_call
     assert 5 == len(projects)
+
+
+def test_list_projects_filters_non_projects(collection, session):
+    # Given
+    projects_data = ProjectDataFactory.create_batch(5)
+    projects_data.append({'foo': 'not a project'})
+    session.set_response({'projects': projects_data})
+
+    # When
+    projects = list(collection.list())
+
+    # Then
+    assert 1 == session.num_calls
+    expected_call = FakeCall(method='GET', path='/projects')
+    assert expected_call == session.last_call
+    assert 5 == len(projects)   # The non-project data is filtered out
 
 
 def test_list_projects_with_page_params(collection, session):
@@ -283,3 +315,7 @@ def test_remove_member(project, session):
         path="/projects/{}/users/{}".format(project.uid, user["id"])
     )
     assert expect_call == session.last_call
+
+
+def test_project_tables(project):
+    assert isinstance(project.tables, TableCollection)

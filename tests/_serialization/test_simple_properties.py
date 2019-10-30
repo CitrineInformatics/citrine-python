@@ -1,8 +1,25 @@
 import pytest
 import arrow
+import uuid
 
-from citrine._serialization.properties import Integer, String, Float, Datetime
-from ._data import VALID_SERIALIZATIONS, VALID_STRINGS, INVALID_INSTANCES, INVALID_SERIALIZED_INSTANCES
+from citrine._serialization.properties import (
+    Integer,
+    String,
+    Float,
+    Datetime,
+    LinkByUID,
+    LinkOrElse,
+    MixedList,
+    Object,
+    Optional,
+)
+from ._data import (
+    VALID_SERIALIZATIONS,
+    VALID_STRINGS,
+    INVALID_DESERIALIZATION_TYPES,
+    INVALID_INSTANCES,
+    INVALID_SERIALIZED_INSTANCES,
+)
 
 
 @pytest.mark.parametrize('prop_type,value,serialized', VALID_SERIALIZATIONS)
@@ -23,6 +40,13 @@ def test_invalid_property_serialization(prop_type, value):
 def test_invalid_property_deserialization(prop_type, serialized):
     prop = prop_type()
     with pytest.raises(Exception):
+        prop.deserialize(serialized)
+
+
+@pytest.mark.parametrize('prop_type,serialized', INVALID_DESERIALIZATION_TYPES)
+def test_invalid_deserialization_type(prop_type, serialized):
+    prop = prop_type()
+    with pytest.raises(ValueError):
         prop.deserialize(serialized)
 
 
@@ -76,3 +100,67 @@ def test_deserialize_string_datetime():
 def test_datetime_cannot_deserialize_float():
     with pytest.raises(TypeError):
         Datetime()._deserialize(1.114)
+
+
+def test_mixed_list_requires_property_list():
+    with pytest.raises(ValueError):
+        MixedList(Integer)
+
+
+def test_deserialize_mixed_list():
+    ml = MixedList([Integer, String])
+    assert [1, '2'] == ml.deserialize([1, '2'])
+    assert [1, None] == ml.deserialize([1])
+
+
+def test_mixed_list_cannot_deserialize_larger_lists():
+    ml = MixedList([Integer])
+    with pytest.raises(ValueError):
+        ml.deserialize([1, '2'])
+    with pytest.raises(ValueError):
+        ml.deserialize([1, 2])
+
+
+def test_mixed_list_cannot_serialize_larger_lists():
+    ml = MixedList([Integer])
+    with pytest.raises(ValueError):
+        ml.serialize([1, '2'])
+    with pytest.raises(ValueError):
+        ml.serialize([1, 2])
+
+
+def test_mixed_list_with_defaults():
+    ml = MixedList([Integer, Integer, Integer(default=100)])
+    assert [1, 2, 100] == ml.serialize([1, 2])
+
+
+def test_invalid_object_deserialize():
+    class Foo:
+        pass
+
+    obj = Object(Foo)
+    with pytest.raises(AttributeError):
+        obj.deserialize({'key': 'value'})
+
+
+def test_linkorelse_deserialize_requires_serializable():
+    loe = LinkOrElse()
+    with pytest.raises(Exception):
+        loe.deserialize({})
+
+
+def test_linkorelse_deserialize_requires_scope_and_id():
+    loe = LinkOrElse()
+    with pytest.raises(ValueError):
+        loe.deserialize({'type': LinkByUID.typ})
+
+
+def test_linkorelse_deserialize():
+    loe = LinkOrElse()
+    lbu = loe.deserialize({'type': LinkByUID.typ, 'scope': 'foo', 'id': uuid.uuid4()})
+    assert isinstance(lbu, LinkByUID)
+
+
+def test_optional_repr():
+    opt = Optional(String)
+    assert '<Optional[<String None>] None>' == str(opt)
