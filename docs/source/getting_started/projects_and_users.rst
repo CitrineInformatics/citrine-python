@@ -7,6 +7,8 @@ Overview
 
 Projects are containers for other resources, such as datasets and modules.
 Access rights on resources inside a Project are managed, granted, and revoked at the Project level.
+This means a user can have permission to perform an action in one project, but be rejected because 
+they are trying to do it from the wrong project.
 
 Users are individuals using of the Citrine Platform.
 Users cannot directly access resources, but must instead be added to Projects.
