@@ -10,7 +10,8 @@ Access rights on resources inside a Project are managed, granted, and revoked at
 This means a user can have permission to perform an action in one project, but be rejected because 
 they are trying to do it from the wrong project. For example, consider Dataset A owned by Project A. 
 There is also Project B that has read access to Dataset A. A user has access to Project A and Project B 
-but cannot update or destroy Dataset A from Project B.
+but cannot update or destroy Dataset A from Project B; in other words, a user can have write access to 
+Dataset A and Dataset B but cannot edit Dataset A from Project B.
 
 Users are individuals using of the Citrine Platform.
 Users cannot directly access resources, but must instead be added to Projects.
