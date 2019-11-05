@@ -19,7 +19,8 @@ The modules are dictate how the platform utilizes research data to generate comp
     A predictor can be composed of machine-learned models and (coming soon) analytical relations.
 -  :doc:`Processors <processors>` define the method used to search the design space.
    The processor and design space are coupled: depending on the design space used, only a subset of processors are applicable.
--  :doc:`Scores <scores>` are used to rank materials for a set of objectives and constraints.
+
+Workflows are further parameterized by :doc:`Scores <scores>`, which codify experimental objectives, constraints on desired candidates, and strategies for candidate acquisition.
 
 Design workflows
 ----------------
