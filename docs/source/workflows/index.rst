@@ -34,7 +34,7 @@ It requires one of each of the modules listed above and executes in the followin
 After a given number of iterations, candidates are ranked according to their score and the best materials are returned.
 (Here, the best materials are those that are most likely to optimize an objective and satisfy a set of constraints.)
 
-Workflows are further parameterized by :doc:`Scores <scores>`, which codify experimental objectives, constraints on desired candidates, and strategies for candidate acquisition.
+Design workflows are further parameterized by :doc:`Scores <scores>`, which codify experimental objectives, constraints on desired candidates, and strategies for candidate acquisition.
 
 Table of Contents
 -----------------
