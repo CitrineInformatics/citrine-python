@@ -27,6 +27,8 @@ Submodules
    citrine.resources.process_template
    citrine.resources.processor
    citrine.resources.project
+   citrine.resources.project_member
+   citrine.resources.project_roles
    citrine.resources.property_template
    citrine.resources.report
    citrine.resources.response

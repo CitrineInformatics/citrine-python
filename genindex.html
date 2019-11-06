@@ -70,10 +70,12 @@
       </ul></li>
       <li><a href="reference/citrine.informatics.constraints.html#citrine.informatics.constraints.CategoricalConstraint.acceptable_categories">acceptable_categories (citrine.informatics.constraints.CategoricalConstraint attribute)</a>
 </li>
-      <li><a href="reference/citrine.resources.process_template.html#citrine.resources.process_template.ProcessTemplate.allowed_labels">allowed_labels (citrine.resources.process_template.ProcessTemplate attribute)</a>
+      <li><a href="reference/citrine.resources.project.html#citrine.resources.project.Project.add_user">add_user() (citrine.resources.project.Project method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/citrine.resources.process_template.html#citrine.resources.process_template.ProcessTemplate.allowed_labels">allowed_labels (citrine.resources.process_template.ProcessTemplate attribute)</a>
+</li>
       <li><a href="reference/citrine.resources.process_template.html#citrine.resources.process_template.ProcessTemplate.allowed_names">allowed_names (citrine.resources.process_template.ProcessTemplate attribute)</a>
 </li>
       <li><a href="reference/citrine.resources.api_error.html#citrine.resources.api_error.ApiError">ApiError (class in citrine.resources.api_error)</a>
@@ -210,10 +212,10 @@
 </li>
       <li><a href="reference/citrine.resources.measurement_run.html#module-citrine.resources.measurement_run">citrine.resources.measurement_run (module)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference/citrine.resources.measurement_spec.html#module-citrine.resources.measurement_spec">citrine.resources.measurement_spec (module)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference/citrine.resources.measurement_template.html#module-citrine.resources.measurement_template">citrine.resources.measurement_template (module)</a>
 </li>
       <li><a href="reference/citrine.resources.parameter_template.html#module-citrine.resources.parameter_template">citrine.resources.parameter_template (module)</a>
@@ -229,6 +231,10 @@
       <li><a href="reference/citrine.resources.processor.html#module-citrine.resources.processor">citrine.resources.processor (module)</a>
 </li>
       <li><a href="reference/citrine.resources.project.html#module-citrine.resources.project">citrine.resources.project (module)</a>
+</li>
+      <li><a href="reference/citrine.resources.project_member.html#module-citrine.resources.project_member">citrine.resources.project_member (module)</a>
+</li>
+      <li><a href="reference/citrine.resources.project_roles.html#module-citrine.resources.project_roles">citrine.resources.project_roles (module)</a>
 </li>
       <li><a href="reference/citrine.resources.property_template.html#module-citrine.resources.property_template">citrine.resources.property_template (module)</a>
 </li>
@@ -960,14 +966,14 @@
         <li><a href="reference/citrine.resources.project.html#citrine.resources.project.Project.process_specs">(citrine.resources.project.Project property)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference/citrine.resources.dataset.html#citrine.resources.dataset.Dataset.process_templates">process_templates() (citrine.resources.dataset.Dataset property)</a>
 
       <ul>
         <li><a href="reference/citrine.resources.project.html#citrine.resources.project.Project.process_templates">(citrine.resources.project.Project property)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference/citrine.informatics.processors.html#citrine.informatics.processors.Processor">Processor (class in citrine.informatics.processors)</a>
 </li>
       <li><a href="reference/citrine.informatics.workflows.html#citrine.informatics.workflows.DesignWorkflow.processor_id">processor_id (citrine.informatics.workflows.DesignWorkflow attribute)</a>
@@ -995,6 +1001,8 @@
       <li><a href="reference/citrine.resources.workflow_executions.html#citrine.resources.workflow_executions.WorkflowExecution.project_id">project_id (citrine.resources.workflow_executions.WorkflowExecution attribute)</a>
 </li>
       <li><a href="reference/citrine.resources.project.html#citrine.resources.project.ProjectCollection">ProjectCollection (class in citrine.resources.project)</a>
+</li>
+      <li><a href="reference/citrine.resources.project_member.html#citrine.resources.project_member.ProjectMember">ProjectMember (class in citrine.resources.project_member)</a>
 </li>
       <li><a href="reference/citrine.citrine.html#citrine.citrine.Citrine.projects">projects() (citrine.citrine.Citrine property)</a>
 </li>
@@ -1048,7 +1056,7 @@
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="reference/citrine.resources.project.html#citrine.resources.project.Project.remove_member">remove_member() (citrine.resources.project.Project method)</a>
+      <li><a href="reference/citrine.resources.project.html#citrine.resources.project.Project.remove_user">remove_user() (citrine.resources.project.Project method)</a>
 </li>
       <li><a href="reference/citrine.informatics.reports.html#citrine.informatics.reports.Report">Report (class in citrine.informatics.reports)</a>
 </li>
@@ -1091,8 +1099,6 @@
       <li><a href="reference/citrine.resources.user.html#citrine.resources.user.User.screen_name">screen_name (citrine.resources.user.User attribute)</a>
 </li>
       <li><a href="reference/citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConcepts.session">session (citrine.resources.data_concepts.DataConcepts attribute)</a>
-</li>
-      <li><a href="reference/citrine.resources.project.html#citrine.resources.project.Project.set_member">set_member() (citrine.resources.project.Project method)</a>
 </li>
       <li><a href="reference/citrine.resources.project.html#citrine.resources.project.Project.share">share() (citrine.resources.project.Project method)</a>
 </li>
@@ -1372,6 +1378,8 @@
 </li>
       <li><a href="reference/citrine.resources.dataset.html#citrine.resources.dataset.Dataset.update_time">update_time (citrine.resources.dataset.Dataset attribute)</a>, <a href="reference/citrine.resources.dataset.html#citrine.resources.dataset.Dataset.update_time">[1]</a>
 </li>
+      <li><a href="reference/citrine.resources.project.html#citrine.resources.project.Project.update_user_role">update_user_role() (citrine.resources.project.Project method)</a>
+</li>
       <li><a href="reference/citrine.resources.dataset.html#citrine.resources.dataset.Dataset.updated_by">updated_by (citrine.resources.dataset.Dataset attribute)</a>, <a href="reference/citrine.resources.dataset.html#citrine.resources.dataset.Dataset.updated_by">[1]</a>
 </li>
       <li><a href="reference/citrine.resources.file_link.html#citrine.resources.file_link.FileCollection.upload">upload() (citrine.resources.file_link.FileCollection method)</a>
@@ -1488,7 +1496,8 @@
 <li class="toctree-l2"><a class="reference internal" href="getting_started/data_model.html">1.3. Data Model</a></li>
 <li class="toctree-l2"><a class="reference internal" href="getting_started/public_access.html">1.4. Dataset Access Control</a></li>
 <li class="toctree-l2"><a class="reference internal" href="getting_started/working_with_files.html">1.5. Working With Files</a></li>
-<li class="toctree-l2"><a class="reference internal" href="getting_started/code_examples.html">1.6. Code Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started/projects_and_users.html">1.6. Projects and Users</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started/code_examples.html">1.7. Code Examples</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="workflows/index.html">2. Workflows</a><ul>

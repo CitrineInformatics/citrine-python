@@ -16,7 +16,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="2.3.1. Design spaces" href="design_spaces.html" />
-    <link rel="prev" title="1.6. Code Examples" href="../getting_started/code_examples.html" />
+    <link rel="prev" title="1.7. Code Examples" href="../getting_started/code_examples.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -52,7 +52,6 @@ The modules are dictate how the platform utilizes research data to generate comp
 </li>
 <li><p><a class="reference internal" href="processors.html"><span class="doc">Processors</span></a> define the method used to search the design space.
 The processor and design space are coupled: depending on the design space used, only a subset of processors are applicable.</p></li>
-<li><p><a class="reference internal" href="scores.html"><span class="doc">Scores</span></a> are used to rank materials for a set of objectives and constraints.</p></li>
 </ul>
 </div>
 <div class="section" id="design-workflows">
@@ -67,6 +66,7 @@ It requires one of each of the modules listed above and executes in the followin
 </ul>
 <p>After a given number of iterations, candidates are ranked according to their score and the best materials are returned.
 (Here, the best materials are those that are most likely to optimize an objective and satisfy a set of constraints.)</p>
+<p>Design workflows are further parameterized by <a class="reference internal" href="scores.html"><span class="doc">Scores</span></a>, which codify experimental objectives and constraints on desired candidates, and define the strategy for candidate acquisition.</p>
 </div>
 <div class="section" id="table-of-contents">
 <h2>2.3. Table of Contents<a class="headerlink" href="#table-of-contents" title="Permalink to this headline">¶</a></h2>
@@ -138,7 +138,8 @@ It requires one of each of the modules listed above and executes in the followin
 <li class="toctree-l2"><a class="reference internal" href="../getting_started/data_model.html">1.3. Data Model</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../getting_started/public_access.html">1.4. Dataset Access Control</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../getting_started/working_with_files.html">1.5. Working With Files</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../getting_started/code_examples.html">1.6. Code Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/projects_and_users.html">1.6. Projects and Users</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/code_examples.html">1.7. Code Examples</a></li>
 </ul>
 </li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">2. Workflows</a><ul>
@@ -157,7 +158,7 @@ It requires one of each of the modules listed above and executes in the followin
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="../getting_started/code_examples.html" title="previous chapter">1.6. Code Examples</a></li>
+      <li>Previous: <a href="../getting_started/code_examples.html" title="previous chapter">1.7. Code Examples</a></li>
       <li>Next: <a href="design_spaces.html" title="next chapter">2.3.1. Design spaces</a></li>
   </ul></li>
 </ul>

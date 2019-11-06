@@ -12,4 +12,5 @@ Getting Started
     data_model
     public_access
     working_with_files
+    projects_and_users
     code_examples

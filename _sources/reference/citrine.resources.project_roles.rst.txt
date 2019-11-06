@@ -1,0 +1,7 @@
+citrine.resources.project\_roles module
+=======================================
+
+.. automodule:: citrine.resources.project_roles
+   :members:
+   :undoc-members:
+   :show-inheritance:

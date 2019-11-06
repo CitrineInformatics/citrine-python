@@ -1,0 +1,224 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>1.6. Projects and Users &#8212; Citrine Python 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="1.7. Code Examples" href="code_examples.html" />
+    <link rel="prev" title="1.5. Working With Files" href="working_with_files.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="projects-and-users">
+<h1>1.6. Projects and Users<a class="headerlink" href="#projects-and-users" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="overview">
+<h2>1.6.1. Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
+<p>Projects are containers for other resources, such as datasets and modules.
+Access rights on resources inside a Project are managed, granted, and revoked at the Project level.
+This means a user can have permission to perform an action in one project, but be rejected because
+they are trying to do it using the wrong project. For example, consider Dataset A owned by Project A.
+There is also Project B that has read access to Dataset A. A user has access to Project A and Project B
+but cannot update or destroy Dataset A from Project B; in other words, a user can have write access to
+Dataset A and Dataset B but cannot edit Dataset A from Project B.</p>
+<p>Users are individuals using of the Citrine Platform.
+Users cannot directly access resources, but must instead be added to Projects.
+Through their membership in Projects, Users can access resources.</p>
+<p>This library presents several methods for managing Projects, Users, and user membership in Projects.</p>
+</div>
+<div class="section" id="listing-users-in-a-project">
+<h2>1.6.2. Listing Users in a Project<a class="headerlink" href="#listing-users-in-a-project" title="Permalink to this headline">¶</a></h2>
+<p>Users in a Project can be listed using the <a class="reference internal" href="../reference/citrine.resources.project.html#citrine.resources.project.Project.list_members" title="citrine.resources.project.Project.list_members"><code class="xref py py-func docutils literal notranslate"><span class="pre">list_members()</span></code></a> method.
+The ProjectMember array returned from this method has the user’s role in the project as well as a copy of the User and Project objects.</p>
+</div>
+<div class="section" id="add-user-to-a-project">
+<h2>1.6.3. Add User to a Project<a class="headerlink" href="#add-user-to-a-project" title="Permalink to this headline">¶</a></h2>
+<p>Users can be added to a Project. They will be granted READ access to resources in the Project and will be given the
+role “MEMBER”. This is accomplished with the <a class="reference internal" href="../reference/citrine.resources.project.html#citrine.resources.project.Project.add_user" title="citrine.resources.project.Project.add_user"><code class="xref py py-func docutils literal notranslate"><span class="pre">add_user()</span></code></a> method.</p>
+</div>
+<div class="section" id="remove-user-from-a-project">
+<h2>1.6.4. Remove User from a Project<a class="headerlink" href="#remove-user-from-a-project" title="Permalink to this headline">¶</a></h2>
+<p>Users can also be removed from a Project. This is achieved with the
+<a class="reference internal" href="../reference/citrine.resources.project.html#citrine.resources.project.Project.remove_user" title="citrine.resources.project.Project.remove_user"><code class="xref py py-func docutils literal notranslate"><span class="pre">remove_user()</span></code></a> method.</p>
+</div>
+<div class="section" id="update-user-s-role-and-actions-in-a-project">
+<h2>1.6.5. Update User’s Role and Actions in a Project<a class="headerlink" href="#update-user-s-role-and-actions-in-a-project" title="Permalink to this headline">¶</a></h2>
+<p>A user’s role in a Project can be updated. The method
+<a class="reference internal" href="../reference/citrine.resources.project.html#citrine.resources.project.Project.update_user_role" title="citrine.resources.project.Project.update_user_role"><code class="xref py py-func docutils literal notranslate"><span class="pre">update_user_role()</span></code></a> facilitates changing a User’s role.</p>
+</div>
+<div class="section" id="examples">
+<h2>1.6.6. Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<p>Adding a User to a Project</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get the UUID of the user you&#39;d like to add</span>
+<span class="n">user_id</span> <span class="o">=</span> <span class="s2">&quot;bed6f207-f15e-4aef-932d-87d99b2d6203&quot;</span>
+<span class="n">project</span> <span class="o">=</span> <span class="n">citrine</span><span class="o">.</span><span class="n">projects</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Your Project&quot;</span><span class="p">)</span>
+
+<span class="c1"># Add them to your project</span>
+<span class="n">project</span><span class="o">.</span><span class="n">add_user</span><span class="p">(</span><span class="n">user_id</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Remove a User from a Project</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get the UUID fo the user you&#39;d like to delete</span>
+<span class="n">user_id</span> <span class="o">=</span> <span class="s2">&quot;bed6f207-f15e-4aef-932d-87d99b2d6203&quot;</span>
+<span class="n">project</span> <span class="o">=</span> <span class="n">citrine</span><span class="o">.</span><span class="n">projects</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Your Project&quot;</span><span class="p">)</span>
+
+<span class="c1"># Remove them from the project</span>
+<span class="n">project</span><span class="o">.</span><span class="n">remove_user</span><span class="p">(</span><span class="n">user_id</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Listing Users in a Project</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">project</span> <span class="o">=</span> <span class="n">citrine</span><span class="o">.</span><span class="n">projects</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Your Project&quot;</span><span class="p">)</span>
+
+<span class="c1"># List Members of a Project</span>
+<span class="n">project_members</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">list_members</span><span class="p">()</span>
+
+<span class="c1"># See their roles</span>
+<span class="p">[(</span><span class="n">m</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">screen_name</span><span class="p">,</span> <span class="n">m</span><span class="o">.</span><span class="n">role</span><span class="p">)</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">project_members</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Changing the role of a User in a Project</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">LEAD</span> <span class="nn">from</span> <span class="nn">project_roles</span>
+<span class="n">user_id</span> <span class="o">=</span> <span class="s2">&quot;bed6f207-f15e-4aef-932d-87d99b2d6203&quot;</span>
+<span class="n">project</span> <span class="o">=</span> <span class="n">citrine</span><span class="o">.</span><span class="n">projects</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Your Project&quot;</span><span class="p">)</span>
+
+<span class="c1"># Change User Role in Project</span>
+<span class="n">project</span><span class="o">.</span><span class="n">update_user_role</span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span> <span class="n">LEAD</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Specifying that a user is permitted the WRITE action in a Project</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">project_roles</span> <span class="kn">import</span> <span class="n">MEMBER</span><span class="p">,</span> <span class="n">WRITE</span>
+<span class="n">user_id</span> <span class="o">=</span> <span class="s2">&quot;bed6f207-f15e-4aef-932d-87d99b2d6203&quot;</span>
+<span class="n">project</span> <span class="o">=</span> <span class="n">citrine</span><span class="o">.</span><span class="n">projects</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Your Project&quot;</span><span class="p">)</span>
+
+<span class="c1"># Change User Role in Project</span>
+<span class="n">project</span><span class="o">.</span><span class="n">update_user_role</span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span> <span class="n">MEMBER</span><span class="p">,</span> <span class="p">[</span><span class="n">WRITE</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../index.html">
+    <img class="logo" src="../_static/logo.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=CitrineInformatics&repo=citrine-python&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">1. Getting Started</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="basic_structure.html">1.1. Structure of the Citrine Python Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="basic_functionality.html">1.2. Using the Citrine Python Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_model.html">1.3. Data Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="public_access.html">1.4. Dataset Access Control</a></li>
+<li class="toctree-l2"><a class="reference internal" href="working_with_files.html">1.5. Working With Files</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">1.6. Projects and Users</a></li>
+<li class="toctree-l2"><a class="reference internal" href="code_examples.html">1.7. Code Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">2. Workflows</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#modules">2.1. Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#design-workflows">2.2. Design workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#table-of-contents">2.3. Table of Contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">3. FAQ</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../FAQ/prohibited_data_patterns.html">3.1. Prohibited Data Patterns</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">1. Getting Started</a><ul>
+      <li>Previous: <a href="working_with_files.html" title="previous chapter">1.5. Working With Files</a></li>
+      <li>Next: <a href="code_examples.html" title="next chapter">1.7. Code Examples</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Citrine Informatics.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/getting_started/projects_and_users.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

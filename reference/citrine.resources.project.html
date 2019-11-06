@@ -84,6 +84,21 @@ and some of which have been shared with the project.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="citrine.resources.project.Project.add_user">
+<code class="sig-name descname">add_user</code><span class="sig-paren">(</span><em class="sig-param">user_uid: Union[str, uuid.UUID]</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.project.Project.add_user" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a User to a Project</p>
+<p>Adds User with MEMBER role to the Project. Use the update_user_rule method to change a User’s role.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Returns True if user successfully added</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
 <dt id="citrine.resources.project.Project.condition_templates">
 <em class="property">property </em><code class="sig-name descname">condition_templates</code><a class="headerlink" href="#citrine.resources.project.Project.condition_templates" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a resource representing all condition templates in this dataset.</p>
@@ -125,14 +140,14 @@ and some of which have been shared with the project.</p>
 
 <dl class="method">
 <dt id="citrine.resources.project.Project.list_members">
-<code class="sig-name descname">list_members</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; List[citrine.resources.user.User]<a class="headerlink" href="#citrine.resources.project.Project.list_members" title="Permalink to this definition">¶</a></dt>
-<dd><p>List all of the users in the current project.</p>
+<code class="sig-name descname">list_members</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; List[citrine.resources.project_member.ProjectMember]<a class="headerlink" href="#citrine.resources.project.Project.list_members" title="Permalink to this definition">¶</a></dt>
+<dd><p>List all of the members in the current project.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>The members of the current project</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>List[<a class="reference internal" href="citrine.resources.user.html#citrine.resources.user.User" title="citrine.resources.user.User">User</a>]</p>
+<dd class="field-even"><p>List[<a class="reference internal" href="citrine.resources.project_member.html#citrine.resources.project_member.ProjectMember" title="citrine.resources.project_member.ProjectMember">ProjectMember</a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -255,26 +270,12 @@ and some of which have been shared with the project.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="citrine.resources.project.Project.remove_member">
-<code class="sig-name descname">remove_member</code><span class="sig-paren">(</span><em class="sig-param">user_uid: str</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#citrine.resources.project.Project.remove_member" title="Permalink to this definition">¶</a></dt>
+<dt id="citrine.resources.project.Project.remove_user">
+<code class="sig-name descname">remove_user</code><span class="sig-paren">(</span><em class="sig-param">user_uid: Union[str, uuid.UUID]</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#citrine.resources.project.Project.remove_user" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove a User from a Project.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>Returns True if user successfully removed</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>bool</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="citrine.resources.project.Project.set_member">
-<code class="sig-name descname">set_member</code><span class="sig-paren">(</span><em class="sig-param">user_uid, role: str, actions: List[str]</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#citrine.resources.project.Project.set_member" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add a User to a Project with the given ‘role’ and ‘actions’.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>Returns True if member successfully added</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>bool</p>
@@ -303,6 +304,22 @@ and some of which have been shared with the project.</p>
 <dt>
 <code class="sig-name descname">uid</code><em class="property"> = None</em></dt>
 <dd></dd></dl>
+
+<dl class="method">
+<dt id="citrine.resources.project.Project.update_user_role">
+<code class="sig-name descname">update_user_role</code><span class="sig-paren">(</span><em class="sig-param">user_uid: Union[str, uuid.UUID], role: Union[LEAD, MEMBER], actions: Union[WRITE, READ] = []</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.project.Project.update_user_role" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update a User’s role and action permissions in the Project</p>
+<p>Valid roles are MEMBER or LEAD.</p>
+<p>WRITE is the only action available for specification.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Returns True if user role successfully updated</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="method">
 <dt id="citrine.resources.project.Project.workflows">
@@ -399,7 +416,8 @@ and some of which have been shared with the project.</p>
 <li class="toctree-l2"><a class="reference internal" href="../getting_started/data_model.html">1.3. Data Model</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../getting_started/public_access.html">1.4. Dataset Access Control</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../getting_started/working_with_files.html">1.5. Working With Files</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../getting_started/code_examples.html">1.6. Code Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/projects_and_users.html">1.6. Projects and Users</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/code_examples.html">1.7. Code Examples</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">2. Workflows</a><ul>
