@@ -83,6 +83,7 @@ class Session(requests.Session):
                 self.logger.error(stacktrace)
             if response.status_code == 400:
                 self.logger.error('%s %s %s', response.status_code, method, path)
+                self.logger.error(response.text)
                 raise BadRequest(path, response)
             elif response.status_code == 401:
                 self.logger.error('%s %s %s', response.status_code, method, path)
