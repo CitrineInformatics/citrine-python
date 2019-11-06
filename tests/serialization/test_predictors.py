@@ -17,6 +17,7 @@ def valid_simple_ml_data():
         module_type='PREDICTOR',
         status='VALID',
         status_info=[],
+        active=True,
         display_name='ML predictor',
         schema_id='08d20e5f-e329-4de0-a90a-4b5e36b91703',
         id=str(uuid.uuid4()),
@@ -38,6 +39,7 @@ def invalid_predictor_type_data():
     return dict(
         module_type='PREDICTOR',
         status='INVALID',
+        active=False,
         status_info=['Something is wrong', 'Very wrong'],
         display_name='my predictor',
         schema_id='ff26b280-8a8b-46ab-b7aa-0c73ff84b0fd',
