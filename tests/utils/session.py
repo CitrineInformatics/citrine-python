@@ -11,6 +11,9 @@ class FakeCall:
         self.json = json
         self.params = params or {}
 
+    def __repr__(self):
+        return 'FakeCall({})'.format(self)
+
     def __str__(self) -> str:
         path = self.path
         if self.params:

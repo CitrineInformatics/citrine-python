@@ -76,6 +76,7 @@ class SimpleMLPredictor(Serializable['SimplePredictor'], Predictor):
         'status_info',
         serializable=False
     )
+    active = properties.Boolean('active', default=True)
 
     # NOTE: These could go here or in _post_dump - it's unclear which is better right now
     module_type = properties.String('module_type', default='PREDICTOR')
@@ -89,7 +90,8 @@ class SimpleMLPredictor(Serializable['SimplePredictor'], Predictor):
                  latent_variables: List[Descriptor],
                  training_data: str,
                  session: Optional[Session] = None,
-                 report: Optional[Report] = None):
+                 report: Optional[Report] = None,
+                 active: bool = True):
         self.name: str = name
         self.description: str = description
         self.inputs: List[Descriptor] = inputs
@@ -98,6 +100,7 @@ class SimpleMLPredictor(Serializable['SimplePredictor'], Predictor):
         self.training_data: str = training_data
         self.session: Optional[Session] = session
         self.report: Optional[Report] = report
+        self.active: bool = active
 
     def _post_dump(self, data: dict) -> dict:
         data['display_name'] = data['config']['name']

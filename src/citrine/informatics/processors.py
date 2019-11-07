@@ -57,6 +57,7 @@ class GridProcessor(Serializable['GridProcessor'], Processor):
         'status_info',
         serializable=False
     )
+    active = properties.Boolean('active', default=True)
 
     # NOTE: These could go here or in _post_dump - it's unclear which is better right now
     module_type = properties.String('module_type', default='PROCESSOR')
@@ -105,6 +106,7 @@ class EnumeratedProcessor(Serializable['EnumeratedProcessor'], Processor):
         'status_info',
         serializable=False
     )
+    active = properties.Boolean('active', default=True)
 
     # NOTE: These could go here or in _post_dump - it's unclear which is better right now
     module_type = properties.String('module_type', default='PROCESSOR')

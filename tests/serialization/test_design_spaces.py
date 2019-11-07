@@ -1,7 +1,4 @@
 """Tests for citrine.informatics.design_spaces serialization."""
-import uuid
-
-
 from citrine.informatics.descriptors import CategoricalDescriptor, RealDescriptor
 from citrine.informatics.design_spaces import DesignSpace, ProductDesignSpace, EnumeratedDesignSpace
 from citrine.informatics.dimensions import ContinuousDimension, EnumeratedDimension
