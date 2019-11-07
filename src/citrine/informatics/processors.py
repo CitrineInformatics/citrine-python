@@ -1,16 +1,17 @@
 """Tools for working with Processors."""
-from typing import Optional, Mapping
+from typing import Optional, Mapping, Type
 from uuid import UUID
 
 from citrine._serialization import properties
-from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
 from citrine._serialization.serializable import Serializable
 from citrine._session import Session
+from citrine.informatics.modules import Module
+
 
 __all__ = ['Processor', 'GridProcessor', 'EnumeratedProcessor']
 
 
-class Processor(PolymorphicSerializable['Processor']):
+class Processor(Module):
     """A Citrine Processor - an abstract type that returns the proper
     subtype based on the 'type' value of the passed in dict.
     """
@@ -18,7 +19,7 @@ class Processor(PolymorphicSerializable['Processor']):
     _response_key = None
 
     @classmethod
-    def get_type(cls, data):
+    def get_type(cls, data) -> Type['Processor']:
         """Return the sole currently implemented subtype."""
         return {
             'Grid': GridProcessor,

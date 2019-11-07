@@ -9,11 +9,12 @@ from citrine._serialization.serializable import Serializable
 from citrine._session import Session
 from citrine.informatics.descriptors import Descriptor
 from citrine.informatics.dimensions import Dimension
+from citrine.informatics.modules import Module
 
 __all__ = ['DesignSpace', 'ProductDesignSpace', 'EnumeratedDesignSpace']
 
 
-class DesignSpace(PolymorphicSerializable['DesignSpace']):
+class DesignSpace(Module):
     """A Citrine Design Space - an abstract type that returns the proper
     subtype based on the 'type' value of the passed in dict.
     """
