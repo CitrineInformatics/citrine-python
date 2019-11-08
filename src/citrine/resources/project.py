@@ -3,6 +3,7 @@ from typing import Optional, Dict, List, Union
 from uuid import UUID
 
 from citrine._session import Session
+from citrine.resources.module import ModuleCollection
 from citrine.resources.design_space import DesignSpaceCollection
 from citrine.resources.processor import ProcessorCollection
 from citrine.resources.predictor import PredictorCollection
@@ -80,6 +81,11 @@ class Project(Resource['Project']):
 
     def _path(self):
         return '/projects/{project_id}'.format(**{"project_id": self.uid})
+
+    @property
+    def modules(self) -> ModuleCollection:
+        """Return a resource representing all visible design spaces."""
+        return ModuleCollection(self.uid, self.session)
 
     @property
     def design_spaces(self) -> DesignSpaceCollection:

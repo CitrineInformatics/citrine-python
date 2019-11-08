@@ -4,18 +4,18 @@ from typing import List, Optional, Type
 from uuid import UUID
 
 from citrine._serialization import properties
-from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
 from citrine._serialization.serializable import Serializable
 from citrine._session import Session
 from citrine.informatics.descriptors import Descriptor
 from citrine.informatics.reports import Report
 from citrine.resources.report import ReportResource
+from citrine.informatics.modules import Module
 
 
 __all__ = ['Predictor', 'SimpleMLPredictor']
 
 
-class Predictor(PolymorphicSerializable['Predictor']):
+class Predictor(Module):
     """Module that describes the ability to compute/predict properties of materials. An abstract type that returns
     the proper subtype based on the 'type' value of the passed in dict.
     """
@@ -27,7 +27,7 @@ class Predictor(PolymorphicSerializable['Predictor']):
         """Executes after a .build() is called in [[PredictorCollection]]."""
 
     @classmethod
-    def get_type(cls, data) -> Type[Serializable]:
+    def get_type(cls, data) -> Type['Predictor']:
         """Return the subtype."""
         type_dict = {
             "Simple": SimpleMLPredictor
