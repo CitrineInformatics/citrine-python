@@ -52,6 +52,31 @@ def uploader() -> _Uploader:
     return _UploaderFactory()
 
 
+def test_delete(collection, session):
+    """Test that deletion calls the expected endpoint and checks the url structure."""
+    # Given
+    file_id, version_id = str(uuid4()), str(uuid4())
+    full_url = 'www.citrine.io/develop/files/{}/versions/{}'.format(file_id, version_id)
+    file_link = collection.build(FileLinkDataFactory(url=full_url))
+
+    # When
+    collection.delete(file_link)
+
+    # Then
+    assert 1 == session.num_calls
+    expected_call = FakeCall(
+        method='DELETE',
+        path=collection._get_path(file_id)
+    )
+    assert expected_call == session.last_call
+
+    # A URL that does not follow the files/{id}/versions/{id} format is invalid
+    invalid_url = 'www.citrine.io/develop/filestuff/{}'.format(file_id)
+    invalid_file_link = collection.build(FileLinkDataFactory(url=invalid_url))
+    with pytest.raises(AssertionError):
+        collection.delete(invalid_file_link)
+
+
 @patch('citrine.resources.file_link.boto3_client')
 @patch('citrine.resources.file_link.open')
 @patch('citrine.resources.file_link.os.stat')
