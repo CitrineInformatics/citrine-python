@@ -13,6 +13,7 @@ from citrine._rest.collection import Collection
 from citrine._rest.resource import Resource
 from citrine._session import Session
 from citrine._utils.functions import write_file_locally
+from citrine.resources.response import Response
 
 
 class _Uploader:
@@ -339,5 +340,5 @@ class FileCollection(Collection[FileLink]):
             "File URL is expected to end with '/files/{{file_id}}/version/{{version id}}', " \
             "but FileLink instead has url {}".format(file_link.url)
         file_id = split_url[-3]
-        self.session.delete_resource(self._get_path(file_id))
-        return True
+        data = self.session.delete_resource(self._get_path(file_id))
+        return Response(body=data)

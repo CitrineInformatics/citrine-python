@@ -1,5 +1,6 @@
 """Resources that represent both individual and collections of datasets."""
 from uuid import UUID
+from typing import Union, Any
 
 from citrine._session import Session
 from citrine._rest.collection import Collection
@@ -21,6 +22,7 @@ from citrine.resources.material_spec import MaterialSpecCollection
 from citrine.resources.ingredient_run import IngredientRunCollection
 from citrine.resources.ingredient_spec import IngredientSpecCollection
 from citrine.resources.file_link import FileCollection
+from citrine.resources.response import Response
 
 
 class Dataset(Resource['Dataset']):
