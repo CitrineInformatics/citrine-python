@@ -28,7 +28,7 @@ class ApiError(DictSerializable):
         if not failure_id:
             # Discourage both anonymous errors ('') and confusing has_failure(None)
             # syntax which may imply there is no failure at all.
-            raise ValueError(f"failure_id cannot be empty: '{failure_id}'")
+            raise ValueError("failure_id cannot be empty: '{}'".format(failure_id))
         return any(v.failure_id == failure_id for v in self.validation_errors)
 
     @classmethod
