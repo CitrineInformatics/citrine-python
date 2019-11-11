@@ -323,3 +323,21 @@ class FileCollection(Collection[FileLink]):
         pre_signed_url = content_link_response['pre_signed_read_link']
         download_response = requests.get(pre_signed_url)
         write_file_locally(download_response.content, local_path)
+
+    def delete(self, file_link: FileLink):
+        """
+        Delete the file associated with a given FileLink from the database.
+
+        Parameters
+        ----------
+        file_link: FileLink
+            Resource referencing the external file.
+
+        """
+        split_url = file_link.url.split('/')
+        assert split_url[-2] == 'versions' and split_url[-4] == 'files',\
+            "File URL is expected to end with '/files/{{file_id}}/version/{{version id}}', " \
+            "but FileLink instead has url {}".format(file_link.url)
+        file_id = split_url[-3]
+        self.session.delete_resource(self._get_path(file_id))
+        return True
