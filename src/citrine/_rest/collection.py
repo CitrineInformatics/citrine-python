@@ -99,6 +99,7 @@ class Collection(Generic[ResourceType]):
                 pass
 
     def update(self, model: CreationType) -> CreationType:
+        """Update a particular element of the collection."""
         url = self._get_path(model.uid)
         updated = self.session.put_resource(url, model.dump())
         data = updated[self._individual_key] if self._individual_key else updated
