@@ -41,7 +41,7 @@ setup(name='citrine',
           "arrow",
           "pytest>=4.3",
           "strip-hints>=0.1.5",
-          "taurus-citrine>=0.2.0,<0.3.0",
+          "taurus-citrine>=0.3.0,<0.4.0",
           "boto3",
           "botocore"
       ],
