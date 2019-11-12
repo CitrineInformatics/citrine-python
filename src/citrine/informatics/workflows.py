@@ -49,6 +49,7 @@ class DesignWorkflow(Resource['DesignWorkflow'], Workflow):
         'status_info',
         serializable=False
     )
+    active = properties.Boolean('active', default=True)
 
     # TODO: Figure out how to make these fields richer/use actual objects
     design_space_id = properties.UUID('modules.design_space_id')

@@ -1,16 +1,17 @@
 """Tools for working with Processors."""
-from typing import Optional, Mapping
+from typing import Optional, Mapping, Type
 from uuid import UUID
 
 from citrine._serialization import properties
-from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
 from citrine._serialization.serializable import Serializable
 from citrine._session import Session
+from citrine.informatics.modules import Module
+
 
 __all__ = ['Processor', 'GridProcessor', 'EnumeratedProcessor']
 
 
-class Processor(PolymorphicSerializable['Processor']):
+class Processor(Module):
     """A Citrine Processor - an abstract type that returns the proper
     subtype based on the 'type' value of the passed in dict.
     """
@@ -18,7 +19,7 @@ class Processor(PolymorphicSerializable['Processor']):
     _response_key = None
 
     @classmethod
-    def get_type(cls, data):
+    def get_type(cls, data) -> Type['Processor']:
         """Return the sole currently implemented subtype."""
         return {
             'Grid': GridProcessor,
@@ -56,6 +57,7 @@ class GridProcessor(Serializable['GridProcessor'], Processor):
         'status_info',
         serializable=False
     )
+    active = properties.Boolean('active', default=True)
 
     # NOTE: These could go here or in _post_dump - it's unclear which is better right now
     module_type = properties.String('module_type', default='PROCESSOR')
@@ -104,6 +106,7 @@ class EnumeratedProcessor(Serializable['EnumeratedProcessor'], Processor):
         'status_info',
         serializable=False
     )
+    active = properties.Boolean('active', default=True)
 
     # NOTE: These could go here or in _post_dump - it's unclear which is better right now
     module_type = properties.String('module_type', default='PROCESSOR')
