@@ -11,8 +11,10 @@ __all__ = ['Dimension', 'ContinuousDimension', 'EnumeratedDimension']
 
 
 class Dimension(PolymorphicSerializable['Dimension']):
-    """A Citrine Dimension - an abstract type that returns the proper
-    subtype based on the 'type' value of the passed in dict.
+    """A Citrine Dimension describes the range of values that some quantity can take.
+
+    Abstract type that returns the proper type given a serialized dict.
+
     """
 
     @classmethod
@@ -25,7 +27,7 @@ class Dimension(PolymorphicSerializable['Dimension']):
 
 
 class ContinuousDimension(Serializable['ContinuousDimension'], Dimension):
-    """Continuous dimension that is defined by a template ID, material descriptor, lower bound, and upper bound.
+    """A continuous, real-valued dimension.
 
     Parameters
     ----------
@@ -37,6 +39,7 @@ class ContinuousDimension(Serializable['ContinuousDimension'], Dimension):
         inclusive upper bound
     template_id: UUID
         UUID that corresponds to the template in DC
+
     """
 
     descriptor = properties.Object(RealDescriptor, 'descriptor')
@@ -57,8 +60,7 @@ class ContinuousDimension(Serializable['ContinuousDimension'], Dimension):
 
 
 class EnumeratedDimension(Serializable['EnumeratedDimension'], Dimension):
-    """Finite enumerated dimension that is defined by a template ID, material descriptor, and a list of values
-    for that descriptor.
+    """A finite, enumerated dimension.
 
     Parameters
     ----------
@@ -68,6 +70,7 @@ class EnumeratedDimension(Serializable['EnumeratedDimension'], Dimension):
         UUID that corresponds to the template in DC
     values: list[str]
         list of values that can be parsed by the descriptor
+
     """
 
     descriptor = properties.Object(Descriptor, 'descriptor')

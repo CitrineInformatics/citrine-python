@@ -12,8 +12,10 @@ __all__ = ['Processor', 'GridProcessor', 'EnumeratedProcessor']
 
 
 class Processor(Module):
-    """A Citrine Processor - an abstract type that returns the proper
-    subtype based on the 'type' value of the passed in dict.
+    """A Citrine Processor describes how a design space is searched.
+
+    Abstract type that returns the proper type given a serialized dict.
+
     """
 
     _response_key = None
@@ -28,9 +30,11 @@ class Processor(Module):
 
 
 class GridProcessor(Serializable['GridProcessor'], Processor):
-    """Generates a finite set of materials from the domain defined by the design space, then scans over the set of
-    materials. To create a finite set of materials from continuous dimensions, a uniform grid is created between the
-    bounds of the descriptor. The number of points is specified by `grid_sizes`.
+    """Generates samples from the outer product of finite dimensions, then scans over them.
+
+    To create a finite set of materials from continuous dimensions, a uniform grid is created
+    between the lower and upper bounds of the descriptor.
+    The number of points along each dimension is specified by `grid_sizes`.
 
     Parameters
     ----------
@@ -40,6 +44,7 @@ class GridProcessor(Serializable['GridProcessor'], Processor):
         description of the processor
     grid_sizes: dict[str, int]
         the number of points to select along each dimension of the grid, by dimension name
+
     """
 
     uid = properties.Optional(properties.UUID, 'id', serializable=False)
@@ -82,8 +87,9 @@ class GridProcessor(Serializable['GridProcessor'], Processor):
 
 
 class EnumeratedProcessor(Serializable['EnumeratedProcessor'], Processor):
-    """Process a design space by enumerating up to `max_size` materials from the domain and processing each
-    independently.
+    """Process a design space by enumerating up to a fixed number of samples from the domain.
+
+    Each sample is processed independently.
 
     Parameters
     ----------
@@ -93,6 +99,7 @@ class EnumeratedProcessor(Serializable['EnumeratedProcessor'], Processor):
         description of the processor
     max_size: int
         maximum number of samples that can be enumerated over
+
     """
 
     uid = properties.Optional(properties.UUID, 'id', serializable=False)

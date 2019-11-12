@@ -16,8 +16,11 @@ __all__ = ['Predictor', 'SimpleMLPredictor']
 
 
 class Predictor(Module):
-    """Module that describes the ability to compute/predict properties of materials. An abstract type that returns
-    the proper subtype based on the 'type' value of the passed in dict.
+    """Module that describes the ability to compute/predict properties of materials.
+
+    Abstract type that returns the proper type given a serialized dict. subtype
+    based on the 'type' value of the passed in dict.
+
     """
 
     _response_key = None
@@ -44,7 +47,11 @@ class Predictor(Module):
 
 
 class SimpleMLPredictor(Serializable['SimplePredictor'], Predictor):
-    """A predictor interface that builds a graphical model connecting the set of inputs through latent variables to the outputs. Supported complex inputs (such as chemical formulas) are auto-featurized and machine learning models are built for each latent variable and output.
+    """A predictor interface that builds a simple grpahical model.
+
+    The model connects the set of inputs through latent variables to the outputs.
+    Supported complex inputs (such as chemical formulas) are auto-featurized and machine learning
+    models are built for each latent variable and output.
 
     Parameters
     ----------
@@ -60,6 +67,7 @@ class SimpleMLPredictor(Serializable['SimplePredictor'], Predictor):
         Descriptors that are predicted from inputs and used when predicting the outputs
     training_data: str
         UUID of the table that contains the training data
+
     """
 
     uid = properties.Optional(properties.UUID, 'id', serializable=False)

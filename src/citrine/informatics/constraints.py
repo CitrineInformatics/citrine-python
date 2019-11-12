@@ -10,8 +10,10 @@ __all__ = ['Constraint', 'ScalarRangeConstraint', 'CategoricalConstraint']
 
 
 class Constraint(PolymorphicSerializable['Constraint']):
-    """A Citrine Constraint - an abstract type that returns the proper
-    subtype based on the 'type' value of the passed in dict.
+    """A Citrine Constraint places restrictions on a design space.
+
+    Abstract type that returns the proper type given a serialized dict.
+
     """
 
     _response_key = None
@@ -40,6 +42,7 @@ class ScalarRangeConstraint(Serializable['ScalarRangeConstraint'], Constraint):
         if True, will include the min value in the range
     max_inclusive: bool
         if True, will include the max value in the range
+
     """
 
     descriptor_key = properties.String('descriptor_key')
@@ -68,7 +71,7 @@ class ScalarRangeConstraint(Serializable['ScalarRangeConstraint'], Constraint):
 
 
 class CategoricalConstraint(Serializable['CategoricalConstraint'], Constraint):
-    """Represents a constraint on a categorical material attribute to be one of a set of acceptable values.
+    """A constraint on a categorical material attribute to be one of a set of acceptable values.
 
     Parameters
     ----------
@@ -76,6 +79,7 @@ class CategoricalConstraint(Serializable['CategoricalConstraint'], Constraint):
         the key corresponding to the associated Categorical descriptor
     acceptable_categories: list[str]
         the names of the acceptable categories to constrain to
+
     """
 
     descriptor_key = properties.String('descriptor_key')
