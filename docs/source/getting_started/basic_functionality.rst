@@ -122,3 +122,10 @@ For example:
 .. code-block:: python
 
     tungsten_dataset.material_specs.delete(id)
+
+Deleting a dataset follows a similar pattern.
+In order for the delete to be successful, the dataset must be empty.
+
+.. code-block:: python
+
+    project.datasets.delete(id)
