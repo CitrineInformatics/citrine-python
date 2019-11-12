@@ -1,13 +1,17 @@
-# Developmental Docker container
+# Developmental Docker container, performing the same tasks as in .travis.yml
 FROM python:3.8
 
 WORKDIR /src
 COPY requirements.txt .
-RUN pip install -r requirements.txt
+RUN pip install -U -r requirements.txt
 
 COPY test_requirements.txt .
-RUN pip install -r test_requirements.txt
+RUN pip install -U -r test_requirements.txt
 
 COPY . .
-RUN python setup.py develop
-CMD pytest
+RUN pip install --no-deps -e .
+CMD pytest --cov=src/ --cov-report term-missing \
+    --cov-report term:skip-covered \
+    --cov-fail-under=100 -s -r . \
+    && flake8 src \
+    && cd docs; make html; cd ..
