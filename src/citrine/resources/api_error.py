@@ -33,8 +33,10 @@ class ApiError(DictSerializable):
 
     @classmethod
     def from_dict(cls, d):
+        """Reconstitute the API error object from a dictionary."""
         d = copy(d)
         d.pop('debug_stacktrace', None)
         # TODO: deserialize to correct type automatically
-        d['validation_errors'] = [ValidationError.from_dict(e) for e in d.get('validation_errors', [])]
+        d['validation_errors'] = [ValidationError.from_dict(e)
+                                  for e in d.get('validation_errors', [])]
         return cls(**d)

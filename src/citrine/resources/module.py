@@ -13,6 +13,7 @@ class ModuleCollection(Collection[Module]):
     ----------
     project_id: UUID
         the UUID of the project
+
     """
 
     _path_template = '/projects/{project_id}/modules'

@@ -1,14 +1,15 @@
 """Tools for working with design spaces."""
-from typing import Any, List, Mapping, Type
-from uuid import UUID
+from typing import Type
 
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
-from citrine._serialization.serializable import Serializable
 
 
 class Module(PolymorphicSerializable['Module']):
-    """A Citrine Module - an abstract type that returns the proper
-    subtype based on the 'type' value of the passed in dict.
+    """A Citrine Module is a reusable computational tool used to construct a workflow.
+
+    Abstract type that returns the proper type given a serialized dict.
+
+
     """
 
     _response_key = None

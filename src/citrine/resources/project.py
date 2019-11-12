@@ -254,7 +254,7 @@ class Project(Resource['Project']):
 
     def update_user_role(self, user_uid: Union[str, UUID], role: ROLES, actions: ACTIONS = []):
         """
-        Update a User's role and action permissions in the Project
+        Update a User's role and action permissions in the Project.
 
         Valid roles are MEMBER or LEAD.
 
@@ -264,22 +264,27 @@ class Project(Resource['Project']):
         -------
         bool
             Returns True if user role successfully updated
+
         """
-        self.session.checked_post(self._path() + "/users/{}".format(user_uid), {'role': role, 'actions': actions})
+        self.session.checked_post(self._path() + "/users/{}".format(user_uid),
+                                  {'role': role, 'actions': actions})
         return True
 
     def add_user(self, user_uid: Union[str, UUID]):
         """
-        Add a User to a Project
+        Add a User to a Project.
 
-        Adds User with MEMBER role to the Project. Use the update_user_rule method to change a User's role.
+        Adds User with MEMBER role to the Project.
+        Use the update_user_rule method to change a User's role.
 
         Returns
         -------
         bool
             Returns True if user successfully added
+
         """
-        self.session.checked_post(self._path() + "/users/{}".format(user_uid), {'role': MEMBER, 'actions': []})
+        self.session.checked_post(self._path() + "/users/{}".format(user_uid),
+                                  {'role': MEMBER, 'actions': []})
         return True
 
     def remove_user(self, user_uid: Union[str, UUID]) -> bool:

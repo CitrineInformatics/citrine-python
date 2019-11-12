@@ -16,6 +16,7 @@ class PredictorCollection(Collection[Predictor]):
     ----------
     project_id: UUID
         the UUID of the project
+
     """
 
     _path_template = '/projects/{project_id}/modules'
