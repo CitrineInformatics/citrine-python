@@ -429,6 +429,14 @@ class DataConceptsCollection(Collection[ResourceType]):
         If the input model has an ID that corresponds to an existing object in the
         database, then that object will be updated. Otherwise a new object will be created.
 
+        Only the top-level object in `model` itself is written to the database with this
+        method. References to other objects are persisted as links, and the object returned
+        by this method has all instances of data objects replaced by instances of LinkByUid.
+        Registering an object which references other objects does NOT implicitly register
+        those other objects. Rather, those other objects' values are ignored, and the
+        pre-existence of objects with their IDs is asserted before attempting to write
+        `model`.
+
         Parameters
         ----------
         model: DataConcepts
