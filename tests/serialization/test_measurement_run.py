@@ -67,8 +67,10 @@ def test_simple_deserialization(valid_data):
     assert measurement_run.material == MaterialRun('sponge cake',
                                                    uids={'id': valid_data['material']['uids']['id']},
                                                    sample_type='experimental')
+    assert measurement_run.material.audit_info == {'created_by': 'user1'}
     assert measurement_run.spec is None
     assert measurement_run.typ == 'measurement_run'
+    assert measurement_run.audit_info == {'created_by': 'user2'}
 
 
 def test_serialization(valid_data):
