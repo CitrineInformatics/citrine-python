@@ -51,6 +51,7 @@ def valid_data():
             'tags': []
         },
         file_links=[{'type': 'file_link', 'filename': 'cake_recipe.txt', 'url': 'www.baking.com'}],
+        audit_info={'created_by': str(uuid4()), 'created_at': 1559933807392},
         type='process_spec'
     )
 
@@ -79,6 +80,7 @@ def test_simple_deserialization(valid_data):
     assert process_spec.notes == 'make sure to use oven mitts'
     assert process_spec.file_links == [FileLink('cake_recipe.txt', 'www.baking.com')]
     assert process_spec.typ == 'process_spec'
+    assert process_spec.audit_info == valid_data['audit_info']
 
 
 def test_serialization(valid_data):
