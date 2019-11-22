@@ -34,7 +34,8 @@ def valid_data():
             'sample_type': 'experimental',
             'spec': None,
             'file_links': [],
-            'type': 'material_run'
+            'type': 'material_run',
+            'audit_info': {'created_by': 'user1'}
         },
         spec=None,
         file_links=[],
@@ -43,7 +44,8 @@ def valid_data():
             "type": "performed_source",
             "performed_by": "Marie Curie",
             "performed_date": "1898-07-01"
-        }
+        },
+        audit_info={'created_by': 'user2'}
     )
 
 
