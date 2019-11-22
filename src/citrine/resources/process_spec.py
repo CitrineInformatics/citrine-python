@@ -58,6 +58,8 @@ class ProcessSpec(DataConcepts, Resource['ProcessSpec'], TaurusProcessSpec):
 
     _response_key = TaurusProcessSpec.typ  # 'process_spec"
 
+    _client_keys = ["audit_info"]
+
     name = String('name')
     uids = Mapping(String('scope'), String('id'), 'uids')
     tags = PropertyOptional(PropertyList(String()), 'tags')

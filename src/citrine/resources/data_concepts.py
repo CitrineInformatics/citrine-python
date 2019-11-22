@@ -1,6 +1,6 @@
 """Top-level class for all data concepts objects and collections thereof."""
 from uuid import UUID
-from typing import TypeVar, Type, List, Dict, Union, Optional
+from typing import TypeVar, Type, List, Dict, Union, Optional, Any
 from copy import deepcopy
 from abc import abstractmethod
 
@@ -40,8 +40,13 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
 
     """
 
-    _local_keys = ['type']
-    """list of str: keys that appear in the serialized dictionary but not in the object itself."""
+    _type_key = "type"
+    """str: key used to determine type of serialized object."""
+
+    _client_keys = []
+    """list of str: keys that are in the serialized object, but are only relevant to the client.
+    These keys are not passed to the data model during deserialization.
+    """
 
     class_dict = dict()
     """
@@ -51,9 +56,10 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
     Only populated if the :func:`get_type` method is invoked.
     """
 
-    def __init__(self, typ: str):
+    def __init__(self, typ: str, audit_info: Optional[Dict[str, Any]] = None):
         self.typ = typ
         self.session = None
+        self.audit_info = audit_info
 
     @classmethod
     def build(cls, data: dict, session: Session = None):
@@ -79,19 +85,30 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
             An object corresponding to a data concepts resource.
 
         """
+        data_copy = deepcopy(data)
+        # Extract the values that are only for the client.
+        # They will be attached to the deserialized object later.
+        client_only_dict = dict()
+        for client_key in cls._client_keys:
+            client_only_dict.__setitem__(client_key, data_copy.pop(client_key, None))
+
         # Running through a taurus loads/dumps cycle validates all of the fields and ensures
         # the object is now a dictionary with a well-understood structure
-        data_copy_dict = loads(dumps(deepcopy(data))).as_dict()
+        data_copy_dict = loads(dumps(data_copy)).as_dict()
+
         # Check the type--it should either correspond to LinkByUID or to this class.
-        if 'type' in data_copy_dict and data_copy_dict['type'] == LinkByUID.typ:
+        if data_copy_dict.get(DataConcepts._type_key) == LinkByUID.typ:
             return loads(dumps(data_copy_dict))
         validate_type(data_copy_dict, cls._response_key)
 
-        cls._remove_local_keys(data_copy_dict)
-        cls._build_child_objects(data_copy_dict, data)
+        # Remove the top-level "type" field and build child objects
+        data_copy_dict.pop(DataConcepts._type_key, None)
+        cls._build_child_objects(data_copy_dict, data_copy)
 
         data_concepts_object = cls(**data_copy_dict)
         data_concepts_object.session = session
+        for client_key in cls._client_keys:
+            data_concepts_object.__setattr__(client_key, client_only_dict.get(client_key))
 
         cls._build_discarded_objects(data_concepts_object, data, session)
         return data_concepts_object
