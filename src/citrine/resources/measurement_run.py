@@ -56,6 +56,8 @@ class MeasurementRun(DataConcepts, Resource['MeasurementRun'], TaurusMeasurement
 
     _response_key = TaurusMeasurementRun.typ  # 'measurement_run'
 
+    _client_keys = ["audit_info"]
+
     name = String('name')
     uids = Mapping(String('scope'), String('id'), 'uids')
     tags = PropertyOptional(PropertyList(String()), 'tags')

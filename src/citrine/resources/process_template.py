@@ -53,6 +53,8 @@ class ProcessTemplate(DataConcepts, Resource['ProcessTemplate'], TaurusProcessTe
 
     _response_key = TaurusProcessTemplate.typ  # 'process_template'
 
+    _client_keys = ["audit_info"]
+
     name = String('name')
     description = PropertyOptional(String(), 'description')
     uids = Mapping(String('scope'), String('id'), 'uids')

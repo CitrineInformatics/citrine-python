@@ -56,6 +56,8 @@ class MaterialRun(DataConcepts, Resource['MaterialRun'], TaurusMaterialRun):
 
     _response_key = TaurusMaterialRun.typ  # 'material_run'
 
+    _client_keys = ["audit_info"]
+
     name = String('name')
     uids = Mapping(String('scope'), String('id'), 'uids')
     tags = PropertyOptional(PropertyList(String()), 'tags')

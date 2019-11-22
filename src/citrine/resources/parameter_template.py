@@ -36,6 +36,8 @@ class ParameterTemplate(DataConcepts, Resource['ParameterTemplate'], TaurusParam
 
     _response_key = TaurusParameterTemplate.typ  # 'parameter_template'
 
+    _client_keys = ["audit_info"]
+
     name = String('name')
     description = PropertyOptional(String(), 'description')
     uids = Mapping(String('scope'), String('id'), 'uids')

@@ -61,6 +61,8 @@ class ProcessRun(DataConcepts, Resource['ProcessRun'], TaurusProcessRun):
 
     _response_key = TaurusProcessRun.typ  # 'process_run'
 
+    _client_keys = ["audit_info"]
+
     name = String('name')
     uids = Mapping(String('scope'), String('id'), 'uids')
     tags = PropertyOptional(PropertyList(String()), 'tags')

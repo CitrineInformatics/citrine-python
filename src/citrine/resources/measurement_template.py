@@ -61,6 +61,8 @@ class MeasurementTemplate(DataConcepts, Resource['MeasurementTemplate'],
 
     _response_key = TaurusMeasurementTemplate.typ  # 'measurement_template'
 
+    _client_keys = ["audit_info"]
+
     name = String('name')
     description = PropertyOptional(String(), 'description')
     uids = Mapping(String('scope'), String('id'), 'uids')

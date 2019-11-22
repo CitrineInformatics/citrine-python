@@ -36,6 +36,8 @@ class PropertyTemplate(DataConcepts, Resource['PropertyTemplate'], TaurusPropert
 
     _response_key = TaurusPropertyTemplate.typ  # 'property_template'
 
+    _client_keys = ["audit_info"]
+
     name = String('name')
     description = PropertyOptional(String(), 'description')
     uids = Mapping(String('scope'), String('id'), 'uids')

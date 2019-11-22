@@ -62,6 +62,8 @@ class IngredientRun(DataConcepts, Resource['IngredientRun'], TaurusIngredientRun
 
     _response_key = TaurusIngredientRun.typ  # 'ingredient_run'
 
+    _client_keys = ["audit_info"]
+
     uids = Mapping(String('scope'), String('id'), 'uids')
     tags = PropertyOptional(PropertyList(String()), 'tags')
     notes = PropertyOptional(String(), 'notes')

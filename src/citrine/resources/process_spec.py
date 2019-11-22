@@ -56,7 +56,7 @@ class ProcessSpec(DataConcepts, Resource['ProcessSpec'], TaurusProcessSpec):
 
     """
 
-    _response_key = TaurusProcessSpec.typ  # 'process_spec"
+    _response_key = TaurusProcessSpec.typ  # 'process_spec'
 
     _client_keys = ["audit_info"]
 

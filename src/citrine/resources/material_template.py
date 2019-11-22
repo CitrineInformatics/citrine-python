@@ -47,6 +47,8 @@ class MaterialTemplate(DataConcepts, Resource['MaterialTemplate'], TaurusMateria
 
     _response_key = TaurusMaterialTemplate.typ  # 'material_template'
 
+    _client_keys = ["audit_info"]
+
     name = String('name')
     description = PropertyOptional(String(), 'description')
     uids = Mapping(String('scope'), String('id'), 'uids')
