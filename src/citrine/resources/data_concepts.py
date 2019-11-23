@@ -91,7 +91,7 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
         client_only_dict = dict()
         for client_key in cls._client_keys:
             val = DataConcepts._pop_field(data_copy, client_key)
-            client_only_dict.__setitem__(client_key, val)
+            client_only_dict[client_key] = val
 
         # Running through a taurus loads/dumps cycle validates all of the fields and ensures
         # the object is now a dictionary with a well-understood structure
