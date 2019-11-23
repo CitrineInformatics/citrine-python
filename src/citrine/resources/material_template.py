@@ -76,7 +76,7 @@ class MaterialTemplate(DataConcepts, Resource['MaterialTemplate'], TaurusMateria
                                         description=description)
 
     @classmethod
-    def _build_child_objects(cls, data: dict, session: Session = None):
+    def _build_child_objects(cls, data: dict, data_with_soft_links, session: Session = None):
         """
         Build the property templates and bounds.
 

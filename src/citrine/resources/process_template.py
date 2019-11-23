@@ -91,7 +91,7 @@ class ProcessTemplate(DataConcepts, Resource['ProcessTemplate'], TaurusProcessTe
                                        allowed_names=allowed_names)
 
     @classmethod
-    def _build_child_objects(cls, data: dict, session: Session = None):
+    def _build_child_objects(cls, data: dict, data_with_soft_links, session: Session = None):
         """
         Build the condition and parameter templates and bounds.
 

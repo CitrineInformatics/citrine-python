@@ -101,7 +101,7 @@ class MeasurementTemplate(DataConcepts, Resource['MeasurementTemplate'],
                                            uids=set_default_uid(uids), description=description)
 
     @classmethod
-    def _build_child_objects(cls, data: dict, session: Session = None):
+    def _build_child_objects(cls, data: dict, data_with_soft_links, session: Session = None):
         """
         Build the condition, parameter, and property templates and bounds.
 
