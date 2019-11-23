@@ -110,7 +110,7 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
         data_concepts_object = cls(**data_copy_dict)
         data_concepts_object.session = session
         for client_key in cls._client_keys:
-            data_concepts_object.__setattr__(client_key, client_only_dict.get(client_key))
+            setattr(data_concepts_object, client_key, client_only_dict.get(client_key))
 
         cls._build_discarded_objects(data_concepts_object, data, session)
         return data_concepts_object
