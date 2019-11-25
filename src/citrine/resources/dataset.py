@@ -60,6 +60,7 @@ class Dataset(Resource['Dataset']):
         Time the dataset was deleted, in seconds since epoch, if it is deleted.
     public: bool
         Flag indicating whether the dataset is publicly readable.
+
     """
 
     _response_key = 'dataset'
