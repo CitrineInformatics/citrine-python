@@ -12,8 +12,11 @@ __all__ = ['Score', 'MLIScore', 'MEIScore']
 
 
 class Score(PolymorphicSerializable['Score']):
-    """A Citrine Score - an abstract type that returns the proper
-    subtype based on the 'type' value of the passed in dict.
+    """A Citrine Score is used to rank materials according to objectives and constraints.
+
+    Abstract type that returns the proper type given a serialized dict.
+
+
     """
 
     @classmethod
@@ -40,6 +43,7 @@ class MLIScore(Serializable['MLIScore'], Score):
         best-so-far values for the various objectives (there must be one for each objective)
     constraints: list[Constraint]
         constraints limiting the allowed values that material instances can have
+
     """
 
     name = properties.String('name')
@@ -82,6 +86,7 @@ class MEIScore(Serializable['MEIScore'], Score):
         best-so-far values for the various objectives (there must be one for each objective)
     constraints: list[Constraint]
         constraints limiting the allowed values that material instances can have
+
     """
 
     name = properties.String('name')

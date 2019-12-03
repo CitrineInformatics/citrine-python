@@ -11,8 +11,11 @@ __all__ = ['Objective', 'ScalarMaxObjective', 'ScalarMinObjective']
 
 
 class Objective(PolymorphicSerializable['Objective']):
-    """A Citrine Objective - an abstract type that returns the proper
-    subtype based on the 'type' value of the passed in dict.
+    """A Citrine Objective describes a goal for a score associated with a particular descriptor.
+
+    Abstract type that returns the proper type given a serialized dict.
+
+
     """
 
     _response_key = None
@@ -37,6 +40,7 @@ class ScalarMaxObjective(Serializable['ScalarMaxObjective'], Objective):
         the lower bound on the space, e.g. 0 for a non-negative property
     upper_bound: float
         the upper bound on the space, e.g. 0 for a non-positive property
+
     """
 
     descriptor_key = properties.String('descriptor_key')
@@ -69,6 +73,7 @@ class ScalarMinObjective(Serializable['ScalarMinObjective'], Objective):
         the lower bound on the space, e.g. 0 for a non-negative property
     upper_bound: float
         the upper bound on the space, e.g. 0 for a non-positive property
+
     """
 
     descriptor_key = properties.String('descriptor_key')

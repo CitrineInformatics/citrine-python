@@ -48,6 +48,7 @@ class DatasetDataFactory(factory.DictFactory):
     create_time = None
     update_time = None
     delete_time = None
+    public = False
 
 
 class IDDataFactory(factory.DictFactory):

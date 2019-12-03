@@ -12,8 +12,11 @@ __all__ = ['Workflow', 'DesignWorkflow']
 
 
 class Workflow(PolymorphicSerializable['Workflow']):
-    """A Citrine Workflow - an abstract type that returns the proper
-    subtype based on the 'type' value of the passed in dict.
+    """A Citrine Workflow is a collection of Modules that together accomplish some task.
+
+    Abstract type that returns the proper type given a serialized dict.
+
+
     """
 
     _response_key = None
@@ -39,6 +42,7 @@ class DesignWorkflow(Resource['DesignWorkflow'], Workflow):
         the UUID corresponding to the predictor to use
     project_id: UUID
         the UUID corresponding to the project to use
+
     """
 
     uid = properties.Optional(properties.UUID, 'id', serializable=False)
@@ -49,6 +53,7 @@ class DesignWorkflow(Resource['DesignWorkflow'], Workflow):
         'status_info',
         serializable=False
     )
+    active = properties.Boolean('active', default=True)
 
     # TODO: Figure out how to make these fields richer/use actual objects
     design_space_id = properties.UUID('modules.design_space_id')

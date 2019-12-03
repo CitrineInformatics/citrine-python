@@ -12,6 +12,7 @@ def valid_data():
         display_name='A rad new workflow',
         status='READY',
         status_info=['Things are looking good'],
+        active=True,
         modules=dict(
             design_space_id=str(uuid4()),
             processor_id=str(uuid4()),

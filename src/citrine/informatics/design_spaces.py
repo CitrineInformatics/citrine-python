@@ -4,18 +4,21 @@ from uuid import UUID
 
 from citrine._rest.resource import Resource
 from citrine._serialization import properties
-from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
 from citrine._serialization.serializable import Serializable
 from citrine._session import Session
 from citrine.informatics.descriptors import Descriptor
 from citrine.informatics.dimensions import Dimension
+from citrine.informatics.modules import Module
 
 __all__ = ['DesignSpace', 'ProductDesignSpace', 'EnumeratedDesignSpace']
 
 
-class DesignSpace(PolymorphicSerializable['DesignSpace']):
-    """A Citrine Design Space - an abstract type that returns the proper
-    subtype based on the 'type' value of the passed in dict.
+class DesignSpace(Module):
+    """A Citrine Design Space describes the set of materials that can be made.
+
+    Abstract type that returns the proper type given a serialized dict.
+
+
     """
 
     _response_key = None
@@ -30,7 +33,7 @@ class DesignSpace(PolymorphicSerializable['DesignSpace']):
 
 
 class ProductDesignSpace(Resource['ProductDesignSpace'], DesignSpace):
-    """Design space composed of an outer product of univariate dimensions, either continuous or enumerated.
+    """An outer product of univariate dimensions, either continuous or enumerated.
 
     Parameters
     ----------
@@ -40,6 +43,7 @@ class ProductDesignSpace(Resource['ProductDesignSpace'], DesignSpace):
         the description of the design space
     dimensions: list[Dimension]
         univariate dimensions that are factors of the design space; can be enumerated or continuous
+
     """
 
     _response_key = None
@@ -55,6 +59,7 @@ class ProductDesignSpace(Resource['ProductDesignSpace'], DesignSpace):
         'status_info',
         serializable=False
     )
+    active = properties.Boolean('active', default=True)
 
     # NOTE: These could go here or in _post_dump - it's unclear which is better right now
     module_type = properties.String('module_type', default='DESIGN_SPACE')
@@ -79,7 +84,10 @@ class ProductDesignSpace(Resource['ProductDesignSpace'], DesignSpace):
 
 
 class EnumeratedDesignSpace(Resource['EnumeratedDesignSpace'], DesignSpace):
-    """Design space composed of an explicit enumeration of candidate materials to score. Note that every candidate must have exactly the descriptors in the list populated (no more, no less) to be included. 
+    """An explicit enumeration of candidate materials to score.
+
+    Note that every candidate must have exactly the descriptors in the list populated
+    (no more, no less) in order to be included.
 
     Parameters
     ----------
@@ -90,8 +98,9 @@ class EnumeratedDesignSpace(Resource['EnumeratedDesignSpace'], DesignSpace):
     descriptors: list[Descriptor]
         the list of descriptors included in the candidates of the design space
     data: list[dict]
-        list of dicts of the shape `{<descriptor_key>: <descriptor_value>}` where each dict corresponds to a candidate
-        in the design space
+        list of dicts of the shape `{<descriptor_key>: <descriptor_value>}`
+        where each dict corresponds to a candidate in the design space
+
     """
 
     _response_key = None
@@ -109,6 +118,7 @@ class EnumeratedDesignSpace(Resource['EnumeratedDesignSpace'], DesignSpace):
         'status_info',
         serializable=False
     )
+    active = properties.Boolean('active', default=True)
 
     # NOTE: These could go here or in _post_dump - it's unclear which is better right now
     module_type = properties.String('module_type', default='DESIGN_SPACE')

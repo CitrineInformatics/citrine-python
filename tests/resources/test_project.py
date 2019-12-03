@@ -4,10 +4,8 @@ from dateutil.parser import parse
 
 from citrine.resources.project import Project, ProjectCollection
 from citrine.resources.table import TableCollection
-from citrine.resources.dataset import Dataset
 from citrine.resources.project_member import ProjectMember
 from citrine.resources.project_roles import MEMBER, LEAD, WRITE
-from citrine.resources.user import User
 from tests.utils.factories import ProjectDataFactory, UserDataFactory
 from tests.utils.session import FakeSession, FakeCall
 
@@ -155,6 +153,10 @@ def test_ingredient_specs_get_project_id(project):
 
 def test_design_spaces_get_project_id(project):
     assert project.uid == project.design_spaces.project_id
+
+
+def test_modules_get_project_id(project):
+    assert project.uid == project.modules.project_id
 
 
 def test_processors_get_project_id(project):
