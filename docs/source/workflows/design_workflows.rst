@@ -70,7 +70,7 @@ Triggering a workflow returns a workflow execution object.
 A workflow execution has a status (in progress, succeeded, or failed) and results (once execution has succeeded).
 Results of a successful workflow are returned as a dictionary.
 The ``results`` key maps to a nested list of ``candidates`` and ``scores``.
-The ``i``th candidate corresponds to the ``i``th score.
+The ``i`` th candidate corresponds to the ``i`` th score.
 
 Each candidate and score is a dictionary.
 The former contains descriptor key-value pairs and uncertainty in descriptor values.
