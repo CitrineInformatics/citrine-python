@@ -1,5 +1,5 @@
 """Resources that represent measurement spec data objects."""
-from typing import List, Dict, Optional, Type
+from typing import List, Dict, Optional, Type, Any
 
 from citrine._utils.functions import set_default_uid
 from citrine._rest.resource import Resource
@@ -67,8 +67,9 @@ class MeasurementSpec(DataConcepts, Resource['MeasurementSpec'], TaurusMeasureme
                  conditions: Optional[List[Condition]] = None,
                  parameters: Optional[List[Parameter]] = None,
                  template: Optional[TaurusMeasurementTemplate] = None,
-                 file_links: Optional[List[FileLink]] = None):
-        DataConcepts.__init__(self, TaurusMeasurementSpec.typ)
+                 file_links: Optional[List[FileLink]] = None,
+                 audit_info: Optional[Dict[str, Any]] = None):
+        DataConcepts.__init__(self, TaurusMeasurementSpec.typ, audit_info=audit_info)
         TaurusMeasurementSpec.__init__(self, name=name, uids=set_default_uid(uids),
                                        tags=tags, conditions=conditions, parameters=parameters,
                                        template=template, file_links=file_links, notes=notes)

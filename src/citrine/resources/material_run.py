@@ -1,5 +1,5 @@
 """Resources that represent material run data objects."""
-from typing import List, Dict, Optional, Type
+from typing import List, Dict, Optional, Type, Any
 import os
 import json
 
@@ -76,8 +76,9 @@ class MaterialRun(DataConcepts, Resource['MaterialRun'], TaurusMaterialRun):
                  process: Optional[TaurusProcessRun] = None,
                  sample_type: Optional[str] = "unknown",
                  spec: Optional[TaurusMaterialSpec] = None,
-                 file_links: Optional[List[FileLink]] = None):
-        DataConcepts.__init__(self, TaurusMaterialRun.typ)
+                 file_links: Optional[List[FileLink]] = None,
+                 audit_info: Optional[Dict[str, Any]] = None):
+        DataConcepts.__init__(self, TaurusMaterialRun.typ, audit_info=audit_info)
         TaurusMaterialRun.__init__(self, name=name, uids=set_default_uid(uids),
                                    tags=tags, process=process,
                                    sample_type=sample_type, spec=spec,

@@ -1,5 +1,5 @@
 """Resources that represent process run data objects."""
-from typing import List, Dict, Optional, Type
+from typing import List, Dict, Optional, Type, Any
 
 from citrine._utils.functions import set_default_uid
 from citrine._rest.resource import Resource
@@ -83,8 +83,9 @@ class ProcessRun(DataConcepts, Resource['ProcessRun'], TaurusProcessRun):
                  parameters: Optional[List[Parameter]] = None,
                  spec: Optional[TaurusProcessSpec] = None,
                  file_links: Optional[List[FileLink]] = None,
-                 source: Optional[PerformedSource] = None):
-        DataConcepts.__init__(self, TaurusProcessRun.typ)
+                 source: Optional[PerformedSource] = None,
+                 audit_info: Optional[Dict[str, Any]] = None):
+        DataConcepts.__init__(self, TaurusProcessRun.typ, audit_info=audit_info)
         TaurusProcessRun.__init__(self, name=name, uids=set_default_uid(uids),
                                   tags=tags, conditions=conditions, parameters=parameters,
                                   spec=spec, file_links=file_links, notes=notes, source=source)

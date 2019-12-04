@@ -1,5 +1,5 @@
 """Resources that represent ingredient spec data objects."""
-from typing import List, Dict, Optional, Type
+from typing import List, Dict, Optional, Type, Any
 
 from citrine._utils.functions import set_default_uid
 from citrine._rest.resource import Resource
@@ -88,8 +88,9 @@ class IngredientSpec(DataConcepts, Resource['IngredientSpec'], TaurusIngredientS
                  number_fraction: Optional[ContinuousValue] = None,
                  absolute_quantity: Optional[ContinuousValue] = None,
                  labels: Optional[List[str]] = None,
-                 file_links: Optional[List[FileLink]] = None):
-        DataConcepts.__init__(self, TaurusIngredientSpec.typ)
+                 file_links: Optional[List[FileLink]] = None,
+                 audit_info: Optional[Dict[str, Any]] = None):
+        DataConcepts.__init__(self, TaurusIngredientSpec.typ, audit_info=audit_info)
         TaurusIngredientSpec.__init__(self, uids=set_default_uid(uids), tags=tags, notes=notes,
                                       material=material, process=process,
                                       mass_fraction=mass_fraction, volume_fraction=volume_fraction,

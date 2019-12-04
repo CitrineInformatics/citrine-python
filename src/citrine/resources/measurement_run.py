@@ -1,5 +1,5 @@
 """Resources that represent measurement run data objects."""
-from typing import List, Dict, Optional, Type
+from typing import List, Dict, Optional, Type, Any
 
 from citrine._utils.functions import set_default_uid
 from citrine._rest.resource import Resource
@@ -82,8 +82,9 @@ class MeasurementRun(DataConcepts, Resource['MeasurementRun'], TaurusMeasurement
                  spec: Optional[TaurusMeasurementSpec] = None,
                  material: Optional[TaurusMaterialRun] = None,
                  file_links: Optional[List[FileLink]] = None,
-                 source: Optional[PerformedSource] = None):
-        DataConcepts.__init__(self, TaurusMeasurementRun.typ)
+                 source: Optional[PerformedSource] = None,
+                 audit_info: Optional[Dict[str, Any]] = None):
+        DataConcepts.__init__(self, TaurusMeasurementRun.typ, audit_info=audit_info)
         TaurusMeasurementRun.__init__(self, name=name, uids=set_default_uid(uids),
                                       material=material,
                                       tags=tags, conditions=conditions, properties=properties,

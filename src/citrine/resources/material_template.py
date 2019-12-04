@@ -1,5 +1,5 @@
 """Resources that represent material templates."""
-from typing import List, Dict, Optional, Union, Sequence, Type
+from typing import List, Dict, Optional, Union, Sequence, Type, Any
 
 from citrine._rest.resource import Resource
 from citrine._session import Session
@@ -66,11 +66,12 @@ class MaterialTemplate(DataConcepts, Resource['MaterialTemplate'], TaurusMateria
                                                                     BaseBounds]]
                                                      ]]] = None,
                  description: Optional[str] = None,
-                 tags: Optional[List[str]] = None):
+                 tags: Optional[List[str]] = None,
+                 audit_info: Optional[Dict[str, Any]] = None):
         # properties is a list, each element of which is a PropertyTemplate OR is a list with
         # 2 entries: [PropertyTemplate, BaseBounds]. Python typing is not expressive enough, so
         # the typing above is more general.
-        DataConcepts.__init__(self, TaurusMaterialTemplate.typ)
+        DataConcepts.__init__(self, TaurusMaterialTemplate.typ, audit_info=audit_info)
         TaurusMaterialTemplate.__init__(self, name=name, properties=properties,
                                         uids=set_default_uid(uids), tags=tags,
                                         description=description)

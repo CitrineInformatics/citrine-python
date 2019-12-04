@@ -6,6 +6,7 @@ from citrine.attributes.property import Property
 from taurus.entity.value.nominal_integer import NominalInteger
 from citrine.resources.measurement_run import MeasurementRun
 from citrine.resources.material_run import MaterialRun
+from citrine.resources.audit_info import AuditInfo
 
 
 @pytest.fixture
@@ -35,7 +36,10 @@ def valid_data():
             'spec': None,
             'file_links': [],
             'type': 'material_run',
-            'audit_info': {'created_by': 'user1'}
+            'audit_info': {
+                'created_by': 'user1', 'created_at': 1559933807392,
+                'updated_by': 'user2', 'updated_at': 1560033807392
+            }
         },
         spec=None,
         file_links=[],
@@ -45,7 +49,7 @@ def valid_data():
             "performed_by": "Marie Curie",
             "performed_date": "1898-07-01"
         },
-        audit_info={'created_by': 'user2'}
+        audit_info={'created_by': 'user2', 'created_at': 1560033807392}
     )
 
 
@@ -67,10 +71,10 @@ def test_simple_deserialization(valid_data):
     assert measurement_run.material == MaterialRun('sponge cake',
                                                    uids={'id': valid_data['material']['uids']['id']},
                                                    sample_type='experimental')
-    assert measurement_run.material.audit_info == {'created_by': 'user1'}
+    assert measurement_run.material.audit_info == AuditInfo(**valid_data['material']['audit_info'])
     assert measurement_run.spec is None
     assert measurement_run.typ == 'measurement_run'
-    assert measurement_run.audit_info == {'created_by': 'user2'}
+    assert measurement_run.audit_info == AuditInfo(**valid_data['audit_info'])
 
 
 def test_serialization(valid_data):

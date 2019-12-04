@@ -9,6 +9,7 @@ from citrine.attributes.parameter import Parameter
 from citrine.resources.process_spec import ProcessSpec
 from citrine.resources.process_template import ProcessTemplate
 from citrine.resources.parameter_template import ParameterTemplate
+from citrine.resources.audit_info import AuditInfo
 
 
 @pytest.fixture
@@ -80,7 +81,7 @@ def test_simple_deserialization(valid_data):
     assert process_spec.notes == 'make sure to use oven mitts'
     assert process_spec.file_links == [FileLink('cake_recipe.txt', 'www.baking.com')]
     assert process_spec.typ == 'process_spec'
-    assert process_spec.audit_info == valid_data['audit_info']
+    assert process_spec.audit_info == AuditInfo(**valid_data['audit_info'])
 
 
 def test_serialization(valid_data):

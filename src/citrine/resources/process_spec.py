@@ -1,5 +1,5 @@
 """Resources that represent process spec objects."""
-from typing import Optional, Dict, List, Type
+from typing import Optional, Dict, List, Type, Any
 
 from citrine._utils.functions import set_default_uid
 from citrine._rest.resource import Resource
@@ -78,8 +78,9 @@ class ProcessSpec(DataConcepts, Resource['ProcessSpec'], TaurusProcessSpec):
                  conditions: Optional[List[Condition]] = None,
                  parameters: Optional[List[Parameter]] = None,
                  template: Optional[TaurusProcessTemplate] = None,
-                 file_links: Optional[List[FileLink]] = None):
-        DataConcepts.__init__(self, TaurusProcessSpec.typ)
+                 file_links: Optional[List[FileLink]] = None,
+                 audit_info: Optional[Dict[str, Any]] = None):
+        DataConcepts.__init__(self, TaurusProcessSpec.typ, audit_info=audit_info)
         TaurusProcessSpec.__init__(self, name=name, uids=set_default_uid(uids),
                                    tags=tags, conditions=conditions, parameters=parameters,
                                    template=template, file_links=file_links, notes=notes)

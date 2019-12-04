@@ -11,6 +11,7 @@ from citrine._serialization.serializable import Serializable
 from citrine._serialization.properties import Property, LinkOrElse, Object
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Optional as PropertyOptional
+from citrine.resources.audit_info import AuditInfo
 from citrine._utils.functions import (
     validate_type, scrub_none,
     replace_objects_with_links, get_object_id)
@@ -59,7 +60,12 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
     def __init__(self, typ: str, audit_info: Optional[Dict[str, Any]] = None):
         self.typ = typ
         self.session = None
-        self.audit_info = audit_info
+        if audit_info is None:
+            audit_info = dict()
+        self.audit_info = AuditInfo(created_by=audit_info.get('created_by', None),
+                                    created_at=audit_info.get('created_at', None),
+                                    updated_by=audit_info.get('updated_by', None),
+                                    updated_at=audit_info.get('updated_at', None))
 
     @classmethod
     def build(cls, data: dict, session: Session = None):
@@ -107,10 +113,8 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
         data_copy_dict.pop(DataConcepts._type_key, None)
         cls._build_child_objects(data_copy_dict, data)
 
-        data_concepts_object = cls(**data_copy_dict)
+        data_concepts_object = cls(**data_copy_dict, **client_only_dict)
         data_concepts_object.session = session
-        for client_key in cls._client_keys:
-            setattr(data_concepts_object, client_key, client_only_dict.get(client_key))
 
         cls._build_discarded_objects(data_concepts_object, data, session)
         return data_concepts_object

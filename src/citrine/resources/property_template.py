@@ -1,5 +1,5 @@
 """Resources that represent property templates."""
-from typing import List, Dict, Optional, Type
+from typing import List, Dict, Optional, Type, Any
 
 from citrine._rest.resource import Resource
 from citrine._serialization.properties import String, Mapping, Object
@@ -50,8 +50,9 @@ class PropertyTemplate(DataConcepts, Resource['PropertyTemplate'], TaurusPropert
                  bounds: BaseBounds,
                  uids: Optional[Dict[str, str]] = None,
                  description: Optional[str] = None,
-                 tags: Optional[List[str]] = None):
-        DataConcepts.__init__(self, TaurusPropertyTemplate.typ)
+                 tags: Optional[List[str]] = None,
+                 audit_info: Optional[Dict[str, Any]] = None):
+        DataConcepts.__init__(self, TaurusPropertyTemplate.typ, audit_info=audit_info)
         TaurusPropertyTemplate.__init__(self, name=name, bounds=bounds, tags=tags,
                                         uids=set_default_uid(uids), description=description)
 

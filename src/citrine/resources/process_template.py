@@ -1,5 +1,5 @@
 """Resources that represent process templates."""
-from typing import List, Dict, Optional, Union, Sequence, Type
+from typing import List, Dict, Optional, Union, Sequence, Type, Any
 
 from citrine._rest.resource import Resource
 from citrine._session import Session
@@ -83,8 +83,9 @@ class ProcessTemplate(DataConcepts, Resource['ProcessTemplate'], TaurusProcessTe
                  allowed_labels: Optional[List[str]] = None,
                  allowed_names: Optional[List[str]] = None,
                  description: Optional[str] = None,
-                 tags: Optional[List[str]] = None):
-        DataConcepts.__init__(self, TaurusProcessTemplate.typ)
+                 tags: Optional[List[str]] = None,
+                 audit_info: Optional[Dict[str, Any]] = None):
+        DataConcepts.__init__(self, TaurusProcessTemplate.typ, audit_info=audit_info)
         TaurusProcessTemplate.__init__(self, name=name, uids=set_default_uid(uids),
                                        conditions=conditions, parameters=parameters, tags=tags,
                                        description=description, allowed_labels=allowed_labels,

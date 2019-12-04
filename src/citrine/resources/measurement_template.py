@@ -1,5 +1,5 @@
 """Resources that represent measurement templates."""
-from typing import List, Dict, Optional, Union, Sequence, Type
+from typing import List, Dict, Optional, Union, Sequence, Type, Any
 
 from citrine._rest.resource import Resource
 from citrine._session import Session
@@ -94,8 +94,9 @@ class MeasurementTemplate(DataConcepts, Resource['MeasurementTemplate'],
                                                                     BaseBounds]]
                                                      ]]] = None,
                  description: Optional[str] = None,
-                 tags: Optional[List[str]] = None):
-        DataConcepts.__init__(self, TaurusMeasurementTemplate.typ)
+                 tags: Optional[List[str]] = None,
+                 audit_info: Optional[Dict[str, Any]] = None):
+        DataConcepts.__init__(self, TaurusMeasurementTemplate.typ, audit_info=audit_info)
         TaurusMeasurementTemplate.__init__(self, name=name, properties=properties,
                                            conditions=conditions, parameters=parameters, tags=tags,
                                            uids=set_default_uid(uids), description=description)

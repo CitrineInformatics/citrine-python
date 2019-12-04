@@ -1,5 +1,5 @@
 """Resources that represent material spec data objects."""
-from typing import List, Dict, Optional, Type
+from typing import List, Dict, Optional, Type, Any
 
 from citrine._utils.functions import set_default_uid
 from citrine._rest.resource import Resource
@@ -66,8 +66,9 @@ class MaterialSpec(DataConcepts, Resource['MaterialSpec'], TaurusMaterialSpec):
                  process: Optional[TaurusProcessSpec] = None,
                  properties: Optional[List[PropertyAndConditions]] = None,
                  template: Optional[TaurusMaterialTemplate] = None,
-                 file_links: Optional[List[FileLink]] = None):
-        DataConcepts.__init__(self, TaurusMaterialSpec.typ)
+                 file_links: Optional[List[FileLink]] = None,
+                 audit_info: Optional[Dict[str, Any]] = None):
+        DataConcepts.__init__(self, TaurusMaterialSpec.typ, audit_info=audit_info)
         TaurusMaterialSpec.__init__(self, name=name, uids=set_default_uid(uids),
                                     tags=tags, process=process, properties=properties,
                                     template=template, file_links=file_links, notes=notes)
