@@ -131,9 +131,11 @@ class Session(requests.Session):
     @staticmethod
     def cursor_paged_resource(base_method: Callable[..., dict], path: str, *args,
                               forward: bool = True, per_page: int = 100, **kwargs):
-        """Returns a flat generator of results for an API query.
+        """
+        Returns a flat generator of results for an API query.
 
-        Results are fetched in chunks of size `per_page` and loaded lazily."""
+        Results are fetched in chunks of size `per_page` and loaded lazily.
+        """
         params = kwargs.get('params', {})
         params['forward'] = forward
         params['ascending'] = forward
