@@ -1,5 +1,5 @@
 """Resources that represent material templates."""
-from typing import List, Dict, Optional, Union, Sequence, Type, Any
+from typing import List, Dict, Optional, Union, Sequence, Type
 
 from citrine._rest.resource import Resource
 from citrine._session import Session
@@ -8,6 +8,7 @@ from citrine._serialization.properties import Optional as PropertyOptional
 from citrine._serialization.properties import List as PropertyList
 from citrine._utils.functions import set_default_uid
 from citrine.resources.data_concepts import DataConcepts, DataConceptsCollection
+from citrine.resources.storable import Storable
 from citrine.resources.property_template import PropertyTemplate
 from taurus.client.json_encoder import loads, dumps
 from taurus.entity.template.material_template import MaterialTemplate as TaurusMaterialTemplate
@@ -15,7 +16,7 @@ from taurus.entity.bounds.base_bounds import BaseBounds
 from taurus.entity.link_by_uid import LinkByUID
 
 
-class MaterialTemplate(DataConcepts, Resource['MaterialTemplate'], TaurusMaterialTemplate):
+class MaterialTemplate(Storable, Resource['MaterialTemplate'], TaurusMaterialTemplate):
     """
     A material template.
 
@@ -47,8 +48,6 @@ class MaterialTemplate(DataConcepts, Resource['MaterialTemplate'], TaurusMateria
 
     _response_key = TaurusMaterialTemplate.typ  # 'material_template'
 
-    _client_keys = ["audit_info"]
-
     name = String('name')
     description = PropertyOptional(String(), 'description')
     uids = Mapping(String('scope'), String('id'), 'uids')
@@ -66,12 +65,11 @@ class MaterialTemplate(DataConcepts, Resource['MaterialTemplate'], TaurusMateria
                                                                     BaseBounds]]
                                                      ]]] = None,
                  description: Optional[str] = None,
-                 tags: Optional[List[str]] = None,
-                 audit_info: Optional[Dict[str, Any]] = None):
+                 tags: Optional[List[str]] = None):
         # properties is a list, each element of which is a PropertyTemplate OR is a list with
         # 2 entries: [PropertyTemplate, BaseBounds]. Python typing is not expressive enough, so
         # the typing above is more general.
-        DataConcepts.__init__(self, TaurusMaterialTemplate.typ, audit_info=audit_info)
+        DataConcepts.__init__(self, TaurusMaterialTemplate.typ)
         TaurusMaterialTemplate.__init__(self, name=name, properties=properties,
                                         uids=set_default_uid(uids), tags=tags,
                                         description=description)

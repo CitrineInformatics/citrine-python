@@ -1,9 +1,10 @@
 """Resources that represent ingredient spec data objects."""
-from typing import List, Dict, Optional, Type, Any
+from typing import List, Dict, Optional, Type
 
 from citrine._utils.functions import set_default_uid
 from citrine._rest.resource import Resource
 from citrine.resources.data_concepts import DataConceptsCollection, DataConcepts
+from citrine.resources.storable import Storable
 from citrine._serialization.properties import Mapping, String, LinkOrElse, Object
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Optional as PropertyOptional
@@ -14,7 +15,7 @@ from taurus.entity.object.material_spec import MaterialSpec as TaurusMaterialSpe
 from taurus.entity.value.continuous_value import ContinuousValue
 
 
-class IngredientSpec(DataConcepts, Resource['IngredientSpec'], TaurusIngredientSpec):
+class IngredientSpec(Storable, Resource['IngredientSpec'], TaurusIngredientSpec):
     """
     An ingredient specification.
 
@@ -59,8 +60,6 @@ class IngredientSpec(DataConcepts, Resource['IngredientSpec'], TaurusIngredientS
 
     _response_key = TaurusIngredientSpec.typ  # 'ingredient_spec'
 
-    _client_keys = ["audit_info"]
-
     uids = Mapping(String('scope'), String('id'), 'uids')
     tags = PropertyOptional(PropertyList(String()), 'tags')
     notes = PropertyOptional(String(), 'notes')
@@ -88,9 +87,8 @@ class IngredientSpec(DataConcepts, Resource['IngredientSpec'], TaurusIngredientS
                  number_fraction: Optional[ContinuousValue] = None,
                  absolute_quantity: Optional[ContinuousValue] = None,
                  labels: Optional[List[str]] = None,
-                 file_links: Optional[List[FileLink]] = None,
-                 audit_info: Optional[Dict[str, Any]] = None):
-        DataConcepts.__init__(self, TaurusIngredientSpec.typ, audit_info=audit_info)
+                 file_links: Optional[List[FileLink]] = None):
+        DataConcepts.__init__(self, TaurusIngredientSpec.typ)
         TaurusIngredientSpec.__init__(self, uids=set_default_uid(uids), tags=tags, notes=notes,
                                       material=material, process=process,
                                       mass_fraction=mass_fraction, volume_fraction=volume_fraction,

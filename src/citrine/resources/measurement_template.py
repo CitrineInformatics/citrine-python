@@ -1,5 +1,5 @@
 """Resources that represent measurement templates."""
-from typing import List, Dict, Optional, Union, Sequence, Type, Any
+from typing import List, Dict, Optional, Union, Sequence, Type
 
 from citrine._rest.resource import Resource
 from citrine._session import Session
@@ -8,6 +8,7 @@ from citrine._serialization.properties import Optional as PropertyOptional
 from citrine._serialization.properties import List as PropertyList
 from citrine._utils.functions import set_default_uid
 from citrine.resources.data_concepts import DataConcepts, DataConceptsCollection
+from citrine.resources.storable import Storable
 from citrine.resources.property_template import PropertyTemplate
 from citrine.resources.parameter_template import ParameterTemplate
 from citrine.resources.condition_template import ConditionTemplate
@@ -18,8 +19,7 @@ from taurus.entity.bounds.base_bounds import BaseBounds
 from taurus.entity.link_by_uid import LinkByUID
 
 
-class MeasurementTemplate(DataConcepts, Resource['MeasurementTemplate'],
-                          TaurusMeasurementTemplate):
+class MeasurementTemplate(Storable, Resource['MeasurementTemplate'], TaurusMeasurementTemplate):
     """
     A measurement template.
 
@@ -61,8 +61,6 @@ class MeasurementTemplate(DataConcepts, Resource['MeasurementTemplate'],
 
     _response_key = TaurusMeasurementTemplate.typ  # 'measurement_template'
 
-    _client_keys = ["audit_info"]
-
     name = String('name')
     description = PropertyOptional(String(), 'description')
     uids = Mapping(String('scope'), String('id'), 'uids')
@@ -94,9 +92,8 @@ class MeasurementTemplate(DataConcepts, Resource['MeasurementTemplate'],
                                                                     BaseBounds]]
                                                      ]]] = None,
                  description: Optional[str] = None,
-                 tags: Optional[List[str]] = None,
-                 audit_info: Optional[Dict[str, Any]] = None):
-        DataConcepts.__init__(self, TaurusMeasurementTemplate.typ, audit_info=audit_info)
+                 tags: Optional[List[str]] = None):
+        DataConcepts.__init__(self, TaurusMeasurementTemplate.typ)
         TaurusMeasurementTemplate.__init__(self, name=name, properties=properties,
                                            conditions=conditions, parameters=parameters, tags=tags,
                                            uids=set_default_uid(uids), description=description)

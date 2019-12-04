@@ -1,5 +1,5 @@
 """Resources that represent process templates."""
-from typing import List, Dict, Optional, Union, Sequence, Type, Any
+from typing import List, Dict, Optional, Union, Sequence, Type
 
 from citrine._rest.resource import Resource
 from citrine._session import Session
@@ -8,6 +8,7 @@ from citrine._serialization.properties import Optional as PropertyOptional
 from citrine._serialization.properties import List as PropertyList
 from citrine._utils.functions import set_default_uid
 from citrine.resources.data_concepts import DataConcepts, DataConceptsCollection
+from citrine.resources.storable import Storable
 from citrine.resources.parameter_template import ParameterTemplate
 from citrine.resources.condition_template import ConditionTemplate
 from taurus.client.json_encoder import loads, dumps
@@ -16,7 +17,7 @@ from taurus.entity.bounds.base_bounds import BaseBounds
 from taurus.entity.link_by_uid import LinkByUID
 
 
-class ProcessTemplate(DataConcepts, Resource['ProcessTemplate'], TaurusProcessTemplate):
+class ProcessTemplate(Storable, Resource['ProcessTemplate'], TaurusProcessTemplate):
     """
     A process template.
 
@@ -53,8 +54,6 @@ class ProcessTemplate(DataConcepts, Resource['ProcessTemplate'], TaurusProcessTe
 
     _response_key = TaurusProcessTemplate.typ  # 'process_template'
 
-    _client_keys = ["audit_info"]
-
     name = String('name')
     description = PropertyOptional(String(), 'description')
     uids = Mapping(String('scope'), String('id'), 'uids')
@@ -83,9 +82,8 @@ class ProcessTemplate(DataConcepts, Resource['ProcessTemplate'], TaurusProcessTe
                  allowed_labels: Optional[List[str]] = None,
                  allowed_names: Optional[List[str]] = None,
                  description: Optional[str] = None,
-                 tags: Optional[List[str]] = None,
-                 audit_info: Optional[Dict[str, Any]] = None):
-        DataConcepts.__init__(self, TaurusProcessTemplate.typ, audit_info=audit_info)
+                 tags: Optional[List[str]] = None):
+        DataConcepts.__init__(self, TaurusProcessTemplate.typ)
         TaurusProcessTemplate.__init__(self, name=name, uids=set_default_uid(uids),
                                        conditions=conditions, parameters=parameters, tags=tags,
                                        description=description, allowed_labels=allowed_labels,

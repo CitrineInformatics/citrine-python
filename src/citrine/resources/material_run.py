@@ -1,5 +1,5 @@
 """Resources that represent material run data objects."""
-from typing import List, Dict, Optional, Type, Any
+from typing import List, Dict, Optional, Type
 import os
 import json
 
@@ -7,6 +7,7 @@ from citrine._utils.functions import set_default_uid
 from citrine._rest.resource import Resource
 from citrine._session import Session
 from citrine.resources.data_concepts import DataConcepts, DataConceptsCollection
+from citrine.resources.storable import Storable
 from citrine._serialization.properties import String, LinkOrElse, Mapping, Object
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Optional as PropertyOptional
@@ -18,7 +19,7 @@ from taurus.entity.object.material_spec import MaterialSpec as TaurusMaterialSpe
 from taurus.client.json_encoder import loads
 
 
-class MaterialRun(DataConcepts, Resource['MaterialRun'], TaurusMaterialRun):
+class MaterialRun(Storable, Resource['MaterialRun'], TaurusMaterialRun):
     """
     A material run.
 
@@ -56,8 +57,6 @@ class MaterialRun(DataConcepts, Resource['MaterialRun'], TaurusMaterialRun):
 
     _response_key = TaurusMaterialRun.typ  # 'material_run'
 
-    _client_keys = ["audit_info"]
-
     name = String('name')
     uids = Mapping(String('scope'), String('id'), 'uids')
     tags = PropertyOptional(PropertyList(String()), 'tags')
@@ -76,9 +75,8 @@ class MaterialRun(DataConcepts, Resource['MaterialRun'], TaurusMaterialRun):
                  process: Optional[TaurusProcessRun] = None,
                  sample_type: Optional[str] = "unknown",
                  spec: Optional[TaurusMaterialSpec] = None,
-                 file_links: Optional[List[FileLink]] = None,
-                 audit_info: Optional[Dict[str, Any]] = None):
-        DataConcepts.__init__(self, TaurusMaterialRun.typ, audit_info=audit_info)
+                 file_links: Optional[List[FileLink]] = None):
+        DataConcepts.__init__(self, TaurusMaterialRun.typ)
         TaurusMaterialRun.__init__(self, name=name, uids=set_default_uid(uids),
                                    tags=tags, process=process,
                                    sample_type=sample_type, spec=spec,

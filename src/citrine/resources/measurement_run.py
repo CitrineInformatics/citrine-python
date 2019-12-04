@@ -1,5 +1,5 @@
 """Resources that represent measurement run data objects."""
-from typing import List, Dict, Optional, Type, Any
+from typing import List, Dict, Optional, Type
 
 from citrine._utils.functions import set_default_uid
 from citrine._rest.resource import Resource
@@ -7,6 +7,7 @@ from citrine._serialization.properties import String, Object, Mapping, LinkOrEls
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Optional as PropertyOptional
 from citrine.resources.data_concepts import DataConcepts, DataConceptsCollection
+from citrine.resources.storable import Storable
 from taurus.entity.file_link import FileLink
 from citrine.attributes.condition import Condition
 from citrine.attributes.parameter import Parameter
@@ -17,7 +18,7 @@ from taurus.entity.object.measurement_spec import MeasurementSpec as TaurusMeasu
 from taurus.entity.source.performed_source import PerformedSource
 
 
-class MeasurementRun(DataConcepts, Resource['MeasurementRun'], TaurusMeasurementRun):
+class MeasurementRun(Storable, Resource['MeasurementRun'], TaurusMeasurementRun):
     """
     A measurement run.
 
@@ -56,8 +57,6 @@ class MeasurementRun(DataConcepts, Resource['MeasurementRun'], TaurusMeasurement
 
     _response_key = TaurusMeasurementRun.typ  # 'measurement_run'
 
-    _client_keys = ["audit_info"]
-
     name = String('name')
     uids = Mapping(String('scope'), String('id'), 'uids')
     tags = PropertyOptional(PropertyList(String()), 'tags')
@@ -82,9 +81,9 @@ class MeasurementRun(DataConcepts, Resource['MeasurementRun'], TaurusMeasurement
                  spec: Optional[TaurusMeasurementSpec] = None,
                  material: Optional[TaurusMaterialRun] = None,
                  file_links: Optional[List[FileLink]] = None,
-                 source: Optional[PerformedSource] = None,
-                 audit_info: Optional[Dict[str, Any]] = None):
-        DataConcepts.__init__(self, TaurusMeasurementRun.typ, audit_info=audit_info)
+                 source: Optional[PerformedSource] = None):
+        DataConcepts.__init__(self, TaurusMeasurementRun.typ)
+        self._audit_info = None
         TaurusMeasurementRun.__init__(self, name=name, uids=set_default_uid(uids),
                                       material=material,
                                       tags=tags, conditions=conditions, properties=properties,

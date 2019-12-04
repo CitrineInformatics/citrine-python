@@ -1,9 +1,10 @@
 """Resources that represent material spec data objects."""
-from typing import List, Dict, Optional, Type, Any
+from typing import List, Dict, Optional, Type
 
 from citrine._utils.functions import set_default_uid
 from citrine._rest.resource import Resource
 from citrine.resources.data_concepts import DataConcepts, DataConceptsCollection
+from citrine.resources.storable import Storable
 from citrine._serialization.properties import String, LinkOrElse, Mapping, Object
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Optional as PropertyOptional
@@ -14,7 +15,7 @@ from taurus.entity.object.process_spec import ProcessSpec as TaurusProcessSpec
 from taurus.entity.template.material_template import MaterialTemplate as TaurusMaterialTemplate
 
 
-class MaterialSpec(DataConcepts, Resource['MaterialSpec'], TaurusMaterialSpec):
+class MaterialSpec(Storable, Resource['MaterialSpec'], TaurusMaterialSpec):
     """
     A material specification.
 
@@ -46,8 +47,6 @@ class MaterialSpec(DataConcepts, Resource['MaterialSpec'], TaurusMaterialSpec):
 
     _response_key = TaurusMaterialSpec.typ  # 'material_spec'
 
-    _client_keys = ["audit_info"]
-
     name = String('name')
     uids = Mapping(String('scope'), String('id'), 'uids')
     tags = PropertyOptional(PropertyList(String()), 'tags')
@@ -66,9 +65,8 @@ class MaterialSpec(DataConcepts, Resource['MaterialSpec'], TaurusMaterialSpec):
                  process: Optional[TaurusProcessSpec] = None,
                  properties: Optional[List[PropertyAndConditions]] = None,
                  template: Optional[TaurusMaterialTemplate] = None,
-                 file_links: Optional[List[FileLink]] = None,
-                 audit_info: Optional[Dict[str, Any]] = None):
-        DataConcepts.__init__(self, TaurusMaterialSpec.typ, audit_info=audit_info)
+                 file_links: Optional[List[FileLink]] = None):
+        DataConcepts.__init__(self, TaurusMaterialSpec.typ)
         TaurusMaterialSpec.__init__(self, name=name, uids=set_default_uid(uids),
                                     tags=tags, process=process, properties=properties,
                                     template=template, file_links=file_links, notes=notes)

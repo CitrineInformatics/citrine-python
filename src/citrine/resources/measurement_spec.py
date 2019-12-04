@@ -1,5 +1,5 @@
 """Resources that represent measurement spec data objects."""
-from typing import List, Dict, Optional, Type, Any
+from typing import List, Dict, Optional, Type
 
 from citrine._utils.functions import set_default_uid
 from citrine._rest.resource import Resource
@@ -7,6 +7,7 @@ from citrine._serialization.properties import String, Object, Mapping, LinkOrEls
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Optional as PropertyOptional
 from citrine.resources.data_concepts import DataConcepts, DataConceptsCollection
+from citrine.resources.storable import Storable
 from taurus.entity.file_link import FileLink
 from citrine.attributes.condition import Condition
 from citrine.attributes.parameter import Parameter
@@ -15,7 +16,7 @@ from taurus.entity.template.measurement_template import \
     MeasurementTemplate as TaurusMeasurementTemplate
 
 
-class MeasurementSpec(DataConcepts, Resource['MeasurementSpec'], TaurusMeasurementSpec):
+class MeasurementSpec(Storable, Resource['MeasurementSpec'], TaurusMeasurementSpec):
     """
     A measurement specification.
 
@@ -47,8 +48,6 @@ class MeasurementSpec(DataConcepts, Resource['MeasurementSpec'], TaurusMeasureme
 
     _response_key = TaurusMeasurementSpec.typ  # 'measurement_spec'
 
-    _client_keys = ["audit_info"]
-
     name = String('name')
     uids = Mapping(String('scope'), String('id'), 'uids')
     tags = PropertyOptional(PropertyList(String()), 'tags')
@@ -67,9 +66,8 @@ class MeasurementSpec(DataConcepts, Resource['MeasurementSpec'], TaurusMeasureme
                  conditions: Optional[List[Condition]] = None,
                  parameters: Optional[List[Parameter]] = None,
                  template: Optional[TaurusMeasurementTemplate] = None,
-                 file_links: Optional[List[FileLink]] = None,
-                 audit_info: Optional[Dict[str, Any]] = None):
-        DataConcepts.__init__(self, TaurusMeasurementSpec.typ, audit_info=audit_info)
+                 file_links: Optional[List[FileLink]] = None):
+        DataConcepts.__init__(self, TaurusMeasurementSpec.typ)
         TaurusMeasurementSpec.__init__(self, name=name, uids=set_default_uid(uids),
                                        tags=tags, conditions=conditions, parameters=parameters,
                                        template=template, file_links=file_links, notes=notes)
