@@ -28,9 +28,6 @@ class Storable(DataConcepts):
         elif isinstance(audit_info, AuditInfo):
             self._audit_info = audit_info
         elif isinstance(audit_info, dict):
-            self._audit_info = AuditInfo(created_by=audit_info.get('created_by', None),
-                                         created_at=audit_info.get('created_at', None),
-                                         updated_by=audit_info.get('updated_by', None),
-                                         updated_at=audit_info.get('updated_at', None))
+            self._audit_info = AuditInfo.build(audit_info)
         else:
             raise TypeError("Audit Info must be a dictionary or an AuditInfo object")

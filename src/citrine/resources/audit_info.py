@@ -1,8 +1,12 @@
 from typing import Optional
-import arrow
+from uuid import UUID
+from datetime import datetime
+
+from citrine._serialization.serializable import Serializable
+from citrine._serialization import properties
 
 
-class AuditInfo:
+class AuditInfo(Serializable):
     """
     Model that holds audit metadata. AuditInfo objects should not be created by the user.
 
@@ -19,31 +23,32 @@ class AuditInfo:
 
     """
 
-    def __init__(self, created_by: str, created_at: int,
-                 updated_by: Optional[str] = None, updated_at: Optional[int] = None):
+    created_by = properties.UUID('created_by')
+    created_at = properties.Datetime('created_at')
+    updated_by = properties.Optional(properties.UUID, 'updated_by')
+    updated_at = properties.Optional(properties.Datetime, 'updated_at')
+
+    def __init__(self, created_by: UUID, created_at: datetime,
+                 updated_by: Optional[UUID] = None, updated_at: Optional[datetime] = None):
         self.created_by = created_by
         self.created_at = created_at
         self.updated_by = updated_by
         self.updated_at = updated_at
 
     def __repr__(self):
-        return 'Created by: {}\nCreated at: {}\nUpdated by: {}\nUpdated at: {}'.format(
+        return 'Created by: {!r}\nCreated at: {!r}\nUpdated by: {!r}\nUpdated at: {!r}'.format(
             self.created_by, self.created_at, self.updated_by, self.updated_at
         )
 
     def __str__(self):
         create_str = 'Created by user {} at time {}'.format(
-            self.created_by, self._pprint_datetime(self.created_at))
+            self.created_by, self.created_at)
         if self.updated_by is not None or self.updated_at is not None:
             update_str = '\nUpdated by user {} at time {}'.format(
-                self.updated_by, self._pprint_datetime(self.updated_at))
+                self.updated_by, self.updated_at)
         else:
             update_str = ''
         return create_str + update_str
 
     def __eq__(self, other):
         return self.__repr__() == other.__repr__()
-
-    @staticmethod
-    def _pprint_datetime(create_time: int):
-        return arrow.get(create_time / 1000).datetime

@@ -37,8 +37,8 @@ def valid_data():
             'file_links': [],
             'type': 'material_run',
             'audit_info': {
-                'created_by': 'user1', 'created_at': 1559933807392,
-                'updated_by': 'user2', 'updated_at': 1560033807392
+                'created_by': str(uuid4()), 'created_at': 1559933807392,
+                'updated_by': str(uuid4()), 'updated_at': 1560033807392
             }
         },
         spec=None,
@@ -49,7 +49,7 @@ def valid_data():
             "performed_by": "Marie Curie",
             "performed_date": "1898-07-01"
         },
-        audit_info={'created_by': 'user2', 'created_at': 1560033807392}
+        audit_info={'created_by': str(uuid4()), 'created_at': 1560133807392}
     )
 
 
