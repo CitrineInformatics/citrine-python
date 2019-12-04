@@ -145,7 +145,7 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
         Parameters
         ----------
         data: dict or object
-            From which to pop the value of hte field
+            From which to pop the value of the field
         field: str
             The name of the field
 
