@@ -54,7 +54,7 @@ def valid_data():
 
 
 def test_simple_deserialization(valid_data):
-    """Ensure that a deserialized Process Run looks sane."""
+    """Ensure that a deserialized Measurement Run looks sane."""
     measurement_run: MeasurementRun = MeasurementRun.build(valid_data)
     assert measurement_run.uids == {'id': valid_data['uids']['id']}
     assert measurement_run.name == 'Taste test'

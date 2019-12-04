@@ -26,6 +26,11 @@ class AuditInfo:
         self.updated_by = updated_by
         self.updated_at = updated_at
 
+    def __repr__(self):
+        return 'Created by: {}\nCreated at: {}\nUpdated by: {}\nUpdated at: {}'.format(
+            self.created_by, self.created_at, self.updated_by, self.updated_at
+        )
+
     def __str__(self):
         create_str = 'Created by user {} at time {}'.format(
             self.created_by, self._pprint_datetime(self.created_at))
