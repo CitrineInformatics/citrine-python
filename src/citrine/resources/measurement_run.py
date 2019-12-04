@@ -83,7 +83,6 @@ class MeasurementRun(Storable, Resource['MeasurementRun'], TaurusMeasurementRun)
                  file_links: Optional[List[FileLink]] = None,
                  source: Optional[PerformedSource] = None):
         DataConcepts.__init__(self, TaurusMeasurementRun.typ)
-        self._audit_info = None
         TaurusMeasurementRun.__init__(self, name=name, uids=set_default_uid(uids),
                                       material=material,
                                       tags=tags, conditions=conditions, properties=properties,
