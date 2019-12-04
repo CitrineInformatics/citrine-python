@@ -183,3 +183,23 @@ def test_failed_put_with_stacktrace(session: Session):
             session.put_resource('/bad-endpoint', json={})
 
     assert '{"debug_stacktrace": "blew up!"}' == str(e.value)
+
+
+def test_cursor_paged_resource():
+    full_result_set = list(range(26))
+
+    def fake_request(*_, params=None, **__):
+        page_size = params['per_page']
+        if 'cursor' in params:
+            cursor = int(params['cursor'])
+            contents = full_result_set[cursor + 1:cursor + page_size + 1]
+        else:
+            contents = full_result_set[:page_size]
+        response = {'contents': contents}
+        if contents:
+            response['next'] = str(contents[-1])
+            if 'cursor' in params:
+                response['previous'] = str(contents[0])
+        return response
+
+    assert list(Session.cursor_paged_resource(fake_request, 'foo', forward=True, per_page=10)) == full_result_set

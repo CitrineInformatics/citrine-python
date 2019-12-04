@@ -1,5 +1,5 @@
 from os import environ
-from typing import Optional
+from typing import Optional, Callable
 from logging import getLogger
 from datetime import datetime, timedelta
 
@@ -127,6 +127,26 @@ class Session(requests.Session):
     def delete_resource(self, path: str) -> dict:
         """DELETE a particular resource as JSON."""
         return self.checked_delete(path).json()
+
+    @staticmethod
+    def cursor_paged_resource(base_method: Callable[..., dict], path: str, *args,
+                              forward: bool = True, per_page: int = 100, **kwargs):
+        """Returns a flat generator of results for an API query.
+
+        Results are fetched in chunks of size `per_page` and loaded lazily."""
+        params = kwargs.get('params', {})
+        params['forward'] = forward
+        params['ascending'] = forward
+        params['per_page'] = per_page
+        kwargs['params'] = params
+        while True:
+            response_json = base_method(path, *args, **kwargs)
+            for obj in response_json['contents']:
+                yield obj
+            cursor = response_json.get('next')
+            if cursor is None:
+                break
+            params['cursor'] = cursor
 
     def checked_post(self, path: str, json: dict, *args, **kwargs) -> Response:
         """Execute a POST request to a URL and utilize error filtering on the response."""
