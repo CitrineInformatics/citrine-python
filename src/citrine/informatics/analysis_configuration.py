@@ -1,4 +1,4 @@
-"""Settings for working Analysis workflows"""
+"""Settings for working Analysis workflows."""
 from typing import Optional, List
 
 from citrine._serialization.serializable import Serializable
@@ -6,6 +6,7 @@ from citrine._serialization import properties
 
 
 class CrossValidationAnalysisConfiguration(Serializable['CrossValidationAnalysisConfiguration']):
+    """Configuration settings for running CV analysis in a Performance Workflow."""
 
     name = properties.String('name')
     description = properties.String('description')
