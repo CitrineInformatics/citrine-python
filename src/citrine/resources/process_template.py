@@ -8,6 +8,7 @@ from citrine._serialization.properties import Optional as PropertyOptional
 from citrine._serialization.properties import List as PropertyList
 from citrine._utils.functions import set_default_uid
 from citrine.resources.data_concepts import DataConcepts, DataConceptsCollection
+from citrine.resources.storable import Storable
 from citrine.resources.parameter_template import ParameterTemplate
 from citrine.resources.condition_template import ConditionTemplate
 from taurus.client.json_encoder import loads, dumps
@@ -16,7 +17,7 @@ from taurus.entity.bounds.base_bounds import BaseBounds
 from taurus.entity.link_by_uid import LinkByUID
 
 
-class ProcessTemplate(DataConcepts, Resource['ProcessTemplate'], TaurusProcessTemplate):
+class ProcessTemplate(Storable, Resource['ProcessTemplate'], TaurusProcessTemplate):
     """
     A process template.
 
@@ -89,7 +90,7 @@ class ProcessTemplate(DataConcepts, Resource['ProcessTemplate'], TaurusProcessTe
                                        allowed_names=allowed_names)
 
     @classmethod
-    def _build_child_objects(cls, data: dict, session: Session = None):
+    def _build_child_objects(cls, data: dict, data_with_soft_links, session: Session = None):
         """
         Build the condition and parameter templates and bounds.
 

@@ -40,8 +40,13 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
 
     """
 
-    _local_keys = ['type']
-    """list of str: keys that appear in the serialized dictionary but not in the object itself."""
+    _type_key = "type"
+    """str: key used to determine type of serialized object."""
+
+    _client_keys = []
+    """list of str: keys that are in the serialized object, but are only relevant to the client.
+    These keys are not passed to the data model during deserialization.
+    """
 
     class_dict = dict()
     """
@@ -79,46 +84,35 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
             An object corresponding to a data concepts resource.
 
         """
+        data_copy = deepcopy(data)
+        # Extract the values that are only for the client.
+        # They will be attached to the deserialized object later.
+        client_only_dict = dict()
+        for client_key in cls._client_keys:
+            val = DataConcepts._pop_field(data_copy, client_key)
+            client_only_dict[client_key] = val
+
         # Running through a taurus loads/dumps cycle validates all of the fields and ensures
         # the object is now a dictionary with a well-understood structure
-        data_copy_dict = loads(dumps(deepcopy(data))).as_dict()
+        # Note that this process modifies data_copy and makes it unsuitable for further use
+        data_copy_dict = loads(dumps(data_copy)).as_dict()
+
         # Check the type--it should either correspond to LinkByUID or to this class.
-        if 'type' in data_copy_dict and data_copy_dict['type'] == LinkByUID.typ:
+        if data_copy_dict.get(DataConcepts._type_key) == LinkByUID.typ:
             return loads(dumps(data_copy_dict))
         validate_type(data_copy_dict, cls._response_key)
 
-        cls._remove_local_keys(data_copy_dict)
+        # Remove the top-level "type" field and build child objects
+        data_copy_dict.pop(DataConcepts._type_key, None)
         cls._build_child_objects(data_copy_dict, data)
 
         data_concepts_object = cls(**data_copy_dict)
         data_concepts_object.session = session
+        for client_key in cls._client_keys:
+            setattr(data_concepts_object, client_key, client_only_dict.get(client_key))
 
         cls._build_discarded_objects(data_concepts_object, data, session)
         return data_concepts_object
-
-    @classmethod
-    def _remove_local_keys(cls, data: dict) -> dict:
-        """
-        Remove each of the 'local' keys in a dictionary.
-
-        Local keys are not meant to be serialized or passed to the class constructor.
-        Note that this method modifies the input dictionary.
-
-        Parameters
-        ----------
-        data: dict
-            A dictionary corresponding to a serialized object.
-
-        Returns
-        -------
-        dict
-            The serialized object with local keys removed.
-
-        """
-        for key in cls._local_keys:
-            if key in data:
-                del data[key]
-        return data
 
     @staticmethod
     def _get_field(data, field: str):
@@ -128,7 +122,7 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
         Parameters
         ----------
         data: dict or object
-            foo
+            From which to get the value of the field
         field: str
             The name of the field
 
@@ -139,9 +133,32 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
 
         """
         if isinstance(data, dict):
-            return data.get(field)
+            return data.get(field, None)
         elif isinstance(data, object):
             return getattr(data, field, None)
+
+    @staticmethod
+    def _pop_field(data, field: str):
+        """
+        Pop the value of a field from something that might be a dictionary or might be an object.
+
+        Parameters
+        ----------
+        data: dict or object
+            From which to pop the value of the field
+        field: str
+            The name of the field
+
+        Returns
+        -------
+        Any
+            The value associated with `field` in `data`
+
+        """
+        if isinstance(data, dict):
+            return data.pop(field, None)
+        elif isinstance(data, object):
+            return data.__dict__.pop(field, None)
 
     @classmethod
     def _build_child_objects(cls, data: dict, data_with_soft_links,

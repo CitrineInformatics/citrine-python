@@ -7,6 +7,7 @@ from citrine._utils.functions import set_default_uid
 from citrine._rest.resource import Resource
 from citrine._session import Session
 from citrine.resources.data_concepts import DataConcepts, DataConceptsCollection
+from citrine.resources.storable import Storable
 from citrine._serialization.properties import String, LinkOrElse, Mapping, Object
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Optional as PropertyOptional
@@ -18,7 +19,7 @@ from taurus.entity.object.material_spec import MaterialSpec as TaurusMaterialSpe
 from taurus.client.json_encoder import loads
 
 
-class MaterialRun(DataConcepts, Resource['MaterialRun'], TaurusMaterialRun):
+class MaterialRun(Storable, Resource['MaterialRun'], TaurusMaterialRun):
     """
     A material run.
 

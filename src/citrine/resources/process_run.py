@@ -8,6 +8,7 @@ from citrine._serialization.properties import String, Mapping, Object, LinkOrEls
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Optional as PropertyOptional
 from citrine.resources.data_concepts import DataConcepts, DataConceptsCollection
+from citrine.resources.storable import Storable
 from citrine.attributes.condition import Condition
 from citrine.attributes.parameter import Parameter
 from taurus.entity.file_link import FileLink
@@ -16,7 +17,7 @@ from taurus.entity.object.process_spec import ProcessSpec as TaurusProcessSpec
 from taurus.entity.source.performed_source import PerformedSource
 
 
-class ProcessRun(DataConcepts, Resource['ProcessRun'], TaurusProcessRun):
+class ProcessRun(Storable, Resource['ProcessRun'], TaurusProcessRun):
     """
     A process run.
 
