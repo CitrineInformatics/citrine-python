@@ -1,7 +1,9 @@
 """Tools for working with design spaces."""
 from typing import Type
 
+from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
+from citrine._serialization.serializable import Serializable
 
 
 class Module(PolymorphicSerializable['Module']):
@@ -25,3 +27,12 @@ class Module(PolymorphicSerializable['Module']):
             'PROCESSOR': Processor,
             'PREDICTOR': Predictor
         }[data['module_type']].get_type(data)
+
+
+class ModuleRef(Serializable['ModuleRef']):
+    """A reference to a Module by UID."""
+
+    module_uid = properties.UUID('module_uid')
+
+    def __init__(self, module_uid: str):
+        self.module_uid = module_uid
