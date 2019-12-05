@@ -42,6 +42,11 @@ class Session(requests.Session):
         self.base_url = '{}://{}/api/v1/'.format(self.scheme, self.authority)
         self.headers.update({"Content-Type": "application/json"})
 
+        # Default parameters for S3 connectivity. Can be changed by tests.
+        self.s3_endpoint_url = None
+        self.s3_use_ssl = True
+        self.s3_addressing_style = 'auto'
+
     def _is_access_token_expired(self):
         return self.access_token_expiration - EXPIRATION_BUFFER_MILLIS <= datetime.utcnow()
 

@@ -4,6 +4,7 @@ import os
 import mimetypes
 from typing import Iterable, Optional
 from boto3 import client as boto3_client
+from boto3.session import Config
 import requests
 from botocore.exceptions import ClientError
 
@@ -28,6 +29,9 @@ class _Uploader:
         self.aws_secret_access_key = ''
         self.aws_session_token = ''
         self.s3_version = ''
+        self.s3_endpoint_url = None
+        self.s3_use_ssl = True
+        self.s3_addressing_style = 'auto'
 
 
 class FileLink(Resource['FileLink'], TaurusFileLink):
@@ -228,6 +232,10 @@ class FileCollection(Collection[FileLink]):
             uploader.bucket = upload_request['s3_bucket']
             uploader.object_key = upload_request['uploads'][0]['s3_key']
             uploader.upload_id = upload_request['uploads'][0]['upload_id']
+            uploader.s3_endpoint_url = self.session.s3_endpoint_url
+            uploader.s3_use_ssl = self.session.s3_use_ssl
+            uploader.s3_addressing_style = self.session.s3_addressing_style
+
         except KeyError:
             raise RuntimeError("Upload initiation response is missing some fields: "
                                "{}".format(upload_request))
@@ -251,11 +259,21 @@ class FileCollection(Collection[FileLink]):
             The input uploader object with its s3_version field now populated.
 
         """
+
+        additional_s3_opts = {
+            'use_ssl': uploader.s3_use_ssl,
+            'config': Config(s3={'addressing_style': uploader.s3_addressing_style})
+        }
+
+        if uploader.s3_endpoint_url:
+            additional_s3_opts['endpoint_url'] = uploader.s3_endpoint_url
+
         s3_client = boto3_client('s3',
                                  region_name=uploader.region_name,
                                  aws_access_key_id=uploader.aws_access_key_id,
                                  aws_secret_access_key=uploader.aws_secret_access_key,
-                                 aws_session_token=uploader.aws_session_token)
+                                 aws_session_token=uploader.aws_session_token,
+                                 **additional_s3_opts)
         with open(file_path, 'rb') as f:
             try:
                 upload_response = s3_client.put_object(
