@@ -655,10 +655,9 @@ class DataConceptsCollection(Collection[ResourceType]):
         forward: bool
             Set to False to reverse the order of results (i.e. return in descending order).
         per_page: int
-            Controls how many results are fetched per request. Has no impact on the size of
-            the result set but will have some effect on performance. Lower gets results
-            faster but increases the total number of requests needed to fetch the entire
-            result set, which increases total latency across fetching the entire result set.
+            Controls the number of results fetched with each http request to the backend.
+            Typically, this is set to a sensible default and should not be modified. Consider
+            modifying this value only if you find this method is unacceptably latent.
 
         Returns
         -------
@@ -690,10 +689,9 @@ class DataConceptsCollection(Collection[ResourceType]):
         forward: bool
             Set to False to reverse the order of results (i.e. return in descending order).
         per_page: int
-            Controls how many results are fetched per request. Has no impact on the size of
-            the result set but will have some effect on performance. Lower gets results
-            faster but increases the total number of requests needed to fetch the entire
-            result set, which increases total latency across fetching the entire result set.
+            Controls the number of results fetched with each http request to the backend.
+            Typically, this is set to a sensible default and should not be modified. Consider
+            modifying this value only if you find this method is unacceptably latent.
 
         Returns
         -------
