@@ -12,13 +12,13 @@ class AuditInfo(Serializable):
 
     Parameters
     ----------
-    created_by: str
+    created_by: Optional[UUID]
         ID of the user who created the object
-    created_at: int
+    created_at: Optional[Datetime]
         Time, in ms since epoch, at which the object was created
-    updated_by: Optional[str]
+    updated_by: Optional[UUID]
         ID of the user who most recently updated the object
-    updated_at: Optional[int]
+    updated_at: Optional[Datetime]
         Time, in ms since epoch, at which the object was most recently updated
 
     """
