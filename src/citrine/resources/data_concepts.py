@@ -678,12 +678,17 @@ class DataConceptsCollection(Collection[ResourceType]):
             params=params)
         return (self.build(raw) for raw in raw_objects)
 
-    def list_all(self, per_page: int = 100) -> Iterator[DataConcepts]:
+    def list_all(self, forward: bool = True, per_page: int = 100) -> Iterator[DataConcepts]:
         """
         Get all objects in the collection.
 
+        The order of results should not be relied upon, but for now they are sorted by
+        dataset, object type, and creation time (in that order of priority).
+
         Parameters
         ----------
+        forward: bool
+            Set to False to reverse the order of results (i.e. return in descending order).
         per_page: int
             Controls how many results are fetched per request. Has no impact on the size of
             the result set but will have some effect on performance. Lower gets results
@@ -702,6 +707,7 @@ class DataConceptsCollection(Collection[ResourceType]):
         raw_objects = self.session.cursor_paged_resource(
             self.session.get_resource,
             self._get_path(ignore_dataset=True),
+            forward=forward,
             per_page=per_page,
             params=params)
         return (self.build(raw) for raw in raw_objects)
