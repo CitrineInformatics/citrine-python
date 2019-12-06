@@ -9,6 +9,7 @@ from citrine.attributes.parameter import Parameter
 from citrine.resources.process_spec import ProcessSpec
 from citrine.resources.process_template import ProcessTemplate
 from citrine.resources.parameter_template import ParameterTemplate
+from citrine.resources.audit_info import AuditInfo
 
 
 @pytest.fixture
@@ -51,6 +52,7 @@ def valid_data():
             'tags': []
         },
         file_links=[{'type': 'file_link', 'filename': 'cake_recipe.txt', 'url': 'www.baking.com'}],
+        audit_info={'created_by': str(uuid4()), 'created_at': 1559933807392},
         type='process_spec'
     )
 
@@ -79,10 +81,12 @@ def test_simple_deserialization(valid_data):
     assert process_spec.notes == 'make sure to use oven mitts'
     assert process_spec.file_links == [FileLink('cake_recipe.txt', 'www.baking.com')]
     assert process_spec.typ == 'process_spec'
+    assert process_spec.audit_info == AuditInfo(**valid_data['audit_info'])
 
 
 def test_serialization(valid_data):
     """Ensure that a serialized Process Run looks sane."""
     process_spec: ProcessSpec = ProcessSpec.build(valid_data)
     serialized = process_spec.dump()
+    valid_data.pop('audit_info')  # this field is not serialized
     assert serialized == valid_data

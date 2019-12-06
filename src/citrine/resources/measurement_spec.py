@@ -7,6 +7,7 @@ from citrine._serialization.properties import String, Object, Mapping, LinkOrEls
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Optional as PropertyOptional
 from citrine.resources.data_concepts import DataConcepts, DataConceptsCollection
+from citrine.resources.storable import Storable
 from taurus.entity.file_link import FileLink
 from citrine.attributes.condition import Condition
 from citrine.attributes.parameter import Parameter
@@ -15,7 +16,7 @@ from taurus.entity.template.measurement_template import \
     MeasurementTemplate as TaurusMeasurementTemplate
 
 
-class MeasurementSpec(DataConcepts, Resource['MeasurementSpec'], TaurusMeasurementSpec):
+class MeasurementSpec(Storable, Resource['MeasurementSpec'], TaurusMeasurementSpec):
     """
     A measurement specification.
 

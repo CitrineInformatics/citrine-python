@@ -1,8 +1,10 @@
 """Top-level class for all data concepts objects and collections thereof."""
+from logging import getLogger
 from uuid import UUID
-from typing import TypeVar, Type, List, Dict, Union, Optional
+from typing import TypeVar, Type, List, Dict, Union, Optional, Iterator
 from copy import deepcopy
 from abc import abstractmethod
+from deprecation import deprecated
 
 from citrine._session import Session
 from citrine._rest.collection import Collection
@@ -40,8 +42,13 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
 
     """
 
-    _local_keys = ['type']
-    """list of str: keys that appear in the serialized dictionary but not in the object itself."""
+    _type_key = "type"
+    """str: key used to determine type of serialized object."""
+
+    _client_keys = []
+    """list of str: keys that are in the serialized object, but are only relevant to the client.
+    These keys are not passed to the data model during deserialization.
+    """
 
     class_dict = dict()
     """
@@ -79,46 +86,35 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
             An object corresponding to a data concepts resource.
 
         """
+        data_copy = deepcopy(data)
+        # Extract the values that are only for the client.
+        # They will be attached to the deserialized object later.
+        client_only_dict = dict()
+        for client_key in cls._client_keys:
+            val = DataConcepts._pop_field(data_copy, client_key)
+            client_only_dict[client_key] = val
+
         # Running through a taurus loads/dumps cycle validates all of the fields and ensures
         # the object is now a dictionary with a well-understood structure
-        data_copy_dict = loads(dumps(deepcopy(data))).as_dict()
+        # Note that this process modifies data_copy and makes it unsuitable for further use
+        data_copy_dict = loads(dumps(data_copy)).as_dict()
+
         # Check the type--it should either correspond to LinkByUID or to this class.
-        if 'type' in data_copy_dict and data_copy_dict['type'] == LinkByUID.typ:
+        if data_copy_dict.get(DataConcepts._type_key) == LinkByUID.typ:
             return loads(dumps(data_copy_dict))
         validate_type(data_copy_dict, cls._response_key)
 
-        cls._remove_local_keys(data_copy_dict)
+        # Remove the top-level "type" field and build child objects
+        data_copy_dict.pop(DataConcepts._type_key, None)
         cls._build_child_objects(data_copy_dict, data)
 
         data_concepts_object = cls(**data_copy_dict)
         data_concepts_object.session = session
+        for client_key in cls._client_keys:
+            setattr(data_concepts_object, client_key, client_only_dict.get(client_key))
 
         cls._build_discarded_objects(data_concepts_object, data, session)
         return data_concepts_object
-
-    @classmethod
-    def _remove_local_keys(cls, data: dict) -> dict:
-        """
-        Remove each of the 'local' keys in a dictionary.
-
-        Local keys are not meant to be serialized or passed to the class constructor.
-        Note that this method modifies the input dictionary.
-
-        Parameters
-        ----------
-        data: dict
-            A dictionary corresponding to a serialized object.
-
-        Returns
-        -------
-        dict
-            The serialized object with local keys removed.
-
-        """
-        for key in cls._local_keys:
-            if key in data:
-                del data[key]
-        return data
 
     @staticmethod
     def _get_field(data, field: str):
@@ -128,7 +124,7 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
         Parameters
         ----------
         data: dict or object
-            foo
+            From which to get the value of the field
         field: str
             The name of the field
 
@@ -139,9 +135,32 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
 
         """
         if isinstance(data, dict):
-            return data.get(field)
+            return data.get(field, None)
         elif isinstance(data, object):
             return getattr(data, field, None)
+
+    @staticmethod
+    def _pop_field(data, field: str):
+        """
+        Pop the value of a field from something that might be a dictionary or might be an object.
+
+        Parameters
+        ----------
+        data: dict or object
+            From which to pop the value of the field
+        field: str
+            The name of the field
+
+        Returns
+        -------
+        Any
+            The value associated with `field` in `data`
+
+        """
+        if isinstance(data, dict):
+            return data.pop(field, None)
+        elif isinstance(data, object):
+            return data.__dict__.pop(field, None)
 
     @classmethod
     def _build_child_objects(cls, data: dict, data_with_soft_links,
@@ -376,6 +395,7 @@ class DataConceptsCollection(Collection[ResourceType]):
         self.project_id = project_id
         self.dataset_id = dataset_id
         self.session = session
+        self.logger = getLogger(type(self).__name__)
 
     @classmethod
     @abstractmethod
@@ -403,6 +423,7 @@ class DataConceptsCollection(Collection[ResourceType]):
         data_concepts_object.session = self.session
         return data_concepts_object
 
+    @deprecated(details='Please use list_all')
     def list(self, page: Optional[int] = None, per_page: Optional[int] = None):
         """
         List all visible elements of the collection.
@@ -582,6 +603,7 @@ class DataConceptsCollection(Collection[ResourceType]):
             json=body, params=params)
         return [self.build(content) for content in response["contents"]]
 
+    @deprecated(details='Please use list_by_name')
     def filter_by_name(self, name: str, exact: bool = False,
                        page: Optional[int] = None, per_page: Optional[int] = None):
         """
@@ -615,9 +637,78 @@ class DataConceptsCollection(Collection[ResourceType]):
         response = self.session.get_resource(
             # "Ignoring" dataset because it is in the query params (and required)
             self._get_path(ignore_dataset=True) + "/filter-by-name",
-            params=params,
-        )
+            params=params)
         return [self.build(content) for content in response["contents"]]
+
+    def list_by_name(self, name: str, exact: bool = False,
+                     forward: bool = True, per_page: int = 100) -> Iterator[DataConcepts]:
+        """
+        Get all objects with specified name in this dataset.
+
+        Parameters
+        ----------
+        name: str
+            case-insensitive object name prefix to search.
+        exact: bool
+            Set to True to change prefix search to exact search (but still case-insensitive).
+            Default is False.
+        forward: bool
+            Set to False to reverse the order of results (i.e. return in descending order).
+        per_page: int
+            Controls the number of results fetched with each http request to the backend.
+            Typically, this is set to a sensible default and should not be modified. Consider
+            modifying this value only if you find this method is unacceptably latent.
+
+        Returns
+        -------
+        Iterator[DataConcepts]
+            List of every object in this collection whose `name` matches the search term.
+
+        """
+        if self.dataset_id is None:
+            raise RuntimeError("Must specify a dataset to filter by name.")
+        params = {'dataset_id': str(self.dataset_id), 'name': name, 'exact': exact}
+        raw_objects = self.session.cursor_paged_resource(
+            self.session.get_resource,
+            # "Ignoring" dataset because it is in the query params (and required)
+            self._get_path(ignore_dataset=True) + "/filter-by-name",
+            forward=forward,
+            per_page=per_page,
+            params=params)
+        return (self.build(raw) for raw in raw_objects)
+
+    def list_all(self, forward: bool = True, per_page: int = 100) -> Iterator[DataConcepts]:
+        """
+        Get all objects in the collection.
+
+        The order of results should not be relied upon, but for now they are sorted by
+        dataset, object type, and creation time (in that order of priority).
+
+        Parameters
+        ----------
+        forward: bool
+            Set to False to reverse the order of results (i.e. return in descending order).
+        per_page: int
+            Controls the number of results fetched with each http request to the backend.
+            Typically, this is set to a sensible default and should not be modified. Consider
+            modifying this value only if you find this method is unacceptably latent.
+
+        Returns
+        -------
+        Iterator[DataConcepts]
+            Every object in this collection.
+
+        """
+        params = {}
+        if self.dataset_id is not None:
+            params['dataset_id'] = str(self.dataset_id)
+        raw_objects = self.session.cursor_paged_resource(
+            self.session.get_resource,
+            self._get_path(ignore_dataset=True),
+            forward=forward,
+            per_page=per_page,
+            params=params)
+        return (self.build(raw) for raw in raw_objects)
 
     def delete(self, uid: Union[UUID, str], scope: str = 'id'):
         """
