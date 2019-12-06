@@ -175,6 +175,9 @@ def test_list_by_name(collection, session):
     setattr(session, 'cursor_paged_resource', Session.cursor_paged_resource)
     # TODO: the results appear equal in the diff but fail equality check
     assert len(list(collection.list_by_name('unused', per_page=2))) == len(all_runs)
+    with pytest.raises(RuntimeError):
+        collection.dataset_id = None
+        collection.list_by_name('unused')
 
 
 def test_list_all(collection, session):
