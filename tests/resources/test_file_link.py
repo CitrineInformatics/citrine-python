@@ -4,7 +4,7 @@ import pytest
 from uuid import uuid4
 
 import requests_mock
-from mock import patch, Mock, call, ANY
+from mock import patch, Mock, call
 from botocore.exceptions import ClientError
 
 from citrine.resources.file_link import FileCollection, FileLink, _Uploader
@@ -121,60 +121,7 @@ def test_upload(mock_isfile, mock_stat, mock_open, mock_boto3_client, collection
     file_link = collection.upload(dest_name)
 
     assert session.num_calls == 2
-    url = 'projects/{}/datasets/{}/files/{}/versions/{}' \
-        .format(collection.project_id, collection.dataset_id, file_id, version)
-    assert file_link.dump() == FileLink(dest_name, url=url).dump()
-
-
-@patch('citrine.resources.file_link.boto3_client')
-@patch('citrine.resources.file_link.open')
-@patch('citrine.resources.file_link.os.stat')
-@patch('citrine.resources.file_link.os.path.isfile')
-def test_upload_with_s3_override(mock_isfile, mock_stat, mock_open, mock_boto3_client, collection, session):
-    """Test signaling that an upload has completed and the creation of a FileLink object."""
-    StatStub = namedtuple('StatStub', ['st_size'])
-
-    mock_isfile.return_value = True
-    mock_stat.return_value = StatStub(st_size=22300)
-    mock_open.return_value.__enter__.return_value = 'Random file contents'
-    mock_boto3_client.return_value = FakeS3Client({'VersionId': '3'})
-
-    dest_name = 'foo.txt'
-    file_id = '12345'
-    version = '13'
-
-    # This is the dictionary structure we expect from the upload completion request
-    file_info_response = {
-        'file_info': {
-            'file_id': file_id,
-            'version': version
-        }
-    }
-    uploads_response = {
-        's3_region': 'us-east-1',
-        's3_bucket': 'temp-bucket',
-        'temporary_credentials': {
-            'access_key_id': '1234',
-            'secret_access_key': 'abbb8777',
-            'session_token': 'hefheuhuhhu83772333',
-        },
-        'uploads': [
-            {
-                's3_key': '66377378',
-                'upload_id': '111',
-            }
-        ]
-    }
-
-    session.set_responses(uploads_response, file_info_response)
-    session.s3_addressing_style = 'path'
-    session.s3_endpoint_url = 'http://foo.bar'
-    session.s3_use_ssl = False
-
-    file_link = collection.upload(dest_name)
-
-    assert session.num_calls == 2
-    url = 'projects/{}/datasets/{}/files/{}/versions/{}' \
+    url = 'projects/{}/datasets/{}/files/{}/versions/{}'\
         .format(collection.project_id, collection.dataset_id, file_id, version)
     assert file_link.dump() == FileLink(dest_name, url=url).dump()
 
@@ -287,21 +234,25 @@ def test_upload_file(_, collection, uploader):
         with pytest.raises(RuntimeError):
             collection._upload_file('foo.txt', uploader)
 
-    # FIXME: ensure that the overridden s3 options get passed to the boto client method
-    # TODO: unable to pick up the args to the boto3_client call properly. (!!!)
+    s3_addressing_style = 'path'
+    s3_endpoint_url = 'http://foo.bar'
+    s3_use_ssl = False
 
-    uploader.s3_addressing_style = 'path'
-    uploader.s3_endpoint_url = 'http://foo.bar'
-    uploader.s3_use_ssl = False
+    uploader.s3_addressing_style = s3_addressing_style
+    uploader.s3_endpoint_url = s3_endpoint_url
+    uploader.s3_use_ssl = s3_use_ssl
 
     s3_override_client = Mock()
     s3_override_client.put_object.return_value = {'VersionId': '3'}
 
     with patch('citrine.resources.file_link.boto3_client',
-               return_value=s3_override_client):
+               return_value=s3_override_client) as mock_boto_client:
         collection._upload_file('foo.txt', uploader)
 
-    s3_override_client.call_args # is always None
+        # Ensure we're connecting to S3 with the proper parameter overrides for a different endpoint.
+        assert mock_boto_client.call_args.kwargs['config'].s3['addressing_style'] is s3_addressing_style
+        assert mock_boto_client.call_args.kwargs['endpoint_url'] is s3_endpoint_url
+        assert mock_boto_client.call_args.kwargs['use_ssl'] is s3_use_ssl
 
 
 def test_upload_missing_version(collection, session, uploader):
