@@ -423,6 +423,7 @@ class DataConceptsCollection(Collection[ResourceType]):
         data_concepts_object.session = self.session
         return data_concepts_object
 
+    @deprecated(details='Please use list_all')
     def list(self, page: Optional[int] = None, per_page: Optional[int] = None):
         """
         List all visible elements of the collection.
@@ -640,7 +641,7 @@ class DataConceptsCollection(Collection[ResourceType]):
             )
         return [self.build(content) for content in response["contents"]]
 
-    def list_by_name(self, name: str, exact: bool = False) -> Iterator[DataConcepts]:
+    def list_by_name(self, name: str, exact: bool = False, forward: bool = True, per_page: int = 100) -> Iterator[DataConcepts]:
         """
         Get all objects with specified name in this dataset.
 
@@ -651,6 +652,13 @@ class DataConceptsCollection(Collection[ResourceType]):
         exact: bool
             Set to True to change prefix search to exact search (but still case-insensitive).
             Default is False.
+        forward: bool
+            Set to False to reverse the order of results (i.e. return in descending order).
+        per_page: int
+            Controls how many results are fetched per request. Has no impact on the size of
+            the result set but will have some effect on performance. Lower gets results
+            faster but increases the total number of requests needed to fetch the entire
+            result set, which increases total latency across fetching the entire result set.
 
         Returns
         -------
@@ -665,12 +673,22 @@ class DataConceptsCollection(Collection[ResourceType]):
             self.session.get_resource,
             # "Ignoring" dataset because it is in the query params (and required)
             self._get_path(ignore_dataset=True) + "/filter-by-name",
+            forward=forward,
+            per_page=per_page,
             params=params)
         return (self.build(raw) for raw in raw_objects)
 
-    def list_all(self) -> Iterator[DataConcepts]:
+    def list_all(self, per_page: int = 100) -> Iterator[DataConcepts]:
         """
         Get all objects in the collection.
+
+        Parameters
+        ----------
+        per_page: int
+            Controls how many results are fetched per request. Has no impact on the size of
+            the result set but will have some effect on performance. Lower gets results
+            faster but increases the total number of requests needed to fetch the entire
+            result set, which increases total latency across fetching the entire result set.
 
         Returns
         -------
@@ -684,6 +702,7 @@ class DataConceptsCollection(Collection[ResourceType]):
         raw_objects = self.session.cursor_paged_resource(
             self.session.get_resource,
             self._get_path(ignore_dataset=True),
+            per_page=per_page,
             params=params)
         return (self.build(raw) for raw in raw_objects)
 
