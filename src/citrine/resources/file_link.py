@@ -265,7 +265,7 @@ class FileCollection(Collection[FileLink]):
             'config': Config(s3={'addressing_style': uploader.s3_addressing_style})
         }
 
-        if uploader.s3_endpoint_url:
+        if uploader.s3_endpoint_url is not None:
             additional_s3_opts['endpoint_url'] = uploader.s3_endpoint_url
 
         s3_client = boto3_client('s3',
@@ -276,6 +276,8 @@ class FileCollection(Collection[FileLink]):
                                  **additional_s3_opts)
         with open(file_path, 'rb') as f:
             try:
+                # NOTE: This is only using the simple PUT logic, not the more sophisticated multipart upload approach
+                # that is also available (providing parallel uploads, etc).
                 upload_response = s3_client.put_object(
                     Bucket=uploader.bucket,
                     Key=uploader.object_key,
