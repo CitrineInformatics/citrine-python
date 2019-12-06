@@ -18,6 +18,7 @@ import requests
 import requests_mock
 from citrine._session import Session
 from citrine.exceptions import UnauthorizedRefreshToken, Unauthorized, NotFound
+from tests.utils.session import make_fake_cursor_request_function
 
 
 def refresh_token(expiration: datetime = None) -> dict:
@@ -183,3 +184,14 @@ def test_failed_put_with_stacktrace(session: Session):
             session.put_resource('/bad-endpoint', json={})
 
     assert '{"debug_stacktrace": "blew up!"}' == str(e.value)
+
+
+def test_cursor_paged_resource():
+    full_result_set = list(range(26))
+
+    fake_request = make_fake_cursor_request_function(full_result_set)
+
+    # varying page size should not affect final result
+    assert list(Session.cursor_paged_resource(fake_request, 'foo', forward=True, per_page=10)) == full_result_set
+    assert list(Session.cursor_paged_resource(fake_request, 'foo', forward=True, per_page=26)) == full_result_set
+    assert list(Session.cursor_paged_resource(fake_request, 'foo', forward=True, per_page=40)) == full_result_set
