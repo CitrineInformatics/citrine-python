@@ -259,7 +259,6 @@ class FileCollection(Collection[FileLink]):
             The input uploader object with its s3_version field now populated.
 
         """
-
         additional_s3_opts = {
             'use_ssl': uploader.s3_use_ssl,
             'config': Config(s3={'addressing_style': uploader.s3_addressing_style})
@@ -276,8 +275,9 @@ class FileCollection(Collection[FileLink]):
                                  **additional_s3_opts)
         with open(file_path, 'rb') as f:
             try:
-                # NOTE: This is only using the simple PUT logic, not the more sophisticated multipart upload approach
-                # that is also available (providing parallel uploads, etc).
+                # NOTE: This is only using the simple PUT logic, not the more sophisticated
+                # multipart upload approach that is also available (providing parallel
+                # uploads, etc).
                 upload_response = s3_client.put_object(
                     Bucket=uploader.bucket,
                     Key=uploader.object_key,
@@ -356,7 +356,7 @@ class FileCollection(Collection[FileLink]):
 
         """
         split_url = file_link.url.split('/')
-        assert split_url[-2] == 'versions' and split_url[-4] == 'files',\
+        assert split_url[-2] == 'versions' and split_url[-4] == 'files', \
             "File URL is expected to end with '/files/{{file_id}}/version/{{version id}}', " \
             "but FileLink instead has url {}".format(file_link.url)
         file_id = split_url[-3]
