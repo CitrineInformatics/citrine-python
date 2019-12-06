@@ -111,3 +111,29 @@ class FakeRequestResponse:
 
     def __init__(self, content=None):
         self.content = content
+
+
+def make_fake_cursor_request_function(all_results: list):
+    """
+    Returns function which simulates request to cursor-paged endpoint.
+
+    Parameters
+    ---------
+    all_results: list
+        All results in the result set to simulate paging
+    """
+    # TODO add logic for `forward` and `ascending`
+    def fake_cursor_request(*_, params=None, **__):
+        page_size = params['per_page']
+        if 'cursor' in params:
+            cursor = int(params['cursor'])
+            contents = all_results[cursor + 1:cursor + page_size + 1]
+        else:
+            contents = all_results[:page_size]
+        response = {'contents': contents}
+        if contents:
+            response['next'] = str(all_results.index(contents[-1]))
+            if 'cursor' in params:
+                response['previous'] = str(all_results.index(contents[0]))
+        return response
+    return fake_cursor_request

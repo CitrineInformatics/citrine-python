@@ -1,8 +1,10 @@
 """Top-level class for all data concepts objects and collections thereof."""
+from logging import getLogger
 from uuid import UUID
-from typing import TypeVar, Type, List, Dict, Union, Optional
+from typing import TypeVar, Type, List, Dict, Union, Optional, Iterator
 from copy import deepcopy
 from abc import abstractmethod
+from deprecation import deprecated
 
 from citrine._session import Session
 from citrine._rest.collection import Collection
@@ -393,6 +395,7 @@ class DataConceptsCollection(Collection[ResourceType]):
         self.project_id = project_id
         self.dataset_id = dataset_id
         self.session = session
+        self.logger = getLogger(type(self).__name__)
 
     @classmethod
     @abstractmethod
@@ -420,6 +423,7 @@ class DataConceptsCollection(Collection[ResourceType]):
         data_concepts_object.session = self.session
         return data_concepts_object
 
+    @deprecated(details='Please use list_all')
     def list(self, page: Optional[int] = None, per_page: Optional[int] = None):
         """
         List all visible elements of the collection.
@@ -599,6 +603,7 @@ class DataConceptsCollection(Collection[ResourceType]):
             json=body, params=params)
         return [self.build(content) for content in response["contents"]]
 
+    @deprecated(details='Please use list_by_name')
     def filter_by_name(self, name: str, exact: bool = False,
                        page: Optional[int] = None, per_page: Optional[int] = None):
         """
@@ -632,9 +637,78 @@ class DataConceptsCollection(Collection[ResourceType]):
         response = self.session.get_resource(
             # "Ignoring" dataset because it is in the query params (and required)
             self._get_path(ignore_dataset=True) + "/filter-by-name",
-            params=params,
-        )
+            params=params)
         return [self.build(content) for content in response["contents"]]
+
+    def list_by_name(self, name: str, exact: bool = False,
+                     forward: bool = True, per_page: int = 100) -> Iterator[DataConcepts]:
+        """
+        Get all objects with specified name in this dataset.
+
+        Parameters
+        ----------
+        name: str
+            case-insensitive object name prefix to search.
+        exact: bool
+            Set to True to change prefix search to exact search (but still case-insensitive).
+            Default is False.
+        forward: bool
+            Set to False to reverse the order of results (i.e. return in descending order).
+        per_page: int
+            Controls the number of results fetched with each http request to the backend.
+            Typically, this is set to a sensible default and should not be modified. Consider
+            modifying this value only if you find this method is unacceptably latent.
+
+        Returns
+        -------
+        Iterator[DataConcepts]
+            List of every object in this collection whose `name` matches the search term.
+
+        """
+        if self.dataset_id is None:
+            raise RuntimeError("Must specify a dataset to filter by name.")
+        params = {'dataset_id': str(self.dataset_id), 'name': name, 'exact': exact}
+        raw_objects = self.session.cursor_paged_resource(
+            self.session.get_resource,
+            # "Ignoring" dataset because it is in the query params (and required)
+            self._get_path(ignore_dataset=True) + "/filter-by-name",
+            forward=forward,
+            per_page=per_page,
+            params=params)
+        return (self.build(raw) for raw in raw_objects)
+
+    def list_all(self, forward: bool = True, per_page: int = 100) -> Iterator[DataConcepts]:
+        """
+        Get all objects in the collection.
+
+        The order of results should not be relied upon, but for now they are sorted by
+        dataset, object type, and creation time (in that order of priority).
+
+        Parameters
+        ----------
+        forward: bool
+            Set to False to reverse the order of results (i.e. return in descending order).
+        per_page: int
+            Controls the number of results fetched with each http request to the backend.
+            Typically, this is set to a sensible default and should not be modified. Consider
+            modifying this value only if you find this method is unacceptably latent.
+
+        Returns
+        -------
+        Iterator[DataConcepts]
+            Every object in this collection.
+
+        """
+        params = {}
+        if self.dataset_id is not None:
+            params['dataset_id'] = str(self.dataset_id)
+        raw_objects = self.session.cursor_paged_resource(
+            self.session.get_resource,
+            self._get_path(ignore_dataset=True),
+            forward=forward,
+            per_page=per_page,
+            params=params)
+        return (self.build(raw) for raw in raw_objects)
 
     def delete(self, uid: Union[UUID, str], scope: str = 'id'):
         """

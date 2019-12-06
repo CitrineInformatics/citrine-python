@@ -1,5 +1,5 @@
 from os import environ
-from typing import Optional
+from typing import Optional, Callable, Iterator
 from logging import getLogger
 from datetime import datetime, timedelta
 
@@ -15,7 +15,6 @@ from citrine.exceptions import (
 
 import jwt
 import requests
-
 
 # Choose a 5 second buffer so that there's no chance of the access token
 # expiring during the check for expiration
@@ -39,7 +38,6 @@ class Session(requests.Session):
         self.access_token_expiration: datetime = datetime.utcnow()
 
         # Following scheme:[//authority]path[?query][#fragment] (https://en.wikipedia.org/wiki/URL)
-        self.base_url = '{}://{}/api/v1/'.format(self.scheme, self.authority)
         self.headers.update({"Content-Type": "application/json"})
 
         # Default parameters for S3 connectivity. Can be changed by tests.
@@ -47,13 +45,17 @@ class Session(requests.Session):
         self.s3_use_ssl = True
         self.s3_addressing_style = 'auto'
 
+    def _versioned_base_url(self, version: str = 'v1'):
+        return '{}://{}/api/{}/'.format(self.scheme, self.authority, version)
+
     def _is_access_token_expired(self):
         return self.access_token_expiration - EXPIRATION_BUFFER_MILLIS <= datetime.utcnow()
 
     def _refresh_access_token(self) -> None:
         """Optionally refresh our access token (if the previous one is about to expire)."""
         data = {'refresh_token': self.refresh_token}
-        response = super().request('POST', self.base_url + 'tokens/refresh', json=data)
+        response = super().request(
+            'POST', self._versioned_base_url() + 'tokens/refresh', json=data)
         if response.status_code != 200:
             raise UnauthorizedRefreshToken()
         self.access_token = response.json()['access_token']
@@ -61,11 +63,12 @@ class Session(requests.Session):
             jwt.decode(self.access_token, verify=False)['exp']
         )
 
-    def checked_request(self, method: str, path: str, *args, **kwargs) -> requests.Response:
+    def checked_request(self, method: str, path: str, *args,
+                        version: str = 'v1', **kwargs) -> requests.Response:
         """Check response status code and throw an exception if relevant."""
         if self._is_access_token_expired():
             self._refresh_access_token()
-        uri = self.base_url + path.lstrip('/')
+        uri = self._versioned_base_url(version) + path.lstrip('/')
         response = super().request(method, uri, *args, **kwargs)
 
         try:
@@ -132,6 +135,29 @@ class Session(requests.Session):
     def delete_resource(self, path: str) -> dict:
         """DELETE a particular resource as JSON."""
         return self.checked_delete(path).json()
+
+    @staticmethod
+    def cursor_paged_resource(base_method: Callable[..., dict], path: str, *args,
+                              forward: bool = True, per_page: int = 100,
+                              version: str = 'v2', **kwargs) -> Iterator[dict]:
+        """
+        Returns a flat generator of results for an API query.
+
+        Results are fetched in chunks of size `per_page` and loaded lazily.
+        """
+        params = kwargs.get('params', {})
+        params['forward'] = forward
+        params['ascending'] = forward
+        params['per_page'] = per_page
+        kwargs['params'] = params
+        while True:
+            response_json = base_method(path, *args, version=version, **kwargs)
+            for obj in response_json['contents']:
+                yield obj
+            cursor = response_json.get('next')
+            if cursor is None:
+                break
+            params['cursor'] = cursor
 
     def checked_post(self, path: str, json: dict, *args, **kwargs) -> Response:
         """Execute a POST request to a URL and utilize error filtering on the response."""

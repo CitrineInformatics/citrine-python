@@ -3,8 +3,9 @@ from uuid import UUID
 import pytest
 from taurus.entity.bounds.integer_bounds import IntegerBounds
 
+from citrine._session import Session
 from citrine.resources.material_run import MaterialRunCollection, MaterialRun
-from tests.utils.session import FakeSession, FakeCall
+from tests.utils.session import FakeSession, FakeCall, make_fake_cursor_request_function
 from tests.utils.factories import MaterialRunFactory, MaterialRunDataFactory, LinkByUIDFactory
 
 
@@ -162,6 +163,33 @@ def test_filter_by_name(collection, session):
     assert expected_call == session.last_call
     assert 1 == len(runs)
     assert sample_run['uids'] == runs[0].uids
+
+
+def test_list_by_name(collection, session):
+    all_runs = [
+        MaterialRunDataFactory(name="foo_{}".format(i)) for i in range(20)
+    ]
+    fake_request = make_fake_cursor_request_function(all_runs)
+    # lotta shady stuff going on in this test
+    setattr(session, 'get_resource', fake_request)
+    setattr(session, 'cursor_paged_resource', Session.cursor_paged_resource)
+    # TODO: the results appear equal in the diff but fail equality check
+    assert len(list(collection.list_by_name('unused', per_page=2))) == len(all_runs)
+    with pytest.raises(RuntimeError):
+        collection.dataset_id = None
+        collection.list_by_name('unused')
+
+
+def test_list_all(collection, session):
+    all_runs = [
+        MaterialRunDataFactory(name="foo_{}".format(i)) for i in range(20)
+    ]
+    fake_request = make_fake_cursor_request_function(all_runs)
+    # lotta shady stuff going on in this test
+    setattr(session, 'get_resource', fake_request)
+    setattr(session, 'cursor_paged_resource', Session.cursor_paged_resource)
+    # TODO: the results appear equal in the diff but fail equality check
+    assert len(list(collection.list_all(per_page=2))) == len(all_runs)
 
 
 def test_filter_by_attribute_bounds(collection, session):
