@@ -119,6 +119,7 @@ def make_fake_cursor_request_function(all_results: list):
     all_results: list
         All results in the result set to simulate paging
     """
+    # TODO add logic for `forward` and `ascending`
     def fake_cursor_request(*_, params=None, **__):
         page_size = params['per_page']
         if 'cursor' in params:
