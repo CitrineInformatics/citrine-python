@@ -637,11 +637,11 @@ class DataConceptsCollection(Collection[ResourceType]):
         response = self.session.get_resource(
             # "Ignoring" dataset because it is in the query params (and required)
             self._get_path(ignore_dataset=True) + "/filter-by-name",
-            params=params,
-            )
+            params=params)
         return [self.build(content) for content in response["contents"]]
 
-    def list_by_name(self, name: str, exact: bool = False, forward: bool = True, per_page: int = 100) -> Iterator[DataConcepts]:
+    def list_by_name(self, name: str, exact: bool = False,
+                     forward: bool = True, per_page: int = 100) -> Iterator[DataConcepts]:
         """
         Get all objects with specified name in this dataset.
 

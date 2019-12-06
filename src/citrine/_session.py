@@ -41,7 +41,7 @@ class Session(requests.Session):
         # Following scheme:[//authority]path[?query][#fragment] (https://en.wikipedia.org/wiki/URL)
         self.headers.update({"Content-Type": "application/json"})
 
-    def versioned_base_url(self, version: str = 'v1'):
+    def _versioned_base_url(self, version: str = 'v1'):
         return '{}://{}/api/{}/'.format(self.scheme, self.authority, version)
 
     def _is_access_token_expired(self):
@@ -50,7 +50,8 @@ class Session(requests.Session):
     def _refresh_access_token(self) -> None:
         """Optionally refresh our access token (if the previous one is about to expire)."""
         data = {'refresh_token': self.refresh_token}
-        response = super().request('POST', self.versioned_base_url() + 'tokens/refresh', json=data)
+        response = super().request(
+            'POST', self._versioned_base_url() + 'tokens/refresh', json=data)
         if response.status_code != 200:
             raise UnauthorizedRefreshToken()
         self.access_token = response.json()['access_token']
@@ -58,11 +59,12 @@ class Session(requests.Session):
             jwt.decode(self.access_token, verify=False)['exp']
         )
 
-    def checked_request(self, method: str, path: str, *args, version: str = 'v1', **kwargs) -> requests.Response:
+    def checked_request(self, method: str, path: str, *args,
+                        version: str = 'v1', **kwargs) -> requests.Response:
         """Check response status code and throw an exception if relevant."""
         if self._is_access_token_expired():
             self._refresh_access_token()
-        uri = self.versioned_base_url(version) + path.lstrip('/')
+        uri = self._versioned_base_url(version) + path.lstrip('/')
         response = super().request(method, uri, *args, **kwargs)
 
         try:
