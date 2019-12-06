@@ -23,12 +23,12 @@ class AuditInfo(Serializable):
 
     """
 
-    created_by = properties.UUID('created_by')
-    created_at = properties.Datetime('created_at')
+    created_by = properties.Optional(properties.UUID, 'created_by')
+    created_at = properties.Optional(properties.Datetime, 'created_at')
     updated_by = properties.Optional(properties.UUID, 'updated_by')
     updated_at = properties.Optional(properties.Datetime, 'updated_at')
 
-    def __init__(self, created_by: UUID, created_at: datetime,
+    def __init__(self, created_by: Optional[UUID], created_at: Optional[datetime],
                  updated_by: Optional[UUID] = None, updated_at: Optional[datetime] = None):
         self.created_by = created_by
         self.created_at = created_at
