@@ -43,7 +43,8 @@ setup(name='citrine',
           "strip-hints>=0.1.5",
           "taurus-citrine>=0.3.0,<0.4.0",
           "boto3",
-          "botocore"
+          "botocore",
+          "deprecation"
       ],
       cmdclass={
           'install': PostInstallCommand,
