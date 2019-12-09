@@ -10,8 +10,6 @@ RUN pip install -U -r test_requirements.txt
 
 COPY . .
 RUN pip install --no-deps -e .
-CMD pytest --cov=src/ --cov-report term-missing \
-    --cov-report term:skip-covered \
-    --cov-fail-under=100 -s -r . \
-    && flake8 src \
-    && cd docs; make html; cd ..
+ENTRYPOINT ["pytest", "--cov=src/", "--cov-report", "term-missing", "--cov-report", "term:skip-covered", \
+    "--cov-fail-under=100", "-s"]
+CMD ["-r", "."]
