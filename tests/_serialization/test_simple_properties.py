@@ -2,10 +2,12 @@ import pytest
 import arrow
 import uuid
 
+from citrine.resources.dataset import Dataset
 from citrine._serialization.properties import (
     Integer,
     String,
     Float,
+    UUID,
     Datetime,
     LinkByUID,
     LinkOrElse,
@@ -50,8 +52,38 @@ def test_invalid_deserialization_type(prop_type, serialized):
         prop.deserialize(serialized)
 
 
+@pytest.mark.parametrize('prop_type,serialized', INVALID_DESERIALIZATION_TYPES)
+def test_invalid_deserialization_type_with_base_class(prop_type, serialized):
+    class BaseTest:
+        pass
+
+    prop = prop_type()
+    prop.serialization_path = 'ser_path'
+    with pytest.raises(ValueError) as excinfo:
+        prop.deserialize(serialized, base_class=BaseTest().__class__)
+
+    # Check that the exception includes the calling class name and argument
+    if not isinstance(prop, UUID):
+        assert 'BaseTest:ser_path' in str(excinfo.value)
+
+
+@pytest.mark.parametrize('prop_type,serialized', INVALID_DESERIALIZATION_TYPES)
+def test_invalid_deserialization_type_with_dataset(prop_type, serialized):
+    # Supplying a Daatset instance as the base_class should include it's
+    # name in the exception value string (UUIDs are a special case)
+    dset = Dataset(name="dset", summary="test dataset", description="description")
+
+    prop = prop_type()
+    prop.serialization_path = 'ser_path'
+    with pytest.raises(ValueError) as excinfo:
+        prop.deserialize(serialized, base_class=dset.__class__)
+
+    if not isinstance(prop, UUID):
+        assert 'Dataset:ser_path' in str(excinfo.value)
+
+
 @pytest.mark.parametrize('prop_type,path,expected', VALID_STRINGS)
-def test_invalid_property_deserialization(prop_type, path, expected):
+def test_valid_property_deserialization(prop_type, path, expected):
     assert expected == str(prop_type(path))
 
 
