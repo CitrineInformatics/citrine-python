@@ -1,6 +1,7 @@
 """Property objects for typed setting and ser/de."""
 from abc import abstractmethod
 import typing
+from typing import Optional
 from datetime import datetime
 import uuid
 import arrow
@@ -39,16 +40,29 @@ class Property(typing.Generic[DeserializedType, SerializedType]):
     def serialized_types(self) -> typing.Union[SerializedType, typing.Tuple[SerializedType]]:
         """Return the types used to serialize this property."""
 
-    def serialize(self, value: DeserializedType) -> SerializedType:
+    def _error_source(self, base_class: type) -> str:
+        """Construct a string of the base class name and the parameter that failed."""
+        if base_class is not None:
+            return 'for {}:{}'.format(base_class.__name__, self.serialization_path)
+        elif self.serialization_path:
+            return 'for {}'.format(self.serialization_path)
+        else:
+            return ''
+
+    def serialize(self, value: DeserializedType,
+                  base_class: Optional[type] = None) -> SerializedType:
         if not isinstance(value, self.underlying_types):
-            raise ValueError('{} is not one of valid types: '
-                             '{}!'.format(value, self.underlying_types))
+            base_name = self._error_source(base_class)
+            raise ValueError('{} is not one of valid types: {} {}'.format(
+                value, self.underlying_types, base_name))
         return self._serialize(value)
 
-    def deserialize(self, value: SerializedType) -> DeserializedType:
+    def deserialize(self, value: SerializedType,
+                    base_class: Optional[type] = None) -> DeserializedType:
         if not isinstance(value, self.serialized_types):
-            raise ValueError('{} is not one of valid types: '
-                             '{}!'.format(value, self.serialized_types))
+            base_name = self._error_source(base_class)
+            raise ValueError('{} is not one of valid types: {} {}'.format(
+                value, self.serialized_types, base_name))
         return self._deserialize(value)
 
     @abstractmethod
@@ -64,17 +78,19 @@ class Property(typing.Generic[DeserializedType, SerializedType]):
         fields = self.serialization_path.split('.')
         for field in fields:
             value = value.get(field, self.default)
-        return self.deserialize(value)
+        base_class = _get_base_class(data, self.serialization_path)
+        return self.deserialize(value, base_class=base_class)
 
     def serialize_to_dict(self, data: dict, value: DeserializedType) -> dict:
         if self.serialization_path is None:
             raise ValueError('No serialization path set!')
         else:
+            base_class = _get_base_class(data, self.serialization_path)
             _data = data
             fields = self.serialization_path.split('.')
             for field in fields[:-1]:
                 _data = _data.setdefault(field, {})
-            _data[fields[-1]] = self.serialize(value)
+            _data[fields[-1]] = self.serialize(value, base_class=base_class)
             return data
 
     def __get__(self, obj, objtype=None) -> DeserializedType:
@@ -87,13 +103,13 @@ class Property(typing.Generic[DeserializedType, SerializedType]):
 
     def __set__(self, obj, value: typing.Union[SerializedType, DeserializedType]):
         """Property setter, deferring to the setter of the parent class, if applicable."""
+        base_class = _get_base_class(obj, self.serialization_path)
         if issubclass(type(value), self.underlying_types):
             value_to_set = value
         else:
             # if value is not an underlying type, set its deserialized version.
-            value_to_set = self.deserialize(value)
+            value_to_set = self.deserialize(value, base_class=base_class)
 
-        base_class = _get_base_class(obj, self.serialization_path)
         if base_class is not None:
             getattr(base_class, self.serialization_path).fset(obj, value_to_set)
         else:
