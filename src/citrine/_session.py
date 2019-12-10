@@ -16,7 +16,6 @@ from citrine.exceptions import (
 import jwt
 import requests
 
-
 # Choose a 5 second buffer so that there's no chance of the access token
 # expiring during the check for expiration
 EXPIRATION_BUFFER_MILLIS: timedelta = timedelta(milliseconds=5000)
@@ -40,6 +39,11 @@ class Session(requests.Session):
 
         # Following scheme:[//authority]path[?query][#fragment] (https://en.wikipedia.org/wiki/URL)
         self.headers.update({"Content-Type": "application/json"})
+
+        # Default parameters for S3 connectivity. Can be changed by tests.
+        self.s3_endpoint_url = None
+        self.s3_use_ssl = True
+        self.s3_addressing_style = 'auto'
 
     def _versioned_base_url(self, version: str = 'v1'):
         return '{}://{}/api/{}/'.format(self.scheme, self.authority, version)

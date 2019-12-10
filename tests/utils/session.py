@@ -36,6 +36,9 @@ class FakeSession:
     def __init__(self):
         self.calls = []
         self.responses = []
+        self.s3_endpoint_url = None
+        self.s3_use_ssl = True
+        self.s3_addressing_style = 'auto'
 
     def set_response(self, resp):
         self.responses = [resp]
