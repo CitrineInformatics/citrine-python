@@ -1,0 +1,15 @@
+# Developmental Docker container, performing the same tasks as in .travis.yml
+FROM python:3.8
+
+WORKDIR /src
+COPY requirements.txt .
+RUN pip install -U -r requirements.txt
+
+COPY test_requirements.txt .
+RUN pip install -U -r test_requirements.txt
+
+COPY . .
+RUN pip install --no-deps -e .
+ENTRYPOINT ["pytest", "--cov=src/", "--cov-report", "term-missing", "--cov-report", "term:skip-covered", \
+    "--cov-fail-under=100", "-s"]
+CMD ["-r", "."]
