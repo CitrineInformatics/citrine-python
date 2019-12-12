@@ -817,7 +817,7 @@ class DataConceptsCollection(Collection[ResourceType]):
                             'got {}'.format(attribute_bounds))
         if len(attribute_bounds) != 1:
             raise NotImplementedError('Currently, only searches with exactly one template '
-                                      'to bounds mapping is supported; got {}'
+                                      'to bounds mapping are supported; got {}'
                                       .format(attribute_bounds))
         return {
             'attribute_bounds': {
