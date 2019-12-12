@@ -167,7 +167,7 @@ def test_filter_by_name(collection, session):
 
 def test_cursor_paginated_searches(collection, session):
     """
-    Tests that search methods using cursor-paginated are hooked up correctly.
+    Tests that search methods using cursor-pagination are hooked up correctly.
     There is no real search logic tested here.
     """
     all_runs = [
