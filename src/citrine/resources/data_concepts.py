@@ -816,7 +816,7 @@ class DataConceptsCollection(Collection[ResourceType]):
             raise TypeError('attribute_bounds must be a dict mapping template to bounds; '
                             'got {}'.format(attribute_bounds))
         if len(attribute_bounds) != 1:
-            raise NotImplementedError('Currently, once searches with exactly one template '
+            raise NotImplementedError('Currently, only searches with exactly one template '
                                       'to bounds mapping is supported; got {}'
                                       .format(attribute_bounds))
         return {
