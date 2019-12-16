@@ -44,6 +44,20 @@ When a performance workflow is executed then the cross-validation analysis will 
 for the `output` descriptor in your `predictor`.
 
 A workflow can be run using the python SDK.
+
+The following demonstrates how to trigger workflow execution using an already existing `predictor` object and the `workflow` created in the example above.:
+
+.. code:: python
+
+   from time import sleep
+   from citrine.informatics.modules import ModuleRef
+
+   execution = workflow.executions.trigger(ModuleRef(str(predictor.uid)))
+   # wait for the execution to complete
+   while execution.status().in_progress:
+       sleep(10)
+   execution_results = execution.results()
+
 Triggering a workflow returns a workflow execution object.
 A workflow execution has a status (in progress, succeeded, or failed) and results (once execution has succeeded).
 Results of a successful workflow are returned as a dictionary.
@@ -66,17 +80,3 @@ Results of a successful workflow are returned as a dictionary.
        ]
      ]
    }
-   
-
-The following demonstrates how to trigger workflow execution using an already existing `predictor` object and the `workflow` created in the example above.:
-
-.. code:: python
-
-   from time import sleep
-   from citrine.informatics.modules import ModuleRef
-
-   execution = workflow.executions.trigger(ModuleRef(str(predictor.uid)))
-   # wait for the execution to complete
-   while execution.status().in_progress:
-       sleep(10)
-   execution_results = execution.results()
