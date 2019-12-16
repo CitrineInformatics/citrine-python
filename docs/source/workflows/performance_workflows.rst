@@ -47,7 +47,7 @@ A workflow can be run using the python SDK.
 Triggering a workflow returns a workflow execution object.
 A workflow execution has a status (in progress, succeeded, or failed) and results (once execution has succeeded).
 Results of a successful workflow are returned as a dictionary.
-
+Below shows an example of the results object.
 .. code:: python
 
    {
