@@ -41,7 +41,10 @@ The following example demonstrates how to use the python SDK to register a perfo
 Execution and results
 ---------------------
 
-When a performance workflow is executed then the cross-validation analysis will be performed against the given `predictor` and will contain performance metrics
+When a performance workflow is executed against a module, it performs the analysis and returns an "analysis results" dictionary that contains performance metrics.
+For a cross-validation analysis, cross-validation is performed against the supplied predictor: the predictor's training data are partitioned into several "folds," and each fold takes a turn acting as the "test set."
+For each test set, the rest of the data are used to train the predictor, and the ensuing model is applied to the held-out test set.
+By comparing the model's predictions to the true values, we can compute several performance metrics that provide information about model quality.
 for the `output` descriptor in your `predictor`.
 
 A workflow can be run using the python SDK.
