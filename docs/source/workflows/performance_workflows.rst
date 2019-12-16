@@ -1,7 +1,7 @@
 Performance workflows
 =====================
 
-A performance workflow runs cross-validation analysis on a predictor configuration
+A performance workflow runs cross-validation analysis on a predictor configuration.
 
 Registration and validation
 ---------------------------
