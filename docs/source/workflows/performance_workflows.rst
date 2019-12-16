@@ -3,34 +3,14 @@ Performance workflows
 
 A performance workflow runs cross-validation analysis on a predictor configuration.
 
-Registration and validation
----------------------------
-
-A workflow is registered with a project and validated before it is ready for use.
-Once registered, validation occurs automatically.
-Validation status can be one of the following states:
-
--  **Created:** The module has been registered with a project and has been queued for validation.
--  **Validating:** The workflow is currently validating. The status will be updated to one of the subsequent states upon completion.
--  **Invalid:** Validation completed successfully but found errors with the workflow.
--  **Ready:** Validation completed successfully and found no errors.
--  **Error:** Validation did not complete.
-   An error was raised during the validation process that prevented an invalid or ready status to be determined.
-   Validation of a workflow and all constituent modules must complete with ready status before the workflow can be executed.
-
 The following example demonstrates how to use the python SDK to register a performance workflow, wait for validation to complete and check the final status:
 
 .. code:: python
 
    from time import sleep
-   from citrine import Citrine
    from citrine.informatics.workflows import PerformanceWorkflow
    from citrine.informatics.analysis_configuration import CrossValidationAnalysisConfiguration
 
-   # create a session with citrine using API variables
-   session = Citrine(API_KEY, API_SCHEME, API_HOST, API_PORT)
-
-   project = session.projects.register('Example project')
    workflow = project.workflows.register(
        PerformanceWorkflow(
            name='Demo Performance Workflow',
@@ -38,7 +18,9 @@ The following example demonstrates how to use the python SDK to register a perfo
                name='analysis_settings',
                n_folds=2,
                n_trials=3,
-               max_rows=200
+               max_rows=200,
+               seed=10,
+               group_by_keys=['~~x']
            )
        )
    )

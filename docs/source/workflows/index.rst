@@ -36,6 +36,20 @@ After a given number of iterations, candidates are ranked according to their sco
 
 Design workflows are further parameterized by :doc:`Scores <scores>`, which codify experimental objectives and constraints on desired candidates, and define the strategy for candidate acquisition.
 
+Registration and validation
+---------------------------
+
+Both modules and workflows are registered with a project and validated before they are ready for use. Once registered, validation occurs automatically.
+Validation status can be one of the following states:
+
+-  **Created:** The module/workflow has been registered with a project and has been queued for validation.
+-  **Validating:** The module/workflow is currently validating. The status will be updated to one of the subsequent states upon completion.
+-  **Invalid:** Validation completed successfully but found errors with the workflow/module.
+-  **Ready:** Validation completed successfully and found no errors.
+-  **Error:** Validation did not complete. An error was raised during the validation process that prevented an invalid or ready status to be determined.
+
+Validation of a workflow and all constituent modules must complete with ready status before the workflow can be executed.
+
 Table of Contents
 -----------------
 
@@ -48,3 +62,4 @@ Table of Contents
     processors
     scores
     design_workflows
+    performance_workflows
