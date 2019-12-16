@@ -1,7 +1,8 @@
 Performance workflows
 =====================
 
-A performance workflow runs cross-validation analysis on a predictor configuration.
+A performance workflow performs analysis on a module.
+Currently, the only analysis implemented is "cross validation analysis," which performs cross-validation on a predictor.
 
 The following example demonstrates how to use the python SDK to register a performance workflow, wait for validation to complete and check the final status:
 
