@@ -54,10 +54,11 @@ several log levels:
 * `DEBUG` - verbose information output that may assist the developer while debugging
 * `NOTSET` - no filtering whatsoever
 
-Each log level includes the previous. By default, the log level is set to `INFO`. However, it may be
-preferable to set the log level to `WARNING` or `ERROR` if your program's output should be concise
-and/or only produce actionable information. When debugging issues, increasing the verbosity to
-`DEBUG` may be helpful, particularly if seeking assistance from the Citrine team.
+Each log level includes the previous, i.e. `WARNING` includes itself, `ERROR`, and `FATAL`. By
+default, the log level is set to `INFO`. However, it may be preferable to set the log level to
+`WARNING` or `ERROR` if your program's output should be concise and/or only produce actionable
+information. When debugging issues, increasing the verbosity to `DEBUG` may be helpful,
+particularly if seeking assistance from the Citrine team.
 
 To set your log level, add
 ```python
