@@ -77,28 +77,22 @@ from taurus.entity.dict_serializable import logger
 import logging
 logger.setLevel(logging.ERROR)
 ```
-will silence warnings about receiving unexpected data in responses from Citrine APIs, while still
-allowing other loggers to produce `INFO` level output.
+will silence warnings about receiving superfluous data in responses from Citrine APIs, while still
+allowing other loggers to produce output of `WARNING` level and lower.
 
 Another example:
 ```python
 import logging
-citrine.session.logger.setLevel(logging.DEBUG)
+import logging
+citrine._session.logger.setLevel(logging.DEBUG)
 ```
 will enable `DEBUG` level output in the for all activity relating to HTTP requests to Citrine APIs.
-This example assumes you've named your `Citrine` object instance `citrine`.
 
 In general, all log output originating from Citrine source code will include the module from which
 log output originates. By convention loggers are named `logger`, so the module + `.logger` will
-locate the correct instance, e.g. log line
+locate the correct instance, e.g. the log line
 
 ```
 INFO:citrine._session:200 GET /projects/fc568490-224a-4070-807f-1427c4f4dcd8
 ```
-
-can be suppressed with
-```
-import citrine
-import logging
-citrine._session.logger.setLevel(logging.WARNING)
-```
+is an example of output from the logger in the previous example.
