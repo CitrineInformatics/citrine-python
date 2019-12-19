@@ -81,16 +81,17 @@ will silence warnings about receiving superfluous data in responses from Citrine
 allowing other loggers to produce output of `WARNING` level and lower.
 
 Another example:
+
 ```python
+from citrine._session import logger
 import logging
-import citrine
-citrine._session.logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.DEBUG)
 ```
 will enable `DEBUG` level output in the for all activity relating to HTTP requests to Citrine APIs.
 
 In general, all log output originating from Citrine source code will include the module from which
-log output originates. By convention loggers are named `logger`, so the module + `.logger` will
-locate the correct instance, e.g. the log line
+log output originates. By convention loggers are named `logger`, so importing `logger` from the
+originating module will locate the correct instance, e.g. the log line
 
 ```
 INFO:citrine._session:200 GET /projects/fc568490-224a-4070-807f-1427c4f4dcd8
