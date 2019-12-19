@@ -63,18 +63,18 @@ class Session(requests.Session):
             jwt.decode(self.access_token, verify=False)['exp']
         )
 
-    def checked_request(self, method: str, path: str, *args,
+    def checked_request(self, method: str, path: str,
                         version: str = 'v1', **kwargs) -> requests.Response:
         """Check response status code and throw an exception if relevant."""
         if self._is_access_token_expired():
             self._refresh_access_token()
         uri = self._versioned_base_url(version) + path.lstrip('/')
-        response = super().request(method, uri, *args, **kwargs)
+        response = super().request(method, uri, **kwargs)
 
         try:
             if response.status_code == 401 and response.json().get("reason") == "invalid-token":
                 self._refresh_access_token()
-                response = super().request(method, uri, *args, **kwargs)
+                response = super().request(method, uri, **kwargs)
         except ValueError:
             # Ignore ValueErrors thrown by attempting to decode json bodies. This
             # might occur if we get a 401 response without a JSON body
@@ -89,9 +89,7 @@ class Session(requests.Session):
             self.logger.debug('\tmethod: {}'.format(method))
             self.logger.debug('\tpath: {}'.format(path))
             self.logger.debug('\tversion: {}'.format(version))
-            for i, arg in enumerate(args):
-                self.logger.debug('\targs[{}]: {}'.format(i, arg))
-            for k, v in kwargs:
+            for k, v in kwargs.items():
                 self.logger.debug('\t{}: {}'.format(k, v))
             self.logger.debug('END request details.')
             stacktrace = self._extract_response_stacktrace(response)
@@ -129,24 +127,24 @@ class Session(requests.Session):
             pass
         return None
 
-    def get_resource(self, path: str, *args, **kwargs) -> dict:
+    def get_resource(self, path: str, **kwargs) -> dict:
         """GET a particular resource as JSON."""
-        return self.checked_get(path, *args, **kwargs).json()
+        return self.checked_get(path, **kwargs).json()
 
-    def post_resource(self, path: str, json: dict, *args, **kwargs) -> dict:
+    def post_resource(self, path: str, json: dict, **kwargs) -> dict:
         """POST to a particular resource as JSON."""
-        return self.checked_post(path, *args, json=json, **kwargs).json()
+        return self.checked_post(path, json=json, **kwargs).json()
 
-    def put_resource(self, path: str, json: dict, *args, **kwargs) -> dict:
+    def put_resource(self, path: str, json: dict, **kwargs) -> dict:
         """PUT data given by some JSON at a particular resource."""
-        return self.checked_put(path, *args, json=json, **kwargs).json()
+        return self.checked_put(path, json=json, **kwargs).json()
 
     def delete_resource(self, path: str) -> dict:
         """DELETE a particular resource as JSON."""
         return self.checked_delete(path).json()
 
     @staticmethod
-    def cursor_paged_resource(base_method: Callable[..., dict], path: str, *args,
+    def cursor_paged_resource(base_method: Callable[..., dict], path: str,
                               forward: bool = True, per_page: int = 100,
                               version: str = 'v2', **kwargs) -> Iterator[dict]:
         """
@@ -160,7 +158,7 @@ class Session(requests.Session):
         params['per_page'] = per_page
         kwargs['params'] = params
         while True:
-            response_json = base_method(path, *args, version=version, **kwargs)
+            response_json = base_method(path, version=version, **kwargs)
             for obj in response_json['contents']:
                 yield obj
             cursor = response_json.get('next')
@@ -168,18 +166,18 @@ class Session(requests.Session):
                 break
             params['cursor'] = cursor
 
-    def checked_post(self, path: str, json: dict, *args, **kwargs) -> Response:
+    def checked_post(self, path: str, json: dict, **kwargs) -> Response:
         """Execute a POST request to a URL and utilize error filtering on the response."""
-        return self.checked_request('POST', path, *args, json=json, **kwargs)
+        return self.checked_request('POST', path, json=json, **kwargs)
 
-    def checked_put(self, path: str, json: dict, *args, **kwargs) -> Response:
+    def checked_put(self, path: str, json: dict, **kwargs) -> Response:
         """Execute a PUT request to a URL and utilize error filtering on the response."""
-        return self.checked_request('PUT', path, *args, json=json, **kwargs)
+        return self.checked_request('PUT', path, json=json, **kwargs)
 
     def checked_delete(self, path: str) -> Response:
         """Execute a DELETE request to a URL and utilize error filtering on the response."""
         return self.checked_request('DELETE', path)
 
-    def checked_get(self, path: str, *args, **kwargs) -> Response:
+    def checked_get(self, path: str, **kwargs) -> Response:
         """Execute a GET request to a URL and utilize error filtering on the response."""
-        return self.checked_request('GET', path, *args, **kwargs)
+        return self.checked_request('GET', path, **kwargs)
