@@ -83,7 +83,7 @@ allowing other loggers to produce output of `WARNING` level and lower.
 Another example:
 ```python
 import logging
-import logging
+import citrine
 citrine._session.logger.setLevel(logging.DEBUG)
 ```
 will enable `DEBUG` level output in the for all activity relating to HTTP requests to Citrine APIs.
