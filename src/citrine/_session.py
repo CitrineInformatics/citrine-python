@@ -85,6 +85,15 @@ class Session(requests.Session):
             self.logger.info('%s %s %s', response.status_code, method, path)
             return response
         else:
+            self.logger.debug('BEGIN request details:')
+            self.logger.debug('\tmethod: {}'.format(method))
+            self.logger.debug('\tpath: {}'.format(path))
+            self.logger.debug('\tversion: {}'.format(version))
+            for i, arg in enumerate(args):
+                self.logger.debug('\targs[{}]: {}'.format(i, arg))
+            for k, v in kwargs:
+                self.logger.debug('\t{}: {}'.format(k, v))
+            self.logger.debug('END request details.')
             stacktrace = self._extract_response_stacktrace(response)
             if stacktrace is not None:
                 self.logger.error('Response arrived with stacktrace:')
