@@ -8,8 +8,11 @@ from citrine._session import Session
 
 
 class Report(PolymorphicSerializable['Report']):
-    """A Citrine Report - an abstract type that returns the proper
-    subtype based on the 'type' value of the passed in dict.
+    """A Citrine Report contains information and performance metrics related to a module.
+
+    Abstract type that returns the proper type given a serialized dict.
+
+
     """
 
     _response_key = None
@@ -29,6 +32,7 @@ class PredictorReport(Serializable['PredictorReport'], Report):
         the status of the report (e.g. PENDING, ERROR, OK, etc)
     json: dict
         the json content of the report
+
     """
 
     uid = properties.Optional(properties.UUID, 'id', serializable=False)

@@ -12,11 +12,14 @@ def valid_data():
         display_name='A rad new workflow',
         status='READY',
         status_info=['Things are looking good'],
-        modules=dict(
+        active=True,
+        config=dict(
             design_space_id=str(uuid4()),
             processor_id=str(uuid4()),
             predictor_id=str(uuid4()),
-        )
+        ),
+        module_type='DESIGN_WORKFLOW',
+        schema_id='8af8b007-3e81-4185-82b2-6f62f4a2e6f1'
     )
 
 
@@ -28,17 +31,17 @@ def valid_serialization_output(valid_data):
 def test_simple_deserialization(valid_data):
     """Ensure a deserialized DesignWorkflow looks sane."""
     workflow: DesignWorkflow = DesignWorkflow.build(valid_data)
-    assert workflow.design_space_id == UUID(valid_data['modules']['design_space_id'])
-    assert workflow.processor_id == UUID(valid_data['modules']['processor_id'])
-    assert workflow.predictor_id == UUID(valid_data['modules']['predictor_id'])
+    assert workflow.design_space_id == UUID(valid_data['config']['design_space_id'])
+    assert workflow.processor_id == UUID(valid_data['config']['processor_id'])
+    assert workflow.predictor_id == UUID(valid_data['config']['predictor_id'])
 
 
 def test_polymorphic_deserialization(valid_data):
     """Ensure a polymorphically deserialized designWorkflow looks sane."""
     workflow: DesignWorkflow = Workflow.build(valid_data)
-    assert workflow.design_space_id == UUID(valid_data['modules']['design_space_id'])
-    assert workflow.processor_id == UUID(valid_data['modules']['processor_id'])
-    assert workflow.predictor_id == UUID(valid_data['modules']['predictor_id'])
+    assert workflow.design_space_id == UUID(valid_data['config']['design_space_id'])
+    assert workflow.processor_id == UUID(valid_data['config']['processor_id'])
+    assert workflow.predictor_id == UUID(valid_data['config']['predictor_id'])
 
 
 def test_serialization(valid_data, valid_serialization_output):

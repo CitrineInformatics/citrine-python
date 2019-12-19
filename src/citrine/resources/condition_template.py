@@ -7,11 +7,12 @@ from citrine._serialization.properties import Optional as PropertyOptional
 from citrine._serialization.properties import List as PropertyList
 from citrine._utils.functions import set_default_uid
 from citrine.resources.data_concepts import DataConcepts, DataConceptsCollection
+from citrine.resources.storable import Storable
 from taurus.entity.template.condition_template import ConditionTemplate as TaurusConditionTemplate
 from taurus.entity.bounds.base_bounds import BaseBounds
 
 
-class ConditionTemplate(DataConcepts, Resource['ConditionTemplate'], TaurusConditionTemplate):
+class ConditionTemplate(Storable, Resource['ConditionTemplate'], TaurusConditionTemplate):
     """
     A condition template.
 

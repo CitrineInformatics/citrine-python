@@ -8,6 +8,7 @@ from citrine._serialization.properties import Optional as PropertyOptional
 from citrine._serialization.properties import List as PropertyList
 from citrine._utils.functions import set_default_uid
 from citrine.resources.data_concepts import DataConcepts, DataConceptsCollection
+from citrine.resources.storable import Storable
 from citrine.resources.property_template import PropertyTemplate
 from taurus.client.json_encoder import loads, dumps
 from taurus.entity.template.material_template import MaterialTemplate as TaurusMaterialTemplate
@@ -15,7 +16,7 @@ from taurus.entity.bounds.base_bounds import BaseBounds
 from taurus.entity.link_by_uid import LinkByUID
 
 
-class MaterialTemplate(DataConcepts, Resource['MaterialTemplate'], TaurusMaterialTemplate):
+class MaterialTemplate(Storable, Resource['MaterialTemplate'], TaurusMaterialTemplate):
     """
     A material template.
 
@@ -74,7 +75,7 @@ class MaterialTemplate(DataConcepts, Resource['MaterialTemplate'], TaurusMateria
                                         description=description)
 
     @classmethod
-    def _build_child_objects(cls, data: dict, session: Session = None):
+    def _build_child_objects(cls, data: dict, data_with_soft_links, session: Session = None):
         """
         Build the property templates and bounds.
 

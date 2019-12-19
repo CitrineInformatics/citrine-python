@@ -58,6 +58,8 @@ class Dataset(Resource['Dataset']):
         Time the dataset was most recently updated, in seconds since epoch.
     delete_time: int
         Time the dataset was deleted, in seconds since epoch, if it is deleted.
+    public: bool
+        Flag indicating whether the dataset is publicly readable.
 
     """
 
@@ -74,6 +76,7 @@ class Dataset(Resource['Dataset']):
     create_time = properties.Optional(properties.Datetime(), 'create_time')
     update_time = properties.Optional(properties.Datetime(), 'update_time')
     delete_time = properties.Optional(properties.Datetime(), 'delete_time')
+    public = properties.Optional(properties.Boolean(), 'public')
 
     def __init__(self, name: str, summary: str, description: str):
         self.name: str = name
@@ -90,6 +93,7 @@ class Dataset(Resource['Dataset']):
         self.create_time = None
         self.update_time = None
         self.delete_time = None
+        self.public = None
 
     def __str__(self):
         return '<Dataset {!r}>'.format(self.name)

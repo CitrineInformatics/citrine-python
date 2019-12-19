@@ -36,6 +36,7 @@ Table of Contents
 
    getting_started/index
    workflows/index
+   development
    FAQ/index
 
 Indices and tables

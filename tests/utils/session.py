@@ -11,6 +11,9 @@ class FakeCall:
         self.json = json
         self.params = params or {}
 
+    def __repr__(self):
+        return 'FakeCall({})'.format(self)
+
     def __str__(self) -> str:
         path = self.path
         if self.params:
@@ -33,6 +36,9 @@ class FakeSession:
     def __init__(self):
         self.calls = []
         self.responses = []
+        self.s3_endpoint_url = None
+        self.s3_use_ssl = True
+        self.s3_addressing_style = 'auto'
 
     def set_response(self, resp):
         self.responses = [resp]
@@ -48,27 +54,27 @@ class FakeSession:
     def last_call(self) -> FakeCall:
         return self.calls[-1]
 
-    def get_resource(self, path: str, *args, **kwargs) -> dict:
-        return self.checked_get(path, *args, **kwargs)
+    def get_resource(self, path: str, **kwargs) -> dict:
+        return self.checked_get(path, **kwargs)
 
-    def post_resource(self, path: str, json: dict, *args, **kwargs) -> dict:
-        return self.checked_post(path, json, *args, **kwargs)
+    def post_resource(self, path: str, json: dict, **kwargs) -> dict:
+        return self.checked_post(path, json, **kwargs)
 
-    def put_resource(self, path: str, json: dict, *args, **kwargs) -> dict:
-        return self.checked_put(path, json, *args, **kwargs)
+    def put_resource(self, path: str, json: dict, **kwargs) -> dict:
+        return self.checked_put(path, json, **kwargs)
 
     def delete_resource(self, path: str) -> dict:
         return self.checked_delete(path)
 
-    def checked_get(self, path: str, *args, **kwargs) -> dict:
+    def checked_get(self, path: str, **kwargs) -> dict:
         self.calls.append(FakeCall('GET', path, params=kwargs.get('params')))
         return self._get_response()
 
-    def checked_post(self, path: str, json: dict, *args, **kwargs) -> dict:
+    def checked_post(self, path: str, json: dict, **kwargs) -> dict:
         self.calls.append(FakeCall('POST', path, json, params=kwargs.get('params')))
         return self._get_response()
 
-    def checked_put(self, path: str, json: dict, *args, **kwargs) -> dict:
+    def checked_put(self, path: str, json: dict, **kwargs) -> dict:
         self.calls.append(FakeCall('PUT', path, json))
         return self._get_response()
 
@@ -105,3 +111,29 @@ class FakeRequestResponse:
 
     def __init__(self, content=None):
         self.content = content
+
+
+def make_fake_cursor_request_function(all_results: list):
+    """
+    Returns function which simulates request to cursor-paged endpoint.
+
+    Parameters
+    ---------
+    all_results: list
+        All results in the result set to simulate paging
+    """
+    # TODO add logic for `forward` and `ascending`
+    def fake_cursor_request(*_, params=None, **__):
+        page_size = params['per_page']
+        if 'cursor' in params:
+            cursor = int(params['cursor'])
+            contents = all_results[cursor + 1:cursor + page_size + 1]
+        else:
+            contents = all_results[:page_size]
+        response = {'contents': contents}
+        if contents:
+            response['next'] = str(all_results.index(contents[-1]))
+            if 'cursor' in params:
+                response['previous'] = str(all_results.index(contents[0]))
+        return response
+    return fake_cursor_request

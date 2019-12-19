@@ -1,8 +1,10 @@
 """Top-level class for all data concepts objects and collections thereof."""
+from logging import getLogger
 from uuid import UUID
-from typing import TypeVar, Type, List, Dict, Union, Optional
+from typing import TypeVar, Type, List, Dict, Union, Optional, Iterator
 from copy import deepcopy
 from abc import abstractmethod
+from deprecation import deprecated
 
 from citrine._session import Session
 from citrine._rest.collection import Collection
@@ -40,8 +42,13 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
 
     """
 
-    _local_keys = ['type']
-    """list of str: keys that appear in the serialized dictionary but not in the object itself."""
+    _type_key = "type"
+    """str: key used to determine type of serialized object."""
+
+    _client_keys = []
+    """list of str: keys that are in the serialized object, but are only relevant to the client.
+    These keys are not passed to the data model during deserialization.
+    """
 
     class_dict = dict()
     """
@@ -79,46 +86,35 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
             An object corresponding to a data concepts resource.
 
         """
+        data_copy = deepcopy(data)
+        # Extract the values that are only for the client.
+        # They will be attached to the deserialized object later.
+        client_only_dict = dict()
+        for client_key in cls._client_keys:
+            val = DataConcepts._pop_field(data_copy, client_key)
+            client_only_dict[client_key] = val
+
         # Running through a taurus loads/dumps cycle validates all of the fields and ensures
         # the object is now a dictionary with a well-understood structure
-        data_copy_dict = loads(dumps(deepcopy(data))).as_dict()
+        # Note that this process modifies data_copy and makes it unsuitable for further use
+        data_copy_dict = loads(dumps(data_copy)).as_dict()
+
         # Check the type--it should either correspond to LinkByUID or to this class.
-        if 'type' in data_copy_dict and data_copy_dict['type'] == LinkByUID.typ:
+        if data_copy_dict.get(DataConcepts._type_key) == LinkByUID.typ:
             return loads(dumps(data_copy_dict))
         validate_type(data_copy_dict, cls._response_key)
 
-        cls._remove_local_keys(data_copy_dict)
+        # Remove the top-level "type" field and build child objects
+        data_copy_dict.pop(DataConcepts._type_key, None)
         cls._build_child_objects(data_copy_dict, data)
 
         data_concepts_object = cls(**data_copy_dict)
         data_concepts_object.session = session
+        for client_key in cls._client_keys:
+            setattr(data_concepts_object, client_key, client_only_dict.get(client_key))
 
         cls._build_discarded_objects(data_concepts_object, data, session)
         return data_concepts_object
-
-    @classmethod
-    def _remove_local_keys(cls, data: dict) -> dict:
-        """
-        Remove each of the 'local' keys in a dictionary.
-
-        Local keys are not meant to be serialized or passed to the class constructor.
-        Note that this method modifies the input dictionary.
-
-        Parameters
-        ----------
-        data: dict
-            A dictionary corresponding to a serialized object.
-
-        Returns
-        -------
-        dict
-            The serialized object with local keys removed.
-
-        """
-        for key in cls._local_keys:
-            if key in data:
-                del data[key]
-        return data
 
     @staticmethod
     def _get_field(data, field: str):
@@ -128,7 +124,7 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
         Parameters
         ----------
         data: dict or object
-            foo
+            From which to get the value of the field
         field: str
             The name of the field
 
@@ -139,9 +135,32 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
 
         """
         if isinstance(data, dict):
-            return data.get(field)
+            return data.get(field, None)
         elif isinstance(data, object):
             return getattr(data, field, None)
+
+    @staticmethod
+    def _pop_field(data, field: str):
+        """
+        Pop the value of a field from something that might be a dictionary or might be an object.
+
+        Parameters
+        ----------
+        data: dict or object
+            From which to pop the value of the field
+        field: str
+            The name of the field
+
+        Returns
+        -------
+        Any
+            The value associated with `field` in `data`
+
+        """
+        if isinstance(data, dict):
+            return data.pop(field, None)
+        elif isinstance(data, object):
+            return data.__dict__.pop(field, None)
 
     @classmethod
     def _build_child_objects(cls, data: dict, data_with_soft_links,
@@ -365,7 +384,7 @@ class DataConceptsCollection(Collection[ResourceType]):
     dataset_id: UUID
         The uid of the dataset that this collection belongs to. If None then the collection
         ranges over all datasets in the project. Note that this is only allowed for certain
-        actions. For example, you can use :func:`filter_by_tags` to search over all datasets,
+        actions. For example, you can use :func:`list_by_tag` to search over all datasets,
         but when using :func:`register` to upload or update an object, a dataset must be specified.
     session: Session
         The Citrine session used to connect to the database.
@@ -376,6 +395,7 @@ class DataConceptsCollection(Collection[ResourceType]):
         self.project_id = project_id
         self.dataset_id = dataset_id
         self.session = session
+        self.logger = getLogger(type(self).__name__)
 
     @classmethod
     @abstractmethod
@@ -403,6 +423,7 @@ class DataConceptsCollection(Collection[ResourceType]):
         data_concepts_object.session = self.session
         return data_concepts_object
 
+    @deprecated(details='Please use list_all')
     def list(self, page: Optional[int] = None, per_page: Optional[int] = None):
         """
         List all visible elements of the collection.
@@ -428,6 +449,14 @@ class DataConceptsCollection(Collection[ResourceType]):
 
         If the input model has an ID that corresponds to an existing object in the
         database, then that object will be updated. Otherwise a new object will be created.
+
+        Only the top-level object in `model` itself is written to the database with this
+        method. References to other objects are persisted as links, and the object returned
+        by this method has all instances of data objects replaced by instances of LinkByUid.
+        Registering an object which references other objects does NOT implicitly register
+        those other objects. Rather, those other objects' values are ignored, and the
+        pre-existence of objects with their IDs is asserted before attempting to write
+        `model`.
 
         Parameters
         ----------
@@ -481,6 +510,7 @@ class DataConceptsCollection(Collection[ResourceType]):
         data = self.session.get_resource(path)
         return self.build(data)
 
+    @deprecated(details='please use list_by_tag')
     def filter_by_tags(self, tags: List[str],
                        page: Optional[int] = None, per_page: Optional[int] = None):
         """
@@ -520,6 +550,7 @@ class DataConceptsCollection(Collection[ResourceType]):
             params=params)
         return [self.build(content) for content in response["contents"]]
 
+    @deprecated(details='please use list_by_attribute_bounds')
     def filter_by_attribute_bounds(
             self,
             attribute_bounds: Dict[Union[AttributeTemplate, LinkByUID], BaseBounds],
@@ -554,13 +585,7 @@ class DataConceptsCollection(Collection[ResourceType]):
             and have values within the specified bounds.
 
         """
-        assert isinstance(attribute_bounds, dict) and len(attribute_bounds) == 1
-
-        attribute_bounds_dict = dict()
-        for key, value in attribute_bounds.items():
-            template_id = get_object_id(key)
-            attribute_bounds_dict[template_id] = value.as_dict()
-        body = {'attribute_bounds': attribute_bounds_dict}
+        body = self._get_attribute_bounds_search_body(attribute_bounds)
         params = {}
         if self.dataset_id is not None:
             params['dataset_id'] = str(self.dataset_id)
@@ -574,6 +599,7 @@ class DataConceptsCollection(Collection[ResourceType]):
             json=body, params=params)
         return [self.build(content) for content in response["contents"]]
 
+    @deprecated(details='Please use list_by_name')
     def filter_by_name(self, name: str, exact: bool = False,
                        page: Optional[int] = None, per_page: Optional[int] = None):
         """
@@ -607,9 +633,166 @@ class DataConceptsCollection(Collection[ResourceType]):
         response = self.session.get_resource(
             # "Ignoring" dataset because it is in the query params (and required)
             self._get_path(ignore_dataset=True) + "/filter-by-name",
-            params=params,
-        )
+            params=params)
         return [self.build(content) for content in response["contents"]]
+
+    def list_by_name(self, name: str, exact: bool = False,
+                     forward: bool = True, per_page: int = 100) -> Iterator[DataConcepts]:
+        """
+        Get all objects with specified name in this dataset.
+
+        Parameters
+        ----------
+        name: str
+            case-insensitive object name prefix to search.
+        exact: bool
+            Set to True to change prefix search to exact search (but still case-insensitive).
+            Default is False.
+        forward: bool
+            Set to False to reverse the order of results (i.e. return in descending order).
+        per_page: int
+            Controls the number of results fetched with each http request to the backend.
+            Typically, this is set to a sensible default and should not be modified. Consider
+            modifying this value only if you find this method is unacceptably latent.
+
+        Returns
+        -------
+        Iterator[DataConcepts]
+            List of every object in this collection whose `name` matches the search term.
+
+        """
+        if self.dataset_id is None:
+            raise RuntimeError("Must specify a dataset to filter by name.")
+        params = {'dataset_id': str(self.dataset_id), 'name': name, 'exact': exact}
+        raw_objects = self.session.cursor_paged_resource(
+            self.session.get_resource,
+            # "Ignoring" dataset because it is in the query params (and required)
+            self._get_path(ignore_dataset=True) + "/filter-by-name",
+            forward=forward,
+            per_page=per_page,
+            params=params)
+        return (self.build(raw) for raw in raw_objects)
+
+    def list_by_attribute_bounds(
+            self,
+            attribute_bounds: Dict[Union[AttributeTemplate, LinkByUID], BaseBounds],
+            forward: bool = True, per_page: int = 100) -> Iterator[DataConcepts]:
+        """
+        Get all objects in the collection with attributes within certain bounds.
+
+        Results are ordered first by dataset, then by attribute value.
+
+        Currently only one attribute and one bounds on that attribute is supported, and
+        attribute type must be numeric.
+
+        Parameters
+        ----------
+        attribute_bounds: Dict[Union[AttributeTemplate, \
+        :py:class:`LinkByUID <taurus.entity.link_by_uid.LinkByUID>`], \
+        :py:class:`BaseBounds <taurus.entity.bounds.base_bounds.BaseBounds>`]
+            A dictionary from attributes to the bounds on that attribute.
+            Currently only real and integer bounds are supported.
+            Each attribute may be represented as an AttributeTemplate (PropertyTemplate,
+            ParameterTemplate, or ConditionTemplate) or as a LinkByUID,
+            but in either case there must be a uid and it must correspond to an
+            AttributeTemplate that exists in the database.
+            Only the uid is passed, so if you would like to update an attribute template you
+            must register that change to the database before you can use it to filter.
+        forward: bool
+            Set to False to reverse the order of results (i.e. return in descending order).
+        per_page: int
+            Controls the number of results fetched with each http request to the backend.
+            Typically, this is set to a sensible default and should not be modified. Consider
+            modifying this value only if you find this method is unacceptably latent.
+
+        Returns
+        -------
+        Iterator[DataConcepts]
+            List of every object in this collection whose `name` matches the search term.
+
+        """
+        body = self._get_attribute_bounds_search_body(attribute_bounds)
+        params = {}
+        if self.dataset_id is not None:
+            params['dataset_id'] = str(self.dataset_id)
+        raw_objects = self.session.cursor_paged_resource(
+            self.session.post_resource,
+            # "Ignoring" dataset because it is in the query params (and required)
+            self._get_path(ignore_dataset=True) + "/filter-by-attribute-bounds",
+            json=body,
+            forward=forward,
+            per_page=per_page,
+            params=params)
+        return (self.build(raw) for raw in raw_objects)
+
+    def list_all(self, forward: bool = True, per_page: int = 100) -> Iterator[DataConcepts]:
+        """
+        Get all objects in the collection.
+
+        The order of results should not be relied upon, but for now they are sorted by
+        dataset, object type, and creation time (in that order of priority).
+
+        Parameters
+        ----------
+        forward: bool
+            Set to False to reverse the order of results (i.e. return in descending order).
+        per_page: int
+            Controls the number of results fetched with each http request to the backend.
+            Typically, this is set to a sensible default and should not be modified. Consider
+            modifying this value only if you find this method is unacceptably latent.
+
+        Returns
+        -------
+        Iterator[DataConcepts]
+            Every object in this collection.
+
+        """
+        params = {}
+        if self.dataset_id is not None:
+            params['dataset_id'] = str(self.dataset_id)
+        raw_objects = self.session.cursor_paged_resource(
+            self.session.get_resource,
+            self._get_path(ignore_dataset=True),
+            forward=forward,
+            per_page=per_page,
+            params=params)
+        return (self.build(raw) for raw in raw_objects)
+
+    def list_by_tag(self, tag: str, per_page: int = 100) -> Iterator[DataConcepts]:
+        """
+        Get all objects bearing a tag prefixed with `tag` in the collection.
+
+        The order of results is largely unmeaningul. Results from the same dataset will be
+        grouped together but no other meaningful ordering can be relied upon. Duplication in
+        the result set may (but needn't) occur when one object has multiple tags matching the
+        search tag. For this reason, it is inadvisable to put 2 tags with the same prefix
+        (e.g. 'foo::bar' and 'foo::baz') the same object when it can be avoided.
+
+        Parameters
+        ----------
+        tag: str
+            The prefix with which to search. Must fully match up to the first delimiter (ex.
+            'foo' and 'foo::b' both match 'foo::bar' but 'fo' is insufficient.
+        per_page: int
+            Controls the number of results fetched with each http request to the backend.
+            Typically, this is set to a sensible default and should not be modified. Consider
+            modifying this value only if you find this method is unacceptably latent.
+
+        Returns
+        -------
+        Iterator[DataConcepts]
+            Every object in this collection.
+
+        """
+        params = {'tag': tag}
+        if self.dataset_id is not None:
+            params['dataset_id'] = str(self.dataset_id)
+        raw_objects = self.session.cursor_paged_resource(
+            self.session.get_resource,
+            self._get_path(ignore_dataset=True),
+            per_page=per_page,
+            params=params)
+        return (self.build(raw) for raw in raw_objects)
 
     def delete(self, uid: Union[UUID, str], scope: str = 'id'):
         """
@@ -626,3 +809,19 @@ class DataConceptsCollection(Collection[ResourceType]):
         path = self._get_path() + "/{}/{}".format(scope, uid)
         self.session.delete_resource(path)
         return Response(status_code=200)  # delete succeeded
+
+    @staticmethod
+    def _get_attribute_bounds_search_body(attribute_bounds):
+        if not isinstance(attribute_bounds, dict):
+            raise TypeError('attribute_bounds must be a dict mapping template to bounds; '
+                            'got {}'.format(attribute_bounds))
+        if len(attribute_bounds) != 1:
+            raise NotImplementedError('Currently, only searches with exactly one template '
+                                      'to bounds mapping are supported; got {}'
+                                      .format(attribute_bounds))
+        return {
+            'attribute_bounds': {
+                get_object_id(templ): bounds.as_dict()
+                for templ, bounds in attribute_bounds.items()
+            }
+        }

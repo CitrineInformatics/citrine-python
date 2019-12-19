@@ -8,33 +8,12 @@ This workflow is comprised of three modules:
 -  :doc:`Predictor <predictors>` adds information to a material using predictions from a machine-learned model.
 -  :doc:`Processor <processors>` defines how to pick the “next” material.
 
-Registration and validation
----------------------------
-
-A workflow is registered with a project and validated before it is ready for use.
-Once registered, validation occurs automatically.
-Validation status can be one of the following states:
-
--  **Created:** The module has been registered with a project and has been queued for validation.
--  **Validating:** The workflow is currently validating. The status will be updated to one of the subsequent states upon completion.
--  **Invalid:** Validation completed successfully but found errors with the workflow.
--  **Ready:** Validation completed successfully and found no errors.
--  **Error:** Validation did not complete.
-   An error was raised during the validation process that prevented an invalid or ready status to be determined.
-   Validation of a workflow and all constituent modules must complete with ready status before the workflow can be executed.
-
 The following example demonstrates how to use the python SDK to register a workflow (assuming a design space, predictor and processor were registered previously), wait for validation to complete and check the final status:
 
 .. code:: python
 
    from time import sleep
-   from citrine import Citrine
    from citrine.informatics.workflows import DesignWorkflow
-
-   # create a session with citrine using API variables
-   session = Citrine(API_KEY, API_SCHEME, API_HOST, API_PORT)
-
-   project = session.projects.register('Example project')
 
    # create a workflow using existing modules and register it with the project
    workflow = project.workflows.register(
@@ -70,7 +49,7 @@ Triggering a workflow returns a workflow execution object.
 A workflow execution has a status (in progress, succeeded, or failed) and results (once execution has succeeded).
 Results of a successful workflow are returned as a dictionary.
 The ``results`` key maps to a nested list of ``candidates`` and ``scores``.
-The ``i``th candidate corresponds to the ``i``th score.
+The ``i`` th candidate corresponds to the ``i`` th score.
 
 Each candidate and score is a dictionary.
 The former contains descriptor key-value pairs and uncertainty in descriptor values.

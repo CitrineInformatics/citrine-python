@@ -19,7 +19,8 @@ def valid_data():
         deleted_by=None,
         create_time=1559933807392,
         update_time=None,
-        delete_time=None
+        delete_time=None,
+        public=False
     )
 
 

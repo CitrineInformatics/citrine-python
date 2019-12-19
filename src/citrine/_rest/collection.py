@@ -98,6 +98,13 @@ class Collection(Generic[ResourceType]):
                 # properly, so we are filtering client-side.
                 pass
 
+    def update(self, model: CreationType) -> CreationType:
+        """Update a particular element of the collection."""
+        url = self._get_path(model.uid)
+        updated = self.session.put_resource(url, model.dump())
+        data = updated[self._individual_key] if self._individual_key else updated
+        return self.build(data)
+
     def delete(self, uid: Union[UUID, str]) -> Response:
         """Delete a particular element of the collection."""
         url = self._get_path(uid)

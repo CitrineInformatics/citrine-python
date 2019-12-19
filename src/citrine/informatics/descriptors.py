@@ -7,8 +7,10 @@ from citrine._serialization import properties
 
 
 class Descriptor(PolymorphicSerializable['Descriptor']):
-    """A Citrine Descriptor - an abstract type that returns the proper
-    subtype based on the 'type' value of the passed in dict.
+    """A Citrine Descriptor describes the range of values that a quantity can take on.
+
+    Abstract type that returns the proper type given a serialized dict.
+
     """
 
     @classmethod
@@ -22,7 +24,7 @@ class Descriptor(PolymorphicSerializable['Descriptor']):
 
 
 class RealDescriptor(Serializable['RealDescriptor'], Descriptor):
-    """Captures domain-specific context about the bounds of an integer-valued datum.
+    """A descriptor to hold real-valued numbers.
 
     Parameters
     ----------
@@ -32,6 +34,7 @@ class RealDescriptor(Serializable['RealDescriptor'], Descriptor):
         inclusive lower bound for valid real values
     upper_bound: float
         inclusive upper bound for valid real values
+
     """
 
     key = properties.String('descriptor_key')
@@ -68,7 +71,9 @@ class InorganicDescriptor(Serializable['InorganicDescriptor'], Descriptor):
     key: str
         the key corresponding to a descriptor
     threshold: float
-        the threshold for valid chemical formulae. Users can think of this as a level of tolerance for typos and/or loss in interpreting a string input as a parseable chemical formula.
+        the threshold for valid chemical formulae. Users can think of this as a level of tolerance
+        for typos and/or loss in interpreting a string input as a parseable chemical formula.
+
     """
 
     key = properties.String('descriptor_key')
@@ -90,7 +95,9 @@ class InorganicDescriptor(Serializable['InorganicDescriptor'], Descriptor):
 
 
 class CategoricalDescriptor(Serializable['CategoricalDescriptor'], Descriptor):
-    """A descriptor to hold categorical variables. An exhaustive list of categorical values may be supplied.
+    """A descriptor to hold categorical variables.
+
+    An exhaustive list of categorical values may be supplied.
 
     Parameters
     ----------
@@ -98,6 +105,7 @@ class CategoricalDescriptor(Serializable['CategoricalDescriptor'], Descriptor):
         the key corresponding to a descriptor
     categories: list[str]
         possible categories for this descriptor
+
     """
 
     key = properties.String('descriptor_key')

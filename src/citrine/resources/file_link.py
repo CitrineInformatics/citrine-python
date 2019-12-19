@@ -4,6 +4,7 @@ import os
 import mimetypes
 from typing import Iterable, Optional
 from boto3 import client as boto3_client
+from boto3.session import Config
 import requests
 from botocore.exceptions import ClientError
 
@@ -13,6 +14,7 @@ from citrine._rest.collection import Collection
 from citrine._rest.resource import Resource
 from citrine._session import Session
 from citrine._utils.functions import write_file_locally
+from citrine.resources.response import Response
 
 
 class _Uploader:
@@ -27,6 +29,9 @@ class _Uploader:
         self.aws_secret_access_key = ''
         self.aws_session_token = ''
         self.s3_version = ''
+        self.s3_endpoint_url = None
+        self.s3_use_ssl = True
+        self.s3_addressing_style = 'auto'
 
 
 class FileLink(Resource['FileLink'], TaurusFileLink):
@@ -227,6 +232,10 @@ class FileCollection(Collection[FileLink]):
             uploader.bucket = upload_request['s3_bucket']
             uploader.object_key = upload_request['uploads'][0]['s3_key']
             uploader.upload_id = upload_request['uploads'][0]['upload_id']
+            uploader.s3_endpoint_url = self.session.s3_endpoint_url
+            uploader.s3_use_ssl = self.session.s3_use_ssl
+            uploader.s3_addressing_style = self.session.s3_addressing_style
+
         except KeyError:
             raise RuntimeError("Upload initiation response is missing some fields: "
                                "{}".format(upload_request))
@@ -250,13 +259,25 @@ class FileCollection(Collection[FileLink]):
             The input uploader object with its s3_version field now populated.
 
         """
+        additional_s3_opts = {
+            'use_ssl': uploader.s3_use_ssl,
+            'config': Config(s3={'addressing_style': uploader.s3_addressing_style})
+        }
+
+        if uploader.s3_endpoint_url is not None:
+            additional_s3_opts['endpoint_url'] = uploader.s3_endpoint_url
+
         s3_client = boto3_client('s3',
                                  region_name=uploader.region_name,
                                  aws_access_key_id=uploader.aws_access_key_id,
                                  aws_secret_access_key=uploader.aws_secret_access_key,
-                                 aws_session_token=uploader.aws_session_token)
+                                 aws_session_token=uploader.aws_session_token,
+                                 **additional_s3_opts)
         with open(file_path, 'rb') as f:
             try:
+                # NOTE: This is only using the simple PUT logic, not the more sophisticated
+                # multipart upload approach that is also available (providing parallel
+                # uploads, etc).
                 upload_response = s3_client.put_object(
                     Bucket=uploader.bucket,
                     Key=uploader.object_key,
@@ -323,3 +344,21 @@ class FileCollection(Collection[FileLink]):
         pre_signed_url = content_link_response['pre_signed_read_link']
         download_response = requests.get(pre_signed_url)
         write_file_locally(download_response.content, local_path)
+
+    def delete(self, file_link: FileLink):
+        """
+        Delete the file associated with a given FileLink from the database.
+
+        Parameters
+        ----------
+        file_link: FileLink
+            Resource referencing the external file.
+
+        """
+        split_url = file_link.url.split('/')
+        assert split_url[-2] == 'versions' and split_url[-4] == 'files', \
+            "File URL is expected to end with '/files/{{file_id}}/version/{{version id}}', " \
+            "but FileLink instead has url {}".format(file_link.url)
+        file_id = split_url[-3]
+        data = self.session.delete_resource(self._get_path(file_id))
+        return Response(body=data)

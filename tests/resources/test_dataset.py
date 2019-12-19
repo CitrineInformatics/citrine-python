@@ -1,4 +1,4 @@
-from uuid import UUID
+from uuid import UUID, uuid4
 import pytest
 
 from citrine.resources.dataset import DatasetCollection
@@ -61,6 +61,20 @@ def test_list_datasets(collection, session):
     expected_call = FakeCall(method='GET', path='projects/{}/datasets'.format(collection.project_id))
     assert expected_call == session.last_call
     assert 5 == len(datasets)
+
+
+def test_delete_dataset(collection, session, dataset):
+    # Given
+    uid = str(uuid4())
+
+    # When
+    collection.delete(uid)
+
+    # Then
+    assert 1 == session.num_calls
+    expected_call = FakeCall(method='DELETE', path='projects/{}/datasets/{}'.format(
+        collection.project_id, uid))
+    assert expected_call == session.last_call
 
 
 def test_string_representation(dataset):

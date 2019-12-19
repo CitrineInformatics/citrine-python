@@ -3,8 +3,9 @@ from uuid import UUID
 import pytest
 from taurus.entity.bounds.integer_bounds import IntegerBounds
 
+from citrine._session import Session
 from citrine.resources.material_run import MaterialRunCollection, MaterialRun
-from tests.utils.session import FakeSession, FakeCall
+from tests.utils.session import FakeSession, FakeCall, make_fake_cursor_request_function
 from tests.utils.factories import MaterialRunFactory, MaterialRunDataFactory, LinkByUIDFactory
 
 
@@ -162,6 +163,40 @@ def test_filter_by_name(collection, session):
     assert expected_call == session.last_call
     assert 1 == len(runs)
     assert sample_run['uids'] == runs[0].uids
+
+
+def test_cursor_paginated_searches(collection, session):
+    """
+    Tests that search methods using cursor-pagination are hooked up correctly.
+    There is no real search logic tested here.
+    """
+    all_runs = [
+        MaterialRunDataFactory(name="foo_{}".format(i)) for i in range(20)
+    ]
+    fake_request = make_fake_cursor_request_function(all_runs)
+    # pretty shady, need to add these methods to the fake session to test their
+    # interactions with the actual search methods
+    setattr(session, 'get_resource', fake_request)
+    setattr(session, 'post_resource', fake_request)
+    setattr(session, 'cursor_paged_resource', Session.cursor_paged_resource)
+
+    assert len(list(collection.list_by_name('unused', per_page=2))) == len(all_runs)
+    assert len(list(collection.list_all(per_page=2))) == len(all_runs)
+    assert len(list(collection.list_by_tag('unused', per_page=2))) == len(all_runs)
+    assert len(list(collection.list_by_attribute_bounds(
+        {LinkByUIDFactory(): IntegerBounds(1, 5)}, per_page=2))) == len(all_runs)
+
+    # invalid inputs
+    with pytest.raises(TypeError):
+        collection.list_by_attribute_bounds([1, 5], per_page=2)
+    with pytest.raises(NotImplementedError):
+        collection.list_by_attribute_bounds({
+            LinkByUIDFactory(): IntegerBounds(1, 5),
+            LinkByUIDFactory(): IntegerBounds(1, 5),
+        }, per_page=2)
+    with pytest.raises(RuntimeError):
+        collection.dataset_id = None
+        collection.list_by_name('unused', per_page=2)
 
 
 def test_filter_by_attribute_bounds(collection, session):
