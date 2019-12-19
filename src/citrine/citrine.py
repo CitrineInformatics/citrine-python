@@ -2,7 +2,6 @@ from typing import Optional
 from citrine._session import Session
 from citrine.resources.project import ProjectCollection
 from citrine.resources.user import UserCollection
-import logging
 
 
 DEFAULT_HOST: str = 'citrine.io'

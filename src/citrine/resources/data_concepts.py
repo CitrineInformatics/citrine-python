@@ -1,5 +1,4 @@
 """Top-level class for all data concepts objects and collections thereof."""
-from logging import getLogger
 from uuid import UUID
 from typing import TypeVar, Type, List, Dict, Union, Optional, Iterator
 from copy import deepcopy
