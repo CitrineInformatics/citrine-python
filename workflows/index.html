@@ -15,7 +15,7 @@
     <link rel="shortcut icon" href="../_static/favicon.png"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="2.3.1. Design spaces" href="design_spaces.html" />
+    <link rel="next" title="2.4.1. Design spaces" href="design_spaces.html" />
     <link rel="prev" title="1.7. Code Examples" href="../getting_started/code_examples.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -68,33 +68,49 @@ It requires one of each of the modules listed above and executes in the followin
 (Here, the best materials are those that are most likely to optimize an objective and satisfy a set of constraints.)</p>
 <p>Design workflows are further parameterized by <a class="reference internal" href="scores.html"><span class="doc">Scores</span></a>, which codify experimental objectives and constraints on desired candidates, and define the strategy for candidate acquisition.</p>
 </div>
+<div class="section" id="registration-and-validation">
+<h2>2.3. Registration and validation<a class="headerlink" href="#registration-and-validation" title="Permalink to this headline">¶</a></h2>
+<p>Both modules and workflows are registered with a project and validated before they are ready for use. Once registered, validation occurs automatically.
+Validation status can be one of the following states:</p>
+<ul class="simple">
+<li><p><strong>Created:</strong> The module/workflow has been registered with a project and has been queued for validation.</p></li>
+<li><p><strong>Validating:</strong> The module/workflow is currently validating. The status will be updated to one of the subsequent states upon completion.</p></li>
+<li><p><strong>Invalid:</strong> Validation completed successfully but found errors with the workflow/module.</p></li>
+<li><p><strong>Ready:</strong> Validation completed successfully and found no errors.</p></li>
+<li><p><strong>Error:</strong> Validation did not complete. An error was raised during the validation process that prevented an invalid or ready status to be determined.</p></li>
+</ul>
+<p>Validation of a workflow and all constituent modules must complete with ready status before the workflow can be executed.</p>
+</div>
 <div class="section" id="table-of-contents">
-<h2>2.3. Table of Contents<a class="headerlink" href="#table-of-contents" title="Permalink to this headline">¶</a></h2>
+<h2>2.4. Table of Contents<a class="headerlink" href="#table-of-contents" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="design_spaces.html">2.3.1. Design spaces</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="design_spaces.html#product-design-space">2.3.1.1. Product design space</a></li>
-<li class="toctree-l2"><a class="reference internal" href="design_spaces.html#enumerated-design-space">2.3.1.2. Enumerated design space</a></li>
+<li class="toctree-l1"><a class="reference internal" href="design_spaces.html">2.4.1. Design spaces</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="design_spaces.html#product-design-space">2.4.1.1. Product design space</a></li>
+<li class="toctree-l2"><a class="reference internal" href="design_spaces.html#enumerated-design-space">2.4.1.2. Enumerated design space</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="predictors.html">2.3.2. Predictors</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="predictors.html#simple-ml-predictor">2.3.2.1. Simple ML predictor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="predictors.html">2.4.2. Predictors</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="predictors.html#simple-ml-predictor">2.4.2.1. Simple ML predictor</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="predictor_reports.html">2.3.3. Predictor reports</a></li>
-<li class="toctree-l1"><a class="reference internal" href="processors.html">2.3.4. Processors</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="processors.html#enumerated-processor">2.3.4.1. Enumerated processor</a></li>
-<li class="toctree-l2"><a class="reference internal" href="processors.html#grid-processor">2.3.4.2. Grid processor</a></li>
+<li class="toctree-l1"><a class="reference internal" href="predictor_reports.html">2.4.3. Predictor reports</a></li>
+<li class="toctree-l1"><a class="reference internal" href="processors.html">2.4.4. Processors</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="processors.html#enumerated-processor">2.4.4.1. Enumerated processor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="processors.html#grid-processor">2.4.4.2. Grid processor</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="scores.html">2.3.5. Scores</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="scores.html#maximum-expected-improvement">2.3.5.1. Maximum expected improvement</a></li>
-<li class="toctree-l2"><a class="reference internal" href="scores.html#maximum-likelihood-of-improvement">2.3.5.2. Maximum likelihood of improvement</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scores.html">2.4.5. Scores</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="scores.html#maximum-expected-improvement">2.4.5.1. Maximum expected improvement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scores.html#maximum-likelihood-of-improvement">2.4.5.2. Maximum likelihood of improvement</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="design_workflows.html">2.3.6. Design workflows</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="design_workflows.html#registration-and-validation">2.3.6.1. Registration and validation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="design_workflows.html#execution-and-results">2.3.6.2. Execution and results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="design_workflows.html">2.4.6. Design workflows</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="design_workflows.html#execution-and-results">2.4.6.1. Execution and results</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="performance_workflows.html">2.4.7. Performance workflows</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="performance_workflows.html#execution-and-results">2.4.7.1. Execution and results</a></li>
 </ul>
 </li>
 </ul>
@@ -145,11 +161,16 @@ It requires one of each of the modules listed above and executes in the followin
 <li class="toctree-l1 current"><a class="current reference internal" href="#">2. Workflows</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#modules">2.1. Modules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#design-workflows">2.2. Design workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#table-of-contents">2.3. Table of Contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#registration-and-validation">2.3. Registration and validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#table-of-contents">2.4. Table of Contents</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">3. FAQ</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../FAQ/prohibited_data_patterns.html">3.1. Prohibited Data Patterns</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development.html">3. Development</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../development.html#running-tests-in-docker">3.1. Running tests in Docker</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">4. FAQ</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../FAQ/prohibited_data_patterns.html">4.1. Prohibited Data Patterns</a></li>
 </ul>
 </li>
 </ul>
@@ -159,7 +180,7 @@ It requires one of each of the modules listed above and executes in the followin
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
       <li>Previous: <a href="../getting_started/code_examples.html" title="previous chapter">1.7. Code Examples</a></li>
-      <li>Next: <a href="design_spaces.html" title="next chapter">2.3.1. Design spaces</a></li>
+      <li>Next: <a href="design_spaces.html" title="next chapter">2.4.1. Design spaces</a></li>
   </ul></li>
 </ul>
 </div>

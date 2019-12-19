@@ -37,12 +37,12 @@
 <dl class="class">
 <dt id="citrine.informatics.processors.Processor">
 <em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.processors.</code><code class="sig-name descname">Processor</code><a class="headerlink" href="#citrine.informatics.processors.Processor" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.polymorphic_serializable.PolymorphicSerializable</span></code></p>
-<p>A Citrine Processor - an abstract type that returns the proper
-subtype based on the ‘type’ value of the passed in dict.</p>
+<dd><p>Bases: <a class="reference internal" href="citrine.informatics.modules.html#citrine.informatics.modules.Module" title="citrine.informatics.modules.Module"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.modules.Module</span></code></a></p>
+<p>A Citrine Processor describes how a design space is searched.</p>
+<p>Abstract type that returns the proper type given a serialized dict.</p>
 <dl class="method">
 <dt id="citrine.informatics.processors.Processor.get_type">
-<em class="property">classmethod </em><code class="sig-name descname">get_type</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.processors.Processor.get_type" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="sig-name descname">get_type</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span> &#x2192; Type[citrine.informatics.processors.Processor]<a class="headerlink" href="#citrine.informatics.processors.Processor.get_type" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the sole currently implemented subtype.</p>
 </dd></dl>
 
@@ -52,9 +52,10 @@ subtype based on the ‘type’ value of the passed in dict.</p>
 <dt id="citrine.informatics.processors.GridProcessor">
 <em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.processors.</code><code class="sig-name descname">GridProcessor</code><span class="sig-paren">(</span><em class="sig-param">name: str, description: str, grid_sizes: Mapping[str, int], session: Optional[citrine._session.Session] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.processors.GridProcessor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.informatics.processors.Processor" title="citrine.informatics.processors.Processor"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.processors.Processor</span></code></a></p>
-<p>Generates a finite set of materials from the domain defined by the design space, then scans over the set of
-materials. To create a finite set of materials from continuous dimensions, a uniform grid is created between the
-bounds of the descriptor. The number of points is specified by <cite>grid_sizes</cite>.</p>
+<p>Generates samples from the outer product of finite dimensions, then scans over them.</p>
+<p>To create a finite set of materials from continuous dimensions, a uniform grid is created
+between the lower and upper bounds of the descriptor.
+The number of points along each dimension is specified by <cite>grid_sizes</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -64,6 +65,11 @@ bounds of the descriptor. The number of points is specified by <cite>grid_sizes<
 </ul>
 </dd>
 </dl>
+<dl class="attribute">
+<dt id="citrine.informatics.processors.GridProcessor.active">
+<code class="sig-name descname">active</code><em class="property"> = True</em><a class="headerlink" href="#citrine.informatics.processors.GridProcessor.active" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="attribute">
 <dt id="citrine.informatics.processors.GridProcessor.description">
 <code class="sig-name descname">description</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.processors.GridProcessor.description" title="Permalink to this definition">¶</a></dt>
@@ -115,8 +121,8 @@ bounds of the descriptor. The number of points is specified by <cite>grid_sizes<
 <dt id="citrine.informatics.processors.EnumeratedProcessor">
 <em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.processors.</code><code class="sig-name descname">EnumeratedProcessor</code><span class="sig-paren">(</span><em class="sig-param">name: str</em>, <em class="sig-param">description: str</em>, <em class="sig-param">max_size: Optional[int] = None</em>, <em class="sig-param">session: Optional[citrine._session.Session] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.processors.EnumeratedProcessor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.informatics.processors.Processor" title="citrine.informatics.processors.Processor"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.processors.Processor</span></code></a></p>
-<p>Process a design space by enumerating up to <cite>max_size</cite> materials from the domain and processing each
-independently.</p>
+<p>Process a design space by enumerating up to a fixed number of samples from the domain.</p>
+<p>Each sample is processed independently.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -126,6 +132,11 @@ independently.</p>
 </ul>
 </dd>
 </dl>
+<dl class="attribute">
+<dt id="citrine.informatics.processors.EnumeratedProcessor.active">
+<code class="sig-name descname">active</code><em class="property"> = True</em><a class="headerlink" href="#citrine.informatics.processors.EnumeratedProcessor.active" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="attribute">
 <dt id="citrine.informatics.processors.EnumeratedProcessor.description">
 <code class="sig-name descname">description</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.processors.EnumeratedProcessor.description" title="Permalink to this definition">¶</a></dt>
@@ -218,11 +229,16 @@ independently.</p>
 <li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">2. Workflows</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#modules">2.1. Modules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#design-workflows">2.2. Design workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#table-of-contents">2.3. Table of Contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#registration-and-validation">2.3. Registration and validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#table-of-contents">2.4. Table of Contents</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">3. FAQ</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../FAQ/prohibited_data_patterns.html">3.1. Prohibited Data Patterns</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development.html">3. Development</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../development.html#running-tests-in-docker">3.1. Running tests in Docker</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">4. FAQ</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../FAQ/prohibited_data_patterns.html">4.1. Prohibited Data Patterns</a></li>
 </ul>
 </li>
 </ul>

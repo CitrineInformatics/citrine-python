@@ -38,12 +38,12 @@
 <dt id="citrine.informatics.workflows.Workflow">
 <em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.workflows.</code><code class="sig-name descname">Workflow</code><a class="headerlink" href="#citrine.informatics.workflows.Workflow" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.polymorphic_serializable.PolymorphicSerializable</span></code></p>
-<p>A Citrine Workflow - an abstract type that returns the proper
-subtype based on the ‘type’ value of the passed in dict.</p>
+<p>A Citrine Workflow is a collection of Modules that together accomplish some task.</p>
+<p>Abstract type that returns the proper type given a serialized dict.</p>
 <dl class="method">
 <dt id="citrine.informatics.workflows.Workflow.get_type">
 <em class="property">classmethod </em><code class="sig-name descname">get_type</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span> &#x2192; Type[citrine.informatics.workflows.Workflow]<a class="headerlink" href="#citrine.informatics.workflows.Workflow.get_type" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the sole currently implemented subtype.</p>
+<dd><p>Return the subtype.</p>
 </dd></dl>
 
 </dd></dl>
@@ -65,6 +65,11 @@ subtype based on the ‘type’ value of the passed in dict.</p>
 </dd>
 </dl>
 <dl class="attribute">
+<dt id="citrine.informatics.workflows.DesignWorkflow.active">
+<code class="sig-name descname">active</code><em class="property"> = True</em><a class="headerlink" href="#citrine.informatics.workflows.DesignWorkflow.active" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
 <dt id="citrine.informatics.workflows.DesignWorkflow.design_space_id">
 <code class="sig-name descname">design_space_id</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.workflows.DesignWorkflow.design_space_id" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -74,6 +79,11 @@ subtype based on the ‘type’ value of the passed in dict.</p>
 <em class="property">property </em><code class="sig-name descname">executions</code><a class="headerlink" href="#citrine.informatics.workflows.DesignWorkflow.executions" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a resource representing all visible executions of this workflow.</p>
 </dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.workflows.DesignWorkflow.module_type">
+<code class="sig-name descname">module_type</code><em class="property"> = 'DESIGN_WORKFLOW'</em><a class="headerlink" href="#citrine.informatics.workflows.DesignWorkflow.module_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="attribute">
 <dt id="citrine.informatics.workflows.DesignWorkflow.name">
@@ -88,6 +98,11 @@ subtype based on the ‘type’ value of the passed in dict.</p>
 <dl class="attribute">
 <dt id="citrine.informatics.workflows.DesignWorkflow.processor_id">
 <code class="sig-name descname">processor_id</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.workflows.DesignWorkflow.processor_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.workflows.DesignWorkflow.schema_id">
+<code class="sig-name descname">schema_id</code><em class="property"> = UUID('8af8b007-3e81-4185-82b2-6f62f4a2e6f1')</em><a class="headerlink" href="#citrine.informatics.workflows.DesignWorkflow.schema_id" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
@@ -152,11 +167,16 @@ subtype based on the ‘type’ value of the passed in dict.</p>
 <li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">2. Workflows</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#modules">2.1. Modules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#design-workflows">2.2. Design workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#table-of-contents">2.3. Table of Contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#registration-and-validation">2.3. Registration and validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#table-of-contents">2.4. Table of Contents</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">3. FAQ</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../FAQ/prohibited_data_patterns.html">3.1. Prohibited Data Patterns</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development.html">3. Development</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../development.html#running-tests-in-docker">3.1. Running tests in Docker</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">4. FAQ</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../FAQ/prohibited_data_patterns.html">4.1. Prohibited Data Patterns</a></li>
 </ul>
 </li>
 </ul>

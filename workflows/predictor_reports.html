@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>2.3.3. Predictor reports &#8212; Citrine Python 0.0.1 documentation</title>
+    <title>2.4.3. Predictor reports &#8212; Citrine Python 0.0.1 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -15,8 +15,8 @@
     <link rel="shortcut icon" href="../_static/favicon.png"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="2.3.4. Processors" href="processors.html" />
-    <link rel="prev" title="2.3.2. Predictors" href="predictors.html" />
+    <link rel="next" title="2.4.4. Processors" href="processors.html" />
+    <link rel="prev" title="2.4.2. Predictors" href="predictors.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -34,7 +34,7 @@
           <div class="body" role="main">
             
   <div class="section" id="predictor-reports">
-<h1>2.3.3. Predictor reports<a class="headerlink" href="#predictor-reports" title="Permalink to this headline">¶</a></h1>
+<h1>2.4.3. Predictor reports<a class="headerlink" href="#predictor-reports" title="Permalink to this headline">¶</a></h1>
 <p>A predictor report contains information about a machine-learned model and various performance metrics.
 The report can be accessed via the python SDK via <code class="docutils literal notranslate"><span class="pre">predictor.report</span></code>.</p>
 <p>A task to generate a predictor report is scheduled when a predictor is registered.
@@ -46,40 +46,10 @@ Status can be one of:</p>
 <li><p><code class="docutils literal notranslate"><span class="pre">OK</span></code> The report was generated successfully and the results are ready.</p></li>
 </ul>
 <p>Results of the report are stored as a dictionary in the <code class="docutils literal notranslate"><span class="pre">json</span></code> member variable.
-For the <a class="reference internal" href="../reference/citrine.informatics.predictors.html#citrine.informatics.predictors.SimpleMLPredictor" title="citrine.informatics.predictors.SimpleMLPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleMLPredictor</span></code></a>, this dictionary contains two keys: <code class="docutils literal notranslate"><span class="pre">important_features</span></code> and <code class="docutils literal notranslate"><span class="pre">performance_metrics</span></code>.
-Feature importances and performance metrics are computed for each output descriptor.
+For the <a class="reference internal" href="../reference/citrine.informatics.predictors.html#citrine.informatics.predictors.SimpleMLPredictor" title="citrine.informatics.predictors.SimpleMLPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleMLPredictor</span></code></a>, this dictionary contains one key: <code class="docutils literal notranslate"><span class="pre">important_features</span></code>.
+Feature importances are computed for each output descriptor.
 Important features are the input features that the machine learning model depends on most strongly.
 These importances can be useful in gaining some insight into how the machine learning model is making its predictions.</p>
-<p>Performance metrics included in the report depend on whether the response is numeric or categorical.
-For numeric responses, performance metrics include root mean squared error (RMSE), non-dimensional error (NDE), standard residual and standard confidence.</p>
-<ul class="simple">
-<li><p>RMSE is a useful and popular statistical metric for model quality.
-Lower RMSE means the model is more accurate.</p></li>
-<li><p>NDE is the ratio between RMSE and standard deviation of the output variable.
-NDE is a useful non-dimensional model quality metric.
-A value of NDE = 0 is a perfect model. If NDE = 1, then the model is uninformative.
-An acceptable NDE depends on how the model is used.
-Generally, NDE &gt; 0.9 indicates a model with very high uncertainty.
-If 0.9 &gt; NDE &gt; 0.6, this model is typically a good candidate for a design workflow.
-Lower values of NDE indicate increasingly accurate models.</p></li>
-<li><p>Standard residual is the root mean square of standardized errors.
-(1.0 is perfectly calibrated.)
-Standard residual provides a way to determine whether uncertainty estimates are well-calibrated for this model.
-Residuals are calculated using <code class="docutils literal notranslate"><span class="pre">(Predicted</span> <span class="pre">-</span> <span class="pre">Actual)/(Uncertainty</span> <span class="pre">Estimate)</span></code>.
-A value below 1 indicates the model is underconfident, i.e. actual values are within predicted error bars, on average.
-A value over 1 indicates the model is overconfident, i.e. actual values fall outside predicted error bars, on average.</p></li>
-<li><p>Standard confidence is the fraction of actual values within the predicted error bars.
-(0.68 is perfectly calibrated.)</p></li>
-</ul>
-<p>For categorical responses, performance metrics include either the area under the receiver operating characteristic (ROC) curve (if there are 2 categories) or the F1 score (if there are &gt; 2 categories).</p>
-<ul class="simple">
-<li><p>Area under the ROC curve (AUC) represents the ability of the model to correctly distinguish samples between two categories.
-If AUC=1.0, all samples are classified correctly.
-If AUC=0.5, the model cannot distinguish between the two categories.
-If AUC=0.0, all samples are classified incorrectly.</p></li>
-<li><p>F1 score is calculated from precision and recall of the model, weighted by the number of true positives according to the formula <code class="docutils literal notranslate"><span class="pre">2.0</span> <span class="pre">*</span> <span class="pre">precision</span> <span class="pre">*</span> <span class="pre">recall</span> <span class="pre">/</span> <span class="pre">(precision</span> <span class="pre">+</span> <span class="pre">recall)</span> <span class="pre">*</span> <span class="pre">true_positives</span></code>.
-Scores are bounded by 0 and 1. At a value of 1, the model has perfect precision and recall.</p></li>
-</ul>
 <p>An as example, consider a model with <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">y</span></code> inputs and a numeric output <code class="docutils literal notranslate"><span class="pre">z</span></code>.
 The following illustrates how to register a predictor, wait for the report to finish and view the results.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">sleep</span>
@@ -109,7 +79,7 @@ The following illustrates how to register a predictor, wait for the report to fi
 
 <span class="c1"># print the json report</span>
 <span class="n">report</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">predictors</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">predictor</span><span class="o">.</span><span class="n">uid</span><span class="p">)</span><span class="o">.</span><span class="n">report</span>
-<span class="k">print</span><span class="p">(</span><span class="n">report</span><span class="o">.</span><span class="n">json</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">report</span><span class="o">.</span><span class="n">json</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>For this example, the report would resemble the following.
@@ -121,26 +91,6 @@ Note, feature importances and performance metrics are keyed on the response (<co
       <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="mf">0.38</span>
     <span class="p">}</span>
   <span class="p">},</span>
-  <span class="s2">&quot;performance_metrics&quot;</span><span class="p">:</span> <span class="p">{</span>
-    <span class="s2">&quot;z&quot;</span><span class="p">:</span> <span class="p">{</span>
-      <span class="s2">&quot;ndme&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mf">0.39</span><span class="p">,</span>
-        <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;non-dimensional model error (0.0 for a perfect model)&quot;</span>
-      <span class="p">},</span>
-      <span class="s2">&quot;rmse&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mf">17.40</span><span class="p">,</span>
-        <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;Root mean squared error (0.0 for a perfect model)&quot;</span>
-      <span class="p">},</span>
-      <span class="s2">&quot;std_residual&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mf">1.18</span><span class="p">,</span>
-        <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;uncertainty calibration: root mean square of standardized errors (1.0 is perfectly calibrated)&quot;</span>
-      <span class="p">},</span>
-      <span class="s2">&quot;std_confidence&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mf">0.63</span><span class="p">,</span>
-        <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;uncertainty calibration: fraction of actual values within the prediction error bars (0.68 is perfectly calibrated)&quot;</span>
-      <span class="p">}</span>
-    <span class="p">}</span>
-  <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -189,11 +139,16 @@ Note, feature importances and performance metrics are keyed on the response (<co
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">2. Workflows</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="index.html#modules">2.1. Modules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="index.html#design-workflows">2.2. Design workflows</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="index.html#table-of-contents">2.3. Table of Contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#registration-and-validation">2.3. Registration and validation</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#table-of-contents">2.4. Table of Contents</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">3. FAQ</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../FAQ/prohibited_data_patterns.html">3.1. Prohibited Data Patterns</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development.html">3. Development</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../development.html#running-tests-in-docker">3.1. Running tests in Docker</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">4. FAQ</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../FAQ/prohibited_data_patterns.html">4.1. Prohibited Data Patterns</a></li>
 </ul>
 </li>
 </ul>
@@ -203,8 +158,8 @@ Note, feature importances and performance metrics are keyed on the response (<co
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="index.html">2. Workflows</a><ul>
-      <li>Previous: <a href="predictors.html" title="previous chapter">2.3.2. Predictors</a></li>
-      <li>Next: <a href="processors.html" title="next chapter">2.3.4. Processors</a></li>
+      <li>Previous: <a href="predictors.html" title="previous chapter">2.4.2. Predictors</a></li>
+      <li>Next: <a href="processors.html" title="next chapter">2.4.4. Processors</a></li>
   </ul></li>
   </ul></li>
 </ul>

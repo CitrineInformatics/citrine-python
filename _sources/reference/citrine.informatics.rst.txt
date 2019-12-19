@@ -6,10 +6,12 @@ Submodules
 
 .. toctree::
 
+   citrine.informatics.analysis_configuration
    citrine.informatics.constraints
    citrine.informatics.descriptors
    citrine.informatics.design_spaces
    citrine.informatics.dimensions
+   citrine.informatics.modules
    citrine.informatics.objectives
    citrine.informatics.predictors
    citrine.informatics.processors

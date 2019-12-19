@@ -41,25 +41,20 @@
 <dl class="method">
 <dt id="citrine.resources.api_error.ApiError.from_dict">
 <em class="property">classmethod </em><code class="sig-name descname">from_dict</code><span class="sig-paren">(</span><em class="sig-param">d</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.api_error.ApiError.from_dict" title="Permalink to this definition">¶</a></dt>
-<dd><p>Reconstitute the object from a dictionary.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>d</strong> (<em>dict</em>) – The object as a dictionary of key-value pairs that correspond to the object’s fields.</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>The deserialized object.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>DictSerializable</p>
-</dd>
-</dl>
+<dd><p>Reconstitute the API error object from a dictionary.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="citrine.resources.api_error.ApiError.has_failure">
+<code class="sig-name descname">has_failure</code><span class="sig-paren">(</span><em class="sig-param">failure_id: str</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#citrine.resources.api_error.ApiError.has_failure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if this error contains a ValidationError with specified failure ID.</p>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="class">
 <dt id="citrine.resources.api_error.ValidationError">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.resources.api_error.</code><code class="sig-name descname">ValidationError</code><span class="sig-paren">(</span><em class="sig-param">failure_message: Optional[str] = None</em>, <em class="sig-param">property: Optional[str] = None</em>, <em class="sig-param">input: Optional[str] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.api_error.ValidationError" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">citrine.resources.api_error.</code><code class="sig-name descname">ValidationError</code><span class="sig-paren">(</span><em class="sig-param">failure_message: Optional[str] = None</em>, <em class="sig-param">property: Optional[str] = None</em>, <em class="sig-param">input: Optional[str] = None</em>, <em class="sig-param">failure_id: Optional[str] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.api_error.ValidationError" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://citrineinformatics.github.io/taurus/reference/taurus.entity.dict_serializable.html#taurus.entity.dict_serializable.DictSerializable" title="(in Taurus)"><code class="xref py py-class docutils literal notranslate"><span class="pre">taurus.entity.dict_serializable.DictSerializable</span></code></a></p>
 <p>A user-facing error message describing why their request was invalid.</p>
 </dd></dl>
@@ -109,11 +104,16 @@
 <li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">2. Workflows</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#modules">2.1. Modules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#design-workflows">2.2. Design workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#table-of-contents">2.3. Table of Contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#registration-and-validation">2.3. Registration and validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#table-of-contents">2.4. Table of Contents</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">3. FAQ</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../FAQ/prohibited_data_patterns.html">3.1. Prohibited Data Patterns</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development.html">3. Development</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../development.html#running-tests-in-docker">3.1. Running tests in Docker</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">4. FAQ</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../FAQ/prohibited_data_patterns.html">4.1. Prohibited Data Patterns</a></li>
 </ul>
 </li>
 </ul>

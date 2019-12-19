@@ -22,8 +22,8 @@ when uploaded. The `filename` **must be unique** within the dataset. If you uplo
 with the same `filename` it will be considered a new version of the same file. The old version
 is not deleted, but at the moment you can only download the latest version of a given FileLink.
 
-Example
--------
+Uploading and Downloading
+-------------------------
 
 Assume you have a dataset named `dataset` and a file at the location `/Users/me/status_20190913.csv`
 on your computer. The code below uploads the file and gives it the filename `microscope_status_20190913.csv`.
@@ -35,3 +35,15 @@ It then downloads the file back to your computer at `/Users/me/Downloads/setting
         "/Users/me/status_20190913.csv", "microscope_status_20190913.csv")
     dataset.files.download(file_link,
         "/Users/me/Downloads/settings.csv")
+
+Deleting
+--------
+
+If you have WRITE permission on a dataset then you may delete any file in the dataset.
+Use this ability carefully, as there are no checks as to whether or no the file is referenced by
+existing data objects.
+Deleting a file can therefore produce broken links.
+
+.. code-block:: python
+
+    dataset.files.delete(file_link)

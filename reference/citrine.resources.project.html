@@ -86,8 +86,9 @@ and some of which have been shared with the project.</p>
 <dl class="method">
 <dt id="citrine.resources.project.Project.add_user">
 <code class="sig-name descname">add_user</code><span class="sig-paren">(</span><em class="sig-param">user_uid: Union[str, uuid.UUID]</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.project.Project.add_user" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add a User to a Project</p>
-<p>Adds User with MEMBER role to the Project. Use the update_user_rule method to change a User’s role.</p>
+<dd><p>Add a User to a Project.</p>
+<p>Adds User with MEMBER role to the Project.
+Use the update_user_rule method to change a User’s role.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>Returns True if user successfully added</p>
@@ -222,6 +223,12 @@ and some of which have been shared with the project.</p>
 <dd><p>Return a resource representing all measurement templates in this dataset.</p>
 </dd></dl>
 
+<dl class="method">
+<dt id="citrine.resources.project.Project.modules">
+<em class="property">property </em><code class="sig-name descname">modules</code><a class="headerlink" href="#citrine.resources.project.Project.modules" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a resource representing all visible design spaces.</p>
+</dd></dl>
+
 <dl class="attribute">
 <dt id="citrine.resources.project.Project.name">
 <code class="sig-name descname">name</code><em class="property"> = None</em><a class="headerlink" href="#citrine.resources.project.Project.name" title="Permalink to this definition">¶</a></dt>
@@ -308,7 +315,7 @@ and some of which have been shared with the project.</p>
 <dl class="method">
 <dt id="citrine.resources.project.Project.update_user_role">
 <code class="sig-name descname">update_user_role</code><span class="sig-paren">(</span><em class="sig-param">user_uid: Union[str, uuid.UUID], role: Union[LEAD, MEMBER], actions: Union[WRITE, READ] = []</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.project.Project.update_user_role" title="Permalink to this definition">¶</a></dt>
-<dd><p>Update a User’s role and action permissions in the Project</p>
+<dd><p>Update a User’s role and action permissions in the Project.</p>
 <p>Valid roles are MEMBER or LEAD.</p>
 <p>WRITE is the only action available for specification.</p>
 <dl class="field-list simple">
@@ -423,11 +430,16 @@ and some of which have been shared with the project.</p>
 <li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">2. Workflows</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#modules">2.1. Modules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#design-workflows">2.2. Design workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#table-of-contents">2.3. Table of Contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#registration-and-validation">2.3. Registration and validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#table-of-contents">2.4. Table of Contents</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">3. FAQ</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../FAQ/prohibited_data_patterns.html">3.1. Prohibited Data Patterns</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development.html">3. Development</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../development.html#running-tests-in-docker">3.1. Running tests in Docker</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">4. FAQ</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../FAQ/prohibited_data_patterns.html">4.1. Prohibited Data Patterns</a></li>
 </ul>
 </li>
 </ul>

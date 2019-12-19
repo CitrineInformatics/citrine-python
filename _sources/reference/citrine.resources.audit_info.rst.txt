@@ -1,0 +1,7 @@
+citrine.resources.audit\_info module
+====================================
+
+.. automodule:: citrine.resources.audit_info
+   :members:
+   :undoc-members:
+   :show-inheritance:

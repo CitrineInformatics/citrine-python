@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>2.3.5. Scores &#8212; Citrine Python 0.0.1 documentation</title>
+    <title>2.4.5. Scores &#8212; Citrine Python 0.0.1 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -15,8 +15,8 @@
     <link rel="shortcut icon" href="../_static/favicon.png"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="2.3.6. Design workflows" href="design_workflows.html" />
-    <link rel="prev" title="2.3.4. Processors" href="processors.html" />
+    <link rel="next" title="2.4.6. Design workflows" href="design_workflows.html" />
+    <link rel="prev" title="2.4.4. Processors" href="processors.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -34,7 +34,7 @@
           <div class="body" role="main">
             
   <div class="section" id="scores">
-<h1>2.3.5. Scores<a class="headerlink" href="#scores" title="Permalink to this headline">¶</a></h1>
+<h1>2.4.5. Scores<a class="headerlink" href="#scores" title="Permalink to this headline">¶</a></h1>
 <p>Scores rank materials according to a set of objectives and constraints.
 An objective defines the goal for a scalar value associated with a particular descriptor.
 The goal can be to either maximize or minimize a value by using <a class="reference internal" href="../reference/citrine.informatics.objectives.html#citrine.informatics.objectives.ScalarMaxObjective" title="citrine.informatics.objectives.ScalarMaxObjective"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScalarMaxObjective</span></code></a> or <a class="reference internal" href="../reference/citrine.informatics.objectives.html#citrine.informatics.objectives.ScalarMinObjective" title="citrine.informatics.objectives.ScalarMinObjective"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScalarMinObjective</span></code></a>, respectively.
@@ -51,7 +51,7 @@ Higher scores represent “better” materials.</p>
 <li><p><a class="reference external" href="#maximum-likelihood-of-improvement">Maximum likelihood of improvement</a></p></li>
 </ul>
 <div class="section" id="maximum-expected-improvement">
-<h2>2.3.5.1. Maximum expected improvement<a class="headerlink" href="#maximum-expected-improvement" title="Permalink to this headline">¶</a></h2>
+<h2>2.4.5.1. Maximum expected improvement<a class="headerlink" href="#maximum-expected-improvement" title="Permalink to this headline">¶</a></h2>
 <p>Maximum expected improvement (MEI) is the magnitude of expected improvement calculated from the integral from the best training objective (i.e. baseline) to infinity of <code class="docutils literal notranslate"><span class="pre">p(x)(x-a)</span></code>, where <code class="docutils literal notranslate"><span class="pre">a</span></code> is the best objective value in the training set.
 <a class="reference internal" href="../reference/citrine.informatics.scores.html#citrine.informatics.scores.MEIScore" title="citrine.informatics.scores.MEIScore"><code class="xref py py-class docutils literal notranslate"><span class="pre">MEIScore</span></code></a> supports 0 or 1 objective.
 If no objective is provided, the score is the probability of satisfying all constraints.</p>
@@ -61,7 +61,7 @@ Higher predicted values exploit information known about the current dataset, e.g
 Higher uncertainty leads to exploration of a design space, e.g. little is known about a certain class materials, but materials from this region of the design space could perform well.</p>
 </div>
 <div class="section" id="maximum-likelihood-of-improvement">
-<h2>2.3.5.2. Maximum likelihood of improvement<a class="headerlink" href="#maximum-likelihood-of-improvement" title="Permalink to this headline">¶</a></h2>
+<h2>2.4.5.2. Maximum likelihood of improvement<a class="headerlink" href="#maximum-likelihood-of-improvement" title="Permalink to this headline">¶</a></h2>
 <p>Maximum likelihood of improvement (MLI) is the probability that a candidate satisfies a set of constraints and is an improvement over known objective values.
 <a class="reference internal" href="../reference/citrine.informatics.scores.html#citrine.informatics.scores.MLIScore" title="citrine.informatics.scores.MLIScore"><code class="xref py py-class docutils literal notranslate"><span class="pre">MLIScore</span></code></a> supports 0 or more objectives.
 If no objectives are provided, the MLI score is 0.
@@ -136,11 +136,16 @@ MLI scores are bounded by 0 and 1.</p>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">2. Workflows</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="index.html#modules">2.1. Modules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="index.html#design-workflows">2.2. Design workflows</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="index.html#table-of-contents">2.3. Table of Contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#registration-and-validation">2.3. Registration and validation</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#table-of-contents">2.4. Table of Contents</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">3. FAQ</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../FAQ/prohibited_data_patterns.html">3.1. Prohibited Data Patterns</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development.html">3. Development</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../development.html#running-tests-in-docker">3.1. Running tests in Docker</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">4. FAQ</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../FAQ/prohibited_data_patterns.html">4.1. Prohibited Data Patterns</a></li>
 </ul>
 </li>
 </ul>
@@ -150,8 +155,8 @@ MLI scores are bounded by 0 and 1.</p>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="index.html">2. Workflows</a><ul>
-      <li>Previous: <a href="processors.html" title="previous chapter">2.3.4. Processors</a></li>
-      <li>Next: <a href="design_workflows.html" title="next chapter">2.3.6. Design workflows</a></li>
+      <li>Previous: <a href="processors.html" title="previous chapter">2.4.4. Processors</a></li>
+      <li>Next: <a href="design_workflows.html" title="next chapter">2.4.6. Design workflows</a></li>
   </ul></li>
   </ul></li>
 </ul>

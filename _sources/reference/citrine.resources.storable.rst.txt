@@ -1,0 +1,7 @@
+citrine.resources.storable module
+=================================
+
+.. automodule:: citrine.resources.storable
+   :members:
+   :undoc-members:
+   :show-inheritance:

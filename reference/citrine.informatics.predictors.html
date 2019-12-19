@@ -37,12 +37,13 @@
 <dl class="class">
 <dt id="citrine.informatics.predictors.Predictor">
 <em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.predictors.</code><code class="sig-name descname">Predictor</code><a class="headerlink" href="#citrine.informatics.predictors.Predictor" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.polymorphic_serializable.PolymorphicSerializable</span></code></p>
-<p>Module that describes the ability to compute/predict properties of materials. An abstract type that returns
-the proper subtype based on the ‘type’ value of the passed in dict.</p>
+<dd><p>Bases: <a class="reference internal" href="citrine.informatics.modules.html#citrine.informatics.modules.Module" title="citrine.informatics.modules.Module"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.modules.Module</span></code></a></p>
+<p>Module that describes the ability to compute/predict properties of materials.</p>
+<p>Abstract type that returns the proper type given a serialized dict. subtype
+based on the ‘type’ value of the passed in dict.</p>
 <dl class="method">
 <dt id="citrine.informatics.predictors.Predictor.get_type">
-<em class="property">classmethod </em><code class="sig-name descname">get_type</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span> &#x2192; Type[citrine._serialization.serializable.Serializable]<a class="headerlink" href="#citrine.informatics.predictors.Predictor.get_type" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><code class="sig-name descname">get_type</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span> &#x2192; Type[citrine.informatics.predictors.Predictor]<a class="headerlink" href="#citrine.informatics.predictors.Predictor.get_type" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the subtype.</p>
 </dd></dl>
 
@@ -56,9 +57,12 @@ the proper subtype based on the ‘type’ value of the passed in dict.</p>
 
 <dl class="class">
 <dt id="citrine.informatics.predictors.SimpleMLPredictor">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.predictors.</code><code class="sig-name descname">SimpleMLPredictor</code><span class="sig-paren">(</span><em class="sig-param">name: str, description: str, inputs: List[citrine.informatics.descriptors.Descriptor], outputs: List[citrine.informatics.descriptors.Descriptor], latent_variables: List[citrine.informatics.descriptors.Descriptor], training_data: str, session: Optional[citrine._session.Session] = None, report: Optional[citrine.informatics.reports.Report] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.predictors.SimpleMLPredictor" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.predictors.</code><code class="sig-name descname">SimpleMLPredictor</code><span class="sig-paren">(</span><em class="sig-param">name: str, description: str, inputs: List[citrine.informatics.descriptors.Descriptor], outputs: List[citrine.informatics.descriptors.Descriptor], latent_variables: List[citrine.informatics.descriptors.Descriptor], training_data: str, session: Optional[citrine._session.Session] = None, report: Optional[citrine.informatics.reports.Report] = None, active: bool = True</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.predictors.SimpleMLPredictor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.informatics.predictors.Predictor" title="citrine.informatics.predictors.Predictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.predictors.Predictor</span></code></a></p>
-<p>A predictor interface that builds a graphical model connecting the set of inputs through latent variables to the outputs. Supported complex inputs (such as chemical formulas) are auto-featurized and machine learning models are built for each latent variable and output.</p>
+<p>A predictor interface that builds a simple grpahical model.</p>
+<p>The model connects the set of inputs through latent variables to the outputs.
+Supported complex inputs (such as chemical formulas) are auto-featurized and machine learning
+models are built for each latent variable and output.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -71,6 +75,11 @@ the proper subtype based on the ‘type’ value of the passed in dict.</p>
 </ul>
 </dd>
 </dl>
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.SimpleMLPredictor.active">
+<code class="sig-name descname">active</code><em class="property"> = True</em><a class="headerlink" href="#citrine.informatics.predictors.SimpleMLPredictor.active" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="attribute">
 <dt id="citrine.informatics.predictors.SimpleMLPredictor.description">
 <code class="sig-name descname">description</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.SimpleMLPredictor.description" title="Permalink to this definition">¶</a></dt>
@@ -184,11 +193,16 @@ the proper subtype based on the ‘type’ value of the passed in dict.</p>
 <li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">2. Workflows</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#modules">2.1. Modules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#design-workflows">2.2. Design workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#table-of-contents">2.3. Table of Contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#registration-and-validation">2.3. Registration and validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#table-of-contents">2.4. Table of Contents</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">3. FAQ</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../FAQ/prohibited_data_patterns.html">3.1. Prohibited Data Patterns</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development.html">3. Development</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../development.html#running-tests-in-docker">3.1. Running tests in Docker</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">4. FAQ</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../FAQ/prohibited_data_patterns.html">4.1. Prohibited Data Patterns</a></li>
 </ul>
 </li>
 </ul>

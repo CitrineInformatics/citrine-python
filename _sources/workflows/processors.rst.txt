@@ -15,7 +15,7 @@ The maximum number of candidates sampled from the design space is defined by the
 To be valid, enumerated processors must have a maximum size of at least 1.
 
 An enumerated processor can be used with finite and infinite design spaces.
-A finite space can be defined using an :class:`~citrine.informatics.design_spaces.EnumeratedDesignSpace` or a :class:`~citrine.informatics.design_spaces.ProductDesignSpace` composed only of :class:`~citrine.informatics.dimensions.EnumeratedDimension`s.
+A finite space can be defined using an :class:`~citrine.informatics.design_spaces.EnumeratedDesignSpace` or a :class:`~citrine.informatics.design_spaces.ProductDesignSpace` composed only of :class:`~citrine.informatics.dimensions.EnumeratedDimension` s.
 In these cases, the processor will systematically pull up to ``max_size`` samples from the space.
 
 An infinite design space is created when a :class:`~citrine.informatics.design_spaces.ProductDesignSpace` contains one or more continuous dimensions.
@@ -60,7 +60,7 @@ Grid processor
 --------------
 
 A grid processor generates samples from the outer product of finite dimensions.
-This processor can only be used with a ``ProductDesignSpace``.
+This processor can only be used with a :class:`~citrine.informatics.design_spaces.ProductDesignSpace`.
 To create a finite set of materials from continuous dimensions, a uniform grid is created between the bounds of the descriptor.
 The number of points is specified by ``grid_sizes``.
 ``grid_sizes`` is a map from descriptor key to the number of points to select between bounds of the dimension.

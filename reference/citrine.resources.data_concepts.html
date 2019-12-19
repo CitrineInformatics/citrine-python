@@ -132,7 +132,7 @@ This method will also work if data is a deserialized Taurus object.</p>
 <li><p><strong>project_id</strong> (<em>UUID</em>) – The uid of the project that this collection belongs to.</p></li>
 <li><p><strong>dataset_id</strong> (<em>UUID</em>) – The uid of the dataset that this collection belongs to. If None then the collection
 ranges over all datasets in the project. Note that this is only allowed for certain
-actions. For example, you can use <a class="reference internal" href="#citrine.resources.data_concepts.DataConceptsCollection.filter_by_tags" title="citrine.resources.data_concepts.DataConceptsCollection.filter_by_tags"><code class="xref py py-func docutils literal notranslate"><span class="pre">filter_by_tags()</span></code></a> to search over all datasets,
+actions. For example, you can use <a class="reference internal" href="#citrine.resources.data_concepts.DataConceptsCollection.list_by_tag" title="citrine.resources.data_concepts.DataConceptsCollection.list_by_tag"><code class="xref py py-func docutils literal notranslate"><span class="pre">list_by_tag()</span></code></a> to search over all datasets,
 but when using <a class="reference internal" href="#citrine.resources.data_concepts.DataConceptsCollection.register" title="citrine.resources.data_concepts.DataConceptsCollection.register"><code class="xref py py-func docutils literal notranslate"><span class="pre">register()</span></code></a> to upload or update an object, a dataset must be specified.</p></li>
 <li><p><strong>session</strong> (<em>Session</em>) – The Citrine session used to connect to the database.</p></li>
 </ul>
@@ -198,6 +198,9 @@ and have values within the specified bounds.</p>
 <dd class="field-odd"><p>List[<a class="reference internal" href="#citrine.resources.data_concepts.DataConcepts" title="citrine.resources.data_concepts.DataConcepts">DataConcepts</a>]</p>
 </dd>
 </dl>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version please: </span>use list_by_attribute_bounds</p>
+</div>
 </dd></dl>
 
 <dl class="method">
@@ -221,6 +224,9 @@ Default is False.</p></li>
 <dd class="field-odd"><p>List[<a class="reference internal" href="#citrine.resources.data_concepts.DataConcepts" title="citrine.resources.data_concepts.DataConcepts">DataConcepts</a>]</p>
 </dd>
 </dl>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version Please: </span>use list_by_name</p>
+</div>
 </dd></dl>
 
 <dl class="method">
@@ -244,6 +250,9 @@ See (insert link) for a discussion of how to match on tags.</p>
 <dd class="field-odd"><p>List[<a class="reference internal" href="#citrine.resources.data_concepts.DataConcepts" title="citrine.resources.data_concepts.DataConcepts">DataConcepts</a>]</p>
 </dd>
 </dl>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version please: </span>use list_by_tag</p>
+</div>
 </dd></dl>
 
 <dl class="method">
@@ -290,6 +299,119 @@ See (insert link) for a discussion of how to match on tags.</p>
 <dd class="field-odd"><p>List[<a class="reference internal" href="#citrine.resources.data_concepts.DataConcepts" title="citrine.resources.data_concepts.DataConcepts">DataConcepts</a>]</p>
 </dd>
 </dl>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version Please: </span>use list_all</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="citrine.resources.data_concepts.DataConceptsCollection.list_all">
+<code class="sig-name descname">list_all</code><span class="sig-paren">(</span><em class="sig-param">forward: bool = True</em>, <em class="sig-param">per_page: int = 100</em><span class="sig-paren">)</span> &#x2192; Iterator[citrine.resources.data_concepts.DataConcepts]<a class="headerlink" href="#citrine.resources.data_concepts.DataConceptsCollection.list_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all objects in the collection.</p>
+<p>The order of results should not be relied upon, but for now they are sorted by
+dataset, object type, and creation time (in that order of priority).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>forward</strong> (<em>bool</em>) – Set to False to reverse the order of results (i.e. return in descending order).</p></li>
+<li><p><strong>per_page</strong> (<em>int</em>) – Controls the number of results fetched with each http request to the backend.
+Typically, this is set to a sensible default and should not be modified. Consider
+modifying this value only if you find this method is unacceptably latent.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Every object in this collection.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Iterator[<a class="reference internal" href="#citrine.resources.data_concepts.DataConcepts" title="citrine.resources.data_concepts.DataConcepts">DataConcepts</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="citrine.resources.data_concepts.DataConceptsCollection.list_by_attribute_bounds">
+<code class="sig-name descname">list_by_attribute_bounds</code><span class="sig-paren">(</span><em class="sig-param">attribute_bounds: Dict[Union[taurus.entity.template.attribute_template.AttributeTemplate, taurus.entity.link_by_uid.LinkByUID], taurus.entity.bounds.base_bounds.BaseBounds], forward: bool = True, per_page: int = 100</em><span class="sig-paren">)</span> &#x2192; Iterator[citrine.resources.data_concepts.DataConcepts]<a class="headerlink" href="#citrine.resources.data_concepts.DataConceptsCollection.list_by_attribute_bounds" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all objects in the collection with attributes within certain bounds.</p>
+<p>Results are ordered first by dataset, then by attribute value.</p>
+<p>Currently only one attribute and one bounds on that attribute is supported, and
+attribute type must be numeric.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>attribute_bounds</strong> (Dict[Union[AttributeTemplate,         <a class="reference external" href="https://citrineinformatics.github.io/taurus/reference/taurus.entity.link_by_uid.html#taurus.entity.link_by_uid.LinkByUID" title="(in Taurus)"><code class="xref py py-class docutils literal notranslate"><span class="pre">LinkByUID</span></code></a>],         <a class="reference external" href="https://citrineinformatics.github.io/taurus/reference/taurus.entity.bounds.base_bounds.html#taurus.entity.bounds.base_bounds.BaseBounds" title="(in Taurus)"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseBounds</span></code></a>]) – A dictionary from attributes to the bounds on that attribute.
+Currently only real and integer bounds are supported.
+Each attribute may be represented as an AttributeTemplate (PropertyTemplate,
+ParameterTemplate, or ConditionTemplate) or as a LinkByUID,
+but in either case there must be a uid and it must correspond to an
+AttributeTemplate that exists in the database.
+Only the uid is passed, so if you would like to update an attribute template you
+must register that change to the database before you can use it to filter.</p></li>
+<li><p><strong>forward</strong> (<em>bool</em>) – Set to False to reverse the order of results (i.e. return in descending order).</p></li>
+<li><p><strong>per_page</strong> (<em>int</em>) – Controls the number of results fetched with each http request to the backend.
+Typically, this is set to a sensible default and should not be modified. Consider
+modifying this value only if you find this method is unacceptably latent.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>List of every object in this collection whose <cite>name</cite> matches the search term.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Iterator[<a class="reference internal" href="#citrine.resources.data_concepts.DataConcepts" title="citrine.resources.data_concepts.DataConcepts">DataConcepts</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="citrine.resources.data_concepts.DataConceptsCollection.list_by_name">
+<code class="sig-name descname">list_by_name</code><span class="sig-paren">(</span><em class="sig-param">name: str</em>, <em class="sig-param">exact: bool = False</em>, <em class="sig-param">forward: bool = True</em>, <em class="sig-param">per_page: int = 100</em><span class="sig-paren">)</span> &#x2192; Iterator[citrine.resources.data_concepts.DataConcepts]<a class="headerlink" href="#citrine.resources.data_concepts.DataConceptsCollection.list_by_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all objects with specified name in this dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – case-insensitive object name prefix to search.</p></li>
+<li><p><strong>exact</strong> (<em>bool</em>) – Set to True to change prefix search to exact search (but still case-insensitive).
+Default is False.</p></li>
+<li><p><strong>forward</strong> (<em>bool</em>) – Set to False to reverse the order of results (i.e. return in descending order).</p></li>
+<li><p><strong>per_page</strong> (<em>int</em>) – Controls the number of results fetched with each http request to the backend.
+Typically, this is set to a sensible default and should not be modified. Consider
+modifying this value only if you find this method is unacceptably latent.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>List of every object in this collection whose <cite>name</cite> matches the search term.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Iterator[<a class="reference internal" href="#citrine.resources.data_concepts.DataConcepts" title="citrine.resources.data_concepts.DataConcepts">DataConcepts</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="citrine.resources.data_concepts.DataConceptsCollection.list_by_tag">
+<code class="sig-name descname">list_by_tag</code><span class="sig-paren">(</span><em class="sig-param">tag: str</em>, <em class="sig-param">per_page: int = 100</em><span class="sig-paren">)</span> &#x2192; Iterator[citrine.resources.data_concepts.DataConcepts]<a class="headerlink" href="#citrine.resources.data_concepts.DataConceptsCollection.list_by_tag" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all objects bearing a tag prefixed with <cite>tag</cite> in the collection.</p>
+<p>The order of results is largely unmeaningul. Results from the same dataset will be
+grouped together but no other meaningful ordering can be relied upon. Duplication in
+the result set may (but needn’t) occur when one object has multiple tags matching the
+search tag. For this reason, it is inadvisable to put 2 tags with the same prefix
+(e.g. ‘foo::bar’ and ‘foo::baz’) the same object when it can be avoided.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tag</strong> (<em>str</em>) – The prefix with which to search. Must fully match up to the first delimiter (ex.
+‘foo’ and ‘foo::b’ both match ‘foo::bar’ but ‘fo’ is insufficient.</p></li>
+<li><p><strong>per_page</strong> (<em>int</em>) – Controls the number of results fetched with each http request to the backend.
+Typically, this is set to a sensible default and should not be modified. Consider
+modifying this value only if you find this method is unacceptably latent.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Every object in this collection.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Iterator[<a class="reference internal" href="#citrine.resources.data_concepts.DataConcepts" title="citrine.resources.data_concepts.DataConcepts">DataConcepts</a>]</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -298,6 +420,13 @@ See (insert link) for a discussion of how to match on tags.</p>
 <dd><p>Create a new element of the collection or update an existing element.</p>
 <p>If the input model has an ID that corresponds to an existing object in the
 database, then that object will be updated. Otherwise a new object will be created.</p>
+<p>Only the top-level object in <cite>model</cite> itself is written to the database with this
+method. References to other objects are persisted as links, and the object returned
+by this method has all instances of data objects replaced by instances of LinkByUid.
+Registering an object which references other objects does NOT implicitly register
+those other objects. Rather, those other objects’ values are ignored, and the
+pre-existence of objects with their IDs is asserted before attempting to write
+<cite>model</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>model</strong> (<a class="reference internal" href="#citrine.resources.data_concepts.DataConcepts" title="citrine.resources.data_concepts.DataConcepts"><em>DataConcepts</em></a>) – The DataConcepts object.</p>
@@ -358,11 +487,16 @@ database, then that object will be updated. Otherwise a new object will be creat
 <li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">2. Workflows</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#modules">2.1. Modules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#design-workflows">2.2. Design workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#table-of-contents">2.3. Table of Contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#registration-and-validation">2.3. Registration and validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#table-of-contents">2.4. Table of Contents</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">3. FAQ</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../FAQ/prohibited_data_patterns.html">3.1. Prohibited Data Patterns</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development.html">3. Development</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../development.html#running-tests-in-docker">3.1. Running tests in Docker</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">4. FAQ</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../FAQ/prohibited_data_patterns.html">4.1. Prohibited Data Patterns</a></li>
 </ul>
 </li>
 </ul>

@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>2.3.1. Design spaces &#8212; Citrine Python 0.0.1 documentation</title>
+    <title>2.4.1. Design spaces &#8212; Citrine Python 0.0.1 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -15,7 +15,7 @@
     <link rel="shortcut icon" href="../_static/favicon.png"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="2.3.2. Predictors" href="predictors.html" />
+    <link rel="next" title="2.4.2. Predictors" href="predictors.html" />
     <link rel="prev" title="2. Workflows" href="index.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -34,7 +34,7 @@
           <div class="body" role="main">
             
   <div class="section" id="design-spaces">
-<h1>2.3.1. Design spaces<a class="headerlink" href="#design-spaces" title="Permalink to this headline">¶</a></h1>
+<h1>2.4.1. Design spaces<a class="headerlink" href="#design-spaces" title="Permalink to this headline">¶</a></h1>
 <p>A design space defines a finite or infinite set of materials that can be made.
 Currently, there are two design spaces:</p>
 <ul class="simple">
@@ -42,7 +42,7 @@ Currently, there are two design spaces:</p>
 <li><p><a class="reference external" href="#enumerated-design-space">EnumeratedDesignSpace</a></p></li>
 </ul>
 <div class="section" id="product-design-space">
-<h2>2.3.1.1. Product design space<a class="headerlink" href="#product-design-space" title="Permalink to this headline">¶</a></h2>
+<h2>2.4.1.1. Product design space<a class="headerlink" href="#product-design-space" title="Permalink to this headline">¶</a></h2>
 <p>Materials from a product design space are composed from the outer product of univariate dimensions.
 A dimension defines valid values of a single variable.
 Valid values can be finite (i.e. enumerated using a list) or infinite (i.e. defined by upper and lower bounds on real numbers).
@@ -83,7 +83,7 @@ The bounds of the descriptor define the minimum and maximum temperatures that co
 The bounds of the dimension are the bounds we wish to search between, e.g. restrict the search between 300 and 400K (even though the furnace heat go to much higher temperatures).</p>
 </div>
 <div class="section" id="enumerated-design-space">
-<span id="id1"></span><h2>2.3.1.2. Enumerated design space<a class="headerlink" href="#enumerated-design-space" title="Permalink to this headline">¶</a></h2>
+<span id="id1"></span><h2>2.4.1.2. Enumerated design space<a class="headerlink" href="#enumerated-design-space" title="Permalink to this headline">¶</a></h2>
 <p>An enumerated design space is composed of an explicit list of candidates.
 Each candidate is specified using a dictionary keyed on descriptor key.
 A list of descriptors defines what key-value pairs must be present in each candidate.
@@ -165,11 +165,16 @@ If a candidate is missing a descriptor key-value pair, contains extra key-value 
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">2. Workflows</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="index.html#modules">2.1. Modules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="index.html#design-workflows">2.2. Design workflows</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="index.html#table-of-contents">2.3. Table of Contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#registration-and-validation">2.3. Registration and validation</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#table-of-contents">2.4. Table of Contents</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">3. FAQ</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../FAQ/prohibited_data_patterns.html">3.1. Prohibited Data Patterns</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development.html">3. Development</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../development.html#running-tests-in-docker">3.1. Running tests in Docker</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">4. FAQ</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../FAQ/prohibited_data_patterns.html">4.1. Prohibited Data Patterns</a></li>
 </ul>
 </li>
 </ul>
@@ -180,7 +185,7 @@ If a candidate is missing a descriptor key-value pair, contains extra key-value 
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="index.html">2. Workflows</a><ul>
       <li>Previous: <a href="index.html" title="previous chapter">2. Workflows</a></li>
-      <li>Next: <a href="predictors.html" title="next chapter">2.3.2. Predictors</a></li>
+      <li>Next: <a href="predictors.html" title="next chapter">2.4.2. Predictors</a></li>
   </ul></li>
   </ul></li>
 </ul>

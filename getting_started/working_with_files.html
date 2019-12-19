@@ -53,8 +53,8 @@ when uploaded. The <cite>filename</cite> <strong>must be unique</strong> within 
 with the same <cite>filename</cite> it will be considered a new version of the same file. The old version
 is not deleted, but at the moment you can only download the latest version of a given FileLink.</p>
 </div>
-<div class="section" id="example">
-<h2>1.5.3. Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="uploading-and-downloading">
+<h2>1.5.3. Uploading and Downloading<a class="headerlink" href="#uploading-and-downloading" title="Permalink to this headline">¶</a></h2>
 <p>Assume you have a dataset named <cite>dataset</cite> and a file at the location <cite>/Users/me/status_20190913.csv</cite>
 on your computer. The code below uploads the file and gives it the filename <cite>microscope_status_20190913.csv</cite>.
 It then downloads the file back to your computer at <cite>/Users/me/Downloads/settings.csv</cite>.</p>
@@ -62,6 +62,16 @@ It then downloads the file back to your computer at <cite>/Users/me/Downloads/se
     <span class="s2">&quot;/Users/me/status_20190913.csv&quot;</span><span class="p">,</span> <span class="s2">&quot;microscope_status_20190913.csv&quot;</span><span class="p">)</span>
 <span class="n">dataset</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">download</span><span class="p">(</span><span class="n">file_link</span><span class="p">,</span>
     <span class="s2">&quot;/Users/me/Downloads/settings.csv&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="deleting">
+<h2>1.5.4. Deleting<a class="headerlink" href="#deleting" title="Permalink to this headline">¶</a></h2>
+<p>If you have WRITE permission on a dataset then you may delete any file in the dataset.
+Use this ability carefully, as there are no checks as to whether or no the file is referenced by
+existing data objects.
+Deleting a file can therefore produce broken links.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dataset</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">file_link</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -110,11 +120,16 @@ It then downloads the file back to your computer at <cite>/Users/me/Downloads/se
 <li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">2. Workflows</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#modules">2.1. Modules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#design-workflows">2.2. Design workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#table-of-contents">2.3. Table of Contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#registration-and-validation">2.3. Registration and validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#table-of-contents">2.4. Table of Contents</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">3. FAQ</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../FAQ/prohibited_data_patterns.html">3.1. Prohibited Data Patterns</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development.html">3. Development</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../development.html#running-tests-in-docker">3.1. Running tests in Docker</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">4. FAQ</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../FAQ/prohibited_data_patterns.html">4.1. Prohibited Data Patterns</a></li>
 </ul>
 </li>
 </ul>
