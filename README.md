@@ -44,8 +44,8 @@ be stored in source control under the `docs/source` directory in properly format
 
 ## Logging
 
-A number of our python classes and modules use python's built-in `logging module`, which supports
-several log levels:
+A number of our python modules use python's built-in `logging` module, which supports several log
+levels:
 
 * `FATAL` - indicates a very serious (probably irrecoverable) failure has occurred
 * `ERROR` - indicates an error which by default will not be handled has occurred
