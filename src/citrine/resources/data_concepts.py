@@ -395,7 +395,6 @@ class DataConceptsCollection(Collection[ResourceType]):
         self.project_id = project_id
         self.dataset_id = dataset_id
         self.session = session
-        self.logger = getLogger(type(self).__name__)
 
     @classmethod
     @abstractmethod

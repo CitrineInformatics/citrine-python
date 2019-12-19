@@ -17,7 +17,6 @@ class Citrine:
                  scheme: str = DEFAULT_SCHEME,
                  host: str = DEFAULT_HOST,
                  port: Optional[str] = None):
-        self.logger = logging.getLogger(__name__)
         self.session: Session = Session(api_key, scheme, host, port)
 
     @property
