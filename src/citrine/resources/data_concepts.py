@@ -3,7 +3,6 @@ from uuid import UUID
 from typing import TypeVar, Type, List, Dict, Union, Optional, Iterator
 from copy import deepcopy
 from abc import abstractmethod
-from deprecation import deprecated
 
 from citrine._session import Session
 from citrine._rest.collection import Collection
@@ -421,7 +420,6 @@ class DataConceptsCollection(Collection[ResourceType]):
         data_concepts_object.session = self.session
         return data_concepts_object
 
-    @deprecated(details='Please use list_all')
     def list(self, page: Optional[int] = None, per_page: Optional[int] = None):
         """
         List all visible elements of the collection.
@@ -506,7 +504,6 @@ class DataConceptsCollection(Collection[ResourceType]):
         data = self.session.get_resource(path)
         return self.build(data)
 
-    @deprecated(details='please use list_by_tag')
     def filter_by_tags(self, tags: List[str],
                        page: Optional[int] = None, per_page: Optional[int] = None):
         """
@@ -546,7 +543,6 @@ class DataConceptsCollection(Collection[ResourceType]):
             params=params)
         return [self.build(content) for content in response["contents"]]
 
-    @deprecated(details='please use list_by_attribute_bounds')
     def filter_by_attribute_bounds(
             self,
             attribute_bounds: Dict[Union[AttributeTemplate, LinkByUID], BaseBounds],
@@ -595,7 +591,6 @@ class DataConceptsCollection(Collection[ResourceType]):
             json=body, params=params)
         return [self.build(content) for content in response["contents"]]
 
-    @deprecated(details='Please use list_by_name')
     def filter_by_name(self, name: str, exact: bool = False,
                        page: Optional[int] = None, per_page: Optional[int] = None):
         """
