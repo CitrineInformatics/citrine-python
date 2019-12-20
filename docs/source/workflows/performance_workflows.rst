@@ -45,10 +45,10 @@ When a performance workflow is executed against a module, it performs the analys
 For a cross-validation analysis, cross-validation is performed against the supplied predictor: the predictor's training data are partitioned into several "folds," and each fold takes a turn acting as the "test set."
 For each test set, the rest of the data are used to train the predictor, and the ensuing model is applied to the held-out test set.
 By comparing the model's predictions to the true values, we can compute several performance metrics that provide information about model quality.
-* Root-mean squared error (RMSE): the square root of the average of the squared prediction error
-* Non-dimensional model error (NDME): The RMSE, normalized by the RMSE of a trivial model that always predicts the mean value of the data.
-* Standard residual: The RMSE of the standardized error (the prediction error divided by the prediction uncertainty)
-* Standard confidence: The fraction of predictions for which the prediction error is less than the prediction uncertainty
+- Root-mean squared error (RMSE): the square root of the average of the squared prediction error
+- Non-dimensional model error (NDME): The RMSE, normalized by the RMSE of a trivial model that always predicts the mean value of the data.
+- Standard residual: The RMSE of the standardized error (the prediction error divided by the prediction uncertainty)
+- Standard confidence: The fraction of predictions for which the prediction error is less than the prediction uncertainty
 
 Performance metrics included in the results depend on whether the response is numeric or categorical.
 For numeric responses, performance metrics include root mean squared error (RMSE), non-dimensional error (NDE), standard residual and standard confidence.
@@ -97,6 +97,7 @@ Triggering a workflow returns a workflow execution object.
 A workflow execution has a status (in progress, succeeded, or failed) and results (once execution has succeeded).
 Results of a successful workflow are returned as a dictionary.
 Below shows an example of the results object.
+
 .. code:: python
 
    {
