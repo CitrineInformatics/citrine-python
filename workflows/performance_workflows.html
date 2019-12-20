@@ -74,11 +74,13 @@ Currently, the only analysis implemented is “cross validation analysis,” whi
 <p>When a performance workflow is executed against a module, it performs the analysis and returns an “analysis results” dictionary that contains performance metrics.
 For a cross-validation analysis, cross-validation is performed against the supplied predictor: the predictor’s training data are partitioned into several “folds,” and each fold takes a turn acting as the “test set.”
 For each test set, the rest of the data are used to train the predictor, and the ensuing model is applied to the held-out test set.
-By comparing the model’s predictions to the true values, we can compute several performance metrics that provide information about model quality.
-* Root-mean squared error (RMSE): the square root of the average of the squared prediction error
-* Non-dimensional model error (NDME): The RMSE, normalized by the RMSE of a trivial model that always predicts the mean value of the data.
-* Standard residual: The RMSE of the standardized error (the prediction error divided by the prediction uncertainty)
-* Standard confidence: The fraction of predictions for which the prediction error is less than the prediction uncertainty</p>
+By comparing the model’s predictions to the true values, we can compute several performance metrics that provide information about model quality.</p>
+<ul class="simple">
+<li><p>Root-mean squared error (RMSE): the square root of the average of the squared prediction error</p></li>
+<li><p>Non-dimensional model error (NDME): The RMSE, normalized by the RMSE of a trivial model that always predicts the mean value of the data.</p></li>
+<li><p>Standard residual: The RMSE of the standardized error (the prediction error divided by the prediction uncertainty)</p></li>
+<li><p>Standard confidence: The fraction of predictions for which the prediction error is less than the prediction uncertainty</p></li>
+</ul>
 <p>Performance metrics included in the results depend on whether the response is numeric or categorical.
 For numeric responses, performance metrics include root mean squared error (RMSE), non-dimensional error (NDE), standard residual and standard confidence.</p>
 <ul class="simple">
@@ -123,38 +125,25 @@ Scores are bounded by 0 and 1. At a value of 1, the model has perfect precision 
 <p>Triggering a workflow returns a workflow execution object.
 A workflow execution has a status (in progress, succeeded, or failed) and results (once execution has succeeded).
 Results of a successful workflow are returned as a dictionary.
-Below shows an example of the results object.
-.. code:: python</p>
-<blockquote>
-<div><dl>
-<dt>{</dt><dd><dl>
-<dt>‘results’: [</dt><dd><dl>
-<dt>[</dt><dd><dl>
-<dt>‘report’, {</dt><dd><dl>
-<dt>‘performance_metrics’: {</dt><dd><dl class="simple">
-<dt>‘~~z’: {</dt><dd><p>‘ndme’: {‘value’: 0.4777230639684575, ‘description’: ‘Non-dimensional model error (0.0 for a perfect model)’},
-‘rmse’: {‘value’: 21.307943307393984, ‘description’: ‘Root mean squared error (0.0 for a perfect model)’},
-‘std_residual’: {‘value’: 1.8288119041155286, ‘description’: ‘Uncertainty calibration: root mean square of standardized errors (1.0 is perfectly calibrated)’},
-‘std_confidence’: {‘value’: 0.59375, ‘description’: ‘Uncertainty calibration: fraction of actual values within the prediction error bars (0.68 is perfectly calibrated)’}</p>
-</dd>
-</dl>
-<p>}</p>
-</dd>
-</dl>
-<p>}</p>
-</dd>
-</dl>
-<p>}</p>
-</dd>
-</dl>
-<p>]</p>
-</dd>
-</dl>
-<p>]</p>
-</dd>
-</dl>
-<p>}</p>
-</div></blockquote>
+Below shows an example of the results object.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="s1">&#39;results&#39;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="p">[</span>
+      <span class="s1">&#39;report&#39;</span><span class="p">,</span> <span class="p">{</span>
+        <span class="s1">&#39;performance_metrics&#39;</span><span class="p">:</span> <span class="p">{</span>
+          <span class="s1">&#39;~~z&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;ndme&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="mf">0.4777230639684575</span><span class="p">,</span> <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;Non-dimensional model error (0.0 for a perfect model)&#39;</span><span class="p">},</span>
+            <span class="s1">&#39;rmse&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="mf">21.307943307393984</span><span class="p">,</span> <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;Root mean squared error (0.0 for a perfect model)&#39;</span><span class="p">},</span>
+            <span class="s1">&#39;std_residual&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="mf">1.8288119041155286</span><span class="p">,</span> <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;Uncertainty calibration: root mean square of standardized errors (1.0 is perfectly calibrated)&#39;</span><span class="p">},</span>
+            <span class="s1">&#39;std_confidence&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="mf">0.59375</span><span class="p">,</span> <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;Uncertainty calibration: fraction of actual values within the prediction error bars (0.68 is perfectly calibrated)&#39;</span><span class="p">}</span>
+          <span class="p">}</span>
+        <span class="p">}</span>
+      <span class="p">}</span>
+    <span class="p">]</span>
+  <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
 </div>
 </div>
 
