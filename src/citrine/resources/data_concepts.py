@@ -502,9 +502,7 @@ class DataConceptsCollection(Collection[ResourceType]):
             An object with specified scope and uid
 
         """
-        if self.dataset_id is None:
-            raise RuntimeError("Must specify a dataset in order to get a data model object.")
-        path = self._get_path() + "/{}/{}".format(scope, uid)
+        path = self._get_path(ignore_dataset=self.dataset_id is None) + "/{}/{}".format(scope, uid)
         data = self.session.get_resource(path)
         return self.build(data)
 

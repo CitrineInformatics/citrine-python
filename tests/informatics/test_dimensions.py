@@ -26,6 +26,18 @@ def test_continuous_initialization(continuous_dimension):
     assert continuous_dimension.upper_bound == 33
 
 
+def test_continuous_bounds():
+    """Test bounds are assigned correctly, even when bounds are == 0"""
+    beta = RealDescriptor('beta', -10, 10)
+    lower_none = ContinuousDimension(beta, upper_bound=0)
+    assert lower_none.lower_bound == -10
+    assert lower_none.upper_bound == 0
+
+    upper_none = ContinuousDimension(beta, lower_bound=0)
+    assert upper_none.lower_bound == 0
+    assert upper_none.upper_bound == 10
+
+
 def test_enumerated_initialization(enumerated_dimension):
     """Make sure the correct fields go to the correct places."""
     assert enumerated_dimension.descriptor.key == 'color'
