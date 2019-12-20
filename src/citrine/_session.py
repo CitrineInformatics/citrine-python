@@ -19,6 +19,7 @@ import requests
 # Choose a 5 second buffer so that there's no chance of the access token
 # expiring during the check for expiration
 EXPIRATION_BUFFER_MILLIS: timedelta = timedelta(milliseconds=5000)
+logger = getLogger(__name__)
 
 
 class Session(requests.Session):
@@ -30,7 +31,6 @@ class Session(requests.Session):
                  host: str = 'citrine.io',
                  port: Optional[str] = None):
         super().__init__()
-        self.logger = getLogger(__name__)
         self.scheme: str = scheme
         self.authority = ':'.join([host, port or ''])
         self.refresh_token: str = refresh_token
@@ -82,39 +82,40 @@ class Session(requests.Session):
 
         # TODO: More substantial/careful error handling
         if 200 <= response.status_code <= 299:
-            self.logger.info('%s %s %s', response.status_code, method, path)
+            logger.info('%s %s %s', response.status_code, method, path)
             return response
         else:
-            self.logger.debug('BEGIN request details:')
-            self.logger.debug('\tmethod: {}'.format(method))
-            self.logger.debug('\tpath: {}'.format(path))
-            self.logger.debug('\tversion: {}'.format(version))
+            logger.debug('BEGIN request details:')
+            logger.debug('\tmethod: {}'.format(method))
+            logger.debug('\tpath: {}'.format(path))
+            logger.debug('\turi: {}'.format(uri))
+            logger.debug('\tversion: {}'.format(version))
             for k, v in kwargs.items():
-                self.logger.debug('\t{}: {}'.format(k, v))
-            self.logger.debug('END request details.')
+                logger.debug('\t{}: {}'.format(k, v))
+            logger.debug('END request details.')
             stacktrace = self._extract_response_stacktrace(response)
             if stacktrace is not None:
-                self.logger.error('Response arrived with stacktrace:')
-                self.logger.error(stacktrace)
+                logger.error('Response arrived with stacktrace:')
+                logger.error(stacktrace)
             if response.status_code == 400:
-                self.logger.error('%s %s %s', response.status_code, method, path)
-                self.logger.error(response.text)
+                logger.error('%s %s %s', response.status_code, method, path)
+                logger.error(response.text)
                 raise BadRequest(path, response)
             elif response.status_code == 401:
-                self.logger.error('%s %s %s', response.status_code, method, path)
+                logger.error('%s %s %s', response.status_code, method, path)
                 raise Unauthorized(path, response)
             elif response.status_code == 404:
-                self.logger.error('%s %s %s', response.status_code, method, path)
+                logger.error('%s %s %s', response.status_code, method, path)
                 raise NotFound(path, response)
             elif response.status_code == 409:
-                self.logger.debug('%s %s %s', response.status_code, method, path)
+                logger.debug('%s %s %s', response.status_code, method, path)
                 raise WorkflowConflictException(response.text)
             elif response.status_code == 425:
-                self.logger.debug('%s %s %s', response.status_code, method, path)
+                logger.debug('%s %s %s', response.status_code, method, path)
                 msg = 'Cant execute at this time. Try again later. Error: {}'.format(response.text)
                 raise WorkflowNotReadyException(msg)
             else:
-                self.logger.error('%s %s %s', response.status_code, method, path)
+                logger.error('%s %s %s', response.status_code, method, path)
                 raise CitrineException(response.text)
 
     @staticmethod

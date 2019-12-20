@@ -1,5 +1,4 @@
 """Top-level class for all data concepts objects and collections thereof."""
-from logging import getLogger
 from uuid import UUID
 from typing import TypeVar, Type, List, Dict, Union, Optional, Iterator
 from copy import deepcopy
@@ -394,7 +393,6 @@ class DataConceptsCollection(Collection[ResourceType]):
         self.project_id = project_id
         self.dataset_id = dataset_id
         self.session = session
-        self.logger = getLogger(type(self).__name__)
 
     @classmethod
     @abstractmethod
@@ -502,9 +500,7 @@ class DataConceptsCollection(Collection[ResourceType]):
             An object with specified scope and uid
 
         """
-        if self.dataset_id is None:
-            raise RuntimeError("Must specify a dataset in order to get a data model object.")
-        path = self._get_path() + "/{}/{}".format(scope, uid)
+        path = self._get_path(ignore_dataset=self.dataset_id is None) + "/{}/{}".format(scope, uid)
         data = self.session.get_resource(path)
         return self.build(data)
 

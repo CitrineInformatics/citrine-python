@@ -54,8 +54,14 @@ class ContinuousDimension(Serializable['ContinuousDimension'], Dimension):
                  upper_bound: Optional[float] = None,
                  template_id: Optional[UUID] = None):
         self.descriptor: RealDescriptor = descriptor
-        self.lower_bound: float = lower_bound or descriptor.lower_bound
-        self.upper_bound: float = upper_bound or descriptor.upper_bound
+        if lower_bound is not None:
+            self.lower_bound: float = lower_bound
+        else:
+            self.lower_bound: float = descriptor.lower_bound
+        if upper_bound is not None:
+            self.upper_bound: float = upper_bound
+        else:
+            self.upper_bound: float = descriptor.upper_bound
         self.template_id: UUID = template_id or uuid4()
 
 

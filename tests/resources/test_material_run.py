@@ -273,13 +273,25 @@ def test_material_run_cannot_register_with_no_id(collection):
         collection.register(MaterialRunFactory())
 
 
-def test_material_run_cannot_get_with_no_id(collection):
+def test_material_run_can_get_with_no_id(collection, session):
     # Given
     collection.dataset_id = None
 
+    run_data = MaterialRunDataFactory(name='Cake 2')
+    mr_id = run_data['uids']['id']
+    session.set_response(run_data)
+
+    # When
+    run = collection.get(mr_id)
+
     # Then
-    with pytest.raises(RuntimeError):
-        collection.get('123')
+    assert 1 == session.num_calls
+    expected_call = FakeCall(
+        method='GET',
+        path='projects/{}/material-runs/id/{}'.format(collection.project_id, mr_id)
+    )
+    assert expected_call == session.last_call
+    assert 'Cake 2' == run.name
 
 
 def test_material_run_filter_by_name_with_no_id(collection):
