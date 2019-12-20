@@ -1,10 +1,8 @@
 """Top-level class for all data concepts objects and collections thereof."""
-from logging import getLogger
 from uuid import UUID
 from typing import TypeVar, Type, List, Dict, Union, Optional, Iterator
 from copy import deepcopy
 from abc import abstractmethod
-from deprecation import deprecated
 
 from citrine._session import Session
 from citrine._rest.collection import Collection
@@ -395,7 +393,6 @@ class DataConceptsCollection(Collection[ResourceType]):
         self.project_id = project_id
         self.dataset_id = dataset_id
         self.session = session
-        self.logger = getLogger(type(self).__name__)
 
     @classmethod
     @abstractmethod
@@ -423,7 +420,6 @@ class DataConceptsCollection(Collection[ResourceType]):
         data_concepts_object.session = self.session
         return data_concepts_object
 
-    @deprecated(details='Please use list_all')
     def list(self, page: Optional[int] = None, per_page: Optional[int] = None):
         """
         List all visible elements of the collection.
@@ -504,13 +500,10 @@ class DataConceptsCollection(Collection[ResourceType]):
             An object with specified scope and uid
 
         """
-        if self.dataset_id is None:
-            raise RuntimeError("Must specify a dataset in order to get a data model object.")
-        path = self._get_path() + "/{}/{}".format(scope, uid)
+        path = self._get_path(ignore_dataset=self.dataset_id is None) + "/{}/{}".format(scope, uid)
         data = self.session.get_resource(path)
         return self.build(data)
 
-    @deprecated(details='please use list_by_tag')
     def filter_by_tags(self, tags: List[str],
                        page: Optional[int] = None, per_page: Optional[int] = None):
         """
@@ -550,7 +543,6 @@ class DataConceptsCollection(Collection[ResourceType]):
             params=params)
         return [self.build(content) for content in response["contents"]]
 
-    @deprecated(details='please use list_by_attribute_bounds')
     def filter_by_attribute_bounds(
             self,
             attribute_bounds: Dict[Union[AttributeTemplate, LinkByUID], BaseBounds],
@@ -599,7 +591,6 @@ class DataConceptsCollection(Collection[ResourceType]):
             json=body, params=params)
         return [self.build(content) for content in response["contents"]]
 
-    @deprecated(details='Please use list_by_name')
     def filter_by_name(self, name: str, exact: bool = False,
                        page: Optional[int] = None, per_page: Optional[int] = None):
         """
