@@ -1,5 +1,4 @@
 """Top-level class for all data concepts objects and collections thereof."""
-from logging import getLogger
 from uuid import UUID
 from typing import TypeVar, Type, List, Dict, Union, Optional, Iterator
 from copy import deepcopy
@@ -395,7 +394,6 @@ class DataConceptsCollection(Collection[ResourceType]):
         self.project_id = project_id
         self.dataset_id = dataset_id
         self.session = session
-        self.logger = getLogger(type(self).__name__)
 
     @classmethod
     @abstractmethod

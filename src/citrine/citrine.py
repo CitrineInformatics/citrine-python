@@ -2,7 +2,6 @@ from typing import Optional
 from citrine._session import Session
 from citrine.resources.project import ProjectCollection
 from citrine.resources.user import UserCollection
-import logging
 
 
 DEFAULT_HOST: str = 'citrine.io'
@@ -17,7 +16,6 @@ class Citrine:
                  scheme: str = DEFAULT_SCHEME,
                  host: str = DEFAULT_HOST,
                  port: Optional[str] = None):
-        self.logger = logging.getLogger(__name__)
         self.session: Session = Session(api_key, scheme, host, port)
 
     @property
