@@ -4,7 +4,6 @@ from uuid import UUID
 from typing import TypeVar, Type, List, Dict, Union, Optional, Iterator
 from copy import deepcopy
 from abc import abstractmethod
-from deprecation import deprecated
 
 from citrine._session import Session
 from citrine._rest.collection import Collection
