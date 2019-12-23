@@ -52,7 +52,7 @@ class IngredientSpec(Storable, Resource['IngredientSpec'], TaurusIngredientSpec)
     name: str
         Label on the ingredient that is unique within the process that contains it.
     labels: List[str], optional
-        Additional labels on the ingredient that must be unique.
+        Additional labels on the ingredient.
     file_links: List[FileLink], optional
         Links to associated files, with resource paths into the files API.
 

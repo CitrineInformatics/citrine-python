@@ -53,7 +53,7 @@ class IngredientRun(Storable, Resource['IngredientRun'], TaurusIngredientRun):
     name: str
         Label on the ingredient that is unique within the process that contains it.
     labels: List[str], optional
-        Additional labels on the ingredient that must be unique.
+        Additional labels on the ingredient.
     spec: IngredientSpec
         The specification of which this ingredient is a realization.
     file_links: List[FileLink], optional
