@@ -24,7 +24,7 @@ or a specific version can be installed via:
 
 .. code::
 
-  pip install citrine==0.3.0
+  pip install citrine==0.6.0
 
 
 Table of Contents
