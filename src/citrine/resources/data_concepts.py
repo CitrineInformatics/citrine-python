@@ -291,6 +291,11 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
         if linked_objects is None:
             return
 
+        # Make `linked_objects` point to the list of linked objects themselves, as opposed to the
+        # attribute of `obj_with_soft_links`. The list in `obj_with_soft_links` will be modified
+        # in the loop below, and we don't want to modify a list while iterating over it.
+        linked_objects = [l for l in linked_objects]
+
         # Cycle through linked objects in obj_with_soft_link and if they are not LinkByUID,
         # build them and then set their `reverse_field` field to dc_obj
         for linked_obj in linked_objects:

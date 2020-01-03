@@ -9,6 +9,7 @@ from citrine.resources.measurement_run import MeasurementRun
 from taurus.client.json_encoder import LinkByUID
 from taurus.client.json_encoder import loads, dumps
 from taurus.demo.cake import make_cake
+from taurus.entity.dict_serializable import DictSerializable
 from taurus.entity.object import MeasurementRun as TaurusMeasurementRun
 from taurus.entity.object import MaterialRun as TaurusMaterialRun
 from taurus.entity.object import MaterialSpec as TaurusMaterialSpec
@@ -145,26 +146,40 @@ def test_measurement_material_connection_rehydration():
 
 def test_cake():
     """Test that the cake example from taurus can be built without modification."""
-    # def _recursive_check_equivalence(obj1, obj2, seen=None):
-    #     if seen is None:
-    #         seen = set()
-    #     if obj1.__hash__ is not None:
-    #         if obj1 in seen:
-    #             return True
-    #         else:
-    #             seen.add(obj1)
-    #
-    #     if isinstance(obj1, (list, tuple)):
-    #         return len(obj1) == len(obj2) and \
-    #                all([_recursive_check_equivalence(obj1[i], obj2[i], seen) for i, _ in enumerate(obj1)])
-    #     elif isinstance(obj1, DictSerializable):
-    #         keys = {x.lstrip('_') for x in vars(obj1)}
-    #         return all([_recursive_check_equivalence(getattr(obj1, key), getattr(obj2, key), seen) for key in keys])
-    #     else:
-    #         return obj1 == obj2
+    def _check_equivalence(obj1, obj2, seen=None):
+        """A convenience method to check if two objects are equivalent.
+
+        obj2 is allowed to be "bigger" than obj1: if they are DictSerializable, obj2 may have more
+        attributes, if they are lists, obj2 may be longer, if they are dicts, obj2 may have more
+        key-value pairs. The important thing is that obj2 have all the attributes of obj1.
+        The intended use is to compare a taurus object (obj1) with a citrine-python object (obj2).
+        The citrine-pythong object can have additional meta-information related to its possible
+        connection with an external database.
+        """
+        if seen is None:
+            seen = set()
+        if obj1.__hash__ is not None:
+            if obj1 in seen:
+                return True
+            else:
+                seen.add(obj1)
+
+        if isinstance(obj1, (list, tuple)):
+            return isinstance(obj2, (list, tuple)) and \
+                   all([_check_equivalence(obj1[i], obj2[i], seen) for i in range(len(obj1))])
+        elif isinstance(obj1, dict):
+            return isinstance(obj2, dict) and \
+                   all([_check_equivalence(obj1.get(key), obj2.get(key), seen)
+                        for key in obj1.keys()])
+        elif isinstance(obj1, DictSerializable):
+            keys = {x.lstrip('_') for x in vars(obj1)}
+            return isinstance(obj2, DictSerializable) and \
+                all([_check_equivalence(getattr(obj1, key), getattr(obj2, key, None), seen)
+                     for key in keys])
+        else:
+            return obj1 == obj2
 
     taurus_cake = make_cake()
     cake = MaterialRun.build(taurus_cake)
-    # assert _recursive_check_equivalence(taurus_cake, cake)
-    assert [ingred.name for ingred in cake.process.ingredients] == \
-           [ingred.name for ingred in taurus_cake.process.ingredients]
+    assert _check_equivalence(taurus_cake, cake), \
+        "Cake example was mutated unexpectedly during building"
