@@ -56,8 +56,8 @@ levels:
   the details of every operation being performed
 
 As set, a logging level will return any logs at the set level and above, e.g. `WARNING` includes
-itself, `ERROR`, and `FATAL`. By default, the log level is set to `INFO`. However, it may be
-preferable to set the log level to `WARNING` or `ERROR` if your program's output should be concise
+itself, `ERROR`, and `FATAL`. By default, the log level is set to `WARNING`. However, it may be
+preferable to set the log level to `ERROR` if your program's output should be particularly concise
 and/or only produce actionable information. When debugging issues, increasing the verbosity to `DEBUG`
 may be helpful, particularly if seeking assistance from the Citrine team.
 
