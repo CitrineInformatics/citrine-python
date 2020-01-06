@@ -1,7 +1,7 @@
 """Top-level class for all data concepts objects and collections thereof."""
 from uuid import UUID
 from typing import TypeVar, Type, List, Dict, Union, Optional, Iterator
-from copy import deepcopy
+from copy import copy, deepcopy
 from abc import abstractmethod
 
 from citrine._session import Session
@@ -291,10 +291,10 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
         if linked_objects is None:
             return
 
-        # Make `linked_objects` point to the list of linked objects themselves, as opposed to the
+        # Make `linked_objects` point to a copy of the list of linked objects, as opposed to the
         # attribute of `obj_with_soft_links`. The list in `obj_with_soft_links` will be modified
         # in the loop below, and we don't want to modify a list while iterating over it.
-        linked_objects = [l for l in linked_objects]
+        linked_objects = copy(linked_objects)
 
         # Cycle through linked objects in obj_with_soft_link and if they are not LinkByUID,
         # build them and then set their `reverse_field` field to dc_obj
