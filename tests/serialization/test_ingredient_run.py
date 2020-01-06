@@ -64,8 +64,7 @@ def test_material_attachment():
     Check that the ingredient can be built, and that the connection survives ser/de.
     """
     flour = MaterialRun("flour", sample_type='unknown')
-    flour_ingredient = IngredientRun(material=flour, absolute_quantity=NominalReal(500, 'g'),
-                                     name='500 g flour')
+    flour_ingredient = IngredientRun(material=flour, absolute_quantity=NominalReal(500, 'g'))
 
     flour_ingredient_copy = IngredientRun.build(flour_ingredient.dump())
     assert flour_ingredient_copy == flour_ingredient
