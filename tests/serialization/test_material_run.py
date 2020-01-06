@@ -68,7 +68,7 @@ def test_nested_serialization():
 
     # helper
     def make_ingredient(material: MaterialRun):
-        return IngredientRun(name=material.name, material=material)
+        return IngredientRun(material=material)
 
     icing = ProcessRun(name="Icing")
     cake = MaterialRun(name='Final cake', process=icing)
@@ -103,8 +103,7 @@ def test_measurement_material_connection_rehydration():
     process = TaurusProcessRun("Transformative process", spec=process_spec)
     ingredient_spec = TaurusIngredientSpec(name="ingredient", material=starting_mat_spec,
                                            process=process_spec)
-    ingredient = TaurusIngredientRun(name="ingredient", material=starting_mat, process=process,
-                                     spec=ingredient_spec)
+    ingredient = TaurusIngredientRun(material=starting_mat, process=process, spec=ingredient_spec)
 
     ending_mat_spec = TaurusMaterialSpec("ending material", process=process_spec)
     ending_mat = TaurusMaterialRun("ending material", process=process, spec=ending_mat_spec)
