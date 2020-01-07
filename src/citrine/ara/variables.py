@@ -1,6 +1,8 @@
-"""Tools for working with Descriptors."""
+"""Variable definitions for Ara"""
 from typing import Type, Optional, List  # noqa: F401
 from abc import abstractmethod
+
+from taurus.entity.link_by_uid import LinkByUID
 
 from citrine._serialization.serializable import Serializable
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
@@ -29,7 +31,8 @@ class Variable(PolymorphicSerializable['Variable']):
     def get_type(cls, data) -> Type[Serializable]:
         """Return the subtype."""
         return {
-            "root_info": RootInfo
+            "root_info": RootInfo,
+            "attribute_by_template": AttributeByTemplate
         }[data["type"]]
 
 
@@ -62,3 +65,34 @@ class RootInfo(Serializable['RootInfo'], Variable):
         self.short_name = short_name
         self.output_name = output_name
         self.field = field
+
+
+class AttributeByTemplate(Serializable['AttributeByTemplate'], Variable):
+    """Attribute marked by an attribute template.
+
+    Parameters
+    ----------
+    short_name: str
+        a short human-readable name to use when referencing the variable
+    output_name: list[str]
+        sequence of column headers
+    template: LinkByUID
+        attribute template that identifies the attribute to assign to the variable
+
+    """
+
+    short_name = properties.String('short_name')
+    output_name = properties.List(properties.String, 'output_name')
+    template = properties.Object(LinkByUID, 'template')
+    type = properties.String('type', default="attribute_by_template", deserializable=False)
+
+    def attrs(self) -> List[str]:
+        return ["short_name", "output_name", "template"]
+
+    def __init__(self,
+                 short_name: str,
+                 output_name: List[str],
+                 template: LinkByUID):
+        self.short_name = short_name
+        self.output_name = output_name
+        self.template = template
