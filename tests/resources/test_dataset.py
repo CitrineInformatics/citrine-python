@@ -3,7 +3,7 @@ import pytest
 
 from citrine.resources.dataset import DatasetCollection
 from tests.utils.factories import DatasetDataFactory, DatasetFactory
-from tests.utils.session import FakeSession, FakeCall
+from tests.utils.session import FakeSession, FakePaginatedSession, FakeCall
 
 
 @pytest.fixture
@@ -12,10 +12,23 @@ def session() -> FakeSession:
 
 
 @pytest.fixture
+def paginated_session() -> FakePaginatedSession:
+    return FakePaginatedSession()
+
+
+@pytest.fixture
 def collection(session) -> DatasetCollection:
     return DatasetCollection(
         project_id=UUID('6b608f78-e341-422c-8076-35adc8828545'),
         session=session
+    )
+
+
+@pytest.fixture
+def paginated_collection(paginated_session) -> DatasetCollection:
+    return DatasetCollection(
+        project_id=UUID('6b608f78-e341-422c-8076-35adc8828545'),
+        session=paginated_session
     )
 
 
@@ -48,19 +61,26 @@ def test_register_dataset(collection, session):
     assert name == dataset.name
 
 
-def test_list_datasets(collection, session):
+def test_list_datasets(paginated_collection, paginated_session):
     # Given
-    datasets_data = DatasetDataFactory.create_batch(5)
-    session.set_response(datasets_data)
+    datasets_data = DatasetDataFactory.create_batch(50)
+    paginated_session.set_response(datasets_data)
 
     # When
-    datasets = list(collection.list())
+    datasets = list(paginated_collection.list())
 
     # Then
-    assert 1 == session.num_calls
-    expected_call = FakeCall(method='GET', path='projects/{}/datasets'.format(collection.project_id))
-    assert expected_call == session.last_call
-    assert 5 == len(datasets)
+    assert 3 == paginated_session.num_calls
+    expected_first_call = FakeCall(method='GET', path='projects/{}/datasets'.format(paginated_collection.project_id))
+    expected_last_call = FakeCall(method='GET', path='projects/{}/datasets'.format(paginated_collection.project_id),
+                                  params={'page': 3})
+    assert expected_first_call == paginated_session.calls[0]
+    assert expected_last_call == paginated_session.last_call
+    assert 50 == len(datasets)
+
+    expected_uids = [str(d.uid) for d in datasets]
+    dataset_ids = [d['id'] for d in datasets_data]
+    assert expected_uids == dataset_ids
 
 
 def test_delete_dataset(collection, session, dataset):
