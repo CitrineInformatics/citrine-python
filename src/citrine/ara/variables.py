@@ -56,7 +56,7 @@ class RootInfo(Serializable['RootInfo'], Variable):
     type = properties.String('type', default="root_info", deserializable=False)
 
     def attrs(self) -> List[str]:
-        return ["short_name", "output_name", "field"]
+        return ["short_name", "output_name", "field", "type"]
 
     def __init__(self,
                  short_name: str,
@@ -87,7 +87,7 @@ class AttributeByTemplate(Serializable['AttributeByTemplate'], Variable):
     type = properties.String('type', default="attribute_by_template", deserializable=False)
 
     def attrs(self) -> List[str]:
-        return ["short_name", "output_name", "template"]
+        return ["short_name", "output_name", "template", "type"]
 
     def __init__(self,
                  short_name: str,
