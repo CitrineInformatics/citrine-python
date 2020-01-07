@@ -69,6 +69,16 @@ class Session(requests.Session):
         if self._is_access_token_expired():
             self._refresh_access_token()
         uri = self._versioned_base_url(version) + path.lstrip('/')
+
+        logger.debug('BEGIN request details:')
+        logger.debug('\tmethod: {}'.format(method))
+        logger.debug('\tpath: {}'.format(path))
+        logger.debug('\turi: {}'.format(uri))
+        logger.debug('\tversion: {}'.format(version))
+        for k, v in kwargs.items():
+            logger.debug('\t{}: {}'.format(k, v))
+        logger.debug('END request details.')
+
         response = super().request(method, uri, **kwargs)
 
         try:
@@ -85,14 +95,6 @@ class Session(requests.Session):
             logger.info('%s %s %s', response.status_code, method, path)
             return response
         else:
-            logger.debug('BEGIN request details:')
-            logger.debug('\tmethod: {}'.format(method))
-            logger.debug('\tpath: {}'.format(path))
-            logger.debug('\turi: {}'.format(uri))
-            logger.debug('\tversion: {}'.format(version))
-            for k, v in kwargs.items():
-                logger.debug('\t{}: {}'.format(k, v))
-            logger.debug('END request details.')
             stacktrace = self._extract_response_stacktrace(response)
             if stacktrace is not None:
                 logger.error('Response arrived with stacktrace:')
