@@ -1,4 +1,4 @@
-"""Variable definitions for Ara"""
+"""Variable definitions for Ara."""
 from typing import Type, Optional, List  # noqa: F401
 from abc import abstractmethod
 
@@ -16,13 +16,13 @@ class Variable(PolymorphicSerializable['Variable']):
     """
 
     @abstractmethod
-    def attrs(self) -> List[str]:
+    def _attrs(self) -> List[str]:
         pass  # pragma: no cover
 
     def __eq__(self, other):
         try:
             return all([
-                self.__getattribute__(key) == other.__getattribute__(key) for key in self.attrs()
+                self.__getattribute__(key) == other.__getattribute__(key) for key in self._attrs()
             ])
         except AttributeError:
             return False
@@ -55,7 +55,7 @@ class RootInfo(Serializable['RootInfo'], Variable):
     field = properties.String('field')
     type = properties.String('type', default="root_info", deserializable=False)
 
-    def attrs(self) -> List[str]:
+    def _attrs(self) -> List[str]:
         return ["short_name", "output_name", "field", "type"]
 
     def __init__(self,
@@ -86,7 +86,7 @@ class AttributeByTemplate(Serializable['AttributeByTemplate'], Variable):
     template = properties.Object(LinkByUID, 'template')
     type = properties.String('type', default="attribute_by_template", deserializable=False)
 
-    def attrs(self) -> List[str]:
+    def _attrs(self) -> List[str]:
         return ["short_name", "output_name", "template", "type"]
 
     def __init__(self,

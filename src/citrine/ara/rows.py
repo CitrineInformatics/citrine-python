@@ -1,4 +1,4 @@
-"""Variable definitions for Ara"""
+"""Row definitions for Ara."""
 from typing import Type, Optional, List  # noqa: F401
 from abc import abstractmethod
 
@@ -16,13 +16,13 @@ class Row(PolymorphicSerializable['Row']):
     """
 
     @abstractmethod
-    def attrs(self) -> List[str]:
+    def _attrs(self) -> List[str]:
         pass  # pragma: no cover
 
     def __eq__(self, other):
         try:
             return all([
-                self.__getattribute__(key) == other.__getattribute__(key) for key in self.attrs()
+                self.__getattribute__(key) == other.__getattribute__(key) for key in self._attrs()
             ])
         except AttributeError:
             return False
@@ -49,10 +49,9 @@ class MaterialRunByTemplate(Serializable['MaterialRunByTemplate'], Row):
     templates = properties.List(properties.Object(LinkByUID), "templates")
     type = properties.String('type', default="material_run_by_template", deserializable=False)
 
-    def attrs(self) -> List[str]:
+    def _attrs(self) -> List[str]:
         return ["templates", "type"]
 
     def __init__(self,
                  templates: List[LinkByUID]):
         self.templates = templates
-
