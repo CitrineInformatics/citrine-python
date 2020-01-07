@@ -1,5 +1,6 @@
 """Tools for working with Descriptors."""
 from typing import Type, Optional, List  # noqa: F401
+from abc import abstractmethod
 
 from citrine._serialization.serializable import Serializable
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
@@ -7,10 +8,22 @@ from citrine._serialization import properties
 
 
 class Variable(PolymorphicSerializable['Variable']):
-    """A variable that can be assigned values present in material histories
+    """A variable that can be assigned values present in material histories.
 
     Abstract type that returns the proper type given a serialized dict.
     """
+
+    @abstractmethod
+    def attrs(self) -> List[str]:
+        pass  # pragma: no cover
+
+    def __eq__(self, other):
+        try:
+            return all([
+                self.__getattribute__(key) == other.__getattribute__(key) for key in self.attrs()
+            ])
+        except AttributeError:
+            return False
 
     @classmethod
     def get_type(cls, data) -> Type[Serializable]:
@@ -31,6 +44,7 @@ class RootInfo(Serializable['RootInfo'], Variable):
         sequence of column headers
     field: str
         name of the field to assign the variable to
+
     """
 
     short_name = properties.String('short_name')
@@ -38,14 +52,8 @@ class RootInfo(Serializable['RootInfo'], Variable):
     field = properties.String('field')
     type = properties.String('type', default="root_info", deserializable=False)
 
-    def __eq__(self, other):
-        try:
-            attrs = ["short_name", "output_name", "field"]
-            return all([
-                self.__getattribute__(key) == other.__getattribute__(key) for key in attrs
-            ])
-        except Exception:
-            return False
+    def attrs(self) -> List[str]:
+        return ["short_name", "output_name", "field"]
 
     def __init__(self,
                  short_name: str,
