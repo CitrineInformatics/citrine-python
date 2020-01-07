@@ -60,6 +60,7 @@ class Collection(Generic[ResourceType]):
                     per_page: Optional[int] = None) -> Iterable[ResourceType]:
         """
         Fetch visible elements in the collection.  This does not handle pagination.
+
         This method will return the first page of results using the default page/per_page
         behaviour of the backend service.  Specify page/per_page to override these defaults
         which are passed to the backend service.
@@ -107,9 +108,10 @@ class Collection(Generic[ResourceType]):
              page: Optional[int] = None,
              per_page: Optional[int] = None) -> Iterable[ResourceType]:
         """
-        List all visible elements in the collection.  Leaving page and per_page as
-        default values will yield all elements in the collection, paginating over
-        all available pages.
+        List all visible elements in the collection.
+
+        Leaving page and per_page as default values will yield all elements in the
+        collection, paginating over all available pages.
 
         Parameters
         ---------
@@ -127,9 +129,8 @@ class Collection(Generic[ResourceType]):
             Resources in this collection.
 
         """
-
-        # Do an initial fetch of the first page using supplied args.  If more results expected, proceed with paginated
-        # calls
+        # Do an initial fetch of the first page using supplied args.
+        # If more results expected, proceed with paginated calls.
         first_page = self._fetch_page(page=page, per_page=per_page)
         first_page_count = 0
         first_uid = None
@@ -151,8 +152,8 @@ class Collection(Generic[ResourceType]):
             subset = self._fetch_page(page=next_page, per_page=per_page)
             count = 0
             for idx, element in enumerate(subset):
-                # escaping from infinite loops where page/per_page are not honored and are returning the
-                # same results regardless of page:
+                # escaping from infinite loops where page/per_page are not
+                # honored and are returning the same results regardless of page:
                 uid = getattr(element, 'uid', None)
                 if first_uid is not None and first_uid == uid:
                     break

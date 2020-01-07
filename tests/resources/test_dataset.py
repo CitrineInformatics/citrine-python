@@ -78,9 +78,33 @@ def test_list_datasets(paginated_collection, paginated_session):
     assert expected_last_call == paginated_session.last_call
     assert 50 == len(datasets)
 
-    expected_uids = [str(d.uid) for d in datasets]
-    dataset_ids = [d['id'] for d in datasets_data]
-    assert expected_uids == dataset_ids
+    expected_uids = [d['id'] for d in datasets_data]
+    dataset_ids = [str(d.uid) for d in datasets]
+    assert dataset_ids == expected_uids
+
+
+def test_list_datasets_infinite_loop_detect(paginated_collection, paginated_session):
+    # Given
+    datasets_data = DatasetDataFactory.create_batch(20)
+    # copy the first 20 results, this simulates an API that keeps returning the first page
+    datasets_data.extend(datasets_data)
+    paginated_session.set_response(datasets_data)
+
+    # When
+    datasets = list(paginated_collection.list())
+
+    # Then
+    assert 2 == paginated_session.num_calls  # duplicate UID detected on the second call
+    expected_first_call = FakeCall(method='GET', path='projects/{}/datasets'.format(paginated_collection.project_id))
+    expected_last_call = FakeCall(method='GET', path='projects/{}/datasets'.format(paginated_collection.project_id),
+                                  params={'page': 2})
+    assert expected_first_call == paginated_session.calls[0]
+    assert expected_last_call == paginated_session.last_call
+    assert 20 == len(datasets)
+
+    expected_uids = [d['id'] for d in datasets_data[0:20]]
+    dataset_ids = [str(d.uid) for d in datasets]
+    assert dataset_ids == expected_uids
 
 
 def test_delete_dataset(collection, session, dataset):
