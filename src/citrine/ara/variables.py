@@ -30,10 +30,10 @@ class Variable(PolymorphicSerializable['Variable']):
     @classmethod
     def get_type(cls, data) -> Type[Serializable]:
         """Return the subtype."""
-        return {
-            "root_info": RootInfo,
-            "attribute_by_template": AttributeByTemplate
-        }[data["type"]]
+        types: List[Type[Serializable]] = [
+            RootInfo, AttributeByTemplate
+        ]
+        return next(x for x in types if x.type == data["type"])
 
 
 class RootInfo(Serializable['RootInfo'], Variable):
