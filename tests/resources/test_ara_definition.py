@@ -1,7 +1,12 @@
-from uuid import UUID
+import json
+from uuid import UUID, uuid4
 
 import pytest
+from taurus.entity.link_by_uid import LinkByUID
 
+from citrine.ara.columns import RealMeanColumn
+from citrine.ara.rows import MaterialRunByTemplate
+from citrine.ara.variables import AttributeByTemplate
 from citrine.resources.ara_definition import AraDefinitionCollection, AraDefinition
 from tests.utils.factories import AraDefinitionFactory
 from tests.utils.session import FakeSession, FakeCall
@@ -51,3 +56,20 @@ def test_init_ara_definition():
     ara_definition = AraDefinition(name="foo", description="bar", rows=[], columns=[], variables=[], datasets=[])
     assert ara_definition.uid is None
     assert ara_definition.version is None
+
+
+def test_dump_example():
+    density = AttributeByTemplate(
+        short_name="density",
+        output_name=["Slice", "Density"],
+        template=LinkByUID(scope="templates", id="density")
+    )
+    ara_definition = AraDefinition(
+        name="Example Table",
+        description="Illustrative example that's meant to show how Ara Definitions will look serialized",
+        datasets=[uuid4()],
+        rows=[MaterialRunByTemplate(templates=[LinkByUID(scope="templates", id="slices")])],
+        columns=[RealMeanColumn(data_source=density.short_name)],
+        variables=[density]
+    )
+    print(json.dumps(ara_definition.dump(), indent=2))

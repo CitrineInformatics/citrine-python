@@ -42,7 +42,7 @@ class AraDefinition(Resource["AraDefinition"]):
     rows = properties.List(properties.Object(Row), "rows")
     columns = properties.List(properties.Object(Column), "columns")
 
-    def __init__(self, *, name: str, description: str, datasets: List[str],
+    def __init__(self, *, name: str, description: str, datasets: List[UUID],
                  variables: List[Variable], rows: List[Row], columns: List[Column],
                  uid: Optional[UUID] = None, version: Optional[int] = None):
         self.name = name
