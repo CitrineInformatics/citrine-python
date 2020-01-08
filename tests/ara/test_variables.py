@@ -23,3 +23,11 @@ def test_deser_from_parent(variable):
 def test_invalid_eq(variable):
     other = None
     assert not variable == other
+
+
+def test_invalid_deser():
+    with pytest.raises(ValueError):
+        Variable.build({})
+
+    with pytest.raises(ValueError):
+        Variable.build({"type": "foo"})

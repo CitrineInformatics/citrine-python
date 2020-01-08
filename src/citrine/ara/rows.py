@@ -30,10 +30,15 @@ class Row(PolymorphicSerializable['Row']):
     @classmethod
     def get_type(cls, data) -> Type[Serializable]:
         """Return the subtype."""
+        if "type" not in data:
+            raise ValueError("Can only get types from dicts with a 'type' key")
         types: List[Type[Serializable]] = [
             MaterialRunByTemplate
         ]
-        return next(x for x in types if x.type == data["type"])
+        res = next((x for x in types if x.typ == data["type"]), None)
+        if res is None:
+            raise ValueError("Unrecognized type: {}".format(data["type"]))
+        return res
 
 
 class MaterialRunByTemplate(Serializable['MaterialRunByTemplate'], Row):
@@ -47,10 +52,10 @@ class MaterialRunByTemplate(Serializable['MaterialRunByTemplate'], Row):
     """
 
     templates = properties.List(properties.Object(LinkByUID), "templates")
-    type = properties.String('type', default="material_run_by_template", deserializable=False)
+    typ = properties.String('type', default="material_run_by_template", deserializable=False)
 
     def _attrs(self) -> List[str]:
-        return ["templates", "type"]
+        return ["templates", "typ"]
 
     def __init__(self,
                  templates: List[LinkByUID]):

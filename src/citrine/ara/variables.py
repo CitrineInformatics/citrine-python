@@ -30,10 +30,15 @@ class Variable(PolymorphicSerializable['Variable']):
     @classmethod
     def get_type(cls, data) -> Type[Serializable]:
         """Return the subtype."""
+        if "type" not in data:
+            raise ValueError("Can only get types from dicts with a 'type' key")
         types: List[Type[Serializable]] = [
             RootInfo, AttributeByTemplate
         ]
-        return next(x for x in types if x.type == data["type"])
+        res = next((x for x in types if x.typ == data["type"]), None)
+        if res is None:
+            raise ValueError("Unrecognized type: {}".format(data["type"]))
+        return res
 
 
 class RootInfo(Serializable['RootInfo'], Variable):
@@ -53,10 +58,10 @@ class RootInfo(Serializable['RootInfo'], Variable):
     short_name = properties.String('short_name')
     output_name = properties.List(properties.String, 'output_name')
     field = properties.String('field')
-    type = properties.String('type', default="root_info", deserializable=False)
+    typ = properties.String('type', default="root_info", deserializable=False)
 
     def _attrs(self) -> List[str]:
-        return ["short_name", "output_name", "field", "type"]
+        return ["short_name", "output_name", "field", "typ"]
 
     def __init__(self,
                  short_name: str,
@@ -84,10 +89,10 @@ class AttributeByTemplate(Serializable['AttributeByTemplate'], Variable):
     short_name = properties.String('short_name')
     output_name = properties.List(properties.String, 'output_name')
     template = properties.Object(LinkByUID, 'template')
-    type = properties.String('type', default="attribute_by_template", deserializable=False)
+    typ = properties.String('type', default="attribute_by_template", deserializable=False)
 
     def _attrs(self) -> List[str]:
-        return ["short_name", "output_name", "template", "type"]
+        return ["short_name", "output_name", "template", "typ"]
 
     def __init__(self,
                  short_name: str,

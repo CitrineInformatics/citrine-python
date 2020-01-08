@@ -28,10 +28,15 @@ class Column(PolymorphicSerializable['Column']):
     @classmethod
     def get_type(cls, data) -> Type[Serializable]:
         """Return the subtype."""
+        if "type" not in data:
+            raise ValueError("Can only get types from dicts with a 'type' key")
         types: List[Type[Serializable]] = [
             RealMeanColumn, IdentityColumn
         ]
-        return next(x for x in types if x.type == data["type"])
+        res = next((x for x in types if x.typ == data["type"]), None)
+        if res is None:
+            raise ValueError("Unrecognized type: {}".format(data["type"]))
+        return res
 
 
 class RealMeanColumn(Serializable['RealMeanColumn'], Column):
@@ -48,10 +53,10 @@ class RealMeanColumn(Serializable['RealMeanColumn'], Column):
 
     data_source = properties.String('data_source')
     target_units = properties.Optional(properties.String, "target_units")
-    type = properties.String('type', default="real_mean_column", deserializable=False)
+    typ = properties.String('type', default="real_mean_column", deserializable=False)
 
     def _attrs(self) -> List[str]:
-        return ["data_source", "target_units", "type"]
+        return ["data_source", "target_units", "typ"]
 
     def __init__(self,
                  data_source: str,
@@ -71,10 +76,10 @@ class IdentityColumn(Serializable['IdentityColumn'], Column):
     """
 
     data_source = properties.String('data_source')
-    type = properties.String('type', default="identity_column", deserializable=False)
+    typ = properties.String('type', default="identity_column", deserializable=False)
 
     def _attrs(self) -> List[str]:
-        return ["data_source", "type"]
+        return ["data_source", "typ"]
 
     def __init__(self,
                  data_source: str,

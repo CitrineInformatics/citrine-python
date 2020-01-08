@@ -22,3 +22,11 @@ def test_deser_from_parent(column):
 def test_invalid_eq(column):
     other = None
     assert not column == other
+
+
+def test_invalid_deser():
+    with pytest.raises(ValueError):
+        Column.build({})
+
+    with pytest.raises(ValueError):
+        Column.build({"type": "foo"})

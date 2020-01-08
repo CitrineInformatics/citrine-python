@@ -24,3 +24,11 @@ def test_deser_from_parent(row):
 def test_invalid_eq(row):
     other = None
     assert not row == other
+
+
+def test_invalid_deser():
+    with pytest.raises(ValueError):
+        Row.build({})
+
+    with pytest.raises(ValueError):
+        Row.build({"type": "foo"})
