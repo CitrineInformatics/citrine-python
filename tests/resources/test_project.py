@@ -232,7 +232,7 @@ def test_list_projects(collection, session):
 
     # Then
     assert 1 == session.num_calls
-    expected_call = FakeCall(method='GET', path='/projects')
+    expected_call = FakeCall(method='GET', path='/projects', params={'per_page': 100})
     assert expected_call == session.last_call
     assert 5 == len(projects)
 
@@ -248,7 +248,7 @@ def test_list_projects_filters_non_projects(collection, session):
 
     # Then
     assert 1 == session.num_calls
-    expected_call = FakeCall(method='GET', path='/projects')
+    expected_call = FakeCall(method='GET', path='/projects', params={'per_page': 100})
     assert expected_call == session.last_call
     assert 5 == len(projects)   # The non-project data is filtered out
 

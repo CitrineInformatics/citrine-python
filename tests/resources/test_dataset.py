@@ -67,13 +67,14 @@ def test_list_datasets(paginated_collection, paginated_session):
     paginated_session.set_response(datasets_data)
 
     # When
-    datasets = list(paginated_collection.list())
+    datasets = list(paginated_collection.list(per_page=20))
 
     # Then
     assert 3 == paginated_session.num_calls
-    expected_first_call = FakeCall(method='GET', path='projects/{}/datasets'.format(paginated_collection.project_id))
+    expected_first_call = FakeCall(method='GET', path='projects/{}/datasets'.format(paginated_collection.project_id),
+                                   params={'per_page': 20})
     expected_last_call = FakeCall(method='GET', path='projects/{}/datasets'.format(paginated_collection.project_id),
-                                  params={'page': 3})
+                                  params={'page': 3, 'per_page': 20})
     assert expected_first_call == paginated_session.calls[0]
     assert expected_last_call == paginated_session.last_call
     assert 50 == len(datasets)
@@ -85,8 +86,9 @@ def test_list_datasets(paginated_collection, paginated_session):
 
 def test_list_datasets_infinite_loop_detect(paginated_collection, paginated_session):
     # Given
-    datasets_data = DatasetDataFactory.create_batch(20)
-    # copy the first 20 results, this simulates an API that keeps returning the first page
+    batch_size = 100
+    datasets_data = DatasetDataFactory.create_batch(batch_size)
+    # duplicate the data, this simulates an API that keeps returning the first page
     datasets_data.extend(datasets_data)
     paginated_session.set_response(datasets_data)
 
@@ -95,14 +97,15 @@ def test_list_datasets_infinite_loop_detect(paginated_collection, paginated_sess
 
     # Then
     assert 2 == paginated_session.num_calls  # duplicate UID detected on the second call
-    expected_first_call = FakeCall(method='GET', path='projects/{}/datasets'.format(paginated_collection.project_id))
+    expected_first_call = FakeCall(method='GET', path='projects/{}/datasets'.format(paginated_collection.project_id),
+                                   params={'per_page': batch_size})
     expected_last_call = FakeCall(method='GET', path='projects/{}/datasets'.format(paginated_collection.project_id),
-                                  params={'page': 2})
+                                  params={'page': 2, 'per_page': batch_size})
     assert expected_first_call == paginated_session.calls[0]
     assert expected_last_call == paginated_session.last_call
-    assert 20 == len(datasets)
+    assert len(datasets) == batch_size
 
-    expected_uids = [d['id'] for d in datasets_data[0:20]]
+    expected_uids = [d['id'] for d in datasets_data[0:batch_size]]
     dataset_ids = [str(d.uid) for d in datasets]
     assert dataset_ids == expected_uids
 

@@ -1,6 +1,7 @@
 from abc import abstractmethod
 from typing import Optional, Union, Generic, TypeVar, Iterable
 from uuid import UUID
+import warnings
 
 from citrine.exceptions import ModuleRegistrationFailedException, NonRetryableException
 from citrine.resources.response import Response
@@ -12,8 +13,6 @@ ResourceType = TypeVar('ResourceType', bound='Resource')
 # Thus, this will never be particularly type safe on its own. The solution is to
 # have subclasses override the create method.
 CreationType = TypeVar('CreationType', bound='Resource')
-
-DEFAULT_PER_PAGE = 20
 
 
 class Collection(Generic[ResourceType]):
@@ -106,7 +105,7 @@ class Collection(Generic[ResourceType]):
 
     def list(self,
              page: Optional[int] = None,
-             per_page: Optional[int] = None) -> Iterable[ResourceType]:
+             per_page: int = 100) -> Iterable[ResourceType]:
         """
         List all visible elements in the collection.
 
@@ -117,11 +116,11 @@ class Collection(Generic[ResourceType]):
         ---------
         page: int, optional
             The "page" of results to list. Default is to read all pages and yield
-            all results.
+            all results.  This option is deprecated.
         per_page: int, optional
-            Max number of results to return per page. Default is 20.  If the page
-            parameter is specified this will limit the number of results in that
-            response.
+            Max number of results to return per page. Default is 100.  This parameter
+            is used when making requests to the backend service.  If the page parameter
+            is specified it limits the maximum number of elements in the response.
 
         Returns
         -------
@@ -129,44 +128,43 @@ class Collection(Generic[ResourceType]):
             Resources in this collection.
 
         """
-        # Do an initial fetch of the first page using supplied args.
-        # If more results expected, proceed with paginated calls.
-        first_page = self._fetch_page(page=page, per_page=per_page)
-        first_page_count = 0
+        if page is not None:
+            warnings.warn("The page parameter is deprecated, default is automatic pagination",
+                          DeprecationWarning)
+
         first_uid = None
-        for idx, element in enumerate(first_page):
-            yield element
-
-            uid = getattr(element, 'uid', None)
-            if idx == 0 and not first_uid and uid:
-                first_uid = uid
-
-            first_page_count += 1
-
-        if page is not None or first_page_count != (per_page or DEFAULT_PER_PAGE):
-            return
-
-        # Read extra pages until nothing is left to read
-        next_page = 2
+        page_idx = page
         while True:
-            subset = self._fetch_page(page=next_page, per_page=per_page)
+            subset = self._fetch_page(page=page_idx, per_page=per_page)
+
             count = 0
             for idx, element in enumerate(subset):
                 # escaping from infinite loops where page/per_page are not
                 # honored and are returning the same results regardless of page:
                 uid = getattr(element, 'uid', None)
                 if first_uid is not None and first_uid == uid:
+                    # TODO: raise an exception once the APIs that ignore pagination are fixed
                     break
 
                 yield element
 
+                if idx == 0:
+                    first_uid = uid
+
                 count += 1
 
-            # Handle the case where we get an unexpected number of results (e.g. last page)
-            if count == 0 or count < first_page_count:
+            # If the page number is specified we exit to disable auto-paginating
+            if page is not None:
                 break
 
-            next_page += 1
+            # Handle the case where we get an unexpected number of results (e.g. last page)
+            if count == 0 or count < per_page:
+                break
+
+            if page_idx is None:
+                page_idx = 2
+            else:
+                page_idx += 1
 
     def update(self, model: CreationType) -> CreationType:
         """Update a particular element of the collection."""
