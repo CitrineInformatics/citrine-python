@@ -45,7 +45,7 @@ class RealMeanColumn(Serializable['RealMeanColumn'], Column):
     Parameters
     ----------
     data_source: str
-        short_name of the variable to use when populating the column
+        name of the variable to use when populating the column
     target_units: optional[str]
         units to convert the real variable into
 
@@ -71,7 +71,7 @@ class IdentityColumn(Serializable['IdentityColumn'], Column):
     Parameters
     ----------
     data_source: str
-        short_name of the variable to use when populating the column
+        name of the variable to use when populating the column
 
     """
 
