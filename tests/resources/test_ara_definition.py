@@ -60,7 +60,7 @@ def test_init_ara_definition():
 
 def test_dup_names():
     """Make sure that variable short_name and output_name are unique across an ara definition"""
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError) as excinfo:
         AraDefinition(
             name="foo", description="bar", datasets=[], rows=[], columns=[],
             variables=[
@@ -68,31 +68,34 @@ def test_dup_names():
                 RootInfo("foo", ["foo", "baz"], "name")
             ]
         )
+    assert "foo" in str(excinfo.value)
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError) as excinfo:
         AraDefinition(
             name="foo", description="bar", datasets=[], rows=[], columns=[],
             variables=[
-                RootInfo("foo", ["foo", "bar"], "name"),
-                RootInfo("bar", ["foo", "bar"], "name")
+                RootInfo("foo", ["spam", "eggs"], "name"),
+                RootInfo("bar", ["spam", "eggs"], "name")
             ]
         )
+    assert "spam" in str(excinfo.value)
 
 
 def test_missing_variable():
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError) as excinfo:
         AraDefinition(
             name="foo", description="bar", datasets=[], rows=[], variables=[],
             columns=[
                 RealMeanColumn("density")
             ]
         )
+    assert "density" in str(excinfo.value)
 
 
 def test_dump_example():
     density = AttributeByTemplate(
-        short_name="density",
-        output_name=["Slice", "Density"],
+        name="density",
+        headers=["Slice", "Density"],
         template=LinkByUID(scope="templates", id="density")
     )
     ara_definition = AraDefinition(
@@ -100,7 +103,7 @@ def test_dump_example():
         description="Illustrative example that's meant to show how Ara Definitions will look serialized",
         datasets=[uuid4()],
         rows=[MaterialRunByTemplate(templates=[LinkByUID(scope="templates", id="slices")])],
-        columns=[RealMeanColumn(data_source=density.short_name)],
+        columns=[RealMeanColumn(data_source=density.name)],
         variables=[density]
     )
     print(json.dumps(ara_definition.dump(), indent=2))

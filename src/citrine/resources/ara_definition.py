@@ -61,12 +61,12 @@ class AraDefinition(Resource["AraDefinition"]):
         # Note that these validations only apply at construction time. The current intended usage
         # is for this object to be created holistically; if changed, then these will need
         # to move into setters.
-        names = [x.short_name for x in variables]
+        names = [x.name for x in variables]
         dup_names = self._get_dups(names)
         if len(dup_names) > 0:
-            raise ValueError("Multiple variables defined these short_names,"
+            raise ValueError("Multiple variables defined these names,"
                              " which much be unique: {}".format(dup_names))
-        headers = [x.output_name for x in variables]
+        headers = [x.headers for x in variables]
         dup_headers = self._get_dups(headers)
         if len(dup_headers) > 0:
             raise ValueError("Multiple variables defined these output_names,"

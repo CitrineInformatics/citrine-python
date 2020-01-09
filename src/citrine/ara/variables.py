@@ -46,29 +46,29 @@ class RootInfo(Serializable['RootInfo'], Variable):
 
     Parameters
     ----------
-    short_name: str
+    name: str
         a short human-readable name to use when referencing the variable
-    output_name: list[str]
+    headers: list[str]
         sequence of column headers
     field: str
         name of the field to assign the variable to
 
     """
 
-    short_name = properties.String('short_name')
-    output_name = properties.List(properties.String, 'output_name')
+    name = properties.String('name')
+    headers = properties.List(properties.String, 'headers')
     field = properties.String('field')
     typ = properties.String('type', default="root_info", deserializable=False)
 
     def _attrs(self) -> List[str]:
-        return ["short_name", "output_name", "field", "typ"]
+        return ["name", "headers", "field", "typ"]
 
     def __init__(self,
-                 short_name: str,
-                 output_name: List[str],
+                 name: str,
+                 headers: List[str],
                  field: str):
-        self.short_name = short_name
-        self.output_name = output_name
+        self.name = name
+        self.headers = headers
         self.field = field
 
 
@@ -77,27 +77,27 @@ class AttributeByTemplate(Serializable['AttributeByTemplate'], Variable):
 
     Parameters
     ----------
-    short_name: str
+    name: str
         a short human-readable name to use when referencing the variable
-    output_name: list[str]
+    headers: list[str]
         sequence of column headers
     template: LinkByUID
         attribute template that identifies the attribute to assign to the variable
 
     """
 
-    short_name = properties.String('short_name')
-    output_name = properties.List(properties.String, 'output_name')
+    name = properties.String('name')
+    headers = properties.List(properties.String, 'headers')
     template = properties.Object(LinkByUID, 'template')
     typ = properties.String('type', default="attribute_by_template", deserializable=False)
 
     def _attrs(self) -> List[str]:
-        return ["short_name", "output_name", "template", "typ"]
+        return ["name", "headers", "template", "typ"]
 
     def __init__(self,
-                 short_name: str,
-                 output_name: List[str],
+                 name: str,
+                 headers: List[str],
                  template: LinkByUID):
-        self.short_name = short_name
-        self.output_name = output_name
+        self.name = name
+        self.headers = headers
         self.template = template
