@@ -17,6 +17,7 @@ The following example demonstrates how to use the python SDK to register a perfo
            name='Demo Performance Workflow',
            analysis=CrossValidationAnalysisConfiguration(
                name='analysis_settings',
+               description='2-fold cross-validation',
                n_folds=2,
                n_trials=3,
                max_rows=200,

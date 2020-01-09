@@ -1,9 +1,8 @@
 """Top-level class for all data concepts objects and collections thereof."""
 from uuid import UUID
 from typing import TypeVar, Type, List, Dict, Union, Optional, Iterator
-from copy import deepcopy
+from copy import copy, deepcopy
 from abc import abstractmethod
-from deprecation import deprecated
 
 from citrine._session import Session
 from citrine._rest.collection import Collection
@@ -292,6 +291,11 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
         if linked_objects is None:
             return
 
+        # Make `linked_objects` point to a copy of the list of linked objects, as opposed to the
+        # attribute of `obj_with_soft_links`. The list in `obj_with_soft_links` will be modified
+        # in the loop below, and we don't want to modify a list while iterating over it.
+        linked_objects = copy(linked_objects)
+
         # Cycle through linked objects in obj_with_soft_link and if they are not LinkByUID,
         # build them and then set their `reverse_field` field to dc_obj
         for linked_obj in linked_objects:
@@ -421,8 +425,7 @@ class DataConceptsCollection(Collection[ResourceType]):
         data_concepts_object.session = self.session
         return data_concepts_object
 
-    @deprecated(details='Please use list_all')
-    def list(self, page: Optional[int] = None, per_page: Optional[int] = None):
+    def _fetch_page(self, page: Optional[int] = None, per_page: Optional[int] = None):
         """
         List all visible elements of the collection.
 
@@ -506,7 +509,6 @@ class DataConceptsCollection(Collection[ResourceType]):
         data = self.session.get_resource(path)
         return self.build(data)
 
-    @deprecated(details='please use list_by_tag')
     def filter_by_tags(self, tags: List[str],
                        page: Optional[int] = None, per_page: Optional[int] = None):
         """
@@ -546,7 +548,6 @@ class DataConceptsCollection(Collection[ResourceType]):
             params=params)
         return [self.build(content) for content in response["contents"]]
 
-    @deprecated(details='please use list_by_attribute_bounds')
     def filter_by_attribute_bounds(
             self,
             attribute_bounds: Dict[Union[AttributeTemplate, LinkByUID], BaseBounds],
@@ -595,7 +596,6 @@ class DataConceptsCollection(Collection[ResourceType]):
             json=body, params=params)
         return [self.build(content) for content in response["contents"]]
 
-    @deprecated(details='Please use list_by_name')
     def filter_by_name(self, name: str, exact: bool = False,
                        page: Optional[int] = None, per_page: Optional[int] = None):
         """
