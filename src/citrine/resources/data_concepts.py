@@ -427,7 +427,7 @@ class DataConceptsCollection(Collection[ResourceType]):
 
     def _fetch_page(self, page: Optional[int] = None, per_page: Optional[int] = None):
         """
-        List all visible elements of the collection.
+        List all visible elements of the collection.  Does not handle pagination.
 
         Parameters
         ----------
@@ -443,6 +443,34 @@ class DataConceptsCollection(Collection[ResourceType]):
 
         """
         return self.filter_by_tags([], page, per_page)
+
+    def list(self,
+             page: Optional[int] = None,
+             per_page: Optional[int] = None) -> List[DataConcepts]:
+        """
+        List all visible elements of the collection.
+
+        Leaving page and per_page as default values will return a list of all elements
+        in the collection, paginating over all available pages.
+
+        Parameters
+        ---------
+        page: int, optional
+            The "page" of results to list. Default is to read all pages and return
+            all results.  This option is deprecated.
+        per_page: int, optional
+            Max number of results to return per page.  This parameter is used when
+            making requests to the backend service.  If the page parameter is
+            specified it limits the maximum number of elements in the response.
+
+        Returns
+        -------
+        List[DataConcepts]
+            Every object in this collection.
+
+        """
+        # Convert the iterator to a list to avoid breaking existing client relying on lists
+        return list(super().list(page=page, per_page=per_page))
 
     def register(self, model: ResourceType):
         """
