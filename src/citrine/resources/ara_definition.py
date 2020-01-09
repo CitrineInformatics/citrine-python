@@ -20,7 +20,7 @@ class AraDefinition(Resource["AraDefinition"]):
         Name of the table being defined
     description: str
         Description of the table being defined
-    datasets: list[str]
+    datasets: list[UUID]
         Datasets that are in scope for the table, as a list of dataset uuids
     variables: list[Variable]
         Variable definitions, which define data from the material histories to use in the columns
@@ -32,6 +32,10 @@ class AraDefinition(Resource["AraDefinition"]):
     """
 
     _response_key = "ara_definition"
+
+    @staticmethod
+    def _get_dups(lst: List) -> List:
+        return [x for x in lst if lst.count(x) > 1]
 
     uid = properties.Optional(properties.UUID(), 'id')
     version = properties.Optional(properties.Integer, 'version')
@@ -53,6 +57,17 @@ class AraDefinition(Resource["AraDefinition"]):
         self.columns = columns
         self.uid = uid
         self.version = version
+
+        names = [x.short_name for x in variables]
+        dup_names = self._get_dups(names)
+        if len(dup_names) > 0:
+            raise ValueError("Multiple variables defined these short_names,"
+                             " which much be unique: {}".format(dup_names))
+        headers = [x.output_name for x in variables]
+        dup_headers = self._get_dups(headers)
+        if len(dup_headers) > 0:
+            raise ValueError("Multiple variables defined these output_names,"
+                             " which much be unique: {}".format(dup_headers))
 
 
 class AraDefinitionCollection(Collection[AraDefinition]):

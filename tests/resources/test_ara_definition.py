@@ -6,7 +6,7 @@ from taurus.entity.link_by_uid import LinkByUID
 
 from citrine.ara.columns import RealMeanColumn
 from citrine.ara.rows import MaterialRunByTemplate
-from citrine.ara.variables import AttributeByTemplate
+from citrine.ara.variables import AttributeByTemplate, RootInfo
 from citrine.resources.ara_definition import AraDefinitionCollection, AraDefinition
 from tests.utils.factories import AraDefinitionFactory
 from tests.utils.session import FakeSession, FakeCall
@@ -56,6 +56,27 @@ def test_init_ara_definition():
     ara_definition = AraDefinition(name="foo", description="bar", rows=[], columns=[], variables=[], datasets=[])
     assert ara_definition.uid is None
     assert ara_definition.version is None
+
+
+def test_dup_names():
+    """Make sure that variable short_name and output_name are unique across an ara definition"""
+    with pytest.raises(ValueError):
+        AraDefinition(
+            name="foo", description="bar", datasets=[], rows=[], columns=[],
+            variables=[
+                RootInfo("foo", ["foo", "bar"], "name"),
+                RootInfo("foo", ["foo", "baz"], "name")
+            ]
+        )
+
+    with pytest.raises(ValueError):
+        AraDefinition(
+            name="foo", description="bar", datasets=[], rows=[], columns=[],
+            variables=[
+                RootInfo("foo", ["foo", "bar"], "name"),
+                RootInfo("bar", ["foo", "bar"], "name")
+            ]
+        )
 
 
 def test_dump_example():
