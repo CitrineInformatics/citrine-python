@@ -59,7 +59,7 @@ def test_init_ara_definition():
 
 
 def test_dup_names():
-    """Make sure that variable short_name and output_name are unique across an ara definition"""
+    """Make sure that variable name and headers are unique across an ara definition"""
     with pytest.raises(ValueError) as excinfo:
         AraDefinition(
             name="foo", description="bar", datasets=[], rows=[], columns=[],
@@ -84,6 +84,7 @@ def test_dup_names():
 
 
 def test_missing_variable():
+    """Make sure that every data_source matches a name of a variable"""
     with pytest.raises(ValueError) as excinfo:
         AraDefinition(
             name="foo", description="bar", datasets=[], rows=[], variables=[],

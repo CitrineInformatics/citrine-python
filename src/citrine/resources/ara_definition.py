@@ -69,7 +69,7 @@ class AraDefinition(Resource["AraDefinition"]):
         headers = [x.headers for x in variables]
         dup_headers = self._get_dups(headers)
         if len(dup_headers) > 0:
-            raise ValueError("Multiple variables defined these output_names,"
+            raise ValueError("Multiple variables defined these headers,"
                              " which much be unique: {}".format(dup_headers))
 
         missing_variables = [x.data_source for x in columns if x.data_source not in names]
