@@ -82,7 +82,5 @@ class IdentityColumn(Serializable['IdentityColumn'], Column):
         return ["data_source", "typ"]
 
     def __init__(self,
-                 data_source: str,
-                 target_units: Optional[str] = None):
+                 data_source: str):
         self.data_source = data_source
-        self.target_units = target_units
