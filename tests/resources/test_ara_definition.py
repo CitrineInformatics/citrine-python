@@ -79,6 +79,16 @@ def test_dup_names():
         )
 
 
+def test_missing_variable():
+    with pytest.raises(ValueError):
+        AraDefinition(
+            name="foo", description="bar", datasets=[], rows=[], variables=[],
+            columns=[
+                RealMeanColumn("density")
+            ]
+        )
+
+
 def test_dump_example():
     density = AttributeByTemplate(
         short_name="density",

@@ -58,6 +58,9 @@ class AraDefinition(Resource["AraDefinition"]):
         self.uid = uid
         self.version = version
 
+        # Note that these validations only apply at construction time. The current intended usage
+        # is for this object to be created holistically; if changed, then these will need
+        # to move into setters.
         names = [x.short_name for x in variables]
         dup_names = self._get_dups(names)
         if len(dup_names) > 0:
@@ -68,6 +71,11 @@ class AraDefinition(Resource["AraDefinition"]):
         if len(dup_headers) > 0:
             raise ValueError("Multiple variables defined these output_names,"
                              " which much be unique: {}".format(dup_headers))
+
+        missing_variables = [x.data_source for x in columns if x.data_source not in names]
+        if len(missing_variables) > 0:
+            raise ValueError("The data_source of the columns must match one of the variable names,"
+                             " but {} were missing".format(missing_variables))
 
 
 class AraDefinitionCollection(Collection[AraDefinition]):
