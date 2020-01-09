@@ -425,7 +425,7 @@ class DataConceptsCollection(Collection[ResourceType]):
         data_concepts_object.session = self.session
         return data_concepts_object
 
-    def list(self, page: Optional[int] = None, per_page: Optional[int] = None):
+    def _fetch_page(self, page: Optional[int] = None, per_page: Optional[int] = None):
         """
         List all visible elements of the collection.
 

@@ -82,7 +82,7 @@ def test_list_material_runs(collection, session):
     })
 
     # When
-    runs = collection.list(page=1, per_page=10)
+    runs = collection._fetch_page(page=1, per_page=10)
 
     # Then
     assert 1 == session.num_calls

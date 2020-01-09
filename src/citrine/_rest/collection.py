@@ -1,6 +1,7 @@
 from abc import abstractmethod
 from typing import Optional, Union, Generic, TypeVar, Iterable
 from uuid import UUID
+import warnings
 
 from citrine.exceptions import ModuleRegistrationFailedException, NonRetryableException
 from citrine.resources.response import Response
@@ -53,11 +54,15 @@ class Collection(Generic[ResourceType]):
         except NonRetryableException as e:
             raise ModuleRegistrationFailedException(model.__class__.__name__, e)
 
-    def list(self,
-             page: Optional[int] = None,
-             per_page: Optional[int] = None) -> Iterable[ResourceType]:
+    def _fetch_page(self,
+                    page: Optional[int] = None,
+                    per_page: Optional[int] = None) -> Iterable[ResourceType]:
         """
-        List all visible elements in the collection.
+        Fetch visible elements in the collection.  This does not handle pagination.
+
+        This method will return the first page of results using the default page/per_page
+        behaviour of the backend service.  Specify page/per_page to override these defaults
+        which are passed to the backend service.
 
         Parameters
         ---------
@@ -97,6 +102,69 @@ class Collection(Generic[ResourceType]):
                 # Module collections are not filtering on module type
                 # properly, so we are filtering client-side.
                 pass
+
+    def list(self,
+             page: Optional[int] = None,
+             per_page: int = 100) -> Iterable[ResourceType]:
+        """
+        List all visible elements in the collection.
+
+        Leaving page and per_page as default values will yield all elements in the
+        collection, paginating over all available pages.
+
+        Parameters
+        ---------
+        page: int, optional
+            The "page" of results to list. Default is to read all pages and yield
+            all results.  This option is deprecated.
+        per_page: int, optional
+            Max number of results to return per page. Default is 100.  This parameter
+            is used when making requests to the backend service.  If the page parameter
+            is specified it limits the maximum number of elements in the response.
+
+        Returns
+        -------
+        Iterable[ResourceType]
+            Resources in this collection.
+
+        """
+        if page is not None:
+            warnings.warn("The page parameter is deprecated, default is automatic pagination",
+                          DeprecationWarning)
+
+        first_uid = None
+        page_idx = page
+        while True:
+            subset = self._fetch_page(page=page_idx, per_page=per_page)
+
+            count = 0
+            for idx, element in enumerate(subset):
+                # escaping from infinite loops where page/per_page are not
+                # honored and are returning the same results regardless of page:
+                uid = getattr(element, 'uid', None)
+                if first_uid is not None and first_uid == uid:
+                    # TODO: raise an exception once the APIs that ignore pagination are fixed
+                    break
+
+                yield element
+
+                if idx == 0:
+                    first_uid = uid
+
+                count += 1
+
+            # If the page number is specified we exit to disable auto-paginating
+            if page is not None:
+                break
+
+            # Handle the case where we get an unexpected number of results (e.g. last page)
+            if count == 0 or count < per_page:
+                break
+
+            if page_idx is None:
+                page_idx = 2
+            else:
+                page_idx += 1
 
     def update(self, model: CreationType) -> CreationType:
         """Update a particular element of the collection."""
