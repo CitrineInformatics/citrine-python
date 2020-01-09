@@ -6,7 +6,7 @@ from taurus.entity.link_by_uid import LinkByUID
 
 
 @pytest.fixture(params=[
-    MaterialRunByTemplate([
+    MaterialRunByTemplate(templates=[
         LinkByUID(scope="templates", id="density"), LinkByUID(scope="templates", id="ingredients")
     ]),
 ])

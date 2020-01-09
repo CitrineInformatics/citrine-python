@@ -6,8 +6,8 @@ from taurus.entity.link_by_uid import LinkByUID
 
 
 @pytest.fixture(params=[
-    RootInfo("root name", ["Root", "Name"], "name"),
-    AttributeByTemplate("density", ["density"], LinkByUID(scope="templates", id="density"))
+    RootInfo(name="root name", headers=["Root", "Name"], field="name"),
+    AttributeByTemplate(name="density", headers=["density"], template=LinkByUID(scope="templates", id="density"))
 ])
 def variable(request):
     return request.param

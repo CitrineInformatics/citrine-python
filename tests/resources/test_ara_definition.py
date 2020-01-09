@@ -64,20 +64,22 @@ def test_dup_names():
         AraDefinition(
             name="foo", description="bar", datasets=[], rows=[], columns=[],
             variables=[
-                RootInfo("foo", ["foo", "bar"], "name"),
-                RootInfo("foo", ["foo", "baz"], "name")
+                RootInfo(name="foo", headers=["foo", "bar"], field="name"),
+                RootInfo(name="foo", headers=["foo", "baz"], field="name")
             ]
         )
+    assert "Multiple" in str(excinfo.value)
     assert "foo" in str(excinfo.value)
 
     with pytest.raises(ValueError) as excinfo:
         AraDefinition(
             name="foo", description="bar", datasets=[], rows=[], columns=[],
             variables=[
-                RootInfo("foo", ["spam", "eggs"], "name"),
-                RootInfo("bar", ["spam", "eggs"], "name")
+                RootInfo(name="foo", headers=["spam", "eggs"], field="name"),
+                RootInfo(name="bar", headers=["spam", "eggs"], field="name")
             ]
         )
+    assert "Multiple" in str(excinfo.value)
     assert "spam" in str(excinfo.value)
 
 
@@ -86,9 +88,10 @@ def test_missing_variable():
         AraDefinition(
             name="foo", description="bar", datasets=[], rows=[], variables=[],
             columns=[
-                RealMeanColumn("density")
+                RealMeanColumn(data_source="density")
             ]
         )
+    assert "must match" in str(excinfo.value)
     assert "density" in str(excinfo.value)
 
 

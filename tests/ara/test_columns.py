@@ -5,8 +5,8 @@ from citrine.ara.columns import RealMeanColumn, IdentityColumn, Column
 
 
 @pytest.fixture(params=[
-    RealMeanColumn("density", "g/cm^3"),
-    IdentityColumn("root name")
+    RealMeanColumn(data_source="density", target_units="g/cm^3"),
+    IdentityColumn(data_source="root name")
 ])
 def column(request):
     return request.param

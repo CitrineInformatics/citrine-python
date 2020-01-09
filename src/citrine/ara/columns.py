@@ -58,7 +58,7 @@ class RealMeanColumn(Serializable['RealMeanColumn'], Column):
     def _attrs(self) -> List[str]:
         return ["data_source", "target_units", "typ"]
 
-    def __init__(self,
+    def __init__(self, *,
                  data_source: str,
                  target_units: Optional[str] = None):
         self.data_source = data_source
@@ -81,6 +81,6 @@ class IdentityColumn(Serializable['IdentityColumn'], Column):
     def _attrs(self) -> List[str]:
         return ["data_source", "typ"]
 
-    def __init__(self,
+    def __init__(self, *,
                  data_source: str):
         self.data_source = data_source

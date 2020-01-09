@@ -57,6 +57,6 @@ class MaterialRunByTemplate(Serializable['MaterialRunByTemplate'], Row):
     def _attrs(self) -> List[str]:
         return ["templates", "typ"]
 
-    def __init__(self,
+    def __init__(self, *,
                  templates: List[LinkByUID]):
         self.templates = templates

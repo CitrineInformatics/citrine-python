@@ -63,7 +63,7 @@ class RootInfo(Serializable['RootInfo'], Variable):
     def _attrs(self) -> List[str]:
         return ["name", "headers", "field", "typ"]
 
-    def __init__(self,
+    def __init__(self, *,
                  name: str,
                  headers: List[str],
                  field: str):
@@ -94,7 +94,7 @@ class AttributeByTemplate(Serializable['AttributeByTemplate'], Variable):
     def _attrs(self) -> List[str]:
         return ["name", "headers", "template", "typ"]
 
-    def __init__(self,
+    def __init__(self, *,
                  name: str,
                  headers: List[str],
                  template: LinkByUID):
