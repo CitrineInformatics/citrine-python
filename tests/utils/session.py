@@ -95,6 +95,32 @@ class FakeSession:
         return self.responses[0]
 
 
+class FakePaginatedSession(FakeSession):
+    """Fake version of Session used to test API interaction, with support for pagination params page and per_page."""
+    def checked_get(self, path: str, **kwargs) -> dict:
+        params = kwargs.get('params')
+        self.calls.append(FakeCall('GET', path, params=params))
+        return self._get_response(**params)
+
+    def checked_post(self, path: str, json: dict, **kwargs) -> dict:
+        params = kwargs.get('params')
+        self.calls.append(FakeCall('POST', path, json, params=params))
+        return self._get_response(**params)
+
+    def _get_response(self, **kwargs):
+        """
+        Returns responses using the page and per_page parameters (if supplied).  This emulates a paginated API response.
+        """
+        if not self.responses:
+            return {}
+
+        page = kwargs.get('page', 1)
+        per_page = kwargs.get('per_page', 20)
+
+        start_idx = (page - 1) * per_page
+        return self.responses[0][start_idx:start_idx + per_page]
+
+
 class FakeS3Client:
     """A fake version of the S3 client that has a put_object method."""
 

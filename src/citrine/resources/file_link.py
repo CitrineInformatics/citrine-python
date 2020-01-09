@@ -79,9 +79,9 @@ class FileCollection(Collection[FileLink]):
         """Build an instance of FileLink."""
         return FileLink.build(data)
 
-    def list(self,
-             page: Optional[int] = None,
-             per_page: Optional[int] = None) -> Iterable[FileLink]:
+    def _fetch_page(self,
+                    page: Optional[int] = None,
+                    per_page: Optional[int] = None) -> Iterable[FileLink]:
         """
         List all visible files in the collection.
 
