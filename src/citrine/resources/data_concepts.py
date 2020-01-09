@@ -374,6 +374,9 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
 
 
 ResourceType = TypeVar('ResourceType', bound='DataConcepts')
+# A Taurus entity that is a subclass of taurus.entity.object.base_object.BaseObject
+# e.g. MaterialRun, MaterialSpec, etc.
+TaurusEntityType = TypeVar('TaurusEntityType', bound='BaseObject')
 
 
 class DataConceptsCollection(Collection[ResourceType]):
@@ -472,7 +475,7 @@ class DataConceptsCollection(Collection[ResourceType]):
         # Convert the iterator to a list to avoid breaking existing client relying on lists
         return list(super().list(page=page, per_page=per_page))
 
-    def register(self, model: ResourceType):
+    def register(self, model: Union[ResourceType, TaurusEntityType]):
         """
         Create a new element of the collection or update an existing element.
 
@@ -489,8 +492,8 @@ class DataConceptsCollection(Collection[ResourceType]):
 
         Parameters
         ----------
-        model: DataConcepts
-            The DataConcepts object.
+        model: DataConcepts or Taurus object
+            The DataConcepts object or compatible Taurus entity that inherits from BaseObject.
 
         Returns
         -------
