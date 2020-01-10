@@ -48,6 +48,15 @@ def test_deserialization_missing_created_by(valid_data):
     assert workflow.created_by is None
 
 
+def test_deserialization_missing_create_time(valid_data):
+    """Ensure a DesignWorkflow can be deserialized with no created_by field."""
+    valid_data['create_time'] = None
+    workflow: DesignWorkflow = DesignWorkflow.build(valid_data)
+
+    assert workflow.design_space_id == UUID(valid_data['config']['design_space_id'])
+    assert workflow.create_time is None
+
+
 def test_polymorphic_deserialization(valid_data):
     """Ensure a polymorphically deserialized designWorkflow looks sane."""
     workflow: DesignWorkflow = Workflow.build(valid_data)
