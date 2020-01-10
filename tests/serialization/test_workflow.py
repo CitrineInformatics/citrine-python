@@ -39,6 +39,15 @@ def test_simple_deserialization(valid_data):
     assert workflow.predictor_id == UUID(valid_data['config']['predictor_id'])
 
 
+def test_deserialization_missing_created_by(valid_data):
+    """Ensure a DesignWorkflow can be deserialized with no created_by field."""
+    valid_data['created_by'] = None
+    workflow: DesignWorkflow = DesignWorkflow.build(valid_data)
+
+    assert workflow.design_space_id == UUID(valid_data['config']['design_space_id'])
+    assert workflow.created_by is None
+
+
 def test_polymorphic_deserialization(valid_data):
     """Ensure a polymorphically deserialized designWorkflow looks sane."""
     workflow: DesignWorkflow = Workflow.build(valid_data)
