@@ -446,7 +446,7 @@ class DataConceptsCollection(Collection[ResourceType]):
 
     def list(self,
              page: Optional[int] = None,
-             per_page: Optional[int] = None) -> List[DataConcepts]:
+             per_page: Optional[int] = 100) -> List[DataConcepts]:
         """
         List all visible elements of the collection.
 
