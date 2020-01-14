@@ -17,6 +17,7 @@ from citrine._utils.functions import (
 from taurus.client.json_encoder import loads, dumps, LinkByUID
 from taurus.entity.dict_serializable import DictSerializable
 from taurus.entity.bounds.base_bounds import BaseBounds
+from taurus.entity.object.base_object import BaseObject
 from taurus.entity.template.attribute_template import AttributeTemplate
 
 from citrine.resources.response import Response
@@ -376,7 +377,7 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
 ResourceType = TypeVar('ResourceType', bound='DataConcepts')
 # A Taurus entity that is a subclass of taurus.entity.object.base_object.BaseObject
 # e.g. MaterialRun, MaterialSpec, etc.
-TaurusEntityType = TypeVar('TaurusEntityType', bound='BaseObject')
+TaurusEntityType = TypeVar('TaurusEntityType', bound=BaseObject)
 
 
 class DataConceptsCollection(Collection[ResourceType]):
