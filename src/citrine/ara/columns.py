@@ -52,6 +52,7 @@ class MeanColumn(Serializable['MeanColumn'], Column):
         units to convert the real variable into
 
     """
+
     data_source = properties.String('data_source')
     target_units = properties.Optional(properties.String, "target_units")
     typ = properties.String('type', default="real_mean_column", deserializable=False)
@@ -77,6 +78,7 @@ class StdDevColumn(Serializable["StdDevColumn"], Column):
         units to convert the real variable into
 
     """
+
     data_source = properties.String('data_source')
     target_units = properties.Optional(properties.String, "target_units")
     typ = properties.String('type', default="std_dev_column", deserializable=False)
@@ -111,6 +113,7 @@ class QuantileColumn(Serializable["QuantileColumn"], Column):
         units to convert the real variable into
 
     """
+
     data_source = properties.String('data_source')
     quantile = properties.Float("quantile")
     target_units = properties.Optional(properties.String, "target_units")
@@ -137,6 +140,7 @@ class OriginalUnitsColumn(Serializable["OriginalUnitsColumn"], Column):
         name of the variable to use when populating the column
 
     """
+
     data_source = properties.String('data_source')
     typ = properties.String('type', default="original_units_column", deserializable=False)
 
@@ -157,6 +161,7 @@ class MostLikelyCategoryColumn(Serializable["MostLikelyCategoryColumn"], Column)
         name of the variable to use when populating the column
 
     """
+
     data_source = properties.String('data_source')
     typ = properties.String('type', default="most_likely_category_column", deserializable=False)
 
@@ -177,6 +182,7 @@ class MostLikelyProbabilityColumn(Serializable["MostLikelyProbabilityColumn"], C
         name of the variable to use when populating the column
 
     """
+
     data_source = properties.String('data_source')
     typ = properties.String('type', default="most_likely_probability_column", deserializable=False)
 
@@ -207,6 +213,3 @@ class IdentityColumn(Serializable['IdentityColumn'], Column):
     def __init__(self, *,
                  data_source: str):
         self.data_source = data_source
-
-
-
