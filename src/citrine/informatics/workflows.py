@@ -67,8 +67,8 @@ class DesignWorkflow(Resource['DesignWorkflow'], Workflow):
         serializable=False
     )
     active = properties.Boolean('active', default=True)
-    created_by = properties.UUID('created_by', serializable=False)
-    create_time = properties.Datetime('create_time', serializable=False)
+    created_by = properties.Optional(properties.UUID, 'created_by', serializable=False)
+    create_time = properties.Optional(properties.Datetime, 'create_time', serializable=False)
     design_space_id = properties.UUID('config.design_space_id')
     processor_id = properties.UUID('config.processor_id')
     predictor_id = properties.UUID('config.predictor_id')
@@ -121,8 +121,8 @@ class PerformanceWorkflow(Resource['PerformanceWorkflow'], Workflow):
         serializable=False
     )
     active = properties.Boolean('active', default=True)
-    created_by = properties.UUID('created_by', serializable=False)
-    create_time = properties.Datetime('create_time', serializable=False)
+    created_by = properties.Optional(properties.UUID, 'created_by', serializable=False)
+    create_time = properties.Optional(properties.Datetime, 'create_time', serializable=False)
     analysis = properties.Object(CrossValidationAnalysisConfiguration, 'config.analysis')
     module_type = properties.String('module_type', default='PERFORMANCE_WORKFLOW')
     schema_id = properties.UUID('schema_id', default=UUID('1d213f0a-d07c-4f70-a4d0-bda3aa951ee0'))
