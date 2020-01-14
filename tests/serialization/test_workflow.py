@@ -1,5 +1,6 @@
 """Tests of the Project schema."""
 import pytest
+from datetime import datetime
 from uuid import uuid4, UUID
 from citrine.informatics.workflows import Workflow, DesignWorkflow
 
@@ -19,13 +20,15 @@ def valid_data():
             predictor_id=str(uuid4()),
         ),
         module_type='DESIGN_WORKFLOW',
-        schema_id='8af8b007-3e81-4185-82b2-6f62f4a2e6f1'
+        schema_id='8af8b007-3e81-4185-82b2-6f62f4a2e6f1',
+        created_by=str(uuid4()),
+        create_time=datetime(2020, 1, 1, 1, 1, 1, 1).isoformat("T")
     )
 
 
 @pytest.fixture
 def valid_serialization_output(valid_data):
-    return { x: y for x, y in valid_data.items() if x not in ['status', 'status_info']}
+    return {x: y for x, y in valid_data.items() if x not in ['status', 'status_info', 'created_by', 'create_time']}
 
 
 def test_simple_deserialization(valid_data):
@@ -34,6 +37,24 @@ def test_simple_deserialization(valid_data):
     assert workflow.design_space_id == UUID(valid_data['config']['design_space_id'])
     assert workflow.processor_id == UUID(valid_data['config']['processor_id'])
     assert workflow.predictor_id == UUID(valid_data['config']['predictor_id'])
+
+
+def test_deserialization_missing_created_by(valid_data):
+    """Ensure a DesignWorkflow can be deserialized with no created_by field."""
+    valid_data['created_by'] = None
+    workflow: DesignWorkflow = DesignWorkflow.build(valid_data)
+
+    assert workflow.design_space_id == UUID(valid_data['config']['design_space_id'])
+    assert workflow.created_by is None
+
+
+def test_deserialization_missing_create_time(valid_data):
+    """Ensure a DesignWorkflow can be deserialized with no created_by field."""
+    valid_data['create_time'] = None
+    workflow: DesignWorkflow = DesignWorkflow.build(valid_data)
+
+    assert workflow.design_space_id == UUID(valid_data['config']['design_space_id'])
+    assert workflow.create_time is None
 
 
 def test_polymorphic_deserialization(valid_data):

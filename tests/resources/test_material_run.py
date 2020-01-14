@@ -82,7 +82,7 @@ def test_list_material_runs(collection, session):
     })
 
     # When
-    runs = collection._fetch_page(page=1, per_page=10)
+    runs = collection.list()
 
     # Then
     assert 1 == session.num_calls
@@ -92,8 +92,7 @@ def test_list_material_runs(collection, session):
         params={
             'dataset_id': str(collection.dataset_id),
             'tags': [],
-            'page': 1,
-            'per_page': 10
+            'per_page': 100
         }
     )
     assert expected_call == session.last_call
