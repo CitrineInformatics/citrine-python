@@ -1,5 +1,5 @@
 import uuid
-
+from datetime import datetime
 from citrine.resources.workflow import WorkflowCollection
 
 
@@ -17,6 +17,9 @@ def test_build_workflow():
         },
         'module_type': 'DESIGN_WORKFLOW',
         'schema_id': '8af8b007-3e81-4185-82b2-6f62f4a2e6f1',
+        'create_time': datetime(2020, 1, 1, 1, 1, 1, 1).isoformat("T"),
+        'created_by': str(uuid.uuid4())
+
     }
 
     # When

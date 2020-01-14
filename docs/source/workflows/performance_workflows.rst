@@ -102,19 +102,15 @@ Below shows an example of the results object.
 
 .. code:: python
 
-   {
-     'results': [
-       [
-         'report', {
-           'performance_metrics': {
-             '~~z': {
-               'ndme': {'value': 0.4777230639684575, 'description': 'Non-dimensional model error (0.0 for a perfect model)'},
-               'rmse': {'value': 21.307943307393984, 'description': 'Root mean squared error (0.0 for a perfect model)'},
-               'std_residual': {'value': 1.8288119041155286, 'description': 'Uncertainty calibration: root mean square of standardized errors (1.0 is perfectly calibrated)'},
-               'std_confidence': {'value': 0.59375, 'description': 'Uncertainty calibration: fraction of actual values within the prediction error bars (0.68 is perfectly calibrated)'}
-             }
-           }
-         }
-       ]
-     ]
-   }
+  {
+    'results': {
+      'performance_metrics': {
+        '~~z': {
+          'ndme': {'value': 0.4777230639684575, 'description': 'Non-dimensional model error (0.0 for a perfect model)'},
+          'rmse': {'value': 21.307943307393984, 'description': 'Root mean squared error (0.0 for a perfect model)'},
+          'std_residual': {'value': 1.8288119041155286, 'description': 'Uncertainty calibration: root mean square of standardized errors (1.0 is perfectly calibrated)'},
+          'std_confidence': {'value': 0.59375, 'description': 'Uncertainty calibration: fraction of actual values within the prediction error bars (0.68 is perfectly calibrated)'}
+        }
+      }
+    }
+  }

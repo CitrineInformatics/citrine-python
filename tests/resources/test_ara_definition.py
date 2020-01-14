@@ -4,7 +4,7 @@ from uuid import UUID, uuid4
 import pytest
 from taurus.entity.link_by_uid import LinkByUID
 
-from citrine.ara.columns import RealMeanColumn
+from citrine.ara.columns import MeanColumn, OriginalUnitsColumn, StdDevColumn
 from citrine.ara.rows import MaterialRunByTemplate
 from citrine.ara.variables import AttributeByTemplate, RootInfo
 from citrine.resources.ara_definition import AraDefinitionCollection, AraDefinition
@@ -89,7 +89,7 @@ def test_missing_variable():
         AraDefinition(
             name="foo", description="bar", datasets=[], rows=[], variables=[],
             columns=[
-                RealMeanColumn(data_source="density")
+                MeanColumn(data_source="density")
             ]
         )
     assert "must match" in str(excinfo.value)
@@ -106,8 +106,12 @@ def test_dump_example():
         name="Example Table",
         description="Illustrative example that's meant to show how Ara Definitions will look serialized",
         datasets=[uuid4()],
+        variables=[density],
         rows=[MaterialRunByTemplate(templates=[LinkByUID(scope="templates", id="slices")])],
-        columns=[RealMeanColumn(data_source=density.name)],
-        variables=[density]
+        columns=[
+            MeanColumn(data_source=density.name),
+            StdDevColumn(data_source=density.name),
+            OriginalUnitsColumn(data_source=density.name),
+        ]
     )
     print(json.dumps(ara_definition.dump(), indent=2))
