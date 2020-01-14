@@ -1,12 +1,18 @@
 """Tests for citrine.informatics.columns."""
 import pytest
 
-from citrine.ara.columns import RealMeanColumn, IdentityColumn, Column
+from citrine.ara.columns import MeanColumn, IdentityColumn, Column, StdDevColumn, QuantileColumn, \
+    OriginalUnitsColumn, MostLikelyProbabilityColumn, MostLikelyCategoryColumn
 
 
 @pytest.fixture(params=[
-    RealMeanColumn(data_source="density", target_units="g/cm^3"),
-    IdentityColumn(data_source="root name")
+    IdentityColumn(data_source="root name"),
+    MeanColumn(data_source="density", target_units="g/cm^3"),
+    StdDevColumn(data_source="density", target_units="g/cm^3"),
+    QuantileColumn(data_source="density", quantile=0.95),
+    OriginalUnitsColumn(data_source="density"),
+    MostLikelyCategoryColumn(data_source="color"),
+    MostLikelyProbabilityColumn(data_source="color"),
 ])
 def column(request):
     return request.param
