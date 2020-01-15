@@ -6,8 +6,9 @@ from citrine._serialization import properties
 
 
 class CrossValidationAnalysisConfiguration(Serializable['CrossValidationAnalysisConfiguration']):
-    """Configuration settings for running cross-validation in a :class:`~citrine.informatics.workflows.PerformanceWorkflow`.
-    
+    """
+    Configuration settings for running cross-validation in a :class:`~citrine.informatics.workflows.PerformanceWorkflow`.
+
     Parameters
     ----------
     name : str
@@ -25,8 +26,10 @@ class CrossValidationAnalysisConfiguration(Serializable['CrossValidationAnalysis
         If not provided, a random seed is used.
     group_by_keys: list[str], optional
         Set of keys used to group candidates.
-        If present, candidates are grouped by the hash of ``(key, value)`` pairs computed on the given keys.
+        If present, candidates are grouped by the hash of 
+        ``(key, value)`` pairs computed on the given keys.
         If not provided, candidates are not grouped.
+
     """
 
     name = properties.String('name')
