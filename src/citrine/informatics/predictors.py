@@ -12,7 +12,7 @@ from citrine.resources.report import ReportResource
 from citrine.informatics.modules import Module
 
 
-__all__ = ['Predictor', 'SimpleMLPredictor']
+__all__ = ['GraphPredictor', 'Predictor', 'SimpleMLPredictor']
 
 
 class Predictor(Module):
@@ -33,7 +33,8 @@ class Predictor(Module):
     def get_type(cls, data) -> Type['Predictor']:
         """Return the subtype."""
         type_dict = {
-            "Simple": SimpleMLPredictor
+            "Simple": SimpleMLPredictor,
+            "Graph": GraphPredictor,
         }
         typ = type_dict.get(data['config']['type'])
 
@@ -47,7 +48,7 @@ class Predictor(Module):
 
 
 class SimpleMLPredictor(Serializable['SimplePredictor'], Predictor):
-    """A predictor interface that builds a simple grpahical model.
+    """A predictor interface that builds a simple graphical model.
 
     The model connects the set of inputs through latent variables to the outputs.
     Supported complex inputs (such as chemical formulas) are auto-featurized and machine learning
@@ -116,6 +117,62 @@ class SimpleMLPredictor(Serializable['SimplePredictor'], Predictor):
 
     def __str__(self):
         return '<SimplePredictor {!r}>'.format(self.name)
+
+    def post_build(self, project_id: UUID, data: dict):
+        """Creates the predictor report object."""
+        self.report = ReportResource(project_id, self.session).get(data['id'])
+
+
+class GraphPredictor(Serializable['GraphPredictor'], Predictor):
+    """A predictor interface that stitches other predictors together.
+
+    Parameters
+    ----------
+    name: str
+        name of the configuration
+    description: str
+        the description of the predictor
+    predictors: list[UUID]
+        the list of existing predictor UUIDs to graph together
+    """
+
+    uid = properties.Optional(properties.UUID, 'id', serializable=False)
+    name = properties.String('config.name')
+    description = properties.String('config.description')
+    predictors = properties.List(properties.UUID, 'config.predictors')
+    typ = properties.String('config.type', default='Graph', deserializable=False)
+    status = properties.String('status', serializable=False)
+    status_info = properties.Optional(
+        properties.List(properties.String()),
+        'status_info',
+        serializable=False
+    )
+    active = properties.Boolean('active', default=True)
+
+    # NOTE: These could go here or in _post_dump - it's unclear which is better right now
+    module_type = properties.String('module_type', default='PREDICTOR')
+    schema_id = properties.UUID('schema_id', default=UUID('43c61ad4-7e33-45d0-a3de-504acb4e0737'))
+
+    def __init__(self,
+                 name: str,
+                 description: str,
+                 predictors: List[UUID],
+                 session: Optional[Session] = None,
+                 report: Optional[Report] = None,
+                 active: bool = True):
+        self.name: str = name
+        self.description: str = description
+        self.predictors: List[UUID] = predictors
+        self.session: Optional[Session] = session
+        self.report: Optional[Report] = report
+        self.active: bool = active
+
+    def _post_dump(self, data: dict) -> dict:
+        data['display_name'] = data['config']['name']
+        return data
+
+    def __str__(self):
+        return '<GraphPredictor {!r}>'.format(self.name)
 
     def post_build(self, project_id: UUID, data: dict):
         """Creates the predictor report object."""

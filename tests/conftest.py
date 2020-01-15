@@ -110,6 +110,26 @@ def valid_simple_ml_predictor_data():
 
 
 @pytest.fixture
+def valid_graph_predictor_data():
+    """Produce valid data used for tests."""
+    return dict(
+        module_type='PREDICTOR',
+        status='VALID',
+        status_info=[],
+        active=True,
+        display_name='Graph predictor',
+        schema_id='43c61ad4-7e33-45d0-a3de-504acb4e0737',
+        id=str(uuid.uuid4()),
+        config=dict(
+            type='Graph',
+            name='Graph predictor',
+            description='description',
+            predictors=[str(uuid.uuid4()), str(uuid.uuid4())]
+        )
+    )
+
+
+@pytest.fixture
 def invalid_predictor_data():
     """Produce valid data used for tests."""
     from citrine.informatics.descriptors import RealDescriptor
