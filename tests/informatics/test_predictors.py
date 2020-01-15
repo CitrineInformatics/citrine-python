@@ -4,7 +4,7 @@ import pytest
 import uuid
 
 from citrine.informatics.descriptors import RealDescriptor
-from citrine.informatics.predictors import Predictor, SimpleMLPredictor
+from citrine.informatics.predictors import GraphPredictor, SimpleMLPredictor
 
 x = RealDescriptor("x", 0, 100, "")
 y = RealDescriptor("y", 0, 100, "")
@@ -20,6 +20,12 @@ def simple_predictor() -> SimpleMLPredictor:
                              outputs=[z],
                              latent_variables=[y],
                              training_data='training_data_key')
+
+
+@pytest.fixture
+def graph_predictor() -> GraphPredictor:
+    """Build a GraphPredictor for testing."""
+    return GraphPredictor(name='Graph predictor', description='description', predictors=[uuid.uuid4(), uuid.uuid4()])
 
 
 def test_simple_initialization(simple_predictor):
@@ -47,3 +53,23 @@ def test_simple_post_build(simple_predictor):
     assert session.get_resource.call_count == 1
     assert simple_predictor.report is not None
     assert simple_predictor.report.status == 'OK'
+
+
+def test_graph_initialization(graph_predictor):
+    """Make sure the correct fields go to the correct places for the Graph Predictor."""
+    assert graph_predictor.name == 'Graph predictor'
+    assert graph_predictor.description == 'description'
+    assert len(graph_predictor.predictors) == 2
+    assert str(graph_predictor) == '<GraphPredictor \'Graph predictor\'>'
+
+
+def test_graph_post_build(graph_predictor):
+    """Ensures we get a report from a graph predictor post_build call."""
+    assert graph_predictor.report is None
+    session = mock.Mock()
+    session.get_resource.return_value = dict(status='OK', report=dict(), uid=uuid.uuid4())
+    graph_predictor.session = session
+    graph_predictor.post_build(uuid.uuid4(), dict(id=uuid.uuid4()))
+    assert session.get_resource.call_count == 1
+    assert graph_predictor.report is not None
+    assert graph_predictor.report.status == 'OK'
