@@ -9,7 +9,7 @@ from citrine._session import Session
 from citrine.resources.workflow_executions import WorkflowExecutionCollection
 from citrine.informatics.analysis_configuration import CrossValidationAnalysisConfiguration
 
-__all__ = ['Workflow', 'DesignWorkflow']
+__all__ = ['Workflow', 'DesignWorkflow', 'PerformanceWorkflow']
 
 
 class Workflow(PolymorphicSerializable['Workflow']):
