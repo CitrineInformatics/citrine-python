@@ -134,6 +134,7 @@ class GraphPredictor(Serializable['GraphPredictor'], Predictor):
         the description of the predictor
     predictors: list[UUID]
         the list of existing predictor UUIDs to graph together
+
     """
 
     uid = properties.Optional(properties.UUID, 'id', serializable=False)
