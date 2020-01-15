@@ -60,3 +60,30 @@ The following example demonstrates how to use the python SDK to create a :class:
 
    # status info will contain relevant validation information
    print(validated_predictor.status_info)
+
+Graph predictor
+---------------
+
+The :class:`~citrine.informatics.predictors.GraphPredictor` stitches together multiple other predictors into a
+directed bipartite graph, where every model node is connected to an arbitrary number of input descriptors and exactly
+one output descriptor.
+
+There are restrictions for a predictor to be used in a GraphPredictor:
+- it must be registered and validated
+- it must NOT be another GraphPredictor
+
+The following example demonstrates how to use the python SDK to create a :class:`~citrine.informatics.predictors.GraphPredictor`.
+
+.. code:: python
+
+   from citrine.informatics.predictors import GraphPredictor
+
+   # the other predictors have already been created and validated
+   graph_predictor = GraphPredictor(
+       name = 'Predictor name',
+       description = 'Predictor description',
+       predictors = [predictor1.uid, predictor2.uid, predictor3.uid]
+   )
+
+   # register predictor
+   predictor = project.predictors.register(graph_predictor)
