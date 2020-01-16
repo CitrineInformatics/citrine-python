@@ -1,7 +1,7 @@
 """Tests for citrine.informatics.predictors serialization."""
 import pytest
 
-from citrine.informatics.predictors import GraphPredictor, Predictor, SimpleMLPredictor
+from citrine.informatics.predictors import ExpressionPredictor, GraphPredictor, Predictor, SimpleMLPredictor
 from citrine.informatics.descriptors import RealDescriptor
 
 
@@ -46,11 +46,19 @@ def test_legacy_serialization(valid_simple_ml_predictor_data):
 
 
 def test_graph_serialization(valid_graph_predictor_data):
-    """Ensure that a serialized SimplePredictor looks sane."""
+    """Ensure that a serialized GraphPredictor looks sane."""
     predictor = GraphPredictor.build(valid_graph_predictor_data)
     serialized = predictor.dump()
     serialized['id'] = valid_graph_predictor_data['id']
     assert serialized == valid_serialization_output(valid_graph_predictor_data)
+
+
+def test_expression_serialization(valid_expression_predictor_data):
+    """Ensure that a serialized ExpressionPredictor looks sane."""
+    predictor = ExpressionPredictor.build(valid_expression_predictor_data)
+    serialized = predictor.dump()
+    serialized['id'] = valid_expression_predictor_data['id']
+    assert serialized == valid_serialization_output(valid_expression_predictor_data)
 
 
 def test_invalid_predictor_type(invalid_predictor_data):

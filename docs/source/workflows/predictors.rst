@@ -68,6 +68,8 @@ The :class:`~citrine.informatics.predictors.GraphPredictor` stitches together mu
 directed bipartite graph, where every model node is connected to an arbitrary number of input descriptors and exactly
 one output descriptor.
 
+Note, if multiple associated predictors use descriptors with the same key the output value with the least loss will be used.
+
 There are restrictions for a predictor to be used in a GraphPredictor:
 - it must be registered and validated
 - it must NOT be another GraphPredictor
@@ -87,3 +89,40 @@ The following example demonstrates how to use the python SDK to create a :class:
 
    # register predictor
    predictor = project.predictors.register(graph_predictor)
+
+Expression predictor
+--------------------
+
+The :class:`~citrine.informatics.predictors.ExpressionPredictor` defines an analytic (lossless) model that computes
+one real-valued output descriptor from one or more input descriptors. An ExpressionPredictor should be used when the
+relationship between inputs and outputs is known.
+
+Note, a string is used to define the expression, and the corresponding output is defined by a RealDescriptor.
+The aliases parameter defines a mapping from expression argument to descriptor key. Expression arguments with spaces
+are not supported, so an alias is created for each input. Aliases are not required for inputs that do not contain
+spaces (but may be useful to avoid typing out the verbose descriptors in the expression string). If an alias isn't
+defined, the expression argument is expected to match the descriptor key exactly.
+
+For a full list of supported syntax see the `mXparser documentation <http://mathparser.org/mxparser-math-collection>`_.
+
+The following example demonstrates how to use the python SDK to create a :class:`~citrine.informatics.predictors.ExpressionPredictor`.
+
+.. code:: python
+
+   from citrine.informatics.predictors import ExpressionPredictor
+
+   shear_modulus = RealDescriptor('Property~Shear modulus', lower_bound=0, upper_bound=100, units='GPa')
+
+   shear_modulus_predictor = ExpressionPredictor(
+       name = 'Shear modulus predictor',
+       description = "Computes shear modulus from Young's modulus and Poisson's ratio.",
+       expression = 'Y / (2 * (1 + v))',
+       output = shear_modulus,
+       aliases = {
+           "Property~Young's modulus": 'Y',
+           "Property~Poisson's ratio": 'v'
+       }
+   )
+
+   # register predictor
+   predictor = project.predictors.register(shear_modulus_predictor)

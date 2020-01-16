@@ -12,7 +12,7 @@ from citrine.resources.report import ReportResource
 from citrine.informatics.modules import Module
 
 
-__all__ = ['GraphPredictor', 'Predictor', 'SimpleMLPredictor']
+__all__ = ['ExpressionPredictor', 'GraphPredictor', 'Predictor', 'SimpleMLPredictor']
 
 
 class Predictor(Module):
@@ -174,6 +174,73 @@ class GraphPredictor(Serializable['GraphPredictor'], Predictor):
 
     def __str__(self):
         return '<GraphPredictor {!r}>'.format(self.name)
+
+    def post_build(self, project_id: UUID, data: dict):
+        """Creates the predictor report object."""
+        self.report = ReportResource(project_id, self.session).get(data['id'])
+
+
+class ExpressionPredictor(Serializable['ExpressionPredictor'], Predictor):
+    """A predictor interface that allows calculator expressions.
+
+    Parameters
+    ----------
+    name: str
+        name of the configuration
+    description: str
+        the description of the predictor
+    expression: str
+        the expression that uses the aliased values
+    output: Descriptor
+        the Descriptor that represents the output relation
+    aliases: dict
+        a mapping from descriptor key to expression argument
+
+    """
+
+    uid = properties.Optional(properties.UUID, 'id', serializable=False)
+    name = properties.String('config.name')
+    description = properties.String('config.description')
+    expression = properties.String('config.expression')
+    output = properties.Object(Descriptor, 'config.output')
+    aliases = properties.Mapping(properties.String, properties.String, 'config.aliases')
+    typ = properties.String('config.type', default='Expression', deserializable=False)
+    status = properties.String('status', serializable=False)
+    status_info = properties.Optional(
+        properties.List(properties.String()),
+        'status_info',
+        serializable=False
+    )
+    active = properties.Boolean('active', default=True)
+
+    # NOTE: These could go here or in _post_dump - it's unclear which is better right now
+    module_type = properties.String('module_type', default='PREDICTOR')
+    schema_id = properties.UUID('schema_id', default=UUID('e7d79c73-8bf3-4609-887a-7f31b9cef566'))
+
+    def __init__(self,
+                 name: str,
+                 description: str,
+                 expression: str,
+                 output: Descriptor,
+                 aliases: dict,
+                 session: Optional[Session] = None,
+                 report: Optional[Report] = None,
+                 active: bool = True):
+        self.name: str = name
+        self.description: str = description
+        self.expression: str = expression
+        self.output: Descriptor = output
+        self.aliases: dict = aliases
+        self.session: Optional[Session] = session
+        self.report: Optional[Report] = report
+        self.active: bool = active
+
+    def _post_dump(self, data: dict) -> dict:
+        data['display_name'] = data['config']['name']
+        return data
+
+    def __str__(self):
+        return '<ExpressionPredictor {!r}>'.format(self.name)
 
     def post_build(self, project_id: UUID, data: dict):
         """Creates the predictor report object."""
