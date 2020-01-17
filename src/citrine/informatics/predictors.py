@@ -215,7 +215,7 @@ class ExpressionPredictor(Serializable['ExpressionPredictor'], Predictor):
 
     # NOTE: These could go here or in _post_dump - it's unclear which is better right now
     module_type = properties.String('module_type', default='PREDICTOR')
-    schema_id = properties.UUID('schema_id', default=UUID('e7d79c73-8bf3-4609-887a-7f31b9cef566'))
+    schema_id = properties.UUID('schema_id', default=UUID('866e72a6-0a01-4c5f-8c35-146eb2540166'))
 
     def __init__(self,
                  name: str,
