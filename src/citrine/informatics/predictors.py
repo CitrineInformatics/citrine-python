@@ -35,6 +35,7 @@ class Predictor(Module):
         type_dict = {
             "Simple": SimpleMLPredictor,
             "Graph": GraphPredictor,
+            "Expression": ExpressionPredictor,
         }
         typ = type_dict.get(data['config']['type'])
 
