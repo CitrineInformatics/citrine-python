@@ -4,11 +4,12 @@ import pytest
 import uuid
 
 from citrine.informatics.descriptors import RealDescriptor
-from citrine.informatics.predictors import GraphPredictor, SimpleMLPredictor
+from citrine.informatics.predictors import ExpressionPredictor, GraphPredictor, SimpleMLPredictor
 
 x = RealDescriptor("x", 0, 100, "")
 y = RealDescriptor("y", 0, 100, "")
 z = RealDescriptor("z", 0, 100, "")
+shear_modulus = RealDescriptor('Property~Shear modulus', lower_bound=0, upper_bound=100, units='GPa')
 
 
 @pytest.fixture
@@ -26,6 +27,20 @@ def simple_predictor() -> SimpleMLPredictor:
 def graph_predictor() -> GraphPredictor:
     """Build a GraphPredictor for testing."""
     return GraphPredictor(name='Graph predictor', description='description', predictors=[uuid.uuid4(), uuid.uuid4()])
+
+
+@pytest.fixture
+def expression_predictor() -> ExpressionPredictor:
+    """Build an ExpressionPredictor for testing."""
+    return ExpressionPredictor(
+        name='Expression predictor',
+        description='Computes shear modulus from Youngs modulus and Poissons ratio',
+        expression='Y / (2 * (1 + v))',
+        output=shear_modulus,
+        aliases = {
+            "Property~Young's modulus": 'Y',
+            "Property~Poisson's ratio": 'v'
+        })
 
 
 def test_simple_initialization(simple_predictor):
@@ -73,3 +88,24 @@ def test_graph_post_build(graph_predictor):
     assert session.get_resource.call_count == 1
     assert graph_predictor.report is not None
     assert graph_predictor.report.status == 'OK'
+
+
+def test_expression_initialization(expression_predictor):
+    """Make sure the correct fields go to the correct places for the Expression Predictor."""
+    assert expression_predictor.name == 'Expression predictor'
+    assert expression_predictor.output.key == 'Property~Shear modulus'
+    assert expression_predictor.expression == 'Y / (2 * (1 + v))'
+    assert expression_predictor.aliases == {"Property~Young's modulus": 'Y', "Property~Poisson's ratio": 'v'}
+    assert str(expression_predictor) == '<ExpressionPredictor \'Expression predictor\'>'
+
+
+def test_expression_post_build(expression_predictor):
+    """Ensures we get a report from a expression predictor post_build call."""
+    assert expression_predictor.report is None
+    session = mock.Mock()
+    session.get_resource.return_value = dict(status='OK', report=dict(), uid=uuid.uuid4())
+    expression_predictor.session = session
+    expression_predictor.post_build(uuid.uuid4(), dict(id=uuid.uuid4()))
+    assert session.get_resource.call_count == 1
+    assert expression_predictor.report is not None
+    assert expression_predictor.report.status == 'OK'
