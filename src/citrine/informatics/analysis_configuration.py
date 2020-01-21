@@ -15,9 +15,9 @@ class CrossValidationAnalysisConfiguration(Serializable['CrossValidationAnalysis
     description: str
         Description of the analysis configuration
     n_folds: int
-        Number of k-folds
+        Number of folds
     n_trials: int
-        Number of k-fold cross-validation trials to run
+        Number of cross-validation trials to run, each with ``n_folds`` folds
     max_rows: int
         Maximum number of training candidates to use during cross-validation
     seed: int, optional

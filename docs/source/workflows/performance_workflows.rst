@@ -5,7 +5,7 @@ A :class:`performance workflow <citrine.informatics.workflows.PerformanceWorkflo
 On construction, a performance workflow requires a configuration object which stores all settings required to run the analysis.
 Currently, the only implemented analysis performs cross-validation on a predictor.
 Settings used to perform cross-validation are defined by a :class:`~citrine.informatics.analysis_configuration.CrossValidationAnalysisConfiguration`.
-This analysis configuration defines cross-validation parameters such as the number of folds, group-by keys (descriptor keys used to group and deduplicate candidates across folds) and :class:`others <citrine.informatics.analysis_configuration.CrossValidationAnalysisConfiguration>`.
+This analysis configuration defines cross-validation parameters such as the number of folds, group-by keys (descriptor keys used to group and deduplicate candidates across folds) and others.
 
 The following example demonstrates how to use the python SDK to register a performance workflow, wait for validation to complete and check the final status:
 
