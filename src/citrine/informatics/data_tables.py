@@ -3,6 +3,15 @@ from citrine._serialization.serializable import Serializable
 
 
 class DataTable(Serializable['DataTable']):
+    """A specification for a data table, generally used to identify source data for some process.
+
+    Parameters
+    ----------
+    table_id: uuid
+        the UUID of the table to use
+
+    """
+
     table_id = properties.UUID('table_id')
     table_version = properties.String('table_version')
 
