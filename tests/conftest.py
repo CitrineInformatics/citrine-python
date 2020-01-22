@@ -104,7 +104,10 @@ def valid_simple_ml_predictor_data():
             inputs=[x.dump()],
             outputs=[z.dump()],
             latent_variables=[y.dump()],
-            training_data='training_data_key'
+            training_data=dict(
+                table_id='e5c51369-8e71-4ec6-b027-1f92bdc14762',
+                table_version='latest'
+            )
         )
     )
 
