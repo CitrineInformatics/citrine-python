@@ -115,11 +115,6 @@ class SimpleMLPredictor(Serializable['SimplePredictor'], Predictor):
 
     def _post_dump(self, data: dict) -> dict:
         data['display_name'] = data['config']['name']
-
-        # Temp
-        print('Predictor dump!')
-        print(data)
-
         return data
 
     def __str__(self):
