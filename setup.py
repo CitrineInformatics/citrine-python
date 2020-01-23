@@ -28,7 +28,7 @@ class PostDevelopCommand(develop):
 
 
 setup(name='citrine',
-      version='0.6.2',
+      version='0.7.0',
       url='http://github.com/CitrineInformatics/citrine-python',
       description='Python library for the Citrine Platform',
       author='Andrew Millspaugh',
