@@ -38,7 +38,24 @@
 <dt id="citrine.informatics.analysis_configuration.CrossValidationAnalysisConfiguration">
 <em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.analysis_configuration.</code><code class="sig-name descname">CrossValidationAnalysisConfiguration</code><span class="sig-paren">(</span><em class="sig-param">name: str</em>, <em class="sig-param">description: str</em>, <em class="sig-param">n_folds: int</em>, <em class="sig-param">n_trials: int</em>, <em class="sig-param">max_rows: int</em>, <em class="sig-param">seed: Optional[int] = None</em>, <em class="sig-param">group_by_keys: Optional[List[str]] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.analysis_configuration.CrossValidationAnalysisConfiguration" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code></p>
-<p>Configuration settings for running CV analysis in a Performance Workflow.</p>
+<p>Configuration settings for running cross-validation in a performance workflow.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – Name of the analysis configuration</p></li>
+<li><p><strong>description</strong> (<em>str</em>) – Description of the analysis configuration</p></li>
+<li><p><strong>n_folds</strong> (<em>int</em>) – Number of folds</p></li>
+<li><p><strong>n_trials</strong> (<em>int</em>) – Number of cross-validation trials to run, each with <code class="docutils literal notranslate"><span class="pre">n_folds</span></code> folds</p></li>
+<li><p><strong>max_rows</strong> (<em>int</em>) – Maximum number of training candidates to use during cross-validation</p></li>
+<li><p><strong>seed</strong> (<em>int</em><em>, </em><em>optional</em>) – Seed used to generate random test/train splits.
+If not provided, a random seed is used.</p></li>
+<li><p><strong>group_by_keys</strong> (<em>list</em><em>[</em><em>str</em><em>]</em><em>, </em><em>optional</em>) – Set of keys used to group candidates.
+If present, candidates are grouped by the hash of
+<code class="docutils literal notranslate"><span class="pre">(key,</span> <span class="pre">value)</span></code> pairs computed on the given keys.
+If not provided, candidates are not grouped.</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="attribute">
 <dt id="citrine.informatics.analysis_configuration.CrossValidationAnalysisConfiguration.description">
 <code class="sig-name descname">description</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.analysis_configuration.CrossValidationAnalysisConfiguration.description" title="Permalink to this definition">¶</a></dt>

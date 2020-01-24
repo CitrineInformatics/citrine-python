@@ -274,13 +274,18 @@ See (insert link) for a discussion of how to match on tags.</p>
 
 <dl class="method">
 <dt id="citrine.resources.data_concepts.DataConceptsCollection.list">
-<code class="sig-name descname">list</code><span class="sig-paren">(</span><em class="sig-param">page: Optional[int] = None</em>, <em class="sig-param">per_page: Optional[int] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.data_concepts.DataConceptsCollection.list" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">list</code><span class="sig-paren">(</span><em class="sig-param">page: Optional[int] = None</em>, <em class="sig-param">per_page: Optional[int] = 100</em><span class="sig-paren">)</span> &#x2192; List[citrine.resources.data_concepts.DataConcepts]<a class="headerlink" href="#citrine.resources.data_concepts.DataConceptsCollection.list" title="Permalink to this definition">¶</a></dt>
 <dd><p>List all visible elements of the collection.</p>
+<p>Leaving page and per_page as default values will return a list of all elements
+in the collection, paginating over all available pages.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>page</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>) – The page of results to list, 1-indexed (i.e. the first page is page=1)</p></li>
-<li><p><strong>per_page</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>) – The number of results to list per page</p></li>
+<li><p><strong>page</strong> (<em>int</em><em>, </em><em>optional</em>) – The “page” of results to list. Default is to read all pages and return
+all results.  This option is deprecated.</p></li>
+<li><p><strong>per_page</strong> (<em>int</em><em>, </em><em>optional</em>) – Max number of results to return per page.  This parameter is used when
+making requests to the backend service.  If the page parameter is
+specified it limits the maximum number of elements in the response.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>

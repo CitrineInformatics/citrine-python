@@ -90,6 +90,62 @@ The uid is a unique string associated with a table of existing data.</p>
 </pre></div>
 </div>
 </div>
+<div class="section" id="graph-predictor">
+<h2>2.4.2.2. Graph predictor<a class="headerlink" href="#graph-predictor" title="Permalink to this headline">¶</a></h2>
+<p>The <a class="reference internal" href="../reference/citrine.informatics.predictors.html#citrine.informatics.predictors.GraphPredictor" title="citrine.informatics.predictors.GraphPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">GraphPredictor</span></code></a> stitches together multiple other predictors into a
+directed bipartite graph, where every model node is connected to an arbitrary number of input descriptors and exactly
+one output descriptor.</p>
+<p>Note, if multiple associated predictors use descriptors with the same key the output value with the least loss will be used.</p>
+<p>There are restrictions for a predictor to be used in a GraphPredictor:
+- it must be registered and validated
+- it must NOT be another GraphPredictor</p>
+<p>The following example demonstrates how to use the python SDK to create a <a class="reference internal" href="../reference/citrine.informatics.predictors.html#citrine.informatics.predictors.GraphPredictor" title="citrine.informatics.predictors.GraphPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">GraphPredictor</span></code></a>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.informatics.predictors</span> <span class="kn">import</span> <span class="n">GraphPredictor</span>
+
+<span class="c1"># the other predictors have already been created and validated</span>
+<span class="n">graph_predictor</span> <span class="o">=</span> <span class="n">GraphPredictor</span><span class="p">(</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Predictor name&#39;</span><span class="p">,</span>
+    <span class="n">description</span> <span class="o">=</span> <span class="s1">&#39;Predictor description&#39;</span><span class="p">,</span>
+    <span class="n">predictors</span> <span class="o">=</span> <span class="p">[</span><span class="n">predictor1</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span> <span class="n">predictor2</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span> <span class="n">predictor3</span><span class="o">.</span><span class="n">uid</span><span class="p">]</span>
+<span class="p">)</span>
+
+<span class="c1"># register predictor</span>
+<span class="n">predictor</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">predictors</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">graph_predictor</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="expression-predictor">
+<h2>2.4.2.3. Expression predictor<a class="headerlink" href="#expression-predictor" title="Permalink to this headline">¶</a></h2>
+<p>The <a class="reference internal" href="../reference/citrine.informatics.predictors.html#citrine.informatics.predictors.ExpressionPredictor" title="citrine.informatics.predictors.ExpressionPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExpressionPredictor</span></code></a> defines an analytic (lossless) model that computes
+one real-valued output descriptor from one or more input descriptors. An ExpressionPredictor should be used when the
+relationship between inputs and outputs is known.</p>
+<p>Note, a string is used to define the expression, and the corresponding output is defined by a RealDescriptor.
+The aliases parameter defines a mapping from expression argument to descriptor key. Expression arguments with spaces
+are not supported, so an alias is created for each input. Aliases are not required for inputs that do not contain
+spaces (but may be useful to avoid typing out the verbose descriptors in the expression string). If an alias isn’t
+defined, the expression argument is expected to match the descriptor key exactly.</p>
+<p>For a full list of supported syntax see the <a class="reference external" href="http://mathparser.org/mxparser-math-collection">mXparser documentation</a>.</p>
+<p>The following example demonstrates how to use the python SDK to create a <a class="reference internal" href="../reference/citrine.informatics.predictors.html#citrine.informatics.predictors.ExpressionPredictor" title="citrine.informatics.predictors.ExpressionPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExpressionPredictor</span></code></a>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.informatics.predictors</span> <span class="kn">import</span> <span class="n">ExpressionPredictor</span>
+
+<span class="n">shear_modulus</span> <span class="o">=</span> <span class="n">RealDescriptor</span><span class="p">(</span><span class="s1">&#39;Property~Shear modulus&#39;</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;GPa&#39;</span><span class="p">)</span>
+
+<span class="n">shear_modulus_predictor</span> <span class="o">=</span> <span class="n">ExpressionPredictor</span><span class="p">(</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Shear modulus predictor&#39;</span><span class="p">,</span>
+    <span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;Computes shear modulus from Young&#39;s modulus and Poisson&#39;s ratio.&quot;</span><span class="p">,</span>
+    <span class="n">expression</span> <span class="o">=</span> <span class="s1">&#39;Y / (2 * (1 + v))&#39;</span><span class="p">,</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">shear_modulus</span><span class="p">,</span>
+    <span class="n">aliases</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;Property~Young&#39;s modulus&quot;</span><span class="p">:</span> <span class="s1">&#39;Y&#39;</span><span class="p">,</span>
+        <span class="s2">&quot;Property~Poisson&#39;s ratio&quot;</span><span class="p">:</span> <span class="s1">&#39;v&#39;</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+
+<span class="c1"># register predictor</span>
+<span class="n">predictor</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">predictors</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">shear_modulus_predictor</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
 </div>
 
 

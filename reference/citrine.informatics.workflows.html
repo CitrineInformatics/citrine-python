@@ -70,6 +70,16 @@
 <dd></dd></dl>
 
 <dl class="attribute">
+<dt id="citrine.informatics.workflows.DesignWorkflow.create_time">
+<code class="sig-name descname">create_time</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.workflows.DesignWorkflow.create_time" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.workflows.DesignWorkflow.created_by">
+<code class="sig-name descname">created_by</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.workflows.DesignWorkflow.created_by" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
 <dt id="citrine.informatics.workflows.DesignWorkflow.design_space_id">
 <code class="sig-name descname">design_space_id</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.workflows.DesignWorkflow.design_space_id" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -118,6 +128,82 @@
 <dl class="attribute">
 <dt id="citrine.informatics.workflows.DesignWorkflow.uid">
 <code class="sig-name descname">uid</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.workflows.DesignWorkflow.uid" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="citrine.informatics.workflows.PerformanceWorkflow">
+<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.workflows.</code><code class="sig-name descname">PerformanceWorkflow</code><span class="sig-paren">(</span><em class="sig-param">name: str</em>, <em class="sig-param">analysis: citrine.informatics.analysis_configuration.CrossValidationAnalysisConfiguration</em>, <em class="sig-param">project_id: Optional[uuid.UUID] = None</em>, <em class="sig-param">session: citrine._session.Session = &lt;citrine._session.Session object&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.workflows.PerformanceWorkflow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.resource.Resource</span></code>, <a class="reference internal" href="#citrine.informatics.workflows.Workflow" title="citrine.informatics.workflows.Workflow"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.workflows.Workflow</span></code></a></p>
+<p>Object that executes performance analysis on a given module.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – the name of the workflow</p></li>
+<li><p><strong>analysis</strong> (<a class="reference internal" href="citrine.informatics.analysis_configuration.html#citrine.informatics.analysis_configuration.CrossValidationAnalysisConfiguration" title="citrine.informatics.analysis_configuration.CrossValidationAnalysisConfiguration"><em>CrossValidationAnalysisConfiguration</em></a>) – the configuration object</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="citrine.informatics.workflows.PerformanceWorkflow.active">
+<code class="sig-name descname">active</code><em class="property"> = True</em><a class="headerlink" href="#citrine.informatics.workflows.PerformanceWorkflow.active" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.workflows.PerformanceWorkflow.analysis">
+<code class="sig-name descname">analysis</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.workflows.PerformanceWorkflow.analysis" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.workflows.PerformanceWorkflow.create_time">
+<code class="sig-name descname">create_time</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.workflows.PerformanceWorkflow.create_time" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.workflows.PerformanceWorkflow.created_by">
+<code class="sig-name descname">created_by</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.workflows.PerformanceWorkflow.created_by" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="citrine.informatics.workflows.PerformanceWorkflow.executions">
+<em class="property">property </em><code class="sig-name descname">executions</code><a class="headerlink" href="#citrine.informatics.workflows.PerformanceWorkflow.executions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a resource representing all visible executions of this workflow.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.workflows.PerformanceWorkflow.module_type">
+<code class="sig-name descname">module_type</code><em class="property"> = 'PERFORMANCE_WORKFLOW'</em><a class="headerlink" href="#citrine.informatics.workflows.PerformanceWorkflow.module_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.workflows.PerformanceWorkflow.name">
+<code class="sig-name descname">name</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.workflows.PerformanceWorkflow.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.workflows.PerformanceWorkflow.schema_id">
+<code class="sig-name descname">schema_id</code><em class="property"> = UUID('1d213f0a-d07c-4f70-a4d0-bda3aa951ee0')</em><a class="headerlink" href="#citrine.informatics.workflows.PerformanceWorkflow.schema_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.workflows.PerformanceWorkflow.status">
+<code class="sig-name descname">status</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.workflows.PerformanceWorkflow.status" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.workflows.PerformanceWorkflow.status_info">
+<code class="sig-name descname">status_info</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.workflows.PerformanceWorkflow.status_info" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.workflows.PerformanceWorkflow.typ">
+<code class="sig-name descname">typ</code><em class="property"> = 'PerformanceWorkflow'</em><a class="headerlink" href="#citrine.informatics.workflows.PerformanceWorkflow.typ" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.workflows.PerformanceWorkflow.uid">
+<code class="sig-name descname">uid</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.workflows.PerformanceWorkflow.uid" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>

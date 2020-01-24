@@ -72,26 +72,6 @@ then the filename of this FileLink object will be appended to the path.</p></li>
 </dd></dl>
 
 <dl class="method">
-<dt id="citrine.resources.file_link.FileCollection.list">
-<code class="sig-name descname">list</code><span class="sig-paren">(</span><em class="sig-param">page: Optional[int] = None</em>, <em class="sig-param">per_page: Optional[int] = None</em><span class="sig-paren">)</span> &#x2192; Iterable[citrine.resources.file_link.FileLink]<a class="headerlink" href="#citrine.resources.file_link.FileCollection.list" title="Permalink to this definition">¶</a></dt>
-<dd><p>List all visible files in the collection.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>page</strong> (<em>int</em><em>, </em><em>optional</em>) – The “page” number of results to list. Default is the first page, which is 1.</p></li>
-<li><p><strong>per_page</strong> (<em>int</em><em>, </em><em>optional</em>) – Max number of results to return for each call. Default is 20.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>FileLink objects in this collection.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Iterable[<a class="reference internal" href="#citrine.resources.file_link.FileLink" title="citrine.resources.file_link.FileLink">FileLink</a>]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
 <dt id="citrine.resources.file_link.FileCollection.upload">
 <code class="sig-name descname">upload</code><span class="sig-paren">(</span><em class="sig-param">file_path: str</em>, <em class="sig-param">dest_name: str = None</em><span class="sig-paren">)</span> &#x2192; citrine.resources.file_link.FileLink<a class="headerlink" href="#citrine.resources.file_link.FileCollection.upload" title="Permalink to this definition">¶</a></dt>
 <dd><p>Uploads a file to the dataset.</p>

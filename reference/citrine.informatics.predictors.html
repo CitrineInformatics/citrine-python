@@ -35,6 +35,162 @@
 <span id="citrine-informatics-predictors-module"></span><h1>citrine.informatics.predictors module<a class="headerlink" href="#module-citrine.informatics.predictors" title="Permalink to this headline">¶</a></h1>
 <p>Tools for working with Predictors.</p>
 <dl class="class">
+<dt id="citrine.informatics.predictors.ExpressionPredictor">
+<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.predictors.</code><code class="sig-name descname">ExpressionPredictor</code><span class="sig-paren">(</span><em class="sig-param">name: str</em>, <em class="sig-param">description: str</em>, <em class="sig-param">expression: str</em>, <em class="sig-param">output: citrine.informatics.descriptors.Descriptor</em>, <em class="sig-param">aliases: dict</em>, <em class="sig-param">session: Optional[citrine._session.Session] = None</em>, <em class="sig-param">report: Optional[citrine.informatics.reports.Report] = None</em>, <em class="sig-param">active: bool = True</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.predictors.ExpressionPredictor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.informatics.predictors.Predictor" title="citrine.informatics.predictors.Predictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.predictors.Predictor</span></code></a></p>
+<p>A predictor interface that allows calculator expressions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – name of the configuration</p></li>
+<li><p><strong>description</strong> (<em>str</em>) – the description of the predictor</p></li>
+<li><p><strong>expression</strong> (<em>str</em>) – the expression that uses the aliased values</p></li>
+<li><p><strong>output</strong> (<a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.Descriptor" title="citrine.informatics.descriptors.Descriptor"><em>Descriptor</em></a>) – the Descriptor that represents the output relation</p></li>
+<li><p><strong>aliases</strong> (<em>dict</em>) – a mapping from descriptor key to expression argument</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.ExpressionPredictor.active">
+<code class="sig-name descname">active</code><em class="property"> = True</em><a class="headerlink" href="#citrine.informatics.predictors.ExpressionPredictor.active" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.ExpressionPredictor.aliases">
+<code class="sig-name descname">aliases</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.ExpressionPredictor.aliases" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.ExpressionPredictor.description">
+<code class="sig-name descname">description</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.ExpressionPredictor.description" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.ExpressionPredictor.expression">
+<code class="sig-name descname">expression</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.ExpressionPredictor.expression" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.ExpressionPredictor.module_type">
+<code class="sig-name descname">module_type</code><em class="property"> = 'PREDICTOR'</em><a class="headerlink" href="#citrine.informatics.predictors.ExpressionPredictor.module_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.ExpressionPredictor.name">
+<code class="sig-name descname">name</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.ExpressionPredictor.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.ExpressionPredictor.output">
+<code class="sig-name descname">output</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.ExpressionPredictor.output" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="citrine.informatics.predictors.ExpressionPredictor.post_build">
+<code class="sig-name descname">post_build</code><span class="sig-paren">(</span><em class="sig-param">project_id: uuid.UUID</em>, <em class="sig-param">data: dict</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.predictors.ExpressionPredictor.post_build" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates the predictor report object.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.ExpressionPredictor.schema_id">
+<code class="sig-name descname">schema_id</code><em class="property"> = UUID('866e72a6-0a01-4c5f-8c35-146eb2540166')</em><a class="headerlink" href="#citrine.informatics.predictors.ExpressionPredictor.schema_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.ExpressionPredictor.status">
+<code class="sig-name descname">status</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.ExpressionPredictor.status" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.ExpressionPredictor.status_info">
+<code class="sig-name descname">status_info</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.ExpressionPredictor.status_info" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.ExpressionPredictor.typ">
+<code class="sig-name descname">typ</code><em class="property"> = 'Expression'</em><a class="headerlink" href="#citrine.informatics.predictors.ExpressionPredictor.typ" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.ExpressionPredictor.uid">
+<code class="sig-name descname">uid</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.ExpressionPredictor.uid" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="citrine.informatics.predictors.GraphPredictor">
+<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.predictors.</code><code class="sig-name descname">GraphPredictor</code><span class="sig-paren">(</span><em class="sig-param">name: str, description: str, predictors: List[uuid.UUID], session: Optional[citrine._session.Session] = None, report: Optional[citrine.informatics.reports.Report] = None, active: bool = True</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.predictors.GraphPredictor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.informatics.predictors.Predictor" title="citrine.informatics.predictors.Predictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.predictors.Predictor</span></code></a></p>
+<p>A predictor interface that stitches other predictors together.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – name of the configuration</p></li>
+<li><p><strong>description</strong> (<em>str</em>) – the description of the predictor</p></li>
+<li><p><strong>predictors</strong> (<em>list</em><em>[</em><em>UUID</em><em>]</em>) – the list of existing predictor UUIDs to graph together</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.GraphPredictor.active">
+<code class="sig-name descname">active</code><em class="property"> = True</em><a class="headerlink" href="#citrine.informatics.predictors.GraphPredictor.active" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.GraphPredictor.description">
+<code class="sig-name descname">description</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.GraphPredictor.description" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.GraphPredictor.module_type">
+<code class="sig-name descname">module_type</code><em class="property"> = 'PREDICTOR'</em><a class="headerlink" href="#citrine.informatics.predictors.GraphPredictor.module_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.GraphPredictor.name">
+<code class="sig-name descname">name</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.GraphPredictor.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="citrine.informatics.predictors.GraphPredictor.post_build">
+<code class="sig-name descname">post_build</code><span class="sig-paren">(</span><em class="sig-param">project_id: uuid.UUID</em>, <em class="sig-param">data: dict</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.predictors.GraphPredictor.post_build" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates the predictor report object.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.GraphPredictor.predictors">
+<code class="sig-name descname">predictors</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.GraphPredictor.predictors" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.GraphPredictor.schema_id">
+<code class="sig-name descname">schema_id</code><em class="property"> = UUID('43c61ad4-7e33-45d0-a3de-504acb4e0737')</em><a class="headerlink" href="#citrine.informatics.predictors.GraphPredictor.schema_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.GraphPredictor.status">
+<code class="sig-name descname">status</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.GraphPredictor.status" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.GraphPredictor.status_info">
+<code class="sig-name descname">status_info</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.GraphPredictor.status_info" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.GraphPredictor.typ">
+<code class="sig-name descname">typ</code><em class="property"> = 'Graph'</em><a class="headerlink" href="#citrine.informatics.predictors.GraphPredictor.typ" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.GraphPredictor.uid">
+<code class="sig-name descname">uid</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.GraphPredictor.uid" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
 <dt id="citrine.informatics.predictors.Predictor">
 <em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.predictors.</code><code class="sig-name descname">Predictor</code><a class="headerlink" href="#citrine.informatics.predictors.Predictor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="citrine.informatics.modules.html#citrine.informatics.modules.Module" title="citrine.informatics.modules.Module"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.modules.Module</span></code></a></p>
@@ -59,7 +215,7 @@ based on the ‘type’ value of the passed in dict.</p>
 <dt id="citrine.informatics.predictors.SimpleMLPredictor">
 <em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.predictors.</code><code class="sig-name descname">SimpleMLPredictor</code><span class="sig-paren">(</span><em class="sig-param">name: str, description: str, inputs: List[citrine.informatics.descriptors.Descriptor], outputs: List[citrine.informatics.descriptors.Descriptor], latent_variables: List[citrine.informatics.descriptors.Descriptor], training_data: str, session: Optional[citrine._session.Session] = None, report: Optional[citrine.informatics.reports.Report] = None, active: bool = True</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.predictors.SimpleMLPredictor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.informatics.predictors.Predictor" title="citrine.informatics.predictors.Predictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.predictors.Predictor</span></code></a></p>
-<p>A predictor interface that builds a simple grpahical model.</p>
+<p>A predictor interface that builds a simple graphical model.</p>
 <p>The model connects the set of inputs through latent variables to the outputs.
 Supported complex inputs (such as chemical formulas) are auto-featurized and machine learning
 models are built for each latent variable and output.</p>

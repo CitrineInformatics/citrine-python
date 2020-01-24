@@ -1,8 +1,11 @@
 Performance workflows
 =====================
 
-A performance workflow performs analysis on a module.
-Currently, the only analysis implemented is "cross validation analysis," which performs cross-validation on a predictor.
+A :class:`performance workflow <citrine.informatics.workflows.PerformanceWorkflow>` performs analysis on a module.
+On construction, a performance workflow requires a configuration object which stores all settings required to run the analysis.
+Currently, the only implemented analysis performs cross-validation on a predictor.
+Settings used to perform cross-validation are defined by a :class:`~citrine.informatics.analysis_configuration.CrossValidationAnalysisConfiguration`.
+This analysis configuration defines cross-validation parameters such as the number of folds, group-by keys (descriptor keys used to group and deduplicate candidates across folds) and others.
 
 The following example demonstrates how to use the python SDK to register a performance workflow, wait for validation to complete and check the final status:
 
@@ -17,6 +20,7 @@ The following example demonstrates how to use the python SDK to register a perfo
            name='Demo Performance Workflow',
            analysis=CrossValidationAnalysisConfiguration(
                name='analysis_settings',
+               description='2-fold cross-validation',
                n_folds=2,
                n_trials=3,
                max_rows=200,
@@ -101,19 +105,15 @@ Below shows an example of the results object.
 
 .. code:: python
 
-   {
-     'results': [
-       [
-         'report', {
-           'performance_metrics': {
-             '~~z': {
-               'ndme': {'value': 0.4777230639684575, 'description': 'Non-dimensional model error (0.0 for a perfect model)'},
-               'rmse': {'value': 21.307943307393984, 'description': 'Root mean squared error (0.0 for a perfect model)'},
-               'std_residual': {'value': 1.8288119041155286, 'description': 'Uncertainty calibration: root mean square of standardized errors (1.0 is perfectly calibrated)'},
-               'std_confidence': {'value': 0.59375, 'description': 'Uncertainty calibration: fraction of actual values within the prediction error bars (0.68 is perfectly calibrated)'}
-             }
-           }
-         }
-       ]
-     ]
-   }
+  {
+    'results': {
+      'performance_metrics': {
+        '~~z': {
+          'ndme': {'value': 0.4777230639684575, 'description': 'Non-dimensional model error (0.0 for a perfect model)'},
+          'rmse': {'value': 21.307943307393984, 'description': 'Root mean squared error (0.0 for a perfect model)'},
+          'std_residual': {'value': 1.8288119041155286, 'description': 'Uncertainty calibration: root mean square of standardized errors (1.0 is perfectly calibrated)'},
+          'std_confidence': {'value': 0.59375, 'description': 'Uncertainty calibration: fraction of actual values within the prediction error bars (0.68 is perfectly calibrated)'}
+        }
+      }
+    }
+  }

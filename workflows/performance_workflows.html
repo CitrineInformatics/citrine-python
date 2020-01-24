@@ -35,8 +35,11 @@
             
   <div class="section" id="performance-workflows">
 <h1>2.4.7. Performance workflows<a class="headerlink" href="#performance-workflows" title="Permalink to this headline">¶</a></h1>
-<p>A performance workflow performs analysis on a module.
-Currently, the only analysis implemented is “cross validation analysis,” which performs cross-validation on a predictor.</p>
+<p>A <a class="reference internal" href="../reference/citrine.informatics.workflows.html#citrine.informatics.workflows.PerformanceWorkflow" title="citrine.informatics.workflows.PerformanceWorkflow"><code class="xref py py-class docutils literal notranslate"><span class="pre">performance</span> <span class="pre">workflow</span></code></a> performs analysis on a module.
+On construction, a performance workflow requires a configuration object which stores all settings required to run the analysis.
+Currently, the only implemented analysis performs cross-validation on a predictor.
+Settings used to perform cross-validation are defined by a <a class="reference internal" href="../reference/citrine.informatics.analysis_configuration.html#citrine.informatics.analysis_configuration.CrossValidationAnalysisConfiguration" title="citrine.informatics.analysis_configuration.CrossValidationAnalysisConfiguration"><code class="xref py py-class docutils literal notranslate"><span class="pre">CrossValidationAnalysisConfiguration</span></code></a>.
+This analysis configuration defines cross-validation parameters such as the number of folds, group-by keys (descriptor keys used to group and deduplicate candidates across folds) and others.</p>
 <p>The following example demonstrates how to use the python SDK to register a performance workflow, wait for validation to complete and check the final status:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">sleep</span>
 <span class="kn">from</span> <span class="nn">citrine.informatics.workflows</span> <span class="kn">import</span> <span class="n">PerformanceWorkflow</span>
@@ -47,6 +50,7 @@ Currently, the only analysis implemented is “cross validation analysis,” whi
         <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Demo Performance Workflow&#39;</span><span class="p">,</span>
         <span class="n">analysis</span><span class="o">=</span><span class="n">CrossValidationAnalysisConfiguration</span><span class="p">(</span>
             <span class="n">name</span><span class="o">=</span><span class="s1">&#39;analysis_settings&#39;</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s1">&#39;2-fold cross-validation&#39;</span><span class="p">,</span>
             <span class="n">n_folds</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
             <span class="n">n_trials</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
             <span class="n">max_rows</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
@@ -127,20 +131,16 @@ A workflow execution has a status (in progress, succeeded, or failed) and result
 Results of a successful workflow are returned as a dictionary.
 Below shows an example of the results object.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-  <span class="s1">&#39;results&#39;</span><span class="p">:</span> <span class="p">[</span>
-    <span class="p">[</span>
-      <span class="s1">&#39;report&#39;</span><span class="p">,</span> <span class="p">{</span>
-        <span class="s1">&#39;performance_metrics&#39;</span><span class="p">:</span> <span class="p">{</span>
-          <span class="s1">&#39;~~z&#39;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">&#39;ndme&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="mf">0.4777230639684575</span><span class="p">,</span> <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;Non-dimensional model error (0.0 for a perfect model)&#39;</span><span class="p">},</span>
-            <span class="s1">&#39;rmse&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="mf">21.307943307393984</span><span class="p">,</span> <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;Root mean squared error (0.0 for a perfect model)&#39;</span><span class="p">},</span>
-            <span class="s1">&#39;std_residual&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="mf">1.8288119041155286</span><span class="p">,</span> <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;Uncertainty calibration: root mean square of standardized errors (1.0 is perfectly calibrated)&#39;</span><span class="p">},</span>
-            <span class="s1">&#39;std_confidence&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="mf">0.59375</span><span class="p">,</span> <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;Uncertainty calibration: fraction of actual values within the prediction error bars (0.68 is perfectly calibrated)&#39;</span><span class="p">}</span>
-          <span class="p">}</span>
-        <span class="p">}</span>
+  <span class="s1">&#39;results&#39;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s1">&#39;performance_metrics&#39;</span><span class="p">:</span> <span class="p">{</span>
+      <span class="s1">&#39;~~z&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;ndme&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="mf">0.4777230639684575</span><span class="p">,</span> <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;Non-dimensional model error (0.0 for a perfect model)&#39;</span><span class="p">},</span>
+        <span class="s1">&#39;rmse&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="mf">21.307943307393984</span><span class="p">,</span> <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;Root mean squared error (0.0 for a perfect model)&#39;</span><span class="p">},</span>
+        <span class="s1">&#39;std_residual&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="mf">1.8288119041155286</span><span class="p">,</span> <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;Uncertainty calibration: root mean square of standardized errors (1.0 is perfectly calibrated)&#39;</span><span class="p">},</span>
+        <span class="s1">&#39;std_confidence&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="mf">0.59375</span><span class="p">,</span> <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;Uncertainty calibration: fraction of actual values within the prediction error bars (0.68 is perfectly calibrated)&#39;</span><span class="p">}</span>
       <span class="p">}</span>
-    <span class="p">]</span>
-  <span class="p">]</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </div>

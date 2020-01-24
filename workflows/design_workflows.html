@@ -78,32 +78,29 @@ Materials at the head of the list are the best materials found from searching th
 Triggering a workflow returns a workflow execution object.
 A workflow execution has a status (in progress, succeeded, or failed) and results (once execution has succeeded).
 Results of a successful workflow are returned as a dictionary.
-The <code class="docutils literal notranslate"><span class="pre">results</span></code> key maps to a nested list of <code class="docutils literal notranslate"><span class="pre">candidates</span></code> and <code class="docutils literal notranslate"><span class="pre">scores</span></code>.
+The <code class="docutils literal notranslate"><span class="pre">results</span></code> key maps to a dictionary containing <code class="docutils literal notranslate"><span class="pre">candidates</span></code> and <code class="docutils literal notranslate"><span class="pre">scores</span></code>.
 The <code class="docutils literal notranslate"><span class="pre">i</span></code> th candidate corresponds to the <code class="docutils literal notranslate"><span class="pre">i</span></code> th score.</p>
 <p>Each candidate and score is a dictionary.
 The former contains descriptor key-value pairs and uncertainty in descriptor values.
 The latter contains a key-value pair for each score.
 For example, if input materials contain an input <code class="docutils literal notranslate"><span class="pre">x</span></code> and are scored by using MLI for predicted output <code class="docutils literal notranslate"><span class="pre">z</span></code> the execution results would have the form:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="s2">&quot;results&quot;</span><span class="p">:</span> <span class="p">[</span>
-        <span class="p">[</span><span class="s2">&quot;candidates&quot;</span><span class="p">,</span> <span class="p">[</span>
+    <span class="s2">&quot;results&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;candidates&quot;</span><span class="p">:</span> <span class="p">[</span>
             <span class="p">{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;uncertainty_in_x&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;z&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;uncertainty_in_x&quot;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">},</span>
             <span class="c1"># ...</span>
-        <span class="p">]],</span>
-        <span class="p">[</span><span class="s2">&quot;scores&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">],</span>
+        <span class="s2">&quot;scores&quot;</span><span class="p">:</span> <span class="p">[</span>
             <span class="p">{</span><span class="s2">&quot;mli_z&quot;</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">},</span>
             <span class="c1"># ...</span>
-        <span class="p">]]</span>
-    <span class="p">]</span>
+        <span class="p">]</span>
+    <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </div>
 <p>The length of <code class="docutils literal notranslate"><span class="pre">candidates</span></code> will always equal that of <code class="docutils literal notranslate"><span class="pre">scores</span></code>.
 A maximum of 200 candidates and scores can be returned by an execution.
-If the design space contains more than 200 possible materials, only the top 200 will be returned by an execution.
-Note, the multiple layers of lists in the results.
-The <code class="docutils literal notranslate"><span class="pre">results</span></code> key maps to a list. This list contains 2 items.
-Each item is a list of the form <code class="docutils literal notranslate"><span class="pre">[name,</span> <span class="pre">[values]]</span></code>, e.g. <code class="docutils literal notranslate"><span class="pre">[&quot;candidates&quot;,</span> <span class="pre">list_of_candidates]</span></code>.</p>
+If the design space contains more than 200 possible materials, only the top 200 will be returned by an execution.</p>
 <p>The following demonstrates how to trigger workflow execution, wait for the design run to complete and inspect the best material found by the workflow:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">sleep</span>
 <span class="kn">from</span> <span class="nn">citrine.informatics.objectives</span> <span class="kn">import</span> <span class="n">ScalarMaxObjective</span>
@@ -129,8 +126,8 @@ Each item is a list of the form <code class="docutils literal notranslate"><span
 <span class="c1"># retrieve the results</span>
 <span class="n">execution_results</span> <span class="o">=</span> <span class="n">execution</span><span class="o">.</span><span class="n">results</span><span class="p">()</span>
 <span class="c1"># extract the candidates and the scores</span>
-<span class="n">candidates</span> <span class="o">=</span> <span class="n">execution_results</span><span class="p">[</span><span class="s1">&#39;results&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
-<span class="n">scores</span> <span class="o">=</span> <span class="n">execution_results</span><span class="p">[</span><span class="s1">&#39;results&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">candidates</span> <span class="o">=</span> <span class="n">execution_results</span><span class="p">[</span><span class="s1">&#39;results&#39;</span><span class="p">][</span><span class="s1">&#39;candidates&#39;</span><span class="p">]</span>
+<span class="n">scores</span> <span class="o">=</span> <span class="n">execution_results</span><span class="p">[</span><span class="s1">&#39;results&#39;</span><span class="p">][</span><span class="s1">&#39;scores&#39;</span><span class="p">]</span>
 
 <span class="c1"># pull out the candidate with the highest shear modulus and its score</span>
 <span class="c1"># (this should be the candidate at the head of the list since we used shear modulus to score and rank materials)</span>
