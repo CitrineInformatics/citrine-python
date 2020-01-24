@@ -8,6 +8,7 @@ from citrine._serialization.serializable import Serializable
 from citrine._session import Session
 from citrine.informatics.descriptors import Descriptor
 from citrine.informatics.reports import Report
+from citrine.informatics.data_tables import DataTable
 from citrine.resources.report import ReportResource
 from citrine.informatics.modules import Module
 
@@ -78,7 +79,7 @@ class SimpleMLPredictor(Serializable['SimplePredictor'], Predictor):
     inputs = properties.List(properties.Object(Descriptor), 'config.inputs')
     outputs = properties.List(properties.Object(Descriptor), 'config.outputs')
     latent_variables = properties.List(properties.Object(Descriptor), 'config.latent_variables')
-    training_data = properties.String('config.training_data')
+    training_data = properties.Object(DataTable, 'config.training_data')
     typ = properties.String('config.type', default='Simple', deserializable=False)
     status = properties.String('status', serializable=False)
     status_info = properties.Optional(
@@ -98,7 +99,7 @@ class SimpleMLPredictor(Serializable['SimplePredictor'], Predictor):
                  inputs: List[Descriptor],
                  outputs: List[Descriptor],
                  latent_variables: List[Descriptor],
-                 training_data: str,
+                 training_data: DataTable,
                  session: Optional[Session] = None,
                  report: Optional[Report] = None,
                  active: bool = True):
@@ -107,7 +108,7 @@ class SimpleMLPredictor(Serializable['SimplePredictor'], Predictor):
         self.inputs: List[Descriptor] = inputs
         self.outputs: List[Descriptor] = outputs
         self.latent_variables: List[Descriptor] = latent_variables
-        self.training_data: str = training_data
+        self.training_data: DataTable = training_data
         self.session: Optional[Session] = session
         self.report: Optional[Report] = report
         self.active: bool = active
