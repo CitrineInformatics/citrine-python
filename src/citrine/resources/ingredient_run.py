@@ -50,10 +50,12 @@ class IngredientRun(Storable, Resource['IngredientRun'], TaurusIngredientRun):
     absolute_quantity: :py:class:`ContinuousValue \
     <taurus.entity.value.continuous_value.ContinuousValue>`, optional
         The absolute quantity of the ingredient in the process.
-    name: str
-        Label on the ingredient that is unique within the process that contains it.
+    name: str, optional
+        Label on the ingredient that is unique within the process that contains it. This property
+        will be overwritten by its value in `spec` if it is present.
     labels: List[str], optional
-        Additional labels on the ingredient that must be unique.
+        Additional labels on the ingredient. This property will be overwritten by its value in
+        `spec` if it is present.
     spec: IngredientSpec
         The specification of which this ingredient is a realization.
     file_links: List[FileLink], optional
@@ -73,14 +75,14 @@ class IngredientRun(Storable, Resource['IngredientRun'], TaurusIngredientRun):
     number_fraction = PropertyOptional(Object(ContinuousValue), 'number_fraction')
     absolute_quantity = PropertyOptional(
         Object(ContinuousValue), 'absolute_quantity')
-    name = String('name')
+    name = PropertyOptional(String(), 'name')
     labels = PropertyOptional(PropertyList(String()), 'labels')
     spec = PropertyOptional(LinkOrElse(), 'spec')
     file_links = PropertyOptional(PropertyList(Object(FileLink)), 'file_links')
     typ = String('type')
 
     def __init__(self,
-                 name: str,
+                 name: Optional[str] = None,
                  uids: Optional[Dict[str, str]] = None,
                  tags: Optional[List[str]] = None,
                  notes: Optional[str] = None,

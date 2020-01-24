@@ -1,7 +1,7 @@
 """Top-level class for all data concepts objects and collections thereof."""
 from uuid import UUID
 from typing import TypeVar, Type, List, Dict, Union, Optional, Iterator
-from copy import deepcopy
+from copy import copy, deepcopy
 from abc import abstractmethod
 
 from citrine._session import Session
@@ -291,6 +291,11 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
         if linked_objects is None:
             return
 
+        # Make `linked_objects` point to a copy of the list of linked objects, as opposed to the
+        # attribute of `obj_with_soft_links`. The list in `obj_with_soft_links` will be modified
+        # in the loop below, and we don't want to modify a list while iterating over it.
+        linked_objects = copy(linked_objects)
+
         # Cycle through linked objects in obj_with_soft_link and if they are not LinkByUID,
         # build them and then set their `reverse_field` field to dc_obj
         for linked_obj in linked_objects:
@@ -420,9 +425,9 @@ class DataConceptsCollection(Collection[ResourceType]):
         data_concepts_object.session = self.session
         return data_concepts_object
 
-    def list(self, page: Optional[int] = None, per_page: Optional[int] = None):
+    def _fetch_page(self, page: Optional[int] = None, per_page: Optional[int] = None):
         """
-        List all visible elements of the collection.
+        List all visible elements of the collection.  Does not handle pagination.
 
         Parameters
         ----------
@@ -438,6 +443,34 @@ class DataConceptsCollection(Collection[ResourceType]):
 
         """
         return self.filter_by_tags([], page, per_page)
+
+    def list(self,
+             page: Optional[int] = None,
+             per_page: Optional[int] = 100) -> List[DataConcepts]:
+        """
+        List all visible elements of the collection.
+
+        Leaving page and per_page as default values will return a list of all elements
+        in the collection, paginating over all available pages.
+
+        Parameters
+        ---------
+        page: int, optional
+            The "page" of results to list. Default is to read all pages and return
+            all results.  This option is deprecated.
+        per_page: int, optional
+            Max number of results to return per page.  This parameter is used when
+            making requests to the backend service.  If the page parameter is
+            specified it limits the maximum number of elements in the response.
+
+        Returns
+        -------
+        List[DataConcepts]
+            Every object in this collection.
+
+        """
+        # Convert the iterator to a list to avoid breaking existing client relying on lists
+        return list(super().list(page=page, per_page=per_page))
 
     def register(self, model: ResourceType):
         """

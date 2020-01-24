@@ -8,6 +8,8 @@ from citrine.resources.ingredient_spec import IngredientSpec
 from citrine.resources.measurement_run import MeasurementRun
 from taurus.client.json_encoder import LinkByUID
 from taurus.client.json_encoder import loads, dumps
+from taurus.demo.cake import make_cake
+from taurus.entity.dict_serializable import DictSerializable
 from taurus.entity.object import MeasurementRun as TaurusMeasurementRun
 from taurus.entity.object import MaterialRun as TaurusMaterialRun
 from taurus.entity.object import MaterialSpec as TaurusMaterialSpec
@@ -66,7 +68,7 @@ def test_nested_serialization():
 
     # helper
     def make_ingredient(material: MaterialRun):
-        return IngredientRun(name=material.name, material=material)
+        return IngredientRun(material=material)
 
     icing = ProcessRun(name="Icing")
     cake = MaterialRun(name='Final cake', process=icing)
@@ -101,8 +103,7 @@ def test_measurement_material_connection_rehydration():
     process = TaurusProcessRun("Transformative process", spec=process_spec)
     ingredient_spec = TaurusIngredientSpec(name="ingredient", material=starting_mat_spec,
                                            process=process_spec)
-    ingredient = TaurusIngredientRun(name="ingredient", material=starting_mat, process=process,
-                                     spec=ingredient_spec)
+    ingredient = TaurusIngredientRun(material=starting_mat, process=process, spec=ingredient_spec)
 
     ending_mat_spec = TaurusMaterialSpec("ending material", process=process_spec)
     ending_mat = TaurusMaterialRun("ending material", process=process, spec=ending_mat_spec)
@@ -140,3 +141,19 @@ def test_measurement_material_connection_rehydration():
     assert isinstance(copy_ingredient.material.measurements[0].spec, MeasurementSpec), \
         "copy of ending_mat should have a process with an ingredient derived from a material " \
         "that has one measurement that has a spec"
+
+
+def test_cake():
+    """Test that the cake example from taurus can be built without modification.
+    This only tests the fix to a limited problem (not all ingredients being reconstructed) and
+    is not a full test of equivalence, because the reconstruction creates "dangling paths."
+    Consider a material/process run/spec square. The material run links to a material spec, which
+    links to a process spec. The material run also links to a process run that links to a process
+    spec, but it's a different process spec, and is not linked to the material spec. If you try
+    to call mat.process.spec.output_material it returns None. This is due to the way the build()
+    method attempts to traverse the object tree, and requires an overhaul of build().
+    """
+    taurus_cake = make_cake()
+    cake = MaterialRun.build(taurus_cake)
+    assert [ingred.name for ingred in cake.process.ingredients] == \
+           [ingred.name for ingred in taurus_cake.process.ingredients]

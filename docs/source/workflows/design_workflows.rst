@@ -48,7 +48,7 @@ A workflow can be run using the python SDK.
 Triggering a workflow returns a workflow execution object.
 A workflow execution has a status (in progress, succeeded, or failed) and results (once execution has succeeded).
 Results of a successful workflow are returned as a dictionary.
-The ``results`` key maps to a nested list of ``candidates`` and ``scores``.
+The ``results`` key maps to a dictionary containing ``candidates`` and ``scores``.
 The ``i`` th candidate corresponds to the ``i`` th score.
 
 Each candidate and score is a dictionary.
@@ -59,24 +59,21 @@ For example, if input materials contain an input ``x`` and are scored by using M
 .. code:: python
 
    {
-       "results": [
-           ["candidates", [
+       "results": {
+           "candidates": [
                {"x": 1, "uncertainty_in_x": 0, "z": 2, "uncertainty_in_x": 0.1},
                # ...
-           ]],
-           ["scores": [
+           ],
+           "scores": [
                {"mli_z": 0.8},
                # ...
-           ]]
-       ]
+           ]
+       }
    }
 
 The length of ``candidates`` will always equal that of ``scores``.
 A maximum of 200 candidates and scores can be returned by an execution.
 If the design space contains more than 200 possible materials, only the top 200 will be returned by an execution.
-Note, the multiple layers of lists in the results.
-The ``results`` key maps to a list. This list contains 2 items.
-Each item is a list of the form ``[name, [values]]``, e.g. ``["candidates", list_of_candidates]``.
 
 The following demonstrates how to trigger workflow execution, wait for the design run to complete and inspect the best material found by the workflow:
 
@@ -106,8 +103,8 @@ The following demonstrates how to trigger workflow execution, wait for the desig
    # retrieve the results
    execution_results = execution.results()
    # extract the candidates and the scores
-   candidates = execution_results['results'][0][1]
-   scores = execution_results['results'][1][1]
+   candidates = execution_results['results']['candidates']
+   scores = execution_results['results']['scores']
 
    # pull out the candidate with the highest shear modulus and its score
    # (this should be the candidate at the head of the list since we used shear modulus to score and rank materials)
