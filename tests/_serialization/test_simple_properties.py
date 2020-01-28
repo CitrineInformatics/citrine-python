@@ -179,6 +179,8 @@ def test_enumeration_ser():
 
 def test_enumeration_deser():
     assert Enumeration(EnumerationExample).deserialize("foo") == EnumerationExample.FOO
+    with pytest.raises(ValueError):
+        Enumeration(EnumerationExample).deserialize("baz")
 
 
 def test_invalid_object_deserialize():
