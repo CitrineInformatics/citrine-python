@@ -117,10 +117,8 @@ class AttributeByTemplate(Serializable['AttributeByTemplate'], Variable):
 
 class AttributeByTemplateAfterProcessTemplate(
         Serializable['AttributeByTemplateAfterProcessTemplate'], Variable):
-    """Attribute of an object that is marked by an attribute template and derives from a process
-    marked by a locally unique object template.
-
-    TODO: define "locally-unique"
+    """Attribute of an object that is marked by an attribute template and that derives from a
+    process that is marked by a given process template.
 
     Parameters
     ---------
@@ -128,37 +126,40 @@ class AttributeByTemplateAfterProcessTemplate(
         a short human-readable name to use when referencing the variable
     headers: list[str]
         sequence of column headers
-    attributeTemplate: LinkByUID
+    attribute_template: LinkByUID
         attribute template that identifies the attribute to assign to the variable
-    processTemplate: LinkByUID
+    process_template: LinkByUID
         process template that identifies the originating process
     """
 
     name = properties.String('name')
     headers = properties.List(properties.String, 'headers')
-    attributeTemplate = properties.Object(LinkByUID, 'attributeTemplate')
-    processTemplate = properties.Object(LinkByUID, 'processTemplate')
+    attribute_template = properties.Object(LinkByUID, 'attribute_template')
+    process_template = properties.Object(LinkByUID, 'process_template')
     typ = properties.String('type', default="attribute_after_process", deserializable=False)
 
     def _attrs(self) -> List[str]:
-        return ["name", "headers", "attributeTemplate", "processTemplate", "typ"]
+        return ["name", "headers", "attribute_template", "process_template", "typ"]
 
     def __init__(self, *,
                  name: str,
                  headers: List[str],
-                 attributeTemplate: LinkByUID,
-                 processTemplate: LinkByUID):
+                 attribute_template: LinkByUID,
+                 process_template: LinkByUID):
         self.name = name
         self.headers = headers
-        self.attributeTemplate = attributeTemplate
-        self.processTemplate = processTemplate
+        self.attribute_template = attribute_template
+        self.process_template = process_template
 
 
 class AttributeByTemplateAndObjectTemplate(
         Serializable['AttributeByTemplateAndObjectTemplate'], Variable):
     """Attribute marked by an attribute template and an object template.
 
-    TODO: clarify documentation of use case here.
+    For example, one property may be measured by two different measurement techniques.  In this
+    case, that property would have the same attribute template.  Filtering by measurement templates,
+    which identify the measurement techniques, disambiguates the technique used to measure that
+    otherwise ambiguous property.
 
     Parameters
     ---------
@@ -166,30 +167,30 @@ class AttributeByTemplateAndObjectTemplate(
         a short human-readable name to use when referencing the variable
     headers: list[str]
         sequence of column headers
-    attributeTemplate: LinkByUID
+    attribute_template: LinkByUID
         attribute template that identifies the attribute to assign to the variable
-    objectTemplate: LinkByUID
+    object_template: LinkByUID
         template that identifies the associated object
     """
 
     name = properties.String('name')
     headers = properties.List(properties.String, 'headers')
-    attributeTemplate = properties.Object(LinkByUID, 'attributeTemplate')
-    objectTemplate = properties.Object(LinkByUID, 'objectTemplate')
+    attribute_template = properties.Object(LinkByUID, 'attribute_template')
+    object_template = properties.Object(LinkByUID, 'object_template')
     typ = properties.String('type', default="attribute_by_object", deserializable=False)
 
     def _attrs(self) -> List[str]:
-        return ["name", "headers", "attributeTemplate", "objectTemplate", "typ"]
+        return ["name", "headers", "attribute_template", "object_template", "typ"]
 
     def __init__(self, *,
                  name: str,
                  headers: List[str],
-                 attributeTemplate: LinkByUID,
-                 objectTemplate: LinkByUID):
+                 attribute_template: LinkByUID,
+                 object_template: LinkByUID):
         self.name = name
         self.headers = headers
-        self.attributeTemplate = attributeTemplate
-        self.objectTemplate = objectTemplate
+        self.attribute_template = attribute_template
+        self.object_template = object_template
 
 
 class IngredientIdentifierByProcessTemplateAndName(
@@ -202,39 +203,40 @@ class IngredientIdentifierByProcessTemplateAndName(
         a short human-readable name to use when referencing the variable
     headers: list[str]
         sequence of column headers
-    processTemplate: LinkByUID
+    process_template: LinkByUID
         process template associated with this ingredient identifier
-    ingredientName: str
+    ingredient_name: str
         name of ingredient
     scope: str
+        scope of the identifier (default: the Citrine scope)
     """
 
     name = properties.String('name')
     headers = properties.List(properties.String, 'headers')
-    processTemplate = properties.Object(LinkByUID, 'processTemplate')
-    ingredientName = properties.String('ingredientName')
+    process_template = properties.Object(LinkByUID, 'process_template')
+    ingredient_name = properties.String('ingredient_name')
     scope = properties.String('scope')
     typ = properties.String('type', default="ing_id_by_process_and_name", deserializable=False)
 
     def _attrs(self) -> List[str]:
-        return ["name", "headers", "processTemplate", "ingredientName", "scope", "typ"]
+        return ["name", "headers", "process_template", "ingredient_name", "scope", "typ"]
 
     def __init__(self, *,
                  name: str,
                  headers: List[str],
-                 processTemplate: LinkByUID,
-                 ingredientName: str,
+                 process_template: LinkByUID,
+                 ingredient_name: str,
                  scope: str):
         self.name = name
         self.headers = headers
-        self.processTemplate = processTemplate
-        self.ingredientName = ingredientName
+        self.process_template = process_template
+        self.ingredient_name = ingredient_name
         self.scope = scope
 
 
 class IngredientLabelByProcessAndName(Serializable['IngredientLabelByProcessAndName'], Variable):
-    """Define a boolean variable indicating whether a given label is applied to an in ingredient
-    that is associated with a process template and a name.
+    """Define a boolean variable indicating whether a given label is applied to an ingredient that
+    is associated with a process template and a name.
 
     For example, a label might be "solvent" for the variable "is the ethanol being used as a
     solvent?".  Many such columns would then support the downstream analysis "get the volumetric
@@ -246,9 +248,9 @@ class IngredientLabelByProcessAndName(Serializable['IngredientLabelByProcessAndN
         a short human-readable name to use when referencing the variable
     headers: list[str]
         sequence of column headers
-    processTemplate: LinkByUID
+    process_template: LinkByUID
         process template associated with this ingredient identifier
-    ingredientName: str
+    ingredient_name: str
         name of ingredient
     label: str
         label to test
@@ -256,31 +258,30 @@ class IngredientLabelByProcessAndName(Serializable['IngredientLabelByProcessAndN
 
     name = properties.String('name')
     headers = properties.List(properties.String, 'headers')
-    processTemplate = properties.Object(LinkByUID, 'processTemplate')
-    ingredientName = properties.String('ingredientName')
+    process_template = properties.Object(LinkByUID, 'process_template')
+    ingredient_name = properties.String('ingredient_name')
     label = properties.String('label')
     typ = properties.String('type', default="ing_label_by_process_and_name", deserializable=False)
 
     def _attrs(self) -> List[str]:
-        return ["name", "headers", "processTemplate", "ingredientName", "label", "typ"]
+        return ["name", "headers", "process_template", "ingredient_name", "label", "typ"]
 
     def __init__(self, *,
                  name: str,
                  headers: List[str],
-                 processTemplate: LinkByUID,
-                 ingredientName: str,
+                 process_template: LinkByUID,
+                 ingredient_name: str,
                  label: str):
         self.name = name
         self.headers = headers
-        self.processTemplate = processTemplate
-        self.ingredientName = ingredientName
+        self.process_template = process_template
+        self.ingredient_name = ingredient_name
         self.label = label
 
 
 class IngredientQuantityByProcessAndName(
         Serializable['IngredientQuantityByProcessAndName'], Variable):
-    """Get the dimension of the quantity in an ingredient that is associated with a process
-    template and a name.
+    """Get the the quantity of an ingredient that is associated with a process template and a name.
 
     Parameters
     ---------
@@ -288,36 +289,36 @@ class IngredientQuantityByProcessAndName(
         a short human-readable name to use when referencing the variable
     headers: list[str]
         sequence of column headers
-    processTemplate: LinkByUID
+    process_template: LinkByUID
         process template associated with this ingredient identifier
-    ingredientName: str
+    ingredient_name: str
         name of ingredient
-    quantity: str
+    quantity_dimension: str
         dimension of the ingredient quantity (e.g. absolute, number fraction...)
     """
 
     name = properties.String('name')
     headers = properties.List(properties.String, 'headers')
-    processTemplate = properties.Object(LinkByUID, 'processTemplate')
-    ingredientName = properties.String('ingredientName')
-    quantityDimension = properties.Enumeration(IngredientQuantityDimension, 'quantityDimension')
+    process_template = properties.Object(LinkByUID, 'process_template')
+    ingredient_name = properties.String('ingredient_name')
+    quantity_dimension = properties.Enumeration(IngredientQuantityDimension, 'quantity')
     typ = properties.String('type', default="ing_quantity_by_process_and_name",
                             deserializable=False)
 
     def _attrs(self) -> List[str]:
-        return ["name", "headers", "processTemplate", "ingredientName", "quantityDimension", "typ"]
+        return ["name", "headers", "process_template", "ingredient_name", "quantity_dimension", "typ"]
 
     def __init__(self, *,
                  name: str,
                  headers: List[str],
-                 processTemplate: LinkByUID,
-                 ingredientName: str,
-                 quantityDimension: str):
+                 process_template: LinkByUID,
+                 ingredient_name: str,
+                 quantity_dimension: str):
         self.name = name
         self.headers = headers
-        self.processTemplate = processTemplate
-        self.ingredientName = ingredientName
-        self.quantityDimension = quantityDimension
+        self.process_template = process_template
+        self.ingredient_name = ingredient_name
+        self.quantity_dimension = quantity_dimension
 
 
 class RootIdentifier(Serializable['RootIdentifier'], Variable):
