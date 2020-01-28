@@ -380,7 +380,7 @@ class MixedList(Property[list, list]):
         return serialized
 
 
-class Enumeration(Property[BaseEnumeration, BaseEnumeration]):
+class Enumeration(Property[BaseEnumeration, str]):
 
     def __init__(self,
                  klass: typing.Type[typing.Any],
