@@ -11,8 +11,8 @@ from citrine._serialization import properties
 
 
 class IngredientQuantityDimension(BaseEnumeration):
-    """The dimension of an ingredient quantity
-    """
+    """The dimension of an ingredient quantity."""
+
     ABSOLUTE = "absolute"
     MASS = "mass"
     VOLUME = "volume"
@@ -66,6 +66,7 @@ class RootInfo(Serializable['RootInfo'], Variable):
         sequence of column headers
     field: str
         name of the field to assign the variable to
+
     """
 
     name = properties.String('name')
@@ -96,6 +97,7 @@ class AttributeByTemplate(Serializable['AttributeByTemplate'], Variable):
         sequence of column headers
     template: LinkByUID
         attribute template that identifies the attribute to assign to the variable
+
     """
 
     name = properties.String('name')
@@ -117,8 +119,7 @@ class AttributeByTemplate(Serializable['AttributeByTemplate'], Variable):
 
 class AttributeByTemplateAfterProcessTemplate(
         Serializable['AttributeByTemplateAfterProcessTemplate'], Variable):
-    """Attribute of an object that is marked by an attribute template and that derives from a
-    process that is marked by a given process template.
+    """Attribute of an object marked by an attribute template and a parent process template.
 
     Parameters
     ---------
@@ -130,6 +131,7 @@ class AttributeByTemplateAfterProcessTemplate(
         attribute template that identifies the attribute to assign to the variable
     process_template: LinkByUID
         process template that identifies the originating process
+
     """
 
     name = properties.String('name')
@@ -157,9 +159,9 @@ class AttributeByTemplateAndObjectTemplate(
     """Attribute marked by an attribute template and an object template.
 
     For example, one property may be measured by two different measurement techniques.  In this
-    case, that property would have the same attribute template.  Filtering by measurement templates,
-    which identify the measurement techniques, disambiguates the technique used to measure that
-    otherwise ambiguous property.
+    case, that property would have the same attribute template.  Filtering by measurement
+    templates, which identify the measurement techniques, disambiguates the technique used to
+    measure that otherwise ambiguous property.
 
     Parameters
     ---------
@@ -171,6 +173,8 @@ class AttributeByTemplateAndObjectTemplate(
         attribute template that identifies the attribute to assign to the variable
     object_template: LinkByUID
         template that identifies the associated object
+
+
     """
 
     name = properties.String('name')
@@ -209,6 +213,7 @@ class IngredientIdentifierByProcessTemplateAndName(
         name of ingredient
     scope: str
         scope of the identifier (default: the Citrine scope)
+
     """
 
     name = properties.String('name')
@@ -235,8 +240,9 @@ class IngredientIdentifierByProcessTemplateAndName(
 
 
 class IngredientLabelByProcessAndName(Serializable['IngredientLabelByProcessAndName'], Variable):
-    """Define a boolean variable indicating whether a given label is applied to an ingredient that
-    is associated with a process template and a name.
+    """Define a boolean variable indicating whether a given label is applied.
+
+    Matches by process template, ingredient name, and the label string to check.
 
     For example, a label might be "solvent" for the variable "is the ethanol being used as a
     solvent?".  Many such columns would then support the downstream analysis "get the volumetric
@@ -254,6 +260,7 @@ class IngredientLabelByProcessAndName(Serializable['IngredientLabelByProcessAndN
         name of ingredient
     label: str
         label to test
+
     """
 
     name = properties.String('name')
@@ -295,6 +302,7 @@ class IngredientQuantityByProcessAndName(
         name of ingredient
     quantity_dimension: str
         dimension of the ingredient quantity (e.g. absolute, number fraction...)
+
     """
 
     name = properties.String('name')
@@ -306,7 +314,8 @@ class IngredientQuantityByProcessAndName(
                             deserializable=False)
 
     def _attrs(self) -> List[str]:
-        return ["name", "headers", "process_template", "ingredient_name", "quantity_dimension", "typ"]
+        return ["name", "headers", "process_template", "ingredient_name", "quantity_dimension",
+                "typ"]
 
     def __init__(self, *,
                  name: str,
@@ -332,7 +341,9 @@ class RootIdentifier(Serializable['RootIdentifier'], Variable):
         sequence of column headers
     scope: string
         scope of the identifier (default: the Citrine scope)
+
     """
+
     name = properties.String('name')
     headers = properties.List(properties.String, 'headers')
     scope = properties.String('scope')

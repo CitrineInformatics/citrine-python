@@ -46,4 +46,4 @@ def test_invalid_deser():
 def test_quantity_dimension_serializes_to_string():
     variable = IngredientQuantityByProcessAndName(name="ingredient quantity dimension", headers=["quantity"], process_template=LinkByUID(scope="template", id="process"), ingredient_name="ingredient", quantity_dimension=IngredientQuantityDimension.ABSOLUTE)
     variable_data = variable.dump()
-    assert variable_data["quantity_dimension"] == "absolute"
+    assert variable_data["quantity"] == "absolute"  # quantity_dimension is serialized as "quantity"
