@@ -6,6 +6,7 @@ from datetime import datetime
 import uuid
 import arrow
 
+from taurus.enumeration.base_enumeration import BaseEnumeration
 from taurus.entity.link_by_uid import LinkByUID
 from taurus.entity.dict_serializable import DictSerializable
 from citrine._serialization.serializable import Serializable
@@ -377,6 +378,35 @@ class MixedList(Property[list, list]):
             serialized.append(element_type.serialize(element_type.default))
 
         return serialized
+
+
+class Enumeration(Property[BaseEnumeration, BaseEnumeration]):
+
+    def __init__(self,
+                 klass: typing.Type[typing.Any],
+                 serialization_path: typing.Optional[str] = None,
+                 serializable: bool = True,
+                 deserializable: bool = True,
+                 default: typing.Optional[DeserializedType] = None):
+        super().__init__(serialization_path,
+                         serializable,
+                         deserializable,
+                         default)
+        self.klass = klass
+
+    @property
+    def underlying_types(self):
+        return self.klass
+
+    @property
+    def serialized_types(self):
+        return str
+
+    def _deserialize(self, value: str) -> uuid.UUID:
+        return self.klass.get_enum(value)
+
+    def _serialize(self, value: typing.Any) -> str:
+        return self.klass.get_value(value)
 
 
 class Object(Property[typing.Any, dict]):
