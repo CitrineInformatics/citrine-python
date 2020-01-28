@@ -8,11 +8,11 @@ from taurus.entity.link_by_uid import LinkByUID
 @pytest.fixture(params=[
     RootInfo(name="root name", headers=["Root", "Name"], field="name"),
     AttributeByTemplate(name="density", headers=["density"], template=LinkByUID(scope="templates", id="density")),
-    AttributeByTemplateAfterProcessTemplate(name="density", headers=["density"], attributeTemplate=LinkByUID(scope="template", id="density"), processTemplate=LinkByUID(scope="template", id="process1")),
+    AttributeByTemplateAfterProcessTemplate(name="density", headers=["density"], attributeTemplate=LinkByUID(scope="template", id="density"), processTemplate=LinkByUID(scope="template", id="process")),
     AttributeByTemplateAndObjectTemplate(name="density", headers=["density"], attributeTemplate=LinkByUID(scope="template", id="density"), objectTemplate=LinkByUID(scope="template", id="object")),
     IngredientIdentifierByProcessTemplateAndName(name="ingredient id", headers=["density"], processTemplate=LinkByUID(scope="template", id="process"), ingredientName="ingredient", scope="scope"),
     IngredientLabelByProcessAndName(name="ingredient label", headers=["label"], processTemplate=LinkByUID(scope="template", id="process"), ingredientName="ingredient", label="label"),
-    IngredientQuantityByProcessAndName(name="ingredient quantity dimension", headers=["quantity"], processTemplate=LinkByUID(scope="template", id="process"), ingredientName="ingredient", quantityDimension=IngredientQuantityDimension.absolute),
+    IngredientQuantityByProcessAndName(name="ingredient quantity dimension", headers=["quantity"], processTemplate=LinkByUID(scope="template", id="process"), ingredientName="ingredient", quantityDimension=IngredientQuantityDimension.ABSOLUTE),
     RootIdentifier(name="root id", headers=["id"], scope="scope")
 ])
 def variable(request):
@@ -41,3 +41,9 @@ def test_invalid_deser():
 
     with pytest.raises(ValueError):
         Variable.build({"type": "foo"})
+
+
+def test_quantity_dimension_serializes_to_string():
+    variable = IngredientQuantityByProcessAndName(name="ingredient quantity dimension", headers=["quantity"], processTemplate=LinkByUID(scope="template", id="process"), ingredientName="ingredient", quantityDimension=IngredientQuantityDimension.ABSOLUTE)
+    variable_data = variable.dump()
+    assert variable_data["quantityDimension"] == "absolute"

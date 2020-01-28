@@ -1,20 +1,22 @@
 """Variable definitions for Ara."""
 from abc import abstractmethod
-from enum import Enum
 from typing import Type, Optional, List  # noqa: F401
 
 from taurus.entity.link_by_uid import LinkByUID
+from taurus.enumeration.base_enumeration import BaseEnumeration
 
 from citrine._serialization.serializable import Serializable
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
 from citrine._serialization import properties
 
 
-class IngredientQuantityDimension:
-    absolute = 1
-    mass = 2
-    volume = 3
-    number = 4
+class IngredientQuantityDimension(BaseEnumeration):
+    """The dimension of an ingredient quantity
+    """
+    ABSOLUTE = "absolute"
+    MASS = "mass"
+    VOLUME = "volume"
+    NUMBER = "number"
 
 
 class Variable(PolymorphicSerializable['Variable']):
@@ -49,6 +51,7 @@ class Variable(PolymorphicSerializable['Variable']):
         res = next((x for x in types if x.typ == data["type"]), None)
         if res is None:
             raise ValueError("Unrecognized type: {}".format(data["type"]))
+
         return res
 
 
@@ -112,7 +115,8 @@ class AttributeByTemplate(Serializable['AttributeByTemplate'], Variable):
         self.template = template
 
 
-class AttributeByTemplateAfterProcessTemplate(Serializable['AttributeByTemplateAfterProcessTemplate'], Variable):
+class AttributeByTemplateAfterProcessTemplate(
+        Serializable['AttributeByTemplateAfterProcessTemplate'], Variable):
     """Attribute of an object that is marked by an attribute template and derives from a process
     marked by a locally unique object template.
 
@@ -126,7 +130,7 @@ class AttributeByTemplateAfterProcessTemplate(Serializable['AttributeByTemplateA
         sequence of column headers
     attributeTemplate: LinkByUID
         attribute template that identifies the attribute to assign to the variable
-    processTemplate: LinkByUid
+    processTemplate: LinkByUID
         process template that identifies the originating process
     """
 
@@ -150,7 +154,8 @@ class AttributeByTemplateAfterProcessTemplate(Serializable['AttributeByTemplateA
         self.processTemplate = processTemplate
 
 
-class AttributeByTemplateAndObjectTemplate(Serializable['AttributeByTemplateAndObjectTemplate'], Variable):
+class AttributeByTemplateAndObjectTemplate(
+        Serializable['AttributeByTemplateAndObjectTemplate'], Variable):
     """Attribute marked by an attribute template and an object template.
 
     TODO: clarify documentation of use case here.
@@ -163,7 +168,7 @@ class AttributeByTemplateAndObjectTemplate(Serializable['AttributeByTemplateAndO
         sequence of column headers
     attributeTemplate: LinkByUID
         attribute template that identifies the attribute to assign to the variable
-    objectTemplate: LinkByUid
+    objectTemplate: LinkByUID
         template that identifies the associated object
     """
 
@@ -187,7 +192,8 @@ class AttributeByTemplateAndObjectTemplate(Serializable['AttributeByTemplateAndO
         self.objectTemplate = objectTemplate
 
 
-class IngredientIdentifierByProcessTemplateAndName(Serializable['IngredientIdentifierByProcessAndName'], Variable):
+class IngredientIdentifierByProcessTemplateAndName(
+        Serializable['IngredientIdentifierByProcessAndName'], Variable):
     """Ingredient identifier associated with a process template and a name.
 
     Parameters
@@ -229,7 +235,7 @@ class IngredientIdentifierByProcessTemplateAndName(Serializable['IngredientIdent
 class IngredientLabelByProcessAndName(Serializable['IngredientLabelByProcessAndName'], Variable):
     """Define a boolean variable indicating whether a given label is applied to an in ingredient
     that is associated with a process template and a name.
-    
+
     For example, a label might be "solvent" for the variable "is the ethanol being used as a
     solvent?".  Many such columns would then support the downstream analysis "get the volumetric
     average density of the solvents".
@@ -271,10 +277,11 @@ class IngredientLabelByProcessAndName(Serializable['IngredientLabelByProcessAndN
         self.label = label
 
 
-class IngredientQuantityByProcessAndName(Serializable['IngredientQuantityByProcessAndName'], Variable):
+class IngredientQuantityByProcessAndName(
+        Serializable['IngredientQuantityByProcessAndName'], Variable):
     """Get the dimension of the quantity in an ingredient that is associated with a process
     template and a name.
-    
+
     Parameters
     ---------
     name: str
@@ -285,7 +292,7 @@ class IngredientQuantityByProcessAndName(Serializable['IngredientQuantityByProce
         process template associated with this ingredient identifier
     ingredientName: str
         name of ingredient
-    quantity: IngredientQuantity
+    quantity: str
         dimension of the ingredient quantity (e.g. absolute, number fraction...)
     """
 
@@ -293,8 +300,9 @@ class IngredientQuantityByProcessAndName(Serializable['IngredientQuantityByProce
     headers = properties.List(properties.String, 'headers')
     processTemplate = properties.Object(LinkByUID, 'processTemplate')
     ingredientName = properties.String('ingredientName')
-    quantityDimension = properties.Integer('quantityDimension')
-    typ = properties.String('type', default="ing_quantity_by_process_and_name", deserializable=False)
+    quantityDimension = properties.Enumeration(IngredientQuantityDimension, 'quantityDimension')
+    typ = properties.String('type', default="ing_quantity_by_process_and_name",
+                            deserializable=False)
 
     def _attrs(self) -> List[str]:
         return ["name", "headers", "processTemplate", "ingredientName", "quantityDimension", "typ"]
@@ -304,7 +312,7 @@ class IngredientQuantityByProcessAndName(Serializable['IngredientQuantityByProce
                  headers: List[str],
                  processTemplate: LinkByUID,
                  ingredientName: str,
-                 quantityDimension: int):
+                 quantityDimension: str):
         self.name = name
         self.headers = headers
         self.processTemplate = processTemplate
