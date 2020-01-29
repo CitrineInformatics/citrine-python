@@ -288,7 +288,7 @@ class IngredientLabelByProcessAndName(Serializable['IngredientLabelByProcessAndN
 
 class IngredientQuantityByProcessAndName(
         Serializable['IngredientQuantityByProcessAndName'], Variable):
-    """[ALPHA] Get the the quantity of an ingredient that is associated with a process template and a name.
+    """[ALPHA] Get the quantity of an ingredient associated with a process template and a name.
 
     Parameters
     ---------
