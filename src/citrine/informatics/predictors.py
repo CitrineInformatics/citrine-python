@@ -196,7 +196,7 @@ class ExpressionPredictor(Serializable['ExpressionPredictor'], Predictor):
     output: Descriptor
         the Descriptor that represents the output relation
     aliases: dict
-        a mapping from descriptor key to expression argument
+        a mapping from expression argument to descriptor key
 
     """
 
