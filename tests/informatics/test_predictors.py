@@ -39,8 +39,8 @@ def expression_predictor() -> ExpressionPredictor:
         expression='Y / (2 * (1 + v))',
         output=shear_modulus,
         aliases = {
-            "Property~Young's modulus": 'Y',
-            "Property~Poisson's ratio": 'v'
+             'Y': "Property~Young's modulus",
+             'v': "Property~Poisson's ratio"
         })
 
 
@@ -96,7 +96,7 @@ def test_expression_initialization(expression_predictor):
     assert expression_predictor.name == 'Expression predictor'
     assert expression_predictor.output.key == 'Property~Shear modulus'
     assert expression_predictor.expression == 'Y / (2 * (1 + v))'
-    assert expression_predictor.aliases == {"Property~Young's modulus": 'Y', "Property~Poisson's ratio": 'v'}
+    assert expression_predictor.aliases == {'Y': "Property~Young's modulus", 'v': "Property~Poisson's ratio"}
     assert str(expression_predictor) == '<ExpressionPredictor \'Expression predictor\'>'
 
 

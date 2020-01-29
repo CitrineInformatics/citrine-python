@@ -119,8 +119,8 @@ The following example demonstrates how to use the python SDK to create a :class:
        expression = 'Y / (2 * (1 + v))',
        output = shear_modulus,
        aliases = {
-           "Property~Young's modulus": 'Y',
-           "Property~Poisson's ratio": 'v'
+           'Y': "Property~Young's modulus",
+           'v': "Property~Poisson's ratio"
        }
    )
 
