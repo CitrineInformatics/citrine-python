@@ -11,7 +11,7 @@ from citrine._serialization import properties
 
 
 class IngredientQuantityDimension(BaseEnumeration):
-    """The dimension of an ingredient quantity."""
+    """[ALPHA] The dimension of an ingredient quantity."""
 
     ABSOLUTE = "absolute"
     MASS = "mass"
@@ -20,7 +20,7 @@ class IngredientQuantityDimension(BaseEnumeration):
 
 
 class Variable(PolymorphicSerializable['Variable']):
-    """A variable that can be assigned values present in material histories.
+    """[ALPHA] A variable that can be assigned values present in material histories.
 
     Abstract type that returns the proper type given a serialized dict.
     """
@@ -56,7 +56,7 @@ class Variable(PolymorphicSerializable['Variable']):
 
 
 class RootInfo(Serializable['RootInfo'], Variable):
-    """Metadata from the root of the material history.
+    """[ALPHA] Metadata from the root of the material history.
 
     Parameters
     ----------
@@ -87,7 +87,7 @@ class RootInfo(Serializable['RootInfo'], Variable):
 
 
 class AttributeByTemplate(Serializable['AttributeByTemplate'], Variable):
-    """Attribute marked by an attribute template.
+    """[ALPHA] Attribute marked by an attribute template.
 
     Parameters
     ----------
@@ -119,7 +119,7 @@ class AttributeByTemplate(Serializable['AttributeByTemplate'], Variable):
 
 class AttributeByTemplateAfterProcessTemplate(
         Serializable['AttributeByTemplateAfterProcessTemplate'], Variable):
-    """Attribute of an object marked by an attribute template and a parent process template.
+    """[ALPHA] Attribute of an object marked by an attribute template and a parent process template.
 
     Parameters
     ---------
@@ -156,7 +156,7 @@ class AttributeByTemplateAfterProcessTemplate(
 
 class AttributeByTemplateAndObjectTemplate(
         Serializable['AttributeByTemplateAndObjectTemplate'], Variable):
-    """Attribute marked by an attribute template and an object template.
+    """[ALPHA] Attribute marked by an attribute template and an object template.
 
     For example, one property may be measured by two different measurement techniques.  In this
     case, that property would have the same attribute template.  Filtering by measurement
@@ -199,7 +199,7 @@ class AttributeByTemplateAndObjectTemplate(
 
 class IngredientIdentifierByProcessTemplateAndName(
         Serializable['IngredientIdentifierByProcessAndName'], Variable):
-    """Ingredient identifier associated with a process template and a name.
+    """[ALPHA] Ingredient identifier associated with a process template and a name.
 
     Parameters
     ---------
@@ -240,7 +240,7 @@ class IngredientIdentifierByProcessTemplateAndName(
 
 
 class IngredientLabelByProcessAndName(Serializable['IngredientLabelByProcessAndName'], Variable):
-    """Define a boolean variable indicating whether a given label is applied.
+    """[ALPHA] Define a boolean variable indicating whether a given label is applied.
 
     Matches by process template, ingredient name, and the label string to check.
 
@@ -288,7 +288,7 @@ class IngredientLabelByProcessAndName(Serializable['IngredientLabelByProcessAndN
 
 class IngredientQuantityByProcessAndName(
         Serializable['IngredientQuantityByProcessAndName'], Variable):
-    """Get the the quantity of an ingredient that is associated with a process template and a name.
+    """[ALPHA] Get the quantity of an ingredient associated with a process template and a name.
 
     Parameters
     ---------
@@ -331,7 +331,7 @@ class IngredientQuantityByProcessAndName(
 
 
 class RootIdentifier(Serializable['RootIdentifier'], Variable):
-    """Get the identifier for the root of the material history, by scope.
+    """[ALPHA] Get the identifier for the root of the material history, by scope.
 
     Parameters
     ---------

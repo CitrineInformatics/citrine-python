@@ -8,7 +8,7 @@ from citrine._serialization import properties
 
 
 class Column(PolymorphicSerializable['Column']):
-    """A column in the Ara table, defined as some operation on a variable.
+    """[ALPHA] A column in the Ara table, defined as some operation on a variable.
 
     Abstract type that returns the proper type given a serialized dict.
     """
@@ -42,7 +42,7 @@ class Column(PolymorphicSerializable['Column']):
 
 
 class MeanColumn(Serializable['MeanColumn'], Column):
-    """Column containing the mean of a real-valued variable.
+    """[ALPHA] Column containing the mean of a real-valued variable.
 
     Parameters
     ----------
@@ -68,7 +68,7 @@ class MeanColumn(Serializable['MeanColumn'], Column):
 
 
 class StdDevColumn(Serializable["StdDevColumn"], Column):
-    """Column containing the standard deviation of a real-valued variable.
+    """[ALPHA] Column containing the standard deviation of a real-valued variable.
 
     Parameters
     ----------
@@ -94,7 +94,7 @@ class StdDevColumn(Serializable["StdDevColumn"], Column):
 
 
 class QuantileColumn(Serializable["QuantileColumn"], Column):
-    """Column containing a quantile of the variable.
+    """[ALPHA] Column containing a quantile of the variable.
 
     The column is populated with the quantile function of the distribution evaluated at "quantile".
     For example, for a uniform distribution parameterized by a lower and upper bound, the value
@@ -132,7 +132,7 @@ class QuantileColumn(Serializable["QuantileColumn"], Column):
 
 
 class OriginalUnitsColumn(Serializable["OriginalUnitsColumn"], Column):
-    """Column containing the units as entered in the source data.
+    """[ALPHA] Column containing the units as entered in the source data.
 
     Parameters
     ----------
@@ -153,7 +153,7 @@ class OriginalUnitsColumn(Serializable["OriginalUnitsColumn"], Column):
 
 
 class MostLikelyCategoryColumn(Serializable["MostLikelyCategoryColumn"], Column):
-    """Column containing the most likely category.
+    """[ALPHA] Column containing the most likely category.
 
     Parameters
     ----------
@@ -174,7 +174,7 @@ class MostLikelyCategoryColumn(Serializable["MostLikelyCategoryColumn"], Column)
 
 
 class MostLikelyProbabilityColumn(Serializable["MostLikelyProbabilityColumn"], Column):
-    """Column containing the probability of the most likely category.
+    """[ALPHA] Column containing the probability of the most likely category.
 
     Parameters
     ----------
@@ -195,7 +195,7 @@ class MostLikelyProbabilityColumn(Serializable["MostLikelyProbabilityColumn"], C
 
 
 class IdentityColumn(Serializable['IdentityColumn'], Column):
-    """Column containing the value of a string-valued variable.
+    """[ALPHA] Column containing the value of a string-valued variable.
 
     Parameters
     ----------

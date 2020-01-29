@@ -12,7 +12,7 @@ from citrine.ara.variables import Variable
 
 class AraDefinition(Resource["AraDefinition"]):
     """
-    The definition of an Ara Table.
+    [ALPHA] The definition of an Ara Table.
 
     Parameters
     ----------
@@ -79,7 +79,7 @@ class AraDefinition(Resource["AraDefinition"]):
 
 
 class AraDefinitionCollection(Collection[AraDefinition]):
-    """Represents the collection of all Ara Definitions associated with a project."""
+    """[ALPHA] Represents the collection of all Ara Definitions associated with a project."""
 
     _path_template = 'projects/{project_id}/ara_definitions'
 

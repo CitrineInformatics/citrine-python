@@ -10,7 +10,7 @@ from citrine._serialization import properties
 
 
 class Row(PolymorphicSerializable['Row']):
-    """A rule for defining rows in an Ara table.
+    """[ALPHA] A rule for defining rows in an Ara table.
 
     Abstract type that returns the proper type given a serialized dict.
     """
@@ -42,7 +42,7 @@ class Row(PolymorphicSerializable['Row']):
 
 
 class MaterialRunByTemplate(Serializable['MaterialRunByTemplate'], Row):
-    """Rows rooted in MaterialRuns, marked by their template.
+    """[ALPHA] Rows rooted in MaterialRuns, marked by their template.
 
     Parameters
     ----------
