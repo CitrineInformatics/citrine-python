@@ -104,7 +104,57 @@ def valid_simple_ml_predictor_data():
             inputs=[x.dump()],
             outputs=[z.dump()],
             latent_variables=[y.dump()],
-            training_data='training_data_key'
+            training_data=dict(
+                table_id='e5c51369-8e71-4ec6-b027-1f92bdc14762',
+                table_version='latest'
+            )
+        )
+    )
+
+
+@pytest.fixture
+def valid_graph_predictor_data():
+    """Produce valid data used for tests."""
+    return dict(
+        module_type='PREDICTOR',
+        status='VALID',
+        status_info=[],
+        active=True,
+        display_name='Graph predictor',
+        schema_id='43c61ad4-7e33-45d0-a3de-504acb4e0737',
+        id=str(uuid.uuid4()),
+        config=dict(
+            type='Graph',
+            name='Graph predictor',
+            description='description',
+            predictors=[str(uuid.uuid4()), str(uuid.uuid4())]
+        )
+    )
+
+
+@pytest.fixture
+def valid_expression_predictor_data():
+    """Produce valid data used for tests."""
+    from citrine.informatics.descriptors import RealDescriptor
+    shear_modulus = RealDescriptor('Property~Shear modulus', lower_bound=0, upper_bound=100, units='GPa')
+    return dict(
+        module_type='PREDICTOR',
+        status='VALID',
+        status_info=[],
+        active=True,
+        display_name='Expression predictor',
+        schema_id='e7d79c73-8bf3-4609-887a-7f31b9cef566',
+        id=str(uuid.uuid4()),
+        config=dict(
+            type='Expression',
+            name='Expression predictor',
+            description='Computes shear modulus from Youngs modulus and Poissons ratio',
+            expression='Y / (2 * (1 + v))',
+            output=shear_modulus.dump(),
+            aliases={
+                "Property~Young's modulus": 'Y',
+                "Property~Poisson's ratio": 'v',
+            }
         )
     )
 

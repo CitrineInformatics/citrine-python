@@ -28,7 +28,7 @@ class PostDevelopCommand(develop):
 
 
 setup(name='citrine',
-      version='0.6.2',
+      version='0.7.1',
       url='http://github.com/CitrineInformatics/citrine-python',
       description='Python library for the Citrine Platform',
       author='Andrew Millspaugh',
@@ -36,15 +36,14 @@ setup(name='citrine',
       package_dir={'': 'src'},
       packages=find_packages(where='src'),
       install_requires=[
-          "requests",
-          "pyjwt",
-          "arrow",
-          "pytest>=4.3",
-          "strip-hints>=0.1.5",
-          "taurus-citrine>=0.3.0,<0.4.0",
-          "boto3",
-          "botocore",
-          "deprecation"
+          "requests>=2.22.0,<3",
+          "pyjwt>=1.7.1,<2",
+          "arrow>=0.15.4,<0.16",
+          "strip-hints>=0.1.5,<=0.1.7",
+          "taurus-citrine>=0.4.0,<0.5",
+          "boto3>=1.9.226,<2",
+          "botocore>=1.12.226,<2",
+          "deprecation>=2.0.7,<3"
       ],
       cmdclass={
           'install': PostInstallCommand,

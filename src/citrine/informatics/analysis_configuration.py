@@ -6,7 +6,30 @@ from citrine._serialization import properties
 
 
 class CrossValidationAnalysisConfiguration(Serializable['CrossValidationAnalysisConfiguration']):
-    """Configuration settings for running CV analysis in a Performance Workflow."""
+    """Configuration settings for running cross-validation in a performance workflow.
+
+    Parameters
+    ----------
+    name : str
+        Name of the analysis configuration
+    description: str
+        Description of the analysis configuration
+    n_folds: int
+        Number of folds
+    n_trials: int
+        Number of cross-validation trials to run, each with ``n_folds`` folds
+    max_rows: int
+        Maximum number of training candidates to use during cross-validation
+    seed: int, optional
+        Seed used to generate random test/train splits.
+        If not provided, a random seed is used.
+    group_by_keys: list[str], optional
+        Set of keys used to group candidates.
+        If present, candidates are grouped by the hash of
+        ``(key, value)`` pairs computed on the given keys.
+        If not provided, candidates are not grouped.
+
+    """
 
     name = properties.String('name')
     description = properties.String('description')
