@@ -98,3 +98,8 @@ originating module will locate the correct instance, e.g. the log line
 INFO:citrine._session:200 GET /projects/fc568490-224a-4070-807f-1427c4f4dcd8
 ```
 is an example of output from the logger in the previous example.
+
+## Developement Status
+
+Classes and methods may be marked as *alpha* by including `[ALPHA]` at the start of their docstrings.
+They should be not be used, and may change or be removed without notice.
