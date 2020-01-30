@@ -171,6 +171,10 @@ def test_workflows_get_project_id(project):
     assert project.uid == project.workflows.project_id
 
 
+def test_ara_definitions_get_project_id(project):
+    assert project.uid == project.ara_definitions.project_id
+
+
 def test_project_registration(collection, session):
     # Given
     create_time = parse('2019-09-10T00:00:00+00:00')
