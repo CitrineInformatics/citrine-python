@@ -1,5 +1,8 @@
+from copy import copy
 from typing import List, Union, Optional
 from uuid import UUID
+
+from taurus.entity.link_by_uid import LinkByUID
 
 from citrine._rest.collection import Collection
 from citrine._rest.resource import Resource
@@ -77,11 +80,52 @@ class AraDefinition(Resource["AraDefinition"]):
             raise ValueError("The data_source of the columns must match one of the variable names,"
                              " but {} were missing".format(missing_variables))
 
+    def add_columns(self, *,
+                    variable: Variable,
+                    columns: List[Column],
+                    name: Optional[str] = None,
+                    description: Optional[str] = None
+                    ) -> 'AraDefinition':
+        """[ALPHA] Add a variable and one or more columns to this AraDefinition (out-of-place).
+
+        This method checks that the variable name is not already in use and that the columns
+        only reference that variable.  It is *not* able to check if the columns and the variable
+        are compatible (yet, at least).
+
+        Parameters
+        ----------
+        variable: Variable
+            Variable to add and use in the added columns
+        columns: list[Column]
+            Columns to add, which must only reference the added variable
+        name: Optional[str]
+            Optional renaming of the table
+        description: Optional[str]
+            Optional re-description of the table
+
+        """
+        if variable.name in [x.name for x in self.variables]:
+            raise ValueError("The variable name {} is already used".format(variable.name))
+
+        mismatched_data_source = [x for x in columns if x.data_source != variable.name]
+        if len(mismatched_data_source):
+            raise ValueError("Column.data_source must be {} but found {}"
+                             .format(variable.name, mismatched_data_source))
+
+        return AraDefinition(
+            name=name or self.name,
+            description=description or self.description,
+            datasets=copy(self.datasets),
+            rows=copy(self.rows),
+            variables=copy(self.variables) + [variable],
+            columns=copy(self.columns) + columns
+        )
+
 
 class AraDefinitionCollection(Collection[AraDefinition]):
     """[ALPHA] Represents the collection of all Ara Definitions associated with a project."""
 
-    _path_template = 'projects/{project_id}/ara_definitions'
+    _path_template = 'projects/{project_id}/ara'
 
     def __init__(self, project_id: UUID, session: Session):
         self.project_id = project_id
@@ -99,3 +143,21 @@ class AraDefinitionCollection(Collection[AraDefinition]):
         defn.project_id = self.project_id
         defn.session = self.session
         return defn
+
+    def preview(self, defn: AraDefinition, preview_roots: List[LinkByUID]) -> dict:
+        """[ALPHA] Preview an AraDefinition on an explicit set of roots.
+
+         Parameters
+        ----------
+        defn: AraDefinition
+            Definition to preview
+        preview_roots: list[LinkByUID]
+            List of links to the material history roots to use in the preview
+
+        """
+        path = self._get_path() + "/preview"
+        body = {
+            "definition": defn.dump(),
+            "rows": [x.as_dict() for x in preview_roots]
+        }
+        return self.session.post_resource(path, body)
