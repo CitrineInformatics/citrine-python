@@ -102,4 +102,4 @@ is an example of output from the logger in the previous example.
 ## Developement Status
 
 Classes and methods may be marked as *alpha* by including `[ALPHA]` at the start of their docstrings.
-They should be not be used, and may change or be removed without notice.
+These methods are intended for development, testing, and experimentation, are not supported, and may change or be removed without notice```
