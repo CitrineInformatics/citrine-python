@@ -1,19 +1,21 @@
 import pytest
 import arrow
 import uuid
+from taurus.enumeration.base_enumeration import BaseEnumeration
 
 from citrine.resources.dataset import Dataset
 from citrine._serialization.properties import (
-    Integer,
-    String,
-    Float,
-    UUID,
     Datetime,
+    Enumeration,
+    Float,
+    Integer,
     LinkByUID,
     LinkOrElse,
     MixedList,
     Object,
     Optional,
+    String,
+    UUID,
 )
 from ._data import (
     VALID_SERIALIZATIONS,
@@ -164,6 +166,21 @@ def test_mixed_list_cannot_serialize_larger_lists():
 def test_mixed_list_with_defaults():
     ml = MixedList([Integer, Integer, Integer(default=100)])
     assert [1, 2, 100] == ml.serialize([1, 2])
+
+
+class EnumerationExample(BaseEnumeration):
+    FOO = "foo"
+    BAR = "bar"
+
+
+def test_enumeration_ser():
+    assert Enumeration(EnumerationExample).serialize(EnumerationExample.FOO) == "foo"
+
+
+def test_enumeration_deser():
+    assert Enumeration(EnumerationExample).deserialize("foo") == EnumerationExample.FOO
+    with pytest.raises(ValueError):
+        Enumeration(EnumerationExample).deserialize("baz")
 
 
 def test_invalid_object_deserialize():
