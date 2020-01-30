@@ -3,6 +3,7 @@ from typing import Optional, Dict, List, Union
 from uuid import UUID
 
 from citrine._session import Session
+from citrine.resources.ara_definition import AraDefinitionCollection
 from citrine.resources.module import ModuleCollection
 from citrine.resources.design_space import DesignSpaceCollection
 from citrine.resources.processor import ProcessorCollection
@@ -186,6 +187,11 @@ class Project(Resource['Project']):
     def ingredient_specs(self) -> IngredientSpecCollection:
         """Return a resource representing all ingredient specs in this dataset."""
         return IngredientSpecCollection(self.uid, None, self.session)
+
+    @property
+    def ara_definitions(self) -> AraDefinitionCollection:
+        """Return a resource representing all ara definitions in the project."""
+        return AraDefinitionCollection(self.uid, self.session)
 
     def share(self,
               project_id: str,

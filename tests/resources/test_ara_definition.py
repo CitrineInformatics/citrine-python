@@ -4,7 +4,7 @@ from uuid import UUID, uuid4
 import pytest
 from taurus.entity.link_by_uid import LinkByUID
 
-from citrine.ara.columns import MeanColumn, OriginalUnitsColumn, StdDevColumn
+from citrine.ara.columns import MeanColumn, OriginalUnitsColumn, StdDevColumn, IdentityColumn
 from citrine.ara.rows import MaterialRunByTemplate
 from citrine.ara.variables import AttributeByTemplate, RootInfo
 from citrine.resources.ara_definition import AraDefinitionCollection, AraDefinition
@@ -32,6 +32,11 @@ def ara_definition() -> AraDefinition:
     return _ara_definition
 
 
+def empty_defn() -> AraDefinition:
+    return AraDefinition(name="empty", description="empty",
+                         datasets=[], rows=[], variables=[], columns=[])
+
+
 def test_get_ara_definition_metadata(collection, session):
     # Given
     project_id = '6b608f78-e341-422c-8076-35adc8828545'
@@ -45,7 +50,7 @@ def test_get_ara_definition_metadata(collection, session):
     assert 1 == session.num_calls
     expect_call = FakeCall(
         method="GET",
-        path="projects/{}/ara_definitions/{}/versions/{}".format(project_id, ara_definition["id"], ara_definition["version"])
+        path="projects/{}/ara/{}/versions/{}".format(project_id, ara_definition["id"], ara_definition["version"])
     )
     assert session.last_call == expect_call
     assert str(retrieved_ara_definition.uid) == ara_definition["id"]
@@ -115,3 +120,50 @@ def test_dump_example():
         ]
     )
     print(json.dumps(ara_definition.dump(), indent=2))
+
+
+def test_preview(collection, session):
+    """Test that preview hits the right route"""
+    # Given
+    project_id = '6b608f78-e341-422c-8076-35adc8828545'
+
+    # When
+    collection.preview(empty_defn(), [])
+
+    # Then
+    assert 1 == session.num_calls
+    expect_call = FakeCall(
+        method="POST",
+        path="projects/{}/ara/preview".format(project_id),
+        json={"definition": empty_defn().dump(), "rows": []}
+    )
+    assert session.last_call == expect_call
+
+
+def test_add_columns():
+    """Test the behavior of AraDefinition.add_columns"""
+    empty = empty_defn()
+
+    # Check the mismatched name error
+    with pytest.raises(ValueError) as excinfo:
+        empty.add_columns(
+            variable=RootInfo(name="foo", headers=["bar"], field="name"),
+            columns=[IdentityColumn(data_source="bar")]
+        )
+    assert "data_source must be" in str(excinfo.value)
+
+    # Check desired behavior
+    with_name_col = empty.add_columns(
+        variable=RootInfo(name="name", headers=["bar"], field="name"),
+        columns=[IdentityColumn(data_source="name")]
+    )
+    assert with_name_col.variables == [RootInfo(name="name", headers=["bar"], field="name")]
+    assert with_name_col.columns == [IdentityColumn(data_source="name")]
+
+    # Check duplicate variable name error
+    with pytest.raises(ValueError) as excinfo:
+        with_name_col.add_columns(
+            variable=RootInfo(name="name", headers=["bar"], field="name"),
+            columns=[IdentityColumn(data_source="name")]
+        )
+    assert "already used" in str(excinfo.value)
