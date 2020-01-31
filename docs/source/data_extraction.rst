@@ -10,7 +10,8 @@ Columns correspond to data about the material histories, such as the temperature
 Defining row and columns
 ------------------------
 
-A Row object describes a mapping from a dataset to rows of a table. The only such mapping presently supported is :class:`~citrine.ara.rows.MaterialRunByTemplate`, which produces one row per Material Run associated with any of a list of material templates.
+A Row object describes a mapping from a list of datasets to rows of a table.
+The only such mapping presently supported is :class:`~citrine.ara.rows.MaterialRunByTemplate`, which produces one row per Material Run associated with any of a list of material templates.
 
 .. code-block:: python
 
