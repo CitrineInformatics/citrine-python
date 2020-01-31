@@ -31,7 +31,7 @@ Thus, it performs the first part of a mapping from the set of Material Histories
          process_template = LinkByUID(scope="templates", id="apply glaze")
 
 A :class:`~citrine.ara.columns.Column` object describes how to transform a Variable into a primitive value (e.g. a real number, an integer, or a string) that can be entered into a cell in a table.
-This is necessary because GEMD Attributes are more general than primitive values; they often conveying uncertainty estimates, for example.
+This is necessary because GEMD Attributes are more general than primitive values; they often convey uncertainty estimates, for example.
 
 .. code-block:: python
 
