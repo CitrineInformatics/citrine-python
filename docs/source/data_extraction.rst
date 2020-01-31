@@ -19,7 +19,8 @@ The only such mapping presently supported is :class:`~citrine.ara.rows.MaterialR
    row_def = MaterialRunByTemplate(
          templates=[LinkByUID(scope="templates", id="finished cookie")])
 
-A :class:`~citrine.ara.variables.Variable` object specifies how to select a piece of data from each Material History. Thus, it serves as a mapping from the set of Material Histories to a column in the Ara table.
+A :class:`~citrine.ara.variables.Variable` object specifies how to select a piece of data from each Material History.
+Thus, it performs the first part of a mapping from the set of Material Histories to columns in the Ara table.
 
 .. code-block:: python
 
@@ -29,7 +30,8 @@ A :class:`~citrine.ara.variables.Variable` object specifies how to select a piec
          attribute_template = LinkByUID(scope="templates", id="cookie density"),
          process_template = LinkByUID(scope="templates", id="apply glaze")
 
-A :class:`~citrine.ara.columns.Column` object describes how to transform a Variable into a primitive value (e.g. a real number, an integer, or a string) that can be entered into a table.  This is necessary because GEMD Attributes are more general than primitive values; they often conveying uncertainty estimates, for example.
+A :class:`~citrine.ara.columns.Column` object describes how to transform a Variable into a primitive value (e.g. a real number, an integer, or a string) that can be entered into a cell in a table.
+This is necessary because GEMD Attributes are more general than primitive values; they often conveying uncertainty estimates, for example.
 
 .. code-block:: python
 
@@ -42,7 +44,11 @@ The data_source parameter is a reference to a Variable for this Column to descri
 Defining tables
 ---------------
 
-The :class:`~citrine.resources.ara_definition.AraDefinition` object defines how to build an Ara Table. It specifies a list of UUIDs for datasets to query in generating the table, a list of :class:`~citrine.ara.rows.Row` objects that define material histories to use as rows, and a list of :class:`~citrine.ara.variables.Variable` objects that specify how to extract data from those material histories into columns.
+The :class:`~citrine.resources.ara_definition.AraDefinition` object defines how to build an Ara Table.
+It specifies a list of UUIDs for datasets to query in generating the table,
+a list of :class:`~citrine.ara.rows.Row` objects that define material histories to use as rows,
+a list of :class:`~citrine.ara.variables.Variable` objects that specify how to extract data from those material histories,
+and a list of :class:`~citrine.ara.columns.Column` objects to transform those variables into columns.
 
 .. code-block:: python
 
@@ -58,7 +64,8 @@ The :class:`~citrine.resources.ara_definition.AraDefinition` object defines how 
 Creating and reading tables
 ---------------------------
 
-An :class:`~citrine.resources.ara_definition.AraDefinitionCollection` object facilitates access to the collection of all Ara definitions associated with a Project. Via such an object, one can preview an AraDefinition on an explicit set of roots (rows):
+An :class:`~citrine.resources.ara_definition.AraDefinitionCollection` object facilitates access to the collection of all Ara definitions visible to a Project.
+Via such an object, one can preview a draft AraDefinition on an explicit set of Material Histories, defined by their root materials:
 
 For example:
 
