@@ -32,9 +32,10 @@ Table of Contents
 
 .. toctree::
    :maxdepth: 2
-   :numbered: 4
+   :numbered: 5
 
    getting_started/index
+   data_extraction
    workflows/index
    development
    FAQ/index
