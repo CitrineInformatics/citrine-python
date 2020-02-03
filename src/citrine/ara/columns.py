@@ -55,7 +55,7 @@ class MeanColumn(Serializable['MeanColumn'], Column):
 
     data_source = properties.String('data_source')
     target_units = properties.Optional(properties.String, "target_units")
-    typ = properties.String('type', default="real_mean_column", deserializable=False)
+    typ = properties.String('type', default="mean_column", deserializable=False)
 
     def _attrs(self) -> List[str]:
         return ["data_source", "target_units", "typ"]
