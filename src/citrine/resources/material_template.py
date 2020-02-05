@@ -8,6 +8,7 @@ from citrine._serialization.properties import Optional as PropertyOptional
 from citrine._serialization.properties import List as PropertyList
 from citrine._utils.functions import set_default_uid
 from citrine.resources.data_concepts import DataConcepts, DataConceptsCollection
+from citrine.resources.material_spec import MaterialSpecCollection
 from citrine.resources.storable import Storable
 from citrine.resources.property_template import PropertyTemplate
 from taurus.client.json_encoder import loads, dumps
@@ -115,3 +116,41 @@ class MaterialTemplateCollection(DataConceptsCollection[MaterialTemplate]):
     def get_type(cls) -> Type[MaterialTemplate]:
         """Return the resource type in the collection."""
         return MaterialTemplate
+
+    def get_specs(self, scope: str, id: str) -> dict:
+        """
+        Get all material specs associated with a material template.
+
+        The material template is specified by its scope and id.
+
+        :param scope: The scope used to locate the material template.
+        :param id: The unique id corresponding to `scope`.
+            The lookup will be most efficient if you use the Citrine ID (scope='id')
+            of the material template.
+        :return: A search result of material specs
+        """
+        path = self._get_path(ignore_dataset=True) + "/" + scope + "/" + id + "/material-specs"
+        return self.session.get_resource(path)
+
+    def get_runs(self,
+                 template_scope: str,
+                 template_id: str,
+                 spec_collection: MaterialSpecCollection) -> dict:
+        """
+        Get all material runs associated with a material template.
+
+        The material template is specified by its scope and id.
+
+        :param template_scope: The scope used to locate the material template.
+        :param template_id: The unique id corresponding to `scope`.
+            The lookup will be most efficient if you use the Citrine ID (scope='id')
+            of the material template.
+        :param spec_collection: The collection of material specs on the project.
+        :return:
+        """
+        specs = self.get_specs(template_scope, template_id)
+        return {"contents":
+                [run for runs in
+                    [spec_collection.get_runs(template_scope,
+                                              spec['uids'][template_scope])["contents"]
+                        for spec in specs["contents"]] for run in runs]}

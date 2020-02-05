@@ -87,3 +87,18 @@ class MaterialSpecCollection(DataConceptsCollection[MaterialSpec]):
     def get_type(cls) -> Type[MaterialSpec]:
         """Return the resource type in the collection."""
         return MaterialSpec
+
+    def get_runs(self, scope: str, id: str) -> dict:
+        """
+        Get all material runs associated with a material spec.
+
+        The material spec is specified by its scope and id.
+
+        :param scope: The scope used to locate the material spec.
+        :param id: The unique id corresponding to `scope`.
+            The lookup will be most efficient if you use the Citrine ID (scope='id')
+            of the material spec.
+        :return: A search result of material runs
+        """
+        path = self._get_path(ignore_dataset=True) + "/" + scope + "/" + id + "/material-runs"
+        return self.session.get_resource(path)
