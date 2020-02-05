@@ -1,5 +1,5 @@
 """Resources that represent material templates."""
-from typing import List, Dict, Optional, Union, Sequence, Type
+from typing import List, Dict, Optional, Union, Sequence, Type, Iterator
 
 from citrine._rest.resource import Resource
 from citrine._session import Session
@@ -117,7 +117,7 @@ class MaterialTemplateCollection(DataConceptsCollection[MaterialTemplate]):
         """Return the resource type in the collection."""
         return MaterialTemplate
 
-    def get_specs(self, scope: str, id: str) -> dict:
+    def get_specs(self, scope: str, id: str, per_page: int = 20) -> Iterator[dict]:
         """
         Get all material specs associated with a material template.
 
@@ -127,15 +127,20 @@ class MaterialTemplateCollection(DataConceptsCollection[MaterialTemplate]):
         :param id: The unique id corresponding to `scope`.
             The lookup will be most efficient if you use the Citrine ID (scope='id')
             of the material template.
+        :param per_page: The number of results to return per page.
         :return: A search result of material specs
         """
         path = self._get_path(ignore_dataset=True) + "/" + scope + "/" + id + "/material-specs"
-        return self.session.get_resource(path)
+        return self.session.cursor_paged_resource(self.session.get_resource,
+                                                  path,
+                                                  per_page=per_page,
+                                                  version="v1")
 
     def get_runs(self,
                  template_scope: str,
                  template_id: str,
-                 spec_collection: MaterialSpecCollection) -> dict:
+                 spec_collection: MaterialSpecCollection,
+                 per_page: int = 20) -> Iterator[dict]:
         """
         Get all material runs associated with a material template.
 
@@ -146,11 +151,12 @@ class MaterialTemplateCollection(DataConceptsCollection[MaterialTemplate]):
             The lookup will be most efficient if you use the Citrine ID (scope='id')
             of the material template.
         :param spec_collection: The collection of material specs on the project.
+        :param per_page: The number of results to return per page.
+            Also used for intermediate queries.
         :return:
         """
-        specs = self.get_specs(template_scope, template_id)
-        return {"contents":
-                [run for runs in
-                    [spec_collection.get_runs(template_scope,
-                                              spec['uids'][template_scope])["contents"]
-                        for spec in specs["contents"]] for run in runs]}
+        specs = self.get_specs(template_scope, template_id, per_page=per_page)
+        return (run for runs in (spec_collection.get_runs(template_scope,
+                                                          spec['uids'][template_scope],
+                                                          per_page=per_page)for spec in specs)
+                for run in runs)

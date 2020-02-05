@@ -1,4 +1,5 @@
 from json import dumps
+from typing import Callable, Iterator
 from urllib.parse import urlencode
 
 
@@ -93,6 +94,29 @@ class FakeSession:
             return self.responses.pop(0)
 
         return self.responses[0]
+
+    @staticmethod
+    def cursor_paged_resource(base_method: Callable[..., dict], path: str,
+                              forward: bool = True, per_page: int = 100,
+                              version: str = 'v2', **kwargs) -> Iterator[dict]:
+        """
+        Returns a flat generator of results for an API query.
+
+        Results are fetched in chunks of size `per_page` and loaded lazily.
+        """
+        params = kwargs.get('params', {})
+        params['forward'] = forward
+        params['ascending'] = forward
+        params['per_page'] = per_page
+        kwargs['params'] = params
+        while True:
+            response_json = base_method(path, version=version, **kwargs)
+            for obj in response_json['contents']:
+                yield obj
+            cursor = response_json.get('next')
+            if cursor is None:
+                break
+            params['cursor'] = cursor
 
 
 class FakePaginatedSession(FakeSession):

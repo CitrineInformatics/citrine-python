@@ -5,7 +5,7 @@ from citrine.resources.material_spec import MaterialSpecCollection
 from citrine.resources.material_template import MaterialTemplateCollection
 
 from tests.utils.factories import MaterialTemplateFactory, MaterialSpecDataFactory, MaterialRunDataFactory
-from tests.utils.session import FakeSession, FakeCall
+from tests.utils.session import FakeCall, FakeSession
 
 
 @pytest.fixture
@@ -36,23 +36,21 @@ def test_get_specs(collection, session):
     test_scope = 'id'
     test_id = material_template.uids[test_scope]
     sample_spec = MaterialSpecDataFactory(template=test_id)
-    key = 'contents'
-    session.set_response({key: [sample_spec]})
+    session.set_response({'contents': [sample_spec]})
 
     # When
-    specs = collection.get_specs(test_scope, test_id)
+    specs = [spec for spec in collection.get_specs(test_scope, test_id)]
 
     # Then
     assert 1 == session.num_calls
     expected_call = FakeCall(
         method="GET",
         path="projects/{}/material-templates/{}/{}/material-specs".format(project_id, test_scope, test_id),
+        params={"forward": True, "ascending": True, "per_page": 20}
     )
     assert session.last_call == expected_call
-    assert key in specs
-    output = specs[key]
-    assert 1 == len(output)
-    assert output == [sample_spec]
+    assert 1 == len(specs)
+    assert specs == [sample_spec]
 
 
 def test_get_runs(collection, session, spec_collection):
@@ -64,15 +62,16 @@ def test_get_runs(collection, session, spec_collection):
     sample_spec1 = MaterialSpecDataFactory(template=template_id)
     sample_spec2 = MaterialSpecDataFactory(template=template_id)
     key = 'contents'
-    sample_run1 = MaterialRunDataFactory(spec=sample_spec1['uids'][test_scope])
-    sample_run2 = MaterialRunDataFactory(spec=sample_spec2['uids'][test_scope])
-    session.set_responses({key: [sample_spec1, sample_spec2]}, {key: [sample_run1]}, {key: [sample_run2]})
+    sample_run1_1 = MaterialRunDataFactory(spec=sample_spec1['uids'][test_scope])
+    sample_run2_1 = MaterialRunDataFactory(spec=sample_spec2['uids'][test_scope])
+    sample_run1_2 = MaterialRunDataFactory(spec=sample_spec1['uids'][test_scope])
+    sample_run2_2 = MaterialRunDataFactory(spec=sample_spec2['uids'][test_scope])
+    session.set_responses({key: [sample_spec1, sample_spec2]}, {key: [sample_run1_1, sample_run1_2]}, {key: [sample_run2_1, sample_run2_2]})
 
     # When
-    runs = collection.get_runs(test_scope, template_id, spec_collection)
+    runs = [run for run in collection.get_runs(test_scope, template_id, spec_collection, per_page=1)]
 
     # Then
     assert 3 == session.num_calls
-    output = runs[key]
-    assert 2 == len(output)
-    assert output == [sample_run1, sample_run2]
+    assert 4 == len(runs)
+    assert runs == [sample_run1_1, sample_run1_2, sample_run2_1, sample_run2_2]

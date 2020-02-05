@@ -1,5 +1,5 @@
 """Resources that represent material spec data objects."""
-from typing import List, Dict, Optional, Type
+from typing import List, Dict, Optional, Type, Iterator
 
 from citrine._utils.functions import set_default_uid
 from citrine._rest.resource import Resource
@@ -88,7 +88,7 @@ class MaterialSpecCollection(DataConceptsCollection[MaterialSpec]):
         """Return the resource type in the collection."""
         return MaterialSpec
 
-    def get_runs(self, scope: str, id: str) -> dict:
+    def get_runs(self, scope: str, id: str, per_page: int = 20) -> Iterator[dict]:
         """
         Get all material runs associated with a material spec.
 
@@ -98,7 +98,11 @@ class MaterialSpecCollection(DataConceptsCollection[MaterialSpec]):
         :param id: The unique id corresponding to `scope`.
             The lookup will be most efficient if you use the Citrine ID (scope='id')
             of the material spec.
+        :param per_page: The number of results to return per page.
         :return: A search result of material runs
         """
         path = self._get_path(ignore_dataset=True) + "/" + scope + "/" + id + "/material-runs"
-        return self.session.get_resource(path)
+        return self.session.cursor_paged_resource(self.session.get_resource,
+                                                  path,
+                                                  per_page=per_page,
+                                                  version="v1")

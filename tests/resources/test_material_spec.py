@@ -4,7 +4,7 @@ import pytest
 from citrine.resources.material_spec import MaterialSpecCollection
 
 from tests.utils.factories import MaterialSpecFactory, MaterialRunDataFactory
-from tests.utils.session import FakeSession, FakeCall
+from tests.utils.session import FakeCall, FakeSession
 
 
 @pytest.fixture
@@ -27,20 +27,18 @@ def test_get_runs(collection, session):
     test_scope = 'id'
     test_id = material_spec.uids[test_scope]
     sample_run = MaterialRunDataFactory(spec=test_id)
-    key = 'contents'
-    session.set_response({key: [sample_run]})
+    session.set_response({'contents': [sample_run]})
 
     # When
-    runs = collection.get_runs(test_scope, test_id)
+    runs = [run for run in collection.get_runs(test_scope, test_id)]
 
     # Then
     assert 1 == session.num_calls
     expected_call = FakeCall(
         method="GET",
         path="projects/{}/material-specs/{}/{}/material-runs".format(project_id, test_scope, test_id),
+        params={"forward": True, "ascending": True, "per_page": 20}
     )
     assert session.last_call == expected_call
-    assert key in runs
-    output = runs[key]
-    assert 1 == len(output)
-    assert output == [sample_run]
+    assert 1 == len(runs)
+    assert runs == [sample_run]
