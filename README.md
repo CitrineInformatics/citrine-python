@@ -15,7 +15,7 @@ pip install -U -r test_requirements.txt
 
 ## Documentation
 
-The documentation for this project is built using [Sphinx](http://www.sphinx-doc.org/en/master/).
+The documentation for this project is built using [Sphinx](http://www.sphinx-doc.org/en/master/) and can be found [here](https://citrineinformatics.github.io/citrine-python/index.html).
 
 ### Building documentation
 
