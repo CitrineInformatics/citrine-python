@@ -1,17 +1,61 @@
 # citrine-python
 Python library for the Citrine Platform
 
-## Installation
+## Installation and Development
 Clone from github:
 ```bash
 git clone git@github.com:CitrineInformatics/citrine-python
 ```
 
-Create a virtual environment using Python >= 3.6, and install requirements:
+Create a virtual environment using Python >= 3.6.
+One option is to use conda, but it is not required.
+
+```bash
+conda create -n <environment_name> python=3.7
+conda activate <environment_name>
+```
+
+Then install requirements.
+
 ```bash
 pip install -U -r requirements.txt
 pip install -U -r test_requirements.txt
+pip install --no-deps -e .
 ```
+
+Note that if you use `python setup.py install` it will **not** install the libraries in "test_requirements.txt".
+Although not necessary for *using* citrine-python, these libraries are important for development.
+
+If using a conda environment, you can now launch a Jupyter notebook from the environment with `jupyter notebook`.
+The resulting notebook will have access to the citrine-python library and all its dependencies.
+
+Changes to citrine-python must pass all tests, follow style guidelines, and maintain 100% test coverage.
+We use flake8 as a linter.
+To run the linter on the "src/" directory:
+```bash
+flake8 src
+```
+
+We use pytest to run tests and use the associated library pytest-cov to check coverage.
+To run all tests and output a report of the coverage of the "src/" directory:
+```bash
+run pytest tests/ --cov=src/
+```
+
+It is not uncommon to have path issues when running pytest from the command line.
+Ensure that your $PATH variable contains the directory with the citrine-python repo.
+If that does not work, it is more reliable to use `pipenv`.
+```bash
+pip install pipenv
+pipenv install --dev
+pipenv shell
+```
+
+You can now run commands by prefacing them with `pipenv run`.
+For example, `pipenv run pytest`.
+
+To exit the pipenv shell, run `exit`.
+To deactivate a conda environment, use `conda deactivate`.
 
 ## Documentation
 
