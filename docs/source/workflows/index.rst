@@ -31,7 +31,7 @@ Modules come `active` by default when created. If you would like to deactivate a
    predictor.active = False
    project.predictors.update(predictor)
 
-Modules that are not `active` cannot be used in workflows and will not show up in search.
+Modules that are not `active` cannot be used in workflows and will not show up when listing.
 
 Design workflows
 ----------------
