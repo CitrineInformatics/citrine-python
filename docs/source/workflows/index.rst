@@ -20,6 +20,19 @@ The modules are dictate how the platform utilizes research data to generate comp
 -  :doc:`Processors <processors>` define the method used to search the design space.
    The processor and design space are coupled: depending on the design space used, only a subset of processors are applicable.
 
+Activation
+**********
+
+Modules come `active` by default when created. If you would like to deactivate a module so it cannot be used again consider this example:
+
+.. code:: python
+
+   predictor = project.predictors.get(predictor_uuid)
+   predictor.active = False
+   project.predictors.update(predictor)
+
+Modules that are not `active` cannot be used in workflows and will not show up in search.
+
 Design workflows
 ----------------
 
