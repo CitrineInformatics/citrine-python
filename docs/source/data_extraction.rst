@@ -24,11 +24,11 @@ Thus, it performs the first part of a mapping from the set of Material Histories
 
 .. code-block:: python
 
-   from citrine.ara.variables import AttributeByTemplate
+   from citrine.ara.variables import AttributeByTemplateAfterProcessTemplate
    final_density = AttributeByTemplateAfterProcessTemplate(
          name = "final density",
          attribute_template = LinkByUID(scope="templates", id="cookie density"),
-         process_template = LinkByUID(scope="templates", id="apply glaze")
+         process_template = LinkByUID(scope="templates", id="apply glaze"))
 
 A :class:`~citrine.ara.columns.Column` object describes how to transform a Variable into a primitive value (e.g. a real number, an integer, or a string) that can be entered into a cell in a table.
 This is necessary because GEMD Attributes are more general than primitive values; they often convey uncertainty estimates, for example.
