@@ -21,6 +21,9 @@ def collection(session) -> MaterialSpecCollection:
 
 
 def test_get_runs(collection, session):
+    """
+    Test that MaterialSpecCollection.get_runs() hits the expected endpoint
+    """
     # Given
     project_id = '6b608f78-e341-422c-8076-35adc8828545'
     material_spec = MaterialSpecFactory()

@@ -135,6 +135,7 @@ class MaterialTemplateCollection(DataConceptsCollection[MaterialTemplate]):
                                                   path,
                                                   per_page=per_page)
 
+    # Retrieve all material runs associated with a material template
     def get_runs(self,
                  template_scope: str,
                  template_id: str,

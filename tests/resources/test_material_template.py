@@ -30,6 +30,9 @@ def spec_collection(session) -> MaterialSpecCollection:
 
 
 def test_get_specs(collection, session):
+    """
+    Test that MaterialTemplateCollection.get_specs() hits the expected endpoint
+    """
     # Given
     project_id = '6b608f78-e341-422c-8076-35adc8828545'
     material_template = MaterialTemplateFactory()
@@ -54,8 +57,10 @@ def test_get_specs(collection, session):
 
 
 def test_get_runs(collection, session, spec_collection):
+    """
+    Test that MaterialTemplateCollection.get_runs() hits the expected endpoints and post-processes the results into the expected format
+    """
     # Given
-    project_id = '6b608f78-e341-422c-8076-35adc8828545'
     material_template = MaterialTemplateFactory()
     test_scope = 'id'
     template_id = material_template.uids[test_scope]
