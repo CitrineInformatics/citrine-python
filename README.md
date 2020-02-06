@@ -44,7 +44,7 @@ run pytest tests/ --cov=src/
 
 It is not uncommon to have path issues when running pytest from the command line.
 Ensure that your $PATH variable contains the directory with the citrine-python repo.
-If that does not work, it is more reliable to use `pipenv`.
+If that does not work and you want to run tests from the command line (as opposed to from an editor such as PyCharm) it is more reliable to use `pipenv`.
 ```bash
 pip install pipenv
 pipenv install --dev
