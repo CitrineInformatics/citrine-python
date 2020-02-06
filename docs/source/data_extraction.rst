@@ -16,6 +16,7 @@ The only such mapping presently supported is :class:`~citrine.ara.rows.MaterialR
 .. code-block:: python
 
    from citrine.ara.rows import MaterialRunByTemplate
+   from taurus.entity.link_by_uid import LinkByUID
    row_def = MaterialRunByTemplate(
          templates=[LinkByUID(scope="templates", id="finished cookie")])
 
@@ -25,6 +26,7 @@ Thus, it performs the first part of a mapping from the set of Material Histories
 .. code-block:: python
 
    from citrine.ara.variables import AttributeByTemplate
+   from taurus.entity.link_by_uid import LinkByUID
    final_density = AttributeByTemplateAfterProcessTemplate(
          name = "final density",
          attribute_template = LinkByUID(scope="templates", id="cookie density"),
