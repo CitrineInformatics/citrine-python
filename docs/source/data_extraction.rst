@@ -27,6 +27,7 @@ Thus, it performs the first part of a mapping from the set of Material Histories
    from citrine.ara.variables import AttributeByTemplateAfterProcessTemplate
    final_density = AttributeByTemplateAfterProcessTemplate(
          name = "final density",
+         headers = ["hello", "world"],
          attribute_template = LinkByUID(scope="templates", id="cookie density"),
          process_template = LinkByUID(scope="templates", id="apply glaze"))
 
