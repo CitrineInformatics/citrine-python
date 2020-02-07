@@ -40,7 +40,7 @@ This is necessary because GEMD Attributes are more general than primitive values
 
    from citrine.ara.columns import MeanColumn, StdColumn
    final_density_mean = MeanColumn(data_source="final density", target_units="g/cm^3")
-   final_density_std = MeanColumn(data_source="final density", target_units="g/cm^3")
+   final_density_std = StdColumn(data_source="final density", target_units="g/cm^3")
 
 The data_source parameter is a reference to a Variable for this Column to describe, so the value of data_source must match the name of a Variable.
 
