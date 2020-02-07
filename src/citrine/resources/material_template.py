@@ -133,7 +133,8 @@ class MaterialTemplateCollection(DataConceptsCollection[MaterialTemplate]):
         path = self._get_path(ignore_dataset=True) + "/" + scope + "/" + id + "/material-specs"
         return self.session.cursor_paged_resource(self.session.get_resource,
                                                   path,
-                                                  per_page=per_page)
+                                                  per_page=per_page,
+                                                  version="v1")
 
     # Retrieve all material runs associated with a material template
     def get_runs(self,

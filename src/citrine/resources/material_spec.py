@@ -104,4 +104,5 @@ class MaterialSpecCollection(DataConceptsCollection[MaterialSpec]):
         path = self._get_path(ignore_dataset=True) + "/" + scope + "/" + id + "/material-runs"
         return self.session.cursor_paged_resource(self.session.get_resource,
                                                   path,
-                                                  per_page=per_page)
+                                                  per_page=per_page,
+                                                  version="v1")
