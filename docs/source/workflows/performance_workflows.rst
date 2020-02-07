@@ -51,7 +51,7 @@ For each test set, the rest of the data are used to train the predictor, and the
 By comparing the model's predictions to the true values, we can compute several performance metrics that provide information about model quality.
 
 - Root-mean squared error (RMSE): the square root of the average of the squared prediction error
-- Non-dimensional model error (NDME): The RMSE, normalized by the RMSE of a trivial model that always predicts the mean value of the data (== standard deviation of the output variable).
+- Non-dimensional model error (NDME): The RMSE, normalized by the standard deviation of the output variable (which is the RMSE of a trivial model that always predicts the mean value of the data).
 - Standard residual: The RMSE of the standardized error (the prediction error divided by the prediction uncertainty)
 - Standard confidence: The fraction of predictions for which the prediction error is less than the prediction uncertainty
 
