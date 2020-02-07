@@ -11,6 +11,8 @@ flake8-docstrings = "*"
 pydocstyle = "==3.0.0"
 sphinx = "*"
 sphinxcontrib-apidoc = "*"
+factory-boy = "*"
+requests-mock = "*"
 
 [packages]
 citrine = {editable = true,path = "."}
