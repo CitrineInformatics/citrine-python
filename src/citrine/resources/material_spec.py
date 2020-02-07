@@ -90,7 +90,7 @@ class MaterialSpecCollection(DataConceptsCollection[MaterialSpec]):
 
     def get_runs(self, scope: str, id: str, per_page: int = 20) -> Iterator[dict]:
         """
-        Get all material runs associated with a material spec.
+        [ALPHA] Get all material runs associated with a material spec.
 
         The material spec is specified by its scope and id.
 

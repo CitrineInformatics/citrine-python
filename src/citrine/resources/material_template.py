@@ -119,7 +119,7 @@ class MaterialTemplateCollection(DataConceptsCollection[MaterialTemplate]):
 
     def get_specs(self, scope: str, id: str, per_page: int = 20) -> Iterator[dict]:
         """
-        Get all material specs associated with a material template.
+        [ALPHA] Get all material specs associated with a material template.
 
         The material template is specified by its scope and id.
 
@@ -142,7 +142,7 @@ class MaterialTemplateCollection(DataConceptsCollection[MaterialTemplate]):
                  spec_collection: MaterialSpecCollection,
                  per_page: int = 20) -> Iterator[dict]:
         """
-        Get all material runs associated with a material template.
+        [ALPHA] Get all material runs associated with a material template.
 
         The material template is specified by its scope and id.
 
