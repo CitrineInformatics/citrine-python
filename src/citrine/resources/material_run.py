@@ -168,10 +168,10 @@ class MaterialRunCollection(DataConceptsCollection[MaterialRun]):
         # Convert taurus objects into citrine-python objects
         return MaterialRun.build(model)
 
-    def with_spec(self,
-                  spec_id: str,
-                  spec_scope: str = 'id',
-                  per_page: int = 20) -> Iterator[dict]:
+    def filter_by_spec(self,
+                       spec_id: str,
+                       spec_scope: str = 'id',
+                       per_page: int = 20) -> Iterator[dict]:
         """
         [ALPHA] Get all material runs associated with a material spec.
 
@@ -194,10 +194,10 @@ class MaterialRunCollection(DataConceptsCollection[MaterialRun]):
                                                   version="v1")
 
     # Retrieve all material runs associated with a material template
-    def with_template(self,
-                      template_id: str,
-                      template_scope: str = 'id',
-                      per_page: int = 20) -> Iterator[dict]:
+    def filter_by_template(self,
+                           template_id: str,
+                           template_scope: str = 'id',
+                           per_page: int = 20) -> Iterator[dict]:
         """
         [ALPHA] Get all material runs associated with a material template.
 
@@ -212,9 +212,9 @@ class MaterialRunCollection(DataConceptsCollection[MaterialRun]):
         :return:
         """
         spec_collection = MaterialSpecCollection(self.project_id, self.dataset_id, self.session)
-        specs = spec_collection.with_template(template_id,
-                                              template_scope=template_scope,
-                                              per_page=per_page)
-        return (run for runs in (self.with_spec(spec['uids']['id'],
-                                                per_page=per_page)for spec in specs)
+        specs = spec_collection.filter_by_template(template_id,
+                                                   template_scope=template_scope,
+                                                   per_page=per_page)
+        return (run for runs in (self.filter_by_spec(spec['uids']['id'],
+                                                     per_page=per_page)for spec in specs)
                 for run in runs)

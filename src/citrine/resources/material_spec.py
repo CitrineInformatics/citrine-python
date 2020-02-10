@@ -89,10 +89,10 @@ class MaterialSpecCollection(DataConceptsCollection[MaterialSpec]):
         """Return the resource type in the collection."""
         return MaterialSpec
 
-    def with_template(self,
-                      template_id: str,
-                      template_scope: str = 'id',
-                      per_page: int = 20) -> Iterator[dict]:
+    def filter_by_template(self,
+                           template_id: str,
+                           template_scope: str = 'id',
+                           per_page: int = 20) -> Iterator[dict]:
         """
         [ALPHA] Get all material specs associated with a material template.
 

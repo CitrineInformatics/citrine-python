@@ -21,9 +21,9 @@ def collection(session) -> MaterialSpecCollection:
         session=session)
 
 
-def test_with_template(collection, session):
+def test_filter_by_template(collection, session):
     """
-    Test that MaterialSpecCollection.with_template() hits the expected endpoint
+    Test that MaterialSpecCollection.filter_by_template() hits the expected endpoint
     """
     # Given
     project_id = '6b608f78-e341-422c-8076-35adc8828545'
@@ -34,7 +34,7 @@ def test_with_template(collection, session):
     session.set_response({'contents': [sample_spec]})
 
     # When
-    specs = [spec for spec in collection.with_template(test_id)]
+    specs = [spec for spec in collection.filter_by_template(test_id)]
 
     # Then
     assert 1 == session.num_calls
