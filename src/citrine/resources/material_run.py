@@ -1,22 +1,23 @@
 """Resources that represent material run data objects."""
-from typing import List, Dict, Optional, Type
-import os
 import json
+import os
+from typing import List, Dict, Optional, Type, Iterator
 
-from citrine._utils.functions import set_default_uid
 from citrine._rest.resource import Resource
-from citrine._session import Session
-from citrine.resources.data_concepts import DataConcepts, DataConceptsCollection
-from citrine.resources.storable import Storable
-from citrine._serialization.properties import String, LinkOrElse, Mapping, Object
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Optional as PropertyOptional
+from citrine._serialization.properties import String, LinkOrElse, Mapping, Object
+from citrine._session import Session
+from citrine._utils.functions import set_default_uid
+from citrine.resources.data_concepts import DataConcepts, DataConceptsCollection
+from citrine.resources.material_spec import MaterialSpecCollection
+from citrine.resources.storable import Storable
 from taurus.client.json_encoder import TaurusEncoder
+from taurus.client.json_encoder import loads
 from taurus.entity.file_link import FileLink
-from taurus.entity.object.process_run import ProcessRun as TaurusProcessRun
 from taurus.entity.object.material_run import MaterialRun as TaurusMaterialRun
 from taurus.entity.object.material_spec import MaterialSpec as TaurusMaterialSpec
-from taurus.client.json_encoder import loads
+from taurus.entity.object.process_run import ProcessRun as TaurusProcessRun
 
 
 class MaterialRun(Storable, Resource['MaterialRun'], TaurusMaterialRun):
@@ -166,3 +167,54 @@ class MaterialRunCollection(DataConceptsCollection[MaterialRun]):
         model = loads(json.dumps([data['context'], data['root']], cls=TaurusEncoder))
         # Convert taurus objects into citrine-python objects
         return MaterialRun.build(model)
+
+    def filter_by_spec(self,
+                       spec_id: str,
+                       spec_scope: str = 'id',
+                       per_page: int = 20) -> Iterator[dict]:
+        """
+        [ALPHA] Get all material runs associated with a material spec.
+
+        The material spec is specified by its scope and id.
+
+        :param spec_id: The unique id corresponding to `scope`.
+            The lookup will be most efficient if you use the Citrine ID (scope='id')
+            of the material spec.
+        :param spec_scope: The scope used to locate the material spec.
+        :param per_page: The number of results to return per page.
+        :return: A search result of material runs
+        """
+        path_prefix = MaterialSpecCollection(self.project_id,
+                                             self.dataset_id,
+                                             self.session)._get_path(ignore_dataset=True)
+        path = path_prefix + "/" + spec_scope + "/" + spec_id + "/material-runs"
+        return self.session.cursor_paged_resource(self.session.get_resource,
+                                                  path,
+                                                  per_page=per_page,
+                                                  version="v1")
+
+    # Retrieve all material runs associated with a material template
+    def filter_by_template(self,
+                           template_id: str,
+                           template_scope: str = 'id',
+                           per_page: int = 20) -> Iterator[dict]:
+        """
+        [ALPHA] Get all material runs associated with a material template.
+
+        The material template is specified by its scope and id.
+
+        :param template_id: The unique id corresponding to `scope`.
+            The lookup will be most efficient if you use the Citrine ID (scope='id')
+            of the material template.
+        :param template_scope: The scope used to locate the material template.
+        :param per_page: The number of results to return per page.
+            Also used for intermediate queries.
+        :return:
+        """
+        spec_collection = MaterialSpecCollection(self.project_id, self.dataset_id, self.session)
+        specs = spec_collection.filter_by_template(template_id,
+                                                   template_scope=template_scope,
+                                                   per_page=per_page)
+        return (run for runs in (self.filter_by_spec(spec['uids']['id'],
+                                                     per_page=per_page)for spec in specs)
+                for run in runs)
