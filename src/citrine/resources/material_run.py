@@ -212,7 +212,9 @@ class MaterialRunCollection(DataConceptsCollection[MaterialRun]):
         :return:
         """
         spec_collection = MaterialSpecCollection(self.project_id, self.dataset_id, self.session)
-        specs = spec_collection.with_template(template_id, template_scope=template_scope, per_page=per_page)
+        specs = spec_collection.with_template(template_id,
+                                              template_scope=template_scope,
+                                              per_page=per_page)
         return (run for runs in (self.with_spec(spec['uids']['id'],
                                                 per_page=per_page)for spec in specs)
                 for run in runs)
