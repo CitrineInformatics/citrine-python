@@ -89,7 +89,10 @@ class MaterialSpecCollection(DataConceptsCollection[MaterialSpec]):
         """Return the resource type in the collection."""
         return MaterialSpec
 
-    def with_template(self, template_id: str, template_scope: str = 'id', per_page: int = 20) -> Iterator[dict]:
+    def with_template(self,
+                      template_id: str,
+                      template_scope: str = 'id',
+                      per_page: int = 20) -> Iterator[dict]:
         """
         [ALPHA] Get all material specs associated with a material template.
 
@@ -102,10 +105,11 @@ class MaterialSpecCollection(DataConceptsCollection[MaterialSpec]):
         :param per_page: The number of results to return per page.
         :return: A search result of material specs
         """
-        path_prefix = MaterialTemplateCollection(self.project_id, self.dataset_id, self.session)._get_path(ignore_dataset=True)
+        path_prefix = MaterialTemplateCollection(self.project_id,
+                                                 self.dataset_id,
+                                                 self.session)._get_path(ignore_dataset=True)
         path = path_prefix + "/" + template_scope + "/" + template_id + "/material-specs"
         return self.session.cursor_paged_resource(self.session.get_resource,
                                                   path,
                                                   per_page=per_page,
                                                   version="v1")
-

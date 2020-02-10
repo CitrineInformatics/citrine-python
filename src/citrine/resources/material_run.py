@@ -168,7 +168,10 @@ class MaterialRunCollection(DataConceptsCollection[MaterialRun]):
         # Convert taurus objects into citrine-python objects
         return MaterialRun.build(model)
 
-    def with_spec(self, spec_id: str, spec_scope: str = 'id', per_page: int = 20) -> Iterator[dict]:
+    def with_spec(self,
+                  spec_id: str,
+                  spec_scope: str = 'id',
+                  per_page: int = 20) -> Iterator[dict]:
         """
         [ALPHA] Get all material runs associated with a material spec.
 
@@ -181,7 +184,9 @@ class MaterialRunCollection(DataConceptsCollection[MaterialRun]):
         :param per_page: The number of results to return per page.
         :return: A search result of material runs
         """
-        path_prefix = MaterialSpecCollection(self.project_id, self.dataset_id, self.session)._get_path(ignore_dataset=True)
+        path_prefix = MaterialSpecCollection(self.project_id,
+                                             self.dataset_id,
+                                             self.session)._get_path(ignore_dataset=True)
         path = path_prefix + "/" + spec_scope + "/" + spec_id + "/material-runs"
         return self.session.cursor_paged_resource(self.session.get_resource,
                                                   path,
@@ -190,9 +195,9 @@ class MaterialRunCollection(DataConceptsCollection[MaterialRun]):
 
     # Retrieve all material runs associated with a material template
     def with_template(self,
-                 template_id: str,
-                 template_scope: str = 'id',
-                 per_page: int = 20) -> Iterator[dict]:
+                      template_id: str,
+                      template_scope: str = 'id',
+                      per_page: int = 20) -> Iterator[dict]:
         """
         [ALPHA] Get all material runs associated with a material template.
 
@@ -209,6 +214,6 @@ class MaterialRunCollection(DataConceptsCollection[MaterialRun]):
         spec_collection = MaterialSpecCollection(self.project_id, self.dataset_id, self.session)
         specs = spec_collection.with_template(template_scope, template_id, per_page=per_page)
         return (run for runs in (self.with_spec(template_scope,
-                                                          spec['uids'][template_scope],
-                                                          per_page=per_page)for spec in specs)
+                                                spec['uids'][template_scope],
+                                                per_page=per_page)for spec in specs)
                 for run in runs)
