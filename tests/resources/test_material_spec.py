@@ -3,7 +3,8 @@ from uuid import UUID
 import pytest
 from citrine.resources.material_spec import MaterialSpecCollection
 
-from tests.utils.factories import MaterialSpecFactory, MaterialRunDataFactory
+from tests.utils.factories import MaterialTemplateFactory, \
+    MaterialSpecDataFactory
 from tests.utils.session import FakeCall, FakeSession
 
 
@@ -20,28 +21,27 @@ def collection(session) -> MaterialSpecCollection:
         session=session)
 
 
-def test_get_runs(collection, session):
+def test_with_template(collection, session):
     """
-    Test that MaterialSpecCollection.get_runs() hits the expected endpoint
+    Test that MaterialSpecCollection.with_template() hits the expected endpoint
     """
     # Given
     project_id = '6b608f78-e341-422c-8076-35adc8828545'
-    material_spec = MaterialSpecFactory()
+    material_template = MaterialTemplateFactory()
     test_scope = 'id'
-    test_id = material_spec.uids[test_scope]
-    sample_run = MaterialRunDataFactory(spec=test_id)
-    session.set_response({'contents': [sample_run]})
+    test_id = material_template.uids[test_scope]
+    sample_spec = MaterialSpecDataFactory(template=test_id)
+    session.set_response({'contents': [sample_spec]})
 
     # When
-    runs = [run for run in collection.get_runs(test_scope, test_id)]
+    specs = [spec for spec in collection.with_template(test_id)]
 
     # Then
     assert 1 == session.num_calls
     expected_call = FakeCall(
         method="GET",
-        path="projects/{}/material-specs/{}/{}/material-runs".format(project_id, test_scope, test_id),
+        path="projects/{}/material-templates/{}/{}/material-specs".format(project_id, test_scope, test_id),
         params={"forward": True, "ascending": True, "per_page": 20}
     )
     assert session.last_call == expected_call
-    assert 1 == len(runs)
-    assert runs == [sample_run]
+    assert specs == [sample_spec]

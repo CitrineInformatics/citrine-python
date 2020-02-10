@@ -1,20 +1,19 @@
 """Resources that represent material templates."""
-from typing import List, Dict, Optional, Union, Sequence, Type, Iterator
+from typing import List, Dict, Optional, Union, Sequence, Type
 
 from citrine._rest.resource import Resource
-from citrine._session import Session
-from citrine._serialization.properties import String, Mapping, Object, MixedList, LinkOrElse
-from citrine._serialization.properties import Optional as PropertyOptional
 from citrine._serialization.properties import List as PropertyList
+from citrine._serialization.properties import Optional as PropertyOptional
+from citrine._serialization.properties import String, Mapping, Object, MixedList, LinkOrElse
+from citrine._session import Session
 from citrine._utils.functions import set_default_uid
 from citrine.resources.data_concepts import DataConcepts, DataConceptsCollection
-from citrine.resources.material_spec import MaterialSpecCollection
-from citrine.resources.storable import Storable
 from citrine.resources.property_template import PropertyTemplate
+from citrine.resources.storable import Storable
 from taurus.client.json_encoder import loads, dumps
-from taurus.entity.template.material_template import MaterialTemplate as TaurusMaterialTemplate
 from taurus.entity.bounds.base_bounds import BaseBounds
 from taurus.entity.link_by_uid import LinkByUID
+from taurus.entity.template.material_template import MaterialTemplate as TaurusMaterialTemplate
 
 
 class MaterialTemplate(Storable, Resource['MaterialTemplate'], TaurusMaterialTemplate):
@@ -116,48 +115,3 @@ class MaterialTemplateCollection(DataConceptsCollection[MaterialTemplate]):
     def get_type(cls) -> Type[MaterialTemplate]:
         """Return the resource type in the collection."""
         return MaterialTemplate
-
-    def get_specs(self, scope: str, id: str, per_page: int = 20) -> Iterator[dict]:
-        """
-        [ALPHA] Get all material specs associated with a material template.
-
-        The material template is specified by its scope and id.
-
-        :param scope: The scope used to locate the material template.
-        :param id: The unique id corresponding to `scope`.
-            The lookup will be most efficient if you use the Citrine ID (scope='id')
-            of the material template.
-        :param per_page: The number of results to return per page.
-        :return: A search result of material specs
-        """
-        path = self._get_path(ignore_dataset=True) + "/" + scope + "/" + id + "/material-specs"
-        return self.session.cursor_paged_resource(self.session.get_resource,
-                                                  path,
-                                                  per_page=per_page,
-                                                  version="v1")
-
-    # Retrieve all material runs associated with a material template
-    def get_runs(self,
-                 template_scope: str,
-                 template_id: str,
-                 spec_collection: MaterialSpecCollection,
-                 per_page: int = 20) -> Iterator[dict]:
-        """
-        [ALPHA] Get all material runs associated with a material template.
-
-        The material template is specified by its scope and id.
-
-        :param template_scope: The scope used to locate the material template.
-        :param template_id: The unique id corresponding to `scope`.
-            The lookup will be most efficient if you use the Citrine ID (scope='id')
-            of the material template.
-        :param spec_collection: The collection of material specs on the project.
-        :param per_page: The number of results to return per page.
-            Also used for intermediate queries.
-        :return:
-        """
-        specs = self.get_specs(template_scope, template_id, per_page=per_page)
-        return (run for runs in (spec_collection.get_runs(template_scope,
-                                                          spec['uids'][template_scope],
-                                                          per_page=per_page)for spec in specs)
-                for run in runs)

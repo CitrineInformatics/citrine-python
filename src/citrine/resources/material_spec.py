@@ -1,14 +1,15 @@
 """Resources that represent material spec data objects."""
 from typing import List, Dict, Optional, Type, Iterator
 
-from citrine._utils.functions import set_default_uid
 from citrine._rest.resource import Resource
-from citrine.resources.data_concepts import DataConcepts, DataConceptsCollection
-from citrine.resources.storable import Storable
-from citrine._serialization.properties import String, LinkOrElse, Mapping, Object
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Optional as PropertyOptional
+from citrine._serialization.properties import String, LinkOrElse, Mapping, Object
+from citrine._utils.functions import set_default_uid
 from citrine.attributes.property_and_conditions import PropertyAndConditions
+from citrine.resources.data_concepts import DataConcepts, DataConceptsCollection
+from citrine.resources.material_template import MaterialTemplateCollection
+from citrine.resources.storable import Storable
 from taurus.entity.file_link import FileLink
 from taurus.entity.object.material_spec import MaterialSpec as TaurusMaterialSpec
 from taurus.entity.object.process_spec import ProcessSpec as TaurusProcessSpec
@@ -88,21 +89,23 @@ class MaterialSpecCollection(DataConceptsCollection[MaterialSpec]):
         """Return the resource type in the collection."""
         return MaterialSpec
 
-    def get_runs(self, scope: str, id: str, per_page: int = 20) -> Iterator[dict]:
+    def with_template(self, template_id: str, template_scope: str = 'id', per_page: int = 20) -> Iterator[dict]:
         """
-        [ALPHA] Get all material runs associated with a material spec.
+        [ALPHA] Get all material specs associated with a material template.
 
-        The material spec is specified by its scope and id.
+        The material template is specified by its scope and id.
 
-        :param scope: The scope used to locate the material spec.
-        :param id: The unique id corresponding to `scope`.
+        :param template_id: The unique id corresponding to `scope`.
             The lookup will be most efficient if you use the Citrine ID (scope='id')
-            of the material spec.
+            of the material template.
+        :param template_scope: The scope used to locate the material template.
         :param per_page: The number of results to return per page.
-        :return: A search result of material runs
+        :return: A search result of material specs
         """
-        path = self._get_path(ignore_dataset=True) + "/" + scope + "/" + id + "/material-runs"
+        path_prefix = MaterialTemplateCollection(self.project_id, self.dataset_id, self.session)._get_path(ignore_dataset=True)
+        path = path_prefix + "/" + template_scope + "/" + template_id + "/material-specs"
         return self.session.cursor_paged_resource(self.session.get_resource,
                                                   path,
                                                   per_page=per_page,
                                                   version="v1")
+
