@@ -92,7 +92,7 @@ class MaterialSpecCollection(DataConceptsCollection[MaterialSpec]):
     def filter_by_template(self,
                            template_id: str,
                            template_scope: str = 'id',
-                           per_page: int = 20) -> Iterator[dict]:
+                           per_page: int = 20) -> Iterator[MaterialSpec]:
         """
         [ALPHA] Get all material specs associated with a material template.
 
@@ -109,7 +109,8 @@ class MaterialSpecCollection(DataConceptsCollection[MaterialSpec]):
                                                  self.dataset_id,
                                                  self.session)._get_path(ignore_dataset=True)
         path = path_prefix + "/" + template_scope + "/" + template_id + "/material-specs"
-        return self.session.cursor_paged_resource(self.session.get_resource,
-                                                  path,
-                                                  per_page=per_page,
-                                                  version="v1")
+        raw_objects = self.session.cursor_paged_resource(self.session.get_resource,
+                                                         path,
+                                                         per_page=per_page,
+                                                         version="v1")
+        return (self.build(raw) for raw in raw_objects)

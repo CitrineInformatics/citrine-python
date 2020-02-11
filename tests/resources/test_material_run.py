@@ -312,7 +312,7 @@ def test_filter_by_spec(collection, session):
     material_spec = MaterialSpecFactory()
     test_scope = 'id'
     test_id = material_spec.uids[test_scope]
-    sample_run = MaterialRunDataFactory(spec=test_id)
+    sample_run = MaterialRunDataFactory(spec=material_spec)
     session.set_response({'contents': [sample_run]})
 
     # When
@@ -326,7 +326,7 @@ def test_filter_by_spec(collection, session):
         params={"forward": True, "ascending": True, "per_page": 20}
     )
     assert session.last_call == expected_call
-    assert runs == [sample_run]
+    assert runs == [collection.build(sample_run)]
 
 
 def test_filter_by_template(collection, session):
@@ -337,13 +337,13 @@ def test_filter_by_template(collection, session):
     material_template = MaterialTemplateFactory()
     test_scope = 'id'
     template_id = material_template.uids[test_scope]
-    sample_spec1 = MaterialSpecDataFactory(template=template_id)
-    sample_spec2 = MaterialSpecDataFactory(template=template_id)
+    sample_spec1 = MaterialSpecDataFactory(template=material_template)
+    sample_spec2 = MaterialSpecDataFactory(template=material_template)
     key = 'contents'
-    sample_run1_1 = MaterialRunDataFactory(spec=sample_spec1['uids'][test_scope])
-    sample_run2_1 = MaterialRunDataFactory(spec=sample_spec2['uids'][test_scope])
-    sample_run1_2 = MaterialRunDataFactory(spec=sample_spec1['uids'][test_scope])
-    sample_run2_2 = MaterialRunDataFactory(spec=sample_spec2['uids'][test_scope])
+    sample_run1_1 = MaterialRunDataFactory(spec=sample_spec1)
+    sample_run2_1 = MaterialRunDataFactory(spec=sample_spec2)
+    sample_run1_2 = MaterialRunDataFactory(spec=sample_spec1)
+    sample_run2_2 = MaterialRunDataFactory(spec=sample_spec2)
     session.set_responses({key: [sample_spec1, sample_spec2]}, {key: [sample_run1_1, sample_run1_2]},
                           {key: [sample_run2_1, sample_run2_2]})
 
@@ -352,4 +352,4 @@ def test_filter_by_template(collection, session):
 
     # Then
     assert 3 == session.num_calls
-    assert runs == [sample_run1_1, sample_run1_2, sample_run2_1, sample_run2_2]
+    assert runs == [collection.build(run) for run in [sample_run1_1, sample_run1_2, sample_run2_1, sample_run2_2]]
