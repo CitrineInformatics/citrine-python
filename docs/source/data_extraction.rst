@@ -75,7 +75,7 @@ For example:
 
 .. code-block:: python
 
-   defns = project.ara_definitions()
+   defns = project.ara_definitions
    preview = defns.preview(
          defn = ara_defn,
          preview_roots = [
