@@ -513,7 +513,7 @@ class DataConceptsCollection(Collection[ResourceType]):
         dumped_data = replace_objects_with_links(scrub_none(model.dump()))
         data = self.session.post_resource(path, dumped_data)
         full_model = self.build(data)
-        model.session = self.session
+        full_model.session = self.session
         return full_model
 
     def get(self, uid: Union[UUID, str], scope: str = 'id') -> ResourceType:
