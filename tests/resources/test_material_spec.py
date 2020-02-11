@@ -30,7 +30,7 @@ def test_filter_by_template(collection, session):
     material_template = MaterialTemplateFactory()
     test_scope = 'id'
     test_id = material_template.uids[test_scope]
-    sample_spec = MaterialSpecDataFactory(template=test_id)
+    sample_spec = MaterialSpecDataFactory(template=material_template)
     session.set_response({'contents': [sample_spec]})
 
     # When
@@ -44,4 +44,4 @@ def test_filter_by_template(collection, session):
         params={"forward": True, "ascending": True, "per_page": 20}
     )
     assert session.last_call == expected_call
-    assert specs == [sample_spec]
+    assert specs == [collection.build(sample_spec)]
