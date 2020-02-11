@@ -82,7 +82,7 @@ For categorical responses, performance metrics include either the area under the
    If AUC=1.0, all samples are classified correctly.
    If AUC=0.5, the model cannot distinguish between the two categories.
    If AUC=0.0, all samples are classified incorrectly.
--  Support-weighted F1 score is calculated from averaged precision and recall of the model, weighted by the in-class fraction of true positives according to the formula ``2.0 * precision * recall / (precision + recall) * fraction_true_positives`` applied to each class.
+-  Support-weighted F1 score is calculated from averaged precision and recall of the model, weighted by the in-class fraction of true positives according to the formula ``2.0 * precision * recall / (precision + recall) * fraction_true_positives`` summed over each class.
    Scores are bounded by 0 and 1. At a value of 1, the model has perfect precision and recall.
 
 The following demonstrates how to trigger workflow execution using an already existing `predictor` object and the `workflow` created in the example above.:
