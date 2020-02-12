@@ -3,6 +3,7 @@ from uuid import UUID
 import pytest
 from citrine._session import Session
 from citrine.resources.material_run import MaterialRunCollection, MaterialRun
+from taurus.entity.object.material_run import MaterialRun as TaurusRun
 from taurus.entity.bounds.integer_bounds import IntegerBounds
 
 from tests.utils.factories import MaterialRunFactory, MaterialRunDataFactory, LinkByUIDFactory, MaterialSpecFactory, \
@@ -34,6 +35,20 @@ def test_register_material_run(collection, session):
 
     # Then
     assert "<Material run 'Test MR 123'>" == str(registered)
+
+
+def test_nomutate_taurus(collection, session):
+    """When registering a Taurus object, the object should not change"""
+    # Given
+    session.set_response(MaterialRunDataFactory(name='Test MR mutation'))
+    before = TaurusRun(name='Main')
+    after = TaurusRun(name='Main')
+
+    # When
+    registered = collection.register(after)
+
+    # Then
+    assert before == after
 
 
 def test_get_history(collection, session):
