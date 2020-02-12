@@ -38,17 +38,17 @@ def test_register_material_run(collection, session):
 
 
 def test_nomutate_taurus(collection, session):
-    """When registering a Taurus object, the object should not change"""
+    """When registering a Taurus object, the object should not change (aside from auto ids)"""
     # Given
     session.set_response(MaterialRunDataFactory(name='Test MR mutation'))
-    before = TaurusRun(name='Main')
-    after = TaurusRun(name='Main')
+    before, after = (TaurusRun(name='Main', uids={'nomutate': 'please'}) for i in range(2))
 
     # When
     registered = collection.register(after)
 
     # Then
     assert before == after
+    assert "<Material run 'Test MR mutation'>" == str(registered)
 
 
 def test_get_history(collection, session):
