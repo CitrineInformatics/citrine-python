@@ -66,7 +66,7 @@ For numeric responses, performance metrics include root mean squared error (RMSE
    An acceptable NDME depends on how the model is used.
    Generally, NDE > 0.9 indicates a model with very high error.
    If 0.9 > NDME > 0.6, this model is typically a good candidate for a design workflow.
-   Lower values of NDE indicate increasingly accurate models.
+   Lower values of NDME indicate increasingly accurate models.
 -  Standard residual is the root mean square of standardized errors.
    (1.0 is perfectly calibrated.)
    Standard residual provides a way to determine whether uncertainty estimates are well-calibrated for this model.
