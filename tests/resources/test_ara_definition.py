@@ -50,7 +50,7 @@ def test_get_ara_definition_metadata(collection, session):
     assert 1 == session.num_calls
     expect_call = FakeCall(
         method="GET",
-        path="projects/{}/ara/{}/versions/{}".format(project_id, ara_definition["id"], ara_definition["version"])
+        path="projects/{}/ara-definitions/{}/versions/{}".format(project_id, ara_definition["id"], ara_definition["version"])
     )
     assert session.last_call == expect_call
     assert str(retrieved_ara_definition.uid) == ara_definition["id"]
@@ -134,7 +134,7 @@ def test_preview(collection, session):
     assert 1 == session.num_calls
     expect_call = FakeCall(
         method="POST",
-        path="projects/{}/ara/preview".format(project_id),
+        path="projects/{}/ara-definitions/preview".format(project_id),
         json={"definition": empty_defn().dump(), "rows": []}
     )
     assert session.last_call == expect_call

@@ -1,12 +1,14 @@
 from uuid import UUID
 
 import pytest
-from taurus.entity.bounds.integer_bounds import IntegerBounds
-
 from citrine._session import Session
 from citrine.resources.material_run import MaterialRunCollection, MaterialRun
+from taurus.entity.object.material_run import MaterialRun as TaurusRun
+from taurus.entity.bounds.integer_bounds import IntegerBounds
+
+from tests.utils.factories import MaterialRunFactory, MaterialRunDataFactory, LinkByUIDFactory, MaterialSpecFactory, \
+    MaterialTemplateFactory, MaterialSpecDataFactory
 from tests.utils.session import FakeSession, FakeCall, make_fake_cursor_request_function
-from tests.utils.factories import MaterialRunFactory, MaterialRunDataFactory, LinkByUIDFactory
 
 
 @pytest.fixture
@@ -33,6 +35,20 @@ def test_register_material_run(collection, session):
 
     # Then
     assert "<Material run 'Test MR 123'>" == str(registered)
+
+
+def test_nomutate_taurus(collection, session):
+    """When registering a Taurus object, the object should not change (aside from auto ids)"""
+    # Given
+    session.set_response(MaterialRunDataFactory(name='Test MR mutation'))
+    before, after = (TaurusRun(name='Main', uids={'nomutate': 'please'}) for i in range(2))
+
+    # When
+    registered = collection.register(after)
+
+    # Then
+    assert before == after
+    assert "<Material run 'Test MR mutation'>" == str(registered)
 
 
 def test_get_history(collection, session):
@@ -300,3 +316,55 @@ def test_material_run_filter_by_name_with_no_id(collection):
     # Then
     with pytest.raises(RuntimeError):
         collection.filter_by_name('foo')
+
+
+def test_filter_by_spec(collection, session):
+    """
+    Test that MaterialRunCollection.filter_by_spec() hits the expected endpoint
+    """
+    # Given
+    project_id = '6b608f78-e341-422c-8076-35adc8828545'
+    material_spec = MaterialSpecFactory()
+    test_scope = 'id'
+    test_id = material_spec.uids[test_scope]
+    sample_run = MaterialRunDataFactory(spec=material_spec)
+    session.set_response({'contents': [sample_run]})
+
+    # When
+    runs = [run for run in collection.filter_by_spec(test_id)]
+
+    # Then
+    assert 1 == session.num_calls
+    expected_call = FakeCall(
+        method="GET",
+        path="projects/{}/material-specs/{}/{}/material-runs".format(project_id, test_scope, test_id),
+        params={"forward": True, "ascending": True, "per_page": 20}
+    )
+    assert session.last_call == expected_call
+    assert runs == [collection.build(sample_run)]
+
+
+def test_filter_by_template(collection, session):
+    """
+    Test that MaterialRunCollection.filter_by_template() hits the expected endpoints and post-processes the results into the expected format
+    """
+    # Given
+    material_template = MaterialTemplateFactory()
+    test_scope = 'id'
+    template_id = material_template.uids[test_scope]
+    sample_spec1 = MaterialSpecDataFactory(template=material_template)
+    sample_spec2 = MaterialSpecDataFactory(template=material_template)
+    key = 'contents'
+    sample_run1_1 = MaterialRunDataFactory(spec=sample_spec1)
+    sample_run2_1 = MaterialRunDataFactory(spec=sample_spec2)
+    sample_run1_2 = MaterialRunDataFactory(spec=sample_spec1)
+    sample_run2_2 = MaterialRunDataFactory(spec=sample_spec2)
+    session.set_responses({key: [sample_spec1, sample_spec2]}, {key: [sample_run1_1, sample_run1_2]},
+                          {key: [sample_run2_1, sample_run2_2]})
+
+    # When
+    runs = [run for run in collection.filter_by_template(template_id, per_page=1)]
+
+    # Then
+    assert 3 == session.num_calls
+    assert runs == [collection.build(run) for run in [sample_run1_1, sample_run1_2, sample_run2_1, sample_run2_2]]
