@@ -12,7 +12,13 @@ from citrine._serialization import properties
 
 
 class IngredientQuantityDimension(BaseEnumeration):
-    """[ALPHA] The dimension of an ingredient quantity."""
+    """[ALPHA] The dimension of an ingredient quantity.
+
+    * ABSOLUTE corresponds to the absolute quantity
+    * MASS corresponds to the mass fraction
+    * VOLUME corresponds to the volume fraction
+    * NUMBER corresponds to the number fraction
+    """
 
     ABSOLUTE = "absolute"
     MASS = "mass"
@@ -330,8 +336,9 @@ class IngredientQuantityByProcessAndName(
         process template associated with this ingredient identifier
     ingredient_name: str
         name of ingredient
-    quantity_dimension: str
-        dimension of the ingredient quantity (e.g. absolute, number fraction...)
+    quantity_dimension: IngredientQuantityDimension
+        dimension of the ingredient quantity: absolute quantity, number, mass, or volume fraction.
+        valid options are defined by :class:`~citrine.ara.variables.IngredientQuantityDimension`
 
     """
 
@@ -352,7 +359,7 @@ class IngredientQuantityByProcessAndName(
                  headers: List[str],
                  process_template: LinkByUID,
                  ingredient_name: str,
-                 quantity_dimension: str):
+                 quantity_dimension: IngredientQuantityDimension):
         self.name = name
         self.headers = headers
         self.process_template = process_template
