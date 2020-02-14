@@ -1,7 +1,8 @@
 """Variable definitions for Ara."""
 from abc import abstractmethod
-from typing import Type, Optional, List  # noqa: F401
+from typing import Type, Optional, List, Tuple  # noqa: F401
 
+from taurus.entity.bounds.base_bounds import BaseBounds
 from taurus.entity.link_by_uid import LinkByUID
 from taurus.enumeration.base_enumeration import BaseEnumeration
 
@@ -97,12 +98,20 @@ class AttributeByTemplate(Serializable['AttributeByTemplate'], Variable):
         sequence of column headers
     template: LinkByUID
         attribute template that identifies the attribute to assign to the variable
+    attribute_constraints: list[tuple[LinkByUID, Bounds]]
+        constraints, expressed as Bounds, on attributes, expressed with links, in the object that
+        contains the target attribute.  The attribute that the variable is being set to may
+        be the target of a constraint as well.
 
     """
 
     name = properties.String('name')
     headers = properties.List(properties.String, 'headers')
     template = properties.Object(LinkByUID, 'template')
+    attribute_constraints = properties.Optional(
+        properties.List(
+            properties.MixedList([properties.Object(LinkByUID), properties.Object(BaseBounds)])
+        ), 'attribute_constraints')
     typ = properties.String('type', default="attribute_by_template", deserializable=False)
 
     def _attrs(self) -> List[str]:
@@ -111,10 +120,12 @@ class AttributeByTemplate(Serializable['AttributeByTemplate'], Variable):
     def __init__(self, *,
                  name: str,
                  headers: List[str],
-                 template: LinkByUID):
+                 template: LinkByUID,
+                 attribute_constraints: List[Tuple[LinkByUID, BaseBounds]] = None):
         self.name = name
         self.headers = headers
         self.template = template
+        self.attribute_constraints = [list(x) for x in attribute_constraints or []]
 
 
 class AttributeByTemplateAfterProcessTemplate(
