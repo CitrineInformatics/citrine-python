@@ -192,6 +192,29 @@ class AraDefinitionCollection(Collection[AraDefinition]):
             data = data[self._individual_key] if self._individual_key else data
             return self.build(data)
         else:
+            # Implement update as a part of register both because:
+            # 1) The validation requirements are the same for updating and registering an
+            #    AraDefinition
+            # 2) This prevents users from accidentally registering duplicate AraDefinitions
             data = self.session.put_resource(self._get_path(defn.definition_uid), body)
             data = data[self._individual_key] if self._individual_key else data
             return self.build(data)
+
+    def update(self, defn: AraDefinition) -> AraDefinition:
+        """
+        [ALPHA] Update an AraDefinition.
+
+        If the provided AraDefinition does have a uid, update (replace) the AraDefinition at that
+        uid with the provided AraDefinition.
+
+        Raise a ValueError if the provided AraDefinition does not have a definition_uid.
+
+        :param defn: The AraDefinition to updated
+        :return: The updated AraDefinition with updated metadata
+        """
+        if defn.definition_uid is None:
+            raise ValueError("Cannot update Ara Definition without a definition_uid."
+                             " Please either use register() to initially register this"
+                             " Ara Definition or retrieve the registered details before calling"
+                             " update()")
+        return self.register(defn)

@@ -213,3 +213,40 @@ def test_register_existing(collection, session):
         json={"definition": collection.build(ara_definition).dump()}
     )
     assert session.last_call == expect_call
+
+
+def test_update(collection, session):
+    """Test the behavior of AraDefinitionCollection.update() on a registered AraDefinition"""
+    # Given
+    project_id = '6b608f78-e341-422c-8076-35adc8828545'
+    ara_definition = AraDefinitionFactory()
+    definition_uid = ara_definition["definition_id"]
+    assert definition_uid is not None
+    session.set_response({"version": ara_definition})
+
+    # When
+    collection.update(collection.build(ara_definition))
+
+    # Then
+    assert 1 == session.num_calls
+    expect_call = FakeCall(
+        method="PUT",
+        path="projects/{}/ara-definitions/{}".format(project_id, definition_uid),
+        json={"definition": collection.build(ara_definition).dump()}
+    )
+    assert session.last_call == expect_call
+
+
+def test_update_unregistered_fail(collection, session):
+    """Test that AraDefinitionCollection.update() fails on an unregistered AraDefinition"""
+    # Given
+    project_id = '6b608f78-e341-422c-8076-35adc8828545'
+    ara_definition = AraDefinitionFactory()
+    ara_definition["definition_id"] = None
+    ara_definition["id"] = None
+    ara_definition["version_number"] = None
+    session.set_response({"version": ara_definition})
+
+    # When
+    with pytest.raises(ValueError, match="Cannot update Ara Definition without a definition_uid."):
+        collection.update(collection.build(ara_definition))
