@@ -100,7 +100,7 @@ class AttributeByTemplate(Serializable['AttributeByTemplate'], Variable):
         attribute template that identifies the attribute to assign to the variable
     attribute_constraints: list[(LinkByUID, Bounds)]
         constraints on object attributes in the target object that must be satisfied. Constraints
-        are expressed as Bounds.  Attributes are expressed with links. The attribute that the 
+        are expressed as Bounds.  Attributes are expressed with links. The attribute that the
         variable is being set to may be the target of a constraint as well.
 
     """
@@ -144,7 +144,7 @@ class AttributeByTemplateAfterProcessTemplate(
         process template that identifies the originating process
     attribute_constraints: list[(LinkByUID, Bounds)]
         constraints on object attributes in the target object that must be satisfied. Constraints
-        are expressed as Bounds.  Attributes are expressed with links. The attribute that the 
+        are expressed as Bounds.  Attributes are expressed with links. The attribute that the
         variable is being set to may be the target of a constraint as well.
 
     """
