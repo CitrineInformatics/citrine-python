@@ -40,8 +40,9 @@ class AraDefinition(Resource["AraDefinition"]):
     def _get_dups(lst: List) -> List:
         return [x for x in lst if lst.count(x) > 1]
 
-    uid = properties.Optional(properties.UUID(), 'id')
-    version = properties.Optional(properties.Integer, 'version')
+    definition_uid = properties.Optional(properties.UUID(), 'definition_id')
+    version_uid = properties.Optional(properties.UUID(), 'id')
+    version_number = properties.Optional(properties.Integer, 'version_number')
     name = properties.String("name")
     description = properties.String("description")
     datasets = properties.List(properties.UUID, "datasets")
@@ -51,15 +52,17 @@ class AraDefinition(Resource["AraDefinition"]):
 
     def __init__(self, *, name: str, description: str, datasets: List[UUID],
                  variables: List[Variable], rows: List[Row], columns: List[Column],
-                 uid: Optional[UUID] = None, version: Optional[int] = None):
+                 version_uid: Optional[UUID] = None, version_number: Optional[int] = None,
+                 definition_uid: Optional[UUID] = None):
         self.name = name
         self.description = description
         self.datasets = datasets
         self.rows = rows
         self.variables = variables
         self.columns = columns
-        self.uid = uid
-        self.version = version
+        self.version_uid = version_uid
+        self.version_number = version_number
+        self.definition_uid = definition_uid
 
         # Note that these validations only apply at construction time. The current intended usage
         # is for this object to be created holistically; if changed, then these will need
@@ -126,20 +129,25 @@ class AraDefinitionCollection(Collection[AraDefinition]):
     """[ALPHA] Represents the collection of all Ara Definitions associated with a project."""
 
     _path_template = 'projects/{project_id}/ara-definitions'
+    _individual_key = 'version'
 
     def __init__(self, project_id: UUID, session: Session):
         self.project_id = project_id
         self.session: Session = session
 
-    def get(self, uid: Union[UUID, str], version: int) -> AraDefinition:
-        """Get an Ara Definition."""
-        path = self._get_path(uid) + "/versions/{}".format(version)
+    def get_with_version(self, definition_uid: Union[UUID, str],
+                         version_number: int) -> AraDefinition:
+        """[ALPHA] Get an Ara Definition at a specific version."""
+        path = self._get_path(definition_uid) + "/versions/{}".format(version_number)
         data = self.session.get_resource(path)
         return self.build(data)
 
     def build(self, data: dict) -> AraDefinition:
-        """Build an individual Ara Definition from a dictionary."""
-        defn = AraDefinition.build(data)
+        """[ALPHA] Build an individual Ara Definition from a dictionary."""
+        defn = AraDefinition.build(data['ara_definition'])
+        defn.definition_uid = data['definition_id']
+        defn.version_number = data['version_number']
+        defn.version_uid = data['id']
         defn.project_id = self.project_id
         defn.session = self.session
         return defn
@@ -161,3 +169,52 @@ class AraDefinitionCollection(Collection[AraDefinition]):
             "rows": [x.as_dict() for x in preview_roots]
         }
         return self.session.post_resource(path, body)
+
+    def register(self, defn: AraDefinition) -> AraDefinition:
+        """
+        [ALPHA] Register an Ara Definition.
+
+        If the provided AraDefinition does not have a definition_uid, create a new element of the
+        AraDefinitionCollection by registering the provided AraDefinition. If the provided
+        AraDefinition does have a uid, update (replace) the AraDefinition at that uid with the
+        provided AraDefinition.
+
+        :param defn: The AraDefinition to register
+
+        :return: The registered AraDefinition with updated metadata
+
+        TODO: Consider validating that a resource exists at the given uid before updating.
+            The code to do so is not yet implemented on the backend
+        """
+        body = {"definition": defn.dump()}
+        if defn.definition_uid is None:
+            data = self.session.post_resource(self._get_path(), body)
+            data = data[self._individual_key] if self._individual_key else data
+            return self.build(data)
+        else:
+            # Implement update as a part of register both because:
+            # 1) The validation requirements are the same for updating and registering an
+            #    AraDefinition
+            # 2) This prevents users from accidentally registering duplicate AraDefinitions
+            data = self.session.put_resource(self._get_path(defn.definition_uid), body)
+            data = data[self._individual_key] if self._individual_key else data
+            return self.build(data)
+
+    def update(self, defn: AraDefinition) -> AraDefinition:
+        """
+        [ALPHA] Update an AraDefinition.
+
+        If the provided AraDefinition does have a uid, update (replace) the AraDefinition at that
+        uid with the provided AraDefinition.
+
+        Raise a ValueError if the provided AraDefinition does not have a definition_uid.
+
+        :param defn: The AraDefinition to updated
+        :return: The updated AraDefinition with updated metadata
+        """
+        if defn.definition_uid is None:
+            raise ValueError("Cannot update Ara Definition without a definition_uid."
+                             " Please either use register() to initially register this"
+                             " Ara Definition or retrieve the registered details before calling"
+                             " update()")
+        return self.register(defn)
