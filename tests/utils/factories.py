@@ -38,15 +38,20 @@ class TableDataFactory(factory.DictFactory):
     signed_download_url = factory.Faker('uri')
 
 
-class AraDefinitionFactory(factory.DictFactory):
-    id = factory.Faker('uuid4')
-    version = randrange(10)
+class AraDefinitionDataFactory(factory.DictFactory):
     name = factory.Faker("company")
     description = factory.Faker('bs')
     rows = []
     columns = []
     variables = []
     datasets = []
+
+
+class AraDefinitionFactory(factory.DictFactory):
+    ara_definition = factory.SubFactory(AraDefinitionDataFactory)
+    id = factory.Faker('uuid4')
+    version_number = randrange(10)
+    definition_id = factory.Faker('uuid4')
 
 
 class DatasetDataFactory(factory.DictFactory):
