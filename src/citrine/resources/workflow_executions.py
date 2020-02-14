@@ -56,7 +56,7 @@ class WorkflowExecutionCollection(Collection[WorkflowExecution]):
 
     _path_template = '/projects/{project_id}/workflows/{workflow_id}/executions'
     _individual_key = None
-    _collection_key = 'executions'
+    _collection_key = 'response'
     _resource = WorkflowExecution
 
     def __init__(self, project_id: UUID, workflow_id: UUID, session: Optional[Session] = None):
