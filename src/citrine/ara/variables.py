@@ -1,6 +1,6 @@
 """Variable definitions for Ara."""
 from abc import abstractmethod
-from typing import Type, Optional, List, Tuple  # noqa: F401
+from typing import Type, Optional, List, Tuple, Union  # noqa: F401
 
 from taurus.entity.bounds.base_bounds import BaseBounds
 from taurus.entity.link_by_uid import LinkByUID
@@ -98,7 +98,7 @@ class AttributeByTemplate(Serializable['AttributeByTemplate'], Variable):
         sequence of column headers
     template: LinkByUID
         attribute template that identifies the attribute to assign to the variable
-    attribute_constraints: list[tuple[LinkByUID, Bounds]]
+    attribute_constraints: list[(LinkByUID, Bounds)]
         constraints, expressed as Bounds, on attributes, expressed with links, in the object that
         contains the target attribute.  The attribute that the variable is being set to may
         be the target of a constraint as well.
@@ -121,11 +121,11 @@ class AttributeByTemplate(Serializable['AttributeByTemplate'], Variable):
                  name: str,
                  headers: List[str],
                  template: LinkByUID,
-                 attribute_constraints: List[Tuple[LinkByUID, BaseBounds]] = None):
+                 attribute_constraints: Optional[List[List[Union[LinkByUID, BaseBounds]]]] = None):
         self.name = name
         self.headers = headers
         self.template = template
-        self.attribute_constraints = [list(x) for x in attribute_constraints or []]
+        self.attribute_constraints = attribute_constraints
 
 
 class AttributeByTemplateAfterProcessTemplate(
@@ -142,6 +142,10 @@ class AttributeByTemplateAfterProcessTemplate(
         attribute template that identifies the attribute to assign to the variable
     process_template: LinkByUID
         process template that identifies the originating process
+    attribute_constraints: list[(LinkByUID, Bounds)]
+        constraints, expressed as Bounds, on attributes, expressed with links, in the object that
+        contains the target attribute.  The attribute that the variable is being set to may
+        be the target of a constraint as well.
 
     """
 
@@ -149,6 +153,10 @@ class AttributeByTemplateAfterProcessTemplate(
     headers = properties.List(properties.String, 'headers')
     attribute_template = properties.Object(LinkByUID, 'attribute_template')
     process_template = properties.Object(LinkByUID, 'process_template')
+    attribute_constraints = properties.Optional(
+        properties.List(
+            properties.MixedList([properties.Object(LinkByUID), properties.Object(BaseBounds)])
+        ), 'attribute_constraints')
     typ = properties.String('type', default="attribute_after_process", deserializable=False)
 
     def _attrs(self) -> List[str]:
@@ -158,11 +166,13 @@ class AttributeByTemplateAfterProcessTemplate(
                  name: str,
                  headers: List[str],
                  attribute_template: LinkByUID,
-                 process_template: LinkByUID):
+                 process_template: LinkByUID,
+                 attribute_constraints: Optional[List[List[Union[LinkByUID, BaseBounds]]]] = None):
         self.name = name
         self.headers = headers
         self.attribute_template = attribute_template
         self.process_template = process_template
+        self.attribute_constraints = attribute_constraints
 
 
 class AttributeByTemplateAndObjectTemplate(
@@ -184,7 +194,10 @@ class AttributeByTemplateAndObjectTemplate(
         attribute template that identifies the attribute to assign to the variable
     object_template: LinkByUID
         template that identifies the associated object
-
+    attribute_constraints: list[(LinkByUID, Bounds)]
+        constraints, expressed as Bounds, on attributes, expressed with links, in the object that
+        contains the target attribute.  The attribute that the variable is being set to may
+        be the target of a constraint as well.
 
     """
 
@@ -192,6 +205,10 @@ class AttributeByTemplateAndObjectTemplate(
     headers = properties.List(properties.String, 'headers')
     attribute_template = properties.Object(LinkByUID, 'attribute_template')
     object_template = properties.Object(LinkByUID, 'object_template')
+    attribute_constraints = properties.Optional(
+        properties.List(
+            properties.MixedList([properties.Object(LinkByUID), properties.Object(BaseBounds)])
+        ), 'attribute_constraints')
     typ = properties.String('type', default="attribute_by_object", deserializable=False)
 
     def _attrs(self) -> List[str]:
@@ -201,11 +218,13 @@ class AttributeByTemplateAndObjectTemplate(
                  name: str,
                  headers: List[str],
                  attribute_template: LinkByUID,
-                 object_template: LinkByUID):
+                 object_template: LinkByUID,
+                 attribute_constraints: List[List[Union[LinkByUID, BaseBounds]]] = None):
         self.name = name
         self.headers = headers
         self.attribute_template = attribute_template
         self.object_template = object_template
+        self.attribute_constraints = attribute_constraints
 
 
 class IngredientIdentifierByProcessTemplateAndName(
