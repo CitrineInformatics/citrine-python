@@ -99,9 +99,9 @@ class AttributeByTemplate(Serializable['AttributeByTemplate'], Variable):
     template: LinkByUID
         attribute template that identifies the attribute to assign to the variable
     attribute_constraints: list[(LinkByUID, Bounds)]
-        constraints, expressed as Bounds, on attributes, expressed with links, in the object that
-        contains the target attribute.  The attribute that the variable is being set to may
-        be the target of a constraint as well.
+        constraints on object attributes in the target object that must be satisfied. Constraints
+        are expressed as Bounds.  Attributes are expressed with links. The attribute that the 
+        variable is being set to may be the target of a constraint as well.
 
     """
 
@@ -143,9 +143,9 @@ class AttributeByTemplateAfterProcessTemplate(
     process_template: LinkByUID
         process template that identifies the originating process
     attribute_constraints: list[(LinkByUID, Bounds)]
-        constraints, expressed as Bounds, on attributes, expressed with links, in the object that
-        contains the target attribute.  The attribute that the variable is being set to may
-        be the target of a constraint as well.
+        constraints on object attributes in the target object that must be satisfied. Constraints
+        are expressed as Bounds.  Attributes are expressed with links. The attribute that the 
+        variable is being set to may be the target of a constraint as well.
 
     """
 
@@ -195,9 +195,9 @@ class AttributeByTemplateAndObjectTemplate(
     object_template: LinkByUID
         template that identifies the associated object
     attribute_constraints: list[(LinkByUID, Bounds)]
-        constraints, expressed as Bounds, on attributes, expressed with links, in the object that
-        contains the target attribute.  The attribute that the variable is being set to may
-        be the target of a constraint as well.
+        constraints on object attributes in the target object that must be satisfied. Constraints
+        are expressed as Bounds.  Attributes are expressed with links. The attribute that the
+        variable is being set to may be the target of a constraint as well.
 
     """
 
