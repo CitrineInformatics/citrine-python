@@ -309,7 +309,7 @@ class IngredientQuantityByProcessAndName(
     headers = properties.List(properties.String, 'headers')
     process_template = properties.Object(LinkByUID, 'process_template')
     ingredient_name = properties.String('ingredient_name')
-    quantity_dimension = properties.Enumeration(IngredientQuantityDimension, 'quantity')
+    quantity_dimension = properties.Enumeration(IngredientQuantityDimension, 'quantity_dimension')
     typ = properties.String('type', default="ing_quantity_by_process_and_name",
                             deserializable=False)
 
