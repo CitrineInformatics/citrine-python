@@ -92,7 +92,7 @@ Currently, Ara provides only a single way to define Rows: by the :class:`~taurus
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The :class:`~citrine.ara.rows.MaterialRunByTemplate` class defines Rows through a list of :class:`~taurus.entity.templates.MaterialTemplate`.
-Every :class:`~taurus.entity.object.MaterialRun` that is assigned to any template in the list is used as the root of a Row.
+Every :class:`~taurus.entity.object.MaterialRun` that is assigned to any template in the list is used as the root of a  Material History to be mapped to a Row.
 This is helpful when the rows correspond to classes of materials that are defined through their templates.
 For example, there could be a :class:`~taurus.entity.templates.MaterialTemplate` called "Cake" that is used in all
 of the cakes and another called "Brownies" that is used in all of the brownies.
@@ -101,21 +101,21 @@ By including one or both of those templates, you can define a table of Cakes, Br
 Available Variable Definitions
 ------------------------------------------
 
-There are several ways to define variables that take their value from Attributes and fields in GEMD objects.
+There are several ways to define variables that take their values from Attributes and fields in GEMD objects.
 
 * Attributes
 
   * :class:`~citrine.ara.variables.AttributeByTemplate`: for when the attribute occurs once per material history
   * :class:`~citrine.ara.variables.AttributeByTemplateAndObjectTemplate`: for when the attributes are distinguished by the object that they are contained in
-  * :class:`~citrine.ara.variables.AttributeByTemplateAfterProcess`: for when measurements are distinguished by the process that they are performed *after*
+  * :class:`~citrine.ara.variables.AttributeByTemplateAfterProcess`: for when measurements are distinguished by the process that precedes them
   * :class:`~citrine.ara.variables.IngredientQuantityByProcessAndName`: for the specific case of the volume fraction, mass fraction, number fraction, or absolute quantity of an ingredient
 
 * Fields
 
   * :class:`~citrine.ara.variables.RootInfo`: for fields defined on the material at the root of the Material History, like the name of the material
   * :class:`~citrine.ara.variables.RootIdentifier`: for the id of the Material History, which can be used as a unique identifier for the rows
-  * :class:`~citrine.ara.variables.IngredientIdentifierByProcessTemplateAndName`: for the id of the material being used in an ingredient, which can be used as a pointer or foreign key
-  * :class:`~citrine.ara.variables.IngredientLabelByProcessAndName`: for whether or not an ingredient is assigned a label
+  * :class:`~citrine.ara.variables.IngredientIdentifierByProcessTemplateAndName`: for the id of the material being used in an ingredient, which can be used as a key for looking up that input material
+  * :class:`~citrine.ara.variables.IngredientLabelByProcessAndName`: for a boolean that indicates whether an ingredient is assigned a given label
 
 Available Column Definitions
 -----------------------------------------------
@@ -127,7 +127,7 @@ There are several ways to define columns, depending on the type of the attribute
  * :class:`~citrine.ara.columns.MeanColumn`: for the mean value of the numeric distribution
  * :class:`~citrine.ara.columns.StdDevColumn`: for the standard deviation of the numeric distribution, or empty if the value is *nominal*
  * :class:`~citrine.ara.columns.QuantileColumn`: for a user-defined quantile of the numeric distribution, or empty if the value is *nominal*
- * :class:`~citrine.ara.columns.OriginalUnitsColumn`: for getting the data author entered units from the specific attribute value, for continuous values only
+ * :class:`~citrine.ara.columns.OriginalUnitsColumn`: for getting the units, as entered by the data author, from the specific attribute value; valid for continuous values only
 
 * Enumerated values, like :class:`~taurus.entity.categorical_value.CategoricalValue`
 
