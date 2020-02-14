@@ -171,7 +171,7 @@ class MaterialRunCollection(DataConceptsCollection[MaterialRun]):
     def filter_by_spec(self,
                        spec_id: str,
                        spec_scope: str = 'id',
-                       per_page: int = 20) -> Iterator[dict]:
+                       per_page: int = 20) -> Iterator[MaterialRun]:
         """
         [ALPHA] Get all material runs associated with a material spec.
 
@@ -188,16 +188,17 @@ class MaterialRunCollection(DataConceptsCollection[MaterialRun]):
                                              self.dataset_id,
                                              self.session)._get_path(ignore_dataset=True)
         path = path_prefix + "/" + spec_scope + "/" + spec_id + "/material-runs"
-        return self.session.cursor_paged_resource(self.session.get_resource,
-                                                  path,
-                                                  per_page=per_page,
-                                                  version="v1")
+        raw_objects = self.session.cursor_paged_resource(self.session.get_resource,
+                                                         path,
+                                                         per_page=per_page,
+                                                         version="v1")
+        return (self.build(raw) for raw in raw_objects)
 
     # Retrieve all material runs associated with a material template
     def filter_by_template(self,
                            template_id: str,
                            template_scope: str = 'id',
-                           per_page: int = 20) -> Iterator[dict]:
+                           per_page: int = 20) -> Iterator[MaterialRun]:
         """
         [ALPHA] Get all material runs associated with a material template.
 
@@ -209,12 +210,12 @@ class MaterialRunCollection(DataConceptsCollection[MaterialRun]):
         :param template_scope: The scope used to locate the material template.
         :param per_page: The number of results to return per page.
             Also used for intermediate queries.
-        :return:
+        :return: A search result of material runs
         """
         spec_collection = MaterialSpecCollection(self.project_id, self.dataset_id, self.session)
         specs = spec_collection.filter_by_template(template_id,
                                                    template_scope=template_scope,
                                                    per_page=per_page)
-        return (run for runs in (self.filter_by_spec(spec['uids']['id'],
-                                                     per_page=per_page)for spec in specs)
+        return (run for runs in (self.filter_by_spec(spec.uids['id'],
+                                 per_page=per_page)for spec in specs)
                 for run in runs)
