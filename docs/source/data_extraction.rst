@@ -12,6 +12,7 @@ Defining row and columns
 
 A Row object describes a mapping from a list of datasets to rows of a table by selecting a set of Material Histories.
 Each Material History corresponds to exactly one row, though the Material Histories may overlap such that the same objects contribute data to multiple rows.
+For example, the material histories of distinct Material Runs will map to exactly two rows even if their histories are identical up to differing Process Runs of their final baking step.
 The only way to define rows right now is through :class:`~citrine.ara.rows.MaterialRunByTemplate`, which produces one row per Material Run associated with any of a list of material templates.
 
 .. code-block:: python
