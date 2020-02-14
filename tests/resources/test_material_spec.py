@@ -45,3 +45,23 @@ def test_filter_by_template(collection, session):
     )
     assert session.last_call == expected_call
     assert specs == [collection.build(sample_spec)]
+
+
+def test_repeat_serialization_taurus(collection, session):
+    """
+    When registering a Taurus object, no unexpected fields should be added.  This is not no fields
+    at all, since a serialization will add an `auto` scoped uid
+    """
+    from taurus.entity.object.material_spec import MaterialSpec as TaurusMaterial
+    from taurus.entity.object.process_spec import ProcessSpec as TaurusProcess
+    # Given
+    session.set_response(MaterialSpecDataFactory(name='Test taurus mutation'))
+    proc = TaurusProcess(name='Test taurus mutation (process)', uids={'nomutate': 'process'})
+    mat = TaurusMaterial(name='Test taurus mutation', uids={'nomutate': 'material'}, process=proc)
+
+    # When
+    collection.register(proc)
+    registered = collection.register(mat)  # This will serialize the linked process as a side effect
+
+    # Then
+    assert "<Material spec 'Test taurus mutation'>" == str(registered)

@@ -125,7 +125,7 @@ class AraDefinition(Resource["AraDefinition"]):
 class AraDefinitionCollection(Collection[AraDefinition]):
     """[ALPHA] Represents the collection of all Ara Definitions associated with a project."""
 
-    _path_template = 'projects/{project_id}/ara'
+    _path_template = 'projects/{project_id}/ara-definitions'
 
     def __init__(self, project_id: UUID, session: Session):
         self.project_id = project_id
