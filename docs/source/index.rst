@@ -20,11 +20,11 @@ The latest release can be installed via `pip`:
 
   pip install citrine
 
-or a specific version can be installed via:
+or a specific version can be installed, for example:
 
 .. code::
 
-  pip install citrine==0.6.0
+  pip install citrine==0.8.0
 
 
 Table of Contents
