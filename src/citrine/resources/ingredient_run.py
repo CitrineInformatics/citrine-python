@@ -3,7 +3,7 @@ from typing import List, Dict, Optional, Type
 
 from citrine._utils.functions import set_default_uid
 from citrine._rest.resource import Resource
-from citrine.resources.data_concepts import DataConceptsCollection, DataConcepts
+from citrine.resources.data_concepts import DataConceptsCollection
 from citrine.resources.storable import Storable
 from citrine._serialization.properties import Mapping, String, LinkOrElse, Object
 from citrine._serialization.properties import List as PropertyList

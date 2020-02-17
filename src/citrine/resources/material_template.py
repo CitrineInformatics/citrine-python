@@ -74,31 +74,6 @@ class MaterialTemplate(Storable, Resource['MaterialTemplate'], TaurusMaterialTem
                                         uids=set_default_uid(uids), tags=tags,
                                         description=description)
 
-    @classmethod
-    def _build_child_objects(cls, data: dict, data_with_soft_links, session: Session = None):
-        """
-        Build the property templates and bounds.
-
-        Parameters
-        ----------
-        data: dict
-            A serialized material template.
-        session: Session, optional
-            Citrine session used to connect to the database.
-
-        Returns
-        -------
-        None
-            The serialized material template is modified so that its
-             properties are [PropertyTemplate, Bounds].
-
-        """
-        if 'properties' in data and len(data['properties']) != 0:
-            # Each entry in the list data['properties'] has a property template as the 1st entry
-            # and a base bounds as the 2nd entry. They are built in different ways.
-            data['properties'] = [[PropertyTemplate.build(prop[0].as_dict()),
-                                   loads(dumps(prop[1]))] for prop in data['properties']]
-
     def __str__(self):
         return '<Material template {!r}>'.format(self.name)
 

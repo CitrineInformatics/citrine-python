@@ -89,35 +89,6 @@ class ProcessTemplate(Storable, Resource['ProcessTemplate'], TaurusProcessTempla
                                        description=description, allowed_labels=allowed_labels,
                                        allowed_names=allowed_names)
 
-    @classmethod
-    def _build_child_objects(cls, data: dict, data_with_soft_links, session: Session = None):
-        """
-        Build the condition and parameter templates and bounds.
-
-        Parameters
-        ----------
-        data: dict
-            A serialized material template.
-        session: Session, optional
-            Citrine session used to connect to the database.
-
-        Returns
-        -------
-        None
-            The serialized process template is modified so that its conditions are now a list
-            of object pairs of the form [ConditionTemplate,
-            :py:class:`BaseBounds <taurus.entity.bounds.base_bounds.BaseBounds>`],
-            and the parameters are [ParameterTemplate,
-            :py:class:`BaseBounds <taurus.entity.bounds.base_bounds.BaseBounds>`].
-
-        """
-        if 'conditions' in data and len(data['conditions']) != 0:
-            data['conditions'] = [[ConditionTemplate.build(cond[0].as_dict()),
-                                   loads(dumps(cond[1]))] for cond in data['conditions']]
-        if 'parameters' in data and len(data['parameters']) != 0:
-            data['parameters'] = [[ParameterTemplate.build(param[0].as_dict()),
-                                   loads(dumps(param[1]))] for param in data['parameters']]
-
     def __str__(self):
         return '<Process template {!r}>'.format(self.name)
 

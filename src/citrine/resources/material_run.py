@@ -7,7 +7,6 @@ from citrine._rest.resource import Resource
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Optional as PropertyOptional
 from citrine._serialization.properties import String, LinkOrElse, Mapping, Object
-from citrine._session import Session
 from citrine._utils.functions import set_default_uid
 from citrine.resources.data_concepts import DataConcepts, DataConceptsCollection
 from citrine.resources.material_spec import MaterialSpecCollection
@@ -86,42 +85,6 @@ class MaterialRun(Storable, Resource['MaterialRun'], TaurusMaterialRun):
 
     def __str__(self):
         return '<Material run {!r}>'.format(self.name)
-
-    @classmethod
-    def _build_discarded_objects(cls, obj, obj_with_soft_links, session: Session = None):
-        """
-        Build the MeasurementRun objects that this MaterialRun has soft links to.
-
-        The measurement runs are found in `obj_with_soft_link`
-
-        This method modifies the object in place.
-
-        Parameters
-        ----------
-        obj: MaterialRun
-            A MaterialRun object that might be missing some links to MeasurementRun objects.
-        obj_with_soft_links: dict or \
-        :py:class:`DictSerializable <taurus.entity.dict_serializable.DictSerializable>`
-            A representation of the MaterialRun in which the MeasurementRuns are encoded.
-            We consider both the possibility that this is a dictionary with a 'measurements' key
-            and that it is a
-            :py:class:`DictSerializable <taurus.entity.dict_serializable.DictSerializable>`
-            (presumably a
-            :py:class:`TaurusMeasurementRun <taurus.entity.measurement_run.MeasurementRun>`)
-            with a .measurements field.
-        session: Session, optional
-            Citrine session used to connect to the database.
-
-        Returns
-        -------
-        None
-            The MaterialRun object is modified so that it has links to its MeasurementRuns.
-
-        """
-        from citrine.resources.measurement_run import MeasurementRun
-        DataConcepts._build_list_of_soft_links(
-            obj, obj_with_soft_links, field='measurements', reverse_field='material',
-            linked_type=MeasurementRun, session=session)
 
 
 class MaterialRunCollection(DataConceptsCollection[MaterialRun]):

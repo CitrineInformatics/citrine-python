@@ -16,6 +16,11 @@ def test_assign_audit_info():
     assert isinstance(sample_object, Storable)
     assert sample_object.audit_info == audit_info_obj
 
+    another_object = ProcessSpec.build({
+        'type': 'process_spec', 'name': "A process spec", "audit_info": audit_info_obj
+    })
+    assert sample_object.audit_info == another_object.audit_info
+
     with pytest.raises(AttributeError):
         sample_object.audit_info = None
 

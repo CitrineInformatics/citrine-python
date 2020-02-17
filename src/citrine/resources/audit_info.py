@@ -4,9 +4,10 @@ from datetime import datetime
 
 from citrine._serialization.serializable import Serializable
 from citrine._serialization import properties
+from taurus.entity.dict_serializable import DictSerializable
 
 
-class AuditInfo(Serializable):
+class AuditInfo(Serializable, DictSerializable):
     """
     Model that holds audit metadata. AuditInfo objects should not be created by the user.
 
@@ -52,3 +53,6 @@ class AuditInfo(Serializable):
 
     def __eq__(self, other):
         return self.__repr__() == other.__repr__()
+
+    def as_dict(self):
+        return self.dump()
