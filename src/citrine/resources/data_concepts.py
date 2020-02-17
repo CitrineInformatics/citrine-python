@@ -14,7 +14,7 @@ from citrine._serialization.properties import Optional as PropertyOptional
 from citrine._utils.functions import (
     validate_type, scrub_none,
     replace_objects_with_links, get_object_id)
-from taurus.client.json_encoder import loads, dumps, LinkByUID
+from taurus.client.json_encoder import loads, dumps, LinkByUID, _clazz_index
 from taurus.entity.dict_serializable import DictSerializable
 from taurus.entity.bounds.base_bounds import BaseBounds
 from taurus.entity.template.attribute_template import AttributeTemplate
@@ -84,6 +84,8 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
             An object corresponding to a data concepts resource.
 
         """
+        DataConcepts.setup_json_encoder()
+        return loads(dumps(data))
         data_copy = deepcopy(data)
         # Extract the values that are only for the client.
         # They will be attached to the deserialized object later.
@@ -367,6 +369,42 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
         for clazz in _clazz_list:
             DataConcepts.class_dict[clazz._response_key] = clazz
         DataConcepts.class_dict['link_by_uid'] = LinkByUID
+
+    @staticmethod
+    def sort_order(key):
+        from citrine.resources.condition_template import ConditionTemplate
+        from citrine.resources.parameter_template import ParameterTemplate
+        from citrine.resources.property_template import PropertyTemplate
+        from citrine.resources.material_template import MaterialTemplate
+        from citrine.resources.measurement_template import MeasurementTemplate
+        from citrine.resources.process_template import ProcessTemplate
+        from citrine.resources.ingredient_spec import IngredientSpec
+        from citrine.resources.material_spec import MaterialSpec
+        from citrine.resources.measurement_spec import MeasurementSpec
+        from citrine.resources.process_spec import ProcessSpec
+        from citrine.resources.ingredient_run import IngredientRun
+        from citrine.resources.material_run import MaterialRun
+        from citrine.resources.measurement_run import MeasurementRun
+        from citrine.resources.process_run import ProcessRun
+
+        if key in [ConditionTemplate._response_key, ParameterTemplate._response_key, PropertyTemplate._response_key]:
+            return 0
+        if key in [MaterialTemplate._response_key, ProcessTemplate._response_key, MeasurementTemplate._response_key]:
+            return 1
+        if key in [ProcessSpec._response_key, MeasurementSpec._response_key]:
+            return 2
+        if key in [ProcessRun._response_key, MaterialSpec._response_key]:
+            return 3
+        if key in [IngredientSpec._response_key, MaterialRun._response_key]:
+            return 4
+        if key in [IngredientRun._response_key, MeasurementRun._response_key]:
+            return 5
+        raise ValueError("Unrecognized type string: {}".format(key))
+
+    @staticmethod
+    def setup_json_encoder():
+        DataConcepts._make_class_dict()
+        _clazz_index.update({k: v for k, v in DataConcepts.class_dict.items() if k != "link_by_uid"})
 
     def as_dict(self) -> dict:
         """Dump to a dictionary (useful for interoperability with taurus)."""

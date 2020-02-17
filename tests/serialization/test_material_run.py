@@ -56,7 +56,7 @@ def test_process_attachment():
 
     assert cake_copy['name'] == cake.name
     assert cake_copy['uids'] == cake.uids
-    assert cake.process.uids['id'] == cake_copy['process'].uids['id']
+    assert cake.process.uids['id'] == cake_copy['process']["uids"]['id']
 
     reconstituted_cake = MaterialRun.build(cake_copy)
     assert isinstance(reconstituted_cake, MaterialRun)
@@ -110,6 +110,7 @@ def test_measurement_material_connection_rehydration():
     meas2 = TaurusMeasurementRun("measurement on ending material",
                                  spec=meas_spec, material=ending_mat)
 
+    print(ending_mat.measurements)
     copy = MaterialRun.build(ending_mat)
     assert isinstance(copy, MaterialRun), "copy of ending_mat should be a MaterialRun"
     assert len(copy.measurements) == 1, "copy of ending_mat should have one measurement"

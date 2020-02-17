@@ -93,7 +93,7 @@ class MeasurementTemplate(Storable, Resource['MeasurementTemplate'], TaurusMeasu
                                                      ]]] = None,
                  description: Optional[str] = None,
                  tags: Optional[List[str]] = None):
-        DataConcepts.__init__(self, TaurusMeasurementTemplate.typ)
+        Storable.__init__(self, TaurusMeasurementTemplate.typ)
         TaurusMeasurementTemplate.__init__(self, name=name, properties=properties,
                                            conditions=conditions, parameters=parameters, tags=tags,
                                            uids=set_default_uid(uids), description=description)

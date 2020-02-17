@@ -83,7 +83,7 @@ class ProcessTemplate(Storable, Resource['ProcessTemplate'], TaurusProcessTempla
                  allowed_names: Optional[List[str]] = None,
                  description: Optional[str] = None,
                  tags: Optional[List[str]] = None):
-        DataConcepts.__init__(self, TaurusProcessTemplate.typ)
+        Storable.__init__(self, TaurusProcessTemplate.typ)
         TaurusProcessTemplate.__init__(self, name=name, uids=set_default_uid(uids),
                                        conditions=conditions, parameters=parameters, tags=tags,
                                        description=description, allowed_labels=allowed_labels,

@@ -67,7 +67,7 @@ class MaterialSpec(Storable, Resource['MaterialSpec'], TaurusMaterialSpec):
                  properties: Optional[List[PropertyAndConditions]] = None,
                  template: Optional[TaurusMaterialTemplate] = None,
                  file_links: Optional[List[FileLink]] = None):
-        DataConcepts.__init__(self, TaurusMaterialSpec.typ)
+        Storable.__init__(self, TaurusMaterialSpec.typ)
         TaurusMaterialSpec.__init__(self, name=name, uids=set_default_uid(uids),
                                     tags=tags, process=process, properties=properties,
                                     template=template, file_links=file_links, notes=notes)

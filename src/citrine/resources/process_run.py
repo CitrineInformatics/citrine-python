@@ -83,7 +83,7 @@ class ProcessRun(Storable, Resource['ProcessRun'], TaurusProcessRun):
                  spec: Optional[TaurusProcessSpec] = None,
                  file_links: Optional[List[FileLink]] = None,
                  source: Optional[PerformedSource] = None):
-        DataConcepts.__init__(self, TaurusProcessRun.typ)
+        Storable.__init__(self, TaurusProcessRun.typ)
         TaurusProcessRun.__init__(self, name=name, uids=set_default_uid(uids),
                                   tags=tags, conditions=conditions, parameters=parameters,
                                   spec=spec, file_links=file_links, notes=notes, source=source)

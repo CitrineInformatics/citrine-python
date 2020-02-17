@@ -87,6 +87,7 @@ def test_simple_deserialization(valid_data):
 def test_serialization(valid_data):
     """Ensure that a serialized Process Run looks sane."""
     process_spec: ProcessSpec = ProcessSpec.build(valid_data)
+    print(process_spec)
     serialized = process_spec.dump()
     valid_data.pop('audit_info')  # this field is not serialized
     assert serialized == valid_data

@@ -67,7 +67,7 @@ class MeasurementSpec(Storable, Resource['MeasurementSpec'], TaurusMeasurementSp
                  parameters: Optional[List[Parameter]] = None,
                  template: Optional[TaurusMeasurementTemplate] = None,
                  file_links: Optional[List[FileLink]] = None):
-        DataConcepts.__init__(self, TaurusMeasurementSpec.typ)
+        Storable.__init__(self, TaurusMeasurementSpec.typ)
         TaurusMeasurementSpec.__init__(self, name=name, uids=set_default_uid(uids),
                                        tags=tags, conditions=conditions, parameters=parameters,
                                        template=template, file_links=file_links, notes=notes)

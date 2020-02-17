@@ -95,7 +95,7 @@ class IngredientRun(Storable, Resource['IngredientRun'], TaurusIngredientRun):
                  labels: Optional[List[str]] = None,
                  spec: Optional[TaurusIngredientSpec] = None,
                  file_links: Optional[List[FileLink]] = None):
-        DataConcepts.__init__(self, TaurusIngredientRun.typ)
+        Storable.__init__(self, TaurusIngredientRun.typ)
         TaurusIngredientRun.__init__(self, uids=set_default_uid(uids), tags=tags, notes=notes,
                                      material=material, process=process,
                                      mass_fraction=mass_fraction, volume_fraction=volume_fraction,

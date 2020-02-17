@@ -69,7 +69,7 @@ class MaterialTemplate(Storable, Resource['MaterialTemplate'], TaurusMaterialTem
         # properties is a list, each element of which is a PropertyTemplate OR is a list with
         # 2 entries: [PropertyTemplate, BaseBounds]. Python typing is not expressive enough, so
         # the typing above is more general.
-        DataConcepts.__init__(self, TaurusMaterialTemplate.typ)
+        Storable.__init__(self, TaurusMaterialTemplate.typ)
         TaurusMaterialTemplate.__init__(self, name=name, properties=properties,
                                         uids=set_default_uid(uids), tags=tags,
                                         description=description)

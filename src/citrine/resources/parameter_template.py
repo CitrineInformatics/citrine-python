@@ -50,7 +50,7 @@ class ParameterTemplate(Storable, Resource['ParameterTemplate'], TaurusParameter
                  uids: Optional[Dict[str, str]] = None,
                  description: Optional[str] = None,
                  tags: Optional[List[str]] = None):
-        DataConcepts.__init__(self, TaurusParameterTemplate.typ)
+        Storable.__init__(self, TaurusParameterTemplate.typ)
         TaurusParameterTemplate.__init__(self, name=name, bounds=bounds, tags=tags,
                                          uids=set_default_uid(uids), description=description)
 

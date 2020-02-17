@@ -54,7 +54,7 @@ def test_nomutate_taurus(collection, session):
 def test_get_history(collection, session):
     # Given
     session.set_response({
-        'context': 'Ignored',
+        'context': [],
         'root': MaterialRunDataFactory(name='Historic MR')
     })
 

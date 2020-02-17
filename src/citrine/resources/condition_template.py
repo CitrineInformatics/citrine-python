@@ -6,6 +6,7 @@ from citrine._serialization.properties import String, Mapping, Object
 from citrine._serialization.properties import Optional as PropertyOptional
 from citrine._serialization.properties import List as PropertyList
 from citrine._utils.functions import set_default_uid
+from citrine.resources.audit_info import AuditInfo
 from citrine.resources.data_concepts import DataConcepts, DataConceptsCollection
 from citrine.resources.storable import Storable
 from taurus.entity.template.condition_template import ConditionTemplate as TaurusConditionTemplate
@@ -49,8 +50,9 @@ class ConditionTemplate(Storable, Resource['ConditionTemplate'], TaurusCondition
                  bounds: BaseBounds,
                  uids: Optional[Dict[str, str]] = None,
                  description: Optional[str] = None,
-                 tags: Optional[List[str]] = None):
-        DataConcepts.__init__(self, TaurusConditionTemplate.typ)
+                 tags: Optional[List[str]] = None
+                 ):
+        Storable.__init__(self, TaurusConditionTemplate.typ)
         TaurusConditionTemplate.__init__(self, name=name, bounds=bounds, tags=tags,
                                          uids=set_default_uid(uids), description=description)
 

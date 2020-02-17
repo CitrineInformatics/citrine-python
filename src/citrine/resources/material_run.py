@@ -15,6 +15,7 @@ from citrine.resources.storable import Storable
 from taurus.client.json_encoder import TaurusEncoder
 from taurus.client.json_encoder import loads
 from taurus.entity.file_link import FileLink
+from taurus.entity.link_by_uid import LinkByUID
 from taurus.entity.object.material_run import MaterialRun as TaurusMaterialRun
 from taurus.entity.object.material_spec import MaterialSpec as TaurusMaterialSpec
 from taurus.entity.object.process_run import ProcessRun as TaurusProcessRun
@@ -77,7 +78,7 @@ class MaterialRun(Storable, Resource['MaterialRun'], TaurusMaterialRun):
                  sample_type: Optional[str] = "unknown",
                  spec: Optional[TaurusMaterialSpec] = None,
                  file_links: Optional[List[FileLink]] = None):
-        DataConcepts.__init__(self, TaurusMaterialRun.typ)
+        Storable.__init__(self, TaurusMaterialRun.typ)
         TaurusMaterialRun.__init__(self, name=name, uids=set_default_uid(uids),
                                    tags=tags, process=process,
                                    sample_type=sample_type, spec=spec,
@@ -163,10 +164,14 @@ class MaterialRunCollection(DataConceptsCollection[MaterialRun]):
         base_path = os.path.dirname(self._get_path(ignore_dataset=True))
         path = base_path + "/material-history/{}/{}".format(scope, id)
         data = self.session.get_resource(path)
+
         # Rehydrate a taurus object based on the data
-        model = loads(json.dumps([data['context'], data['root']], cls=TaurusEncoder))
+        full_context = sorted(data['context'] + [data['root']], key=lambda x: DataConcepts.sort_order(x["type"]))
+        root_uid = next(iter(data['root']['uids'].items()))
+        root_link = LinkByUID(scope=root_uid[0], id=root_uid[1])
+        model: MaterialRun = loads(json.dumps([full_context, root_link], cls=TaurusEncoder))
         # Convert taurus objects into citrine-python objects
-        return MaterialRun.build(model)
+        return model
 
     def filter_by_spec(self,
                        spec_id: str,

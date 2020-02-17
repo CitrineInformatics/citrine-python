@@ -88,7 +88,7 @@ class IngredientSpec(Storable, Resource['IngredientSpec'], TaurusIngredientSpec)
                  absolute_quantity: Optional[ContinuousValue] = None,
                  labels: Optional[List[str]] = None,
                  file_links: Optional[List[FileLink]] = None):
-        DataConcepts.__init__(self, TaurusIngredientSpec.typ)
+        Storable.__init__(self, TaurusIngredientSpec.typ)
         TaurusIngredientSpec.__init__(self, uids=set_default_uid(uids), tags=tags, notes=notes,
                                       material=material, process=process,
                                       mass_fraction=mass_fraction, volume_fraction=volume_fraction,

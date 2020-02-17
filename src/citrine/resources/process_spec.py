@@ -7,6 +7,7 @@ from citrine._session import Session
 from citrine._serialization.properties import String, Mapping, Object, LinkOrElse
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Optional as PropertyOptional
+from citrine.resources.audit_info import AuditInfo
 from citrine.resources.data_concepts import DataConcepts, DataConceptsCollection
 from citrine.resources.storable import Storable
 from citrine.attributes.condition import Condition
@@ -77,8 +78,9 @@ class ProcessSpec(Storable, Resource['ProcessSpec'], TaurusProcessSpec):
                  conditions: Optional[List[Condition]] = None,
                  parameters: Optional[List[Parameter]] = None,
                  template: Optional[TaurusProcessTemplate] = None,
-                 file_links: Optional[List[FileLink]] = None):
-        DataConcepts.__init__(self, TaurusProcessSpec.typ)
+                 file_links: Optional[List[FileLink]] = None
+                 ):
+        Storable.__init__(self, TaurusProcessSpec.typ)
         TaurusProcessSpec.__init__(self, name=name, uids=set_default_uid(uids),
                                    tags=tags, conditions=conditions, parameters=parameters,
                                    template=template, file_links=file_links, notes=notes)
