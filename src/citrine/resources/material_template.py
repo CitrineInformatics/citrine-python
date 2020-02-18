@@ -5,11 +5,9 @@ from citrine._rest.resource import Resource
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Optional as PropertyOptional
 from citrine._serialization.properties import String, Mapping, Object, MixedList, LinkOrElse
-from citrine._session import Session
 from citrine._utils.functions import set_default_uid
 from citrine.resources.data_concepts import DataConcepts, DataConceptsCollection
 from citrine.resources.property_template import PropertyTemplate
-from taurus.client.json_encoder import loads, dumps
 from taurus.entity.bounds.base_bounds import BaseBounds
 from taurus.entity.link_by_uid import LinkByUID
 from taurus.entity.template.material_template import MaterialTemplate as TaurusMaterialTemplate

@@ -11,7 +11,6 @@ from citrine.resources.data_concepts import DataConcepts, DataConceptsCollection
 from citrine.resources.property_template import PropertyTemplate
 from citrine.resources.parameter_template import ParameterTemplate
 from citrine.resources.condition_template import ConditionTemplate
-from taurus.client.json_encoder import loads, dumps
 from taurus.entity.template.measurement_template \
     import MeasurementTemplate as TaurusMeasurementTemplate
 from taurus.entity.bounds.base_bounds import BaseBounds

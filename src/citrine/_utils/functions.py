@@ -4,7 +4,7 @@ from urllib.parse import urlparse
 from uuid import uuid4, UUID
 import os
 
-from taurus.client.json_encoder import LinkByUID
+from taurus.entity.link_by_uid import LinkByUID
 
 
 def set_default_uid(id_dict: Dict[str, str]) -> Dict[str, str]:

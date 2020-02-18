@@ -6,8 +6,8 @@ from citrine.resources.process_run import ProcessRun
 from citrine.resources.ingredient_run import IngredientRun
 from citrine.resources.ingredient_spec import IngredientSpec
 from citrine.resources.measurement_run import MeasurementRun
-from taurus.client.json_encoder import LinkByUID
-from taurus.client.json_encoder import loads, dumps
+from taurus.entity.link_by_uid import LinkByUID
+from taurus.json import loads, dumps
 from taurus.demo.cake import make_cake
 from taurus.entity.object import MeasurementRun as TaurusMeasurementRun
 from taurus.entity.object import MaterialRun as TaurusMaterialRun
@@ -55,7 +55,7 @@ def test_process_attachment():
 
     assert cake_copy['name'] == cake.name
     assert cake_copy['uids'] == cake.uids
-    assert cake.process.uids['id'] == cake_copy['process']["uids"]['id']
+    assert cake.process.uids['id'] == cake_copy['process'].uids['id']
 
     reconstituted_cake = MaterialRun.build(cake_copy)
     assert isinstance(reconstituted_cake, MaterialRun)

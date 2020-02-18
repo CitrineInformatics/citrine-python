@@ -9,7 +9,8 @@ from citrine._serialization.polymorphic_serializable import PolymorphicSerializa
 from citrine._serialization.serializable import Serializable
 from citrine._utils.functions import scrub_none, replace_objects_with_links, get_object_id
 from citrine.resources.audit_info import AuditInfo
-from taurus.client.json_encoder import loads, dumps, LinkByUID, _clazz_index
+from taurus.json import TaurusJson
+from taurus.entity.link_by_uid import LinkByUID
 from taurus.entity.dict_serializable import DictSerializable
 from taurus.entity.bounds.base_bounds import BaseBounds
 from taurus.entity.template.attribute_template import AttributeTemplate
@@ -28,11 +29,6 @@ class DataConcepts(PolymorphicSerializable['DataConcepts'], DictSerializable):
     typ: str
         A string denoting what type of DataConcepts class a particular instantiation is.
 
-    Attributes
-    ----------
-    session: Session
-        The Citrine session used to connect to the database.
-
     """
 
     _type_key = "type"
@@ -50,6 +46,8 @@ class DataConcepts(PolymorphicSerializable['DataConcepts'], DictSerializable):
 
     Only populated if the :func:`get_type` method is invoked.
     """
+
+    encoder = None
 
     def __init__(self, typ: str):
         self.skip.add("audit_info")
@@ -90,7 +88,7 @@ class DataConcepts(PolymorphicSerializable['DataConcepts'], DictSerializable):
         data: dict
             A representation of the object. It must be possible to put this dictionary through
             the loads/dumps cycle of the Taurus
-            :py:mod:`JSON encoder <taurus.client.json_encoder>`. The ensuing dictionary must
+            :py:mod:`JSON encoder <taurus.jsonr>`. The ensuing dictionary must
             have a `type` field that corresponds to the response key of this class or of
             :py:class:`LinkByUID <taurus.entity.link_by_uid.LinkByUID>`.
         session: Session
@@ -102,8 +100,7 @@ class DataConcepts(PolymorphicSerializable['DataConcepts'], DictSerializable):
             An object corresponding to a data concepts resource.
 
         """
-        DataConcepts.setup_json_encoder()
-        return loads(dumps(data))
+        return cls.get_encoder().copy(data)
 
     @classmethod
     def get_type(cls, data) -> Type[Serializable]:
@@ -156,10 +153,15 @@ class DataConcepts(PolymorphicSerializable['DataConcepts'], DictSerializable):
             DataConcepts.class_dict[clazz._response_key] = clazz
         DataConcepts.class_dict['link_by_uid'] = LinkByUID
 
-    @staticmethod
-    def setup_json_encoder():
-        DataConcepts._make_class_dict()
-        _clazz_index.update({k: v for k, v in DataConcepts.class_dict.items() if k != "link_by_uid"})
+    @classmethod
+    def get_encoder(cls):
+        if cls.encoder is None:
+            DataConcepts._make_class_dict()
+            cls.encoder = TaurusJson()
+            cls.encoder.register_classes(
+                {k: v for k, v in DataConcepts.class_dict.items() if k != "link_by_uid"}
+            )
+        return cls.encoder
 
     def as_dict(self) -> dict:
         """Dump to a dictionary (useful for interoperability with taurus)."""

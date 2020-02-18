@@ -10,14 +10,13 @@ from citrine._serialization.properties import String, LinkOrElse, Mapping, Objec
 from citrine._utils.functions import set_default_uid
 from citrine.resources.data_concepts import DataConcepts, DataConceptsCollection
 from citrine.resources.material_spec import MaterialSpecCollection
-from taurus.client.json_encoder import TaurusEncoder
-from taurus.client.json_encoder import loads
 from taurus.entity.file_link import FileLink
 from taurus.entity.link_by_uid import LinkByUID
 from taurus.entity.object.material_run import MaterialRun as TaurusMaterialRun
 from taurus.entity.object.material_spec import MaterialSpec as TaurusMaterialSpec
 from taurus.entity.object.process_run import ProcessRun as TaurusProcessRun
 from taurus.util import writable_sort_order
+from taurus.json import TaurusEncoder
 
 
 class MaterialRun(DataConcepts, Resource['MaterialRun'], TaurusMaterialRun):
@@ -128,16 +127,19 @@ class MaterialRunCollection(DataConceptsCollection[MaterialRun]):
         path = base_path + "/material-history/{}/{}".format(scope, id)
         data = self.session.get_resource(path)
 
-        # Rehydrate a taurus object based on the data
-        full_context = sorted(
+        # Add the root to the context and sort by writable order
+        blob = dict()
+        blob["context"] = sorted(
             data['context'] + [data['root']],
             key=lambda x: writable_sort_order(x["type"])
         )
         root_uid = next(iter(data['root']['uids'].items()))
-        root_link = LinkByUID(scope=root_uid[0], id=root_uid[1])
-        model: MaterialRun = loads(json.dumps([full_context, root_link], cls=TaurusEncoder))
-        # Convert taurus objects into citrine-python objects
-        return model
+        # Add a link to the root as the "object"
+        blob["object"] = LinkByUID(scope=root_uid[0], id=root_uid[1])
+
+        # Serialize using normal json (with the TaurusEncoder) and then deserialize with the
+        # TaurusJson encoder in order to rebuild the material history
+        return MaterialRun.get_encoder().loads(json.dumps(blob, cls=TaurusEncoder))
 
     def filter_by_spec(self,
                        spec_id: str,
