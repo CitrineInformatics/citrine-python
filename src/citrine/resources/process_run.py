@@ -3,14 +3,13 @@ from typing import List, Dict, Optional, Type
 
 from citrine._utils.functions import set_default_uid
 from citrine._rest.resource import Resource
-from citrine._session import Session
 from citrine._serialization.properties import String, Mapping, Object, LinkOrElse
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Optional as PropertyOptional
-from citrine.resources.data_concepts import DataConcepts, DataConceptsCollection
+from citrine.resources.data_concepts import DataConceptsCollection
 from citrine.resources.storable import Storable
-from citrine.attributes.condition import Condition
-from citrine.attributes.parameter import Parameter
+from taurus.entity.attribute.condition import Condition
+from taurus.entity.attribute.parameter import Parameter
 from taurus.entity.file_link import FileLink
 from taurus.entity.object.process_run import ProcessRun as TaurusProcessRun
 from taurus.entity.object.process_spec import ProcessSpec as TaurusProcessSpec

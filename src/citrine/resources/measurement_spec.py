@@ -6,11 +6,11 @@ from citrine._rest.resource import Resource
 from citrine._serialization.properties import String, Object, Mapping, LinkOrElse
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Optional as PropertyOptional
-from citrine.resources.data_concepts import DataConcepts, DataConceptsCollection
+from citrine.resources.data_concepts import DataConceptsCollection
 from citrine.resources.storable import Storable
+from taurus.entity.attribute.condition import Condition
+from taurus.entity.attribute.parameter import Parameter
 from taurus.entity.file_link import FileLink
-from citrine.attributes.condition import Condition
-from citrine.attributes.parameter import Parameter
 from taurus.entity.object.measurement_spec import MeasurementSpec as TaurusMeasurementSpec
 from taurus.entity.template.measurement_template import \
     MeasurementTemplate as TaurusMeasurementTemplate

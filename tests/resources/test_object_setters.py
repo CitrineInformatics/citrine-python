@@ -3,7 +3,7 @@
 import pytest
 
 from taurus.entity.value.discrete_categorical import DiscreteCategorical
-from citrine.attributes.property import Property
+from taurus.entity.attribute.property import Property
 from citrine.resources.process_run import ProcessRun
 from citrine.resources.process_spec import ProcessSpec
 from citrine.resources.material_run import MaterialRun

@@ -54,10 +54,9 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
 
     def __init__(self, typ: str):
         self.typ = typ
-        self.session = None
 
     @classmethod
-    def build(cls, data: dict, session: Session = None):
+    def build(cls, data: dict):
         """
         Build a data concepts object from a dictionary or from a Taurus object.
 
@@ -112,10 +111,6 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
     @staticmethod
     def _make_class_dict():
         """Construct a dictionary from each type key to the class."""
-        from citrine.attributes.condition import Condition
-        from citrine.attributes.parameter import Parameter
-        from citrine.attributes.property import Property
-        from citrine.attributes.property_and_conditions import PropertyAndConditions
         from citrine.resources.condition_template import ConditionTemplate
         from citrine.resources.parameter_template import ParameterTemplate
         from citrine.resources.property_template import PropertyTemplate
@@ -130,8 +125,7 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
         from citrine.resources.material_run import MaterialRun
         from citrine.resources.measurement_run import MeasurementRun
         from citrine.resources.process_run import ProcessRun
-        _clazz_list = [Condition, Parameter, Property, PropertyAndConditions,
-                       ConditionTemplate, ParameterTemplate, PropertyTemplate,
+        _clazz_list = [ConditionTemplate, ParameterTemplate, PropertyTemplate,
                        MaterialTemplate, MeasurementTemplate, ProcessTemplate,
                        IngredientSpec, MaterialSpec, MeasurementSpec, ProcessSpec,
                        IngredientRun, MaterialRun, MeasurementRun, ProcessRun]
@@ -229,7 +223,6 @@ class DataConceptsCollection(Collection[ResourceType]):
 
         """
         data_concepts_object = self.get_type().build(data)
-        data_concepts_object.session = self.session
         return data_concepts_object
 
     def _fetch_page(self, page: Optional[int] = None, per_page: Optional[int] = None):
@@ -320,7 +313,6 @@ class DataConceptsCollection(Collection[ResourceType]):
         dumped_data = replace_objects_with_links(scrub_none(model.dump()))
         data = self.session.post_resource(path, dumped_data)
         full_model = self.build(data)
-        full_model.session = self.session
         return full_model
 
     def get(self, uid: Union[UUID, str], scope: str = 'id') -> ResourceType:
