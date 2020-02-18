@@ -9,14 +9,13 @@ from citrine._session import Session
 from citrine._utils.functions import set_default_uid
 from citrine.resources.data_concepts import DataConcepts, DataConceptsCollection
 from citrine.resources.property_template import PropertyTemplate
-from citrine.resources.storable import Storable
 from taurus.client.json_encoder import loads, dumps
 from taurus.entity.bounds.base_bounds import BaseBounds
 from taurus.entity.link_by_uid import LinkByUID
 from taurus.entity.template.material_template import MaterialTemplate as TaurusMaterialTemplate
 
 
-class MaterialTemplate(Storable, Resource['MaterialTemplate'], TaurusMaterialTemplate):
+class MaterialTemplate(DataConcepts, Resource['MaterialTemplate'], TaurusMaterialTemplate):
     """
     A material template.
 
@@ -69,7 +68,7 @@ class MaterialTemplate(Storable, Resource['MaterialTemplate'], TaurusMaterialTem
         # properties is a list, each element of which is a PropertyTemplate OR is a list with
         # 2 entries: [PropertyTemplate, BaseBounds]. Python typing is not expressive enough, so
         # the typing above is more general.
-        Storable.__init__(self, TaurusMaterialTemplate.typ)
+        DataConcepts.__init__(self, TaurusMaterialTemplate.typ)
         TaurusMaterialTemplate.__init__(self, name=name, properties=properties,
                                         uids=set_default_uid(uids), tags=tags,
                                         description=description)

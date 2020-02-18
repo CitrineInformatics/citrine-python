@@ -7,7 +7,6 @@ from citrine._serialization.properties import String, Object, Mapping, LinkOrEls
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Optional as PropertyOptional
 from citrine.resources.data_concepts import DataConcepts, DataConceptsCollection
-from citrine.resources.storable import Storable
 from taurus.entity.attribute.condition import Condition
 from taurus.entity.attribute.parameter import Parameter
 from taurus.entity.attribute.property import Property
@@ -18,7 +17,7 @@ from taurus.entity.object.measurement_spec import MeasurementSpec as TaurusMeasu
 from taurus.entity.source.performed_source import PerformedSource
 
 
-class MeasurementRun(Storable, Resource['MeasurementRun'], TaurusMeasurementRun):
+class MeasurementRun(DataConcepts, Resource['MeasurementRun'], TaurusMeasurementRun):
     """
     A measurement run.
 
@@ -82,7 +81,7 @@ class MeasurementRun(Storable, Resource['MeasurementRun'], TaurusMeasurementRun)
                  material: Optional[TaurusMaterialRun] = None,
                  file_links: Optional[List[FileLink]] = None,
                  source: Optional[PerformedSource] = None):
-        Storable.__init__(self, TaurusMeasurementRun.typ)
+        DataConcepts.__init__(self, TaurusMeasurementRun.typ)
         TaurusMeasurementRun.__init__(self, name=name, uids=set_default_uid(uids),
                                       material=material,
                                       tags=tags, conditions=conditions, properties=properties,

@@ -3,8 +3,7 @@ from typing import List, Dict, Optional, Type
 
 from citrine._utils.functions import set_default_uid
 from citrine._rest.resource import Resource
-from citrine.resources.data_concepts import DataConceptsCollection
-from citrine.resources.storable import Storable
+from citrine.resources.data_concepts import DataConceptsCollection, DataConcepts
 from citrine._serialization.properties import Mapping, String, LinkOrElse, Object
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Optional as PropertyOptional
@@ -16,7 +15,7 @@ from taurus.entity.object.process_run import ProcessRun as TaurusProcessRun
 from taurus.entity.value.continuous_value import ContinuousValue
 
 
-class IngredientRun(Storable, Resource['IngredientRun'], TaurusIngredientRun):
+class IngredientRun(DataConcepts, Resource['IngredientRun'], TaurusIngredientRun):
     """
     An ingredient run.
 
@@ -95,7 +94,7 @@ class IngredientRun(Storable, Resource['IngredientRun'], TaurusIngredientRun):
                  labels: Optional[List[str]] = None,
                  spec: Optional[TaurusIngredientSpec] = None,
                  file_links: Optional[List[FileLink]] = None):
-        Storable.__init__(self, TaurusIngredientRun.typ)
+        DataConcepts.__init__(self, TaurusIngredientRun.typ)
         TaurusIngredientRun.__init__(self, uids=set_default_uid(uids), tags=tags, notes=notes,
                                      material=material, process=process,
                                      mass_fraction=mass_fraction, volume_fraction=volume_fraction,

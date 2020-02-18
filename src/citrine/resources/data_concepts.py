@@ -7,9 +7,8 @@ from citrine._session import Session
 from citrine._rest.collection import Collection
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
 from citrine._serialization.serializable import Serializable
-from citrine._utils.functions import (
-    validate_type, scrub_none,
-    replace_objects_with_links, get_object_id)
+from citrine._utils.functions import scrub_none, replace_objects_with_links, get_object_id
+from citrine.resources.audit_info import AuditInfo
 from taurus.client.json_encoder import loads, dumps, LinkByUID, _clazz_index
 from taurus.entity.dict_serializable import DictSerializable
 from taurus.entity.bounds.base_bounds import BaseBounds
@@ -18,7 +17,7 @@ from taurus.entity.template.attribute_template import AttributeTemplate
 from citrine.resources.response import Response
 
 
-class DataConcepts(PolymorphicSerializable['DataConcepts']):
+class DataConcepts(PolymorphicSerializable['DataConcepts'], DictSerializable):
     """
     An abstract data concepts object.
 
@@ -53,7 +52,31 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
     """
 
     def __init__(self, typ: str):
+        self.skip.add("audit_info")
+        self._audit_info = None
         self.typ = typ
+
+    @property
+    def audit_info(self):
+        """Get the audit info object."""
+        return self._audit_info
+
+    @classmethod
+    def from_dict(cls, d: dict):
+        audit_info = d.pop("audit_info", None)
+        obj = super().from_dict(d)
+        obj.skip.add("_audit_info")
+
+        if audit_info is None:
+            obj._audit_info = None
+        elif isinstance(audit_info, AuditInfo):
+            obj._audit_info = audit_info
+        elif isinstance(audit_info, dict):
+            obj._audit_info = AuditInfo.build(audit_info)
+        else:
+            raise TypeError("Audit Info must be a dictionary or an AuditInfo object")
+
+        return obj
 
     @classmethod
     def build(cls, data: dict):
@@ -132,37 +155,6 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
         for clazz in _clazz_list:
             DataConcepts.class_dict[clazz._response_key] = clazz
         DataConcepts.class_dict['link_by_uid'] = LinkByUID
-
-    @staticmethod
-    def sort_order(key):
-        from citrine.resources.condition_template import ConditionTemplate
-        from citrine.resources.parameter_template import ParameterTemplate
-        from citrine.resources.property_template import PropertyTemplate
-        from citrine.resources.material_template import MaterialTemplate
-        from citrine.resources.measurement_template import MeasurementTemplate
-        from citrine.resources.process_template import ProcessTemplate
-        from citrine.resources.ingredient_spec import IngredientSpec
-        from citrine.resources.material_spec import MaterialSpec
-        from citrine.resources.measurement_spec import MeasurementSpec
-        from citrine.resources.process_spec import ProcessSpec
-        from citrine.resources.ingredient_run import IngredientRun
-        from citrine.resources.material_run import MaterialRun
-        from citrine.resources.measurement_run import MeasurementRun
-        from citrine.resources.process_run import ProcessRun
-
-        if key in [ConditionTemplate._response_key, ParameterTemplate._response_key, PropertyTemplate._response_key]:
-            return 0
-        if key in [MaterialTemplate._response_key, ProcessTemplate._response_key, MeasurementTemplate._response_key]:
-            return 1
-        if key in [ProcessSpec._response_key, MeasurementSpec._response_key]:
-            return 2
-        if key in [ProcessRun._response_key, MaterialSpec._response_key]:
-            return 3
-        if key in [IngredientSpec._response_key, MaterialRun._response_key]:
-            return 4
-        if key in [IngredientRun._response_key, MeasurementRun._response_key]:
-            return 5
-        raise ValueError("Unrecognized type string: {}".format(key))
 
     @staticmethod
     def setup_json_encoder():

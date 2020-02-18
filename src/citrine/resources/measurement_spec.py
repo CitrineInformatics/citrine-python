@@ -6,8 +6,7 @@ from citrine._rest.resource import Resource
 from citrine._serialization.properties import String, Object, Mapping, LinkOrElse
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Optional as PropertyOptional
-from citrine.resources.data_concepts import DataConceptsCollection
-from citrine.resources.storable import Storable
+from citrine.resources.data_concepts import DataConceptsCollection, DataConcepts
 from taurus.entity.attribute.condition import Condition
 from taurus.entity.attribute.parameter import Parameter
 from taurus.entity.file_link import FileLink
@@ -16,7 +15,7 @@ from taurus.entity.template.measurement_template import \
     MeasurementTemplate as TaurusMeasurementTemplate
 
 
-class MeasurementSpec(Storable, Resource['MeasurementSpec'], TaurusMeasurementSpec):
+class MeasurementSpec(DataConcepts, Resource['MeasurementSpec'], TaurusMeasurementSpec):
     """
     A measurement specification.
 
@@ -67,7 +66,7 @@ class MeasurementSpec(Storable, Resource['MeasurementSpec'], TaurusMeasurementSp
                  parameters: Optional[List[Parameter]] = None,
                  template: Optional[TaurusMeasurementTemplate] = None,
                  file_links: Optional[List[FileLink]] = None):
-        Storable.__init__(self, TaurusMeasurementSpec.typ)
+        DataConcepts.__init__(self, TaurusMeasurementSpec.typ)
         TaurusMeasurementSpec.__init__(self, name=name, uids=set_default_uid(uids),
                                        tags=tags, conditions=conditions, parameters=parameters,
                                        template=template, file_links=file_links, notes=notes)

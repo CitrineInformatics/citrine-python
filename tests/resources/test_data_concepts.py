@@ -2,7 +2,6 @@ import pytest
 from uuid import uuid4
 
 from citrine.resources.audit_info import AuditInfo
-from citrine.resources.storable import Storable
 from citrine.resources.process_spec import ProcessSpec
 
 
@@ -13,7 +12,6 @@ def test_assign_audit_info():
     audit_info_obj = AuditInfo.build(audit_info_dict)
     process_spec_dict = {'type': 'process_spec', 'name': "A process spec", "audit_info": audit_info_dict}
     sample_object = ProcessSpec.build(process_spec_dict)
-    assert isinstance(sample_object, Storable)
     assert sample_object.audit_info == audit_info_obj
 
     another_object = ProcessSpec.build({

@@ -8,7 +8,6 @@ from citrine._serialization.properties import Optional as PropertyOptional
 from citrine._serialization.properties import List as PropertyList
 from citrine._utils.functions import set_default_uid
 from citrine.resources.data_concepts import DataConcepts, DataConceptsCollection
-from citrine.resources.storable import Storable
 from citrine.resources.property_template import PropertyTemplate
 from citrine.resources.parameter_template import ParameterTemplate
 from citrine.resources.condition_template import ConditionTemplate
@@ -19,7 +18,7 @@ from taurus.entity.bounds.base_bounds import BaseBounds
 from taurus.entity.link_by_uid import LinkByUID
 
 
-class MeasurementTemplate(Storable, Resource['MeasurementTemplate'], TaurusMeasurementTemplate):
+class MeasurementTemplate(DataConcepts, Resource['MeasurementTemplate'], TaurusMeasurementTemplate):
     """
     A measurement template.
 
@@ -93,7 +92,7 @@ class MeasurementTemplate(Storable, Resource['MeasurementTemplate'], TaurusMeasu
                                                      ]]] = None,
                  description: Optional[str] = None,
                  tags: Optional[List[str]] = None):
-        Storable.__init__(self, TaurusMeasurementTemplate.typ)
+        DataConcepts.__init__(self, TaurusMeasurementTemplate.typ)
         TaurusMeasurementTemplate.__init__(self, name=name, properties=properties,
                                            conditions=conditions, parameters=parameters, tags=tags,
                                            uids=set_default_uid(uids), description=description)

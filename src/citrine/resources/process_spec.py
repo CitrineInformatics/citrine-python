@@ -6,8 +6,7 @@ from citrine._rest.resource import Resource
 from citrine._serialization.properties import String, Mapping, Object, LinkOrElse
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Optional as PropertyOptional
-from citrine.resources.data_concepts import DataConceptsCollection
-from citrine.resources.storable import Storable
+from citrine.resources.data_concepts import DataConceptsCollection, DataConcepts
 from taurus.entity.attribute.condition import Condition
 from taurus.entity.attribute.parameter import Parameter
 from taurus.entity.file_link import FileLink
@@ -15,7 +14,7 @@ from taurus.entity.object.process_spec import ProcessSpec as TaurusProcessSpec
 from taurus.entity.template.process_template import ProcessTemplate as TaurusProcessTemplate
 
 
-class ProcessSpec(Storable, Resource['ProcessSpec'], TaurusProcessSpec):
+class ProcessSpec(DataConcepts, Resource['ProcessSpec'], TaurusProcessSpec):
     """
     A process specification.
 
@@ -78,7 +77,7 @@ class ProcessSpec(Storable, Resource['ProcessSpec'], TaurusProcessSpec):
                  template: Optional[TaurusProcessTemplate] = None,
                  file_links: Optional[List[FileLink]] = None
                  ):
-        Storable.__init__(self, TaurusProcessSpec.typ)
+        DataConcepts.__init__(self, TaurusProcessSpec.typ)
         TaurusProcessSpec.__init__(self, name=name, uids=set_default_uid(uids),
                                    tags=tags, conditions=conditions, parameters=parameters,
                                    template=template, file_links=file_links, notes=notes)

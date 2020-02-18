@@ -8,7 +8,6 @@ from citrine._serialization.properties import Optional as PropertyOptional
 from citrine._serialization.properties import List as PropertyList
 from citrine._utils.functions import set_default_uid
 from citrine.resources.data_concepts import DataConcepts, DataConceptsCollection
-from citrine.resources.storable import Storable
 from citrine.resources.parameter_template import ParameterTemplate
 from citrine.resources.condition_template import ConditionTemplate
 from taurus.client.json_encoder import loads, dumps
@@ -17,7 +16,7 @@ from taurus.entity.bounds.base_bounds import BaseBounds
 from taurus.entity.link_by_uid import LinkByUID
 
 
-class ProcessTemplate(Storable, Resource['ProcessTemplate'], TaurusProcessTemplate):
+class ProcessTemplate(DataConcepts, Resource['ProcessTemplate'], TaurusProcessTemplate):
     """
     A process template.
 
@@ -83,7 +82,7 @@ class ProcessTemplate(Storable, Resource['ProcessTemplate'], TaurusProcessTempla
                  allowed_names: Optional[List[str]] = None,
                  description: Optional[str] = None,
                  tags: Optional[List[str]] = None):
-        Storable.__init__(self, TaurusProcessTemplate.typ)
+        DataConcepts.__init__(self, TaurusProcessTemplate.typ)
         TaurusProcessTemplate.__init__(self, name=name, uids=set_default_uid(uids),
                                        conditions=conditions, parameters=parameters, tags=tags,
                                        description=description, allowed_labels=allowed_labels,

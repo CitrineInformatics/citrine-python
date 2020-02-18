@@ -7,12 +7,11 @@ from citrine._serialization.properties import Optional as PropertyOptional
 from citrine._serialization.properties import List as PropertyList
 from citrine._utils.functions import set_default_uid
 from citrine.resources.data_concepts import DataConcepts, DataConceptsCollection
-from citrine.resources.storable import Storable
 from taurus.entity.template.parameter_template import ParameterTemplate as TaurusParameterTemplate
 from taurus.entity.bounds.base_bounds import BaseBounds
 
 
-class ParameterTemplate(Storable, Resource['ParameterTemplate'], TaurusParameterTemplate):
+class ParameterTemplate(DataConcepts, Resource['ParameterTemplate'], TaurusParameterTemplate):
     """
     A parameter template.
 
@@ -50,7 +49,7 @@ class ParameterTemplate(Storable, Resource['ParameterTemplate'], TaurusParameter
                  uids: Optional[Dict[str, str]] = None,
                  description: Optional[str] = None,
                  tags: Optional[List[str]] = None):
-        Storable.__init__(self, TaurusParameterTemplate.typ)
+        DataConcepts.__init__(self, TaurusParameterTemplate.typ)
         TaurusParameterTemplate.__init__(self, name=name, bounds=bounds, tags=tags,
                                          uids=set_default_uid(uids), description=description)
 

@@ -6,9 +6,8 @@ from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Optional as PropertyOptional
 from citrine._serialization.properties import String, LinkOrElse, Mapping, Object
 from citrine._utils.functions import set_default_uid
-from citrine.resources.data_concepts import DataConceptsCollection
+from citrine.resources.data_concepts import DataConceptsCollection, DataConcepts
 from citrine.resources.material_template import MaterialTemplateCollection
-from citrine.resources.storable import Storable
 from taurus.entity.attribute.property_and_conditions import PropertyAndConditions
 from taurus.entity.file_link import FileLink
 from taurus.entity.object.material_spec import MaterialSpec as TaurusMaterialSpec
@@ -16,7 +15,7 @@ from taurus.entity.object.process_spec import ProcessSpec as TaurusProcessSpec
 from taurus.entity.template.material_template import MaterialTemplate as TaurusMaterialTemplate
 
 
-class MaterialSpec(Storable, Resource['MaterialSpec'], TaurusMaterialSpec):
+class MaterialSpec(DataConcepts, Resource['MaterialSpec'], TaurusMaterialSpec):
     """
     A material specification.
 
@@ -67,7 +66,7 @@ class MaterialSpec(Storable, Resource['MaterialSpec'], TaurusMaterialSpec):
                  properties: Optional[List[PropertyAndConditions]] = None,
                  template: Optional[TaurusMaterialTemplate] = None,
                  file_links: Optional[List[FileLink]] = None):
-        Storable.__init__(self, TaurusMaterialSpec.typ)
+        DataConcepts.__init__(self, TaurusMaterialSpec.typ)
         TaurusMaterialSpec.__init__(self, name=name, uids=set_default_uid(uids),
                                     tags=tags, process=process, properties=properties,
                                     template=template, file_links=file_links, notes=notes)
