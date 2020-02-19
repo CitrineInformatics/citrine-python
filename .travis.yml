@@ -8,7 +8,7 @@ install:
 - pip install --no-deps -e .
 script:
 - pytest --cov=src/ --cov-report term-missing --cov-report term:skip-covered
-  --cov-fail-under=100 -s -r .
+  --cov-config=tox.ini --cov-fail-under=100 -s -r .
 - flake8 src
 - cd docs; make html; cd ..;
 - touch ./docs/_build/html/.nojekyll
