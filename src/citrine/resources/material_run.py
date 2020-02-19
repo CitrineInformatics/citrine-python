@@ -139,7 +139,7 @@ class MaterialRunCollection(DataConceptsCollection[MaterialRun]):
 
         # Serialize using normal json (with the TaurusEncoder) and then deserialize with the
         # TaurusJson encoder in order to rebuild the material history
-        return MaterialRun.get_encoder().loads(json.dumps(blob, cls=TaurusEncoder))
+        return MaterialRun.get_encoder().loads(json.dumps(blob, cls=TaurusEncoder, sort_keys=True))
 
     def filter_by_spec(self,
                        spec_id: str,
