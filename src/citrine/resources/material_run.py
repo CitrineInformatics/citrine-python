@@ -133,9 +133,9 @@ class MaterialRunCollection(DataConceptsCollection[MaterialRun]):
             data['context'] + [data['root']],
             key=lambda x: writable_sort_order(x["type"])
         )
-        root_uid = next(iter(data['root']['uids'].items()))
+        root_uid_scope, root_uid_id = next(iter(data['root']['uids'].items()))
         # Add a link to the root as the "object"
-        blob["object"] = LinkByUID(scope=root_uid[0], id=root_uid[1])
+        blob["object"] = LinkByUID(scope=root_uid_scope, id=root_uid_id)
 
         # Serialize using normal json (with the TaurusEncoder) and then deserialize with the
         # TaurusJson encoder in order to rebuild the material history
