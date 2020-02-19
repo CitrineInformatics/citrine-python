@@ -42,7 +42,7 @@ def test_get_ara_definition_metadata(collection, session):
     # Given
     project_id = '6b608f78-e341-422c-8076-35adc8828545'
     ara_definition = AraDefinitionFactory()
-    session.set_response(ara_definition)
+    session.set_response({"version": ara_definition})
 
     # When
     retrieved_ara_definition: AraDefinition = collection.get_with_version(ara_definition["definition_id"], ara_definition["version_number"])
