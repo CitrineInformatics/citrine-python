@@ -140,6 +140,7 @@ class AraDefinitionCollection(Collection[AraDefinition]):
         """[ALPHA] Get an Ara Definition at a specific version."""
         path = self._get_path(definition_uid) + "/versions/{}".format(version_number)
         data = self.session.get_resource(path)
+        data = data[self._individual_key] if self._individual_key else data
         return self.build(data)
 
     def build(self, data: dict) -> AraDefinition:
