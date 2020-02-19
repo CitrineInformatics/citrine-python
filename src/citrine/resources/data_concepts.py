@@ -47,12 +47,22 @@ class DataConcepts(PolymorphicSerializable['DataConcepts'], DictSerializable):
     Only populated if the :func:`get_type` method is invoked.
     """
 
-    encoder = None
+    json_support = None
+    """
+    Custom json support object, which knows how to serialize and deserialize DataConcepts classes.
+    """
+
+    client_specific_fields = {"audit_info": AuditInfo}
+    """
+    Fields that are added to the taurus data objects when they are used in this client
+
+    * AuditInfo contains who/when information about the resource on the citrine platform
+    """
 
     def __init__(self, typ: str):
-        self.skip.add("audit_info")
-        self._audit_info = None
         self.typ = typ
+        for field in self.client_specific_fields:
+            self.__setattr__("_{}".format(field), None)
 
     @property
     def audit_info(self):
@@ -65,8 +75,8 @@ class DataConcepts(PolymorphicSerializable['DataConcepts'], DictSerializable):
         Build a data concepts object from a dictionary.
 
         This is an internal method, and should not be called directly by users.  First,
-        it removes audit_info from d, if present, and then calls the taurus object's from_dict
-        method.  Finally, it adds audit_info back into the object.
+        it removes client_specific_fields from d, if present, and then calls the taurus
+        object's from_dict method.  Finally, it adds those fields back.
 
         Parameters
         ----------
@@ -74,16 +84,16 @@ class DataConcepts(PolymorphicSerializable['DataConcepts'], DictSerializable):
             A representation of the object that will be shallowly loaded into the object.
 
         """
-        audit_info = d.pop("audit_info", None)
+        popped = {k: d.pop(k, None) for k in cls.client_specific_fields}
         obj = super().from_dict(d)
-        obj.skip.add("_audit_info")
 
-        if audit_info is None:
-            obj._audit_info = None
-        elif isinstance(audit_info, dict):
-            obj._audit_info = AuditInfo.build(audit_info)
-        else:
-            raise TypeError("Audit Info must be a dictionary or an AuditInfo object")
+        for field, clazz in cls.client_specific_fields.items():
+            if popped[field] is None:
+                setattr(obj, "_{}".format(field), None)
+            elif isinstance(popped[field], dict):
+                setattr(obj, "_{}".format(field), clazz.build(popped[field]))
+            else:
+                raise TypeError("{} must be a dictionary or None".format(field))
 
         return obj
 
@@ -109,7 +119,7 @@ class DataConcepts(PolymorphicSerializable['DataConcepts'], DictSerializable):
             An object corresponding to a data concepts resource.
 
         """
-        return cls.get_encoder().copy(data)
+        return cls.get_json_support().copy(data)
 
     @classmethod
     def get_type(cls, data) -> Type[Serializable]:
@@ -165,15 +175,15 @@ class DataConcepts(PolymorphicSerializable['DataConcepts'], DictSerializable):
         DataConcepts.class_dict['link_by_uid'] = LinkByUID
 
     @classmethod
-    def get_encoder(cls):
-        """Get a taurus-compatible json serializer/deserializer."""
-        if cls.encoder is None:
+    def get_json_support(cls):
+        """Get a DataConcepts-compatible json serializer/deserializer."""
+        if cls.json_support is None:
             DataConcepts._make_class_dict()
-            cls.encoder = TaurusJson()
-            cls.encoder.register_classes(
+            cls.json_support = TaurusJson()
+            cls.json_support.register_classes(
                 {k: v for k, v in DataConcepts.class_dict.items() if k != "link_by_uid"}
             )
-        return cls.encoder
+        return cls.json_support
 
     def as_dict(self) -> dict:
         """Dump to a dictionary (useful for interoperability with taurus)."""
