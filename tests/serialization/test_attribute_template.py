@@ -5,7 +5,7 @@ from citrine.resources.property_template import PropertyTemplate
 from taurus.entity.bounds.real_bounds import RealBounds
 from taurus.entity.bounds.integer_bounds import IntegerBounds
 from taurus.entity.bounds.categorical_bounds import CategoricalBounds
-from taurus.client.json_encoder import loads, dumps
+from taurus.json import loads, dumps
 
 
 def test_condition_template():
