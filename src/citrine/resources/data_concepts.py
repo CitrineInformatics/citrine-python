@@ -61,7 +61,18 @@ class DataConcepts(PolymorphicSerializable['DataConcepts'], DictSerializable):
 
     @classmethod
     def from_dict(cls, d: dict):
-        """Build a data concepts option from a dictionary."""
+        """
+        Build a data concepts object from a dictionary.
+
+        This is an internal method, and should not be called directly by users.  First,
+        it removes audit_info from d, if present, and then calls the taurus object's from_dict
+        method.  Finally, it adds audit_info back into the object.
+
+        Parameters
+        ----------
+        d: dict
+            A representation of the object that will be shallowly loaded into the object.
+        """
         audit_info = d.pop("audit_info", None)
         obj = super().from_dict(d)
         obj.skip.add("_audit_info")
@@ -90,8 +101,6 @@ class DataConcepts(PolymorphicSerializable['DataConcepts'], DictSerializable):
             :py:mod:`JSON encoder <taurus.jsonr>`. The ensuing dictionary must
             have a `type` field that corresponds to the response key of this class or of
             :py:class:`LinkByUID <taurus.entity.link_by_uid.LinkByUID>`.
-        session: Session
-            the Citrine session to assign to the built object.
 
         Returns
         -------

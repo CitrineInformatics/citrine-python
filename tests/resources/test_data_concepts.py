@@ -9,23 +9,30 @@ from citrine.resources.process_spec import ProcessSpec
 
 
 def test_assign_audit_info():
-    assert ProcessSpec("Spec with no audit info").audit_info is None
+    """Test that audit_info can be injected with build but not set"""
+
+    assert ProcessSpec("Spec with no audit info").audit_info is None,\
+        "Audit info should be None by default"
 
     audit_info_dict = {'created_by': str(uuid4()), 'created_at': 1560033807392}
     audit_info_obj = AuditInfo.build(audit_info_dict)
-    process_spec_dict = {'type': 'process_spec', 'name': "A process spec", "audit_info": audit_info_dict}
-    sample_object = ProcessSpec.build(process_spec_dict)
-    assert sample_object.audit_info == audit_info_obj
+
+    sample_object = ProcessSpec.build({
+        'type': 'process_spec',
+        'name': "A process spec",
+        "audit_info": audit_info_dict
+    })
+    assert sample_object.audit_info == audit_info_obj, "Audit info should be built from a dict"
 
     another_object = ProcessSpec.build({
         'type': 'process_spec', 'name': "A process spec", "audit_info": audit_info_obj
     })
-    assert sample_object.audit_info == another_object.audit_info
+    assert another_object.audit_info == audit_info_obj, "Audit info should be built from an obj"
 
-    with pytest.raises(AttributeError):
+    with pytest.raises(AttributeError, message="Audit info cannot be set"):
         sample_object.audit_info = None
 
-    with pytest.raises(TypeError):
+    with pytest.raises(TypeError, message="Audit info must be dict or obj valued"):
         ProcessSpec.build({
             'type': 'process_spec',
             'name': "A process spec",
