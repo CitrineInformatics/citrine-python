@@ -3,9 +3,9 @@ import pytest
 from uuid import uuid4
 
 from citrine.resources.material_spec import MaterialSpec
-from citrine.attributes.property_and_conditions import PropertyAndConditions
-from citrine.attributes.property import Property
-from citrine.attributes.condition import Condition
+from taurus.entity.attribute.condition import Condition
+from taurus.entity.attribute.property import Property
+from taurus.entity.attribute.property_and_conditions import PropertyAndConditions
 from taurus.entity.value.nominal_categorical import NominalCategorical
 from taurus.entity.value.nominal_real import NominalReal
 

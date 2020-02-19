@@ -6,10 +6,9 @@ from citrine.resources.process_run import ProcessRun
 from citrine.resources.ingredient_run import IngredientRun
 from citrine.resources.ingredient_spec import IngredientSpec
 from citrine.resources.measurement_run import MeasurementRun
-from taurus.client.json_encoder import LinkByUID
-from taurus.client.json_encoder import loads, dumps
+from taurus.entity.link_by_uid import LinkByUID
+from taurus.json import loads, dumps
 from taurus.demo.cake import make_cake
-from taurus.entity.dict_serializable import DictSerializable
 from taurus.entity.object import MeasurementRun as TaurusMeasurementRun
 from taurus.entity.object import MaterialRun as TaurusMaterialRun
 from taurus.entity.object import MaterialSpec as TaurusMaterialSpec

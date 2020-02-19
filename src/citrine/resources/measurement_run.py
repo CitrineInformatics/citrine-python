@@ -7,18 +7,17 @@ from citrine._serialization.properties import String, Object, Mapping, LinkOrEls
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Optional as PropertyOptional
 from citrine.resources.data_concepts import DataConcepts, DataConceptsCollection
-from citrine.resources.storable import Storable
+from taurus.entity.attribute.condition import Condition
+from taurus.entity.attribute.parameter import Parameter
+from taurus.entity.attribute.property import Property
 from taurus.entity.file_link import FileLink
-from citrine.attributes.condition import Condition
-from citrine.attributes.parameter import Parameter
-from citrine.attributes.property import Property
 from taurus.entity.object.material_run import MaterialRun as TaurusMaterialRun
 from taurus.entity.object.measurement_run import MeasurementRun as TaurusMeasurementRun
 from taurus.entity.object.measurement_spec import MeasurementSpec as TaurusMeasurementSpec
 from taurus.entity.source.performed_source import PerformedSource
 
 
-class MeasurementRun(Storable, Resource['MeasurementRun'], TaurusMeasurementRun):
+class MeasurementRun(DataConcepts, Resource['MeasurementRun'], TaurusMeasurementRun):
     """
     A measurement run.
 
