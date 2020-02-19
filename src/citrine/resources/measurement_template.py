@@ -2,7 +2,6 @@
 from typing import List, Dict, Optional, Union, Sequence, Type
 
 from citrine._rest.resource import Resource
-from citrine._session import Session
 from citrine._serialization.properties import String, Mapping, Object, MixedList, LinkOrElse
 from citrine._serialization.properties import Optional as PropertyOptional
 from citrine._serialization.properties import List as PropertyList
@@ -17,7 +16,8 @@ from taurus.entity.bounds.base_bounds import BaseBounds
 from taurus.entity.link_by_uid import LinkByUID
 
 
-class MeasurementTemplate(DataConcepts, Resource['MeasurementTemplate'], TaurusMeasurementTemplate):
+class MeasurementTemplate(DataConcepts,
+                          Resource['MeasurementTemplate'], TaurusMeasurementTemplate):
     """
     A measurement template.
 

@@ -61,6 +61,7 @@ class DataConcepts(PolymorphicSerializable['DataConcepts'], DictSerializable):
 
     @classmethod
     def from_dict(cls, d: dict):
+        """Build a data concepts option from a dictionary."""
         audit_info = d.pop("audit_info", None)
         obj = super().from_dict(d)
         obj.skip.add("_audit_info")
@@ -155,6 +156,7 @@ class DataConcepts(PolymorphicSerializable['DataConcepts'], DictSerializable):
 
     @classmethod
     def get_encoder(cls):
+        """Get a taurus-compatible json serializer/deserializer."""
         if cls.encoder is None:
             DataConcepts._make_class_dict()
             cls.encoder = TaurusJson()

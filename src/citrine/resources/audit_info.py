@@ -55,4 +55,5 @@ class AuditInfo(Serializable, DictSerializable):
         return self.__repr__() == other.__repr__()
 
     def as_dict(self):
+        """Return the object as a dictionary."""
         return self.dump()
