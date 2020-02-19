@@ -67,8 +67,6 @@ class DataConcepts(PolymorphicSerializable['DataConcepts'], DictSerializable):
 
         if audit_info is None:
             obj._audit_info = None
-        elif isinstance(audit_info, AuditInfo):
-            obj._audit_info = audit_info
         elif isinstance(audit_info, dict):
             obj._audit_info = AuditInfo.build(audit_info)
         else:
@@ -123,7 +121,9 @@ class DataConcepts(PolymorphicSerializable['DataConcepts'], DictSerializable):
 
         """
         if len(DataConcepts.class_dict) == 0:
-            DataConcepts._make_class_dict()
+            # This line is only reached if get_type is called before build,
+            # which is hard to reproduce, hence the no cover.
+            DataConcepts._make_class_dict()  # pragma: no cover
         if isinstance(data, DictSerializable):
             data = data.as_dict()
         return DataConcepts.class_dict[data['type']]

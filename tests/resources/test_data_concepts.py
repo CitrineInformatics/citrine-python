@@ -1,7 +1,10 @@
 import pytest
 from uuid import uuid4
 
+from citrine._serialization.serializable import Serializable
 from citrine.resources.audit_info import AuditInfo
+from citrine.resources.data_concepts import DataConcepts
+from citrine.resources.process_run import ProcessRun
 from citrine.resources.process_spec import ProcessSpec
 
 
@@ -28,3 +31,10 @@ def test_assign_audit_info():
             'name': "A process spec",
             "audit_info": "Created by me, yesterday"
         })
+
+
+def test_get_type():
+    """Test that get_type works, even though its not used in DataConcepts.build"""
+
+    assert DataConcepts.get_type({"type": "process_run"}) == ProcessRun
+    assert DataConcepts.get_type(ProcessSpec("foo")) == ProcessSpec
