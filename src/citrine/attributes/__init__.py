@@ -1,0 +1,1 @@
+"""Resources that represent attributes."""
