@@ -2,24 +2,22 @@
 from typing import List, Dict, Optional, Union, Sequence, Type
 
 from citrine._rest.resource import Resource
-from citrine._session import Session
 from citrine._serialization.properties import String, Mapping, Object, MixedList, LinkOrElse
 from citrine._serialization.properties import Optional as PropertyOptional
 from citrine._serialization.properties import List as PropertyList
 from citrine._utils.functions import set_default_uid
 from citrine.resources.data_concepts import DataConcepts, DataConceptsCollection
-from citrine.resources.storable import Storable
 from citrine.resources.property_template import PropertyTemplate
 from citrine.resources.parameter_template import ParameterTemplate
 from citrine.resources.condition_template import ConditionTemplate
-from taurus.client.json_encoder import loads, dumps
 from taurus.entity.template.measurement_template \
     import MeasurementTemplate as TaurusMeasurementTemplate
 from taurus.entity.bounds.base_bounds import BaseBounds
 from taurus.entity.link_by_uid import LinkByUID
 
 
-class MeasurementTemplate(Storable, Resource['MeasurementTemplate'], TaurusMeasurementTemplate):
+class MeasurementTemplate(DataConcepts,
+                          Resource['MeasurementTemplate'], TaurusMeasurementTemplate):
     """
     A measurement template.
 
@@ -97,36 +95,6 @@ class MeasurementTemplate(Storable, Resource['MeasurementTemplate'], TaurusMeasu
         TaurusMeasurementTemplate.__init__(self, name=name, properties=properties,
                                            conditions=conditions, parameters=parameters, tags=tags,
                                            uids=set_default_uid(uids), description=description)
-
-    @classmethod
-    def _build_child_objects(cls, data: dict, data_with_soft_links, session: Session = None):
-        """
-        Build the condition, parameter, and property templates and bounds.
-
-        Parameters
-        ----------
-        data: dict
-            A serialized material template.
-        session: Session, optional
-            Citrine session used to connect to the database.
-
-        Returns
-        -------
-        None
-            The serialized measurement template is modified so that its conditions are now a list
-            of object pairs of the form [ConditionTemplate, Bounds], the parameters are
-            [ParameterTemplate, Bounds], and the properties are [PropertyTemplate, Bounds].
-
-        """
-        if 'properties' in data and len(data['properties']) != 0:
-            data['properties'] = [[PropertyTemplate.build(prop[0].as_dict()),
-                                   loads(dumps(prop[1]))] for prop in data['properties']]
-        if 'conditions' in data and len(data['conditions']) != 0:
-            data['conditions'] = [[ConditionTemplate.build(cond[0].as_dict()),
-                                   loads(dumps(cond[1]))] for cond in data['conditions']]
-        if 'parameters' in data and len(data['parameters']) != 0:
-            data['parameters'] = [[ParameterTemplate.build(param[0].as_dict()),
-                                   loads(dumps(param[1]))] for param in data['parameters']]
 
     def __str__(self):
         return '<Measurement template {!r}>'.format(self.name)

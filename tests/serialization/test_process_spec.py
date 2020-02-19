@@ -2,10 +2,10 @@
 import pytest
 from uuid import uuid4
 
+from taurus.entity.attribute.parameter import Parameter
 from taurus.entity.bounds.real_bounds import RealBounds
 from taurus.entity.value.uniform_real import UniformReal
 from taurus.entity.file_link import FileLink
-from citrine.attributes.parameter import Parameter
 from citrine.resources.process_spec import ProcessSpec
 from citrine.resources.process_template import ProcessTemplate
 from citrine.resources.parameter_template import ParameterTemplate

@@ -2,22 +2,19 @@
 from typing import List, Dict, Optional, Union, Sequence, Type
 
 from citrine._rest.resource import Resource
-from citrine._session import Session
 from citrine._serialization.properties import String, Mapping, Object, MixedList, LinkOrElse
 from citrine._serialization.properties import Optional as PropertyOptional
 from citrine._serialization.properties import List as PropertyList
 from citrine._utils.functions import set_default_uid
 from citrine.resources.data_concepts import DataConcepts, DataConceptsCollection
-from citrine.resources.storable import Storable
 from citrine.resources.parameter_template import ParameterTemplate
 from citrine.resources.condition_template import ConditionTemplate
-from taurus.client.json_encoder import loads, dumps
 from taurus.entity.template.process_template import ProcessTemplate as TaurusProcessTemplate
 from taurus.entity.bounds.base_bounds import BaseBounds
 from taurus.entity.link_by_uid import LinkByUID
 
 
-class ProcessTemplate(Storable, Resource['ProcessTemplate'], TaurusProcessTemplate):
+class ProcessTemplate(DataConcepts, Resource['ProcessTemplate'], TaurusProcessTemplate):
     """
     A process template.
 
@@ -88,35 +85,6 @@ class ProcessTemplate(Storable, Resource['ProcessTemplate'], TaurusProcessTempla
                                        conditions=conditions, parameters=parameters, tags=tags,
                                        description=description, allowed_labels=allowed_labels,
                                        allowed_names=allowed_names)
-
-    @classmethod
-    def _build_child_objects(cls, data: dict, data_with_soft_links, session: Session = None):
-        """
-        Build the condition and parameter templates and bounds.
-
-        Parameters
-        ----------
-        data: dict
-            A serialized material template.
-        session: Session, optional
-            Citrine session used to connect to the database.
-
-        Returns
-        -------
-        None
-            The serialized process template is modified so that its conditions are now a list
-            of object pairs of the form [ConditionTemplate,
-            :py:class:`BaseBounds <taurus.entity.bounds.base_bounds.BaseBounds>`],
-            and the parameters are [ParameterTemplate,
-            :py:class:`BaseBounds <taurus.entity.bounds.base_bounds.BaseBounds>`].
-
-        """
-        if 'conditions' in data and len(data['conditions']) != 0:
-            data['conditions'] = [[ConditionTemplate.build(cond[0].as_dict()),
-                                   loads(dumps(cond[1]))] for cond in data['conditions']]
-        if 'parameters' in data and len(data['parameters']) != 0:
-            data['parameters'] = [[ParameterTemplate.build(param[0].as_dict()),
-                                   loads(dumps(param[1]))] for param in data['parameters']]
 
     def __str__(self):
         return '<Process template {!r}>'.format(self.name)
