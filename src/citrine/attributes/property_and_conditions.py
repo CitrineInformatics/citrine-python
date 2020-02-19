@@ -5,7 +5,7 @@ from taurus.entity.attribute.property_and_conditions import PropertyAndCondition
     TaurusPropertyAndConditions
 
 
-@deprecation.deprecated(deprecated_in="0.7.2", removed_in="0.8.0",
+@deprecation.deprecated(deprecated_in="0.8.0", removed_in="0.9.0",
                         details="Use taurus.entity.attribute.property_and_conditions instead")
 class PropertyAndConditions(TaurusPropertyAndConditions):
     pass
