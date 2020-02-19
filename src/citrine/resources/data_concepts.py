@@ -72,6 +72,7 @@ class DataConcepts(PolymorphicSerializable['DataConcepts'], DictSerializable):
         ----------
         d: dict
             A representation of the object that will be shallowly loaded into the object.
+
         """
         audit_info = d.pop("audit_info", None)
         obj = super().from_dict(d)
