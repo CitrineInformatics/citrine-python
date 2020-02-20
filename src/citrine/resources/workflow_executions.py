@@ -11,7 +11,7 @@ from citrine._session import Session
 
 
 class WorkflowExecution(Resource['WorkflowExecution']):
-    """A Citrine Workflow Execution."""
+    """[ALPHA] A Citrine Workflow Execution."""
 
     _response_key = 'WorkflowExecutions'
 
@@ -52,7 +52,7 @@ class WorkflowExecution(Resource['WorkflowExecution']):
 
 
 class WorkflowExecutionCollection(Collection[WorkflowExecution]):
-    """A collection of WorkflowExecutions."""
+    """[ALPHA] A collection of WorkflowExecutions."""
 
     _path_template = '/projects/{project_id}/workflows/{workflow_id}/executions'
     _individual_key = None
@@ -78,7 +78,7 @@ class WorkflowExecutionCollection(Collection[WorkflowExecution]):
 
 
 class WorkflowExecutionStatus(Resource['WorkflowExecutionStatus']):
-    """The status for a specific workflow execution."""
+    """[ALPHA] The status for a specific workflow execution."""
 
     status = properties.String('status')
 
