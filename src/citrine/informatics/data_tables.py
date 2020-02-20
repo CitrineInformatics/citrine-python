@@ -3,7 +3,7 @@ from citrine._serialization.serializable import Serializable
 
 
 class DataTable(Serializable['DataTable']):
-    """A specification for a data table, generally used to identify source data for some process.
+    """[ALPHA] A specification for a data table, generally used to identify source data for some process.
 
     Parameters
     ----------
