@@ -71,7 +71,8 @@ class ScalarRangeConstraint(Serializable['ScalarRangeConstraint'], Constraint):
 
 
 class CategoricalConstraint(Serializable['CategoricalConstraint'], Constraint):
-    """[ALPHA] A constraint on a categorical material attribute to be one of a set of acceptable values.
+    """
+    [ALPHA] A constraint on a categorical material attribute to be in a set of acceptable values.
 
     Parameters
     ----------
