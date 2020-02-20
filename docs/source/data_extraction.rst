@@ -25,8 +25,9 @@ The only way to define rows right now is through :class:`~citrine.ara.rows.Mater
 A :class:`~citrine.ara.variables.Variable` object specifies how to select a piece of data from each Material History.
 Thus, it performs the first part of a mapping from the set of Material Histories to columns in the Ara table.
 A :class:`~citrine.ara.variables.Variable` is addressed locally (within a definition) by a ``name``.
-A :class:`~citrine.ara.variables.Variable` is also labeled with ``headers``, which is a list of strings so that when variables are displayed, their relationship to other variables can be expressed.
-In the example below, a hardness measurement might also be performed, and it might have ``headers = ["Product", "Hardness"]`` since it is a measurement of the same object.
+A :class:`~citrine.ara.variables.Variable` is also labeled with ``headers``, which is a list of strings that can express a hierarchical relationship with other variables.
+The headers are listed in decreasing hierarchical order: the first string indicates the broadest classification, and each subsequent string indicates a refinement of those classifications preceding it.
+In the example below, a hardness measurement might also be performed of the object denoted by the ``Product`` header. One might assign ``headers = ["Product", "Hardness"]`` to this measurement in order to relate it with the ``Density`` measurement of the same object.
 
 .. code-block:: python
 
