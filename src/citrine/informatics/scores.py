@@ -72,7 +72,8 @@ class MLIScore(Serializable['MLIScore'], Score):
 
 
 class MEIScore(Serializable['MEIScore'], Score):
-    """[ALPHA] Evaluates the expected magnitude of improvement beyond some baselines for given objectives.
+    """
+    [ALPHA] Evaluates the expected magnitude of improvement beyond baselines for given objectives.
 
     Parameters
     ----------
