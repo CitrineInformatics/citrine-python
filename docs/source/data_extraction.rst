@@ -27,7 +27,8 @@ Thus, it performs the first part of a mapping from the set of Material Histories
 A :class:`~citrine.ara.variables.Variable` is addressed locally (within a definition) by a ``name``.
 A :class:`~citrine.ara.variables.Variable` is also labeled with ``headers``, which is a list of strings that can express a hierarchical relationship with other variables.
 The headers are listed in decreasing hierarchical order: the first string indicates the broadest classification, and each subsequent string indicates a refinement of those classifications preceding it.
-In the example below, a hardness measurement might also be performed on the object denoted by the ``Product`` header. One might assign ``headers = ["Product", "Hardness"]`` to this measurement in order to relate it with the ``Density`` measurement of the same physical object.
+In the example below, a hardness measurement might also be performed on the object denoted by the ``Product`` header.
+One might assign ``headers = ["Product", "Hardness"]`` to this measurement in order to relate it with the ``Density`` measurement of the same physical object.
 
 .. code-block:: python
 
