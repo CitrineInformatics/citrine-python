@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>4.1. Prohibited Data Patterns &#8212; Citrine Python 0.0.1 documentation</title>
+    <title>5.1. Prohibited Data Patterns &#8212; Citrine Python 0.0.1 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -15,7 +15,7 @@
     <link rel="shortcut icon" href="../_static/favicon.png"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="prev" title="4. FAQ" href="index.html" />
+    <link rel="prev" title="5. FAQ" href="index.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -33,16 +33,16 @@
           <div class="body" role="main">
             
   <div class="section" id="prohibited-data-patterns">
-<h1>4.1. Prohibited Data Patterns<a class="headerlink" href="#prohibited-data-patterns" title="Permalink to this headline">¶</a></h1>
+<h1>5.1. Prohibited Data Patterns<a class="headerlink" href="#prohibited-data-patterns" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="summary">
-<h2>4.1.1. Summary<a class="headerlink" href="#summary" title="Permalink to this headline">¶</a></h2>
+<h2>5.1.1. Summary<a class="headerlink" href="#summary" title="Permalink to this headline">¶</a></h2>
 <p>This is a disclaimer on our end to let you know that there are some invalid usage patterns that are not prevented by the API but may corrupt your data and eliminate
 some of the functionality the api and/or platform would otherwise provide.</p>
 </div>
 <div class="section" id="cyclic-data-patterns">
-<h2>4.1.2. Cyclic data patterns<a class="headerlink" href="#cyclic-data-patterns" title="Permalink to this headline">¶</a></h2>
+<h2>5.1.2. Cyclic data patterns<a class="headerlink" href="#cyclic-data-patterns" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="description">
-<h3>4.1.2.1. Description<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h3>
+<h3>5.1.2.1. Description<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h3>
 <p>Data objects should <strong>NOT</strong> be linked in a cyclic pattern. Consider the following example (where the citrine session is created and dataset already defined):</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">procsp</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">process_specs</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">ProcessSpec</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;test proc&#39;</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">matsp</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">material_specs</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">MaterialSpec</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;test mat&#39;</span><span class="p">,</span><span class="n">process</span><span class="o">=</span><span class="n">procsp</span><span class="p">))</span>
@@ -62,7 +62,7 @@ It does not make sense for a material to be used as an ingredient in its own his
 In other words, the data model does not support time traveling materials.</p>
 </div>
 <div class="section" id="implications">
-<h3>4.1.2.2. Implications<a class="headerlink" href="#implications" title="Permalink to this headline">¶</a></h3>
+<h3>5.1.2.2. Implications<a class="headerlink" href="#implications" title="Permalink to this headline">¶</a></h3>
 <p>Currently, there are no validations in place to keep cyclic data from being persisted on the platform. It is up to the user to make sure that the
 objects created do not follow a cyclic pattern; otherwise, the data will be corrupted. If cyclic data is written to the platform, an error will
 not be thrown, but the user may lose core functionality (such as <code class="code docutils literal notranslate"><span class="pre">get_material_history()</span></code>) for the objects participating in the cycle.</p>
@@ -110,19 +110,28 @@ not be thrown, but the user may lose core functionality (such as <code class="co
 <li class="toctree-l2"><a class="reference internal" href="../getting_started/code_examples.html">1.7. Code Examples</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">2. Workflows</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#modules">2.1. Modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#design-workflows">2.2. Design workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#registration-and-validation">2.3. Registration and validation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#table-of-contents">2.4. Table of Contents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_extraction.html">2. [ALPHA] Data Extraction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#defining-row-and-columns">2.1. Defining row and columns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#defining-tables">2.2. Defining tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#creating-and-reading-tables">2.3. Creating and reading tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-row-definitions">2.4. Available Row Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-variable-definitions">2.5. Available Variable Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-column-definitions">2.6. Available Column Definitions</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../development.html">3. Development</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../development.html#running-tests-in-docker">3.1. Running tests in Docker</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">3. Workflows</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#modules">3.1. Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#design-workflows">3.2. Design workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#registration-and-validation">3.3. Registration and validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#table-of-contents">3.4. Table of Contents</a></li>
 </ul>
 </li>
-<li class="toctree-l1 current"><a class="reference internal" href="index.html">4. FAQ</a><ul class="current">
-<li class="toctree-l2 current"><a class="current reference internal" href="#">4.1. Prohibited Data Patterns</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development.html">4. Development</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../development.html#running-tests-in-docker">4.1. Running tests in Docker</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">5. FAQ</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">5.1. Prohibited Data Patterns</a></li>
 </ul>
 </li>
 </ul>
@@ -131,8 +140,8 @@ not be thrown, but the user may lose core functionality (such as <code class="co
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-  <li><a href="index.html">4. FAQ</a><ul>
-      <li>Previous: <a href="index.html" title="previous chapter">4. FAQ</a></li>
+  <li><a href="index.html">5. FAQ</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">5. FAQ</a></li>
   </ul></li>
   </ul></li>
 </ul>

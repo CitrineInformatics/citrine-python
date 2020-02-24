@@ -1,0 +1,7 @@
+citrine.ara.columns module
+==========================
+
+.. automodule:: citrine.ara.columns
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -8,6 +8,7 @@ Submodules
 
    citrine.informatics.analysis_configuration
    citrine.informatics.constraints
+   citrine.informatics.data_tables
    citrine.informatics.descriptors
    citrine.informatics.design_spaces
    citrine.informatics.dimensions

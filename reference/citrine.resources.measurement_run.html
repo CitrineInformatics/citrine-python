@@ -36,8 +36,8 @@
 <p>Resources that represent measurement run data objects.</p>
 <dl class="class">
 <dt id="citrine.resources.measurement_run.MeasurementRun">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.resources.measurement_run.</code><code class="sig-name descname">MeasurementRun</code><span class="sig-paren">(</span><em class="sig-param">name: str</em>, <em class="sig-param">uids: Optional[Dict[str</em>, <em class="sig-param">str]] = None</em>, <em class="sig-param">tags: Optional[List[str]] = None</em>, <em class="sig-param">notes: Optional[str] = None</em>, <em class="sig-param">conditions: Optional[List[citrine.attributes.condition.Condition]] = None</em>, <em class="sig-param">properties: Optional[List[citrine.attributes.property.Property]] = None</em>, <em class="sig-param">parameters: Optional[List[citrine.attributes.parameter.Parameter]] = None</em>, <em class="sig-param">spec: Optional[taurus.entity.object.measurement_spec.MeasurementSpec] = None</em>, <em class="sig-param">material: Optional[taurus.entity.object.material_run.MaterialRun] = None</em>, <em class="sig-param">file_links: Optional[List[taurus.entity.file_link.FileLink]] = None</em>, <em class="sig-param">source: Optional[taurus.entity.source.performed_source.PerformedSource] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.measurement_run.MeasurementRun" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="citrine.resources.storable.html#citrine.resources.storable.Storable" title="citrine.resources.storable.Storable"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.resources.storable.Storable</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.resource.Resource</span></code>, <a class="reference external" href="https://citrineinformatics.github.io/taurus/reference/taurus.entity.object.measurement_run.html#taurus.entity.object.measurement_run.MeasurementRun" title="(in Taurus)"><code class="xref py py-class docutils literal notranslate"><span class="pre">taurus.entity.object.measurement_run.MeasurementRun</span></code></a></p>
+<em class="property">class </em><code class="sig-prename descclassname">citrine.resources.measurement_run.</code><code class="sig-name descname">MeasurementRun</code><span class="sig-paren">(</span><em class="sig-param">name: str</em>, <em class="sig-param">uids: Optional[Dict[str</em>, <em class="sig-param">str]] = None</em>, <em class="sig-param">tags: Optional[List[str]] = None</em>, <em class="sig-param">notes: Optional[str] = None</em>, <em class="sig-param">conditions: Optional[List[taurus.entity.attribute.condition.Condition]] = None</em>, <em class="sig-param">properties: Optional[List[taurus.entity.attribute.property.Property]] = None</em>, <em class="sig-param">parameters: Optional[List[taurus.entity.attribute.parameter.Parameter]] = None</em>, <em class="sig-param">spec: Optional[taurus.entity.object.measurement_spec.MeasurementSpec] = None</em>, <em class="sig-param">material: Optional[taurus.entity.object.material_run.MaterialRun] = None</em>, <em class="sig-param">file_links: Optional[List[taurus.entity.file_link.FileLink]] = None</em>, <em class="sig-param">source: Optional[taurus.entity.source.performed_source.PerformedSource] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.measurement_run.MeasurementRun" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConcepts" title="citrine.resources.data_concepts.DataConcepts"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.resources.data_concepts.DataConcepts</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.resource.Resource</span></code>, <a class="reference external" href="https://citrineinformatics.github.io/taurus/reference/taurus.entity.object.measurement_run.html#taurus.entity.object.measurement_run.MeasurementRun" title="(in Taurus)"><code class="xref py py-class docutils literal notranslate"><span class="pre">taurus.entity.object.measurement_run.MeasurementRun</span></code></a></p>
 <p>A measurement run.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -49,9 +49,9 @@
 are hierarchical strings that store information about an entity. They can be used
 for filtering and discoverability.</p></li>
 <li><p><strong>notes</strong> (<em>str</em><em>, </em><em>optional</em>) – Long-form notes about the measurement run.</p></li>
-<li><p><strong>conditions</strong> (<em>List</em><em>[</em><a class="reference internal" href="citrine.attributes.condition.html#citrine.attributes.condition.Condition" title="citrine.attributes.condition.Condition"><em>Condition</em></a><em>]</em><em>, </em><em>optional</em>) – Conditions under which this measurement run occurs.</p></li>
-<li><p><strong>parameters</strong> (<em>List</em><em>[</em><a class="reference internal" href="citrine.attributes.parameter.html#citrine.attributes.parameter.Parameter" title="citrine.attributes.parameter.Parameter"><em>Parameter</em></a><em>]</em><em>, </em><em>optional</em>) – Parameters of this measurement run.</p></li>
-<li><p><strong>properties</strong> (<em>List</em><em>[</em><a class="reference internal" href="citrine.attributes.property.html#citrine.attributes.property.Property" title="citrine.attributes.property.Property"><em>Property</em></a><em>]</em><em>, </em><em>optional</em>) – Properties that are measured during this measurement run.</p></li>
+<li><p><strong>conditions</strong> (<em>List</em><em>[</em><em>Condition</em><em>]</em><em>, </em><em>optional</em>) – Conditions under which this measurement run occurs.</p></li>
+<li><p><strong>parameters</strong> (<em>List</em><em>[</em><em>Parameter</em><em>]</em><em>, </em><em>optional</em>) – Parameters of this measurement run.</p></li>
+<li><p><strong>properties</strong> (<em>List</em><em>[</em><em>Property</em><em>]</em><em>, </em><em>optional</em>) – Properties that are measured during this measurement run.</p></li>
 <li><p><strong>spec</strong> (<a class="reference internal" href="citrine.resources.material_spec.html#citrine.resources.material_spec.MaterialSpec" title="citrine.resources.material_spec.MaterialSpec"><em>MaterialSpec</em></a>) – The measurement specification of which this is an instance.</p></li>
 <li><p><strong>material</strong> (<a class="reference internal" href="citrine.resources.material_run.html#citrine.resources.material_run.MaterialRun" title="citrine.resources.material_run.MaterialRun"><em>MaterialRun</em></a>) – The material run being measured.</p></li>
 <li><p><strong>spec</strong> – The material specification of which this is an instance.</p></li>
@@ -177,19 +177,28 @@ for filtering and discoverability.</p></li>
 <li class="toctree-l2"><a class="reference internal" href="../getting_started/code_examples.html">1.7. Code Examples</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">2. Workflows</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#modules">2.1. Modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#design-workflows">2.2. Design workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#registration-and-validation">2.3. Registration and validation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#table-of-contents">2.4. Table of Contents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_extraction.html">2. [ALPHA] Data Extraction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#defining-row-and-columns">2.1. Defining row and columns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#defining-tables">2.2. Defining tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#creating-and-reading-tables">2.3. Creating and reading tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-row-definitions">2.4. Available Row Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-variable-definitions">2.5. Available Variable Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-column-definitions">2.6. Available Column Definitions</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../development.html">3. Development</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../development.html#running-tests-in-docker">3.1. Running tests in Docker</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">3. Workflows</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#modules">3.1. Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#design-workflows">3.2. Design workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#registration-and-validation">3.3. Registration and validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#table-of-contents">3.4. Table of Contents</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">4. FAQ</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../FAQ/prohibited_data_patterns.html">4.1. Prohibited Data Patterns</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development.html">4. Development</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../development.html#running-tests-in-docker">4.1. Running tests in Docker</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">5. FAQ</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../FAQ/prohibited_data_patterns.html">5.1. Prohibited Data Patterns</a></li>
 </ul>
 </li>
 </ul>

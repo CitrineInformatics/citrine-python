@@ -6,6 +6,7 @@ Subpackages
 
 .. toctree::
 
+   citrine.ara
    citrine.attributes
    citrine.informatics
    citrine.resources

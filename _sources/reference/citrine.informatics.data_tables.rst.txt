@@ -1,0 +1,7 @@
+citrine.informatics.data\_tables module
+=======================================
+
+.. automodule:: citrine.informatics.data_tables
+   :members:
+   :undoc-members:
+   :show-inheritance:

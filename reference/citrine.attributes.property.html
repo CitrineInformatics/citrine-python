@@ -34,64 +34,12 @@
   <div class="section" id="module-citrine.attributes.property">
 <span id="citrine-attributes-property-module"></span><h1>citrine.attributes.property module<a class="headerlink" href="#module-citrine.attributes.property" title="Permalink to this headline">¶</a></h1>
 <p>A resource that represents a property attribute.</p>
-<dl class="class">
+<dl class="function">
 <dt id="citrine.attributes.property.Property">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.attributes.property.</code><code class="sig-name descname">Property</code><span class="sig-paren">(</span><em class="sig-param">name: str</em>, <em class="sig-param">notes: Optional[str] = None</em>, <em class="sig-param">value: Optional[taurus.entity.value.base_value.BaseValue] = None</em>, <em class="sig-param">template: Optional[taurus.entity.template.property_template.PropertyTemplate] = None</em>, <em class="sig-param">origin: Optional[str] = 'unknown'</em>, <em class="sig-param">file_links: Optional[List[taurus.entity.file_link.FileLink]] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.attributes.property.Property" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConcepts" title="citrine.resources.data_concepts.DataConcepts"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.resources.data_concepts.DataConcepts</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference external" href="https://citrineinformatics.github.io/taurus/reference/taurus.entity.attribute.property.html#taurus.entity.attribute.property.Property" title="(in Taurus)"><code class="xref py py-class docutils literal notranslate"><span class="pre">taurus.entity.attribute.property.Property</span></code></a></p>
-<p>A property attribute.</p>
-<dl class="simple">
-<dt>Properties are characteristics of a material that could be measured, e.g. chemical composition,</dt><dd><p>density, yield strength.</p>
-</dd>
-</dl>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<em>str</em>) – Required name of the property. Each property within an object must have a unique name.</p></li>
-<li><p><strong>notes</strong> (<em>str</em>) – Optional free-form notes about the property.</p></li>
-<li><p><strong>value</strong> (<a class="reference external" href="https://citrineinformatics.github.io/taurus/reference/taurus.entity.value.base_value.html#taurus.entity.value.base_value.BaseValue" title="(in Taurus)"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseValue</span></code></a>) – The value of the property.</p></li>
-<li><p><strong>template</strong> (<a class="reference internal" href="citrine.resources.property_template.html#citrine.resources.property_template.PropertyTemplate" title="citrine.resources.property_template.PropertyTemplate"><code class="xref py py-class docutils literal notranslate"><span class="pre">PropertyTemplate</span></code></a>) – Property template that defines the allowed bounds of this property. If a template
-and value are both present then the value must be within the template bounds.</p></li>
-<li><p><strong>origin</strong> (<em>str</em>) – The origin of the property. Must be one of “measured”, “predicted”, “summary”,
-“specified”, “computed”, or “unknown.” Default is “unknown.”</p></li>
-<li><p><strong>file_links</strong> (<em>List</em><em>[</em><a class="reference internal" href="citrine.resources.file_link.html#citrine.resources.file_link.FileLink" title="citrine.resources.file_link.FileLink"><em>FileLink</em></a><em>]</em>) – Links to files associated with the property.</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="attribute">
-<dt id="citrine.attributes.property.Property.file_links">
-<code class="sig-name descname">file_links</code><em class="property"> = None</em><a class="headerlink" href="#citrine.attributes.property.Property.file_links" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="citrine.attributes.property.Property.name">
-<code class="sig-name descname">name</code><em class="property"> = None</em><a class="headerlink" href="#citrine.attributes.property.Property.name" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="citrine.attributes.property.Property.notes">
-<code class="sig-name descname">notes</code><em class="property"> = None</em><a class="headerlink" href="#citrine.attributes.property.Property.notes" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="citrine.attributes.property.Property.origin">
-<code class="sig-name descname">origin</code><em class="property"> = 'unknown'</em><a class="headerlink" href="#citrine.attributes.property.Property.origin" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="citrine.attributes.property.Property.template">
-<code class="sig-name descname">template</code><em class="property"> = None</em><a class="headerlink" href="#citrine.attributes.property.Property.template" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="citrine.attributes.property.Property.typ">
-<code class="sig-name descname">typ</code><em class="property"> = 'property'</em><a class="headerlink" href="#citrine.attributes.property.Property.typ" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="citrine.attributes.property.Property.value">
-<code class="sig-name descname">value</code><em class="property"> = None</em><a class="headerlink" href="#citrine.attributes.property.Property.value" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
+<code class="sig-prename descclassname">citrine.attributes.property.</code><code class="sig-name descname">Property</code><span class="sig-paren">(</span><em class="sig-param">name=None</em>, <em class="sig-param">template=None</em>, <em class="sig-param">origin='unknown'</em>, <em class="sig-param">value=None</em>, <em class="sig-param">notes=None</em>, <em class="sig-param">file_links=None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.attributes.property.Property" title="Permalink to this definition">¶</a></dt>
+<dd><div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 0.8.0: </span>This will be removed in 0.9.0. Use taurus.entity.attribute.property instead</p>
+</div>
 </dd></dl>
 
 </div>
@@ -136,19 +84,28 @@ and value are both present then the value must be within the template bounds.</p
 <li class="toctree-l2"><a class="reference internal" href="../getting_started/code_examples.html">1.7. Code Examples</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">2. Workflows</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#modules">2.1. Modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#design-workflows">2.2. Design workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#registration-and-validation">2.3. Registration and validation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#table-of-contents">2.4. Table of Contents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_extraction.html">2. [ALPHA] Data Extraction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#defining-row-and-columns">2.1. Defining row and columns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#defining-tables">2.2. Defining tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#creating-and-reading-tables">2.3. Creating and reading tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-row-definitions">2.4. Available Row Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-variable-definitions">2.5. Available Variable Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-column-definitions">2.6. Available Column Definitions</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../development.html">3. Development</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../development.html#running-tests-in-docker">3.1. Running tests in Docker</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">3. Workflows</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#modules">3.1. Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#design-workflows">3.2. Design workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#registration-and-validation">3.3. Registration and validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#table-of-contents">3.4. Table of Contents</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">4. FAQ</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../FAQ/prohibited_data_patterns.html">4.1. Prohibited Data Patterns</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development.html">4. Development</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../development.html#running-tests-in-docker">4.1. Running tests in Docker</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">5. FAQ</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../FAQ/prohibited_data_patterns.html">5.1. Prohibited Data Patterns</a></li>
 </ul>
 </li>
 </ul>

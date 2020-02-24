@@ -38,7 +38,7 @@
 <dt id="citrine.informatics.constraints.Constraint">
 <em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.constraints.</code><code class="sig-name descname">Constraint</code><a class="headerlink" href="#citrine.informatics.constraints.Constraint" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.polymorphic_serializable.PolymorphicSerializable</span></code></p>
-<p>A Citrine Constraint places restrictions on a design space.</p>
+<p>[ALPHA] A Citrine Constraint places restrictions on a design space.</p>
 <p>Abstract type that returns the proper type given a serialized dict.</p>
 <dl class="method">
 <dt id="citrine.informatics.constraints.Constraint.get_type">
@@ -52,7 +52,7 @@
 <dt id="citrine.informatics.constraints.ScalarRangeConstraint">
 <em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.constraints.</code><code class="sig-name descname">ScalarRangeConstraint</code><span class="sig-paren">(</span><em class="sig-param">descriptor_key: str</em>, <em class="sig-param">max: Optional[float] = None</em>, <em class="sig-param">min: Optional[float] = None</em>, <em class="sig-param">min_inclusive: Optional[bool] = True</em>, <em class="sig-param">max_inclusive: Optional[bool] = True</em>, <em class="sig-param">session: Optional[citrine._session.Session] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.constraints.ScalarRangeConstraint" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.informatics.constraints.Constraint" title="citrine.informatics.constraints.Constraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.constraints.Constraint</span></code></a></p>
-<p>Represents an inequality constraint on a scalar-valued material attribute.</p>
+<p>[ALPHA] Represents an inequality constraint on a scalar-valued material attribute.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -100,7 +100,7 @@
 <dt id="citrine.informatics.constraints.CategoricalConstraint">
 <em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.constraints.</code><code class="sig-name descname">CategoricalConstraint</code><span class="sig-paren">(</span><em class="sig-param">descriptor_key: str, acceptable_categories: List[str], session: Optional[citrine._session.Session] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.constraints.CategoricalConstraint" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.informatics.constraints.Constraint" title="citrine.informatics.constraints.Constraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.constraints.Constraint</span></code></a></p>
-<p>A constraint on a categorical material attribute to be one of a set of acceptable values.</p>
+<p>[ALPHA] A constraint on a categorical material attribute to be in a set of acceptable values.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -168,19 +168,28 @@
 <li class="toctree-l2"><a class="reference internal" href="../getting_started/code_examples.html">1.7. Code Examples</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">2. Workflows</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#modules">2.1. Modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#design-workflows">2.2. Design workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#registration-and-validation">2.3. Registration and validation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#table-of-contents">2.4. Table of Contents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_extraction.html">2. [ALPHA] Data Extraction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#defining-row-and-columns">2.1. Defining row and columns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#defining-tables">2.2. Defining tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#creating-and-reading-tables">2.3. Creating and reading tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-row-definitions">2.4. Available Row Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-variable-definitions">2.5. Available Variable Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-column-definitions">2.6. Available Column Definitions</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../development.html">3. Development</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../development.html#running-tests-in-docker">3.1. Running tests in Docker</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">3. Workflows</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#modules">3.1. Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#design-workflows">3.2. Design workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#registration-and-validation">3.3. Registration and validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#table-of-contents">3.4. Table of Contents</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">4. FAQ</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../FAQ/prohibited_data_patterns.html">4.1. Prohibited Data Patterns</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development.html">4. Development</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../development.html#running-tests-in-docker">4.1. Running tests in Docker</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">5. FAQ</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../FAQ/prohibited_data_patterns.html">5.1. Prohibited Data Patterns</a></li>
 </ul>
 </li>
 </ul>

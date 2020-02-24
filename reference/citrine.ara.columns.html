@@ -1,0 +1,358 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>citrine.ara.columns module &#8212; Citrine Python 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-citrine.ara.columns">
+<span id="citrine-ara-columns-module"></span><h1>citrine.ara.columns module<a class="headerlink" href="#module-citrine.ara.columns" title="Permalink to this headline">¶</a></h1>
+<p>Column definitions for Ara.</p>
+<dl class="class">
+<dt id="citrine.ara.columns.Column">
+<em class="property">class </em><code class="sig-prename descclassname">citrine.ara.columns.</code><code class="sig-name descname">Column</code><a class="headerlink" href="#citrine.ara.columns.Column" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.polymorphic_serializable.PolymorphicSerializable</span></code></p>
+<p>[ALPHA] A column in the Ara table, defined as some operation on a variable.</p>
+<p>Abstract type that returns the proper type given a serialized dict.</p>
+<dl class="method">
+<dt id="citrine.ara.columns.Column.get_type">
+<em class="property">classmethod </em><code class="sig-name descname">get_type</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span> &#x2192; Type[citrine._serialization.serializable.Serializable]<a class="headerlink" href="#citrine.ara.columns.Column.get_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the subtype.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="citrine.ara.columns.IdentityColumn">
+<em class="property">class </em><code class="sig-prename descclassname">citrine.ara.columns.</code><code class="sig-name descname">IdentityColumn</code><span class="sig-paren">(</span><em class="sig-param">*</em>, <em class="sig-param">data_source: str</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.ara.columns.IdentityColumn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.ara.columns.Column" title="citrine.ara.columns.Column"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.ara.columns.Column</span></code></a></p>
+<p>[ALPHA] Column containing the value of a string-valued variable.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data_source</strong> (<em>str</em>) – name of the variable to use when populating the column</p>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="citrine.ara.columns.IdentityColumn.data_source">
+<code class="sig-name descname">data_source</code><em class="property"> = None</em><a class="headerlink" href="#citrine.ara.columns.IdentityColumn.data_source" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.ara.columns.IdentityColumn.typ">
+<code class="sig-name descname">typ</code><em class="property"> = 'identity_column'</em><a class="headerlink" href="#citrine.ara.columns.IdentityColumn.typ" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="citrine.ara.columns.MeanColumn">
+<em class="property">class </em><code class="sig-prename descclassname">citrine.ara.columns.</code><code class="sig-name descname">MeanColumn</code><span class="sig-paren">(</span><em class="sig-param">*</em>, <em class="sig-param">data_source: str</em>, <em class="sig-param">target_units: Optional[str] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.ara.columns.MeanColumn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.ara.columns.Column" title="citrine.ara.columns.Column"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.ara.columns.Column</span></code></a></p>
+<p>[ALPHA] Column containing the mean of a real-valued variable.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data_source</strong> (<em>str</em>) – name of the variable to use when populating the column</p></li>
+<li><p><strong>target_units</strong> (<em>optional</em><em>[</em><em>str</em><em>]</em>) – units to convert the real variable into</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="citrine.ara.columns.MeanColumn.data_source">
+<code class="sig-name descname">data_source</code><em class="property"> = None</em><a class="headerlink" href="#citrine.ara.columns.MeanColumn.data_source" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.ara.columns.MeanColumn.target_units">
+<code class="sig-name descname">target_units</code><em class="property"> = None</em><a class="headerlink" href="#citrine.ara.columns.MeanColumn.target_units" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.ara.columns.MeanColumn.typ">
+<code class="sig-name descname">typ</code><em class="property"> = 'mean_column'</em><a class="headerlink" href="#citrine.ara.columns.MeanColumn.typ" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="citrine.ara.columns.MostLikelyCategoryColumn">
+<em class="property">class </em><code class="sig-prename descclassname">citrine.ara.columns.</code><code class="sig-name descname">MostLikelyCategoryColumn</code><span class="sig-paren">(</span><em class="sig-param">*</em>, <em class="sig-param">data_source: str</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.ara.columns.MostLikelyCategoryColumn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.ara.columns.Column" title="citrine.ara.columns.Column"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.ara.columns.Column</span></code></a></p>
+<p>[ALPHA] Column containing the most likely category.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data_source</strong> (<em>str</em>) – name of the variable to use when populating the column</p>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="citrine.ara.columns.MostLikelyCategoryColumn.data_source">
+<code class="sig-name descname">data_source</code><em class="property"> = None</em><a class="headerlink" href="#citrine.ara.columns.MostLikelyCategoryColumn.data_source" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.ara.columns.MostLikelyCategoryColumn.typ">
+<code class="sig-name descname">typ</code><em class="property"> = 'most_likely_category_column'</em><a class="headerlink" href="#citrine.ara.columns.MostLikelyCategoryColumn.typ" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="citrine.ara.columns.MostLikelyProbabilityColumn">
+<em class="property">class </em><code class="sig-prename descclassname">citrine.ara.columns.</code><code class="sig-name descname">MostLikelyProbabilityColumn</code><span class="sig-paren">(</span><em class="sig-param">*</em>, <em class="sig-param">data_source: str</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.ara.columns.MostLikelyProbabilityColumn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.ara.columns.Column" title="citrine.ara.columns.Column"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.ara.columns.Column</span></code></a></p>
+<p>[ALPHA] Column containing the probability of the most likely category.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data_source</strong> (<em>str</em>) – name of the variable to use when populating the column</p>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="citrine.ara.columns.MostLikelyProbabilityColumn.data_source">
+<code class="sig-name descname">data_source</code><em class="property"> = None</em><a class="headerlink" href="#citrine.ara.columns.MostLikelyProbabilityColumn.data_source" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.ara.columns.MostLikelyProbabilityColumn.typ">
+<code class="sig-name descname">typ</code><em class="property"> = 'most_likely_probability_column'</em><a class="headerlink" href="#citrine.ara.columns.MostLikelyProbabilityColumn.typ" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="citrine.ara.columns.OriginalUnitsColumn">
+<em class="property">class </em><code class="sig-prename descclassname">citrine.ara.columns.</code><code class="sig-name descname">OriginalUnitsColumn</code><span class="sig-paren">(</span><em class="sig-param">*</em>, <em class="sig-param">data_source: str</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.ara.columns.OriginalUnitsColumn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.ara.columns.Column" title="citrine.ara.columns.Column"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.ara.columns.Column</span></code></a></p>
+<p>[ALPHA] Column containing the units as entered in the source data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data_source</strong> (<em>str</em>) – name of the variable to use when populating the column</p>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="citrine.ara.columns.OriginalUnitsColumn.data_source">
+<code class="sig-name descname">data_source</code><em class="property"> = None</em><a class="headerlink" href="#citrine.ara.columns.OriginalUnitsColumn.data_source" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.ara.columns.OriginalUnitsColumn.typ">
+<code class="sig-name descname">typ</code><em class="property"> = 'original_units_column'</em><a class="headerlink" href="#citrine.ara.columns.OriginalUnitsColumn.typ" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="citrine.ara.columns.QuantileColumn">
+<em class="property">class </em><code class="sig-prename descclassname">citrine.ara.columns.</code><code class="sig-name descname">QuantileColumn</code><span class="sig-paren">(</span><em class="sig-param">*</em>, <em class="sig-param">data_source: str</em>, <em class="sig-param">quantile: float</em>, <em class="sig-param">target_units: Optional[str] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.ara.columns.QuantileColumn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.ara.columns.Column" title="citrine.ara.columns.Column"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.ara.columns.Column</span></code></a></p>
+<p>[ALPHA] Column containing a quantile of the variable.</p>
+<p>The column is populated with the quantile function of the distribution evaluated at “quantile”.
+For example, for a uniform distribution parameterized by a lower and upper bound, the value
+in the column would be:</p>
+<blockquote>
+<div><p>lower + (upper - lower) * quantile</p>
+</div></blockquote>
+<dl class="simple">
+<dt>while for a normal distribution parameterized by a mean and stddev, the value would be:</dt><dd><p>mean + stddev * sqrt(2) * inverse error function (2 * quantile - 1)</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data_source</strong> (<em>str</em>) – name of the variable to use when populating the column</p></li>
+<li><p><strong>quantile</strong> (<em>float</em>) – the quantile to use for the column, defined between 0.0 and 1.0</p></li>
+<li><p><strong>target_units</strong> (<em>optional</em><em>[</em><em>str</em><em>]</em>) – units to convert the real variable into</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="citrine.ara.columns.QuantileColumn.data_source">
+<code class="sig-name descname">data_source</code><em class="property"> = None</em><a class="headerlink" href="#citrine.ara.columns.QuantileColumn.data_source" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.ara.columns.QuantileColumn.quantile">
+<code class="sig-name descname">quantile</code><em class="property"> = None</em><a class="headerlink" href="#citrine.ara.columns.QuantileColumn.quantile" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.ara.columns.QuantileColumn.target_units">
+<code class="sig-name descname">target_units</code><em class="property"> = None</em><a class="headerlink" href="#citrine.ara.columns.QuantileColumn.target_units" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.ara.columns.QuantileColumn.typ">
+<code class="sig-name descname">typ</code><em class="property"> = 'quantile_column'</em><a class="headerlink" href="#citrine.ara.columns.QuantileColumn.typ" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="citrine.ara.columns.StdDevColumn">
+<em class="property">class </em><code class="sig-prename descclassname">citrine.ara.columns.</code><code class="sig-name descname">StdDevColumn</code><span class="sig-paren">(</span><em class="sig-param">*</em>, <em class="sig-param">data_source: str</em>, <em class="sig-param">target_units: Optional[str] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.ara.columns.StdDevColumn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.ara.columns.Column" title="citrine.ara.columns.Column"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.ara.columns.Column</span></code></a></p>
+<p>[ALPHA] Column containing the standard deviation of a real-valued variable.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data_source</strong> (<em>str</em>) – name of the variable to use when populating the column</p></li>
+<li><p><strong>target_units</strong> (<em>optional</em><em>[</em><em>str</em><em>]</em>) – units to convert the real variable into</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="citrine.ara.columns.StdDevColumn.data_source">
+<code class="sig-name descname">data_source</code><em class="property"> = None</em><a class="headerlink" href="#citrine.ara.columns.StdDevColumn.data_source" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.ara.columns.StdDevColumn.target_units">
+<code class="sig-name descname">target_units</code><em class="property"> = None</em><a class="headerlink" href="#citrine.ara.columns.StdDevColumn.target_units" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.ara.columns.StdDevColumn.typ">
+<code class="sig-name descname">typ</code><em class="property"> = 'std_dev_column'</em><a class="headerlink" href="#citrine.ara.columns.StdDevColumn.typ" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../index.html">
+    <img class="logo" src="../_static/logo.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=CitrineInformatics&repo=citrine-python&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/index.html">1. Getting Started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/basic_structure.html">1.1. Structure of the Citrine Python Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/basic_functionality.html">1.2. Using the Citrine Python Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/data_model.html">1.3. Data Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/public_access.html">1.4. Dataset Access Control</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/working_with_files.html">1.5. Working With Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/projects_and_users.html">1.6. Projects and Users</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/code_examples.html">1.7. Code Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../data_extraction.html">2. [ALPHA] Data Extraction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#defining-row-and-columns">2.1. Defining row and columns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#defining-tables">2.2. Defining tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#creating-and-reading-tables">2.3. Creating and reading tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-row-definitions">2.4. Available Row Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-variable-definitions">2.5. Available Variable Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-column-definitions">2.6. Available Column Definitions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">3. Workflows</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#modules">3.1. Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#design-workflows">3.2. Design workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#registration-and-validation">3.3. Registration and validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#table-of-contents">3.4. Table of Contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../development.html">4. Development</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../development.html#running-tests-in-docker">4.1. Running tests in Docker</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">5. FAQ</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../FAQ/prohibited_data_patterns.html">5.1. Prohibited Data Patterns</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Citrine Informatics.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/reference/citrine.ara.columns.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

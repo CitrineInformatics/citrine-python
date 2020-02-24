@@ -1,0 +1,19 @@
+citrine.ara package
+===================
+
+Submodules
+----------
+
+.. toctree::
+
+   citrine.ara.columns
+   citrine.ara.rows
+   citrine.ara.variables
+
+Module contents
+---------------
+
+.. automodule:: citrine.ara
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -1,0 +1,305 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>citrine.resources.ara_definition module &#8212; Citrine Python 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="shortcut icon" href="../_static/favicon.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-citrine.resources.ara_definition">
+<span id="citrine-resources-ara-definition-module"></span><h1>citrine.resources.ara_definition module<a class="headerlink" href="#module-citrine.resources.ara_definition" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="citrine.resources.ara_definition.AraDefinition">
+<em class="property">class </em><code class="sig-prename descclassname">citrine.resources.ara_definition.</code><code class="sig-name descname">AraDefinition</code><span class="sig-paren">(</span><em class="sig-param">*, name: str, description: str, datasets: List[uuid.UUID], variables: List[citrine.ara.variables.Variable], rows: List[citrine.ara.rows.Row], columns: List[citrine.ara.columns.Column], version_uid: Optional[uuid.UUID] = None, version_number: Optional[int] = None, definition_uid: Optional[uuid.UUID] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.ara_definition.AraDefinition" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.resource.Resource</span></code></p>
+<p>[ALPHA] The definition of an Ara Table.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – Name of the table being defined</p></li>
+<li><p><strong>description</strong> (<em>str</em>) – Description of the table being defined</p></li>
+<li><p><strong>datasets</strong> (<em>list</em><em>[</em><em>UUID</em><em>]</em>) – Datasets that are in scope for the table, as a list of dataset uuids</p></li>
+<li><p><strong>variables</strong> (<em>list</em><em>[</em><a class="reference internal" href="citrine.ara.variables.html#citrine.ara.variables.Variable" title="citrine.ara.variables.Variable"><em>Variable</em></a><em>]</em>) – Variable definitions, which define data from the material histories to use in the columns</p></li>
+<li><p><strong>rows</strong> (<em>list</em><em>[</em><a class="reference internal" href="citrine.ara.rows.html#citrine.ara.rows.Row" title="citrine.ara.rows.Row"><em>Row</em></a><em>]</em>) – List of row definitions that define the rows of the table</p></li>
+<li><p><strong>columns</strong> (<em>list</em><em>[</em><a class="reference internal" href="citrine.ara.columns.html#citrine.ara.columns.Column" title="citrine.ara.columns.Column"><em>Column</em></a><em>]</em>) – Column definitions, which describe how the variables are shaped into the table</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="method">
+<dt id="citrine.resources.ara_definition.AraDefinition.add_columns">
+<code class="sig-name descname">add_columns</code><span class="sig-paren">(</span><em class="sig-param">*, variable: citrine.ara.variables.Variable, columns: List[citrine.ara.columns.Column], name: Optional[str] = None, description: Optional[str] = None</em><span class="sig-paren">)</span> &#x2192; citrine.resources.ara_definition.AraDefinition<a class="headerlink" href="#citrine.resources.ara_definition.AraDefinition.add_columns" title="Permalink to this definition">¶</a></dt>
+<dd><p>[ALPHA] Add a variable and one or more columns to this AraDefinition (out-of-place).</p>
+<p>This method checks that the variable name is not already in use and that the columns
+only reference that variable.  It is <em>not</em> able to check if the columns and the variable
+are compatible (yet, at least).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>variable</strong> (<a class="reference internal" href="citrine.ara.variables.html#citrine.ara.variables.Variable" title="citrine.ara.variables.Variable"><em>Variable</em></a>) – Variable to add and use in the added columns</p></li>
+<li><p><strong>columns</strong> (<em>list</em><em>[</em><a class="reference internal" href="citrine.ara.columns.html#citrine.ara.columns.Column" title="citrine.ara.columns.Column"><em>Column</em></a><em>]</em>) – Columns to add, which must only reference the added variable</p></li>
+<li><p><strong>name</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Optional renaming of the table</p></li>
+<li><p><strong>description</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Optional re-description of the table</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.resources.ara_definition.AraDefinition.columns">
+<code class="sig-name descname">columns</code><em class="property"> = None</em><a class="headerlink" href="#citrine.resources.ara_definition.AraDefinition.columns" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.resources.ara_definition.AraDefinition.datasets">
+<code class="sig-name descname">datasets</code><em class="property"> = None</em><a class="headerlink" href="#citrine.resources.ara_definition.AraDefinition.datasets" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.resources.ara_definition.AraDefinition.definition_uid">
+<code class="sig-name descname">definition_uid</code><em class="property"> = None</em><a class="headerlink" href="#citrine.resources.ara_definition.AraDefinition.definition_uid" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.resources.ara_definition.AraDefinition.description">
+<code class="sig-name descname">description</code><em class="property"> = None</em><a class="headerlink" href="#citrine.resources.ara_definition.AraDefinition.description" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.resources.ara_definition.AraDefinition.name">
+<code class="sig-name descname">name</code><em class="property"> = None</em><a class="headerlink" href="#citrine.resources.ara_definition.AraDefinition.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.resources.ara_definition.AraDefinition.rows">
+<code class="sig-name descname">rows</code><em class="property"> = None</em><a class="headerlink" href="#citrine.resources.ara_definition.AraDefinition.rows" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.resources.ara_definition.AraDefinition.variables">
+<code class="sig-name descname">variables</code><em class="property"> = None</em><a class="headerlink" href="#citrine.resources.ara_definition.AraDefinition.variables" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.resources.ara_definition.AraDefinition.version_number">
+<code class="sig-name descname">version_number</code><em class="property"> = None</em><a class="headerlink" href="#citrine.resources.ara_definition.AraDefinition.version_number" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.resources.ara_definition.AraDefinition.version_uid">
+<code class="sig-name descname">version_uid</code><em class="property"> = None</em><a class="headerlink" href="#citrine.resources.ara_definition.AraDefinition.version_uid" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="citrine.resources.ara_definition.AraDefinitionCollection">
+<em class="property">class </em><code class="sig-prename descclassname">citrine.resources.ara_definition.</code><code class="sig-name descname">AraDefinitionCollection</code><span class="sig-paren">(</span><em class="sig-param">project_id: uuid.UUID</em>, <em class="sig-param">session: citrine._session.Session</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.ara_definition.AraDefinitionCollection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.collection.Collection</span></code></p>
+<p>[ALPHA] Represents the collection of all Ara Definitions associated with a project.</p>
+<dl class="method">
+<dt id="citrine.resources.ara_definition.AraDefinitionCollection.build">
+<code class="sig-name descname">build</code><span class="sig-paren">(</span><em class="sig-param">data: dict</em><span class="sig-paren">)</span> &#x2192; citrine.resources.ara_definition.AraDefinition<a class="headerlink" href="#citrine.resources.ara_definition.AraDefinitionCollection.build" title="Permalink to this definition">¶</a></dt>
+<dd><p>[ALPHA] Build an individual Ara Definition from a dictionary.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="citrine.resources.ara_definition.AraDefinitionCollection.get_with_version">
+<code class="sig-name descname">get_with_version</code><span class="sig-paren">(</span><em class="sig-param">definition_uid: Union[uuid.UUID, str], version_number: int</em><span class="sig-paren">)</span> &#x2192; citrine.resources.ara_definition.AraDefinition<a class="headerlink" href="#citrine.resources.ara_definition.AraDefinitionCollection.get_with_version" title="Permalink to this definition">¶</a></dt>
+<dd><p>[ALPHA] Get an Ara Definition at a specific version.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="citrine.resources.ara_definition.AraDefinitionCollection.preview">
+<code class="sig-name descname">preview</code><span class="sig-paren">(</span><em class="sig-param">defn: citrine.resources.ara_definition.AraDefinition, preview_roots: List[taurus.entity.link_by_uid.LinkByUID]</em><span class="sig-paren">)</span> &#x2192; dict<a class="headerlink" href="#citrine.resources.ara_definition.AraDefinitionCollection.preview" title="Permalink to this definition">¶</a></dt>
+<dd><p>[ALPHA] Preview an AraDefinition on an explicit set of roots.</p>
+<blockquote>
+<div><p>Parameters</p>
+</div></blockquote>
+<dl class="simple">
+<dt>defn: AraDefinition</dt><dd><p>Definition to preview</p>
+</dd>
+<dt>preview_roots: list[LinkByUID]</dt><dd><p>List of links to the material history roots to use in the preview</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="citrine.resources.ara_definition.AraDefinitionCollection.register">
+<code class="sig-name descname">register</code><span class="sig-paren">(</span><em class="sig-param">defn: citrine.resources.ara_definition.AraDefinition</em><span class="sig-paren">)</span> &#x2192; citrine.resources.ara_definition.AraDefinition<a class="headerlink" href="#citrine.resources.ara_definition.AraDefinitionCollection.register" title="Permalink to this definition">¶</a></dt>
+<dd><p>[ALPHA] Register an Ara Definition.</p>
+<p>If the provided AraDefinition does not have a definition_uid, create a new element of the
+AraDefinitionCollection by registering the provided AraDefinition. If the provided
+AraDefinition does have a uid, update (replace) the AraDefinition at that uid with the
+provided AraDefinition.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>defn</strong> – The AraDefinition to register</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The registered AraDefinition with updated metadata</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>TODO: Consider validating that a resource exists at the given uid before updating.</dt><dd><p>The code to do so is not yet implemented on the backend</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="citrine.resources.ara_definition.AraDefinitionCollection.update">
+<code class="sig-name descname">update</code><span class="sig-paren">(</span><em class="sig-param">defn: citrine.resources.ara_definition.AraDefinition</em><span class="sig-paren">)</span> &#x2192; citrine.resources.ara_definition.AraDefinition<a class="headerlink" href="#citrine.resources.ara_definition.AraDefinitionCollection.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>[ALPHA] Update an AraDefinition.</p>
+<p>If the provided AraDefinition does have a uid, update (replace) the AraDefinition at that
+uid with the provided AraDefinition.</p>
+<p>Raise a ValueError if the provided AraDefinition does not have a definition_uid.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>defn</strong> – The AraDefinition to updated</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The updated AraDefinition with updated metadata</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../index.html">
+    <img class="logo" src="../_static/logo.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=CitrineInformatics&repo=citrine-python&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/index.html">1. Getting Started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/basic_structure.html">1.1. Structure of the Citrine Python Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/basic_functionality.html">1.2. Using the Citrine Python Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/data_model.html">1.3. Data Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/public_access.html">1.4. Dataset Access Control</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/working_with_files.html">1.5. Working With Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/projects_and_users.html">1.6. Projects and Users</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/code_examples.html">1.7. Code Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../data_extraction.html">2. [ALPHA] Data Extraction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#defining-row-and-columns">2.1. Defining row and columns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#defining-tables">2.2. Defining tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#creating-and-reading-tables">2.3. Creating and reading tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-row-definitions">2.4. Available Row Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-variable-definitions">2.5. Available Variable Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-column-definitions">2.6. Available Column Definitions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">3. Workflows</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#modules">3.1. Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#design-workflows">3.2. Design workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#registration-and-validation">3.3. Registration and validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#table-of-contents">3.4. Table of Contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../development.html">4. Development</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../development.html#running-tests-in-docker">4.1. Running tests in Docker</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">5. FAQ</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../FAQ/prohibited_data_patterns.html">5.1. Prohibited Data Patterns</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Citrine Informatics.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/reference/citrine.resources.ara_definition.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -38,7 +38,7 @@
 <dt id="citrine.informatics.design_spaces.DesignSpace">
 <em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.design_spaces.</code><code class="sig-name descname">DesignSpace</code><a class="headerlink" href="#citrine.informatics.design_spaces.DesignSpace" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="citrine.informatics.modules.html#citrine.informatics.modules.Module" title="citrine.informatics.modules.Module"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.modules.Module</span></code></a></p>
-<p>A Citrine Design Space describes the set of materials that can be made.</p>
+<p>[ALPHA] A Citrine Design Space describes the set of materials that can be made.</p>
 <p>Abstract type that returns the proper type given a serialized dict.</p>
 <dl class="method">
 <dt id="citrine.informatics.design_spaces.DesignSpace.get_type">
@@ -52,7 +52,7 @@
 <dt id="citrine.informatics.design_spaces.ProductDesignSpace">
 <em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.design_spaces.</code><code class="sig-name descname">ProductDesignSpace</code><span class="sig-paren">(</span><em class="sig-param">name: str, description: str, dimensions: List[citrine.informatics.dimensions.Dimension], session: citrine._session.Session = &lt;citrine._session.Session object&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.design_spaces.ProductDesignSpace" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.resource.Resource</span></code>, <a class="reference internal" href="#citrine.informatics.design_spaces.DesignSpace" title="citrine.informatics.design_spaces.DesignSpace"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.design_spaces.DesignSpace</span></code></a></p>
-<p>An outer product of univariate dimensions, either continuous or enumerated.</p>
+<p>[ALPHA] An outer product of univariate dimensions, either continuous or enumerated.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -118,7 +118,7 @@
 <dt id="citrine.informatics.design_spaces.EnumeratedDesignSpace">
 <em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.design_spaces.</code><code class="sig-name descname">EnumeratedDesignSpace</code><span class="sig-paren">(</span><em class="sig-param">name: str, description: str, descriptors: List[citrine.informatics.descriptors.Descriptor], data: List[Mapping[str, Any]], session: citrine._session.Session = &lt;citrine._session.Session object&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.design_spaces.EnumeratedDesignSpace" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.resource.Resource</span></code>, <a class="reference internal" href="#citrine.informatics.design_spaces.DesignSpace" title="citrine.informatics.design_spaces.DesignSpace"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.design_spaces.DesignSpace</span></code></a></p>
-<p>An explicit enumeration of candidate materials to score.</p>
+<p>[ALPHA] An explicit enumeration of candidate materials to score.</p>
 <p>Note that every candidate must have exactly the descriptors in the list populated
 (no more, no less) in order to be included.</p>
 <dl class="field-list simple">
@@ -231,19 +231,28 @@ where each dict corresponds to a candidate in the design space</p></li>
 <li class="toctree-l2"><a class="reference internal" href="../getting_started/code_examples.html">1.7. Code Examples</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">2. Workflows</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#modules">2.1. Modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#design-workflows">2.2. Design workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#registration-and-validation">2.3. Registration and validation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#table-of-contents">2.4. Table of Contents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_extraction.html">2. [ALPHA] Data Extraction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#defining-row-and-columns">2.1. Defining row and columns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#defining-tables">2.2. Defining tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#creating-and-reading-tables">2.3. Creating and reading tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-row-definitions">2.4. Available Row Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-variable-definitions">2.5. Available Variable Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-column-definitions">2.6. Available Column Definitions</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../development.html">3. Development</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../development.html#running-tests-in-docker">3.1. Running tests in Docker</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">3. Workflows</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#modules">3.1. Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#design-workflows">3.2. Design workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#registration-and-validation">3.3. Registration and validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#table-of-contents">3.4. Table of Contents</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">4. FAQ</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../FAQ/prohibited_data_patterns.html">4.1. Prohibited Data Patterns</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development.html">4. Development</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../development.html#running-tests-in-docker">4.1. Running tests in Docker</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">5. FAQ</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../FAQ/prohibited_data_patterns.html">5.1. Prohibited Data Patterns</a></li>
 </ul>
 </li>
 </ul>

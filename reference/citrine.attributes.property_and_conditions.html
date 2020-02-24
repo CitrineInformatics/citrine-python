@@ -33,41 +33,13 @@
             
   <div class="section" id="module-citrine.attributes.property_and_conditions">
 <span id="citrine-attributes-property-and-conditions-module"></span><h1>citrine.attributes.property_and_conditions module<a class="headerlink" href="#module-citrine.attributes.property_and_conditions" title="Permalink to this headline">¶</a></h1>
-<p>A resource that represents a property_and_conditions compound attribute.</p>
-<dl class="class">
+<p>A resource that represents a property attribute.</p>
+<dl class="function">
 <dt id="citrine.attributes.property_and_conditions.PropertyAndConditions">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.attributes.property_and_conditions.</code><code class="sig-name descname">PropertyAndConditions</code><span class="sig-paren">(</span><em class="sig-param">property: citrine.attributes.property.Property</em>, <em class="sig-param">conditions: Optional[List[citrine.attributes.condition.Condition]] = []</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.attributes.property_and_conditions.PropertyAndConditions" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConcepts" title="citrine.resources.data_concepts.DataConcepts"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.resources.data_concepts.DataConcepts</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference external" href="https://citrineinformatics.github.io/taurus/reference/taurus.entity.attribute.property_and_conditions.html#taurus.entity.attribute.property_and_conditions.PropertyAndConditions" title="(in Taurus)"><code class="xref py py-class docutils literal notranslate"><span class="pre">taurus.entity.attribute.property_and_conditions.PropertyAndConditions</span></code></a></p>
-<p>A compound attribute with one property and a list of relevant conditions.</p>
-<p>In the MaterialSpec object, one may need to specify a property along with the conditions
-under which the property occurs. For example:</p>
-<ul class="simple">
-<li><p>Vapor pressure of 5.6 kPa at a temperature of 35 deg C</p></li>
-<li><p>Gas phase at a pressure of 1 kPa and a temperature of 300 K</p></li>
-</ul>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>property</strong> (<a class="reference internal" href="citrine.attributes.property.html#citrine.attributes.property.Property" title="citrine.attributes.property.Property"><code class="xref py py-class docutils literal notranslate"><span class="pre">Property</span></code></a>) – A property attribute</p></li>
-<li><p><strong>conditions</strong> (List[<a class="reference internal" href="citrine.attributes.condition.html#citrine.attributes.condition.Condition" title="citrine.attributes.condition.Condition"><code class="xref py py-class docutils literal notranslate"><span class="pre">Condition</span></code></a>]) – An optional list of conditions associated with this property</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="attribute">
-<dt id="citrine.attributes.property_and_conditions.PropertyAndConditions.conditions">
-<code class="sig-name descname">conditions</code><em class="property"> = None</em><a class="headerlink" href="#citrine.attributes.property_and_conditions.PropertyAndConditions.conditions" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="citrine.attributes.property_and_conditions.PropertyAndConditions.property">
-<code class="sig-name descname">property</code><em class="property"> = None</em><a class="headerlink" href="#citrine.attributes.property_and_conditions.PropertyAndConditions.property" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="citrine.attributes.property_and_conditions.PropertyAndConditions.typ">
-<code class="sig-name descname">typ</code><em class="property"> = 'property_and_conditions'</em><a class="headerlink" href="#citrine.attributes.property_and_conditions.PropertyAndConditions.typ" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
+<code class="sig-prename descclassname">citrine.attributes.property_and_conditions.</code><code class="sig-name descname">PropertyAndConditions</code><span class="sig-paren">(</span><em class="sig-param">property=None</em>, <em class="sig-param">conditions=None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.attributes.property_and_conditions.PropertyAndConditions" title="Permalink to this definition">¶</a></dt>
+<dd><div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 0.8.0: </span>This will be removed in 0.9.0. Use taurus.entity.attribute.property_and_conditions instead</p>
+</div>
 </dd></dl>
 
 </div>
@@ -112,19 +84,28 @@ under which the property occurs. For example:</p>
 <li class="toctree-l2"><a class="reference internal" href="../getting_started/code_examples.html">1.7. Code Examples</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">2. Workflows</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#modules">2.1. Modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#design-workflows">2.2. Design workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#registration-and-validation">2.3. Registration and validation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#table-of-contents">2.4. Table of Contents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_extraction.html">2. [ALPHA] Data Extraction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#defining-row-and-columns">2.1. Defining row and columns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#defining-tables">2.2. Defining tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#creating-and-reading-tables">2.3. Creating and reading tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-row-definitions">2.4. Available Row Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-variable-definitions">2.5. Available Variable Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-column-definitions">2.6. Available Column Definitions</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../development.html">3. Development</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../development.html#running-tests-in-docker">3.1. Running tests in Docker</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">3. Workflows</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#modules">3.1. Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#design-workflows">3.2. Design workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#registration-and-validation">3.3. Registration and validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#table-of-contents">3.4. Table of Contents</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">4. FAQ</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../FAQ/prohibited_data_patterns.html">4.1. Prohibited Data Patterns</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development.html">4. Development</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../development.html#running-tests-in-docker">4.1. Running tests in Docker</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">5. FAQ</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../FAQ/prohibited_data_patterns.html">5.1. Prohibited Data Patterns</a></li>
 </ul>
 </li>
 </ul>

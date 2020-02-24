@@ -1,0 +1,7 @@
+citrine.ara.variables module
+============================
+
+.. automodule:: citrine.ara.variables
+   :members:
+   :undoc-members:
+   :show-inheritance:
