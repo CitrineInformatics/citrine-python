@@ -1,25 +1,25 @@
 """Resources that represent material run data objects."""
-from typing import List, Dict, Optional, Type
-import os
 import json
+import os
+from typing import List, Dict, Optional, Type, Iterator
 
-from citrine._utils.functions import set_default_uid
 from citrine._rest.resource import Resource
-from citrine._session import Session
-from citrine.resources.data_concepts import DataConcepts, DataConceptsCollection
-from citrine.resources.storable import Storable
-from citrine._serialization.properties import String, LinkOrElse, Mapping, Object
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Optional as PropertyOptional
-from taurus.client.json_encoder import TaurusEncoder
+from citrine._serialization.properties import String, LinkOrElse, Mapping, Object
+from citrine._utils.functions import set_default_uid
+from citrine.resources.data_concepts import DataConcepts, DataConceptsCollection
+from citrine.resources.material_spec import MaterialSpecCollection
 from taurus.entity.file_link import FileLink
-from taurus.entity.object.process_run import ProcessRun as TaurusProcessRun
+from taurus.entity.link_by_uid import LinkByUID
 from taurus.entity.object.material_run import MaterialRun as TaurusMaterialRun
 from taurus.entity.object.material_spec import MaterialSpec as TaurusMaterialSpec
-from taurus.client.json_encoder import loads
+from taurus.entity.object.process_run import ProcessRun as TaurusProcessRun
+from taurus.util import writable_sort_order
+from taurus.json import TaurusEncoder
 
 
-class MaterialRun(Storable, Resource['MaterialRun'], TaurusMaterialRun):
+class MaterialRun(DataConcepts, Resource['MaterialRun'], TaurusMaterialRun):
     """
     A material run.
 
@@ -85,42 +85,6 @@ class MaterialRun(Storable, Resource['MaterialRun'], TaurusMaterialRun):
     def __str__(self):
         return '<Material run {!r}>'.format(self.name)
 
-    @classmethod
-    def _build_discarded_objects(cls, obj, obj_with_soft_links, session: Session = None):
-        """
-        Build the MeasurementRun objects that this MaterialRun has soft links to.
-
-        The measurement runs are found in `obj_with_soft_link`
-
-        This method modifies the object in place.
-
-        Parameters
-        ----------
-        obj: MaterialRun
-            A MaterialRun object that might be missing some links to MeasurementRun objects.
-        obj_with_soft_links: dict or \
-        :py:class:`DictSerializable <taurus.entity.dict_serializable.DictSerializable>`
-            A representation of the MaterialRun in which the MeasurementRuns are encoded.
-            We consider both the possibility that this is a dictionary with a 'measurements' key
-            and that it is a
-            :py:class:`DictSerializable <taurus.entity.dict_serializable.DictSerializable>`
-            (presumably a
-            :py:class:`TaurusMeasurementRun <taurus.entity.measurement_run.MeasurementRun>`)
-            with a .measurements field.
-        session: Session, optional
-            Citrine session used to connect to the database.
-
-        Returns
-        -------
-        None
-            The MaterialRun object is modified so that it has links to its MeasurementRuns.
-
-        """
-        from citrine.resources.measurement_run import MeasurementRun
-        DataConcepts._build_list_of_soft_links(
-            obj, obj_with_soft_links, field='measurements', reverse_field='material',
-            linked_type=MeasurementRun, session=session)
-
 
 class MaterialRunCollection(DataConceptsCollection[MaterialRun]):
     """Represents the collection of all material runs associated with a dataset."""
@@ -162,7 +126,70 @@ class MaterialRunCollection(DataConceptsCollection[MaterialRun]):
         base_path = os.path.dirname(self._get_path(ignore_dataset=True))
         path = base_path + "/material-history/{}/{}".format(scope, id)
         data = self.session.get_resource(path)
-        # Rehydrate a taurus object based on the data
-        model = loads(json.dumps([data['context'], data['root']], cls=TaurusEncoder))
-        # Convert taurus objects into citrine-python objects
-        return MaterialRun.build(model)
+
+        # Add the root to the context and sort by writable order
+        blob = dict()
+        blob["context"] = sorted(
+            data['context'] + [data['root']],
+            key=lambda x: writable_sort_order(x["type"])
+        )
+        root_uid_scope, root_uid_id = next(iter(data['root']['uids'].items()))
+        # Add a link to the root as the "object"
+        blob["object"] = LinkByUID(scope=root_uid_scope, id=root_uid_id)
+
+        # Serialize using normal json (with the TaurusEncoder) and then deserialize with the
+        # TaurusJson encoder in order to rebuild the material history
+        return MaterialRun.get_json_support().loads(
+            json.dumps(blob, cls=TaurusEncoder, sort_keys=True))
+
+    def filter_by_spec(self,
+                       spec_id: str,
+                       spec_scope: str = 'id',
+                       per_page: int = 20) -> Iterator[MaterialRun]:
+        """
+        [ALPHA] Get all material runs associated with a material spec.
+
+        The material spec is specified by its scope and id.
+
+        :param spec_id: The unique id corresponding to `scope`.
+            The lookup will be most efficient if you use the Citrine ID (scope='id')
+            of the material spec.
+        :param spec_scope: The scope used to locate the material spec.
+        :param per_page: The number of results to return per page.
+        :return: A search result of material runs
+        """
+        path_prefix = MaterialSpecCollection(self.project_id,
+                                             self.dataset_id,
+                                             self.session)._get_path(ignore_dataset=True)
+        path = path_prefix + "/" + spec_scope + "/" + spec_id + "/material-runs"
+        raw_objects = self.session.cursor_paged_resource(self.session.get_resource,
+                                                         path,
+                                                         per_page=per_page,
+                                                         version="v1")
+        return (self.build(raw) for raw in raw_objects)
+
+    # Retrieve all material runs associated with a material template
+    def filter_by_template(self,
+                           template_id: str,
+                           template_scope: str = 'id',
+                           per_page: int = 20) -> Iterator[MaterialRun]:
+        """
+        [ALPHA] Get all material runs associated with a material template.
+
+        The material template is specified by its scope and id.
+
+        :param template_id: The unique id corresponding to `scope`.
+            The lookup will be most efficient if you use the Citrine ID (scope='id')
+            of the material template.
+        :param template_scope: The scope used to locate the material template.
+        :param per_page: The number of results to return per page.
+            Also used for intermediate queries.
+        :return: A search result of material runs
+        """
+        spec_collection = MaterialSpecCollection(self.project_id, self.dataset_id, self.session)
+        specs = spec_collection.filter_by_template(template_id,
+                                                   template_scope=template_scope,
+                                                   per_page=per_page)
+        return (run for runs in (self.filter_by_spec(spec.uids['id'],
+                                 per_page=per_page)for spec in specs)
+                for run in runs)

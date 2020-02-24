@@ -2,21 +2,18 @@
 from typing import List, Dict, Optional, Union, Sequence, Type
 
 from citrine._rest.resource import Resource
-from citrine._session import Session
-from citrine._serialization.properties import String, Mapping, Object, MixedList, LinkOrElse
-from citrine._serialization.properties import Optional as PropertyOptional
 from citrine._serialization.properties import List as PropertyList
+from citrine._serialization.properties import Optional as PropertyOptional
+from citrine._serialization.properties import String, Mapping, Object, MixedList, LinkOrElse
 from citrine._utils.functions import set_default_uid
 from citrine.resources.data_concepts import DataConcepts, DataConceptsCollection
-from citrine.resources.storable import Storable
 from citrine.resources.property_template import PropertyTemplate
-from taurus.client.json_encoder import loads, dumps
-from taurus.entity.template.material_template import MaterialTemplate as TaurusMaterialTemplate
 from taurus.entity.bounds.base_bounds import BaseBounds
 from taurus.entity.link_by_uid import LinkByUID
+from taurus.entity.template.material_template import MaterialTemplate as TaurusMaterialTemplate
 
 
-class MaterialTemplate(Storable, Resource['MaterialTemplate'], TaurusMaterialTemplate):
+class MaterialTemplate(DataConcepts, Resource['MaterialTemplate'], TaurusMaterialTemplate):
     """
     A material template.
 
@@ -73,31 +70,6 @@ class MaterialTemplate(Storable, Resource['MaterialTemplate'], TaurusMaterialTem
         TaurusMaterialTemplate.__init__(self, name=name, properties=properties,
                                         uids=set_default_uid(uids), tags=tags,
                                         description=description)
-
-    @classmethod
-    def _build_child_objects(cls, data: dict, data_with_soft_links, session: Session = None):
-        """
-        Build the property templates and bounds.
-
-        Parameters
-        ----------
-        data: dict
-            A serialized material template.
-        session: Session, optional
-            Citrine session used to connect to the database.
-
-        Returns
-        -------
-        None
-            The serialized material template is modified so that its
-             properties are [PropertyTemplate, Bounds].
-
-        """
-        if 'properties' in data and len(data['properties']) != 0:
-            # Each entry in the list data['properties'] has a property template as the 1st entry
-            # and a base bounds as the 2nd entry. They are built in different ways.
-            data['properties'] = [[PropertyTemplate.build(prop[0].as_dict()),
-                                   loads(dumps(prop[1]))] for prop in data['properties']]
 
     def __str__(self):
         return '<Material template {!r}>'.format(self.name)

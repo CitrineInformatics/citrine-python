@@ -1,20 +1,16 @@
 """Top-level class for all data concepts objects and collections thereof."""
 from uuid import UUID
 from typing import TypeVar, Type, List, Dict, Union, Optional, Iterator
-from copy import copy, deepcopy
 from abc import abstractmethod
 
 from citrine._session import Session
 from citrine._rest.collection import Collection
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
 from citrine._serialization.serializable import Serializable
-from citrine._serialization.properties import Property, LinkOrElse, Object
-from citrine._serialization.properties import List as PropertyList
-from citrine._serialization.properties import Optional as PropertyOptional
-from citrine._utils.functions import (
-    validate_type, scrub_none,
-    replace_objects_with_links, get_object_id)
-from taurus.client.json_encoder import loads, dumps, LinkByUID
+from citrine._utils.functions import scrub_none, replace_objects_with_links, get_object_id
+from citrine.resources.audit_info import AuditInfo
+from taurus.json import TaurusJson
+from taurus.entity.link_by_uid import LinkByUID
 from taurus.entity.dict_serializable import DictSerializable
 from taurus.entity.bounds.base_bounds import BaseBounds
 from taurus.entity.template.attribute_template import AttributeTemplate
@@ -22,7 +18,7 @@ from taurus.entity.template.attribute_template import AttributeTemplate
 from citrine.resources.response import Response
 
 
-class DataConcepts(PolymorphicSerializable['DataConcepts']):
+class DataConcepts(PolymorphicSerializable['DataConcepts'], DictSerializable):
     """
     An abstract data concepts object.
 
@@ -32,11 +28,6 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
     ----------
     typ: str
         A string denoting what type of DataConcepts class a particular instantiation is.
-
-    Attributes
-    ----------
-    session: Session
-        The Citrine session used to connect to the database.
 
     """
 
@@ -56,12 +47,58 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
     Only populated if the :func:`get_type` method is invoked.
     """
 
+    json_support = None
+    """
+    Custom json support object, which knows how to serialize and deserialize DataConcepts classes.
+    """
+
+    client_specific_fields = {"audit_info": AuditInfo}
+    """
+    Fields that are added to the taurus data objects when they are used in this client
+
+    * AuditInfo contains who/when information about the resource on the citrine platform
+    """
+
     def __init__(self, typ: str):
         self.typ = typ
-        self.session = None
+        for field in self.client_specific_fields:
+            self.__setattr__("_{}".format(field), None)
+
+    @property
+    def audit_info(self):
+        """Get the audit info object."""
+        return self._audit_info
 
     @classmethod
-    def build(cls, data: dict, session: Session = None):
+    def from_dict(cls, d: dict):
+        """
+        Build a data concepts object from a dictionary.
+
+        This is an internal method, and should not be called directly by users.  First,
+        it removes client_specific_fields from d, if present, and then calls the taurus
+        object's from_dict method.  Finally, it adds those fields back.
+
+        Parameters
+        ----------
+        d: dict
+            A representation of the object that will be shallowly loaded into the object.
+
+        """
+        popped = {k: d.pop(k, None) for k in cls.client_specific_fields}
+        obj = super().from_dict(d)
+
+        for field, clazz in cls.client_specific_fields.items():
+            if popped[field] is None:
+                setattr(obj, "_{}".format(field), None)
+            elif isinstance(popped[field], dict):
+                setattr(obj, "_{}".format(field), clazz.build(popped[field]))
+            else:
+                raise TypeError("{} must be a dictionary or None".format(field))
+
+        return obj
+
+    @classmethod
+    def build(cls, data: dict):
         """
         Build a data concepts object from a dictionary or from a Taurus object.
 
@@ -72,11 +109,9 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
         data: dict
             A representation of the object. It must be possible to put this dictionary through
             the loads/dumps cycle of the Taurus
-            :py:mod:`JSON encoder <taurus.client.json_encoder>`. The ensuing dictionary must
+            :py:mod:`JSON encoder <taurus.jsonr>`. The ensuing dictionary must
             have a `type` field that corresponds to the response key of this class or of
             :py:class:`LinkByUID <taurus.entity.link_by_uid.LinkByUID>`.
-        session: Session
-            the Citrine session to assign to the built object.
 
         Returns
         -------
@@ -84,233 +119,7 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
             An object corresponding to a data concepts resource.
 
         """
-        data_copy = deepcopy(data)
-        # Extract the values that are only for the client.
-        # They will be attached to the deserialized object later.
-        client_only_dict = dict()
-        for client_key in cls._client_keys:
-            val = DataConcepts._pop_field(data_copy, client_key)
-            client_only_dict[client_key] = val
-
-        # Running through a taurus loads/dumps cycle validates all of the fields and ensures
-        # the object is now a dictionary with a well-understood structure
-        # Note that this process modifies data_copy and makes it unsuitable for further use
-        data_copy_dict = loads(dumps(data_copy)).as_dict()
-
-        # Check the type--it should either correspond to LinkByUID or to this class.
-        if data_copy_dict.get(DataConcepts._type_key) == LinkByUID.typ:
-            return loads(dumps(data_copy_dict))
-        validate_type(data_copy_dict, cls._response_key)
-
-        # Remove the top-level "type" field and build child objects
-        data_copy_dict.pop(DataConcepts._type_key, None)
-        cls._build_child_objects(data_copy_dict, data)
-
-        data_concepts_object = cls(**data_copy_dict)
-        data_concepts_object.session = session
-        for client_key in cls._client_keys:
-            setattr(data_concepts_object, client_key, client_only_dict.get(client_key))
-
-        cls._build_discarded_objects(data_concepts_object, data, session)
-        return data_concepts_object
-
-    @staticmethod
-    def _get_field(data, field: str):
-        """
-        Get the value of a field from something that might be a dictionary or might be an object.
-
-        Parameters
-        ----------
-        data: dict or object
-            From which to get the value of the field
-        field: str
-            The name of the field
-
-        Returns
-        -------
-        Any
-            The value associated with `field` in `data`
-
-        """
-        if isinstance(data, dict):
-            return data.get(field, None)
-        elif isinstance(data, object):
-            return getattr(data, field, None)
-
-    @staticmethod
-    def _pop_field(data, field: str):
-        """
-        Pop the value of a field from something that might be a dictionary or might be an object.
-
-        Parameters
-        ----------
-        data: dict or object
-            From which to pop the value of the field
-        field: str
-            The name of the field
-
-        Returns
-        -------
-        Any
-            The value associated with `field` in `data`
-
-        """
-        if isinstance(data, dict):
-            return data.pop(field, None)
-        elif isinstance(data, object):
-            return data.__dict__.pop(field, None)
-
-    @classmethod
-    def _build_child_objects(cls, data: dict, data_with_soft_links,
-                             session: Session = None) -> dict:
-        """
-        Build the data concepts objects that this serialized object points to.
-
-        This method modifies the serialized object in place.
-
-        Parameters
-        ----------
-        data: dict
-            A data concepts object as a serialized dictionary.
-        data_with_soft_links: dict or \
-        :py:class:`DictSerializable <taurus.entity.dict_serializable.DictSerializable>`
-            A representation of data in which the knowledge of the soft-links is somehow encoded.
-        session: Session
-            Citrine session used to connect to the database.
-
-        Returns
-        -------
-        None
-            The data concepts object is modified so that all of its values or fields are
-            deserialized as DataConcepts objects.
-
-        """
-        def _is_dc(prop_type: Property) -> bool:
-            """Determine if a property is a DataConcepts object or LinkByUID."""
-            if isinstance(prop_type, LinkOrElse):
-                return True
-            elif isinstance(prop_type, Object):
-                return issubclass(prop_type.klass, DataConcepts)
-            elif isinstance(prop_type, PropertyOptional):
-                return _is_dc(prop_type.prop)
-            elif isinstance(prop_type, PropertyList):
-                return _is_dc(prop_type.element_type)
-            else:
-                return False
-
-        fields = {k: v for k, v in cls.__dict__.items() if isinstance(v, Property)}
-        for key, field in fields.items():
-            if _is_dc(field):
-                if data.get(key):
-                    if isinstance(data[key], List):
-                        data[key] = [DataConcepts.get_type(elem).build(elem) for
-                                     elem in DataConcepts._get_field(data_with_soft_links, key)]
-                        for elem in data[key]:
-                            if isinstance(elem, DataConcepts):
-                                elem.session = session
-                    else:
-                        elem = DataConcepts._get_field(data_with_soft_links, key)
-                        data[key] = DataConcepts.get_type(elem).build(elem)
-                        if isinstance(data[key], DataConcepts):
-                            data[key].session = session
-
-    @classmethod
-    def _build_discarded_objects(cls, obj, obj_with_soft_links, session: Session = None):
-        """
-        Possibly build objects that connect to obj but get removed during serialization.
-
-        This method is to be sparingly implemented, and the details will depend on the specific
-        soft-link.
-
-        This method modifies the object in place.
-
-        Parameters
-        ----------
-        obj: DataConcepts
-            A data concepts object that might be missing some soft links
-        obj_with_soft_links: dict or \
-        :py:class:`DictSerializable <taurus.entity.dict_serializable.DictSerializable>`
-            A representation of obj in which the knowledge of the soft-links is somehow encoded.
-        session: Session, optional
-            Citrine session used to connect to the database.
-
-        Returns
-        -------
-        None
-            The data concepts object is modified so that it has soft links to other objects.
-
-        """
-        pass
-
-    @staticmethod
-    def _build_list_of_soft_links(dc_obj, obj_with_soft_links, field: str, reverse_field: str,
-                                  linked_type, session: Session = None):
-        """
-        Build the data concepts objects that this object has soft links to.
-
-        This method is a specific implementation of _build_discarded_objects() that works
-        for one particular type of discarded object--a list of soft links.
-        In this case, object A has a field `field` such that A.field is a list [B1, B2, ...],
-        but the field is skipped upon serialization. We therefore cannot know about the links
-        if we serialize and then deserialize A. But if obj_with_soft_links retains the list,
-        then we can build each Bi and and set Bi.a = A to populate the soft link.
-
-        This method modifies the object in place.
-
-        Parameters
-        ----------
-        dc_obj: DataConcepts
-            A data concepts object that might be missing some soft links
-        obj_with_soft_links: dict or \
-        :py:class:`DictSerializable <taurus.entity.dict_serializable.DictSerializable>`
-            A representation of obj in which the knowledge of the soft-links is somehow encoded.
-        field: str
-            The name of the field that contains the list of soft links in obj.
-        reverse_field: str
-            The name of the field in the soft-linked objects that are used to refer back to obj.
-        linked_type: Type[DataConcepts]
-            The class of the soft-linked objects. Used for building them.
-        session: Session, optional
-            Citrine session used to connect to the database.
-
-        Returns
-        -------
-        None
-            The data concepts object, `dc_obj`, is modified so that all of its
-            soft-links are populated.
-
-        """
-        linked_objects = None
-        # Get the list of linked objects, if it exists.
-        if isinstance(obj_with_soft_links, dict):
-            if obj_with_soft_links.get(field):
-                linked_objects = obj_with_soft_links[field]
-        if isinstance(obj_with_soft_links, DictSerializable):
-            if hasattr(obj_with_soft_links, field):
-                linked_objects = getattr(obj_with_soft_links, field)
-        if linked_objects is None:
-            return
-
-        # Make `linked_objects` point to a copy of the list of linked objects, as opposed to the
-        # attribute of `obj_with_soft_links`. The list in `obj_with_soft_links` will be modified
-        # in the loop below, and we don't want to modify a list while iterating over it.
-        linked_objects = copy(linked_objects)
-
-        # Cycle through linked objects in obj_with_soft_link and if they are not LinkByUID,
-        # build them and then set their `reverse_field` field to dc_obj
-        for linked_obj in linked_objects:
-            assert isinstance(linked_obj, DictSerializable)
-            if isinstance(linked_obj, LinkByUID):
-                continue
-            # Sever the link between linked_obj and obj_with_soft_links.
-            # This prevents infinite loops in the next step.
-            setattr(linked_obj, reverse_field, None)
-            # Build a DataConcepts instance of linked_obj
-            dc_linked_obj = linked_type.build(linked_obj, session)
-            # Establish the link between the DataConcepts instances of obj and linked_obj
-            setattr(dc_linked_obj, reverse_field, dc_obj)
-            # Re-establish the link between linked_obj and obj_with_soft_links
-            setattr(linked_obj, reverse_field, obj_with_soft_links)
+        return cls.get_json_support().copy(data)
 
     @classmethod
     def get_type(cls, data) -> Type[Serializable]:
@@ -333,7 +142,9 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
 
         """
         if len(DataConcepts.class_dict) == 0:
-            DataConcepts._make_class_dict()
+            # This line is only reached if get_type is called before build,
+            # which is hard to reproduce, hence the no cover.
+            DataConcepts._make_class_dict()  # pragma: no cover
         if isinstance(data, DictSerializable):
             data = data.as_dict()
         return DataConcepts.class_dict[data['type']]
@@ -341,10 +152,6 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
     @staticmethod
     def _make_class_dict():
         """Construct a dictionary from each type key to the class."""
-        from citrine.attributes.condition import Condition
-        from citrine.attributes.parameter import Parameter
-        from citrine.attributes.property import Property
-        from citrine.attributes.property_and_conditions import PropertyAndConditions
         from citrine.resources.condition_template import ConditionTemplate
         from citrine.resources.parameter_template import ParameterTemplate
         from citrine.resources.property_template import PropertyTemplate
@@ -359,14 +166,24 @@ class DataConcepts(PolymorphicSerializable['DataConcepts']):
         from citrine.resources.material_run import MaterialRun
         from citrine.resources.measurement_run import MeasurementRun
         from citrine.resources.process_run import ProcessRun
-        _clazz_list = [Condition, Parameter, Property, PropertyAndConditions,
-                       ConditionTemplate, ParameterTemplate, PropertyTemplate,
+        _clazz_list = [ConditionTemplate, ParameterTemplate, PropertyTemplate,
                        MaterialTemplate, MeasurementTemplate, ProcessTemplate,
                        IngredientSpec, MaterialSpec, MeasurementSpec, ProcessSpec,
                        IngredientRun, MaterialRun, MeasurementRun, ProcessRun]
         for clazz in _clazz_list:
             DataConcepts.class_dict[clazz._response_key] = clazz
         DataConcepts.class_dict['link_by_uid'] = LinkByUID
+
+    @classmethod
+    def get_json_support(cls):
+        """Get a DataConcepts-compatible json serializer/deserializer."""
+        if cls.json_support is None:
+            DataConcepts._make_class_dict()
+            cls.json_support = TaurusJson()
+            cls.json_support.register_classes(
+                {k: v for k, v in DataConcepts.class_dict.items() if k != "link_by_uid"}
+            )
+        return cls.json_support
 
     def as_dict(self) -> dict:
         """Dump to a dictionary (useful for interoperability with taurus)."""
@@ -422,7 +239,6 @@ class DataConceptsCollection(Collection[ResourceType]):
 
         """
         data_concepts_object = self.get_type().build(data)
-        data_concepts_object.session = self.session
         return data_concepts_object
 
     def _fetch_page(self, page: Optional[int] = None, per_page: Optional[int] = None):
@@ -513,7 +329,6 @@ class DataConceptsCollection(Collection[ResourceType]):
         dumped_data = replace_objects_with_links(scrub_none(model.dump()))
         data = self.session.post_resource(path, dumped_data)
         full_model = self.build(data)
-        model.session = self.session
         return full_model
 
     def get(self, uid: Union[UUID, str], scope: str = 'id') -> ResourceType:

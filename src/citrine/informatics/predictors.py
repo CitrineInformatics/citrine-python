@@ -8,6 +8,7 @@ from citrine._serialization.serializable import Serializable
 from citrine._session import Session
 from citrine.informatics.descriptors import Descriptor
 from citrine.informatics.reports import Report
+from citrine.informatics.data_tables import DataTable
 from citrine.resources.report import ReportResource
 from citrine.informatics.modules import Module
 
@@ -16,7 +17,7 @@ __all__ = ['ExpressionPredictor', 'GraphPredictor', 'Predictor', 'SimpleMLPredic
 
 
 class Predictor(Module):
-    """Module that describes the ability to compute/predict properties of materials.
+    """[ALPHA] Module that describes the ability to compute/predict properties of materials.
 
     Abstract type that returns the proper type given a serialized dict. subtype
     based on the 'type' value of the passed in dict.
@@ -49,7 +50,7 @@ class Predictor(Module):
 
 
 class SimpleMLPredictor(Serializable['SimplePredictor'], Predictor):
-    """A predictor interface that builds a simple graphical model.
+    """[ALPHA] A predictor interface that builds a simple graphical model.
 
     The model connects the set of inputs through latent variables to the outputs.
     Supported complex inputs (such as chemical formulas) are auto-featurized and machine learning
@@ -78,7 +79,7 @@ class SimpleMLPredictor(Serializable['SimplePredictor'], Predictor):
     inputs = properties.List(properties.Object(Descriptor), 'config.inputs')
     outputs = properties.List(properties.Object(Descriptor), 'config.outputs')
     latent_variables = properties.List(properties.Object(Descriptor), 'config.latent_variables')
-    training_data = properties.String('config.training_data')
+    training_data = properties.Object(DataTable, 'config.training_data')
     typ = properties.String('config.type', default='Simple', deserializable=False)
     status = properties.String('status', serializable=False)
     status_info = properties.Optional(
@@ -98,7 +99,7 @@ class SimpleMLPredictor(Serializable['SimplePredictor'], Predictor):
                  inputs: List[Descriptor],
                  outputs: List[Descriptor],
                  latent_variables: List[Descriptor],
-                 training_data: str,
+                 training_data: DataTable,
                  session: Optional[Session] = None,
                  report: Optional[Report] = None,
                  active: bool = True):
@@ -107,7 +108,7 @@ class SimpleMLPredictor(Serializable['SimplePredictor'], Predictor):
         self.inputs: List[Descriptor] = inputs
         self.outputs: List[Descriptor] = outputs
         self.latent_variables: List[Descriptor] = latent_variables
-        self.training_data: str = training_data
+        self.training_data: DataTable = training_data
         self.session: Optional[Session] = session
         self.report: Optional[Report] = report
         self.active: bool = active
@@ -125,7 +126,7 @@ class SimpleMLPredictor(Serializable['SimplePredictor'], Predictor):
 
 
 class GraphPredictor(Serializable['GraphPredictor'], Predictor):
-    """A predictor interface that stitches other predictors together.
+    """[ALPHA] A predictor interface that stitches other predictors together.
 
     Parameters
     ----------
@@ -182,7 +183,7 @@ class GraphPredictor(Serializable['GraphPredictor'], Predictor):
 
 
 class ExpressionPredictor(Serializable['ExpressionPredictor'], Predictor):
-    """A predictor interface that allows calculator expressions.
+    """[ALPHA] A predictor interface that allows calculator expressions.
 
     Parameters
     ----------
@@ -195,7 +196,7 @@ class ExpressionPredictor(Serializable['ExpressionPredictor'], Predictor):
     output: Descriptor
         the Descriptor that represents the output relation
     aliases: dict
-        a mapping from descriptor key to expression argument
+        a mapping from expression argument to descriptor key
 
     """
 

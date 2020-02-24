@@ -11,7 +11,7 @@ __all__ = ['Dimension', 'ContinuousDimension', 'EnumeratedDimension']
 
 
 class Dimension(PolymorphicSerializable['Dimension']):
-    """A Citrine Dimension describes the range of values that some quantity can take.
+    """[ALPHA] A Citrine Dimension describes the range of values that some quantity can take.
 
     Abstract type that returns the proper type given a serialized dict.
 
@@ -27,7 +27,7 @@ class Dimension(PolymorphicSerializable['Dimension']):
 
 
 class ContinuousDimension(Serializable['ContinuousDimension'], Dimension):
-    """A continuous, real-valued dimension.
+    """[ALPHA] A continuous, real-valued dimension.
 
     Parameters
     ----------
@@ -66,7 +66,7 @@ class ContinuousDimension(Serializable['ContinuousDimension'], Dimension):
 
 
 class EnumeratedDimension(Serializable['EnumeratedDimension'], Dimension):
-    """A finite, enumerated dimension.
+    """[ALPHA] A finite, enumerated dimension.
 
     Parameters
     ----------

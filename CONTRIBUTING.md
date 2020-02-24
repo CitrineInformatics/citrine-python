@@ -18,3 +18,18 @@ A passing build requires the following:
 * All tests pass
 * The linter finds no violations of PEP8 style
 * Every line of code is executed by a test (100% coverage)
+
+## Dependencies
+Dependencies are tracked in multiple places:
+* requirements files (requirements.txt and test_requirements.txt)
+* setup.py
+* Pipfile
+
+The setup.py file only contains libraries that are necessary for users to run citrine-python.
+If you add a dependency that is necessary to run the repo, it is crucial that you add it to setup.py.
+
+The requirements files and the Pipfile *additionally* contain dependencies for testing/development.
+The two options are redundant, but we maintain both to give developers options (Pipfile is more powerful but more involved to use).
+Please keep both up to date whenever you add or change dependencies.
+If you change the Pipfile, run `pipfile lock` to generate a new version of Pipfile.lock.
+Other developers can use this file to recreate the precise environment.

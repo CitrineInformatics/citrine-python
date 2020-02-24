@@ -5,6 +5,7 @@ import uuid
 
 from citrine.informatics.descriptors import RealDescriptor
 from citrine.informatics.predictors import ExpressionPredictor, GraphPredictor, SimpleMLPredictor
+from citrine.informatics.data_tables import DataTable
 
 x = RealDescriptor("x", 0, 100, "")
 y = RealDescriptor("y", 0, 100, "")
@@ -20,7 +21,7 @@ def simple_predictor() -> SimpleMLPredictor:
                              inputs=[x],
                              outputs=[z],
                              latent_variables=[y],
-                             training_data='training_data_key')
+                             training_data=DataTable('e5c51369-8e71-4ec6-b027-1f92bdc14762'))
 
 
 @pytest.fixture
@@ -38,8 +39,8 @@ def expression_predictor() -> ExpressionPredictor:
         expression='Y / (2 * (1 + v))',
         output=shear_modulus,
         aliases = {
-            "Property~Young's modulus": 'Y',
-            "Property~Poisson's ratio": 'v'
+             'Y': "Property~Young's modulus",
+             'v': "Property~Poisson's ratio"
         })
 
 
@@ -53,7 +54,7 @@ def test_simple_initialization(simple_predictor):
     assert simple_predictor.outputs[0] == z
     assert len(simple_predictor.latent_variables) == 1
     assert simple_predictor.latent_variables[0] == y
-    assert simple_predictor.training_data == 'training_data_key'
+    assert simple_predictor.training_data.table_id == uuid.UUID('e5c51369-8e71-4ec6-b027-1f92bdc14762')
     assert str(simple_predictor) == '<SimplePredictor \'ML predictor\'>'
     assert hasattr(simple_predictor, 'report')
 
@@ -95,7 +96,7 @@ def test_expression_initialization(expression_predictor):
     assert expression_predictor.name == 'Expression predictor'
     assert expression_predictor.output.key == 'Property~Shear modulus'
     assert expression_predictor.expression == 'Y / (2 * (1 + v))'
-    assert expression_predictor.aliases == {"Property~Young's modulus": 'Y', "Property~Poisson's ratio": 'v'}
+    assert expression_predictor.aliases == {'Y': "Property~Young's modulus", 'v': "Property~Poisson's ratio"}
     assert str(expression_predictor) == '<ExpressionPredictor \'Expression predictor\'>'
 
 

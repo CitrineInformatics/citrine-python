@@ -7,7 +7,7 @@ from citrine._serialization import properties
 
 
 class Descriptor(PolymorphicSerializable['Descriptor']):
-    """A Citrine Descriptor describes the range of values that a quantity can take on.
+    """[ALPHA] A Citrine Descriptor describes the range of values that a quantity can take on.
 
     Abstract type that returns the proper type given a serialized dict.
 
@@ -24,7 +24,7 @@ class Descriptor(PolymorphicSerializable['Descriptor']):
 
 
 class RealDescriptor(Serializable['RealDescriptor'], Descriptor):
-    """A descriptor to hold real-valued numbers.
+    """[ALPHA] A descriptor to hold real-valued numbers.
 
     Parameters
     ----------
@@ -64,7 +64,7 @@ class RealDescriptor(Serializable['RealDescriptor'], Descriptor):
 
 
 class InorganicDescriptor(Serializable['InorganicDescriptor'], Descriptor):
-    """Captures domain-specific context about the chemical formula for an inorganic compound.
+    """[ALPHA] Captures domain-specific context about the chemical formula for an inorganic compound.
 
     Parameters
     ----------
@@ -95,7 +95,7 @@ class InorganicDescriptor(Serializable['InorganicDescriptor'], Descriptor):
 
 
 class CategoricalDescriptor(Serializable['CategoricalDescriptor'], Descriptor):
-    """A descriptor to hold categorical variables.
+    """[ALPHA] A descriptor to hold categorical variables.
 
     An exhaustive list of categorical values may be supplied.
 

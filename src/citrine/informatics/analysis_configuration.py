@@ -6,7 +6,7 @@ from citrine._serialization import properties
 
 
 class CrossValidationAnalysisConfiguration(Serializable['CrossValidationAnalysisConfiguration']):
-    """Configuration settings for running cross-validation in a performance workflow.
+    """[ALPHA] Configuration settings for running cross-validation in a performance workflow.
 
     Parameters
     ----------

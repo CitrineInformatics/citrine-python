@@ -11,5 +11,6 @@ RUN pip install -e .
 
 WORKDIR /opt/app/docs
 
+ENV SPHINX_APIDOC_OPTIONS="members,undoc-members,inherited-members,show-inheritance"
 
 RUN make html

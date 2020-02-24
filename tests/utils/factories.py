@@ -5,6 +5,8 @@
 # <ModelName>Factory for the domain objects themselves
 
 import factory
+from citrine.resources.material_spec import MaterialSpec
+from citrine.resources.material_template import MaterialTemplate
 from taurus.entity.link_by_uid import LinkByUID
 
 from citrine.informatics.scores import MLIScore
@@ -34,6 +36,22 @@ class TableDataFactory(factory.DictFactory):
     id = factory.Faker('uuid4')
     version = randrange(10)
     signed_download_url = factory.Faker('uri')
+
+
+class AraDefinitionDataFactory(factory.DictFactory):
+    name = factory.Faker("company")
+    description = factory.Faker('bs')
+    rows = []
+    columns = []
+    variables = []
+    datasets = []
+
+
+class AraDefinitionFactory(factory.DictFactory):
+    ara_definition = factory.SubFactory(AraDefinitionDataFactory)
+    id = factory.Faker('uuid4')
+    version_number = randrange(10)
+    definition_id = factory.Faker('uuid4')
 
 
 class DatasetDataFactory(factory.DictFactory):
@@ -135,3 +153,39 @@ class MLIScoreFactory(factory.Factory):
     baselines = []
     objectives = []
     constraints = []
+
+
+class MaterialSpecFactory(factory.Factory):
+    class Meta:
+        model = MaterialSpec
+
+    uids = factory.SubFactory(IDDataFactory)
+    name = factory.Faker('color_name')
+    tags = []
+    notes = None
+    process = factory.SubFactory(LinkByUIDFactory)
+    file_links = []
+    template = None
+    properties = []
+
+
+class MaterialTemplateFactory(factory.Factory):
+    class Meta:
+        model = MaterialTemplate
+
+    uids = factory.SubFactory(IDDataFactory)
+    name = factory.Faker('color_name')
+    tags = []
+    properties = []
+    description = factory.Faker('catch_phrase')
+
+
+class MaterialSpecDataFactory(factory.DictFactory):
+    uids = factory.SubFactory(IDDataFactory)
+    name = factory.Faker('color_name')
+    tags = ["color"]
+    notes = None
+    process = factory.SubFactory(LinkByUIDInputFactory)
+    template = None
+    file_links = []
+    type = 'material_spec'

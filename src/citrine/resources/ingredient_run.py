@@ -4,7 +4,6 @@ from typing import List, Dict, Optional, Type
 from citrine._utils.functions import set_default_uid
 from citrine._rest.resource import Resource
 from citrine.resources.data_concepts import DataConceptsCollection, DataConcepts
-from citrine.resources.storable import Storable
 from citrine._serialization.properties import Mapping, String, LinkOrElse, Object
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Optional as PropertyOptional
@@ -16,7 +15,7 @@ from taurus.entity.object.process_run import ProcessRun as TaurusProcessRun
 from taurus.entity.value.continuous_value import ContinuousValue
 
 
-class IngredientRun(Storable, Resource['IngredientRun'], TaurusIngredientRun):
+class IngredientRun(DataConcepts, Resource['IngredientRun'], TaurusIngredientRun):
     """
     An ingredient run.
 

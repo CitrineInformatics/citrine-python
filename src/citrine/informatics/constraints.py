@@ -10,7 +10,7 @@ __all__ = ['Constraint', 'ScalarRangeConstraint', 'CategoricalConstraint']
 
 
 class Constraint(PolymorphicSerializable['Constraint']):
-    """A Citrine Constraint places restrictions on a design space.
+    """[ALPHA] A Citrine Constraint places restrictions on a design space.
 
     Abstract type that returns the proper type given a serialized dict.
 
@@ -28,7 +28,7 @@ class Constraint(PolymorphicSerializable['Constraint']):
 
 
 class ScalarRangeConstraint(Serializable['ScalarRangeConstraint'], Constraint):
-    """Represents an inequality constraint on a scalar-valued material attribute.
+    """[ALPHA] Represents an inequality constraint on a scalar-valued material attribute.
 
     Parameters
     ----------
@@ -71,7 +71,8 @@ class ScalarRangeConstraint(Serializable['ScalarRangeConstraint'], Constraint):
 
 
 class CategoricalConstraint(Serializable['CategoricalConstraint'], Constraint):
-    """A constraint on a categorical material attribute to be one of a set of acceptable values.
+    """
+    [ALPHA] A constraint on a categorical material attribute to be in a set of acceptable values.
 
     Parameters
     ----------

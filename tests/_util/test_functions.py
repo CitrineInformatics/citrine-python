@@ -7,7 +7,7 @@ from taurus.entity.link_by_uid import LinkByUID
 
 from citrine._utils.functions import set_default_uid, get_object_id, validate_type, object_to_link_by_uid, \
     rewrite_s3_links_locally, write_file_locally
-from citrine.attributes.property import Property
+from taurus.entity.attribute.property import Property
 from citrine.resources.condition_template import ConditionTemplate
 
 
