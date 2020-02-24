@@ -59,27 +59,6 @@ To list every material spec in the dataset ``standard_glasses_dataset``, use the
 You can instead broaden the scope of the search to an entire project.
 The command ``lens_project.material_specs.list()`` will list every material spec in every dataset that ``lens_project`` has read access to.
 
-Filter
-^^^^^^
-
-Filter lies somewhere between Get and List, returning only those objects that meet a given criterion.
-There are currently three ways to filter, and they only work on data model objects:
-:func:`~citrine.resources.data_concepts.DataConceptsCollection.filter_by_tags`,
-:func:`~citrine.resources.data_concepts.DataConceptsCollection.filter_by_attribute_bounds`,
-and :func:`~citrine.resources.data_concepts.DataConceptsCollection.filter_by_name`.
-
-Filtering by tags or attribute bounds can be scoped to a dataset or to a project.
-Filtering by name must be scoped to a dataset.
-
-Get Material History
-^^^^^^^^^^^^^^^^^^^^
-
-Starting with a specific root :class:`MaterialRun <citrine.resources.material_run.MaterialRun>`,
-you can retrieve the complete material history--every process, ingredient and material that went
-into the root material, as well as the measurements that were performed on all of those materials
-The method is :func:`~citrine.resources.material_run.MaterialRunCollection.get_history`,
-and it requires you to know a unique identifier (scope/id pair) for the material.
-
 Updating
 --------
 
@@ -129,3 +108,51 @@ In order for the delete to be successful, the dataset must be empty.
 .. code-block:: python
 
     project.datasets.delete(id)
+
+Data Model Object Specific Methods
+-----------------------------------
+
+The client supports additional methods on certain data model object resources.
+
+Project-Wide Collections
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Data model objects are each contained in exactly one dataset.
+However, most methods that read data model objects can be evaluated against all of the datasets that are readable from a project.
+Special data model object collections are available in the project to support this, for example:
+
+.. code-block:: python
+
+    project.material_specs.list()
+
+Any method that writes to a data model object must be taken from within a dataset-scoped collection.
+
+Filter
+^^^^^^
+
+Filter lies somewhere between Get and List, returning only those objects that meet a given criterion.
+There are currently three ways to filter, and they work on each data model object type:
+:func:`~citrine.resources.data_concepts.DataConceptsCollection.filter_by_tags`,
+:func:`~citrine.resources.data_concepts.DataConceptsCollection.filter_by_attribute_bounds`,
+and :func:`~citrine.resources.data_concepts.DataConceptsCollection.filter_by_name`.
+
+Filtering by tags or attribute bounds can be scoped to a dataset or to a project.
+Filtering by name must be scoped to a dataset.
+
+Get Material History
+^^^^^^^^^^^^^^^^^^^^
+
+Starting with a specific root :class:`MaterialRun <citrine.resources.material_run.MaterialRun>`,
+you can retrieve the complete material history--every process, ingredient and material that went
+into the root material, as well as the measurements that were performed on all of those materials
+The method is :func:`~citrine.resources.material_run.MaterialRunCollection.get_history`,
+and it requires you to know a unique identifier (scope/id pair) for the material.
+
+LinkByUID
+^^^^^^^^^^
+
+The :class:`~taurus.entity.link_by_uid.LinkByUID` class allows you to reference another data model object by a unique identifier without downloading it first.
+This is a common pattern within the data model objects, since many objects contain links to other objects that may have already been registered to the platform.
+:class:`~taurus.entity.link_by_uid.LinkByUID` objects can use either the platform's unique identifier or an `alternative identifier`__.
+
+__ https://citrineinformatics.github.io/gemd-docs/specification/unique-identifiers/#alternative-ids
