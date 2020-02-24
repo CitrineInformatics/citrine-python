@@ -143,7 +143,7 @@ INFO:citrine._session:200 GET /projects/fc568490-224a-4070-807f-1427c4f4dcd8
 ```
 is an example of output from the logger in the previous example.
 
-## Developement Status
+## Development Status
 
 Classes and methods may be marked as *alpha* by including `[ALPHA]` at the start of their docstrings.
-These methods are intended for development, testing, and experimentation, are not supported, and may change or be removed without notice```
+These methods are intended for development, testing, and experimentation, are not supported, and may change or be removed without notice
