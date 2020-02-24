@@ -12,7 +12,7 @@ __all__ = ['Processor', 'GridProcessor', 'EnumeratedProcessor']
 
 
 class Processor(Module):
-    """A Citrine Processor describes how a design space is searched.
+    """[ALPHA] A Citrine Processor describes how a design space is searched.
 
     Abstract type that returns the proper type given a serialized dict.
 
@@ -30,7 +30,7 @@ class Processor(Module):
 
 
 class GridProcessor(Serializable['GridProcessor'], Processor):
-    """Generates samples from the outer product of finite dimensions, then scans over them.
+    """[ALPHA] Generates samples from the outer product of finite dimensions, then scans over them.
 
     To create a finite set of materials from continuous dimensions, a uniform grid is created
     between the lower and upper bounds of the descriptor.
@@ -87,7 +87,7 @@ class GridProcessor(Serializable['GridProcessor'], Processor):
 
 
 class EnumeratedProcessor(Serializable['EnumeratedProcessor'], Processor):
-    """Process a design space by enumerating up to a fixed number of samples from the domain.
+    """[ALPHA] Process a design space by enumerating up to a fixed number of samples from the domain.
 
     Each sample is processed independently.
 

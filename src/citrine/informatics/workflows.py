@@ -13,7 +13,7 @@ __all__ = ['Workflow', 'DesignWorkflow', 'PerformanceWorkflow']
 
 
 class Workflow(PolymorphicSerializable['Workflow']):
-    """A Citrine Workflow is a collection of Modules that together accomplish some task.
+    """[ALPHA] A Citrine Workflow is a collection of Modules that together accomplish some task.
 
     Abstract type that returns the proper type given a serialized dict.
 
@@ -41,7 +41,7 @@ class Workflow(PolymorphicSerializable['Workflow']):
 
 
 class DesignWorkflow(Resource['DesignWorkflow'], Workflow):
-    """Object that generates scored materials that may approach higher values of the score.
+    """[ALPHA] Object that generates scored materials that may approach higher values of the score.
 
     Parameters
     ----------
@@ -101,7 +101,7 @@ class DesignWorkflow(Resource['DesignWorkflow'], Workflow):
 
 
 class PerformanceWorkflow(Resource['PerformanceWorkflow'], Workflow):
-    """Object that executes performance analysis on a given module.
+    """[ALPHA] Object that executes performance analysis on a given module.
 
     Parameters
     ----------

@@ -7,7 +7,7 @@ from citrine._serialization.serializable import Serializable
 
 
 class Module(PolymorphicSerializable['Module']):
-    """A Citrine Module is a reusable computational tool used to construct a workflow.
+    """[ALPHA] A Citrine Module is a reusable computational tool used to construct a workflow.
 
     Abstract type that returns the proper type given a serialized dict.
 
@@ -30,7 +30,7 @@ class Module(PolymorphicSerializable['Module']):
 
 
 class ModuleRef(Serializable['ModuleRef']):
-    """A reference to a Module by UID."""
+    """[ALPHA] A reference to a Module by UID."""
 
     module_uid = properties.UUID('module_uid')
 
