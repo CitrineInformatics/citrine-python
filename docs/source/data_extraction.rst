@@ -24,6 +24,11 @@ The only way to define rows right now is through :class:`~citrine.ara.rows.Mater
 
 A :class:`~citrine.ara.variables.Variable` object specifies how to select a piece of data from each Material History.
 Thus, it performs the first part of a mapping from the set of Material Histories to columns in the Ara table.
+A :class:`~citrine.ara.variables.Variable` is addressed locally (within a definition) by a ``name``.
+A :class:`~citrine.ara.variables.Variable` is also labeled with ``headers``, which is a list of strings that can express a hierarchical relationship with other variables.
+The headers are listed in decreasing hierarchical order: the first string indicates the broadest classification, and each subsequent string indicates a refinement of those classifications preceding it.
+In the example below, a hardness measurement might also be performed on the object denoted by the ``Product`` header.
+One might assign ``headers = ["Product", "Hardness"]`` to this measurement in order to relate it with the ``Density`` measurement of the same physical object.
 
 .. code-block:: python
 
@@ -67,7 +72,7 @@ and a list of :class:`~citrine.ara.columns.Column` objects to transform those va
          rows = [row_def],
          columns = [final_density_mean, final_density_std])
 
-Creating and reading tables
+Previewing, creating and reading tables
 ---------------------------
 
 Calling :func:`~citrine.resources.project.Project.ara_definitions` on a project returns an :class:`~citrine.resources.ara_definition.AraDefinitionCollection` object, which facilitates access to the collection of all Ara definitions visible to a Project.
@@ -83,6 +88,22 @@ For example:
          preview_roots = [
                LinkByUID(scope="products", id="best cookie ever"),
                LinkByUID(scope="products", id="worst cookie ever")])
+
+The preview returns a dictionary with two keys:
+
+* The ``csv`` key will get a preview of the table in the comma-separated-values format.
+* The ``warnings`` key will get a list of String-valued warnings that describe possible issues with the Ara definition, e.g. that one of the columns is completely empty.
+
+For example, if you wanted to print the warnings and then load the preview into a pandas dataframe, you could:
+
+.. code-block:: python
+
+   from io import StringIO
+   import pandas as pd
+
+   preview = defns.preview(ara_defn, preview_roots)
+   print("\n\n".join(preview["warnings"]))
+   data_frame = pd.read_csv(StringIO(preview["csv"]))
 
 Available Row Definitions
 ------------------------------
