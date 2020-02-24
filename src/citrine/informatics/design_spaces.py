@@ -14,7 +14,7 @@ __all__ = ['DesignSpace', 'ProductDesignSpace', 'EnumeratedDesignSpace']
 
 
 class DesignSpace(Module):
-    """A Citrine Design Space describes the set of materials that can be made.
+    """[ALPHA] A Citrine Design Space describes the set of materials that can be made.
 
     Abstract type that returns the proper type given a serialized dict.
 
@@ -33,7 +33,7 @@ class DesignSpace(Module):
 
 
 class ProductDesignSpace(Resource['ProductDesignSpace'], DesignSpace):
-    """An outer product of univariate dimensions, either continuous or enumerated.
+    """[ALPHA] An outer product of univariate dimensions, either continuous or enumerated.
 
     Parameters
     ----------
@@ -84,7 +84,7 @@ class ProductDesignSpace(Resource['ProductDesignSpace'], DesignSpace):
 
 
 class EnumeratedDesignSpace(Resource['EnumeratedDesignSpace'], DesignSpace):
-    """An explicit enumeration of candidate materials to score.
+    """[ALPHA] An explicit enumeration of candidate materials to score.
 
     Note that every candidate must have exactly the descriptors in the list populated
     (no more, no less) in order to be included.

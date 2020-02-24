@@ -8,7 +8,7 @@ from citrine._session import Session
 
 
 class Report(PolymorphicSerializable['Report']):
-    """A Citrine Report contains information and performance metrics related to a module.
+    """[ALPHA] A Citrine Report contains information and performance metrics related to a module.
 
     Abstract type that returns the proper type given a serialized dict.
 
@@ -24,7 +24,7 @@ class Report(PolymorphicSerializable['Report']):
 
 
 class PredictorReport(Serializable['PredictorReport'], Report):
-    """The performance metrics corresponding to a predictor.
+    """[ALPHA] The performance metrics corresponding to a predictor.
 
     Parameters
     ----------

@@ -11,7 +11,7 @@ CreationType = TypeVar('CreationType', bound=Workflow)
 
 
 class WorkflowCollection(Collection[Workflow]):
-    """Represents the collection of all Workflows as well as the resources belonging to it.
+    """[ALPHA] Represents the collection of all Workflows as well as the resources belonging to it.
 
     Parameters
     ----------
