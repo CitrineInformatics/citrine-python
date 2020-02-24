@@ -3,12 +3,12 @@
 Data Entry
 =========================
 
-Creating and Data Model Objects
+Creating Data Model Objects
 ---------------------------------
 
 Each data object and template in the GEMD_ data model has a corresponding resource in the Citrine Python Client.
 For example, the :class:`citrine.resources.process_spec.ProcessSpec` class implements the ProcessSpec_ object in GEMD_.
-The Citrine Python Client implements are consistent with the GEMD_ model specification.
+The Citrine Python Client implementations are consistent with the GEMD_ model specification.
 
 The Citrine Python Client is built on top of and entirely interoperable with the taurus_ package.
 Any method that accepts the Citrine Python Client's implementations of data model objects should also accept those from taurus.
@@ -21,7 +21,7 @@ The easiest way to get an existing object is by one of its unique identifiers.
 Every data model object on the Citrine Platform has a platform-issued identifier, often referred to as the "Citrine Identifier" or "CitrineId".
 These identifiers are UUID4_, which are extremely robust but also not especially human readable.
 
-`Alternative identifiers`__ are an even easier way to recall data objects.
+`Alternative identifiers`__ are an easier way to recall data objects.
 To create an alternative identifier, simply add key-value pairs to the ``uids`` dictionary in the data model object.
 The key defines the ``scope`` and the value the ``id``.
 As a pair, they must be unique across the entire platform.
