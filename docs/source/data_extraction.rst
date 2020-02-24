@@ -72,7 +72,7 @@ and a list of :class:`~citrine.ara.columns.Column` objects to transform those va
          rows = [row_def],
          columns = [final_density_mean, final_density_std])
 
-Creating and reading tables
+Previewing, creating and reading tables
 ---------------------------
 
 Calling :func:`~citrine.resources.project.Project.ara_definitions` on a project returns an :class:`~citrine.resources.ara_definition.AraDefinitionCollection` object, which facilitates access to the collection of all Ara definitions visible to a Project.
@@ -88,6 +88,22 @@ For example:
          preview_roots = [
                LinkByUID(scope="products", id="best cookie ever"),
                LinkByUID(scope="products", id="worst cookie ever")])
+
+The preview returns a dictionary with two keys:
+
+* The ``csv`` key will get a preview of the table in the comma-separated-values format.
+* The ``warnings`` key will get a list of String-valued warnings that describe possible issues with the Ara definition, e.g. that one of the columns is completely empty.
+
+For example, if you wanted to print the warnings and then load the preview into a pandas dataframe, you could:
+
+.. code-block:: python
+
+   from io import StringIO
+   import pandas as pd
+
+   preview = defns.preview(ara_defn, preview_roots)
+   print("\n\n".join(preview["warnings"]))
+   data_frame = pd.read_csv(StringIO(preview["csv"]))
 
 Available Row Definitions
 ------------------------------
