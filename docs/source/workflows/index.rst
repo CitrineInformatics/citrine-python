@@ -1,7 +1,7 @@
 .. _workflows:
 
-Workflows
-=========
+[ALPHA] Workflows
+=================
 
 The Citrine Platform provides tools to make data-driven decisions for materials research and development using artificial intelligence (AI) workflows.
 AI Workflows are composed of modules, which provide the ability to programmatically codify domain knowledge, research capabilities and experimental objectives.
