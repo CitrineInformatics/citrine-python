@@ -9,7 +9,7 @@ from citrine.resources.material_spec import MaterialSpec
 from citrine.resources.material_template import MaterialTemplate
 from taurus.entity.link_by_uid import LinkByUID
 
-from citrine.informatics.scores import MLIScore
+from citrine.informatics.scores import LIScore
 from citrine.resources.file_link import _Uploader
 from citrine.resources.dataset import Dataset
 from citrine.resources.material_run import MaterialRun
@@ -146,7 +146,7 @@ class _UploaderFactory(factory.Factory):
 
 class MLIScoreFactory(factory.Factory):
     class Meta:
-        model = MLIScore
+        model = LIScore
 
     name = factory.Faker('bs')
     description = factory.Faker('catch_phrase')

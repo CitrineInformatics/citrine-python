@@ -2,13 +2,13 @@
 import pytest
 
 from citrine.informatics.objectives import ScalarMaxObjective
-from citrine.informatics.scores import Score, MEIScore, MLIScore
+from citrine.informatics.scores import Score, EIScore, LIScore
 
 
 @pytest.fixture
-def mli_score() -> MLIScore:
+def mli_score() -> LIScore:
     """Build an MLIScore."""
-    return MLIScore(
+    return LIScore(
         name="MLI(z)",
         description="experimental design score for z",
         objectives=[
@@ -21,9 +21,9 @@ def mli_score() -> MLIScore:
 
 
 @pytest.fixture
-def mei_score() -> MEIScore:
+def mei_score() -> EIScore:
     """Build an MEIScore."""
-    return MEIScore(
+    return EIScore(
         name="MEI(x)",
         description="experimental design score for x",
         objectives=[
@@ -48,7 +48,7 @@ def test_mli_dumps(mli_score):
 def test_get_mli_type(mli_score):
     """Ensure correct type is returned."""
     typ = Score.get_type(mli_score.dump())
-    assert typ == MLIScore
+    assert typ == LIScore
 
 
 def test_mei_dumps(mei_score):
@@ -64,4 +64,4 @@ def test_mei_dumps(mei_score):
 def test_get_mei_type(mei_score):
     """Ensure correct type is returned."""
     typ = Score.get_type(mei_score.dump())
-    assert typ == MEIScore
+    assert typ == EIScore
