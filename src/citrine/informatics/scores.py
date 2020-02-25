@@ -12,7 +12,7 @@ __all__ = ['Score', 'MLIScore', 'MEIScore']
 
 
 class Score(PolymorphicSerializable['Score']):
-    """A Citrine Score is used to rank materials according to objectives and constraints.
+    """[ALPHA] A Citrine Score is used to rank materials according to objectives and constraints.
 
     Abstract type that returns the proper type given a serialized dict.
 
@@ -29,7 +29,7 @@ class Score(PolymorphicSerializable['Score']):
 
 
 class MLIScore(Serializable['MLIScore'], Score):
-    """Evaluates the likelihood of scoring better than some baselines for given objectives.
+    """[ALPHA] Evaluates the likelihood of scoring better than some baselines for given objectives.
 
     Parameters
     ----------
@@ -72,7 +72,8 @@ class MLIScore(Serializable['MLIScore'], Score):
 
 
 class MEIScore(Serializable['MEIScore'], Score):
-    """Evaluates the expected magnitude of improvement beyond some baselines for given objectives.
+    """
+    [ALPHA] Evaluates the expected magnitude of improvement beyond baselines for given objectives.
 
     Parameters
     ----------
