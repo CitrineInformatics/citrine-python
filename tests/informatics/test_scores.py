@@ -3,13 +3,13 @@ import pytest
 
 from citrine.informatics.constraints import ScalarRangeConstraint
 from citrine.informatics.objectives import ScalarMaxObjective
-from citrine.informatics.scores import MLIScore, MEIScore
+from citrine.informatics.scores import LIScore, EIScore
 
 
 @pytest.fixture
-def mli_score() -> MLIScore:
+def mli_score() -> LIScore:
     """Build an MLIScore."""
-    return MLIScore(
+    return LIScore(
         name="MLI(z)",
         description="experimental design score for z",
         objectives=[
@@ -22,9 +22,9 @@ def mli_score() -> MLIScore:
 
 
 @pytest.fixture
-def mei_score() -> MEIScore:
+def mei_score() -> EIScore:
     """Build an MEIScore."""
-    return MEIScore(
+    return EIScore(
         name="MEI(x)",
         description="experimental design score for x",
         objectives=[
