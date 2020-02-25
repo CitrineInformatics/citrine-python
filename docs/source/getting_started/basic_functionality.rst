@@ -148,11 +148,3 @@ into the root material, as well as the measurements that were performed on all o
 The method is :func:`~citrine.resources.material_run.MaterialRunCollection.get_history`,
 and it requires you to know a unique identifier (scope/id pair) for the material.
 
-LinkByUID
-^^^^^^^^^^
-
-The :class:`~taurus.entity.link_by_uid.LinkByUID` class allows you to reference another data model object by a unique identifier without downloading it first.
-This is a common pattern within the data model objects, since many objects contain links to other objects that may have already been registered to the platform.
-:class:`~taurus.entity.link_by_uid.LinkByUID` objects can use either the platform's unique identifier or an `alternative identifier`__.
-
-__ https://citrineinformatics.github.io/gemd-docs/specification/unique-identifiers/#alternative-ids
