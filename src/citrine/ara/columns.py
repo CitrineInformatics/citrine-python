@@ -10,7 +10,7 @@ from citrine._serialization import properties
 
 
 class CompositionSortOrder(BaseEnumeration):
-    """[ALPHA] Order to use when sorting the components in a composition
+    """[ALPHA] Order to use when sorting the components in a composition.
 
     * ALPHABETICAL is alpha-numeric order by the component name
     * QUANTITY is ordered from the largest to smallest quantity, with ties broken alphabetically
@@ -301,7 +301,8 @@ class NthBiggestComponentQuantityColumn(Serializable["NthBiggestComponentQuantit
 
     data_source = properties.String('data_source')
     n = properties.Integer("n")
-    typ = properties.String('type', default="biggest_component_quantity_column", deserializable=False)
+    typ = properties.String('type',
+                            default="biggest_component_quantity_column", deserializable=False)
 
     def _attrs(self) -> List[str]:
         return ["data_source", "n", "typ"]
