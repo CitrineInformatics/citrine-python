@@ -151,11 +151,18 @@ There are several ways to define columns, depending on the type of the attribute
  * :class:`~citrine.ara.columns.QuantileColumn`: for a user-defined quantile of the numeric distribution, or empty if the value is *nominal*
  * :class:`~citrine.ara.columns.OriginalUnitsColumn`: for getting the units, as entered by the data author, from the specific attribute value; valid for continuous values only
 
-* Enumerated values, like :class:`~taurus.entity.categorical_value.CategoricalValue`
+* Enumerated attribute values, like :class:`~taurus.entity.categorical_value.CategoricalValue`
 
  * :class:`~citrine.ara.columns.MostLikelyCategoryColumn`: for getting the mode
  * :class:`~citrine.ara.columns.MostLikelyProbabilityColumn`: for getting the probability of the mode
 
-* String and boolean valued fields
+* Composition and chemical formula attribute values, like :class:`~taurus.entity.composition_value.CompositionValue`
+
+ * :class:`~citrine.ara.columns.FlatCompositionColumn`: for flattening the composition into a chemical-formula-like string
+ * :class:`~citrine.ara.columns.ComponentQuantityColumn`: for getting the quantity of a specific component, by name
+ * :class:`~citrine.ara.columns.NthBiggestComponentNameColumn`: for getting the name of the n-th biggest component (by quantity)
+ * :class:`~citrine.ara.columns.NthBiggestComponentQuantityColumn`: for getting the quantity of the n-th biggest component (by quantity)
+
+* String and boolean valued fields, like identifiers and non-attribute fields
 
  * :class:`~citrine.ara.columns.IdentityColumn`: for simply casting the value to a string, which doesn't work on values from attributes
