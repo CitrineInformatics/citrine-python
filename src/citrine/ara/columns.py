@@ -212,6 +212,10 @@ class MostLikelyProbabilityColumn(Serializable["MostLikelyProbabilityColumn"], C
 class FlatCompositionColumn(Serializable["FlatCompositionColumn"], Column):
     """[ALPHA] Column that flattens the composition into a string of names and quantities.
 
+    The numeric formatting tries to be human readable. For example, if all of the quantities
+    are round numbers like {"spam": 4.0, "eggs": 1.0} then the result omit the decimal points like
+    "(spam)4(eggs)1" (if sort_order is by quantity).
+
     Parameters
     ----------
     data_source: str
@@ -237,6 +241,8 @@ class FlatCompositionColumn(Serializable["FlatCompositionColumn"], Column):
 
 class ComponentQuantityColumn(Serializable["ComponentQuantityColumn"], Column):
     """[ALPHA] Column that extracts the quantity of a given component.
+
+    If the component is not present in the composition, then the value in the column will be 0.0.
 
     Parameters
     ----------
@@ -264,6 +270,8 @@ class ComponentQuantityColumn(Serializable["ComponentQuantityColumn"], Column):
 class NthBiggestComponentNameColumn(Serializable["NthBiggestComponentNameColumn"], Column):
     """[ALPHA] Name of the Nth biggest component.
 
+    If there are not N components in the composition, then this column will be empty.
+
     Parameters
     ----------
     data_source: str
@@ -289,6 +297,8 @@ class NthBiggestComponentNameColumn(Serializable["NthBiggestComponentNameColumn"
 
 class NthBiggestComponentQuantityColumn(Serializable["NthBiggestComponentQuantityColumn"], Column):
     """[ALPHA] Quantity of the Nth biggest component.
+
+    If there are not N components in the composition, then this column will be empty.
 
     Parameters
     ----------
