@@ -8,7 +8,7 @@ from citrine._rest.collection import Collection
 from citrine._rest.resource import Resource
 from citrine._serialization import properties
 from citrine._session import Session
-from citrine.resources.process_template import ProcessTemplate
+from citrine.resources.process_template import ProcessTemplate  # noqa: F401
 from citrine.ara.columns import Column, MeanColumn, IdentityColumn, OriginalUnitsColumn
 from citrine.ara.rows import Row
 from citrine.ara.variables import Variable, IngredientIdentifierByProcessTemplateAndName,\
