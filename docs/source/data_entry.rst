@@ -40,7 +40,7 @@ For example:
     dataset.process_specs.register(ProcessSpec(...))
 
 Note that registration must be performed within the scope of a dataset: the dataset into which the objects are being written.
-The data model object collections that are defined with the project scope are read-only and will throw an error if their register method is called.
+The data model object collections that are defined with the project scope (such as `project.process_specs`) are read-only and will throw an error if their register method is called.
 
 If you have taurus_ objects, e.g. :class:`taurus.entity.object.process_spec.ProcessSpec`, you can register it just like the objects defined in the Citrine Python Client.
 
