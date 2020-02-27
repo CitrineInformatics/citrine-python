@@ -8,7 +8,6 @@ from citrine._rest.collection import Collection
 from citrine._rest.resource import Resource
 from citrine._serialization import properties
 from citrine._session import Session
-from citrine.resources.project import Project
 from citrine.resources.process_template import ProcessTemplate
 from citrine.ara.columns import Column, MeanColumn, IdentityColumn, OriginalUnitsColumn
 from citrine.ara.rows import Row
@@ -129,7 +128,7 @@ class AraDefinition(Resource["AraDefinition"]):
 
     def add_all_ingredients(self, *,
                             process_template: LinkByUID,
-                            project: Project,
+                            project,
                             quantity_dimension: IngredientQuantityDimension,
                             scope: str = 'id'
                             ):
@@ -170,16 +169,18 @@ class AraDefinition(Resource["AraDefinition"]):
                 scope=scope
             )
             quantity_variable = IngredientQuantityByProcessAndName(
-                name="{} of ingredient {} in process{}".format(
+                name="{} of ingredient {} in process {}".format(
                     quantity_dimension_display[quantity_dimension], name, process.name),
                 headers=[process.name, name, quantity_dimension_display[quantity_dimension]],
                 process_template=process_template,
                 ingredient_name=name,
                 quantity_dimension=quantity_dimension
             )
-            new_variables.extend([identifier_variable, quantity_variable])
 
-            new_columns.append(IdentityColumn(data_source=identifier_variable.name))
+            if identifier_variable.name not in [var.name for var in self.variables]:
+                new_variables.append(identifier_variable)
+                new_columns.append(IdentityColumn(data_source=identifier_variable.name))
+            new_variables.append(quantity_variable)
             new_columns.append(MeanColumn(data_source=quantity_variable.name))
             if quantity_dimension == IngredientQuantityDimension.ABSOLUTE:
                 new_columns.append(OriginalUnitsColumn(data_source=quantity_variable.name))

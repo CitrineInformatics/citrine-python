@@ -6,9 +6,11 @@ from taurus.entity.link_by_uid import LinkByUID
 
 from citrine.ara.columns import MeanColumn, OriginalUnitsColumn, StdDevColumn, IdentityColumn
 from citrine.ara.rows import MaterialRunByTemplate
-from citrine.ara.variables import AttributeByTemplate, RootInfo, IngredientQuantityDimension
+from citrine.ara.variables import AttributeByTemplate, RootInfo, IngredientQuantityDimension,\
+    IngredientQuantityByProcessAndName, IngredientIdentifierByProcessTemplateAndName
 from citrine.resources.ara_definition import AraDefinitionCollection, AraDefinition
 from citrine.resources.project import Project
+from citrine.resources.process_template import ProcessTemplate
 from tests.utils.factories import AraDefinitionFactory
 from tests.utils.session import FakeSession, FakeCall
 
@@ -182,10 +184,46 @@ def test_add_columns():
 
 def test_add_all_ingredients(session, project):
     """Test the behavior of AraDefinition.add_all_ingredients."""
-    empty = empty_defn()
+    # GIVEN
+    process_id = '3a308f78-e341-f39c-8076-35a2c88292ad'
+    process_name = 'mixing'
+    allowed_names = ["gold nanoparticles", "methanol", "acetone"]
+    process_link = LinkByUID('id', process_id)
+    session.set_response(
+        ProcessTemplate(process_name, uids={'id': process_id}, allowed_names=allowed_names).dump()
+    )
 
-    process = LinkByUID('id', '3a308f78-e341-f39c-8076-35a2c88292ad')
-    empty.add_all_ingredients(process_template=process, project=project, quantity_dimension=IngredientQuantityDimension.VOLUME)
+    # WHEN we add all ingredients in a volume basis
+    def1 = empty_defn().add_all_ingredients(process_template=process_link, project=project,
+                                            quantity_dimension=IngredientQuantityDimension.VOLUME)
+    # THEN there should be 2 variables and columns for each name, one for id and one for quantity
+    assert len(def1.variables) == len(allowed_names) * 2
+    assert len(def1.columns) == len(def1.variables)
+    for name in allowed_names:
+        assert next((var for var in def1.variables if name in var.name
+                     and isinstance(var, IngredientQuantityByProcessAndName)), None) is not None
+        assert next((var for var in def1.variables if name in var.name
+                     and isinstance(var, IngredientIdentifierByProcessTemplateAndName)), None) is not None
+
+    # WHEN we add all ingredients to the same Ara definition as absolute quantities
+    def2 = def1.add_all_ingredients(process_template=process_link, project=project,
+                                    quantity_dimension=IngredientQuantityDimension.ABSOLUTE)
+    # THEN there should be 1 new variable for each name, corresponding to the quantity
+    #   There is already a variable for id
+    #   There should be 2 new columns for each name, one for the quantity and one for the units
+    new_variables = def2.variables[len(def1.variables):]
+    new_columns = def2.columns[len(def1.columns):]
+    assert len(new_variables) == len(allowed_names)
+    assert len(new_columns) == len(allowed_names) * 2
+    for name in allowed_names:
+        assert next((var for var in new_variables if name in var.name
+                     and isinstance(var, IngredientQuantityByProcessAndName)), None) is not None
+
+    # WHEN we add all ingredients to the same Ara definition in a volume basis
+    # THEN it raises an exception because these variables and columns already exist
+    with pytest.raises(ValueError):
+        def2.add_all_ingredients(process_template=process_link, project=project,
+                                 quantity_dimension=IngredientQuantityDimension.VOLUME)
 
 
 def test_register_new(collection, session):
