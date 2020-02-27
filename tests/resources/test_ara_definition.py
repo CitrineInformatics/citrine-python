@@ -2,13 +2,13 @@ import json
 from uuid import UUID, uuid4
 
 import pytest
-from citrine.exceptions import ModuleRegistrationFailedException
 from taurus.entity.link_by_uid import LinkByUID
 
 from citrine.ara.columns import MeanColumn, OriginalUnitsColumn, StdDevColumn, IdentityColumn
 from citrine.ara.rows import MaterialRunByTemplate
-from citrine.ara.variables import AttributeByTemplate, RootInfo
+from citrine.ara.variables import AttributeByTemplate, RootInfo, IngredientQuantityDimension
 from citrine.resources.ara_definition import AraDefinitionCollection, AraDefinition
+from citrine.resources.project import Project
 from tests.utils.factories import AraDefinitionFactory
 from tests.utils.session import FakeSession, FakeCall
 
@@ -16,6 +16,16 @@ from tests.utils.session import FakeSession, FakeCall
 @pytest.fixture
 def session() -> FakeSession:
     return FakeSession()
+
+
+@pytest.fixture
+def project(session) -> Project:
+    project = Project(
+        name="Test Ara project",
+        session=session
+    )
+    project.uid = UUID('6b608f78-e341-422c-8076-35adc8828545')
+    return project
 
 
 @pytest.fixture
@@ -168,6 +178,14 @@ def test_add_columns():
             columns=[IdentityColumn(data_source="name")]
         )
     assert "already used" in str(excinfo.value)
+
+
+def test_add_all_ingredients(session, project):
+    """Test the behavior of AraDefinition.add_all_ingredients."""
+    empty = empty_defn()
+
+    process = LinkByUID('id', '3a308f78-e341-f39c-8076-35a2c88292ad')
+    empty.add_all_ingredients(process_template=process, project=project, quantity_dimension=IngredientQuantityDimension.VOLUME)
 
 
 def test_register_new(collection, session):
