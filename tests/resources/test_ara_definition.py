@@ -200,9 +200,9 @@ def test_add_all_ingredients(session, project):
     assert len(def1.variables) == len(allowed_names) * 2
     assert len(def1.columns) == len(def1.variables)
     for name in allowed_names:
-        assert next((var for var in def1.variables if name in var.name
+        assert next((var for var in def1.variables if name in var.headers
                      and isinstance(var, IngredientQuantityByProcessAndName)), None) is not None
-        assert next((var for var in def1.variables if name in var.name
+        assert next((var for var in def1.variables if name in var.headers
                      and isinstance(var, IngredientIdentifierByProcessTemplateAndName)), None) is not None
 
     # WHEN we add all ingredients to the same Ara definition as absolute quantities
@@ -216,7 +216,7 @@ def test_add_all_ingredients(session, project):
     assert len(new_variables) == len(allowed_names)
     assert len(new_columns) == len(allowed_names) * 2
     for name in allowed_names:
-        assert next((var for var in new_variables if name in var.name
+        assert next((var for var in new_variables if name in var.headers
                      and isinstance(var, IngredientQuantityByProcessAndName)), None) is not None
 
     # WHEN we add all ingredients to the same Ara definition in a volume basis

@@ -150,7 +150,7 @@ class AraDefinition(Resource["AraDefinition"]):
             the scope for which to get ingredient ids (default is Citrine scope, 'id')
 
         """
-        quantity_dimension_display = {
+        dimension_display = {
             IngredientQuantityDimension.ABSOLUTE: "absolute quantity",
             IngredientQuantityDimension.MASS: "mass fraction",
             IngredientQuantityDimension.VOLUME: "volume fraction",
@@ -162,16 +162,16 @@ class AraDefinition(Resource["AraDefinition"]):
         new_columns = []
         for name in process.allowed_names:
             identifier_variable = IngredientIdentifierByProcessTemplateAndName(
-                name="{} of ingredient {} in process {}".format(scope, name, process.name),
-                headers=[process.name, name + ' ' + scope],
+                name='_'.join([process.name, name, str(hash(process_template.id + name + scope))]),
+                headers=[process.name, name, scope],
                 process_template=process_template,
                 ingredient_name=name,
                 scope=scope
             )
             quantity_variable = IngredientQuantityByProcessAndName(
-                name="{} of ingredient {} in process {}".format(
-                    quantity_dimension_display[quantity_dimension], name, process.name),
-                headers=[process.name, name, quantity_dimension_display[quantity_dimension]],
+                name='_'.join([process.name, name, str(hash(
+                    process_template.id + name + dimension_display[quantity_dimension]))]),
+                headers=[process.name, name, dimension_display[quantity_dimension]],
                 process_template=process_template,
                 ingredient_name=name,
                 quantity_dimension=quantity_dimension
