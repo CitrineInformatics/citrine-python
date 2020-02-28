@@ -8,9 +8,11 @@ from citrine._rest.collection import Collection
 from citrine._rest.resource import Resource
 from citrine._serialization import properties
 from citrine._session import Session
-from citrine.ara.columns import Column
+from citrine.resources.process_template import ProcessTemplate  # noqa: F401
+from citrine.ara.columns import Column, MeanColumn, IdentityColumn, OriginalUnitsColumn
 from citrine.ara.rows import Row
-from citrine.ara.variables import Variable
+from citrine.ara.variables import Variable, IngredientIdentifierByProcessTemplateAndName,\
+    IngredientQuantityByProcessAndName, IngredientQuantityDimension
 
 
 class AraDefinition(Resource["AraDefinition"]):
@@ -122,6 +124,74 @@ class AraDefinition(Resource["AraDefinition"]):
             rows=copy(self.rows),
             variables=copy(self.variables) + [variable],
             columns=copy(self.columns) + columns
+        )
+
+    def add_all_ingredients(self, *,
+                            process_template: LinkByUID,
+                            project,
+                            quantity_dimension: IngredientQuantityDimension,
+                            scope: str = 'id'
+                            ):
+        """[ALPHA] Add variables and columns for all of the possible ingredients in a process.
+
+        For each allowed ingredient name in the process template there is a column for the if of
+        the ingredient and a column for the quantity of the ingredient. If the quantities are
+        given in absolute amounts then there is also a column for units.
+
+        Parameters
+        ------------
+        process_template: LinkByUID
+            scope and id of a registered process template
+        project: Project
+            a project that has access to the process template
+        quantity_dimension: IngredientQuantityDimension
+            the dimension in which to report ingredient quantities
+        scope: Optional[str]
+            the scope for which to get ingredient ids (default is Citrine scope, 'id')
+
+        """
+        dimension_display = {
+            IngredientQuantityDimension.ABSOLUTE: "absolute quantity",
+            IngredientQuantityDimension.MASS: "mass fraction",
+            IngredientQuantityDimension.VOLUME: "volume fraction",
+            IngredientQuantityDimension.NUMBER: "number fraction"
+        }
+        process: ProcessTemplate = project.process_templates.get(
+            uid=process_template.id, scope=process_template.scope)
+        new_variables = []
+        new_columns = []
+        for name in process.allowed_names:
+            identifier_variable = IngredientIdentifierByProcessTemplateAndName(
+                name='_'.join([process.name, name, str(hash(process_template.id + name + scope))]),
+                headers=[process.name, name, scope],
+                process_template=process_template,
+                ingredient_name=name,
+                scope=scope
+            )
+            quantity_variable = IngredientQuantityByProcessAndName(
+                name='_'.join([process.name, name, str(hash(
+                    process_template.id + name + dimension_display[quantity_dimension]))]),
+                headers=[process.name, name, dimension_display[quantity_dimension]],
+                process_template=process_template,
+                ingredient_name=name,
+                quantity_dimension=quantity_dimension
+            )
+
+            if identifier_variable.name not in [var.name for var in self.variables]:
+                new_variables.append(identifier_variable)
+                new_columns.append(IdentityColumn(data_source=identifier_variable.name))
+            new_variables.append(quantity_variable)
+            new_columns.append(MeanColumn(data_source=quantity_variable.name))
+            if quantity_dimension == IngredientQuantityDimension.ABSOLUTE:
+                new_columns.append(OriginalUnitsColumn(data_source=quantity_variable.name))
+
+        return AraDefinition(
+            name=self.name,
+            description=self.description,
+            datasets=copy(self.datasets),
+            rows=copy(self.rows),
+            variables=copy(self.variables) + new_variables,
+            columns=copy(self.columns) + new_columns
         )
 
 
