@@ -4,12 +4,8 @@ from uuid import UUID
 
 from taurus.entity.object import MeasurementSpec, MeasurementRun, MaterialSpec, MaterialRun, \
     ProcessSpec, ProcessRun, IngredientSpec, IngredientRun
-from taurus.entity.template.condition_template import ConditionTemplate
-from taurus.entity.template.material_template import MaterialTemplate
-from taurus.entity.template.measurement_template import MeasurementTemplate
-from taurus.entity.template.parameter_template import ParameterTemplate
-from taurus.entity.template.process_template import ProcessTemplate
-from taurus.entity.template.property_template import PropertyTemplate
+from taurus.entity.template import MaterialTemplate, ProcessTemplate, MeasurementTemplate, \
+    PropertyTemplate, ParameterTemplate, ConditionTemplate
 
 from citrine._session import Session
 from citrine._rest.collection import Collection

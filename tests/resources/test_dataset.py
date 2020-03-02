@@ -211,23 +211,23 @@ def test_files_get_project_id(dataset):
 def test_register_data_concepts(dataset):
     """Check that register routes to the correct collections"""
     from os.path import basename
-    expected_pairs = [
-        (MaterialTemplateCollection, MaterialTemplate("foo")),
-        (MaterialSpecCollection, MaterialSpec("foo")),
-        (MaterialRunCollection, MaterialRun("foo")),
-        (ProcessTemplateCollection, ProcessTemplate("foo")),
-        (ProcessSpecCollection, ProcessSpec("foo")),
-        (ProcessRunCollection, ProcessRun("foo")),
-        (MeasurementTemplateCollection, MeasurementTemplate("foo")),
-        (MeasurementSpecCollection, MeasurementSpec("foo")),
-        (MeasurementRunCollection, MeasurementRun("foo")),
-        (IngredientSpecCollection, IngredientSpec("foo")),
-        (IngredientRunCollection, IngredientRun("foo")),
-        (PropertyTemplateCollection, PropertyTemplate("bar", bounds=IntegerBounds(0, 1))),
-        (ParameterTemplateCollection, ParameterTemplate("bar", bounds=IntegerBounds(0, 1))),
-        (ConditionTemplateCollection, ConditionTemplate("bar", bounds=IntegerBounds(0, 1))),
-    ]
+    expected = {
+        MaterialTemplateCollection: MaterialTemplate("foo"),
+        MaterialSpecCollection: MaterialSpec("foo"),
+        MaterialRunCollection: MaterialRun("foo"),
+        ProcessTemplateCollection: ProcessTemplate("foo"),
+        ProcessSpecCollection: ProcessSpec("foo"),
+        ProcessRunCollection: ProcessRun("foo"),
+        MeasurementTemplateCollection: MeasurementTemplate("foo"),
+        MeasurementSpecCollection: MeasurementSpec("foo"),
+        MeasurementRunCollection: MeasurementRun("foo"),
+        IngredientSpecCollection: IngredientSpec("foo"),
+        IngredientRunCollection: IngredientRun("foo"),
+        PropertyTemplateCollection: PropertyTemplate("bar", bounds=IntegerBounds(0, 1)),
+        ParameterTemplateCollection: ParameterTemplate("bar", bounds=IntegerBounds(0, 1)),
+        ConditionTemplateCollection: ConditionTemplate("bar", bounds=IntegerBounds(0, 1))
+    }
 
-    for collection, obj in expected_pairs:
+    for collection, obj in expected.items():
         dataset.register(obj)
         assert basename(dataset.session.calls[-1].path) == basename(collection._path_template)
