@@ -72,6 +72,28 @@ and a list of :class:`~citrine.ara.columns.Column` objects to transform those va
          rows = [row_def],
          columns = [final_density_mean, final_density_std])
 
+In addition to defining variables, rows, and columns individually, there are convenience methods that simultaneously add multiple elements to an existing Ara definition.
+One such method is :func:`~citrine.resources.Ara.Definition.add_all_ingredients`, which creates variables and columns for every potential ingredient in a process.
+The user provides a link to a process template that has a non-empty set of `allowed_names` (the allowed names of the ingredient runs and specs in the process).
+This creates an id variable/column and a quantity variable/column for each allowed name.
+The user specifies the dimension to report the quantity in: mass fraction, volume fraction, number fraction, or absolute quantity.
+If the quantities are reported in absolute amounts then there is also a column for the units.
+
+The code below takes the `ara_defn` object defined in the preceding code block and adds the ingredient amounts for a `batter mixing` process with known uid "3a308f78-e341-f39c-8076-35a2c88292ad".
+Assume that the process template is accessible from a known project, `project`.
+
+.. code-block:: python
+
+    from citrine.ara.variables import IngredientQuantityDimension
+
+    ara_defn = ara_defn.add_all_ingredients(
+                                            process_template = LinkByUID('id', '3a308f78-e341-f39c-8076-35a2c88292ad'),
+                                            project=project,
+                                            quantity_dimension=IngredientQuantityDimension.MASS
+                                            )
+
+If the process template's allowed names includes, for example, "flour" then there will now be columns "batter mixing~flour~id" and "batter mixing~flour~mass fraction~mean."
+
 Previewing, creating and reading tables
 ---------------------------
 
