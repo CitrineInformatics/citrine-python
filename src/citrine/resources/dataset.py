@@ -1,5 +1,15 @@
 """Resources that represent both individual and collections of datasets."""
+from typing import TypeVar
 from uuid import UUID
+
+from taurus.entity.object import MeasurementSpec, MeasurementRun, MaterialSpec, MaterialRun, \
+    ProcessSpec, ProcessRun, IngredientSpec, IngredientRun
+from taurus.entity.template.condition_template import ConditionTemplate
+from taurus.entity.template.material_template import MaterialTemplate
+from taurus.entity.template.measurement_template import MeasurementTemplate
+from taurus.entity.template.parameter_template import ParameterTemplate
+from taurus.entity.template.process_template import ProcessTemplate
+from taurus.entity.template.property_template import PropertyTemplate
 
 from citrine._session import Session
 from citrine._rest.collection import Collection
@@ -21,6 +31,9 @@ from citrine.resources.material_spec import MaterialSpecCollection
 from citrine.resources.ingredient_run import IngredientRunCollection
 from citrine.resources.ingredient_spec import IngredientSpecCollection
 from citrine.resources.file_link import FileCollection
+
+
+ResourceType = TypeVar('ResourceType', bound='DataConcepts')
 
 
 class Dataset(Resource['Dataset']):
@@ -172,6 +185,41 @@ class Dataset(Resource['Dataset']):
     def files(self) -> FileCollection:
         """Return a resource representing all files in the dataset."""
         return FileCollection(self.project_id, self.uid, self.session)
+
+    def register(self, data_concepts_resource: ResourceType) -> ResourceType:
+        """Register a data concepts resource to the appropriate collection."""
+        if isinstance(data_concepts_resource, MeasurementTemplate):
+            return self.measurement_templates.register(data_concepts_resource)
+        if isinstance(data_concepts_resource, MeasurementSpec):
+            return self.measurement_specs.register(data_concepts_resource)
+        if isinstance(data_concepts_resource, MeasurementRun):
+            return self.measurement_runs.register(data_concepts_resource)
+
+        if isinstance(data_concepts_resource, MaterialTemplate):
+            return self.material_templates.register(data_concepts_resource)
+        if isinstance(data_concepts_resource, MaterialSpec):
+            return self.material_specs.register(data_concepts_resource)
+        if isinstance(data_concepts_resource, MaterialRun):
+            return self.material_runs.register(data_concepts_resource)
+
+        if isinstance(data_concepts_resource, ProcessTemplate):
+            return self.process_templates.register(data_concepts_resource)
+        if isinstance(data_concepts_resource, ProcessSpec):
+            return self.process_specs.register(data_concepts_resource)
+        if isinstance(data_concepts_resource, ProcessRun):
+            return self.process_runs.register(data_concepts_resource)
+
+        if isinstance(data_concepts_resource, IngredientSpec):
+            return self.ingredient_specs.register(data_concepts_resource)
+        if isinstance(data_concepts_resource, IngredientRun):
+            return self.ingredient_runs.register(data_concepts_resource)
+
+        if isinstance(data_concepts_resource, PropertyTemplate):
+            return self.property_templates.register(data_concepts_resource)
+        if isinstance(data_concepts_resource, ParameterTemplate):
+            return self.parameter_templates.register(data_concepts_resource)
+        if isinstance(data_concepts_resource, ConditionTemplate):
+            return self.condition_templates.register(data_concepts_resource)
 
 
 class DatasetCollection(Collection[Dataset]):
