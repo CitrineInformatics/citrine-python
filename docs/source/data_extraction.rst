@@ -74,7 +74,7 @@ and a list of :class:`~citrine.ara.columns.Column` objects to transform those va
 
 In addition to defining variables, rows, and columns individually, there are convenience methods that simultaneously add multiple elements to an existing Ara definition.
 One such method is :func:`~citrine.resources.Ara.Definition.add_all_ingredients`, which creates variables and columns for every potential ingredient in a process.
-The user provides a link to a process template which must have a list of `allowed_names` corresponding to the names of the allowed ingredients in the process.
+The user provides a link to a process template that has a non-empty set of `allowed_names` (the allowed names of the ingredient runs and specs in the process).
 This creates an id variable/column and a quantity variable/column for each allowed name.
 The user specifies the dimension to report the quantity in: mass fraction, volume fraction, number fraction, or absolute quantity.
 If the quantities are reported in absolute amounts then there is also a column for the units.
