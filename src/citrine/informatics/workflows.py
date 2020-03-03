@@ -49,8 +49,9 @@ class DesignWorkflow(Resource['DesignWorkflow'], Workflow):
         the name of the workflow
     design_space_id: UUID
         the UUID corresponding to the design space to use
-    processor_id: UUID
+    processor_id: Optional[UUID]
         the UUID corresponding to the processor to use
+        if none is provided, one matching your design space will be automatically generated
     predictor_id: UUID
         the UUID corresponding to the predictor to use
     project_id: UUID
