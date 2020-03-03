@@ -70,7 +70,7 @@ class DesignWorkflow(Resource['DesignWorkflow'], Workflow):
     created_by = properties.Optional(properties.UUID, 'created_by', serializable=False)
     create_time = properties.Optional(properties.Datetime, 'create_time', serializable=False)
     design_space_id = properties.UUID('config.design_space_id')
-    processor_id = properties.UUID('config.processor_id')
+    processor_id = properties.Optional(properties.UUID, 'config.processor_id')
     predictor_id = properties.UUID('config.predictor_id')
     module_type = properties.String('module_type', default='DESIGN_WORKFLOW')
     schema_id = properties.UUID('schema_id', default=UUID('8af8b007-3e81-4185-82b2-6f62f4a2e6f1'))
@@ -78,7 +78,7 @@ class DesignWorkflow(Resource['DesignWorkflow'], Workflow):
     def __init__(self,
                  name: str,
                  design_space_id: UUID,
-                 processor_id: UUID,
+                 processor_id: Optional[UUID],
                  predictor_id: UUID,
                  project_id: Optional[UUID] = None,
                  session: Session = Session()):
