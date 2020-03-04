@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>1.2. Using the Citrine Python Client &#8212; Citrine Python 0.0.1 documentation</title>
+    <title>1.3. Using the Citrine Python Client &#8212; Citrine Python 0.0.1 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -15,8 +15,8 @@
     <link rel="shortcut icon" href="../_static/favicon.png"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="1.3. Data Model" href="data_model.html" />
-    <link rel="prev" title="1.1. Structure of the Citrine Python Client" href="basic_structure.html" />
+    <link rel="next" title="1.4. Data Model" href="data_model.html" />
+    <link rel="prev" title="1.2. Structure of the Citrine Python Client" href="basic_structure.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -34,10 +34,10 @@
           <div class="body" role="main">
             
   <div class="section" id="using-the-citrine-python-client">
-<h1>1.2. Using the Citrine Python Client<a class="headerlink" href="#using-the-citrine-python-client" title="Permalink to this headline">¶</a></h1>
+<h1>1.3. Using the Citrine Python Client<a class="headerlink" href="#using-the-citrine-python-client" title="Permalink to this headline">¶</a></h1>
 <p>The Citrine python client creates, reads, updates, and deletes <a class="reference internal" href="basic_structure.html"><span class="doc">resources</span></a> using the Citrine product API.</p>
 <div class="section" id="creating">
-<h2>1.2.1. Creating<a class="headerlink" href="#creating" title="Permalink to this headline">¶</a></h2>
+<h2>1.3.1. Creating<a class="headerlink" href="#creating" title="Permalink to this headline">¶</a></h2>
 <p>To create a resource, initialize it as you would any other python object. For example,</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.resources.process_spec</span> <span class="kn">import</span> <span class="n">ProcessSpec</span>
 <span class="n">buy_electrolyte_spec</span> <span class="o">=</span> <span class="n">ProcessSpec</span><span class="p">(</span><span class="s2">&quot;Buy ammonium chloride&quot;</span><span class="p">)</span>
@@ -55,10 +55,10 @@ The command <code class="docutils literal notranslate"><span class="pre">battery
 The database may decorate the object with additional information, such as a unique identifier string that you can use to retrieve it in the future.</p>
 </div>
 <div class="section" id="reading">
-<span id="functionality-reading-label"></span><h2>1.2.2. Reading<a class="headerlink" href="#reading" title="Permalink to this headline">¶</a></h2>
+<span id="functionality-reading-label"></span><h2>1.3.2. Reading<a class="headerlink" href="#reading" title="Permalink to this headline">¶</a></h2>
 <p>There are several ways to retrieve a resource from the database.</p>
 <div class="section" id="get">
-<h3>1.2.2.1. Get<a class="headerlink" href="#get" title="Permalink to this headline">¶</a></h3>
+<h3>1.3.2.1. Get<a class="headerlink" href="#get" title="Permalink to this headline">¶</a></h3>
 <p>Get retrieves a specific resource with a known unique identifier string.
 If the project <code class="docutils literal notranslate"><span class="pre">ceramic_resistors_project</span></code> has a dataset with an id that you have saved as <code class="docutils literal notranslate"><span class="pre">special_dataset_id</span></code>, then you could retrieve it with:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ceramic_resistors_project</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">special_dataset_id</span><span class="p">)</span>
@@ -66,7 +66,7 @@ If the project <code class="docutils literal notranslate"><span class="pre">cera
 </div>
 </div>
 <div class="section" id="list">
-<h3>1.2.2.2. List<a class="headerlink" href="#list" title="Permalink to this headline">¶</a></h3>
+<h3>1.3.2.2. List<a class="headerlink" href="#list" title="Permalink to this headline">¶</a></h3>
 <p>List returns an iterator of every resource in a collection.
 To list every material spec in the dataset <code class="docutils literal notranslate"><span class="pre">standard_glasses_dataset</span></code>, use the command:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">standard_glasses_dataset</span><span class="o">.</span><span class="n">material_specs</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
@@ -75,27 +75,9 @@ To list every material spec in the dataset <code class="docutils literal notrans
 <p>You can instead broaden the scope of the search to an entire project.
 The command <code class="docutils literal notranslate"><span class="pre">lens_project.material_specs.list()</span></code> will list every material spec in every dataset that <code class="docutils literal notranslate"><span class="pre">lens_project</span></code> has read access to.</p>
 </div>
-<div class="section" id="filter">
-<h3>1.2.2.3. Filter<a class="headerlink" href="#filter" title="Permalink to this headline">¶</a></h3>
-<p>Filter lies somewhere between Get and List, returning only those objects that meet a given criterion.
-There are currently three ways to filter, and they only work on data model objects:
-<a class="reference internal" href="../reference/citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConceptsCollection.filter_by_tags" title="citrine.resources.data_concepts.DataConceptsCollection.filter_by_tags"><code class="xref py py-func docutils literal notranslate"><span class="pre">filter_by_tags()</span></code></a>,
-<a class="reference internal" href="../reference/citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConceptsCollection.filter_by_attribute_bounds" title="citrine.resources.data_concepts.DataConceptsCollection.filter_by_attribute_bounds"><code class="xref py py-func docutils literal notranslate"><span class="pre">filter_by_attribute_bounds()</span></code></a>,
-and <a class="reference internal" href="../reference/citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConceptsCollection.filter_by_name" title="citrine.resources.data_concepts.DataConceptsCollection.filter_by_name"><code class="xref py py-func docutils literal notranslate"><span class="pre">filter_by_name()</span></code></a>.</p>
-<p>Filtering by tags or attribute bounds can be scoped to a dataset or to a project.
-Filtering by name must be scoped to a dataset.</p>
-</div>
-<div class="section" id="get-material-history">
-<h3>1.2.2.4. Get Material History<a class="headerlink" href="#get-material-history" title="Permalink to this headline">¶</a></h3>
-<p>Starting with a specific root <a class="reference internal" href="../reference/citrine.resources.material_run.html#citrine.resources.material_run.MaterialRun" title="citrine.resources.material_run.MaterialRun"><code class="xref py py-class docutils literal notranslate"><span class="pre">MaterialRun</span></code></a>,
-you can retrieve the complete material history–every process, ingredient and material that went
-into the root material, as well as the measurements that were performed on all of those materials
-The method is <a class="reference internal" href="../reference/citrine.resources.material_run.html#citrine.resources.material_run.MaterialRunCollection.get_history" title="citrine.resources.material_run.MaterialRunCollection.get_history"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_history()</span></code></a>,
-and it requires you to know a unique identifier (scope/id pair) for the material.</p>
-</div>
 </div>
 <div class="section" id="updating">
-<h2>1.2.3. Updating<a class="headerlink" href="#updating" title="Permalink to this headline">¶</a></h2>
+<h2>1.3.3. Updating<a class="headerlink" href="#updating" title="Permalink to this headline">¶</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">register</span></code> command is also used to update an object. The following code creates and persists
 a process spec <code class="docutils literal notranslate"><span class="pre">sintering</span></code> to a dataset <code class="docutils literal notranslate"><span class="pre">tungsten_dataset</span></code>, then updates it locally
 and persists that update.</p>
@@ -106,7 +88,7 @@ and persists that update.</p>
 </div>
 </div>
 <div class="section" id="deleting">
-<h2>1.2.4. Deleting<a class="headerlink" href="#deleting" title="Permalink to this headline">¶</a></h2>
+<h2>1.3.4. Deleting<a class="headerlink" href="#deleting" title="Permalink to this headline">¶</a></h2>
 <p>Deleting an object is a permanent action and cannot be undone, so do use caution when performing deletes!</p>
 <p>In order for a delete to be successful, the following circumstances must be true:</p>
 <ol class="arabic simple">
@@ -129,6 +111,38 @@ Should that <code class="docutils literal notranslate"><span class="pre">Materia
 In order for the delete to be successful, the dataset must be empty.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">project</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
 </pre></div>
+</div>
+</div>
+<div class="section" id="data-model-object-specific-methods">
+<h2>1.3.5. Data Model Object Specific Methods<a class="headerlink" href="#data-model-object-specific-methods" title="Permalink to this headline">¶</a></h2>
+<p>The client supports additional methods on certain data model object resources.</p>
+<div class="section" id="project-wide-collections">
+<h3>1.3.5.1. Project-Wide Collections<a class="headerlink" href="#project-wide-collections" title="Permalink to this headline">¶</a></h3>
+<p>Data model objects are each contained in exactly one dataset.
+However, most methods that read data model objects can be evaluated against all of the datasets that are readable from a project.
+Special data model object collections are available in the project to support this, for example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">project</span><span class="o">.</span><span class="n">material_specs</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Any method that writes to a data model object must be taken from within a dataset-scoped collection.</p>
+</div>
+<div class="section" id="filter">
+<h3>1.3.5.2. Filter<a class="headerlink" href="#filter" title="Permalink to this headline">¶</a></h3>
+<p>Filter lies somewhere between Get and List, returning only those objects that meet a given criterion.
+There are currently three ways to filter, and they work on each data model object type:
+<a class="reference internal" href="../reference/citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConceptsCollection.filter_by_tags" title="citrine.resources.data_concepts.DataConceptsCollection.filter_by_tags"><code class="xref py py-func docutils literal notranslate"><span class="pre">filter_by_tags()</span></code></a>,
+<a class="reference internal" href="../reference/citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConceptsCollection.filter_by_attribute_bounds" title="citrine.resources.data_concepts.DataConceptsCollection.filter_by_attribute_bounds"><code class="xref py py-func docutils literal notranslate"><span class="pre">filter_by_attribute_bounds()</span></code></a>,
+and <a class="reference internal" href="../reference/citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConceptsCollection.filter_by_name" title="citrine.resources.data_concepts.DataConceptsCollection.filter_by_name"><code class="xref py py-func docutils literal notranslate"><span class="pre">filter_by_name()</span></code></a>.</p>
+<p>Filtering by tags or attribute bounds can be scoped to a dataset or to a project.
+Filtering by name must be scoped to a dataset.</p>
+</div>
+<div class="section" id="get-material-history">
+<h3>1.3.5.3. Get Material History<a class="headerlink" href="#get-material-history" title="Permalink to this headline">¶</a></h3>
+<p>Starting with a specific root <a class="reference internal" href="../reference/citrine.resources.material_run.html#citrine.resources.material_run.MaterialRun" title="citrine.resources.material_run.MaterialRun"><code class="xref py py-class docutils literal notranslate"><span class="pre">MaterialRun</span></code></a>,
+you can retrieve the complete material history–every process, ingredient and material that went
+into the root material, as well as the measurements that were performed on all of those materials
+The method is <a class="reference internal" href="../reference/citrine.resources.material_run.html#citrine.resources.material_run.MaterialRunCollection.get_history" title="citrine.resources.material_run.MaterialRunCollection.get_history"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_history()</span></code></a>,
+and it requires you to know a unique identifier (scope/id pair) for the material.</p>
 </div>
 </div>
 </div>
@@ -164,33 +178,38 @@ In order for the delete to be successful, the dataset must be empty.</p>
 <h3>Navigation</h3>
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">1. Getting Started</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="basic_structure.html">1.1. Structure of the Citrine Python Client</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">1.2. Using the Citrine Python Client</a></li>
-<li class="toctree-l2"><a class="reference internal" href="data_model.html">1.3. Data Model</a></li>
-<li class="toctree-l2"><a class="reference internal" href="public_access.html">1.4. Dataset Access Control</a></li>
-<li class="toctree-l2"><a class="reference internal" href="working_with_files.html">1.5. Working With Files</a></li>
-<li class="toctree-l2"><a class="reference internal" href="projects_and_users.html">1.6. Projects and Users</a></li>
-<li class="toctree-l2"><a class="reference internal" href="code_examples.html">1.7. Code Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="connecting.html">1.1. Connecting to the Citrine Platform</a></li>
+<li class="toctree-l2"><a class="reference internal" href="basic_structure.html">1.2. Structure of the Citrine Python Client</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">1.3. Using the Citrine Python Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_model.html">1.4. Data Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="public_access.html">1.5. Dataset Access Control</a></li>
+<li class="toctree-l2"><a class="reference internal" href="working_with_files.html">1.6. Working With Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="projects_and_users.html">1.7. Projects and Users</a></li>
+<li class="toctree-l2"><a class="reference internal" href="code_examples.html">1.8. Code Examples</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../data_extraction.html">2. [ALPHA] Data Extraction</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#defining-row-and-columns">2.1. Defining row and columns</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#defining-tables">2.2. Defining tables</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#creating-and-reading-tables">2.3. Creating and reading tables</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-row-definitions">2.4. Available Row Definitions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-variable-definitions">2.5. Available Variable Definitions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-column-definitions">2.6. Available Column Definitions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_entry.html">2. Data Entry</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#creating-data-model-objects">2.1. Creating Data Model Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#identifiying-data-model-objects">2.2. Identifiying Data Model Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#registering-data-model-objects">2.3. Registering Data Model Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#finding-data-model-objects">2.4. Finding Data Model Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#referencing-data-model-objects">2.5. Referencing Data Model Objects</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">3. Workflows</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#modules">3.1. Modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#design-workflows">3.2. Design workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#registration-and-validation">3.3. Registration and validation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#table-of-contents">3.4. Table of Contents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_extraction.html">3. [ALPHA] Data Extraction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#defining-row-and-columns">3.1. Defining row and columns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#defining-tables">3.2. Defining tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#previewing-creating-and-reading-tables">3.3. Previewing, creating and reading tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-row-definitions">3.4. Available Row Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-variable-definitions">3.5. Available Variable Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-column-definitions">3.6. Available Column Definitions</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../development.html">4. Development</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../development.html#running-tests-in-docker">4.1. Running tests in Docker</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">4. [ALPHA] Workflows</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#modules">4.1. Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#design-workflows">4.2. Design workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#registration-and-validation">4.3. Registration and validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#table-of-contents">4.4. Table of Contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">5. FAQ</a><ul>
@@ -204,8 +223,8 @@ In order for the delete to be successful, the dataset must be empty.</p>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="index.html">1. Getting Started</a><ul>
-      <li>Previous: <a href="basic_structure.html" title="previous chapter">1.1. Structure of the Citrine Python Client</a></li>
-      <li>Next: <a href="data_model.html" title="next chapter">1.3. Data Model</a></li>
+      <li>Previous: <a href="basic_structure.html" title="previous chapter">1.2. Structure of the Citrine Python Client</a></li>
+      <li>Next: <a href="data_model.html" title="next chapter">1.4. Data Model</a></li>
   </ul></li>
   </ul></li>
 </ul>

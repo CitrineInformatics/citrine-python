@@ -24,6 +24,11 @@ The only way to define rows right now is through :class:`~citrine.ara.rows.Mater
 
 A :class:`~citrine.ara.variables.Variable` object specifies how to select a piece of data from each Material History.
 Thus, it performs the first part of a mapping from the set of Material Histories to columns in the Ara table.
+A :class:`~citrine.ara.variables.Variable` is addressed locally (within a definition) by a ``name``.
+A :class:`~citrine.ara.variables.Variable` is also labeled with ``headers``, which is a list of strings that can express a hierarchical relationship with other variables.
+The headers are listed in decreasing hierarchical order: the first string indicates the broadest classification, and each subsequent string indicates a refinement of those classifications preceding it.
+In the example below, a hardness measurement might also be performed on the object denoted by the ``Product`` header.
+One might assign ``headers = ["Product", "Hardness"]`` to this measurement in order to relate it with the ``Density`` measurement of the same physical object.
 
 .. code-block:: python
 
@@ -67,7 +72,29 @@ and a list of :class:`~citrine.ara.columns.Column` objects to transform those va
          rows = [row_def],
          columns = [final_density_mean, final_density_std])
 
-Creating and reading tables
+In addition to defining variables, rows, and columns individually, there are convenience methods that simultaneously add multiple elements to an existing Ara definition.
+One such method is :func:`~citrine.resources.Ara.Definition.add_all_ingredients`, which creates variables and columns for every potential ingredient in a process.
+The user provides a link to a process template that has a non-empty set of `allowed_names` (the allowed names of the ingredient runs and specs in the process).
+This creates an id variable/column and a quantity variable/column for each allowed name.
+The user specifies the dimension to report the quantity in: mass fraction, volume fraction, number fraction, or absolute quantity.
+If the quantities are reported in absolute amounts then there is also a column for the units.
+
+The code below takes the `ara_defn` object defined in the preceding code block and adds the ingredient amounts for a `batter mixing` process with known uid "3a308f78-e341-f39c-8076-35a2c88292ad".
+Assume that the process template is accessible from a known project, `project`.
+
+.. code-block:: python
+
+    from citrine.ara.variables import IngredientQuantityDimension
+
+    ara_defn = ara_defn.add_all_ingredients(
+                                            process_template = LinkByUID('id', '3a308f78-e341-f39c-8076-35a2c88292ad'),
+                                            project=project,
+                                            quantity_dimension=IngredientQuantityDimension.MASS
+                                            )
+
+If the process template's allowed names includes, for example, "flour" then there will now be columns "batter mixing~flour~id" and "batter mixing~flour~mass fraction~mean."
+
+Previewing, creating and reading tables
 ---------------------------
 
 Calling :func:`~citrine.resources.project.Project.ara_definitions` on a project returns an :class:`~citrine.resources.ara_definition.AraDefinitionCollection` object, which facilitates access to the collection of all Ara definitions visible to a Project.
@@ -83,6 +110,22 @@ For example:
          preview_roots = [
                LinkByUID(scope="products", id="best cookie ever"),
                LinkByUID(scope="products", id="worst cookie ever")])
+
+The preview returns a dictionary with two keys:
+
+* The ``csv`` key will get a preview of the table in the comma-separated-values format.
+* The ``warnings`` key will get a list of String-valued warnings that describe possible issues with the Ara definition, e.g. that one of the columns is completely empty.
+
+For example, if you wanted to print the warnings and then load the preview into a pandas dataframe, you could:
+
+.. code-block:: python
+
+   from io import StringIO
+   import pandas as pd
+
+   preview = defns.preview(ara_defn, preview_roots)
+   print("\n\n".join(preview["warnings"]))
+   data_frame = pd.read_csv(StringIO(preview["csv"]))
 
 Available Row Definitions
 ------------------------------
@@ -130,11 +173,18 @@ There are several ways to define columns, depending on the type of the attribute
  * :class:`~citrine.ara.columns.QuantileColumn`: for a user-defined quantile of the numeric distribution, or empty if the value is *nominal*
  * :class:`~citrine.ara.columns.OriginalUnitsColumn`: for getting the units, as entered by the data author, from the specific attribute value; valid for continuous values only
 
-* Enumerated values, like :class:`~taurus.entity.categorical_value.CategoricalValue`
+* Enumerated attribute values, like :class:`~taurus.entity.categorical_value.CategoricalValue`
 
  * :class:`~citrine.ara.columns.MostLikelyCategoryColumn`: for getting the mode
  * :class:`~citrine.ara.columns.MostLikelyProbabilityColumn`: for getting the probability of the mode
 
-* String and boolean valued fields
+* Composition and chemical formula attribute values, like :class:`~taurus.entity.composition_value.CompositionValue`
+
+ * :class:`~citrine.ara.columns.FlatCompositionColumn`: for flattening the composition into a chemical-formula-like string
+ * :class:`~citrine.ara.columns.ComponentQuantityColumn`: for getting the quantity of a specific component, by name
+ * :class:`~citrine.ara.columns.NthBiggestComponentNameColumn`: for getting the name of the n-th biggest component (by quantity)
+ * :class:`~citrine.ara.columns.NthBiggestComponentQuantityColumn`: for getting the quantity of the n-th biggest component (by quantity)
+
+* String and boolean valued fields, like identifiers and non-attribute fields
 
  * :class:`~citrine.ara.columns.IdentityColumn`: for simply casting the value to a string, which doesn't work on values from attributes

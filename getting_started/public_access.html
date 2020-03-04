@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>1.4. Dataset Access Control &#8212; Citrine Python 0.0.1 documentation</title>
+    <title>1.5. Dataset Access Control &#8212; Citrine Python 0.0.1 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -15,8 +15,8 @@
     <link rel="shortcut icon" href="../_static/favicon.png"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="1.5. Working With Files" href="working_with_files.html" />
-    <link rel="prev" title="1.3. Data Model" href="data_model.html" />
+    <link rel="next" title="1.6. Working With Files" href="working_with_files.html" />
+    <link rel="prev" title="1.4. Data Model" href="data_model.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -34,21 +34,21 @@
           <div class="body" role="main">
             
   <div class="section" id="dataset-access-control">
-<h1>1.4. Dataset Access Control<a class="headerlink" href="#dataset-access-control" title="Permalink to this headline">¶</a></h1>
+<h1>1.5. Dataset Access Control<a class="headerlink" href="#dataset-access-control" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="overview">
-<h2>1.4.1. Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
+<h2>1.5.1. Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
 <p>When a dataset is created on the Citrine platform, only members of the project in which it was
 created can see it and interact with it. If a dataset is made public it can be retrieved by any user
 using any project. Once retrieved, its data objects are also available to view. Datasets that are
 public may only be written to by the project from which they originated.</p>
 </div>
 <div class="section" id="toggling-public-access">
-<h2>1.4.2. Toggling Public Access<a class="headerlink" href="#toggling-public-access" title="Permalink to this headline">¶</a></h2>
+<h2>1.5.2. Toggling Public Access<a class="headerlink" href="#toggling-public-access" title="Permalink to this headline">¶</a></h2>
 <p>A dataset can be made public (or made private again) using the project from which it originates
 using the <a class="reference internal" href="../reference/citrine.resources.project.html#citrine.resources.project.Project.make_public" title="citrine.resources.project.Project.make_public"><code class="xref py py-func docutils literal notranslate"><span class="pre">make_public()</span></code></a> and <a class="reference internal" href="../reference/citrine.resources.project.html#citrine.resources.project.Project.make_private" title="citrine.resources.project.Project.make_private"><code class="xref py py-func docutils literal notranslate"><span class="pre">make_private()</span></code></a> methods on the project.</p>
 </div>
 <div class="section" id="example">
-<h2>1.4.3. Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
+<h2>1.5.3. Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
 <p>Assume you have a “band gaps project” with known ID, <cite>band_gaps_project_id</cite>, and an associated dataset with known ID, <cite>strehlow_cook_dataset_id</cite>.</p>
 <p>Making a dataset public:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">band_gaps_project</span> <span class="o">=</span> <span class="n">citrine</span><span class="o">.</span><span class="n">projects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">band_gaps_project_id</span><span class="p">)</span>
@@ -102,33 +102,38 @@ using the <a class="reference internal" href="../reference/citrine.resources.pro
 <h3>Navigation</h3>
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">1. Getting Started</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="basic_structure.html">1.1. Structure of the Citrine Python Client</a></li>
-<li class="toctree-l2"><a class="reference internal" href="basic_functionality.html">1.2. Using the Citrine Python Client</a></li>
-<li class="toctree-l2"><a class="reference internal" href="data_model.html">1.3. Data Model</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">1.4. Dataset Access Control</a></li>
-<li class="toctree-l2"><a class="reference internal" href="working_with_files.html">1.5. Working With Files</a></li>
-<li class="toctree-l2"><a class="reference internal" href="projects_and_users.html">1.6. Projects and Users</a></li>
-<li class="toctree-l2"><a class="reference internal" href="code_examples.html">1.7. Code Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="connecting.html">1.1. Connecting to the Citrine Platform</a></li>
+<li class="toctree-l2"><a class="reference internal" href="basic_structure.html">1.2. Structure of the Citrine Python Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="basic_functionality.html">1.3. Using the Citrine Python Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_model.html">1.4. Data Model</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">1.5. Dataset Access Control</a></li>
+<li class="toctree-l2"><a class="reference internal" href="working_with_files.html">1.6. Working With Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="projects_and_users.html">1.7. Projects and Users</a></li>
+<li class="toctree-l2"><a class="reference internal" href="code_examples.html">1.8. Code Examples</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../data_extraction.html">2. [ALPHA] Data Extraction</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#defining-row-and-columns">2.1. Defining row and columns</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#defining-tables">2.2. Defining tables</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#creating-and-reading-tables">2.3. Creating and reading tables</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-row-definitions">2.4. Available Row Definitions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-variable-definitions">2.5. Available Variable Definitions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-column-definitions">2.6. Available Column Definitions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_entry.html">2. Data Entry</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#creating-data-model-objects">2.1. Creating Data Model Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#identifiying-data-model-objects">2.2. Identifiying Data Model Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#registering-data-model-objects">2.3. Registering Data Model Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#finding-data-model-objects">2.4. Finding Data Model Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#referencing-data-model-objects">2.5. Referencing Data Model Objects</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">3. Workflows</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#modules">3.1. Modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#design-workflows">3.2. Design workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#registration-and-validation">3.3. Registration and validation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#table-of-contents">3.4. Table of Contents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_extraction.html">3. [ALPHA] Data Extraction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#defining-row-and-columns">3.1. Defining row and columns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#defining-tables">3.2. Defining tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#previewing-creating-and-reading-tables">3.3. Previewing, creating and reading tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-row-definitions">3.4. Available Row Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-variable-definitions">3.5. Available Variable Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-column-definitions">3.6. Available Column Definitions</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../development.html">4. Development</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../development.html#running-tests-in-docker">4.1. Running tests in Docker</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">4. [ALPHA] Workflows</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#modules">4.1. Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#design-workflows">4.2. Design workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#registration-and-validation">4.3. Registration and validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#table-of-contents">4.4. Table of Contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">5. FAQ</a><ul>
@@ -142,8 +147,8 @@ using the <a class="reference internal" href="../reference/citrine.resources.pro
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="index.html">1. Getting Started</a><ul>
-      <li>Previous: <a href="data_model.html" title="previous chapter">1.3. Data Model</a></li>
-      <li>Next: <a href="working_with_files.html" title="next chapter">1.5. Working With Files</a></li>
+      <li>Previous: <a href="data_model.html" title="previous chapter">1.4. Data Model</a></li>
+      <li>Next: <a href="working_with_files.html" title="next chapter">1.6. Working With Files</a></li>
   </ul></li>
   </ul></li>
 </ul>

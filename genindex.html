@@ -94,6 +94,8 @@
         <li><a href="reference/citrine.informatics.workflows.html#citrine.informatics.workflows.PerformanceWorkflow.active">(citrine.informatics.workflows.PerformanceWorkflow attribute)</a>
 </li>
       </ul></li>
+      <li><a href="reference/citrine.resources.ara_definition.html#citrine.resources.ara_definition.AraDefinition.add_all_ingredients">add_all_ingredients() (citrine.resources.ara_definition.AraDefinition method)</a>
+</li>
       <li><a href="reference/citrine.resources.ara_definition.html#citrine.resources.ara_definition.AraDefinition.add_columns">add_columns() (citrine.resources.ara_definition.AraDefinition method)</a>
 </li>
       <li><a href="reference/citrine.resources.project.html#citrine.resources.project.Project.add_user">add_user() (citrine.resources.project.Project method)</a>
@@ -106,6 +108,8 @@
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/citrine.ara.columns.html#citrine.ara.columns.CompositionSortOrder.ALPHABETICAL">ALPHABETICAL (citrine.ara.columns.CompositionSortOrder attribute)</a>
+</li>
       <li><a href="reference/citrine.informatics.workflows.html#citrine.informatics.workflows.PerformanceWorkflow.analysis">analysis (citrine.informatics.workflows.PerformanceWorkflow attribute)</a>
 </li>
       <li><a href="reference/citrine.resources.api_error.html#citrine.resources.api_error.ApiError">ApiError (class in citrine.resources.api_error)</a>
@@ -156,10 +160,10 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference/citrine.exceptions.html#citrine.exceptions.BadRequest">BadRequest</a>
 </li>
-      <li><a href="reference/citrine.informatics.scores.html#citrine.informatics.scores.MEIScore.baselines">baselines (citrine.informatics.scores.MEIScore attribute)</a>
+      <li><a href="reference/citrine.informatics.scores.html#citrine.informatics.scores.EIScore.baselines">baselines (citrine.informatics.scores.EIScore attribute)</a>
 
       <ul>
-        <li><a href="reference/citrine.informatics.scores.html#citrine.informatics.scores.MLIScore.baselines">(citrine.informatics.scores.MLIScore attribute)</a>
+        <li><a href="reference/citrine.informatics.scores.html#citrine.informatics.scores.LIScore.baselines">(citrine.informatics.scores.LIScore attribute)</a>
 </li>
       </ul></li>
       <li><a href="reference/citrine.resources.condition_template.html#citrine.resources.condition_template.ConditionTemplate.bounds">bounds (citrine.resources.condition_template.ConditionTemplate attribute)</a>
@@ -300,10 +304,10 @@
 </li>
       <li><a href="reference/citrine.resources.measurement_template.html#module-citrine.resources.measurement_template">citrine.resources.measurement_template (module)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference/citrine.resources.module.html#module-citrine.resources.module">citrine.resources.module (module)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference/citrine.resources.parameter_template.html#module-citrine.resources.parameter_template">citrine.resources.parameter_template (module)</a>
 </li>
       <li><a href="reference/citrine.resources.predictor.html#module-citrine.resources.predictor">citrine.resources.predictor (module)</a>
@@ -346,6 +350,12 @@
 </li>
       <li><a href="reference/citrine.resources.ara_definition.html#citrine.resources.ara_definition.AraDefinition.columns">columns (citrine.resources.ara_definition.AraDefinition attribute)</a>
 </li>
+      <li><a href="reference/citrine.ara.columns.html#citrine.ara.columns.ComponentQuantityColumn.component_name">component_name (citrine.ara.columns.ComponentQuantityColumn attribute)</a>
+</li>
+      <li><a href="reference/citrine.ara.columns.html#citrine.ara.columns.ComponentQuantityColumn">ComponentQuantityColumn (class in citrine.ara.columns)</a>
+</li>
+      <li><a href="reference/citrine.ara.columns.html#citrine.ara.columns.CompositionSortOrder">CompositionSortOrder (class in citrine.ara.columns)</a>
+</li>
       <li><a href="reference/citrine.attributes.condition.html#citrine.attributes.condition.Condition">Condition() (in module citrine.attributes.condition)</a>
 </li>
       <li><a href="reference/citrine.resources.dataset.html#citrine.resources.dataset.Dataset.condition_templates">condition_templates() (citrine.resources.dataset.Dataset property)</a>
@@ -374,10 +384,10 @@
 </li>
       <li><a href="reference/citrine.informatics.constraints.html#citrine.informatics.constraints.Constraint">Constraint (class in citrine.informatics.constraints)</a>
 </li>
-      <li><a href="reference/citrine.informatics.scores.html#citrine.informatics.scores.MEIScore.constraints">constraints (citrine.informatics.scores.MEIScore attribute)</a>
+      <li><a href="reference/citrine.informatics.scores.html#citrine.informatics.scores.EIScore.constraints">constraints (citrine.informatics.scores.EIScore attribute)</a>
 
       <ul>
-        <li><a href="reference/citrine.informatics.scores.html#citrine.informatics.scores.MLIScore.constraints">(citrine.informatics.scores.MLIScore attribute)</a>
+        <li><a href="reference/citrine.informatics.scores.html#citrine.informatics.scores.LIScore.constraints">(citrine.informatics.scores.LIScore attribute)</a>
 </li>
       </ul></li>
       <li><a href="reference/citrine.informatics.dimensions.html#citrine.informatics.dimensions.ContinuousDimension">ContinuousDimension (class in citrine.informatics.dimensions)</a>
@@ -416,14 +426,22 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference/citrine.informatics.design_spaces.html#citrine.informatics.design_spaces.EnumeratedDesignSpace.data">data (citrine.informatics.design_spaces.EnumeratedDesignSpace attribute)</a>
 </li>
-      <li><a href="reference/citrine.ara.columns.html#citrine.ara.columns.IdentityColumn.data_source">data_source (citrine.ara.columns.IdentityColumn attribute)</a>
+      <li><a href="reference/citrine.ara.columns.html#citrine.ara.columns.ComponentQuantityColumn.data_source">data_source (citrine.ara.columns.ComponentQuantityColumn attribute)</a>
 
       <ul>
+        <li><a href="reference/citrine.ara.columns.html#citrine.ara.columns.FlatCompositionColumn.data_source">(citrine.ara.columns.FlatCompositionColumn attribute)</a>
+</li>
+        <li><a href="reference/citrine.ara.columns.html#citrine.ara.columns.IdentityColumn.data_source">(citrine.ara.columns.IdentityColumn attribute)</a>
+</li>
         <li><a href="reference/citrine.ara.columns.html#citrine.ara.columns.MeanColumn.data_source">(citrine.ara.columns.MeanColumn attribute)</a>
 </li>
         <li><a href="reference/citrine.ara.columns.html#citrine.ara.columns.MostLikelyCategoryColumn.data_source">(citrine.ara.columns.MostLikelyCategoryColumn attribute)</a>
 </li>
         <li><a href="reference/citrine.ara.columns.html#citrine.ara.columns.MostLikelyProbabilityColumn.data_source">(citrine.ara.columns.MostLikelyProbabilityColumn attribute)</a>
+</li>
+        <li><a href="reference/citrine.ara.columns.html#citrine.ara.columns.NthBiggestComponentNameColumn.data_source">(citrine.ara.columns.NthBiggestComponentNameColumn attribute)</a>
+</li>
+        <li><a href="reference/citrine.ara.columns.html#citrine.ara.columns.NthBiggestComponentQuantityColumn.data_source">(citrine.ara.columns.NthBiggestComponentQuantityColumn attribute)</a>
 </li>
         <li><a href="reference/citrine.ara.columns.html#citrine.ara.columns.OriginalUnitsColumn.data_source">(citrine.ara.columns.OriginalUnitsColumn attribute)</a>
 </li>
@@ -479,9 +497,9 @@
 </li>
         <li><a href="reference/citrine.informatics.processors.html#citrine.informatics.processors.GridProcessor.description">(citrine.informatics.processors.GridProcessor attribute)</a>
 </li>
-        <li><a href="reference/citrine.informatics.scores.html#citrine.informatics.scores.MEIScore.description">(citrine.informatics.scores.MEIScore attribute)</a>
+        <li><a href="reference/citrine.informatics.scores.html#citrine.informatics.scores.EIScore.description">(citrine.informatics.scores.EIScore attribute)</a>
 </li>
-        <li><a href="reference/citrine.informatics.scores.html#citrine.informatics.scores.MLIScore.description">(citrine.informatics.scores.MLIScore attribute)</a>
+        <li><a href="reference/citrine.informatics.scores.html#citrine.informatics.scores.LIScore.description">(citrine.informatics.scores.LIScore attribute)</a>
 </li>
         <li><a href="reference/citrine.resources.ara_definition.html#citrine.resources.ara_definition.AraDefinition.description">(citrine.resources.ara_definition.AraDefinition attribute)</a>
 </li>
@@ -548,16 +566,18 @@
 <h2 id="E">E</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/citrine.informatics.scores.html#citrine.informatics.scores.EIScore">EIScore (class in citrine.informatics.scores)</a>
+</li>
       <li><a href="reference/citrine.resources.user.html#citrine.resources.user.User.email">email (citrine.resources.user.User attribute)</a>
 </li>
       <li><a href="reference/citrine.informatics.design_spaces.html#citrine.informatics.design_spaces.EnumeratedDesignSpace">EnumeratedDesignSpace (class in citrine.informatics.design_spaces)</a>
 </li>
       <li><a href="reference/citrine.informatics.dimensions.html#citrine.informatics.dimensions.EnumeratedDimension">EnumeratedDimension (class in citrine.informatics.dimensions)</a>
 </li>
-      <li><a href="reference/citrine.informatics.processors.html#citrine.informatics.processors.EnumeratedProcessor">EnumeratedProcessor (class in citrine.informatics.processors)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/citrine.informatics.processors.html#citrine.informatics.processors.EnumeratedProcessor">EnumeratedProcessor (class in citrine.informatics.processors)</a>
+</li>
       <li><a href="reference/citrine.informatics.workflows.html#citrine.informatics.workflows.DesignWorkflow.executions">executions() (citrine.informatics.workflows.DesignWorkflow property)</a>
 
       <ul>
@@ -620,6 +640,8 @@
         <li><a href="reference/citrine.resources.material_spec.html#citrine.resources.material_spec.MaterialSpecCollection.filter_by_template">(citrine.resources.material_spec.MaterialSpecCollection method)</a>
 </li>
       </ul></li>
+      <li><a href="reference/citrine.ara.columns.html#citrine.ara.columns.FlatCompositionColumn">FlatCompositionColumn (class in citrine.ara.columns)</a>
+</li>
       <li><a href="reference/citrine.resources.api_error.html#citrine.resources.api_error.ApiError.from_dict">from_dict() (citrine.resources.api_error.ApiError class method)</a>
 
       <ul>
@@ -848,14 +870,16 @@
       </ul></li>
       <li><a href="reference/citrine.informatics.predictors.html#citrine.informatics.predictors.SimpleMLPredictor.latent_variables">latent_variables (citrine.informatics.predictors.SimpleMLPredictor attribute)</a>
 </li>
+      <li><a href="reference/citrine.informatics.scores.html#citrine.informatics.scores.LIScore">LIScore (class in citrine.informatics.scores)</a>
+</li>
       <li><a href="reference/citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConceptsCollection.list">list() (citrine.resources.data_concepts.DataConceptsCollection method)</a>
 </li>
       <li><a href="reference/citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConceptsCollection.list_all">list_all() (citrine.resources.data_concepts.DataConceptsCollection method)</a>
 </li>
-      <li><a href="reference/citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConceptsCollection.list_by_attribute_bounds">list_by_attribute_bounds() (citrine.resources.data_concepts.DataConceptsCollection method)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConceptsCollection.list_by_attribute_bounds">list_by_attribute_bounds() (citrine.resources.data_concepts.DataConceptsCollection method)</a>
+</li>
       <li><a href="reference/citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConceptsCollection.list_by_name">list_by_name() (citrine.resources.data_concepts.DataConceptsCollection method)</a>
 </li>
       <li><a href="reference/citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConceptsCollection.list_by_tag">list_by_tag() (citrine.resources.data_concepts.DataConceptsCollection method)</a>
@@ -948,14 +972,14 @@
         <li><a href="reference/citrine.resources.project.html#citrine.resources.project.Project.measurement_runs">(citrine.resources.project.Project property)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference/citrine.resources.dataset.html#citrine.resources.dataset.Dataset.measurement_specs">measurement_specs() (citrine.resources.dataset.Dataset property)</a>
 
       <ul>
         <li><a href="reference/citrine.resources.project.html#citrine.resources.project.Project.measurement_specs">(citrine.resources.project.Project property)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference/citrine.resources.dataset.html#citrine.resources.dataset.Dataset.measurement_templates">measurement_templates() (citrine.resources.dataset.Dataset property)</a>
 
       <ul>
@@ -976,13 +1000,9 @@
 </li>
       <li><a href="reference/citrine.resources.measurement_template.html#citrine.resources.measurement_template.MeasurementTemplateCollection">MeasurementTemplateCollection (class in citrine.resources.measurement_template)</a>
 </li>
-      <li><a href="reference/citrine.informatics.scores.html#citrine.informatics.scores.MEIScore">MEIScore (class in citrine.informatics.scores)</a>
-</li>
       <li><a href="reference/citrine.informatics.constraints.html#citrine.informatics.constraints.ScalarRangeConstraint.min">min (citrine.informatics.constraints.ScalarRangeConstraint attribute)</a>
 </li>
       <li><a href="reference/citrine.informatics.constraints.html#citrine.informatics.constraints.ScalarRangeConstraint.min_inclusive">min_inclusive (citrine.informatics.constraints.ScalarRangeConstraint attribute)</a>
-</li>
-      <li><a href="reference/citrine.informatics.scores.html#citrine.informatics.scores.MLIScore">MLIScore (class in citrine.informatics.scores)</a>
 </li>
       <li><a href="reference/citrine.informatics.modules.html#citrine.informatics.modules.Module">Module (class in citrine.informatics.modules)</a>
 </li>
@@ -1026,6 +1046,12 @@
 <h2 id="N">N</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/citrine.ara.columns.html#citrine.ara.columns.NthBiggestComponentNameColumn.n">n (citrine.ara.columns.NthBiggestComponentNameColumn attribute)</a>
+
+      <ul>
+        <li><a href="reference/citrine.ara.columns.html#citrine.ara.columns.NthBiggestComponentQuantityColumn.n">(citrine.ara.columns.NthBiggestComponentQuantityColumn attribute)</a>
+</li>
+      </ul></li>
       <li><a href="reference/citrine.informatics.analysis_configuration.html#citrine.informatics.analysis_configuration.CrossValidationAnalysisConfiguration.n_folds">n_folds (citrine.informatics.analysis_configuration.CrossValidationAnalysisConfiguration attribute)</a>
 </li>
       <li><a href="reference/citrine.informatics.analysis_configuration.html#citrine.informatics.analysis_configuration.CrossValidationAnalysisConfiguration.n_trials">n_trials (citrine.informatics.analysis_configuration.CrossValidationAnalysisConfiguration attribute)</a>
@@ -1063,9 +1089,9 @@
 </li>
         <li><a href="reference/citrine.informatics.processors.html#citrine.informatics.processors.GridProcessor.name">(citrine.informatics.processors.GridProcessor attribute)</a>
 </li>
-        <li><a href="reference/citrine.informatics.scores.html#citrine.informatics.scores.MEIScore.name">(citrine.informatics.scores.MEIScore attribute)</a>
+        <li><a href="reference/citrine.informatics.scores.html#citrine.informatics.scores.EIScore.name">(citrine.informatics.scores.EIScore attribute)</a>
 </li>
-        <li><a href="reference/citrine.informatics.scores.html#citrine.informatics.scores.MLIScore.name">(citrine.informatics.scores.MLIScore attribute)</a>
+        <li><a href="reference/citrine.informatics.scores.html#citrine.informatics.scores.LIScore.name">(citrine.informatics.scores.LIScore attribute)</a>
 </li>
         <li><a href="reference/citrine.informatics.workflows.html#citrine.informatics.workflows.DesignWorkflow.name">(citrine.informatics.workflows.DesignWorkflow attribute)</a>
 </li>
@@ -1132,6 +1158,10 @@
       </ul></li>
       <li><a href="reference/citrine.exceptions.html#citrine.exceptions.NotFound">NotFound</a>
 </li>
+      <li><a href="reference/citrine.ara.columns.html#citrine.ara.columns.NthBiggestComponentNameColumn">NthBiggestComponentNameColumn (class in citrine.ara.columns)</a>
+</li>
+      <li><a href="reference/citrine.ara.columns.html#citrine.ara.columns.NthBiggestComponentQuantityColumn">NthBiggestComponentQuantityColumn (class in citrine.ara.columns)</a>
+</li>
       <li><a href="reference/citrine.ara.variables.html#citrine.ara.variables.IngredientQuantityDimension.NUMBER">NUMBER (citrine.ara.variables.IngredientQuantityDimension attribute)</a>
 </li>
       <li><a href="reference/citrine.resources.ingredient_run.html#citrine.resources.ingredient_run.IngredientRun.number_fraction">number_fraction (citrine.resources.ingredient_run.IngredientRun attribute)</a>
@@ -1150,10 +1180,10 @@
 </li>
       <li><a href="reference/citrine.informatics.objectives.html#citrine.informatics.objectives.Objective">Objective (class in citrine.informatics.objectives)</a>
 </li>
-      <li><a href="reference/citrine.informatics.scores.html#citrine.informatics.scores.MEIScore.objectives">objectives (citrine.informatics.scores.MEIScore attribute)</a>
+      <li><a href="reference/citrine.informatics.scores.html#citrine.informatics.scores.EIScore.objectives">objectives (citrine.informatics.scores.EIScore attribute)</a>
 
       <ul>
-        <li><a href="reference/citrine.informatics.scores.html#citrine.informatics.scores.MLIScore.objectives">(citrine.informatics.scores.MLIScore attribute)</a>
+        <li><a href="reference/citrine.informatics.scores.html#citrine.informatics.scores.LIScore.objectives">(citrine.informatics.scores.LIScore attribute)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -1336,9 +1366,11 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference/citrine.ara.columns.html#citrine.ara.columns.QuantileColumn.quantile">quantile (citrine.ara.columns.QuantileColumn attribute)</a>
 </li>
+      <li><a href="reference/citrine.ara.columns.html#citrine.ara.columns.QuantileColumn">QuantileColumn (class in citrine.ara.columns)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="reference/citrine.ara.columns.html#citrine.ara.columns.QuantileColumn">QuantileColumn (class in citrine.ara.columns)</a>
+      <li><a href="reference/citrine.ara.columns.html#citrine.ara.columns.CompositionSortOrder.QUANTITY">QUANTITY (citrine.ara.columns.CompositionSortOrder attribute)</a>
 </li>
       <li><a href="reference/citrine.ara.variables.html#citrine.ara.variables.IngredientQuantityByProcessAndName.quantity_dimension">quantity_dimension (citrine.ara.variables.IngredientQuantityByProcessAndName attribute)</a>
 </li>
@@ -1357,6 +1389,8 @@
       <ul>
         <li><a href="reference/citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConceptsCollection.register">(citrine.resources.data_concepts.DataConceptsCollection method)</a>
 </li>
+        <li><a href="reference/citrine.resources.dataset.html#citrine.resources.dataset.Dataset.register">(citrine.resources.dataset.Dataset method)</a>
+</li>
         <li><a href="reference/citrine.resources.dataset.html#citrine.resources.dataset.DatasetCollection.register">(citrine.resources.dataset.DatasetCollection method)</a>
 </li>
         <li><a href="reference/citrine.resources.project.html#citrine.resources.project.ProjectCollection.register">(citrine.resources.project.ProjectCollection method)</a>
@@ -1366,10 +1400,10 @@
         <li><a href="reference/citrine.resources.user.html#citrine.resources.user.UserCollection.register">(citrine.resources.user.UserCollection method)</a>
 </li>
       </ul></li>
-      <li><a href="reference/citrine.resources.project.html#citrine.resources.project.Project.remove_user">remove_user() (citrine.resources.project.Project method)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/citrine.resources.project.html#citrine.resources.project.Project.remove_user">remove_user() (citrine.resources.project.Project method)</a>
+</li>
       <li><a href="reference/citrine.informatics.reports.html#citrine.informatics.reports.Report">Report (class in citrine.informatics.reports)</a>
 </li>
       <li><a href="reference/citrine.resources.report.html#citrine.resources.report.ReportResource">ReportResource (class in citrine.resources.report)</a>
@@ -1437,6 +1471,8 @@
       <li><a href="reference/citrine.resources.project.html#citrine.resources.project.Project.share">share() (citrine.resources.project.Project method)</a>
 </li>
       <li><a href="reference/citrine.informatics.predictors.html#citrine.informatics.predictors.SimpleMLPredictor">SimpleMLPredictor (class in citrine.informatics.predictors)</a>
+</li>
+      <li><a href="reference/citrine.ara.columns.html#citrine.ara.columns.FlatCompositionColumn.sort_order">sort_order (citrine.ara.columns.FlatCompositionColumn attribute)</a>
 </li>
       <li><a href="reference/citrine.resources.measurement_run.html#citrine.resources.measurement_run.MeasurementRun.source">source (citrine.resources.measurement_run.MeasurementRun attribute)</a>
 
@@ -1588,14 +1624,22 @@
 </li>
       <li><a href="reference/citrine.resources.workflow_executions.html#citrine.resources.workflow_executions.WorkflowExecutionCollection.trigger">trigger() (citrine.resources.workflow_executions.WorkflowExecutionCollection method)</a>
 </li>
-      <li><a href="reference/citrine.ara.columns.html#citrine.ara.columns.IdentityColumn.typ">typ (citrine.ara.columns.IdentityColumn attribute)</a>
+      <li><a href="reference/citrine.ara.columns.html#citrine.ara.columns.ComponentQuantityColumn.typ">typ (citrine.ara.columns.ComponentQuantityColumn attribute)</a>
 
       <ul>
+        <li><a href="reference/citrine.ara.columns.html#citrine.ara.columns.FlatCompositionColumn.typ">(citrine.ara.columns.FlatCompositionColumn attribute)</a>
+</li>
+        <li><a href="reference/citrine.ara.columns.html#citrine.ara.columns.IdentityColumn.typ">(citrine.ara.columns.IdentityColumn attribute)</a>
+</li>
         <li><a href="reference/citrine.ara.columns.html#citrine.ara.columns.MeanColumn.typ">(citrine.ara.columns.MeanColumn attribute)</a>
 </li>
         <li><a href="reference/citrine.ara.columns.html#citrine.ara.columns.MostLikelyCategoryColumn.typ">(citrine.ara.columns.MostLikelyCategoryColumn attribute)</a>
 </li>
         <li><a href="reference/citrine.ara.columns.html#citrine.ara.columns.MostLikelyProbabilityColumn.typ">(citrine.ara.columns.MostLikelyProbabilityColumn attribute)</a>
+</li>
+        <li><a href="reference/citrine.ara.columns.html#citrine.ara.columns.NthBiggestComponentNameColumn.typ">(citrine.ara.columns.NthBiggestComponentNameColumn attribute)</a>
+</li>
+        <li><a href="reference/citrine.ara.columns.html#citrine.ara.columns.NthBiggestComponentQuantityColumn.typ">(citrine.ara.columns.NthBiggestComponentQuantityColumn attribute)</a>
 </li>
         <li><a href="reference/citrine.ara.columns.html#citrine.ara.columns.OriginalUnitsColumn.typ">(citrine.ara.columns.OriginalUnitsColumn attribute)</a>
 </li>
@@ -1649,9 +1693,9 @@
 </li>
         <li><a href="reference/citrine.informatics.processors.html#citrine.informatics.processors.GridProcessor.typ">(citrine.informatics.processors.GridProcessor attribute)</a>
 </li>
-        <li><a href="reference/citrine.informatics.scores.html#citrine.informatics.scores.MEIScore.typ">(citrine.informatics.scores.MEIScore attribute)</a>
+        <li><a href="reference/citrine.informatics.scores.html#citrine.informatics.scores.EIScore.typ">(citrine.informatics.scores.EIScore attribute)</a>
 </li>
-        <li><a href="reference/citrine.informatics.scores.html#citrine.informatics.scores.MLIScore.typ">(citrine.informatics.scores.MLIScore attribute)</a>
+        <li><a href="reference/citrine.informatics.scores.html#citrine.informatics.scores.LIScore.typ">(citrine.informatics.scores.LIScore attribute)</a>
 </li>
         <li><a href="reference/citrine.informatics.workflows.html#citrine.informatics.workflows.PerformanceWorkflow.typ">(citrine.informatics.workflows.PerformanceWorkflow attribute)</a>
 </li>
@@ -1897,33 +1941,38 @@
 <h3>Navigation</h3>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="getting_started/index.html">1. Getting Started</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="getting_started/basic_structure.html">1.1. Structure of the Citrine Python Client</a></li>
-<li class="toctree-l2"><a class="reference internal" href="getting_started/basic_functionality.html">1.2. Using the Citrine Python Client</a></li>
-<li class="toctree-l2"><a class="reference internal" href="getting_started/data_model.html">1.3. Data Model</a></li>
-<li class="toctree-l2"><a class="reference internal" href="getting_started/public_access.html">1.4. Dataset Access Control</a></li>
-<li class="toctree-l2"><a class="reference internal" href="getting_started/working_with_files.html">1.5. Working With Files</a></li>
-<li class="toctree-l2"><a class="reference internal" href="getting_started/projects_and_users.html">1.6. Projects and Users</a></li>
-<li class="toctree-l2"><a class="reference internal" href="getting_started/code_examples.html">1.7. Code Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started/connecting.html">1.1. Connecting to the Citrine Platform</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started/basic_structure.html">1.2. Structure of the Citrine Python Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started/basic_functionality.html">1.3. Using the Citrine Python Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started/data_model.html">1.4. Data Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started/public_access.html">1.5. Dataset Access Control</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started/working_with_files.html">1.6. Working With Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started/projects_and_users.html">1.7. Projects and Users</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started/code_examples.html">1.8. Code Examples</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="data_extraction.html">2. [ALPHA] Data Extraction</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="data_extraction.html#defining-row-and-columns">2.1. Defining row and columns</a></li>
-<li class="toctree-l2"><a class="reference internal" href="data_extraction.html#defining-tables">2.2. Defining tables</a></li>
-<li class="toctree-l2"><a class="reference internal" href="data_extraction.html#creating-and-reading-tables">2.3. Creating and reading tables</a></li>
-<li class="toctree-l2"><a class="reference internal" href="data_extraction.html#available-row-definitions">2.4. Available Row Definitions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="data_extraction.html#available-variable-definitions">2.5. Available Variable Definitions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="data_extraction.html#available-column-definitions">2.6. Available Column Definitions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_entry.html">2. Data Entry</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="data_entry.html#creating-data-model-objects">2.1. Creating Data Model Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_entry.html#identifiying-data-model-objects">2.2. Identifiying Data Model Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_entry.html#registering-data-model-objects">2.3. Registering Data Model Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_entry.html#finding-data-model-objects">2.4. Finding Data Model Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_entry.html#referencing-data-model-objects">2.5. Referencing Data Model Objects</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="workflows/index.html">3. Workflows</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="workflows/index.html#modules">3.1. Modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="workflows/index.html#design-workflows">3.2. Design workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="workflows/index.html#registration-and-validation">3.3. Registration and validation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="workflows/index.html#table-of-contents">3.4. Table of Contents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_extraction.html">3. [ALPHA] Data Extraction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="data_extraction.html#defining-row-and-columns">3.1. Defining row and columns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_extraction.html#defining-tables">3.2. Defining tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_extraction.html#previewing-creating-and-reading-tables">3.3. Previewing, creating and reading tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_extraction.html#available-row-definitions">3.4. Available Row Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_extraction.html#available-variable-definitions">3.5. Available Variable Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_extraction.html#available-column-definitions">3.6. Available Column Definitions</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="development.html">4. Development</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="development.html#running-tests-in-docker">4.1. Running tests in Docker</a></li>
+<li class="toctree-l1"><a class="reference internal" href="workflows/index.html">4. [ALPHA] Workflows</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="workflows/index.html#modules">4.1. Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="workflows/index.html#design-workflows">4.2. Design workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="workflows/index.html#registration-and-validation">4.3. Registration and validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="workflows/index.html#table-of-contents">4.4. Table of Contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="FAQ/index.html">5. FAQ</a><ul>

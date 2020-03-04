@@ -49,6 +49,91 @@
 </dd></dl>
 
 <dl class="class">
+<dt id="citrine.ara.columns.ComponentQuantityColumn">
+<em class="property">class </em><code class="sig-prename descclassname">citrine.ara.columns.</code><code class="sig-name descname">ComponentQuantityColumn</code><span class="sig-paren">(</span><em class="sig-param">*</em>, <em class="sig-param">data_source: str</em>, <em class="sig-param">component_name: str</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.ara.columns.ComponentQuantityColumn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.ara.columns.Column" title="citrine.ara.columns.Column"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.ara.columns.Column</span></code></a></p>
+<p>[ALPHA] Column that extracts the quantity of a given component.</p>
+<p>If the component is not present in the composition, then the value in the column will be 0.0.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data_source</strong> (<em>str</em>) – name of the variable to use when populating the column</p></li>
+<li><p><strong>component_name</strong> (<em>str</em>) – name of the component from which to extract the quantity</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="citrine.ara.columns.ComponentQuantityColumn.component_name">
+<code class="sig-name descname">component_name</code><em class="property"> = None</em><a class="headerlink" href="#citrine.ara.columns.ComponentQuantityColumn.component_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.ara.columns.ComponentQuantityColumn.data_source">
+<code class="sig-name descname">data_source</code><em class="property"> = None</em><a class="headerlink" href="#citrine.ara.columns.ComponentQuantityColumn.data_source" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.ara.columns.ComponentQuantityColumn.typ">
+<code class="sig-name descname">typ</code><em class="property"> = 'component_quantity_column'</em><a class="headerlink" href="#citrine.ara.columns.ComponentQuantityColumn.typ" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="citrine.ara.columns.CompositionSortOrder">
+<em class="property">class </em><code class="sig-prename descclassname">citrine.ara.columns.</code><code class="sig-name descname">CompositionSortOrder</code><span class="sig-paren">(</span><em class="sig-param">*args</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.ara.columns.CompositionSortOrder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://citrineinformatics.github.io/taurus/reference/taurus.enumeration.base_enumeration.html#taurus.enumeration.base_enumeration.BaseEnumeration" title="(in Taurus)"><code class="xref py py-class docutils literal notranslate"><span class="pre">taurus.enumeration.base_enumeration.BaseEnumeration</span></code></a></p>
+<p>[ALPHA] Order to use when sorting the components in a composition.</p>
+<ul class="simple">
+<li><p>ALPHABETICAL is alpha-numeric order by the component name</p></li>
+<li><p>QUANTITY is ordered from the largest to smallest quantity, with ties broken alphabetically</p></li>
+</ul>
+<dl class="attribute">
+<dt id="citrine.ara.columns.CompositionSortOrder.ALPHABETICAL">
+<code class="sig-name descname">ALPHABETICAL</code><em class="property"> = 'alphabetical'</em><a class="headerlink" href="#citrine.ara.columns.CompositionSortOrder.ALPHABETICAL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.ara.columns.CompositionSortOrder.QUANTITY">
+<code class="sig-name descname">QUANTITY</code><em class="property"> = 'quantity'</em><a class="headerlink" href="#citrine.ara.columns.CompositionSortOrder.QUANTITY" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="citrine.ara.columns.FlatCompositionColumn">
+<em class="property">class </em><code class="sig-prename descclassname">citrine.ara.columns.</code><code class="sig-name descname">FlatCompositionColumn</code><span class="sig-paren">(</span><em class="sig-param">*</em>, <em class="sig-param">data_source: str</em>, <em class="sig-param">sort_order: citrine.ara.columns.CompositionSortOrder</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.ara.columns.FlatCompositionColumn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.ara.columns.Column" title="citrine.ara.columns.Column"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.ara.columns.Column</span></code></a></p>
+<p>[ALPHA] Column that flattens the composition into a string of names and quantities.</p>
+<p>The numeric formatting tries to be human readable. For example, if all of the quantities
+are round numbers like {“spam”: 4.0, “eggs”: 1.0} then the result omit the decimal points like
+“(spam)4(eggs)1” (if sort_order is by quantity).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data_source</strong> (<em>str</em>) – name of the variable to use when populating the column</p></li>
+<li><p><strong>sort_order</strong> (<a class="reference internal" href="#citrine.ara.columns.CompositionSortOrder" title="citrine.ara.columns.CompositionSortOrder"><em>CompositionSortOrder</em></a>) – order with which to sort the components when generating the flat string</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="citrine.ara.columns.FlatCompositionColumn.data_source">
+<code class="sig-name descname">data_source</code><em class="property"> = None</em><a class="headerlink" href="#citrine.ara.columns.FlatCompositionColumn.data_source" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.ara.columns.FlatCompositionColumn.sort_order">
+<code class="sig-name descname">sort_order</code><em class="property"> = None</em><a class="headerlink" href="#citrine.ara.columns.FlatCompositionColumn.sort_order" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.ara.columns.FlatCompositionColumn.typ">
+<code class="sig-name descname">typ</code><em class="property"> = 'flat_composition_column'</em><a class="headerlink" href="#citrine.ara.columns.FlatCompositionColumn.typ" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
 <dt id="citrine.ara.columns.IdentityColumn">
 <em class="property">class </em><code class="sig-prename descclassname">citrine.ara.columns.</code><code class="sig-name descname">IdentityColumn</code><span class="sig-paren">(</span><em class="sig-param">*</em>, <em class="sig-param">data_source: str</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.ara.columns.IdentityColumn" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.ara.columns.Column" title="citrine.ara.columns.Column"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.ara.columns.Column</span></code></a></p>
@@ -140,6 +225,68 @@
 <dl class="attribute">
 <dt id="citrine.ara.columns.MostLikelyProbabilityColumn.typ">
 <code class="sig-name descname">typ</code><em class="property"> = 'most_likely_probability_column'</em><a class="headerlink" href="#citrine.ara.columns.MostLikelyProbabilityColumn.typ" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="citrine.ara.columns.NthBiggestComponentNameColumn">
+<em class="property">class </em><code class="sig-prename descclassname">citrine.ara.columns.</code><code class="sig-name descname">NthBiggestComponentNameColumn</code><span class="sig-paren">(</span><em class="sig-param">*</em>, <em class="sig-param">data_source: str</em>, <em class="sig-param">n: int</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.ara.columns.NthBiggestComponentNameColumn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.ara.columns.Column" title="citrine.ara.columns.Column"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.ara.columns.Column</span></code></a></p>
+<p>[ALPHA] Name of the Nth biggest component.</p>
+<p>If there are not N components in the composition, then this column will be empty.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data_source</strong> (<em>str</em>) – name of the variable to use when populating the column</p></li>
+<li><p><strong>n</strong> (<em>int</em>) – index of the component name to extract, starting with 1 for the biggest</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="citrine.ara.columns.NthBiggestComponentNameColumn.data_source">
+<code class="sig-name descname">data_source</code><em class="property"> = None</em><a class="headerlink" href="#citrine.ara.columns.NthBiggestComponentNameColumn.data_source" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.ara.columns.NthBiggestComponentNameColumn.n">
+<code class="sig-name descname">n</code><em class="property"> = None</em><a class="headerlink" href="#citrine.ara.columns.NthBiggestComponentNameColumn.n" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.ara.columns.NthBiggestComponentNameColumn.typ">
+<code class="sig-name descname">typ</code><em class="property"> = 'biggest_component_name_column'</em><a class="headerlink" href="#citrine.ara.columns.NthBiggestComponentNameColumn.typ" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="citrine.ara.columns.NthBiggestComponentQuantityColumn">
+<em class="property">class </em><code class="sig-prename descclassname">citrine.ara.columns.</code><code class="sig-name descname">NthBiggestComponentQuantityColumn</code><span class="sig-paren">(</span><em class="sig-param">*</em>, <em class="sig-param">data_source: str</em>, <em class="sig-param">n: int</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.ara.columns.NthBiggestComponentQuantityColumn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.ara.columns.Column" title="citrine.ara.columns.Column"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.ara.columns.Column</span></code></a></p>
+<p>[ALPHA] Quantity of the Nth biggest component.</p>
+<p>If there are not N components in the composition, then this column will be empty.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data_source</strong> (<em>str</em>) – name of the variable to use when populating the column</p></li>
+<li><p><strong>n</strong> (<em>int</em>) – index of the component quantity to extract, starting with 1 for the biggest</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="citrine.ara.columns.NthBiggestComponentQuantityColumn.data_source">
+<code class="sig-name descname">data_source</code><em class="property"> = None</em><a class="headerlink" href="#citrine.ara.columns.NthBiggestComponentQuantityColumn.data_source" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.ara.columns.NthBiggestComponentQuantityColumn.n">
+<code class="sig-name descname">n</code><em class="property"> = None</em><a class="headerlink" href="#citrine.ara.columns.NthBiggestComponentQuantityColumn.n" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.ara.columns.NthBiggestComponentQuantityColumn.typ">
+<code class="sig-name descname">typ</code><em class="property"> = 'biggest_component_quantity_column'</em><a class="headerlink" href="#citrine.ara.columns.NthBiggestComponentQuantityColumn.typ" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -275,33 +422,38 @@ in the column would be:</p>
 <h3>Navigation</h3>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../getting_started/index.html">1. Getting Started</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../getting_started/basic_structure.html">1.1. Structure of the Citrine Python Client</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../getting_started/basic_functionality.html">1.2. Using the Citrine Python Client</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../getting_started/data_model.html">1.3. Data Model</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../getting_started/public_access.html">1.4. Dataset Access Control</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../getting_started/working_with_files.html">1.5. Working With Files</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../getting_started/projects_and_users.html">1.6. Projects and Users</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../getting_started/code_examples.html">1.7. Code Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/connecting.html">1.1. Connecting to the Citrine Platform</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/basic_structure.html">1.2. Structure of the Citrine Python Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/basic_functionality.html">1.3. Using the Citrine Python Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/data_model.html">1.4. Data Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/public_access.html">1.5. Dataset Access Control</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/working_with_files.html">1.6. Working With Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/projects_and_users.html">1.7. Projects and Users</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/code_examples.html">1.8. Code Examples</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../data_extraction.html">2. [ALPHA] Data Extraction</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#defining-row-and-columns">2.1. Defining row and columns</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#defining-tables">2.2. Defining tables</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#creating-and-reading-tables">2.3. Creating and reading tables</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-row-definitions">2.4. Available Row Definitions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-variable-definitions">2.5. Available Variable Definitions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-column-definitions">2.6. Available Column Definitions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_entry.html">2. Data Entry</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#creating-data-model-objects">2.1. Creating Data Model Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#identifiying-data-model-objects">2.2. Identifiying Data Model Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#registering-data-model-objects">2.3. Registering Data Model Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#finding-data-model-objects">2.4. Finding Data Model Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#referencing-data-model-objects">2.5. Referencing Data Model Objects</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">3. Workflows</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#modules">3.1. Modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#design-workflows">3.2. Design workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#registration-and-validation">3.3. Registration and validation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#table-of-contents">3.4. Table of Contents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_extraction.html">3. [ALPHA] Data Extraction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#defining-row-and-columns">3.1. Defining row and columns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#defining-tables">3.2. Defining tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#previewing-creating-and-reading-tables">3.3. Previewing, creating and reading tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-row-definitions">3.4. Available Row Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-variable-definitions">3.5. Available Variable Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-column-definitions">3.6. Available Column Definitions</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../development.html">4. Development</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../development.html#running-tests-in-docker">4.1. Running tests in Docker</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">4. [ALPHA] Workflows</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#modules">4.1. Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#design-workflows">4.2. Design workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#registration-and-validation">4.3. Registration and validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#table-of-contents">4.4. Table of Contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">5. FAQ</a><ul>

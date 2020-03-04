@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>5. FAQ &#8212; Citrine Python 0.0.1 documentation</title>
+    <title>1.1. Connecting to the Citrine Platform &#8212; Citrine Python 0.0.1 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -15,8 +15,8 @@
     <link rel="shortcut icon" href="../_static/favicon.png"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="5.1. Prohibited Data Patterns" href="prohibited_data_patterns.html" />
-    <link rel="prev" title="4.4.7. Performance workflows" href="../workflows/performance_workflows.html" />
+    <link rel="next" title="1.2. Structure of the Citrine Python Client" href="basic_structure.html" />
+    <link rel="prev" title="1. Getting Started" href="index.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -33,17 +33,20 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="faq">
-<h1>5. FAQ<a class="headerlink" href="#faq" title="Permalink to this headline">¶</a></h1>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="prohibited_data_patterns.html">5.1. Prohibited Data Patterns</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="prohibited_data_patterns.html#summary">5.1.1. Summary</a></li>
-<li class="toctree-l2"><a class="reference internal" href="prohibited_data_patterns.html#cyclic-data-patterns">5.1.2. Cyclic data patterns</a></li>
-</ul>
-</li>
-</ul>
+  <div class="section" id="connecting-to-the-citrine-platform">
+<h1>1.1. Connecting to the Citrine Platform<a class="headerlink" href="#connecting-to-the-citrine-platform" title="Permalink to this headline">¶</a></h1>
+<p>The Citrine Python Client connects to the Citrine Platform API.
+To create a client, you must specify the specific site that you want to connect to and your API key:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine</span> <span class="kn">import</span> <span class="n">Citrine</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="n">citrine_client</span> <span class="o">=</span> <span class="n">Citrine</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="s2">&quot;stage.citrine-platform.com&quot;</span><span class="p">,</span> <span class="n">api_key</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;CITRINE_API_KEY&quot;</span><span class="p">)</span>
+</pre></div>
 </div>
+<p>Your API key serves both as your identity and your password.
+Anyone with your API key can take actions as you would on the platform.
+Therefore, you should keep your API key out of scripts and sources files.
+A better option is to define your API key as an environment variable, as in the example above.
+If you’ve accidentally exposed your API key, you can revoke it and create a new one via the browser interface.</p>
 </div>
 
 
@@ -76,15 +79,15 @@
 
 <h3>Navigation</h3>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../getting_started/index.html">1. Getting Started</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../getting_started/connecting.html">1.1. Connecting to the Citrine Platform</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../getting_started/basic_structure.html">1.2. Structure of the Citrine Python Client</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../getting_started/basic_functionality.html">1.3. Using the Citrine Python Client</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../getting_started/data_model.html">1.4. Data Model</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../getting_started/public_access.html">1.5. Dataset Access Control</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../getting_started/working_with_files.html">1.6. Working With Files</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../getting_started/projects_and_users.html">1.7. Projects and Users</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../getting_started/code_examples.html">1.8. Code Examples</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">1. Getting Started</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">1.1. Connecting to the Citrine Platform</a></li>
+<li class="toctree-l2"><a class="reference internal" href="basic_structure.html">1.2. Structure of the Citrine Python Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="basic_functionality.html">1.3. Using the Citrine Python Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_model.html">1.4. Data Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="public_access.html">1.5. Dataset Access Control</a></li>
+<li class="toctree-l2"><a class="reference internal" href="working_with_files.html">1.6. Working With Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="projects_and_users.html">1.7. Projects and Users</a></li>
+<li class="toctree-l2"><a class="reference internal" href="code_examples.html">1.8. Code Examples</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../data_entry.html">2. Data Entry</a><ul>
@@ -111,8 +114,8 @@
 <li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#table-of-contents">4.4. Table of Contents</a></li>
 </ul>
 </li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">5. FAQ</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="prohibited_data_patterns.html">5.1. Prohibited Data Patterns</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">5. FAQ</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../FAQ/prohibited_data_patterns.html">5.1. Prohibited Data Patterns</a></li>
 </ul>
 </li>
 </ul>
@@ -121,8 +124,10 @@
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="../workflows/performance_workflows.html" title="previous chapter">4.4.7. Performance workflows</a></li>
-      <li>Next: <a href="prohibited_data_patterns.html" title="next chapter">5.1. Prohibited Data Patterns</a></li>
+  <li><a href="index.html">1. Getting Started</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">1. Getting Started</a></li>
+      <li>Next: <a href="basic_structure.html" title="next chapter">1.2. Structure of the Citrine Python Client</a></li>
+  </ul></li>
   </ul></li>
 </ul>
 </div>
@@ -156,7 +161,7 @@
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
-      <a href="../_sources/FAQ/index.rst.txt"
+      <a href="../_sources/getting_started/connecting.rst.txt"
           rel="nofollow">Page source</a>
     </div>
 

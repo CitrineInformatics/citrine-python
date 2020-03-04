@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>1.3. Data Model &#8212; Citrine Python 0.0.1 documentation</title>
+    <title>1.4. Data Model &#8212; Citrine Python 0.0.1 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -15,8 +15,8 @@
     <link rel="shortcut icon" href="../_static/favicon.png"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="1.4. Dataset Access Control" href="public_access.html" />
-    <link rel="prev" title="1.2. Using the Citrine Python Client" href="basic_functionality.html" />
+    <link rel="next" title="1.5. Dataset Access Control" href="public_access.html" />
+    <link rel="prev" title="1.3. Using the Citrine Python Client" href="basic_functionality.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -34,16 +34,16 @@
           <div class="body" role="main">
             
   <div class="section" id="data-model">
-<h1>1.3. Data Model<a class="headerlink" href="#data-model" title="Permalink to this headline">¶</a></h1>
+<h1>1.4. Data Model<a class="headerlink" href="#data-model" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="overview">
-<h2>1.3.1. Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
+<h2>1.4.1. Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
 <p>The Citrine python client is built on our NextGen data model, (codename taurus).
 Taurus is a format that links together materials, the processes that produced them, and the measurements that characterize them.
 Complete documentation can be found in the <a class="reference external" href="https://citrineinformatics.github.io/taurus/">data model docs</a>.
 This page presents a broad overview.</p>
 </div>
 <div class="section" id="the-basic-objects-processes-materials-measurements">
-<h2>1.3.2. The Basic Objects: Processes, Materials, Measurements<a class="headerlink" href="#the-basic-objects-processes-materials-measurements" title="Permalink to this headline">¶</a></h2>
+<h2>1.4.2. The Basic Objects: Processes, Materials, Measurements<a class="headerlink" href="#the-basic-objects-processes-materials-measurements" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><p>A process is an action that creates a material, possibly using some input ingredients.</p></li>
 <li><p>A material represents a sample, either physical or virtual.</p></li>
@@ -71,7 +71,7 @@ Materials science is messy and reality does not always align with our intent.
 That’s why we’ve made our data model flexible.</p>
 </div>
 <div class="section" id="attributes">
-<h2>1.3.3. Attributes<a class="headerlink" href="#attributes" title="Permalink to this headline">¶</a></h2>
+<h2>1.4.3. Attributes<a class="headerlink" href="#attributes" title="Permalink to this headline">¶</a></h2>
 <p>Properties are characteristics of a material that could be measured, e.g. chemical composition, density, yield strength.
 Conditions are the environmental variables (typically measured) that may affect a process or measurement: e.g. Temperature, Pressure.
 Parameters are the non-environmental variables (typically specified and controlled) that may affect a process or measurement: e.g. oven dial temperature position for a kiln firing, magnification for a measurement taken with a SEM.</p>
@@ -80,7 +80,7 @@ For example, process specs have optional conditions and parameters but not prope
 For more information, please see the documentation related to each data object.</p>
 </div>
 <div class="section" id="templates-and-validation">
-<h2>1.3.4. Templates and Validation<a class="headerlink" href="#templates-and-validation" title="Permalink to this headline">¶</a></h2>
+<h2>1.4.4. Templates and Validation<a class="headerlink" href="#templates-and-validation" title="Permalink to this headline">¶</a></h2>
 <p>Templates provide a controlled vocabulary that establishes what attributes you expect objects to have and what the bounds on those attributes are.
 Attribute templates constrain a property, parameter, or condition to be within certain bounds.
 Object templates contain a list of attribute templates that a process, material, or measurement may not violate.
@@ -94,6 +94,12 @@ An object may have attributes with templates that do not exist in its object tem
 <p>Attribute templates should be narrowly scoped and very permissive.
 For example, “Temperature is between 20 and 24 degC” is a bad template: temperature is generic and 20-24 degC is too strict.
 “Room temperature during drying is between 0 and 100 degC” is better because it is more specific and contains all reasonable values of room temperature.</p>
+</div>
+<div class="section" id="linkbyuid">
+<h2>1.4.5. LinkByUID<a class="headerlink" href="#linkbyuid" title="Permalink to this headline">¶</a></h2>
+<p>The <a class="reference external" href="https://citrineinformatics.github.io/taurus/reference/taurus.entity.link_by_uid.html#taurus.entity.link_by_uid.LinkByUID" title="(in Taurus)"><code class="xref py py-class docutils literal notranslate"><span class="pre">LinkByUID</span></code></a> class allows you to reference another data model object by a unique identifier without downloading it first.
+This is a common pattern within the data model objects, since many objects contain links to other objects that may have already been registered to the platform.
+<a class="reference external" href="https://citrineinformatics.github.io/taurus/reference/taurus.entity.link_by_uid.html#taurus.entity.link_by_uid.LinkByUID" title="(in Taurus)"><code class="xref py py-class docutils literal notranslate"><span class="pre">LinkByUID</span></code></a> objects can use either the platform’s unique identifier or an <a class="reference external" href="https://citrineinformatics.github.io/gemd-docs/specification/unique-identifiers/#alternative-ids">alternative identifier</a>.</p>
 </div>
 </div>
 
@@ -128,33 +134,38 @@ For example, “Temperature is between 20 and 24 degC” is a bad template: temp
 <h3>Navigation</h3>
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">1. Getting Started</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="basic_structure.html">1.1. Structure of the Citrine Python Client</a></li>
-<li class="toctree-l2"><a class="reference internal" href="basic_functionality.html">1.2. Using the Citrine Python Client</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">1.3. Data Model</a></li>
-<li class="toctree-l2"><a class="reference internal" href="public_access.html">1.4. Dataset Access Control</a></li>
-<li class="toctree-l2"><a class="reference internal" href="working_with_files.html">1.5. Working With Files</a></li>
-<li class="toctree-l2"><a class="reference internal" href="projects_and_users.html">1.6. Projects and Users</a></li>
-<li class="toctree-l2"><a class="reference internal" href="code_examples.html">1.7. Code Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="connecting.html">1.1. Connecting to the Citrine Platform</a></li>
+<li class="toctree-l2"><a class="reference internal" href="basic_structure.html">1.2. Structure of the Citrine Python Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="basic_functionality.html">1.3. Using the Citrine Python Client</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">1.4. Data Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="public_access.html">1.5. Dataset Access Control</a></li>
+<li class="toctree-l2"><a class="reference internal" href="working_with_files.html">1.6. Working With Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="projects_and_users.html">1.7. Projects and Users</a></li>
+<li class="toctree-l2"><a class="reference internal" href="code_examples.html">1.8. Code Examples</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../data_extraction.html">2. [ALPHA] Data Extraction</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#defining-row-and-columns">2.1. Defining row and columns</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#defining-tables">2.2. Defining tables</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#creating-and-reading-tables">2.3. Creating and reading tables</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-row-definitions">2.4. Available Row Definitions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-variable-definitions">2.5. Available Variable Definitions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-column-definitions">2.6. Available Column Definitions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_entry.html">2. Data Entry</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#creating-data-model-objects">2.1. Creating Data Model Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#identifiying-data-model-objects">2.2. Identifiying Data Model Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#registering-data-model-objects">2.3. Registering Data Model Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#finding-data-model-objects">2.4. Finding Data Model Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#referencing-data-model-objects">2.5. Referencing Data Model Objects</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">3. Workflows</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#modules">3.1. Modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#design-workflows">3.2. Design workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#registration-and-validation">3.3. Registration and validation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#table-of-contents">3.4. Table of Contents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_extraction.html">3. [ALPHA] Data Extraction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#defining-row-and-columns">3.1. Defining row and columns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#defining-tables">3.2. Defining tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#previewing-creating-and-reading-tables">3.3. Previewing, creating and reading tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-row-definitions">3.4. Available Row Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-variable-definitions">3.5. Available Variable Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-column-definitions">3.6. Available Column Definitions</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../development.html">4. Development</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../development.html#running-tests-in-docker">4.1. Running tests in Docker</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">4. [ALPHA] Workflows</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#modules">4.1. Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#design-workflows">4.2. Design workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#registration-and-validation">4.3. Registration and validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#table-of-contents">4.4. Table of Contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">5. FAQ</a><ul>
@@ -168,8 +179,8 @@ For example, “Temperature is between 20 and 24 degC” is a bad template: temp
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="index.html">1. Getting Started</a><ul>
-      <li>Previous: <a href="basic_functionality.html" title="previous chapter">1.2. Using the Citrine Python Client</a></li>
-      <li>Next: <a href="public_access.html" title="next chapter">1.4. Dataset Access Control</a></li>
+      <li>Previous: <a href="basic_functionality.html" title="previous chapter">1.3. Using the Citrine Python Client</a></li>
+      <li>Next: <a href="public_access.html" title="next chapter">1.5. Dataset Access Control</a></li>
   </ul></li>
   </ul></li>
 </ul>

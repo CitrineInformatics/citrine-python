@@ -54,7 +54,7 @@ The ``i`` th candidate corresponds to the ``i`` th score.
 Each candidate and score is a dictionary.
 The former contains descriptor key-value pairs and uncertainty in descriptor values.
 The latter contains a key-value pair for each score.
-For example, if input materials contain an input ``x`` and are scored by using MLI for predicted output ``z`` the execution results would have the form:
+For example, if input materials contain an input ``x`` and are scored by using LI for predicted output ``z`` the execution results would have the form:
 
 .. code:: python
 
@@ -65,7 +65,7 @@ For example, if input materials contain an input ``x`` and are scored by using M
                # ...
            ],
            "scores": [
-               {"mli_z": 0.8},
+               {"li_z": 0.8},
                # ...
            ]
        }
@@ -81,10 +81,10 @@ The following demonstrates how to trigger workflow execution, wait for the desig
 
    from time import sleep
    from citrine.informatics.objectives import ScalarMaxObjective
-   from citrine.informatics.scores import MLIScore
+   from citrine.informatics.scores import LIScore
 
    # create a score with the desired objectives and baselines
-   score = MLIScore(
+   score = LIScore(
        name='Example score',
        description='Used to rank materials',
        # create an objective to maximize shear modulus

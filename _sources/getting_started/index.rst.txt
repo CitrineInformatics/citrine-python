@@ -7,6 +7,7 @@ Getting Started
 .. toctree::
     :maxdepth: 2
 
+    connecting
     basic_structure
     basic_functionality
     data_model

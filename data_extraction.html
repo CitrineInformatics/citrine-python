@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>2. [ALPHA] Data Extraction &#8212; Citrine Python 0.0.1 documentation</title>
+    <title>3. [ALPHA] Data Extraction &#8212; Citrine Python 0.0.1 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -15,8 +15,8 @@
     <link rel="shortcut icon" href="_static/favicon.png"/>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="3. Workflows" href="workflows/index.html" />
-    <link rel="prev" title="1.7. Code Examples" href="getting_started/code_examples.html" />
+    <link rel="next" title="4. [ALPHA] Workflows" href="workflows/index.html" />
+    <link rel="prev" title="2. Data Entry" href="data_entry.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -34,12 +34,12 @@
           <div class="body" role="main">
             
   <div class="section" id="alpha-data-extraction">
-<h1>2. [ALPHA] Data Extraction<a class="headerlink" href="#alpha-data-extraction" title="Permalink to this headline">¶</a></h1>
+<h1>3. [ALPHA] Data Extraction<a class="headerlink" href="#alpha-data-extraction" title="Permalink to this headline">¶</a></h1>
 <p>Ara is a component of the Citrine Platform data service that extracts data from GEMD’s complex and expressive graphical representations into a tabular structure (like a CSV file) that is easier to consume in analytical contexts.
 An Ara table is defined on a set of material histories, and the rows in the resulting Ara Table are in 1-to-1 correspondence with those material histories.
 Columns correspond to data about the material histories, such as the temperature measured in a kiln used at a specific manufacturing step.</p>
 <div class="section" id="defining-row-and-columns">
-<h2>2.1. Defining row and columns<a class="headerlink" href="#defining-row-and-columns" title="Permalink to this headline">¶</a></h2>
+<h2>3.1. Defining row and columns<a class="headerlink" href="#defining-row-and-columns" title="Permalink to this headline">¶</a></h2>
 <p>A RowDefinition object describes a mapping from a list of datasets to rows of a table by selecting a set of Material Histories.
 Each Material History corresponds to exactly one row, though the Material Histories may overlap such that the same objects contribute data to multiple rows.
 For example, the material histories of distinct Material Runs will map to exactly two rows even if their histories are identical up to differing Process Runs of their final baking step.
@@ -51,7 +51,12 @@ The only way to define rows right now is through <a class="reference internal" h
 </pre></div>
 </div>
 <p>A <a class="reference internal" href="reference/citrine.ara.variables.html#citrine.ara.variables.Variable" title="citrine.ara.variables.Variable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Variable</span></code></a> object specifies how to select a piece of data from each Material History.
-Thus, it performs the first part of a mapping from the set of Material Histories to columns in the Ara table.</p>
+Thus, it performs the first part of a mapping from the set of Material Histories to columns in the Ara table.
+A <a class="reference internal" href="reference/citrine.ara.variables.html#citrine.ara.variables.Variable" title="citrine.ara.variables.Variable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Variable</span></code></a> is addressed locally (within a definition) by a <code class="docutils literal notranslate"><span class="pre">name</span></code>.
+A <a class="reference internal" href="reference/citrine.ara.variables.html#citrine.ara.variables.Variable" title="citrine.ara.variables.Variable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Variable</span></code></a> is also labeled with <code class="docutils literal notranslate"><span class="pre">headers</span></code>, which is a list of strings that can express a hierarchical relationship with other variables.
+The headers are listed in decreasing hierarchical order: the first string indicates the broadest classification, and each subsequent string indicates a refinement of those classifications preceding it.
+In the example below, a hardness measurement might also be performed on the object denoted by the <code class="docutils literal notranslate"><span class="pre">Product</span></code> header.
+One might assign <code class="docutils literal notranslate"><span class="pre">headers</span> <span class="pre">=</span> <span class="pre">[&quot;Product&quot;,</span> <span class="pre">&quot;Hardness&quot;]</span></code> to this measurement in order to relate it with the <code class="docutils literal notranslate"><span class="pre">Density</span></code> measurement of the same physical object.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.ara.variables</span> <span class="kn">import</span> <span class="n">AttributeByTemplateAfterProcessTemplate</span>
 <span class="kn">from</span> <span class="nn">taurus.entity.link_by_uid</span> <span class="kn">import</span> <span class="n">LinkByUID</span>
 <span class="n">final_density</span> <span class="o">=</span> <span class="n">AttributeByTemplateAfterProcessTemplate</span><span class="p">(</span>
@@ -71,7 +76,7 @@ This is necessary because GEMD Attributes are more general than primitive values
 <p>The data_source parameter is a reference to a Variable for this Column to describe, so the value of data_source must match the name of a Variable.</p>
 </div>
 <div class="section" id="defining-tables">
-<h2>2.2. Defining tables<a class="headerlink" href="#defining-tables" title="Permalink to this headline">¶</a></h2>
+<h2>3.2. Defining tables<a class="headerlink" href="#defining-tables" title="Permalink to this headline">¶</a></h2>
 <p>The <a class="reference internal" href="reference/citrine.resources.ara_definition.html#citrine.resources.ara_definition.AraDefinition" title="citrine.resources.ara_definition.AraDefinition"><code class="xref py py-class docutils literal notranslate"><span class="pre">AraDefinition</span></code></a> object defines how to build an Ara Table.
 It specifies a list of UUIDs for datasets to query in generating the table,
 a list of <a class="reference internal" href="reference/citrine.ara.rows.html#citrine.ara.rows.Row" title="citrine.ara.rows.Row"><code class="xref py py-class docutils literal notranslate"><span class="pre">Row</span></code></a> objects that define material histories to use as rows,
@@ -88,9 +93,27 @@ and a list of <a class="reference internal" href="reference/citrine.ara.columns.
       <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">final_density_mean</span><span class="p">,</span> <span class="n">final_density_std</span><span class="p">])</span>
 </pre></div>
 </div>
+<p>In addition to defining variables, rows, and columns individually, there are convenience methods that simultaneously add multiple elements to an existing Ara definition.
+One such method is <code class="xref py py-func docutils literal notranslate"><span class="pre">add_all_ingredients()</span></code>, which creates variables and columns for every potential ingredient in a process.
+The user provides a link to a process template that has a non-empty set of <cite>allowed_names</cite> (the allowed names of the ingredient runs and specs in the process).
+This creates an id variable/column and a quantity variable/column for each allowed name.
+The user specifies the dimension to report the quantity in: mass fraction, volume fraction, number fraction, or absolute quantity.
+If the quantities are reported in absolute amounts then there is also a column for the units.</p>
+<p>The code below takes the <cite>ara_defn</cite> object defined in the preceding code block and adds the ingredient amounts for a <cite>batter mixing</cite> process with known uid “3a308f78-e341-f39c-8076-35a2c88292ad”.
+Assume that the process template is accessible from a known project, <cite>project</cite>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.ara.variables</span> <span class="kn">import</span> <span class="n">IngredientQuantityDimension</span>
+
+<span class="n">ara_defn</span> <span class="o">=</span> <span class="n">ara_defn</span><span class="o">.</span><span class="n">add_all_ingredients</span><span class="p">(</span>
+                                        <span class="n">process_template</span> <span class="o">=</span> <span class="n">LinkByUID</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;3a308f78-e341-f39c-8076-35a2c88292ad&#39;</span><span class="p">),</span>
+                                        <span class="n">project</span><span class="o">=</span><span class="n">project</span><span class="p">,</span>
+                                        <span class="n">quantity_dimension</span><span class="o">=</span><span class="n">IngredientQuantityDimension</span><span class="o">.</span><span class="n">MASS</span>
+                                        <span class="p">)</span>
+</pre></div>
 </div>
-<div class="section" id="creating-and-reading-tables">
-<h2>2.3. Creating and reading tables<a class="headerlink" href="#creating-and-reading-tables" title="Permalink to this headline">¶</a></h2>
+<p>If the process template’s allowed names includes, for example, “flour” then there will now be columns “batter mixing~flour~id” and “batter mixing~flour~mass fraction~mean.”</p>
+</div>
+<div class="section" id="previewing-creating-and-reading-tables">
+<h2>3.3. Previewing, creating and reading tables<a class="headerlink" href="#previewing-creating-and-reading-tables" title="Permalink to this headline">¶</a></h2>
 <p>Calling <a class="reference internal" href="reference/citrine.resources.project.html#citrine.resources.project.Project.ara_definitions" title="citrine.resources.project.Project.ara_definitions"><code class="xref py py-func docutils literal notranslate"><span class="pre">ara_definitions()</span></code></a> on a project returns an <a class="reference internal" href="reference/citrine.resources.ara_definition.html#citrine.resources.ara_definition.AraDefinitionCollection" title="citrine.resources.ara_definition.AraDefinitionCollection"><code class="xref py py-class docutils literal notranslate"><span class="pre">AraDefinitionCollection</span></code></a> object, which facilitates access to the collection of all Ara definitions visible to a Project.
 Via such an object, one can preview a draft AraDefinition on an explicit set of Material Histories, defined by their root materials:</p>
 <p>For example:</p>
@@ -102,12 +125,26 @@ Via such an object, one can preview a draft AraDefinition on an explicit set of 
             <span class="n">LinkByUID</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s2">&quot;products&quot;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;worst cookie ever&quot;</span><span class="p">)])</span>
 </pre></div>
 </div>
+<p>The preview returns a dictionary with two keys:</p>
+<ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">csv</span></code> key will get a preview of the table in the comma-separated-values format.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">warnings</span></code> key will get a list of String-valued warnings that describe possible issues with the Ara definition, e.g. that one of the columns is completely empty.</p></li>
+</ul>
+<p>For example, if you wanted to print the warnings and then load the preview into a pandas dataframe, you could:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">StringIO</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="n">preview</span> <span class="o">=</span> <span class="n">defns</span><span class="o">.</span><span class="n">preview</span><span class="p">(</span><span class="n">ara_defn</span><span class="p">,</span> <span class="n">preview_roots</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">preview</span><span class="p">[</span><span class="s2">&quot;warnings&quot;</span><span class="p">]))</span>
+<span class="n">data_frame</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">StringIO</span><span class="p">(</span><span class="n">preview</span><span class="p">[</span><span class="s2">&quot;csv&quot;</span><span class="p">]))</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="available-row-definitions">
-<h2>2.4. Available Row Definitions<a class="headerlink" href="#available-row-definitions" title="Permalink to this headline">¶</a></h2>
+<h2>3.4. Available Row Definitions<a class="headerlink" href="#available-row-definitions" title="Permalink to this headline">¶</a></h2>
 <p>Currently, Ara provides only a single way to define Rows: by the <code class="xref py py-class docutils literal notranslate"><span class="pre">MaterialTemplate</span></code> of the roots of the material histories that correspond to each row.</p>
 <div class="section" id="materialrunbytemplate">
-<h3>2.4.1. <a class="reference internal" href="reference/citrine.ara.rows.html#citrine.ara.rows.MaterialRunByTemplate" title="citrine.ara.rows.MaterialRunByTemplate"><code class="xref py py-class docutils literal notranslate"><span class="pre">MaterialRunByTemplate</span></code></a><a class="headerlink" href="#materialrunbytemplate" title="Permalink to this headline">¶</a></h3>
+<h3>3.4.1. <a class="reference internal" href="reference/citrine.ara.rows.html#citrine.ara.rows.MaterialRunByTemplate" title="citrine.ara.rows.MaterialRunByTemplate"><code class="xref py py-class docutils literal notranslate"><span class="pre">MaterialRunByTemplate</span></code></a><a class="headerlink" href="#materialrunbytemplate" title="Permalink to this headline">¶</a></h3>
 <p>The <a class="reference internal" href="reference/citrine.ara.rows.html#citrine.ara.rows.MaterialRunByTemplate" title="citrine.ara.rows.MaterialRunByTemplate"><code class="xref py py-class docutils literal notranslate"><span class="pre">MaterialRunByTemplate</span></code></a> class defines Rows through a list of <code class="xref py py-class docutils literal notranslate"><span class="pre">MaterialTemplate</span></code>.
 Every <code class="xref py py-class docutils literal notranslate"><span class="pre">MaterialRun</span></code> that is assigned to any template in the list is used as the root of a  Material History to be mapped to a Row.
 This is helpful when the rows correspond to classes of materials that are defined through their templates.
@@ -117,7 +154,7 @@ By including one or both of those templates, you can define a table of Cakes, Br
 </div>
 </div>
 <div class="section" id="available-variable-definitions">
-<h2>2.5. Available Variable Definitions<a class="headerlink" href="#available-variable-definitions" title="Permalink to this headline">¶</a></h2>
+<h2>3.5. Available Variable Definitions<a class="headerlink" href="#available-variable-definitions" title="Permalink to this headline">¶</a></h2>
 <p>There are several ways to define variables that take their values from Attributes and fields in GEMD objects.</p>
 <ul class="simple">
 <li><p>Attributes</p>
@@ -139,7 +176,7 @@ By including one or both of those templates, you can define a table of Cakes, Br
 </ul>
 </div>
 <div class="section" id="available-column-definitions">
-<h2>2.6. Available Column Definitions<a class="headerlink" href="#available-column-definitions" title="Permalink to this headline">¶</a></h2>
+<h2>3.6. Available Column Definitions<a class="headerlink" href="#available-column-definitions" title="Permalink to this headline">¶</a></h2>
 <p>There are several ways to define columns, depending on the type of the attribute that is being used as the data source for the column.</p>
 <ul class="simple">
 <li><p>Numeric attributes values, like <code class="xref py py-class docutils literal notranslate"><span class="pre">ContinuousValue</span></code> and <code class="xref py py-class docutils literal notranslate"><span class="pre">IntegerValue</span></code></p></li>
@@ -153,7 +190,7 @@ By including one or both of those templates, you can define a table of Cakes, Br
 </ul>
 </div></blockquote>
 <ul class="simple">
-<li><p>Enumerated values, like <code class="xref py py-class docutils literal notranslate"><span class="pre">CategoricalValue</span></code></p></li>
+<li><p>Enumerated attribute values, like <code class="xref py py-class docutils literal notranslate"><span class="pre">CategoricalValue</span></code></p></li>
 </ul>
 <blockquote>
 <div><ul class="simple">
@@ -162,7 +199,18 @@ By including one or both of those templates, you can define a table of Cakes, Br
 </ul>
 </div></blockquote>
 <ul class="simple">
-<li><p>String and boolean valued fields</p></li>
+<li><p>Composition and chemical formula attribute values, like <code class="xref py py-class docutils literal notranslate"><span class="pre">CompositionValue</span></code></p></li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li><p><a class="reference internal" href="reference/citrine.ara.columns.html#citrine.ara.columns.FlatCompositionColumn" title="citrine.ara.columns.FlatCompositionColumn"><code class="xref py py-class docutils literal notranslate"><span class="pre">FlatCompositionColumn</span></code></a>: for flattening the composition into a chemical-formula-like string</p></li>
+<li><p><a class="reference internal" href="reference/citrine.ara.columns.html#citrine.ara.columns.ComponentQuantityColumn" title="citrine.ara.columns.ComponentQuantityColumn"><code class="xref py py-class docutils literal notranslate"><span class="pre">ComponentQuantityColumn</span></code></a>: for getting the quantity of a specific component, by name</p></li>
+<li><p><a class="reference internal" href="reference/citrine.ara.columns.html#citrine.ara.columns.NthBiggestComponentNameColumn" title="citrine.ara.columns.NthBiggestComponentNameColumn"><code class="xref py py-class docutils literal notranslate"><span class="pre">NthBiggestComponentNameColumn</span></code></a>: for getting the name of the n-th biggest component (by quantity)</p></li>
+<li><p><a class="reference internal" href="reference/citrine.ara.columns.html#citrine.ara.columns.NthBiggestComponentQuantityColumn" title="citrine.ara.columns.NthBiggestComponentQuantityColumn"><code class="xref py py-class docutils literal notranslate"><span class="pre">NthBiggestComponentQuantityColumn</span></code></a>: for getting the quantity of the n-th biggest component (by quantity)</p></li>
+</ul>
+</div></blockquote>
+<ul class="simple">
+<li><p>String and boolean valued fields, like identifiers and non-attribute fields</p></li>
 </ul>
 <blockquote>
 <div><ul class="simple">
@@ -203,33 +251,38 @@ By including one or both of those templates, you can define a table of Cakes, Br
 <h3>Navigation</h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="getting_started/index.html">1. Getting Started</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="getting_started/basic_structure.html">1.1. Structure of the Citrine Python Client</a></li>
-<li class="toctree-l2"><a class="reference internal" href="getting_started/basic_functionality.html">1.2. Using the Citrine Python Client</a></li>
-<li class="toctree-l2"><a class="reference internal" href="getting_started/data_model.html">1.3. Data Model</a></li>
-<li class="toctree-l2"><a class="reference internal" href="getting_started/public_access.html">1.4. Dataset Access Control</a></li>
-<li class="toctree-l2"><a class="reference internal" href="getting_started/working_with_files.html">1.5. Working With Files</a></li>
-<li class="toctree-l2"><a class="reference internal" href="getting_started/projects_and_users.html">1.6. Projects and Users</a></li>
-<li class="toctree-l2"><a class="reference internal" href="getting_started/code_examples.html">1.7. Code Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started/connecting.html">1.1. Connecting to the Citrine Platform</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started/basic_structure.html">1.2. Structure of the Citrine Python Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started/basic_functionality.html">1.3. Using the Citrine Python Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started/data_model.html">1.4. Data Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started/public_access.html">1.5. Dataset Access Control</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started/working_with_files.html">1.6. Working With Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started/projects_and_users.html">1.7. Projects and Users</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started/code_examples.html">1.8. Code Examples</a></li>
 </ul>
 </li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">2. [ALPHA] Data Extraction</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#defining-row-and-columns">2.1. Defining row and columns</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#defining-tables">2.2. Defining tables</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#creating-and-reading-tables">2.3. Creating and reading tables</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#available-row-definitions">2.4. Available Row Definitions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#available-variable-definitions">2.5. Available Variable Definitions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#available-column-definitions">2.6. Available Column Definitions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_entry.html">2. Data Entry</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="data_entry.html#creating-data-model-objects">2.1. Creating Data Model Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_entry.html#identifiying-data-model-objects">2.2. Identifiying Data Model Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_entry.html#registering-data-model-objects">2.3. Registering Data Model Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_entry.html#finding-data-model-objects">2.4. Finding Data Model Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_entry.html#referencing-data-model-objects">2.5. Referencing Data Model Objects</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="workflows/index.html">3. Workflows</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="workflows/index.html#modules">3.1. Modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="workflows/index.html#design-workflows">3.2. Design workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="workflows/index.html#registration-and-validation">3.3. Registration and validation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="workflows/index.html#table-of-contents">3.4. Table of Contents</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">3. [ALPHA] Data Extraction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#defining-row-and-columns">3.1. Defining row and columns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#defining-tables">3.2. Defining tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#previewing-creating-and-reading-tables">3.3. Previewing, creating and reading tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#available-row-definitions">3.4. Available Row Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#available-variable-definitions">3.5. Available Variable Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#available-column-definitions">3.6. Available Column Definitions</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="development.html">4. Development</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="development.html#running-tests-in-docker">4.1. Running tests in Docker</a></li>
+<li class="toctree-l1"><a class="reference internal" href="workflows/index.html">4. [ALPHA] Workflows</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="workflows/index.html#modules">4.1. Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="workflows/index.html#design-workflows">4.2. Design workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="workflows/index.html#registration-and-validation">4.3. Registration and validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="workflows/index.html#table-of-contents">4.4. Table of Contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="FAQ/index.html">5. FAQ</a><ul>
@@ -242,8 +295,8 @@ By including one or both of those templates, you can define a table of Cakes, Br
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="getting_started/code_examples.html" title="previous chapter">1.7. Code Examples</a></li>
-      <li>Next: <a href="workflows/index.html" title="next chapter">3. Workflows</a></li>
+      <li>Previous: <a href="data_entry.html" title="previous chapter">2. Data Entry</a></li>
+      <li>Next: <a href="workflows/index.html" title="next chapter">4. [ALPHA] Workflows</a></li>
   </ul></li>
 </ul>
 </div>

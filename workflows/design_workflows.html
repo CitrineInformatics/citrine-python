@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>3.4.6. Design workflows &#8212; Citrine Python 0.0.1 documentation</title>
+    <title>4.4.6. Design workflows &#8212; Citrine Python 0.0.1 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -15,8 +15,8 @@
     <link rel="shortcut icon" href="../_static/favicon.png"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="3.4.7. Performance workflows" href="performance_workflows.html" />
-    <link rel="prev" title="3.4.5. Scores" href="scores.html" />
+    <link rel="next" title="4.4.7. Performance workflows" href="performance_workflows.html" />
+    <link rel="prev" title="4.4.5. Scores" href="scores.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -34,7 +34,7 @@
           <div class="body" role="main">
             
   <div class="section" id="design-workflows">
-<h1>3.4.6. Design workflows<a class="headerlink" href="#design-workflows" title="Permalink to this headline">¶</a></h1>
+<h1>4.4.6. Design workflows<a class="headerlink" href="#design-workflows" title="Permalink to this headline">¶</a></h1>
 <p>A design workflow ranks materials according to a <a class="reference internal" href="scores.html"><span class="doc">score</span></a>.
 This workflow is comprised of three modules:</p>
 <ul class="simple">
@@ -70,7 +70,7 @@ This workflow is comprised of three modules:</p>
 </pre></div>
 </div>
 <div class="section" id="execution-and-results">
-<h2>3.4.6.1. Execution and results<a class="headerlink" href="#execution-and-results" title="Permalink to this headline">¶</a></h2>
+<h2>4.4.6.1. Execution and results<a class="headerlink" href="#execution-and-results" title="Permalink to this headline">¶</a></h2>
 <p>When a design workflow is executed, the processor will search the design space for optimal materials using additional information provided by the predictor.
 The result is a list of scored and ranked materials.
 Materials at the head of the list are the best materials found from searching the design space.</p>
@@ -83,7 +83,7 @@ The <code class="docutils literal notranslate"><span class="pre">i</span></code>
 <p>Each candidate and score is a dictionary.
 The former contains descriptor key-value pairs and uncertainty in descriptor values.
 The latter contains a key-value pair for each score.
-For example, if input materials contain an input <code class="docutils literal notranslate"><span class="pre">x</span></code> and are scored by using MLI for predicted output <code class="docutils literal notranslate"><span class="pre">z</span></code> the execution results would have the form:</p>
+For example, if input materials contain an input <code class="docutils literal notranslate"><span class="pre">x</span></code> and are scored by using LI for predicted output <code class="docutils literal notranslate"><span class="pre">z</span></code> the execution results would have the form:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="s2">&quot;results&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="s2">&quot;candidates&quot;</span><span class="p">:</span> <span class="p">[</span>
@@ -91,7 +91,7 @@ For example, if input materials contain an input <code class="docutils literal n
             <span class="c1"># ...</span>
         <span class="p">],</span>
         <span class="s2">&quot;scores&quot;</span><span class="p">:</span> <span class="p">[</span>
-            <span class="p">{</span><span class="s2">&quot;mli_z&quot;</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">},</span>
+            <span class="p">{</span><span class="s2">&quot;li_z&quot;</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">},</span>
             <span class="c1"># ...</span>
         <span class="p">]</span>
     <span class="p">}</span>
@@ -104,10 +104,10 @@ If the design space contains more than 200 possible materials, only the top 200 
 <p>The following demonstrates how to trigger workflow execution, wait for the design run to complete and inspect the best material found by the workflow:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">sleep</span>
 <span class="kn">from</span> <span class="nn">citrine.informatics.objectives</span> <span class="kn">import</span> <span class="n">ScalarMaxObjective</span>
-<span class="kn">from</span> <span class="nn">citrine.informatics.scores</span> <span class="kn">import</span> <span class="n">MLIScore</span>
+<span class="kn">from</span> <span class="nn">citrine.informatics.scores</span> <span class="kn">import</span> <span class="n">LIScore</span>
 
 <span class="c1"># create a score with the desired objectives and baselines</span>
-<span class="n">score</span> <span class="o">=</span> <span class="n">MLIScore</span><span class="p">(</span>
+<span class="n">score</span> <span class="o">=</span> <span class="n">LIScore</span><span class="p">(</span>
     <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Example score&#39;</span><span class="p">,</span>
     <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Used to rank materials&#39;</span><span class="p">,</span>
     <span class="c1"># create an objective to maximize shear modulus</span>
@@ -176,33 +176,38 @@ If the design space contains more than 200 possible materials, only the top 200 
 <h3>Navigation</h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../getting_started/index.html">1. Getting Started</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../getting_started/basic_structure.html">1.1. Structure of the Citrine Python Client</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../getting_started/basic_functionality.html">1.2. Using the Citrine Python Client</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../getting_started/data_model.html">1.3. Data Model</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../getting_started/public_access.html">1.4. Dataset Access Control</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../getting_started/working_with_files.html">1.5. Working With Files</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../getting_started/projects_and_users.html">1.6. Projects and Users</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../getting_started/code_examples.html">1.7. Code Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/connecting.html">1.1. Connecting to the Citrine Platform</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/basic_structure.html">1.2. Structure of the Citrine Python Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/basic_functionality.html">1.3. Using the Citrine Python Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/data_model.html">1.4. Data Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/public_access.html">1.5. Dataset Access Control</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/working_with_files.html">1.6. Working With Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/projects_and_users.html">1.7. Projects and Users</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/code_examples.html">1.8. Code Examples</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../data_extraction.html">2. [ALPHA] Data Extraction</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#defining-row-and-columns">2.1. Defining row and columns</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#defining-tables">2.2. Defining tables</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#creating-and-reading-tables">2.3. Creating and reading tables</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-row-definitions">2.4. Available Row Definitions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-variable-definitions">2.5. Available Variable Definitions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-column-definitions">2.6. Available Column Definitions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_entry.html">2. Data Entry</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#creating-data-model-objects">2.1. Creating Data Model Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#identifiying-data-model-objects">2.2. Identifiying Data Model Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#registering-data-model-objects">2.3. Registering Data Model Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#finding-data-model-objects">2.4. Finding Data Model Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#referencing-data-model-objects">2.5. Referencing Data Model Objects</a></li>
 </ul>
 </li>
-<li class="toctree-l1 current"><a class="reference internal" href="index.html">3. Workflows</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="index.html#modules">3.1. Modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="index.html#design-workflows">3.2. Design workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="index.html#registration-and-validation">3.3. Registration and validation</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="index.html#table-of-contents">3.4. Table of Contents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_extraction.html">3. [ALPHA] Data Extraction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#defining-row-and-columns">3.1. Defining row and columns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#defining-tables">3.2. Defining tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#previewing-creating-and-reading-tables">3.3. Previewing, creating and reading tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-row-definitions">3.4. Available Row Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-variable-definitions">3.5. Available Variable Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-column-definitions">3.6. Available Column Definitions</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../development.html">4. Development</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../development.html#running-tests-in-docker">4.1. Running tests in Docker</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">4. [ALPHA] Workflows</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="index.html#modules">4.1. Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#design-workflows">4.2. Design workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#registration-and-validation">4.3. Registration and validation</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#table-of-contents">4.4. Table of Contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">5. FAQ</a><ul>
@@ -215,9 +220,9 @@ If the design space contains more than 200 possible materials, only the top 200 
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-  <li><a href="index.html">3. Workflows</a><ul>
-      <li>Previous: <a href="scores.html" title="previous chapter">3.4.5. Scores</a></li>
-      <li>Next: <a href="performance_workflows.html" title="next chapter">3.4.7. Performance workflows</a></li>
+  <li><a href="index.html">4. [ALPHA] Workflows</a><ul>
+      <li>Previous: <a href="scores.html" title="previous chapter">4.4.5. Scores</a></li>
+      <li>Next: <a href="performance_workflows.html" title="next chapter">4.4.7. Performance workflows</a></li>
   </ul></li>
   </ul></li>
 </ul>
