@@ -68,3 +68,12 @@ If you attempt to upload an object with an attribute value that is outside of it
 Attribute templates should be narrowly scoped and very permissive.
 For example, "Temperature is between 20 and 24 degC" is a bad template: temperature is generic and 20-24 degC is too strict.
 "Room temperature during drying is between 0 and 100 degC" is better because it is more specific and contains all reasonable values of room temperature.
+
+LinkByUID
+----------
+
+The :class:`~taurus.entity.link_by_uid.LinkByUID` class allows you to reference another data model object by a unique identifier without downloading it first.
+This is a common pattern within the data model objects, since many objects contain links to other objects that may have already been registered to the platform.
+:class:`~taurus.entity.link_by_uid.LinkByUID` objects can use either the platform's unique identifier or an `alternative identifier`__.
+
+__ https://citrineinformatics.github.io/gemd-docs/specification/unique-identifiers/#alternative-ids

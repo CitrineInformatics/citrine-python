@@ -35,6 +35,7 @@ Table of Contents
    :numbered: 5
 
    getting_started/index
+   data_entry
    data_extraction
    workflows/index
    development

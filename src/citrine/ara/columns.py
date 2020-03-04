@@ -2,9 +2,22 @@
 from typing import Type, Optional, List  # noqa: F401
 from abc import abstractmethod
 
+from taurus.enumeration.base_enumeration import BaseEnumeration
+
 from citrine._serialization.serializable import Serializable
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
 from citrine._serialization import properties
+
+
+class CompositionSortOrder(BaseEnumeration):
+    """[ALPHA] Order to use when sorting the components in a composition.
+
+    * ALPHABETICAL is alpha-numeric order by the component name
+    * QUANTITY is ordered from the largest to smallest quantity, with ties broken alphabetically
+    """
+
+    ALPHABETICAL = "alphabetical"
+    QUANTITY = "quantity"
 
 
 class Column(PolymorphicSerializable['Column']):
@@ -33,7 +46,9 @@ class Column(PolymorphicSerializable['Column']):
         types: List[Type[Serializable]] = [
             IdentityColumn,
             MeanColumn, StdDevColumn, QuantileColumn, OriginalUnitsColumn,
-            MostLikelyCategoryColumn, MostLikelyProbabilityColumn
+            MostLikelyCategoryColumn, MostLikelyProbabilityColumn,
+            FlatCompositionColumn, ComponentQuantityColumn,
+            NthBiggestComponentNameColumn, NthBiggestComponentQuantityColumn
         ]
         res = next((x for x in types if x.typ == data["type"]), None)
         if res is None:
@@ -192,6 +207,121 @@ class MostLikelyProbabilityColumn(Serializable["MostLikelyProbabilityColumn"], C
     def __init__(self, *,
                  data_source: str):
         self.data_source = data_source
+
+
+class FlatCompositionColumn(Serializable["FlatCompositionColumn"], Column):
+    """[ALPHA] Column that flattens the composition into a string of names and quantities.
+
+    The numeric formatting tries to be human readable. For example, if all of the quantities
+    are round numbers like {"spam": 4.0, "eggs": 1.0} then the result omit the decimal points like
+    "(spam)4(eggs)1" (if sort_order is by quantity).
+
+    Parameters
+    ----------
+    data_source: str
+        name of the variable to use when populating the column
+    sort_order: CompositionSortOrder
+        order with which to sort the components when generating the flat string
+
+    """
+
+    data_source = properties.String('data_source')
+    sort_order = properties.Enumeration(CompositionSortOrder, 'sort_order')
+    typ = properties.String('type', default="flat_composition_column", deserializable=False)
+
+    def _attrs(self) -> List[str]:
+        return ["data_source", "sort_order", "typ"]
+
+    def __init__(self, *,
+                 data_source: str,
+                 sort_order: CompositionSortOrder):
+        self.data_source = data_source
+        self.sort_order = sort_order
+
+
+class ComponentQuantityColumn(Serializable["ComponentQuantityColumn"], Column):
+    """[ALPHA] Column that extracts the quantity of a given component.
+
+    If the component is not present in the composition, then the value in the column will be 0.0.
+
+    Parameters
+    ----------
+    data_source: str
+        name of the variable to use when populating the column
+    component_name: str
+        name of the component from which to extract the quantity
+
+    """
+
+    data_source = properties.String('data_source')
+    component_name = properties.String("component_name")
+    typ = properties.String('type', default="component_quantity_column", deserializable=False)
+
+    def _attrs(self) -> List[str]:
+        return ["data_source", "component_name", "typ"]
+
+    def __init__(self, *,
+                 data_source: str,
+                 component_name: str):
+        self.data_source = data_source
+        self.component_name = component_name
+
+
+class NthBiggestComponentNameColumn(Serializable["NthBiggestComponentNameColumn"], Column):
+    """[ALPHA] Name of the Nth biggest component.
+
+    If there are not N components in the composition, then this column will be empty.
+
+    Parameters
+    ----------
+    data_source: str
+        name of the variable to use when populating the column
+    n: int
+        index of the component name to extract, starting with 1 for the biggest
+
+    """
+
+    data_source = properties.String('data_source')
+    n = properties.Integer("n")
+    typ = properties.String('type', default="biggest_component_name_column", deserializable=False)
+
+    def _attrs(self) -> List[str]:
+        return ["data_source", "n", "typ"]
+
+    def __init__(self, *,
+                 data_source: str,
+                 n: int):
+        self.data_source = data_source
+        self.n = n
+
+
+class NthBiggestComponentQuantityColumn(Serializable["NthBiggestComponentQuantityColumn"], Column):
+    """[ALPHA] Quantity of the Nth biggest component.
+
+    If there are not N components in the composition, then this column will be empty.
+
+    Parameters
+    ----------
+    data_source: str
+        name of the variable to use when populating the column
+    n: int
+        index of the component quantity to extract, starting with 1 for the biggest
+
+    """
+
+    data_source = properties.String('data_source')
+    n = properties.Integer("n")
+    typ = properties.String('type',
+                            default="biggest_component_quantity_column", deserializable=False)
+
+    def _attrs(self) -> List[str]:
+        return ["data_source", "n", "typ"]
+
+    def __init__(self, *,
+                 data_source: str,
+                 n: int):
+        self.data_source = data_source
+        self.n = n
 
 
 class IdentityColumn(Serializable['IdentityColumn'], Column):

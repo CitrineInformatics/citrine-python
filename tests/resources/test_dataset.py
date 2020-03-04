@@ -1,7 +1,26 @@
 from uuid import UUID, uuid4
 import pytest
+from taurus.entity.bounds.integer_bounds import IntegerBounds
+from taurus.entity.object import MeasurementRun
+from taurus.entity.template.material_template import MaterialTemplate
+from taurus.entity.template.parameter_template import ParameterTemplate
 
+from citrine.resources.condition_template import ConditionTemplateCollection, ConditionTemplate
 from citrine.resources.dataset import DatasetCollection
+from citrine.resources.ingredient_run import IngredientRun, IngredientRunCollection
+from citrine.resources.ingredient_spec import IngredientSpec, IngredientSpecCollection
+from citrine.resources.material_run import MaterialRunCollection, MaterialRun
+from citrine.resources.material_spec import MaterialSpecCollection, MaterialSpec
+from citrine.resources.material_template import MaterialTemplateCollection
+from citrine.resources.measurement_run import MeasurementRunCollection
+from citrine.resources.measurement_spec import MeasurementSpec, MeasurementSpecCollection
+from citrine.resources.measurement_template import MeasurementTemplate, \
+    MeasurementTemplateCollection
+from citrine.resources.parameter_template import ParameterTemplateCollection
+from citrine.resources.process_run import ProcessRunCollection, ProcessRun
+from citrine.resources.process_spec import ProcessSpecCollection, ProcessSpec
+from citrine.resources.process_template import ProcessTemplateCollection, ProcessTemplate
+from citrine.resources.property_template import PropertyTemplateCollection, PropertyTemplate
 from tests.utils.factories import DatasetDataFactory, DatasetFactory
 from tests.utils.session import FakeSession, FakePaginatedSession, FakeCall
 
@@ -32,11 +51,12 @@ def paginated_collection(paginated_session) -> DatasetCollection:
     )
 
 
-@pytest.fixture
+@pytest.fixture(scope="function")
 def dataset():
     dataset = DatasetFactory(name='Test Dataset')
     dataset.project_id = UUID('6b608f78-e341-422c-8076-35adc8828545')
-    dataset.session = None
+    dataset.uid = UUID("503d7bf6-8e2d-4d29-88af-257af0d4fe4a")
+    dataset.session = FakeSession()
 
     return dataset
 
@@ -186,3 +206,28 @@ def test_ingredient_specs_get_project_id(dataset):
 
 def test_files_get_project_id(dataset):
     assert dataset.project_id == dataset.files.project_id
+
+
+def test_register_data_concepts(dataset):
+    """Check that register routes to the correct collections"""
+    from os.path import basename
+    expected = {
+        MaterialTemplateCollection: MaterialTemplate("foo"),
+        MaterialSpecCollection: MaterialSpec("foo"),
+        MaterialRunCollection: MaterialRun("foo"),
+        ProcessTemplateCollection: ProcessTemplate("foo"),
+        ProcessSpecCollection: ProcessSpec("foo"),
+        ProcessRunCollection: ProcessRun("foo"),
+        MeasurementTemplateCollection: MeasurementTemplate("foo"),
+        MeasurementSpecCollection: MeasurementSpec("foo"),
+        MeasurementRunCollection: MeasurementRun("foo"),
+        IngredientSpecCollection: IngredientSpec("foo"),
+        IngredientRunCollection: IngredientRun("foo"),
+        PropertyTemplateCollection: PropertyTemplate("bar", bounds=IntegerBounds(0, 1)),
+        ParameterTemplateCollection: ParameterTemplate("bar", bounds=IntegerBounds(0, 1)),
+        ConditionTemplateCollection: ConditionTemplate("bar", bounds=IntegerBounds(0, 1))
+    }
+
+    for collection, obj in expected.items():
+        dataset.register(obj)
+        assert basename(dataset.session.calls[-1].path) == basename(collection._path_template)
