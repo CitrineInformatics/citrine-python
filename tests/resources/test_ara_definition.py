@@ -225,6 +225,14 @@ def test_add_all_ingredients(session, project):
         def2.add_all_ingredients(process_template=process_link, project=project,
                                  quantity_dimension=IngredientQuantityDimension.VOLUME)
 
+    # If the process template has an empty allowed_names list then an error should be raised
+    session.set_response(
+        ProcessTemplate(process_name, uids={'id': process_id}, allowed_names=[]).dump()
+    )
+    with pytest.raises(RuntimeError):
+        empty_defn().add_all_ingredients(process_template=process_link, project=project,
+                                         quantity_dimension=IngredientQuantityDimension.VOLUME)
+
 
 def test_register_new(collection, session):
     """Test the behavior of AraDefinitionCollection.register() on an unregistered AraDefinition"""
