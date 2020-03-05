@@ -158,6 +158,11 @@ class AraDefinition(Resource["AraDefinition"]):
         }
         process: ProcessTemplate = project.process_templates.get(
             uid=process_template.id, scope=process_template.scope)
+        if len(process.allowed_names) == 0:
+            raise RuntimeError(
+                "Cannot add ingredients for process template \'{}\' because it has no defined "
+                "ingredients (allowed_names is an empty list).".format(process.name))
+
         new_variables = []
         new_columns = []
         for name in process.allowed_names:

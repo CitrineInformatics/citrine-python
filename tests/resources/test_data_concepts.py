@@ -1,7 +1,6 @@
 import pytest
 from uuid import uuid4
 
-from citrine._serialization.serializable import Serializable
 from citrine.resources.audit_info import AuditInfo
 from citrine.resources.data_concepts import DataConcepts
 from citrine.resources.process_run import ProcessRun
