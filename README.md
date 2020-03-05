@@ -36,7 +36,13 @@ To run the linter on the "src/" directory:
 flake8 src
 ```
 
+### Running tests
+
 We use pytest to run tests and use the associated library pytest-cov to check coverage.
+See the [PyTest documentation](https://docs.pytest.org/en/latest/usage.html) for more information.
+
+#### Command line
+
 To run all tests and output a report of the coverage of the "src/" directory:
 ```bash
 run pytest tests/ --cov=src/
@@ -56,6 +62,33 @@ For example, `pipenv run pytest`.
 
 To exit the pipenv shell, run `exit`.
 To deactivate a conda environment, use `conda deactivate`.
+
+#### Docker
+
+Running tests in Docker will ensure the same development environment as used by Travis CI, our continuous integration server.
+See the file .travis.yml in the repository root for more information.
+
+To build the container, run this command from the repository root.
+It will tag the image as "citrine-python":
+```bash
+docker build -f scripts/Dockerfile.pytest -t citrine-python .
+```
+
+To get an interactive bash shell in the Docker container, overriding the default entrypoint, run the following:
+```bash
+docker run --rm -it --entrypoint bash citrine-python
+```
+
+To run all unit tests in the Docker container with default parameters:
+```bash
+docker run --rm -it citrine-python
+```
+
+To run all tests in a module or run a specific test, run a command like the following (note that this will result a reported test coverage that is low):
+```bash
+docker run --rm -it citrine-python tests/serialization/test_table.py
+docker run --rm -it citrine-python tests/serialization/test_table.py::test_simple_deserialization
+```
 
 ## Documentation
 
@@ -143,7 +176,7 @@ INFO:citrine._session:200 GET /projects/fc568490-224a-4070-807f-1427c4f4dcd8
 ```
 is an example of output from the logger in the previous example.
 
-## Developement Status
+## Development Status
 
 Classes and methods may be marked as *alpha* by including `[ALPHA]` at the start of their docstrings.
-These methods are intended for development, testing, and experimentation, are not supported, and may change or be removed without notice```
+These methods are intended for development, testing, and experimentation, are not supported, and may change or be removed without notice

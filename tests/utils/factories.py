@@ -9,7 +9,7 @@ from citrine.resources.material_spec import MaterialSpec
 from citrine.resources.material_template import MaterialTemplate
 from taurus.entity.link_by_uid import LinkByUID
 
-from citrine.informatics.scores import MLIScore
+from citrine.informatics.scores import LIScore
 from citrine.resources.file_link import _Uploader
 from citrine.resources.dataset import Dataset
 from citrine.resources.material_run import MaterialRun
@@ -38,15 +38,20 @@ class TableDataFactory(factory.DictFactory):
     signed_download_url = factory.Faker('uri')
 
 
-class AraDefinitionFactory(factory.DictFactory):
-    id = factory.Faker('uuid4')
-    version = randrange(10)
+class AraDefinitionDataFactory(factory.DictFactory):
     name = factory.Faker("company")
     description = factory.Faker('bs')
     rows = []
     columns = []
     variables = []
     datasets = []
+
+
+class AraDefinitionFactory(factory.DictFactory):
+    ara_definition = factory.SubFactory(AraDefinitionDataFactory)
+    id = factory.Faker('uuid4')
+    version_number = randrange(10)
+    definition_id = factory.Faker('uuid4')
 
 
 class DatasetDataFactory(factory.DictFactory):
@@ -141,7 +146,7 @@ class _UploaderFactory(factory.Factory):
 
 class MLIScoreFactory(factory.Factory):
     class Meta:
-        model = MLIScore
+        model = LIScore
 
     name = factory.Faker('bs')
     description = factory.Faker('catch_phrase')

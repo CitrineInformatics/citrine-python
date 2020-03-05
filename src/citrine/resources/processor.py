@@ -10,7 +10,7 @@ CreationType = TypeVar('CreationType', bound=Processor)
 
 
 class ProcessorCollection(Collection[Processor]):
-    """Represents the collection of all processors for a project.
+    """[ALPHA] Represents the collection of all processors for a project.
 
     Parameters
     ----------

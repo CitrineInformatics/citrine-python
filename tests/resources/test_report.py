@@ -16,4 +16,4 @@ def test_get_report():
     report = rr.get(module_id)
     assert report.status == 'PENDING'
     assert session.get_resource.call_count == 1
-    assert session.get_resource.call_args == mock.call(f'/projects/{project_id}/modules/{module_id}/report')
+    assert session.get_resource.call_args == mock.call('/projects/{}/modules/{}/report'.format(project_id, module_id))

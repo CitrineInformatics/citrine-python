@@ -2,7 +2,7 @@ from uuid import UUID
 
 import pytest
 import requests_mock
-from mock import patch, call, Mock
+from mock import patch, call
 
 from citrine.resources.table import TableCollection, Table
 from tests.utils.factories import TableDataFactory

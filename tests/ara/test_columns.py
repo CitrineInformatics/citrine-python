@@ -2,7 +2,9 @@
 import pytest
 
 from citrine.ara.columns import MeanColumn, IdentityColumn, Column, StdDevColumn, QuantileColumn, \
-    OriginalUnitsColumn, MostLikelyProbabilityColumn, MostLikelyCategoryColumn
+    OriginalUnitsColumn, MostLikelyProbabilityColumn, MostLikelyCategoryColumn, \
+    FlatCompositionColumn, CompositionSortOrder, ComponentQuantityColumn, \
+    NthBiggestComponentNameColumn, NthBiggestComponentQuantityColumn
 
 
 @pytest.fixture(params=[
@@ -13,6 +15,10 @@ from citrine.ara.columns import MeanColumn, IdentityColumn, Column, StdDevColumn
     OriginalUnitsColumn(data_source="density"),
     MostLikelyCategoryColumn(data_source="color"),
     MostLikelyProbabilityColumn(data_source="color"),
+    FlatCompositionColumn(data_source="formula", sort_order=CompositionSortOrder.QUANTITY),
+    ComponentQuantityColumn(data_source="formula", component_name="Si"),
+    NthBiggestComponentNameColumn(data_source="formula", n=1),
+    NthBiggestComponentQuantityColumn(data_source="formula", n=2),
 ])
 def column(request):
     return request.param

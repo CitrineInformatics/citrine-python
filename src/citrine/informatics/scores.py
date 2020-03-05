@@ -8,11 +8,11 @@ from citrine._session import Session
 from citrine.informatics.constraints import Constraint
 from citrine.informatics.objectives import Objective
 
-__all__ = ['Score', 'MLIScore', 'MEIScore']
+__all__ = ['Score', 'LIScore', 'EIScore']
 
 
 class Score(PolymorphicSerializable['Score']):
-    """A Citrine Score is used to rank materials according to objectives and constraints.
+    """[ALPHA] A Citrine Score is used to rank materials according to objectives and constraints.
 
     Abstract type that returns the proper type given a serialized dict.
 
@@ -23,13 +23,13 @@ class Score(PolymorphicSerializable['Score']):
     def get_type(cls, data):
         """Return the subtype."""
         return {
-            'MLI': MLIScore,
-            'MEI': MEIScore
+            'MLI': LIScore,
+            'MEI': EIScore
         }[data['type']]
 
 
-class MLIScore(Serializable['MLIScore'], Score):
-    """Evaluates the likelihood of scoring better than some baselines for given objectives.
+class LIScore(Serializable['LIScore'], Score):
+    """[ALPHA] Evaluates the likelihood of scoring better than some baselines for given objectives.
 
     Parameters
     ----------
@@ -68,11 +68,12 @@ class MLIScore(Serializable['MLIScore'], Score):
         self.session: Optional[Session] = session
 
     def __str__(self):
-        return '<MLIScore {!r}>'.format(self.name)
+        return '<LIScore {!r}>'.format(self.name)
 
 
-class MEIScore(Serializable['MEIScore'], Score):
-    """Evaluates the expected magnitude of improvement beyond some baselines for given objectives.
+class EIScore(Serializable['EIScore'], Score):
+    """
+    [ALPHA] Evaluates the expected magnitude of improvement beyond baselines for given objectives.
 
     Parameters
     ----------
@@ -111,4 +112,4 @@ class MEIScore(Serializable['MEIScore'], Score):
         self.session: Optional[Session] = session
 
     def __str__(self):
-        return '<MEIScore {!r}>'.format(self.name)
+        return '<EIScore {!r}>'.format(self.name)

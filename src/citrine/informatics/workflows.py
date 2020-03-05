@@ -13,7 +13,7 @@ __all__ = ['Workflow', 'DesignWorkflow', 'PerformanceWorkflow']
 
 
 class Workflow(PolymorphicSerializable['Workflow']):
-    """A Citrine Workflow is a collection of Modules that together accomplish some task.
+    """[ALPHA] A Citrine Workflow is a collection of Modules that together accomplish some task.
 
     Abstract type that returns the proper type given a serialized dict.
 
@@ -41,7 +41,7 @@ class Workflow(PolymorphicSerializable['Workflow']):
 
 
 class DesignWorkflow(Resource['DesignWorkflow'], Workflow):
-    """Object that generates scored materials that may approach higher values of the score.
+    """[ALPHA] Object that generates scored materials that may approach higher values of the score.
 
     Parameters
     ----------
@@ -49,8 +49,9 @@ class DesignWorkflow(Resource['DesignWorkflow'], Workflow):
         the name of the workflow
     design_space_id: UUID
         the UUID corresponding to the design space to use
-    processor_id: UUID
+    processor_id: Optional[UUID]
         the UUID corresponding to the processor to use
+        if none is provided, one matching your design space will be automatically generated
     predictor_id: UUID
         the UUID corresponding to the predictor to use
     project_id: UUID
@@ -70,7 +71,7 @@ class DesignWorkflow(Resource['DesignWorkflow'], Workflow):
     created_by = properties.Optional(properties.UUID, 'created_by', serializable=False)
     create_time = properties.Optional(properties.Datetime, 'create_time', serializable=False)
     design_space_id = properties.UUID('config.design_space_id')
-    processor_id = properties.UUID('config.processor_id')
+    processor_id = properties.Optional(properties.UUID, 'config.processor_id')
     predictor_id = properties.UUID('config.predictor_id')
     module_type = properties.String('module_type', default='DESIGN_WORKFLOW')
     schema_id = properties.UUID('schema_id', default=UUID('8af8b007-3e81-4185-82b2-6f62f4a2e6f1'))
@@ -78,7 +79,7 @@ class DesignWorkflow(Resource['DesignWorkflow'], Workflow):
     def __init__(self,
                  name: str,
                  design_space_id: UUID,
-                 processor_id: UUID,
+                 processor_id: Optional[UUID],
                  predictor_id: UUID,
                  project_id: Optional[UUID] = None,
                  session: Session = Session()):
@@ -101,7 +102,7 @@ class DesignWorkflow(Resource['DesignWorkflow'], Workflow):
 
 
 class PerformanceWorkflow(Resource['PerformanceWorkflow'], Workflow):
-    """Object that executes performance analysis on a given module.
+    """[ALPHA] Object that executes performance analysis on a given module.
 
     Parameters
     ----------

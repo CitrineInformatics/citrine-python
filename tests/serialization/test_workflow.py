@@ -39,6 +39,19 @@ def test_simple_deserialization(valid_data):
     assert workflow.predictor_id == UUID(valid_data['config']['predictor_id'])
 
 
+def test_roundtrip_without_processor(valid_data, valid_serialization_output):
+    """Ensure a deserialized DesignWorkflow without a processor looks sane."""
+    valid_data['config']['processor_id'] = None
+    workflow: DesignWorkflow = DesignWorkflow.build(valid_data)
+    assert workflow.design_space_id == UUID(valid_data['config']['design_space_id'])
+    assert workflow.processor_id is None
+    assert workflow.predictor_id == UUID(valid_data['config']['predictor_id'])
+    serialized = workflow.dump()
+    serialized['id'] = valid_data['id']
+    valid_serialization_output['config']['processor_id'] = None
+    assert serialized == valid_serialization_output
+
+
 def test_deserialization_missing_created_by(valid_data):
     """Ensure a DesignWorkflow can be deserialized with no created_by field."""
     valid_data['created_by'] = None

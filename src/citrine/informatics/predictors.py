@@ -17,7 +17,7 @@ __all__ = ['ExpressionPredictor', 'GraphPredictor', 'Predictor', 'SimpleMLPredic
 
 
 class Predictor(Module):
-    """Module that describes the ability to compute/predict properties of materials.
+    """[ALPHA] Module that describes the ability to compute/predict properties of materials.
 
     Abstract type that returns the proper type given a serialized dict. subtype
     based on the 'type' value of the passed in dict.
@@ -50,7 +50,7 @@ class Predictor(Module):
 
 
 class SimpleMLPredictor(Serializable['SimplePredictor'], Predictor):
-    """A predictor interface that builds a simple graphical model.
+    """[ALPHA] A predictor interface that builds a simple graphical model.
 
     The model connects the set of inputs through latent variables to the outputs.
     Supported complex inputs (such as chemical formulas) are auto-featurized and machine learning
@@ -126,7 +126,7 @@ class SimpleMLPredictor(Serializable['SimplePredictor'], Predictor):
 
 
 class GraphPredictor(Serializable['GraphPredictor'], Predictor):
-    """A predictor interface that stitches other predictors together.
+    """[ALPHA] A predictor interface that stitches other predictors together.
 
     Parameters
     ----------
@@ -183,7 +183,7 @@ class GraphPredictor(Serializable['GraphPredictor'], Predictor):
 
 
 class ExpressionPredictor(Serializable['ExpressionPredictor'], Predictor):
-    """A predictor interface that allows calculator expressions.
+    """[ALPHA] A predictor interface that allows calculator expressions.
 
     Parameters
     ----------
