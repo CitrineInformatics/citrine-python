@@ -227,7 +227,7 @@ def test_add_all_ingredients(session, project):
 
     # If the process template has an empty allowed_names list then an error should be raised
     session.set_response(
-        ProcessTemplate(process_name, uids={'id': process_id}, allowed_names=[]).dump()
+        ProcessTemplate(process_name, uids={'id': process_id}).dump()
     )
     with pytest.raises(RuntimeError):
         empty_defn().add_all_ingredients(process_template=process_link, project=project,
