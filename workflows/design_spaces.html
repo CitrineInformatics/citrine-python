@@ -43,11 +43,11 @@ Currently, there are two design spaces:</p>
 </ul>
 <div class="section" id="product-design-space">
 <h2>4.4.1.1. Product design space<a class="headerlink" href="#product-design-space" title="Permalink to this headline">¶</a></h2>
-<p>Materials from a product design space are composed from the outer product of univariate dimensions.
+<p>Materials from a product design space are composed from the Cartesian product of univariate dimensions.
 A dimension defines valid values of a single variable.
 Valid values can be finite (i.e. enumerated using a list) or infinite (i.e. defined by upper and lower bounds on real numbers).
-This design space samples materials by taking the outer-product of all dimensions.
-For example, given dimensions <code class="docutils literal notranslate"><span class="pre">temperature</span> <span class="pre">=</span> <span class="pre">[300,</span> <span class="pre">400]</span></code> and <code class="docutils literal notranslate"><span class="pre">time</span> <span class="pre">=</span> <span class="pre">[1,</span> <span class="pre">5,</span> <span class="pre">10]</span></code> the outer product is:</p>
+This design space samples materials by taking the Cartesian product of all dimensions.
+For example, given dimensions <code class="docutils literal notranslate"><span class="pre">temperature</span> <span class="pre">=</span> <span class="pre">[300,</span> <span class="pre">400]</span></code> and <code class="docutils literal notranslate"><span class="pre">time</span> <span class="pre">=</span> <span class="pre">[1,</span> <span class="pre">5,</span> <span class="pre">10]</span></code> the Cartesian product is:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">candidates</span> <span class="o">=</span> <span class="p">[</span>
   <span class="p">[</span><span class="mi">300</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
   <span class="p">[</span><span class="mi">300</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span>
