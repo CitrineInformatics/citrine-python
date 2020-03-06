@@ -2,7 +2,7 @@ from uuid import UUID
 
 import pytest
 from citrine._session import Session
-from citrine.resources.material_run import MaterialRunCollection, MaterialRun
+from citrine.resources.material_run import MaterialRunCollection
 from taurus.entity.object.material_run import MaterialRun as TaurusRun
 from taurus.entity.bounds.integer_bounds import IntegerBounds
 
