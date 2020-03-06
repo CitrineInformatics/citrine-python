@@ -10,11 +10,11 @@ Currently, there are two design spaces:
 Product design space
 --------------------
 
-Materials from a product design space are composed from the outer product of univariate dimensions.
+Materials from a product design space are composed from the Cartesian product of univariate dimensions.
 A dimension defines valid values of a single variable.
 Valid values can be finite (i.e. enumerated using a list) or infinite (i.e. defined by upper and lower bounds on real numbers).
-This design space samples materials by taking the outer-product of all dimensions.
-For example, given dimensions ``temperature = [300, 400]`` and ``time = [1, 5, 10]`` the outer product is:
+This design space samples materials by taking the Cartesian product of all dimensions.
+For example, given dimensions ``temperature = [300, 400]`` and ``time = [1, 5, 10]`` the Cartesian product is:
 
 ::
 
