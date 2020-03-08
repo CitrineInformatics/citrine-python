@@ -325,6 +325,41 @@ class List(Property[list, list]):
         return serialized
 
 
+class Set(Property[set, set]):
+
+    def __init__(self,
+                 element_type: typing.Union[Property, typing.Type[Property]],
+                 serialization_path: typing.Optional[str] = None,
+                 serializable: bool = True,
+                 deserializable: bool = True,
+                 default: typing.Optional[DeserializedType] = None):
+        super().__init__(serialization_path,
+                         serializable,
+                         deserializable,
+                         default)
+        self.element_type = element_type if isinstance(element_type, Property) else element_type()
+
+    @property
+    def underlying_types(self):
+        return set
+
+    @property
+    def serialized_types(self):
+        return set
+
+    def _deserialize(self, value: set) -> set:
+        deserialized = set()
+        for element in value:
+            deserialized.add(self.element_type.deserialize(element))
+        return deserialized
+
+    def _serialize(self, value: set) -> set:
+        serialized = set()
+        for element in value:
+            serialized.add(self.element_type.serialize(element))
+        return serialized
+
+
 class MixedList(Property[list, list]):
     """A finite list in which the type of each entry is specified."""
 
