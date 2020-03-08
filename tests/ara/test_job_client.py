@@ -10,7 +10,7 @@ def task_node_1() -> dict:
 
 def task_node_2() -> dict:
     tn2 = {'id': 'dave_id2', 'task_type': 'dave_type', 'status': 'dave_status', 'failure_reason': 'because I failed',
-                   'dependencies': {'dep3', 'dep4'}}
+                   'dependencies': ['dep3', 'dep4']}
     return tn2
 
 

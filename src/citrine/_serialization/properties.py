@@ -325,7 +325,7 @@ class List(Property[list, list]):
         return serialized
 
 
-class Set(Property[set, set]):
+class Set(Property[set, typing.Iterable]):
 
     def __init__(self,
                  element_type: typing.Union[Property, typing.Type[Property]],
@@ -345,9 +345,9 @@ class Set(Property[set, set]):
 
     @property
     def serialized_types(self):
-        return set
+        return typing.Iterable
 
-    def _deserialize(self, value: set) -> set:
+    def _deserialize(self, value: typing.Iterable) -> set:
         deserialized = set()
         for element in value:
             deserialized.add(self.element_type.deserialize(element))
