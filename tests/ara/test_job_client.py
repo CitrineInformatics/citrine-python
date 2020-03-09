@@ -10,7 +10,7 @@ def task_node_1() -> dict:
 
 def task_node_2() -> dict:
     tn2 = {'id': 'dave_id2', 'task_type': 'dave_type', 'status': 'dave_status', 'failure_reason': 'because I failed',
-                   'dependencies': ['dep3', 'dep4']}
+                   'dependencies': {'dep3', 'dep4'}}
     return tn2
 
 
@@ -21,9 +21,13 @@ def job_status() -> dict:
 
 def test_tn_serde():
     tn = TaskNode.build(task_node_1())
-    assert tn.dump() == task_node_1()
+    expected = task_node_1()
+    expected['failure_reason'] = None
+    assert tn.dump() == expected
 
 
 def test_js_serde():
     js = JobStatusResponse.build(job_status())
-    assert js.dump() == job_status()
+    expected = job_status()
+    expected['tasks'][0]['failure_reason'] = None
+    assert js.dump() == expected
