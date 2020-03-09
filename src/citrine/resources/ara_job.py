@@ -20,6 +20,8 @@ class AraJobSubmissionResponse(Resource['AraJobStatus']):
     job_id: UUID
         job id of the of a job submission request
     """
+    job_id = properties.UUID("job_id")
+
     def __init__(self, job_id: UUID):
         self.job_id = job_id
 
@@ -139,23 +141,16 @@ class AraJobFramework(Resource["AraJobFramework"]):
             the ara definition describing the new table
         """
         job_id = uuid4()
-        url_suffix: str = "/ara-definitions{ara_definition}/versions/{version_number}/build?job_id={job_id}"
-        if ara_def.version_number is None:
-            return ApiError(400, "Version number was not present request", None)
-        elif ara_def.definition_uid is None:
-            return ApiError(400, "Ara Definition UID was not present request", None)
-        elif project.uid is None:
-            return ApiError(400, "Project UUID was not present request", None)
-        else:
-            path: str = self._path_template.format(
-                project_id=project.uid
-            ) + url_suffix.format(
-                ara_definition=ara_def.definition_uid,
-                version_number=ara_def.version_number,
-                job_id=job_id
-            )
-            response: dict = self.session.post_resource(path=path)
-            return AraJobSubmissionResponse.build(response)
+        url_suffix: str = "/ara-definitions/{ara_definition}/versions/{version_number}/build?job_id={job_id}"
+        path: str = self._path_template.format(
+            project_id=project.uid
+        ) + url_suffix.format(
+            ara_definition=ara_def.definition_uid,
+            version_number=ara_def.version_number,
+            job_id=job_id
+        )
+        response: dict = self.session.post_resource(path=path, json={})
+        return AraJobSubmissionResponse.build(response)
 
     def get_job_status(self, project: Project, job_id: str):
         """
@@ -169,11 +164,8 @@ class AraJobFramework(Resource["AraJobFramework"]):
             The job we retrieve the status for
         """
         url_suffix: str = "/execution/job-status?job_id={job_id}"
-        if project.uid is None:
-            return ApiError(400, "Project UUID was not present request", None)
-        else:
-            path: str = self._path_template.format(
-                project_id=project.uid
-            ) + url_suffix.format(job_id=job_id)
-            response: dict = self.session.post_resource(path=path)
-            return JobStatusResponse.build(response)
+        path: str = self._path_template.format(
+            project_id=project.uid
+        ) + url_suffix.format(job_id=job_id)
+        response: dict = self.session.get_resource(path=path)
+        return JobStatusResponse.build(response)

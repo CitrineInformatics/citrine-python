@@ -1,5 +1,13 @@
+from uuid import UUID
+
 import pytest
-from citrine.resources.ara_job import TaskNode, JobStatusResponse
+from citrine.resources.ara_definition import AraDefinition
+from citrine.resources.ara_job import TaskNode, JobStatusResponse, AraJobFramework, AraJobSubmissionResponse
+from citrine.resources.project import Project
+
+from tests.utils.factories import AraDefinitionFactory
+from tests.utils.session import FakeSession, FakeCall
+from citrine._session import Session
 
 
 def task_node_1() -> dict:
@@ -19,15 +27,68 @@ def job_status() -> dict:
     return js
 
 
+@pytest.fixture
+def session() -> FakeSession:
+    return FakeSession()
+
+
+@pytest.fixture
+def job_framework(session: FakeSession) -> AraJobFramework:
+    return AraJobFramework(session)
+
+
+@pytest.fixture
+def ara_def() -> AraDefinition:
+    ara_def: AraDefinition = AraDefinition(name="name", description="description", datasets=[], rows=[], variables=[], columns=[])
+    ara_def.version_number = 1
+    ara_def.definition_uid = UUID('12345678-1234-1234-1234-123456789bbb')
+    return ara_def
+
+
+@pytest.fixture
+def project(session: FakeSession) -> Project:
+    project = Project(
+        name="Test Ara project",
+        session=session
+    )
+    project.uid = UUID('6b608f78-e341-422c-8076-35adc8828545')
+    return project
+
+
 def test_tn_serde():
     tn = TaskNode.build(task_node_1())
     expected = task_node_1()
     expected['failure_reason'] = None
-    assert tn.dump() == expected
+    expected_tn = TaskNode(
+        id=expected['id'],
+        task_type=expected['task_type'],
+        status=expected['status'],
+        dependencies=expected['dependencies'],
+        failure_reason=expected['failure_reason']
+    )
+    assert tn.dump() == expected_tn.dump()
 
 
 def test_js_serde():
     js = JobStatusResponse.build(job_status())
     expected = job_status()
     expected['tasks'][0]['failure_reason'] = None
-    assert js.dump() == expected
+    expected_js = JobStatusResponse(
+        job_type=expected['job_type'],
+        status=expected['status'],
+        tasks=[TaskNode.build(i) for i in expected['tasks']])
+    assert js.dump() == expected_js.dump()
+
+
+def test_build_job(job_framework: AraJobFramework, project: Project, ara_def: AraDefinition):
+    job_framework.session.set_response({"job_id": '12345678-1234-1234-1234-123456789ccc'})
+    resp = job_framework.build_ara_table(project, ara_def)
+    assert resp.dump() == AraJobSubmissionResponse(UUID('12345678-1234-1234-1234-123456789ccc')).dump()
+
+
+def test_job_status(job_framework: AraJobFramework, project: Project, ara_def: AraDefinition):
+    status = job_status()
+    job_framework.session.set_response(status)
+    resp = job_framework.get_job_status(project=project, job_id='12345678-1234-1234-1234-123456789ccc')
+    status['tasks'][0]['failure_reason'] = None
+    assert status == resp.dump()
