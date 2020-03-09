@@ -1,4 +1,4 @@
-from typing import List, Union, Optional, Set, Any
+from typing import List, Union, Optional, Set
 from uuid import UUID
 from uuid import uuid4
 
@@ -10,9 +10,15 @@ from citrine.resources.ara_definition import AraDefinition
 from citrine.resources.project import Project
 from citrine._serialization import properties
 
+
 class AraJobSubmissionResponse(Resource['AraJobStatus']):
     """
     [ALPHA] a response to a submit-job request for the job submission framework
+
+    Parameters
+    ----------
+    job_id: UUID
+        job id of the of a job submission request
     """
     def __init__(self, job_id: UUID):
         self.job_id = job_id
@@ -21,6 +27,19 @@ class AraJobSubmissionResponse(Resource['AraJobStatus']):
 class TaskNode(Resource['TaskNode']):
     """
     [ALPHA] individual task status
+
+    Parameters
+    ----------
+    id: str
+        unique identification number for the job task.
+    task_type: str
+        the type of task running
+    status: str
+        the last reported status of this particular task.
+    dependencies: Set[str]
+        all the tasks that this task is dependent on.
+    failure_reason: Optional[str]
+        if a task has failed, the failure reason will be in this parameter.
     """
     id = properties.String("id")
     task_type = properties.String("task_type")
@@ -64,6 +83,15 @@ class TaskNodeType(Property[TaskNode, dict]):
 class JobStatusResponse(Resource['JobStatusResponse']):
     """
     [ALPHA] a response to a job status check
+
+    Parameters
+    ----------
+    job_type: str
+        the type of job for this status report
+    status: str
+        the actual status of the job
+    tasks: List[TaskNode]
+        all of the constituent task required to complete this job
     """
 
     job_type = properties.String("job_type")
@@ -85,7 +113,10 @@ class AraJobFramework(Resource["AraJobFramework"]):
     """
     [ALPHA] a resource for submitting a job and getting job status
 
-    Example: http://localhost:8402/api/v1/projects/{{projectId}}/ara-definitions/{...}/versions/{...}/build?job_id={...}
+    Parameters
+    ----------
+    session: Session
+        the remote session for hitting framework endpoints
     """
     _path_template = 'projects/{project_id}'
 
@@ -94,6 +125,19 @@ class AraJobFramework(Resource["AraJobFramework"]):
 
     def build_ara_table(self, project: Project,
                         ara_def: AraDefinition) -> Union[ApiError, AraJobSubmissionResponse]:
+        """
+        [ALPHA] submit an ara table construction job
+
+        This method makes a call out to the job framework to start a new job to build
+        the respective table for a given AraDefinition.
+
+        Parameters
+        ----------
+        project: Project
+            The project on behalf of which the job executes.
+        ara_def: AraDefinition
+            the ara definition describing the new table
+        """
         job_id = uuid4()
         url_suffix: str = "/ara-definitions{ara_definition}/versions/{version_number}/build?job_id={job_id}"
         if ara_def.version_number is None:
@@ -114,6 +158,16 @@ class AraJobFramework(Resource["AraJobFramework"]):
             return AraJobSubmissionResponse.build(response)
 
     def get_job_status(self, project: Project, job_id: str):
+        """
+        [ALPHA] get status of a running job
+
+        Parameters
+        ----------
+        project: Project
+            The project on behalf of which we retrieve a job status
+        job_id: str
+            The job we retrieve the status for
+        """
         url_suffix: str = "/execution/job-status?job_id={job_id}"
         if project.uid is None:
             return ApiError(400, "Project UUID was not present request", None)
@@ -123,30 +177,3 @@ class AraJobFramework(Resource["AraJobFramework"]):
             ) + url_suffix.format(job_id=job_id)
             response: dict = self.session.post_resource(path=path)
             return JobStatusResponse.build(response)
-
-print("stuff...")
-task_node_1 = {}
-task_node_1['id'] = 'dave_id1'
-task_node_1['task_type'] = 'dave_type'
-task_node_1['status'] = 'dave_status'
-task_node_1['dependencies'] = {'dep1', 'dep2'}
-
-task_node_2 = {}
-task_node_2['id'] = 'dave_id2'
-task_node_2['task_type'] = 'dave_type'
-task_node_2['status'] = 'dave_status'
-task_node_2['dependencies'] = ['dep3', 'dep4']
-task_node_2['failure_reason'] = "because I failed silly buns"
-tn1 = TaskNode.build(task_node_1)
-tn2 = TaskNode.build(task_node_2)
-
-job_status = {}
-job_status['job_type'] = "dave_job_type"
-job_status['status'] = "david_job_status"
-job_status["tasks"] = [task_node_1, task_node_2]
-
-print(str(tn2))
-print(str(tn2.dump()))
-js = JobStatusResponse.build(job_status)
-print(str(js))
-print(str(js.dump()))

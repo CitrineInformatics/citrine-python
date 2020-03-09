@@ -66,7 +66,7 @@ class AraDefinition(Resource["AraDefinition"]):
         self.version_number = version_number
         self.definition_uid = definition_uid
 
-        # Note that these validations only apply at construction time. The current intended usage
+            # Note that these validations only apply at construction time. The current intended usage
         # is for this object to be created holistically; if changed, then these will need
         # to move into setters.
         names = [x.name for x in variables]
