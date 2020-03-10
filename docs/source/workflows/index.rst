@@ -80,16 +80,4 @@ Validation status can be one of the following states:
 
 Validation of a workflow and all constituent modules must complete with ready status before the workflow can be executed.
 
-Table of Contents
------------------
 
-.. toctree::
-    :maxdepth: 2
-
-    design_spaces
-    predictors
-    predictor_reports
-    processors
-    scores
-    design_workflows
-    performance_workflows
