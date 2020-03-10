@@ -2,12 +2,10 @@ from uuid import UUID
 
 import pytest
 from citrine.resources.ara_definition import AraDefinition
-from citrine.resources.ara_job import TaskNode, JobStatusResponse, AraJobFramework, AraJobSubmissionResponse
+from citrine.resources.ara_job import TaskNode, JobStatusResponse, AraJobFramework, JobSubmissionResponse
 from citrine.resources.project import Project
 
-from tests.utils.factories import AraDefinitionFactory
-from tests.utils.session import FakeSession, FakeCall
-from citrine._session import Session
+from tests.utils.session import FakeSession
 
 
 def task_node_1() -> dict:
@@ -83,7 +81,7 @@ def test_js_serde():
 def test_build_job(job_framework: AraJobFramework, project: Project, ara_def: AraDefinition):
     job_framework.session.set_response({"job_id": '12345678-1234-1234-1234-123456789ccc'})
     resp = job_framework.build_ara_table(project, ara_def)
-    assert resp.dump() == AraJobSubmissionResponse(UUID('12345678-1234-1234-1234-123456789ccc')).dump()
+    assert resp.dump() == JobSubmissionResponse(UUID('12345678-1234-1234-1234-123456789ccc')).dump()
 
 
 def test_job_status(job_framework: AraJobFramework, project: Project, ara_def: AraDefinition):

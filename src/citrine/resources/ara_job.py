@@ -2,7 +2,7 @@ from typing import List, Union, Optional, Set
 from uuid import UUID
 from uuid import uuid4
 
-from citrine._serialization.properties import Set as PropertySet, String, Property
+from citrine._serialization.properties import Set as PropertySet, String, Property, Object
 from citrine._rest.resource import Resource
 from citrine._session import Session
 from citrine.resources.api_error import ApiError
@@ -11,7 +11,7 @@ from citrine.resources.project import Project
 from citrine._serialization import properties
 
 
-class AraJobSubmissionResponse(Resource['AraJobStatus']):
+class JobSubmissionResponse(Resource['AraJobStatus']):
     """
     [ALPHA] a response to a submit-job request for the job submission framework
 
@@ -64,24 +64,6 @@ class TaskNode(Resource['TaskNode']):
         self.failure_reason = failure_reason
 
 
-class TaskNodeType(Property[TaskNode, dict]):
-    @property
-    def underlying_types(self):
-        return TaskNode
-
-    @property
-    def serialized_types(self):
-        return dict
-
-    def _serialize(self, value: TaskNode) -> dict:
-        result = {"id": value.id, "task_type": value.task_type, "status": value.status,
-                  "failure_reason": value.failure_reason, "dependencies": value.dependencies}
-        return result
-
-    def _deserialize(self, value: dict) -> TaskNode:
-        return TaskNode.build(value)
-
-
 class JobStatusResponse(Resource['JobStatusResponse']):
     """
     [ALPHA] a response to a job status check
@@ -98,7 +80,7 @@ class JobStatusResponse(Resource['JobStatusResponse']):
 
     job_type = properties.String("job_type")
     status = properties.String("status")
-    tasks = properties.List(TaskNodeType, "tasks")
+    tasks = properties.List(Object(TaskNode), "tasks")
 
     def __init__(
             self,
@@ -126,7 +108,7 @@ class AraJobFramework(Resource["AraJobFramework"]):
         self.session = session
 
     def build_ara_table(self, project: Project,
-                        ara_def: AraDefinition) -> Union[ApiError, AraJobSubmissionResponse]:
+                        ara_def: AraDefinition) -> Union[ApiError, JobSubmissionResponse]:
         """
         [ALPHA] submit an ara table construction job
 
@@ -150,7 +132,7 @@ class AraJobFramework(Resource["AraJobFramework"]):
             job_id=job_id
         )
         response: dict = self.session.post_resource(path=path, json={})
-        return AraJobSubmissionResponse.build(response)
+        return JobSubmissionResponse.build(response)
 
     def get_job_status(self, project: Project, job_id: str):
         """
