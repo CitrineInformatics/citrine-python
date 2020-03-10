@@ -1,8 +1,8 @@
 from uuid import UUID
 
 import pytest
-from citrine.resources.ara_definition import AraDefinition
-from citrine.resources.ara_job import TaskNode, JobStatusResponse, AraJobFramework, JobSubmissionResponse
+from citrine.resources.ara_definition import AraDefinition, AraDefinitionCollection
+from citrine.resources.ara_job import TaskNode, JobStatusResponse, JobSubmissionResponse
 from citrine.resources.project import Project
 
 from tests.utils.session import FakeSession
@@ -31,8 +31,11 @@ def session() -> FakeSession:
 
 
 @pytest.fixture
-def job_framework(session: FakeSession) -> AraJobFramework:
-    return AraJobFramework(session)
+def collection(session) -> AraDefinitionCollection:
+    return AraDefinitionCollection(
+        project_id=UUID('6b608f78-e341-422c-8076-35adc8828545'),
+        session=session
+    )
 
 
 @pytest.fixture
@@ -78,15 +81,15 @@ def test_js_serde():
     assert js.dump() == expected_js.dump()
 
 
-def test_build_job(job_framework: AraJobFramework, project: Project, ara_def: AraDefinition):
-    job_framework.session.set_response({"job_id": '12345678-1234-1234-1234-123456789ccc'})
-    resp = job_framework.build_ara_table(project, ara_def)
+def test_build_job(collection: AraDefinitionCollection, ara_def: AraDefinition):
+    collection.session.set_response({"job_id": '12345678-1234-1234-1234-123456789ccc'})
+    resp = collection.build_ara_table(ara_def)
     assert resp.dump() == JobSubmissionResponse(UUID('12345678-1234-1234-1234-123456789ccc')).dump()
 
 
-def test_job_status(job_framework: AraJobFramework, project: Project, ara_def: AraDefinition):
+def test_job_status(collection: AraDefinitionCollection):
     status = job_status()
-    job_framework.session.set_response(status)
-    resp = job_framework.get_job_status(project=project, job_id='12345678-1234-1234-1234-123456789ccc')
+    collection.session.set_response(status)
+    resp = collection.get_job_status(job_id='12345678-1234-1234-1234-123456789ccc')
     status['tasks'][0]['failure_reason'] = None
     assert status == resp.dump()
