@@ -1,18 +1,50 @@
 .. _workflows:
 
-[ALPHA] Workflows
+[ALPHA] AI Engine
 =================
+
+Getting Started
+-------
 
 The Citrine Platform provides tools to make data-driven decisions for materials research and development using artificial intelligence (AI) workflows.
 AI Workflows are composed of modules, which provide the ability to programmatically codify domain knowledge, research capabilities and experimental objectives.
 Workflows leverage data and domain knowledge to help materials researchers make traceable, data-driven decisions in pursuit of their research and development goals.
 These capabilities include generating candidates for sequential learning, identifying outliers or imputing missing values.
 
-Modules
+Workflows Overview
+-------
+
+Currently, there are two types of workflows on the AI Engine: the :doc:`DesignWorkflow <design_workflows>` and the :doc:`PerformanceWorkflow <performance_workflows>`.
+Workflows employ reusable modules in order to execute. 
+There are three different types of modules, and these are discussed in greater detail below.
+
+DesignWorkflow
+**********
+
+The :doc:`DesignWorkflow <design_workflows>` is the core AI workflow on the platform.
+This workflow generates scored candidates for sequential learning.
+It requires one of each of the modules listed above and executes in the following manner:
+
+-  Material candidates are pulled from the design space.
+-  The predictor adds additional information to the candidates.
+-  Enriched candidates are scored, and the processor selects the next batch of candidates to pull from the design space.
+
+After a given number of iterations, candidates are ranked according to their score and the best materials are returned.
+(Here, the best materials are those that are most likely to optimize an objective and satisfy a set of constraints.)
+
+Design workflows are further parameterized by :doc:`Scores <scores>`, which codify experimental objectives and constraints on desired candidates, and define the strategy for candidate acquisition.
+
+PerformanceWorkflow
+**********
+
+The :doc:`PerformanceWorkflow <performance_workflows>` is used to perform analysis on a predictor module. The PerformanceWorkflow exists to help the user understand how well their predictor module works with their data: in essence, it describes the trustworthiness of their model. These outcomes are captured in a series of performance metrics.
+
+Modules Overview
 -------
 
 Modules are re-usable computational tools used to construct workflows.
-The modules are dictate how the platform utilizes research data to generate computational results. There are 4 types of modules on the platform:
+The modules dictate how the platform utilizes research data to generate computational results. 
+There are 3 types of modules on the platform:
 
 -  :doc:`Design Spaces <design_spaces>` define the domain of controllable experimental parameters, their allowable values and relevant bounds.
 -  :doc:`Predictors <predictors>` define relations between variables in a table of experimental data.
@@ -33,21 +65,6 @@ Modules come `active` by default when created. If you would like to deactivate a
 
 Modules that are not `active` cannot be used in workflows and will not show up when listing.
 
-Design workflows
-----------------
-
-The :doc:`design workflow <design_workflows>` is the core AI workflow on the platform.
-This workflow generates scored candidates for sequential learning.
-It requires one of each of the modules listed above and executes in the following manner:
-
--  Material candidates are pulled from the design space.
--  The predictor adds additional information to the candidates.
--  Enriched candidates are scored, and the processor selects the next batch of candidates to pull from the design space.
-
-After a given number of iterations, candidates are ranked according to their score and the best materials are returned.
-(Here, the best materials are those that are most likely to optimize an objective and satisfy a set of constraints.)
-
-Design workflows are further parameterized by :doc:`Scores <scores>`, which codify experimental objectives and constraints on desired candidates, and define the strategy for candidate acquisition.
 
 Registration and validation
 ---------------------------
