@@ -67,7 +67,7 @@ class AraDefinition(Resource["AraDefinition"]):
         self.version_number = version_number
         self.definition_uid = definition_uid
 
-            # Note that these validations only apply at construction time. The current intended usage
+        # Note that these validations only apply at construction time. The current intended usage
         # is for this object to be created holistically; if changed, then these will need
         # to move into setters.
         names = [x.name for x in variables]
@@ -230,8 +230,7 @@ class AraDefinitionCollection(Collection[AraDefinition]):
         return defn
 
     def build_ara_table(self, ara_def: AraDefinition) -> JobSubmissionResponse:
-        """
-        [ALPHA] submit an ara table construction job
+        """[ALPHA] submit an ara table construction job.
 
         This method makes a call out to the job framework to start a new job to build
         the respective table for a given AraDefinition.
@@ -242,6 +241,7 @@ class AraDefinitionCollection(Collection[AraDefinition]):
             The project on behalf of which the job executes.
         ara_def: AraDefinition
             the ara definition describing the new table
+
         """
         job_id = uuid4()
         url_suffix: str = "/{ara_definition}/versions/{version_number}/build?job_id={job_id}"
@@ -256,8 +256,9 @@ class AraDefinitionCollection(Collection[AraDefinition]):
         return JobSubmissionResponse.build(response)
 
     def get_job_status(self, job_id: str):
-        """
-        [ALPHA] get status of a running job
+        """[ALPHA] get status of a running job.
+
+        This method grabs a JobStatusResponse object for the given job_id.
 
         Parameters
         ----------
@@ -265,8 +266,8 @@ class AraDefinitionCollection(Collection[AraDefinition]):
             The project on behalf of which we retrieve a job status
         job_id: str
             The job we retrieve the status for
-        """
 
+        """
         url_suffix: str = "/execution/job-status?job_id={job_id}"
         path: str = 'projects/{project_id}'.format(
             project_id=self.project_id

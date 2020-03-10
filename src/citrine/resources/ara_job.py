@@ -7,14 +7,17 @@ from citrine._serialization import properties
 
 
 class JobSubmissionResponse(Resource['AraJobStatus']):
-    """
-    [ALPHA] a response to a submit-job request for the job submission framework
+    """[ALPHA] a response to a submit-job request for the job submission framework.
+
+    This is returned as a successful response from the remote service.
 
     Parameters
     ----------
     job_id: UUID
         job id of the of a job submission request
+
     """
+
     job_id = properties.UUID("job_id")
 
     def __init__(self, job_id: UUID):
@@ -22,8 +25,9 @@ class JobSubmissionResponse(Resource['AraJobStatus']):
 
 
 class TaskNode(Resource['TaskNode']):
-    """
-    [ALPHA] individual task status
+    """[ALPHA] individual task status.
+
+    The TaskNode describes a component of an overall job.
 
     Parameters
     ----------
@@ -37,7 +41,9 @@ class TaskNode(Resource['TaskNode']):
         all the tasks that this task is dependent on.
     failure_reason: Optional[str]
         if a task has failed, the failure reason will be in this parameter.
+
     """
+
     id = properties.String("id")
     task_type = properties.String("task_type")
     status = properties.String("status")
@@ -60,8 +66,9 @@ class TaskNode(Resource['TaskNode']):
 
 
 class JobStatusResponse(Resource['JobStatusResponse']):
-    """
-    [ALPHA] a response to a job status check
+    """[ALPHA] a response to a job status check.
+
+    The JobStatusResponse summarizes the status for the entire job.
 
     Parameters
     ----------
@@ -71,6 +78,7 @@ class JobStatusResponse(Resource['JobStatusResponse']):
         the actual status of the job
     tasks: List[TaskNode]
         all of the constituent task required to complete this job
+
     """
 
     job_type = properties.String("job_type")
