@@ -147,6 +147,37 @@ are compatible (yet, at least).</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="citrine.resources.ara_definition.AraDefinitionCollection.build_ara_table">
+<code class="sig-name descname">build_ara_table</code><span class="sig-paren">(</span><em class="sig-param">ara_def: citrine.resources.ara_definition.AraDefinition</em><span class="sig-paren">)</span> &#x2192; citrine.resources.ara_job.JobSubmissionResponse<a class="headerlink" href="#citrine.resources.ara_definition.AraDefinitionCollection.build_ara_table" title="Permalink to this definition">¶</a></dt>
+<dd><p>[ALPHA] submit an ara table construction job.</p>
+<p>This method makes a call out to the job framework to start a new job to build
+the respective table for a given AraDefinition.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>project</strong> (<a class="reference internal" href="citrine.resources.project.html#citrine.resources.project.Project" title="citrine.resources.project.Project"><em>Project</em></a>) – The project on behalf of which the job executes.</p></li>
+<li><p><strong>ara_def</strong> (<a class="reference internal" href="#citrine.resources.ara_definition.AraDefinition" title="citrine.resources.ara_definition.AraDefinition"><em>AraDefinition</em></a>) – the ara definition describing the new table</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="citrine.resources.ara_definition.AraDefinitionCollection.get_job_status">
+<code class="sig-name descname">get_job_status</code><span class="sig-paren">(</span><em class="sig-param">job_id: str</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.ara_definition.AraDefinitionCollection.get_job_status" title="Permalink to this definition">¶</a></dt>
+<dd><p>[ALPHA] get status of a running job.</p>
+<p>This method grabs a JobStatusResponse object for the given job_id.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>project</strong> (<a class="reference internal" href="citrine.resources.project.html#citrine.resources.project.Project" title="citrine.resources.project.Project"><em>Project</em></a>) – The project on behalf of which we retrieve a job status</p></li>
+<li><p><strong>job_id</strong> (<em>str</em>) – The job we retrieve the status for</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
 <dt id="citrine.resources.ara_definition.AraDefinitionCollection.get_with_version">
 <code class="sig-name descname">get_with_version</code><span class="sig-paren">(</span><em class="sig-param">definition_uid: Union[uuid.UUID, str], version_number: int</em><span class="sig-paren">)</span> &#x2192; citrine.resources.ara_definition.AraDefinition<a class="headerlink" href="#citrine.resources.ara_definition.AraDefinitionCollection.get_with_version" title="Permalink to this definition">¶</a></dt>
 <dd><p>[ALPHA] Get an Ara Definition at a specific version.</p>

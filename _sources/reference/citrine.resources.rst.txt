@@ -8,6 +8,7 @@ Submodules
 
    citrine.resources.api_error
    citrine.resources.ara_definition
+   citrine.resources.ara_job
    citrine.resources.audit_info
    citrine.resources.condition_template
    citrine.resources.data_concepts
