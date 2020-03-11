@@ -1,7 +1,8 @@
 from copy import copy
 from typing import List, Union, Optional
-from uuid import UUID
+from uuid import UUID, uuid4
 
+from citrine.resources.ara_job import JobSubmissionResponse, JobStatusResponse
 from taurus.entity.link_by_uid import LinkByUID
 
 from citrine._rest.collection import Collection
@@ -227,6 +228,52 @@ class AraDefinitionCollection(Collection[AraDefinition]):
         defn.project_id = self.project_id
         defn.session = self.session
         return defn
+
+    def build_ara_table(self, ara_def: AraDefinition) -> JobSubmissionResponse:
+        """[ALPHA] submit an ara table construction job.
+
+        This method makes a call out to the job framework to start a new job to build
+        the respective table for a given AraDefinition.
+
+        Parameters
+        ----------
+        project: Project
+            The project on behalf of which the job executes.
+        ara_def: AraDefinition
+            the ara definition describing the new table
+
+        """
+        job_id = uuid4()
+        url_suffix: str = "/{ara_definition}/versions/{version_number}/build?job_id={job_id}"
+        path: str = self._path_template.format(
+            project_id=self.project_id
+        ) + url_suffix.format(
+            ara_definition=ara_def.definition_uid,
+            version_number=ara_def.version_number,
+            job_id=job_id
+        )
+        response: dict = self.session.post_resource(path=path, json={})
+        return JobSubmissionResponse.build(response)
+
+    def get_job_status(self, job_id: str):
+        """[ALPHA] get status of a running job.
+
+        This method grabs a JobStatusResponse object for the given job_id.
+
+        Parameters
+        ----------
+        project: Project
+            The project on behalf of which we retrieve a job status
+        job_id: str
+            The job we retrieve the status for
+
+        """
+        url_suffix: str = "/execution/job-status?job_id={job_id}"
+        path: str = 'projects/{project_id}'.format(
+            project_id=self.project_id
+        ) + url_suffix.format(job_id=job_id)
+        response: dict = self.session.get_resource(path=path)
+        return JobStatusResponse.build(response)
 
     def preview(self, defn: AraDefinition, preview_roots: List[LinkByUID]) -> dict:
         """[ALPHA] Preview an AraDefinition on an explicit set of roots.
