@@ -35,7 +35,7 @@
 <span id="citrine-resources-ara-job-module"></span><h1>citrine.resources.ara_job module<a class="headerlink" href="#module-citrine.resources.ara_job" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="citrine.resources.ara_job.JobStatusResponse">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.resources.ara_job.</code><code class="sig-name descname">JobStatusResponse</code><span class="sig-paren">(</span><em class="sig-param">job_type: str, status: str, tasks: List[citrine.resources.ara_job.TaskNode]</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.ara_job.JobStatusResponse" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">citrine.resources.ara_job.</code><code class="sig-name descname">JobStatusResponse</code><span class="sig-paren">(</span><em class="sig-param">job_type: str, status: str, tasks: List[citrine.resources.ara_job.TaskNode], output: Optional[Dict[str, str]]</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.ara_job.JobStatusResponse" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.resource.Resource</span></code></p>
 <p>[ALPHA] a response to a job status check.</p>
 <p>The JobStatusResponse summarizes the status for the entire job.</p>
@@ -45,12 +45,18 @@
 <li><p><strong>job_type</strong> (<em>str</em>) – the type of job for this status report</p></li>
 <li><p><strong>status</strong> (<em>str</em>) – the actual status of the job</p></li>
 <li><p><strong>tasks</strong> (<em>List</em><em>[</em><a class="reference internal" href="#citrine.resources.ara_job.TaskNode" title="citrine.resources.ara_job.TaskNode"><em>TaskNode</em></a><em>]</em>) – all of the constituent task required to complete this job</p></li>
+<li><p><strong>output</strong> (<em>Optional</em><em>[</em><em>Map</em><em>[</em><em>String</em><em>,</em><em>String</em><em>]</em><em>]</em>) – job output properties and results</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="attribute">
 <dt id="citrine.resources.ara_job.JobStatusResponse.job_type">
 <code class="sig-name descname">job_type</code><em class="property"> = None</em><a class="headerlink" href="#citrine.resources.ara_job.JobStatusResponse.job_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.resources.ara_job.JobStatusResponse.output">
+<code class="sig-name descname">output</code><em class="property"> = None</em><a class="headerlink" href="#citrine.resources.ara_job.JobStatusResponse.output" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
