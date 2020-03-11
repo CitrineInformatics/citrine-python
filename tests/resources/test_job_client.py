@@ -120,5 +120,10 @@ def test_job_status(collection: AraDefinitionCollection):
     status['output'] = None
     assert status == resp.dump()
 
-js = JobStatusResponse.build(job_status_with_output())
-print(str(js))
+
+def test_job_status_with_output(collection: AraDefinitionCollection):
+    status = job_status_with_output()
+    collection.session.set_response(status)
+    resp = collection.get_job_status(job_id='12345678-1234-1234-1234-123456789ccc')
+    status['tasks'][0]['failure_reason'] = None
+    assert status == resp.dump()
