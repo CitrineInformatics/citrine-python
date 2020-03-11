@@ -1,9 +1,10 @@
-from typing import List, Optional, Set
+from typing import List, Optional, Set, Mapping, Dict
 from uuid import UUID
 
 from citrine._serialization.properties import Set as PropertySet, String, Object
 from citrine._rest.resource import Resource
 from citrine._serialization import properties
+from taurus.entity.dict_serializable import DictSerializable
 
 
 class JobSubmissionResponse(Resource['AraJobStatus']):
@@ -65,7 +66,7 @@ class TaskNode(Resource['TaskNode']):
         self.failure_reason = failure_reason
 
 
-class JobStatusResponse(Resource['JobStatusResponse']):
+class JobStatusResponse(Resource['JobStatusResponse'], DictSerializable):
     """[ALPHA] a response to a job status check.
 
     The JobStatusResponse summarizes the status for the entire job.
@@ -84,13 +85,16 @@ class JobStatusResponse(Resource['JobStatusResponse']):
     job_type = properties.String("job_type")
     status = properties.String("status")
     tasks = properties.List(Object(TaskNode), "tasks")
+    output = properties.Mapping(String('scope'), String('id'), 'output')
 
     def __init__(
             self,
             job_type: str,
             status: str,
-            tasks: List[TaskNode]
+            tasks: List[TaskNode],
+            output: Optional[Dict[str, str]] = None
     ):
         self.job_type = job_type
         self.status = status
         self.tasks = tasks
+        self.output = output
