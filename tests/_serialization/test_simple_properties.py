@@ -187,6 +187,25 @@ class EnumerationExample(BaseEnumeration):
     BAR = "bar"
 
 
+def test_union_runtime_errors():
+    """
+    De/serialization of Union ignores value errors.
+    They indicate that a specific property is not the one that should be used for de/ser.
+
+    If a different type of value error occurs then it can result in a difficult-to-diagnose
+    error state and a runtime error is thrown.
+    This test illustrates how that can happen for both serialization and deserialization.
+
+    """
+    # The underlying type is correct (BaseEnumeration) but FOO is not part of that enumeration
+    with pytest.raises(RuntimeError):
+        Union([Enumeration(BaseEnumeration)]).serialize(EnumerationExample.FOO)
+    # The serialized type is correct (dict) but it is missing fields
+    incomplete_dataset_dict = {'name': 'name'}
+    with pytest.raises(RuntimeError):
+        Union([Object(Dataset)]).deserialize(incomplete_dataset_dict)
+
+
 def test_enumeration_ser():
     assert Enumeration(EnumerationExample).serialize(EnumerationExample.FOO) == "foo"
 
