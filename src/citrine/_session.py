@@ -81,7 +81,7 @@ class Session(requests.Session):
 
         try:
             response = super().request(method, uri, **kwargs)
-        except ConnectionResetError:
+        except (ConnectionError, ConnectionResetError):
             logger.debug('Connection Reset, creating a new session')
             super().__init__()
             response = super().request(method, uri, **kwargs)

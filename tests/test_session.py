@@ -195,3 +195,23 @@ def test_cursor_paged_resource():
     assert list(Session.cursor_paged_resource(fake_request, 'foo', forward=True, per_page=10)) == full_result_set
     assert list(Session.cursor_paged_resource(fake_request, 'foo', forward=True, per_page=26)) == full_result_set
     assert list(Session.cursor_paged_resource(fake_request, 'foo', forward=True, per_page=40)) == full_result_set
+
+
+def test_connection_reset_error_starts_new_session(session: Session):
+    call_count = 0
+
+    # This function is used to raise a ConnectionResetError on the first call and otherwise True.  This execises
+    # the code that recreates the session and retries the request.
+    def error_on_first_call(_):
+        nonlocal call_count
+        if call_count == 0:
+            call_count += 1
+            raise ConnectionResetError
+        else:
+            return True
+
+    with requests_mock.Mocker() as m:
+        m.register_uri('GET', 'http://citrine-testing.fake/api/v1/foo',
+                       additional_matcher=error_on_first_call, text=json.dumps({'hello': 'world'}))
+
+        session.get_resource('/foo')
