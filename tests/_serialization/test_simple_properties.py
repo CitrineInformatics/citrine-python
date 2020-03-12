@@ -16,6 +16,7 @@ from citrine._serialization.properties import (
     Object,
     Optional,
     String,
+    Union,
     UUID,
 )
 from ._data import (
@@ -167,6 +168,18 @@ def test_mixed_list_cannot_serialize_larger_lists():
 def test_mixed_list_with_defaults():
     ml = SpecifiedMixedList([Integer, Integer, Integer(default=100)])
     assert [1, 2, 100] == ml.serialize([1, 2])
+
+
+def test_union():
+    # Attempt to de/serialize first with Integer, then LinkOrElse, then String
+    union_type = Union([Integer, LinkOrElse, String])
+    assert 3 == union_type.deserialize(3)
+    assert 3 == union_type.serialize(3)
+    # Since "3" can be deserialized with Integer, this deserializes as an int
+    assert 3 == union_type.deserialize("3")
+    assert "3" == union_type.serialize("3")
+    with pytest.raises(ValueError):
+        union_type.deserialize(1.7)
 
 
 class EnumerationExample(BaseEnumeration):

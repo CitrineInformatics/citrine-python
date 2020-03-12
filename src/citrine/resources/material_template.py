@@ -4,7 +4,8 @@ from typing import List, Dict, Optional, Union, Sequence, Type
 from citrine._rest.resource import Resource
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Optional as PropertyOptional
-from citrine._serialization.properties import String, Mapping, Object, SpecifiedMixedList, LinkOrElse
+from citrine._serialization.properties import String, Mapping, Object, SpecifiedMixedList, \
+    LinkOrElse
 from citrine._utils.functions import set_default_uid
 from citrine.resources.data_concepts import DataConcepts, DataConceptsCollection
 from citrine.resources.property_template import PropertyTemplate

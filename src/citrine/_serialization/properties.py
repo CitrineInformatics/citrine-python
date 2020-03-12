@@ -362,7 +362,11 @@ class Set(Property[set, typing.Iterable]):
 
 
 class Union(Property[typing.Any, typing.Any]):
-    """One of several possible property types."""
+    """
+    One of several possible property types.
+
+    Attempted de/serialization is done in the order in which types are provided in the constructor.
+    """
 
     def __init__(self,
                  element_types: typing.Sequence[typing.Union[Property, typing.Type[Property]]],
@@ -382,14 +386,14 @@ class Union(Property[typing.Any, typing.Any]):
     @property
     def underlying_types(self):
         all_underlying_types = [prop.underlying_types for prop in self.element_types]
-        return tuple(chain(*[typ if isinstance(typ, tuple)
-                             else (typ,) for typ in all_underlying_types]))
+        return tuple(set(chain(*[typ if isinstance(typ, tuple)
+                                 else (typ,) for typ in all_underlying_types])))
 
     @property
     def serialized_types(self):
         all_serialized_types = [prop.serialized_types for prop in self.element_types]
-        return tuple(chain(*[typ if isinstance(typ, tuple)
-                             else (typ,) for typ in all_serialized_types]))
+        return tuple(set(chain(*[typ if isinstance(typ, tuple)
+                                 else (typ,) for typ in all_serialized_types])))
 
     def _serialize(self, value: typing.Any) -> typing.Any:
         for prop in self.element_types:
