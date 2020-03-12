@@ -53,7 +53,7 @@ class Variable(PolymorphicSerializable['Variable']):
             RootInfo, AttributeByTemplate, AttributeByTemplateAfterProcessTemplate,
             AttributeByTemplateAndObjectTemplate, IngredientIdentifierByProcessTemplateAndName,
             IngredientLabelByProcessAndName, IngredientQuantityByProcessAndName,
-            RootIdentifier, AttributeInTrunk
+            RootIdentifier, AttributeInOutput
         ]
         res = next((x for x in types if x.typ == data["type"]), None)
         if res is None:
@@ -400,8 +400,8 @@ class RootIdentifier(Serializable['RootIdentifier'], Variable):
         self.scope = scope
 
 
-class AttributeInTrunk(
-        Serializable['AttributeInTrunk'], Variable):
+class AttributeInOutput(
+        Serializable['AttributeInOutput'], Variable):
     """[ALPHA] Attribute marked by an attribute template in the trunk of the history tree.
 
     The search for an attribute that marks the given attribute template starts at the root

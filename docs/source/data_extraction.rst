@@ -152,7 +152,7 @@ There are several ways to define variables that take their values from Attribute
   * :class:`~citrine.ara.variables.AttributeByTemplate`: for when the attribute occurs once per material history
   * :class:`~citrine.ara.variables.AttributeByTemplateAndObjectTemplate`: for when the attributes are distinguished by the object that they are contained in
   * :class:`~citrine.ara.variables.AttributeByTemplateAfterProcess`: for when measurements are distinguished by the process that precedes them
-  * :class:`~citrine.ara.variables.AttributeInTrunk`: for when attributes occur both in a process output and one or more of its inputs
+  * :class:`~citrine.ara.variables.AttributeInOutput`: for when attributes occur both in a process output and one or more of its inputs
   * :class:`~citrine.ara.variables.IngredientQuantityByProcessAndName`: for the specific case of the volume fraction, mass fraction, number fraction, or absolute quantity of an ingredient
 
 * Fields
