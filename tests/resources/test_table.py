@@ -63,7 +63,7 @@ def test_get_table_metadata(collection, session):
     assert 1 == session.num_calls
     expect_call = FakeCall(
         method="GET",
-        path="projects/{}/tables/{}/versions/{}".format(project_id, table["id"], table["version"])
+        path="projects/{}/display-tables/{}/versions/{}".format(project_id, table["id"], table["version"])
     )
     assert session.last_call == expect_call
     assert str(retrieved_table.uid) == table["id"]

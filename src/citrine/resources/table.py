@@ -55,7 +55,7 @@ class Table(Resource['Table']):
 class TableCollection(Collection[Table]):
     """Represents the collection of all tables associated with a project."""
 
-    _path_template = 'projects/{project_id}/tables'
+    _path_template = 'projects/{project_id}/display-tables'
 
     def __init__(self, project_id: UUID, session: Session):
         self.project_id = project_id
