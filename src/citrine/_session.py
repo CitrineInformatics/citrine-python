@@ -79,7 +79,12 @@ class Session(requests.Session):
             logger.debug('\t{}: {}'.format(k, v))
         logger.debug('END request details.')
 
-        response = super().request(method, uri, **kwargs)
+        try:
+            response = super().request(method, uri, **kwargs)
+        except ConnectionResetError:
+            logger.debug('Connection Reset, creating a new session')
+            super().__init__()
+            response = super().request(method, uri, **kwargs)
 
         try:
             if response.status_code == 401 and response.json().get("reason") == "invalid-token":
