@@ -116,7 +116,7 @@ class AttributeByTemplate(Serializable['AttributeByTemplate'], Variable):
     template = properties.Object(LinkByUID, 'template')
     attribute_constraints = properties.Optional(
         properties.List(
-            properties.MixedList([properties.Object(LinkByUID), properties.Object(BaseBounds)])
+            properties.SpecifiedMixedList([properties.Object(LinkByUID), properties.Object(BaseBounds)])
         ), 'attribute_constraints')
     typ = properties.String('type', default="attribute_by_template", deserializable=False)
 
@@ -161,7 +161,7 @@ class AttributeByTemplateAfterProcessTemplate(
     process_template = properties.Object(LinkByUID, 'process_template')
     attribute_constraints = properties.Optional(
         properties.List(
-            properties.MixedList([properties.Object(LinkByUID), properties.Object(BaseBounds)])
+            properties.SpecifiedMixedList([properties.Object(LinkByUID), properties.Object(BaseBounds)])
         ), 'attribute_constraints')
     typ = properties.String('type', default="attribute_after_process", deserializable=False)
 
@@ -213,7 +213,7 @@ class AttributeByTemplateAndObjectTemplate(
     object_template = properties.Object(LinkByUID, 'object_template')
     attribute_constraints = properties.Optional(
         properties.List(
-            properties.MixedList([properties.Object(LinkByUID), properties.Object(BaseBounds)])
+            properties.SpecifiedMixedList([properties.Object(LinkByUID), properties.Object(BaseBounds)])
         ), 'attribute_constraints')
     typ = properties.String('type', default="attribute_by_object", deserializable=False)
 

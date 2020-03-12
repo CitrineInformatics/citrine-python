@@ -3,6 +3,7 @@ import arrow
 import uuid
 from taurus.enumeration.base_enumeration import BaseEnumeration
 
+
 from citrine.resources.dataset import Dataset
 from citrine._serialization.properties import (
     Datetime,
@@ -11,7 +12,7 @@ from citrine._serialization.properties import (
     Integer,
     LinkByUID,
     LinkOrElse,
-    MixedList,
+    SpecifiedMixedList,
     Object,
     Optional,
     String,
@@ -138,17 +139,17 @@ def test_datetime_cannot_deserialize_float():
 
 def test_mixed_list_requires_property_list():
     with pytest.raises(ValueError):
-        MixedList(Integer)
+        SpecifiedMixedList(Integer)
 
 
 def test_deserialize_mixed_list():
-    ml = MixedList([Integer, String])
+    ml = SpecifiedMixedList([Integer, String])
     assert [1, '2'] == ml.deserialize([1, '2'])
     assert [1, None] == ml.deserialize([1])
 
 
 def test_mixed_list_cannot_deserialize_larger_lists():
-    ml = MixedList([Integer])
+    ml = SpecifiedMixedList([Integer])
     with pytest.raises(ValueError):
         ml.deserialize([1, '2'])
     with pytest.raises(ValueError):
@@ -156,7 +157,7 @@ def test_mixed_list_cannot_deserialize_larger_lists():
 
 
 def test_mixed_list_cannot_serialize_larger_lists():
-    ml = MixedList([Integer])
+    ml = SpecifiedMixedList([Integer])
     with pytest.raises(ValueError):
         ml.serialize([1, '2'])
     with pytest.raises(ValueError):
@@ -164,7 +165,7 @@ def test_mixed_list_cannot_serialize_larger_lists():
 
 
 def test_mixed_list_with_defaults():
-    ml = MixedList([Integer, Integer, Integer(default=100)])
+    ml = SpecifiedMixedList([Integer, Integer, Integer(default=100)])
     assert [1, 2, 100] == ml.serialize([1, 2])
 
 

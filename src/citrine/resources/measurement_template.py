@@ -2,7 +2,7 @@
 from typing import List, Dict, Optional, Union, Sequence, Type
 
 from citrine._rest.resource import Resource
-from citrine._serialization.properties import String, Mapping, Object, MixedList, LinkOrElse
+from citrine._serialization.properties import String, Mapping, Object, SpecifiedMixedList, LinkOrElse
 from citrine._serialization.properties import Optional as PropertyOptional
 from citrine._serialization.properties import List as PropertyList
 from citrine._utils.functions import set_default_uid
@@ -64,11 +64,11 @@ class MeasurementTemplate(DataConcepts,
     uids = Mapping(String('scope'), String('id'), 'uids')
     tags = PropertyOptional(PropertyList(String()), 'tags')
     properties = PropertyOptional(PropertyList(
-        MixedList([LinkOrElse, Object(BaseBounds)])), 'properties')
+        SpecifiedMixedList([LinkOrElse, Object(BaseBounds)])), 'properties')
     conditions = PropertyOptional(PropertyList(
-        MixedList([LinkOrElse, Object(BaseBounds)])), 'conditions')
+        SpecifiedMixedList([LinkOrElse, Object(BaseBounds)])), 'conditions')
     parameters = PropertyOptional(PropertyList(
-        MixedList([LinkOrElse, Object(BaseBounds)])), 'parameters')
+        SpecifiedMixedList([LinkOrElse, Object(BaseBounds)])), 'parameters')
     typ = String('type')
 
     def __init__(self,
