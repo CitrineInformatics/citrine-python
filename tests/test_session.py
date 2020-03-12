@@ -200,7 +200,7 @@ def test_cursor_paged_resource():
 def test_connection_reset_error_starts_new_session(session: Session):
     call_count = 0
 
-    # This function is used to raise a ConnectionResetError on the first call and otherwise True.  This execises
+    # This function is used to raise a ConnectionResetError on the first call and otherwise True.  This exercises
     # the code that recreates the session and retries the request.
     def error_on_first_call(_):
         nonlocal call_count
