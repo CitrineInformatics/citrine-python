@@ -182,6 +182,11 @@ def test_union():
         union_type.deserialize(1.7)
 
 
+def test_untion_requires_property_iterable():
+    with pytest.raises(ValueError):
+        Union(Integer)
+
+
 class EnumerationExample(BaseEnumeration):
     FOO = "foo"
     BAR = "bar"

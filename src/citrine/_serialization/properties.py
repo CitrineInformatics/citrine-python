@@ -378,8 +378,8 @@ class Union(Property[typing.Any, typing.Any]):
                          serializable,
                          deserializable,
                          default)
-        if not isinstance(element_types, list):
-            raise ValueError("element types must be a list: {}".format(element_types))
+        if not isinstance(element_types, typing.Iterable):
+            raise ValueError("element types must be iterable: {}".format(element_types))
         self.element_types: typing.List[Property, ...] = \
             [el if isinstance(el, Property) else el() for el in element_types]
 
