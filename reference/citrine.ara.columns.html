@@ -50,7 +50,7 @@
 
 <dl class="class">
 <dt id="citrine.ara.columns.ComponentQuantityColumn">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.ara.columns.</code><code class="sig-name descname">ComponentQuantityColumn</code><span class="sig-paren">(</span><em class="sig-param">*</em>, <em class="sig-param">data_source: str</em>, <em class="sig-param">component_name: str</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.ara.columns.ComponentQuantityColumn" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">citrine.ara.columns.</code><code class="sig-name descname">ComponentQuantityColumn</code><span class="sig-paren">(</span><em class="sig-param">*</em>, <em class="sig-param">data_source: str</em>, <em class="sig-param">component_name: str</em>, <em class="sig-param">normalize: Optional[bool] = False</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.ara.columns.ComponentQuantityColumn" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.ara.columns.Column" title="citrine.ara.columns.Column"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.ara.columns.Column</span></code></a></p>
 <p>[ALPHA] Column that extracts the quantity of a given component.</p>
 <p>If the component is not present in the composition, then the value in the column will be 0.0.</p>
@@ -59,6 +59,7 @@
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>data_source</strong> (<em>str</em>) – name of the variable to use when populating the column</p></li>
 <li><p><strong>component_name</strong> (<em>str</em>) – name of the component from which to extract the quantity</p></li>
+<li><p><strong>normalize</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – whether to normalize the quantity by the sum of all component amounts. Default is false</p></li>
 </ul>
 </dd>
 </dl>
@@ -70,6 +71,11 @@
 <dl class="attribute">
 <dt id="citrine.ara.columns.ComponentQuantityColumn.data_source">
 <code class="sig-name descname">data_source</code><em class="property"> = None</em><a class="headerlink" href="#citrine.ara.columns.ComponentQuantityColumn.data_source" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.ara.columns.ComponentQuantityColumn.normalize">
+<code class="sig-name descname">normalize</code><em class="property"> = None</em><a class="headerlink" href="#citrine.ara.columns.ComponentQuantityColumn.normalize" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
@@ -262,7 +268,7 @@ are round numbers like {“spam”: 4.0, “eggs”: 1.0} then the result omit t
 
 <dl class="class">
 <dt id="citrine.ara.columns.NthBiggestComponentQuantityColumn">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.ara.columns.</code><code class="sig-name descname">NthBiggestComponentQuantityColumn</code><span class="sig-paren">(</span><em class="sig-param">*</em>, <em class="sig-param">data_source: str</em>, <em class="sig-param">n: int</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.ara.columns.NthBiggestComponentQuantityColumn" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">citrine.ara.columns.</code><code class="sig-name descname">NthBiggestComponentQuantityColumn</code><span class="sig-paren">(</span><em class="sig-param">*</em>, <em class="sig-param">data_source: str</em>, <em class="sig-param">n: int</em>, <em class="sig-param">normalize: Optional[bool] = False</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.ara.columns.NthBiggestComponentQuantityColumn" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.ara.columns.Column" title="citrine.ara.columns.Column"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.ara.columns.Column</span></code></a></p>
 <p>[ALPHA] Quantity of the Nth biggest component.</p>
 <p>If there are not N components in the composition, then this column will be empty.</p>
@@ -271,6 +277,7 @@ are round numbers like {“spam”: 4.0, “eggs”: 1.0} then the result omit t
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>data_source</strong> (<em>str</em>) – name of the variable to use when populating the column</p></li>
 <li><p><strong>n</strong> (<em>int</em>) – index of the component quantity to extract, starting with 1 for the biggest</p></li>
+<li><p><strong>normalize</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – whether to normalize the quantity by the sum of all component amounts. Default is false</p></li>
 </ul>
 </dd>
 </dl>
@@ -282,6 +289,11 @@ are round numbers like {“spam”: 4.0, “eggs”: 1.0} then the result omit t
 <dl class="attribute">
 <dt id="citrine.ara.columns.NthBiggestComponentQuantityColumn.n">
 <code class="sig-name descname">n</code><em class="property"> = None</em><a class="headerlink" href="#citrine.ara.columns.NthBiggestComponentQuantityColumn.n" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.ara.columns.NthBiggestComponentQuantityColumn.normalize">
+<code class="sig-name descname">normalize</code><em class="property"> = None</em><a class="headerlink" href="#citrine.ara.columns.NthBiggestComponentQuantityColumn.normalize" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
