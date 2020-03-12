@@ -1,6 +1,6 @@
 """Tools for working with Predictors."""
 from abc import abstractmethod
-from typing import List, Optional, Type
+from typing import List, Optional, Type, Union
 from uuid import UUID
 
 from citrine._serialization import properties
@@ -81,7 +81,7 @@ class SimpleMLPredictor(Serializable['SimplePredictor'], Predictor):
     latent_variables = properties.List(properties.Object(Descriptor), 'config.latent_variables')
     training_data = properties.Object(DataTable, 'config.training_data')
     typ = properties.String('config.type', default='Simple', deserializable=False)
-    status = properties.String('status', serializable=False)
+    status = properties.Optional(properties.String(), 'status', serializable=False)
     status_info = properties.Optional(
         properties.List(properties.String()),
         'status_info',
@@ -142,8 +142,11 @@ class GraphPredictor(Serializable['GraphPredictor'], Predictor):
     uid = properties.Optional(properties.UUID, 'id', serializable=False)
     name = properties.String('config.name')
     description = properties.String('config.description')
-    predictors = properties.List(properties.UUID, 'config.predictors')
+    predictors = properties.List(properties.Union(
+        [properties.UUID, properties.Object(Predictor)]), 'config.predictors')
     typ = properties.String('config.type', default='Graph', deserializable=False)
+    # Graph predictors may not be embedded in other predictors, hence while status is optional
+    # for deserializing most predictors, it is required for deserializing a graph
     status = properties.String('status', serializable=False)
     status_info = properties.Optional(
         properties.List(properties.String()),
@@ -159,13 +162,13 @@ class GraphPredictor(Serializable['GraphPredictor'], Predictor):
     def __init__(self,
                  name: str,
                  description: str,
-                 predictors: List[UUID],
+                 predictors: List[Union[UUID, Predictor]],
                  session: Optional[Session] = None,
                  report: Optional[Report] = None,
                  active: bool = True):
         self.name: str = name
         self.description: str = description
-        self.predictors: List[UUID] = predictors
+        self.predictors: List[Union[UUID, Predictor]] = predictors
         self.session: Optional[Session] = session
         self.report: Optional[Report] = report
         self.active: bool = active
@@ -207,7 +210,7 @@ class ExpressionPredictor(Serializable['ExpressionPredictor'], Predictor):
     output = properties.Object(Descriptor, 'config.output')
     aliases = properties.Mapping(properties.String, properties.String, 'config.aliases')
     typ = properties.String('config.type', default='Expression', deserializable=False)
-    status = properties.String('status', serializable=False)
+    status = properties.Optional(properties.String(), 'status', serializable=False)
     status_info = properties.Optional(
         properties.List(properties.String()),
         'status_info',

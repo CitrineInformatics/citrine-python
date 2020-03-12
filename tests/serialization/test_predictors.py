@@ -1,6 +1,7 @@
 """Tests for citrine.informatics.predictors serialization."""
 import pytest
 from uuid import UUID
+from uuid import uuid4
 
 from citrine.informatics.predictors import ExpressionPredictor, GraphPredictor, Predictor, SimpleMLPredictor
 from citrine.informatics.descriptors import RealDescriptor

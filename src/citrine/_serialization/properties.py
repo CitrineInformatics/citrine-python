@@ -411,7 +411,7 @@ class Union(Property[typing.Any, typing.Any]):
             except ValueError:
                 pass
         raise RuntimeError("An unexpected error occurred while trying to deserialize {} to one "
-                           "of the following types: {}.".format(value, self.serialized_types))
+                           "of the following types: {}.".format(value, self.underlying_types))
 
 
 class SpecifiedMixedList(Property[list, list]):
