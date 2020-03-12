@@ -181,9 +181,9 @@ There are several ways to define columns, depending on the type of the attribute
 * Composition and chemical formula attribute values, like :class:`~taurus.entity.composition_value.CompositionValue`
 
  * :class:`~citrine.ara.columns.FlatCompositionColumn`: for flattening the composition into a chemical-formula-like string
- * :class:`~citrine.ara.columns.ComponentQuantityColumn`: for getting the quantity of a specific component, by name
+ * :class:`~citrine.ara.columns.ComponentQuantityColumn`: for getting the (optionally normalized) quantity of a specific component, by name
  * :class:`~citrine.ara.columns.NthBiggestComponentNameColumn`: for getting the name of the n-th biggest component (by quantity)
- * :class:`~citrine.ara.columns.NthBiggestComponentQuantityColumn`: for getting the quantity of the n-th biggest component (by quantity)
+ * :class:`~citrine.ara.columns.NthBiggestComponentQuantityColumn`: for getting the (optionally normalized) quantity of the n-th biggest component (by quantity)
 
 * String and boolean valued fields, like identifiers and non-attribute fields
 

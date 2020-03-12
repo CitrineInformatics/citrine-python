@@ -16,7 +16,7 @@ from citrine.ara.columns import MeanColumn, IdentityColumn, Column, StdDevColumn
     MostLikelyCategoryColumn(data_source="color"),
     MostLikelyProbabilityColumn(data_source="color"),
     FlatCompositionColumn(data_source="formula", sort_order=CompositionSortOrder.QUANTITY),
-    ComponentQuantityColumn(data_source="formula", component_name="Si"),
+    ComponentQuantityColumn(data_source="formula", component_name="Si", normalize=True),
     NthBiggestComponentNameColumn(data_source="formula", n=1),
     NthBiggestComponentQuantityColumn(data_source="formula", n=2),
 ])
