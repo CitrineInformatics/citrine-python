@@ -87,8 +87,9 @@ class Session(requests.Session):
 
             try:
                 response = super().request(method, uri, **kwargs)
+                msg = 'Received server error from citrine, trying again. {}'.format(try_msg)
                 if response.status_code >= 500:
-                    logger.warn('Received server error from citrine, trying again. {}'.format(try_msg))
+                    logger.warn(msg)
                 else:
                     break
             except (ConnectionError, ConnectionResetError) as e:
