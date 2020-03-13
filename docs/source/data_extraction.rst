@@ -94,7 +94,7 @@ Assume that the process template is accessible from a known project, `project`.
 
 If the process template's allowed names includes, for example, "flour" then there will now be columns "batter mixing~flour~id" and "batter mixing~flour~mass fraction~mean."
 
-Previewing, creating and reading tables
+Previewing tables
 ---------------------------
 
 Calling :func:`~citrine.resources.project.Project.ara_definitions` on a project returns an :class:`~citrine.resources.ara_definition.AraDefinitionCollection` object, which facilitates access to the collection of all Ara definitions visible to a Project.
@@ -126,6 +126,54 @@ For example, if you wanted to print the warnings and then load the preview into 
    preview = defns.preview(ara_defn, preview_roots)
    print("\n\n".join(preview["warnings"]))
    data_frame = pd.read_csv(StringIO(preview["csv"]))
+
+Building and downloading tables
+--------------------
+
+After iteratively adjusting the AraDefinition with the ``preview`` method above, the definition can be registered to save it.
+
+.. code-block:: python
+
+    ara_defn = defns.register(ara_defn)
+    print("Definition registered as {}".format(ara_defn.definition_uid))
+
+Registered AraDefinitions can be built into Ara Tables.
+Ara Tables are sometimes large and time-consuming to build, so the build process is asynchronous.
+The steps are:
+
+1. Submit an Ara Build Job
+2. Poll the Job Status until it is a ``Success`` or ``Failure``
+3. (If success) Get the id and version for the table
+4. (If success) Download the table
+
+For example:
+
+.. code-block:: python
+
+    from time import sleep
+    # 1. Submit the Ara build job
+    job = defns.build_ara_table(ara_defn)
+    # 2. Poll the Job Status every second
+    while True:
+        status = project.ara_definitions.get_job_status(job.job_id)
+        if status.status in ['Success', 'Failure']:
+            break
+        sleep(1)
+    if status.status == 'Success':
+        # 3. Get the id and version for the table
+        table_id = status.output['display_table_id']
+        table_version = status.output['display_table_version']
+        # 4. Download the table
+        table = project.tables.get(table_id, table_version)
+        table.read("./my_table.csv")
+
+The return type of the ``build_ara_table`` method is a :class:`~citrine.resources.ara_job.JobSubmissionResponse` that contains a unique identifier for the submitted job.
+
+This identifier can be used to get the status of the job via the ``get_job_status`` method, which returns a :class:`~citrine.resources.ara_job.JobStatusResponse`.
+The :class:`~citrine.resources.ara_job.JobStatusResponse` contains a ``status`` string describing the state of the job and an ``output`` map that contains the table id and version.
+
+The table id and version can be used to get a :class:`~citrine.resources.table.Table` resource that provides access the table.
+Just like the :class:`~citrine.resources.file_link.FileLink` resource, :class:`~citrine.resources.table.Table` does not literally contain the table but does expose a ``read`` method that will download it.
 
 Available Row Definitions
 ------------------------------
