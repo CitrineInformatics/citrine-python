@@ -17,6 +17,7 @@ import pytz
 import mock
 import requests
 import requests_mock
+import time
 from citrine._session import Session
 from citrine.exceptions import UnauthorizedRefreshToken, Unauthorized, NotFound
 from tests.utils.session import make_fake_cursor_request_function
@@ -154,9 +155,10 @@ class SessionTests(unittest.TestCase):
         resp = mock.Mock()
         resp.status_code = 500
         mock_request.return_value = resp
-        with pytest.raises(CitrineException):
-            Session().checked_request('method', 'path')
-        assert mock_request.call_count is 3
+        with mock.patch("time.sleep", return_value=None):
+            with pytest.raises(CitrineException):
+                Session().checked_request('method', 'path')
+            assert mock_request.call_count is 10
 
 
 def test_post_refreshes_token_when_denied(session: Session):
@@ -184,17 +186,18 @@ def test_delete_unauthorized_without_json(session: Session):
 
 
 def test_failed_put_with_stacktrace(session: Session):
-    with requests_mock.Mocker() as m:
-        m.put(
-            'http://citrine-testing.fake/api/v1/bad-endpoint',
-            status_code=500,
-            json={'debug_stacktrace': 'blew up!'}
-        )
+    with mock.patch("time.sleep", return_value=None):
+        with requests_mock.Mocker() as m:
+            m.put(
+                'http://citrine-testing.fake/api/v1/bad-endpoint',
+                status_code=500,
+                json={'debug_stacktrace': 'blew up!'}
+            )
 
-        with pytest.raises(Exception) as e:
-            session.put_resource('/bad-endpoint', json={})
+            with pytest.raises(Exception) as e:
+                session.put_resource('/bad-endpoint', json={})
 
-    assert '{"debug_stacktrace": "blew up!"}' == str(e.value)
+        assert '{"debug_stacktrace": "blew up!"}' == str(e.value)
 
 
 def test_cursor_paged_resource():
@@ -213,19 +216,20 @@ def test_connection_reset_error_starts_new_session(session: Session):
 
     # This function is used to raise a ConnectionResetError on the first call and otherwise True.  This exercises
     # the code that recreates the session and retries the request.
-    def error_on_first_call(_):
+    def error_on_call(_):
         nonlocal call_count
         call_count += 1
         raise ConnectionResetError
 
-    with requests_mock.Mocker() as m:
-        m.register_uri('GET', 'http://citrine-testing.fake/api/v1/foo',
-                       additional_matcher=error_on_first_call, text=json.dumps({'hello': 'world'}))
+    with mock.patch("time.sleep", return_value=None):
+        with requests_mock.Mocker() as m:
+            m.register_uri('GET', 'http://citrine-testing.fake/api/v1/foo',
+                        additional_matcher=error_on_call, text=json.dumps({'hello': 'world'}))
 
-        with pytest.raises(ConnectionResetError):
-            session.get_resource('/foo')
+            with pytest.raises(ConnectionResetError):
+                session.get_resource('/foo')
 
-    assert call_count is 3
+    assert call_count is 10
 
 
 def test_bad_json_response(session: Session):
