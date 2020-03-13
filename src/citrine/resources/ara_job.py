@@ -37,6 +37,7 @@ class TaskNode(Resource['TaskNode']):
         the type of task running
     status: str
         the last reported status of this particular task.
+        One of "Submitted", "Pending", "Running", "Success", or "Failure".
     dependencies: Set[str]
         all the tasks that this task is dependent on.
     failure_reason: Optional[str]
@@ -75,7 +76,8 @@ class JobStatusResponse(Resource['JobStatusResponse']):
     job_type: str
         the type of job for this status report
     status: str
-        the actual status of the job
+        the actual status of the job.
+        One of "Submitted", "Pending", "Running", "Success", or "Failure".
     tasks: List[TaskNode]
         all of the constituent task required to complete this job
     output: Optional[Map[String,String]]
