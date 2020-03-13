@@ -83,7 +83,7 @@ class Session(requests.Session):
         logger.debug('END request details.')
 
         tries = 0
-        while tries < 3:
+        while tries < 10:
             tries += 1
             try_msg = 'Tried {} times.'.format(tries)
 
@@ -95,7 +95,7 @@ class Session(requests.Session):
                 else:
                     break
             except (ConnectionError, ConnectionResetError) as e:
-                if tries < 3:
+                if tries < 10:
                     logger.debug('Connection reset by server, trying again. ')
                 else:
                     raise e
