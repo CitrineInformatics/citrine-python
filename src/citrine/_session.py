@@ -15,6 +15,7 @@ from citrine.exceptions import (
 
 import jwt
 import requests
+import time
 
 # Choose a 5 second buffer so that there's no chance of the access token
 # expiring during the check for expiration
@@ -95,6 +96,8 @@ class Session(requests.Session):
                     logger.debug('Connection reset by server, trying again. ')
                 else:
                     raise e
+
+            time.sleep(tries)
 
         try:
             if response.status_code == 401 and response.json().get("reason") == "invalid-token":
