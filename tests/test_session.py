@@ -226,3 +226,18 @@ def test_connection_reset_error_starts_new_session(session: Session):
             session.get_resource('/foo')
 
     assert call_count is 3
+
+
+def test_bad_json_response(session: Session):
+    with requests_mock.Mocker() as m:
+        m.delete('http://citrine-testing.fake/api/v1/bar/something', status_code=200)
+        response_json = session.delete_resource('/bar/something')
+        assert response_json == {}
+
+
+def test_good_json_response(session: Session):
+    with requests_mock.Mocker() as m:
+        json_to_validate = {"bar": "something"}
+        m.put('http://citrine-testing.fake/api/v1/bar/something', status_code=200, json=json_to_validate)
+        response_json = session.put_resource('bar/something', {"ignored": "true"})
+        assert response_json == json_to_validate

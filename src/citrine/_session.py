@@ -5,6 +5,8 @@ from datetime import datetime, timedelta
 
 from requests import Response
 
+from json.decoder import JSONDecodeError
+
 from citrine.exceptions import (
     NotFound,
     Unauthorized,
@@ -151,19 +153,36 @@ class Session(requests.Session):
 
     def get_resource(self, path: str, **kwargs) -> dict:
         """GET a particular resource as JSON."""
-        return self.checked_get(path, **kwargs).json()
+        response = self.checked_get(path, **kwargs)
+        return self._extract_response_json(path, response)
 
     def post_resource(self, path: str, json: dict, **kwargs) -> dict:
         """POST to a particular resource as JSON."""
-        return self.checked_post(path, json=json, **kwargs).json()
+        response = self.checked_post(path, json=json, **kwargs)
+        return self._extract_response_json(path, response)
 
     def put_resource(self, path: str, json: dict, **kwargs) -> dict:
         """PUT data given by some JSON at a particular resource."""
-        return self.checked_put(path, json=json, **kwargs).json()
+        response = self.checked_put(path, json=json, **kwargs)
+        return self._extract_response_json(path, response)
 
     def delete_resource(self, path: str) -> dict:
         """DELETE a particular resource as JSON."""
-        return self.checked_delete(path).json()
+        response = self.checked_delete(path)
+        return self._extract_response_json(path, response)
+
+    @staticmethod
+    def _extract_response_json(path, response) -> dict:
+        """Extract json from the response or log and return an empty dict if extraction fails."""
+        try:
+            return response.json()
+        except JSONDecodeError as err:
+            logger.info('Response at path %s with status code %s failed json parsing with'
+                        ' exception %s. Returning empty value.',
+                        path,
+                        response.status_code,
+                        err.msg)
+            return {}
 
     @staticmethod
     def cursor_paged_resource(base_method: Callable[..., dict], path: str,
