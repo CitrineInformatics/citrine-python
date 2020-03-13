@@ -408,7 +408,7 @@ class AttributeInOutput(
     of the material history tree and proceeds until any of the given process templates are reached.
     Those templates block the search from continuing into their ingredients but do not halt the
     search entirely. This variable definition allows attributes that are present both in output
-    and the inputs of a process cto be distinguished.
+    and the inputs of a process to be distinguished.
 
     For example, a material "paint" might be produced by mixing and then resting "pigments" and
     a "base".  The color of the pigments and base could be measured and recorded as attributes
