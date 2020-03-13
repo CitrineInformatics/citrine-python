@@ -250,7 +250,7 @@ class ComponentQuantityColumn(Serializable["ComponentQuantityColumn"], Column):
         name of the variable to use when populating the column
     component_name: str
         name of the component from which to extract the quantity
-    normalize: Optional[str]
+    normalize: Optional[bool]
         whether to normalize the quantity by the sum of all component amounts. Default is false
 
     """
@@ -311,7 +311,7 @@ class NthBiggestComponentQuantityColumn(Serializable["NthBiggestComponentQuantit
         name of the variable to use when populating the column
     n: int
         index of the component quantity to extract, starting with 1 for the biggest
-    normalize: Optional[str]
+    normalize: Optional[bool]
         whether to normalize the quantity by the sum of all component amounts. Default is false
 
     """
