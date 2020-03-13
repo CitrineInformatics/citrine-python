@@ -5,6 +5,7 @@ import pytest
 import unittest
 
 from citrine.exceptions import (
+    CitrineException,
     NonRetryableException,
     WorkflowConflictException,
     WorkflowNotReadyException,
@@ -147,6 +148,16 @@ class SessionTests(unittest.TestCase):
         with pytest.raises(NonRetryableException):
             Session().checked_request('method', 'path')
 
+    @mock.patch.object(Session, '_refresh_access_token')
+    @mock.patch.object(requests.Session, 'request')
+    def test_status_code_500(self, mock_request, _):
+        resp = mock.Mock()
+        resp.status_code = 500
+        mock_request.return_value = resp
+        with pytest.raises(CitrineException):
+            Session().checked_request('method', 'path')
+        assert mock_request.call_count is 3
+
 
 def test_post_refreshes_token_when_denied(session: Session):
     token_refresh_response = refresh_token(datetime(2019, 3, 14, tzinfo=pytz.utc))
@@ -204,14 +215,14 @@ def test_connection_reset_error_starts_new_session(session: Session):
     # the code that recreates the session and retries the request.
     def error_on_first_call(_):
         nonlocal call_count
-        if call_count == 0:
-            call_count += 1
-            raise ConnectionResetError
-        else:
-            return True
+        call_count += 1
+        raise ConnectionResetError
 
     with requests_mock.Mocker() as m:
         m.register_uri('GET', 'http://citrine-testing.fake/api/v1/foo',
                        additional_matcher=error_on_first_call, text=json.dumps({'hello': 'world'}))
 
-        session.get_resource('/foo')
+        with pytest.raises(ConnectionResetError):
+            session.get_resource('/foo')
+
+    assert call_count is 3

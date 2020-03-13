@@ -79,11 +79,22 @@ class Session(requests.Session):
             logger.debug('\t{}: {}'.format(k, v))
         logger.debug('END request details.')
 
-        try:
-            response = super().request(method, uri, **kwargs)
-        except (ConnectionError, ConnectionResetError):
-            logger.debug('Connection reset by server, attempting again')
-            response = super().request(method, uri, **kwargs)
+        tries = 0
+        while tries < 3:
+            tries += 1
+            try_msg = 'Tried {} times.'.format(tries)
+
+            try:
+                response = super().request(method, uri, **kwargs)
+                if response.status_code >= 500:
+                    logger.warn('Received server error from citrine, trying again. {}'.format(try_msg))
+                else:
+                    break
+            except (ConnectionError, ConnectionResetError) as e:
+                if tries < 3:
+                    logger.debug('Connection reset by server, trying again. ')
+                else:
+                    raise e
 
         try:
             if response.status_code == 401 and response.json().get("reason") == "invalid-token":
