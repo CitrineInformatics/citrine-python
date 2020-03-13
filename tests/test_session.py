@@ -5,7 +5,6 @@ import pytest
 import unittest
 
 from citrine.exceptions import (
-    CitrineException,
     NonRetryableException,
     WorkflowConflictException,
     WorkflowNotReadyException,
@@ -17,10 +16,8 @@ import pytz
 import mock
 import requests
 import requests_mock
-import time
 from citrine._session import Session
 from citrine.exceptions import UnauthorizedRefreshToken, Unauthorized, NotFound
-from requests.exceptions import ConnectionError
 from tests.utils.session import make_fake_cursor_request_function
 
 
@@ -150,17 +147,6 @@ class SessionTests(unittest.TestCase):
         with pytest.raises(NonRetryableException):
             Session().checked_request('method', 'path')
 
-    @mock.patch.object(Session, '_refresh_access_token')
-    @mock.patch.object(requests.Session, 'request')
-    def test_status_code_500(self, mock_request, _):
-        resp = mock.Mock()
-        resp.status_code = 500
-        mock_request.return_value = resp
-        with mock.patch("time.sleep", return_value=None):
-            with pytest.raises(CitrineException):
-                Session().checked_request('method', 'path')
-            assert mock_request.call_count is 10
-
 
 def test_post_refreshes_token_when_denied(session: Session):
     token_refresh_response = refresh_token(datetime(2019, 3, 14, tzinfo=pytz.utc))
@@ -210,27 +196,6 @@ def test_cursor_paged_resource():
     assert list(Session.cursor_paged_resource(fake_request, 'foo', forward=True, per_page=10)) == full_result_set
     assert list(Session.cursor_paged_resource(fake_request, 'foo', forward=True, per_page=26)) == full_result_set
     assert list(Session.cursor_paged_resource(fake_request, 'foo', forward=True, per_page=40)) == full_result_set
-
-
-def test_connection_reset_error_starts_new_session(session: Session):
-    call_count = 0
-
-    # This function is used to raise a ConnectionError on the first call and otherwise True.  This exercises
-    # the code that recreates the session and retries the request.
-    def error_on_call(_):
-        nonlocal call_count
-        call_count += 1
-        raise ConnectionError
-
-    with mock.patch("time.sleep", return_value=None):
-        with requests_mock.Mocker() as m:
-            m.register_uri('GET', 'http://citrine-testing.fake/api/v1/foo',
-                        additional_matcher=error_on_call, text=json.dumps({'hello': 'world'}))
-
-            with pytest.raises(ConnectionError):
-                session.get_resource('/foo')
-
-    assert call_count is 10
 
 
 def test_bad_json_response(session: Session):
