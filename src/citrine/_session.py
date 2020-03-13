@@ -15,6 +15,7 @@ from citrine.exceptions import (
 
 import jwt
 import requests
+import time
 
 # Choose a 5 second buffer so that there's no chance of the access token
 # expiring during the check for expiration
@@ -79,11 +80,25 @@ class Session(requests.Session):
             logger.debug('\t{}: {}'.format(k, v))
         logger.debug('END request details.')
 
-        try:
-            response = super().request(method, uri, **kwargs)
-        except (ConnectionError, ConnectionResetError):
-            logger.debug('Connection reset by server, attempting again')
-            response = super().request(method, uri, **kwargs)
+        tries = 0
+        while tries < 3:
+            tries += 1
+            try_msg = 'Tried {} times.'.format(tries)
+
+            try:
+                response = super().request(method, uri, **kwargs)
+                msg = 'Received server error from citrine, trying again. {}'.format(try_msg)
+                if response.status_code >= 500:
+                    logger.warn(msg)
+                else:
+                    break
+            except (ConnectionError, ConnectionResetError) as e:
+                if tries < 3:
+                    logger.debug('Connection reset by server, trying again. ')
+                else:
+                    raise e
+
+            time.sleep(tries)
 
         try:
             if response.status_code == 401 and response.json().get("reason") == "invalid-token":
