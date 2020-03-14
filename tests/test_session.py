@@ -20,6 +20,7 @@ import requests_mock
 import time
 from citrine._session import Session
 from citrine.exceptions import UnauthorizedRefreshToken, Unauthorized, NotFound
+from requests.exceptions import ConnectionError
 from tests.utils.session import make_fake_cursor_request_function
 
 
@@ -214,19 +215,19 @@ def test_cursor_paged_resource():
 def test_connection_reset_error_starts_new_session(session: Session):
     call_count = 0
 
-    # This function is used to raise a ConnectionResetError on the first call and otherwise True.  This exercises
+    # This function is used to raise a ConnectionError on the first call and otherwise True.  This exercises
     # the code that recreates the session and retries the request.
     def error_on_call(_):
         nonlocal call_count
         call_count += 1
-        raise ConnectionResetError
+        raise ConnectionError
 
     with mock.patch("time.sleep", return_value=None):
         with requests_mock.Mocker() as m:
             m.register_uri('GET', 'http://citrine-testing.fake/api/v1/foo',
                         additional_matcher=error_on_call, text=json.dumps({'hello': 'world'}))
 
-            with pytest.raises(ConnectionResetError):
+            with pytest.raises(ConnectionError):
                 session.get_resource('/foo')
 
     assert call_count is 10

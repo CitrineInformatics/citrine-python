@@ -4,7 +4,7 @@ from logging import getLogger
 from datetime import datetime, timedelta
 
 from requests import Response
-
+from requests.exceptions import ConnectionError
 from json.decoder import JSONDecodeError
 
 from citrine.exceptions import (
@@ -94,7 +94,7 @@ class Session(requests.Session):
                     logger.warn(msg)
                 else:
                     break
-            except (ConnectionError, ConnectionResetError) as e:
+            except ConnectionError as e:
                 if tries < 10:
                     logger.debug('Connection reset by server, trying again. ')
                 else:
