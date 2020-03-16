@@ -134,8 +134,8 @@ class GraphPredictor(Serializable['GraphPredictor'], Predictor):
         name of the configuration
     description: str
         the description of the predictor
-    predictors: list[UUID]
-        the list of existing predictor UUIDs to graph together
+    predictors: list[UUID, Predictor]
+        the list of predictors to use in the grpah, either UUIDs or serialized predictors
 
     """
 
@@ -191,6 +191,7 @@ class GraphPredictor(Serializable['GraphPredictor'], Predictor):
             module_type='PREDICTOR',
             config=predictor,
             status='EMBEDDED',
+            status_info=[],
             active=False
         )
 
