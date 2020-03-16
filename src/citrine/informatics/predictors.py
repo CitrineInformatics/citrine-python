@@ -180,12 +180,13 @@ class GraphPredictor(Serializable['GraphPredictor'], Predictor):
                 # embedded predictors are not modules, so only serialize their config
                 data['config']['predictors'][i] = predictor['config']
         return data
-    
+
     @classmethod
     def _pre_build(cls, data: dict) -> dict:
         for i, predictor in enumerate(data['config']['predictors']):
             if isinstance(predictor, dict):
-                data['config']['predictors'][i] = GraphPredictor.stuff_predictor_into_envelope(predictor)
+                data['config']['predictors'][i] = \
+                    GraphPredictor.stuff_predictor_into_envelope(predictor)
         return data
 
     @staticmethod
