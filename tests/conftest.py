@@ -127,7 +127,7 @@ def valid_graph_predictor_data(valid_expression_predictor_data):
         config=dict(
             type='Graph',
             name='Graph predictor',
-            description='description',
+            description='description of graph',
             predictors=[
                 dict(
                     type='Expression',
