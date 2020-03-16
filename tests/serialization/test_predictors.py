@@ -52,6 +52,7 @@ def test_graph_serialization(valid_graph_predictor_data):
     predictor = GraphPredictor.build(valid_graph_predictor_data)
     serialized = predictor.dump()
     serialized['id'] = valid_graph_predictor_data['id']
+    assert serialized['config']['predictors'] == valid_graph_predictor_data['config']['predictors']
     assert serialized == valid_serialization_output(valid_graph_predictor_data)
 
 
