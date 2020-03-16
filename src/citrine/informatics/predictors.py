@@ -142,7 +142,8 @@ class GraphPredictor(Serializable['GraphPredictor'], Predictor):
     uid = properties.Optional(properties.UUID, 'id', serializable=False)
     name = properties.String('config.name')
     description = properties.String('config.description')
-    predictors = properties.List(properties.Object(Predictor), 'config.predictors')
+    predictors = properties.List(properties.Union(
+        [properties.UUID, properties.Object(Predictor)]), 'config.predictors')
     typ = properties.String('config.type', default='Graph', deserializable=False)
     # Graph predictors may not be embedded in other predictors, hence while status is optional
     # for deserializing most predictors, it is required for deserializing a graph
