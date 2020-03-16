@@ -129,7 +129,6 @@ def valid_graph_predictor_data(valid_expression_predictor_data):
             name='Graph predictor',
             description='description',
             predictors=[
-                str(uuid.uuid4()),
                 dict(
                     type='Expression',
                     name='Expression predictor',
