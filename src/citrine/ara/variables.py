@@ -452,7 +452,7 @@ class AttributeInOutput(
     process_templates = properties.List(properties.Object(LinkByUID), 'process_templates')
     attribute_constraints = properties.Optional(
         properties.List(
-            properties.MixedList([properties.Object(LinkByUID), properties.Object(BaseBounds)])
+            properties.SpecifiedMixedList([properties.Object(LinkByUID), properties.Object(BaseBounds)])
         ), 'attribute_constraints')
     typ = properties.String('type', default="attribute_in_trunk", deserializable=False)
 
