@@ -113,7 +113,7 @@ def valid_simple_ml_predictor_data():
 
 
 @pytest.fixture
-def valid_graph_predictor_data(valid_expression_predictor_data):
+def valid_graph_predictor_data():
     """Produce valid data used for tests."""
     from citrine.informatics.descriptors import RealDescriptor
     return dict(
