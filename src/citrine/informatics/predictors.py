@@ -191,7 +191,8 @@ class GraphPredictor(Serializable['GraphPredictor'], Predictor):
             config=predictor,
             status='EMBEDDED',
             status_info=[],
-            active=False
+            active=False,
+            schema_id='43c61ad4-7e33-45d0-a3de-504acb4e0737'  # TODO: what should this be?
         )
 
     def __str__(self):
