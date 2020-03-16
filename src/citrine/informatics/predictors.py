@@ -174,6 +174,10 @@ class GraphPredictor(Serializable['GraphPredictor'], Predictor):
 
     def _post_dump(self, data: dict) -> dict:
         data['display_name'] = data['config']['name']
+        for i, predictor in enumerate(data['config']['predictors']):
+            if isinstance(predictor, dict):
+                # embedded predictors are not modules, so only serialize their config
+                data['config']['predictors'][i] = predictor['config']
         return data
     
     @classmethod
