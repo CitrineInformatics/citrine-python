@@ -160,9 +160,9 @@ class Session(requests.Session):
         response = self.checked_put(path, json=json, **kwargs)
         return self._extract_response_json(path, response)
 
-    def delete_resource(self, path: str) -> dict:
+    def delete_resource(self, path: str, **kwargs) -> dict:
         """DELETE a particular resource as JSON."""
-        response = self.checked_delete(path)
+        response = self.checked_delete(path, **kwargs)
         return self._extract_response_json(path, response)
 
     @staticmethod
@@ -209,9 +209,9 @@ class Session(requests.Session):
         """Execute a PUT request to a URL and utilize error filtering on the response."""
         return self.checked_request('PUT', path, json=json, **kwargs)
 
-    def checked_delete(self, path: str) -> Response:
+    def checked_delete(self, path: str, **kwargs) -> Response:
         """Execute a DELETE request to a URL and utilize error filtering on the response."""
-        return self.checked_request('DELETE', path)
+        return self.checked_request('DELETE', path, **kwargs)
 
     def checked_get(self, path: str, **kwargs) -> Response:
         """Execute a GET request to a URL and utilize error filtering on the response."""

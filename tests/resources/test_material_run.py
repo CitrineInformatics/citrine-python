@@ -1,6 +1,7 @@
 from uuid import UUID
 
 import pytest
+import json
 from citrine._session import Session
 from citrine.resources.material_run import MaterialRunCollection
 from taurus.entity.object.material_run import MaterialRun as TaurusRun
@@ -36,6 +37,17 @@ def test_register_material_run(collection, session):
     # Then
     assert "<Material run 'Test MR 123'>" == str(registered)
 
+def test_dry_run_register_material_run(collection, session):
+    # Given
+    session.set_response(MaterialRunDataFactory(name='Test MR 123'))
+    material_run = MaterialRunFactory()
+
+    # When
+    registered = collection.register(material_run, dry_run=True)
+
+    # Then
+    assert "<Material run 'Test MR 123'>" == str(registered)
+    assert session.last_call.params == {'dry_run': True}
 
 def test_nomutate_taurus(collection, session):
     """When registering a Taurus object, the object should not change (aside from auto ids)"""
@@ -263,6 +275,29 @@ def test_delete_material_run(collection, session):
             material_run_scope,
             material_run_uid
         ),
+        params={'dry_run': False}
+    )
+    assert expected_call == session.last_call
+
+def test_dry_run_delete_material_run(collection, session):
+    # Given
+    material_run_uid = '2d3a782f-aee7-41db-853c-36bf4bff0626'
+    material_run_scope = 'id'
+
+    # When
+    collection.delete(material_run_uid, dry_run=True)
+
+    # Then
+    assert 1 == session.num_calls
+    expected_call = FakeCall(
+        method='DELETE',
+        path='projects/{}/datasets/{}/material-runs/{}/{}'.format(
+            collection.project_id,
+            collection.dataset_id,
+            material_run_scope,
+            material_run_uid
+        ),
+        params={'dry_run': True}
     )
     assert expected_call == session.last_call
 

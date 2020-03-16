@@ -288,7 +288,7 @@ class DataConceptsCollection(Collection[ResourceType]):
         # Convert the iterator to a list to avoid breaking existing client relying on lists
         return list(super().list(page=page, per_page=per_page))
 
-    def register(self, model: ResourceType):
+    def register(self, model: ResourceType, dry_run=False):
         """
         Create a new element of the collection or update an existing element.
 
@@ -307,6 +307,9 @@ class DataConceptsCollection(Collection[ResourceType]):
         ----------
         model: DataConcepts
             The DataConcepts object.
+        dry_run: bool
+            Whether to actually delete the item or run a dry run of the delete operation.
+            Dry run is intended to be used for validation. Default: false
 
         Returns
         -------
@@ -317,6 +320,7 @@ class DataConceptsCollection(Collection[ResourceType]):
         if self.dataset_id is None:
             raise RuntimeError("Must specify a dataset in order to register a data model object.")
         path = self._get_path()
+        params = {'dry_run': dry_run}
         # How do we prepare a citrine-python object to be the json in a POST request?
         # Right now, that method scrubs out None values and replaces top-level objects with links.
         # Eventually, we want to replace it with the following:
@@ -327,7 +331,7 @@ class DataConceptsCollection(Collection[ResourceType]):
         # taurus objects, and then the final dumps() converts that to a json-ready string in which
         # all of the object references have been replaced with link-by-uids.
         dumped_data = replace_objects_with_links(scrub_none(model.dump()))
-        data = self.session.post_resource(path, dumped_data)
+        data = self.session.post_resource(path, dumped_data, params=params)
         full_model = self.build(data)
         return full_model
 
@@ -633,7 +637,7 @@ class DataConceptsCollection(Collection[ResourceType]):
             params=params)
         return (self.build(raw) for raw in raw_objects)
 
-    def delete(self, uid: Union[UUID, str], scope: str = 'id'):
+    def delete(self, uid: Union[UUID, str], scope: str = 'id', dry_run: bool = False):
         """
         Delete the element of the collection with ID equal to uid.
 
@@ -643,10 +647,14 @@ class DataConceptsCollection(Collection[ResourceType]):
             The ID.
         scope: str
             The scope of the uid, defaults to Citrine scope ('id')
+        dry_run: bool
+            Whether to actually delete the item or run a dry run of the delete operation.
+            Dry run is intended to be used for validation. Default: false
 
         """
         path = self._get_path() + "/{}/{}".format(scope, uid)
-        self.session.delete_resource(path)
+        params = {'dry_run': dry_run}
+        self.session.delete_resource(path, params=params)
         return Response(status_code=200)  # delete succeeded
 
     @staticmethod
