@@ -176,6 +176,23 @@ class GraphPredictor(Serializable['GraphPredictor'], Predictor):
     def _post_dump(self, data: dict) -> dict:
         data['display_name'] = data['config']['name']
         return data
+    
+    @classmethod
+    def _pre_build(cls, data: dict) -> dict:
+        for i, predictor in enumerate(data['config']['predictors']):
+            if isinstance(predictor, dict):
+                data['config']['predictors'][i] = GraphPredictor.stuff_predictor_into_envelope(predictor)
+        return data
+
+    @staticmethod
+    def stuff_predictor_into_envelope(predictor: dict) -> dict:
+        """Insert a serialized embedded predictor into a module envelope, to facilitate deser."""
+        return dict(
+            module_type='PREDICTOR',
+            config=predictor,
+            status='EMBEDDED',
+            active=False
+        )
 
     def __str__(self):
         return '<GraphPredictor {!r}>'.format(self.name)
