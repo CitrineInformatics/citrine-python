@@ -173,17 +173,18 @@ def test_delete_unauthorized_without_json(session: Session):
 
 
 def test_failed_put_with_stacktrace(session: Session):
-    with requests_mock.Mocker() as m:
-        m.put(
-            'http://citrine-testing.fake/api/v1/bad-endpoint',
-            status_code=500,
-            json={'debug_stacktrace': 'blew up!'}
-        )
+    with mock.patch("time.sleep", return_value=None):
+        with requests_mock.Mocker() as m:
+            m.put(
+                'http://citrine-testing.fake/api/v1/bad-endpoint',
+                status_code=500,
+                json={'debug_stacktrace': 'blew up!'}
+            )
 
-        with pytest.raises(Exception) as e:
-            session.put_resource('/bad-endpoint', json={})
+            with pytest.raises(Exception) as e:
+                session.put_resource('/bad-endpoint', json={})
 
-    assert '{"debug_stacktrace": "blew up!"}' == str(e.value)
+        assert '{"debug_stacktrace": "blew up!"}' == str(e.value)
 
 
 def test_cursor_paged_resource():
@@ -195,3 +196,18 @@ def test_cursor_paged_resource():
     assert list(Session.cursor_paged_resource(fake_request, 'foo', forward=True, per_page=10)) == full_result_set
     assert list(Session.cursor_paged_resource(fake_request, 'foo', forward=True, per_page=26)) == full_result_set
     assert list(Session.cursor_paged_resource(fake_request, 'foo', forward=True, per_page=40)) == full_result_set
+
+
+def test_bad_json_response(session: Session):
+    with requests_mock.Mocker() as m:
+        m.delete('http://citrine-testing.fake/api/v1/bar/something', status_code=200)
+        response_json = session.delete_resource('/bar/something')
+        assert response_json == {}
+
+
+def test_good_json_response(session: Session):
+    with requests_mock.Mocker() as m:
+        json_to_validate = {"bar": "something"}
+        m.put('http://citrine-testing.fake/api/v1/bar/something', status_code=200, json=json_to_validate)
+        response_json = session.put_resource('bar/something', {"ignored": "true"})
+        assert response_json == json_to_validate

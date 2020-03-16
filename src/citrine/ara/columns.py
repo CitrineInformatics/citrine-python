@@ -250,21 +250,26 @@ class ComponentQuantityColumn(Serializable["ComponentQuantityColumn"], Column):
         name of the variable to use when populating the column
     component_name: str
         name of the component from which to extract the quantity
+    normalize: Optional[bool]
+        whether to normalize the quantity by the sum of all component amounts. Default is false
 
     """
 
     data_source = properties.String('data_source')
     component_name = properties.String("component_name")
+    normalize = properties.Optional(properties.Boolean, "normalize")
     typ = properties.String('type', default="component_quantity_column", deserializable=False)
 
     def _attrs(self) -> List[str]:
-        return ["data_source", "component_name", "typ"]
+        return ["data_source", "component_name", "normalize", "typ"]
 
     def __init__(self, *,
                  data_source: str,
-                 component_name: str):
+                 component_name: str,
+                 normalize: Optional[bool] = False):
         self.data_source = data_source
         self.component_name = component_name
+        self.normalize = normalize
 
 
 class NthBiggestComponentNameColumn(Serializable["NthBiggestComponentNameColumn"], Column):
@@ -306,22 +311,27 @@ class NthBiggestComponentQuantityColumn(Serializable["NthBiggestComponentQuantit
         name of the variable to use when populating the column
     n: int
         index of the component quantity to extract, starting with 1 for the biggest
+    normalize: Optional[bool]
+        whether to normalize the quantity by the sum of all component amounts. Default is false
 
     """
 
     data_source = properties.String('data_source')
     n = properties.Integer("n")
+    normalize = properties.Optional(properties.Boolean, "normalize")
     typ = properties.String('type',
                             default="biggest_component_quantity_column", deserializable=False)
 
     def _attrs(self) -> List[str]:
-        return ["data_source", "n", "typ"]
+        return ["data_source", "n", "normalize", "typ"]
 
     def __init__(self, *,
                  data_source: str,
-                 n: int):
+                 n: int,
+                 normalize: Optional[bool] = False):
         self.data_source = data_source
         self.n = n
+        self.normalize = normalize
 
 
 class IdentityColumn(Serializable['IdentityColumn'], Column):

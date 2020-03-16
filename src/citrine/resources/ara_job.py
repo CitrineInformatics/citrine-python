@@ -1,4 +1,4 @@
-from typing import List, Optional, Set
+from typing import List, Optional, Set, Dict
 from uuid import UUID
 
 from citrine._serialization.properties import Set as PropertySet, String, Object
@@ -37,6 +37,7 @@ class TaskNode(Resource['TaskNode']):
         the type of task running
     status: str
         the last reported status of this particular task.
+        One of "Submitted", "Pending", "Running", "Success", or "Failure".
     dependencies: Set[str]
         all the tasks that this task is dependent on.
     failure_reason: Optional[str]
@@ -75,22 +76,28 @@ class JobStatusResponse(Resource['JobStatusResponse']):
     job_type: str
         the type of job for this status report
     status: str
-        the actual status of the job
+        the actual status of the job.
+        One of "Submitted", "Pending", "Running", "Success", or "Failure".
     tasks: List[TaskNode]
         all of the constituent task required to complete this job
+    output: Optional[Map[String,String]]
+        job output properties and results
 
     """
 
     job_type = properties.String("job_type")
     status = properties.String("status")
     tasks = properties.List(Object(TaskNode), "tasks")
+    output = properties.Optional(properties.Mapping(String, String), 'output')
 
     def __init__(
             self,
             job_type: str,
             status: str,
-            tasks: List[TaskNode]
+            tasks: List[TaskNode],
+            output: Optional[Dict[str, str]]
     ):
         self.job_type = job_type
         self.status = status
         self.tasks = tasks
+        self.output = output

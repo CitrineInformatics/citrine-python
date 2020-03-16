@@ -25,6 +25,15 @@ def job_status() -> dict:
     return js
 
 
+def job_status_with_output() -> dict:
+    js = {'job_type': "dave_job_type",
+          'status': "david_job_status",
+          "tasks": [task_node_1(), task_node_2()],
+          "output": {"key1": "val1", "key2": "val2"}
+          }
+    return js
+
+
 @pytest.fixture
 def session() -> FakeSession:
     return FakeSession()
@@ -74,10 +83,26 @@ def test_js_serde():
     js = JobStatusResponse.build(job_status())
     expected = job_status()
     expected['tasks'][0]['failure_reason'] = None
+    expected['output'] = None
     expected_js = JobStatusResponse(
         job_type=expected['job_type'],
         status=expected['status'],
-        tasks=[TaskNode.build(i) for i in expected['tasks']])
+        tasks=[TaskNode.build(i) for i in expected['tasks']],
+        output=expected['output']
+    )
+    assert js.dump() == expected_js.dump()
+
+
+def test_js_serde_with_output():
+    js = JobStatusResponse.build(job_status_with_output())
+    expected = job_status_with_output()
+    expected['tasks'][0]['failure_reason'] = None
+    expected_js = JobStatusResponse(
+        job_type=expected['job_type'],
+        status=expected['status'],
+        tasks=[TaskNode.build(i) for i in expected['tasks']],
+        output={"key1": "val1", "key2": "val2"}
+    )
     assert js.dump() == expected_js.dump()
 
 
@@ -89,6 +114,15 @@ def test_build_job(collection: AraDefinitionCollection, ara_def: AraDefinition):
 
 def test_job_status(collection: AraDefinitionCollection):
     status = job_status()
+    collection.session.set_response(status)
+    resp = collection.get_job_status(job_id='12345678-1234-1234-1234-123456789ccc')
+    status['tasks'][0]['failure_reason'] = None
+    status['output'] = None
+    assert status == resp.dump()
+
+
+def test_job_status_with_output(collection: AraDefinitionCollection):
+    status = job_status_with_output()
     collection.session.set_response(status)
     resp = collection.get_job_status(job_id='12345678-1234-1234-1234-123456789ccc')
     status['tasks'][0]['failure_reason'] = None
