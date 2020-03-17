@@ -86,3 +86,41 @@ These links are created with the :class:`~taurus.entity.link_by_uid.LinkByUID` c
 .. _ProcessSpec: https://citrineinformatics.github.io/gemd-docs/specification/objects/#process-spec
 .. _taurus: https://github.com/CitrineInformatics/taurus
 .. _UUID4: https://en.wikipedia.org/wiki/Universally_unique_identifier#Version_4_(random)
+
+Validating Data Model Objects
+---------------------------------
+
+If you try to ``register`` or ``delete`` an invalid data model object, the operation fails with an error message that
+specifies in what way(s) the data model object was invalid. For example:
+
+.. code-block:: python
+
+    spec = ProcessSpec("foo")
+    run = ProcessRun("bar", spec=spec)
+
+    spec = dataset.process_specs.register(spec)
+    run = dataset.process_runs.register(run)
+
+    dataset.process_specs.delete(spec.uids["id"])
+
+yields
+
+.. code-block::
+
+    ERROR:citrine._session:400 DELETE projects/$PROJECT_ID/datasets/$DATASET_ID/process-specs/id/$PROCESS_SPEC_ID
+    ERROR:citrine._session:{"code":400,"message":"object $PROCESS_SPEC_ID in dataset $DATASET_ID not deleted. See ValidationErrors for details.","validation_errors":[{"failure_message":"Referenced by process_run in dataset $DATASET_ID with ID $PROCESS_RUN_ID","failure_id":"object.mutation.referenced"}]}
+
+If you want to run these same validations on a data model object without the possibility of registering or deleting the
+object, pass the ``dry_run=True`` argument to either the ``register`` or ``delete`` method. In the example above, this
+would look like
+
+.. code-block:: python
+
+    dataset.process_specs.delete(spec.uids["id"], dry_run=True)
+
+Setting ``dry_run=True`` in either ``register`` or ``delete`` causes the method to run through all of its validations
+and if any fail, provide the same error that the method would provide without the ``dry_run`` argument. If all
+validations succeed, the method returns the same success value that it would without the ``dry_run`` argument, but the
+object will not be registered or deleted.
+
+Setting ``dry_run=False`` is equivalent to not specifying ``dry_run`` at all and will have no effect.
