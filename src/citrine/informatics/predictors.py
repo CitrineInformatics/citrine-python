@@ -1,6 +1,6 @@
 """Tools for working with Predictors."""
 from abc import abstractmethod
-from typing import List, Optional, Type
+from typing import List, Optional, Type, Union
 from uuid import UUID
 
 from citrine._serialization import properties
@@ -81,7 +81,7 @@ class SimpleMLPredictor(Serializable['SimplePredictor'], Predictor):
     latent_variables = properties.List(properties.Object(Descriptor), 'config.latent_variables')
     training_data = properties.Object(DataTable, 'config.training_data')
     typ = properties.String('config.type', default='Simple', deserializable=False)
-    status = properties.String('status', serializable=False)
+    status = properties.Optional(properties.String(), 'status', serializable=False)
     status_info = properties.Optional(
         properties.List(properties.String()),
         'status_info',
@@ -134,16 +134,19 @@ class GraphPredictor(Serializable['GraphPredictor'], Predictor):
         name of the configuration
     description: str
         the description of the predictor
-    predictors: list[UUID]
-        the list of existing predictor UUIDs to graph together
+    predictors: list[UUID, Predictor]
+        the list of predictors to use in the grpah, either UUIDs or serialized predictors
 
     """
 
     uid = properties.Optional(properties.UUID, 'id', serializable=False)
     name = properties.String('config.name')
     description = properties.String('config.description')
-    predictors = properties.List(properties.UUID, 'config.predictors')
+    predictors = properties.List(properties.Union(
+        [properties.UUID, properties.Object(Predictor)]), 'config.predictors')
     typ = properties.String('config.type', default='Graph', deserializable=False)
+    # Graph predictors may not be embedded in other predictors, hence while status is optional
+    # for deserializing most predictors, it is required for deserializing a graph
     status = properties.String('status', serializable=False)
     status_info = properties.Optional(
         properties.List(properties.String()),
@@ -159,20 +162,42 @@ class GraphPredictor(Serializable['GraphPredictor'], Predictor):
     def __init__(self,
                  name: str,
                  description: str,
-                 predictors: List[UUID],
+                 predictors: List[Union[UUID, Predictor]],
                  session: Optional[Session] = None,
                  report: Optional[Report] = None,
                  active: bool = True):
         self.name: str = name
         self.description: str = description
-        self.predictors: List[UUID] = predictors
+        self.predictors: List[Union[UUID, Predictor]] = predictors
         self.session: Optional[Session] = session
         self.report: Optional[Report] = report
         self.active: bool = active
 
     def _post_dump(self, data: dict) -> dict:
         data['display_name'] = data['config']['name']
+        for i, predictor in enumerate(data['config']['predictors']):
+            if isinstance(predictor, dict):
+                # embedded predictors are not modules, so only serialize their config
+                data['config']['predictors'][i] = predictor['config']
         return data
+
+    @classmethod
+    def _pre_build(cls, data: dict) -> dict:
+        for i, predictor in enumerate(data['config']['predictors']):
+            if isinstance(predictor, dict):
+                data['config']['predictors'][i] = \
+                    GraphPredictor.stuff_predictor_into_envelope(predictor)
+        return data
+
+    @staticmethod
+    def stuff_predictor_into_envelope(predictor: dict) -> dict:
+        """Insert a serialized embedded predictor into a module envelope, to facilitate deser."""
+        return dict(
+            module_type='PREDICTOR',
+            config=predictor,
+            active=False,
+            schema_id='43c61ad4-7e33-45d0-a3de-504acb4e0737'  # TODO: what should this be?
+        )
 
     def __str__(self):
         return '<GraphPredictor {!r}>'.format(self.name)
@@ -207,7 +232,7 @@ class ExpressionPredictor(Serializable['ExpressionPredictor'], Predictor):
     output = properties.Object(Descriptor, 'config.output')
     aliases = properties.Mapping(properties.String, properties.String, 'config.aliases')
     typ = properties.String('config.type', default='Expression', deserializable=False)
-    status = properties.String('status', serializable=False)
+    status = properties.Optional(properties.String(), 'status', serializable=False)
     status_info = properties.Optional(
         properties.List(properties.String()),
         'status_info',

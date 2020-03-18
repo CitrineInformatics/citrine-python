@@ -2,6 +2,7 @@
 import mock
 import pytest
 import uuid
+from copy import deepcopy
 
 from citrine.exceptions import ModuleRegistrationFailedException, NotFound
 from citrine.informatics.predictors import GraphPredictor, SimpleMLPredictor
@@ -51,8 +52,9 @@ def test_register(valid_simple_ml_predictor_data):
 
 
 def test_graph_register(valid_graph_predictor_data):
+    copy_graph_data = deepcopy(valid_graph_predictor_data)
     session = mock.Mock()
-    session.post_resource.return_value = valid_graph_predictor_data
+    session.post_resource.return_value = copy_graph_data
     session.get_resource.return_value = {
         'id': str(uuid.uuid4()),
         'status': 'VALID',

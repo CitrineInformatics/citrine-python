@@ -132,7 +132,6 @@ def test_dump_example():
             OriginalUnitsColumn(data_source=density.name),
         ]
     )
-    print(json.dumps(ara_definition.dump(), indent=2))
 
 
 def test_preview(collection, session):

@@ -1,5 +1,3 @@
-from typing import List
-
 import pytest
 
 from citrine._serialization import properties

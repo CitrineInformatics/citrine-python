@@ -115,6 +115,7 @@ def valid_simple_ml_predictor_data():
 @pytest.fixture
 def valid_graph_predictor_data():
     """Produce valid data used for tests."""
+    from citrine.informatics.descriptors import RealDescriptor
     return dict(
         module_type='PREDICTOR',
         status='VALID',
@@ -127,7 +128,22 @@ def valid_graph_predictor_data():
             type='Graph',
             name='Graph predictor',
             description='description',
-            predictors=[str(uuid.uuid4()), str(uuid.uuid4())]
+            predictors=[
+                str(uuid.uuid4()),
+                dict(
+                    type='Expression',
+                    name='Expression predictor',
+                    description='mean of 2 outputs',
+                    expression='(X + Y)/2',
+                    output=RealDescriptor(
+                        'Property~Some metric', lower_bound=0, upper_bound=1000, units='W'
+                    ).dump(),
+                    aliases={
+                        "Property~X": "X",
+                        "Property~Y": "Y"
+                    }
+                )
+            ]
         )
     )
 
