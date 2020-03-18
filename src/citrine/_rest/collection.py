@@ -1,6 +1,7 @@
 from abc import abstractmethod
 from typing import Optional, Union, Generic, TypeVar, Iterable
 from uuid import UUID
+from urllib.parse import quote
 import warnings
 
 from citrine.exceptions import ModuleRegistrationFailedException, NonRetryableException
@@ -27,11 +28,19 @@ class Collection(Generic[ResourceType]):
     def _get_path(self, uid: Optional[Union[UUID, str]] = None,
                   ignore_dataset: Optional[bool] = False) -> str:
         """Construct a url from __base_path__ and, optionally, id."""
-        subpath = '/{}'.format(uid) if uid else ''
+        subpath = '/{}'.format(quote(uid, safe="")) if uid else ''
+        path_attrs = {}
+
+        for attr_key, attr_value in self.__dict__.items():
+            try:
+                path_attrs[attr_key] = quote(str(attr_value), safe="")
+            except Exception as e:
+                pass
+
         if ignore_dataset:
-            return self._dataset_agnostic_path_template.format(**self.__dict__) + subpath
+            return self._dataset_agnostic_path_template.format(**path_attrs) + subpath
         else:
-            return self._path_template.format(**self.__dict__) + subpath
+            return self._path_template.format(**path_attrs) + subpath
 
     @abstractmethod
     def build(self, data: dict):

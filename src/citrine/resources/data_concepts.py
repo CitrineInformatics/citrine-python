@@ -2,6 +2,7 @@
 from uuid import UUID
 from typing import TypeVar, Type, List, Dict, Union, Optional, Iterator
 from abc import abstractmethod
+from urllib.parse import quote
 
 from citrine._session import Session
 from citrine._rest.collection import Collection
@@ -352,7 +353,7 @@ class DataConceptsCollection(Collection[ResourceType]):
             An object with specified scope and uid
 
         """
-        path = self._get_path(ignore_dataset=self.dataset_id is None) + "/{}/{}".format(scope, uid)
+        path = self._url_safe_scope_and_id_snippet(scope, uid)
         data = self.session.get_resource(path)
         return self.build(data)
 
@@ -652,10 +653,15 @@ class DataConceptsCollection(Collection[ResourceType]):
             Dry run is intended to be used for validation. Default: false
 
         """
-        path = self._get_path() + "/{}/{}".format(scope, uid)
+        path = self._url_safe_scope_and_id_snippet(scope, uid)
         params = {'dry_run': dry_run}
         self.session.delete_resource(path, params=params)
         return Response(status_code=200)  # delete succeeded
+
+    def _url_safe_scope_and_id_snippet(self, scope, uid):
+        encoded_scope = quote(scope, safe='')
+        encoded_uid = quote(uid, safe='')
+        return self._get_path(ignore_dataset=self.dataset_id is None) + "/{}/{}".format(encoded_scope, encoded_uid)
 
     @staticmethod
     def _get_attribute_bounds_search_body(attribute_bounds):
