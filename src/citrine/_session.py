@@ -4,6 +4,8 @@ from logging import getLogger
 from datetime import datetime, timedelta
 
 from requests import Response
+from json.decoder import JSONDecodeError
+from urllib3.util.retry import Retry
 
 from citrine.exceptions import (
     NotFound,
@@ -45,6 +47,19 @@ class Session(requests.Session):
         self.s3_use_ssl = True
         self.s3_addressing_style = 'auto'
 
+        # Custom adapter so we can use custom retry parameters. The default HTTP status
+        # codes for retries are [503, 413, 429]. We're using status_force list to add
+        # additional codes to retry on, focusing on specific CloudFlare 5XX errors.
+        retries = Retry(total=10,
+                        connect=5,
+                        read=5,
+                        status=5,
+                        backoff_factor=0.25,
+                        status_forcelist=[500, 502, 504, 520, 521, 522, 524, 527])
+        adapter = requests.adapters.HTTPAdapter(max_retries=retries)
+        self.mount('https://', adapter)
+        self.mount('http://', adapter)
+
     def _versioned_base_url(self, version: str = 'v1'):
         return '{}://{}/api/{}/'.format(self.scheme, self.authority, version)
 
@@ -54,7 +69,7 @@ class Session(requests.Session):
     def _refresh_access_token(self) -> None:
         """Optionally refresh our access token (if the previous one is about to expire)."""
         data = {'refresh_token': self.refresh_token}
-        response = super().request(
+        response = self.request(
             'POST', self._versioned_base_url() + 'tokens/refresh', json=data)
         if response.status_code != 200:
             raise UnauthorizedRefreshToken()
@@ -79,12 +94,12 @@ class Session(requests.Session):
             logger.debug('\t{}: {}'.format(k, v))
         logger.debug('END request details.')
 
-        response = super().request(method, uri, **kwargs)
+        response = self.request(method, uri, **kwargs)
 
         try:
             if response.status_code == 401 and response.json().get("reason") == "invalid-token":
                 self._refresh_access_token()
-                response = super().request(method, uri, **kwargs)
+                response = self.request(method, uri, **kwargs)
         except ValueError:
             # Ignore ValueErrors thrown by attempting to decode json bodies. This
             # might occur if we get a 401 response without a JSON body
@@ -132,19 +147,36 @@ class Session(requests.Session):
 
     def get_resource(self, path: str, **kwargs) -> dict:
         """GET a particular resource as JSON."""
-        return self.checked_get(path, **kwargs).json()
+        response = self.checked_get(path, **kwargs)
+        return self._extract_response_json(path, response)
 
     def post_resource(self, path: str, json: dict, **kwargs) -> dict:
         """POST to a particular resource as JSON."""
-        return self.checked_post(path, json=json, **kwargs).json()
+        response = self.checked_post(path, json=json, **kwargs)
+        return self._extract_response_json(path, response)
 
     def put_resource(self, path: str, json: dict, **kwargs) -> dict:
         """PUT data given by some JSON at a particular resource."""
-        return self.checked_put(path, json=json, **kwargs).json()
+        response = self.checked_put(path, json=json, **kwargs)
+        return self._extract_response_json(path, response)
 
-    def delete_resource(self, path: str) -> dict:
+    def delete_resource(self, path: str, **kwargs) -> dict:
         """DELETE a particular resource as JSON."""
-        return self.checked_delete(path).json()
+        response = self.checked_delete(path, **kwargs)
+        return self._extract_response_json(path, response)
+
+    @staticmethod
+    def _extract_response_json(path, response) -> dict:
+        """Extract json from the response or log and return an empty dict if extraction fails."""
+        try:
+            return response.json()
+        except JSONDecodeError as err:
+            logger.info('Response at path %s with status code %s failed json parsing with'
+                        ' exception %s. Returning empty value.',
+                        path,
+                        response.status_code,
+                        err.msg)
+            return {}
 
     @staticmethod
     def cursor_paged_resource(base_method: Callable[..., dict], path: str,
@@ -177,9 +209,9 @@ class Session(requests.Session):
         """Execute a PUT request to a URL and utilize error filtering on the response."""
         return self.checked_request('PUT', path, json=json, **kwargs)
 
-    def checked_delete(self, path: str) -> Response:
+    def checked_delete(self, path: str, **kwargs) -> Response:
         """Execute a DELETE request to a URL and utilize error filtering on the response."""
-        return self.checked_request('DELETE', path)
+        return self.checked_request('DELETE', path, **kwargs)
 
     def checked_get(self, path: str, **kwargs) -> Response:
         """Execute a GET request to a URL and utilize error filtering on the response."""

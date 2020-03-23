@@ -51,22 +51,22 @@ For each test set, the rest of the data are used to train the predictor, and the
 By comparing the model's predictions to the true values, we can compute several performance metrics that provide information about model quality.
 
 - Root-mean squared error (RMSE): the square root of the average of the squared prediction error
-- Non-dimensional model error (NDME): The RMSE, normalized by the RMSE of a trivial model that always predicts the mean value of the data.
+- Non-dimensional model error (NDME): The RMSE, normalized by the standard deviation of the output variable (which is the RMSE of a trivial model that always predicts the mean value of the data).
 - Standard residual: The RMSE of the standardized error (the prediction error divided by the prediction uncertainty)
 - Standard confidence: The fraction of predictions for which the prediction error is less than the prediction uncertainty
 
 Performance metrics included in the results depend on whether the response is numeric or categorical.
-For numeric responses, performance metrics include root mean squared error (RMSE), non-dimensional error (NDE), standard residual and standard confidence.
+For numeric responses, performance metrics include root mean squared error (RMSE), non-dimensiona model error (NDME), standard residual and standard confidence.
 
 -  RMSE is a useful and popular statistical metric for model quality.
    Lower RMSE means the model is more accurate.
--  NDE is the ratio between RMSE and standard deviation of the output variable.
-   NDE is a useful non-dimensional model quality metric.
-   A value of NDE = 0 is a perfect model. If NDE = 1, then the model is uninformative.
-   An acceptable NDE depends on how the model is used.
-   Generally, NDE > 0.9 indicates a model with very high uncertainty.
-   If 0.9 > NDE > 0.6, this model is typically a good candidate for a design workflow.
-   Lower values of NDE indicate increasingly accurate models.
+-  NDME is the ratio between RMSE and standard deviation of the output variable.
+   NDME is a useful non-dimensional model quality metric.
+   A value of NDME = 0 is a perfect model. If NDME = 1, then the model is uninformative.
+   An acceptable NDME depends on how the model is used.
+   Generally, NDME > 0.9 indicates a model with very high error.
+   If 0.9 > NDME > 0.6, this model is typically a good candidate for a design workflow.
+   Lower NDME indicates a model that is more likely to surface good candidates by yielding more accurate predictions.
 -  Standard residual is the root mean square of standardized errors.
    (1.0 is perfectly calibrated.)
    Standard residual provides a way to determine whether uncertainty estimates are well-calibrated for this model.
@@ -82,7 +82,7 @@ For categorical responses, performance metrics include either the area under the
    If AUC=1.0, all samples are classified correctly.
    If AUC=0.5, the model cannot distinguish between the two categories.
    If AUC=0.0, all samples are classified incorrectly.
--  F1 score is calculated from precision and recall of the model, weighted by the number of true positives according to the formula ``2.0 * precision * recall / (precision + recall) * true_positives``.
+-  Support-weighted F1 score is calculated from averaged precision and recall of the model, weighted by the in-class fraction of true positives according to the formula ``2.0 * precision * recall / (precision + recall) * fraction_true_positives`` summed over each class.
    Scores are bounded by 0 and 1. At a value of 1, the model has perfect precision and recall.
 
 The following demonstrates how to trigger workflow execution using an already existing `predictor` object and the `workflow` created in the example above.:

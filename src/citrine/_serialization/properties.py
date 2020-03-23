@@ -3,6 +3,7 @@ from abc import abstractmethod
 import typing
 from typing import Optional
 from datetime import datetime
+from itertools import chain
 import uuid
 import arrow
 
@@ -325,7 +326,95 @@ class List(Property[list, list]):
         return serialized
 
 
-class MixedList(Property[list, list]):
+class Set(Property[set, typing.Iterable]):
+
+    def __init__(self,
+                 element_type: typing.Union[Property, typing.Type[Property]],
+                 serialization_path: typing.Optional[str] = None,
+                 serializable: bool = True,
+                 deserializable: bool = True,
+                 default: typing.Optional[DeserializedType] = None):
+        super().__init__(serialization_path,
+                         serializable,
+                         deserializable,
+                         default)
+        self.element_type = element_type if isinstance(element_type, Property) else element_type()
+
+    @property
+    def underlying_types(self):
+        return set
+
+    @property
+    def serialized_types(self):
+        return typing.Iterable
+
+    def _deserialize(self, value: typing.Iterable) -> set:
+        deserialized = set()
+        for element in value:
+            deserialized.add(self.element_type.deserialize(element))
+        return deserialized
+
+    def _serialize(self, value: set) -> set:
+        serialized = set()
+        for element in value:
+            serialized.add(self.element_type.serialize(element))
+        return serialized
+
+
+class Union(Property[typing.Any, typing.Any]):
+    """
+    One of several possible property types.
+
+    Attempted de/serialization is done in the order in which types are provided in the constructor.
+    """
+
+    def __init__(self,
+                 element_types: typing.Sequence[typing.Union[Property, typing.Type[Property]]],
+                 serialization_path: typing.Optional[str] = None,
+                 serializable: bool = True,
+                 deserializable: bool = True,
+                 default: typing.Optional[DeserializedType] = None):
+        super().__init__(serialization_path,
+                         serializable,
+                         deserializable,
+                         default)
+        if not isinstance(element_types, typing.Iterable):
+            raise ValueError("element types must be iterable: {}".format(element_types))
+        self.element_types: typing.List[Property, ...] = \
+            [el if isinstance(el, Property) else el() for el in element_types]
+
+    @property
+    def underlying_types(self):
+        all_underlying_types = [prop.underlying_types for prop in self.element_types]
+        return tuple(set(chain(*[typ if isinstance(typ, tuple)
+                                 else (typ,) for typ in all_underlying_types])))
+
+    @property
+    def serialized_types(self):
+        all_serialized_types = [prop.serialized_types for prop in self.element_types]
+        return tuple(set(chain(*[typ if isinstance(typ, tuple)
+                                 else (typ,) for typ in all_serialized_types])))
+
+    def _serialize(self, value: typing.Any) -> typing.Any:
+        for prop in self.element_types:
+            try:
+                return prop.serialize(value)
+            except ValueError:
+                pass
+        raise RuntimeError("An unexpected error occurred while trying to serialize {} to one "
+                           "of the following types: {}.".format(value, self.serialized_types))
+
+    def _deserialize(self, value: typing.Any) -> typing.Any:
+        for prop in self.element_types:
+            try:
+                return prop.deserialize(value)
+            except ValueError:
+                pass
+        raise RuntimeError("An unexpected error occurred while trying to deserialize {} to one "
+                           "of the following types: {}.".format(value, self.underlying_types))
+
+
+class SpecifiedMixedList(Property[list, list]):
     """A finite list in which the type of each entry is specified."""
 
     def __init__(self,

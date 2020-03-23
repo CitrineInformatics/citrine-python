@@ -3,6 +3,7 @@ import arrow
 import uuid
 from taurus.enumeration.base_enumeration import BaseEnumeration
 
+
 from citrine.resources.dataset import Dataset
 from citrine._serialization.properties import (
     Datetime,
@@ -11,10 +12,11 @@ from citrine._serialization.properties import (
     Integer,
     LinkByUID,
     LinkOrElse,
-    MixedList,
+    SpecifiedMixedList,
     Object,
     Optional,
     String,
+    Union,
     UUID,
 )
 from ._data import (
@@ -138,17 +140,17 @@ def test_datetime_cannot_deserialize_float():
 
 def test_mixed_list_requires_property_list():
     with pytest.raises(ValueError):
-        MixedList(Integer)
+        SpecifiedMixedList(Integer)
 
 
 def test_deserialize_mixed_list():
-    ml = MixedList([Integer, String])
+    ml = SpecifiedMixedList([Integer, String])
     assert [1, '2'] == ml.deserialize([1, '2'])
     assert [1, None] == ml.deserialize([1])
 
 
 def test_mixed_list_cannot_deserialize_larger_lists():
-    ml = MixedList([Integer])
+    ml = SpecifiedMixedList([Integer])
     with pytest.raises(ValueError):
         ml.deserialize([1, '2'])
     with pytest.raises(ValueError):
@@ -156,7 +158,7 @@ def test_mixed_list_cannot_deserialize_larger_lists():
 
 
 def test_mixed_list_cannot_serialize_larger_lists():
-    ml = MixedList([Integer])
+    ml = SpecifiedMixedList([Integer])
     with pytest.raises(ValueError):
         ml.serialize([1, '2'])
     with pytest.raises(ValueError):
@@ -164,13 +166,49 @@ def test_mixed_list_cannot_serialize_larger_lists():
 
 
 def test_mixed_list_with_defaults():
-    ml = MixedList([Integer, Integer, Integer(default=100)])
+    ml = SpecifiedMixedList([Integer, Integer, Integer(default=100)])
     assert [1, 2, 100] == ml.serialize([1, 2])
+
+
+def test_union():
+    # Attempt to de/serialize first with Integer, then LinkOrElse, then String
+    union_type = Union([Integer, LinkOrElse, String])
+    assert 3 == union_type.deserialize(3)
+    assert 3 == union_type.serialize(3)
+    # Since "3" can be deserialized with Integer, this deserializes as an int
+    assert 3 == union_type.deserialize("3")
+    assert "3" == union_type.serialize("3")
+    with pytest.raises(ValueError):
+        union_type.deserialize(1.7)
+
+
+def test_untion_requires_property_iterable():
+    with pytest.raises(ValueError):
+        Union(Integer)
 
 
 class EnumerationExample(BaseEnumeration):
     FOO = "foo"
     BAR = "bar"
+
+
+def test_union_runtime_errors():
+    """
+    De/serialization of Union ignores value errors.
+    They indicate that a specific property is not the one that should be used for de/ser.
+
+    If a different type of value error occurs then it can result in a difficult-to-diagnose
+    error state and a runtime error is thrown.
+    This test illustrates how that can happen for both serialization and deserialization.
+
+    """
+    # The underlying type is correct (BaseEnumeration) but FOO is not part of that enumeration
+    with pytest.raises(RuntimeError):
+        Union([Enumeration(BaseEnumeration)]).serialize(EnumerationExample.FOO)
+    # The serialized type is correct (dict) but it is missing fields
+    incomplete_dataset_dict = {'name': 'name'}
+    with pytest.raises(RuntimeError):
+        Union([Object(Dataset)]).deserialize(incomplete_dataset_dict)
 
 
 def test_enumeration_ser():

@@ -132,7 +132,6 @@ def test_dump_example():
             OriginalUnitsColumn(data_source=density.name),
         ]
     )
-    print(json.dumps(ara_definition.dump(), indent=2))
 
 
 def test_preview(collection, session):
@@ -224,6 +223,14 @@ def test_add_all_ingredients(session, project):
     with pytest.raises(ValueError):
         def2.add_all_ingredients(process_template=process_link, project=project,
                                  quantity_dimension=IngredientQuantityDimension.VOLUME)
+
+    # If the process template has an empty allowed_names list then an error should be raised
+    session.set_response(
+        ProcessTemplate(process_name, uids={'id': process_id}).dump()
+    )
+    with pytest.raises(RuntimeError):
+        empty_defn().add_all_ingredients(process_template=process_link, project=project,
+                                         quantity_dimension=IngredientQuantityDimension.VOLUME)
 
 
 def test_register_new(collection, session):

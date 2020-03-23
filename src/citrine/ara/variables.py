@@ -53,7 +53,7 @@ class Variable(PolymorphicSerializable['Variable']):
             RootInfo, AttributeByTemplate, AttributeByTemplateAfterProcessTemplate,
             AttributeByTemplateAndObjectTemplate, IngredientIdentifierByProcessTemplateAndName,
             IngredientLabelByProcessAndName, IngredientQuantityByProcessAndName,
-            RootIdentifier
+            RootIdentifier, AttributeInOutput
         ]
         res = next((x for x in types if x.typ == data["type"]), None)
         if res is None:
@@ -116,12 +116,14 @@ class AttributeByTemplate(Serializable['AttributeByTemplate'], Variable):
     template = properties.Object(LinkByUID, 'template')
     attribute_constraints = properties.Optional(
         properties.List(
-            properties.MixedList([properties.Object(LinkByUID), properties.Object(BaseBounds)])
+            properties.SpecifiedMixedList(
+                [properties.Object(LinkByUID), properties.Object(BaseBounds)]
+            )
         ), 'attribute_constraints')
     typ = properties.String('type', default="attribute_by_template", deserializable=False)
 
     def _attrs(self) -> List[str]:
-        return ["name", "headers", "template", "typ"]
+        return ["name", "headers", "template", "attribute_constraints", "typ"]
 
     def __init__(self, *,
                  name: str,
@@ -161,12 +163,15 @@ class AttributeByTemplateAfterProcessTemplate(
     process_template = properties.Object(LinkByUID, 'process_template')
     attribute_constraints = properties.Optional(
         properties.List(
-            properties.MixedList([properties.Object(LinkByUID), properties.Object(BaseBounds)])
+            properties.SpecifiedMixedList(
+                [properties.Object(LinkByUID), properties.Object(BaseBounds)]
+            )
         ), 'attribute_constraints')
     typ = properties.String('type', default="attribute_after_process", deserializable=False)
 
     def _attrs(self) -> List[str]:
-        return ["name", "headers", "attribute_template", "process_template", "typ"]
+        return ["name", "headers", "attribute_template", "process_template",
+                "attribute_constraints", "typ"]
 
     def __init__(self, *,
                  name: str,
@@ -213,12 +218,15 @@ class AttributeByTemplateAndObjectTemplate(
     object_template = properties.Object(LinkByUID, 'object_template')
     attribute_constraints = properties.Optional(
         properties.List(
-            properties.MixedList([properties.Object(LinkByUID), properties.Object(BaseBounds)])
+            properties.SpecifiedMixedList(
+                [properties.Object(LinkByUID), properties.Object(BaseBounds)]
+            )
         ), 'attribute_constraints')
     typ = properties.String('type', default="attribute_by_object", deserializable=False)
 
     def _attrs(self) -> List[str]:
-        return ["name", "headers", "attribute_template", "object_template", "typ"]
+        return ["name", "headers", "attribute_template", "object_template",
+                "attribute_constraints", "typ"]
 
     def __init__(self, *,
                  name: str,
@@ -396,3 +404,72 @@ class RootIdentifier(Serializable['RootIdentifier'], Variable):
         self.name = name
         self.headers = headers
         self.scope = scope
+
+
+class AttributeInOutput(
+        Serializable['AttributeInOutput'], Variable):
+    """[ALPHA] Attribute marked by an attribute template in the trunk of the history tree.
+
+    The search for an attribute that marks the given attribute template starts at the root
+    of the material history tree and proceeds until any of the given process templates are reached.
+    Those templates block the search from continuing into their ingredients but do not halt the
+    search entirely. This variable definition allows attributes that are present both in output
+    and the inputs of a process to be distinguished.
+
+    For example, a material "paint" might be produced by mixing and then resting "pigments" and
+    a "base".  The color of the pigments and base could be measured and recorded as attributes
+    in addition to the color of the resulting paint.  To define a variable as the color of the
+    resulting paint, AttributeInTrunk can be used with the mixing process included in the list
+    of process templates.  Then, when the platform looks for colors, it won't traverse through
+    the mixing process and hit the colors of the pigments and base as well, which would result
+    in an ambiguous variable match.
+
+    Unlike "AttributeByTemplateAfterProcess", AttributeInTrunk will also match on the color
+    attribute of the pigments in the rows that correspond to those pigments.  This way, all the
+    colors can be assigned to the same variable and rendered into the same columns in the table.
+
+    Parameters
+    ---------
+    name: str
+        a short human-readable name to use when referencing the variable
+    headers: list[str]
+        sequence of column headers
+    attribute_template: LinkByUID
+        attribute template that identifies the attribute to assign to the variable
+    process_templates: list[LinkByUID]
+        process templates that should not be traversed through when searching for a matching
+        attribute.  The attribute may be present in these processes but not their ingredients.
+    attribute_constraints: list[(LinkByUID, Bounds)]
+        constraints on object attributes in the target object that must be satisfied. Constraints
+        are expressed as Bounds.  Attributes are expressed with links. The attribute that the
+        variable is being set to may be the target of a constraint as well.
+
+    """
+
+    name = properties.String('name')
+    headers = properties.List(properties.String, 'headers')
+    attribute_template = properties.Object(LinkByUID, 'attribute_template')
+    process_templates = properties.List(properties.Object(LinkByUID), 'process_templates')
+    attribute_constraints = properties.Optional(
+        properties.List(
+            properties.SpecifiedMixedList(
+                [properties.Object(LinkByUID), properties.Object(BaseBounds)]
+            )
+        ), 'attribute_constraints')
+    typ = properties.String('type', default="attribute_in_trunk", deserializable=False)
+
+    def _attrs(self) -> List[str]:
+        return ["name", "headers", "attribute_template", "process_templates",
+                "attribute_constraints", "typ"]
+
+    def __init__(self, *,
+                 name: str,
+                 headers: List[str],
+                 attribute_template: LinkByUID,
+                 process_templates: List[LinkByUID],
+                 attribute_constraints: List[List[Union[LinkByUID, BaseBounds]]] = None):
+        self.name = name
+        self.headers = headers
+        self.attribute_template = attribute_template
+        self.process_templates = process_templates
+        self.attribute_constraints = attribute_constraints

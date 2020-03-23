@@ -1,12 +1,14 @@
 """Tests for citrine.informatics.predictors serialization."""
 import pytest
 from uuid import UUID
+from copy import deepcopy
 
 from citrine.informatics.predictors import ExpressionPredictor, GraphPredictor, Predictor, SimpleMLPredictor
 from citrine.informatics.descriptors import RealDescriptor
 
 
 def valid_serialization_output(data):
+    """Remove fields that are not preserved by serialization."""
     return {x: y for x, y in data.items() if x not in {'status', 'status_info'}}
 
 
@@ -48,10 +50,12 @@ def test_legacy_serialization(valid_simple_ml_predictor_data):
 
 def test_graph_serialization(valid_graph_predictor_data):
     """Ensure that a serialized GraphPredictor looks sane."""
+    graph_data_copy = deepcopy(valid_graph_predictor_data)
     predictor = GraphPredictor.build(valid_graph_predictor_data)
     serialized = predictor.dump()
-    serialized['id'] = valid_graph_predictor_data['id']
-    assert serialized == valid_serialization_output(valid_graph_predictor_data)
+    serialized['id'] = graph_data_copy['id']
+    assert serialized['config']['predictors'] == graph_data_copy['config']['predictors']
+    assert serialized == valid_serialization_output(graph_data_copy)
 
 
 def test_expression_serialization(valid_expression_predictor_data):
