@@ -1,7 +1,8 @@
 Predictor reports
 =================
 
-A predictor report contains information about a machine-learned model and various performance metrics.
+A predictor report describes a machine-learned model, for example, its settings and what features are important to the model. 
+It does not include performance metrics. To learn more about performance metrics, please see :doc:`PerformanceWorkflows <performance_workflows>`.
 The report can be accessed via the python SDK via ``predictor.report``.
 
 A task to generate a predictor report is scheduled when a predictor is registered.
