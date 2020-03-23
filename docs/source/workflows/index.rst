@@ -23,7 +23,7 @@ DesignWorkflow
 
 The :doc:`DesignWorkflow <design_workflows>` is the core AI workflow on the platform.
 This workflow generates scored candidates for sequential learning.
-It requires one of each of the modules listed above and executes in the following manner:
+It requires one of each of the modules listed below and executes in the following manner:
 
 -  Material candidates are pulled from the design space.
 -  The predictor adds additional information to the candidates.
@@ -81,4 +81,3 @@ Validation status can be one of the following states:
 -  **Error:** Validation did not complete. An error was raised during the validation process that prevented an invalid or ready status to be determined.
 
 Validation of a workflow and all constituent modules must complete with ready status before the workflow can be executed.
-
