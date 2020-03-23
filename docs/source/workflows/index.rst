@@ -37,7 +37,9 @@ Design workflows are further parameterized by :doc:`Scores <scores>`, which codi
 PerformanceWorkflow
 **********
 
-The :doc:`PerformanceWorkflow <performance_workflows>` is used to perform analysis on a predictor module. The PerformanceWorkflow exists to help the user understand how well their predictor module works with their data: in essence, it describes the trustworthiness of their model. These outcomes are captured in a series of performance metrics.
+The :doc:`PerformanceWorkflow <performance_workflows>` is used to perform analysis on a predictor module.
+The PerformanceWorkflow exists to help the user understand how well their predictor module works with their data: in essence, it describes the trustworthiness of their model.
+These outcomes are captured in a series of performance metrics.
 
 Modules Overview
 -------
@@ -79,5 +81,4 @@ Validation status can be one of the following states:
 -  **Error:** Validation did not complete. An error was raised during the validation process that prevented an invalid or ready status to be determined.
 
 Validation of a workflow and all constituent modules must complete with ready status before the workflow can be executed.
-
 
