@@ -3,9 +3,9 @@ import mock
 import pytest
 import uuid
 
+from citrine.informatics.data_sources import AraTableDataSource
 from citrine.informatics.descriptors import RealDescriptor
 from citrine.informatics.predictors import ExpressionPredictor, GraphPredictor, SimpleMLPredictor
-from citrine.informatics.data_tables import DataTable
 
 x = RealDescriptor("x", 0, 100, "")
 y = RealDescriptor("y", 0, 100, "")
@@ -21,7 +21,7 @@ def simple_predictor() -> SimpleMLPredictor:
                              inputs=[x],
                              outputs=[z],
                              latent_variables=[y],
-                             training_data=DataTable('e5c51369-8e71-4ec6-b027-1f92bdc14762'))
+                             training_data=AraTableDataSource(uuid.UUID('e5c51369-8e71-4ec6-b027-1f92bdc14762'), 0))
 
 
 @pytest.fixture
