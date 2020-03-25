@@ -41,11 +41,11 @@ class RealDescriptor(Serializable['RealDescriptor'], Descriptor):
     lower_bound = properties.Float('lower_bound')
     upper_bound = properties.Float('upper_bound')
     units = properties.Optional(properties.String, 'units', default='')
-    type = properties.String('type', default='Real', deserializable=False)
+    typ = properties.String('type', default='Real', deserializable=False)
 
     def __eq__(self, other):
         try:
-            attrs = ["key", "lower_bound", "upper_bound", "units", "type"]
+            attrs = ["key", "lower_bound", "upper_bound", "units", "typ"]
             return all([
                 self.__getattribute__(key) == other.__getattribute__(key) for key in attrs
             ])
@@ -78,11 +78,11 @@ class InorganicDescriptor(Serializable['InorganicDescriptor'], Descriptor):
 
     key = properties.String('descriptor_key')
     threshold = properties.Float('threshold')
-    type = properties.String('type', default='Inorganic', deserializable=False)
+    typ = properties.String('type', default='Inorganic', deserializable=False)
 
     def __eq__(self, other):
         try:
-            attrs = ["key", "type"]
+            attrs = ["key", "typ"]
             return all([
                 self.__getattribute__(key) == other.__getattribute__(key) for key in attrs
             ])
@@ -109,12 +109,12 @@ class CategoricalDescriptor(Serializable['CategoricalDescriptor'], Descriptor):
     """
 
     key = properties.String('descriptor_key')
-    type = properties.String('type', default='Categorical', deserializable=False)
+    typ = properties.String('type', default='Categorical', deserializable=False)
     categories = properties.List(properties.String, 'descriptor_values')
 
     def __eq__(self, other):
         try:
-            attrs = ["key", "type"]
+            attrs = ["key", "typ"]
             return all([
                 self.__getattribute__(key) == other.__getattribute__(key) for key in attrs
             ]) and set(self.categories) == set(self.categories + other.categories)
