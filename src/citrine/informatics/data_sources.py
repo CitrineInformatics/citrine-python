@@ -1,6 +1,6 @@
 """Tools for working with Descriptors."""
 from abc import abstractmethod
-from typing import Type, List, Mapping  # noqa: F401
+from typing import Type, List, Mapping, Union  # noqa: F401
 from uuid import UUID
 
 from citrine._serialization.serializable import Serializable
@@ -80,8 +80,8 @@ class AraTableDataSource(Serializable['AraTableDataSource'], DataSource):
     ----------
     table_id: UUID
         Unique identifier for the table
-    table_version: int
-        Version number for the table
+    table_version: Union[str,int]
+        Version number for the table, which starts at 1 rather than 0.  Strings are cast to ints
 
     """
 
@@ -94,6 +94,6 @@ class AraTableDataSource(Serializable['AraTableDataSource'], DataSource):
 
     def __init__(self,
                  table_id: UUID,
-                 table_version: int):
+                 table_version: Union[int, str]):
         self.table_id = table_id
         self.table_version = table_version
