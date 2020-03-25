@@ -38,7 +38,7 @@ class DataSource(PolymorphicSerializable['DataSource']):
         types: List[Type[Serializable]] = [
             CSVDataSource, AraTableDataSource
         ]
-        res = next((x for x in types if x.type == data["type"]), None)
+        res = next((x for x in types if x.typ == data["type"]), None)
         if res is None:
             raise ValueError("Unrecognized type: {}".format(data["type"]))
         return res
@@ -56,13 +56,13 @@ class CSVDataSource(Serializable['CSVDataSource'], DataSource):
 
     """
 
-    type = properties.String('type', default='csv_data_source', deserializable=False)
+    typ = properties.String('type', default='csv_data_source', deserializable=False)
     file_link = properties.Object(FileLink, "file_link")
     column_definitions = properties.Mapping(
         properties.String, properties.Object(Descriptor), "column_definitions")
 
     def _attrs(self) -> List[str]:
-        return ["file_link", "column_definitions", "type"]
+        return ["file_link", "column_definitions", "typ"]
 
     def __init__(self,
                  file_link: FileLink,
@@ -85,12 +85,12 @@ class AraTableDataSource(Serializable['AraTableDataSource'], DataSource):
 
     """
 
-    type = properties.String('type', default='hosted_table_data_source', deserializable=False)
+    typ = properties.String('type', default='hosted_table_data_source', deserializable=False)
     table_id = properties.UUID("table_id")
     table_version = properties.Integer("table_version")
 
     def _attrs(self) -> List[str]:
-        return ["table_id", "table_version", "type"]
+        return ["table_id", "table_version", "typ"]
 
     def __init__(self,
                  table_id: UUID,
