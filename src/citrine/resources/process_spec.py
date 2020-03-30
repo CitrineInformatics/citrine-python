@@ -1,12 +1,13 @@
 """Resources that represent process spec objects."""
 from typing import Optional, Dict, List, Type
 
-from citrine._utils.functions import set_default_uid
 from citrine._rest.resource import Resource
-from citrine._serialization.properties import String, Mapping, Object, LinkOrElse
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Optional as PropertyOptional
-from citrine.resources.data_concepts import DataConceptsCollection, DataConcepts
+from citrine._serialization.properties import String, Mapping, Object, LinkOrElse
+from citrine._utils.functions import set_default_uid
+from citrine.resources.data_concepts import DataConcepts
+from citrine.resources.object_specs import ObjectSpec, ObjectSpecCollection
 from taurus.entity.attribute.condition import Condition
 from taurus.entity.attribute.parameter import Parameter
 from taurus.entity.file_link import FileLink
@@ -14,7 +15,7 @@ from taurus.entity.object.process_spec import ProcessSpec as TaurusProcessSpec
 from taurus.entity.template.process_template import ProcessTemplate as TaurusProcessTemplate
 
 
-class ProcessSpec(DataConcepts, Resource['ProcessSpec'], TaurusProcessSpec):
+class ProcessSpec(ObjectSpec, Resource['ProcessSpec'], TaurusProcessSpec):
     """
     A process specification.
 
@@ -86,7 +87,7 @@ class ProcessSpec(DataConcepts, Resource['ProcessSpec'], TaurusProcessSpec):
         return '<Process spec {!r}>'.format(self.name)
 
 
-class ProcessSpecCollection(DataConceptsCollection[ProcessSpec]):
+class ProcessSpecCollection(ObjectSpecCollection[ProcessSpec]):
     """Represents the collection of all process specs associated with a dataset."""
 
     _path_template = 'projects/{project_id}/datasets/{dataset_id}/process-specs'

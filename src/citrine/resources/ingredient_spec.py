@@ -1,20 +1,21 @@
 """Resources that represent ingredient spec data objects."""
 from typing import List, Dict, Optional, Type
 
-from citrine._utils.functions import set_default_uid
 from citrine._rest.resource import Resource
-from citrine.resources.data_concepts import DataConceptsCollection, DataConcepts
-from citrine._serialization.properties import Mapping, String, LinkOrElse, Object
 from citrine._serialization.properties import List as PropertyList
+from citrine._serialization.properties import Mapping, String, LinkOrElse, Object
 from citrine._serialization.properties import Optional as PropertyOptional
+from citrine._utils.functions import set_default_uid
+from citrine.resources.data_concepts import DataConcepts
+from citrine.resources.object_specs import ObjectSpec, ObjectSpecCollection
 from taurus.entity.file_link import FileLink
 from taurus.entity.object.ingredient_spec import IngredientSpec as TaurusIngredientSpec
-from taurus.entity.object.process_spec import ProcessSpec as TaurusProcessSpec
 from taurus.entity.object.material_spec import MaterialSpec as TaurusMaterialSpec
+from taurus.entity.object.process_spec import ProcessSpec as TaurusProcessSpec
 from taurus.entity.value.continuous_value import ContinuousValue
 
 
-class IngredientSpec(DataConcepts, Resource['IngredientSpec'], TaurusIngredientSpec):
+class IngredientSpec(ObjectSpec, Resource['IngredientSpec'], TaurusIngredientSpec):
     """
     An ingredient specification.
 
@@ -99,7 +100,7 @@ class IngredientSpec(DataConcepts, Resource['IngredientSpec'], TaurusIngredientS
         return '<Ingredient spec {!r}>'.format(self.name)
 
 
-class IngredientSpecCollection(DataConceptsCollection[IngredientSpec]):
+class IngredientSpecCollection(ObjectSpecCollection[IngredientSpec]):
     """Represents the collection of all ingredient specs associated with a dataset."""
 
     _path_template = 'projects/{project_id}/datasets/{dataset_id}/ingredient-specs'

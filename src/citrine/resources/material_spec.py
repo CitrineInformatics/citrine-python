@@ -6,8 +6,9 @@ from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Optional as PropertyOptional
 from citrine._serialization.properties import String, LinkOrElse, Mapping, Object
 from citrine._utils.functions import set_default_uid
-from citrine.resources.data_concepts import DataConceptsCollection, DataConcepts
+from citrine.resources.data_concepts import DataConcepts
 from citrine.resources.material_template import MaterialTemplateCollection
+from citrine.resources.object_specs import ObjectSpec, ObjectSpecCollection
 from taurus.entity.attribute.property_and_conditions import PropertyAndConditions
 from taurus.entity.file_link import FileLink
 from taurus.entity.object.material_spec import MaterialSpec as TaurusMaterialSpec
@@ -15,7 +16,7 @@ from taurus.entity.object.process_spec import ProcessSpec as TaurusProcessSpec
 from taurus.entity.template.material_template import MaterialTemplate as TaurusMaterialTemplate
 
 
-class MaterialSpec(DataConcepts, Resource['MaterialSpec'], TaurusMaterialSpec):
+class MaterialSpec(ObjectSpec, Resource['MaterialSpec'], TaurusMaterialSpec):
     """
     A material specification.
 
@@ -75,7 +76,7 @@ class MaterialSpec(DataConcepts, Resource['MaterialSpec'], TaurusMaterialSpec):
         return '<Material spec {!r}>'.format(self.name)
 
 
-class MaterialSpecCollection(DataConceptsCollection[MaterialSpec]):
+class MaterialSpecCollection(ObjectSpecCollection[MaterialSpec]):
     """Represents the collection of all material specs associated with a dataset."""
 
     _path_template = 'projects/{project_id}/datasets/{dataset_id}/material-specs'

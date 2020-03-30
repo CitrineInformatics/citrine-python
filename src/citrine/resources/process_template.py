@@ -2,20 +2,21 @@
 from typing import List, Dict, Optional, Union, Sequence, Type
 
 from citrine._rest.resource import Resource
+from citrine._serialization.properties import List as PropertyList
+from citrine._serialization.properties import Optional as PropertyOptional
 from citrine._serialization.properties import String, Mapping, Object, SpecifiedMixedList, \
     LinkOrElse
-from citrine._serialization.properties import Optional as PropertyOptional
-from citrine._serialization.properties import List as PropertyList
 from citrine._utils.functions import set_default_uid
-from citrine.resources.data_concepts import DataConcepts, DataConceptsCollection
-from citrine.resources.parameter_template import ParameterTemplate
 from citrine.resources.condition_template import ConditionTemplate
-from taurus.entity.template.process_template import ProcessTemplate as TaurusProcessTemplate
+from citrine.resources.data_concepts import DataConcepts
+from citrine.resources.object_templates import ObjectTemplate, ObjectTemplateCollection
+from citrine.resources.parameter_template import ParameterTemplate
 from taurus.entity.bounds.base_bounds import BaseBounds
 from taurus.entity.link_by_uid import LinkByUID
+from taurus.entity.template.process_template import ProcessTemplate as TaurusProcessTemplate
 
 
-class ProcessTemplate(DataConcepts, Resource['ProcessTemplate'], TaurusProcessTemplate):
+class ProcessTemplate(ObjectTemplate, Resource['ProcessTemplate'], TaurusProcessTemplate):
     """
     A process template.
 
@@ -91,7 +92,7 @@ class ProcessTemplate(DataConcepts, Resource['ProcessTemplate'], TaurusProcessTe
         return '<Process template {!r}>'.format(self.name)
 
 
-class ProcessTemplateCollection(DataConceptsCollection[ProcessTemplate]):
+class ProcessTemplateCollection(ObjectTemplateCollection[ProcessTemplate]):
     """A collection of process templates."""
 
     _path_template = 'projects/{project_id}/datasets/{dataset_id}/process-templates'
