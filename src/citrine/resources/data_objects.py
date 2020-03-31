@@ -1,12 +1,10 @@
 """Top-level class for all data object (i.e. spec and run) objects and collections thereof."""
-from abc import abstractmethod
-from typing import Type
+from abc import ABC
 
-from citrine._serialization.serializable import Serializable
 from citrine.resources.data_concepts import DataConcepts, DataConceptsCollection, ResourceType
 
 
-class DataObject(DataConcepts):
+class DataObject(DataConcepts, ABC):
     """
     An abstract data object object.
 
@@ -14,10 +12,5 @@ class DataObject(DataConcepts):
     """
 
 
-class DataObjectCollection(DataConceptsCollection[ResourceType]):
+class DataObjectCollection(DataConceptsCollection[ResourceType], ABC):
     """A collection of one kind of data object object."""
-
-    @classmethod
-    @abstractmethod
-    def get_type(cls) -> Type[Serializable]:
-        """Return the resource type in the collection."""

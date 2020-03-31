@@ -1,13 +1,11 @@
 """Top-level class for all object run objects and collections thereof."""
-from abc import abstractmethod
-from typing import Type
+from abc import ABC
 
-from citrine._serialization.serializable import Serializable
 from citrine.resources.data_concepts import ResourceType
 from citrine.resources.data_objects import DataObject, DataObjectCollection
 
 
-class ObjectRun(DataObject):
+class ObjectRun(DataObject, ABC):
     """
     An abstract object run object.
 
@@ -15,10 +13,5 @@ class ObjectRun(DataObject):
     """
 
 
-class ObjectRunCollection(DataObjectCollection[ResourceType]):
+class ObjectRunCollection(DataObjectCollection[ResourceType], ABC):
     """A collection of one kind of object run object."""
-
-    @classmethod
-    @abstractmethod
-    def get_type(cls) -> Type[Serializable]:
-        """Return the resource type in the collection."""

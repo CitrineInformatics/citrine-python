@@ -1,12 +1,10 @@
 """Top-level class for all template objects and collections thereof."""
-from abc import abstractmethod
-from typing import Type
+from abc import ABC
 
-from citrine._serialization.serializable import Serializable
 from citrine.resources.data_concepts import DataConcepts, DataConceptsCollection, ResourceType
 
 
-class Template(DataConcepts):
+class Template(DataConcepts, ABC):
     """
     An abstract template object.
 
@@ -14,10 +12,5 @@ class Template(DataConcepts):
     """
 
 
-class TemplateCollection(DataConceptsCollection[ResourceType]):
+class TemplateCollection(DataConceptsCollection[ResourceType], ABC):
     """A collection of one kind of template object."""
-
-    @classmethod
-    @abstractmethod
-    def get_type(cls) -> Type[Serializable]:
-        """Return the resource type in the collection."""

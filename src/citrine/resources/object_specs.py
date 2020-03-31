@@ -1,13 +1,11 @@
 """Top-level class for all object spec objects and collections thereof."""
-from abc import abstractmethod
-from typing import Type
+from abc import ABC
 
-from citrine._serialization.serializable import Serializable
 from citrine.resources.data_concepts import ResourceType
 from citrine.resources.data_objects import DataObject, DataObjectCollection
 
 
-class ObjectSpec(DataObject):
+class ObjectSpec(DataObject, ABC):
     """
     An abstract object spec object.
 
@@ -15,10 +13,5 @@ class ObjectSpec(DataObject):
     """
 
 
-class ObjectSpecCollection(DataObjectCollection[ResourceType]):
+class ObjectSpecCollection(DataObjectCollection[ResourceType], ABC):
     """A collection of one kind of object spec object."""
-
-    @classmethod
-    @abstractmethod
-    def get_type(cls) -> Type[Serializable]:
-        """Return the resource type in the collection."""
