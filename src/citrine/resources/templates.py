@@ -1,7 +1,8 @@
 """Top-level class for all template objects and collections thereof."""
 from abc import ABC
+from typing import TypeVar
 
-from citrine.resources.data_concepts import DataConcepts, DataConceptsCollection, ResourceType
+from citrine.resources.data_concepts import DataConcepts, DataConceptsCollection
 
 
 class Template(DataConcepts, ABC):
@@ -12,5 +13,8 @@ class Template(DataConcepts, ABC):
     """
 
 
-class TemplateCollection(DataConceptsCollection[ResourceType], ABC):
+TemplateResourceType = TypeVar("TemplateResourceType", bound="Template")
+
+
+class TemplateCollection(DataConceptsCollection[TemplateResourceType], ABC):
     """A collection of one kind of template object."""

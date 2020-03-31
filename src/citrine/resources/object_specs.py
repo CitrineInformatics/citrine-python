@@ -1,7 +1,7 @@
 """Top-level class for all object spec objects and collections thereof."""
 from abc import ABC
+from typing import TypeVar
 
-from citrine.resources.data_concepts import ResourceType
 from citrine.resources.data_objects import DataObject, DataObjectCollection
 
 
@@ -13,5 +13,8 @@ class ObjectSpec(DataObject, ABC):
     """
 
 
-class ObjectSpecCollection(DataObjectCollection[ResourceType], ABC):
+ObjectSpecResourceType = TypeVar("ObjectSpecResourceType", bound="ObjectSpec")
+
+
+class ObjectSpecCollection(DataObjectCollection[ObjectSpecResourceType], ABC):
     """A collection of one kind of object spec object."""
