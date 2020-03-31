@@ -1,7 +1,7 @@
 """Top-level class for all data concepts objects and collections thereof."""
 from uuid import UUID
 from typing import TypeVar, Type, List, Dict, Union, Optional, Iterator
-from abc import abstractmethod
+from abc import abstractmethod, ABC
 
 from citrine._session import Session
 from citrine._rest.collection import Collection
@@ -18,7 +18,7 @@ from taurus.entity.template.attribute_template import AttributeTemplate
 from citrine.resources.response import Response
 
 
-class DataConcepts(PolymorphicSerializable['DataConcepts'], DictSerializable):
+class DataConcepts(PolymorphicSerializable['DataConcepts'], DictSerializable, ABC):
     """
     An abstract data concepts object.
 
@@ -193,7 +193,7 @@ class DataConcepts(PolymorphicSerializable['DataConcepts'], DictSerializable):
 ResourceType = TypeVar('ResourceType', bound='DataConcepts')
 
 
-class DataConceptsCollection(Collection[ResourceType]):
+class DataConceptsCollection(Collection[ResourceType], ABC):
     """
     A collection of one kind of data concepts object.
 

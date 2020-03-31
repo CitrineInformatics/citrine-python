@@ -2,22 +2,23 @@
 from typing import List, Dict, Optional, Union, Sequence, Type
 
 from citrine._rest.resource import Resource
+from citrine._serialization.properties import List as PropertyList
+from citrine._serialization.properties import Optional as PropertyOptional
 from citrine._serialization.properties import String, Mapping, Object, SpecifiedMixedList, \
     LinkOrElse
-from citrine._serialization.properties import Optional as PropertyOptional
-from citrine._serialization.properties import List as PropertyList
 from citrine._utils.functions import set_default_uid
-from citrine.resources.data_concepts import DataConcepts, DataConceptsCollection
-from citrine.resources.property_template import PropertyTemplate
-from citrine.resources.parameter_template import ParameterTemplate
 from citrine.resources.condition_template import ConditionTemplate
-from taurus.entity.template.measurement_template \
-    import MeasurementTemplate as TaurusMeasurementTemplate
+from citrine.resources.data_concepts import DataConcepts
+from citrine.resources.object_templates import ObjectTemplate, ObjectTemplateCollection
+from citrine.resources.parameter_template import ParameterTemplate
+from citrine.resources.property_template import PropertyTemplate
 from taurus.entity.bounds.base_bounds import BaseBounds
 from taurus.entity.link_by_uid import LinkByUID
+from taurus.entity.template.measurement_template \
+    import MeasurementTemplate as TaurusMeasurementTemplate
 
 
-class MeasurementTemplate(DataConcepts,
+class MeasurementTemplate(ObjectTemplate,
                           Resource['MeasurementTemplate'], TaurusMeasurementTemplate):
     """
     A measurement template.
@@ -101,7 +102,7 @@ class MeasurementTemplate(DataConcepts,
         return '<Measurement template {!r}>'.format(self.name)
 
 
-class MeasurementTemplateCollection(DataConceptsCollection[MeasurementTemplate]):
+class MeasurementTemplateCollection(ObjectTemplateCollection[MeasurementTemplate]):
     """A collection of measurement templates."""
 
     _path_template = 'projects/{project_id}/datasets/{dataset_id}/measurement-templates'

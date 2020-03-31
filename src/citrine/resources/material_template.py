@@ -7,14 +7,15 @@ from citrine._serialization.properties import Optional as PropertyOptional
 from citrine._serialization.properties import String, Mapping, Object, SpecifiedMixedList, \
     LinkOrElse
 from citrine._utils.functions import set_default_uid
-from citrine.resources.data_concepts import DataConcepts, DataConceptsCollection
+from citrine.resources.data_concepts import DataConcepts
+from citrine.resources.object_templates import ObjectTemplateCollection, ObjectTemplate
 from citrine.resources.property_template import PropertyTemplate
 from taurus.entity.bounds.base_bounds import BaseBounds
 from taurus.entity.link_by_uid import LinkByUID
 from taurus.entity.template.material_template import MaterialTemplate as TaurusMaterialTemplate
 
 
-class MaterialTemplate(DataConcepts, Resource['MaterialTemplate'], TaurusMaterialTemplate):
+class MaterialTemplate(ObjectTemplate, Resource['MaterialTemplate'], TaurusMaterialTemplate):
     """
     A material template.
 
@@ -76,7 +77,7 @@ class MaterialTemplate(DataConcepts, Resource['MaterialTemplate'], TaurusMateria
         return '<Material template {!r}>'.format(self.name)
 
 
-class MaterialTemplateCollection(DataConceptsCollection[MaterialTemplate]):
+class MaterialTemplateCollection(ObjectTemplateCollection[MaterialTemplate]):
     """A collection of material templates."""
 
     _path_template = 'projects/{project_id}/datasets/{dataset_id}/material-templates'
