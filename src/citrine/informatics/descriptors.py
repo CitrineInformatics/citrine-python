@@ -101,6 +101,7 @@ class MolecularStructureDescriptor(Serializable['MolecularStructureDescriptor'],
     ----------
     key: str
         The column header key corresponding to this descriptor
+
     """
 
     key = properties.String('descriptor_key')
