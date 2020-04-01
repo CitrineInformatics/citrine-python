@@ -18,7 +18,8 @@ class Descriptor(PolymorphicSerializable['Descriptor']):
         return {
             "Real": RealDescriptor,
             "Inorganic": InorganicDescriptor,
-            "Categorical": CategoricalDescriptor
+            "Categorical": CategoricalDescriptor,
+            "Organic": MolecularStructureDescriptor
         }[data["type"]]
 
 
