@@ -1,15 +1,14 @@
 from collections import namedtuple
-
-import pytest
 from uuid import uuid4
 
+import pytest
 import requests_mock
-from mock import patch, Mock, call
 from botocore.exceptions import ClientError
-
 from citrine.resources.file_link import FileCollection, FileLink, _Uploader
-from tests.utils.session import FakeSession, FakeS3Client, FakeCall, FakeRequestResponse
+from mock import patch, Mock, call
+
 from tests.utils.factories import FileLinkDataFactory, _UploaderFactory
+from tests.utils.session import FakeSession, FakeS3Client, FakeCall
 
 
 @pytest.fixture
