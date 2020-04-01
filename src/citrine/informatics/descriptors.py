@@ -49,7 +49,7 @@ class RealDescriptor(Serializable['RealDescriptor'], Descriptor):
             return all([
                 self.__getattribute__(key) == other.__getattribute__(key) for key in attrs
             ])
-        except Exception:
+        except AttributeError:
             return False
 
     def __init__(self,
@@ -86,7 +86,7 @@ class InorganicDescriptor(Serializable['InorganicDescriptor'], Descriptor):
             return all([
                 self.__getattribute__(key) == other.__getattribute__(key) for key in attrs
             ])
-        except Exception:
+        except AttributeError:
             return False
 
     def __init__(self, key: str, threshold: float = 1.0):
@@ -114,7 +114,7 @@ class MolecularStructureDescriptor(Serializable['MolecularStructureDescriptor'],
             return all([
                 self.__getattribute__(key) == other.__getattribute__(key) for key in attrs
             ])
-        except Exception:
+        except AttributeError:
             return False
 
     def __init__(self, key: str):
@@ -141,11 +141,11 @@ class CategoricalDescriptor(Serializable['CategoricalDescriptor'], Descriptor):
 
     def __eq__(self, other):
         try:
-            attrs = ["key", "typ"]
+            attrs = ["key", "categories", "typ"]
             return all([
                 self.__getattribute__(key) == other.__getattribute__(key) for key in attrs
             ]) and set(self.categories) == set(self.categories + other.categories)
-        except Exception:
+        except AttributeError:
             return False
 
     def __init__(self, key: str, categories: List[str]):
