@@ -3,7 +3,11 @@ from abc import ABC
 from typing import Dict, Union, Optional, Iterator, List, TypeVar
 
 from citrine._utils.functions import get_object_id
+from citrine.exceptions import BadRequest
+from citrine.resources.api_error import ValidationError
 from citrine.resources.data_concepts import DataConcepts, DataConceptsCollection
+from citrine.resources.object_templates import ObjectTemplateResourceType
+from citrine.resources.process_template import ProcessTemplate
 from taurus.entity.bounds.base_bounds import BaseBounds
 from taurus.entity.link_by_uid import LinkByUID
 from taurus.entity.template.attribute_template import AttributeTemplate
@@ -138,3 +142,34 @@ class DataObjectCollection(DataConceptsCollection[DataObjectResourceType], ABC):
                 for templ, bounds in attribute_bounds.items()
             }
         }
+
+    def validate_templates(self,
+                           model: DataObjectResourceType,
+                           object_template: Optional[ObjectTemplateResourceType] = None,
+                           ingredient_process_template: Optional[ProcessTemplate] = None)\
+            -> List[ValidationError]:
+        """
+        Validate a data object against its templates.
+
+        Validates against provided object templates (passed in as parameters) and stored attribute
+        templates linked on the data object.
+
+        :param model: the data object to validate
+        :param object_template: optional object template to validate against
+        :param ingredient_process_template: optional process template to validate ingredient
+         against. Ignored unless data object is an IngredientSpec or IngredientRun.
+        :return: List[ValidationError] of validation errors encountered. Empty if successful.
+        """
+        path = self._get_path(ignore_dataset=True) + "/validate-templates"
+        request_data = {"dataObject": model.dump()}
+        if object_template is not None:
+            request_data["objectTemplate"] = object_template.dump()
+        if ingredient_process_template is not None:
+            request_data["ingredientProcessTemplate"] = ingredient_process_template.dump()
+        try:
+            self.session.put_resource(path, request_data)
+            return []
+        except BadRequest as e:
+            if e.api_error is not None:
+                return e.api_error.validation_errors
+            raise e
