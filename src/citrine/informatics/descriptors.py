@@ -93,6 +93,32 @@ class InorganicDescriptor(Serializable['InorganicDescriptor'], Descriptor):
         self.threshold = threshold
 
 
+class MolecularStructureDescriptor(Serializable['MolecularStructureDescriptor'], Descriptor):
+    """
+    [ALPHA] Material descriptor for an organic molecule (accepts SMILES and InChI String values).
+
+    Parameters
+    ----------
+    key: str
+        The column header key corresponding to this descriptor
+    """
+
+    key = properties.String('descriptor_key')
+    typ = properties.String('type', default='Organic', deserializable=False)
+
+    def __eq__(self, other):
+        try:
+            attrs = ["key", "typ"]
+            return all([
+                self.__getattribute__(key) == other.__getattribute__(key) for key in attrs
+            ])
+        except Exception:
+            return False
+
+    def __init__(self, key: str):
+        self.key: str = key
+
+
 class CategoricalDescriptor(Serializable['CategoricalDescriptor'], Descriptor):
     """[ALPHA] A descriptor to hold categorical variables.
 
