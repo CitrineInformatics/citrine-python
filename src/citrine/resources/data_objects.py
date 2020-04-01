@@ -149,7 +149,10 @@ class DataObjectCollection(DataConceptsCollection[DataObjectResourceType], ABC):
                            ingredient_process_template: Optional[ProcessTemplate] = None)\
             -> List[ValidationError]:
         """
-        Validate the data object against provided object templates and stored attribute templates.
+        [BETA] Validate a data object against its templates.
+
+        Validates against provided object templates (passed in as parameters) and stored attribute
+        templates linked on the data object.
 
         :param model: the data object to validate
         :param object_template: optional object template to validate against
