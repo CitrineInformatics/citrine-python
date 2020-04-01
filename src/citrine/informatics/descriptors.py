@@ -10,7 +10,6 @@ class Descriptor(PolymorphicSerializable['Descriptor']):
     """[ALPHA] A Citrine Descriptor describes the range of values that a quantity can take on.
 
     Abstract type that returns the proper type given a serialized dict.
-
     """
 
     @classmethod
@@ -82,7 +81,7 @@ class InorganicDescriptor(Serializable['InorganicDescriptor'], Descriptor):
 
     def __eq__(self, other):
         try:
-            attrs = ["key", "typ"]
+            attrs = ["key", "threshold", "typ"]
             return all([
                 self.__getattribute__(key) == other.__getattribute__(key) for key in attrs
             ])
