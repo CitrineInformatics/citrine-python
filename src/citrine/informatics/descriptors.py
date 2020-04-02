@@ -96,8 +96,9 @@ class InorganicDescriptor(Serializable['InorganicDescriptor'], Descriptor):
 
 class MolecularStructureDescriptor(Serializable['MolecularStructureDescriptor'], Descriptor):
     """
-    [ALPHA] Material descriptor for an organic molecule
-    (accepts SMILES, IUPAC, and InChI String values).
+    [ALPHA] Material descriptor for an organic molecule.
+
+    Accepts SMILES, IUPAC, and InChI String values.
 
     Parameters
     ----------
