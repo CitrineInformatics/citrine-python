@@ -21,7 +21,7 @@ extract_patch() {
 trap "$(set +eux)" EXIT
 
 CURRENT="$(extract_version $(cat setup.py))"
-MASTER="$(extract_version $(git show MASTER:setup.py))"
+MASTER="$(extract_version $(git show master:setup.py))"
 
 CURRENT_MAJOR="$(extract_major ${CURRENT})"
 CURRENT_MINOR="$(extract_minor ${CURRENT})"
