@@ -8,20 +8,17 @@ from citrine.resources.ingredient_run import IngredientRun, IngredientRunCollect
 from citrine.resources.ingredient_spec import IngredientSpec, IngredientSpecCollection
 from citrine.resources.material_run import MaterialRunCollection, MaterialRun
 from citrine.resources.material_spec import MaterialSpecCollection, MaterialSpec
-from citrine.resources.material_template import MaterialTemplateCollection
-from citrine.resources.measurement_run import MeasurementRunCollection
+from citrine.resources.material_template import MaterialTemplateCollection, MaterialTemplate
+from citrine.resources.measurement_run import MeasurementRunCollection, MeasurementRun
 from citrine.resources.measurement_spec import MeasurementSpec, MeasurementSpecCollection
 from citrine.resources.measurement_template import MeasurementTemplate, \
     MeasurementTemplateCollection
-from citrine.resources.parameter_template import ParameterTemplateCollection
+from citrine.resources.parameter_template import ParameterTemplateCollection, ParameterTemplate
 from citrine.resources.process_run import ProcessRunCollection, ProcessRun
 from citrine.resources.process_spec import ProcessSpecCollection, ProcessSpec
 from citrine.resources.process_template import ProcessTemplateCollection, ProcessTemplate
 from citrine.resources.property_template import PropertyTemplateCollection, PropertyTemplate
 from taurus.entity.bounds.integer_bounds import IntegerBounds
-from taurus.entity.object import MeasurementRun
-from taurus.entity.template.material_template import MaterialTemplate
-from taurus.entity.template.parameter_template import ParameterTemplate
 
 from tests.utils.factories import DatasetDataFactory, DatasetFactory
 from tests.utils.session import FakeSession, FakePaginatedSession, FakeCall
@@ -236,26 +233,52 @@ def test_register_data_concepts(dataset):
 
 def test_register_all_data_concepts(dataset):
     """Check that register_all registers everything and routes to all collections"""
+    bounds = IntegerBounds(0, 1)
+    property_template = PropertyTemplate("bar", bounds=bounds)
+    parameter_template = ParameterTemplate("bar", bounds=bounds)
+    condition_template = ConditionTemplate("bar", bounds=bounds)
+    foo_process_template = ProcessTemplate("foo",
+                                           conditions=[[condition_template, bounds]],
+                                           parameters=[[parameter_template, bounds]])
+    foo_process_spec = ProcessSpec("foo", template=foo_process_template)
+    foo_process_run = ProcessRun("foo", spec=foo_process_spec)
+    foo_material_template = MaterialTemplate("foo", properties=[[property_template, bounds]])
+    foo_material_spec = MaterialSpec("foo", template=foo_material_template, process=foo_process_spec)
+    foo_material_run = MaterialRun("foo", spec=foo_material_spec, process=foo_process_run)
+    baz_template = MaterialTemplate("baz")
+    foo_measurement_template = MeasurementTemplate("foo",
+                                                   conditions=[[condition_template, bounds]],
+                                                   parameters=[[parameter_template, bounds]],
+                                                   properties=[[property_template, bounds]])
+    foo_measurement_spec = MeasurementSpec("foo", template=foo_measurement_template)
+    foo_measurement_run = MeasurementRun("foo", spec=foo_measurement_spec, material=foo_material_run)
+    foo_ingredient_spec = IngredientSpec("foo", material=foo_material_spec, process=foo_process_spec)
+    foo_ingredient_run = IngredientRun("foo", spec=foo_ingredient_spec, material=foo_material_run, process=foo_process_run)
+    baz_run = MeasurementRun("baz")
+
+    # worst order possible
     expected = {
-        MaterialTemplate("foo"): MaterialTemplateCollection,
-        MaterialSpec("foo"): MaterialSpecCollection,
-        MaterialRun("foo"): MaterialRunCollection,
-        ProcessTemplate("foo"): ProcessTemplateCollection,
-        ProcessSpec("foo"): ProcessSpecCollection,
-        ProcessRun("foo"): ProcessRunCollection,
-        MaterialTemplate("baz"): MaterialTemplateCollection,
-        MeasurementTemplate("foo"): MeasurementTemplateCollection,
-        MeasurementSpec("foo"): MeasurementSpecCollection,
-        MeasurementRun("foo"): MeasurementRunCollection,
-        IngredientSpec("foo"): IngredientSpecCollection,
-        IngredientRun("foo"): IngredientRunCollection,
-        MeasurementRun("baz"): MeasurementRunCollection,
-        PropertyTemplate("bar", bounds=IntegerBounds(0, 1)): PropertyTemplateCollection,
-        ParameterTemplate("bar", bounds=IntegerBounds(0, 1)): ParameterTemplateCollection,
-        ConditionTemplate("bar", bounds=IntegerBounds(0, 1)): ConditionTemplateCollection
+        foo_ingredient_run: IngredientRunCollection,
+        foo_ingredient_spec: IngredientSpecCollection,
+        foo_measurement_run: MeasurementRunCollection,
+        foo_measurement_spec: MeasurementSpecCollection,
+        foo_measurement_template: MeasurementTemplateCollection,
+        foo_material_run: MaterialRunCollection,
+        foo_material_spec: MaterialSpecCollection,
+        foo_material_template: MaterialTemplateCollection,
+        foo_process_run: ProcessRunCollection,
+        foo_process_spec: ProcessSpecCollection,
+        foo_process_template: ProcessTemplateCollection,
+        baz_template: MaterialTemplateCollection,
+        baz_run: MeasurementRunCollection,
+        property_template: PropertyTemplateCollection,
+        parameter_template: ParameterTemplateCollection,
+        condition_template: ConditionTemplateCollection
     }
     registered = dataset.register_all(expected.keys())
     assert len(registered) == len(expected)
     call_basenames = [basename(call.path) for call in dataset.session.calls]
     collection_basenames = [basename(collection._path_template) for collection in expected.values()]
     assert sorted(call_basenames) == sorted(collection_basenames)
+    # Validate that ingredient runs are stored last to spot check correct store order
+    assert call_basenames.index(basename(IngredientRunCollection._path_template)) == len(call_basenames) - 1

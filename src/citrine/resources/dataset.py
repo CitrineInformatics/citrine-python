@@ -4,6 +4,8 @@ from uuid import UUID
 
 from taurus.entity.object import MeasurementSpec, MeasurementRun, MaterialSpec, MaterialRun, \
     ProcessSpec, ProcessRun, IngredientSpec, IngredientRun
+from taurus.entity.template.attribute_template import AttributeTemplate
+from taurus.entity.template.base_template import BaseTemplate
 from taurus.entity.template.condition_template import ConditionTemplate
 from taurus.entity.template.material_template import MaterialTemplate
 from taurus.entity.template.measurement_template import MeasurementTemplate
@@ -31,7 +33,6 @@ from citrine.resources.material_spec import MaterialSpecCollection
 from citrine.resources.ingredient_run import IngredientRunCollection
 from citrine.resources.ingredient_spec import IngredientSpecCollection
 from citrine.resources.file_link import FileCollection
-
 
 ResourceType = TypeVar('ResourceType', bound='DataConcepts')
 
@@ -225,11 +226,53 @@ class Dataset(Resource['Dataset']):
         """
         Register multiple data concepts resources to each of their appropriate collections.
 
+        Does so in an order that is guaranteed to store all linked items before the item that
+        references them.
+
         :param data_concepts_resources: the resources to register. Can be different types.
 
         :return the registered versions
         """
-        return [self.register(resource) for resource in data_concepts_resources]
+        registered_attribute_templates = [self.register(resource)
+                                          for resource in data_concepts_resources
+                                          if isinstance(resource, AttributeTemplate)]
+        registered_object_templates = [self.register(resource)
+                                       for resource in data_concepts_resources
+                                       if isinstance(resource, BaseTemplate)]
+        registered_process_specs = [self.register(resource)
+                                    for resource in data_concepts_resources
+                                    if isinstance(resource, ProcessSpec)]
+        registered_material_specs = [self.register(resource)
+                                     for resource in data_concepts_resources
+                                     if isinstance(resource, MaterialSpec)]
+        registered_measurement_specs = [self.register(resource)
+                                        for resource in data_concepts_resources
+                                        if isinstance(resource, MeasurementSpec)]
+        registered_ingredient_specs = [self.register(resource)
+                                       for resource in data_concepts_resources
+                                       if isinstance(resource, IngredientSpec)]
+        registered_process_runs = [self.register(resource)
+                                   for resource in data_concepts_resources
+                                   if isinstance(resource, ProcessRun)]
+        registered_material_runs = [self.register(resource)
+                                    for resource in data_concepts_resources
+                                    if isinstance(resource, MaterialRun)]
+        registered_measurement_runs = [self.register(resource)
+                                       for resource in data_concepts_resources
+                                       if isinstance(resource, MeasurementRun)]
+        registered_ingredient_runs = [self.register(resource)
+                                      for resource in data_concepts_resources
+                                      if isinstance(resource, IngredientRun)]
+        return registered_attribute_templates \
+            + registered_object_templates \
+            + registered_process_specs \
+            + registered_material_specs \
+            + registered_measurement_specs \
+            + registered_ingredient_specs \
+            + registered_process_runs \
+            + registered_material_runs \
+            + registered_measurement_runs \
+            + registered_ingredient_runs
 
 
 class DatasetCollection(Collection[Dataset]):
