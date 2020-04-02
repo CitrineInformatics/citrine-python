@@ -1,5 +1,5 @@
 """Resources that represent both individual and collections of datasets."""
-from typing import TypeVar
+from typing import TypeVar, List
 from uuid import UUID
 
 from taurus.entity.object import MeasurementSpec, MeasurementRun, MaterialSpec, MaterialRun, \
@@ -220,6 +220,16 @@ class Dataset(Resource['Dataset']):
             return self.parameter_templates.register(data_concepts_resource)
         if isinstance(data_concepts_resource, ConditionTemplate):
             return self.condition_templates.register(data_concepts_resource)
+
+    def register_all(self, data_concepts_resources: List[ResourceType]) -> List[ResourceType]:
+        """
+        Register multiple data concepts resources to each of their appropriate collections.
+
+        :param data_concepts_resources: the resources to register. Can be different types.
+
+        :return the registered versions
+        """
+        return [self.register(resource) for resource in data_concepts_resources]
 
 
 class DatasetCollection(Collection[Dataset]):

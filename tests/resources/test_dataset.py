@@ -1,10 +1,7 @@
+from os.path import basename
 from uuid import UUID, uuid4
-import pytest
-from taurus.entity.bounds.integer_bounds import IntegerBounds
-from taurus.entity.object import MeasurementRun
-from taurus.entity.template.material_template import MaterialTemplate
-from taurus.entity.template.parameter_template import ParameterTemplate
 
+import pytest
 from citrine.resources.condition_template import ConditionTemplateCollection, ConditionTemplate
 from citrine.resources.dataset import DatasetCollection
 from citrine.resources.ingredient_run import IngredientRun, IngredientRunCollection
@@ -21,6 +18,11 @@ from citrine.resources.process_run import ProcessRunCollection, ProcessRun
 from citrine.resources.process_spec import ProcessSpecCollection, ProcessSpec
 from citrine.resources.process_template import ProcessTemplateCollection, ProcessTemplate
 from citrine.resources.property_template import PropertyTemplateCollection, PropertyTemplate
+from taurus.entity.bounds.integer_bounds import IntegerBounds
+from taurus.entity.object import MeasurementRun
+from taurus.entity.template.material_template import MaterialTemplate
+from taurus.entity.template.parameter_template import ParameterTemplate
+
 from tests.utils.factories import DatasetDataFactory, DatasetFactory
 from tests.utils.session import FakeSession, FakePaginatedSession, FakeCall
 
@@ -210,7 +212,6 @@ def test_files_get_project_id(dataset):
 
 def test_register_data_concepts(dataset):
     """Check that register routes to the correct collections"""
-    from os.path import basename
     expected = {
         MaterialTemplateCollection: MaterialTemplate("foo"),
         MaterialSpecCollection: MaterialSpec("foo"),
@@ -231,3 +232,30 @@ def test_register_data_concepts(dataset):
     for collection, obj in expected.items():
         dataset.register(obj)
         assert basename(dataset.session.calls[-1].path) == basename(collection._path_template)
+
+
+def test_register_all_data_concepts(dataset):
+    """Check that register_all registers everything and routes to all collections"""
+    expected = {
+        MaterialTemplate("foo"): MaterialTemplateCollection,
+        MaterialSpec("foo"): MaterialSpecCollection,
+        MaterialRun("foo"): MaterialRunCollection,
+        ProcessTemplate("foo"): ProcessTemplateCollection,
+        ProcessSpec("foo"): ProcessSpecCollection,
+        ProcessRun("foo"): ProcessRunCollection,
+        MaterialTemplate("baz"): MaterialTemplateCollection,
+        MeasurementTemplate("foo"): MeasurementTemplateCollection,
+        MeasurementSpec("foo"): MeasurementSpecCollection,
+        MeasurementRun("foo"): MeasurementRunCollection,
+        IngredientSpec("foo"): IngredientSpecCollection,
+        IngredientRun("foo"): IngredientRunCollection,
+        MeasurementRun("baz"): MeasurementRunCollection,
+        PropertyTemplate("bar", bounds=IntegerBounds(0, 1)): PropertyTemplateCollection,
+        ParameterTemplate("bar", bounds=IntegerBounds(0, 1)): ParameterTemplateCollection,
+        ConditionTemplate("bar", bounds=IntegerBounds(0, 1)): ConditionTemplateCollection
+    }
+    registered = dataset.register_all(expected.keys())
+    assert len(registered) == len(expected)
+    call_basenames = [basename(call.path) for call in dataset.session.calls]
+    collection_basenames = [basename(collection._path_template) for collection in expected.values()]
+    assert sorted(call_basenames) == sorted(collection_basenames)
