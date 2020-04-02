@@ -23,7 +23,7 @@ def find_collection(collection, name):
         i += 1
 
     if result:
-        print(f'Found existing: {result}')
+        print('Found existing: {}'.format(result))
     return result
 
 
@@ -37,7 +37,7 @@ def get_by_name_or_create(collection, name, default_provider):
     if found:
         return found
     else:
-        print(f'Failed to find resource with name {name}, creating one instead.')
+        print('Failed to find resource with name {}, creating one instead.'.format(name))
         return default_provider()
 
 
