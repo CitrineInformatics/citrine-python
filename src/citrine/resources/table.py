@@ -42,10 +42,14 @@ class Table(Resource['Table']):
 
     def __str__(self):
         # TODO: Change this to name once that's added to the table model
-        return '<Table {!r}>'.format(self.uid)
+        return '<Table {!r}, version {}>'.format(self.uid, self.version)
 
     def read(self, local_path):
         """Read the Table file from S3."""
+
+        # NOTE: this uses the pre-signed S3 download url. If we need to download larger files, we have other options
+        # available (using multi-part downloads in parallel , for example).
+
         data_location = self.download_url
         data_location = rewrite_s3_links_locally(data_location)
         response = requests.get(data_location)

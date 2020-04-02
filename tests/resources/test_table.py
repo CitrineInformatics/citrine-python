@@ -25,7 +25,7 @@ def collection(session) -> TableCollection:
 @pytest.fixture
 def table() -> Table:
     def _table(download_url: str):
-        return Table.build(TableDataFactory(signed_download_url=download_url))
+        return Table.build(TableDataFactory(signed_download_url=download_url, version=2))
     return _table
 
 
@@ -48,7 +48,6 @@ def test_read_table(mock_write_files_locally,  table):
         assert mock_get.call_count == 1
         assert mock_write_files_locally.call_count == 2
         assert mock_write_files_locally.call_args == call(b'stuff', "table2.pdf")
-
 
 def test_get_table_metadata(collection, session):
     # Given
@@ -80,7 +79,7 @@ def test_init_table():
 
 def test_str_serialization(table):
     t = table("http://somewhere.cool")
-    assert "<Table {!r}>".format(t.uid) == str(t)
+    assert str(t) == "<Table {!r}, version {}>".format(t.uid, 2)
 
 
 def test_register_table(collection):
