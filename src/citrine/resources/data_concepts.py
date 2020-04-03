@@ -49,7 +49,10 @@ class DataConcepts(PolymorphicSerializable['DataConcepts'], DictSerializable, AB
     Custom json support object, which knows how to serialize and deserialize DataConcepts classes.
     """
 
-    client_specific_fields = {"audit_info": AuditInfo}
+    client_specific_fields = {
+        "audit_info": AuditInfo,
+        "dataset": UUID,
+    }
     """
     Fields that are added to the taurus data objects when they are used in this client
 
@@ -62,9 +65,14 @@ class DataConcepts(PolymorphicSerializable['DataConcepts'], DictSerializable, AB
             self.__setattr__("_{}".format(field), None)
 
     @property
-    def audit_info(self):
+    def audit_info(self) -> Optional[AuditInfo]:
         """Get the audit info object."""
         return self._audit_info
+
+    @property
+    def dataset(self) -> Optional[UUID]:
+        """Get the audit info object."""
+        return self._dataset
 
     @classmethod
     def from_dict(cls, d: dict):
@@ -85,13 +93,21 @@ class DataConcepts(PolymorphicSerializable['DataConcepts'], DictSerializable, AB
         obj = super().from_dict(d)
 
         for field, clazz in cls.client_specific_fields.items():
-            if popped[field] is None:
-                setattr(obj, "_{}".format(field), None)
-            elif isinstance(popped[field], dict):
-                setattr(obj, "_{}".format(field), clazz.build(popped[field]))
+            value = popped[field]
+            if value is None:
+                deserialized = None
+            elif issubclass(clazz, DictSerializable):
+                deserialized = clazz.build(value)
+                if not isinstance(value, dict):
+                    raise TypeError("{} must be a dictionary or None but was {}".format(field, value))
+            elif clazz == UUID:
+                deserialized = UUID(value)
+                if not isinstance(value, str):
+                    raise TypeError("{} must be a string or None but was {}".format(field, value))
             else:
-                raise TypeError("{} must be a dictionary or None".format(field))
-
+                raise NotImplementedError("No deserialization strategy reported for client "
+                                          "field type {} for field.".format(clazz, field))
+            setattr(obj, "_{}".format(field), deserialized)
         return obj
 
     @classmethod
