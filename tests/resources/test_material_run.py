@@ -1,15 +1,17 @@
 from uuid import UUID
 
 import pytest
-import json
 from citrine._session import Session
+from citrine.exceptions import BadRequest
+from citrine.resources.api_error import ValidationError
 from citrine.resources.material_run import MaterialRunCollection
-from taurus.entity.object.material_run import MaterialRun as TaurusRun
 from taurus.entity.bounds.integer_bounds import IntegerBounds
+from taurus.entity.object.material_run import MaterialRun as TaurusRun
 
 from tests.utils.factories import MaterialRunFactory, MaterialRunDataFactory, LinkByUIDFactory, MaterialSpecFactory, \
-    MaterialTemplateFactory, MaterialSpecDataFactory
-from tests.utils.session import FakeSession, FakeCall, make_fake_cursor_request_function
+    MaterialTemplateFactory, MaterialSpecDataFactory, ProcessTemplateFactory
+from tests.utils.session import FakeSession, FakeCall, make_fake_cursor_request_function, FakeRequestResponseApiError, \
+    FakeRequestResponse
 
 
 @pytest.fixture
@@ -155,6 +157,9 @@ def test_filter_by_tags(collection, session):
     assert sample_run['uids'] == runs[0].uids
 
     # When user gives a single string for tags, it should still work.
+    session.set_response({
+        'contents': [sample_run]
+    })
     collection.filter_by_tags(tags="color", page=1, per_page=10)
 
     # Then
@@ -391,3 +396,91 @@ def test_filter_by_template(collection, session):
     # Then
     assert 3 == session.num_calls
     assert runs == [collection.build(run) for run in [sample_run1_1, sample_run1_2, sample_run2_1, sample_run2_2]]
+
+
+def test_validate_templates_successful_minimal_params(collection, session):
+    """
+    Test that DataObjectCollection.validate_templates() handles a successful return value when
+    passing in minimal params
+    """
+
+    # Given
+    project_id = '6b608f78-e341-422c-8076-35adc8828545'
+    run = MaterialRunFactory(name="validate_templates_successful")
+
+    # When
+    session.set_response("")
+    errors = collection.validate_templates(run)
+
+    # Then
+    assert 1 == session.num_calls
+    expected_call = FakeCall(
+        method="PUT",
+        path="projects/{}/material-runs/validate-templates".format(project_id),
+        json={"dataObject":run.dump()})
+    assert session.last_call == expected_call
+    assert errors == []
+
+
+def test_validate_templates_successful_all_params(collection, session):
+    """
+    Test that DataObjectCollection.validate_templates() handles a successful return value when
+    passing in all params
+    """
+
+    # Given
+    project_id = '6b608f78-e341-422c-8076-35adc8828545'
+    run = MaterialRunFactory(name="validate_templates_successful")
+    template = MaterialTemplateFactory()
+    unused_process_template = ProcessTemplateFactory()
+
+    # When
+    session.set_response("")
+    errors = collection.validate_templates(run, template, unused_process_template)
+
+    # Then
+    assert 1 == session.num_calls
+    expected_call = FakeCall(
+        method="PUT",
+        path="projects/{}/material-runs/validate-templates".format(project_id),
+        json={"dataObject": run.dump(),
+              "objectTemplate": template.dump(),
+              "ingredientProcessTemplate": unused_process_template.dump()})
+    assert session.last_call == expected_call
+    assert errors == []
+
+
+def test_validate_templates_errors(collection, session):
+    """
+    Test that DataObjectCollection.validate_templates() handles validation errors
+    """
+    # Given
+    project_id = '6b608f78-e341-422c-8076-35adc8828545'
+    run = MaterialRunFactory(name="")
+
+    # When
+    validation_error = ValidationError(failure_message="you failed", failure_id="failure_id")
+    session.set_response(BadRequest("path", FakeRequestResponseApiError(400, "Bad Request", [validation_error])))
+    errors = collection.validate_templates(run)
+
+    # Then
+    assert 1 == session.num_calls
+    expected_call = FakeCall(
+        method="PUT",
+        path="projects/{}/material-runs/validate-templates".format(project_id),
+        json={"dataObject":run.dump()})
+    assert session.last_call == expected_call
+    assert errors == [validation_error]
+
+
+def test_validate_templates_unrelated_400(collection, session):
+    """
+    Test that DataObjectCollection.validate_templates() propagates an unrelated 400
+    """
+    # Given
+    run = MaterialRunFactory()
+
+    # When
+    session.set_response(BadRequest("path", FakeRequestResponse(400)))
+    with pytest.raises(BadRequest):
+        collection.validate_templates(run)
