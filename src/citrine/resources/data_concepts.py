@@ -4,7 +4,9 @@ from typing import TypeVar, Type, List, Union, Optional, Iterator
 from uuid import UUID
 
 from citrine._rest.collection import Collection
+from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
+from citrine._serialization.properties import Property
 from citrine._serialization.serializable import Serializable
 from citrine._session import Session
 from citrine._utils.functions import scrub_none, replace_objects_with_links
@@ -51,7 +53,7 @@ class DataConcepts(PolymorphicSerializable['DataConcepts'], DictSerializable, AB
 
     client_specific_fields = {
         "audit_info": AuditInfo,
-        "dataset": UUID,
+        "dataset": properties.UUID,
     }
     """
     Fields that are added to the taurus data objects when they are used in this client
@@ -71,7 +73,7 @@ class DataConcepts(PolymorphicSerializable['DataConcepts'], DictSerializable, AB
 
     @property
     def dataset(self) -> Optional[UUID]:
-        """Get the audit info object."""
+        """[ALPHA] Get the dataset of this object, if it was returned by the backend."""
         return self._dataset
 
     @classmethod
@@ -98,12 +100,12 @@ class DataConcepts(PolymorphicSerializable['DataConcepts'], DictSerializable, AB
                 deserialized = None
             elif issubclass(clazz, DictSerializable):
                 if not isinstance(value, dict):
-                    raise TypeError("{} must be a dictionary or None but was {}".format(field, value))
+                    raise TypeError(
+                        "{} must be a dictionary or None but was {}".format(field, value))
                 deserialized = clazz.build(value)
-            elif clazz == UUID:
-                if not isinstance(value, str):
-                    raise TypeError("{} must be a string or None but was {}".format(field, value))
-                deserialized = UUID(value)
+            elif issubclass(clazz, Property):
+                # deserialize handles type checking already
+                deserialized = clazz(clazz).deserialize(value)
             else:
                 raise NotImplementedError("No deserialization strategy reported for client "
                                           "field type {} for field.".format(clazz, field))
