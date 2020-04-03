@@ -2,10 +2,28 @@
 from typing import TypeVar, List
 from uuid import UUID
 
+from citrine._rest.collection import Collection
+from citrine._rest.resource import Resource
+from citrine._serialization import properties
+from citrine._session import Session
+from citrine._utils.functions import scrub_none
+from citrine.resources.condition_template import ConditionTemplateCollection
+from citrine.resources.file_link import FileCollection
+from citrine.resources.ingredient_run import IngredientRunCollection
+from citrine.resources.ingredient_spec import IngredientSpecCollection
+from citrine.resources.material_run import MaterialRunCollection
+from citrine.resources.material_spec import MaterialSpecCollection
+from citrine.resources.material_template import MaterialTemplateCollection
+from citrine.resources.measurement_run import MeasurementRunCollection
+from citrine.resources.measurement_spec import MeasurementSpecCollection
+from citrine.resources.measurement_template import MeasurementTemplateCollection
+from citrine.resources.parameter_template import ParameterTemplateCollection
+from citrine.resources.process_run import ProcessRunCollection
+from citrine.resources.process_spec import ProcessSpecCollection
+from citrine.resources.process_template import ProcessTemplateCollection
+from citrine.resources.property_template import PropertyTemplateCollection
 from taurus.entity.object import MeasurementSpec, MeasurementRun, MaterialSpec, MaterialRun, \
     ProcessSpec, ProcessRun, IngredientSpec, IngredientRun
-from taurus.entity.template.attribute_template import AttributeTemplate
-from taurus.entity.template.base_template import BaseTemplate
 from taurus.entity.template.condition_template import ConditionTemplate
 from taurus.entity.template.material_template import MaterialTemplate
 from taurus.entity.template.measurement_template import MeasurementTemplate
@@ -13,27 +31,6 @@ from taurus.entity.template.parameter_template import ParameterTemplate
 from taurus.entity.template.process_template import ProcessTemplate
 from taurus.entity.template.property_template import PropertyTemplate
 from taurus.util import writable_sort_order
-
-from citrine._session import Session
-from citrine._rest.collection import Collection
-from citrine._rest.resource import Resource
-from citrine._serialization import properties
-from citrine._utils.functions import scrub_none
-from citrine.resources.condition_template import ConditionTemplateCollection
-from citrine.resources.parameter_template import ParameterTemplateCollection
-from citrine.resources.property_template import PropertyTemplateCollection
-from citrine.resources.material_template import MaterialTemplateCollection
-from citrine.resources.measurement_template import MeasurementTemplateCollection
-from citrine.resources.process_template import ProcessTemplateCollection
-from citrine.resources.process_run import ProcessRunCollection
-from citrine.resources.process_spec import ProcessSpecCollection
-from citrine.resources.measurement_run import MeasurementRunCollection
-from citrine.resources.measurement_spec import MeasurementSpecCollection
-from citrine.resources.material_run import MaterialRunCollection
-from citrine.resources.material_spec import MaterialSpecCollection
-from citrine.resources.ingredient_run import IngredientRunCollection
-from citrine.resources.ingredient_spec import IngredientSpecCollection
-from citrine.resources.file_link import FileCollection
 
 ResourceType = TypeVar('ResourceType', bound='DataConcepts')
 
