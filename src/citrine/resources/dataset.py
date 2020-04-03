@@ -12,6 +12,7 @@ from taurus.entity.template.measurement_template import MeasurementTemplate
 from taurus.entity.template.parameter_template import ParameterTemplate
 from taurus.entity.template.process_template import ProcessTemplate
 from taurus.entity.template.property_template import PropertyTemplate
+from taurus.util import writable_sort_order
 
 from citrine._session import Session
 from citrine._rest.collection import Collection
@@ -233,46 +234,9 @@ class Dataset(Resource['Dataset']):
 
         :return the registered versions
         """
-        registered_attribute_templates = [self.register(resource)
-                                          for resource in data_concepts_resources
-                                          if isinstance(resource, AttributeTemplate)]
-        registered_object_templates = [self.register(resource)
-                                       for resource in data_concepts_resources
-                                       if isinstance(resource, BaseTemplate)]
-        registered_process_specs = [self.register(resource)
-                                    for resource in data_concepts_resources
-                                    if isinstance(resource, ProcessSpec)]
-        registered_material_specs = [self.register(resource)
-                                     for resource in data_concepts_resources
-                                     if isinstance(resource, MaterialSpec)]
-        registered_measurement_specs = [self.register(resource)
-                                        for resource in data_concepts_resources
-                                        if isinstance(resource, MeasurementSpec)]
-        registered_ingredient_specs = [self.register(resource)
-                                       for resource in data_concepts_resources
-                                       if isinstance(resource, IngredientSpec)]
-        registered_process_runs = [self.register(resource)
-                                   for resource in data_concepts_resources
-                                   if isinstance(resource, ProcessRun)]
-        registered_material_runs = [self.register(resource)
-                                    for resource in data_concepts_resources
-                                    if isinstance(resource, MaterialRun)]
-        registered_measurement_runs = [self.register(resource)
-                                       for resource in data_concepts_resources
-                                       if isinstance(resource, MeasurementRun)]
-        registered_ingredient_runs = [self.register(resource)
-                                      for resource in data_concepts_resources
-                                      if isinstance(resource, IngredientRun)]
-        return registered_attribute_templates \
-            + registered_object_templates \
-            + registered_process_specs \
-            + registered_material_specs \
-            + registered_measurement_specs \
-            + registered_ingredient_specs \
-            + registered_process_runs \
-            + registered_material_runs \
-            + registered_measurement_runs \
-            + registered_ingredient_runs
+        return [self.register(resource) for resource
+                in (sorted(data_concepts_resources,
+                           key=lambda resource: writable_sort_order(resource.typ)))]
 
 
 class DatasetCollection(Collection[Dataset]):

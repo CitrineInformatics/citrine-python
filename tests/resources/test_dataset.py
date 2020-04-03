@@ -280,5 +280,17 @@ def test_register_all_data_concepts(dataset):
     call_basenames = [basename(call.path) for call in dataset.session.calls]
     collection_basenames = [basename(collection._path_template) for collection in expected.values()]
     assert sorted(call_basenames) == sorted(collection_basenames)
-    # Validate that ingredient runs are stored last to spot check correct store order
-    assert call_basenames.index(basename(IngredientRunCollection._path_template)) == len(call_basenames) - 1
+
+    # spot check order. Does not check every constraint
+    assert call_basenames.index(basename(IngredientRunCollection._path_template)) > call_basenames.index(basename(IngredientSpecCollection._path_template))
+    assert call_basenames.index(basename(MaterialRunCollection._path_template)) > call_basenames.index(basename(MaterialSpecCollection._path_template))
+    assert call_basenames.index(basename(MeasurementRunCollection._path_template)) > call_basenames.index(basename(MeasurementSpecCollection._path_template))
+    assert call_basenames.index(basename(ProcessRunCollection._path_template)) > call_basenames.index(basename(ProcessSpecCollection._path_template))
+    assert call_basenames.index(basename(MaterialSpecCollection._path_template)) > call_basenames.index(basename(MaterialTemplateCollection._path_template))
+    assert call_basenames.index(basename(MeasurementSpecCollection._path_template)) > call_basenames.index(basename(MeasurementTemplateCollection._path_template))
+    assert call_basenames.index(basename(ProcessSpecCollection._path_template)) > call_basenames.index(basename(ProcessTemplateCollection._path_template))
+    assert call_basenames.index(basename(MaterialSpecCollection._path_template)) > call_basenames.index(basename(ProcessSpecCollection._path_template))
+    assert call_basenames.index(basename(MaterialSpecCollection._path_template)) > call_basenames.index(basename(MeasurementSpecCollection._path_template))
+    assert call_basenames.index(basename(MeasurementTemplateCollection._path_template)) > call_basenames.index(basename(ConditionTemplateCollection._path_template))
+    assert call_basenames.index(basename(MeasurementTemplateCollection._path_template)) > call_basenames.index(basename(ParameterTemplateCollection._path_template))
+    assert call_basenames.index(basename(MaterialTemplateCollection._path_template)) > call_basenames.index(basename(PropertyTemplateCollection._path_template))
