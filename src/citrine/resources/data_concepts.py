@@ -97,13 +97,13 @@ class DataConcepts(PolymorphicSerializable['DataConcepts'], DictSerializable, AB
             if value is None:
                 deserialized = None
             elif issubclass(clazz, DictSerializable):
-                deserialized = clazz.build(value)
                 if not isinstance(value, dict):
                     raise TypeError("{} must be a dictionary or None but was {}".format(field, value))
+                deserialized = clazz.build(value)
             elif clazz == UUID:
-                deserialized = UUID(value)
                 if not isinstance(value, str):
                     raise TypeError("{} must be a string or None but was {}".format(field, value))
+                deserialized = UUID(value)
             else:
                 raise NotImplementedError("No deserialization strategy reported for client "
                                           "field type {} for field.".format(clazz, field))
