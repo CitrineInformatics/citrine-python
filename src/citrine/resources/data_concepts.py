@@ -6,7 +6,7 @@ from uuid import UUID
 from citrine._rest.collection import Collection
 from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
-from citrine._serialization.properties import Property
+from citrine._serialization.properties import Property as SerializableProperty
 from citrine._serialization.serializable import Serializable
 from citrine._session import Session
 from citrine._utils.functions import scrub_none, replace_objects_with_links
@@ -103,7 +103,7 @@ class DataConcepts(PolymorphicSerializable['DataConcepts'], DictSerializable, AB
                     raise TypeError(
                         "{} must be a dictionary or None but was {}".format(field, value))
                 deserialized = clazz.build(value)
-            elif issubclass(clazz, Property):
+            elif issubclass(clazz, SerializableProperty):
                 # deserialize handles type checking already
                 deserialized = clazz(clazz).deserialize(value)
             else:
