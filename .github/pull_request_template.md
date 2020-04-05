@@ -12,3 +12,4 @@ Please briefly explain the goal of the changes/this PR.
 - [ ] I have added tests for 100% coverage
 - [ ] I have written Numpy-style docstrings for every method and class.
 - [ ] I have communicated the downstream consequences of the PR to others.
+- [ ] I have bumped the version in setup.py
