@@ -12,6 +12,7 @@ script:
 - flake8 src
 - cd docs; make html; cd ..;
 - touch ./docs/_build/html/.nojekyll
+- ./scripts/validate-version-bump.sh
 deploy:
   - provider: pages
     skip_cleanup: true

@@ -3,7 +3,7 @@ import pytest
 
 from citrine.informatics.constraints import ScalarRangeConstraint
 from citrine.informatics.objectives import ScalarMaxObjective
-from citrine.informatics.scores import LIScore, EIScore
+from citrine.informatics.scores import LIScore, EIScore, EVScore
 
 
 @pytest.fixture
@@ -37,6 +37,21 @@ def mei_score() -> EIScore:
     )
 
 
+@pytest.fixture
+def mev_score() -> EVScore:
+    """Build an MEVScore."""
+    return EVScore(
+        name="EV(x)",
+        description="experimental design score for x",
+        objectives=[
+            ScalarMaxObjective(
+                descriptor_key="x"
+            )
+        ],
+        constraints=[ScalarRangeConstraint('y', 0.0, 1.0)]
+    )
+
+
 def test_mli_initialization(mli_score):
     """Make sure the correct fields go to the correct places."""
     assert mli_score.name == 'MLI(z)'
@@ -55,3 +70,13 @@ def test_mei_initialization(mei_score):
     assert mei_score.baselines == [1.0]
     assert isinstance(mei_score.constraints[0], ScalarRangeConstraint)
     assert mei_score.constraints[0].descriptor_key == 'y'
+
+
+def test_mev_initialization(mev_score):
+    """Make sure the correct fields go to the correct places."""
+    assert mev_score.name == 'EV(x)'
+    assert mev_score.description == 'experimental design score for x'
+    assert mev_score.objectives[0].descriptor_key == 'x'
+    assert isinstance(mev_score.constraints[0], ScalarRangeConstraint)
+    assert mev_score.constraints[0].descriptor_key == 'y'
+    assert "EVScore" in str(mev_score)

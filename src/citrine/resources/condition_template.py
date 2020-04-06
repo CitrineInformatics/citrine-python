@@ -2,16 +2,17 @@
 from typing import List, Dict, Optional, Type
 
 from citrine._rest.resource import Resource
-from citrine._serialization.properties import String, Mapping, Object
-from citrine._serialization.properties import Optional as PropertyOptional
 from citrine._serialization.properties import List as PropertyList
+from citrine._serialization.properties import Optional as PropertyOptional
+from citrine._serialization.properties import String, Mapping, Object
 from citrine._utils.functions import set_default_uid
-from citrine.resources.data_concepts import DataConcepts, DataConceptsCollection
-from taurus.entity.template.condition_template import ConditionTemplate as TaurusConditionTemplate
+from citrine.resources.attribute_templates import AttributeTemplate, AttributeTemplateCollection
+from citrine.resources.data_concepts import DataConcepts
 from taurus.entity.bounds.base_bounds import BaseBounds
+from taurus.entity.template.condition_template import ConditionTemplate as TaurusConditionTemplate
 
 
-class ConditionTemplate(DataConcepts, Resource['ConditionTemplate'], TaurusConditionTemplate):
+class ConditionTemplate(AttributeTemplate, Resource['ConditionTemplate'], TaurusConditionTemplate):
     """
     A condition template.
 
@@ -58,7 +59,7 @@ class ConditionTemplate(DataConcepts, Resource['ConditionTemplate'], TaurusCondi
         return '<Condition template {!r}>'.format(self.name)
 
 
-class ConditionTemplateCollection(DataConceptsCollection[ConditionTemplate]):
+class ConditionTemplateCollection(AttributeTemplateCollection[ConditionTemplate]):
     """A collection of condition templates."""
 
     _path_template = 'projects/{project_id}/datasets/{dataset_id}/condition-templates'
