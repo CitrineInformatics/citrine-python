@@ -7,24 +7,16 @@ def find_collection(collection, name):
 
     Returns it, or if not found, returns None
     """
-    i = 1
-    per_page = 100
-    result = None
-    while True:
-        collection_list = list(collection.list(page=i, per_page=per_page))
-        if len(collection_list) == 0:
-            break
-        matching_resources = [resource for resource in collection_list if resource.name == name]
-        if len(matching_resources) > 0:
-            if result or len(matching_resources) > 1:
-                raise ValueError("Found multiple collections with name {}".format(name))
-            else:
-                result = matching_resources.pop()
-        i += 1
-
-    if result:
+    collection_list = collection.list()
+    matching_resources = [resource for resource in collection_list if resource.name == name]
+    if len(matching_resources) > 1:
+        raise ValueError("Found multiple collections with name '{}'".format(name))
+    if len(matching_resources) == 1:
+        result = matching_resources.pop()
         print('Found existing: {}'.format(result))
-    return result
+        return result
+    else:
+        return None
 
 
 def get_by_name_or_create(collection, name, default_provider):
