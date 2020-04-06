@@ -1,7 +1,27 @@
 """Resources that represent both individual and collections of datasets."""
-from typing import TypeVar
+from typing import TypeVar, List
 from uuid import UUID
 
+from citrine._rest.collection import Collection
+from citrine._rest.resource import Resource
+from citrine._serialization import properties
+from citrine._session import Session
+from citrine._utils.functions import scrub_none
+from citrine.resources.condition_template import ConditionTemplateCollection
+from citrine.resources.file_link import FileCollection
+from citrine.resources.ingredient_run import IngredientRunCollection
+from citrine.resources.ingredient_spec import IngredientSpecCollection
+from citrine.resources.material_run import MaterialRunCollection
+from citrine.resources.material_spec import MaterialSpecCollection
+from citrine.resources.material_template import MaterialTemplateCollection
+from citrine.resources.measurement_run import MeasurementRunCollection
+from citrine.resources.measurement_spec import MeasurementSpecCollection
+from citrine.resources.measurement_template import MeasurementTemplateCollection
+from citrine.resources.parameter_template import ParameterTemplateCollection
+from citrine.resources.process_run import ProcessRunCollection
+from citrine.resources.process_spec import ProcessSpecCollection
+from citrine.resources.process_template import ProcessTemplateCollection
+from citrine.resources.property_template import PropertyTemplateCollection
 from taurus.entity.object import MeasurementSpec, MeasurementRun, MaterialSpec, MaterialRun, \
     ProcessSpec, ProcessRun, IngredientSpec, IngredientRun
 from taurus.entity.template.condition_template import ConditionTemplate
@@ -10,28 +30,7 @@ from taurus.entity.template.measurement_template import MeasurementTemplate
 from taurus.entity.template.parameter_template import ParameterTemplate
 from taurus.entity.template.process_template import ProcessTemplate
 from taurus.entity.template.property_template import PropertyTemplate
-
-from citrine._session import Session
-from citrine._rest.collection import Collection
-from citrine._rest.resource import Resource
-from citrine._serialization import properties
-from citrine._utils.functions import scrub_none
-from citrine.resources.condition_template import ConditionTemplateCollection
-from citrine.resources.parameter_template import ParameterTemplateCollection
-from citrine.resources.property_template import PropertyTemplateCollection
-from citrine.resources.material_template import MaterialTemplateCollection
-from citrine.resources.measurement_template import MeasurementTemplateCollection
-from citrine.resources.process_template import ProcessTemplateCollection
-from citrine.resources.process_run import ProcessRunCollection
-from citrine.resources.process_spec import ProcessSpecCollection
-from citrine.resources.measurement_run import MeasurementRunCollection
-from citrine.resources.measurement_spec import MeasurementSpecCollection
-from citrine.resources.material_run import MaterialRunCollection
-from citrine.resources.material_spec import MaterialSpecCollection
-from citrine.resources.ingredient_run import IngredientRunCollection
-from citrine.resources.ingredient_spec import IngredientSpecCollection
-from citrine.resources.file_link import FileCollection
-
+from taurus.util import writable_sort_order
 
 ResourceType = TypeVar('ResourceType', bound='DataConcepts')
 
@@ -220,6 +219,21 @@ class Dataset(Resource['Dataset']):
             return self.parameter_templates.register(data_concepts_resource)
         if isinstance(data_concepts_resource, ConditionTemplate):
             return self.condition_templates.register(data_concepts_resource)
+
+    def register_all(self, data_concepts_resources: List[ResourceType]) -> List[ResourceType]:
+        """
+        Register multiple data concepts resources to each of their appropriate collections.
+
+        Does so in an order that is guaranteed to store all linked items before the item that
+        references them.
+
+        :param data_concepts_resources: the resources to register. Can be different types.
+
+        :return the registered versions
+        """
+        return [self.register(resource) for resource
+                in (sorted(data_concepts_resources,
+                           key=lambda resource: writable_sort_order(resource.typ)))]
 
 
 class DatasetCollection(Collection[Dataset]):
