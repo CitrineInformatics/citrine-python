@@ -37,7 +37,7 @@
 <dl class="class">
 <dt id="citrine.resources.data_concepts.DataConcepts">
 <em class="property">class </em><code class="sig-prename descclassname">citrine.resources.data_concepts.</code><code class="sig-name descname">DataConcepts</code><span class="sig-paren">(</span><em class="sig-param">typ: str</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.data_concepts.DataConcepts" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.polymorphic_serializable.PolymorphicSerializable</span></code>, <a class="reference external" href="https://citrineinformatics.github.io/taurus/reference/taurus.entity.dict_serializable.html#taurus.entity.dict_serializable.DictSerializable" title="(in Taurus)"><code class="xref py py-class docutils literal notranslate"><span class="pre">taurus.entity.dict_serializable.DictSerializable</span></code></a></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.polymorphic_serializable.PolymorphicSerializable</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">taurus.entity.dict_serializable.DictSerializable</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
 <p>An abstract data concepts object.</p>
 <p>DataConcepts must be extended along with <cite>Resource</cite>.</p>
 <dl class="field-list simple">
@@ -68,7 +68,7 @@
 the loads/dumps cycle of the Taurus
 <code class="xref py py-mod docutils literal notranslate"><span class="pre">JSON</span> <span class="pre">encoder</span></code>. The ensuing dictionary must
 have a <cite>type</cite> field that corresponds to the response key of this class or of
-<a class="reference external" href="https://citrineinformatics.github.io/taurus/reference/taurus.entity.link_by_uid.html#taurus.entity.link_by_uid.LinkByUID" title="(in Taurus)"><code class="xref py py-class docutils literal notranslate"><span class="pre">LinkByUID</span></code></a>.</p>
+<code class="xref py py-class docutils literal notranslate"><span class="pre">LinkByUID</span></code>.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>An object corresponding to a data concepts resource.</p>
@@ -93,11 +93,17 @@ have a <cite>type</cite> field that corresponds to the response key of this clas
 
 <dl class="attribute">
 <dt id="citrine.resources.data_concepts.DataConcepts.client_specific_fields">
-<code class="sig-name descname">client_specific_fields</code><em class="property"> = {'audit_info': citrine.resources.audit_info.AuditInfo}</em><a class="headerlink" href="#citrine.resources.data_concepts.DataConcepts.client_specific_fields" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">client_specific_fields</code><em class="property"> = {'audit_info': citrine.resources.audit_info.AuditInfo, 'dataset': citrine._serialization.properties.UUID}</em><a class="headerlink" href="#citrine.resources.data_concepts.DataConcepts.client_specific_fields" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fields that are added to the taurus data objects when they are used in this client</p>
 <ul class="simple">
 <li><p>AuditInfo contains who/when information about the resource on the citrine platform</p></li>
 </ul>
+</dd></dl>
+
+<dl class="method">
+<dt id="citrine.resources.data_concepts.DataConcepts.dataset">
+<em class="property">property </em><code class="sig-name descname">dataset</code><a class="headerlink" href="#citrine.resources.data_concepts.DataConcepts.dataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>[ALPHA] Get the dataset of this object, if it was returned by the backend.</p>
 </dd></dl>
 
 <dl class="method">
@@ -151,7 +157,7 @@ This method will also work if data is a deserialized Taurus object.</p>
 <dl class="class">
 <dt id="citrine.resources.data_concepts.DataConceptsCollection">
 <em class="property">class </em><code class="sig-prename descclassname">citrine.resources.data_concepts.</code><code class="sig-name descname">DataConceptsCollection</code><span class="sig-paren">(</span><em class="sig-param">project_id: uuid.UUID</em>, <em class="sig-param">dataset_id: uuid.UUID</em>, <em class="sig-param">session: citrine._session.Session</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.data_concepts.DataConceptsCollection" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.collection.Collection</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.collection.Collection</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
 <p>A collection of one kind of data concepts object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -185,44 +191,16 @@ but when using <a class="reference internal" href="#citrine.resources.data_conce
 
 <dl class="method">
 <dt id="citrine.resources.data_concepts.DataConceptsCollection.delete">
-<code class="sig-name descname">delete</code><span class="sig-paren">(</span><em class="sig-param">uid: Union[uuid.UUID, str], scope: str = 'id'</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.data_concepts.DataConceptsCollection.delete" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">delete</code><span class="sig-paren">(</span><em class="sig-param">uid: Union[uuid.UUID, str], scope: str = 'id', dry_run: bool = False</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.data_concepts.DataConceptsCollection.delete" title="Permalink to this definition">¶</a></dt>
 <dd><p>Delete the element of the collection with ID equal to uid.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>uid</strong> (<em>Union</em><em>[</em><em>UUID</em><em>, </em><em>str</em><em>]</em>) – The ID.</p></li>
 <li><p><strong>scope</strong> (<em>str</em>) – The scope of the uid, defaults to Citrine scope (‘id’)</p></li>
+<li><p><strong>dry_run</strong> (<em>bool</em>) – Whether to actually delete the item or run a dry run of the delete operation.
+Dry run is intended to be used for validation. Default: false</p></li>
 </ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="citrine.resources.data_concepts.DataConceptsCollection.filter_by_attribute_bounds">
-<code class="sig-name descname">filter_by_attribute_bounds</code><span class="sig-paren">(</span><em class="sig-param">attribute_bounds: Dict[Union[taurus.entity.template.attribute_template.AttributeTemplate, taurus.entity.link_by_uid.LinkByUID], taurus.entity.bounds.base_bounds.BaseBounds], page: Optional[int] = None, per_page: Optional[int] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.data_concepts.DataConceptsCollection.filter_by_attribute_bounds" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get all objects in the collection with attributes within certain bounds.</p>
-<p>Currently only one attribute and one bounds on that attribute is supported.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>attribute_bounds</strong> (Dict[Union[AttributeTemplate,         <a class="reference external" href="https://citrineinformatics.github.io/taurus/reference/taurus.entity.link_by_uid.html#taurus.entity.link_by_uid.LinkByUID" title="(in Taurus)"><code class="xref py py-class docutils literal notranslate"><span class="pre">LinkByUID</span></code></a>],         <a class="reference external" href="https://citrineinformatics.github.io/taurus/reference/taurus.entity.bounds.base_bounds.html#taurus.entity.bounds.base_bounds.BaseBounds" title="(in Taurus)"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseBounds</span></code></a>]) – A dictionary from attributes to the bounds on that attribute.
-Currently only real and integer bounds are supported.
-Each attribute may be represented as an AttributeTemplate (PropertyTemplate,
-ParameterTemplate, or ConditionTemplate) or as a LinkByUID,
-but in either case there must be a uid and it must correspond to an
-AttributeTemplate that exists in the database.
-Only the uid is passed, so if you would like to update an attribute template you
-must register that change to the database before you can use it to filter.</p></li>
-<li><p><strong>page</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>) – The page of results to list, 1-indexed (i.e. the first page is page=1)</p></li>
-<li><p><strong>per_page</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>) – The number of results to list per page</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>List of all objects in this collection that both have the specified attribute
-and have values within the specified bounds.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>List[<a class="reference internal" href="#citrine.resources.data_concepts.DataConcepts" title="citrine.resources.data_concepts.DataConcepts">DataConcepts</a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -349,39 +327,6 @@ modifying this value only if you find this method is unacceptably latent.</p></l
 </dd></dl>
 
 <dl class="method">
-<dt id="citrine.resources.data_concepts.DataConceptsCollection.list_by_attribute_bounds">
-<code class="sig-name descname">list_by_attribute_bounds</code><span class="sig-paren">(</span><em class="sig-param">attribute_bounds: Dict[Union[taurus.entity.template.attribute_template.AttributeTemplate, taurus.entity.link_by_uid.LinkByUID], taurus.entity.bounds.base_bounds.BaseBounds], forward: bool = True, per_page: int = 100</em><span class="sig-paren">)</span> &#x2192; Iterator[citrine.resources.data_concepts.DataConcepts]<a class="headerlink" href="#citrine.resources.data_concepts.DataConceptsCollection.list_by_attribute_bounds" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get all objects in the collection with attributes within certain bounds.</p>
-<p>Results are ordered first by dataset, then by attribute value.</p>
-<p>Currently only one attribute and one bounds on that attribute is supported, and
-attribute type must be numeric.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>attribute_bounds</strong> (Dict[Union[AttributeTemplate,         <a class="reference external" href="https://citrineinformatics.github.io/taurus/reference/taurus.entity.link_by_uid.html#taurus.entity.link_by_uid.LinkByUID" title="(in Taurus)"><code class="xref py py-class docutils literal notranslate"><span class="pre">LinkByUID</span></code></a>],         <a class="reference external" href="https://citrineinformatics.github.io/taurus/reference/taurus.entity.bounds.base_bounds.html#taurus.entity.bounds.base_bounds.BaseBounds" title="(in Taurus)"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseBounds</span></code></a>]) – A dictionary from attributes to the bounds on that attribute.
-Currently only real and integer bounds are supported.
-Each attribute may be represented as an AttributeTemplate (PropertyTemplate,
-ParameterTemplate, or ConditionTemplate) or as a LinkByUID,
-but in either case there must be a uid and it must correspond to an
-AttributeTemplate that exists in the database.
-Only the uid is passed, so if you would like to update an attribute template you
-must register that change to the database before you can use it to filter.</p></li>
-<li><p><strong>forward</strong> (<em>bool</em>) – Set to False to reverse the order of results (i.e. return in descending order).</p></li>
-<li><p><strong>per_page</strong> (<em>int</em>) – Controls the number of results fetched with each http request to the backend.
-Typically, this is set to a sensible default and should not be modified. Consider
-modifying this value only if you find this method is unacceptably latent.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>List of every object in this collection whose <cite>name</cite> matches the search term.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Iterator[<a class="reference internal" href="#citrine.resources.data_concepts.DataConcepts" title="citrine.resources.data_concepts.DataConcepts">DataConcepts</a>]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
 <dt id="citrine.resources.data_concepts.DataConceptsCollection.list_by_name">
 <code class="sig-name descname">list_by_name</code><span class="sig-paren">(</span><em class="sig-param">name: str</em>, <em class="sig-param">exact: bool = False</em>, <em class="sig-param">forward: bool = True</em>, <em class="sig-param">per_page: int = 100</em><span class="sig-paren">)</span> &#x2192; Iterator[citrine.resources.data_concepts.DataConcepts]<a class="headerlink" href="#citrine.resources.data_concepts.DataConceptsCollection.list_by_name" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get all objects with specified name in this dataset.</p>
@@ -436,7 +381,7 @@ modifying this value only if you find this method is unacceptably latent.</p></l
 
 <dl class="method">
 <dt id="citrine.resources.data_concepts.DataConceptsCollection.register">
-<code class="sig-name descname">register</code><span class="sig-paren">(</span><em class="sig-param">model: ResourceType</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.data_concepts.DataConceptsCollection.register" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">register</code><span class="sig-paren">(</span><em class="sig-param">model: ResourceType</em>, <em class="sig-param">dry_run=False</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.data_concepts.DataConceptsCollection.register" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a new element of the collection or update an existing element.</p>
 <p>If the input model has an ID that corresponds to an existing object in the
 database, then that object will be updated. Otherwise a new object will be created.</p>
@@ -449,7 +394,11 @@ pre-existence of objects with their IDs is asserted before attempting to write
 <cite>model</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>model</strong> (<a class="reference internal" href="#citrine.resources.data_concepts.DataConcepts" title="citrine.resources.data_concepts.DataConcepts"><em>DataConcepts</em></a>) – The DataConcepts object.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<a class="reference internal" href="#citrine.resources.data_concepts.DataConcepts" title="citrine.resources.data_concepts.DataConcepts"><em>DataConcepts</em></a>) – The DataConcepts object.</p></li>
+<li><p><strong>dry_run</strong> (<em>bool</em>) – Whether to actually delete the item or run a dry run of the delete operation.
+Dry run is intended to be used for validation. Default: false</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>A copy of the registered object as it now exists in the database.</p>
@@ -511,22 +460,24 @@ pre-existence of objects with their IDs is asserted before attempting to write
 <li class="toctree-l2"><a class="reference internal" href="../data_entry.html#registering-data-model-objects">2.3. Registering Data Model Objects</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../data_entry.html#finding-data-model-objects">2.4. Finding Data Model Objects</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../data_entry.html#referencing-data-model-objects">2.5. Referencing Data Model Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#validating-data-model-objects">2.6. Validating Data Model Objects</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../data_extraction.html">3. [ALPHA] Data Extraction</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#defining-row-and-columns">3.1. Defining row and columns</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#defining-tables">3.2. Defining tables</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#previewing-creating-and-reading-tables">3.3. Previewing, creating and reading tables</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-row-definitions">3.4. Available Row Definitions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-variable-definitions">3.5. Available Variable Definitions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-column-definitions">3.6. Available Column Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#previewing-tables">3.3. Previewing tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#building-and-downloading-tables">3.4. Building and downloading tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-row-definitions">3.5. Available Row Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-variable-definitions">3.6. Available Variable Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-column-definitions">3.7. Available Column Definitions</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">4. [ALPHA] Workflows</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#modules">4.1. Modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#design-workflows">4.2. Design workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#registration-and-validation">4.3. Registration and validation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#table-of-contents">4.4. Table of Contents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">4. [ALPHA] AI Engine</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#getting-started">4.1. Getting Started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#workflows-overview">4.2. Workflows Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#modules-overview">4.3. Modules Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#registration-and-validation">4.4. Registration and validation</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">5. FAQ</a><ul>

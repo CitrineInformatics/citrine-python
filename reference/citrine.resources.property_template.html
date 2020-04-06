@@ -37,13 +37,13 @@
 <dl class="class">
 <dt id="citrine.resources.property_template.PropertyTemplate">
 <em class="property">class </em><code class="sig-prename descclassname">citrine.resources.property_template.</code><code class="sig-name descname">PropertyTemplate</code><span class="sig-paren">(</span><em class="sig-param">name: str</em>, <em class="sig-param">bounds: taurus.entity.bounds.base_bounds.BaseBounds</em>, <em class="sig-param">uids: Optional[Dict[str</em>, <em class="sig-param">str]] = None</em>, <em class="sig-param">description: Optional[str] = None</em>, <em class="sig-param">tags: Optional[List[str]] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.property_template.PropertyTemplate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConcepts" title="citrine.resources.data_concepts.DataConcepts"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.resources.data_concepts.DataConcepts</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.resource.Resource</span></code>, <a class="reference external" href="https://citrineinformatics.github.io/taurus/reference/taurus.entity.template.property_template.html#taurus.entity.template.property_template.PropertyTemplate" title="(in Taurus)"><code class="xref py py-class docutils literal notranslate"><span class="pre">taurus.entity.template.property_template.PropertyTemplate</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="citrine.resources.attribute_templates.html#citrine.resources.attribute_templates.AttributeTemplate" title="citrine.resources.attribute_templates.AttributeTemplate"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.resources.attribute_templates.AttributeTemplate</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.resource.Resource</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">taurus.entity.template.property_template.PropertyTemplate</span></code></p>
 <p>A property template.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>name</strong> (<em>str</em>) – The name of the property template.</p></li>
-<li><p><strong>bounds</strong> (<a class="reference external" href="https://citrineinformatics.github.io/taurus/reference/taurus.entity.bounds.base_bounds.html#taurus.entity.bounds.base_bounds.BaseBounds" title="(in Taurus)"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseBounds</span></code></a>) – Bounds circumscribe the values that are valid according to this property template.</p></li>
+<li><p><strong>bounds</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">BaseBounds</span></code>) – Bounds circumscribe the values that are valid according to this property template.</p></li>
 <li><p><strong>description</strong> (<em>str</em><em>, </em><em>optional</em>) – A long-form description of the property template.</p></li>
 <li><p><strong>uids</strong> (<em>Map</em><em>[</em><em>str</em><em>, </em><em>str</em><em>]</em><em>, </em><em>optional</em>) – A collection of
 <a class="reference external" href="https://citrineinformatics.github.io/taurus-documentation/specification/unique-identifiers/">unique IDs</a>.</p></li>
@@ -88,7 +88,7 @@ for filtering and discoverability.</p></li>
 <dl class="class">
 <dt id="citrine.resources.property_template.PropertyTemplateCollection">
 <em class="property">class </em><code class="sig-prename descclassname">citrine.resources.property_template.</code><code class="sig-name descname">PropertyTemplateCollection</code><span class="sig-paren">(</span><em class="sig-param">project_id: uuid.UUID</em>, <em class="sig-param">dataset_id: uuid.UUID</em>, <em class="sig-param">session: citrine._session.Session</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.property_template.PropertyTemplateCollection" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConceptsCollection" title="citrine.resources.data_concepts.DataConceptsCollection"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.resources.data_concepts.DataConceptsCollection</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="citrine.resources.attribute_templates.html#citrine.resources.attribute_templates.AttributeTemplateCollection" title="citrine.resources.attribute_templates.AttributeTemplateCollection"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.resources.attribute_templates.AttributeTemplateCollection</span></code></a></p>
 <p>A collection of property templates.</p>
 <dl class="method">
 <dt id="citrine.resources.property_template.PropertyTemplateCollection.get_type">
@@ -147,22 +147,24 @@ for filtering and discoverability.</p></li>
 <li class="toctree-l2"><a class="reference internal" href="../data_entry.html#registering-data-model-objects">2.3. Registering Data Model Objects</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../data_entry.html#finding-data-model-objects">2.4. Finding Data Model Objects</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../data_entry.html#referencing-data-model-objects">2.5. Referencing Data Model Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#validating-data-model-objects">2.6. Validating Data Model Objects</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../data_extraction.html">3. [ALPHA] Data Extraction</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#defining-row-and-columns">3.1. Defining row and columns</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#defining-tables">3.2. Defining tables</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#previewing-creating-and-reading-tables">3.3. Previewing, creating and reading tables</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-row-definitions">3.4. Available Row Definitions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-variable-definitions">3.5. Available Variable Definitions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-column-definitions">3.6. Available Column Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#previewing-tables">3.3. Previewing tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#building-and-downloading-tables">3.4. Building and downloading tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-row-definitions">3.5. Available Row Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-variable-definitions">3.6. Available Variable Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-column-definitions">3.7. Available Column Definitions</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">4. [ALPHA] Workflows</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#modules">4.1. Modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#design-workflows">4.2. Design workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#registration-and-validation">4.3. Registration and validation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#table-of-contents">4.4. Table of Contents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">4. [ALPHA] AI Engine</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#getting-started">4.1. Getting Started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#workflows-overview">4.2. Workflows Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#modules-overview">4.3. Modules Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#registration-and-validation">4.4. Registration and validation</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">5. FAQ</a><ul>

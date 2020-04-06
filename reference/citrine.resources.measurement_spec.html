@@ -37,7 +37,7 @@
 <dl class="class">
 <dt id="citrine.resources.measurement_spec.MeasurementSpec">
 <em class="property">class </em><code class="sig-prename descclassname">citrine.resources.measurement_spec.</code><code class="sig-name descname">MeasurementSpec</code><span class="sig-paren">(</span><em class="sig-param">name: str</em>, <em class="sig-param">uids: Optional[Dict[str</em>, <em class="sig-param">str]] = None</em>, <em class="sig-param">tags: Optional[List[str]] = None</em>, <em class="sig-param">notes: Optional[str] = None</em>, <em class="sig-param">conditions: Optional[List[taurus.entity.attribute.condition.Condition]] = None</em>, <em class="sig-param">parameters: Optional[List[taurus.entity.attribute.parameter.Parameter]] = None</em>, <em class="sig-param">template: Optional[taurus.entity.template.measurement_template.MeasurementTemplate] = None</em>, <em class="sig-param">file_links: Optional[List[taurus.entity.file_link.FileLink]] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.measurement_spec.MeasurementSpec" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConcepts" title="citrine.resources.data_concepts.DataConcepts"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.resources.data_concepts.DataConcepts</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.resource.Resource</span></code>, <a class="reference external" href="https://citrineinformatics.github.io/taurus/reference/taurus.entity.object.measurement_spec.html#taurus.entity.object.measurement_spec.MeasurementSpec" title="(in Taurus)"><code class="xref py py-class docutils literal notranslate"><span class="pre">taurus.entity.object.measurement_spec.MeasurementSpec</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="citrine.resources.object_specs.html#citrine.resources.object_specs.ObjectSpec" title="citrine.resources.object_specs.ObjectSpec"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.resources.object_specs.ObjectSpec</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.resource.Resource</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">taurus.entity.object.measurement_spec.MeasurementSpec</span></code></p>
 <p>A measurement specification.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -107,7 +107,7 @@ and conditions.</p></li>
 <dl class="class">
 <dt id="citrine.resources.measurement_spec.MeasurementSpecCollection">
 <em class="property">class </em><code class="sig-prename descclassname">citrine.resources.measurement_spec.</code><code class="sig-name descname">MeasurementSpecCollection</code><span class="sig-paren">(</span><em class="sig-param">project_id: uuid.UUID</em>, <em class="sig-param">dataset_id: uuid.UUID</em>, <em class="sig-param">session: citrine._session.Session</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.measurement_spec.MeasurementSpecCollection" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConceptsCollection" title="citrine.resources.data_concepts.DataConceptsCollection"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.resources.data_concepts.DataConceptsCollection</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="citrine.resources.object_specs.html#citrine.resources.object_specs.ObjectSpecCollection" title="citrine.resources.object_specs.ObjectSpecCollection"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.resources.object_specs.ObjectSpecCollection</span></code></a></p>
 <p>Represents the collection of all measurement specs associated with a dataset.</p>
 <dl class="method">
 <dt id="citrine.resources.measurement_spec.MeasurementSpecCollection.get_type">
@@ -166,22 +166,24 @@ and conditions.</p></li>
 <li class="toctree-l2"><a class="reference internal" href="../data_entry.html#registering-data-model-objects">2.3. Registering Data Model Objects</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../data_entry.html#finding-data-model-objects">2.4. Finding Data Model Objects</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../data_entry.html#referencing-data-model-objects">2.5. Referencing Data Model Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#validating-data-model-objects">2.6. Validating Data Model Objects</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../data_extraction.html">3. [ALPHA] Data Extraction</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#defining-row-and-columns">3.1. Defining row and columns</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#defining-tables">3.2. Defining tables</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#previewing-creating-and-reading-tables">3.3. Previewing, creating and reading tables</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-row-definitions">3.4. Available Row Definitions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-variable-definitions">3.5. Available Variable Definitions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-column-definitions">3.6. Available Column Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#previewing-tables">3.3. Previewing tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#building-and-downloading-tables">3.4. Building and downloading tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-row-definitions">3.5. Available Row Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-variable-definitions">3.6. Available Variable Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-column-definitions">3.7. Available Column Definitions</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">4. [ALPHA] Workflows</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#modules">4.1. Modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#design-workflows">4.2. Design workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#registration-and-validation">4.3. Registration and validation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#table-of-contents">4.4. Table of Contents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">4. [ALPHA] AI Engine</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#getting-started">4.1. Getting Started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#workflows-overview">4.2. Workflows Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#modules-overview">4.3. Modules Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#registration-and-validation">4.4. Registration and validation</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">5. FAQ</a><ul>

@@ -1,0 +1,7 @@
+citrine.resources.object\_specs module
+======================================
+
+.. automodule:: citrine.resources.object_specs
+   :members:
+   :undoc-members:
+   :show-inheritance:

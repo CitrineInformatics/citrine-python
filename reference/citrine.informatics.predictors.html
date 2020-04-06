@@ -120,7 +120,7 @@
 
 <dl class="class">
 <dt id="citrine.informatics.predictors.GraphPredictor">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.predictors.</code><code class="sig-name descname">GraphPredictor</code><span class="sig-paren">(</span><em class="sig-param">name: str, description: str, predictors: List[uuid.UUID], session: Optional[citrine._session.Session] = None, report: Optional[citrine.informatics.reports.Report] = None, active: bool = True</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.predictors.GraphPredictor" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.predictors.</code><code class="sig-name descname">GraphPredictor</code><span class="sig-paren">(</span><em class="sig-param">name: str, description: str, predictors: List[Union[uuid.UUID, citrine.informatics.predictors.Predictor]], session: Optional[citrine._session.Session] = None, report: Optional[citrine.informatics.reports.Report] = None, active: bool = True</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.predictors.GraphPredictor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.informatics.predictors.Predictor" title="citrine.informatics.predictors.Predictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.predictors.Predictor</span></code></a></p>
 <p>[ALPHA] A predictor interface that stitches other predictors together.</p>
 <dl class="field-list simple">
@@ -128,7 +128,7 @@
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>name</strong> (<em>str</em>) – name of the configuration</p></li>
 <li><p><strong>description</strong> (<em>str</em>) – the description of the predictor</p></li>
-<li><p><strong>predictors</strong> (<em>list</em><em>[</em><em>UUID</em><em>]</em>) – the list of existing predictor UUIDs to graph together</p></li>
+<li><p><strong>predictors</strong> (<em>list</em><em>[</em><em>UUID</em><em>, </em><a class="reference internal" href="#citrine.informatics.predictors.Predictor" title="citrine.informatics.predictors.Predictor"><em>Predictor</em></a><em>]</em>) – the list of predictors to use in the grpah, either UUIDs or serialized predictors</p></li>
 </ul>
 </dd>
 </dl>
@@ -178,6 +178,12 @@
 <code class="sig-name descname">status_info</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.GraphPredictor.status_info" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
+<dl class="method">
+<dt id="citrine.informatics.predictors.GraphPredictor.stuff_predictor_into_envelope">
+<em class="property">static </em><code class="sig-name descname">stuff_predictor_into_envelope</code><span class="sig-paren">(</span><em class="sig-param">predictor: dict</em><span class="sig-paren">)</span> &#x2192; dict<a class="headerlink" href="#citrine.informatics.predictors.GraphPredictor.stuff_predictor_into_envelope" title="Permalink to this definition">¶</a></dt>
+<dd><p>Insert a serialized embedded predictor into a module envelope, to facilitate deser.</p>
+</dd></dl>
+
 <dl class="attribute">
 <dt id="citrine.informatics.predictors.GraphPredictor.typ">
 <code class="sig-name descname">typ</code><em class="property"> = 'Graph'</em><a class="headerlink" href="#citrine.informatics.predictors.GraphPredictor.typ" title="Permalink to this definition">¶</a></dt>
@@ -213,7 +219,7 @@ based on the ‘type’ value of the passed in dict.</p>
 
 <dl class="class">
 <dt id="citrine.informatics.predictors.SimpleMLPredictor">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.predictors.</code><code class="sig-name descname">SimpleMLPredictor</code><span class="sig-paren">(</span><em class="sig-param">name: str, description: str, inputs: List[citrine.informatics.descriptors.Descriptor], outputs: List[citrine.informatics.descriptors.Descriptor], latent_variables: List[citrine.informatics.descriptors.Descriptor], training_data: citrine.informatics.data_tables.DataTable, session: Optional[citrine._session.Session] = None, report: Optional[citrine.informatics.reports.Report] = None, active: bool = True</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.predictors.SimpleMLPredictor" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.predictors.</code><code class="sig-name descname">SimpleMLPredictor</code><span class="sig-paren">(</span><em class="sig-param">name: str, description: str, inputs: List[citrine.informatics.descriptors.Descriptor], outputs: List[citrine.informatics.descriptors.Descriptor], latent_variables: List[citrine.informatics.descriptors.Descriptor], training_data: citrine.informatics.data_sources.DataSource, session: Optional[citrine._session.Session] = None, report: Optional[citrine.informatics.reports.Report] = None, active: bool = True</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.predictors.SimpleMLPredictor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.informatics.predictors.Predictor" title="citrine.informatics.predictors.Predictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.predictors.Predictor</span></code></a></p>
 <p>[ALPHA] A predictor interface that builds a simple graphical model.</p>
 <p>The model connects the set of inputs through latent variables to the outputs.
@@ -227,7 +233,7 @@ models are built for each latent variable and output.</p>
 <li><p><strong>inputs</strong> (<em>list</em><em>[</em><a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.Descriptor" title="citrine.informatics.descriptors.Descriptor"><em>Descriptor</em></a><em>]</em>) – Descriptors that represent inputs to relations</p></li>
 <li><p><strong>outputs</strong> (<em>list</em><em>[</em><a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.Descriptor" title="citrine.informatics.descriptors.Descriptor"><em>Descriptor</em></a><em>]</em>) – Descriptors that represent outputs of relations</p></li>
 <li><p><strong>latent_variables</strong> (<em>list</em><em>[</em><a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.Descriptor" title="citrine.informatics.descriptors.Descriptor"><em>Descriptor</em></a><em>]</em>) – Descriptors that are predicted from inputs and used when predicting the outputs</p></li>
-<li><p><strong>training_data</strong> (<em>str</em>) – UUID of the table that contains the training data</p></li>
+<li><p><strong>training_data</strong> (<a class="reference internal" href="citrine.informatics.data_sources.html#citrine.informatics.data_sources.DataSource" title="citrine.informatics.data_sources.DataSource"><em>DataSource</em></a>) – Source of the training data, which can be either a CSV or an Ara table</p></li>
 </ul>
 </dd>
 </dl>
@@ -353,22 +359,24 @@ models are built for each latent variable and output.</p>
 <li class="toctree-l2"><a class="reference internal" href="../data_entry.html#registering-data-model-objects">2.3. Registering Data Model Objects</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../data_entry.html#finding-data-model-objects">2.4. Finding Data Model Objects</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../data_entry.html#referencing-data-model-objects">2.5. Referencing Data Model Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#validating-data-model-objects">2.6. Validating Data Model Objects</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../data_extraction.html">3. [ALPHA] Data Extraction</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#defining-row-and-columns">3.1. Defining row and columns</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#defining-tables">3.2. Defining tables</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#previewing-creating-and-reading-tables">3.3. Previewing, creating and reading tables</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-row-definitions">3.4. Available Row Definitions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-variable-definitions">3.5. Available Variable Definitions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-column-definitions">3.6. Available Column Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#previewing-tables">3.3. Previewing tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#building-and-downloading-tables">3.4. Building and downloading tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-row-definitions">3.5. Available Row Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-variable-definitions">3.6. Available Variable Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-column-definitions">3.7. Available Column Definitions</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">4. [ALPHA] Workflows</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#modules">4.1. Modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#design-workflows">4.2. Design workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#registration-and-validation">4.3. Registration and validation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#table-of-contents">4.4. Table of Contents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">4. [ALPHA] AI Engine</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#getting-started">4.1. Getting Started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#workflows-overview">4.2. Workflows Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#modules-overview">4.3. Modules Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#registration-and-validation">4.4. Registration and validation</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">5. FAQ</a><ul>

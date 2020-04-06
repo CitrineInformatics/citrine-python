@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>4. [ALPHA] Workflows &#8212; Citrine Python 0.0.1 documentation</title>
+    <title>4. [ALPHA] AI Engine &#8212; Citrine Python 0.0.1 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -15,7 +15,7 @@
     <link rel="shortcut icon" href="../_static/favicon.png"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="4.4.1. Design spaces" href="design_spaces.html" />
+    <link rel="next" title="5. FAQ" href="../FAQ/index.html" />
     <link rel="prev" title="3. [ALPHA] Data Extraction" href="../data_extraction.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -33,16 +33,46 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="alpha-workflows">
-<span id="workflows"></span><h1>4. [ALPHA] Workflows<a class="headerlink" href="#alpha-workflows" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="alpha-ai-engine">
+<span id="workflows"></span><h1>4. [ALPHA] AI Engine<a class="headerlink" href="#alpha-ai-engine" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="getting-started">
+<h2>4.1. Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h2>
 <p>The Citrine Platform provides tools to make data-driven decisions for materials research and development using artificial intelligence (AI) workflows.
 AI Workflows are composed of modules, which provide the ability to programmatically codify domain knowledge, research capabilities and experimental objectives.
 Workflows leverage data and domain knowledge to help materials researchers make traceable, data-driven decisions in pursuit of their research and development goals.
 These capabilities include generating candidates for sequential learning, identifying outliers or imputing missing values.</p>
-<div class="section" id="modules">
-<h2>4.1. Modules<a class="headerlink" href="#modules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="workflows-overview">
+<h2>4.2. Workflows Overview<a class="headerlink" href="#workflows-overview" title="Permalink to this headline">¶</a></h2>
+<p>Currently, there are two types of workflows on the AI Engine: the <a class="reference internal" href="design_workflows.html"><span class="doc">DesignWorkflow</span></a> and the <a class="reference internal" href="performance_workflows.html"><span class="doc">PerformanceWorkflow</span></a>.
+Workflows employ reusable modules in order to execute.
+There are three different types of modules, and these are discussed in greater detail below.</p>
+<div class="section" id="designworkflow">
+<h3>4.2.1. DesignWorkflow<a class="headerlink" href="#designworkflow" title="Permalink to this headline">¶</a></h3>
+<p>The <a class="reference internal" href="design_workflows.html"><span class="doc">DesignWorkflow</span></a> is the core AI workflow on the platform.
+This workflow generates scored candidates for sequential learning.
+It requires one of each of the modules listed below and executes in the following manner:</p>
+<ul class="simple">
+<li><p>Material candidates are pulled from the design space.</p></li>
+<li><p>The predictor adds additional information to the candidates.</p></li>
+<li><p>Enriched candidates are scored, and the processor selects the next batch of candidates to pull from the design space.</p></li>
+</ul>
+<p>After a given number of iterations, candidates are ranked according to their score and the best materials are returned.
+(Here, the best materials are those that are most likely to optimize an objective and satisfy a set of constraints.)</p>
+<p>Design workflows are further parameterized by <a class="reference internal" href="scores.html"><span class="doc">Scores</span></a>, which codify experimental objectives and constraints on desired candidates, and define the strategy for candidate acquisition.</p>
+</div>
+<div class="section" id="performanceworkflow">
+<h3>4.2.2. PerformanceWorkflow<a class="headerlink" href="#performanceworkflow" title="Permalink to this headline">¶</a></h3>
+<p>The <a class="reference internal" href="performance_workflows.html"><span class="doc">PerformanceWorkflow</span></a> is used to perform analysis on a predictor module.
+The PerformanceWorkflow exists to help the user understand how well their predictor module works with their data: in essence, it describes the trustworthiness of their model.
+These outcomes are captured in a series of performance metrics.</p>
+</div>
+</div>
+<div class="section" id="modules-overview">
+<h2>4.3. Modules Overview<a class="headerlink" href="#modules-overview" title="Permalink to this headline">¶</a></h2>
 <p>Modules are re-usable computational tools used to construct workflows.
-The modules are dictate how the platform utilizes research data to generate computational results. There are 4 types of modules on the platform:</p>
+The modules dictate how the platform utilizes research data to generate computational results.
+There are 3 types of modules on the platform:</p>
 <ul class="simple">
 <li><p><a class="reference internal" href="design_spaces.html"><span class="doc">Design Spaces</span></a> define the domain of controllable experimental parameters, their allowable values and relevant bounds.</p></li>
 <li><dl class="simple">
@@ -54,7 +84,7 @@ The modules are dictate how the platform utilizes research data to generate comp
 The processor and design space are coupled: depending on the design space used, only a subset of processors are applicable.</p></li>
 </ul>
 <div class="section" id="activation">
-<h3>4.1.1. Activation<a class="headerlink" href="#activation" title="Permalink to this headline">¶</a></h3>
+<h3>4.3.1. Activation<a class="headerlink" href="#activation" title="Permalink to this headline">¶</a></h3>
 <p>Modules come <cite>active</cite> by default when created. If you would like to deactivate a module so it cannot be used again consider this example:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">predictor</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">predictors</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">predictor_uuid</span><span class="p">)</span>
 <span class="n">predictor</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="kc">False</span>
@@ -64,22 +94,8 @@ The processor and design space are coupled: depending on the design space used, 
 <p>Modules that are not <cite>active</cite> cannot be used in workflows and will not show up when listing.</p>
 </div>
 </div>
-<div class="section" id="design-workflows">
-<h2>4.2. Design workflows<a class="headerlink" href="#design-workflows" title="Permalink to this headline">¶</a></h2>
-<p>The <a class="reference internal" href="design_workflows.html"><span class="doc">design workflow</span></a> is the core AI workflow on the platform.
-This workflow generates scored candidates for sequential learning.
-It requires one of each of the modules listed above and executes in the following manner:</p>
-<ul class="simple">
-<li><p>Material candidates are pulled from the design space.</p></li>
-<li><p>The predictor adds additional information to the candidates.</p></li>
-<li><p>Enriched candidates are scored, and the processor selects the next batch of candidates to pull from the design space.</p></li>
-</ul>
-<p>After a given number of iterations, candidates are ranked according to their score and the best materials are returned.
-(Here, the best materials are those that are most likely to optimize an objective and satisfy a set of constraints.)</p>
-<p>Design workflows are further parameterized by <a class="reference internal" href="scores.html"><span class="doc">Scores</span></a>, which codify experimental objectives and constraints on desired candidates, and define the strategy for candidate acquisition.</p>
-</div>
 <div class="section" id="registration-and-validation">
-<h2>4.3. Registration and validation<a class="headerlink" href="#registration-and-validation" title="Permalink to this headline">¶</a></h2>
+<h2>4.4. Registration and validation<a class="headerlink" href="#registration-and-validation" title="Permalink to this headline">¶</a></h2>
 <p>Both modules and workflows are registered with a project and validated before they are ready for use. Once registered, validation occurs automatically.
 Validation status can be one of the following states:</p>
 <ul class="simple">
@@ -90,43 +106,6 @@ Validation status can be one of the following states:</p>
 <li><p><strong>Error:</strong> Validation did not complete. An error was raised during the validation process that prevented an invalid or ready status to be determined.</p></li>
 </ul>
 <p>Validation of a workflow and all constituent modules must complete with ready status before the workflow can be executed.</p>
-</div>
-<div class="section" id="table-of-contents">
-<h2>4.4. Table of Contents<a class="headerlink" href="#table-of-contents" title="Permalink to this headline">¶</a></h2>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="design_spaces.html">4.4.1. Design spaces</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="design_spaces.html#product-design-space">4.4.1.1. Product design space</a></li>
-<li class="toctree-l2"><a class="reference internal" href="design_spaces.html#enumerated-design-space">4.4.1.2. Enumerated design space</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="predictors.html">4.4.2. Predictors</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="predictors.html#simple-ml-predictor">4.4.2.1. Simple ML predictor</a></li>
-<li class="toctree-l2"><a class="reference internal" href="predictors.html#graph-predictor">4.4.2.2. Graph predictor</a></li>
-<li class="toctree-l2"><a class="reference internal" href="predictors.html#expression-predictor">4.4.2.3. Expression predictor</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="predictor_reports.html">4.4.3. Predictor reports</a></li>
-<li class="toctree-l1"><a class="reference internal" href="processors.html">4.4.4. Processors</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="processors.html#enumerated-processor">4.4.4.1. Enumerated processor</a></li>
-<li class="toctree-l2"><a class="reference internal" href="processors.html#grid-processor">4.4.4.2. Grid processor</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="scores.html">4.4.5. Scores</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="scores.html#expected-improvement">4.4.5.1. Expected improvement</a></li>
-<li class="toctree-l2"><a class="reference internal" href="scores.html#likelihood-of-improvement">4.4.5.2. Likelihood of improvement</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="design_workflows.html">4.4.6. Design workflows</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="design_workflows.html#execution-and-results">4.4.6.1. Execution and results</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="performance_workflows.html">4.4.7. Performance workflows</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="performance_workflows.html#execution-and-results">4.4.7.1. Execution and results</a></li>
-</ul>
-</li>
-</ul>
-</div>
 </div>
 </div>
 
@@ -177,22 +156,24 @@ Validation status can be one of the following states:</p>
 <li class="toctree-l2"><a class="reference internal" href="../data_entry.html#registering-data-model-objects">2.3. Registering Data Model Objects</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../data_entry.html#finding-data-model-objects">2.4. Finding Data Model Objects</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../data_entry.html#referencing-data-model-objects">2.5. Referencing Data Model Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#validating-data-model-objects">2.6. Validating Data Model Objects</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../data_extraction.html">3. [ALPHA] Data Extraction</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#defining-row-and-columns">3.1. Defining row and columns</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#defining-tables">3.2. Defining tables</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#previewing-creating-and-reading-tables">3.3. Previewing, creating and reading tables</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-row-definitions">3.4. Available Row Definitions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-variable-definitions">3.5. Available Variable Definitions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-column-definitions">3.6. Available Column Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#previewing-tables">3.3. Previewing tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#building-and-downloading-tables">3.4. Building and downloading tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-row-definitions">3.5. Available Row Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-variable-definitions">3.6. Available Variable Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-column-definitions">3.7. Available Column Definitions</a></li>
 </ul>
 </li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">4. [ALPHA] Workflows</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#modules">4.1. Modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#design-workflows">4.2. Design workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#registration-and-validation">4.3. Registration and validation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#table-of-contents">4.4. Table of Contents</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">4. [ALPHA] AI Engine</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#getting-started">4.1. Getting Started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#workflows-overview">4.2. Workflows Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#modules-overview">4.3. Modules Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#registration-and-validation">4.4. Registration and validation</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">5. FAQ</a><ul>
@@ -206,7 +187,7 @@ Validation status can be one of the following states:</p>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
       <li>Previous: <a href="../data_extraction.html" title="previous chapter">3. [ALPHA] Data Extraction</a></li>
-      <li>Next: <a href="design_spaces.html" title="next chapter">4.4.1. Design spaces</a></li>
+      <li>Next: <a href="../FAQ/index.html" title="next chapter">5. FAQ</a></li>
   </ul></li>
 </ul>
 </div>

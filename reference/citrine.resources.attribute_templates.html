@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>citrine.informatics.data_tables module &#8212; Citrine Python 0.0.1 documentation</title>
+    <title>citrine.resources.attribute_templates module &#8212; Citrine Python 0.0.1 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -31,28 +31,22 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="module-citrine.informatics.data_tables">
-<span id="citrine-informatics-data-tables-module"></span><h1>citrine.informatics.data_tables module<a class="headerlink" href="#module-citrine.informatics.data_tables" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-citrine.resources.attribute_templates">
+<span id="citrine-resources-attribute-templates-module"></span><h1>citrine.resources.attribute_templates module<a class="headerlink" href="#module-citrine.resources.attribute_templates" title="Permalink to this headline">¶</a></h1>
+<p>Top-level class for all attribute template objects and collections thereof.</p>
 <dl class="class">
-<dt id="citrine.informatics.data_tables.DataTable">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.data_tables.</code><code class="sig-name descname">DataTable</code><span class="sig-paren">(</span><em class="sig-param">table_id: str</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.data_tables.DataTable" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code></p>
-<p>[ALPHA] A reference to a data table, generally used to identify source data for some process.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>table_id</strong> (<em>uuid</em>) – the UUID of the table to use</p>
-</dd>
-</dl>
-<dl class="attribute">
-<dt id="citrine.informatics.data_tables.DataTable.table_id">
-<code class="sig-name descname">table_id</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.data_tables.DataTable.table_id" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dt id="citrine.resources.attribute_templates.AttributeTemplate">
+<em class="property">class </em><code class="sig-prename descclassname">citrine.resources.attribute_templates.</code><code class="sig-name descname">AttributeTemplate</code><span class="sig-paren">(</span><em class="sig-param">typ: str</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.attribute_templates.AttributeTemplate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="citrine.resources.templates.html#citrine.resources.templates.Template" title="citrine.resources.templates.Template"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.resources.templates.Template</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<p>An abstract attribute template object.</p>
+<p>AttributeTemplate must be extended along with <cite>Resource</cite></p>
+</dd></dl>
 
-<dl class="attribute">
-<dt id="citrine.informatics.data_tables.DataTable.table_version">
-<code class="sig-name descname">table_version</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.data_tables.DataTable.table_version" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
+<dl class="class">
+<dt id="citrine.resources.attribute_templates.AttributeTemplateCollection">
+<em class="property">class </em><code class="sig-prename descclassname">citrine.resources.attribute_templates.</code><code class="sig-name descname">AttributeTemplateCollection</code><span class="sig-paren">(</span><em class="sig-param">project_id: uuid.UUID</em>, <em class="sig-param">dataset_id: uuid.UUID</em>, <em class="sig-param">session: citrine._session.Session</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.attribute_templates.AttributeTemplateCollection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="citrine.resources.templates.html#citrine.resources.templates.TemplateCollection" title="citrine.resources.templates.TemplateCollection"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.resources.templates.TemplateCollection</span></code></a></p>
+<p>A collection of one kind of attribute template object.</p>
 </dd></dl>
 
 </div>
@@ -104,22 +98,24 @@
 <li class="toctree-l2"><a class="reference internal" href="../data_entry.html#registering-data-model-objects">2.3. Registering Data Model Objects</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../data_entry.html#finding-data-model-objects">2.4. Finding Data Model Objects</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../data_entry.html#referencing-data-model-objects">2.5. Referencing Data Model Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#validating-data-model-objects">2.6. Validating Data Model Objects</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../data_extraction.html">3. [ALPHA] Data Extraction</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#defining-row-and-columns">3.1. Defining row and columns</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#defining-tables">3.2. Defining tables</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#previewing-creating-and-reading-tables">3.3. Previewing, creating and reading tables</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-row-definitions">3.4. Available Row Definitions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-variable-definitions">3.5. Available Variable Definitions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-column-definitions">3.6. Available Column Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#previewing-tables">3.3. Previewing tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#building-and-downloading-tables">3.4. Building and downloading tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-row-definitions">3.5. Available Row Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-variable-definitions">3.6. Available Variable Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-column-definitions">3.7. Available Column Definitions</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">4. [ALPHA] Workflows</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#modules">4.1. Modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#design-workflows">4.2. Design workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#registration-and-validation">4.3. Registration and validation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#table-of-contents">4.4. Table of Contents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">4. [ALPHA] AI Engine</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#getting-started">4.1. Getting Started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#workflows-overview">4.2. Workflows Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#modules-overview">4.3. Modules Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#registration-and-validation">4.4. Registration and validation</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">5. FAQ</a><ul>
@@ -165,7 +161,7 @@
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
-      <a href="../_sources/reference/citrine.informatics.data_tables.rst.txt"
+      <a href="../_sources/reference/citrine.resources.attribute_templates.rst.txt"
           rel="nofollow">Page source</a>
     </div>
 

@@ -9,9 +9,11 @@ Submodules
    citrine.resources.api_error
    citrine.resources.ara_definition
    citrine.resources.ara_job
+   citrine.resources.attribute_templates
    citrine.resources.audit_info
    citrine.resources.condition_template
    citrine.resources.data_concepts
+   citrine.resources.data_objects
    citrine.resources.dataset
    citrine.resources.design_space
    citrine.resources.file_link
@@ -24,6 +26,9 @@ Submodules
    citrine.resources.measurement_spec
    citrine.resources.measurement_template
    citrine.resources.module
+   citrine.resources.object_runs
+   citrine.resources.object_specs
+   citrine.resources.object_templates
    citrine.resources.parameter_template
    citrine.resources.predictor
    citrine.resources.process_run
@@ -37,6 +42,7 @@ Submodules
    citrine.resources.report
    citrine.resources.response
    citrine.resources.table
+   citrine.resources.templates
    citrine.resources.user
    citrine.resources.workflow
    citrine.resources.workflow_executions

@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>4.4.4. Processors &#8212; Citrine Python 0.0.1 documentation</title>
+    <title>Processors &#8212; Citrine Python 0.0.1 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -15,8 +15,6 @@
     <link rel="shortcut icon" href="../_static/favicon.png"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="4.4.5. Scores" href="scores.html" />
-    <link rel="prev" title="4.4.3. Predictor reports" href="predictor_reports.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -34,7 +32,7 @@
           <div class="body" role="main">
             
   <div class="section" id="processors">
-<h1>4.4.4. Processors<a class="headerlink" href="#processors" title="Permalink to this headline">¶</a></h1>
+<h1>Processors<a class="headerlink" href="#processors" title="Permalink to this headline">¶</a></h1>
 <p>A processor defines how a <a class="reference internal" href="design_spaces.html"><span class="doc">design space</span></a> is searched.
 There are two processors:</p>
 <ul class="simple">
@@ -42,7 +40,7 @@ There are two processors:</p>
 <li><p><a class="reference external" href="#grid-processor">GridProcessor</a> creates finite, enumerable space from a (semi)-continuous one by discretizing the continuous variables and enumerating the finite variables.</p></li>
 </ul>
 <div class="section" id="enumerated-processor">
-<h2>4.4.4.1. Enumerated processor<a class="headerlink" href="#enumerated-processor" title="Permalink to this headline">¶</a></h2>
+<h2>Enumerated processor<a class="headerlink" href="#enumerated-processor" title="Permalink to this headline">¶</a></h2>
 <p>An enumerated processor takes up to a maximum number of materials from a <a class="reference internal" href="design_spaces.html"><span class="doc">design space</span></a> and processes each independently.
 The maximum number of candidates sampled from the design space is defined by the optional <code class="docutils literal notranslate"><span class="pre">max_size</span></code> parameter when creating an <a class="reference internal" href="../reference/citrine.informatics.processors.html#citrine.informatics.processors.EnumeratedProcessor" title="citrine.informatics.processors.EnumeratedProcessor"><code class="xref py py-class docutils literal notranslate"><span class="pre">EnumeratedProcessor</span></code></a> using the python SDK.
 To be valid, enumerated processors must have a maximum size of at least 1.</p>
@@ -86,7 +84,7 @@ Finite elements repeat once the outer product is exhausted.</p>
 </div>
 </div>
 <div class="section" id="grid-processor">
-<h2>4.4.4.2. Grid processor<a class="headerlink" href="#grid-processor" title="Permalink to this headline">¶</a></h2>
+<h2>Grid processor<a class="headerlink" href="#grid-processor" title="Permalink to this headline">¶</a></h2>
 <p>A grid processor generates samples from the outer product of finite dimensions.
 This processor can only be used with a <a class="reference internal" href="../reference/citrine.informatics.design_spaces.html#citrine.informatics.design_spaces.ProductDesignSpace" title="citrine.informatics.design_spaces.ProductDesignSpace"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProductDesignSpace</span></code></a>.
 To create a finite set of materials from continuous dimensions, a uniform grid is created between the bounds of the descriptor.
@@ -158,7 +156,7 @@ a 2D design space of enumerated x values and continuous y values:</p>
 
 
 <h3>Navigation</h3>
-<ul class="current">
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../getting_started/index.html">1. Getting Started</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../getting_started/connecting.html">1.1. Connecting to the Citrine Platform</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../getting_started/basic_structure.html">1.2. Structure of the Citrine Python Client</a></li>
@@ -176,22 +174,24 @@ a 2D design space of enumerated x values and continuous y values:</p>
 <li class="toctree-l2"><a class="reference internal" href="../data_entry.html#registering-data-model-objects">2.3. Registering Data Model Objects</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../data_entry.html#finding-data-model-objects">2.4. Finding Data Model Objects</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../data_entry.html#referencing-data-model-objects">2.5. Referencing Data Model Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#validating-data-model-objects">2.6. Validating Data Model Objects</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../data_extraction.html">3. [ALPHA] Data Extraction</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#defining-row-and-columns">3.1. Defining row and columns</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#defining-tables">3.2. Defining tables</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#previewing-creating-and-reading-tables">3.3. Previewing, creating and reading tables</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-row-definitions">3.4. Available Row Definitions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-variable-definitions">3.5. Available Variable Definitions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-column-definitions">3.6. Available Column Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#previewing-tables">3.3. Previewing tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#building-and-downloading-tables">3.4. Building and downloading tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-row-definitions">3.5. Available Row Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-variable-definitions">3.6. Available Variable Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-column-definitions">3.7. Available Column Definitions</a></li>
 </ul>
 </li>
-<li class="toctree-l1 current"><a class="reference internal" href="index.html">4. [ALPHA] Workflows</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="index.html#modules">4.1. Modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="index.html#design-workflows">4.2. Design workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="index.html#registration-and-validation">4.3. Registration and validation</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="index.html#table-of-contents">4.4. Table of Contents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html">4. [ALPHA] AI Engine</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="index.html#getting-started">4.1. Getting Started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#workflows-overview">4.2. Workflows Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#modules-overview">4.3. Modules Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#registration-and-validation">4.4. Registration and validation</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">5. FAQ</a><ul>
@@ -204,10 +204,6 @@ a 2D design space of enumerated x values and continuous y values:</p>
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-  <li><a href="index.html">4. [ALPHA] Workflows</a><ul>
-      <li>Previous: <a href="predictor_reports.html" title="previous chapter">4.4.3. Predictor reports</a></li>
-      <li>Next: <a href="scores.html" title="next chapter">4.4.5. Scores</a></li>
-  </ul></li>
   </ul></li>
 </ul>
 </div>

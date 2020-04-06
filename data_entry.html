@@ -64,7 +64,7 @@ For example:</p>
 </div>
 <p>Note that registration must be performed within the scope of a dataset: the dataset into which the objects are being written.
 The data model object collections that are defined with the project scope (such as <cite>project.process_specs</cite>) are read-only and will throw an error if their register method is called.</p>
-<p>If you have <a class="reference external" href="https://github.com/CitrineInformatics/taurus">taurus</a> objects, e.g. <a class="reference external" href="https://citrineinformatics.github.io/taurus/reference/taurus.entity.object.process_spec.html#taurus.entity.object.process_spec.ProcessSpec" title="(in Taurus)"><code class="xref py py-class docutils literal notranslate"><span class="pre">taurus.entity.object.process_spec.ProcessSpec</span></code></a>, you can register it just like the objects defined in the Citrine Python Client.</p>
+<p>If you have <a class="reference external" href="https://github.com/CitrineInformatics/taurus">taurus</a> objects, e.g. <code class="xref py py-class docutils literal notranslate"><span class="pre">taurus.entity.object.process_spec.ProcessSpec</span></code>, you can register it just like the objects defined in the Citrine Python Client.</p>
 </div>
 <div class="section" id="finding-data-model-objects">
 <h2>2.4. Finding Data Model Objects<a class="headerlink" href="#finding-data-model-objects" title="Permalink to this headline">¶</a></h2>
@@ -79,7 +79,7 @@ For example:</p>
 </div>
 <p>The
 <a class="reference internal" href="reference/citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConceptsCollection.filter_by_tags" title="citrine.resources.data_concepts.DataConceptsCollection.filter_by_tags"><code class="xref py py-func docutils literal notranslate"><span class="pre">filter_by_tags()</span></code></a>,
-<a class="reference internal" href="reference/citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConceptsCollection.filter_by_attribute_bounds" title="citrine.resources.data_concepts.DataConceptsCollection.filter_by_attribute_bounds"><code class="xref py py-func docutils literal notranslate"><span class="pre">filter_by_attribute_bounds()</span></code></a>,
+<code class="xref py py-func docutils literal notranslate"><span class="pre">filter_by_attribute_bounds()</span></code>,
 and <a class="reference internal" href="reference/citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConceptsCollection.filter_by_name" title="citrine.resources.data_concepts.DataConceptsCollection.filter_by_name"><code class="xref py py-func docutils literal notranslate"><span class="pre">filter_by_name()</span></code></a>
 can help refine the listing to make the target object easier to find.</p>
 </div>
@@ -87,7 +87,7 @@ can help refine the listing to make the target object easier to find.</p>
 <h2>2.5. Referencing Data Model Objects<a class="headerlink" href="#referencing-data-model-objects" title="Permalink to this headline">¶</a></h2>
 <p>Many data model objects contain links to other data model objects.
 For example, a <a class="reference internal" href="reference/citrine.resources.material_spec.html#citrine.resources.material_spec.MaterialSpec" title="citrine.resources.material_spec.MaterialSpec"><code class="xref py py-class docutils literal notranslate"><span class="pre">MaterialSpec</span></code></a> references the <a class="reference internal" href="reference/citrine.resources.process_spec.html#citrine.resources.process_spec.ProcessSpec" title="citrine.resources.process_spec.ProcessSpec"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProcessSpec</span></code></a> that produced it.
-These links are created with the <a class="reference external" href="https://citrineinformatics.github.io/taurus/reference/taurus.entity.link_by_uid.html#taurus.entity.link_by_uid.LinkByUID" title="(in Taurus)"><code class="xref py py-class docutils literal notranslate"><span class="pre">LinkByUID</span></code></a> class, e.g.:</p>
+These links are created with the <code class="xref py py-class docutils literal notranslate"><span class="pre">LinkByUID</span></code> class, e.g.:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">process</span> <span class="o">=</span> <span class="n">ProcessSpec</span><span class="p">(</span><span class="s2">&quot;my process&quot;</span><span class="p">,</span> <span class="n">uids</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;my namespace&quot;</span><span class="p">:</span> <span class="s2">&quot;my process&quot;</span><span class="p">})</span>
 <span class="n">dataset</span><span class="o">.</span><span class="n">process_specs</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">process</span><span class="p">)</span>
 <span class="n">link</span> <span class="o">=</span> <span class="n">LinkByUID</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s2">&quot;my namespace&quot;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;my_process&quot;</span><span class="p">)</span>
@@ -95,6 +95,36 @@ These links are created with the <a class="reference external" href="https://cit
 <span class="n">dataset</span><span class="o">.</span><span class="n">material_specs</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">material</span><span class="p">)</span>
 </pre></div>
 </div>
+</div>
+<div class="section" id="validating-data-model-objects">
+<h2>2.6. Validating Data Model Objects<a class="headerlink" href="#validating-data-model-objects" title="Permalink to this headline">¶</a></h2>
+<p>If you try to <code class="docutils literal notranslate"><span class="pre">register</span></code> or <code class="docutils literal notranslate"><span class="pre">delete</span></code> an invalid data model object, the operation fails with an error message that
+specifies in what way(s) the data model object was invalid. For example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">spec</span> <span class="o">=</span> <span class="n">ProcessSpec</span><span class="p">(</span><span class="s2">&quot;foo&quot;</span><span class="p">)</span>
+<span class="n">run</span> <span class="o">=</span> <span class="n">ProcessRun</span><span class="p">(</span><span class="s2">&quot;bar&quot;</span><span class="p">,</span> <span class="n">spec</span><span class="o">=</span><span class="n">spec</span><span class="p">)</span>
+
+<span class="n">spec</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">process_specs</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
+<span class="n">run</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">process_runs</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">run</span><span class="p">)</span>
+
+<span class="n">dataset</span><span class="o">.</span><span class="n">process_specs</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">spec</span><span class="o">.</span><span class="n">uids</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>yields</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>ERROR:citrine._session:400 DELETE projects/$PROJECT_ID/datasets/$DATASET_ID/process-specs/id/$PROCESS_SPEC_ID
+ERROR:citrine._session:{&quot;code&quot;:400,&quot;message&quot;:&quot;object $PROCESS_SPEC_ID in dataset $DATASET_ID not deleted. See ValidationErrors for details.&quot;,&quot;validation_errors&quot;:[{&quot;failure_message&quot;:&quot;Referenced by process_run in dataset $DATASET_ID with ID $PROCESS_RUN_ID&quot;,&quot;failure_id&quot;:&quot;object.mutation.referenced&quot;}]}
+</pre></div>
+</div>
+<p>If you want to run these same validations on a data model object without the possibility of registering or deleting the
+object, pass the <code class="docutils literal notranslate"><span class="pre">dry_run=True</span></code> argument to either the <code class="docutils literal notranslate"><span class="pre">register</span></code> or <code class="docutils literal notranslate"><span class="pre">delete</span></code> method. In the example above, this
+would look like</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dataset</span><span class="o">.</span><span class="n">process_specs</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">spec</span><span class="o">.</span><span class="n">uids</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">],</span> <span class="n">dry_run</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Setting <code class="docutils literal notranslate"><span class="pre">dry_run=True</span></code> in either <code class="docutils literal notranslate"><span class="pre">register</span></code> or <code class="docutils literal notranslate"><span class="pre">delete</span></code> causes the method to run through all of its validations
+and if any fail, provide the same error that the method would provide without the <code class="docutils literal notranslate"><span class="pre">dry_run</span></code> argument. If all
+validations succeed, the method returns the same success value that it would without the <code class="docutils literal notranslate"><span class="pre">dry_run</span></code> argument, but the
+object will not be registered or deleted.</p>
+<p>Setting <code class="docutils literal notranslate"><span class="pre">dry_run=False</span></code> is equivalent to not specifying <code class="docutils literal notranslate"><span class="pre">dry_run</span></code> at all and will have no effect.</p>
 </div>
 </div>
 
@@ -145,22 +175,24 @@ These links are created with the <a class="reference external" href="https://cit
 <li class="toctree-l2"><a class="reference internal" href="#registering-data-model-objects">2.3. Registering Data Model Objects</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#finding-data-model-objects">2.4. Finding Data Model Objects</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#referencing-data-model-objects">2.5. Referencing Data Model Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#validating-data-model-objects">2.6. Validating Data Model Objects</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="data_extraction.html">3. [ALPHA] Data Extraction</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="data_extraction.html#defining-row-and-columns">3.1. Defining row and columns</a></li>
 <li class="toctree-l2"><a class="reference internal" href="data_extraction.html#defining-tables">3.2. Defining tables</a></li>
-<li class="toctree-l2"><a class="reference internal" href="data_extraction.html#previewing-creating-and-reading-tables">3.3. Previewing, creating and reading tables</a></li>
-<li class="toctree-l2"><a class="reference internal" href="data_extraction.html#available-row-definitions">3.4. Available Row Definitions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="data_extraction.html#available-variable-definitions">3.5. Available Variable Definitions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="data_extraction.html#available-column-definitions">3.6. Available Column Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_extraction.html#previewing-tables">3.3. Previewing tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_extraction.html#building-and-downloading-tables">3.4. Building and downloading tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_extraction.html#available-row-definitions">3.5. Available Row Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_extraction.html#available-variable-definitions">3.6. Available Variable Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_extraction.html#available-column-definitions">3.7. Available Column Definitions</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="workflows/index.html">4. [ALPHA] Workflows</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="workflows/index.html#modules">4.1. Modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="workflows/index.html#design-workflows">4.2. Design workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="workflows/index.html#registration-and-validation">4.3. Registration and validation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="workflows/index.html#table-of-contents">4.4. Table of Contents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="workflows/index.html">4. [ALPHA] AI Engine</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="workflows/index.html#getting-started">4.1. Getting Started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="workflows/index.html#workflows-overview">4.2. Workflows Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="workflows/index.html#modules-overview">4.3. Modules Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="workflows/index.html#registration-and-validation">4.4. Registration and validation</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="FAQ/index.html">5. FAQ</a><ul>

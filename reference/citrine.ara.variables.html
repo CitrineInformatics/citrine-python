@@ -183,6 +183,72 @@ variable is being set to may be the target of a constraint as well.</p></li>
 </dd></dl>
 
 <dl class="class">
+<dt id="citrine.ara.variables.AttributeInOutput">
+<em class="property">class </em><code class="sig-prename descclassname">citrine.ara.variables.</code><code class="sig-name descname">AttributeInOutput</code><span class="sig-paren">(</span><em class="sig-param">*, name: str, headers: List[str], attribute_template: taurus.entity.link_by_uid.LinkByUID, process_templates: List[taurus.entity.link_by_uid.LinkByUID], attribute_constraints: List[List[Union[taurus.entity.link_by_uid.LinkByUID, taurus.entity.bounds.base_bounds.BaseBounds]]] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.ara.variables.AttributeInOutput" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.ara.variables.Variable" title="citrine.ara.variables.Variable"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.ara.variables.Variable</span></code></a></p>
+<p>[ALPHA] Attribute marked by an attribute template in the trunk of the history tree.</p>
+<p>The search for an attribute that marks the given attribute template starts at the root
+of the material history tree and proceeds until any of the given process templates are reached.
+Those templates block the search from continuing into their ingredients but do not halt the
+search entirely. This variable definition allows attributes that are present both in output
+and the inputs of a process to be distinguished.</p>
+<p>For example, a material “paint” might be produced by mixing and then resting “pigments” and
+a “base”.  The color of the pigments and base could be measured and recorded as attributes
+in addition to the color of the resulting paint.  To define a variable as the color of the
+resulting paint, AttributeInTrunk can be used with the mixing process included in the list
+of process templates.  Then, when the platform looks for colors, it won’t traverse through
+the mixing process and hit the colors of the pigments and base as well, which would result
+in an ambiguous variable match.</p>
+<p>Unlike “AttributeByTemplateAfterProcess”, AttributeInTrunk will also match on the color
+attribute of the pigments in the rows that correspond to those pigments.  This way, all the
+colors can be assigned to the same variable and rendered into the same columns in the table.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – a short human-readable name to use when referencing the variable</p></li>
+<li><p><strong>headers</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – sequence of column headers</p></li>
+<li><p><strong>attribute_template</strong> (<em>LinkByUID</em>) – attribute template that identifies the attribute to assign to the variable</p></li>
+<li><p><strong>process_templates</strong> (<em>list</em><em>[</em><em>LinkByUID</em><em>]</em>) – process templates that should not be traversed through when searching for a matching
+attribute.  The attribute may be present in these processes but not their ingredients.</p></li>
+<li><p><strong>attribute_constraints</strong> (<em>list</em><em>[</em><em>(</em><em>LinkByUID</em><em>, </em><em>Bounds</em><em>)</em><em>]</em>) – constraints on object attributes in the target object that must be satisfied. Constraints
+are expressed as Bounds.  Attributes are expressed with links. The attribute that the
+variable is being set to may be the target of a constraint as well.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="citrine.ara.variables.AttributeInOutput.attribute_constraints">
+<code class="sig-name descname">attribute_constraints</code><em class="property"> = None</em><a class="headerlink" href="#citrine.ara.variables.AttributeInOutput.attribute_constraints" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.ara.variables.AttributeInOutput.attribute_template">
+<code class="sig-name descname">attribute_template</code><em class="property"> = None</em><a class="headerlink" href="#citrine.ara.variables.AttributeInOutput.attribute_template" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.ara.variables.AttributeInOutput.headers">
+<code class="sig-name descname">headers</code><em class="property"> = None</em><a class="headerlink" href="#citrine.ara.variables.AttributeInOutput.headers" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.ara.variables.AttributeInOutput.name">
+<code class="sig-name descname">name</code><em class="property"> = None</em><a class="headerlink" href="#citrine.ara.variables.AttributeInOutput.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.ara.variables.AttributeInOutput.process_templates">
+<code class="sig-name descname">process_templates</code><em class="property"> = None</em><a class="headerlink" href="#citrine.ara.variables.AttributeInOutput.process_templates" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.ara.variables.AttributeInOutput.typ">
+<code class="sig-name descname">typ</code><em class="property"> = 'attribute_in_trunk'</em><a class="headerlink" href="#citrine.ara.variables.AttributeInOutput.typ" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
 <dt id="citrine.ara.variables.IngredientIdentifierByProcessTemplateAndName">
 <em class="property">class </em><code class="sig-prename descclassname">citrine.ara.variables.</code><code class="sig-name descname">IngredientIdentifierByProcessTemplateAndName</code><span class="sig-paren">(</span><em class="sig-param">*, name: str, headers: List[str], process_template: taurus.entity.link_by_uid.LinkByUID, ingredient_name: str, scope: str</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.ara.variables.IngredientIdentifierByProcessTemplateAndName" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.ara.variables.Variable" title="citrine.ara.variables.Variable"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.ara.variables.Variable</span></code></a></p>
@@ -334,7 +400,7 @@ valid options are defined by <a class="reference internal" href="#citrine.ara.va
 <dl class="class">
 <dt id="citrine.ara.variables.IngredientQuantityDimension">
 <em class="property">class </em><code class="sig-prename descclassname">citrine.ara.variables.</code><code class="sig-name descname">IngredientQuantityDimension</code><span class="sig-paren">(</span><em class="sig-param">*args</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.ara.variables.IngredientQuantityDimension" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://citrineinformatics.github.io/taurus/reference/taurus.enumeration.base_enumeration.html#taurus.enumeration.base_enumeration.BaseEnumeration" title="(in Taurus)"><code class="xref py py-class docutils literal notranslate"><span class="pre">taurus.enumeration.base_enumeration.BaseEnumeration</span></code></a></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">taurus.enumeration.base_enumeration.BaseEnumeration</span></code></p>
 <p>[ALPHA] The dimension of an ingredient quantity.</p>
 <ul class="simple">
 <li><p>ABSOLUTE corresponds to the absolute quantity</p></li>
@@ -499,22 +565,24 @@ valid options are defined by <a class="reference internal" href="#citrine.ara.va
 <li class="toctree-l2"><a class="reference internal" href="../data_entry.html#registering-data-model-objects">2.3. Registering Data Model Objects</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../data_entry.html#finding-data-model-objects">2.4. Finding Data Model Objects</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../data_entry.html#referencing-data-model-objects">2.5. Referencing Data Model Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#validating-data-model-objects">2.6. Validating Data Model Objects</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../data_extraction.html">3. [ALPHA] Data Extraction</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#defining-row-and-columns">3.1. Defining row and columns</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#defining-tables">3.2. Defining tables</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#previewing-creating-and-reading-tables">3.3. Previewing, creating and reading tables</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-row-definitions">3.4. Available Row Definitions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-variable-definitions">3.5. Available Variable Definitions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-column-definitions">3.6. Available Column Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#previewing-tables">3.3. Previewing tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#building-and-downloading-tables">3.4. Building and downloading tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-row-definitions">3.5. Available Row Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-variable-definitions">3.6. Available Variable Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-column-definitions">3.7. Available Column Definitions</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">4. [ALPHA] Workflows</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#modules">4.1. Modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#design-workflows">4.2. Design workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#registration-and-validation">4.3. Registration and validation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#table-of-contents">4.4. Table of Contents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">4. [ALPHA] AI Engine</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#getting-started">4.1. Getting Started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#workflows-overview">4.2. Workflows Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#modules-overview">4.3. Modules Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#registration-and-validation">4.4. Registration and validation</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">5. FAQ</a><ul>

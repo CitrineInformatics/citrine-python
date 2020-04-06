@@ -1,0 +1,7 @@
+citrine.informatics.data\_sources module
+========================================
+
+.. automodule:: citrine.informatics.data_sources
+   :members:
+   :undoc-members:
+   :show-inheritance:

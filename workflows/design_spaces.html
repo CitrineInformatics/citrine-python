@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>4.4.1. Design spaces &#8212; Citrine Python 0.0.1 documentation</title>
+    <title>Design spaces &#8212; Citrine Python 0.0.1 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -15,8 +15,6 @@
     <link rel="shortcut icon" href="../_static/favicon.png"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="4.4.2. Predictors" href="predictors.html" />
-    <link rel="prev" title="4. [ALPHA] Workflows" href="index.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -34,7 +32,7 @@
           <div class="body" role="main">
             
   <div class="section" id="design-spaces">
-<h1>4.4.1. Design spaces<a class="headerlink" href="#design-spaces" title="Permalink to this headline">¶</a></h1>
+<h1>Design spaces<a class="headerlink" href="#design-spaces" title="Permalink to this headline">¶</a></h1>
 <p>A design space defines a finite or infinite set of materials that can be made.
 Currently, there are two design spaces:</p>
 <ul class="simple">
@@ -42,7 +40,7 @@ Currently, there are two design spaces:</p>
 <li><p><a class="reference external" href="#enumerated-design-space">EnumeratedDesignSpace</a></p></li>
 </ul>
 <div class="section" id="product-design-space">
-<h2>4.4.1.1. Product design space<a class="headerlink" href="#product-design-space" title="Permalink to this headline">¶</a></h2>
+<h2>Product design space<a class="headerlink" href="#product-design-space" title="Permalink to this headline">¶</a></h2>
 <p>Materials from a product design space are composed from the Cartesian product of univariate dimensions.
 A dimension defines valid values of a single variable.
 Valid values can be finite (i.e. enumerated using a list) or infinite (i.e. defined by upper and lower bounds on real numbers).
@@ -83,7 +81,7 @@ The bounds of the descriptor define the minimum and maximum temperatures that co
 The bounds of the dimension are the bounds we wish to search between, e.g. restrict the search between 300 and 400K (even though the furnace heat go to much higher temperatures).</p>
 </div>
 <div class="section" id="enumerated-design-space">
-<span id="id1"></span><h2>4.4.1.2. Enumerated design space<a class="headerlink" href="#enumerated-design-space" title="Permalink to this headline">¶</a></h2>
+<span id="id1"></span><h2>Enumerated design space<a class="headerlink" href="#enumerated-design-space" title="Permalink to this headline">¶</a></h2>
 <p>An enumerated design space is composed of an explicit list of candidates.
 Each candidate is specified using a dictionary keyed on descriptor key.
 A list of descriptors defines what key-value pairs must be present in each candidate.
@@ -151,7 +149,7 @@ If a candidate is missing a descriptor key-value pair, contains extra key-value 
 
 
 <h3>Navigation</h3>
-<ul class="current">
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../getting_started/index.html">1. Getting Started</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../getting_started/connecting.html">1.1. Connecting to the Citrine Platform</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../getting_started/basic_structure.html">1.2. Structure of the Citrine Python Client</a></li>
@@ -169,22 +167,24 @@ If a candidate is missing a descriptor key-value pair, contains extra key-value 
 <li class="toctree-l2"><a class="reference internal" href="../data_entry.html#registering-data-model-objects">2.3. Registering Data Model Objects</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../data_entry.html#finding-data-model-objects">2.4. Finding Data Model Objects</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../data_entry.html#referencing-data-model-objects">2.5. Referencing Data Model Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#validating-data-model-objects">2.6. Validating Data Model Objects</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../data_extraction.html">3. [ALPHA] Data Extraction</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#defining-row-and-columns">3.1. Defining row and columns</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#defining-tables">3.2. Defining tables</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#previewing-creating-and-reading-tables">3.3. Previewing, creating and reading tables</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-row-definitions">3.4. Available Row Definitions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-variable-definitions">3.5. Available Variable Definitions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-column-definitions">3.6. Available Column Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#previewing-tables">3.3. Previewing tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#building-and-downloading-tables">3.4. Building and downloading tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-row-definitions">3.5. Available Row Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-variable-definitions">3.6. Available Variable Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-column-definitions">3.7. Available Column Definitions</a></li>
 </ul>
 </li>
-<li class="toctree-l1 current"><a class="reference internal" href="index.html">4. [ALPHA] Workflows</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="index.html#modules">4.1. Modules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="index.html#design-workflows">4.2. Design workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="index.html#registration-and-validation">4.3. Registration and validation</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="index.html#table-of-contents">4.4. Table of Contents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html">4. [ALPHA] AI Engine</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="index.html#getting-started">4.1. Getting Started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#workflows-overview">4.2. Workflows Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#modules-overview">4.3. Modules Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#registration-and-validation">4.4. Registration and validation</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">5. FAQ</a><ul>
@@ -197,10 +197,6 @@ If a candidate is missing a descriptor key-value pair, contains extra key-value 
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-  <li><a href="index.html">4. [ALPHA] Workflows</a><ul>
-      <li>Previous: <a href="index.html" title="previous chapter">4. [ALPHA] Workflows</a></li>
-      <li>Next: <a href="predictors.html" title="next chapter">4.4.2. Predictors</a></li>
-  </ul></li>
   </ul></li>
 </ul>
 </div>

@@ -18,6 +18,7 @@ Submodules
 
    citrine.citrine
    citrine.exceptions
+   citrine.test_session
 
 Module contents
 ---------------

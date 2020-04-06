@@ -18,8 +18,7 @@ If defined, latent variables are used to build hierarchical models.
 One model is trained from inputs to latent variables, and another is trained from inputs and latent variables to outputs.
 Thus, all inputs and latent variables are used to predict outputs.
 
-Models are trained using data provided by the table associated with the ``training_data`` uid specified when creating a predictor.
-The uid is a unique string associated with a table of existing data.
+Models are trained using data provided by a :class:`~citrine.informatics.data_sources.DataSource` specified when creating a predictor.
 
 The following example demonstrates how to use the python SDK to create a :class:`~citrine.informatics.predictors.SimpleMLPredictor`, register the predictor to a project and wait for validation:
 
@@ -28,6 +27,7 @@ The following example demonstrates how to use the python SDK to create a :class:
    from time import sleep
    from citrine import Citrine
    from citrine.informatics.predictors import SimpleMLPredictor
+   from citrine.informatics.data_sources import AraTableDataSource
 
    # create a session with citrine using your API key
    session = Citrine(api_key = API_KEY)
@@ -43,7 +43,7 @@ The following example demonstrates how to use the python SDK to create a :class:
        inputs = [input_descriptor_1, input_descriptor_2],
        outputs = [output_descriptor_1, output_descriptor_2],
        latent_variables = [latent_variable_descriptor_1],
-       training_data = training_data_table_uid  # string id for training data
+       training_data = AraTableDataSource(training_data_table_uid, 0)
    )
 
    # register predictor
@@ -126,3 +126,9 @@ The following example demonstrates how to use the python SDK to create a :class:
 
    # register predictor
    predictor = project.predictors.register(shear_modulus_predictor)
+
+Predictor Reports
+--------------------
+
+A :doc:`predictor report <predictor_reports>` describes a machine-learned model, for example its settings and what features are important to the model. 
+It does not include performance metrics. To learn more about performance metrics, please see :doc:`PerformanceWorkflows <performance_workflows>`.

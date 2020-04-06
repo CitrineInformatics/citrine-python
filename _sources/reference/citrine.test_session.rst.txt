@@ -1,0 +1,7 @@
+citrine.test\_session module
+============================
+
+.. automodule:: citrine.test_session
+   :members:
+   :undoc-members:
+   :show-inheritance:
