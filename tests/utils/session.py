@@ -1,6 +1,9 @@
 from json import dumps
-from typing import Callable, Iterator
+from typing import Callable, Iterator, List
 from urllib.parse import urlencode
+
+from citrine.exceptions import NonRetryableHttpException
+from citrine.resources.api_error import ValidationError
 
 
 class FakeCall:
@@ -90,10 +93,10 @@ class FakeSession:
         if not self.responses:
             return {}
 
-        if len(self.responses) > 1:
-            return self.responses.pop(0)
-
-        return self.responses[0]
+        response = self.responses.pop(0)
+        if isinstance(response, NonRetryableHttpException):
+            raise response
+        return response
 
     @staticmethod
     def cursor_paged_resource(base_method: Callable[..., dict], path: str,
@@ -159,8 +162,26 @@ class FakeS3Client:
 class FakeRequestResponse:
     """A fake version of a requests.request() response."""
 
-    def __init__(self, content=None):
+    def __init__(self, status_code, content=None, text=""):
         self.content = content
+        self.text = text
+        self.status_code = status_code
+
+    def json(self):
+        return self.content
+
+
+class FakeRequestResponseApiError:
+    """A fake version of a requests.request() response that has an ApiError"""
+    def __init__(self, code: int, message: str, validation_errors: List[ValidationError]):
+        self.api_error_json = {"code": code,
+                               "message": message,
+                               "validation_errors":[ve.as_dict() for ve in validation_errors]}
+        self.text = message
+        self.status_code = code
+
+    def json(self):
+        return self.api_error_json
 
 
 def make_fake_cursor_request_function(all_results: list):

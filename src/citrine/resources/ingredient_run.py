@@ -1,12 +1,13 @@
 """Resources that represent ingredient run data objects."""
 from typing import List, Dict, Optional, Type
 
-from citrine._utils.functions import set_default_uid
 from citrine._rest.resource import Resource
-from citrine.resources.data_concepts import DataConceptsCollection, DataConcepts
-from citrine._serialization.properties import Mapping, String, LinkOrElse, Object
 from citrine._serialization.properties import List as PropertyList
+from citrine._serialization.properties import Mapping, String, LinkOrElse, Object
 from citrine._serialization.properties import Optional as PropertyOptional
+from citrine._utils.functions import set_default_uid
+from citrine.resources.data_concepts import DataConcepts
+from citrine.resources.object_runs import ObjectRun, ObjectRunCollection
 from taurus.entity.file_link import FileLink
 from taurus.entity.object.ingredient_run import IngredientRun as TaurusIngredientRun
 from taurus.entity.object.ingredient_spec import IngredientSpec as TaurusIngredientSpec
@@ -15,7 +16,7 @@ from taurus.entity.object.process_run import ProcessRun as TaurusProcessRun
 from taurus.entity.value.continuous_value import ContinuousValue
 
 
-class IngredientRun(DataConcepts, Resource['IngredientRun'], TaurusIngredientRun):
+class IngredientRun(ObjectRun, Resource['IngredientRun'], TaurusIngredientRun):
     """
     An ingredient run.
 
@@ -106,7 +107,7 @@ class IngredientRun(DataConcepts, Resource['IngredientRun'], TaurusIngredientRun
         return '<Ingredient run {!r}>'.format(self.name)
 
 
-class IngredientRunCollection(DataConceptsCollection[IngredientRun]):
+class IngredientRunCollection(ObjectRunCollection[IngredientRun]):
     """Represents the collection of all ingredient runs associated with a dataset."""
 
     _path_template = 'projects/{project_id}/datasets/{dataset_id}/ingredient-runs'

@@ -81,7 +81,7 @@ def test_mark_predictor_invalid(valid_simple_ml_predictor_data):
     session = FakeSession()
     collection = PredictorCollection(uuid.uuid4(), session)
     predictor = SimpleMLPredictor.build(valid_simple_ml_predictor_data)
-    session.set_response(valid_simple_ml_predictor_data)
+    session.set_responses(valid_simple_ml_predictor_data, valid_simple_ml_predictor_data)
 
     # When
     predictor.active = False

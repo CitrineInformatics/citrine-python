@@ -17,6 +17,7 @@ Currently, there are two scores:
 
 -  `Expected improvement <#expected-improvement>`__
 -  `Likelihood of improvement <#likelihood-of-improvement>`__
+-  `Expected value <#expected-value>`__
 
 Expected improvement
 ---------------------
@@ -63,3 +64,15 @@ The following demonstrates how to create an LI score and use it when triggering 
 
    # assuming you have a validated workflow, the score can be used a design run via:
    execution = workflow.executions.trigger(score)
+
+Expected value
+---------------------
+
+Expected value (EV) is the expected value of the objective, penalized if the constraints are unlikely to be satisfied.
+:class:`~citrine.informatics.scores.EVScore` supports 0 or 1 objective.
+If no objective is provided, the score is the probability of satisfying all constraints.
+
+EV is a purely exploitative scoring strategy.
+The candidate with the highest score will be the candidate that is expected to be the best at achieving the objectives
+and satisfying the constraints, neglecting any additional value for gaining information about materials being modeled.
+EV is unique among the currently available scores in that it ignores the predicted uncertainty in the objectives.

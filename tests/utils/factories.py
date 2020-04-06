@@ -4,16 +4,17 @@
 # Naming convention here is to use "*DataFactory" for dictionaries used as API input/out, and
 # <ModelName>Factory for the domain objects themselves
 
+from random import randrange
+
 import factory
+from citrine.informatics.scores import LIScore
+from citrine.resources.dataset import Dataset
+from citrine.resources.file_link import _Uploader
+from citrine.resources.material_run import MaterialRun
 from citrine.resources.material_spec import MaterialSpec
 from citrine.resources.material_template import MaterialTemplate
+from citrine.resources.process_template import ProcessTemplate
 from taurus.entity.link_by_uid import LinkByUID
-
-from citrine.informatics.scores import LIScore
-from citrine.resources.file_link import _Uploader
-from citrine.resources.dataset import Dataset
-from citrine.resources.material_run import MaterialRun
-from random import randrange
 
 
 class ProjectDataFactory(factory.DictFactory):
@@ -189,3 +190,15 @@ class MaterialSpecDataFactory(factory.DictFactory):
     template = None
     file_links = []
     type = 'material_spec'
+
+
+class ProcessTemplateFactory(factory.Factory):
+    class Meta:
+        model = ProcessTemplate
+
+    uids = factory.SubFactory(IDDataFactory)
+    name = factory.Faker('color_name')
+    tags = []
+    description = factory.Faker('catch_phrase')
+    conditions = []
+    parameters = []

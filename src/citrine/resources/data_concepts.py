@@ -1,24 +1,23 @@
 """Top-level class for all data concepts objects and collections thereof."""
+from abc import abstractmethod, ABC
+from typing import TypeVar, Type, List, Union, Optional, Iterator
 from uuid import UUID
-from typing import TypeVar, Type, List, Dict, Union, Optional, Iterator
-from abc import abstractmethod
 
-from citrine._session import Session
 from citrine._rest.collection import Collection
+from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
+from citrine._serialization.properties import Property as SerializableProperty
 from citrine._serialization.serializable import Serializable
-from citrine._utils.functions import scrub_none, replace_objects_with_links, get_object_id
+from citrine._session import Session
+from citrine._utils.functions import scrub_none, replace_objects_with_links
 from citrine.resources.audit_info import AuditInfo
-from taurus.json import TaurusJson
-from taurus.entity.link_by_uid import LinkByUID
-from taurus.entity.dict_serializable import DictSerializable
-from taurus.entity.bounds.base_bounds import BaseBounds
-from taurus.entity.template.attribute_template import AttributeTemplate
-
 from citrine.resources.response import Response
+from taurus.entity.dict_serializable import DictSerializable
+from taurus.entity.link_by_uid import LinkByUID
+from taurus.json import TaurusJson
 
 
-class DataConcepts(PolymorphicSerializable['DataConcepts'], DictSerializable):
+class DataConcepts(PolymorphicSerializable['DataConcepts'], DictSerializable, ABC):
     """
     An abstract data concepts object.
 
@@ -52,7 +51,10 @@ class DataConcepts(PolymorphicSerializable['DataConcepts'], DictSerializable):
     Custom json support object, which knows how to serialize and deserialize DataConcepts classes.
     """
 
-    client_specific_fields = {"audit_info": AuditInfo}
+    client_specific_fields = {
+        "audit_info": AuditInfo,
+        "dataset": properties.UUID,
+    }
     """
     Fields that are added to the taurus data objects when they are used in this client
 
@@ -65,9 +67,14 @@ class DataConcepts(PolymorphicSerializable['DataConcepts'], DictSerializable):
             self.__setattr__("_{}".format(field), None)
 
     @property
-    def audit_info(self):
+    def audit_info(self) -> Optional[AuditInfo]:
         """Get the audit info object."""
         return self._audit_info
+
+    @property
+    def dataset(self) -> Optional[UUID]:
+        """[ALPHA] Get the dataset of this object, if it was returned by the backend."""
+        return self._dataset
 
     @classmethod
     def from_dict(cls, d: dict):
@@ -88,13 +95,21 @@ class DataConcepts(PolymorphicSerializable['DataConcepts'], DictSerializable):
         obj = super().from_dict(d)
 
         for field, clazz in cls.client_specific_fields.items():
-            if popped[field] is None:
-                setattr(obj, "_{}".format(field), None)
-            elif isinstance(popped[field], dict):
-                setattr(obj, "_{}".format(field), clazz.build(popped[field]))
+            value = popped[field]
+            if value is None:
+                deserialized = None
+            elif issubclass(clazz, DictSerializable):
+                if not isinstance(value, dict):
+                    raise TypeError(
+                        "{} must be a dictionary or None but was {}".format(field, value))
+                deserialized = clazz.build(value)
+            elif issubclass(clazz, SerializableProperty):
+                # deserialize handles type checking already
+                deserialized = clazz(clazz).deserialize(value)
             else:
-                raise TypeError("{} must be a dictionary or None".format(field))
-
+                raise NotImplementedError("No deserialization strategy reported for client "
+                                          "field type {} for field.".format(clazz, field))
+            setattr(obj, "_{}".format(field), deserialized)
         return obj
 
     @classmethod
@@ -193,7 +208,7 @@ class DataConcepts(PolymorphicSerializable['DataConcepts'], DictSerializable):
 ResourceType = TypeVar('ResourceType', bound='DataConcepts')
 
 
-class DataConceptsCollection(Collection[ResourceType]):
+class DataConceptsCollection(Collection[ResourceType], ABC):
     """
     A collection of one kind of data concepts object.
 
@@ -395,54 +410,6 @@ class DataConceptsCollection(Collection[ResourceType]):
             params=params)
         return [self.build(content) for content in response["contents"]]
 
-    def filter_by_attribute_bounds(
-            self,
-            attribute_bounds: Dict[Union[AttributeTemplate, LinkByUID], BaseBounds],
-            page: Optional[int] = None, per_page: Optional[int] = None):
-        """
-        Get all objects in the collection with attributes within certain bounds.
-
-        Currently only one attribute and one bounds on that attribute is supported.
-
-        Parameters
-        ----------
-        attribute_bounds: Dict[Union[AttributeTemplate, \
-        :py:class:`LinkByUID <taurus.entity.link_by_uid.LinkByUID>`], \
-        :py:class:`BaseBounds <taurus.entity.bounds.base_bounds.BaseBounds>`]
-            A dictionary from attributes to the bounds on that attribute.
-            Currently only real and integer bounds are supported.
-            Each attribute may be represented as an AttributeTemplate (PropertyTemplate,
-            ParameterTemplate, or ConditionTemplate) or as a LinkByUID,
-            but in either case there must be a uid and it must correspond to an
-            AttributeTemplate that exists in the database.
-            Only the uid is passed, so if you would like to update an attribute template you
-            must register that change to the database before you can use it to filter.
-        page: Optional[int]
-            The page of results to list, 1-indexed (i.e. the first page is page=1)
-        per_page: Optional[int]
-            The number of results to list per page
-
-        Returns
-        -------
-        List[DataConcepts]
-            List of all objects in this collection that both have the specified attribute
-            and have values within the specified bounds.
-
-        """
-        body = self._get_attribute_bounds_search_body(attribute_bounds)
-        params = {}
-        if self.dataset_id is not None:
-            params['dataset_id'] = str(self.dataset_id)
-        if page is not None:
-            params['page'] = page
-        if per_page is not None:
-            params['per_page'] = per_page
-
-        response = self.session.post_resource(
-            self._get_path(ignore_dataset=True) + "/filter-by-attribute-bounds",
-            json=body, params=params)
-        return [self.build(content) for content in response["contents"]]
-
     def filter_by_name(self, name: str, exact: bool = False,
                        page: Optional[int] = None, per_page: Optional[int] = None):
         """
@@ -511,58 +478,6 @@ class DataConceptsCollection(Collection[ResourceType]):
             self.session.get_resource,
             # "Ignoring" dataset because it is in the query params (and required)
             self._get_path(ignore_dataset=True) + "/filter-by-name",
-            forward=forward,
-            per_page=per_page,
-            params=params)
-        return (self.build(raw) for raw in raw_objects)
-
-    def list_by_attribute_bounds(
-            self,
-            attribute_bounds: Dict[Union[AttributeTemplate, LinkByUID], BaseBounds],
-            forward: bool = True, per_page: int = 100) -> Iterator[DataConcepts]:
-        """
-        Get all objects in the collection with attributes within certain bounds.
-
-        Results are ordered first by dataset, then by attribute value.
-
-        Currently only one attribute and one bounds on that attribute is supported, and
-        attribute type must be numeric.
-
-        Parameters
-        ----------
-        attribute_bounds: Dict[Union[AttributeTemplate, \
-        :py:class:`LinkByUID <taurus.entity.link_by_uid.LinkByUID>`], \
-        :py:class:`BaseBounds <taurus.entity.bounds.base_bounds.BaseBounds>`]
-            A dictionary from attributes to the bounds on that attribute.
-            Currently only real and integer bounds are supported.
-            Each attribute may be represented as an AttributeTemplate (PropertyTemplate,
-            ParameterTemplate, or ConditionTemplate) or as a LinkByUID,
-            but in either case there must be a uid and it must correspond to an
-            AttributeTemplate that exists in the database.
-            Only the uid is passed, so if you would like to update an attribute template you
-            must register that change to the database before you can use it to filter.
-        forward: bool
-            Set to False to reverse the order of results (i.e. return in descending order).
-        per_page: int
-            Controls the number of results fetched with each http request to the backend.
-            Typically, this is set to a sensible default and should not be modified. Consider
-            modifying this value only if you find this method is unacceptably latent.
-
-        Returns
-        -------
-        Iterator[DataConcepts]
-            List of every object in this collection whose `name` matches the search term.
-
-        """
-        body = self._get_attribute_bounds_search_body(attribute_bounds)
-        params = {}
-        if self.dataset_id is not None:
-            params['dataset_id'] = str(self.dataset_id)
-        raw_objects = self.session.cursor_paged_resource(
-            self.session.post_resource,
-            # "Ignoring" dataset because it is in the query params (and required)
-            self._get_path(ignore_dataset=True) + "/filter-by-attribute-bounds",
-            json=body,
             forward=forward,
             per_page=per_page,
             params=params)
@@ -656,19 +571,3 @@ class DataConceptsCollection(Collection[ResourceType]):
         params = {'dry_run': dry_run}
         self.session.delete_resource(path, params=params)
         return Response(status_code=200)  # delete succeeded
-
-    @staticmethod
-    def _get_attribute_bounds_search_body(attribute_bounds):
-        if not isinstance(attribute_bounds, dict):
-            raise TypeError('attribute_bounds must be a dict mapping template to bounds; '
-                            'got {}'.format(attribute_bounds))
-        if len(attribute_bounds) != 1:
-            raise NotImplementedError('Currently, only searches with exactly one template '
-                                      'to bounds mapping are supported; got {}'
-                                      .format(attribute_bounds))
-        return {
-            'attribute_bounds': {
-                get_object_id(templ): bounds.as_dict()
-                for templ, bounds in attribute_bounds.items()
-            }
-        }

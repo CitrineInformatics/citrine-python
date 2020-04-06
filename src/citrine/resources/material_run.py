@@ -8,18 +8,19 @@ from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Optional as PropertyOptional
 from citrine._serialization.properties import String, LinkOrElse, Mapping, Object
 from citrine._utils.functions import set_default_uid
-from citrine.resources.data_concepts import DataConcepts, DataConceptsCollection
+from citrine.resources.data_concepts import DataConcepts
 from citrine.resources.material_spec import MaterialSpecCollection
+from citrine.resources.object_runs import ObjectRun, ObjectRunCollection
 from taurus.entity.file_link import FileLink
 from taurus.entity.link_by_uid import LinkByUID
 from taurus.entity.object.material_run import MaterialRun as TaurusMaterialRun
 from taurus.entity.object.material_spec import MaterialSpec as TaurusMaterialSpec
 from taurus.entity.object.process_run import ProcessRun as TaurusProcessRun
-from taurus.util import writable_sort_order
 from taurus.json import TaurusEncoder
+from taurus.util import writable_sort_order
 
 
-class MaterialRun(DataConcepts, Resource['MaterialRun'], TaurusMaterialRun):
+class MaterialRun(ObjectRun, Resource['MaterialRun'], TaurusMaterialRun):
     """
     A material run.
 
@@ -86,7 +87,7 @@ class MaterialRun(DataConcepts, Resource['MaterialRun'], TaurusMaterialRun):
         return '<Material run {!r}>'.format(self.name)
 
 
-class MaterialRunCollection(DataConceptsCollection[MaterialRun]):
+class MaterialRunCollection(ObjectRunCollection[MaterialRun]):
     """Represents the collection of all material runs associated with a dataset."""
 
     _path_template = 'projects/{project_id}/datasets/{dataset_id}/material-runs'

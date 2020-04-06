@@ -45,6 +45,7 @@ def valid_product_design_space_data():
         )
     )
 
+
 @pytest.fixture
 def valid_enumerated_design_space_data():
     """Produce valid enumerated design space data."""
@@ -106,7 +107,8 @@ def valid_simple_ml_predictor_data():
             latent_variables=[y.dump()],
             training_data=dict(
                 table_id='e5c51369-8e71-4ec6-b027-1f92bdc14762',
-                table_version='latest'
+                table_version=2,
+                type="hosted_table_data_source"
             )
         )
     )

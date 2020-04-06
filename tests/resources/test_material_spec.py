@@ -61,6 +61,7 @@ def test_repeat_serialization_taurus(collection, session):
 
     # When
     collection.register(proc)
+    session.set_response(MaterialSpecDataFactory(name='Test taurus mutation'))
     registered = collection.register(mat)  # This will serialize the linked process as a side effect
 
     # Then

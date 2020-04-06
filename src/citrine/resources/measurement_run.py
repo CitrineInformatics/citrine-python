@@ -1,12 +1,13 @@
 """Resources that represent measurement run data objects."""
 from typing import List, Dict, Optional, Type
 
-from citrine._utils.functions import set_default_uid
 from citrine._rest.resource import Resource
-from citrine._serialization.properties import String, Object, Mapping, LinkOrElse
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Optional as PropertyOptional
-from citrine.resources.data_concepts import DataConcepts, DataConceptsCollection
+from citrine._serialization.properties import String, Object, Mapping, LinkOrElse
+from citrine._utils.functions import set_default_uid
+from citrine.resources.data_concepts import DataConcepts
+from citrine.resources.object_runs import ObjectRun, ObjectRunCollection
 from taurus.entity.attribute.condition import Condition
 from taurus.entity.attribute.parameter import Parameter
 from taurus.entity.attribute.property import Property
@@ -17,7 +18,7 @@ from taurus.entity.object.measurement_spec import MeasurementSpec as TaurusMeasu
 from taurus.entity.source.performed_source import PerformedSource
 
 
-class MeasurementRun(DataConcepts, Resource['MeasurementRun'], TaurusMeasurementRun):
+class MeasurementRun(ObjectRun, Resource['MeasurementRun'], TaurusMeasurementRun):
     """
     A measurement run.
 
@@ -92,7 +93,7 @@ class MeasurementRun(DataConcepts, Resource['MeasurementRun'], TaurusMeasurement
         return '<Measurement run {!r}>'.format(self.name)
 
 
-class MeasurementRunCollection(DataConceptsCollection[MeasurementRun]):
+class MeasurementRunCollection(ObjectRunCollection[MeasurementRun]):
     """Represents the collection of all measurement runs associated with a dataset."""
 
     _path_template = 'projects/{project_id}/datasets/{dataset_id}/measurement-runs'
