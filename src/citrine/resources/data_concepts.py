@@ -4,7 +4,9 @@ from typing import TypeVar, Type, List, Union, Optional, Iterator
 from uuid import UUID
 
 from citrine._rest.collection import Collection
+from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
+from citrine._serialization.properties import Property as SerializableProperty
 from citrine._serialization.serializable import Serializable
 from citrine._session import Session
 from citrine._utils.functions import scrub_none, replace_objects_with_links
@@ -49,7 +51,10 @@ class DataConcepts(PolymorphicSerializable['DataConcepts'], DictSerializable, AB
     Custom json support object, which knows how to serialize and deserialize DataConcepts classes.
     """
 
-    client_specific_fields = {"audit_info": AuditInfo}
+    client_specific_fields = {
+        "audit_info": AuditInfo,
+        "dataset": properties.UUID,
+    }
     """
     Fields that are added to the taurus data objects when they are used in this client
 
@@ -62,9 +67,14 @@ class DataConcepts(PolymorphicSerializable['DataConcepts'], DictSerializable, AB
             self.__setattr__("_{}".format(field), None)
 
     @property
-    def audit_info(self):
+    def audit_info(self) -> Optional[AuditInfo]:
         """Get the audit info object."""
         return self._audit_info
+
+    @property
+    def dataset(self) -> Optional[UUID]:
+        """[ALPHA] Get the dataset of this object, if it was returned by the backend."""
+        return self._dataset
 
     @classmethod
     def from_dict(cls, d: dict):
@@ -85,13 +95,21 @@ class DataConcepts(PolymorphicSerializable['DataConcepts'], DictSerializable, AB
         obj = super().from_dict(d)
 
         for field, clazz in cls.client_specific_fields.items():
-            if popped[field] is None:
-                setattr(obj, "_{}".format(field), None)
-            elif isinstance(popped[field], dict):
-                setattr(obj, "_{}".format(field), clazz.build(popped[field]))
+            value = popped[field]
+            if value is None:
+                deserialized = None
+            elif issubclass(clazz, DictSerializable):
+                if not isinstance(value, dict):
+                    raise TypeError(
+                        "{} must be a dictionary or None but was {}".format(field, value))
+                deserialized = clazz.build(value)
+            elif issubclass(clazz, SerializableProperty):
+                # deserialize handles type checking already
+                deserialized = clazz(clazz).deserialize(value)
             else:
-                raise TypeError("{} must be a dictionary or None".format(field))
-
+                raise NotImplementedError("No deserialization strategy reported for client "
+                                          "field type {} for field.".format(clazz, field))
+            setattr(obj, "_{}".format(field), deserialized)
         return obj
 
     @classmethod
