@@ -1,0 +1,17 @@
+citrine.seeding package
+=======================
+
+Submodules
+----------
+
+.. toctree::
+
+   citrine.seeding.find_or_create
+
+Module contents
+---------------
+
+.. automodule:: citrine.seeding
+   :members:
+   :undoc-members:
+   :show-inheritance:

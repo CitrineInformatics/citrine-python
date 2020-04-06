@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>src &#8212; Citrine Python 0.0.1 documentation</title>
+    <title>citrine.seeding.find_or_create module &#8212; Citrine Python 0.0.1 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -31,50 +31,43 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="src">
-<h1>src<a class="headerlink" href="#src" title="Permalink to this headline">¶</a></h1>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="citrine.html">citrine package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="citrine.html#subpackages">Subpackages</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="citrine.ara.html">citrine.ara package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="citrine.ara.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="citrine.ara.html#module-citrine.ara">Module contents</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="citrine.attributes.html">citrine.attributes package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="citrine.attributes.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="citrine.attributes.html#module-citrine.attributes">Module contents</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="citrine.informatics.html">citrine.informatics package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="citrine.informatics.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="citrine.informatics.html#module-citrine.informatics">Module contents</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="citrine.resources.html">citrine.resources package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="citrine.resources.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="citrine.resources.html#module-citrine.resources">Module contents</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="citrine.seeding.html">citrine.seeding package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="citrine.seeding.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="citrine.seeding.html#module-citrine.seeding">Module contents</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="citrine.html#submodules">Submodules</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="citrine.citrine.html">citrine.citrine module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="citrine.exceptions.html">citrine.exceptions module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="citrine.test_session.html">citrine.test_session module</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="citrine.html#module-citrine">Module contents</a></li>
-</ul>
-</li>
-</ul>
-</div>
+  <div class="section" id="module-citrine.seeding.find_or_create">
+<span id="citrine-seeding-find-or-create-module"></span><h1>citrine.seeding.find_or_create module<a class="headerlink" href="#module-citrine.seeding.find_or_create" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="citrine.seeding.find_or_create.find_collection">
+<code class="sig-prename descclassname">citrine.seeding.find_or_create.</code><code class="sig-name descname">find_collection</code><span class="sig-paren">(</span><em class="sig-param">collection</em>, <em class="sig-param">name</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.seeding.find_or_create.find_collection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Looks through the pages of a collection for a resource with the specified name.</p>
+<p>Returns it, or if not found, returns None</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="citrine.seeding.find_or_create.find_or_create_dataset">
+<code class="sig-prename descclassname">citrine.seeding.find_or_create.</code><code class="sig-name descname">find_or_create_dataset</code><span class="sig-paren">(</span><em class="sig-param">dataset_collection</em>, <em class="sig-param">dataset_name</em>, <em class="sig-param">raise_error=False</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.seeding.find_or_create.find_or_create_dataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tries to find a dataset by name (returns first hit).</p>
+<p>If not found, creates a new dataset with the given name</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="citrine.seeding.find_or_create.find_or_create_project">
+<code class="sig-prename descclassname">citrine.seeding.find_or_create.</code><code class="sig-name descname">find_or_create_project</code><span class="sig-paren">(</span><em class="sig-param">project_collection</em>, <em class="sig-param">project_name</em>, <em class="sig-param">raise_error=False</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.seeding.find_or_create.find_or_create_project" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tries to find a project by name (returns first hit).</p>
+<p>If not found, creates a new project with the given name</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="citrine.seeding.find_or_create.get_by_name_or_create">
+<code class="sig-prename descclassname">citrine.seeding.find_or_create.</code><code class="sig-name descname">get_by_name_or_create</code><span class="sig-paren">(</span><em class="sig-param">collection</em>, <em class="sig-param">name</em>, <em class="sig-param">default_provider</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.seeding.find_or_create.get_by_name_or_create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tries to find a collection by its name (returns first hit).</p>
+<p>If not found, implements default_provider</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="citrine.seeding.find_or_create.get_by_name_or_raise_error">
+<code class="sig-prename descclassname">citrine.seeding.find_or_create.</code><code class="sig-name descname">get_by_name_or_raise_error</code><span class="sig-paren">(</span><em class="sig-param">collection</em>, <em class="sig-param">name</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.seeding.find_or_create.get_by_name_or_raise_error" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tries to find a collection by its name (returns first hit).</p>
+<p>If not found, raises error</p>
+</dd></dl>
+
 </div>
 
 
@@ -187,7 +180,7 @@
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
-      <a href="../_sources/reference/modules.rst.txt"
+      <a href="../_sources/reference/citrine.seeding.find_or_create.rst.txt"
           rel="nofollow">Page source</a>
     </div>
 
