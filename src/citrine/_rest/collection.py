@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import Optional, Union, Generic, TypeVar, Iterable
+from typing import Optional, Union, Generic, TypeVar, Iterable, Callable, Dict
 from uuid import UUID
 import warnings
 
@@ -128,14 +128,45 @@ class Collection(Generic[ResourceType]):
             Resources in this collection.
 
         """
+
+        return self._paginate(self._fetch_page, page, per_page)
+
+    def _paginate(self,
+                  page_fetcher: Callable[[Dict[str, int]], Iterable[ResourceType]],
+                  page: Optional[int] = None,
+                  per_page: int = 100) -> Iterable[ResourceType]:
+        """
+        Paginate generically over the resource type of this collection, parameterized
+        by the callable passed in. This allows us to paginate over different data suppliers.
+
+        Leaving page and per_page as default values will yield all elements in the
+        collection, paginating over all available pages.
+
+        Parameters
+        ---------
+        page: int, optional
+            The "page" of results to list. Default is to read all pages and yield
+            all results.  This option is deprecated.
+        per_page: int, optional
+            Max number of results to return per page. Default is 100.  This parameter
+            is used when making requests to the backend service.  If the page parameter
+            is specified it limits the maximum number of elements in the response.
+
+        Returns
+        -------
+        Iterable[ResourceType]
+            Resources in this collection.
+        """
+
         if page is not None:
             warnings.warn("The page parameter is deprecated, default is automatic pagination",
                           DeprecationWarning)
 
         first_uid = None
         page_idx = page
+
         while True:
-            subset = self._fetch_page(page=page_idx, per_page=per_page)
+            subset = page_fetcher(page_idx, per_page)
 
             count = 0
             for idx, element in enumerate(subset):
@@ -146,7 +177,8 @@ class Collection(Generic[ResourceType]):
                     # TODO: raise an exception once the APIs that ignore pagination are fixed
                     break
 
-                yield element
+                for element in subset:
+                    yield element
 
                 if idx == 0:
                     first_uid = uid
@@ -165,6 +197,14 @@ class Collection(Generic[ResourceType]):
                 page_idx = 2
             else:
                 page_idx += 1
+
+    def _page_params(self, page: Optional[int], per_page: int) -> Dict[str, int]:
+        params = {}
+        if page is not None:
+            params["page"] = page
+        if per_page is not None:
+            params["per_page"] = per_page
+        return params
 
     def update(self, model: CreationType) -> CreationType:
         """Update a particular element of the collection."""
