@@ -47,8 +47,8 @@ class Table(Resource['Table']):
     def read(self, local_path):
         """Read the Table file from S3."""
 
-        # NOTE: this uses the pre-signed S3 download url. If we need to download larger files, we have other options
-        # available (using multi-part downloads in parallel , for example).
+        # NOTE: this uses the pre-signed S3 download url. If we need to download larger files,
+        # we have other options available (using multi-part downloads in parallel , for example).
 
         data_location = self.download_url
         data_location = rewrite_s3_links_locally(data_location)
