@@ -2,7 +2,7 @@ from taurus.entity.template.attribute_template import AttributeTemplate
 from taurus.entity.template.base_template import BaseTemplate
 
 
-def sort_templates_from_objects(gems):
+def split_templates_from_objects(gems):
     """
     Sort the provided gems into two lists.
 
@@ -11,6 +11,9 @@ def sort_templates_from_objects(gems):
 
     Useful when the procedure for seeding templates needs to be distinct from the procedure for
     seeding data objects.
+
+    Note that each list is unsorted and it is expected that subsequent registration code will
+    handle sorting the gems provided.
     """
     templates = []
     data_objects = []
