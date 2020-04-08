@@ -18,7 +18,7 @@ class Descriptor(PolymorphicSerializable['Descriptor']):
         """Return the subtype."""
         return {
             "Real": RealDescriptor,
-            "Inorganic": InorganicDescriptor,
+            "Inorganic": ChemicalFormulaDescriptor,
             "Categorical": CategoricalDescriptor
         }[data["type"]]
 
@@ -63,7 +63,7 @@ class RealDescriptor(Serializable['RealDescriptor'], Descriptor):
         self.units: Optional[str] = units
 
 
-class InorganicDescriptor(Serializable['InorganicDescriptor'], Descriptor):
+class ChemicalFormulaDescriptor(Serializable['ChemicalFormulaDescriptor'], Descriptor):
     """[ALPHA] Captures domain-specific context about the chemical formula for an inorganic compound.
 
     Parameters

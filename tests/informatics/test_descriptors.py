@@ -1,12 +1,12 @@
 """Tests for citrine.informatics.descriptors."""
 import pytest
 
-from citrine.informatics.descriptors import RealDescriptor, Descriptor, InorganicDescriptor, CategoricalDescriptor
+from citrine.informatics.descriptors import RealDescriptor, Descriptor, ChemicalFormulaDescriptor, CategoricalDescriptor
 
 
 @pytest.fixture(params=[
     RealDescriptor('alpha', 0, 100),
-    InorganicDescriptor('formula'),
+    ChemicalFormulaDescriptor('formula'),
     CategoricalDescriptor("my categorical", ["a", "b"]),
     CategoricalDescriptor("categorical", ["*"])
 ])
