@@ -1,7 +1,6 @@
 from abc import abstractmethod
-from typing import Optional, Union, Generic, TypeVar, Iterable, Callable, Dict, Any
+from typing import Optional, Union, Generic, TypeVar, Iterable, Dict
 from uuid import UUID
-import warnings
 
 from citrine._rest.paginator import Paginator
 from citrine.exceptions import ModuleRegistrationFailedException, NonRetryableException

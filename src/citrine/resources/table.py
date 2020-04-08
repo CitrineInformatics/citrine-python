@@ -101,4 +101,3 @@ class TableCollection(Collection[Table]):
     def register(self, model: Table) -> Table:
         """Tables cannot be created at this time."""
         raise RuntimeError('Creating Tables is not supported at this time.')
-

@@ -1,5 +1,5 @@
 import warnings
-from typing import TypeVar, Generic, Callable, Optional, Iterable, Dict, Any
+from typing import TypeVar, Generic, Callable, Optional, Iterable, Any
 
 ResourceType = TypeVar('ResourceType')
 
@@ -52,7 +52,8 @@ class Paginator(Generic[ResourceType]):
                 # escaping from infinite loops where page/per_page are not
                 # honored and are returning the same results regardless of page:
                 unique_identifiers = self._extract_unique_identifiers(element)
-                if first_unique_identifiers is not None and first_unique_identifiers == unique_identifiers:
+                if first_unique_identifiers is not None and \
+                        first_unique_identifiers == unique_identifiers:
                     # TODO: raise an exception once the APIs that ignore pagination are fixed
                     break
 
