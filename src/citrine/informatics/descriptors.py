@@ -74,6 +74,9 @@ class ChemicalFormulaDescriptor(Serializable['ChemicalFormulaDescriptor'], Descr
     """
 
     key = properties.String('descriptor_key')
+    # `threshold` exists in the backend but is not configurable through this client. It is fixed
+    # to 1.0 which means that chemical formula string parsing is strict with respect to typos.
+    threshold = properties.Float('threshold', deserializable=False, default=1.0)
     typ = properties.String('type', default='Inorganic', deserializable=False)
 
     def __eq__(self, other):
