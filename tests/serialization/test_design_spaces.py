@@ -43,8 +43,8 @@ def test_simple_enumerated_deserialization(valid_enumerated_design_space_data):
     Deserialization is done both directly (using EnumeratedDesignSpace)
     and polymorphically (using DesignSpace)
     """
-    for clazz in [DesignSpace, EnumeratedDesignSpace]:
-        design_space: EnumeratedDesignSpace = clazz.build(valid_enumerated_design_space_data)
+    for designSpaceClass in [DesignSpace, EnumeratedDesignSpace]:
+        design_space: EnumeratedDesignSpace = designSpaceClass.build(valid_enumerated_design_space_data)
         assert design_space.name == 'my enumerated design space'
         assert design_space.description == 'enumerates some things'
 
