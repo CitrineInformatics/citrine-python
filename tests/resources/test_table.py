@@ -69,7 +69,6 @@ def test_get_table_metadata(collection, session):
     assert retrieved_table.version == table["version"]
     assert retrieved_table.download_url == table["signed_download_url"]
 
-
 def test_init_table():
     table = Table()
     assert table.uid is None

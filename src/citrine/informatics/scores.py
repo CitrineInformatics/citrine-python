@@ -24,7 +24,8 @@ class Score(PolymorphicSerializable['Score']):
         """Return the subtype."""
         return {
             'MLI': LIScore,
-            'MEI': EIScore
+            'MEI': EIScore,
+            'MEV': EVScore
         }[data['type']]
 
 
