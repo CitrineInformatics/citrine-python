@@ -64,20 +64,16 @@ class RealDescriptor(Serializable['RealDescriptor'], Descriptor):
 
 
 class ChemicalFormulaDescriptor(Serializable['ChemicalFormulaDescriptor'], Descriptor):
-    """[ALPHA] Captures domain-specific context about the chemical formula for an inorganic compound.
+    """[ALPHA] Captures domain-specific context about a stoichiometric chemical formula.
 
     Parameters
     ----------
     key: str
         the key corresponding to a descriptor
-    threshold: float
-        the threshold for valid chemical formulae. Users can think of this as a level of tolerance
-        for typos and/or loss in interpreting a string input as a parseable chemical formula.
 
     """
 
     key = properties.String('descriptor_key')
-    threshold = properties.Float('threshold')
     typ = properties.String('type', default='Inorganic', deserializable=False)
 
     def __eq__(self, other):
@@ -89,9 +85,8 @@ class ChemicalFormulaDescriptor(Serializable['ChemicalFormulaDescriptor'], Descr
         except Exception:
             return False
 
-    def __init__(self, key: str, threshold: float = 1.0):
+    def __init__(self, key: str):
         self.key: str = key
-        self.threshold = threshold
 
 
 class CategoricalDescriptor(Serializable['CategoricalDescriptor'], Descriptor):
