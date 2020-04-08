@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import Optional, Union, Generic, TypeVar, Iterable, Callable, Dict
+from typing import Optional, Union, Generic, TypeVar, Iterable, Callable, Dict, Any
 from uuid import UUID
 import warnings
 
@@ -132,7 +132,7 @@ class Collection(Generic[ResourceType]):
         return self._paginate(self._fetch_page, page, per_page)
 
     def _paginate(self,
-                  page_fetcher: Callable[[Dict[str, int]], Iterable[ResourceType]],
+                  page_fetcher: Callable[[Optional[int], int], Iterable[ResourceType]],
                   page: Optional[int] = None,
                   per_page: int = 100) -> Iterable[ResourceType]:
         """
@@ -162,7 +162,7 @@ class Collection(Generic[ResourceType]):
             warnings.warn("The page parameter is deprecated, default is automatic pagination",
                           DeprecationWarning)
 
-        first_uid = None
+        first_unique_identifiers = None
         page_idx = page
 
         while True:
@@ -170,18 +170,18 @@ class Collection(Generic[ResourceType]):
 
             count = 0
             for idx, element in enumerate(subset):
+
                 # escaping from infinite loops where page/per_page are not
                 # honored and are returning the same results regardless of page:
-                uid = getattr(element, 'uid', None)
-                if first_uid is not None and first_uid == uid:
+                unique_identifiers = self._extract_unique_identifiers(element)
+                if first_unique_identifiers is not None and first_unique_identifiers == unique_identifiers:
                     # TODO: raise an exception once the APIs that ignore pagination are fixed
                     break
 
-                for element in subset:
-                    yield element
+                yield element
 
                 if idx == 0:
-                    first_uid = uid
+                    first_unique_identifiers = unique_identifiers
 
                 count += 1
 
@@ -205,6 +205,14 @@ class Collection(Generic[ResourceType]):
         if per_page is not None:
             params["per_page"] = per_page
         return params
+
+    def _extract_unique_identifiers(self, entity: ResourceType) -> Any:
+        """
+        Extract the uniquely identifying attributes from the resource type into an object we can
+        compare for equality.
+        """
+        return getattr(entity, 'uid', None)
+
 
     def update(self, model: CreationType) -> CreationType:
         """Update a particular element of the collection."""

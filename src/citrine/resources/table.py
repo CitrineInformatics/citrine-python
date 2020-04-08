@@ -1,4 +1,4 @@
-from typing import Union, Iterable, Optional
+from typing import Union, Iterable, Optional, Any
 
 import requests
 
@@ -79,9 +79,13 @@ class TableCollection(Collection[Table]):
         def fetch_versions(page: Optional[int], per_page: int) -> Iterable[Table]:
             data = self.session.get_resource(self._get_path() + '/' + str(uid),
                                              params=self._page_params(page, per_page))
-            return [self.build(item) for item in data[self._collection_key]]
+            for item in data[self._collection_key]:
+                yield self.build(item)
 
         return self._paginate(fetch_versions, page, per_page)
+
+    def _extract_unique_identifiers(self, entity: Table) -> Any:
+        return (entity.uid, entity.version)
 
     def build(self, data: dict) -> Table:
         """Build an individual Table from a dictionary."""
