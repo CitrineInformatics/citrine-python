@@ -1,5 +1,5 @@
 """Tests for citrine.informatics.design_spaces serialization."""
-from citrine.informatics.descriptors import CategoricalDescriptor, RealDescriptor
+from citrine.informatics.descriptors import CategoricalDescriptor, RealDescriptor, ChemicalFormulaDescriptor
 from citrine.informatics.design_spaces import DesignSpace, ProductDesignSpace, EnumeratedDesignSpace
 from citrine.informatics.dimensions import ContinuousDimension, EnumeratedDimension
 
@@ -39,53 +39,35 @@ def test_product_serialization(valid_product_design_space_data):
 
 
 def test_simple_enumerated_deserialization(valid_enumerated_design_space_data):
-    """Ensure that a deserialized EnumeratedDesignSpace looks sane."""
-    design_space: EnumeratedDesignSpace = EnumeratedDesignSpace.build(valid_enumerated_design_space_data)
-    assert design_space.name == 'my enumerated design space'
-    assert design_space.description == 'enumerates some things'
+    """Ensure that a deserialized EnumeratedDesignSpace looks sane.
+    Deserialization is done both directly (using EnumeratedDesignSpace)
+    and polymorphically (using DesignSpace)
+    """
+    for clazz in [DesignSpace, EnumeratedDesignSpace]:
+        design_space: EnumeratedDesignSpace = clazz.build(valid_enumerated_design_space_data)
+        assert design_space.name == 'my enumerated design space'
+        assert design_space.description == 'enumerates some things'
 
-    assert len(design_space.descriptors) == 2
+        assert len(design_space.descriptors) == 3
 
-    real, categorical = design_space.descriptors
+        real, categorical, formula = design_space.descriptors
 
-    assert type(real) == RealDescriptor
-    assert real.key == 'x'
-    assert real.units == ''
-    assert real.lower_bound == 1.0
-    assert real.upper_bound == 2.0
+        assert type(real) == RealDescriptor
+        assert real.key == 'x'
+        assert real.units == ''
+        assert real.lower_bound == 1.0
+        assert real.upper_bound == 2.0
 
-    assert type(categorical) == CategoricalDescriptor
-    assert categorical.key == 'color'
-    assert categorical.categories == ['red', 'green', 'blue']
+        assert type(categorical) == CategoricalDescriptor
+        assert categorical.key == 'color'
+        assert categorical.categories == ['red', 'green', 'blue']
 
-    assert len(design_space.data) == 2
-    assert design_space.data[0] == {'x': 1.0, 'color': 'red'}
-    assert design_space.data[1] == {'x': 2.0, 'color': 'green'}
+        assert type(formula) == ChemicalFormulaDescriptor
+        assert formula.key == 'formula'
 
-
-def test_polymorphic_enumerated_deserialization(valid_enumerated_design_space_data):
-    """Ensure that a polymorphically deserialized EnumeratedDesignSpace looks sane."""
-    design_space: EnumeratedDesignSpace = DesignSpace.build(valid_enumerated_design_space_data)
-    assert design_space.name == 'my enumerated design space'
-    assert design_space.description == 'enumerates some things'
-
-    assert len(design_space.descriptors) == 2
-
-    real, categorical = design_space.descriptors
-
-    assert type(real) == RealDescriptor
-    assert real.key == 'x'
-    assert real.units == ''
-    assert real.lower_bound == 1.0
-    assert real.upper_bound == 2.0
-
-    assert type(categorical) == CategoricalDescriptor
-    assert categorical.key == 'color'
-    assert categorical.categories == ['red', 'green', 'blue']
-
-    assert len(design_space.data) == 2
-    assert design_space.data[0] == {'x': 1.0, 'color': 'red'}
-    assert design_space.data[1] == {'x': 2.0, 'color': 'green'}
+        assert len(design_space.data) == 2
+        assert design_space.data[0] == {'x': 1.0, 'color': 'red', 'formula': 'C44H54Si2'}
+        assert design_space.data[1] == {'x': 2.0, 'color': 'green', 'formula': 'V2O3'}
 
 
 def test_enumerated_serialization(valid_enumerated_design_space_data):
