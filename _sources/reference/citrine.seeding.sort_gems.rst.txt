@@ -1,0 +1,7 @@
+citrine.seeding.sort\_gems module
+=================================
+
+.. automodule:: citrine.seeding.sort_gems
+   :members:
+   :undoc-members:
+   :show-inheritance:

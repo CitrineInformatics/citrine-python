@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>citrine.seeding package &#8212; Citrine Python 0.0.1 documentation</title>
+    <title>citrine.seeding.sort_gems module &#8212; Citrine Python 0.0.1 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -31,21 +31,20 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="citrine-seeding-package">
-<h1>citrine.seeding package<a class="headerlink" href="#citrine-seeding-package" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="citrine.seeding.find_or_create.html">citrine.seeding.find_or_create module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="citrine.seeding.sort_gems.html">citrine.seeding.sort_gems module</a></li>
-</ul>
-</div>
-</div>
-<div class="section" id="module-citrine.seeding">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-citrine.seeding" title="Permalink to this headline">¶</a></h2>
-<p>Utilities for seeding the Citrine platform.</p>
-</div>
+  <div class="section" id="module-citrine.seeding.sort_gems">
+<span id="citrine-seeding-sort-gems-module"></span><h1>citrine.seeding.sort_gems module<a class="headerlink" href="#module-citrine.seeding.sort_gems" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="citrine.seeding.sort_gems.split_templates_from_objects">
+<code class="sig-prename descclassname">citrine.seeding.sort_gems.</code><code class="sig-name descname">split_templates_from_objects</code><span class="sig-paren">(</span><em class="sig-param">gems</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.seeding.sort_gems.split_templates_from_objects" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sort the provided gems into two lists.</p>
+<p>The first list contains only templates (both ObjectTemplate and AttributeTemplate).
+The second list contains only data objects (specs and runs).</p>
+<p>Useful when the procedure for seeding templates needs to be distinct from the procedure for
+seeding data objects.</p>
+<p>Note that each list is unsorted and it is expected that subsequent registration code will
+handle sorting the gems provided.</p>
+</dd></dl>
+
 </div>
 
 
@@ -158,7 +157,7 @@
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
-      <a href="../_sources/reference/citrine.seeding.rst.txt"
+      <a href="../_sources/reference/citrine.seeding.sort_gems.rst.txt"
           rel="nofollow">Page source</a>
     </div>
 
