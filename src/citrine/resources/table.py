@@ -3,6 +3,7 @@ from typing import Union, Iterable, Optional, Any
 import requests
 
 from citrine._rest.collection import Collection
+from citrine._rest.paginator import Paginator
 from citrine._rest.resource import Resource
 from citrine._serialization import properties
 from citrine._serialization.properties import UUID
@@ -76,16 +77,19 @@ class TableCollection(Collection[Table]):
                       page: Optional[int] = None,
                       per_page: int = 100) -> Iterable[Table]:
 
+        class TablePaginator(Paginator[Table]):
+            def _extract_unique_identifiers(self, entity: Table) -> Any:
+                return (entity.uid, entity.version)
+
+        paginator = TablePaginator()
+
         def fetch_versions(page: Optional[int], per_page: int) -> Iterable[Table]:
             data = self.session.get_resource(self._get_path() + '/' + str(uid),
                                              params=self._page_params(page, per_page))
             for item in data[self._collection_key]:
                 yield self.build(item)
 
-        return self._paginate(fetch_versions, page, per_page)
-
-    def _extract_unique_identifiers(self, entity: Table) -> Any:
-        return (entity.uid, entity.version)
+        return paginator.paginate(fetch_versions, page, per_page)
 
     def build(self, data: dict) -> Table:
         """Build an individual Table from a dictionary."""
@@ -97,3 +101,4 @@ class TableCollection(Collection[Table]):
     def register(self, model: Table) -> Table:
         """Tables cannot be created at this time."""
         raise RuntimeError('Creating Tables is not supported at this time.')
+

@@ -3,9 +3,9 @@ from typing import Optional, Union, Generic, TypeVar, Iterable, Callable, Dict, 
 from uuid import UUID
 import warnings
 
+from citrine._rest.paginator import Paginator
 from citrine.exceptions import ModuleRegistrationFailedException, NonRetryableException
 from citrine.resources.response import Response
-
 
 ResourceType = TypeVar('ResourceType', bound='Resource')
 
@@ -54,6 +54,46 @@ class Collection(Generic[ResourceType]):
         except NonRetryableException as e:
             raise ModuleRegistrationFailedException(model.__class__.__name__, e)
 
+    def list(self,
+             page: Optional[int] = None,
+             per_page: int = 100) -> Iterable[ResourceType]:
+        """
+        Paginate over the elements of the collection.
+
+        Leaving page and per_page as default values will yield all elements in the
+        collection, paginating over all available pages.
+
+        Parameters
+        ---------
+        page: int, optional
+            The "page" of results to list. Default is to read all pages and yield
+            all results.  This option is deprecated.
+        per_page: int, optional
+            Max number of results to return per page. Default is 100.  This parameter
+            is used when making requests to the backend service.  If the page parameter
+            is specified it limits the maximum number of elements in the response.
+
+        Returns
+        -------
+        Iterable[ResourceType]
+            Resources in this collection.
+        """
+
+        return Paginator().paginate(self._fetch_page, page, per_page)
+
+    def update(self, model: CreationType) -> CreationType:
+        """Update a particular element of the collection."""
+        url = self._get_path(model.uid)
+        updated = self.session.put_resource(url, model.dump())
+        data = updated[self._individual_key] if self._individual_key else updated
+        return self.build(data)
+
+    def delete(self, uid: Union[UUID, str]) -> Response:
+        """Delete a particular element of the collection."""
+        url = self._get_path(uid)
+        data = self.session.delete_resource(url)
+        return Response(body=data)
+
     def _fetch_page(self,
                     page: Optional[int] = None,
                     per_page: Optional[int] = None) -> Iterable[ResourceType]:
@@ -79,11 +119,7 @@ class Collection(Generic[ResourceType]):
         """
         path = self._get_path()
 
-        params = {}
-        if page is not None:
-            params["page"] = page
-        if per_page is not None:
-            params["per_page"] = per_page
+        params = self._page_params(page, per_page)
 
         data = self.session.get_resource(path, params=params)
         # A 'None' collection key implies response has a top-level array
@@ -103,126 +139,10 @@ class Collection(Generic[ResourceType]):
                 # properly, so we are filtering client-side.
                 pass
 
-    def list(self,
-             page: Optional[int] = None,
-             per_page: int = 100) -> Iterable[ResourceType]:
-        """
-        List all visible elements in the collection.
-
-        Leaving page and per_page as default values will yield all elements in the
-        collection, paginating over all available pages.
-
-        Parameters
-        ---------
-        page: int, optional
-            The "page" of results to list. Default is to read all pages and yield
-            all results.  This option is deprecated.
-        per_page: int, optional
-            Max number of results to return per page. Default is 100.  This parameter
-            is used when making requests to the backend service.  If the page parameter
-            is specified it limits the maximum number of elements in the response.
-
-        Returns
-        -------
-        Iterable[ResourceType]
-            Resources in this collection.
-
-        """
-
-        return self._paginate(self._fetch_page, page, per_page)
-
-    def _paginate(self,
-                  page_fetcher: Callable[[Optional[int], int], Iterable[ResourceType]],
-                  page: Optional[int] = None,
-                  per_page: int = 100) -> Iterable[ResourceType]:
-        """
-        Paginate generically over the resource type of this collection, parameterized
-        by the callable passed in. This allows us to paginate over different data suppliers.
-
-        Leaving page and per_page as default values will yield all elements in the
-        collection, paginating over all available pages.
-
-        Parameters
-        ---------
-        page: int, optional
-            The "page" of results to list. Default is to read all pages and yield
-            all results.  This option is deprecated.
-        per_page: int, optional
-            Max number of results to return per page. Default is 100.  This parameter
-            is used when making requests to the backend service.  If the page parameter
-            is specified it limits the maximum number of elements in the response.
-
-        Returns
-        -------
-        Iterable[ResourceType]
-            Resources in this collection.
-        """
-
-        if page is not None:
-            warnings.warn("The page parameter is deprecated, default is automatic pagination",
-                          DeprecationWarning)
-
-        first_unique_identifiers = None
-        page_idx = page
-
-        while True:
-            subset = page_fetcher(page_idx, per_page)
-
-            count = 0
-            for idx, element in enumerate(subset):
-
-                # escaping from infinite loops where page/per_page are not
-                # honored and are returning the same results regardless of page:
-                unique_identifiers = self._extract_unique_identifiers(element)
-                if first_unique_identifiers is not None and first_unique_identifiers == unique_identifiers:
-                    # TODO: raise an exception once the APIs that ignore pagination are fixed
-                    break
-
-                yield element
-
-                if idx == 0:
-                    first_unique_identifiers = unique_identifiers
-
-                count += 1
-
-            # If the page number is specified we exit to disable auto-paginating
-            if page is not None:
-                break
-
-            # Handle the case where we get an unexpected number of results (e.g. last page)
-            if count == 0 or count < per_page:
-                break
-
-            if page_idx is None:
-                page_idx = 2
-            else:
-                page_idx += 1
-
-    def _page_params(self, page: Optional[int], per_page: int) -> Dict[str, int]:
+    def _page_params(self, page: Optional[int], per_page: Optional[int]) -> Dict[str, int]:
         params = {}
         if page is not None:
             params["page"] = page
         if per_page is not None:
             params["per_page"] = per_page
         return params
-
-    def _extract_unique_identifiers(self, entity: ResourceType) -> Any:
-        """
-        Extract the uniquely identifying attributes from the resource type into an object we can
-        compare for equality.
-        """
-        return getattr(entity, 'uid', None)
-
-
-    def update(self, model: CreationType) -> CreationType:
-        """Update a particular element of the collection."""
-        url = self._get_path(model.uid)
-        updated = self.session.put_resource(url, model.dump())
-        data = updated[self._individual_key] if self._individual_key else updated
-        return self.build(data)
-
-    def delete(self, uid: Union[UUID, str]) -> Response:
-        """Delete a particular element of the collection."""
-        url = self._get_path(uid)
-        data = self.session.delete_resource(url)
-        return Response(body=data)
