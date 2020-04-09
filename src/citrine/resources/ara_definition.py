@@ -243,6 +243,7 @@ class AraDefinitionCollection(Collection[AraDefinition]):
             the ara definition describing the new table
 
         """
+        # TODO: shouldn't this live on the AraDefinition object?
         job_id = uuid4()
         url_suffix: str = "/{ara_definition}/versions/{version_number}/build?job_id={job_id}"
         path: str = self._path_template.format(

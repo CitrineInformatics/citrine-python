@@ -13,7 +13,7 @@ from citrine._utils.functions import rewrite_s3_links_locally, write_file_locall
 class Table(Resource['Table']):
     """A 2-dimensional projection of data.
 
-    Tables are the basic unit used to flatten and manipulate data objects.
+    (Display) Tables are the basic unit used to flatten and manipulate data objects.
     While data objects can represent complex materials data, the format
     is NOT conducive to analysis and machine learning. Tables, however,
     can be used to 'flatten' data objects into useful projections.
@@ -42,10 +42,13 @@ class Table(Resource['Table']):
 
     def __str__(self):
         # TODO: Change this to name once that's added to the table model
-        return '<Table {!r}>'.format(self.uid)
+        return '<Table {!r}, version {}>'.format(self.uid, self.version)
 
     def read(self, local_path):
         """Read the Table file from S3."""
+        # NOTE: this uses the pre-signed S3 download url. If we need to download larger files,
+        # we have other options available (using multi-part downloads in parallel , for example).
+
         data_location = self.download_url
         data_location = rewrite_s3_links_locally(data_location)
         response = requests.get(data_location)
@@ -56,6 +59,7 @@ class TableCollection(Collection[Table]):
     """Represents the collection of all tables associated with a project."""
 
     _path_template = 'projects/{project_id}/display-tables'
+    _collection_key: str = 'tables'
 
     def __init__(self, project_id: UUID, session: Session):
         self.project_id = project_id
