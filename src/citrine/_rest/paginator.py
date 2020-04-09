@@ -45,7 +45,7 @@ class Paginator(Generic[ResourceType]):
             warnings.warn("The page parameter is deprecated, default is automatic pagination",
                           DeprecationWarning)
 
-        first_unique_identifiers = None
+        first_entity = None
         page_idx = page
 
         while True:
@@ -56,16 +56,16 @@ class Paginator(Generic[ResourceType]):
 
                 # escaping from infinite loops where page/per_page are not
                 # honored and are returning the same results regardless of page:
-                unique_identifiers = self._extract_unique_identifiers(element)
-                if first_unique_identifiers is not None and \
-                        first_unique_identifiers == unique_identifiers:
+                current_entity = self._comparison_fields(element)
+                if first_entity is not None and \
+                        first_entity == current_entity:
                     # TODO: raise an exception once the APIs that ignore pagination are fixed
                     break
 
                 yield element
 
-                if first_unique_identifiers is None:
-                    first_unique_identifiers = unique_identifiers
+                if first_entity is None:
+                    first_entity = current_entity
 
                 count += 1
 
@@ -82,7 +82,7 @@ class Paginator(Generic[ResourceType]):
             else:
                 page_idx += 1
 
-    def _extract_unique_identifiers(self, entity: ResourceType) -> Any:
+    def _comparison_fields(self, entity: ResourceType) -> Any:
         """
         Extract the uniquely identifying attributes for equality comparison.
 

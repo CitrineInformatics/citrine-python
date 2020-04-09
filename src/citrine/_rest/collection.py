@@ -22,6 +22,7 @@ class Collection(Generic[ResourceType]):
     _individual_key: str = NotImplemented
     _resource: ResourceType = NotImplemented
     _collection_key: str = 'entries'
+    _paginator: Paginator = Paginator()
 
     def _get_path(self, uid: Optional[Union[UUID, str]] = None,
                   ignore_dataset: Optional[bool] = False) -> str:
@@ -78,7 +79,7 @@ class Collection(Generic[ResourceType]):
             Resources in this collection.
 
         """
-        return Paginator().paginate(self._fetch_page, page, per_page)
+        return self._paginator.paginate(self._fetch_page, page, per_page)
 
     def update(self, model: CreationType) -> CreationType:
         """Update a particular element of the collection."""

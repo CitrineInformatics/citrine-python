@@ -56,11 +56,24 @@ class Table(Resource['Table']):
         write_file_locally(response.content, local_path)
 
 
+class TableVersionPaginator(Paginator[Table]):
+    """
+    A Paginator for Tables.
+
+    For a single table, we share the same UID, but have different versions -
+    ensure that (uid, version) is used for comparisons.
+    """
+
+    def _comparison_fields(self, entity: Table) -> Any:
+        return (entity.uid, entity.version)
+
+
 class TableCollection(Collection[Table]):
     """Represents the collection of all tables associated with a project."""
 
     _path_template = 'projects/{project_id}/display-tables'
     _collection_key: str = 'tables'
+    _paginator: Paginator = TableVersionPaginator()
 
     def __init__(self, project_id: UUID, session: Session):
         self.project_id = project_id
@@ -87,19 +100,13 @@ class TableCollection(Collection[Table]):
         :param per_page: The number of items to fetch per-page.
         :return: An iterable of the versions of the Tables (as Table objects).
         """
-        class TablePaginator(Paginator[Table]):
-            def _extract_unique_identifiers(self, entity: Table) -> Any:
-                return (entity.uid, entity.version)
-
-        paginator = TablePaginator()
-
         def fetch_versions(page: Optional[int], per_page: int) -> Iterable[Table]:
             data = self.session.get_resource(self._get_path() + '/' + str(uid),
                                              params=self._page_params(page, per_page))
             for item in data[self._collection_key]:
                 yield self.build(item)
 
-        return paginator.paginate(fetch_versions, page, per_page)
+        return self._paginator.paginate(fetch_versions, page, per_page)
 
     def build(self, data: dict) -> Table:
         """Build an individual Table from a dictionary."""
