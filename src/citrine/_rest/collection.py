@@ -76,8 +76,8 @@ class Collection(Generic[ResourceType]):
         -------
         Iterable[ResourceType]
             Resources in this collection.
-        """
 
+        """
         return Paginator().paginate(self._fetch_page, page, per_page)
 
     def update(self, model: CreationType) -> CreationType:

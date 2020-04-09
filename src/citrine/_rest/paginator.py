@@ -5,14 +5,19 @@ ResourceType = TypeVar('ResourceType')
 
 
 class Paginator(Generic[ResourceType]):
+    """
+    This generically pages over a resource, given a page_fetcher callable.
+
+    One can override this class to fine-tune the components of the objects
+    that will be extracted for comparison purposes (to avoid looping on the same items).
+    """
 
     def paginate(self,
                  page_fetcher: Callable[[Optional[int], int], Iterable[ResourceType]],
                  page: Optional[int] = None,
                  per_page: int = 100) -> Iterable[ResourceType]:
         """
-        Paginate generically over the items returned by the page fetcher, parameterized
-        by the callable passed in. This allows us to paginate over different data suppliers.
+        A generic support class to paginate requests into an iterable of a built object.
 
         Leaving page and per_page as default values will yield all elements in the
         collection, paginating over all available pages.
@@ -34,8 +39,8 @@ class Paginator(Generic[ResourceType]):
         -------
         Iterable[ResourceType]
             Resources in this collection.
-        """
 
+        """
         if page is not None:
             warnings.warn("The page parameter is deprecated, default is automatic pagination",
                           DeprecationWarning)
@@ -79,8 +84,7 @@ class Paginator(Generic[ResourceType]):
 
     def _extract_unique_identifiers(self, entity: ResourceType) -> Any:
         """
-        Extract the uniquely identifying attributes from the resource type into an object we can
-        compare for equality.
+        Extract the uniquely identifying attributes for equality comparison.
 
         If the 'uid' here isn't found, default to comparing the entire entity.
         """
