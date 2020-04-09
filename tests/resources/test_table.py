@@ -5,7 +5,7 @@ import requests_mock
 from mock import patch, call
 
 from citrine.resources.table import TableCollection, Table
-from tests.utils.factories import TableDataFactory
+from tests.utils.factories import TableDataFactory, ListTableVersionsDataFactory
 from tests.utils.session import FakeSession, FakeCall
 
 
@@ -25,12 +25,13 @@ def collection(session) -> TableCollection:
 @pytest.fixture
 def table() -> Table:
     def _table(download_url: str):
-        return Table.build(TableDataFactory(signed_download_url=download_url))
+        return Table.build(TableDataFactory(signed_download_url=download_url, version=2))
+
     return _table
 
 
 @patch("citrine.resources.table.write_file_locally")
-def test_read_table(mock_write_files_locally,  table):
+def test_read_table(mock_write_files_locally, table):
     # When
     with requests_mock.mock() as mock_get:
         remote_url = "http://otherhost:4572/anywhere"
@@ -71,6 +72,32 @@ def test_get_table_metadata(collection, session):
     assert retrieved_table.download_url == table["signed_download_url"]
 
 
+def test_list_tables(collection, session):
+    # Given
+    tableVersions = ListTableVersionsDataFactory()
+    session.set_response(tableVersions)
+
+    # When
+    results = list(collection.list())
+
+    # Then
+    assert len(results) == 1
+    assert results[0].uid is not None
+
+
+def test_list_table_versions(collection, session):
+    # Given
+    tableVersions = ListTableVersionsDataFactory()
+    session.set_response(tableVersions)
+
+    # When
+    results = list(collection.list_versions(tableVersions['tables'][0]['id']))
+
+    # Then
+    assert len(results) == 1
+    assert results[0].uid is not None
+
+
 def test_init_table():
     table = Table()
     assert table.uid is None
@@ -80,7 +107,7 @@ def test_init_table():
 
 def test_str_serialization(table):
     t = table("http://somewhere.cool")
-    assert "<Table {!r}>".format(t.uid) == str(t)
+    assert str(t) == "<Table {!r}, version {}>".format(t.uid, 2)
 
 
 def test_register_table(collection):

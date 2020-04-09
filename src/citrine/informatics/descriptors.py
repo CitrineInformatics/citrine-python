@@ -13,7 +13,6 @@ class Descriptor(PolymorphicSerializable['Descriptor']):
     """[ALPHA] A Citrine Descriptor describes the range of values that a quantity can take on.
 
     Abstract type that returns the proper type given a serialized dict.
-
     """
 
     @classmethod
@@ -23,6 +22,7 @@ class Descriptor(PolymorphicSerializable['Descriptor']):
             "Real": RealDescriptor,
             "Inorganic": ChemicalFormulaDescriptor,
             "Categorical": CategoricalDescriptor
+            "Organic": MolecularStructureDescriptor,
         }[data["type"]]
 
 
@@ -52,7 +52,7 @@ class RealDescriptor(Serializable['RealDescriptor'], Descriptor):
             return all([
                 self.__getattribute__(key) == other.__getattribute__(key) for key in attrs
             ])
-        except Exception:
+        except AttributeError:
             return False
 
     def __init__(self,
@@ -84,11 +84,11 @@ class ChemicalFormulaDescriptor(Serializable['ChemicalFormulaDescriptor'], Descr
 
     def __eq__(self, other):
         try:
-            attrs = ["key", "typ"]
+            attrs = ["key", "threshold", "typ"]
             return all([
                 self.__getattribute__(key) == other.__getattribute__(key) for key in attrs
             ])
-        except Exception:
+        except AttributeError:
             return False
 
     def __init__(self, key: str):
@@ -100,6 +100,35 @@ def InorganicDescriptor(key: str, threshold: Optional[float] = 1.0):
     logger.warning("InorganicDescriptor is deprecated and will soon be removed. "
                    "Use ChemicalFormulaDescriptor instead.")
     return ChemicalFormulaDescriptor(key)
+
+
+class MolecularStructureDescriptor(Serializable['MolecularStructureDescriptor'], Descriptor):
+    """
+    [ALPHA] Material descriptor for an organic molecule.
+
+    Accepts SMILES, IUPAC, and InChI String values.
+
+    Parameters
+    ----------
+    key: str
+        The column header key corresponding to this descriptor
+
+    """
+
+    key = properties.String('descriptor_key')
+    typ = properties.String('type', default='Organic', deserializable=False)
+
+    def __eq__(self, other):
+        try:
+            attrs = ["key", "typ"]
+            return all([
+                self.__getattribute__(key) == other.__getattribute__(key) for key in attrs
+            ])
+        except AttributeError:
+            return False
+
+    def __init__(self, key: str):
+        self.key: str = key
 
 
 class CategoricalDescriptor(Serializable['CategoricalDescriptor'], Descriptor):
@@ -122,11 +151,11 @@ class CategoricalDescriptor(Serializable['CategoricalDescriptor'], Descriptor):
 
     def __eq__(self, other):
         try:
-            attrs = ["key", "typ"]
+            attrs = ["key", "categories", "typ"]
             return all([
                 self.__getattribute__(key) == other.__getattribute__(key) for key in attrs
             ]) and set(self.categories) == set(self.categories + other.categories)
-        except Exception:
+        except AttributeError:
             return False
 
     def __init__(self, key: str, categories: List[str]):
