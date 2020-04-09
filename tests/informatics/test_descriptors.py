@@ -2,6 +2,7 @@
 import pytest
 
 from citrine.informatics.descriptors import RealDescriptor, Descriptor, ChemicalFormulaDescriptor, CategoricalDescriptor
+from citrine.informatics.descriptors import InorganicDescriptor
 
 
 @pytest.fixture(params=[
@@ -24,3 +25,8 @@ def test_deser_from_parent(descriptor):
 def test_invalid_eq(descriptor):
     other = None
     assert not descriptor == other
+
+
+def test_inorganic_deprecated():
+    old_descriptor = InorganicDescriptor("formula")
+    assert isinstance(old_descriptor, ChemicalFormulaDescriptor)
