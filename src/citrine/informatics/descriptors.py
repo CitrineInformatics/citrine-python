@@ -21,7 +21,7 @@ class Descriptor(PolymorphicSerializable['Descriptor']):
         return {
             "Real": RealDescriptor,
             "Inorganic": ChemicalFormulaDescriptor,
-            "Categorical": CategoricalDescriptor
+            "Categorical": CategoricalDescriptor,
             "Organic": MolecularStructureDescriptor,
         }[data["type"]]
 
@@ -96,7 +96,7 @@ class ChemicalFormulaDescriptor(Serializable['ChemicalFormulaDescriptor'], Descr
 
 
 def InorganicDescriptor(key: str, threshold: Optional[float] = 1.0):
-    """[DEPRECATED] Use ChemicalFormulaDescriptor instead"""
+    """[DEPRECATED] Use ChemicalFormulaDescriptor instead."""
     logger.warning("InorganicDescriptor is deprecated and will soon be removed. "
                    "Use ChemicalFormulaDescriptor instead.")
     return ChemicalFormulaDescriptor(key)
