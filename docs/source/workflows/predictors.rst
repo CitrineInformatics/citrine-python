@@ -126,3 +126,9 @@ The following example demonstrates how to use the python SDK to create a :class:
 
    # register predictor
    predictor = project.predictors.register(shear_modulus_predictor)
+
+Predictor Reports
+--------------------
+
+A :doc:`predictor report <predictor_reports>` describes a machine-learned model, for example its settings and what features are important to the model. 
+It does not include performance metrics. To learn more about performance metrics, please see :doc:`PerformanceWorkflows <performance_workflows>`.

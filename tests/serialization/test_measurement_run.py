@@ -1,6 +1,6 @@
 """Tests of the Measurement Run schema"""
 import pytest
-from uuid import uuid4
+from uuid import uuid4, UUID
 
 from taurus.entity.attribute.property import Property
 from taurus.entity.value.nominal_integer import NominalInteger
@@ -39,7 +39,8 @@ def valid_data():
             'audit_info': {
                 'created_by': str(uuid4()), 'created_at': 1559933807392,
                 'updated_by': str(uuid4()), 'updated_at': 1560033807392
-            }
+            },
+            'dataset': str(uuid4()),
         },
         spec=None,
         file_links=[],
@@ -49,7 +50,8 @@ def valid_data():
             "performed_by": "Marie Curie",
             "performed_date": "1898-07-01"
         },
-        audit_info={'created_by': str(uuid4()), 'created_at': 1560133807392}
+        audit_info={'created_by': str(uuid4()), 'created_at': 1560133807392},
+        dataset=str(uuid4()),
     )
 
 
@@ -72,9 +74,11 @@ def test_simple_deserialization(valid_data):
                                                    uids={'id': valid_data['material']['uids']['id']},
                                                    sample_type='experimental')
     assert measurement_run.material.audit_info == AuditInfo(**valid_data['material']['audit_info'])
+    assert measurement_run.material.dataset == UUID(valid_data['material']['dataset'])
     assert measurement_run.spec is None
     assert measurement_run.typ == 'measurement_run'
     assert measurement_run.audit_info == AuditInfo(**valid_data['audit_info'])
+    assert measurement_run.dataset == UUID(valid_data['dataset'])
 
 
 def test_serialization(valid_data):
@@ -82,7 +86,9 @@ def test_serialization(valid_data):
     measurement_run: MeasurementRun = MeasurementRun.build(valid_data)
     serialized = measurement_run.dump()
     valid_data['material'].pop('audit_info')
+    valid_data['material'].pop('dataset')
     valid_data.pop('audit_info')
+    valid_data.pop('dataset')
     assert serialized == valid_data
 
 

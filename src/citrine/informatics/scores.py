@@ -8,7 +8,7 @@ from citrine._session import Session
 from citrine.informatics.constraints import Constraint
 from citrine.informatics.objectives import Objective
 
-__all__ = ['Score', 'LIScore', 'EIScore']
+__all__ = ['Score', 'LIScore', 'EIScore', 'EVScore']
 
 
 class Score(PolymorphicSerializable['Score']):
@@ -24,7 +24,8 @@ class Score(PolymorphicSerializable['Score']):
         """Return the subtype."""
         return {
             'MLI': LIScore,
-            'MEI': EIScore
+            'MEI': EIScore,
+            'MEV': EVScore
         }[data['type']]
 
 
@@ -113,3 +114,42 @@ class EIScore(Serializable['EIScore'], Score):
 
     def __str__(self):
         return '<EIScore {!r}>'.format(self.name)
+
+
+class EVScore(Serializable['EVScore'], Score):
+    """
+    [ALPHA] Evaluates the expected value for given objectives.
+
+    Parameters
+    ----------
+    name: str
+        the name of the score
+    description: str
+        the description of the score
+    objectives: list[Objective]
+        objectives (e.g., maximize, minimize, tune, etc.)
+    constraints: list[Constraint]
+        constraints limiting the allowed values that material instances can have
+
+    """
+
+    name = properties.String('name')
+    description = properties.String('description')
+    objectives = properties.List(properties.Object(Objective), 'objectives')
+    constraints = properties.List(properties.Object(Constraint), 'constraints')
+    typ = properties.String('type', default='MEV')
+
+    def __init__(self,
+                 name: str,
+                 description: str,
+                 objectives: List[Objective],
+                 constraints: Optional[List[Constraint]] = None,
+                 session: Optional[Session] = None):
+        self.name: str = name
+        self.description: str = description
+        self.objectives: List[Objective] = objectives
+        self.constraints: List[Constraint] = constraints or []
+        self.session: Optional[Session] = session
+
+    def __str__(self):
+        return '<EVScore {!r}>'.format(self.name)

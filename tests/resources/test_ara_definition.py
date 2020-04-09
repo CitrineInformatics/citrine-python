@@ -204,6 +204,9 @@ def test_add_all_ingredients(session, project):
         assert next((var for var in def1.variables if name in var.headers
                      and isinstance(var, IngredientIdentifierByProcessTemplateAndName)), None) is not None
 
+    session.set_response(
+        ProcessTemplate(process_name, uids={'id': process_id}, allowed_names=allowed_names).dump()
+    )
     # WHEN we add all ingredients to the same Ara definition as absolute quantities
     def2 = def1.add_all_ingredients(process_template=process_link, project=project,
                                     quantity_dimension=IngredientQuantityDimension.ABSOLUTE)
@@ -218,6 +221,9 @@ def test_add_all_ingredients(session, project):
         assert next((var for var in new_variables if name in var.headers
                      and isinstance(var, IngredientQuantityByProcessAndName)), None) is not None
 
+    session.set_response(
+        ProcessTemplate(process_name, uids={'id': process_id}, allowed_names=allowed_names).dump()
+    )
     # WHEN we add all ingredients to the same Ara definition in a volume basis
     # THEN it raises an exception because these variables and columns already exist
     with pytest.raises(ValueError):
