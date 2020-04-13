@@ -7,10 +7,10 @@ from citrine.informatics.scores import LIScore, EIScore, EVScore
 
 
 @pytest.fixture
-def mli_score() -> LIScore:
-    """Build an MLIScore."""
+def li_score() -> LIScore:
+    """Build an LIScore."""
     return LIScore(
-        name="MLI(z)",
+        name="LI(z)",
         description="experimental design score for z",
         objectives=[
             ScalarMaxObjective(
@@ -22,10 +22,10 @@ def mli_score() -> LIScore:
 
 
 @pytest.fixture
-def mei_score() -> EIScore:
-    """Build an MEIScore."""
+def ei_score() -> EIScore:
+    """Build an EIScore."""
     return EIScore(
-        name="MEI(x)",
+        name="EI(x)",
         description="experimental design score for x",
         objectives=[
             ScalarMaxObjective(
@@ -38,7 +38,7 @@ def mei_score() -> EIScore:
 
 
 @pytest.fixture
-def mev_score() -> EVScore:
+def ev_score() -> EVScore:
     """Build an MEVScore."""
     return EVScore(
         name="EV(x)",
@@ -52,31 +52,31 @@ def mev_score() -> EVScore:
     )
 
 
-def test_mli_initialization(mli_score):
+def test_li_initialization(li_score):
     """Make sure the correct fields go to the correct places."""
-    assert mli_score.name == 'MLI(z)'
-    assert mli_score.description == 'experimental design score for z'
-    assert isinstance(mli_score.objectives[0], ScalarMaxObjective)
-    assert mli_score.objectives[0].descriptor_key == 'z'
-    assert mli_score.baselines == [10.0]
-    assert mli_score.constraints == []
+    assert li_score.name == 'LI(z)'
+    assert li_score.description == 'experimental design score for z'
+    assert isinstance(li_score.objectives[0], ScalarMaxObjective)
+    assert li_score.objectives[0].descriptor_key == 'z'
+    assert li_score.baselines == [10.0]
+    assert li_score.constraints == []
 
 
-def test_mei_initialization(mei_score):
+def test_ei_initialization(ei_score):
     """Make sure the correct fields go to the correct places."""
-    assert mei_score.name == 'MEI(x)'
-    assert mei_score.description == 'experimental design score for x'
-    assert mei_score.objectives[0].descriptor_key == 'x'
-    assert mei_score.baselines == [1.0]
-    assert isinstance(mei_score.constraints[0], ScalarRangeConstraint)
-    assert mei_score.constraints[0].descriptor_key == 'y'
+    assert ei_score.name == 'EI(x)'
+    assert ei_score.description == 'experimental design score for x'
+    assert ei_score.objectives[0].descriptor_key == 'x'
+    assert ei_score.baselines == [1.0]
+    assert isinstance(ei_score.constraints[0], ScalarRangeConstraint)
+    assert ei_score.constraints[0].descriptor_key == 'y'
 
 
-def test_mev_initialization(mev_score):
+def test_ev_initialization(ev_score):
     """Make sure the correct fields go to the correct places."""
-    assert mev_score.name == 'EV(x)'
-    assert mev_score.description == 'experimental design score for x'
-    assert mev_score.objectives[0].descriptor_key == 'x'
-    assert isinstance(mev_score.constraints[0], ScalarRangeConstraint)
-    assert mev_score.constraints[0].descriptor_key == 'y'
-    assert "EVScore" in str(mev_score)
+    assert ev_score.name == 'EV(x)'
+    assert ev_score.description == 'experimental design score for x'
+    assert ev_score.objectives[0].descriptor_key == 'x'
+    assert isinstance(ev_score.constraints[0], ScalarRangeConstraint)
+    assert ev_score.constraints[0].descriptor_key == 'y'
+    assert "EVScore" in str(ev_score)
