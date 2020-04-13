@@ -12,7 +12,8 @@ script:
 - flake8 src
 - cd docs; make html; cd ..;
 - touch ./docs/_build/html/.nojekyll
-- ./scripts/validate-version-bump.sh
+- if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then bash ./scripts/validate-version-bump.sh; fi
+
 deploy:
   - provider: pages
     skip_cleanup: true
