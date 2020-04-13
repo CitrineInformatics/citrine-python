@@ -38,7 +38,7 @@
 <em class="property">class </em><code class="sig-prename descclassname">citrine.resources.table.</code><code class="sig-name descname">Table</code><a class="headerlink" href="#citrine.resources.table.Table" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.resource.Resource</span></code></p>
 <p>A 2-dimensional projection of data.</p>
-<p>Tables are the basic unit used to flatten and manipulate data objects.
+<p>(Display) Tables are the basic unit used to flatten and manipulate data objects.
 While data objects can represent complex materials data, the format
 is NOT conducive to analysis and machine learning. Tables, however,
 can be used to ‘flatten’ data objects into useful projections.</p>
@@ -116,11 +116,39 @@ can be used to ‘flatten’ data objects into useful projections.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="citrine.resources.table.TableCollection.list_versions">
+<code class="sig-name descname">list_versions</code><span class="sig-paren">(</span><em class="sig-param">uid: citrine._serialization.properties.UUID</em>, <em class="sig-param">page: Optional[int] = None</em>, <em class="sig-param">per_page: int = 100</em><span class="sig-paren">)</span> &#x2192; Iterable[citrine.resources.table.Table]<a class="headerlink" href="#citrine.resources.table.TableCollection.list_versions" title="Permalink to this definition">¶</a></dt>
+<dd><p>List the versions of a table given a specific Table UID.</p>
+<p>This is a paginated collection, similar to a .list() call.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>uid</strong> – The Table UID.</p></li>
+<li><p><strong>page</strong> – The page number to display (eg: 1)</p></li>
+<li><p><strong>per_page</strong> – The number of items to fetch per-page.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>An iterable of the versions of the Tables (as Table objects).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
 <dt id="citrine.resources.table.TableCollection.register">
 <code class="sig-name descname">register</code><span class="sig-paren">(</span><em class="sig-param">model: citrine.resources.table.Table</em><span class="sig-paren">)</span> &#x2192; citrine.resources.table.Table<a class="headerlink" href="#citrine.resources.table.TableCollection.register" title="Permalink to this definition">¶</a></dt>
 <dd><p>Tables cannot be created at this time.</p>
 </dd></dl>
 
+</dd></dl>
+
+<dl class="class">
+<dt id="citrine.resources.table.TableVersionPaginator">
+<em class="property">class </em><code class="sig-prename descclassname">citrine.resources.table.</code><code class="sig-name descname">TableVersionPaginator</code><a class="headerlink" href="#citrine.resources.table.TableVersionPaginator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.paginator.Paginator</span></code></p>
+<p>A Paginator for Tables.</p>
+<p>For a single table, we share the same UID, but have different versions -
+ensure that (uid, version) is used for comparisons.</p>
 </dd></dl>
 
 </div>

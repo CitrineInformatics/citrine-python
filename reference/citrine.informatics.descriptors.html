@@ -66,6 +66,33 @@
 </dd></dl>
 
 <dl class="class">
+<dt id="citrine.informatics.descriptors.ChemicalFormulaDescriptor">
+<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.descriptors.</code><code class="sig-name descname">ChemicalFormulaDescriptor</code><span class="sig-paren">(</span><em class="sig-param">key: str</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.descriptors.ChemicalFormulaDescriptor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.informatics.descriptors.Descriptor" title="citrine.informatics.descriptors.Descriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.descriptors.Descriptor</span></code></a></p>
+<p>[ALPHA] Captures domain-specific context about a stoichiometric chemical formula.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>key</strong> (<em>str</em>) – the key corresponding to a descriptor</p>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="citrine.informatics.descriptors.ChemicalFormulaDescriptor.key">
+<code class="sig-name descname">key</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.descriptors.ChemicalFormulaDescriptor.key" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.descriptors.ChemicalFormulaDescriptor.threshold">
+<code class="sig-name descname">threshold</code><em class="property"> = 1.0</em><a class="headerlink" href="#citrine.informatics.descriptors.ChemicalFormulaDescriptor.threshold" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.descriptors.ChemicalFormulaDescriptor.typ">
+<code class="sig-name descname">typ</code><em class="property"> = 'Inorganic'</em><a class="headerlink" href="#citrine.informatics.descriptors.ChemicalFormulaDescriptor.typ" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
 <dt id="citrine.informatics.descriptors.Descriptor">
 <em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.descriptors.</code><code class="sig-name descname">Descriptor</code><a class="headerlink" href="#citrine.informatics.descriptors.Descriptor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.polymorphic_serializable.PolymorphicSerializable</span></code></p>
@@ -79,33 +106,31 @@
 
 </dd></dl>
 
-<dl class="class">
+<dl class="function">
 <dt id="citrine.informatics.descriptors.InorganicDescriptor">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.descriptors.</code><code class="sig-name descname">InorganicDescriptor</code><span class="sig-paren">(</span><em class="sig-param">key: str</em>, <em class="sig-param">threshold: float = 1.0</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.descriptors.InorganicDescriptor" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">citrine.informatics.descriptors.</code><code class="sig-name descname">InorganicDescriptor</code><span class="sig-paren">(</span><em class="sig-param">key: str</em>, <em class="sig-param">threshold: Optional[float] = 1.0</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.descriptors.InorganicDescriptor" title="Permalink to this definition">¶</a></dt>
+<dd><p>[DEPRECATED] Use ChemicalFormulaDescriptor instead.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="citrine.informatics.descriptors.MolecularStructureDescriptor">
+<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.descriptors.</code><code class="sig-name descname">MolecularStructureDescriptor</code><span class="sig-paren">(</span><em class="sig-param">key: str</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.descriptors.MolecularStructureDescriptor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.informatics.descriptors.Descriptor" title="citrine.informatics.descriptors.Descriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.descriptors.Descriptor</span></code></a></p>
-<p>[ALPHA] Captures domain-specific context about the chemical formula for an inorganic compound.</p>
+<p>[ALPHA] Material descriptor for an organic molecule.</p>
+<p>Accepts SMILES, IUPAC, and InChI String values.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>key</strong> (<em>str</em>) – the key corresponding to a descriptor</p></li>
-<li><p><strong>threshold</strong> (<em>float</em>) – the threshold for valid chemical formulae. Users can think of this as a level of tolerance
-for typos and/or loss in interpreting a string input as a parseable chemical formula.</p></li>
-</ul>
+<dd class="field-odd"><p><strong>key</strong> (<em>str</em>) – The column header key corresponding to this descriptor</p>
 </dd>
 </dl>
 <dl class="attribute">
-<dt id="citrine.informatics.descriptors.InorganicDescriptor.key">
-<code class="sig-name descname">key</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.descriptors.InorganicDescriptor.key" title="Permalink to this definition">¶</a></dt>
+<dt id="citrine.informatics.descriptors.MolecularStructureDescriptor.key">
+<code class="sig-name descname">key</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.descriptors.MolecularStructureDescriptor.key" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
-<dt id="citrine.informatics.descriptors.InorganicDescriptor.threshold">
-<code class="sig-name descname">threshold</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.descriptors.InorganicDescriptor.threshold" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="citrine.informatics.descriptors.InorganicDescriptor.typ">
-<code class="sig-name descname">typ</code><em class="property"> = 'Inorganic'</em><a class="headerlink" href="#citrine.informatics.descriptors.InorganicDescriptor.typ" title="Permalink to this definition">¶</a></dt>
+<dt id="citrine.informatics.descriptors.MolecularStructureDescriptor.typ">
+<code class="sig-name descname">typ</code><em class="property"> = 'Organic'</em><a class="headerlink" href="#citrine.informatics.descriptors.MolecularStructureDescriptor.typ" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
