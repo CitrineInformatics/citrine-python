@@ -17,7 +17,7 @@ class Descriptor(PolymorphicSerializable['Descriptor']):
         """Return the subtype."""
         return {
             "Real": RealDescriptor,
-            "Inorganic": InorganicDescriptor,
+            "Inorganic": ChemicalFormulaDescriptor,
             "Categorical": CategoricalDescriptor,
             "Organic": MolecularStructureDescriptor,
         }[data["type"]]
@@ -63,21 +63,20 @@ class RealDescriptor(Serializable['RealDescriptor'], Descriptor):
         self.units: Optional[str] = units
 
 
-class InorganicDescriptor(Serializable['InorganicDescriptor'], Descriptor):
-    """[ALPHA] Captures domain-specific context about the chemical formula for an inorganic compound.
+class ChemicalFormulaDescriptor(Serializable['ChemicalFormulaDescriptor'], Descriptor):
+    """[ALPHA] Captures domain-specific context about a stoichiometric chemical formula.
 
     Parameters
     ----------
     key: str
         the key corresponding to a descriptor
-    threshold: float
-        the threshold for valid chemical formulae. Users can think of this as a level of tolerance
-        for typos and/or loss in interpreting a string input as a parseable chemical formula.
 
     """
 
     key = properties.String('descriptor_key')
-    threshold = properties.Float('threshold')
+    # `threshold` exists in the backend but is not configurable through this client. It is fixed
+    # to 1.0 which means that chemical formula string parsing is strict with regards to typos.
+    threshold = properties.Float('threshold', deserializable=False, default=1.0)
     typ = properties.String('type', default='Inorganic', deserializable=False)
 
     def __eq__(self, other):
@@ -89,9 +88,16 @@ class InorganicDescriptor(Serializable['InorganicDescriptor'], Descriptor):
         except AttributeError:
             return False
 
-    def __init__(self, key: str, threshold: float = 1.0):
+    def __init__(self, key: str):
         self.key: str = key
-        self.threshold = threshold
+
+
+def InorganicDescriptor(key: str, threshold: Optional[float] = 1.0):
+    """[DEPRECATED] Use ChemicalFormulaDescriptor instead."""
+    from warnings import warn
+    warn("InorganicDescriptor is deprecated and will soon be removed. "
+         "Use ChemicalFormulaDescriptor instead.", DeprecationWarning)
+    return ChemicalFormulaDescriptor(key)
 
 
 class MolecularStructureDescriptor(Serializable['MolecularStructureDescriptor'], Descriptor):
