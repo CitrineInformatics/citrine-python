@@ -73,11 +73,16 @@ def valid_enumerated_design_space_data():
                     type='Categorical',
                     descriptor_key='color',
                     descriptor_values=['red', 'green', 'blue'],
+                ),
+                dict(
+                    type='Inorganic',
+                    descriptor_key='formula',
+                    threshold=1.0
                 )
             ],
             data=[
-                dict(x=1, color='red'),
-                dict(x=2.0, color='green')
+                dict(x=1, color='red', formula='C44H54Si2'),
+                dict(x=2.0, color='green', formula='V2O3')
             ]
         )
     )

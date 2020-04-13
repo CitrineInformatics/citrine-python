@@ -10,7 +10,6 @@ class Descriptor(PolymorphicSerializable['Descriptor']):
     """[ALPHA] A Citrine Descriptor describes the range of values that a quantity can take on.
 
     Abstract type that returns the proper type given a serialized dict.
-
     """
 
     @classmethod
@@ -18,8 +17,9 @@ class Descriptor(PolymorphicSerializable['Descriptor']):
         """Return the subtype."""
         return {
             "Real": RealDescriptor,
-            "Inorganic": InorganicDescriptor,
-            "Categorical": CategoricalDescriptor
+            "Inorganic": ChemicalFormulaDescriptor,
+            "Categorical": CategoricalDescriptor,
+            "Organic": MolecularStructureDescriptor,
         }[data["type"]]
 
 
@@ -49,7 +49,7 @@ class RealDescriptor(Serializable['RealDescriptor'], Descriptor):
             return all([
                 self.__getattribute__(key) == other.__getattribute__(key) for key in attrs
             ])
-        except Exception:
+        except AttributeError:
             return False
 
     def __init__(self,
@@ -63,22 +63,58 @@ class RealDescriptor(Serializable['RealDescriptor'], Descriptor):
         self.units: Optional[str] = units
 
 
-class InorganicDescriptor(Serializable['InorganicDescriptor'], Descriptor):
-    """[ALPHA] Captures domain-specific context about the chemical formula for an inorganic compound.
+class ChemicalFormulaDescriptor(Serializable['ChemicalFormulaDescriptor'], Descriptor):
+    """[ALPHA] Captures domain-specific context about a stoichiometric chemical formula.
 
     Parameters
     ----------
     key: str
         the key corresponding to a descriptor
-    threshold: float
-        the threshold for valid chemical formulae. Users can think of this as a level of tolerance
-        for typos and/or loss in interpreting a string input as a parseable chemical formula.
 
     """
 
     key = properties.String('descriptor_key')
-    threshold = properties.Float('threshold')
+    # `threshold` exists in the backend but is not configurable through this client. It is fixed
+    # to 1.0 which means that chemical formula string parsing is strict with regards to typos.
+    threshold = properties.Float('threshold', deserializable=False, default=1.0)
     typ = properties.String('type', default='Inorganic', deserializable=False)
+
+    def __eq__(self, other):
+        try:
+            attrs = ["key", "threshold", "typ"]
+            return all([
+                self.__getattribute__(key) == other.__getattribute__(key) for key in attrs
+            ])
+        except AttributeError:
+            return False
+
+    def __init__(self, key: str):
+        self.key: str = key
+
+
+def InorganicDescriptor(key: str, threshold: Optional[float] = 1.0):
+    """[DEPRECATED] Use ChemicalFormulaDescriptor instead."""
+    from warnings import warn
+    warn("InorganicDescriptor is deprecated and will soon be removed. "
+         "Use ChemicalFormulaDescriptor instead.", DeprecationWarning)
+    return ChemicalFormulaDescriptor(key)
+
+
+class MolecularStructureDescriptor(Serializable['MolecularStructureDescriptor'], Descriptor):
+    """
+    [ALPHA] Material descriptor for an organic molecule.
+
+    Accepts SMILES, IUPAC, and InChI String values.
+
+    Parameters
+    ----------
+    key: str
+        The column header key corresponding to this descriptor
+
+    """
+
+    key = properties.String('descriptor_key')
+    typ = properties.String('type', default='Organic', deserializable=False)
 
     def __eq__(self, other):
         try:
@@ -86,12 +122,11 @@ class InorganicDescriptor(Serializable['InorganicDescriptor'], Descriptor):
             return all([
                 self.__getattribute__(key) == other.__getattribute__(key) for key in attrs
             ])
-        except Exception:
+        except AttributeError:
             return False
 
-    def __init__(self, key: str, threshold: float = 1.0):
+    def __init__(self, key: str):
         self.key: str = key
-        self.threshold = threshold
 
 
 class CategoricalDescriptor(Serializable['CategoricalDescriptor'], Descriptor):
@@ -114,11 +149,11 @@ class CategoricalDescriptor(Serializable['CategoricalDescriptor'], Descriptor):
 
     def __eq__(self, other):
         try:
-            attrs = ["key", "typ"]
+            attrs = ["key", "categories", "typ"]
             return all([
                 self.__getattribute__(key) == other.__getattribute__(key) for key in attrs
             ]) and set(self.categories) == set(self.categories + other.categories)
-        except Exception:
+        except AttributeError:
             return False
 
     def __init__(self, key: str, categories: List[str]):

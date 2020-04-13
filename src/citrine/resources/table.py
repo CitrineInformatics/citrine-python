@@ -1,8 +1,9 @@
-from typing import Union
+from typing import Union, Iterable, Optional, Any
 
 import requests
 
 from citrine._rest.collection import Collection
+from citrine._rest.paginator import Paginator
 from citrine._rest.resource import Resource
 from citrine._serialization import properties
 from citrine._serialization.properties import UUID
@@ -13,7 +14,7 @@ from citrine._utils.functions import rewrite_s3_links_locally, write_file_locall
 class Table(Resource['Table']):
     """A 2-dimensional projection of data.
 
-    Tables are the basic unit used to flatten and manipulate data objects.
+    (Display) Tables are the basic unit used to flatten and manipulate data objects.
     While data objects can represent complex materials data, the format
     is NOT conducive to analysis and machine learning. Tables, however,
     can be used to 'flatten' data objects into useful projections.
@@ -42,20 +43,37 @@ class Table(Resource['Table']):
 
     def __str__(self):
         # TODO: Change this to name once that's added to the table model
-        return '<Table {!r}>'.format(self.uid)
+        return '<Table {!r}, version {}>'.format(self.uid, self.version)
 
     def read(self, local_path):
         """Read the Table file from S3."""
+        # NOTE: this uses the pre-signed S3 download url. If we need to download larger files,
+        # we have other options available (using multi-part downloads in parallel , for example).
+
         data_location = self.download_url
         data_location = rewrite_s3_links_locally(data_location)
         response = requests.get(data_location)
         write_file_locally(response.content, local_path)
 
 
+class TableVersionPaginator(Paginator[Table]):
+    """
+    A Paginator for Tables.
+
+    For a single table, we share the same UID, but have different versions -
+    ensure that (uid, version) is used for comparisons.
+    """
+
+    def _comparison_fields(self, entity: Table) -> Any:
+        return (entity.uid, entity.version)
+
+
 class TableCollection(Collection[Table]):
     """Represents the collection of all tables associated with a project."""
 
     _path_template = 'projects/{project_id}/display-tables'
+    _collection_key: str = 'tables'
+    _paginator: Paginator = TableVersionPaginator()
 
     def __init__(self, project_id: UUID, session: Session):
         self.project_id = project_id
@@ -66,6 +84,29 @@ class TableCollection(Collection[Table]):
         path = self._get_path(uid) + "/versions/{}".format(version)
         data = self.session.get_resource(path)
         return self.build(data)
+
+    def list_versions(self,
+                      uid: UUID,
+                      page: Optional[int] = None,
+                      per_page: int = 100) -> Iterable[Table]:
+        """
+        List the versions of a table given a specific Table UID.
+
+        This is a paginated collection, similar to a .list() call.
+
+
+        :param uid: The Table UID.
+        :param page: The page number to display (eg: 1)
+        :param per_page: The number of items to fetch per-page.
+        :return: An iterable of the versions of the Tables (as Table objects).
+        """
+        def fetch_versions(page: Optional[int], per_page: int) -> Iterable[Table]:
+            data = self.session.get_resource(self._get_path() + '/' + str(uid),
+                                             params=self._page_params(page, per_page))
+            for item in data[self._collection_key]:
+                yield self.build(item)
+
+        return self._paginator.paginate(fetch_versions, page, per_page)
 
     def build(self, data: dict) -> Table:
         """Build an individual Table from a dictionary."""

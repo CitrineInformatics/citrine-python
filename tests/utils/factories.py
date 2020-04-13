@@ -39,6 +39,10 @@ class TableDataFactory(factory.DictFactory):
     signed_download_url = factory.Faker('uri')
 
 
+class ListTableVersionsDataFactory(factory.DictFactory):
+    tables = [TableDataFactory()]
+
+
 class AraDefinitionDataFactory(factory.DictFactory):
     name = factory.Faker("company")
     description = factory.Faker('bs')
