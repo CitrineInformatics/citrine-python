@@ -10,8 +10,8 @@ Each data object and template in the GEMD_ data model has a corresponding resour
 For example, the :class:`citrine.resources.process_spec.ProcessSpec` class implements the ProcessSpec_ object in GEMD_.
 The Citrine Python Client implementations are consistent with the GEMD_ model specification.
 
-The Citrine Python Client is built on top of and entirely interoperable with the taurus_ package.
-Any method that accepts the Citrine Python Client's implementations of data model objects should also accept those from taurus.
+The Citrine Python Client is built on top of and entirely interoperable with the gemd-python_ package.
+Any method that accepts the Citrine Python Client's implementations of data model objects should also accept those from GEMD.
 
 Identifiying Data Model Objects
 ---------------------------------
@@ -42,7 +42,7 @@ For example:
 Note that registration must be performed within the scope of a dataset: the dataset into which the objects are being written.
 The data model object collections that are defined with the project scope (such as `project.process_specs`) are read-only and will throw an error if their register method is called.
 
-If you have taurus_ objects, e.g. :class:`taurus.entity.object.process_spec.ProcessSpec`, you can register it just like the objects defined in the Citrine Python Client.
+If you have GEMD_ objects, e.g. :class:`gemd.entity.object.process_spec.ProcessSpec`, you can register it just like the objects defined in the Citrine Python Client.
 
 
 Finding Data Model Objects
@@ -72,7 +72,7 @@ Referencing Data Model Objects
 
 Many data model objects contain links to other data model objects.
 For example, a :class:`~citrine.resources.material_spec.MaterialSpec` references the :class:`~citrine.resources.process_spec.ProcessSpec` that produced it.
-These links are created with the :class:`~taurus.entity.link_by_uid.LinkByUID` class, e.g.:
+These links are created with the :class:`~gemd.entity.link_by_uid.LinkByUID` class, e.g.:
 
 .. code-block:: python
 
@@ -84,7 +84,7 @@ These links are created with the :class:`~taurus.entity.link_by_uid.LinkByUID` c
 
 .. _GEMD: https://citrineinformatics.github.io/gemd-docs/
 .. _ProcessSpec: https://citrineinformatics.github.io/gemd-docs/specification/objects/#process-spec
-.. _taurus: https://github.com/CitrineInformatics/taurus
+.. _gemd-python: https://github.com/CitrineInformatics/gemd-python
 .. _UUID4: https://en.wikipedia.org/wiki/Universally_unique_identifier#Version_4_(random)
 
 Validating Data Model Objects
