@@ -128,7 +128,7 @@ def object_to_link_by_uid(json: dict) -> dict:
         return json
 
 
-def rewrite_s3_links_locally(url: str) -> str:
+def rewrite_s3_links_locally(url: str, s3_endpoint_url: str = None) -> str:
     """
     Rewrites 'localstack' hosts to localhost for testing.
 
@@ -140,9 +140,16 @@ def rewrite_s3_links_locally(url: str) -> str:
     In order to access dockerized servers from outside of docker, the
     host:port space must be mapped onto localhost. For S3, this mapping is as follows:
     localstack:4572 => localhost:9572
+
+    Allows for an explicit override, useful for tests that are trying to access this endpoint
+    from within the docker context
     """
     parsed_url = urlparse(url)
-    if parsed_url.netloc != "localstack:4572":
+    if s3_endpoint_url is not None:
+        parsed_s3_endpoint = urlparse(s3_endpoint_url)
+        return parsed_url._replace(scheme=parsed_s3_endpoint.scheme,
+                                   netloc=parsed_s3_endpoint.netloc).geturl()
+    elif parsed_url.netloc != "localstack:4572":
         return url
     else:
         return parsed_url._replace(netloc="localhost:9572").geturl()
