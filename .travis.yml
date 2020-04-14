@@ -12,6 +12,11 @@ script:
 - flake8 src
 - cd docs; make html; cd ..;
 - touch ./docs/_build/html/.nojekyll
+# only run the validate-version-bump.sh script on PR builds against master, since those have access to a "master" reference to git show the version
+# following https://docs.travis-ci.com/user/environment-variables/#convenience-variables
+# the pull request isn't set to true if its a PR; its just set to false if its not.
+- if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ "$TRAVIS_BRANCH" == "master" ]; then bash ./scripts/validate-version-bump.sh; fi
+
 deploy:
   - provider: pages
     skip_cleanup: true
