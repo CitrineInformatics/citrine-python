@@ -2,7 +2,7 @@
 from abc import ABC
 from typing import Dict, Union, Optional, Iterator, List, TypeVar
 
-from citrine._utils.functions import get_object_id
+from citrine._utils.functions import get_object_id, replace_objects_with_links, scrub_none
 from citrine.exceptions import BadRequest
 from citrine.resources.api_error import ValidationError
 from citrine.resources.data_concepts import DataConcepts, DataConceptsCollection
@@ -161,11 +161,14 @@ class DataObjectCollection(DataConceptsCollection[DataObjectResourceType], ABC):
         :return: List[ValidationError] of validation errors encountered. Empty if successful.
         """
         path = self._get_path(ignore_dataset=True) + "/validate-templates"
-        request_data = {"dataObject": model.dump()}
+        dumped_data = replace_objects_with_links(scrub_none(model.dump()))
+        request_data = {"dataObject": dumped_data}
         if object_template is not None:
-            request_data["objectTemplate"] = object_template.dump()
+            request_data["objectTemplate"] = \
+                replace_objects_with_links(scrub_none(object_template.dump()))
         if ingredient_process_template is not None:
-            request_data["ingredientProcessTemplate"] = ingredient_process_template.dump()
+            request_data["ingredientProcessTemplate"] = \
+                replace_objects_with_links(scrub_none(ingredient_process_template.dump()))
         try:
             self.session.put_resource(path, request_data)
             return []
