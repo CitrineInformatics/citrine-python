@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -eux
-
 extract_version() {
   sed -En "s/.*version='([0-9]+\.[0-9]+\.[0-9]+).*/\1/p" <<< "$@"
 }
