@@ -46,7 +46,7 @@ class Table(Resource['Table']):
         # TODO: Change this to name once that's added to the table model
         return '<Table {!r}, version {}>'.format(self.uid, self.version)
 
-    @deprecation.deprecated(deprecated_in="0.15.9", details="Use TableCollection.read() instead")
+    @deprecation.deprecated(deprecated_in="0.16.0", details="Use TableCollection.read() instead")
     def read(self, local_path):
         """[DEPRECATED] Use TableCollection.read() instead."""  # noqa: D402
         data_location = self.download_url
