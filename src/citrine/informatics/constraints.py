@@ -34,9 +34,9 @@ class ScalarRangeConstraint(Serializable['ScalarRangeConstraint'], Constraint):
     ----------
     descriptor_key: str
         the key corresponding to a descriptor
-    min: int
+    min: float
         the minimum value in the range
-    max: int
+    max: float
         the maximum value in the range
     min_inclusive: bool
         if True, will include the min value in the range
