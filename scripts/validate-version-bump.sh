@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -eu
+
 extract_version() {
   sed -En "s/.*version='([0-9]+\.[0-9]+\.[0-9]+).*/\1/p" <<< "$@"
 }
@@ -16,7 +18,7 @@ extract_patch() {
   sed -En "s/.*([0-9])/\1/p" <<< "$1"
 }
 
-trap "$(set +eux)" EXIT
+trap "$(set +eu)" EXIT
 
 CURRENT="$(extract_version $(cat setup.py))"
 MASTER="$(extract_version $(git show master:setup.py))"
