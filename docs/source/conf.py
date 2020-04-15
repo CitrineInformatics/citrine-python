@@ -48,7 +48,7 @@ apidoc_separate_modules = True
 
 # Use intersphinx to link to classes in Sphinx docs for other libraries
 # See: https://www.sphinx-doc.org/en/master/usage/extensions/intersphinx.html
-intersphinx_mapping = {'taurus': ('https://citrineinformatics.github.io/taurus/', None)}
+intersphinx_mapping = {'gemd-python': ('https://citrineinformatics.github.io/gemd-python/', None)}
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
