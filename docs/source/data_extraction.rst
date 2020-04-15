@@ -165,7 +165,7 @@ For example:
         table_version = status.output['display_table_version']
         # 4. Download the table
         table = project.tables.get(table_id, table_version)
-        table.read("./my_table.csv")
+        project.tables.read(table, "./my_table.csv")
 
 The return type of the ``build_ara_table`` method is a :class:`~citrine.resources.ara_job.JobSubmissionResponse` that contains a unique identifier for the submitted job.
 
