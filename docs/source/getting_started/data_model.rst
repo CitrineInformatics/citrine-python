@@ -5,9 +5,9 @@ Data Model
 Overview
 --------
 
-The Citrine python client is built on our NextGen data model, (codename taurus).
-Taurus is a format that links together materials, the processes that produced them, and the measurements that characterize them.
-Complete documentation can be found in the `data model docs <https://citrineinformatics.github.io/taurus/>`_.
+The Citrine python client is built on our NextGen data model, GEMD.
+GEMD is a format that links together materials, the processes that produced them, and the measurements that characterize them.
+Complete documentation can be found in the `data model docs <https://citrineinformatics.github.io/gemd-docs/>`_.
 This page presents a broad overview.
 
 The Basic Objects: Processes, Materials, Measurements
@@ -72,8 +72,8 @@ For example, "Temperature is between 20 and 24 degC" is a bad template: temperat
 LinkByUID
 ----------
 
-The :class:`~taurus.entity.link_by_uid.LinkByUID` class allows you to reference another data model object by a unique identifier without downloading it first.
+The :class:`~gemd.entity.link_by_uid.LinkByUID` class allows you to reference another data model object by a unique identifier without downloading it first.
 This is a common pattern within the data model objects, since many objects contain links to other objects that may have already been registered to the platform.
-:class:`~taurus.entity.link_by_uid.LinkByUID` objects can use either the platform's unique identifier or an `alternative identifier`__.
+:class:`~gemd.entity.link_by_uid.LinkByUID` objects can use either the platform's unique identifier or an `alternative identifier`__.
 
 __ https://citrineinformatics.github.io/gemd-docs/specification/unique-identifiers/#alternative-ids

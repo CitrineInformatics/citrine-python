@@ -18,7 +18,7 @@ The only way to define rows right now is through :class:`~citrine.ara.rows.Mater
 .. code-block:: python
 
    from citrine.ara.rows import MaterialRunByTemplate
-   from taurus.entity.link_by_uid import LinkByUID
+   from gemd.entity.link_by_uid import LinkByUID
    row_def = MaterialRunByTemplate(
          templates=[LinkByUID(scope="templates", id="finished cookie")])
 
@@ -33,7 +33,7 @@ One might assign ``headers = ["Product", "Hardness"]`` to this measurement in or
 .. code-block:: python
 
    from citrine.ara.variables import AttributeByTemplateAfterProcessTemplate
-   from taurus.entity.link_by_uid import LinkByUID
+   from gemd.entity.link_by_uid import LinkByUID
    final_density = AttributeByTemplateAfterProcessTemplate(
          name = "final density",
          headers = ["Product", "Density"],
@@ -165,7 +165,7 @@ For example:
         table_version = status.output['display_table_version']
         # 4. Download the table
         table = project.tables.get(table_id, table_version)
-        table.read("./my_table.csv")
+        project.tables.read(table, "./my_table.csv")
 
 The return type of the ``build_ara_table`` method is a :class:`~citrine.resources.ara_job.JobSubmissionResponse` that contains a unique identifier for the submitted job.
 
@@ -178,15 +178,15 @@ Just like the :class:`~citrine.resources.file_link.FileLink` resource, :class:`~
 Available Row Definitions
 ------------------------------
 
-Currently, Ara provides only a single way to define Rows: by the :class:`~taurus.entity.templates.MaterialTemplate` of the roots of the material histories that correspond to each row.
+Currently, Ara provides only a single way to define Rows: by the :class:`~gemd.entity.templates.MaterialTemplate` of the roots of the material histories that correspond to each row.
 
 :class:`~citrine.ara.rows.MaterialRunByTemplate`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The :class:`~citrine.ara.rows.MaterialRunByTemplate` class defines Rows through a list of :class:`~taurus.entity.templates.MaterialTemplate`.
-Every :class:`~taurus.entity.object.MaterialRun` that is assigned to any template in the list is used as the root of a  Material History to be mapped to a Row.
+The :class:`~citrine.ara.rows.MaterialRunByTemplate` class defines Rows through a list of :class:`~gemd.entity.templates.MaterialTemplate`.
+Every :class:`~gemd.entity.object.MaterialRun` that is assigned to any template in the list is used as the root of a  Material History to be mapped to a Row.
 This is helpful when the rows correspond to classes of materials that are defined through their templates.
-For example, there could be a :class:`~taurus.entity.templates.MaterialTemplate` called "Cake" that is used in all
+For example, there could be a :class:`~gemd.entity.templates.MaterialTemplate` called "Cake" that is used in all
 of the cakes and another called "Brownies" that is used in all of the brownies.
 By including one or both of those templates, you can define a table of Cakes, Brownies, or both.
 
@@ -215,19 +215,19 @@ Available Column Definitions
 
 There are several ways to define columns, depending on the type of the attribute that is being used as the data source for the column.
 
-* Numeric attributes values, like :class:`~taurus.entity.continuous_value.ContinuousValue` and :class:`~taurus.entity.integer_value.IntegerValue`
+* Numeric attributes values, like :class:`~gemd.entity.continuous_value.ContinuousValue` and :class:`~gemd.entity.integer_value.IntegerValue`
 
  * :class:`~citrine.ara.columns.MeanColumn`: for the mean value of the numeric distribution
  * :class:`~citrine.ara.columns.StdDevColumn`: for the standard deviation of the numeric distribution, or empty if the value is *nominal*
  * :class:`~citrine.ara.columns.QuantileColumn`: for a user-defined quantile of the numeric distribution, or empty if the value is *nominal*
  * :class:`~citrine.ara.columns.OriginalUnitsColumn`: for getting the units, as entered by the data author, from the specific attribute value; valid for continuous values only
 
-* Enumerated attribute values, like :class:`~taurus.entity.categorical_value.CategoricalValue`
+* Enumerated attribute values, like :class:`~gemd.entity.categorical_value.CategoricalValue`
 
  * :class:`~citrine.ara.columns.MostLikelyCategoryColumn`: for getting the mode
  * :class:`~citrine.ara.columns.MostLikelyProbabilityColumn`: for getting the probability of the mode
 
-* Composition and chemical formula attribute values, like :class:`~taurus.entity.composition_value.CompositionValue`
+* Composition and chemical formula attribute values, like :class:`~gemd.entity.composition_value.CompositionValue`
 
  * :class:`~citrine.ara.columns.FlatCompositionColumn`: for flattening the composition into a chemical-formula-like string
  * :class:`~citrine.ara.columns.ComponentQuantityColumn`: for getting the (optionally normalized) quantity of a specific component, by name

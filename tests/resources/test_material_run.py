@@ -2,6 +2,7 @@ from uuid import UUID
 
 import pytest
 from citrine._session import Session
+from citrine._utils.functions import scrub_none
 from citrine.exceptions import BadRequest
 from citrine.resources.api_error import ValidationError
 from citrine.resources.material_run import MaterialRunCollection
@@ -417,7 +418,7 @@ def test_validate_templates_successful_minimal_params(collection, session):
     expected_call = FakeCall(
         method="PUT",
         path="projects/{}/material-runs/validate-templates".format(project_id),
-        json={"dataObject":run.dump()})
+        json={"dataObject":scrub_none(run.dump())})
     assert session.last_call == expected_call
     assert errors == []
 
@@ -443,9 +444,9 @@ def test_validate_templates_successful_all_params(collection, session):
     expected_call = FakeCall(
         method="PUT",
         path="projects/{}/material-runs/validate-templates".format(project_id),
-        json={"dataObject": run.dump(),
-              "objectTemplate": template.dump(),
-              "ingredientProcessTemplate": unused_process_template.dump()})
+        json={"dataObject": scrub_none(run.dump()),
+              "objectTemplate": scrub_none(template.dump()),
+              "ingredientProcessTemplate": scrub_none(unused_process_template.dump())})
     assert session.last_call == expected_call
     assert errors == []
 
@@ -468,7 +469,7 @@ def test_validate_templates_errors(collection, session):
     expected_call = FakeCall(
         method="PUT",
         path="projects/{}/material-runs/validate-templates".format(project_id),
-        json={"dataObject":run.dump()})
+        json={"dataObject":scrub_none(run.dump())})
     assert session.last_call == expected_call
     assert errors == [validation_error]
 

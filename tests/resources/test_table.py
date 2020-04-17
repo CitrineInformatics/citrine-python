@@ -113,3 +113,35 @@ def test_str_serialization(table):
 def test_register_table(collection):
     with pytest.raises(RuntimeError):
         collection.register(Table.build(TableDataFactory()))
+
+
+@patch("citrine.resources.table.write_file_locally")
+def test_read_table_from_collection(mock_write_files_locally, collection, table):
+    # When
+    with requests_mock.mock() as mock_get:
+        remote_url = "http://otherhost:4572/anywhere"
+        mock_get.get(remote_url, text='stuff')
+        collection.read(table(remote_url), "table.pdf")
+        assert mock_get.call_count == 1
+        assert mock_write_files_locally.call_count == 1
+        assert mock_write_files_locally.call_args == call(b'stuff', "table.pdf")
+
+    with requests_mock.mock() as mock_get:
+        # When
+        localstack_url = "http://localstack:4572/anywhere"
+        mock_get.get("http://localhost:9572/anywhere", text='stuff')
+        collection.read(table(localstack_url), "table2.pdf")
+        assert mock_get.call_count == 1
+        assert mock_write_files_locally.call_count == 2
+        assert mock_write_files_locally.call_args == call(b'stuff', "table2.pdf")
+
+    with requests_mock.mock() as mock_get:
+        # When
+        localstack_url = "http://localstack:4572/anywhere"
+        override_url = "https://fakestack:1337"
+        collection.session.s3_endpoint_url = override_url
+        mock_get.get(override_url + "/anywhere", text='stuff')
+        collection.read(table(localstack_url), "table2.pdf")
+        assert mock_get.call_count == 1
+        assert mock_write_files_locally.call_count == 3
+        assert mock_write_files_locally.call_args == call(b'stuff', "table2.pdf")

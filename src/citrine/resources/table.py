@@ -1,5 +1,6 @@
 from typing import Union, Iterable, Optional, Any
 
+import deprecation
 import requests
 
 from citrine._rest.collection import Collection
@@ -45,11 +46,9 @@ class Table(Resource['Table']):
         # TODO: Change this to name once that's added to the table model
         return '<Table {!r}, version {}>'.format(self.uid, self.version)
 
+    @deprecation.deprecated(deprecated_in="0.16.0", details="Use TableCollection.read() instead")
     def read(self, local_path):
-        """Read the Table file from S3."""
-        # NOTE: this uses the pre-signed S3 download url. If we need to download larger files,
-        # we have other options available (using multi-part downloads in parallel , for example).
-
+        """[DEPRECATED] Use TableCollection.read() instead."""  # noqa: D402
         data_location = self.download_url
         data_location = rewrite_s3_links_locally(data_location)
         response = requests.get(data_location)
@@ -118,3 +117,13 @@ class TableCollection(Collection[Table]):
     def register(self, model: Table) -> Table:
         """Tables cannot be created at this time."""
         raise RuntimeError('Creating Tables is not supported at this time.')
+
+    def read(self, table: Table, local_path: str):
+        """Read the Table file from S3."""
+        # NOTE: this uses the pre-signed S3 download url. If we need to download larger files,
+        # we have other options available (using multi-part downloads in parallel , for example).
+
+        data_location = table.download_url
+        data_location = rewrite_s3_links_locally(data_location, self.session.s3_endpoint_url)
+        response = requests.get(data_location)
+        write_file_locally(response.content, local_path)
