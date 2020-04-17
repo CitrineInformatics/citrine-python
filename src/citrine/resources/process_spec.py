@@ -8,14 +8,14 @@ from citrine._serialization.properties import String, Mapping, Object, LinkOrEls
 from citrine._utils.functions import set_default_uid
 from citrine.resources.data_concepts import DataConcepts
 from citrine.resources.object_specs import ObjectSpec, ObjectSpecCollection
-from taurus.entity.attribute.condition import Condition
-from taurus.entity.attribute.parameter import Parameter
-from taurus.entity.file_link import FileLink
-from taurus.entity.object.process_spec import ProcessSpec as TaurusProcessSpec
-from taurus.entity.template.process_template import ProcessTemplate as TaurusProcessTemplate
+from gemd.entity.attribute.condition import Condition
+from gemd.entity.attribute.parameter import Parameter
+from gemd.entity.file_link import FileLink
+from gemd.entity.object.process_spec import ProcessSpec as GEMDProcessSpec
+from gemd.entity.template.process_template import ProcessTemplate as GEMDProcessTemplate
 
 
-class ProcessSpec(ObjectSpec, Resource['ProcessSpec'], TaurusProcessSpec):
+class ProcessSpec(ObjectSpec, Resource['ProcessSpec'], GEMDProcessSpec):
     """
     A process specification.
 
@@ -27,10 +27,10 @@ class ProcessSpec(ObjectSpec, Resource['ProcessSpec'], TaurusProcessSpec):
         Name of the process spec.
     uids: Map[str, str], optional
         A collection of
-        `unique IDs <https://citrineinformatics.github.io/taurus-documentation/
+        `unique IDs <https://citrineinformatics.github.io/gemd-docs/
         specification/unique-identifiers/>`_.
     tags: List[str], optional
-        `Tags <https://citrineinformatics.github.io/taurus-documentation/specification/tags/>`_
+        `Tags <https://citrineinformatics.github.io/gemd-docs/specification/tags/>`_
         are hierarchical strings that store information about an entity. They can be used
         for filtering and discoverability.
     notes: str, optional
@@ -56,7 +56,7 @@ class ProcessSpec(ObjectSpec, Resource['ProcessSpec'], TaurusProcessSpec):
 
     """
 
-    _response_key = TaurusProcessSpec.typ  # 'process_spec'
+    _response_key = GEMDProcessSpec.typ  # 'process_spec'
 
     name = String('name')
     uids = Mapping(String('scope'), String('id'), 'uids')
@@ -75,13 +75,13 @@ class ProcessSpec(ObjectSpec, Resource['ProcessSpec'], TaurusProcessSpec):
                  notes: Optional[str] = None,
                  conditions: Optional[List[Condition]] = None,
                  parameters: Optional[List[Parameter]] = None,
-                 template: Optional[TaurusProcessTemplate] = None,
+                 template: Optional[GEMDProcessTemplate] = None,
                  file_links: Optional[List[FileLink]] = None
                  ):
-        DataConcepts.__init__(self, TaurusProcessSpec.typ)
-        TaurusProcessSpec.__init__(self, name=name, uids=set_default_uid(uids),
-                                   tags=tags, conditions=conditions, parameters=parameters,
-                                   template=template, file_links=file_links, notes=notes)
+        DataConcepts.__init__(self, GEMDProcessSpec.typ)
+        GEMDProcessSpec.__init__(self, name=name, uids=set_default_uid(uids),
+                                 tags=tags, conditions=conditions, parameters=parameters,
+                                 template=template, file_links=file_links, notes=notes)
 
     def __str__(self):
         return '<Process spec {!r}>'.format(self.name)

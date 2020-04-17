@@ -10,12 +10,12 @@ from citrine._utils.functions import set_default_uid
 from citrine.resources.data_concepts import DataConcepts
 from citrine.resources.object_templates import ObjectTemplateCollection, ObjectTemplate
 from citrine.resources.property_template import PropertyTemplate
-from taurus.entity.bounds.base_bounds import BaseBounds
-from taurus.entity.link_by_uid import LinkByUID
-from taurus.entity.template.material_template import MaterialTemplate as TaurusMaterialTemplate
+from gemd.entity.bounds.base_bounds import BaseBounds
+from gemd.entity.link_by_uid import LinkByUID
+from gemd.entity.template.material_template import MaterialTemplate as GEMDMaterialTemplate
 
 
-class MaterialTemplate(ObjectTemplate, Resource['MaterialTemplate'], TaurusMaterialTemplate):
+class MaterialTemplate(ObjectTemplate, Resource['MaterialTemplate'], GEMDMaterialTemplate):
     """
     A material template.
 
@@ -31,21 +31,21 @@ class MaterialTemplate(ObjectTemplate, Resource['MaterialTemplate'], TaurusMater
         Long-form description of the material template.
     uids: Map[str, str], optional
         A collection of
-        `unique IDs <https://citrineinformatics.github.io/taurus-documentation/
+        `unique IDs <https://citrineinformatics.github.io/gemd-docs/
         specification/unique-identifiers/>`_.
     tags: List[str], optional
-        `Tags <https://citrineinformatics.github.io/taurus-documentation/specification/tags/>`_
+        `Tags <https://citrineinformatics.github.io/gemd-docs/specification/tags/>`_
         are hierarchical strings that store information about an entity. They can be used
         for filtering and discoverability.
     properties: List[PropertyTemplate] or List[PropertyTemplate, \
-    :py:class:`BaseBounds <taurus.entity.bounds.base_bounds.BaseBounds>`], optional
+    :py:class:`BaseBounds <gemd.entity.bounds.base_bounds.BaseBounds>`], optional
         Templates for associated properties. Each template can be provided by itself, or as a list
         with the second entry being a separate, *more restrictive* Bounds object that defines
         the limits of the value for this property.
 
     """
 
-    _response_key = TaurusMaterialTemplate.typ  # 'material_template'
+    _response_key = GEMDMaterialTemplate.typ  # 'material_template'
 
     name = String('name')
     description = PropertyOptional(String(), 'description')
@@ -68,10 +68,10 @@ class MaterialTemplate(ObjectTemplate, Resource['MaterialTemplate'], TaurusMater
         # properties is a list, each element of which is a PropertyTemplate OR is a list with
         # 2 entries: [PropertyTemplate, BaseBounds]. Python typing is not expressive enough, so
         # the typing above is more general.
-        DataConcepts.__init__(self, TaurusMaterialTemplate.typ)
-        TaurusMaterialTemplate.__init__(self, name=name, properties=properties,
-                                        uids=set_default_uid(uids), tags=tags,
-                                        description=description)
+        DataConcepts.__init__(self, GEMDMaterialTemplate.typ)
+        GEMDMaterialTemplate.__init__(self, name=name, properties=properties,
+                                      uids=set_default_uid(uids), tags=tags,
+                                      description=description)
 
     def __str__(self):
         return '<Material template {!r}>'.format(self.name)

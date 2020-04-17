@@ -8,14 +8,14 @@ from citrine._serialization.properties import Optional as PropertyOptional
 from citrine._utils.functions import set_default_uid
 from citrine.resources.data_concepts import DataConcepts
 from citrine.resources.object_specs import ObjectSpec, ObjectSpecCollection
-from taurus.entity.file_link import FileLink
-from taurus.entity.object.ingredient_spec import IngredientSpec as TaurusIngredientSpec
-from taurus.entity.object.material_spec import MaterialSpec as TaurusMaterialSpec
-from taurus.entity.object.process_spec import ProcessSpec as TaurusProcessSpec
-from taurus.entity.value.continuous_value import ContinuousValue
+from gemd.entity.file_link import FileLink
+from gemd.entity.object.ingredient_spec import IngredientSpec as GEMDIngredientSpec
+from gemd.entity.object.material_spec import MaterialSpec as GEMDMaterialSpec
+from gemd.entity.object.process_spec import ProcessSpec as GEMDProcessSpec
+from gemd.entity.value.continuous_value import ContinuousValue
 
 
-class IngredientSpec(ObjectSpec, Resource['IngredientSpec'], TaurusIngredientSpec):
+class IngredientSpec(ObjectSpec, Resource['IngredientSpec'], GEMDIngredientSpec):
     """
     An ingredient specification.
 
@@ -25,10 +25,10 @@ class IngredientSpec(ObjectSpec, Resource['IngredientSpec'], TaurusIngredientSpe
     ----------
     uids: Map[str, str], optional
         A collection of
-        `unique IDs <https://citrineinformatics.github.io/taurus-documentation/
+        `unique IDs <https://citrineinformatics.github.io/gemd-docs/
         specification/unique-identifiers/>`_.
     tags: List[str], optional
-        `Tags <https://citrineinformatics.github.io/taurus-documentation/specification/tags/>`_
+        `Tags <https://citrineinformatics.github.io/gemd-docs/specification/tags/>`_
         are hierarchical strings that store information about an entity. They can be used
         for filtering and discoverability.
     notes: str, optional
@@ -38,16 +38,16 @@ class IngredientSpec(ObjectSpec, Resource['IngredientSpec'], TaurusIngredientSpe
     process: ProcessSpec
         Process that this ingredient is used in.
     mass_fraction: :py:class:`ContinuousValue \
-    <taurus.entity.value.continuous_value.ContinuousValue>`, optional
+    <gemd.entity.value.continuous_value.ContinuousValue>`, optional
         The mass fraction of the ingredient in the process.
     volume_fraction: :py:class:`ContinuousValue \
-    <taurus.entity.value.continuous_value.ContinuousValue>`, optional
+    <gemd.entity.value.continuous_value.ContinuousValue>`, optional
         The volume fraction of the ingredient in the process.
     number_fraction: :py:class:`ContinuousValue \
-    <taurus.entity.value.continuous_value.ContinuousValue>`, optional
+    <gemd.entity.value.continuous_value.ContinuousValue>`, optional
         The number fraction of the ingredient in the process.
     absolute_quantity: :py:class:`ContinuousValue \
-    <taurus.entity.value.continuous_value.ContinuousValue>`, optional
+    <gemd.entity.value.continuous_value.ContinuousValue>`, optional
         The absolute quantity of the ingredient in the process.
     name: str
         Label on the ingredient that is unique within the process that contains it.
@@ -58,7 +58,7 @@ class IngredientSpec(ObjectSpec, Resource['IngredientSpec'], TaurusIngredientSpe
 
     """
 
-    _response_key = TaurusIngredientSpec.typ  # 'ingredient_spec'
+    _response_key = GEMDIngredientSpec.typ  # 'ingredient_spec'
 
     uids = Mapping(String('scope'), String('id'), 'uids')
     tags = PropertyOptional(PropertyList(String()), 'tags')
@@ -80,21 +80,21 @@ class IngredientSpec(ObjectSpec, Resource['IngredientSpec'], TaurusIngredientSpe
                  uids: Optional[Dict[str, str]] = None,
                  tags: Optional[List[str]] = None,
                  notes: Optional[str] = None,
-                 material: Optional[TaurusMaterialSpec] = None,
-                 process: Optional[TaurusProcessSpec] = None,
+                 material: Optional[GEMDMaterialSpec] = None,
+                 process: Optional[GEMDProcessSpec] = None,
                  mass_fraction: Optional[ContinuousValue] = None,
                  volume_fraction: Optional[ContinuousValue] = None,
                  number_fraction: Optional[ContinuousValue] = None,
                  absolute_quantity: Optional[ContinuousValue] = None,
                  labels: Optional[List[str]] = None,
                  file_links: Optional[List[FileLink]] = None):
-        DataConcepts.__init__(self, TaurusIngredientSpec.typ)
-        TaurusIngredientSpec.__init__(self, uids=set_default_uid(uids), tags=tags, notes=notes,
-                                      material=material, process=process,
-                                      mass_fraction=mass_fraction, volume_fraction=volume_fraction,
-                                      number_fraction=number_fraction,
-                                      absolute_quantity=absolute_quantity, labels=labels,
-                                      name=name, file_links=file_links)
+        DataConcepts.__init__(self, GEMDIngredientSpec.typ)
+        GEMDIngredientSpec.__init__(self, uids=set_default_uid(uids), tags=tags, notes=notes,
+                                    material=material, process=process,
+                                    mass_fraction=mass_fraction, volume_fraction=volume_fraction,
+                                    number_fraction=number_fraction,
+                                    absolute_quantity=absolute_quantity, labels=labels,
+                                    name=name, file_links=file_links)
 
     def __str__(self):
         return '<Ingredient spec {!r}>'.format(self.name)

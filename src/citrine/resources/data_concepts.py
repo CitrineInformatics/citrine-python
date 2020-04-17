@@ -12,9 +12,9 @@ from citrine._session import Session
 from citrine._utils.functions import scrub_none, replace_objects_with_links
 from citrine.resources.audit_info import AuditInfo
 from citrine.resources.response import Response
-from taurus.entity.dict_serializable import DictSerializable
-from taurus.entity.link_by_uid import LinkByUID
-from taurus.json import TaurusJson
+from gemd.entity.dict_serializable import DictSerializable
+from gemd.entity.link_by_uid import LinkByUID
+from gemd.json import GEMDJson
 
 
 class DataConcepts(PolymorphicSerializable['DataConcepts'], DictSerializable, ABC):
@@ -56,7 +56,7 @@ class DataConcepts(PolymorphicSerializable['DataConcepts'], DictSerializable, AB
         "dataset": properties.UUID,
     }
     """
-    Fields that are added to the taurus data objects when they are used in this client
+    Fields that are added to the gemd data objects when they are used in this client
 
     * AuditInfo contains who/when information about the resource on the citrine platform
     """
@@ -82,7 +82,7 @@ class DataConcepts(PolymorphicSerializable['DataConcepts'], DictSerializable, AB
         Build a data concepts object from a dictionary.
 
         This is an internal method, and should not be called directly by users.  First,
-        it removes client_specific_fields from d, if present, and then calls the taurus
+        it removes client_specific_fields from d, if present, and then calls the gemd
         object's from_dict method.  Finally, it adds those fields back.
 
         Parameters
@@ -115,7 +115,7 @@ class DataConcepts(PolymorphicSerializable['DataConcepts'], DictSerializable, AB
     @classmethod
     def build(cls, data: dict):
         """
-        Build a data concepts object from a dictionary or from a Taurus object.
+        Build a data concepts object from a dictionary or from a GEMD object.
 
         This is an internal method, and should not be called directly by users.
 
@@ -123,10 +123,10 @@ class DataConcepts(PolymorphicSerializable['DataConcepts'], DictSerializable, AB
         ----------
         data: dict
             A representation of the object. It must be possible to put this dictionary through
-            the loads/dumps cycle of the Taurus
-            :py:mod:`JSON encoder <taurus.jsonr>`. The ensuing dictionary must
+            the loads/dumps cycle of the GMED
+            :py:mod:`JSON encoder <gemd.jsonr>`. The ensuing dictionary must
             have a `type` field that corresponds to the response key of this class or of
-            :py:class:`LinkByUID <taurus.entity.link_by_uid.LinkByUID>`.
+            :py:class:`LinkByUID <gemd.entity.link_by_uid.LinkByUID>`.
 
         Returns
         -------
@@ -148,7 +148,7 @@ class DataConcepts(PolymorphicSerializable['DataConcepts'], DictSerializable, AB
         ----------
         data: dict
             A dictionary corresponding to a serialized data concepts object of unknown type.
-            This method will also work if data is a deserialized Taurus object.
+            This method will also work if data is a deserialized GEMD object.
 
         Returns
         -------
@@ -194,14 +194,14 @@ class DataConcepts(PolymorphicSerializable['DataConcepts'], DictSerializable, AB
         """Get a DataConcepts-compatible json serializer/deserializer."""
         if cls.json_support is None:
             DataConcepts._make_class_dict()
-            cls.json_support = TaurusJson()
+            cls.json_support = GEMDJson()
             cls.json_support.register_classes(
                 {k: v for k, v in DataConcepts.class_dict.items() if k != "link_by_uid"}
             )
         return cls.json_support
 
     def as_dict(self) -> dict:
-        """Dump to a dictionary (useful for interoperability with taurus)."""
+        """Dump to a dictionary (useful for interoperability with gemd)."""
         return self.dump()
 
 
@@ -341,9 +341,9 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         # Eventually, we want to replace it with the following:
         #   dumped_data = dumps(loads(dumps(model.dump())))
         # This dumps the object to a dictionary (model.dump()), and then to a string (dumps()).
-        # But this string is still nested--because it's a dictionary, taurus.dumps() does not know
+        # But this string is still nested--because it's a dictionary, GEMDJson.dumps() does not know
         # how to replace the objects with link-by-uids. loads() converts this string into nested
-        # taurus objects, and then the final dumps() converts that to a json-ready string in which
+        # gemd objects, and then the final dumps() converts that to a json-ready string in which
         # all of the object references have been replaced with link-by-uids.
         dumped_data = replace_objects_with_links(scrub_none(model.dump()))
         data = self.session.post_resource(path, dumped_data, params=params)

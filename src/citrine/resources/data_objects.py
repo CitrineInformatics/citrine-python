@@ -8,9 +8,9 @@ from citrine.resources.api_error import ValidationError
 from citrine.resources.data_concepts import DataConcepts, DataConceptsCollection
 from citrine.resources.object_templates import ObjectTemplateResourceType
 from citrine.resources.process_template import ProcessTemplate
-from taurus.entity.bounds.base_bounds import BaseBounds
-from taurus.entity.link_by_uid import LinkByUID
-from taurus.entity.template.attribute_template import AttributeTemplate
+from gemd.entity.bounds.base_bounds import BaseBounds
+from gemd.entity.link_by_uid import LinkByUID
+from gemd.entity.template.attribute_template import AttributeTemplate
 
 
 class DataObject(DataConcepts, ABC):
@@ -39,8 +39,8 @@ class DataObjectCollection(DataConceptsCollection[DataObjectResourceType], ABC):
         Parameters
         ----------
         attribute_bounds: Dict[Union[AttributeTemplate, \
-        :py:class:`LinkByUID <taurus.entity.link_by_uid.LinkByUID>`], \
-        :py:class:`BaseBounds <taurus.entity.bounds.base_bounds.BaseBounds>`]
+        :py:class:`LinkByUID <gemd.entity.link_by_uid.LinkByUID>`], \
+        :py:class:`BaseBounds <gemd.entity.bounds.base_bounds.BaseBounds>`]
             A dictionary from attributes to the bounds on that attribute.
             Currently only real and integer bounds are supported.
             Each attribute may be represented as an AttributeTemplate (PropertyTemplate,
@@ -90,8 +90,8 @@ class DataObjectCollection(DataConceptsCollection[DataObjectResourceType], ABC):
         Parameters
         ----------
         attribute_bounds: Dict[Union[AttributeTemplate, \
-        :py:class:`LinkByUID <taurus.entity.link_by_uid.LinkByUID>`], \
-        :py:class:`BaseBounds <taurus.entity.bounds.base_bounds.BaseBounds>`]
+        :py:class:`LinkByUID <gemd.entity.link_by_uid.LinkByUID>`], \
+        :py:class:`BaseBounds <gemd.entity.bounds.base_bounds.BaseBounds>`]
             A dictionary from attributes to the bounds on that attribute.
             Currently only real and integer bounds are supported.
             Each attribute may be represented as an AttributeTemplate (PropertyTemplate,

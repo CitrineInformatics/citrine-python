@@ -6,8 +6,8 @@ from citrine._utils.functions import scrub_none
 from citrine.exceptions import BadRequest
 from citrine.resources.api_error import ValidationError
 from citrine.resources.material_run import MaterialRunCollection
-from taurus.entity.bounds.integer_bounds import IntegerBounds
-from taurus.entity.object.material_run import MaterialRun as TaurusRun
+from gemd.entity.bounds.integer_bounds import IntegerBounds
+from gemd.entity.object.material_run import MaterialRun as GEMDRun
 
 from tests.utils.factories import MaterialRunFactory, MaterialRunDataFactory, LinkByUIDFactory, MaterialSpecFactory, \
     MaterialTemplateFactory, MaterialSpecDataFactory, ProcessTemplateFactory
@@ -40,6 +40,7 @@ def test_register_material_run(collection, session):
     # Then
     assert "<Material run 'Test MR 123'>" == str(registered)
 
+
 def test_dry_run_register_material_run(collection, session):
     # Given
     session.set_response(MaterialRunDataFactory(name='Test MR 123'))
@@ -52,11 +53,12 @@ def test_dry_run_register_material_run(collection, session):
     assert "<Material run 'Test MR 123'>" == str(registered)
     assert session.last_call.params == {'dry_run': True}
 
-def test_nomutate_taurus(collection, session):
-    """When registering a Taurus object, the object should not change (aside from auto ids)"""
+
+def test_nomutate_gemd(collection, session):
+    """When registering a GEMD object, the object should not change (aside from auto ids)"""
     # Given
     session.set_response(MaterialRunDataFactory(name='Test MR mutation'))
-    before, after = (TaurusRun(name='Main', uids={'nomutate': 'please'}) for i in range(2))
+    before, after = (GEMDRun(name='Main', uids={'nomutate': 'please'}) for i in range(2))
 
     # When
     registered = collection.register(after)

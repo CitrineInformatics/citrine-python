@@ -1,7 +1,7 @@
 import uuid
 
 import pytest
-from taurus.entity.bounds.real_bounds import RealBounds
+from gemd.entity.bounds.real_bounds import RealBounds
 
 from citrine.resources.condition_template import ConditionTemplate, ConditionTemplateCollection
 from citrine.resources.ingredient_run import IngredientRun, IngredientRunCollection
