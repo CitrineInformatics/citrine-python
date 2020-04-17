@@ -70,7 +70,7 @@ class Session(requests.Session):
         """Optionally refresh our access token (if the previous one is about to expire)."""
         data = {'refresh_token': self.refresh_token}
         response = self.request(
-            'POST', self._versioned_base_url() + 'tokens/refresh', json=data)
+            'POST', self._versioned_base_url() + 'tokens/refresh-tokens', json=data)
         if response.status_code != 200:
             raise UnauthorizedRefreshToken()
         self.access_token = response.json()['access_token']

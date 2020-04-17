@@ -49,7 +49,7 @@ def test_get_refreshes_token(session: Session):
     token_refresh_response = refresh_token(datetime(2019, 3, 14, tzinfo=pytz.utc))
 
     with requests_mock.Mocker() as m:
-        m.post('http://citrine-testing.fake/api/v1/tokens/refresh', json=token_refresh_response)
+        m.post('http://citrine-testing.fake/api/v1/tokens/refresh-tokens', json=token_refresh_response)
         m.get('http://citrine-testing.fake/api/v1/foo', json={'foo': 'bar'})
 
         resp = session.get_resource('/foo')
@@ -62,7 +62,7 @@ def test_get_refresh_token_failure(session: Session):
     session.access_token_expiration = datetime.utcnow() - timedelta(minutes=1)
 
     with requests_mock.Mocker() as m:
-        m.post('http://citrine-testing.fake/api/v1/tokens/refresh', status_code=401)
+        m.post('http://citrine-testing.fake/api/v1/tokens/refresh-tokens', status_code=401)
 
         with pytest.raises(UnauthorizedRefreshToken):
             session.get_resource('/foo')
