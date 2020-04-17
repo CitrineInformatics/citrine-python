@@ -341,10 +341,10 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         # Eventually, we want to replace it with the following:
         #   dumped_data = dumps(loads(dumps(model.dump())))
         # This dumps the object to a dictionary (model.dump()), and then to a string (dumps()).
-        # But this string is still nested--because it's a dictionary, GEMDJson.dumps() does not know
-        # how to replace the objects with link-by-uids. loads() converts this string into nested
-        # gemd objects, and then the final dumps() converts that to a json-ready string in which
-        # all of the object references have been replaced with link-by-uids.
+        # But this string is still nested--because it's a dictionary, GEMDJson.dumps() does not
+        # know how to replace the objects with link-by-uids. loads() converts this string into
+        # nested gemd objects, and then the final dumps() converts that to a json-ready string
+        # in which all of the object references have been replaced with link-by-uids.
         dumped_data = replace_objects_with_links(scrub_none(model.dump()))
         data = self.session.post_resource(path, dumped_data, params=params)
         full_model = self.build(data)
