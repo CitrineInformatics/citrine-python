@@ -132,3 +132,8 @@ Predictor Reports
 
 A :doc:`predictor report <predictor_reports>` describes a machine-learned model, for example its settings and what features are important to the model. 
 It does not include performance metrics. To learn more about performance metrics, please see :doc:`PerformanceWorkflows <performance_workflows>`.
+
+Data Sources
+-------------
+
+A :doc:`data source <data_sources>` references the training data used by a predictor.
