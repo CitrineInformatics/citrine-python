@@ -234,7 +234,7 @@ class Dataset(Resource['Dataset']):
         """
         resources = list()
         for resource in (sorted(data_concepts_resources,
-                           key=lambda resource: writable_sort_order(resource.typ))):
+                         key=lambda resource: writable_sort_order(resource.typ))):
             registered_resource = self.register(resource)
             if isinstance(registered_resource, BaseEntity):
                 resource.uids = registered_resource.uids
