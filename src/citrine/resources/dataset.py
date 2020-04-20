@@ -30,6 +30,7 @@ from taurus.entity.template.measurement_template import MeasurementTemplate
 from taurus.entity.template.parameter_template import ParameterTemplate
 from taurus.entity.template.process_template import ProcessTemplate
 from taurus.entity.template.property_template import PropertyTemplate
+from taurus.entity.base_entity import BaseEntity
 from taurus.util import writable_sort_order
 
 ResourceType = TypeVar('ResourceType', bound='DataConcepts')
@@ -231,9 +232,14 @@ class Dataset(Resource['Dataset']):
 
         :return the registered versions
         """
-        return [self.register(resource) for resource
-                in (sorted(data_concepts_resources,
-                           key=lambda resource: writable_sort_order(resource.typ)))]
+        resources = list()
+        for resource in (sorted(data_concepts_resources,
+                           key=lambda resource: writable_sort_order(resource.typ))):
+            registered_resource = self.register(resource)
+            if isinstance(registered_resource, BaseEntity):
+                resource.uids = registered_resource.uids
+            resources.append(resource)
+        return resources
 
 
 class DatasetCollection(Collection[Dataset]):
