@@ -119,7 +119,7 @@ class MaterialSpecCollection(ObjectSpecCollection[MaterialSpec]):
 
     def list_by_template(self, uid: Union[UUID, str], scope: str = 'id') -> Iterator[MaterialSpec]:
         """
-        Get the material specs using the specified material template.
+        [ALPHA] Get the material specs using the specified material template.
 
         Parameters
         ----------
@@ -136,7 +136,7 @@ class MaterialSpecCollection(ObjectSpecCollection[MaterialSpec]):
 
     def get_by_process(self, uid: Union[UUID, str], scope: str = 'id') -> Optional[MaterialSpec]:
         """
-        Get output material of a process.
+        [ALPHA] Get output material of a process.
 
         Parameters
         ----------

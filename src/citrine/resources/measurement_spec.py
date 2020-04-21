@@ -92,7 +92,7 @@ class MeasurementSpecCollection(ObjectSpecCollection[MeasurementSpec]):
 
     def list_by_template(self, uid: Union[UUID, str], scope: str = 'id') -> Iterator[MeasurementSpec]:
         """
-        Get the measurement specs using the specified measurement template.
+        [ALPHA] Get the measurement specs using the specified measurement template.
 
         Parameters
         ----------

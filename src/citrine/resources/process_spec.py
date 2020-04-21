@@ -103,7 +103,7 @@ class ProcessSpecCollection(ObjectSpecCollection[ProcessSpec]):
 
     def list_by_template(self, uid: Union[UUID, str], scope: str = 'id') -> Iterator[ProcessSpec]:
         """
-        Get the process specs using the specified process template.
+        [ALPHA] Get the process specs using the specified process template.
 
         Parameters
         ----------

@@ -109,7 +109,7 @@ class MeasurementRunCollection(ObjectRunCollection[MeasurementRun]):
 
     def list_by_spec(self, uid: Union[UUID, str], scope: str = 'id') -> Iterator[MeasurementRun]:
         """
-        Get the measurement runs using the specified measurement spec.
+        [ALPHA] Get the measurement runs using the specified measurement spec.
 
         Parameters
         ----------
@@ -126,7 +126,7 @@ class MeasurementRunCollection(ObjectRunCollection[MeasurementRun]):
 
     def list_by_material(self, uid: Union[UUID, str], scope: str = 'id') -> Iterator[MeasurementRun]:
         """
-        Get measurements of the specified material.
+        [ALPHA] Get measurements of the specified material.
 
         Parameters
         ----------

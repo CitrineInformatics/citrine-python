@@ -152,7 +152,7 @@ class MaterialRunCollection(ObjectRunCollection[MaterialRun]):
 
     def get_by_process(self, uid: Union[UUID, str], scope: str = 'id') -> Optional[MaterialRun]:
         """
-        Get output material of a process.
+        [ALPHA] Get output material of a process.
 
         Parameters
         ----------
@@ -213,7 +213,7 @@ class MaterialRunCollection(ObjectRunCollection[MaterialRun]):
 
     def list_by_spec(self, uid: Union[UUID, str], scope: str = 'id') -> Iterator[MaterialRun]:
         """
-        Get the material runs using the specified material spec.
+        [ALPHA] Get the material runs using the specified material spec.
 
         Parameters
         ----------
@@ -230,7 +230,7 @@ class MaterialRunCollection(ObjectRunCollection[MaterialRun]):
 
     def list_by_template(self, uid: Union[UUID, str], scope: str = 'id') -> Iterator[MaterialRun]:
         """
-        Get the material runs using the specified material template.
+        [ALPHA] Get the material runs using the specified material template.
 
         Parameters
         ----------

@@ -107,7 +107,7 @@ class ProcessRunCollection(ObjectRunCollection[ProcessRun]):
 
     def list_by_spec(self, uid: Union[UUID, str], scope: str = 'id') -> Iterator[ProcessRun]:
         """
-        Get the process runs using the specified process spec.
+        [ALPHA] Get the process runs using the specified process spec.
 
         Parameters
         ----------

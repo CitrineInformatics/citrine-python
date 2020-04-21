@@ -121,9 +121,26 @@ class IngredientRunCollection(ObjectRunCollection[IngredientRun]):
         """Return the resource type in the collection."""
         return IngredientRun
 
+    def list_by_spec(self, uid: Union[UUID, str], scope: str = 'id') -> Iterator[IngredientRun]:
+        """
+        [ALPHA] Get the ingredient runs using the specified ingredient spec.
+
+        Parameters
+        ----------
+        uid
+            The unique ID of the ingredient spec whose ingredient run usages are to be located.
+        scope
+            The scope of `uid`.
+        Returns
+        -------
+        Iterator[IngredientRun]
+            The ingredient runs using the specified ingredient spec.
+        """
+        return self._get_relation('ingredient-specs', uid=uid, scope=scope)
+
     def list_by_process(self, uid: Union[UUID, str], scope: str = 'id') -> Iterator[IngredientRun]:
         """
-        Get ingredients to a process.
+        [ALPHA] Get ingredients to a process.
 
         Parameters
         ----------
@@ -141,7 +158,7 @@ class IngredientRunCollection(ObjectRunCollection[IngredientRun]):
 
     def list_by_material(self, uid: Union[UUID, str], scope: str = 'id') -> Iterator[IngredientRun]:
         """
-        Get ingredients using the specified material.
+        [ALPHA] Get ingredients using the specified material.
 
         Parameters
         ----------

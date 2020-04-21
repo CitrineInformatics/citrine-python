@@ -116,7 +116,7 @@ class IngredientSpecCollection(ObjectSpecCollection[IngredientSpec]):
 
     def list_by_process(self, uid: Union[UUID, str], scope: str = 'id') -> Iterator[IngredientSpec]:
         """
-        Get ingredients to a process.
+        [ALPHA] Get ingredients to a process.
 
         Parameters
         ----------
@@ -134,7 +134,7 @@ class IngredientSpecCollection(ObjectSpecCollection[IngredientSpec]):
 
     def list_by_material(self, uid: Union[UUID, str], scope: str = 'id') -> Iterator[IngredientSpec]:
         """
-        Get ingredients using the specified material.
+        [ALPHA] Get ingredients using the specified material.
 
         Parameters
         ----------
