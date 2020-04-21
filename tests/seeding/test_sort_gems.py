@@ -3,7 +3,7 @@ from citrine.resources.measurement_spec import MeasurementSpec
 from citrine.resources.process_spec import ProcessSpec
 from citrine.resources.property_template import PropertyTemplate
 from citrine.seeding.sort_gems import split_templates_from_objects
-from taurus.entity.bounds.categorical_bounds import CategoricalBounds
+from gemd.entity.bounds.categorical_bounds import CategoricalBounds
 
 
 def test_no_templates():

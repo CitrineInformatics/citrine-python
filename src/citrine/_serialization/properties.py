@@ -7,9 +7,9 @@ from itertools import chain
 import uuid
 import arrow
 
-from taurus.enumeration.base_enumeration import BaseEnumeration
-from taurus.entity.link_by_uid import LinkByUID
-from taurus.entity.dict_serializable import DictSerializable
+from gemd.enumeration.base_enumeration import BaseEnumeration
+from gemd.entity.link_by_uid import LinkByUID
+from gemd.entity.dict_serializable import DictSerializable
 from citrine._serialization.serializable import Serializable
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
 
@@ -544,9 +544,9 @@ class Object(Property[typing.Any, dict]):
             # There are two types of objects that we expect to not have fields.
             # One is a PolymorphicSerializable, in which case obj is some Serializable instance
             # of a child class, and has a dump() method.
-            # The other possibility is that obj is a taurus object that is not reproduced in
+            # The other possibility is that obj is a gemd object that is not reproduced in
             # citrine-python (attribute, value, bounds, etc.). These are all DictSerializable,
-            # and have a dump() method that uses the taurus json encoder client.
+            # and have a dump() method that uses the gemd json encoder client.
             try:
                 return obj.dump()
             except AttributeError:
@@ -577,7 +577,7 @@ class LinkOrElse(Property[typing.Union[Serializable, LinkByUID], dict]):
     (data concepts objects, templates, etc.) know how to deserialize themselves through a
     build() method that doesn't call _deserialize().
 
-    This is currently tied to LinkByUID in taurus, but could be modified to work with a
+    This is currently tied to LinkByUID in gemd, but could be modified to work with a
     generic Link object.
     """
 

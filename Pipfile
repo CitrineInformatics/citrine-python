@@ -16,7 +16,7 @@ requests-mock = "*"
 
 [packages]
 citrine = {editable = true,path = "."}
-taurus = {git = "https://github.com/CitrineInformatics/taurus.git", editable = true, ref="develop"}
+gemd = {git = "https://github.com/CitrineInformatics/gemd-python.git", editable = true, ref="master"}
 boto3 = "*"
 botocore = "*"
 deprecation = "*"

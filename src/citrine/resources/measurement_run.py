@@ -8,17 +8,17 @@ from citrine._serialization.properties import String, Object, Mapping, LinkOrEls
 from citrine._utils.functions import set_default_uid
 from citrine.resources.data_concepts import DataConcepts
 from citrine.resources.object_runs import ObjectRun, ObjectRunCollection
-from taurus.entity.attribute.condition import Condition
-from taurus.entity.attribute.parameter import Parameter
-from taurus.entity.attribute.property import Property
-from taurus.entity.file_link import FileLink
-from taurus.entity.object.material_run import MaterialRun as TaurusMaterialRun
-from taurus.entity.object.measurement_run import MeasurementRun as TaurusMeasurementRun
-from taurus.entity.object.measurement_spec import MeasurementSpec as TaurusMeasurementSpec
-from taurus.entity.source.performed_source import PerformedSource
+from gemd.entity.attribute.condition import Condition
+from gemd.entity.attribute.parameter import Parameter
+from gemd.entity.attribute.property import Property
+from gemd.entity.file_link import FileLink
+from gemd.entity.object.material_run import MaterialRun as GEMDMaterialRun
+from gemd.entity.object.measurement_run import MeasurementRun as GEMDMeasurementRun
+from gemd.entity.object.measurement_spec import MeasurementSpec as GEMDMeasurementSpec
+from gemd.entity.source.performed_source import PerformedSource
 
 
-class MeasurementRun(ObjectRun, Resource['MeasurementRun'], TaurusMeasurementRun):
+class MeasurementRun(ObjectRun, Resource['MeasurementRun'], GEMDMeasurementRun):
     """
     A measurement run.
 
@@ -28,10 +28,10 @@ class MeasurementRun(ObjectRun, Resource['MeasurementRun'], TaurusMeasurementRun
         Name of the measurement run.
     uids: Map[str, str], optional
         A collection of
-        `unique IDs <https://citrineinformatics.github.io/taurus-documentation/
+        `unique IDs <https://citrineinformatics.github.io/gemd-docs/
         specification/unique-identifiers/>`_.
     tags: List[str], optional
-        `Tags <https://citrineinformatics.github.io/taurus-documentation/specification/tags/>`_
+        `Tags <https://citrineinformatics.github.io/gemd-docs/specification/tags/>`_
         are hierarchical strings that store information about an entity. They can be used
         for filtering and discoverability.
     notes: str, optional
@@ -55,7 +55,7 @@ class MeasurementRun(ObjectRun, Resource['MeasurementRun'], TaurusMeasurementRun
 
     """
 
-    _response_key = TaurusMeasurementRun.typ  # 'measurement_run'
+    _response_key = GEMDMeasurementRun.typ  # 'measurement_run'
 
     name = String('name')
     uids = Mapping(String('scope'), String('id'), 'uids')
@@ -78,16 +78,16 @@ class MeasurementRun(ObjectRun, Resource['MeasurementRun'], TaurusMeasurementRun
                  conditions: Optional[List[Condition]] = None,
                  properties: Optional[List[Property]] = None,
                  parameters: Optional[List[Parameter]] = None,
-                 spec: Optional[TaurusMeasurementSpec] = None,
-                 material: Optional[TaurusMaterialRun] = None,
+                 spec: Optional[GEMDMeasurementSpec] = None,
+                 material: Optional[GEMDMaterialRun] = None,
                  file_links: Optional[List[FileLink]] = None,
                  source: Optional[PerformedSource] = None):
-        DataConcepts.__init__(self, TaurusMeasurementRun.typ)
-        TaurusMeasurementRun.__init__(self, name=name, uids=set_default_uid(uids),
-                                      material=material,
-                                      tags=tags, conditions=conditions, properties=properties,
-                                      parameters=parameters, spec=spec,
-                                      file_links=file_links, notes=notes, source=source)
+        DataConcepts.__init__(self, GEMDMeasurementRun.typ)
+        GEMDMeasurementRun.__init__(self, name=name, uids=set_default_uid(uids),
+                                    material=material,
+                                    tags=tags, conditions=conditions, properties=properties,
+                                    parameters=parameters, spec=spec,
+                                    file_links=file_links, notes=notes, source=source)
 
     def __str__(self):
         return '<Measurement run {!r}>'.format(self.name)

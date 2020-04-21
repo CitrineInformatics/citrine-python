@@ -2,9 +2,9 @@
 import pytest
 from uuid import uuid4
 
-from taurus.entity.attribute.condition import Condition
-from taurus.entity.value.nominal_real import NominalReal
-from taurus.entity.value.uniform_real import UniformReal
+from gemd.entity.attribute.condition import Condition
+from gemd.entity.value.nominal_real import NominalReal
+from gemd.entity.value.uniform_real import UniformReal
 from citrine.resources.process_run import ProcessRun
 from citrine.resources.process_spec import ProcessSpec
 
