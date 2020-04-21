@@ -294,3 +294,16 @@ def test_register_all_data_concepts(dataset):
     assert call_basenames.index(basename(MeasurementTemplateCollection._path_template)) > call_basenames.index(basename(ConditionTemplateCollection._path_template))
     assert call_basenames.index(basename(MeasurementTemplateCollection._path_template)) > call_basenames.index(basename(ParameterTemplateCollection._path_template))
     assert call_basenames.index(basename(MaterialTemplateCollection._path_template)) > call_basenames.index(basename(PropertyTemplateCollection._path_template))
+
+
+def test_register_all_object_update(dataset):
+    from taurus.entity.object.process_spec import ProcessSpec as TaurusProcessSpec
+    from taurus.entity.object.material_spec import MaterialSpec as TaurusMaterialSpec
+
+    process = TaurusProcessSpec("process")
+    material = TaurusMaterialSpec("material", process=process)
+
+    registered_process, registered_material = dataset.register_all([process, material])
+
+    assert process.uids == registered_process.uids
+    assert material.uids == registered_material.uids
