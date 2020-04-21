@@ -6,17 +6,17 @@ from citrine.resources.process_run import ProcessRun
 from citrine.resources.ingredient_run import IngredientRun
 from citrine.resources.ingredient_spec import IngredientSpec
 from citrine.resources.measurement_run import MeasurementRun
-from taurus.entity.link_by_uid import LinkByUID
-from taurus.json import loads, dumps
-from taurus.demo.cake import make_cake
-from taurus.entity.object import MeasurementRun as TaurusMeasurementRun
-from taurus.entity.object import MaterialRun as TaurusMaterialRun
-from taurus.entity.object import MaterialSpec as TaurusMaterialSpec
-from taurus.entity.object import MeasurementSpec as TaurusMeasurementSpec
-from taurus.entity.object import ProcessSpec as TaurusProcessSpec
-from taurus.entity.object import ProcessRun as TaurusProcessRun
-from taurus.entity.object.ingredient_spec import IngredientSpec as TaurusIngredientSpec
-from taurus.entity.object.ingredient_run import IngredientRun as TaurusIngredientRun
+from gemd.entity.link_by_uid import LinkByUID
+from gemd.json import loads, dumps
+from gemd.demo.cake import make_cake
+from gemd.entity.object import MeasurementRun as GEMDMeasurementRun
+from gemd.entity.object import MaterialRun as GEMDMaterialRun
+from gemd.entity.object import MaterialSpec as GEMDMaterialSpec
+from gemd.entity.object import MeasurementSpec as GEMDMeasurementSpec
+from gemd.entity.object import ProcessSpec as GEMDProcessSpec
+from gemd.entity.object import ProcessRun as GEMDProcessRun
+from gemd.entity.object.ingredient_spec import IngredientSpec as GEMDIngredientSpec
+from gemd.entity.object.ingredient_run import IngredientRun as GEMDIngredientRun
 
 from tests.utils.factories import MaterialRunDataFactory
 
@@ -91,23 +91,23 @@ def test_nested_serialization():
 
 
 def test_measurement_material_connection_rehydration():
-    """Test that fully-linked Taurus object can be built as fully-linked Citrine-python object."""
-    starting_mat_spec = TaurusMaterialSpec("starting material")
-    starting_mat = TaurusMaterialRun("starting material", spec=starting_mat_spec)
-    meas_spec = TaurusMeasurementSpec("measurement spec")
-    meas1 = TaurusMeasurementRun("measurement on starting material",
-                                 spec=meas_spec, material=starting_mat)
+    """Test that fully-linked GEMD object can be built as fully-linked Citrine-python object."""
+    starting_mat_spec = GEMDMaterialSpec("starting material")
+    starting_mat = GEMDMaterialRun("starting material", spec=starting_mat_spec)
+    meas_spec = GEMDMeasurementSpec("measurement spec")
+    meas1 = GEMDMeasurementRun("measurement on starting material",
+                               spec=meas_spec, material=starting_mat)
 
-    process_spec = TaurusProcessSpec("Transformative process")
-    process = TaurusProcessRun("Transformative process", spec=process_spec)
-    ingredient_spec = TaurusIngredientSpec(name="ingredient", material=starting_mat_spec,
-                                           process=process_spec)
-    ingredient = TaurusIngredientRun(material=starting_mat, process=process, spec=ingredient_spec)
+    process_spec = GEMDProcessSpec("Transformative process")
+    process = GEMDProcessRun("Transformative process", spec=process_spec)
+    ingredient_spec = GEMDIngredientSpec(name="ingredient", material=starting_mat_spec,
+                                         process=process_spec)
+    ingredient = GEMDIngredientRun(material=starting_mat, process=process, spec=ingredient_spec)
 
-    ending_mat_spec = TaurusMaterialSpec("ending material", process=process_spec)
-    ending_mat = TaurusMaterialRun("ending material", process=process, spec=ending_mat_spec)
-    meas2 = TaurusMeasurementRun("measurement on ending material",
-                                 spec=meas_spec, material=ending_mat)
+    ending_mat_spec = GEMDMaterialSpec("ending material", process=process_spec)
+    ending_mat = GEMDMaterialRun("ending material", process=process, spec=ending_mat_spec)
+    meas2 = GEMDMeasurementRun("measurement on ending material",
+                               spec=meas_spec, material=ending_mat)
 
     copy = MaterialRun.build(ending_mat)
     assert isinstance(copy, MaterialRun), "copy of ending_mat should be a MaterialRun"
@@ -143,7 +143,7 @@ def test_measurement_material_connection_rehydration():
 
 
 def test_cake():
-    """Test that the cake example from taurus can be built without modification.
+    """Test that the cake example from gemd can be built without modification.
     This only tests the fix to a limited problem (not all ingredients being reconstructed) and
     is not a full test of equivalence, because the reconstruction creates "dangling paths."
     Consider a material/process run/spec square. The material run links to a material spec, which
@@ -152,7 +152,7 @@ def test_cake():
     to call mat.process.spec.output_material it returns None. This is due to the way the build()
     method attempts to traverse the object tree, and requires an overhaul of build().
     """
-    taurus_cake = make_cake()
-    cake = MaterialRun.build(taurus_cake)
+    gemd_cake = make_cake()
+    cake = MaterialRun.build(gemd_cake)
     assert [ingred.name for ingred in cake.process.ingredients] == \
-           [ingred.name for ingred in taurus_cake.process.ingredients]
+           [ingred.name for ingred in gemd_cake.process.ingredients]

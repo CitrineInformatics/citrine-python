@@ -1,7 +1,7 @@
 import pytest
 
 from citrine._rest.resource import Resource
-from taurus.entity.object.process_spec import ProcessSpec
+from gemd.entity.object.process_spec import ProcessSpec
 
 from citrine.resources.object_specs import ObjectSpec
 

@@ -12,14 +12,14 @@ from citrine.resources.data_concepts import DataConcepts
 from citrine.resources.object_templates import ObjectTemplate, ObjectTemplateCollection
 from citrine.resources.parameter_template import ParameterTemplate
 from citrine.resources.property_template import PropertyTemplate
-from taurus.entity.bounds.base_bounds import BaseBounds
-from taurus.entity.link_by_uid import LinkByUID
-from taurus.entity.template.measurement_template \
-    import MeasurementTemplate as TaurusMeasurementTemplate
+from gemd.entity.bounds.base_bounds import BaseBounds
+from gemd.entity.link_by_uid import LinkByUID
+from gemd.entity.template.measurement_template \
+    import MeasurementTemplate as GEMDMeasurementTemplate
 
 
 class MeasurementTemplate(ObjectTemplate,
-                          Resource['MeasurementTemplate'], TaurusMeasurementTemplate):
+                          Resource['MeasurementTemplate'], GEMDMeasurementTemplate):
     """
     A measurement template.
 
@@ -35,31 +35,31 @@ class MeasurementTemplate(ObjectTemplate,
         Long-form description of the measurement template.
     uids: Map[str, str], optional
         A collection of
-        `unique IDs <https://citrineinformatics.github.io/taurus-documentation/
+        `unique IDs <https://citrineinformatics.github.io/gemd-docs/
         specification/unique-identifiers/>`_.
     tags: List[str], optional
-        `Tags <https://citrineinformatics.github.io/taurus-documentation/specification/tags/>`_
+        `Tags <https://citrineinformatics.github.io/gemd-docs/specification/tags/>`_
         are hierarchical strings that store information about an entity. They can be used
         for filtering and discoverability.
     conditions: List[ConditionTemplate] or List[ConditionTemplate, \
-    :py:class:`BaseBounds <taurus.entity.bounds.base_bounds.BaseBounds>`], optional
+    :py:class:`BaseBounds <gemd.entity.bounds.base_bounds.BaseBounds>`], optional
         Templates for associated conditions. Each template can be provided by itself, or as a list
         with the second entry being a separate, *more restrictive* Bounds object that defines
         the limits of the value for this condition.
     parameters: List[ParameterTemplate] or List[ParameterTemplate, \
-    :py:class:`BaseBounds <taurus.entity.bounds.base_bounds.BaseBounds>`], optional
+    :py:class:`BaseBounds <gemd.entity.bounds.base_bounds.BaseBounds>`], optional
         Templates for associated parameters. Each template can be provided by itself, or as a list
         with the second entry being a separate, *more restrictive* Bounds object that defines
         the limits of the value for this parameter.
     properties: List[PropertyTemplate] or List[PropertyTemplate, \
-    :py:class:`BaseBounds <taurus.entity.bounds.base_bounds.BaseBounds>`], optional
+    :py:class:`BaseBounds <gemd.entity.bounds.base_bounds.BaseBounds>`], optional
         Templates for associated properties. Each template can be provided by itself, or as a list
         with the second entry being a separate, *more restrictive* Bounds object that defines
         the limits of the value for this property.
 
     """
 
-    _response_key = TaurusMeasurementTemplate.typ  # 'measurement_template'
+    _response_key = GEMDMeasurementTemplate.typ  # 'measurement_template'
 
     name = String('name')
     description = PropertyOptional(String(), 'description')
@@ -93,10 +93,10 @@ class MeasurementTemplate(ObjectTemplate,
                                                      ]]] = None,
                  description: Optional[str] = None,
                  tags: Optional[List[str]] = None):
-        DataConcepts.__init__(self, TaurusMeasurementTemplate.typ)
-        TaurusMeasurementTemplate.__init__(self, name=name, properties=properties,
-                                           conditions=conditions, parameters=parameters, tags=tags,
-                                           uids=set_default_uid(uids), description=description)
+        DataConcepts.__init__(self, GEMDMeasurementTemplate.typ)
+        GEMDMeasurementTemplate.__init__(self, name=name, properties=properties,
+                                         conditions=conditions, parameters=parameters, tags=tags,
+                                         uids=set_default_uid(uids), description=description)
 
     def __str__(self):
         return '<Measurement template {!r}>'.format(self.name)

@@ -4,8 +4,8 @@ from uuid import uuid4
 
 from citrine.resources.ingredient_run import IngredientRun
 from citrine.resources.material_run import MaterialRun
-from taurus.entity.value.normal_real import NormalReal
-from taurus.entity.value.nominal_real import NominalReal
+from gemd.entity.value.normal_real import NormalReal
+from gemd.entity.value.nominal_real import NominalReal
 
 
 @pytest.fixture
