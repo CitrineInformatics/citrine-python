@@ -2,12 +2,12 @@ import uuid
 
 import pytest
 from mock import patch, call, MagicMock, mock_open
-from taurus.entity.bounds.real_bounds import RealBounds
-from taurus.entity.link_by_uid import LinkByUID
+from gemd.entity.bounds.real_bounds import RealBounds
+from gemd.entity.link_by_uid import LinkByUID
 
 from citrine._utils.functions import set_default_uid, get_object_id, validate_type, object_to_link_by_uid, \
     rewrite_s3_links_locally, write_file_locally
-from taurus.entity.attribute.property import Property
+from gemd.entity.attribute.property import Property
 from citrine.resources.condition_template import ConditionTemplate
 
 

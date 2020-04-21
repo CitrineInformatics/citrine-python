@@ -2,9 +2,9 @@
 from abc import abstractmethod
 from typing import Type, Optional, List, Tuple, Union  # noqa: F401
 
-from taurus.entity.bounds.base_bounds import BaseBounds
-from taurus.entity.link_by_uid import LinkByUID
-from taurus.enumeration.base_enumeration import BaseEnumeration
+from gemd.entity.bounds.base_bounds import BaseBounds
+from gemd.entity.link_by_uid import LinkByUID
+from gemd.enumeration.base_enumeration import BaseEnumeration
 
 from citrine._serialization.serializable import Serializable
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable

@@ -14,7 +14,7 @@ from citrine.resources.material_run import MaterialRun
 from citrine.resources.material_spec import MaterialSpec
 from citrine.resources.material_template import MaterialTemplate
 from citrine.resources.process_template import ProcessTemplate
-from taurus.entity.link_by_uid import LinkByUID
+from gemd.entity.link_by_uid import LinkByUID
 
 
 class ProjectDataFactory(factory.DictFactory):

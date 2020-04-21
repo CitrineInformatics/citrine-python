@@ -2,13 +2,13 @@ from citrine.resources.condition_template import ConditionTemplate
 from citrine.resources.process_spec import ProcessSpec
 from citrine.resources.process_template import ProcessTemplate
 
-from taurus.entity.bounds.categorical_bounds import CategoricalBounds
-from taurus.util import flatten
+from gemd.entity.bounds.categorical_bounds import CategoricalBounds
+from gemd.util import flatten
 
 
 def test_flatten():
-    """Test that taurus utility methods can be applied to citrine-python objects.
-    Citrine-python resources extend the taurus data model, so the taurus operations
+    """Test that gemd utility methods can be applied to citrine-python objects.
+    Citrine-python resources extend the gemd data model, so the gemd operations
     should work on them.
     """
 

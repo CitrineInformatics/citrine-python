@@ -18,7 +18,7 @@ from citrine.resources.process_run import ProcessRunCollection, ProcessRun
 from citrine.resources.process_spec import ProcessSpecCollection, ProcessSpec
 from citrine.resources.process_template import ProcessTemplateCollection, ProcessTemplate
 from citrine.resources.property_template import PropertyTemplateCollection, PropertyTemplate
-from taurus.entity.bounds.integer_bounds import IntegerBounds
+from gemd.entity.bounds.integer_bounds import IntegerBounds
 
 from tests.utils.factories import DatasetDataFactory, DatasetFactory
 from tests.utils.session import FakeSession, FakePaginatedSession, FakeCall

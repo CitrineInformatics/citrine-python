@@ -1,9 +1,9 @@
-"""Test that setting objects in citrine-python activates the setter logic in taurus."""
+"""Test that setting objects in citrine-python activates the setter logic in gemd."""
 
 import pytest
 
-from taurus.entity.value.discrete_categorical import DiscreteCategorical
-from taurus.entity.attribute.property import Property
+from gemd.entity.value.discrete_categorical import DiscreteCategorical
+from gemd.entity.attribute.property import Property
 from citrine.resources.process_run import ProcessRun
 from citrine.resources.process_spec import ProcessSpec
 from citrine.resources.material_run import MaterialRun
@@ -58,7 +58,7 @@ def test_object_validation():
 
 
 def test_list_validation():
-    """Test that lists are validated by taurus."""
+    """Test that lists are validated by gemd."""
     with pytest.raises(TypeError):
         # labels must be a list of string, but contains an int
         IngredientSpec(labels=["Label 1", 17], name="foo")

@@ -8,15 +8,15 @@ from citrine._serialization.properties import Optional as PropertyOptional
 from citrine._utils.functions import set_default_uid
 from citrine.resources.data_concepts import DataConcepts
 from citrine.resources.object_runs import ObjectRun, ObjectRunCollection
-from taurus.entity.file_link import FileLink
-from taurus.entity.object.ingredient_run import IngredientRun as TaurusIngredientRun
-from taurus.entity.object.ingredient_spec import IngredientSpec as TaurusIngredientSpec
-from taurus.entity.object.material_run import MaterialRun as TaurusMaterialRun
-from taurus.entity.object.process_run import ProcessRun as TaurusProcessRun
-from taurus.entity.value.continuous_value import ContinuousValue
+from gemd.entity.file_link import FileLink
+from gemd.entity.object.ingredient_run import IngredientRun as GEMDIngredientRun
+from gemd.entity.object.ingredient_spec import IngredientSpec as GEMDIngredientSpec
+from gemd.entity.object.material_run import MaterialRun as GEMDMaterialRun
+from gemd.entity.object.process_run import ProcessRun as GEMDProcessRun
+from gemd.entity.value.continuous_value import ContinuousValue
 
 
-class IngredientRun(ObjectRun, Resource['IngredientRun'], TaurusIngredientRun):
+class IngredientRun(ObjectRun, Resource['IngredientRun'], GEMDIngredientRun):
     """
     An ingredient run.
 
@@ -26,10 +26,10 @@ class IngredientRun(ObjectRun, Resource['IngredientRun'], TaurusIngredientRun):
     ----------
     uids: Map[str, str], optional
         A collection of
-        `unique IDs <https://citrineinformatics.github.io/taurus-documentation/
+        `unique IDs <https://citrineinformatics.github.io/gemd-docs/
         specification/unique-identifiers/>`_.
     tags: List[str], optional
-        `Tags <https://citrineinformatics.github.io/taurus-documentation/specification/tags/>`_
+        `Tags <https://citrineinformatics.github.io/gemd-docs/specification/tags/>`_
         are hierarchical strings that store information about an entity. They can be used
         for filtering and discoverability.
     notes: str, optional
@@ -39,16 +39,16 @@ class IngredientRun(ObjectRun, Resource['IngredientRun'], TaurusIngredientRun):
     process: ProcessRun
         Process that this ingredient is used in.
     mass_fraction: :py:class:`ContinuousValue \
-    <taurus.entity.value.continuous_value.ContinuousValue>`, optional
+    <gemd.entity.value.continuous_value.ContinuousValue>`, optional
         The mass fraction of the ingredient in the process.
     volume_fraction: :py:class:`ContinuousValue \
-    <taurus.entity.value.continuous_value.ContinuousValue>`, optional
+    <gemd.entity.value.continuous_value.ContinuousValue>`, optional
         The volume fraction of the ingredient in the process.
     number_fraction: :py:class:`ContinuousValue \
-    <taurus.entity.value.continuous_value.ContinuousValue>`, optional
+    <gemd.entity.value.continuous_value.ContinuousValue>`, optional
         The number fraction of the ingredient in the process.
     absolute_quantity: :py:class:`ContinuousValue \
-    <taurus.entity.value.continuous_value.ContinuousValue>`, optional
+    <gemd.entity.value.continuous_value.ContinuousValue>`, optional
         The absolute quantity of the ingredient in the process.
     name: str, optional
         Label on the ingredient that is unique within the process that contains it. This property
@@ -63,7 +63,7 @@ class IngredientRun(ObjectRun, Resource['IngredientRun'], TaurusIngredientRun):
 
     """
 
-    _response_key = TaurusIngredientRun.typ  # 'ingredient_run'
+    _response_key = GEMDIngredientRun.typ  # 'ingredient_run'
 
     uids = Mapping(String('scope'), String('id'), 'uids')
     tags = PropertyOptional(PropertyList(String()), 'tags')
@@ -86,22 +86,22 @@ class IngredientRun(ObjectRun, Resource['IngredientRun'], TaurusIngredientRun):
                  uids: Optional[Dict[str, str]] = None,
                  tags: Optional[List[str]] = None,
                  notes: Optional[str] = None,
-                 material: Optional[TaurusMaterialRun] = None,
-                 process: Optional[TaurusProcessRun] = None,
+                 material: Optional[GEMDMaterialRun] = None,
+                 process: Optional[GEMDProcessRun] = None,
                  mass_fraction: Optional[ContinuousValue] = None,
                  volume_fraction: Optional[ContinuousValue] = None,
                  number_fraction: Optional[ContinuousValue] = None,
                  absolute_quantity: Optional[ContinuousValue] = None,
                  labels: Optional[List[str]] = None,
-                 spec: Optional[TaurusIngredientSpec] = None,
+                 spec: Optional[GEMDIngredientSpec] = None,
                  file_links: Optional[List[FileLink]] = None):
-        DataConcepts.__init__(self, TaurusIngredientRun.typ)
-        TaurusIngredientRun.__init__(self, uids=set_default_uid(uids), tags=tags, notes=notes,
-                                     material=material, process=process,
-                                     mass_fraction=mass_fraction, volume_fraction=volume_fraction,
-                                     number_fraction=number_fraction,
-                                     absolute_quantity=absolute_quantity, labels=labels,
-                                     name=name, spec=spec, file_links=file_links)
+        DataConcepts.__init__(self, GEMDIngredientRun.typ)
+        GEMDIngredientRun.__init__(self, uids=set_default_uid(uids), tags=tags, notes=notes,
+                                   material=material, process=process,
+                                   mass_fraction=mass_fraction, volume_fraction=volume_fraction,
+                                   number_fraction=number_fraction,
+                                   absolute_quantity=absolute_quantity, labels=labels,
+                                   name=name, spec=spec, file_links=file_links)
 
     def __str__(self):
         return '<Ingredient run {!r}>'.format(self.name)

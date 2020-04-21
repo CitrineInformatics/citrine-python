@@ -2,10 +2,10 @@
 from citrine.resources.condition_template import ConditionTemplate
 from citrine.resources.parameter_template import ParameterTemplate
 from citrine.resources.property_template import PropertyTemplate
-from taurus.entity.bounds.real_bounds import RealBounds
-from taurus.entity.bounds.integer_bounds import IntegerBounds
-from taurus.entity.bounds.categorical_bounds import CategoricalBounds
-from taurus.json import loads, dumps
+from gemd.entity.bounds.real_bounds import RealBounds
+from gemd.entity.bounds.integer_bounds import IntegerBounds
+from gemd.entity.bounds.categorical_bounds import CategoricalBounds
+from gemd.json import loads, dumps
 
 
 def test_condition_template():
@@ -16,7 +16,7 @@ def test_condition_template():
 
     # Take template through a serde cycle and ensure that it is unchanged
     assert ConditionTemplate.build(template.dump()) == template
-    # A more complicated cycle that goes through both taurus and citrine-python serde.
+    # A more complicated cycle that goes through both gemd-python and citrine-python serde.
     assert ConditionTemplate.build(loads(dumps(template.dump())).as_dict()) == template
 
 

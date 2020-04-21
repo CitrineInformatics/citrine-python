@@ -3,11 +3,11 @@ import pytest
 from uuid import uuid4
 
 from citrine.resources.material_spec import MaterialSpec
-from taurus.entity.attribute.condition import Condition
-from taurus.entity.attribute.property import Property
-from taurus.entity.attribute.property_and_conditions import PropertyAndConditions
-from taurus.entity.value.nominal_categorical import NominalCategorical
-from taurus.entity.value.nominal_real import NominalReal
+from gemd.entity.attribute.condition import Condition
+from gemd.entity.attribute.property import Property
+from gemd.entity.attribute.property_and_conditions import PropertyAndConditions
+from gemd.entity.value.nominal_categorical import NominalCategorical
+from gemd.entity.value.nominal_real import NominalReal
 
 
 @pytest.fixture

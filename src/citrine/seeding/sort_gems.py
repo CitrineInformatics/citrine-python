@@ -1,5 +1,5 @@
-from taurus.entity.template.attribute_template import AttributeTemplate
-from taurus.entity.template.base_template import BaseTemplate
+from gemd.entity.template.attribute_template import AttributeTemplate
+from gemd.entity.template.base_template import BaseTemplate
 
 
 def split_templates_from_objects(gems):
