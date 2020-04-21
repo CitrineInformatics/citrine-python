@@ -30,6 +30,7 @@ from gemd.entity.template.measurement_template import MeasurementTemplate
 from gemd.entity.template.parameter_template import ParameterTemplate
 from gemd.entity.template.process_template import ProcessTemplate
 from gemd.entity.template.property_template import PropertyTemplate
+from gemd.entity.base_entity import BaseEntity
 from gemd.util import writable_sort_order
 
 ResourceType = TypeVar('ResourceType', bound='DataConcepts')
