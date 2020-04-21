@@ -76,7 +76,7 @@ class FakeSession:
 
     def checked_post(self, path: str, json: dict, **kwargs) -> dict:
         self.calls.append(FakeCall('POST', path, json, params=kwargs.get('params')))
-        return self._get_response()
+        return self._get_response(default_response=json)
 
     def checked_put(self, path: str, json: dict, **kwargs) -> dict:
         self.calls.append(FakeCall('PUT', path, json, params=kwargs.get('params')))
@@ -86,12 +86,14 @@ class FakeSession:
         self.calls.append(FakeCall('DELETE', path, params=kwargs.get('params')))
         return self._get_response()
 
-    def _get_response(self):
+    def _get_response(self, default_response: dict = None):
         """
         Returns responses in order, repeating the final response indefinitely.
         """
         if not self.responses:
-            return {}
+            if not default_response:
+                default_response = {}
+            return default_response
 
         response = self.responses.pop(0)
         if isinstance(response, NonRetryableHttpException):
