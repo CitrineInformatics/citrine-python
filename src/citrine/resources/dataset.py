@@ -228,6 +228,9 @@ class Dataset(Resource['Dataset']):
         Does so in an order that is guaranteed to store all linked items before the item that
         references them.
 
+        The uids of the input data concepts resources are updated with their on-platform uids.
+        This supports storing an object that has a reference to an object that doesn't have a uid.
+
         :param data_concepts_resources: the resources to register. Can be different types.
 
         :return the registered versions
