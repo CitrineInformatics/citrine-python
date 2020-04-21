@@ -18,6 +18,8 @@ from citrine.resources.process_run import ProcessRunCollection, ProcessRun
 from citrine.resources.process_spec import ProcessSpecCollection, ProcessSpec
 from citrine.resources.process_template import ProcessTemplateCollection, ProcessTemplate
 from citrine.resources.property_template import PropertyTemplateCollection, PropertyTemplate
+from gemd.entity.object.material_spec import MaterialSpec as GemdMaterialSpec
+from gemd.entity.object.process_spec import ProcessSpec as GemdProcessSpec
 from gemd.entity.bounds.integer_bounds import IntegerBounds
 
 from tests.utils.factories import DatasetDataFactory, DatasetFactory
@@ -297,11 +299,9 @@ def test_register_all_data_concepts(dataset):
 
 
 def test_register_all_object_update(dataset):
-    from taurus.entity.object.process_spec import ProcessSpec as TaurusProcessSpec
-    from taurus.entity.object.material_spec import MaterialSpec as TaurusMaterialSpec
-
-    process = TaurusProcessSpec("process")
-    material = TaurusMaterialSpec("material", process=process)
+    """Check that uids of gemd-python objects get updated"""
+    process = GemdProcessSpec("process")
+    material = GemdMaterialSpec("material", process=process)
 
     registered_process, registered_material = dataset.register_all([process, material])
 
