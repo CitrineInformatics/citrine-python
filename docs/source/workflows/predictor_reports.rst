@@ -36,18 +36,19 @@ Assume that there is a training data table with known id and version.
 
 .. code:: python
 
-   from time import sleep
+    from time import sleep
 
-   from citrine.informatics.predictors import SimpleMLPredictor
+    from citrine.informatics.predictors import SimpleMLPredictor
     from citrine.informatics.descriptors import RealDescriptor
+    from citrine.informatics.data_sources import AraTableDataSource
 
-   # create input descriptors
-   x = RealDescriptor('x', lower_bound=0, upper_bound=10)
-   y = RealDescriptor('y', lower_bound=0, upper_bound=10)
-   z = RealDescriptor('z', lower_bound=0, upper_bound=10)
+    # create input descriptors
+    x = RealDescriptor('x', lower_bound=0, upper_bound=10)
+    y = RealDescriptor('y', lower_bound=0, upper_bound=10)
+    z = RealDescriptor('z', lower_bound=0, upper_bound=10)
 
-   # register a predictor with a project
-   predictor = project.predictors.register(
+    # register a predictor with a project
+    predictor = project.predictors.register(
        SimpleMLPredictor(
            name='ML predictor for z',
            description='Predicts z from x and y',
@@ -59,15 +60,15 @@ Assume that there is a training data table with known id and version.
             table_version = training_table_version
            )
        )
-   )
+    )
 
-   # wait for the predictor report to be ready
-   while project.predictors.get(predictor.uid).report.status == 'PENDING':
+    # wait for the predictor report to be ready
+    while project.predictors.get(predictor.uid).report.status == 'PENDING':
        sleep(10)
 
-   # print the json report
-   report = project.predictors.get(predictor.uid).report
-   print(report.json)
+    # print the json report
+    report = project.predictors.get(predictor.uid).report
+    print(report.json)
 
 For this example, the report would resemble the following.
 
