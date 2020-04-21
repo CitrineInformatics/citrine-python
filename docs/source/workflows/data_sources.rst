@@ -12,7 +12,7 @@ The file is referenced via a :class:`~citrine.resources.file_link.FileLink`.
 Each FileLink references an explicit version of the CSV file.
 Uploading a new file with the same name will produce a new version of the file with a new FileLink.
 
-The columns in the CSV are extracted and parsed by a mapping of column header names to descriptors.
+The columns in the CSV are extracted and parsed by a mapping of column header names to user-created descriptors.
 Columns in the CSV that are not mapped with a descriptor are ignored.
 
 Assume that a file data.csv exists with the following contents:
@@ -37,6 +37,8 @@ That file could be used as the training data for a predictor as:
 
     data_source = CsvDataSource(
         file_link = file_link,
+        # `column_definitions` maps a column header to a descriptor
+        # the column header and the descriptor key do not need to be identical
         column_definitions = {
             "Chemical Formula": ChemicalFormulaDescriptor("formula"),
             "Gap": RealDescriptor("Band gap", lower_bound=0, upper_bound=20, units="eV"),
@@ -49,6 +51,8 @@ That file could be used as the training data for a predictor as:
         name = "Band gap predictor",
         description = "Predict the band gap from the chemical formula and crystallinity",
         inputs = [
+            # referencing `data_source.column_definitions` is one way to ensure that the
+            # descriptors in the training data match the descriptors in the predictor definition
             data_source.column_definitions["Chemical Formula"],
             data_source.column_definitions["Crystallinity"]
         ],
