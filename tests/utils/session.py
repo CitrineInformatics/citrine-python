@@ -86,11 +86,13 @@ class FakeSession:
         self.calls.append(FakeCall('DELETE', path, params=kwargs.get('params')))
         return self._get_response()
 
-    def _get_response(self, default_response: dict = {}):
+    def _get_response(self, default_response: dict = None):
         """
         Returns responses in order, repeating the final response indefinitely.
         """
         if not self.responses:
+            if not default_response:
+                default_response = {}
             return default_response
 
         response = self.responses.pop(0)
