@@ -2,8 +2,8 @@
 import pytest
 from uuid import uuid4, UUID
 
-from taurus.entity.attribute.property import Property
-from taurus.entity.value.nominal_integer import NominalInteger
+from gemd.entity.attribute.property import Property
+from gemd.entity.value.nominal_integer import NominalInteger
 from citrine.resources.measurement_run import MeasurementRun
 from citrine.resources.material_run import MaterialRun
 from citrine.resources.audit_info import AuditInfo

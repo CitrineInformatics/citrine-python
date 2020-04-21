@@ -8,15 +8,15 @@ from citrine._serialization.properties import String, Mapping, Object, LinkOrEls
 from citrine._utils.functions import set_default_uid
 from citrine.resources.data_concepts import DataConcepts
 from citrine.resources.object_runs import ObjectRun, ObjectRunCollection
-from taurus.entity.attribute.condition import Condition
-from taurus.entity.attribute.parameter import Parameter
-from taurus.entity.file_link import FileLink
-from taurus.entity.object.process_run import ProcessRun as TaurusProcessRun
-from taurus.entity.object.process_spec import ProcessSpec as TaurusProcessSpec
-from taurus.entity.source.performed_source import PerformedSource
+from gemd.entity.attribute.condition import Condition
+from gemd.entity.attribute.parameter import Parameter
+from gemd.entity.file_link import FileLink
+from gemd.entity.object.process_run import ProcessRun as GEMDProcessRun
+from gemd.entity.object.process_spec import ProcessSpec as GEMDProcessSpec
+from gemd.entity.source.performed_source import PerformedSource
 
 
-class ProcessRun(ObjectRun, Resource['ProcessRun'], TaurusProcessRun):
+class ProcessRun(ObjectRun, Resource['ProcessRun'], GEMDProcessRun):
     """
     A process run.
 
@@ -28,10 +28,10 @@ class ProcessRun(ObjectRun, Resource['ProcessRun'], TaurusProcessRun):
         Name of the process run.
     uids: Map[str, str], optional
         A collection of
-        `unique IDs <https://citrineinformatics.github.io/taurus-documentation/
+        `unique IDs <https://citrineinformatics.github.io/gemd-docs/
         specification/unique-identifiers/>`_.
     tags: List[str], optional
-        `Tags <https://citrineinformatics.github.io/taurus-documentation/specification/tags/>`_
+        `Tags <https://citrineinformatics.github.io/gemd-docs/specification/tags/>`_
         are hierarchical strings that store information about an entity. They can be used
         for filtering and discoverability.
     notes: str, optional
@@ -59,7 +59,7 @@ class ProcessRun(ObjectRun, Resource['ProcessRun'], TaurusProcessRun):
 
     """
 
-    _response_key = TaurusProcessRun.typ  # 'process_run'
+    _response_key = GEMDProcessRun.typ  # 'process_run'
 
     name = String('name')
     uids = Mapping(String('scope'), String('id'), 'uids')
@@ -79,13 +79,13 @@ class ProcessRun(ObjectRun, Resource['ProcessRun'], TaurusProcessRun):
                  notes: Optional[str] = None,
                  conditions: Optional[List[Condition]] = None,
                  parameters: Optional[List[Parameter]] = None,
-                 spec: Optional[TaurusProcessSpec] = None,
+                 spec: Optional[GEMDProcessSpec] = None,
                  file_links: Optional[List[FileLink]] = None,
                  source: Optional[PerformedSource] = None):
-        DataConcepts.__init__(self, TaurusProcessRun.typ)
-        TaurusProcessRun.__init__(self, name=name, uids=set_default_uid(uids),
-                                  tags=tags, conditions=conditions, parameters=parameters,
-                                  spec=spec, file_links=file_links, notes=notes, source=source)
+        DataConcepts.__init__(self, GEMDProcessRun.typ)
+        GEMDProcessRun.__init__(self, name=name, uids=set_default_uid(uids),
+                                tags=tags, conditions=conditions, parameters=parameters,
+                                spec=spec, file_links=file_links, notes=notes, source=source)
 
     def __str__(self):
         return '<Process run {!r}>'.format(self.name)

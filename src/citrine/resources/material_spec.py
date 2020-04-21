@@ -9,14 +9,14 @@ from citrine._utils.functions import set_default_uid
 from citrine.resources.data_concepts import DataConcepts
 from citrine.resources.material_template import MaterialTemplateCollection
 from citrine.resources.object_specs import ObjectSpec, ObjectSpecCollection
-from taurus.entity.attribute.property_and_conditions import PropertyAndConditions
-from taurus.entity.file_link import FileLink
-from taurus.entity.object.material_spec import MaterialSpec as TaurusMaterialSpec
-from taurus.entity.object.process_spec import ProcessSpec as TaurusProcessSpec
-from taurus.entity.template.material_template import MaterialTemplate as TaurusMaterialTemplate
+from gemd.entity.attribute.property_and_conditions import PropertyAndConditions
+from gemd.entity.file_link import FileLink
+from gemd.entity.object.material_spec import MaterialSpec as GEMDMaterialSpec
+from gemd.entity.object.process_spec import ProcessSpec as GEMDProcessSpec
+from gemd.entity.template.material_template import MaterialTemplate as GEMDMaterialTemplate
 
 
-class MaterialSpec(ObjectSpec, Resource['MaterialSpec'], TaurusMaterialSpec):
+class MaterialSpec(ObjectSpec, Resource['MaterialSpec'], GEMDMaterialSpec):
     """
     A material specification.
 
@@ -26,10 +26,10 @@ class MaterialSpec(ObjectSpec, Resource['MaterialSpec'], TaurusMaterialSpec):
         Name of the material spec.
     uids: Map[str, str], optional
         A collection of
-        `unique IDs <https://citrineinformatics.github.io/taurus-documentation/
+        `unique IDs <https://citrineinformatics.github.io/gemd-docs/
         specification/unique-identifiers/>`_.
     tags: List[str], optional
-        `Tags <https://citrineinformatics.github.io/taurus-documentation/specification/tags/>`_
+        `Tags <https://citrineinformatics.github.io/gemd-docs/specification/tags/>`_
         are hierarchical strings that store information about an entity. They can be used
         for filtering and discoverability.
     notes: str, optional
@@ -46,7 +46,7 @@ class MaterialSpec(ObjectSpec, Resource['MaterialSpec'], TaurusMaterialSpec):
 
     """
 
-    _response_key = TaurusMaterialSpec.typ  # 'material_spec'
+    _response_key = GEMDMaterialSpec.typ  # 'material_spec'
 
     name = String('name')
     uids = Mapping(String('scope'), String('id'), 'uids')
@@ -63,14 +63,14 @@ class MaterialSpec(ObjectSpec, Resource['MaterialSpec'], TaurusMaterialSpec):
                  uids: Optional[Dict[str, str]] = None,
                  tags: Optional[List[str]] = None,
                  notes: Optional[str] = None,
-                 process: Optional[TaurusProcessSpec] = None,
+                 process: Optional[GEMDProcessSpec] = None,
                  properties: Optional[List[PropertyAndConditions]] = None,
-                 template: Optional[TaurusMaterialTemplate] = None,
+                 template: Optional[GEMDMaterialTemplate] = None,
                  file_links: Optional[List[FileLink]] = None):
-        DataConcepts.__init__(self, TaurusMaterialSpec.typ)
-        TaurusMaterialSpec.__init__(self, name=name, uids=set_default_uid(uids),
-                                    tags=tags, process=process, properties=properties,
-                                    template=template, file_links=file_links, notes=notes)
+        DataConcepts.__init__(self, GEMDMaterialSpec.typ)
+        GEMDMaterialSpec.__init__(self, name=name, uids=set_default_uid(uids),
+                                  tags=tags, process=process, properties=properties,
+                                  template=template, file_links=file_links, notes=notes)
 
     def __str__(self):
         return '<Material spec {!r}>'.format(self.name)

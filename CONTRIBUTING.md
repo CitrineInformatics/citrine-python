@@ -136,7 +136,7 @@ In some scenarios, you may wish to increase or decrease the verbosity of a parti
 instance
 
 ```python
-from taurus.entity.dict_serializable import logger
+from gemd.entity.dict_serializable import logger
 import logging
 logger.setLevel(logging.ERROR)
 ```

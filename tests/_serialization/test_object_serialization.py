@@ -3,8 +3,8 @@ from typing import Any
 
 from citrine._serialization.serializable import Serializable
 from citrine._serialization.properties import String, Object, Optional
-from taurus.entity.value.base_value import BaseValue
-from taurus.entity.value.nominal_real import NominalReal
+from gemd.entity.value.base_value import BaseValue
+from gemd.entity.value.nominal_real import NominalReal
 
 
 class UnserializableClass:
@@ -25,8 +25,8 @@ class SampleClass(Serializable):
         self.prop_object = prop_object
 
 
-def test_taurus_object_serde():
-    """Test that an unspecified taurus object can be serialized and deserialized."""
+def test_gemd_object_serde():
+    """Test that an unspecified gemd object can be serialized and deserialized."""
     good_obj = SampleClass("Can be serialized", NominalReal(17, ''))
     copy = SampleClass.build(good_obj.dump())
     assert copy.prop_value == good_obj.prop_value

@@ -4,7 +4,7 @@ from datetime import datetime
 
 from citrine._serialization.serializable import Serializable
 from citrine._serialization import properties
-from taurus.entity.dict_serializable import DictSerializable
+from gemd.entity.dict_serializable import DictSerializable
 
 
 class AuditInfo(Serializable, DictSerializable):

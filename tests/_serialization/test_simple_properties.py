@@ -1,7 +1,7 @@
 import pytest
 import arrow
 import uuid
-from taurus.enumeration.base_enumeration import BaseEnumeration
+from gemd.enumeration.base_enumeration import BaseEnumeration
 
 
 from citrine.resources.dataset import Dataset

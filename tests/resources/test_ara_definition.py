@@ -2,7 +2,7 @@ import json
 from uuid import UUID, uuid4
 
 import pytest
-from taurus.entity.link_by_uid import LinkByUID
+from gemd.entity.link_by_uid import LinkByUID
 
 from citrine.ara.columns import MeanColumn, OriginalUnitsColumn, StdDevColumn, IdentityColumn
 from citrine.ara.rows import MaterialRunByTemplate

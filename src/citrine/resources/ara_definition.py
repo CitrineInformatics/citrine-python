@@ -3,7 +3,7 @@ from typing import List, Union, Optional
 from uuid import UUID, uuid4
 
 from citrine.resources.ara_job import JobSubmissionResponse, JobStatusResponse
-from taurus.entity.link_by_uid import LinkByUID
+from gemd.entity.link_by_uid import LinkByUID
 
 from citrine._rest.collection import Collection
 from citrine._rest.resource import Resource

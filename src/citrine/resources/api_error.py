@@ -1,7 +1,7 @@
 from copy import copy
 from typing import Optional, List
 
-from taurus.entity.dict_serializable import DictSerializable
+from gemd.entity.dict_serializable import DictSerializable
 
 
 class ValidationError(DictSerializable):
