@@ -571,3 +571,18 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         params = {'dry_run': dry_run}
         self.session.delete_resource(path, params=params)
         return Response(status_code=200)  # delete succeeded
+
+    def _get_relation(self, relation: str, uid: Union[UUID, str], scope: str,
+                      forward: bool = True, per_page: int = 100):
+        params = {}
+        if self.dataset_id is not None:
+            params['dataset_id'] = str(self.dataset_id)
+        raw_objects = self.session.cursor_paged_resource(
+            self.session.get_resource,
+            self._get_path(ignore_dataset=True) + 'projects/{}/{}/{}/{}'.format(
+                self.project_id, relation, scope, uid, self._collection_key.replace('_', '-')),
+            forward=forward,
+            per_page=per_page,
+            params=params,
+            version='v1')
+        return (self.build(raw) for raw in raw_objects)

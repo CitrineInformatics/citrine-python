@@ -1,5 +1,6 @@
 """Resources that represent ingredient spec data objects."""
-from typing import List, Dict, Optional, Type
+from typing import List, Dict, Optional, Type, Iterator, Union
+from uuid import UUID
 
 from citrine._rest.resource import Resource
 from citrine._serialization.properties import List as PropertyList
@@ -112,3 +113,39 @@ class IngredientSpecCollection(ObjectSpecCollection[IngredientSpec]):
     def get_type(cls) -> Type[IngredientSpec]:
         """Return the resource type in the collection."""
         return IngredientSpec
+
+    def list_by_process(self, uid: Union[UUID, str], scope: str = 'id') -> Iterator[IngredientSpec]:
+        """
+        Get ingredients to a process.
+
+        Parameters
+        ----------
+        uid
+            The unique ID of the process whose ingredients are to be located.
+        scope
+            The scope of `uid`.
+        Returns
+        -------
+        Iterator[IngredientSpec]
+            The ingredients to the specified process.
+
+        """
+        return self._get_relation(relation='process-specs', uid=uid, scope=scope)
+
+    def list_by_material(self, uid: Union[UUID, str], scope: str = 'id') -> Iterator[IngredientSpec]:
+        """
+        Get ingredients using the specified material.
+
+        Parameters
+        ----------
+        uid
+            The unique ID of the material whose ingredient usages are to be located.
+        scope
+            The scope of `uid`.
+        Returns
+        -------
+        Iterator[IngredientSpec]
+            The ingredients using the specified material
+
+        """
+        return self._get_relation(relation='material-specs', uid=uid, scope=scope)

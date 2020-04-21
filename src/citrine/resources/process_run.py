@@ -1,5 +1,6 @@
 """Resources that represent process run data objects."""
-from typing import List, Dict, Optional, Type
+from typing import List, Dict, Optional, Type, Union, Iterator
+from uuid import UUID
 
 from citrine._rest.resource import Resource
 from citrine._serialization.properties import List as PropertyList
@@ -103,3 +104,20 @@ class ProcessRunCollection(ObjectRunCollection[ProcessRun]):
     def get_type(cls) -> Type[ProcessRun]:
         """Return the resource type in the collection."""
         return ProcessRun
+
+    def list_by_spec(self, uid: Union[UUID, str], scope: str = 'id') -> Iterator[ProcessRun]:
+        """
+        Get the process runs using the specified process spec.
+
+        Parameters
+        ----------
+        uid
+            The unique ID of the process spec whose process run usages are to be located.
+        scope
+            The scope of `uid`.
+        Returns
+        -------
+        Iterator[ProcessRun]
+            The process runs using the specified process spec.
+        """
+        return self._get_relation('process-specs', uid=uid, scope=scope)

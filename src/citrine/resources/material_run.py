@@ -1,7 +1,11 @@
 """Resources that represent material run data objects."""
 import json
 import os
-from typing import List, Dict, Optional, Type, Iterator
+from logging import getLogger
+from typing import List, Dict, Optional, Type, Iterator, Union
+from uuid import UUID
+
+import deprecation
 
 from citrine._rest.resource import Resource
 from citrine._serialization.properties import List as PropertyList
@@ -18,6 +22,9 @@ from gemd.entity.object.material_spec import MaterialSpec as GEMDMaterialSpec
 from gemd.entity.object.process_run import ProcessRun as GEMDProcessRun
 from gemd.json import GEMDEncoder
 from gemd.util import writable_sort_order
+
+
+logger = getLogger(__name__)
 
 
 class MaterialRun(ObjectRun, Resource['MaterialRun'], GEMDMaterialRun):
@@ -143,10 +150,29 @@ class MaterialRunCollection(ObjectRunCollection[MaterialRun]):
         return MaterialRun.get_json_support().loads(
             json.dumps(blob, cls=GEMDEncoder, sort_keys=True))
 
+    def get_by_process(self, uid: Union[UUID, str], scope: str = 'id') -> Optional[MaterialRun]:
+        """
+        Get output material of a process.
+
+        Parameters
+        ----------
+        uid
+            The unique ID of the process whose output is to be located.
+        scope
+            The scope of `uid`.
+        Returns
+        -------
+        MaterialRun
+            The output material of the specified process.
+
+        """
+        return next(self._get_relation(relation='process-runs', uid=uid, scope=scope), None)
+
+    @deprecation.deprecated(details='Use list_by_spec instead.')
     def filter_by_spec(self,
                        spec_id: str,
                        spec_scope: str = 'id',
-                       per_page: int = 20) -> Iterator[MaterialRun]:
+                       per_page: int = None) -> Iterator[MaterialRun]:
         """
         [ALPHA] Get all material runs associated with a material spec.
 
@@ -159,21 +185,15 @@ class MaterialRunCollection(ObjectRunCollection[MaterialRun]):
         :param per_page: The number of results to return per page.
         :return: A search result of material runs
         """
-        path_prefix = MaterialSpecCollection(self.project_id,
-                                             self.dataset_id,
-                                             self.session)._get_path(ignore_dataset=True)
-        path = path_prefix + "/" + spec_scope + "/" + spec_id + "/material-runs"
-        raw_objects = self.session.cursor_paged_resource(self.session.get_resource,
-                                                         path,
-                                                         per_page=per_page,
-                                                         version="v1")
-        return (self.build(raw) for raw in raw_objects)
+        if per_page is not None:
+            logger.warning('The per_page parameter will be ignored. Please remove it.')
+        return self.list_by_spec(uid=spec_id, scope=spec_scope)
 
-    # Retrieve all material runs associated with a material template
+    @deprecation.deprecated(details='Use list_by_template instead.')
     def filter_by_template(self,
                            template_id: str,
                            template_scope: str = 'id',
-                           per_page: int = 20) -> Iterator[MaterialRun]:
+                           per_page: int = None) -> Iterator[MaterialRun]:
         """
         [ALPHA] Get all material runs associated with a material template.
 
@@ -187,10 +207,43 @@ class MaterialRunCollection(ObjectRunCollection[MaterialRun]):
             Also used for intermediate queries.
         :return: A search result of material runs
         """
+        if per_page is not None:
+            logger.warning('The per_page parameter will be ignored. Please remove it.')
+        return self.list_by_template(uid=template_id, scope=template_scope)
+
+    def list_by_spec(self, uid: Union[UUID, str], scope: str = 'id') -> Iterator[MaterialRun]:
+        """
+        Get the material runs using the specified material spec.
+
+        Parameters
+        ----------
+        uid
+            The unique ID of the material spec whose material run usages are to be located.
+        scope
+            The scope of `uid`.
+        Returns
+        -------
+        Iterator[MaterialRun]
+            The material runs using the specified material spec.
+        """
+        return self._get_relation('material-specs', uid=uid, scope=scope)
+
+    def list_by_template(self, uid: Union[UUID, str], scope: str = 'id') -> Iterator[MaterialRun]:
+        """
+        Get the material runs using the specified material template.
+
+        Parameters
+        ----------
+        uid
+            The unique ID of the material template whose material run usages are to be located.
+        scope
+            The scope of `uid`.
+        Returns
+        -------
+        Iterator[MaterialRun]
+            The material runs using the specified material template.
+        """
         spec_collection = MaterialSpecCollection(self.project_id, self.dataset_id, self.session)
-        specs = spec_collection.filter_by_template(template_id,
-                                                   template_scope=template_scope,
-                                                   per_page=per_page)
-        return (run for runs in (self.filter_by_spec(spec.uids['id'],
-                                 per_page=per_page)for spec in specs)
+        specs = spec_collection.list_by_template(uid=uid, scope=scope)
+        return (run for runs in (self.list_by_spec(spec.uids['id']) for spec in specs)
                 for run in runs)

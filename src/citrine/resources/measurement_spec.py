@@ -1,5 +1,6 @@
 """Resources that represent measurement spec data objects."""
-from typing import List, Dict, Optional, Type
+from typing import List, Dict, Optional, Type, Union, Iterator
+from uuid import UUID
 
 from citrine._rest.resource import Resource
 from citrine._serialization.properties import List as PropertyList
@@ -88,3 +89,20 @@ class MeasurementSpecCollection(ObjectSpecCollection[MeasurementSpec]):
     def get_type(cls) -> Type[MeasurementSpec]:
         """Return the resource type in the collection."""
         return MeasurementSpec
+
+    def list_by_template(self, uid: Union[UUID, str], scope: str = 'id') -> Iterator[MeasurementSpec]:
+        """
+        Get the measurement specs using the specified measurement template.
+
+        Parameters
+        ----------
+        uid
+            The unique ID of the measurement template whose measurement spec usages are to be located.
+        scope
+            The scope of `uid`.
+        Returns
+        -------
+        Iterator[MeasurementSpec]
+            The measurement specs using the specified measurement template.
+        """
+        return self._get_relation('measurement-templates', uid=uid, scope=scope)
