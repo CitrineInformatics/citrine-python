@@ -30,6 +30,7 @@ from gemd.entity.template.measurement_template import MeasurementTemplate
 from gemd.entity.template.parameter_template import ParameterTemplate
 from gemd.entity.template.process_template import ProcessTemplate
 from gemd.entity.template.property_template import PropertyTemplate
+from gemd.entity.base_entity import BaseEntity
 from gemd.util import writable_sort_order
 
 ResourceType = TypeVar('ResourceType', bound='DataConcepts')
@@ -227,13 +228,21 @@ class Dataset(Resource['Dataset']):
         Does so in an order that is guaranteed to store all linked items before the item that
         references them.
 
+        The uids of the input data concepts resources are updated with their on-platform uids.
+        This supports storing an object that has a reference to an object that doesn't have a uid.
+
         :param data_concepts_resources: the resources to register. Can be different types.
 
         :return the registered versions
         """
-        return [self.register(resource) for resource
-                in (sorted(data_concepts_resources,
-                           key=lambda resource: writable_sort_order(resource.typ)))]
+        resources = list()
+        for resource in (sorted(data_concepts_resources,
+                         key=lambda resource: writable_sort_order(resource.typ))):
+            registered_resource = self.register(resource)
+            if isinstance(registered_resource, BaseEntity):
+                resource.uids = registered_resource.uids
+            resources.append(resource)
+        return resources
 
 
 class DatasetCollection(Collection[Dataset]):
