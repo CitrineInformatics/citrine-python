@@ -22,16 +22,15 @@ from citrine.resources.process_run import ProcessRunCollection
 from citrine.resources.process_spec import ProcessSpecCollection
 from citrine.resources.process_template import ProcessTemplateCollection
 from citrine.resources.property_template import PropertyTemplateCollection
-from taurus.entity.object import MeasurementSpec, MeasurementRun, MaterialSpec, MaterialRun, \
+from gemd.entity.object import MeasurementSpec, MeasurementRun, MaterialSpec, MaterialRun, \
     ProcessSpec, ProcessRun, IngredientSpec, IngredientRun
-from taurus.entity.template.condition_template import ConditionTemplate
-from taurus.entity.template.material_template import MaterialTemplate
-from taurus.entity.template.measurement_template import MeasurementTemplate
-from taurus.entity.template.parameter_template import ParameterTemplate
-from taurus.entity.template.process_template import ProcessTemplate
-from taurus.entity.template.property_template import PropertyTemplate
-from taurus.entity.base_entity import BaseEntity
-from taurus.util import writable_sort_order
+from gemd.entity.template.condition_template import ConditionTemplate
+from gemd.entity.template.material_template import MaterialTemplate
+from gemd.entity.template.measurement_template import MeasurementTemplate
+from gemd.entity.template.parameter_template import ParameterTemplate
+from gemd.entity.template.process_template import ProcessTemplate
+from gemd.entity.template.property_template import PropertyTemplate
+from gemd.util import writable_sort_order
 
 ResourceType = TypeVar('ResourceType', bound='DataConcepts')
 

@@ -2,7 +2,7 @@
 from typing import Type, Optional, List  # noqa: F401
 from abc import abstractmethod
 
-from taurus.entity.link_by_uid import LinkByUID
+from gemd.entity.link_by_uid import LinkByUID
 
 from citrine._serialization.serializable import Serializable
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable

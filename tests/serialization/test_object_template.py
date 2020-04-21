@@ -5,10 +5,10 @@ from citrine.resources.process_template import ProcessTemplate
 from citrine.resources.property_template import PropertyTemplate
 from citrine.resources.condition_template import ConditionTemplate
 from citrine.resources.parameter_template import ParameterTemplate
-from taurus.entity.link_by_uid import LinkByUID
-from taurus.entity.bounds.real_bounds import RealBounds
-from taurus.entity.bounds.integer_bounds import IntegerBounds
-from taurus.entity.bounds.categorical_bounds import CategoricalBounds
+from gemd.entity.link_by_uid import LinkByUID
+from gemd.entity.bounds.real_bounds import RealBounds
+from gemd.entity.bounds.integer_bounds import IntegerBounds
+from gemd.entity.bounds.categorical_bounds import CategoricalBounds
 
 
 def test_object_template_serde():
