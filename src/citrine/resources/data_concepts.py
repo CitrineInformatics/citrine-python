@@ -579,7 +579,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
             params['dataset_id'] = str(self.dataset_id)
         raw_objects = self.session.cursor_paged_resource(
             self.session.get_resource,
-            self._get_path(ignore_dataset=True) + 'projects/{}/{}/{}/{}'.format(
+            'projects/{}/{}/{}/{}/{}'.format(
                 self.project_id, relation, scope, uid, self._collection_key.replace('_', '-')),
             forward=forward,
             per_page=per_page,

@@ -41,7 +41,7 @@ def test_filter_by_template(collection, session):
     expected_call = FakeCall(
         method="GET",
         path="projects/{}/material-templates/{}/{}/material-specs".format(project_id, test_scope, test_id),
-        params={"forward": True, "ascending": True, "per_page": 20}
+        params={"dataset_id": str(collection.dataset_id), "forward": True, "ascending": True, "per_page": 100}
     )
     assert session.last_call == expected_call
     assert specs == [collection.build(sample_spec)]
