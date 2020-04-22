@@ -96,6 +96,9 @@ These links are created with the :class:`~gemd.entity.link_by_uid.LinkByUID` cla
 Validating Data Model Objects
 ---------------------------------
 
+Dry-Run Validation
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
 If you try to ``register`` or ``delete`` an invalid data model object, the operation fails with an error message that
 specifies in what way(s) the data model object was invalid. For example:
 
@@ -130,3 +133,43 @@ validations succeed, the method returns the same success value that it would wit
 object will not be registered or deleted.
 
 Setting ``dry_run=False`` is equivalent to not specifying ``dry_run`` at all and will have no effect.
+
+Template and Simple Validations
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Sometimes, it is convenient to be able to bulk validate a group of runs and/or specs against their attribute and object
+templates before any of the data objects is stored. The ``.validate_templates()`` methods, available for all runs and
+specs, validate the provided object against already-stored attribute templates as well as a provided object template.
+Notably, these methods do not validate linked objects in any way, making it possible to run validations on an object
+with links to yet-unstored objects. Be aware that this means that ``.validate_templates()`` does not validate links and
+will not surface any link-based errors. For ingredients, the associated object template is a process template that is
+provided as a separate parameter. This method returns a list of validation errors, which is empty on validation success.
+
+The below example usages are trivial examples intended to illustrate the method arguments, rather than interesting
+validation cases.
+
+Example usage with no object template:
+
+.. code-block:: python
+
+    spec = ProcessSpec("foo")
+    run = ProcessRun("bar", spec=spec)
+    dataset.process_runs.validate_templates(run)
+
+Example usage with an object template:
+
+.. code-block:: python
+
+    template = ProcessTemplate("pt")
+    spec = ProcessSpec("foo", template=template)
+    run = ProcessRun("bar", spec=spec)
+    dataset.process_runs.validate_templates(run, object_template=template)
+
+Example usage for an ingredient:
+
+.. code-block:: python
+
+    process_template = ProcessTemplate("pt")
+    process_spec = ProcessSpec("ps", template=process_template)
+    material_spec = MaterialSpec("ms", process=process_spec)
+    ingredient_spec = IngredientSpec("is", process=process_spec, material=material_spec)
+    dataset.ingredient_specs.validate_templates(run, ingredient_process_template=process_template)
