@@ -83,7 +83,10 @@ can be used to ‘flatten’ data objects into useful projections.</p>
 <dl class="method">
 <dt id="citrine.resources.table.Table.read">
 <code class="sig-name descname">read</code><span class="sig-paren">(</span><em class="sig-param">local_path</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.table.Table.read" title="Permalink to this definition">¶</a></dt>
-<dd><p>Read the Table file from S3.</p>
+<dd><p>[DEPRECATED] Use TableCollection.read() instead.</p>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 0.16.0: </span>Use TableCollection.read() instead</p>
+</div>
 </dd></dl>
 
 <dl class="attribute">
@@ -132,6 +135,12 @@ can be used to ‘flatten’ data objects into useful projections.</p>
 <dd class="field-even"><p>An iterable of the versions of the Tables (as Table objects).</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="citrine.resources.table.TableCollection.read">
+<code class="sig-name descname">read</code><span class="sig-paren">(</span><em class="sig-param">table: citrine.resources.table.Table</em>, <em class="sig-param">local_path: str</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.table.TableCollection.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read the Table file from S3.</p>
 </dd></dl>
 
 <dl class="method">
@@ -214,10 +223,14 @@ ensure that (uid, version) is used for comparisons.</p>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">4. [ALPHA] AI Engine</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#getting-started">4.1. Getting Started</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#workflows-overview">4.2. Workflows Overview</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#modules-overview">4.3. Modules Overview</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#registration-and-validation">4.4. Registration and validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/getting_started.html">4.1. Getting Started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/predictors.html">4.2. Predictors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/design_spaces.html">4.3. Design spaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/processors.html">4.4. Processors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/scores.html">4.5. Scores</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/data_sources.html">4.6. Data Sources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/predictor_reports.html">4.7. Predictor reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/performance_workflows.html">4.8. Performance workflows</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">5. FAQ</a><ul>

@@ -36,8 +36,8 @@
 <p>Resources that represent process spec objects.</p>
 <dl class="class">
 <dt id="citrine.resources.process_spec.ProcessSpec">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.resources.process_spec.</code><code class="sig-name descname">ProcessSpec</code><span class="sig-paren">(</span><em class="sig-param">name: str</em>, <em class="sig-param">uids: Optional[Dict[str</em>, <em class="sig-param">str]] = None</em>, <em class="sig-param">tags: Optional[List[str]] = None</em>, <em class="sig-param">notes: Optional[str] = None</em>, <em class="sig-param">conditions: Optional[List[taurus.entity.attribute.condition.Condition]] = None</em>, <em class="sig-param">parameters: Optional[List[taurus.entity.attribute.parameter.Parameter]] = None</em>, <em class="sig-param">template: Optional[taurus.entity.template.process_template.ProcessTemplate] = None</em>, <em class="sig-param">file_links: Optional[List[taurus.entity.file_link.FileLink]] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.process_spec.ProcessSpec" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="citrine.resources.object_specs.html#citrine.resources.object_specs.ObjectSpec" title="citrine.resources.object_specs.ObjectSpec"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.resources.object_specs.ObjectSpec</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.resource.Resource</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">taurus.entity.object.process_spec.ProcessSpec</span></code></p>
+<em class="property">class </em><code class="sig-prename descclassname">citrine.resources.process_spec.</code><code class="sig-name descname">ProcessSpec</code><span class="sig-paren">(</span><em class="sig-param">name: str</em>, <em class="sig-param">uids: Optional[Dict[str</em>, <em class="sig-param">str]] = None</em>, <em class="sig-param">tags: Optional[List[str]] = None</em>, <em class="sig-param">notes: Optional[str] = None</em>, <em class="sig-param">conditions: Optional[List[gemd.entity.attribute.condition.Condition]] = None</em>, <em class="sig-param">parameters: Optional[List[gemd.entity.attribute.parameter.Parameter]] = None</em>, <em class="sig-param">template: Optional[gemd.entity.template.process_template.ProcessTemplate] = None</em>, <em class="sig-param">file_links: Optional[List[gemd.entity.file_link.FileLink]] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.process_spec.ProcessSpec" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="citrine.resources.object_specs.html#citrine.resources.object_specs.ObjectSpec" title="citrine.resources.object_specs.ObjectSpec"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.resources.object_specs.ObjectSpec</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.resource.Resource</span></code>, <a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.object.process_spec.html#gemd.entity.object.process_spec.ProcessSpec" title="(in GEMD-python)"><code class="xref py py-class docutils literal notranslate"><span class="pre">gemd.entity.object.process_spec.ProcessSpec</span></code></a></p>
 <p>A process specification.</p>
 <p>Processes transform zero or more input materials into exactly one output material.</p>
 <dl class="field-list simple">
@@ -45,8 +45,8 @@
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>name</strong> (<em>str</em>) – Name of the process spec.</p></li>
 <li><p><strong>uids</strong> (<em>Map</em><em>[</em><em>str</em><em>, </em><em>str</em><em>]</em><em>, </em><em>optional</em>) – A collection of
-<a class="reference external" href="https://citrineinformatics.github.io/taurus-documentation/specification/unique-identifiers/">unique IDs</a>.</p></li>
-<li><p><strong>tags</strong> (<em>List</em><em>[</em><em>str</em><em>]</em><em>, </em><em>optional</em>) – <a class="reference external" href="https://citrineinformatics.github.io/taurus-documentation/specification/tags/">Tags</a>
+<a class="reference external" href="https://citrineinformatics.github.io/gemd-docs/specification/unique-identifiers/">unique IDs</a>.</p></li>
+<li><p><strong>tags</strong> (<em>List</em><em>[</em><em>str</em><em>]</em><em>, </em><em>optional</em>) – <a class="reference external" href="https://citrineinformatics.github.io/gemd-docs/specification/tags/">Tags</a>
 are hierarchical strings that store information about an entity. They can be used
 for filtering and discoverability.</p></li>
 <li><p><strong>notes</strong> (<em>str</em><em>, </em><em>optional</em>) – Long-form notes about the process spec.</p></li>
@@ -204,10 +204,14 @@ creating each ingredient spec and setting its <cite>process</cite> field to this
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">4. [ALPHA] AI Engine</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#getting-started">4.1. Getting Started</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#workflows-overview">4.2. Workflows Overview</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#modules-overview">4.3. Modules Overview</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#registration-and-validation">4.4. Registration and validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/getting_started.html">4.1. Getting Started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/predictors.html">4.2. Predictors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/design_spaces.html">4.3. Design spaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/processors.html">4.4. Processors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/scores.html">4.5. Scores</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/data_sources.html">4.6. Data Sources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/predictor_reports.html">4.7. Predictor reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/performance_workflows.html">4.8. Performance workflows</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">5. FAQ</a><ul>

@@ -36,18 +36,18 @@
 <p>Resources that represent property templates.</p>
 <dl class="class">
 <dt id="citrine.resources.property_template.PropertyTemplate">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.resources.property_template.</code><code class="sig-name descname">PropertyTemplate</code><span class="sig-paren">(</span><em class="sig-param">name: str</em>, <em class="sig-param">bounds: taurus.entity.bounds.base_bounds.BaseBounds</em>, <em class="sig-param">uids: Optional[Dict[str</em>, <em class="sig-param">str]] = None</em>, <em class="sig-param">description: Optional[str] = None</em>, <em class="sig-param">tags: Optional[List[str]] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.property_template.PropertyTemplate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="citrine.resources.attribute_templates.html#citrine.resources.attribute_templates.AttributeTemplate" title="citrine.resources.attribute_templates.AttributeTemplate"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.resources.attribute_templates.AttributeTemplate</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.resource.Resource</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">taurus.entity.template.property_template.PropertyTemplate</span></code></p>
+<em class="property">class </em><code class="sig-prename descclassname">citrine.resources.property_template.</code><code class="sig-name descname">PropertyTemplate</code><span class="sig-paren">(</span><em class="sig-param">name: str</em>, <em class="sig-param">bounds: gemd.entity.bounds.base_bounds.BaseBounds</em>, <em class="sig-param">uids: Optional[Dict[str</em>, <em class="sig-param">str]] = None</em>, <em class="sig-param">description: Optional[str] = None</em>, <em class="sig-param">tags: Optional[List[str]] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.property_template.PropertyTemplate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="citrine.resources.attribute_templates.html#citrine.resources.attribute_templates.AttributeTemplate" title="citrine.resources.attribute_templates.AttributeTemplate"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.resources.attribute_templates.AttributeTemplate</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.resource.Resource</span></code>, <a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.template.property_template.html#gemd.entity.template.property_template.PropertyTemplate" title="(in GEMD-python)"><code class="xref py py-class docutils literal notranslate"><span class="pre">gemd.entity.template.property_template.PropertyTemplate</span></code></a></p>
 <p>A property template.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>name</strong> (<em>str</em>) – The name of the property template.</p></li>
-<li><p><strong>bounds</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">BaseBounds</span></code>) – Bounds circumscribe the values that are valid according to this property template.</p></li>
+<li><p><strong>bounds</strong> (<a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.bounds.base_bounds.html#gemd.entity.bounds.base_bounds.BaseBounds" title="(in GEMD-python)"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseBounds</span></code></a>) – Bounds circumscribe the values that are valid according to this property template.</p></li>
 <li><p><strong>description</strong> (<em>str</em><em>, </em><em>optional</em>) – A long-form description of the property template.</p></li>
 <li><p><strong>uids</strong> (<em>Map</em><em>[</em><em>str</em><em>, </em><em>str</em><em>]</em><em>, </em><em>optional</em>) – A collection of
-<a class="reference external" href="https://citrineinformatics.github.io/taurus-documentation/specification/unique-identifiers/">unique IDs</a>.</p></li>
-<li><p><strong>tags</strong> (<em>List</em><em>[</em><em>str</em><em>]</em><em>, </em><em>optional</em>) – <a class="reference external" href="https://citrineinformatics.github.io/taurus-documentation/specification/tags/">Tags</a>
+<a class="reference external" href="https://citrineinformatics.github.io/gemd-docs/specification/unique-identifiers/">unique IDs</a>.</p></li>
+<li><p><strong>tags</strong> (<em>List</em><em>[</em><em>str</em><em>]</em><em>, </em><em>optional</em>) – <a class="reference external" href="https://citrineinformatics.github.io/gemd-docs/specification/tags/">Tags</a>
 are hierarchical strings that store information about an entity. They can be used
 for filtering and discoverability.</p></li>
 </ul>
@@ -161,10 +161,14 @@ for filtering and discoverability.</p></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">4. [ALPHA] AI Engine</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#getting-started">4.1. Getting Started</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#workflows-overview">4.2. Workflows Overview</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#modules-overview">4.3. Modules Overview</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#registration-and-validation">4.4. Registration and validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/getting_started.html">4.1. Getting Started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/predictors.html">4.2. Predictors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/design_spaces.html">4.3. Design spaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/processors.html">4.4. Processors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/scores.html">4.5. Scores</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/data_sources.html">4.6. Data Sources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/predictor_reports.html">4.7. Predictor reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/performance_workflows.html">4.8. Performance workflows</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">5. FAQ</a><ul>

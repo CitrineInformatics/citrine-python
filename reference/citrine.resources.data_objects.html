@@ -49,13 +49,13 @@
 <p>A collection of one kind of data object object.</p>
 <dl class="method">
 <dt id="citrine.resources.data_objects.DataObjectCollection.filter_by_attribute_bounds">
-<code class="sig-name descname">filter_by_attribute_bounds</code><span class="sig-paren">(</span><em class="sig-param">attribute_bounds: Dict[Union[taurus.entity.template.attribute_template.AttributeTemplate, taurus.entity.link_by_uid.LinkByUID], taurus.entity.bounds.base_bounds.BaseBounds], page: Optional[int] = None, per_page: Optional[int] = None</em><span class="sig-paren">)</span> &#x2192; List[citrine.resources.data_objects.DataObject]<a class="headerlink" href="#citrine.resources.data_objects.DataObjectCollection.filter_by_attribute_bounds" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">filter_by_attribute_bounds</code><span class="sig-paren">(</span><em class="sig-param">attribute_bounds: Dict[Union[gemd.entity.template.attribute_template.AttributeTemplate, gemd.entity.link_by_uid.LinkByUID], gemd.entity.bounds.base_bounds.BaseBounds], page: Optional[int] = None, per_page: Optional[int] = None</em><span class="sig-paren">)</span> &#x2192; List[citrine.resources.data_objects.DataObject]<a class="headerlink" href="#citrine.resources.data_objects.DataObjectCollection.filter_by_attribute_bounds" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get all objects in the collection with attributes within certain bounds.</p>
 <p>Currently only one attribute and one bounds on that attribute is supported.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>attribute_bounds</strong> (Dict[Union[AttributeTemplate,         <code class="xref py py-class docutils literal notranslate"><span class="pre">LinkByUID</span></code>],         <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseBounds</span></code>]) – A dictionary from attributes to the bounds on that attribute.
+<li><p><strong>attribute_bounds</strong> (Dict[Union[AttributeTemplate,         <a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.link_by_uid.html#gemd.entity.link_by_uid.LinkByUID" title="(in GEMD-python)"><code class="xref py py-class docutils literal notranslate"><span class="pre">LinkByUID</span></code></a>],         <a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.bounds.base_bounds.html#gemd.entity.bounds.base_bounds.BaseBounds" title="(in GEMD-python)"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseBounds</span></code></a>]) – A dictionary from attributes to the bounds on that attribute.
 Currently only real and integer bounds are supported.
 Each attribute may be represented as an AttributeTemplate (PropertyTemplate,
 ParameterTemplate, or ConditionTemplate) or as a LinkByUID,
@@ -79,7 +79,7 @@ and have values within the specified bounds.</p>
 
 <dl class="method">
 <dt id="citrine.resources.data_objects.DataObjectCollection.list_by_attribute_bounds">
-<code class="sig-name descname">list_by_attribute_bounds</code><span class="sig-paren">(</span><em class="sig-param">attribute_bounds: Dict[Union[taurus.entity.template.attribute_template.AttributeTemplate, taurus.entity.link_by_uid.LinkByUID], taurus.entity.bounds.base_bounds.BaseBounds], forward: bool = True, per_page: int = 100</em><span class="sig-paren">)</span> &#x2192; Iterator[citrine.resources.data_objects.DataObject]<a class="headerlink" href="#citrine.resources.data_objects.DataObjectCollection.list_by_attribute_bounds" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">list_by_attribute_bounds</code><span class="sig-paren">(</span><em class="sig-param">attribute_bounds: Dict[Union[gemd.entity.template.attribute_template.AttributeTemplate, gemd.entity.link_by_uid.LinkByUID], gemd.entity.bounds.base_bounds.BaseBounds], forward: bool = True, per_page: int = 100</em><span class="sig-paren">)</span> &#x2192; Iterator[citrine.resources.data_objects.DataObject]<a class="headerlink" href="#citrine.resources.data_objects.DataObjectCollection.list_by_attribute_bounds" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get all objects in the collection with attributes within certain bounds.</p>
 <p>Results are ordered first by dataset, then by attribute value.</p>
 <p>Currently only one attribute and one bounds on that attribute is supported, and
@@ -87,7 +87,7 @@ attribute type must be numeric.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>attribute_bounds</strong> (Dict[Union[AttributeTemplate,         <code class="xref py py-class docutils literal notranslate"><span class="pre">LinkByUID</span></code>],         <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseBounds</span></code>]) – A dictionary from attributes to the bounds on that attribute.
+<li><p><strong>attribute_bounds</strong> (Dict[Union[AttributeTemplate,         <a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.link_by_uid.html#gemd.entity.link_by_uid.LinkByUID" title="(in GEMD-python)"><code class="xref py py-class docutils literal notranslate"><span class="pre">LinkByUID</span></code></a>],         <a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.bounds.base_bounds.html#gemd.entity.bounds.base_bounds.BaseBounds" title="(in GEMD-python)"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseBounds</span></code></a>]) – A dictionary from attributes to the bounds on that attribute.
 Currently only real and integer bounds are supported.
 Each attribute may be represented as an AttributeTemplate (PropertyTemplate,
 ParameterTemplate, or ConditionTemplate) or as a LinkByUID,
@@ -196,10 +196,14 @@ against. Ignored unless data object is an IngredientSpec or IngredientRun.</p></
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">4. [ALPHA] AI Engine</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#getting-started">4.1. Getting Started</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#workflows-overview">4.2. Workflows Overview</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#modules-overview">4.3. Modules Overview</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#registration-and-validation">4.4. Registration and validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/getting_started.html">4.1. Getting Started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/predictors.html">4.2. Predictors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/design_spaces.html">4.3. Design spaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/processors.html">4.4. Processors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/scores.html">4.5. Scores</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/data_sources.html">4.6. Data Sources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/predictor_reports.html">4.7. Predictor reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/performance_workflows.html">4.8. Performance workflows</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">5. FAQ</a><ul>

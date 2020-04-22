@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>Performance workflows &#8212; Citrine Python 0.0.1 documentation</title>
+    <title>4.8. Performance workflows &#8212; Citrine Python 0.0.1 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -15,6 +15,8 @@
     <link rel="shortcut icon" href="../_static/favicon.png"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="5. FAQ" href="../FAQ/index.html" />
+    <link rel="prev" title="4.7. Predictor reports" href="predictor_reports.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -32,7 +34,7 @@
           <div class="body" role="main">
             
   <div class="section" id="performance-workflows">
-<h1>Performance workflows<a class="headerlink" href="#performance-workflows" title="Permalink to this headline">¶</a></h1>
+<h1>4.8. Performance workflows<a class="headerlink" href="#performance-workflows" title="Permalink to this headline">¶</a></h1>
 <p>A <a class="reference internal" href="../reference/citrine.informatics.workflows.html#citrine.informatics.workflows.PerformanceWorkflow" title="citrine.informatics.workflows.PerformanceWorkflow"><code class="xref py py-class docutils literal notranslate"><span class="pre">performance</span> <span class="pre">workflow</span></code></a> performs analysis on a module.
 On construction, a performance workflow requires a configuration object which stores all settings required to run the analysis.
 Currently, the only implemented analysis performs cross-validation on a predictor.
@@ -72,7 +74,7 @@ This analysis configuration defines cross-validation parameters such as the numb
 </pre></div>
 </div>
 <div class="section" id="execution-and-results">
-<h2>Execution and results<a class="headerlink" href="#execution-and-results" title="Permalink to this headline">¶</a></h2>
+<h2>4.8.1. Execution and results<a class="headerlink" href="#execution-and-results" title="Permalink to this headline">¶</a></h2>
 <p>When a performance workflow is executed against a module, it performs the analysis and returns an “analysis results” dictionary that contains performance metrics.
 For a cross-validation analysis, cross-validation is performed against the supplied predictor: the predictor’s training data are partitioned into several “folds,” and each fold takes a turn acting as the “test set.”
 For each test set, the rest of the data are used to train the predictor, and the ensuing model is applied to the held-out test set.
@@ -174,7 +176,7 @@ Below shows an example of the results object.</p>
 
 
 <h3>Navigation</h3>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../getting_started/index.html">1. Getting Started</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../getting_started/connecting.html">1.1. Connecting to the Citrine Platform</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../getting_started/basic_structure.html">1.2. Structure of the Citrine Python Client</a></li>
@@ -205,11 +207,15 @@ Below shows an example of the results object.</p>
 <li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-column-definitions">3.7. Available Column Definitions</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="index.html">4. [ALPHA] AI Engine</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="index.html#getting-started">4.1. Getting Started</a></li>
-<li class="toctree-l2"><a class="reference internal" href="index.html#workflows-overview">4.2. Workflows Overview</a></li>
-<li class="toctree-l2"><a class="reference internal" href="index.html#modules-overview">4.3. Modules Overview</a></li>
-<li class="toctree-l2"><a class="reference internal" href="index.html#registration-and-validation">4.4. Registration and validation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">4. [ALPHA] AI Engine</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="getting_started.html">4.1. Getting Started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="predictors.html">4.2. Predictors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="design_spaces.html">4.3. Design spaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="processors.html">4.4. Processors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scores.html">4.5. Scores</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_sources.html">4.6. Data Sources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="predictor_reports.html">4.7. Predictor reports</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">4.8. Performance workflows</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">5. FAQ</a><ul>
@@ -222,6 +228,10 @@ Below shows an example of the results object.</p>
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">4. [ALPHA] AI Engine</a><ul>
+      <li>Previous: <a href="predictor_reports.html" title="previous chapter">4.7. Predictor reports</a></li>
+      <li>Next: <a href="../FAQ/index.html" title="next chapter">5. FAQ</a></li>
+  </ul></li>
   </ul></li>
 </ul>
 </div>

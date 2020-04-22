@@ -45,7 +45,7 @@ Each Material History corresponds to exactly one row, though the Material Histor
 For example, the material histories of distinct Material Runs will map to exactly two rows even if their histories are identical up to differing Process Runs of their final baking step.
 The only way to define rows right now is through <a class="reference internal" href="reference/citrine.ara.rows.html#citrine.ara.rows.MaterialRunByTemplate" title="citrine.ara.rows.MaterialRunByTemplate"><code class="xref py py-class docutils literal notranslate"><span class="pre">MaterialRunByTemplate</span></code></a>, which produces one row per Material Run associated with any of a list of material templates.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.ara.rows</span> <span class="kn">import</span> <span class="n">MaterialRunByTemplate</span>
-<span class="kn">from</span> <span class="nn">taurus.entity.link_by_uid</span> <span class="kn">import</span> <span class="n">LinkByUID</span>
+<span class="kn">from</span> <span class="nn">gemd.entity.link_by_uid</span> <span class="kn">import</span> <span class="n">LinkByUID</span>
 <span class="n">row_def</span> <span class="o">=</span> <span class="n">MaterialRunByTemplate</span><span class="p">(</span>
       <span class="n">templates</span><span class="o">=</span><span class="p">[</span><span class="n">LinkByUID</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s2">&quot;templates&quot;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;finished cookie&quot;</span><span class="p">)])</span>
 </pre></div>
@@ -58,7 +58,7 @@ The headers are listed in decreasing hierarchical order: the first string indica
 In the example below, a hardness measurement might also be performed on the object denoted by the <code class="docutils literal notranslate"><span class="pre">Product</span></code> header.
 One might assign <code class="docutils literal notranslate"><span class="pre">headers</span> <span class="pre">=</span> <span class="pre">[&quot;Product&quot;,</span> <span class="pre">&quot;Hardness&quot;]</span></code> to this measurement in order to relate it with the <code class="docutils literal notranslate"><span class="pre">Density</span></code> measurement of the same physical object.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.ara.variables</span> <span class="kn">import</span> <span class="n">AttributeByTemplateAfterProcessTemplate</span>
-<span class="kn">from</span> <span class="nn">taurus.entity.link_by_uid</span> <span class="kn">import</span> <span class="n">LinkByUID</span>
+<span class="kn">from</span> <span class="nn">gemd.entity.link_by_uid</span> <span class="kn">import</span> <span class="n">LinkByUID</span>
 <span class="n">final_density</span> <span class="o">=</span> <span class="n">AttributeByTemplateAfterProcessTemplate</span><span class="p">(</span>
       <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;final density&quot;</span><span class="p">,</span>
       <span class="n">headers</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Product&quot;</span><span class="p">,</span> <span class="s2">&quot;Density&quot;</span><span class="p">],</span>
@@ -172,7 +172,7 @@ The steps are:</p>
     <span class="n">table_version</span> <span class="o">=</span> <span class="n">status</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="s1">&#39;display_table_version&#39;</span><span class="p">]</span>
     <span class="c1"># 4. Download the table</span>
     <span class="n">table</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">tables</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">table_id</span><span class="p">,</span> <span class="n">table_version</span><span class="p">)</span>
-    <span class="n">table</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">&quot;./my_table.csv&quot;</span><span class="p">)</span>
+    <span class="n">project</span><span class="o">.</span><span class="n">tables</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="s2">&quot;./my_table.csv&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>The return type of the <code class="docutils literal notranslate"><span class="pre">build_ara_table</span></code> method is a <a class="reference internal" href="reference/citrine.resources.ara_job.html#citrine.resources.ara_job.JobSubmissionResponse" title="citrine.resources.ara_job.JobSubmissionResponse"><code class="xref py py-class docutils literal notranslate"><span class="pre">JobSubmissionResponse</span></code></a> that contains a unique identifier for the submitted job.</p>
@@ -323,10 +323,14 @@ By including one or both of those templates, you can define a table of Cakes, Br
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="workflows/index.html">4. [ALPHA] AI Engine</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="workflows/index.html#getting-started">4.1. Getting Started</a></li>
-<li class="toctree-l2"><a class="reference internal" href="workflows/index.html#workflows-overview">4.2. Workflows Overview</a></li>
-<li class="toctree-l2"><a class="reference internal" href="workflows/index.html#modules-overview">4.3. Modules Overview</a></li>
-<li class="toctree-l2"><a class="reference internal" href="workflows/index.html#registration-and-validation">4.4. Registration and validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="workflows/getting_started.html">4.1. Getting Started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="workflows/predictors.html">4.2. Predictors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="workflows/design_spaces.html">4.3. Design spaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="workflows/processors.html">4.4. Processors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="workflows/scores.html">4.5. Scores</a></li>
+<li class="toctree-l2"><a class="reference internal" href="workflows/data_sources.html">4.6. Data Sources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="workflows/predictor_reports.html">4.7. Predictor reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="workflows/performance_workflows.html">4.8. Performance workflows</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="FAQ/index.html">5. FAQ</a><ul>

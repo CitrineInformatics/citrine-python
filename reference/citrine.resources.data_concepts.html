@@ -37,7 +37,7 @@
 <dl class="class">
 <dt id="citrine.resources.data_concepts.DataConcepts">
 <em class="property">class </em><code class="sig-prename descclassname">citrine.resources.data_concepts.</code><code class="sig-name descname">DataConcepts</code><span class="sig-paren">(</span><em class="sig-param">typ: str</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.data_concepts.DataConcepts" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.polymorphic_serializable.PolymorphicSerializable</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">taurus.entity.dict_serializable.DictSerializable</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.polymorphic_serializable.PolymorphicSerializable</span></code>, <a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.dict_serializable.html#gemd.entity.dict_serializable.DictSerializable" title="(in GEMD-python)"><code class="xref py py-class docutils literal notranslate"><span class="pre">gemd.entity.dict_serializable.DictSerializable</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
 <p>An abstract data concepts object.</p>
 <p>DataConcepts must be extended along with <cite>Resource</cite>.</p>
 <dl class="field-list simple">
@@ -48,7 +48,7 @@
 <dl class="method">
 <dt id="citrine.resources.data_concepts.DataConcepts.as_dict">
 <code class="sig-name descname">as_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; dict<a class="headerlink" href="#citrine.resources.data_concepts.DataConcepts.as_dict" title="Permalink to this definition">¶</a></dt>
-<dd><p>Dump to a dictionary (useful for interoperability with taurus).</p>
+<dd><p>Dump to a dictionary (useful for interoperability with gemd).</p>
 </dd></dl>
 
 <dl class="method">
@@ -60,15 +60,15 @@
 <dl class="method">
 <dt id="citrine.resources.data_concepts.DataConcepts.build">
 <em class="property">classmethod </em><code class="sig-name descname">build</code><span class="sig-paren">(</span><em class="sig-param">data: dict</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.data_concepts.DataConcepts.build" title="Permalink to this definition">¶</a></dt>
-<dd><p>Build a data concepts object from a dictionary or from a Taurus object.</p>
+<dd><p>Build a data concepts object from a dictionary or from a GEMD object.</p>
 <p>This is an internal method, and should not be called directly by users.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>data</strong> (<em>dict</em>) – A representation of the object. It must be possible to put this dictionary through
-the loads/dumps cycle of the Taurus
+the loads/dumps cycle of the GMED
 <code class="xref py py-mod docutils literal notranslate"><span class="pre">JSON</span> <span class="pre">encoder</span></code>. The ensuing dictionary must
 have a <cite>type</cite> field that corresponds to the response key of this class or of
-<code class="xref py py-class docutils literal notranslate"><span class="pre">LinkByUID</span></code>.</p>
+<a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.link_by_uid.html#gemd.entity.link_by_uid.LinkByUID" title="(in GEMD-python)"><code class="xref py py-class docutils literal notranslate"><span class="pre">LinkByUID</span></code></a>.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>An object corresponding to a data concepts resource.</p>
@@ -94,7 +94,7 @@ have a <cite>type</cite> field that corresponds to the response key of this clas
 <dl class="attribute">
 <dt id="citrine.resources.data_concepts.DataConcepts.client_specific_fields">
 <code class="sig-name descname">client_specific_fields</code><em class="property"> = {'audit_info': citrine.resources.audit_info.AuditInfo, 'dataset': citrine._serialization.properties.UUID}</em><a class="headerlink" href="#citrine.resources.data_concepts.DataConcepts.client_specific_fields" title="Permalink to this definition">¶</a></dt>
-<dd><p>Fields that are added to the taurus data objects when they are used in this client</p>
+<dd><p>Fields that are added to the gemd data objects when they are used in this client</p>
 <ul class="simple">
 <li><p>AuditInfo contains who/when information about the resource on the citrine platform</p></li>
 </ul>
@@ -111,7 +111,7 @@ have a <cite>type</cite> field that corresponds to the response key of this clas
 <em class="property">classmethod </em><code class="sig-name descname">from_dict</code><span class="sig-paren">(</span><em class="sig-param">d: dict</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.data_concepts.DataConcepts.from_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Build a data concepts object from a dictionary.</p>
 <p>This is an internal method, and should not be called directly by users.  First,
-it removes client_specific_fields from d, if present, and then calls the taurus
+it removes client_specific_fields from d, if present, and then calls the gemd
 object’s from_dict method.  Finally, it adds those fields back.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -135,7 +135,7 @@ of one of the classes that extends <a class="reference internal" href="#citrine.
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>data</strong> (<em>dict</em>) – A dictionary corresponding to a serialized data concepts object of unknown type.
-This method will also work if data is a deserialized Taurus object.</p>
+This method will also work if data is a deserialized GEMD object.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The class corresponding to data.</p>
@@ -184,7 +184,7 @@ but when using <a class="reference internal" href="#citrine.resources.data_conce
 <dd class="field-even"><p>A data model object built from the dictionary.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="#citrine.resources.data_concepts.DataConcepts" title="citrine.resources.data_concepts.DataConcepts">DataConcepts</a></p>
+<dd class="field-odd"><p>ResourceType</p>
 </dd>
 </dl>
 </dd></dl>
@@ -223,7 +223,7 @@ Default is False.</p></li>
 <dd class="field-even"><p>List of every object in this collection whose <cite>name</cite> matches the search term.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>List[<a class="reference internal" href="#citrine.resources.data_concepts.DataConcepts" title="citrine.resources.data_concepts.DataConcepts">DataConcepts</a>]</p>
+<dd class="field-odd"><p>List[ResourceType]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -246,7 +246,7 @@ limited to a length of 1 or 0 (empty list does not filter).</p></li>
 See (insert link) for a discussion of how to match on tags.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>List[<a class="reference internal" href="#citrine.resources.data_concepts.DataConcepts" title="citrine.resources.data_concepts.DataConcepts">DataConcepts</a>]</p>
+<dd class="field-odd"><p>List[ResourceType]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -266,7 +266,7 @@ See (insert link) for a discussion of how to match on tags.</p>
 <dd class="field-even"><p>An object with specified scope and uid</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="#citrine.resources.data_concepts.DataConcepts" title="citrine.resources.data_concepts.DataConcepts">DataConcepts</a></p>
+<dd class="field-odd"><p>ResourceType</p>
 </dd>
 </dl>
 </dd></dl>
@@ -279,7 +279,7 @@ See (insert link) for a discussion of how to match on tags.</p>
 
 <dl class="method">
 <dt id="citrine.resources.data_concepts.DataConceptsCollection.list">
-<code class="sig-name descname">list</code><span class="sig-paren">(</span><em class="sig-param">page: Optional[int] = None</em>, <em class="sig-param">per_page: Optional[int] = 100</em><span class="sig-paren">)</span> &#x2192; List[citrine.resources.data_concepts.DataConcepts]<a class="headerlink" href="#citrine.resources.data_concepts.DataConceptsCollection.list" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">list</code><span class="sig-paren">(</span><em class="sig-param">page: Optional[int] = None</em>, <em class="sig-param">per_page: Optional[int] = 100</em><span class="sig-paren">)</span> &#x2192; List[ResourceType]<a class="headerlink" href="#citrine.resources.data_concepts.DataConceptsCollection.list" title="Permalink to this definition">¶</a></dt>
 <dd><p>List all visible elements of the collection.</p>
 <p>Leaving page and per_page as default values will return a list of all elements
 in the collection, paginating over all available pages.</p>
@@ -297,14 +297,14 @@ specified it limits the maximum number of elements in the response.</p></li>
 <dd class="field-even"><p>Every object in this collection.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>List[<a class="reference internal" href="#citrine.resources.data_concepts.DataConcepts" title="citrine.resources.data_concepts.DataConcepts">DataConcepts</a>]</p>
+<dd class="field-odd"><p>List[ResourceType]</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="citrine.resources.data_concepts.DataConceptsCollection.list_all">
-<code class="sig-name descname">list_all</code><span class="sig-paren">(</span><em class="sig-param">forward: bool = True</em>, <em class="sig-param">per_page: int = 100</em><span class="sig-paren">)</span> &#x2192; Iterator[citrine.resources.data_concepts.DataConcepts]<a class="headerlink" href="#citrine.resources.data_concepts.DataConceptsCollection.list_all" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">list_all</code><span class="sig-paren">(</span><em class="sig-param">forward: bool = True</em>, <em class="sig-param">per_page: int = 100</em><span class="sig-paren">)</span> &#x2192; Iterator[ResourceType]<a class="headerlink" href="#citrine.resources.data_concepts.DataConceptsCollection.list_all" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get all objects in the collection.</p>
 <p>The order of results should not be relied upon, but for now they are sorted by
 dataset, object type, and creation time (in that order of priority).</p>
@@ -321,14 +321,14 @@ modifying this value only if you find this method is unacceptably latent.</p></l
 <dd class="field-even"><p>Every object in this collection.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Iterator[<a class="reference internal" href="#citrine.resources.data_concepts.DataConcepts" title="citrine.resources.data_concepts.DataConcepts">DataConcepts</a>]</p>
+<dd class="field-odd"><p>Iterator[ResourceType]</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="citrine.resources.data_concepts.DataConceptsCollection.list_by_name">
-<code class="sig-name descname">list_by_name</code><span class="sig-paren">(</span><em class="sig-param">name: str</em>, <em class="sig-param">exact: bool = False</em>, <em class="sig-param">forward: bool = True</em>, <em class="sig-param">per_page: int = 100</em><span class="sig-paren">)</span> &#x2192; Iterator[citrine.resources.data_concepts.DataConcepts]<a class="headerlink" href="#citrine.resources.data_concepts.DataConceptsCollection.list_by_name" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">list_by_name</code><span class="sig-paren">(</span><em class="sig-param">name: str</em>, <em class="sig-param">exact: bool = False</em>, <em class="sig-param">forward: bool = True</em>, <em class="sig-param">per_page: int = 100</em><span class="sig-paren">)</span> &#x2192; Iterator[ResourceType]<a class="headerlink" href="#citrine.resources.data_concepts.DataConceptsCollection.list_by_name" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get all objects with specified name in this dataset.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -346,14 +346,14 @@ modifying this value only if you find this method is unacceptably latent.</p></l
 <dd class="field-even"><p>List of every object in this collection whose <cite>name</cite> matches the search term.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Iterator[<a class="reference internal" href="#citrine.resources.data_concepts.DataConcepts" title="citrine.resources.data_concepts.DataConcepts">DataConcepts</a>]</p>
+<dd class="field-odd"><p>Iterator[ResourceType]</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="citrine.resources.data_concepts.DataConceptsCollection.list_by_tag">
-<code class="sig-name descname">list_by_tag</code><span class="sig-paren">(</span><em class="sig-param">tag: str</em>, <em class="sig-param">per_page: int = 100</em><span class="sig-paren">)</span> &#x2192; Iterator[citrine.resources.data_concepts.DataConcepts]<a class="headerlink" href="#citrine.resources.data_concepts.DataConceptsCollection.list_by_tag" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">list_by_tag</code><span class="sig-paren">(</span><em class="sig-param">tag: str</em>, <em class="sig-param">per_page: int = 100</em><span class="sig-paren">)</span> &#x2192; Iterator[ResourceType]<a class="headerlink" href="#citrine.resources.data_concepts.DataConceptsCollection.list_by_tag" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get all objects bearing a tag prefixed with <cite>tag</cite> in the collection.</p>
 <p>The order of results is largely unmeaningul. Results from the same dataset will be
 grouped together but no other meaningful ordering can be relied upon. Duplication in
@@ -374,7 +374,7 @@ modifying this value only if you find this method is unacceptably latent.</p></l
 <dd class="field-even"><p>Every object in this collection.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Iterator[<a class="reference internal" href="#citrine.resources.data_concepts.DataConcepts" title="citrine.resources.data_concepts.DataConcepts">DataConcepts</a>]</p>
+<dd class="field-odd"><p>Iterator[ResourceType]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -395,7 +395,7 @@ pre-existence of objects with their IDs is asserted before attempting to write
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>model</strong> (<a class="reference internal" href="#citrine.resources.data_concepts.DataConcepts" title="citrine.resources.data_concepts.DataConcepts"><em>DataConcepts</em></a>) – The DataConcepts object.</p></li>
+<li><p><strong>model</strong> (<em>ResourceType</em>) – The DataConcepts object.</p></li>
 <li><p><strong>dry_run</strong> (<em>bool</em>) – Whether to actually delete the item or run a dry run of the delete operation.
 Dry run is intended to be used for validation. Default: false</p></li>
 </ul>
@@ -404,7 +404,7 @@ Dry run is intended to be used for validation. Default: false</p></li>
 <dd class="field-even"><p>A copy of the registered object as it now exists in the database.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="#citrine.resources.data_concepts.DataConcepts" title="citrine.resources.data_concepts.DataConcepts">DataConcepts</a></p>
+<dd class="field-odd"><p>ResourceType</p>
 </dd>
 </dl>
 </dd></dl>
@@ -474,10 +474,14 @@ Dry run is intended to be used for validation. Default: false</p></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">4. [ALPHA] AI Engine</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#getting-started">4.1. Getting Started</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#workflows-overview">4.2. Workflows Overview</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#modules-overview">4.3. Modules Overview</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#registration-and-validation">4.4. Registration and validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/getting_started.html">4.1. Getting Started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/predictors.html">4.2. Predictors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/design_spaces.html">4.3. Design spaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/processors.html">4.4. Processors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/scores.html">4.5. Scores</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/data_sources.html">4.6. Data Sources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/predictor_reports.html">4.7. Predictor reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/performance_workflows.html">4.8. Performance workflows</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">5. FAQ</a><ul>

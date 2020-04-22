@@ -37,9 +37,9 @@
 <h1>1.4. Data Model<a class="headerlink" href="#data-model" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="overview">
 <h2>1.4.1. Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
-<p>The Citrine python client is built on our NextGen data model, (codename taurus).
-Taurus is a format that links together materials, the processes that produced them, and the measurements that characterize them.
-Complete documentation can be found in the <a class="reference external" href="https://citrineinformatics.github.io/taurus/">data model docs</a>.
+<p>The Citrine python client is built on our NextGen data model, GEMD.
+GEMD is a format that links together materials, the processes that produced them, and the measurements that characterize them.
+Complete documentation can be found in the <a class="reference external" href="https://citrineinformatics.github.io/gemd-docs/">data model docs</a>.
 This page presents a broad overview.</p>
 </div>
 <div class="section" id="the-basic-objects-processes-materials-measurements">
@@ -97,9 +97,9 @@ For example, “Temperature is between 20 and 24 degC” is a bad template: temp
 </div>
 <div class="section" id="linkbyuid">
 <h2>1.4.5. LinkByUID<a class="headerlink" href="#linkbyuid" title="Permalink to this headline">¶</a></h2>
-<p>The <code class="xref py py-class docutils literal notranslate"><span class="pre">LinkByUID</span></code> class allows you to reference another data model object by a unique identifier without downloading it first.
+<p>The <a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.link_by_uid.html#gemd.entity.link_by_uid.LinkByUID" title="(in GEMD-python)"><code class="xref py py-class docutils literal notranslate"><span class="pre">LinkByUID</span></code></a> class allows you to reference another data model object by a unique identifier without downloading it first.
 This is a common pattern within the data model objects, since many objects contain links to other objects that may have already been registered to the platform.
-<code class="xref py py-class docutils literal notranslate"><span class="pre">LinkByUID</span></code> objects can use either the platform’s unique identifier or an <a class="reference external" href="https://citrineinformatics.github.io/gemd-docs/specification/unique-identifiers/#alternative-ids">alternative identifier</a>.</p>
+<a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.link_by_uid.html#gemd.entity.link_by_uid.LinkByUID" title="(in GEMD-python)"><code class="xref py py-class docutils literal notranslate"><span class="pre">LinkByUID</span></code></a> objects can use either the platform’s unique identifier or an <a class="reference external" href="https://citrineinformatics.github.io/gemd-docs/specification/unique-identifiers/#alternative-ids">alternative identifier</a>.</p>
 </div>
 </div>
 
@@ -164,10 +164,14 @@ This is a common pattern within the data model objects, since many objects conta
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">4. [ALPHA] AI Engine</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#getting-started">4.1. Getting Started</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#workflows-overview">4.2. Workflows Overview</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#modules-overview">4.3. Modules Overview</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#registration-and-validation">4.4. Registration and validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/getting_started.html">4.1. Getting Started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/predictors.html">4.2. Predictors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/design_spaces.html">4.3. Design spaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/processors.html">4.4. Processors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/scores.html">4.5. Scores</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/data_sources.html">4.6. Data Sources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/predictor_reports.html">4.7. Predictor reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/performance_workflows.html">4.8. Performance workflows</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">5. FAQ</a><ul>

@@ -36,7 +36,7 @@
 <p>Variable definitions for Ara.</p>
 <dl class="class">
 <dt id="citrine.ara.variables.AttributeByTemplate">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.ara.variables.</code><code class="sig-name descname">AttributeByTemplate</code><span class="sig-paren">(</span><em class="sig-param">*, name: str, headers: List[str], template: taurus.entity.link_by_uid.LinkByUID, attribute_constraints: Optional[List[List[Union[taurus.entity.link_by_uid.LinkByUID, taurus.entity.bounds.base_bounds.BaseBounds]]]] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.ara.variables.AttributeByTemplate" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">citrine.ara.variables.</code><code class="sig-name descname">AttributeByTemplate</code><span class="sig-paren">(</span><em class="sig-param">*, name: str, headers: List[str], template: gemd.entity.link_by_uid.LinkByUID, attribute_constraints: Optional[List[List[Union[gemd.entity.link_by_uid.LinkByUID, gemd.entity.bounds.base_bounds.BaseBounds]]]] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.ara.variables.AttributeByTemplate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.ara.variables.Variable" title="citrine.ara.variables.Variable"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.ara.variables.Variable</span></code></a></p>
 <p>[ALPHA] Attribute marked by an attribute template.</p>
 <dl class="field-list simple">
@@ -80,7 +80,7 @@ variable is being set to may be the target of a constraint as well.</p></li>
 
 <dl class="class">
 <dt id="citrine.ara.variables.AttributeByTemplateAfterProcessTemplate">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.ara.variables.</code><code class="sig-name descname">AttributeByTemplateAfterProcessTemplate</code><span class="sig-paren">(</span><em class="sig-param">*, name: str, headers: List[str], attribute_template: taurus.entity.link_by_uid.LinkByUID, process_template: taurus.entity.link_by_uid.LinkByUID, attribute_constraints: Optional[List[List[Union[taurus.entity.link_by_uid.LinkByUID, taurus.entity.bounds.base_bounds.BaseBounds]]]] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.ara.variables.AttributeByTemplateAfterProcessTemplate" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">citrine.ara.variables.</code><code class="sig-name descname">AttributeByTemplateAfterProcessTemplate</code><span class="sig-paren">(</span><em class="sig-param">*, name: str, headers: List[str], attribute_template: gemd.entity.link_by_uid.LinkByUID, process_template: gemd.entity.link_by_uid.LinkByUID, attribute_constraints: Optional[List[List[Union[gemd.entity.link_by_uid.LinkByUID, gemd.entity.bounds.base_bounds.BaseBounds]]]] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.ara.variables.AttributeByTemplateAfterProcessTemplate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.ara.variables.Variable" title="citrine.ara.variables.Variable"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.ara.variables.Variable</span></code></a></p>
 <p>[ALPHA] Attribute of an object marked by an attribute template and a parent process template.</p>
 <dl class="field-list simple">
@@ -130,7 +130,7 @@ variable is being set to may be the target of a constraint as well.</p></li>
 
 <dl class="class">
 <dt id="citrine.ara.variables.AttributeByTemplateAndObjectTemplate">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.ara.variables.</code><code class="sig-name descname">AttributeByTemplateAndObjectTemplate</code><span class="sig-paren">(</span><em class="sig-param">*, name: str, headers: List[str], attribute_template: taurus.entity.link_by_uid.LinkByUID, object_template: taurus.entity.link_by_uid.LinkByUID, attribute_constraints: List[List[Union[taurus.entity.link_by_uid.LinkByUID, taurus.entity.bounds.base_bounds.BaseBounds]]] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.ara.variables.AttributeByTemplateAndObjectTemplate" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">citrine.ara.variables.</code><code class="sig-name descname">AttributeByTemplateAndObjectTemplate</code><span class="sig-paren">(</span><em class="sig-param">*, name: str, headers: List[str], attribute_template: gemd.entity.link_by_uid.LinkByUID, object_template: gemd.entity.link_by_uid.LinkByUID, attribute_constraints: List[List[Union[gemd.entity.link_by_uid.LinkByUID, gemd.entity.bounds.base_bounds.BaseBounds]]] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.ara.variables.AttributeByTemplateAndObjectTemplate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.ara.variables.Variable" title="citrine.ara.variables.Variable"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.ara.variables.Variable</span></code></a></p>
 <p>[ALPHA] Attribute marked by an attribute template and an object template.</p>
 <p>For example, one property may be measured by two different measurement techniques.  In this
@@ -184,7 +184,7 @@ variable is being set to may be the target of a constraint as well.</p></li>
 
 <dl class="class">
 <dt id="citrine.ara.variables.AttributeInOutput">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.ara.variables.</code><code class="sig-name descname">AttributeInOutput</code><span class="sig-paren">(</span><em class="sig-param">*, name: str, headers: List[str], attribute_template: taurus.entity.link_by_uid.LinkByUID, process_templates: List[taurus.entity.link_by_uid.LinkByUID], attribute_constraints: List[List[Union[taurus.entity.link_by_uid.LinkByUID, taurus.entity.bounds.base_bounds.BaseBounds]]] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.ara.variables.AttributeInOutput" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">citrine.ara.variables.</code><code class="sig-name descname">AttributeInOutput</code><span class="sig-paren">(</span><em class="sig-param">*, name: str, headers: List[str], attribute_template: gemd.entity.link_by_uid.LinkByUID, process_templates: List[gemd.entity.link_by_uid.LinkByUID], attribute_constraints: List[List[Union[gemd.entity.link_by_uid.LinkByUID, gemd.entity.bounds.base_bounds.BaseBounds]]] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.ara.variables.AttributeInOutput" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.ara.variables.Variable" title="citrine.ara.variables.Variable"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.ara.variables.Variable</span></code></a></p>
 <p>[ALPHA] Attribute marked by an attribute template in the trunk of the history tree.</p>
 <p>The search for an attribute that marks the given attribute template starts at the root
@@ -195,11 +195,11 @@ and the inputs of a process to be distinguished.</p>
 <p>For example, a material “paint” might be produced by mixing and then resting “pigments” and
 a “base”.  The color of the pigments and base could be measured and recorded as attributes
 in addition to the color of the resulting paint.  To define a variable as the color of the
-resulting paint, AttributeInTrunk can be used with the mixing process included in the list
+resulting paint, AttributeInOutput can be used with the mixing process included in the list
 of process templates.  Then, when the platform looks for colors, it won’t traverse through
 the mixing process and hit the colors of the pigments and base as well, which would result
 in an ambiguous variable match.</p>
-<p>Unlike “AttributeByTemplateAfterProcess”, AttributeInTrunk will also match on the color
+<p>Unlike “AttributeByTemplateAfterProcess”, AttributeInOutput will also match on the color
 attribute of the pigments in the rows that correspond to those pigments.  This way, all the
 colors can be assigned to the same variable and rendered into the same columns in the table.</p>
 <dl class="field-list simple">
@@ -250,7 +250,7 @@ variable is being set to may be the target of a constraint as well.</p></li>
 
 <dl class="class">
 <dt id="citrine.ara.variables.IngredientIdentifierByProcessTemplateAndName">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.ara.variables.</code><code class="sig-name descname">IngredientIdentifierByProcessTemplateAndName</code><span class="sig-paren">(</span><em class="sig-param">*, name: str, headers: List[str], process_template: taurus.entity.link_by_uid.LinkByUID, ingredient_name: str, scope: str</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.ara.variables.IngredientIdentifierByProcessTemplateAndName" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">citrine.ara.variables.</code><code class="sig-name descname">IngredientIdentifierByProcessTemplateAndName</code><span class="sig-paren">(</span><em class="sig-param">*, name: str, headers: List[str], process_template: gemd.entity.link_by_uid.LinkByUID, ingredient_name: str, scope: str</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.ara.variables.IngredientIdentifierByProcessTemplateAndName" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.ara.variables.Variable" title="citrine.ara.variables.Variable"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.ara.variables.Variable</span></code></a></p>
 <p>[ALPHA] Ingredient identifier associated with a process template and a name.</p>
 <dl class="field-list simple">
@@ -298,7 +298,7 @@ variable is being set to may be the target of a constraint as well.</p></li>
 
 <dl class="class">
 <dt id="citrine.ara.variables.IngredientLabelByProcessAndName">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.ara.variables.</code><code class="sig-name descname">IngredientLabelByProcessAndName</code><span class="sig-paren">(</span><em class="sig-param">*, name: str, headers: List[str], process_template: taurus.entity.link_by_uid.LinkByUID, ingredient_name: str, label: str</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.ara.variables.IngredientLabelByProcessAndName" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">citrine.ara.variables.</code><code class="sig-name descname">IngredientLabelByProcessAndName</code><span class="sig-paren">(</span><em class="sig-param">*, name: str, headers: List[str], process_template: gemd.entity.link_by_uid.LinkByUID, ingredient_name: str, label: str</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.ara.variables.IngredientLabelByProcessAndName" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.ara.variables.Variable" title="citrine.ara.variables.Variable"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.ara.variables.Variable</span></code></a></p>
 <p>[ALPHA] Define a boolean variable indicating whether a given label is applied.</p>
 <p>Matches by process template, ingredient name, and the label string to check.</p>
@@ -350,7 +350,7 @@ average density of the solvents”.</p>
 
 <dl class="class">
 <dt id="citrine.ara.variables.IngredientQuantityByProcessAndName">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.ara.variables.</code><code class="sig-name descname">IngredientQuantityByProcessAndName</code><span class="sig-paren">(</span><em class="sig-param">*, name: str, headers: List[str], process_template: taurus.entity.link_by_uid.LinkByUID, ingredient_name: str, quantity_dimension: citrine.ara.variables.IngredientQuantityDimension</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.ara.variables.IngredientQuantityByProcessAndName" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">citrine.ara.variables.</code><code class="sig-name descname">IngredientQuantityByProcessAndName</code><span class="sig-paren">(</span><em class="sig-param">*, name: str, headers: List[str], process_template: gemd.entity.link_by_uid.LinkByUID, ingredient_name: str, quantity_dimension: citrine.ara.variables.IngredientQuantityDimension</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.ara.variables.IngredientQuantityByProcessAndName" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.ara.variables.Variable" title="citrine.ara.variables.Variable"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.ara.variables.Variable</span></code></a></p>
 <p>[ALPHA] Get the quantity of an ingredient associated with a process template and a name.</p>
 <dl class="field-list simple">
@@ -400,7 +400,7 @@ valid options are defined by <a class="reference internal" href="#citrine.ara.va
 <dl class="class">
 <dt id="citrine.ara.variables.IngredientQuantityDimension">
 <em class="property">class </em><code class="sig-prename descclassname">citrine.ara.variables.</code><code class="sig-name descname">IngredientQuantityDimension</code><span class="sig-paren">(</span><em class="sig-param">*args</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.ara.variables.IngredientQuantityDimension" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">taurus.enumeration.base_enumeration.BaseEnumeration</span></code></p>
+<dd><p>Bases: <a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.enumeration.base_enumeration.html#gemd.enumeration.base_enumeration.BaseEnumeration" title="(in GEMD-python)"><code class="xref py py-class docutils literal notranslate"><span class="pre">gemd.enumeration.base_enumeration.BaseEnumeration</span></code></a></p>
 <p>[ALPHA] The dimension of an ingredient quantity.</p>
 <ul class="simple">
 <li><p>ABSOLUTE corresponds to the absolute quantity</p></li>
@@ -579,10 +579,14 @@ valid options are defined by <a class="reference internal" href="#citrine.ara.va
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">4. [ALPHA] AI Engine</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#getting-started">4.1. Getting Started</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#workflows-overview">4.2. Workflows Overview</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#modules-overview">4.3. Modules Overview</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/index.html#registration-and-validation">4.4. Registration and validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/getting_started.html">4.1. Getting Started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/predictors.html">4.2. Predictors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/design_spaces.html">4.3. Design spaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/processors.html">4.4. Processors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/scores.html">4.5. Scores</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/data_sources.html">4.6. Data Sources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/predictor_reports.html">4.7. Predictor reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/performance_workflows.html">4.8. Performance workflows</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">5. FAQ</a><ul>
