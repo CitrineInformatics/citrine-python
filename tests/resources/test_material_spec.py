@@ -2,6 +2,7 @@ from uuid import UUID
 
 import pytest
 from citrine.resources.material_spec import MaterialSpecCollection
+from tests.resources.test_data_concepts import run_noop_gemd_relation_search_test
 
 from tests.utils.factories import MaterialTemplateFactory, \
     MaterialSpecDataFactory
@@ -45,6 +46,24 @@ def test_filter_by_template(collection, session):
     )
     assert session.last_call == expected_call
     assert specs == [collection.build(sample_spec)]
+
+
+def test_list_by_template(collection):
+    run_noop_gemd_relation_search_test(
+        search_for='material-specs',
+        search_with='material-templates',
+        collection=collection,
+        search_fn=collection.list_by_template,
+    )
+
+
+def test_get_by_process(collection):
+    run_noop_gemd_relation_search_test(
+        search_for='material-specs',
+        search_with='process-specs',
+        collection=collection,
+        search_fn=collection.get_by_process,
+    )
 
 
 def test_repeat_serialization_gemd(collection, session):

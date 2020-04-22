@@ -1,3 +1,5 @@
+from collections import Iterator
+
 import pytest
 from uuid import uuid4
 
@@ -5,6 +7,23 @@ from citrine.resources.audit_info import AuditInfo
 from citrine.resources.data_concepts import DataConcepts
 from citrine.resources.process_run import ProcessRun
 from citrine.resources.process_spec import ProcessSpec
+from tests.utils.session import FakeCall
+
+
+def run_noop_gemd_relation_search_test(search_for, search_with, collection, search_fn):
+    collection.session.set_response({'contents': []})
+    test_id = 'foo-id'
+    test_scope = 'foo-scope'
+    result = search_fn(test_id, scope=test_scope)
+    if isinstance(result, Iterator):
+        # evaluate iterator to make calls happen
+        list(result)
+    assert collection.session.num_calls == 1
+    assert collection.session.last_call == FakeCall(
+        method="GET",
+        path="projects/{}/{}/{}/{}/{}".format(collection.project_id, search_with, test_scope, test_id, search_for),
+        params={"dataset_id": str(collection.dataset_id), "forward": True, "ascending": True, "per_page": 100}
+    )
 
 
 def test_assign_audit_info():
