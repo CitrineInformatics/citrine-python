@@ -419,12 +419,12 @@ class AttributeInOutput(
     For example, a material "paint" might be produced by mixing and then resting "pigments" and
     a "base".  The color of the pigments and base could be measured and recorded as attributes
     in addition to the color of the resulting paint.  To define a variable as the color of the
-    resulting paint, AttributeInTrunk can be used with the mixing process included in the list
+    resulting paint, AttributeInOutput can be used with the mixing process included in the list
     of process templates.  Then, when the platform looks for colors, it won't traverse through
     the mixing process and hit the colors of the pigments and base as well, which would result
     in an ambiguous variable match.
 
-    Unlike "AttributeByTemplateAfterProcess", AttributeInTrunk will also match on the color
+    Unlike "AttributeByTemplateAfterProcess", AttributeInOutput will also match on the color
     attribute of the pigments in the rows that correspond to those pigments.  This way, all the
     colors can be assigned to the same variable and rendered into the same columns in the table.
 
