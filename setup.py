@@ -56,8 +56,14 @@ class PreBuildCommand(build_py):
         build_py.run(self)
 
 
+def get_git_tag():
+    # probably not valid subprocess usage, but you get the idea
+    import subprocess
+    return subprocess.run('git tag -l | HEAD -1').stdout
+
+
 setup(name='citrine',
-      version='0.16.4',
+      version=get_git_tag(),
       url='http://github.com/CitrineInformatics/citrine-python',
       description='Python library for the Citrine Platform',
       author='Andrew Millspaugh',

@@ -3,8 +3,6 @@ python:
 - '3.5'
 - '3.6'
 install:
-- git tag
-- echo $TRAVIS_COMMIT_MESSAGE
 - pip install -U -r requirements.txt
 - pip install -U -r test_requirements.txt
 - pip install --no-deps -e .
@@ -18,7 +16,24 @@ script:
 # following https://docs.travis-ci.com/user/environment-variables/#convenience-variables
 # the pull request isn't set to true if its a PR; its just set to false if its not.
 - if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ "$TRAVIS_BRANCH" == "master" ]; then bash ./scripts/validate-version-bump.sh; fi
-
+after_success:
+- |
+  # PSEUDO CODE
+  if branch == master
+      prev_tag = git tag -l | HEAD -1
+      msg = $TRAVIS_COMMIT_MESSAGE
+      if msg.startswith('patch')
+          bump = 0.0.1
+      elif msg.startswith('minor')
+          bump = 0.1.0
+      elif msg.startswith('major')
+          bump = 1.0.0
+      elif msg.startswith('pre')
+          bump = None
+      if bump
+          tag = prev_tag + bump
+          git tag $tag
+          git push --tags
 deploy:
   - provider: pages
     skip_cleanup: true
