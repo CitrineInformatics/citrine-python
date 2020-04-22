@@ -137,39 +137,75 @@ Setting ``dry_run=False`` is equivalent to not specifying ``dry_run`` at all and
 Template and Simple Validations
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Sometimes, it is convenient to be able to bulk validate a group of runs and/or specs against their attribute and object
-templates before any of the data objects is stored. The ``.validate_templates()`` methods, available for all runs and
-specs, validate the provided object against already-stored attribute templates as well as a provided object template.
+templates before any of the data objects are stored.
+The ``.validate_templates()`` methods, available for all runs and specs, validate the provided object against all of the
+(already-stored) attribute templates linked to attributes on the object as well as an optional provided object template.
 Notably, these methods do not validate linked objects in any way, making it possible to run validations on an object
-with links to yet-unstored objects. Be aware that this means that ``.validate_templates()`` does not validate links and
-will not surface any link-based errors. For ingredients, the associated object template is a process template that is
-provided as a separate parameter. This method returns a list of validation errors, which is empty on validation success.
+with links to yet-unstored objects.
+Be aware that this means that ``.validate_templates()`` does not validate links and will not surface any link-based
+errors.
+This method returns a list of validation errors, which is empty on validation success.
 
 The below example usages are trivial examples intended to illustrate the method arguments, rather than interesting
 validation cases.
 
-Example usage with no object template:
+Example with validation errors with no object template:
 
 .. code-block:: python
 
-    spec = ProcessSpec("foo")
-    run = ProcessRun("bar", spec=spec)
-    dataset.process_runs.validate_templates(run)
+    condition1 = Condition('condition_name', value=UniformInteger(1, 2))
+    condition2 = Condition('condition_name', value=UniformInteger(1, 3))
+    parameter1 = Parameter('parameter_name', value=UniformInteger(1, 4))
+    parameter2 = Parameter('parameter_name', value=UniformInteger(1, 5))
+    process_spec = ProcessSpec(name='spec name')
+    process_run = ProcessRun(name='run name', spec=process_spec, conditions=[condition1, condition2], parameters=[parameter1, parameter2])
+    dataset.process_runs.validate_templates(process_run)
 
-Example usage with an object template:
-
-.. code-block:: python
-
-    template = ProcessTemplate("pt")
-    spec = ProcessSpec("foo", template=template)
-    run = ProcessRun("bar", spec=spec)
-    dataset.process_runs.validate_templates(run, object_template=template)
-
-Example usage for an ingredient:
+has return value:
 
 .. code-block:: python
 
-    process_template = ProcessTemplate("pt")
+    [{'failure_message': 'Multiple Condition with named condition_name', 'property': None, 'failure_id': 'attribute.duplicate', 'input': None, 'type': NotImplemented},
+     {'failure_message': 'Multiple Parameter with named parameter_name', 'property': None, 'failure_id': 'attribute.duplicate', 'input': None, 'type': NotImplemented}]
+
+Example with validation errors with an object template:
+
+.. code-block:: python
+
+    condition_template = ConditionTemplate("condition template", bounds=IntegerBounds(1, 5))
+    condition_template = dataset.condition_templates.register(condition_template)
+
+    condition = Condition("condition", value=UniformInteger(1, 3), template=condition_template)
+    process_template = ProcessTemplate("pt", conditions=[[LinkByUID("id", condition_template.uids["id"]), IntegerBounds(2, 4)]])
     process_spec = ProcessSpec("ps", template=process_template)
-    material_spec = MaterialSpec("ms", process=process_spec)
-    ingredient_spec = IngredientSpec("is", process=process_spec, material=material_spec)
-    dataset.ingredient_specs.validate_templates(run, ingredient_process_template=process_template)
+    process_run = ProcessRun("pr", conditions=[condition], spec=process_spec)
+    dataset.process_runs.validate_templates(process_run, object_template=process_template)
+
+has return value:
+
+.. code-block:: python
+
+    [{'failure_message': 'UniformInteger(1,3) extends below 2 {2}', 'property': None, 'failure_id': 'attribute.bounds.value', 'input': None, 'type': NotImplemented}]
+
+For ingredients, the associated object template is a process template that is provided as a separate parameter. Any
+value provided to the ``object_template`` parameter for an ingredient will be ignored.
+
+Example with validation errors for an ingredient:
+
+.. code-block:: python
+
+    process_template = ProcessTemplate("pt", allowed_names=["foo"], allowed_labels=["bar"])
+    process_spec = ProcessSpec("ps", template=process_template)
+
+    mat_process_spec = ProcessSpec("mps")
+    material_spec = MaterialSpec("ms", process=mat_process_spec)
+
+    ingredient_spec = IngredientSpec("is", process=process_spec, material=material_spec, labels=["ingredient"])
+    dataset.ingredient_specs.validate_templates(ingredient_spec, ingredient_process_template=process_template)
+
+has return value:
+
+.. code-block:: python
+
+    [{'failure_message': 'Ingredient label ingredient not in list of allowed labels Set(bar)', 'property': None, 'failure_id': 'ingredient.label.allowed', 'input': None, 'type': NotImplemented},
+     {'failure_message': 'Ingredient name is not in list of allowed names Set(foo)', 'property': None, 'failure_id': 'ingredient.name.allowed', 'input': None, 'type': NotImplemented}]
