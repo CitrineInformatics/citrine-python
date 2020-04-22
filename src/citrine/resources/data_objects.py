@@ -173,6 +173,6 @@ class DataObjectCollection(DataConceptsCollection[DataObjectResourceType], ABC):
             self.session.put_resource(path, request_data)
             return []
         except BadRequest as e:
-            if e.api_error is not None:
+            if e.api_error is not None and e.api_error.validation_errors:
                 return e.api_error.validation_errors
             raise e

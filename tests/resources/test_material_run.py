@@ -487,3 +487,16 @@ def test_validate_templates_unrelated_400(collection, session):
     session.set_response(BadRequest("path", FakeRequestResponse(400)))
     with pytest.raises(BadRequest):
         collection.validate_templates(run)
+
+
+def test_validate_templates_unrelated_400_with_api_error(collection, session):
+    """
+    Test that DataObjectCollection.validate_templates() propagates an unrelated 400
+    """
+    # Given
+    run = MaterialRunFactory()
+
+    # When
+    session.set_response(BadRequest("path", FakeRequestResponseApiError(400, "I am not a validation error", [])))
+    with pytest.raises(BadRequest):
+        collection.validate_templates(run)
