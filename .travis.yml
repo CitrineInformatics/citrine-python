@@ -4,6 +4,7 @@ python:
 - '3.6'
 install:
 - git tag
+- echo $TRAVIS_COMMIT_MESSAGE
 - pip install -U -r requirements.txt
 - pip install -U -r test_requirements.txt
 - pip install --no-deps -e .
