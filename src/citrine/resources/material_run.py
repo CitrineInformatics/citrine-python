@@ -166,7 +166,8 @@ class MaterialRunCollection(ObjectRunCollection[MaterialRun]):
             The output material of the specified process, or None if no such material exists.
 
         """
-        return next(self._get_relation(relation='process-runs', uid=uid, scope=scope), None)
+        return next(
+            self._get_relation(relation='process-runs', uid=uid, scope=scope, per_page=1), None)
 
     @deprecation.deprecated(details='Use list_by_spec instead.')
     def filter_by_spec(self,

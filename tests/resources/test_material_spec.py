@@ -64,6 +64,7 @@ def test_get_by_process(collection):
         search_with='process-specs',
         collection=collection,
         search_fn=collection.get_by_process,
+        per_page=1,
     )
 
 

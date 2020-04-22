@@ -377,12 +377,13 @@ def test_filter_by_spec(collection: MaterialRunCollection, session):
     assert runs == [collection.build(sample_run)]
 
 
-def test_get_by_process(collection, session):
+def test_get_by_process(collection):
     run_noop_gemd_relation_search_test(
         search_for='material-runs',
         search_with='process-runs',
         collection=collection,
         search_fn=collection.get_by_process,
+        per_page=1,
     )
 
 

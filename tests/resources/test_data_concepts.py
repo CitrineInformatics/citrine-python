@@ -10,7 +10,7 @@ from citrine.resources.process_spec import ProcessSpec
 from tests.utils.session import FakeCall
 
 
-def run_noop_gemd_relation_search_test(search_for, search_with, collection, search_fn):
+def run_noop_gemd_relation_search_test(search_for, search_with, collection, search_fn, per_page=100):
     """Test that relation searches hit the correct endpoint."""
     collection.session.set_response({'contents': []})
     test_id = 'foo-id'
@@ -23,7 +23,7 @@ def run_noop_gemd_relation_search_test(search_for, search_with, collection, sear
     assert collection.session.last_call == FakeCall(
         method="GET",
         path="projects/{}/{}/{}/{}/{}".format(collection.project_id, search_with, test_scope, test_id, search_for),
-        params={"dataset_id": str(collection.dataset_id), "forward": True, "ascending": True, "per_page": 100}
+        params={"dataset_id": str(collection.dataset_id), "forward": True, "ascending": True, "per_page": per_page}
     )
 
 
