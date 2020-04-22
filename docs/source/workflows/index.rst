@@ -1,83 +1,18 @@
 .. _workflows:
 
+=================
 [ALPHA] AI Engine
 =================
 
-Getting Started
--------
+.. toctree::
+    :maxdepth: 2
 
-The Citrine Platform provides tools to make data-driven decisions for materials research and development using artificial intelligence (AI) workflows.
-AI Workflows are composed of modules, which provide the ability to programmatically codify domain knowledge, research capabilities and experimental objectives.
-Workflows leverage data and domain knowledge to help materials researchers make traceable, data-driven decisions in pursuit of their research and development goals.
-These capabilities include generating candidates for sequential learning, identifying outliers or imputing missing values.
-
-Workflows Overview
--------
-
-Currently, there are two types of workflows on the AI Engine: the :doc:`DesignWorkflow <design_workflows>` and the :doc:`PerformanceWorkflow <performance_workflows>`.
-Workflows employ reusable modules in order to execute. 
-There are three different types of modules, and these are discussed in greater detail below.
-
-DesignWorkflow
-**********
-
-The :doc:`DesignWorkflow <design_workflows>` is the core AI workflow on the platform.
-This workflow generates scored candidates for sequential learning.
-It requires one of each of the modules listed below and executes in the following manner:
-
--  Material candidates are pulled from the design space.
--  The predictor adds additional information to the candidates.
--  Enriched candidates are scored, and the processor selects the next batch of candidates to pull from the design space.
-
-After a given number of iterations, candidates are ranked according to their score and the best materials are returned.
-(Here, the best materials are those that are most likely to optimize an objective and satisfy a set of constraints.)
-
-Design workflows are further parameterized by :doc:`Scores <scores>`, which codify experimental objectives and constraints on desired candidates, and define the strategy for candidate acquisition.
-
-PerformanceWorkflow
-**********
-
-The :doc:`PerformanceWorkflow <performance_workflows>` is used to perform analysis on a predictor module.
-The PerformanceWorkflow exists to help the user understand how well their predictor module works with their data: in essence, it describes the trustworthiness of their model.
-These outcomes are captured in a series of performance metrics.
-
-Modules Overview
--------
-
-Modules are re-usable computational tools used to construct workflows.
-The modules dictate how the platform utilizes research data to generate computational results. 
-There are 3 types of modules on the platform:
-
--  :doc:`Design Spaces <design_spaces>` define the domain of controllable experimental parameters, their allowable values and relevant bounds.
--  :doc:`Predictors <predictors>` define relations between variables in a table of experimental data.
-    A predictor can be composed of machine-learned models and (coming soon) analytical relations.
--  :doc:`Processors <processors>` define the method used to search the design space.
-   The processor and design space are coupled: depending on the design space used, only a subset of processors are applicable.
-
-Activation
-**********
-
-Modules come `active` by default when created. If you would like to deactivate a module so it cannot be used again consider this example:
-
-.. code:: python
-
-   predictor = project.predictors.get(predictor_uuid)
-   predictor.active = False
-   project.predictors.update(predictor)
-
-Modules that are not `active` cannot be used in workflows and will not show up when listing.
-
-
-Registration and validation
----------------------------
-
-Both modules and workflows are registered with a project and validated before they are ready for use. Once registered, validation occurs automatically.
-Validation status can be one of the following states:
-
--  **Created:** The module/workflow has been registered with a project and has been queued for validation.
--  **Validating:** The module/workflow is currently validating. The status will be updated to one of the subsequent states upon completion.
--  **Invalid:** Validation completed successfully but found errors with the workflow/module.
--  **Ready:** Validation completed successfully and found no errors.
--  **Error:** Validation did not complete. An error was raised during the validation process that prevented an invalid or ready status to be determined.
-
-Validation of a workflow and all constituent modules must complete with ready status before the workflow can be executed.
+    getting_started
+    predictors
+    design_spaces
+    processors
+    desigh_workflows
+    scores
+    data_sources
+    predictor_reports
+    performance_workflows

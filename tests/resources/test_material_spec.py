@@ -47,22 +47,22 @@ def test_filter_by_template(collection, session):
     assert specs == [collection.build(sample_spec)]
 
 
-def test_repeat_serialization_taurus(collection, session):
+def test_repeat_serialization_gemd(collection, session):
     """
-    When registering a Taurus object, no unexpected fields should be added.  This is not no fields
+    When registering a GEMD object, no unexpected fields should be added.  This is not no fields
     at all, since a serialization will add an `auto` scoped uid
     """
-    from taurus.entity.object.material_spec import MaterialSpec as TaurusMaterial
-    from taurus.entity.object.process_spec import ProcessSpec as TaurusProcess
+    from gemd.entity.object.material_spec import MaterialSpec as GEMDMaterial
+    from gemd.entity.object.process_spec import ProcessSpec as GEMDProcess
     # Given
-    session.set_response(MaterialSpecDataFactory(name='Test taurus mutation'))
-    proc = TaurusProcess(name='Test taurus mutation (process)', uids={'nomutate': 'process'})
-    mat = TaurusMaterial(name='Test taurus mutation', uids={'nomutate': 'material'}, process=proc)
+    session.set_response(MaterialSpecDataFactory(name='Test gemd mutation'))
+    proc = GEMDProcess(name='Test gemd mutation (process)', uids={'nomutate': 'process'})
+    mat = GEMDMaterial(name='Test gemd mutation', uids={'nomutate': 'material'}, process=proc)
 
     # When
     collection.register(proc)
-    session.set_response(MaterialSpecDataFactory(name='Test taurus mutation'))
+    session.set_response(MaterialSpecDataFactory(name='Test gemd mutation'))
     registered = collection.register(mat)  # This will serialize the linked process as a side effect
 
     # Then
-    assert "<Material spec 'Test taurus mutation'>" == str(registered)
+    assert "<Material spec 'Test gemd mutation'>" == str(registered)

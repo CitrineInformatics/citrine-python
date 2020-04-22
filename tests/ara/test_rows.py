@@ -2,7 +2,7 @@
 import pytest
 
 from citrine.ara.rows import MaterialRunByTemplate, Row
-from taurus.entity.link_by_uid import LinkByUID
+from gemd.entity.link_by_uid import LinkByUID
 
 
 @pytest.fixture(params=[

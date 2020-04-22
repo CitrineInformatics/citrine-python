@@ -1,9 +1,9 @@
 """Tests for citrine.informatics.variables."""
 import pytest
-from taurus.entity.bounds.real_bounds import RealBounds
+from gemd.entity.bounds.real_bounds import RealBounds
 
 from citrine.ara.variables import *
-from taurus.entity.link_by_uid import LinkByUID
+from gemd.entity.link_by_uid import LinkByUID
 
 
 @pytest.fixture(params=[

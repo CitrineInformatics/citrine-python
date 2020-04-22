@@ -8,15 +8,15 @@ from citrine._serialization.properties import String, Object, Mapping, LinkOrEls
 from citrine._utils.functions import set_default_uid
 from citrine.resources.data_concepts import DataConcepts
 from citrine.resources.object_specs import ObjectSpec, ObjectSpecCollection
-from taurus.entity.attribute.condition import Condition
-from taurus.entity.attribute.parameter import Parameter
-from taurus.entity.file_link import FileLink
-from taurus.entity.object.measurement_spec import MeasurementSpec as TaurusMeasurementSpec
-from taurus.entity.template.measurement_template import \
-    MeasurementTemplate as TaurusMeasurementTemplate
+from gemd.entity.attribute.condition import Condition
+from gemd.entity.attribute.parameter import Parameter
+from gemd.entity.file_link import FileLink
+from gemd.entity.object.measurement_spec import MeasurementSpec as GEMDMeasurementSpec
+from gemd.entity.template.measurement_template import \
+    MeasurementTemplate as GEMDMeasurementTemplate
 
 
-class MeasurementSpec(ObjectSpec, Resource['MeasurementSpec'], TaurusMeasurementSpec):
+class MeasurementSpec(ObjectSpec, Resource['MeasurementSpec'], GEMDMeasurementSpec):
     """
     A measurement specification.
 
@@ -26,10 +26,10 @@ class MeasurementSpec(ObjectSpec, Resource['MeasurementSpec'], TaurusMeasurement
         Name of the measurement spec.
     uids: Map[str, str], optional
         A collection of
-        `unique IDs <https://citrineinformatics.github.io/taurus-documentation/
+        `unique IDs <https://citrineinformatics.github.io/gemd-docs/
         specification/unique-identifiers/>`_.
     tags: List[str], optional
-        `Tags <https://citrineinformatics.github.io/taurus-documentation/specification/tags/>`_
+        `Tags <https://citrineinformatics.github.io/gemd-docs/specification/tags/>`_
         are hierarchical strings that store information about an entity. They can be used
         for filtering and discoverability.
     notes: str, optional
@@ -46,7 +46,7 @@ class MeasurementSpec(ObjectSpec, Resource['MeasurementSpec'], TaurusMeasurement
 
     """
 
-    _response_key = TaurusMeasurementSpec.typ  # 'measurement_spec'
+    _response_key = GEMDMeasurementSpec.typ  # 'measurement_spec'
 
     name = String('name')
     uids = Mapping(String('scope'), String('id'), 'uids')
@@ -65,12 +65,12 @@ class MeasurementSpec(ObjectSpec, Resource['MeasurementSpec'], TaurusMeasurement
                  notes: Optional[str] = None,
                  conditions: Optional[List[Condition]] = None,
                  parameters: Optional[List[Parameter]] = None,
-                 template: Optional[TaurusMeasurementTemplate] = None,
+                 template: Optional[GEMDMeasurementTemplate] = None,
                  file_links: Optional[List[FileLink]] = None):
-        DataConcepts.__init__(self, TaurusMeasurementSpec.typ)
-        TaurusMeasurementSpec.__init__(self, name=name, uids=set_default_uid(uids),
-                                       tags=tags, conditions=conditions, parameters=parameters,
-                                       template=template, file_links=file_links, notes=notes)
+        DataConcepts.__init__(self, GEMDMeasurementSpec.typ)
+        GEMDMeasurementSpec.__init__(self, name=name, uids=set_default_uid(uids),
+                                     tags=tags, conditions=conditions, parameters=parameters,
+                                     template=template, file_links=file_links, notes=notes)
 
     def __str__(self):
         return '<Measurement spec {!r}>'.format(self.name)

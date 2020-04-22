@@ -199,10 +199,10 @@
             ],
             "version": "==0.1.7"
         },
-        "taurus": {
+        "gemd": {
             "editable": true,
-            "git": "https://github.com/CitrineInformatics/taurus.git",
-            "ref": "e043283fab2f18112d8e71f102657527fc09efe9"
+            "git": "https://github.com/CitrineInformatics/gemd-python.git",
+            "ref": "1733aa751683b915666f30a24ca289cfcf9da305"
         },
         "toolz": {
             "hashes": [

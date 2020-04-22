@@ -4,7 +4,7 @@ from urllib.parse import urlparse
 from uuid import uuid4, UUID
 import os
 
-from taurus.entity.link_by_uid import LinkByUID
+from gemd.entity.link_by_uid import LinkByUID
 
 
 def set_default_uid(id_dict: Dict[str, str]) -> Dict[str, str]:
@@ -40,7 +40,7 @@ def set_default_uid(id_dict: Dict[str, str]) -> Dict[str, str]:
 
 def get_object_id(object_or_id):
     """Extract the citrine id from a data concepts object or LinkByUID."""
-    from taurus.entity.attribute.base_attribute import BaseAttribute
+    from gemd.entity.attribute.base_attribute import BaseAttribute
     from citrine.resources.data_concepts import DataConcepts
     if isinstance(object_or_id, BaseAttribute):
         raise ValueError("Attributes do not have ids.")
