@@ -11,6 +11,7 @@ from tests.utils.session import FakeCall
 
 
 def run_noop_gemd_relation_search_test(search_for, search_with, collection, search_fn):
+    """Test that relation searches hit the correct endpoint."""
     collection.session.set_response({'contents': []})
     test_id = 'foo-id'
     test_scope = 'foo-scope'

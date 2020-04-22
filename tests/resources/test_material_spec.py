@@ -35,13 +35,14 @@ def test_filter_by_template(collection, session):
     session.set_response({'contents': [sample_spec]})
 
     # When
-    specs = [spec for spec in collection.filter_by_template(test_id)]
+    specs = [spec for spec in collection.filter_by_template(test_id, per_page=20)]
 
     # Then
     assert 1 == session.num_calls
     expected_call = FakeCall(
         method="GET",
         path="projects/{}/material-templates/{}/{}/material-specs".format(project_id, test_scope, test_id),
+        # per_page will be ignored
         params={"dataset_id": str(collection.dataset_id), "forward": True, "ascending": True, "per_page": 100}
     )
     assert session.last_call == expected_call

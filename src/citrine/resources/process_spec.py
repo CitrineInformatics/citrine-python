@@ -114,6 +114,7 @@ class ProcessSpecCollection(ObjectSpecCollection[ProcessSpec]):
         Returns
         -------
         Iterator[ProcessSpec]
-            The process specs using the specified process template.
+            The process specs using the specified process template
+
         """
         return self._get_relation('process-templates', uid=uid, scope=scope)

@@ -135,6 +135,7 @@ class IngredientRunCollection(ObjectRunCollection[IngredientRun]):
         -------
         Iterator[IngredientRun]
             The ingredient runs using the specified ingredient spec.
+
         """
         return self._get_relation('ingredient-specs', uid=uid, scope=scope)
 
@@ -156,7 +157,8 @@ class IngredientRunCollection(ObjectRunCollection[IngredientRun]):
         """
         return self._get_relation(relation='process-runs', uid=uid, scope=scope)
 
-    def list_by_material(self, uid: Union[UUID, str], scope: str = 'id') -> Iterator[IngredientRun]:
+    def list_by_material(self, uid: Union[UUID, str],
+                         scope: str = 'id') -> Iterator[IngredientRun]:
         """
         [ALPHA] Get ingredients using the specified material.
 

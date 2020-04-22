@@ -350,7 +350,7 @@ def test_material_run_filter_by_name_with_no_id(collection):
         collection.filter_by_name('foo')
 
 
-def test_filter_by_spec(collection, session):
+def test_filter_by_spec(collection: MaterialRunCollection, session):
     """
     Test that MaterialRunCollection.filter_by_spec() hits the expected endpoint
     """
@@ -363,13 +363,14 @@ def test_filter_by_spec(collection, session):
     session.set_response({'contents': [sample_run]})
 
     # When
-    runs = [run for run in collection.filter_by_spec(test_id)]
+    runs = [run for run in collection.filter_by_spec(test_id, per_page=20)]
 
     # Then
     assert 1 == session.num_calls
     expected_call = FakeCall(
         method="GET",
         path="projects/{}/material-specs/{}/{}/material-runs".format(project_id, test_scope, test_id),
+        # per_page will be ignored
         params={"dataset_id": str(collection.dataset_id), "forward": True, "ascending": True, "per_page": 100}
     )
     assert session.last_call == expected_call

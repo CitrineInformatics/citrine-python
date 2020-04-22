@@ -225,10 +225,12 @@ class MaterialRunCollection(ObjectRunCollection[MaterialRun]):
         -------
         Iterator[MaterialRun]
             The material runs using the specified material spec.
+
         """
         return self._get_relation('material-specs', uid=uid, scope=scope)
 
-    def list_by_template(self, uid: Union[UUID, str], scope: str = 'id') -> Iterator[MaterialRun]:
+    def list_by_template(self, uid: Union[UUID, str],
+                         scope: str = 'id') -> Iterator[MaterialRun]:
         """
         [ALPHA] Get the material runs using the specified material template.
 
@@ -242,6 +244,7 @@ class MaterialRunCollection(ObjectRunCollection[MaterialRun]):
         -------
         Iterator[MaterialRun]
             The material runs using the specified material template.
+
         """
         spec_collection = MaterialSpecCollection(self.project_id, self.dataset_id, self.session)
         specs = spec_collection.list_by_template(uid=uid, scope=scope)

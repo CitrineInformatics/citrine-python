@@ -114,7 +114,8 @@ class IngredientSpecCollection(ObjectSpecCollection[IngredientSpec]):
         """Return the resource type in the collection."""
         return IngredientSpec
 
-    def list_by_process(self, uid: Union[UUID, str], scope: str = 'id') -> Iterator[IngredientSpec]:
+    def list_by_process(self, uid: Union[UUID, str],
+                        scope: str = 'id') -> Iterator[IngredientSpec]:
         """
         [ALPHA] Get ingredients to a process.
 
@@ -132,7 +133,8 @@ class IngredientSpecCollection(ObjectSpecCollection[IngredientSpec]):
         """
         return self._get_relation(relation='process-specs', uid=uid, scope=scope)
 
-    def list_by_material(self, uid: Union[UUID, str], scope: str = 'id') -> Iterator[IngredientSpec]:
+    def list_by_material(self, uid: Union[UUID, str],
+                         scope: str = 'id') -> Iterator[IngredientSpec]:
         """
         [ALPHA] Get ingredients using the specified material.
 

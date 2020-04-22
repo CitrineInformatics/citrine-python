@@ -90,19 +90,22 @@ class MeasurementSpecCollection(ObjectSpecCollection[MeasurementSpec]):
         """Return the resource type in the collection."""
         return MeasurementSpec
 
-    def list_by_template(self, uid: Union[UUID, str], scope: str = 'id') -> Iterator[MeasurementSpec]:
+    def list_by_template(self, uid: Union[UUID, str],
+                         scope: str = 'id') -> Iterator[MeasurementSpec]:
         """
         [ALPHA] Get the measurement specs using the specified measurement template.
 
         Parameters
         ----------
         uid
-            The unique ID of the measurement template whose measurement spec usages are to be located.
+            The unique ID of the measurement template whose measurement spec usages are
+            to be located.
         scope
             The scope of `uid`.
         Returns
         -------
         Iterator[MeasurementSpec]
             The measurement specs using the specified measurement template.
+
         """
         return self._get_relation('measurement-templates', uid=uid, scope=scope)

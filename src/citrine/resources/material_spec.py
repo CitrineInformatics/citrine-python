@@ -11,7 +11,6 @@ from citrine._serialization.properties import Optional as PropertyOptional
 from citrine._serialization.properties import String, LinkOrElse, Mapping, Object
 from citrine._utils.functions import set_default_uid
 from citrine.resources.data_concepts import DataConcepts
-from citrine.resources.material_template import MaterialTemplateCollection
 from citrine.resources.object_specs import ObjectSpec, ObjectSpecCollection
 from gemd.entity.attribute.property_and_conditions import PropertyAndConditions
 from gemd.entity.file_link import FileLink
@@ -131,6 +130,7 @@ class MaterialSpecCollection(ObjectSpecCollection[MaterialSpec]):
         -------
         Iterator[MaterialSpec]
             The material specs using the specified material template.
+
         """
         return self._get_relation('material-templates', uid=uid, scope=scope)
 

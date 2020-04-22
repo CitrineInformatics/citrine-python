@@ -119,5 +119,6 @@ class ProcessRunCollection(ObjectRunCollection[ProcessRun]):
         -------
         Iterator[ProcessRun]
             The process runs using the specified process spec.
+
         """
         return self._get_relation('process-specs', uid=uid, scope=scope)
