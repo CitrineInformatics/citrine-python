@@ -249,7 +249,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
 
         Returns
         -------
-        DataConcepts
+        ResourceType
             A data model object built from the dictionary.
 
         """
@@ -269,7 +269,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
 
         Returns
         -------
-        List[DataConcepts]
+        List[ResourceType]
             Every object in this collection.
 
         """
@@ -277,7 +277,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
 
     def list(self,
              page: Optional[int] = None,
-             per_page: Optional[int] = 100) -> List[DataConcepts]:
+             per_page: Optional[int] = 100) -> List[ResourceType]:
         """
         List all visible elements of the collection.
 
@@ -296,7 +296,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
 
         Returns
         -------
-        List[DataConcepts]
+        List[ResourceType]
             Every object in this collection.
 
         """
@@ -320,7 +320,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
 
         Parameters
         ----------
-        model: DataConcepts
+        model: ResourceType
             The DataConcepts object.
         dry_run: bool
             Whether to actually delete the item or run a dry run of the delete operation.
@@ -328,7 +328,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
 
         Returns
         -------
-        DataConcepts
+        ResourceType
             A copy of the registered object as it now exists in the database.
 
         """
@@ -363,7 +363,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
 
         Returns
         -------
-        DataConcepts
+        ResourceType
             An object with specified scope and uid
 
         """
@@ -388,7 +388,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
 
         Returns
         -------
-        List[DataConcepts]
+        List[ResourceType]
             Every object in this collection that matches one of the tags.
             See (insert link) for a discussion of how to match on tags.
 
@@ -429,7 +429,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
 
         Returns
         -------
-        List[DataConcepts]
+        List[ResourceType]
             List of every object in this collection whose `name` matches the search term.
 
         """
@@ -447,7 +447,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         return [self.build(content) for content in response["contents"]]
 
     def list_by_name(self, name: str, exact: bool = False,
-                     forward: bool = True, per_page: int = 100) -> Iterator[DataConcepts]:
+                     forward: bool = True, per_page: int = 100) -> Iterator[ResourceType]:
         """
         Get all objects with specified name in this dataset.
 
@@ -467,7 +467,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
 
         Returns
         -------
-        Iterator[DataConcepts]
+        Iterator[ResourceType]
             List of every object in this collection whose `name` matches the search term.
 
         """
@@ -483,7 +483,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
             params=params)
         return (self.build(raw) for raw in raw_objects)
 
-    def list_all(self, forward: bool = True, per_page: int = 100) -> Iterator[DataConcepts]:
+    def list_all(self, forward: bool = True, per_page: int = 100) -> Iterator[ResourceType]:
         """
         Get all objects in the collection.
 
@@ -501,7 +501,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
 
         Returns
         -------
-        Iterator[DataConcepts]
+        Iterator[ResourceType]
             Every object in this collection.
 
         """
@@ -516,7 +516,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
             params=params)
         return (self.build(raw) for raw in raw_objects)
 
-    def list_by_tag(self, tag: str, per_page: int = 100) -> Iterator[DataConcepts]:
+    def list_by_tag(self, tag: str, per_page: int = 100) -> Iterator[ResourceType]:
         """
         Get all objects bearing a tag prefixed with `tag` in the collection.
 
@@ -538,7 +538,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
 
         Returns
         -------
-        Iterator[DataConcepts]
+        Iterator[ResourceType]
             Every object in this collection.
 
         """
