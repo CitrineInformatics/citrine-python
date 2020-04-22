@@ -22,14 +22,16 @@ after_success:
   if branch == master
       prev_tag = git tag -l | HEAD -1
       msg = $TRAVIS_COMMIT_MESSAGE
-      if msg.startswith('patch')
+      if msg.startswith('[patch]')
           bump = 0.0.1
-      elif msg.startswith('minor')
+      elif msg.startswith('[minor]')
           bump = 0.1.0
-      elif msg.startswith('major')
+      elif msg.startswith('[major]')
           bump = 1.0.0
-      elif msg.startswith('pre')
+      elif msg.startswith('[pre]')
           bump = None
+      else
+          exit 1 "Invalid semver bump"
       if bump
           tag = prev_tag + bump
           git tag $tag
