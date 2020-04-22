@@ -573,7 +573,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         return Response(status_code=200)  # delete succeeded
 
     def _get_relation(self, relation: str, uid: Union[UUID, str], scope: str,
-                      forward: bool = True, per_page: int = 100):
+                      forward: bool = True, per_page: int = 100) -> Iterator[ResourceType]:
         """
         Generic method for searching this collection by relation to another object.
 
@@ -596,7 +596,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
             this is an unnecessary parameter.
         Returns
         -------
-        Iterator[DataConcepts]
+        Iterator[ResourceType]
             Objects in this collection which are somehow related to the object with
             provided uid and scope.
 
