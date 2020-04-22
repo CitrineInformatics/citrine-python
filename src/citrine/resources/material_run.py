@@ -163,7 +163,7 @@ class MaterialRunCollection(ObjectRunCollection[MaterialRun]):
         Returns
         -------
         MaterialRun
-            The output material of the specified process.
+            The output material of the specified process, or None if no such material exists.
 
         """
         return next(self._get_relation(relation='process-runs', uid=uid, scope=scope), None)
