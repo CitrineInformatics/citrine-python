@@ -68,9 +68,9 @@ and :func:`~citrine.resources.data_concepts.DataConceptsCollection.filter_by_nam
 can help refine the listing to make the target object easier to find.
 
 For material runs and specs, there exist additional types of filtering:
-:func:`~citrine.resources.material_run.MaterialRunCollection.filter_by_spec`,
-:func:`~citrine.resources.material_run.MaterialRunCollection.filter_by_template`,
-and :func:`~citrine.resources.material_spec.MaterialSpecCollection.filter_by_template`.
+:func:`~citrine.resources.material_run.MaterialRunCollection.list_by_spec`,
+:func:`~citrine.resources.material_run.MaterialRunCollection.list_by_template`,
+and :func:`~citrine.resources.material_spec.MaterialSpecCollection.list_by_template`.
 
 
 Referencing Data Model Objects
