@@ -3,6 +3,7 @@ python:
 - '3.5'
 - '3.6'
 install:
+- git tag
 - pip install -U -r requirements.txt
 - pip install -U -r test_requirements.txt
 - pip install --no-deps -e .
