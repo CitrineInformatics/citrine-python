@@ -136,18 +136,16 @@ Setting ``dry_run=False`` is equivalent to not specifying ``dry_run`` at all and
 
 Template and Simple Validations
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Sometimes, it is convenient to be able to bulk validate a group of runs and/or specs against their attribute and object
+Sometimes, it is convenient to validate a group of runs and/or specs against their attribute and object
 templates before any of the data objects are stored.
 The ``.validate_templates()`` methods, available for all runs and specs, validate the provided object against all of the
-(already-stored) attribute templates linked to attributes on the object as well as an optional provided object template.
+(already-stored) attribute templates linked to attributes on the object as well as against an optional object template.
 Notably, these methods do not validate linked objects in any way, making it possible to run validations on an object
 with links to yet-unstored objects.
-Be aware that this means that ``.validate_templates()`` does not validate links and will not surface any link-based
-errors.
+Be aware that this means that ``.validate_templates()`` will not surface any link-based errors.
 This method returns a list of validation errors, which is empty on validation success.
 
-The below example usages are trivial examples intended to illustrate the method arguments, rather than interesting
-validation cases.
+The examples below illustrate the usage of ``.validate_templates()`` and its expected return values.
 
 Example with validation errors with no object template:
 
