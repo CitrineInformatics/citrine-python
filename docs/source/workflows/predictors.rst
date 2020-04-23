@@ -106,10 +106,10 @@ The syntax is described in the `mXparser documentation <http://mathparser.org/mx
 Citrine-python currently supports the following operators and functions:
 - basic operators: addition `+`, subtraction `-`, multiplication `*`, division `/`, power `^`,
 - built-in math functions:
-  - trigonometric `sin`, `cos`, `tan`, `asin`, `acos`, `atan`
-  - hyperbolic `sinh`, `cosh`, `tanh`
-  - logarithm `log10`, `ln`
-  - exponential `exp`
+  - trigonometric: `sin`, `cos`, `tan`, `asin`, `acos`, `atan`
+  - hyperbolic: `sinh`, `cosh`, `tanh`
+  - logarithm: `log10`, `ln`
+  - exponential: `exp`
 - constants: `pi`, `e`
 
 The following example demonstrates how to create an :class:`~citrine.informatics.predictors.ExpressionPredictor`.
