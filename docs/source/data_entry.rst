@@ -67,7 +67,7 @@ These results can be further constrained by dataset:
 
     dataset.process_templates.list()
 
-The 
+The
 :meth:`~citrine.resources.data_concepts.DataConceptsCollection.filter_by_tags`,
 :meth:`~citrine.resources.data_objects.DataObjectCollection.filter_by_attribute_bounds`,
 and :meth:`~citrine.resources.data_concepts.DataConceptsCollection.filter_by_name`
@@ -123,6 +123,9 @@ These links are created with the :class:`~gemd.entity.link_by_uid.LinkByUID` cla
 Validating Data Model Objects
 ---------------------------------
 
+Dry-Run Validation
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
 If you try to ``register`` or ``delete`` an invalid data model object, the operation fails with an error message that
 specifies in what way(s) the data model object was invalid. For example:
 
@@ -157,3 +160,77 @@ validations succeed, the method returns the same success value that it would wit
 object will not be registered or deleted.
 
 Setting ``dry_run=False`` is equivalent to not specifying ``dry_run`` at all and will have no effect.
+
+Template and Simple Validations
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Sometimes, it is convenient to validate a group of runs and/or specs against their attribute and object
+templates before any of the data objects are stored.
+The ``.validate_templates()`` methods, available for all runs and specs, validate the provided object against all of the
+(already-stored) attribute templates linked to attributes on the object as well as against an optional object template.
+Notably, these methods do not validate linked objects in any way, making it possible to run validations on an object
+with links to yet-unstored objects.
+Be aware that this means that ``.validate_templates()`` will not surface any link-based errors.
+This method returns a list of validation errors, which is empty on validation success.
+
+The examples below illustrate the usage of ``.validate_templates()`` and its expected return values.
+
+Example with validation errors with no object template:
+
+.. code-block:: python
+
+    condition1 = Condition('condition_name', value=UniformInteger(1, 2))
+    condition2 = Condition('condition_name', value=UniformInteger(1, 3))
+    parameter1 = Parameter('parameter_name', value=UniformInteger(1, 4))
+    parameter2 = Parameter('parameter_name', value=UniformInteger(1, 5))
+    process_spec = ProcessSpec(name='spec name')
+    process_run = ProcessRun(name='run name', spec=process_spec, conditions=[condition1, condition2], parameters=[parameter1, parameter2])
+    dataset.process_runs.validate_templates(process_run)
+
+has return value:
+
+.. code-block:: python
+
+    [{'failure_message': 'Multiple Condition with named condition_name', 'property': None, 'failure_id': 'attribute.duplicate', 'input': None, 'type': NotImplemented},
+     {'failure_message': 'Multiple Parameter with named parameter_name', 'property': None, 'failure_id': 'attribute.duplicate', 'input': None, 'type': NotImplemented}]
+
+Example with validation errors with an object template:
+
+.. code-block:: python
+
+    condition_template = ConditionTemplate("condition template", bounds=IntegerBounds(1, 5))
+    condition_template = dataset.condition_templates.register(condition_template)
+
+    condition = Condition("condition", value=UniformInteger(1, 3), template=condition_template)
+    process_template = ProcessTemplate("pt", conditions=[[LinkByUID("id", condition_template.uids["id"]), IntegerBounds(2, 4)]])
+    process_spec = ProcessSpec("ps", template=process_template)
+    process_run = ProcessRun("pr", conditions=[condition], spec=process_spec)
+    dataset.process_runs.validate_templates(process_run, object_template=process_template)
+
+has return value:
+
+.. code-block:: python
+
+    [{'failure_message': 'UniformInteger(1,3) extends below 2 {2}', 'property': None, 'failure_id': 'attribute.bounds.value', 'input': None, 'type': NotImplemented}]
+
+For ingredients, the associated object template is a process template that is provided as a separate parameter. Any
+value provided to the ``object_template`` parameter for an ingredient will be ignored.
+
+Example with validation errors for an ingredient:
+
+.. code-block:: python
+
+    process_template = ProcessTemplate("pt", allowed_names=["foo"], allowed_labels=["bar"])
+    process_spec = ProcessSpec("ps", template=process_template)
+
+    mat_process_spec = ProcessSpec("mps")
+    material_spec = MaterialSpec("ms", process=mat_process_spec)
+
+    ingredient_spec = IngredientSpec("is", process=process_spec, material=material_spec, labels=["ingredient"])
+    dataset.ingredient_specs.validate_templates(ingredient_spec, ingredient_process_template=process_template)
+
+has return value:
+
+.. code-block:: python
+
+    [{'failure_message': 'Ingredient label ingredient not in list of allowed labels Set(bar)', 'property': None, 'failure_id': 'ingredient.label.allowed', 'input': None, 'type': NotImplemented},
+     {'failure_message': 'Ingredient name is not in list of allowed names Set(foo)', 'property': None, 'failure_id': 'ingredient.name.allowed', 'input': None, 'type': NotImplemented}]
