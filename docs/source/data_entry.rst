@@ -61,17 +61,44 @@ If you don't know any of the data model object's unique identifiers, then you ca
 
     project.process_templates.list()
 
-The 
-:func:`~citrine.resources.data_concepts.DataConceptsCollection.filter_by_tags`,
-:func:`~citrine.resources.data_concepts.DataConceptsCollection.filter_by_attribute_bounds`,
-and :func:`~citrine.resources.data_concepts.DataConceptsCollection.filter_by_name`
-can help refine the listing to make the target object easier to find.
+These results can be further constrained by dataset:
 
-For material runs and specs, there exist additional types of filtering:
-:func:`~citrine.resources.material_run.MaterialRunCollection.filter_by_spec`,
-:func:`~citrine.resources.material_run.MaterialRunCollection.filter_by_template`,
-and :func:`~citrine.resources.material_spec.MaterialSpecCollection.filter_by_template`.
+.. code-block:: python
 
+    dataset.process_templates.list()
+
+The
+:meth:`~citrine.resources.data_concepts.DataConceptsCollection.filter_by_tags`,
+:meth:`~citrine.resources.data_objects.DataObjectCollection.filter_by_attribute_bounds`,
+and :meth:`~citrine.resources.data_concepts.DataConceptsCollection.filter_by_name`
+methods can help refine the listing to make the target object easier to find.
+
+There also exist methods for locating data objects by its reference to another object:
+
+Runs may be listed by spec with
+:meth:`citrine.resources.material_run.MaterialRunCollection.list_by_spec`,
+:meth:`citrine.resources.ingredient_run.IngredientRunCollection.list_by_spec`,
+:meth:`citrine.resources.measurement_run.MeasurementRunCollection.list_by_spec`,
+and :meth:`citrine.resources.process_run.ProcessRunCollection.list_by_spec`.
+
+Material Runs may also be listed by their template with
+:meth:`~citrine.resources.material_spec.MaterialSpecCollection.list_by_template`.
+
+Specs may be listed by template with
+:meth:`citrine.resources.material_spec.MaterialSpecCollection.list_by_template`,
+:meth:`citrine.resources.process_spec.ProcessSpecCollection.list_by_template`,
+and :meth:`citrine.resources.measurement_spec.MeasurementSpecCollection.list_by_template`.
+
+The output material for a process can be located with
+:meth:`citrine.resources.material_run.MaterialRunCollection.get_by_process`,
+or :meth:`citrine.resources.material_run.MaterialRunCollection.get_by_process`.
+
+The ingredients a material is used in can be located with
+:meth:`citrine.resources.ingredient_run.IngredientRunCollection.list_by_material`,
+or :meth:`citrine.resources.ingredient_spec.IngredientSpecCollection.list_by_material`.
+
+The measurements of a material can be located with
+:meth:`citrine.resources.measurement_run.MeasurementRunCollection.list_by_material`.
 
 Referencing Data Model Objects
 ---------------------------------

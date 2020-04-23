@@ -1,5 +1,6 @@
 """Resources that represent measurement run data objects."""
-from typing import List, Dict, Optional, Type
+from typing import List, Dict, Optional, Type, Iterator, Union
+from uuid import UUID
 
 from citrine._rest.resource import Resource
 from citrine._serialization.properties import List as PropertyList
@@ -105,3 +106,40 @@ class MeasurementRunCollection(ObjectRunCollection[MeasurementRun]):
     def get_type(cls) -> Type[MeasurementRun]:
         """Return the resource type in the collection."""
         return MeasurementRun
+
+    def list_by_spec(self, uid: Union[UUID, str], scope: str = 'id') -> Iterator[MeasurementRun]:
+        """
+        [ALPHA] Get the measurement runs using the specified measurement spec.
+
+        Parameters
+        ----------
+        uid
+            The unique ID of the measurement spec whose measurement run usages are to be located.
+        scope
+            The scope of `uid`.
+        Returns
+        -------
+        Iterator[MeasurementRun]
+            The measurement runs using the specified measurement spec.
+
+        """
+        return self._get_relation('measurement-specs', uid=uid, scope=scope)
+
+    def list_by_material(self, uid: Union[UUID, str],
+                         scope: str = 'id') -> Iterator[MeasurementRun]:
+        """
+        [ALPHA] Get measurements of the specified material.
+
+        Parameters
+        ----------
+        uid
+            The unique ID of the material whose measurements are to be queried.
+        scope
+            The scope of `uid`.
+        Returns
+        -------
+        Iterator[MeasurementRun]
+            The measurements of the specified material
+
+        """
+        return self._get_relation(relation='material-runs', uid=uid, scope=scope)

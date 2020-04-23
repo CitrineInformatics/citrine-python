@@ -9,6 +9,7 @@ from citrine.resources.material_run import MaterialRunCollection
 from gemd.entity.bounds.integer_bounds import IntegerBounds
 from gemd.entity.object.material_run import MaterialRun as GEMDRun
 
+from tests.resources.test_data_concepts import run_noop_gemd_relation_search_test
 from tests.utils.factories import MaterialRunFactory, MaterialRunDataFactory, LinkByUIDFactory, MaterialSpecFactory, \
     MaterialTemplateFactory, MaterialSpecDataFactory, ProcessTemplateFactory
 from tests.utils.session import FakeSession, FakeCall, make_fake_cursor_request_function, FakeRequestResponseApiError, \
@@ -349,7 +350,7 @@ def test_material_run_filter_by_name_with_no_id(collection):
         collection.filter_by_name('foo')
 
 
-def test_filter_by_spec(collection, session):
+def test_filter_by_spec(collection: MaterialRunCollection, session):
     """
     Test that MaterialRunCollection.filter_by_spec() hits the expected endpoint
     """
@@ -362,17 +363,37 @@ def test_filter_by_spec(collection, session):
     session.set_response({'contents': [sample_run]})
 
     # When
-    runs = [run for run in collection.filter_by_spec(test_id)]
+    runs = [run for run in collection.filter_by_spec(test_id, per_page=20)]
 
     # Then
     assert 1 == session.num_calls
     expected_call = FakeCall(
         method="GET",
         path="projects/{}/material-specs/{}/{}/material-runs".format(project_id, test_scope, test_id),
-        params={"forward": True, "ascending": True, "per_page": 20}
+        # per_page will be ignored
+        params={"dataset_id": str(collection.dataset_id), "forward": True, "ascending": True, "per_page": 100}
     )
     assert session.last_call == expected_call
     assert runs == [collection.build(sample_run)]
+
+
+def test_get_by_process(collection):
+    run_noop_gemd_relation_search_test(
+        search_for='material-runs',
+        search_with='process-runs',
+        collection=collection,
+        search_fn=collection.get_by_process,
+        per_page=1,
+    )
+
+
+def test_list_by_spec(collection):
+    run_noop_gemd_relation_search_test(
+        search_for='material-runs',
+        search_with='material-specs',
+        collection=collection,
+        search_fn=collection.list_by_spec,
+    )
 
 
 def test_filter_by_template(collection, session):

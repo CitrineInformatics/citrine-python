@@ -1,5 +1,6 @@
 """Resources that represent process spec objects."""
-from typing import Optional, Dict, List, Type
+from typing import Optional, Dict, List, Type, Union, Iterator
+from uuid import UUID
 
 from citrine._rest.resource import Resource
 from citrine._serialization.properties import List as PropertyList
@@ -99,3 +100,21 @@ class ProcessSpecCollection(ObjectSpecCollection[ProcessSpec]):
     def get_type(cls) -> Type[ProcessSpec]:
         """Return the resource type in the collection."""
         return ProcessSpec
+
+    def list_by_template(self, uid: Union[UUID, str], scope: str = 'id') -> Iterator[ProcessSpec]:
+        """
+        [ALPHA] Get the process specs using the specified process template.
+
+        Parameters
+        ----------
+        uid
+            The unique ID of the process template whose process spec usages are to be located.
+        scope
+            The scope of `uid`.
+        Returns
+        -------
+        Iterator[ProcessSpec]
+            The process specs using the specified process template
+
+        """
+        return self._get_relation('process-templates', uid=uid, scope=scope)

@@ -2,6 +2,7 @@ from uuid import UUID
 
 import pytest
 from citrine.resources.material_spec import MaterialSpecCollection
+from tests.resources.test_data_concepts import run_noop_gemd_relation_search_test
 
 from tests.utils.factories import MaterialTemplateFactory, \
     MaterialSpecDataFactory
@@ -34,17 +35,37 @@ def test_filter_by_template(collection, session):
     session.set_response({'contents': [sample_spec]})
 
     # When
-    specs = [spec for spec in collection.filter_by_template(test_id)]
+    specs = [spec for spec in collection.filter_by_template(test_id, per_page=20)]
 
     # Then
     assert 1 == session.num_calls
     expected_call = FakeCall(
         method="GET",
         path="projects/{}/material-templates/{}/{}/material-specs".format(project_id, test_scope, test_id),
-        params={"forward": True, "ascending": True, "per_page": 20}
+        # per_page will be ignored
+        params={"dataset_id": str(collection.dataset_id), "forward": True, "ascending": True, "per_page": 100}
     )
     assert session.last_call == expected_call
     assert specs == [collection.build(sample_spec)]
+
+
+def test_list_by_template(collection):
+    run_noop_gemd_relation_search_test(
+        search_for='material-specs',
+        search_with='material-templates',
+        collection=collection,
+        search_fn=collection.list_by_template,
+    )
+
+
+def test_get_by_process(collection):
+    run_noop_gemd_relation_search_test(
+        search_for='material-specs',
+        search_with='process-specs',
+        collection=collection,
+        search_fn=collection.get_by_process,
+        per_page=1,
+    )
 
 
 def test_repeat_serialization_gemd(collection, session):

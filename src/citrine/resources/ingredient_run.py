@@ -1,5 +1,6 @@
 """Resources that represent ingredient run data objects."""
-from typing import List, Dict, Optional, Type
+from typing import List, Dict, Optional, Type, Iterator, Union
+from uuid import UUID
 
 from citrine._rest.resource import Resource
 from citrine._serialization.properties import List as PropertyList
@@ -119,3 +120,58 @@ class IngredientRunCollection(ObjectRunCollection[IngredientRun]):
     def get_type(cls) -> Type[IngredientRun]:
         """Return the resource type in the collection."""
         return IngredientRun
+
+    def list_by_spec(self, uid: Union[UUID, str], scope: str = 'id') -> Iterator[IngredientRun]:
+        """
+        [ALPHA] Get the ingredient runs using the specified ingredient spec.
+
+        Parameters
+        ----------
+        uid
+            The unique ID of the ingredient spec whose ingredient run usages are to be located.
+        scope
+            The scope of `uid`.
+        Returns
+        -------
+        Iterator[IngredientRun]
+            The ingredient runs using the specified ingredient spec.
+
+        """
+        return self._get_relation('ingredient-specs', uid=uid, scope=scope)
+
+    def list_by_process(self, uid: Union[UUID, str], scope: str = 'id') -> Iterator[IngredientRun]:
+        """
+        [ALPHA] Get ingredients to a process.
+
+        Parameters
+        ----------
+        uid
+            The unique ID of the process whose ingredients are to be located.
+        scope
+            The scope of `uid`.
+        Returns
+        -------
+        Iterator[IngredientRun]
+            The ingredients to the specified process.
+
+        """
+        return self._get_relation(relation='process-runs', uid=uid, scope=scope)
+
+    def list_by_material(self, uid: Union[UUID, str],
+                         scope: str = 'id') -> Iterator[IngredientRun]:
+        """
+        [ALPHA] Get ingredients using the specified material.
+
+        Parameters
+        ----------
+        uid
+            The unique ID of the material whose ingredient usages are to be located.
+        scope
+            The scope of `uid`.
+        Returns
+        -------
+        Iterator[IngredientRun]
+            The ingredients using the specified material
+
+        """
+        return self._get_relation(relation='material-runs', uid=uid, scope=scope)

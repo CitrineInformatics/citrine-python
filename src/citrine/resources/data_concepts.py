@@ -571,3 +571,45 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         params = {'dry_run': dry_run}
         self.session.delete_resource(path, params=params)
         return Response(status_code=200)  # delete succeeded
+
+    def _get_relation(self, relation: str, uid: Union[UUID, str], scope: str,
+                      forward: bool = True, per_page: int = 100) -> Iterator[ResourceType]:
+        """
+        Generic method for searching this collection by relation to another object.
+
+        Parameters
+        ----------
+        relation
+            Reflects the type of the object with the provided uid and scope, e.g.
+            'process-templates' if searching for process specs by process template.
+        uid
+            The unique ID of the object upon which this search is based, e.g. an
+            External or Citrine ID of a process template whose process spec usages
+            are being located.
+        scope
+            The scope of `uid`
+        forward
+            Whether to pages results in ascending order. Typically this is an
+            unnecessary parameter.
+        per_page
+            The number of results to retrieve in each request to the backend. Typically
+            this is an unnecessary parameter.
+        Returns
+        -------
+        Iterator[ResourceType]
+            Objects in this collection which are somehow related to the object with
+            provided uid and scope.
+
+        """
+        params = {}
+        if self.dataset_id is not None:
+            params['dataset_id'] = str(self.dataset_id)
+        raw_objects = self.session.cursor_paged_resource(
+            self.session.get_resource,
+            'projects/{}/{}/{}/{}/{}'.format(
+                self.project_id, relation, scope, uid, self._collection_key.replace('_', '-')),
+            forward=forward,
+            per_page=per_page,
+            params=params,
+            version='v1')
+        return (self.build(raw) for raw in raw_objects)
