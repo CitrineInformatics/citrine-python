@@ -104,7 +104,7 @@ If an alias isn't defined, the expression argument is expected to match the desc
 
 The syntax is described in the `mXparser documentation <http://mathparser.org/mxparser-math-collection>`_.
 Citrine-python currently supports the following operators and functions:
-- basic operators: addition `+`, subtraction `-`, multiplication `*`, division `/`, power `^`,
+- basic operators: addition `+`, subtraction `-`, multiplication `*`, division `/`, exponentiation `^`
 - built-in math functions:
   - trigonometric: `sin`, `cos`, `tan`, `asin`, `acos`, `atan`
   - hyperbolic: `sinh`, `cosh`, `tanh`
