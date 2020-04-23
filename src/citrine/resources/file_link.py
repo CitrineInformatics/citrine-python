@@ -55,6 +55,11 @@ class FileLink(Resource['FileLink'], GEMDFileLink):
         GEMDFileLink.__init__(self, filename, url)
         self.typ = GEMDFileLink.typ
 
+    @property
+    def name(self):
+        """Attribute name is an alias for filename."""
+        return self.filename
+
     def __str__(self):
         return '<File link {!r}>'.format(self.filename)
 

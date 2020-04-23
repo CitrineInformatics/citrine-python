@@ -40,6 +40,12 @@ def test_build_as_dict(collection, valid_data):
     assert collection.build(valid_data).dump() == FileLink.build(valid_data).as_dict()
 
 
+def test_name_alias(valid_data):
+    """Test that .name aliases to filename."""
+    file = FileLink.build(valid_data)
+    assert file.name == file.filename
+
+
 def test_string_representation(valid_data):
     """Test the string representation."""
     assert str(FileLink.build(valid_data)) == '<File link \'materials.txt\'>'
