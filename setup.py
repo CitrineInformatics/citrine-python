@@ -57,11 +57,10 @@ class PreBuildCommand(build_py):
 
 
 setup(name='citrine',
-      version='0.17.3',
+      version='0.17.4',
       url='http://github.com/CitrineInformatics/citrine-python',
       description='Python library for the Citrine Platform',
-      author='Andrew Millspaugh',
-      author_email='amillspaugh@citrine.io',
+      author='Citrine Informatics',
       package_dir={'': 'src'},
       packages=find_packages(where='src'),
       install_requires=[
