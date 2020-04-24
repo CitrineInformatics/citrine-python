@@ -93,19 +93,26 @@ The following example demonstrates how to use the python SDK to create a :class:
 Expression predictor
 --------------------
 
-The :class:`~citrine.informatics.predictors.ExpressionPredictor` defines an analytic (lossless) model that computes
-one real-valued output descriptor from one or more input descriptors. An ExpressionPredictor should be used when the
-relationship between inputs and outputs is known.
+The :class:`~citrine.informatics.predictors.ExpressionPredictor` defines an analytic (lossless) model that computes one real-valued output descriptor from one or more input descriptors.
+An ExpressionPredictor should be used when the relationship between inputs and outputs is known.
 
-Note, a string is used to define the expression, and the corresponding output is defined by a RealDescriptor.
-The aliases parameter defines a mapping from expression argument to descriptor key. Expression arguments with spaces
-are not supported, so an alias is created for each input. Aliases are not required for inputs that do not contain
-spaces (but may be useful to avoid typing out the verbose descriptors in the expression string). If an alias isn't
-defined, the expression argument is expected to match the descriptor key exactly.
+A string is used to define the expression, and the corresponding output is defined by a :class:`~citrine.informatics.descriptors.RealDescriptor`.
+The ``aliases`` parameter defines a mapping from expression arguments to descriptor keys.
+Expression arguments with spaces are not supported, so an alias must be created for each input that has a space in its name.
+Aliases are not required for inputs that do not contain spaces, but may be useful to avoid typing out the verbose descriptors in the expression string.
+If an alias isn't defined, the expression argument is expected to match the descriptor key exactly.
 
-For a full list of supported syntax see the `mXparser documentation <http://mathparser.org/mxparser-math-collection>`_.
+The syntax is described in the `mXparser documentation <http://mathparser.org/mxparser-math-collection>`_.
+Citrine-python currently supports the following operators and functions:
+- basic operators: addition `+`, subtraction `-`, multiplication `*`, division `/`, exponentiation `^`
+- built-in math functions:
+  - trigonometric: `sin`, `cos`, `tan`, `asin`, `acos`, `atan`
+  - hyperbolic: `sinh`, `cosh`, `tanh`
+  - logarithm: `log10`, `ln`
+  - exponential: `exp`
+- constants: `pi`, `e`
 
-The following example demonstrates how to use the python SDK to create a :class:`~citrine.informatics.predictors.ExpressionPredictor`.
+The following example demonstrates how to create an :class:`~citrine.informatics.predictors.ExpressionPredictor`.
 
 .. code:: python
 
