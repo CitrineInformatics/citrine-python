@@ -186,42 +186,42 @@ class Dataset(Resource['Dataset']):
         """Return a resource representing all files in the dataset."""
         return FileCollection(self.project_id, self.uid, self.session)
 
-    def register(self, data_concepts_resource: ResourceType) -> ResourceType:
+    def register(self, data_concepts_resource: ResourceType, dry_run=False) -> ResourceType:
         """Register a data concepts resource to the appropriate collection."""
         if isinstance(data_concepts_resource, MeasurementTemplate):
-            return self.measurement_templates.register(data_concepts_resource)
+            return self.measurement_templates.register(data_concepts_resource, dry_run)
         if isinstance(data_concepts_resource, MeasurementSpec):
-            return self.measurement_specs.register(data_concepts_resource)
+            return self.measurement_specs.register(data_concepts_resource, dry_run)
         if isinstance(data_concepts_resource, MeasurementRun):
-            return self.measurement_runs.register(data_concepts_resource)
+            return self.measurement_runs.register(data_concepts_resource, dry_run)
 
         if isinstance(data_concepts_resource, MaterialTemplate):
-            return self.material_templates.register(data_concepts_resource)
+            return self.material_templates.register(data_concepts_resource, dry_run)
         if isinstance(data_concepts_resource, MaterialSpec):
-            return self.material_specs.register(data_concepts_resource)
+            return self.material_specs.register(data_concepts_resource, dry_run)
         if isinstance(data_concepts_resource, MaterialRun):
-            return self.material_runs.register(data_concepts_resource)
+            return self.material_runs.register(data_concepts_resource, dry_run)
 
         if isinstance(data_concepts_resource, ProcessTemplate):
-            return self.process_templates.register(data_concepts_resource)
+            return self.process_templates.register(data_concepts_resource, dry_run)
         if isinstance(data_concepts_resource, ProcessSpec):
-            return self.process_specs.register(data_concepts_resource)
+            return self.process_specs.register(data_concepts_resource, dry_run)
         if isinstance(data_concepts_resource, ProcessRun):
-            return self.process_runs.register(data_concepts_resource)
+            return self.process_runs.register(data_concepts_resource, dry_run)
 
         if isinstance(data_concepts_resource, IngredientSpec):
-            return self.ingredient_specs.register(data_concepts_resource)
+            return self.ingredient_specs.register(data_concepts_resource, dry_run)
         if isinstance(data_concepts_resource, IngredientRun):
-            return self.ingredient_runs.register(data_concepts_resource)
+            return self.ingredient_runs.register(data_concepts_resource, dry_run)
 
         if isinstance(data_concepts_resource, PropertyTemplate):
-            return self.property_templates.register(data_concepts_resource)
+            return self.property_templates.register(data_concepts_resource, dry_run)
         if isinstance(data_concepts_resource, ParameterTemplate):
-            return self.parameter_templates.register(data_concepts_resource)
+            return self.parameter_templates.register(data_concepts_resource, dry_run)
         if isinstance(data_concepts_resource, ConditionTemplate):
-            return self.condition_templates.register(data_concepts_resource)
+            return self.condition_templates.register(data_concepts_resource, dry_run)
 
-    def register_all(self, data_concepts_resources: List[ResourceType]) -> List[ResourceType]:
+    def register_all(self, data_concepts_resources: List[ResourceType], dry_run=False) -> List[ResourceType]:
         """
         Register multiple data concepts resources to each of their appropriate collections.
 
@@ -231,14 +231,24 @@ class Dataset(Resource['Dataset']):
         The uids of the input data concepts resources are updated with their on-platform uids.
         This supports storing an object that has a reference to an object that doesn't have a uid.
 
-        :param data_concepts_resources: the resources to register. Can be different types.
+        Parameters
+        ----------
+        data_concepts_resources: List[ResourceType]
+            The resources to register. Can be different types.
 
-        :return the registered versions
+        dry_run: bool
+            Whether to actually register the item or run a dry run of the register operation.
+            Dry run is intended to be used for validation. Default: false
+
+        Returns
+        -------
+        List[ResourceType]
+            The registered versions
         """
         resources = list()
         for resource in (sorted(data_concepts_resources,
                          key=lambda resource: writable_sort_order(resource.typ))):
-            registered_resource = self.register(resource)
+            registered_resource = self.register(resource, dry_run)
             if isinstance(registered_resource, BaseEntity):
                 resource.uids = registered_resource.uids
             resources.append(resource)
