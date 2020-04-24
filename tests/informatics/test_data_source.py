@@ -9,7 +9,7 @@ from citrine.resources.file_link import FileLink
 
 
 @pytest.fixture(params=[
-    CSVDataSource(FileLink("foo.spam", "http://example.com"), {"spam": RealDescriptor("eggs", lower_bound=0, upper_bound=1.0)}),
+    CSVDataSource(FileLink("foo.spam", "http://example.com"), {"spam": RealDescriptor("eggs", lower_bound=0, upper_bound=1.0)}, ["identifier"]),
     AraTableDataSource(uuid.uuid4(), 1),
     AraTableDataSource(uuid.uuid4(), "2"),
 ])
