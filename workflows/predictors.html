@@ -116,16 +116,29 @@ one output descriptor.</p>
 </div>
 <div class="section" id="expression-predictor">
 <h2>4.2.3. Expression predictor<a class="headerlink" href="#expression-predictor" title="Permalink to this headline">¶</a></h2>
-<p>The <a class="reference internal" href="../reference/citrine.informatics.predictors.html#citrine.informatics.predictors.ExpressionPredictor" title="citrine.informatics.predictors.ExpressionPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExpressionPredictor</span></code></a> defines an analytic (lossless) model that computes
-one real-valued output descriptor from one or more input descriptors. An ExpressionPredictor should be used when the
-relationship between inputs and outputs is known.</p>
-<p>Note, a string is used to define the expression, and the corresponding output is defined by a RealDescriptor.
-The aliases parameter defines a mapping from expression argument to descriptor key. Expression arguments with spaces
-are not supported, so an alias is created for each input. Aliases are not required for inputs that do not contain
-spaces (but may be useful to avoid typing out the verbose descriptors in the expression string). If an alias isn’t
-defined, the expression argument is expected to match the descriptor key exactly.</p>
-<p>For a full list of supported syntax see the <a class="reference external" href="http://mathparser.org/mxparser-math-collection">mXparser documentation</a>.</p>
-<p>The following example demonstrates how to use the python SDK to create a <a class="reference internal" href="../reference/citrine.informatics.predictors.html#citrine.informatics.predictors.ExpressionPredictor" title="citrine.informatics.predictors.ExpressionPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExpressionPredictor</span></code></a>.</p>
+<p>The <a class="reference internal" href="../reference/citrine.informatics.predictors.html#citrine.informatics.predictors.ExpressionPredictor" title="citrine.informatics.predictors.ExpressionPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExpressionPredictor</span></code></a> defines an analytic (lossless) model that computes one real-valued output descriptor from one or more input descriptors.
+An ExpressionPredictor should be used when the relationship between inputs and outputs is known.</p>
+<p>A string is used to define the expression, and the corresponding output is defined by a <a class="reference internal" href="../reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.RealDescriptor" title="citrine.informatics.descriptors.RealDescriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">RealDescriptor</span></code></a>.
+The <code class="docutils literal notranslate"><span class="pre">aliases</span></code> parameter defines a mapping from expression arguments to descriptor keys.
+Expression arguments with spaces are not supported, so an alias must be created for each input that has a space in its name.
+Aliases are not required for inputs that do not contain spaces, but may be useful to avoid typing out the verbose descriptors in the expression string.
+If an alias isn’t defined, the expression argument is expected to match the descriptor key exactly.</p>
+<p>The syntax is described in the <a class="reference external" href="http://mathparser.org/mxparser-math-collection">mXparser documentation</a>.
+Citrine-python currently supports the following operators and functions:
+- basic operators: addition <cite>+</cite>, subtraction <cite>-</cite>, multiplication <cite>*</cite>, division <cite>/</cite>, exponentiation <cite>^</cite>
+- built-in math functions:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>trigonometric: <cite>sin</cite>, <cite>cos</cite>, <cite>tan</cite>, <cite>asin</cite>, <cite>acos</cite>, <cite>atan</cite></p></li>
+<li><p>hyperbolic: <cite>sinh</cite>, <cite>cosh</cite>, <cite>tanh</cite></p></li>
+<li><p>logarithm: <cite>log10</cite>, <cite>ln</cite></p></li>
+<li><p>exponential: <cite>exp</cite></p></li>
+</ul>
+</div></blockquote>
+<ul class="simple">
+<li><p>constants: <cite>pi</cite>, <cite>e</cite></p></li>
+</ul>
+<p>The following example demonstrates how to create an <a class="reference internal" href="../reference/citrine.informatics.predictors.html#citrine.informatics.predictors.ExpressionPredictor" title="citrine.informatics.predictors.ExpressionPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExpressionPredictor</span></code></a>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.informatics.predictors</span> <span class="kn">import</span> <span class="n">ExpressionPredictor</span>
 
 <span class="n">shear_modulus</span> <span class="o">=</span> <span class="n">RealDescriptor</span><span class="p">(</span><span class="s1">&#39;Property~Shear modulus&#39;</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;GPa&#39;</span><span class="p">)</span>

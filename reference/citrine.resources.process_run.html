@@ -145,6 +145,26 @@ creating each ingredient run and setting its <cite>process</cite> field to this 
 <dd><p>Return the resource type in the collection.</p>
 </dd></dl>
 
+<dl class="method">
+<dt id="citrine.resources.process_run.ProcessRunCollection.list_by_spec">
+<code class="sig-name descname">list_by_spec</code><span class="sig-paren">(</span><em class="sig-param">uid: Union[uuid.UUID, str], scope: str = 'id'</em><span class="sig-paren">)</span> &#x2192; Iterator[citrine.resources.process_run.ProcessRun]<a class="headerlink" href="#citrine.resources.process_run.ProcessRunCollection.list_by_spec" title="Permalink to this definition">¶</a></dt>
+<dd><p>[ALPHA] Get the process runs using the specified process spec.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>uid</strong> – The unique ID of the process spec whose process run usages are to be located.</p></li>
+<li><p><strong>scope</strong> – The scope of <cite>uid</cite>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The process runs using the specified process spec.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Iterator[<a class="reference internal" href="#citrine.resources.process_run.ProcessRun" title="citrine.resources.process_run.ProcessRun">ProcessRun</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 </div>

@@ -139,6 +139,46 @@ for filtering and discoverability.</p></li>
 <dd><p>Return the resource type in the collection.</p>
 </dd></dl>
 
+<dl class="method">
+<dt id="citrine.resources.ingredient_spec.IngredientSpecCollection.list_by_material">
+<code class="sig-name descname">list_by_material</code><span class="sig-paren">(</span><em class="sig-param">uid: Union[uuid.UUID, str], scope: str = 'id'</em><span class="sig-paren">)</span> &#x2192; Iterator[citrine.resources.ingredient_spec.IngredientSpec]<a class="headerlink" href="#citrine.resources.ingredient_spec.IngredientSpecCollection.list_by_material" title="Permalink to this definition">¶</a></dt>
+<dd><p>[ALPHA] Get ingredients using the specified material.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>uid</strong> – The unique ID of the material whose ingredient usages are to be located.</p></li>
+<li><p><strong>scope</strong> – The scope of <cite>uid</cite>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The ingredients using the specified material</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Iterator[<a class="reference internal" href="#citrine.resources.ingredient_spec.IngredientSpec" title="citrine.resources.ingredient_spec.IngredientSpec">IngredientSpec</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="citrine.resources.ingredient_spec.IngredientSpecCollection.list_by_process">
+<code class="sig-name descname">list_by_process</code><span class="sig-paren">(</span><em class="sig-param">uid: Union[uuid.UUID, str], scope: str = 'id'</em><span class="sig-paren">)</span> &#x2192; Iterator[citrine.resources.ingredient_spec.IngredientSpec]<a class="headerlink" href="#citrine.resources.ingredient_spec.IngredientSpecCollection.list_by_process" title="Permalink to this definition">¶</a></dt>
+<dd><p>[ALPHA] Get ingredients to a process.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>uid</strong> – The unique ID of the process whose ingredients are to be located.</p></li>
+<li><p><strong>scope</strong> – The scope of <cite>uid</cite>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The ingredients to the specified process.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Iterator[<a class="reference internal" href="#citrine.resources.ingredient_spec.IngredientSpec" title="citrine.resources.ingredient_spec.IngredientSpec">IngredientSpec</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 </div>

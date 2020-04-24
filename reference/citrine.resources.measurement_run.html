@@ -133,6 +133,46 @@ for filtering and discoverability.</p></li>
 <dd><p>Return the resource type in the collection.</p>
 </dd></dl>
 
+<dl class="method">
+<dt id="citrine.resources.measurement_run.MeasurementRunCollection.list_by_material">
+<code class="sig-name descname">list_by_material</code><span class="sig-paren">(</span><em class="sig-param">uid: Union[uuid.UUID, str], scope: str = 'id'</em><span class="sig-paren">)</span> &#x2192; Iterator[citrine.resources.measurement_run.MeasurementRun]<a class="headerlink" href="#citrine.resources.measurement_run.MeasurementRunCollection.list_by_material" title="Permalink to this definition">¶</a></dt>
+<dd><p>[ALPHA] Get measurements of the specified material.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>uid</strong> – The unique ID of the material whose measurements are to be queried.</p></li>
+<li><p><strong>scope</strong> – The scope of <cite>uid</cite>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The measurements of the specified material</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Iterator[<a class="reference internal" href="#citrine.resources.measurement_run.MeasurementRun" title="citrine.resources.measurement_run.MeasurementRun">MeasurementRun</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="citrine.resources.measurement_run.MeasurementRunCollection.list_by_spec">
+<code class="sig-name descname">list_by_spec</code><span class="sig-paren">(</span><em class="sig-param">uid: Union[uuid.UUID, str], scope: str = 'id'</em><span class="sig-paren">)</span> &#x2192; Iterator[citrine.resources.measurement_run.MeasurementRun]<a class="headerlink" href="#citrine.resources.measurement_run.MeasurementRunCollection.list_by_spec" title="Permalink to this definition">¶</a></dt>
+<dd><p>[ALPHA] Get the measurement runs using the specified measurement spec.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>uid</strong> – The unique ID of the measurement spec whose measurement run usages are to be located.</p></li>
+<li><p><strong>scope</strong> – The scope of <cite>uid</cite>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The measurement runs using the specified measurement spec.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Iterator[<a class="reference internal" href="#citrine.resources.measurement_run.MeasurementRun" title="citrine.resources.measurement_run.MeasurementRun">MeasurementRun</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 </div>

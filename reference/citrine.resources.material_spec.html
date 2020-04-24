@@ -111,7 +111,7 @@ those properties are measured.</p></li>
 <p>Represents the collection of all material specs associated with a dataset.</p>
 <dl class="method">
 <dt id="citrine.resources.material_spec.MaterialSpecCollection.filter_by_template">
-<code class="sig-name descname">filter_by_template</code><span class="sig-paren">(</span><em class="sig-param">template_id: str</em>, <em class="sig-param">template_scope: str = 'id'</em>, <em class="sig-param">per_page: int = 20</em><span class="sig-paren">)</span> &#x2192; Iterator[citrine.resources.material_spec.MaterialSpec]<a class="headerlink" href="#citrine.resources.material_spec.MaterialSpecCollection.filter_by_template" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">filter_by_template</code><span class="sig-paren">(</span><em class="sig-param">template_id: str</em>, <em class="sig-param">template_scope: str = 'id'</em>, <em class="sig-param">per_page: int = None</em><span class="sig-paren">)</span> &#x2192; Iterator[citrine.resources.material_spec.MaterialSpec]<a class="headerlink" href="#citrine.resources.material_spec.MaterialSpecCollection.filter_by_template" title="Permalink to this definition">¶</a></dt>
 <dd><p>[ALPHA] Get all material specs associated with a material template.</p>
 <p>The material template is specified by its scope and id.</p>
 <dl class="field-list simple">
@@ -128,12 +128,55 @@ of the material template.</p></li>
 <dd class="field-even"><p>A search result of material specs</p>
 </dd>
 </dl>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version Use: </span>list_by_template instead.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="citrine.resources.material_spec.MaterialSpecCollection.get_by_process">
+<code class="sig-name descname">get_by_process</code><span class="sig-paren">(</span><em class="sig-param">uid: Union[uuid.UUID, str], scope: str = 'id'</em><span class="sig-paren">)</span> &#x2192; Optional[citrine.resources.material_spec.MaterialSpec]<a class="headerlink" href="#citrine.resources.material_spec.MaterialSpecCollection.get_by_process" title="Permalink to this definition">¶</a></dt>
+<dd><p>[ALPHA] Get output material of a process.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>uid</strong> – The unique ID of the process whose output is to be located.</p></li>
+<li><p><strong>scope</strong> – The scope of <cite>uid</cite>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The output material of the specified process, or None if no such material exists.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#citrine.resources.material_spec.MaterialSpec" title="citrine.resources.material_spec.MaterialSpec">MaterialSpec</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="citrine.resources.material_spec.MaterialSpecCollection.get_type">
 <em class="property">classmethod </em><code class="sig-name descname">get_type</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; Type[citrine.resources.material_spec.MaterialSpec]<a class="headerlink" href="#citrine.resources.material_spec.MaterialSpecCollection.get_type" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the resource type in the collection.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="citrine.resources.material_spec.MaterialSpecCollection.list_by_template">
+<code class="sig-name descname">list_by_template</code><span class="sig-paren">(</span><em class="sig-param">uid: Union[uuid.UUID, str], scope: str = 'id'</em><span class="sig-paren">)</span> &#x2192; Iterator[citrine.resources.material_spec.MaterialSpec]<a class="headerlink" href="#citrine.resources.material_spec.MaterialSpecCollection.list_by_template" title="Permalink to this definition">¶</a></dt>
+<dd><p>[ALPHA] Get the material specs using the specified material template.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>uid</strong> – The unique ID of the material template whose material spec usages are to be located.</p></li>
+<li><p><strong>scope</strong> – The scope of <cite>uid</cite>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The material specs using the specified material template.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Iterator[<a class="reference internal" href="#citrine.resources.material_spec.MaterialSpec" title="citrine.resources.material_spec.MaterialSpec">MaterialSpec</a>]</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
