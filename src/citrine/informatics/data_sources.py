@@ -54,9 +54,10 @@ class CSVDataSource(Serializable['CSVDataSource'], DataSource):
     column_definitions: Mapping[str, Descriptor]
         Map the column headers to the descriptors that will be used to interpret the cell contents
     identifiers: Optional[List[str]]
-        List of one or more column headers whose values uniquely identify a row. These may overlap with
-        ``column_definitions`` if a column should be used as data and as an identifier, but this is not necessary.
-        Identifiers should be globally unique. No two rows should contain the same value.
+        List of one or more column headers whose values uniquely identify a row. These may overlap
+        with ``column_definitions`` if a column should be used as data and as an identifier,
+        but this is not necessary. Identifiers should be globally unique. No two rows should
+        contain the same value.
 
     """
 
