@@ -68,6 +68,9 @@ class RealDescriptor(Serializable['RealDescriptor'], Descriptor):
         self.upper_bound: float = upper_bound
         self.units: Optional[str] = units
 
+    def __str__(self):
+        return "<RealDescriptor {!r}>".format(self.key)
+
 
 class ChemicalFormulaDescriptor(Serializable['ChemicalFormulaDescriptor'], Descriptor):
     """[ALPHA] Captures domain-specific context about a stoichiometric chemical formula.
@@ -96,6 +99,9 @@ class ChemicalFormulaDescriptor(Serializable['ChemicalFormulaDescriptor'], Descr
 
     def __init__(self, key: str):
         self.key: str = key
+
+    def __str__(self):
+        return "<ChemicalFormulaDescriptor {!r}>".format(self.key)
 
 
 def InorganicDescriptor(key: str, threshold: Optional[float] = 1.0):
@@ -134,6 +140,9 @@ class MolecularStructureDescriptor(Serializable['MolecularStructureDescriptor'],
     def __init__(self, key: str):
         self.key: str = key
 
+    def __str__(self):
+        return "<MolecularStructureDescriptor {!r}>".format(self.key)
+
 
 class CategoricalDescriptor(Serializable['CategoricalDescriptor'], Descriptor):
     """[ALPHA] A descriptor to hold categorical variables.
@@ -165,3 +174,6 @@ class CategoricalDescriptor(Serializable['CategoricalDescriptor'], Descriptor):
     def __init__(self, key: str, categories: List[str]):
         self.key: str = key
         self.categories: List[str] = categories
+
+    def __str__(self):
+        return "<CategoricalDescriptor {!r}>".format(self.key)
