@@ -245,6 +245,7 @@ class Dataset(Resource['Dataset']):
         -------
         List[ResourceType]
             The registered versions
+
         """
         resources = list()
         for resource in (sorted(data_concepts_resources,
