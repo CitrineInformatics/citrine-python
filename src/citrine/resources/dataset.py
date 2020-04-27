@@ -221,7 +221,8 @@ class Dataset(Resource['Dataset']):
         if isinstance(data_concepts_resource, ConditionTemplate):
             return self.condition_templates.register(data_concepts_resource, dry_run)
 
-    def register_all(self, data_concepts_resources: List[ResourceType], dry_run=False) -> List[ResourceType]:
+    def register_all(self, data_concepts_resources: List[ResourceType],
+                     dry_run=False) -> List[ResourceType]:
         """
         Register multiple data concepts resources to each of their appropriate collections.
 
@@ -247,7 +248,7 @@ class Dataset(Resource['Dataset']):
         """
         resources = list()
         for resource in (sorted(data_concepts_resources,
-                         key=lambda resource: writable_sort_order(resource.typ))):
+                                key=lambda resource: writable_sort_order(resource.typ))):
             registered_resource = self.register(resource, dry_run)
             if isinstance(registered_resource, BaseEntity):
                 resource.uids = registered_resource.uids
