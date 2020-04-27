@@ -1,6 +1,7 @@
 """Tools for working with reports."""
-from typing import Optional, Type, List, Dict, TypeVar
+from typing import Optional, Type, List, Dict, TypeVar, Iterable
 from abc import abstractmethod
+from itertools import groupby
 
 from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
@@ -15,7 +16,6 @@ class Report(PolymorphicSerializable['Report']):
     """[ALPHA] A Citrine Report contains information and performance metrics related to a module.
 
     Abstract type that returns the proper type given a serialized dict.
-
 
     """
 
@@ -42,6 +42,9 @@ class Report(PolymorphicSerializable['Report']):
 class FeatureImportanceReport(Serializable["FeatureImportanceReport"]):
     """[ALPHA] Feature importances for a specific model response.
 
+    FeatureImportanceReport objects are constructed from saved models and
+    should not be user-instantiated.
+
     Parameters
     ----------
     output_key: str
@@ -65,6 +68,8 @@ class FeatureImportanceReport(Serializable["FeatureImportanceReport"]):
 
 class ModelSummary(Serializable['ModelSummary']):
     """[ALPHA] Summary of information about a single model in a predictor.
+
+    ModelSummary objects are constructed from saved models and should not be user-instantiated.
 
     Parameters
     ----------
@@ -107,6 +112,8 @@ class ModelSummary(Serializable['ModelSummary']):
 class PredictorReport(Serializable['PredictorReport'], Report):
     """[ALPHA] The performance metrics corresponding to a predictor.
 
+    PredictorReport objects are constructed from saved models and should not be user-instantiated.
+
     Parameters
     ----------
     status: str
@@ -122,7 +129,6 @@ class PredictorReport(Serializable['PredictorReport'], Report):
     status = properties.String('status')
     descriptors = properties.List(properties.Object(Descriptor), 'report.descriptors')
     model_summaries = properties.List(properties.Object(ModelSummary), 'report.models')
-    # Structure model summary
 
     def __init__(self, status: str, descriptors: List[Descriptor],
                  model_summaries: List[ModelSummary], session: Optional[Session] = None):
@@ -132,17 +138,68 @@ class PredictorReport(Serializable['PredictorReport'], Report):
         self.session: Optional[Session] = session
 
     def post_build(self):
+        """Modify a PredictorReport object in-place after deserialization."""
+        self._fill_out_descriptors()
+        for _, model in enumerate(self.model_summaries):
+            self._collapse_model_settings(model)
+
+    def _fill_out_descriptors(self):
+        """Replace descriptor keys in `model_summaries` with full Descriptor objects."""
+        descriptor_key_groups = groupby(self.descriptors, lambda d: d.key)
+        descriptor_map = {group[0]: self._get_sole_descriptor(group[1])
+                          for group in descriptor_key_groups}
         for i, model in enumerate(self.model_summaries):
             for j, input_key in enumerate(model.inputs):
-                self.model_summaries[i].inputs[j] = self._key_to_descriptor(input_key)
+                try:
+                    self.model_summaries[i].inputs[j] = descriptor_map[input_key]
+                except KeyError:
+                    raise RuntimeError("Model {} contains input \'{}\', but no descriptor found "
+                                       "with that key").format(model.name, input_key)
             for j, output_key in enumerate(model.outputs):
-                self.model_summaries[i].outputs[j] = self._key_to_descriptor(output_key)
+                try:
+                    self.model_summaries[i].outputs[j] = descriptor_map[output_key]
+                except KeyError:
+                    raise RuntimeError("Model {} contains output \'{}\', but no descriptor found "
+                                       "with that key").format(model.name, input_key)
 
-    def _key_to_descriptor(self, key: str) -> Descriptor:
-        matching_descriptors = [d for d in self.descriptors if d.key == key]
-        if len(matching_descriptors) == 1:
-            return matching_descriptors[0]
-        elif len(matching_descriptors) == 0:
-            raise RuntimeError("blah")
+    @staticmethod
+    def _get_sole_descriptor(it: Iterable):
+        """Get what should be the sole descriptor in an iterable of descriptors.
+
+        This method is called by `_fill_out_descriptors` on an iterable of descriptors
+        that have been grouped by their key.
+
+        Parameters
+        ----------
+        it: Iterable
+            iterable of descriptors
+
+        """
+        as_list = list(it)
+        if len(as_list) > 1:
+            raise RuntimeError("Error: found multiple descriptors with the key \'{}\': {}."
+                               .format(as_list[0].key, as_list))
         else:
-            raise RuntimeError("blah")
+            return as_list[0]
+
+    @staticmethod
+    def _collapse_model_settings(model: ModelSummary):
+        """Collapse a model's settings into a flat dictionary.
+
+        Model settings are returned as a dictionary with a "name" field, a "value" field,
+        and "children," a list of sub-settings. This method flattens that structure to a
+        top-level dictionary with keys given by "name" and values given by "value."
+
+        """
+        def _recurse_model_settings(settings: Dict[str, str], list_or_dict):
+            """Recursively traverse the model settings, adding name-value pairs to dictionary."""
+            if isinstance(list_or_dict, list):
+                for setting in list_or_dict:
+                    _recurse_model_settings(settings, setting)
+            elif isinstance(list_or_dict, dict):
+                settings[list_or_dict['name']] = list_or_dict['value']
+                _recurse_model_settings(settings, list_or_dict['children'])
+
+        settings = dict()
+        _recurse_model_settings(settings, model.model_settings)
+        model.model_settings = settings
