@@ -1,5 +1,5 @@
 """Tools for working with reports."""
-from typing import Optional, Type, List, Dict, TypeVar, Iterable
+from typing import Optional, Type, List, Dict, TypeVar, Iterable, Any
 from abc import abstractmethod
 from itertools import groupby
 
@@ -97,8 +97,8 @@ class ModelSummary(Serializable['ModelSummary']):
                  name: str,
                  inputs: List[Descriptor],
                  outputs: List[Descriptor],
-                 model_settings,
-                 feature_importances):
+                 model_settings: Dict[str, Any],
+                 feature_importances: List[FeatureImportanceReport]):
         self.name = name
         self.inputs = inputs
         self.outputs = outputs
