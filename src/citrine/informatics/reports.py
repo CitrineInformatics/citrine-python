@@ -145,22 +145,22 @@ class PredictorReport(Serializable['PredictorReport'], Report):
 
     def _fill_out_descriptors(self):
         """Replace descriptor keys in `model_summaries` with full Descriptor objects."""
-        descriptor_key_groups = groupby(self.descriptors, lambda d: d.key)
-        descriptor_map = {group[0]: self._get_sole_descriptor(group[1])
-                          for group in descriptor_key_groups}
+        descriptor_map = dict()
+        for key, group in groupby(sorted(self.descriptors, key=lambda d: d.key), lambda d: d.key):
+            descriptor_map[key] = self._get_sole_descriptor(group)
         for i, model in enumerate(self.model_summaries):
             for j, input_key in enumerate(model.inputs):
                 try:
-                    self.model_summaries[i].inputs[j] = descriptor_map[input_key]
+                    model.inputs[j] = descriptor_map[input_key]
                 except KeyError:
                     raise RuntimeError("Model {} contains input \'{}\', but no descriptor found "
-                                       "with that key").format(model.name, input_key)
+                                       "with that key".format(model.name, input_key))
             for j, output_key in enumerate(model.outputs):
                 try:
-                    self.model_summaries[i].outputs[j] = descriptor_map[output_key]
+                    model.outputs[j] = descriptor_map[output_key]
                 except KeyError:
                     raise RuntimeError("Model {} contains output \'{}\', but no descriptor found "
-                                       "with that key").format(model.name, input_key)
+                                       "with that key".format(model.name, input_key))
 
     @staticmethod
     def _get_sole_descriptor(it: Iterable):
