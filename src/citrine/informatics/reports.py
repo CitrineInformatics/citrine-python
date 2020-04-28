@@ -80,9 +80,9 @@ class ModelSummary(Serializable['ModelSummary']):
     outputs: List[Descriptor]
         list of output descriptors
     model_settings: dict
-        settings of the model
-    feature_importances: dict
-        feature importances
+        settings of the model, as a dictionary (details depend on model type)
+    feature_importances: List[FeatureImportanceReport]
+        list of feature importance reports, one for each output
 
     """
 
