@@ -63,7 +63,7 @@ def test_simple_post_build(simple_predictor):
     """Ensures we get a report from a simple predictor post_build call"""
     assert simple_predictor.report is None
     session = mock.Mock()
-    session.get_resource.return_value = dict(status='OK', report=dict(), uid=uuid.uuid4())
+    session.get_resource.return_value = dict(status='OK', report=dict(descriptors=[], models=[]), uid=str(uuid.uuid4()))
     simple_predictor.session = session
     simple_predictor.post_build(uuid.uuid4(), dict(id=uuid.uuid4()))
     assert session.get_resource.call_count == 1
@@ -83,7 +83,7 @@ def test_graph_post_build(graph_predictor):
     """Ensures we get a report from a graph predictor post_build call."""
     assert graph_predictor.report is None
     session = mock.Mock()
-    session.get_resource.return_value = dict(status='OK', report=dict(), uid=uuid.uuid4())
+    session.get_resource.return_value = dict(status='OK', report=dict(descriptors=[], models=[]), uid=str(uuid.uuid4()))
     graph_predictor.session = session
     graph_predictor.post_build(uuid.uuid4(), dict(id=uuid.uuid4()))
     assert session.get_resource.call_count == 1
@@ -104,7 +104,7 @@ def test_expression_post_build(expression_predictor):
     """Ensures we get a report from a expression predictor post_build call."""
     assert expression_predictor.report is None
     session = mock.Mock()
-    session.get_resource.return_value = dict(status='OK', report=dict(), uid=uuid.uuid4())
+    session.get_resource.return_value = dict(status='OK', report=dict(descriptors=[], models=[]), uid=str(uuid.uuid4()))
     expression_predictor.session = session
     expression_predictor.post_build(uuid.uuid4(), dict(id=uuid.uuid4()))
     assert session.get_resource.call_count == 1
