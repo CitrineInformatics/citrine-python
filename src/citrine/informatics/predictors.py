@@ -290,6 +290,7 @@ class MolecularStructureFeaturizer(Serializable['MolecularStructureFeaturizer'],
     uid = properties.Optional(properties.UUID, 'id', serializable=False)
     name = properties.String('config.name')
     description = properties.String('config.description')
+    descriptor = properties.Object(Descriptor, 'config.descriptor')
     typ = properties.String('config.type', default='MoleculeFeaturizer', deserializable=False)
     status = properties.Optional(properties.String(), 'status', serializable=False)
     status_info = properties.Optional(
