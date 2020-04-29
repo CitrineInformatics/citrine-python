@@ -15,6 +15,10 @@ Uploading a new file with the same name will produce a new version of the file w
 The columns in the CSV are extracted and parsed by a mapping of column header names to user-created descriptors.
 Columns in the CSV that are not mapped with a descriptor are ignored.
 
+The CSV must be UTF-8 encoded ASCII text with CRLF line terminators.
+The best way to ensure this is to save the file in a "Comma Separated Values" format and not any of the other small CSV variations.
+For example, Excel's default CSV format, "CSV UTF-8 (Comma Delimited)" is not parseable.
+
 Assume that a file data.csv exists with the following contents:
 
 .. code::
