@@ -291,6 +291,8 @@ class MolecularStructureFeaturizer(Serializable['MolecularStructureFeaturizer'],
     name = properties.String('config.name')
     description = properties.String('config.description')
     descriptor = properties.Object(Descriptor, 'config.descriptor')
+    features = properties.List(properties.String, 'config.features')
+    excludes = properties.List(properties.String, 'config.excludes')
     typ = properties.String('config.type', default='MoleculeFeaturizer', deserializable=False)
     status = properties.Optional(properties.String(), 'status', serializable=False)
     status_info = properties.Optional(
@@ -308,12 +310,16 @@ class MolecularStructureFeaturizer(Serializable['MolecularStructureFeaturizer'],
                  name: str,
                  description: str,
                  descriptor: MolecularStructureDescriptor,
+                 features: List[str] = ["standard"],
+                 excludes: List[str] = [],
                  session: Optional[Session] = None,
                  report: Optional[Report] = None,
                  active: bool = True):
         self.name: str = name
         self.description: str = description
         self.descriptor = descriptor
+        self.features = features
+        self.excludes = excludes
         self.session: Optional[Session] = session
         self.report: Optional[Report] = report
         self.active: bool = active
