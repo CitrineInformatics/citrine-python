@@ -4,8 +4,9 @@ import pytest
 import uuid
 
 from citrine.informatics.data_sources import AraTableDataSource
-from citrine.informatics.descriptors import RealDescriptor
-from citrine.informatics.predictors import ExpressionPredictor, GraphPredictor, SimpleMLPredictor
+from citrine.informatics.descriptors import RealDescriptor, MolecularStructureDescriptor
+from citrine.informatics.predictors import ExpressionPredictor, GraphPredictor, SimpleMLPredictor, \
+    MolecularStructureFeaturizer
 
 x = RealDescriptor("x", 0, 100, "")
 y = RealDescriptor("y", 0, 100, "")
@@ -23,6 +24,15 @@ def simple_predictor() -> SimpleMLPredictor:
                              latent_variables=[y],
                              training_data=AraTableDataSource(uuid.UUID('e5c51369-8e71-4ec6-b027-1f92bdc14762'), 0))
 
+@pytest.fixture
+def molecule_featurizer() -> MolecularStructureFeaturizer:
+    return MolecularStructureFeaturizer(
+        name="Molecule featurizer",
+        description="description",
+        descriptor=MolecularStructureDescriptor("SMILES"),
+        features=["standard"],
+        excludes=[]
+    )
 
 @pytest.fixture
 def graph_predictor() -> GraphPredictor:
@@ -110,3 +120,10 @@ def test_expression_post_build(expression_predictor):
     assert session.get_resource.call_count == 1
     assert expression_predictor.report is not None
     assert expression_predictor.report.status == 'OK'
+
+def test_molecule_featurizer(molecule_featurizer):
+    assert molecule_featurizer.name == "Molecule featurizer"
+    assert molecule_featurizer.description == "description"
+    assert molecule_featurizer.descriptor == MolecularStructureDescriptor("SMILES")
+    assert molecule_featurizer.features == ["standard"]
+    assert molecule_featurizer.excludes == []
