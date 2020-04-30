@@ -542,7 +542,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
             Every object in this collection.
 
         """
-        params = {'tag': tag}
+        params = {'tags': [tag]}
         if self.dataset_id is not None:
             params['dataset_id'] = str(self.dataset_id)
         raw_objects = self.session.cursor_paged_resource(
