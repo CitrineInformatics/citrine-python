@@ -127,8 +127,10 @@ class PredictorReport(Serializable['PredictorReport'], Report):
 
     uid = properties.Optional(properties.UUID, 'id', serializable=False)
     status = properties.String('status')
-    descriptors = properties.List(properties.Object(Descriptor), 'report.descriptors')
-    model_summaries = properties.List(properties.Object(ModelSummary), 'report.models')
+    descriptors = properties.Optional(
+        properties.List(properties.Object(Descriptor)), 'report.descriptors', default=[])
+    model_summaries = properties.Optional(
+        properties.List(properties.Object(ModelSummary)), 'report.models', default=[])
 
     def __init__(self, status: str, descriptors: List[Descriptor],
                  model_summaries: List[ModelSummary], session: Optional[Session] = None):
