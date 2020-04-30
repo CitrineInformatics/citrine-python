@@ -24,6 +24,7 @@ def simple_predictor() -> SimpleMLPredictor:
                              latent_variables=[y],
                              training_data=AraTableDataSource(uuid.UUID('e5c51369-8e71-4ec6-b027-1f92bdc14762'), 0))
 
+
 @pytest.fixture
 def molecule_featurizer() -> MolecularStructureFeaturizer:
     return MolecularStructureFeaturizer(
@@ -33,6 +34,7 @@ def molecule_featurizer() -> MolecularStructureFeaturizer:
         features=["standard"],
         excludes=[]
     )
+
 
 @pytest.fixture
 def graph_predictor() -> GraphPredictor:
@@ -48,9 +50,9 @@ def expression_predictor() -> ExpressionPredictor:
         description='Computes shear modulus from Youngs modulus and Poissons ratio',
         expression='Y / (2 * (1 + v))',
         output=shear_modulus,
-        aliases = {
-             'Y': "Property~Young's modulus",
-             'v': "Property~Poisson's ratio"
+        aliases={
+            'Y': "Property~Young's modulus",
+            'v': "Property~Poisson's ratio"
         })
 
 
@@ -121,9 +123,29 @@ def test_expression_post_build(expression_predictor):
     assert expression_predictor.report is not None
     assert expression_predictor.report.status == 'OK'
 
+
 def test_molecule_featurizer(molecule_featurizer):
     assert molecule_featurizer.name == "Molecule featurizer"
     assert molecule_featurizer.description == "description"
     assert molecule_featurizer.descriptor == MolecularStructureDescriptor("SMILES")
     assert molecule_featurizer.features == ["standard"]
     assert molecule_featurizer.excludes == []
+
+    assert str(molecule_featurizer) == "<MolecularStructureFeaturizer 'Molecule featurizer'>"
+
+    # This is what you get when you require 100% test coverage
+    assert molecule_featurizer._post_dump(molecule_featurizer.dump())["display_name"] == molecule_featurizer.name
+
+
+def test_molecule_featurizer_post_build(molecule_featurizer):
+    """Ensures we get a report from a molecule featurizer post_build call."""
+    predictor = molecule_featurizer
+
+    assert predictor.report is None
+    session = mock.Mock()
+    session.get_resource.return_value = dict(status='OK', report=dict(), uid=uuid.uuid4())
+    predictor.session = session
+    predictor.post_build(uuid.uuid4(), dict(id=uuid.uuid4()))
+    assert session.get_resource.call_count == 1
+    assert predictor.report is not None
+    assert predictor.report.status == 'OK'

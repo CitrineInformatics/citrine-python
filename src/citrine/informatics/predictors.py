@@ -12,7 +12,11 @@ from citrine.informatics.reports import Report
 from citrine.resources.report import ReportResource
 from citrine.informatics.modules import Module
 
-__all__ = ['ExpressionPredictor', 'GraphPredictor', 'Predictor', 'SimpleMLPredictor', 'MolecularStructureFeaturizer']
+__all__ = ['ExpressionPredictor',
+           'GraphPredictor',
+           'Predictor',
+           'SimpleMLPredictor',
+           'MolecularStructureFeaturizer']
 
 
 class Predictor(Module):
@@ -275,7 +279,8 @@ class ExpressionPredictor(Serializable['ExpressionPredictor'], Predictor):
 
 
 class MolecularStructureFeaturizer(Serializable['MolecularStructureFeaturizer'], Predictor):
-    """[ALPHA] A "batteries-included" featurizer for organic molecules. Powered by CDK.
+    """
+    [ALPHA] A "batteries-included" featurizer for organic molecules. Powered by CDK.
 
     Parameters
     ----------
@@ -285,6 +290,62 @@ class MolecularStructureFeaturizer(Serializable['MolecularStructureFeaturizer'],
         the description of the predictor
     descriptor: MolecularStructureDescriptor
         the descriptor to featurize
+    features: List[str]
+        the list of features to compute. Valid values include:
+        - all
+        - standard
+        - expensive
+        - PetitjeanShapeIndex
+        - TopologicalSurfaceArea
+        - EccentricConnectivityIndex
+        - MomentOfInertia
+        - KappaShapeIndices
+        - RuleOfFive
+        - ALOGP
+        - PolarizabilityAutocorr
+        - BondCount
+        - Volume
+        - VertexAdjacencyMagnitude
+        - ZagrebIndex
+        - HBondDonorCount
+        - ChiPathCluster
+        - MannholdLogP
+        - AtomCount
+        - AutocorrelationDescriptorCharge
+        - AromaticAtomCount
+        - LargestPiSystem
+        - HybridizationRatioDescriptor
+        - LargestChain
+        - MDE
+        - Weight
+        - LengthOverBreadth
+        - FMF
+        - AtomicPolarizability
+        - CarbonTypes
+        - PetitjeanNumber
+        - HBondAcceptorCount
+        - RotatableBondsCount
+        - BCUT
+        - WeightedPath
+        - AromaticBondCount
+        - GravitationalIndex
+        - XLogP
+        - ChiPath
+        - WHIM
+        - FragmentComplexity
+        - ChiChain
+        - KierHallSmarts
+        - MassAutocorr
+        - AcidGroupCount
+        - BPol
+        - WienerNumbers
+        - LongestAliphaticChain
+        - CPSA
+        - ChiCluster
+        - BasicGroupCount
+    excludes: List[str]
+        list of features to exclude (accepts same set of values as features)
+
     """
 
     uid = properties.Optional(properties.UUID, 'id', serializable=False)
