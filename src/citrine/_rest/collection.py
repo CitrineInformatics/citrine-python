@@ -119,7 +119,8 @@ class Collection(Generic[ResourceType]):
         """
         path = self._get_path()
 
-        params = self._page_params(page, per_page)
+        module_type = getattr(self, '_module_type', None)
+        params = self._page_params(page, per_page, module_type)
 
         data = self.session.get_resource(path, params=params)
         # A 'None' collection key implies response has a top-level array
@@ -139,10 +140,15 @@ class Collection(Generic[ResourceType]):
                 # properly, so we are filtering client-side.
                 pass
 
-    def _page_params(self, page: Optional[int], per_page: Optional[int]) -> Dict[str, int]:
+    def _page_params(self,
+                     page: Optional[int],
+                     per_page: Optional[int],
+                     module_type: Optional[str] = None) -> Dict[str, int]:
         params = {}
         if page is not None:
             params["page"] = page
         if per_page is not None:
             params["per_page"] = per_page
+        if module_type is not None:
+            params["module_type"] = module_type
         return params
