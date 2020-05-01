@@ -15,8 +15,8 @@ class Descriptor(PolymorphicSerializable['Descriptor']):
     @classmethod
     def get_type(cls, data) -> Type[Serializable]:
         """Return the subtype."""
-        # Current backend bug means that some descriptors come back with "category" as type key
-        # This should be resolved soon
+        # Current backend bug PLA-4036 means that some descriptors come back with "category"
+        # as type key. This should be resolved soon
         try:
             t = data["type"]
         except KeyError:

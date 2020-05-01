@@ -25,7 +25,7 @@ def test_deser_from_parent(descriptor):
 
 def test_buggy_deserialization():
     """Should be able to deserialize a descriptor with type key 'category'.
-    THIS IS TEMPORARY, TO BE REMOVED AS SOON AS BACKEND BUG IS FIXED.
+    THIS IS TEMPORARY, TO BE REMOVED AS SOON AS PLA-4036 IS FIXED.
     """
     buggy_data = dict(
         descriptor_key='key',
