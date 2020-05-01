@@ -144,11 +144,10 @@ class Collection(Generic[ResourceType]):
         for element in collection:
             try:
                 yield self.build(element)
-            except(KeyError, ValueError) as e:
+            except(KeyError, ValueError):
                 # TODO:  Right now this is a hack.  Clean this up soon.
                 # Module collections are not filtering on module type
                 # properly, so we are filtering client-side.
-                print(e)
                 pass
 
     def _page_params(self,
