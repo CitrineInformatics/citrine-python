@@ -273,7 +273,10 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
             Every object in this collection.
 
         """
-        return self.filter_by_tags([], page, per_page)
+        return self.filter_by_tags([], page, per_page), ""
+
+    def _build_collection_elements(self, collection):
+        return collection
 
     def list(self,
              page: Optional[int] = None,

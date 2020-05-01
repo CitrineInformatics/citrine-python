@@ -112,6 +112,9 @@ class FileCollection(Collection[FileLink]):
 
         response = self.session.get_resource(path=path, params=params)
         collection = response[self._collection_key]
+        return collection, ""
+
+    def _build_collection_elements(self, collection):
         for file in collection:
             yield self.build(self._as_dict_from_resource(file))
 

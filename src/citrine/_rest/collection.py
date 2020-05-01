@@ -103,7 +103,12 @@ class Collection(Generic[ResourceType]):
         params = self._page_params(page, per_page, module_type)
 
         data = self.session.get_resource(path, params=params)
-        next_uri = data.get('next', "")
+
+        try:
+            next_uri = data.get('next', "")
+        except AttributeError:
+            next_uri = ""
+
         # A 'None' collection key implies response has a top-level array
         # of 'ResourceType'
         # TODO: Unify backend return values
@@ -139,10 +144,11 @@ class Collection(Generic[ResourceType]):
         for element in collection:
             try:
                 yield self.build(element)
-            except(KeyError, ValueError):
+            except(KeyError, ValueError) as e:
                 # TODO:  Right now this is a hack.  Clean this up soon.
                 # Module collections are not filtering on module type
                 # properly, so we are filtering client-side.
+                print(e)
                 pass
 
     def _page_params(self,
