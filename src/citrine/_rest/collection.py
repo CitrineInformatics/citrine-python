@@ -79,7 +79,10 @@ class Collection(Generic[ResourceType]):
             Resources in this collection.
 
         """
-        return self._paginator.paginate(self._fetch_page, self._build_collection_elements, page, per_page)
+        return self._paginator.paginate(self._fetch_page,
+                                        self._build_collection_elements,
+                                        page,
+                                        per_page)
 
     def update(self, model: CreationType) -> CreationType:
         """Update a particular element of the collection."""
@@ -118,7 +121,6 @@ class Collection(Generic[ResourceType]):
             collection = data[self._collection_key]
 
         return collection, next_uri
-
 
     def _build_collection_elements(self, collection) -> Iterable[ResourceType]:
         """
