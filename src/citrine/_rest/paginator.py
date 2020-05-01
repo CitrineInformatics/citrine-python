@@ -1,5 +1,5 @@
 import warnings
-from typing import TypeVar, Generic, Callable, Optional, Iterable, Any
+from typing import TypeVar, Generic, Callable, Optional, Iterable, Any, Tuple
 
 ResourceType = TypeVar('ResourceType')
 
@@ -13,8 +13,8 @@ class Paginator(Generic[ResourceType]):
     """
 
     def paginate(self,
-                 page_fetcher: Callable[[Optional[int], int], Iterable[ResourceType]],
-                 collection_builder,
+                 page_fetcher: Callable[[Optional[int], int], Tuple[Iterable[dict], str]],
+                 collection_builder: Callable[[Iterable[dict]], Iterable[ResourceType]],
                  page: Optional[int] = None,
                  per_page: int = 100) -> Iterable[ResourceType]:
         """
@@ -28,6 +28,10 @@ class Paginator(Generic[ResourceType]):
 
         Parameters
         ---------
+        page_fetcher: Callable[[Optional[int], int], Tuple[Iterable[dict], str]]
+            Fetches the next page of elements
+        collection_builder: Callable[[Iterable[dict]], Iterable[ResourceType]]
+            Builds each element in the collection into the appropriate resource
         page: int, optional
             The "page" of results to list. Default is to read all pages and yield
             all results.  This option is deprecated.

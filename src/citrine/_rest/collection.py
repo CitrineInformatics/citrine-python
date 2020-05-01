@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import Optional, Union, Generic, TypeVar, Iterable, Dict
+from typing import Optional, Union, Generic, TypeVar, Iterable, Dict, Tuple
 from uuid import UUID
 
 from citrine._rest.paginator import Paginator
@@ -99,7 +99,29 @@ class Collection(Generic[ResourceType]):
 
     def _fetch_page(self,
                     page: Optional[int] = None,
-                    per_page: Optional[int] = None):
+                    per_page: Optional[int] = None) -> Tuple[Iterable[dict], str]:
+        """
+        Fetch visible elements in the collection.  This does not handle pagination.
+
+        This method will return the first page of results using the default page/per_page
+        behavior of the backend service.  Specify page/per_page to override these defaults
+        which are passed to the backend service.
+
+        Parameters
+        ---------
+        page: int, optional
+            The "page" of results to list. Default is the first page, which is 1.
+        per_page: int, optional
+            Max number of results to return. Default is 20.
+
+        Returns
+        -------
+        Iterable[dict]
+            Elements in this collection.
+        str
+            The next uri if one is available, empty string otherwise
+
+        """
         path = self._get_path()
 
         module_type = getattr(self, '_module_type', None)
@@ -122,20 +144,15 @@ class Collection(Generic[ResourceType]):
 
         return collection, next_uri
 
-    def _build_collection_elements(self, collection) -> Iterable[ResourceType]:
+    def _build_collection_elements(self,
+                                   collection: Iterable[dict]) -> Iterable[ResourceType]:
         """
-        Fetch visible elements in the collection.  This does not handle pagination.
-
-        This method will return the first page of results using the default page/per_page
-        behaviour of the backend service.  Specify page/per_page to override these defaults
-        which are passed to the backend service.
+        For each element in the collection, build the appropriate resource type.
 
         Parameters
         ---------
-        page: int, optional
-            The "page" of results to list. Default is the first page, which is 1.
-        per_page: int, optional
-            Max number of results to return. Default is 20.
+        collection: Iterable[dict]
+            collection containing the elements to be built
 
         Returns
         -------
