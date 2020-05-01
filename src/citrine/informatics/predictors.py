@@ -26,9 +26,10 @@ class Predictor(Module):
 
     _response_key = None
 
-    @abstractmethod
     def post_build(self, project_id: UUID, data: dict):
         """Executes after a .build() is called in [[PredictorCollection]]."""
+        self.report = ReportResource(project_id, self.session).get(data['id'])
+
 
     @classmethod
     def get_type(cls, data) -> Type['Predictor']:
@@ -120,10 +121,6 @@ class SimpleMLPredictor(Serializable['SimplePredictor'], Predictor):
     def __str__(self):
         return '<SimplePredictor {!r}>'.format(self.name)
 
-    def post_build(self, project_id: UUID, data: dict):
-        """Creates the predictor report object."""
-        self.report = ReportResource(project_id, self.session).get(data['id'])
-
 
 class GraphPredictor(Serializable['GraphPredictor'], Predictor):
     """[ALPHA] A predictor interface that stitches other predictors together.
@@ -202,10 +199,6 @@ class GraphPredictor(Serializable['GraphPredictor'], Predictor):
     def __str__(self):
         return '<GraphPredictor {!r}>'.format(self.name)
 
-    def post_build(self, project_id: UUID, data: dict):
-        """Creates the predictor report object."""
-        self.report = ReportResource(project_id, self.session).get(data['id'])
-
 
 class ExpressionPredictor(Serializable['ExpressionPredictor'], Predictor):
     """[ALPHA] A predictor interface that allows calculator expressions.
@@ -268,7 +261,3 @@ class ExpressionPredictor(Serializable['ExpressionPredictor'], Predictor):
 
     def __str__(self):
         return '<ExpressionPredictor {!r}>'.format(self.name)
-
-    def post_build(self, project_id: UUID, data: dict):
-        """Creates the predictor report object."""
-        self.report = ReportResource(project_id, self.session).get(data['id'])

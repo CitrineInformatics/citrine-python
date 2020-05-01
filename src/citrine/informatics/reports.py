@@ -13,7 +13,7 @@ SelfType = TypeVar('SelfType', bound='Report')
 
 
 class Report(PolymorphicSerializable['Report']):
-    """[ALPHA] A Citrine Report contains information and performance metrics related to a module.
+    """[ALPHA] A Citrine Report contains information related to a module.
 
     Abstract type that returns the proper type given a serialized dict.
 
