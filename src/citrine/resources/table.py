@@ -99,12 +99,13 @@ class TableCollection(Collection[Table]):
         :param per_page: The number of items to fetch per-page.
         :return: An iterable of the versions of the Tables (as Table objects).
         """
-        def fetch_versions(page: Optional[int], per_page: int) -> Iterable[Table]:
+        def fetch_versions(page: Optional[int],
+                           per_page: int) -> Tuple[Iterable[dict], str]:
             data = self.session.get_resource(self._get_path() + '/' + str(uid),
                                              params=self._page_params(page, per_page))
             return (data[self._collection_key], data.get('next', ""))
 
-        def build_versions(collection):
+        def build_versions(collection: Iterable[dict]) -> Iterable[Table]:
             for item in collection:
                 yield self.build(item)
 
