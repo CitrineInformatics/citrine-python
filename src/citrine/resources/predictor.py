@@ -22,7 +22,7 @@ class PredictorCollection(Collection[Predictor]):
     _path_template = '/projects/{project_id}/modules'
     _individual_key = None
     _resource = Predictor
-    _module_type = "PREDICTOR"
+    _module_type = 'PREDICTOR'
 
     def __init__(self, project_id: UUID, session: Session):
         self.project_id = project_id
