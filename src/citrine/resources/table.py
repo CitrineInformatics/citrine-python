@@ -1,4 +1,4 @@
-from typing import Union, Iterable, Optional, Any
+from typing import Union, Iterable, Optional, Any, Tuple
 
 import deprecation
 import requests
@@ -118,10 +118,16 @@ class TableCollection(Collection[Table]):
         """Tables cannot be created at this time."""
         raise RuntimeError('Creating Tables is not supported at this time.')
 
-    def read(self, table: Table, local_path: str):
-        """Read the Table file from S3."""
+    def read(self, table: Union[Table, Tuple[str, int]], local_path: str):
+        """
+        Read the Table file from S3.
+
+        If a Table object is not provided, retrieve it using the provided table and version ids.
+        """
         # NOTE: this uses the pre-signed S3 download url. If we need to download larger files,
         # we have other options available (using multi-part downloads in parallel , for example).
+        if isinstance(table, Tuple):
+            table = self.get(table[0], table[1])
 
         data_location = table.download_url
         data_location = rewrite_s3_links_locally(data_location, self.session.s3_endpoint_url)
