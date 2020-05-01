@@ -79,7 +79,7 @@ class Collection(Generic[ResourceType]):
             Resources in this collection.
 
         """
-        return self._paginator.paginate(self._fetch_page, page, per_page)
+        return self._paginator.paginate(self._fetch_page, self._build_collection_elements, page, per_page)
 
     def update(self, model: CreationType) -> CreationType:
         """Update a particular element of the collection."""
@@ -96,7 +96,26 @@ class Collection(Generic[ResourceType]):
 
     def _fetch_page(self,
                     page: Optional[int] = None,
-                    per_page: Optional[int] = None) -> Iterable[ResourceType]:
+                    per_page: Optional[int] = None):
+        path = self._get_path()
+
+        module_type = getattr(self, '_module_type', None)
+        params = self._page_params(page, per_page, module_type)
+
+        data = self.session.get_resource(path, params=params)
+        next_uri = data.get('next', "")
+        # A 'None' collection key implies response has a top-level array
+        # of 'ResourceType'
+        # TODO: Unify backend return values
+        if self._collection_key is None:
+            collection = data
+        else:
+            collection = data[self._collection_key]
+
+        return collection, next_uri
+
+
+    def _build_collection_elements(self, collection) -> Iterable[ResourceType]:
         """
         Fetch visible elements in the collection.  This does not handle pagination.
 
@@ -117,20 +136,6 @@ class Collection(Generic[ResourceType]):
             Resources in this collection.
 
         """
-        path = self._get_path()
-
-        module_type = getattr(self, '_module_type', None)
-        params = self._page_params(page, per_page, module_type)
-
-        data = self.session.get_resource(path, params=params)
-        # A 'None' collection key implies response has a top-level array
-        # of 'ResourceType'
-        # TODO: Unify backend return values
-        if self._collection_key is None:
-            collection = data
-        else:
-            collection = data[self._collection_key]
-
         for element in collection:
             try:
                 yield self.build(element)

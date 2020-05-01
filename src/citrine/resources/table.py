@@ -102,10 +102,13 @@ class TableCollection(Collection[Table]):
         def fetch_versions(page: Optional[int], per_page: int) -> Iterable[Table]:
             data = self.session.get_resource(self._get_path() + '/' + str(uid),
                                              params=self._page_params(page, per_page))
-            for item in data[self._collection_key]:
+            return (data[self._collection_key], data.get('next', ""))
+
+        def build_versions(collection):
+            for item in collection:
                 yield self.build(item)
 
-        return self._paginator.paginate(fetch_versions, page, per_page)
+        return self._paginator.paginate(fetch_versions, build_versions, page, per_page)
 
     def build(self, data: dict) -> Table:
         """Build an individual Table from a dictionary."""

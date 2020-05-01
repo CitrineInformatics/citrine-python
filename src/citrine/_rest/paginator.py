@@ -14,6 +14,7 @@ class Paginator(Generic[ResourceType]):
 
     def paginate(self,
                  page_fetcher: Callable[[Optional[int], int], Iterable[ResourceType]],
+                 collection_builder,
                  page: Optional[int] = None,
                  per_page: int = 100) -> Iterable[ResourceType]:
         """
@@ -49,7 +50,8 @@ class Paginator(Generic[ResourceType]):
         page_idx = page
 
         while True:
-            subset = page_fetcher(page_idx, per_page)
+            subset_collection, next_uri = page_fetcher(page_idx, per_page)
+            subset = collection_builder(subset_collection)
 
             count = 0
             for idx, element in enumerate(subset):
@@ -74,7 +76,7 @@ class Paginator(Generic[ResourceType]):
                 break
 
             # Handle the case where we get an unexpected number of results (e.g. last page)
-            if count == 0 or count < per_page:
+            if next_uri == "" and count < per_page:
                 break
 
             if page_idx is None:
