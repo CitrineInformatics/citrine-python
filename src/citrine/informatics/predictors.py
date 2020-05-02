@@ -291,7 +291,7 @@ class MolecularStructureFeaturizer(Serializable['MolecularStructureFeaturizer'],
     descriptor: MolecularStructureDescriptor
         the descriptor to featurize
     features: List[str]
-        the list of features to compute. Valid values include:
+        the list of features to compute (first 3 are aliases for feature sets). Valid values include:
         - all
         - standard
         - expensive
