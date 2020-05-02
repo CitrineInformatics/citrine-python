@@ -31,8 +31,8 @@ def molecule_featurizer() -> MolecularStructureFeaturizer:
         name="Molecule featurizer",
         description="description",
         descriptor=MolecularStructureDescriptor("SMILES"),
-        features=["standard"],
-        excludes=[]
+        features=["all"],
+        excludes=["standard"]
     )
 
 
@@ -128,13 +128,23 @@ def test_molecule_featurizer(molecule_featurizer):
     assert molecule_featurizer.name == "Molecule featurizer"
     assert molecule_featurizer.description == "description"
     assert molecule_featurizer.descriptor == MolecularStructureDescriptor("SMILES")
-    assert molecule_featurizer.features == ["standard"]
-    assert molecule_featurizer.excludes == []
+    assert molecule_featurizer.features == ["all"]
+    assert molecule_featurizer.excludes == ["standard"]
 
     assert str(molecule_featurizer) == "<MolecularStructureFeaturizer 'Molecule featurizer'>"
 
-    # This is what you get when you require 100% test coverage
-    assert molecule_featurizer._post_dump(molecule_featurizer.dump())["display_name"] == molecule_featurizer.name
+    assert molecule_featurizer.dump() == {
+        'config': {
+            'name': 'Molecule featurizer', 'description': 'description',
+            'descriptor': {'descriptor_key': 'SMILES', 'type': 'Organic'},
+            'features': ['all'], 'excludes': ['standard'],
+            'type': 'MoleculeFeaturizer'
+        },
+        'active': True,
+        'module_type': 'PREDICTOR',
+        'schema_id': '24183b2f-848c-46fa-8640-21b7743e38a3',
+        'display_name': 'Molecule featurizer'
+    }
 
 
 def test_molecule_featurizer_post_build(molecule_featurizer):
