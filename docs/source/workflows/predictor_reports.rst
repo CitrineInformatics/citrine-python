@@ -21,9 +21,32 @@ Results of the report are in the ``descriptors`` and ``model_summaries`` attribu
 ``model_summaries`` is a list of :class:`~citrine.informatics.reports.ModelSummary` objects, each one corresponding to a single model in the predictor.
 Each ``ModelSummary`` includes the name of the model, a list of input descriptors, a list of output descriptors, the model's settings, and its feature importances.
 ``model_settings`` is a dictionary of settings and values, the details of which depend on the type of model.
-For example, a model that is an ensemble of 24 estimators might contain a setting "Number of estimators" with a value of 24.
+One possible model settings dictionary is shown below:
+
+.. code:: python
+
+    {
+        'Algorithm': 'Ensemble of non-linear estimators',
+        'Number of estimators': 64,
+        'Use jackknife': True
+    }
+
+
 ``feature_importances`` is a list of :class:`~citrine.informatics.reports.FeatureImportanceReport` objects, each of which corresponds to a single output of the model.
 It has fields ``output_key``, which is the key of the output descriptor, and ``importances``, which is a dictionary from input keys to their importance.
+The input and output keys correspond to descriptors that can be found in the predictor report's ``descriptors`` field.
+An example is shown below:
+
+.. code:: python
+
+    {
+        'output_key': 'shear modulus',
+        'importances': {
+            'Young's modulus': 0.85,
+            'Poisson's ratio': 0.15
+        }
+    }
+
 For simple models, such as those that featurize inputs, the ``model_settings`` and ``feature_importances`` fields might be empty.
 
 As an example, consider a :class:`~citrine.informatics.predictors.SimpleMLPredictor` with numeric inputs ``x`` and ``y`` and numeric output ``z``.
