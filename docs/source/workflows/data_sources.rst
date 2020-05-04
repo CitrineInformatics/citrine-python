@@ -1,3 +1,6 @@
+Data Sources
+=============
+
 Data sources are used by modules to pull data from outside of the AI engine.
 For example, a :doc:`predictor <predictors>` may need to define external training data.
 
