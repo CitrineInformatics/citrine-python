@@ -1,6 +1,3 @@
-Data Sources
-=============
-
 Data sources are used by modules to pull data from outside of the AI engine.
 For example, a :doc:`predictor <predictors>` may need to define external training data.
 
@@ -25,11 +22,11 @@ Assume that a file data.csv exists with the following contents:
 
 .. code::
 
-    Chemical Formula,Gap,Crystallinity
-    Bi2Te3,0.153,Single crystalline
-    Mg2Ge,0.567,Single crystalline
-    GeTe,0.7,Amorphous
-    Sb2Se3,1.15,Polycrystalline
+    Chemical Formula,Gap,Crystallinity,Sample ID
+    Bi2Te3,0.153,Single crystalline,0
+    Mg2Ge,0.567,Single crystalline,1
+    GeTe,0.7,Amorphous,2
+    Sb2Se3,1.15,Polycrystalline,3
 
 That file could be used as the training data for a predictor as:
 
@@ -51,9 +48,7 @@ That file could be used as the training data for a predictor as:
             "Crystallinity": CategoricalDescriptor("Crystallinity", categories=[
                 "Single crystalline", "Amorphous", "Polycrystalline"])
         },
-        # assuming no two row share the same chemical formula,
-        # we may wish to use the column as an identifier
-        identifiers = ["Chemical Formula"]
+        identifiers = ["Sample ID"]
     )
 
     predictor = SimpleMLPredictor(
