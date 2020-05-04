@@ -89,16 +89,19 @@ def test_mark_predictor_invalid(valid_simple_ml_predictor_data, valid_predictor_
     assert not first_call.json['active']
 
 
-def test_list_predictors(valid_simple_ml_predictor_data):
+def test_list_predictors(valid_simple_ml_predictor_data, valid_expression_predictor_data,
+                         basic_predictor_report_data):
     # Given
     session = FakeSession()
     collection = PredictorCollection(uuid.uuid4(), session)
-    predictor = SimpleMLPredictor.build(valid_simple_ml_predictor_data)
     session.set_responses(
         {
-            'entries': [valid_simple_ml_predictor_data, valid_simple_ml_predictor_data],
+            'entries': [valid_simple_ml_predictor_data, valid_expression_predictor_data],
             'next': ''
-        })
+        },
+        basic_predictor_report_data,
+        basic_predictor_report_data
+    )
 
     # When
     predictors = list(collection.list(per_page=20))
@@ -106,5 +109,6 @@ def test_list_predictors(valid_simple_ml_predictor_data):
     # Then
     expected_call = FakeCall(method='GET', path='/projects/{}/modules'.format(collection.project_id),
                                    params={'per_page': 20, 'module_type': 'PREDICTOR'})
-    # assert 3 == session.num_calls, session.calls  # This is a little strange, the report is fetched eagerly
+    assert 3 == session.num_calls, session.calls  # This is a little strange, the report is fetched eagerly
     assert expected_call == session.calls[0]
+    assert len(predictors) == 2
