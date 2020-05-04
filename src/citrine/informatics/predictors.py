@@ -1,5 +1,4 @@
 """Tools for working with Predictors."""
-from abc import abstractmethod
 from typing import List, Optional, Type, Union
 from uuid import UUID
 
@@ -29,7 +28,6 @@ class Predictor(Module):
     def post_build(self, project_id: UUID, data: dict):
         """Executes after a .build() is called in [[PredictorCollection]]."""
         self.report = ReportResource(project_id, self.session).get(data['id'])
-
 
     @classmethod
     def get_type(cls, data) -> Type['Predictor']:
