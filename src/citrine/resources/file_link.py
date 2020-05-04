@@ -2,7 +2,7 @@
 from uuid import UUID
 import os
 import mimetypes
-from typing import Iterable, Optional
+from typing import Iterable, Optional, Tuple
 from boto3 import client as boto3_client
 from boto3.session import Config
 import requests
@@ -86,7 +86,7 @@ class FileCollection(Collection[FileLink]):
 
     def _fetch_page(self,
                     page: Optional[int] = None,
-                    per_page: Optional[int] = None) -> Iterable[FileLink]:
+                    per_page: Optional[int] = None) -> Tuple[Iterable[FileLink], str]:
         """
         List all visible files in the collection.
 
@@ -101,6 +101,8 @@ class FileCollection(Collection[FileLink]):
         -------
         Iterable[FileLink]
             FileLink objects in this collection.
+        str
+            The next uri if one is available, empty string otherwise
 
         """
         path = self._get_path()
@@ -112,6 +114,9 @@ class FileCollection(Collection[FileLink]):
 
         response = self.session.get_resource(path=path, params=params)
         collection = response[self._collection_key]
+        return collection, ""
+
+    def _build_collection_elements(self, collection):
         for file in collection:
             yield self.build(self._as_dict_from_resource(file))
 

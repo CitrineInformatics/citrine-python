@@ -1,6 +1,6 @@
 """Top-level class for all data concepts objects and collections thereof."""
 from abc import abstractmethod, ABC
-from typing import TypeVar, Type, List, Union, Optional, Iterator
+from typing import TypeVar, Type, List, Union, Optional, Iterator, Iterable
 from uuid import UUID
 
 from citrine._rest.collection import Collection
@@ -273,7 +273,25 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
             Every object in this collection.
 
         """
-        return self.filter_by_tags([], page, per_page)
+        return self.filter_by_tags([], page, per_page), ""
+
+    def _build_collection_elements(self,
+                                   collection: Iterable[dict]) -> Iterable[ResourceType]:
+        """
+        For each element in the collection, build the appropriate resource type.
+
+        Parameters
+        ---------
+        collection: Iterable[dict]
+            collection containing the elements to be built
+
+        Returns
+        -------
+        Iterable[ResourceType]
+            Resources in this collection.
+
+        """
+        return collection
 
     def list(self,
              page: Optional[int] = None,
@@ -542,7 +560,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
             Every object in this collection.
 
         """
-        params = {'tag': tag}
+        params = {'tags': [tag]}
         if self.dataset_id is not None:
             params['dataset_id'] = str(self.dataset_id)
         raw_objects = self.session.cursor_paged_resource(

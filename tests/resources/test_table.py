@@ -141,7 +141,21 @@ def test_read_table_from_collection(mock_write_files_locally, collection, table)
         override_url = "https://fakestack:1337"
         collection.session.s3_endpoint_url = override_url
         mock_get.get(override_url + "/anywhere", text='stuff')
-        collection.read(table(localstack_url), "table2.pdf")
+        collection.read(table(localstack_url), "table3.pdf")
         assert mock_get.call_count == 1
         assert mock_write_files_locally.call_count == 3
-        assert mock_write_files_locally.call_args == call(b'stuff', "table2.pdf")
+        assert mock_write_files_locally.call_args == call(b'stuff', "table3.pdf")
+
+
+@patch("citrine.resources.table.write_file_locally")
+def test_get_and_read_table_from_collection(mock_write_files_locally, table, session, collection):
+    with requests_mock.mock() as mock_get:
+        # Given
+        remote_url = "http://otherhost:4572/anywhere"
+        retrieved_table = table(remote_url)
+        session.set_response(retrieved_table.dump())
+        mock_get.get(remote_url, text='stuff')
+        collection.read((retrieved_table.uid, retrieved_table.version), "table4.csv")
+        assert mock_get.call_count == 1
+        assert mock_write_files_locally.call_count == 1
+        assert mock_write_files_locally.call_args == call(b'stuff', "table4.csv")

@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import Optional, Union, Generic, TypeVar, Iterable, Dict
+from typing import Optional, Union, Generic, TypeVar, Iterable, Dict, Tuple
 from uuid import UUID
 
 from citrine._rest.paginator import Paginator
@@ -79,7 +79,10 @@ class Collection(Generic[ResourceType]):
             Resources in this collection.
 
         """
-        return self._paginator.paginate(self._fetch_page, page, per_page)
+        return self._paginator.paginate(self._fetch_page,
+                                        self._build_collection_elements,
+                                        page,
+                                        per_page)
 
     def update(self, model: CreationType) -> CreationType:
         """Update a particular element of the collection."""
@@ -96,12 +99,12 @@ class Collection(Generic[ResourceType]):
 
     def _fetch_page(self,
                     page: Optional[int] = None,
-                    per_page: Optional[int] = None) -> Iterable[ResourceType]:
+                    per_page: Optional[int] = None) -> Tuple[Iterable[dict], str]:
         """
         Fetch visible elements in the collection.  This does not handle pagination.
 
         This method will return the first page of results using the default page/per_page
-        behaviour of the backend service.  Specify page/per_page to override these defaults
+        behavior of the backend service.  Specify page/per_page to override these defaults
         which are passed to the backend service.
 
         Parameters
@@ -113,15 +116,24 @@ class Collection(Generic[ResourceType]):
 
         Returns
         -------
-        Iterable[ResourceType]
-            Resources in this collection.
+        Iterable[dict]
+            Elements in this collection.
+        str
+            The next uri if one is available, empty string otherwise
 
         """
         path = self._get_path()
 
-        params = self._page_params(page, per_page)
+        module_type = getattr(self, '_module_type', None)
+        params = self._page_params(page, per_page, module_type)
 
         data = self.session.get_resource(path, params=params)
+
+        try:
+            next_uri = data.get('next', "")
+        except AttributeError:
+            next_uri = ""
+
         # A 'None' collection key implies response has a top-level array
         # of 'ResourceType'
         # TODO: Unify backend return values
@@ -130,6 +142,24 @@ class Collection(Generic[ResourceType]):
         else:
             collection = data[self._collection_key]
 
+        return collection, next_uri
+
+    def _build_collection_elements(self,
+                                   collection: Iterable[dict]) -> Iterable[ResourceType]:
+        """
+        For each element in the collection, build the appropriate resource type.
+
+        Parameters
+        ---------
+        collection: Iterable[dict]
+            collection containing the elements to be built
+
+        Returns
+        -------
+        Iterable[ResourceType]
+            Resources in this collection.
+
+        """
         for element in collection:
             try:
                 yield self.build(element)
@@ -139,10 +169,15 @@ class Collection(Generic[ResourceType]):
                 # properly, so we are filtering client-side.
                 pass
 
-    def _page_params(self, page: Optional[int], per_page: Optional[int]) -> Dict[str, int]:
+    def _page_params(self,
+                     page: Optional[int],
+                     per_page: Optional[int],
+                     module_type: Optional[str] = None) -> Dict[str, int]:
         params = {}
         if page is not None:
             params["page"] = page
         if per_page is not None:
             params["per_page"] = per_page
+        if module_type is not None:
+            params["module_type"] = module_type
         return params
