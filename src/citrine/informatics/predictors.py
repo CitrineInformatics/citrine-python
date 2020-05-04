@@ -12,8 +12,8 @@ from citrine.informatics.reports import Report
 from citrine.resources.report import ReportResource
 from citrine.informatics.modules import Module
 
-__all__ = ['ExpressionPredictor', 'GraphPredictor', 'IngredientsToSimpleMixturePredictor', 'Predictor',
-           'SimpleMLPredictor']
+__all__ = ['ExpressionPredictor', 'GraphPredictor', 'IngredientsToSimpleMixturePredictor',
+           'Predictor', 'SimpleMLPredictor']
 
 
 class Predictor(Module):
@@ -276,7 +276,8 @@ class ExpressionPredictor(Serializable['ExpressionPredictor'], Predictor):
         self.report = ReportResource(project_id, self.session).get(data['id'])
 
 
-class IngredientsToSimpleMixturePredictor(Serializable['IngredientsToSimpleMixturePredictor'], Predictor):
+class IngredientsToSimpleMixturePredictor(
+        Serializable['IngredientsToSimpleMixturePredictor'], Predictor):
     """[ALPHA] A predictor interface that constructs a simple mixture from ingredient quantities.
 
     Parameters
@@ -302,8 +303,10 @@ class IngredientsToSimpleMixturePredictor(Serializable['IngredientsToSimpleMixtu
     output = _properties.Object(FormulationDescriptor, 'config.output')
     id_to_quantity = _properties.Mapping(_properties.String, _properties.Object(RealDescriptor),
                                          'config.id_to_quantity')
-    labels = _properties.Mapping(_properties.String, _properties.List(_properties.String), 'config.labels')
-    typ = _properties.String('config.type', default='IngredientsToSimpleMixture', deserializable=False)
+    labels = _properties.Mapping(_properties.String, _properties.List(_properties.String),
+                                 'config.labels')
+    typ = _properties.String('config.type', default='IngredientsToSimpleMixture',
+                             deserializable=False)
     status = _properties.Optional(_properties.String(), 'status', serializable=False)
     status_info = _properties.Optional(
         _properties.List(_properties.String()),
@@ -346,7 +349,8 @@ class IngredientsToSimpleMixturePredictor(Serializable['IngredientsToSimpleMixtu
         self.report = ReportResource(project_id, self.session).get(data['id'])
 
 
-class GeneralizedMeanPropertyPredictor(Serializable['GeneralizedMeanPropertyPredictor'], Predictor):
+class GeneralizedMeanPropertyPredictor(
+        Serializable['GeneralizedMeanPropertyPredictor'], Predictor):
     """[ALPHA] A predictor interface that mean component properties.
 
     Parameters
@@ -381,10 +385,11 @@ class GeneralizedMeanPropertyPredictor(Serializable['GeneralizedMeanPropertyPred
     p = _properties.Float('config.p')
     impute__properties = _properties.Boolean('config.impute_properties')
     training_data = _properties.Object(DataSource, 'config.training_data')
-    default__properties = _properties.Optional(_properties.Mapping(_properties.String, _properties.Float),
-                                               'config.default_properties')
+    default__properties = _properties.Optional(
+        _properties.Mapping(_properties.String, _properties.Float), 'config.default_properties')
     label = _properties.Optional(_properties.String, 'config.label')
-    typ = _properties.String('config.type', default='GeneralizedMeanProperty', deserializable=False)
+    typ = _properties.String('config.type', default='GeneralizedMeanProperty',
+                             deserializable=False)
     status = _properties.Optional(_properties.String(), 'status', serializable=False)
     status_info = _properties.Optional(
         _properties.List(_properties.String()),

@@ -186,4 +186,3 @@ class FormulationDescriptor(Serializable['FormulationDescriptor'], Descriptor):
 
     def __init__(self, key: str):
         self.key: str = key
-
