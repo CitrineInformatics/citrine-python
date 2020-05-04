@@ -7,7 +7,7 @@ from copy import deepcopy
 from citrine.exceptions import ModuleRegistrationFailedException, NotFound
 from citrine.informatics.predictors import GraphPredictor, SimpleMLPredictor
 from citrine.resources.predictor import PredictorCollection
-from tests.utils.session import FakeSession
+from tests.utils.session import FakeSession, FakeCall
 
 
 @pytest.fixture(scope='module')
@@ -87,3 +87,24 @@ def test_mark_predictor_invalid(valid_simple_ml_predictor_data, valid_predictor_
     assert first_call.method == 'PUT'
     assert first_call.path == '/projects/{}/modules/{}'.format(collection.project_id, predictor.uid)
     assert not first_call.json['active']
+
+
+def test_list_predictors(valid_simple_ml_predictor_data):
+    # Given
+    session = FakeSession()
+    collection = PredictorCollection(uuid.uuid4(), session)
+    predictor = SimpleMLPredictor.build(valid_simple_ml_predictor_data)
+    session.set_responses(
+        {
+            'entries': [valid_simple_ml_predictor_data, valid_simple_ml_predictor_data],
+            'next': ''
+        })
+
+    # When
+    predictors = list(collection.list(per_page=20))
+
+    # Then
+    expected_call = FakeCall(method='GET', path='/projects/{}/modules'.format(collection.project_id),
+                                   params={'per_page': 20, 'module_type': 'PREDICTOR'})
+    # assert 3 == session.num_calls, session.calls  # This is a little strange, the report is fetched eagerly
+    assert expected_call == session.calls[0]

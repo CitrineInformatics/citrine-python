@@ -21,6 +21,7 @@ class ProcessorCollection(Collection[Processor]):
 
     _path_template = '/projects/{project_id}/modules'
     _individual_key = None
+    _module_type = 'PROCESSOR'
 
     def __init__(self, project_id: UUID, session: Session):
         self.project_id = project_id
