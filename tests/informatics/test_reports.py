@@ -5,8 +5,10 @@ from citrine.informatics.descriptors import RealDescriptor
 
 def test_report_init():
     """Tests that a Report object can be constructed."""
-    report = PredictorReport('ERROR', descriptors=[], model_summaries=[])
+    report = PredictorReport('ERROR', descriptors=[])
     assert report.status == 'ERROR'
+    assert report.model_summaries == []
+    assert report.descriptors == []
 
 
 def test_model_summary_init():
