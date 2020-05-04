@@ -132,11 +132,13 @@ class PredictorReport(Serializable['PredictorReport'], Report):
     model_summaries = properties.Optional(
         properties.List(properties.Object(ModelSummary)), 'report.models', default=[])
 
-    def __init__(self, status: str, descriptors: List[Descriptor],
-                 model_summaries: List[ModelSummary], session: Optional[Session] = None):
+    def __init__(self, status: str,
+                 descriptors: Optional[List[Descriptor]] = None,
+                 model_summaries: Optional[List[ModelSummary]] = None,
+                 session: Optional[Session] = None):
         self.status = status
-        self.descriptors = descriptors
-        self.model_summaries = model_summaries
+        self.descriptors = descriptors or []
+        self.model_summaries = model_summaries or []
         self.session: Optional[Session] = session
 
     def post_build(self):
