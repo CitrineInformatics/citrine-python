@@ -79,7 +79,10 @@ class Property(typing.Generic[DeserializedType, SerializedType]):
         value = data
         fields = self.serialization_path.split('.')
         for field in fields:
-            value = value.get(field, self.default)
+            if isinstance(value, dict):
+                value = value.get(field, self.default)
+            else:
+                value = self.default
         base_class = _get_base_class(data, self.serialization_path)
         return self.deserialize(value, base_class=base_class)
 
