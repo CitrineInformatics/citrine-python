@@ -47,14 +47,14 @@ def test_empty_report_build():
     Report.build(dict(id='7c2dda5d-675a-41b6-829c-e485163f0e43', status='PENDING', report=dict()))
 
 
-def test_failed_predictor_report_build(valid_predictor_report_data):
-    """Modify the predictor report to be invalid and check that the errors are caught."""
+def test_bad_predictor_report_build(valid_predictor_report_data):
+    """Modify the predictor report to be non-ideal and check the behavior."""
     too_many_descriptors = deepcopy(valid_predictor_report_data)
     # Multiple descriptors with the same key
     other_x = RealDescriptor("x", 0, 100, "")
     too_many_descriptors['report']['descriptors'].append(other_x.dump())
-    with pytest.raises(RuntimeError):
-        Report.build(too_many_descriptors)
+    # this should build but throw a warning
+    Report.build(too_many_descriptors)
 
     # A key that appears in inputs and/or outputs, but there is no corresponding descriptor.
     # This is done twice for coverage, once to catch a missing input and once for a missing output.
