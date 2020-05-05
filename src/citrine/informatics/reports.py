@@ -2,6 +2,7 @@
 from typing import Optional, Type, List, Dict, TypeVar, Iterable, Any
 from abc import abstractmethod
 from itertools import groupby
+import warnings
 
 from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
@@ -179,10 +180,11 @@ class PredictorReport(Serializable['PredictorReport'], Report):
         """
         as_list = list(it)
         if len(as_list) > 1:
-            raise RuntimeError("Error: found multiple descriptors with the key \'{}\': {}."
-                               .format(as_list[0].key, as_list))
-        else:
-            return as_list[0]
+            serialized_descriptors = [d.dump() for d in as_list]
+            warnings.warn("Warning: found multiple descriptors with the key \'{}\', arbitrarily "
+                          "selecting the first one. The descriptors are: {}"
+                          .format(as_list[0].key, serialized_descriptors), RuntimeWarning)
+        return as_list[0]
 
     @staticmethod
     def _collapse_model_settings(model: ModelSummary):
