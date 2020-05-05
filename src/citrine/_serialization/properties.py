@@ -83,7 +83,9 @@ class Property(typing.Generic[DeserializedType, SerializedType]):
             next_value = value.get(field)
             if next_value is None:
                 # This occurs if a `field` is unexpectedly not present in the data dictionary
-                # Stop traversing and use the default value
+                # or if its value is null.
+                # Use the default value and stop traversing, even if we have not yet reached
+                # the last field in the serialization path.
                 value = self.default
                 break
             else:
