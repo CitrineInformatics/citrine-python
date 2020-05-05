@@ -40,6 +40,13 @@ def test_predictor_report_build(valid_predictor_report_data):
     assert exp_model.feature_importances == []
 
 
+def test_empty_report_build():
+    """Build a predictor report when the 'report' field is somehow unfilled."""
+    Report.build(dict(id='7c2dda5d-675a-41b6-829c-e485163f0e43', status='PENDING'))
+    Report.build(dict(id='7c2dda5d-675a-41b6-829c-e485163f0e43', status='PENDING', report=None))
+    Report.build(dict(id='7c2dda5d-675a-41b6-829c-e485163f0e43', status='PENDING', report=dict()))
+
+
 def test_failed_predictor_report_build(valid_predictor_report_data):
     """Modify the predictor report to be invalid and check that the errors are caught."""
     too_many_descriptors = deepcopy(valid_predictor_report_data)
