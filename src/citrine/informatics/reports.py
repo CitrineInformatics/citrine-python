@@ -181,7 +181,8 @@ class PredictorReport(Serializable['PredictorReport'], Report):
         as_list = list(it)
         if len(as_list) > 1:
             serialized_descriptors = [d.dump() for d in as_list]
-            warnings.warn("Warning: found multiple descriptors with the key \'{}\': {}"
+            warnings.warn("Warning: found multiple descriptors with the key \'{}\', arbitrarily "
+                          "selecting the first one. The descriptors are: {}"
                           .format(as_list[0].key, serialized_descriptors), RuntimeWarning)
         else:
             return as_list[0]

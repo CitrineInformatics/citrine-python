@@ -54,7 +54,6 @@ def test_bad_predictor_report_build(valid_predictor_report_data):
     # Multiple descriptors with the same key
     other_x = RealDescriptor("x", 0, 100, "")
     too_many_descriptors['report']['descriptors'].append(other_x.dump())
-    Report.build(too_many_descriptors)
     with warnings.catch_warnings(record=True) as w:
         Report.build(too_many_descriptors)
         assert len(w) == 1
