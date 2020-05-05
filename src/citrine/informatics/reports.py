@@ -184,8 +184,7 @@ class PredictorReport(Serializable['PredictorReport'], Report):
             warnings.warn("Warning: found multiple descriptors with the key \'{}\', arbitrarily "
                           "selecting the first one. The descriptors are: {}"
                           .format(as_list[0].key, serialized_descriptors), RuntimeWarning)
-        else:
-            return as_list[0]
+        return as_list[0]
 
     @staticmethod
     def _collapse_model_settings(model: ModelSummary):
