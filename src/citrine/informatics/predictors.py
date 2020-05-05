@@ -13,7 +13,7 @@ from citrine.resources.report import ReportResource
 from citrine.informatics.modules import Module
 
 __all__ = ['ExpressionPredictor', 'GraphPredictor', 'IngredientsToSimpleMixturePredictor',
-           'Predictor', 'SimpleMLPredictor']
+           'Predictor', 'SimpleMLPredictor', 'GeneralizedMeanPropertyPredictor']
 
 
 class Predictor(Module):
