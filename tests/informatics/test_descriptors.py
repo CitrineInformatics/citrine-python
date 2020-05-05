@@ -23,20 +23,6 @@ def test_deser_from_parent(descriptor):
     assert descriptor == descriptor_deserialized
 
 
-def test_buggy_deserialization():
-    """Should be able to deserialize a descriptor with type key 'category'.
-    THIS IS TEMPORARY, TO BE REMOVED AS SOON AS PLA-4036 IS FIXED.
-    """
-    buggy_data = dict(
-        descriptor_key='key',
-        lower_bound=0,
-        upper_bound=1,
-        units="",
-        category='Real'
-    )
-    Descriptor.build(buggy_data)
-
-
 def test_invalid_eq(descriptor):
     other = None
     assert not descriptor == other
@@ -46,8 +32,3 @@ def test_inorganic_deprecated():
     # InorganicDescriptor is still callable but creates a ChemicalFormulaDescriptor
     old_descriptor = InorganicDescriptor("formula")
     assert isinstance(old_descriptor, ChemicalFormulaDescriptor)
-
-
-def test_string_rep(descriptor):
-    """String representation of descriptor should contain the descriptor key."""
-    assert str(descriptor).__contains__(descriptor.key)

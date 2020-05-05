@@ -9,9 +9,7 @@ import mock
 def test_get_report():
     """Validates the proper url is called"""
     session = mock.Mock()
-    session.get_resource.return_value = dict(status='PENDING',
-                                             report=dict(descriptors=[], models=[]),
-                                             uid=str(str(uuid.uuid4())))
+    session.get_resource.return_value = dict(status='PENDING', report=dict(), uid=str(str(uuid.uuid4())))
     project_id = uuid.uuid4()
     module_id = uuid.uuid4()
     rr = ReportResource(project_id, session)

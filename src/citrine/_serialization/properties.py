@@ -88,7 +88,6 @@ class Property(typing.Generic[DeserializedType, SerializedType]):
                 break
             else:
                 value = next_value
-
         base_class = _get_base_class(data, self.serialization_path)
         return self.deserialize(value, base_class=base_class)
 
