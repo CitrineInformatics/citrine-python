@@ -292,7 +292,7 @@ class IngredientsToSimpleMixturePredictor(
         Map from ingredient identifier to the descriptor that represents its quantity,
         e.g. ``{'water': RealDescriptor('water quantity', 0, 1)}``
     labels: Dict[str, List[str]]
-        Map from each label to all components assigned that label, when present in a mixture,
+        Map from each label to all ingredients assigned that label, when present in a mixture,
         e.g. ``{'solvent': ['water']}``
 
     """
