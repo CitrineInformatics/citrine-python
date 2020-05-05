@@ -82,7 +82,7 @@ class Property(typing.Generic[DeserializedType, SerializedType]):
             if isinstance(value, dict):
                 value = value.get(field, self.default)
             else:
-                value = self.default  # pragma: no cover
+                value = self.default
         base_class = _get_base_class(data, self.serialization_path)
         return self.deserialize(value, base_class=base_class)
 
