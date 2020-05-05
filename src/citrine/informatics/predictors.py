@@ -383,9 +383,9 @@ class GeneralizedMeanPropertyPredictor(
     input_descriptor = _properties.Object(FormulationDescriptor, 'config.input')
     properties = _properties.List(_properties.String, 'config.properties')
     p = _properties.Float('config.p')
-    impute__properties = _properties.Boolean('config.impute_properties')
+    impute_properties = _properties.Boolean('config.impute_properties')
     training_data = _properties.Object(DataSource, 'config.training_data')
-    default__properties = _properties.Optional(
+    default_properties = _properties.Optional(
         _properties.Mapping(_properties.String, _properties.Float), 'config.default_properties')
     label = _properties.Optional(_properties.String, 'config.label')
     typ = _properties.String('config.type', default='GeneralizedMeanProperty',
@@ -407,6 +407,7 @@ class GeneralizedMeanPropertyPredictor(
                  description: str,
                  input_descriptor: FormulationDescriptor,
                  properties: List[str],
+                 p: float,
                  impute_properties: bool,
                  training_data: DataSource,
                  default_properties: Optional[Dict[str, float]] = None,
@@ -418,6 +419,7 @@ class GeneralizedMeanPropertyPredictor(
         self.description: str = description
         self.input_descriptor: FormulationDescriptor = input_descriptor
         self.properties: List[str] = properties
+        self.p: float = p
         self.impute_properties: bool = impute_properties
         self.training_data = training_data
         self.default_properties: Optional[Dict[str, float]] = default_properties

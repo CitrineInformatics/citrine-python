@@ -75,6 +75,7 @@ def generalized_mean_property_predictor() -> GeneralizedMeanPropertyPredictor:
         description='Computes mean component properties',
         input_descriptor=formulation,
         properties=['density'],
+        p=2,
         impute_properties=True,
         training_data=data_source,
         default_properties={'density': 1.0},
@@ -177,6 +178,7 @@ def test_generalized_mean_property_initialization(generalized_mean_property_pred
     assert generalized_mean_property_predictor.name == 'Mean property predictor'
     assert generalized_mean_property_predictor.input_descriptor.key == 'formulation'
     assert generalized_mean_property_predictor.properties == ['density']
+    assert generalized_mean_property_predictor.p == 2
     assert generalized_mean_property_predictor.impute_properties == True
     assert generalized_mean_property_predictor.training_data == data_source
     assert generalized_mean_property_predictor.default_properties == {'density': 1.0}

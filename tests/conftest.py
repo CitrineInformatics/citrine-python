@@ -183,6 +183,63 @@ def valid_expression_predictor_data():
 
 
 @pytest.fixture
+def valid_ing_to_simple_mixture_predictor_data():
+    """Produce valid data used for tests."""
+    from citrine.informatics.descriptors import FormulationDescriptor, RealDescriptor
+    return dict(
+        module_type='PREDICTOR',
+        status='VALID',
+        status_info=[],
+        active=True,
+        display_name='Ingredients to simple mixture predictor',
+        schema_id='873e4541-da8a-4698-a981-732c0c729c3d',
+        id=str(uuid.uuid4()),
+        config=dict(
+            type='IngredientsToSimpleMixture',
+            name='Ingredients to simple mixture predictor',
+            description='Constructs mixtures from ingredients',
+            output=FormulationDescriptor('simple mixture').dump(),
+            id_to_quantity={
+                'water': RealDescriptor('water quantity', 0, 1).dump(),
+                'salt': RealDescriptor('salt quantity', 0, 1).dump()
+            },
+            labels={
+                'solvent': ['water'],
+                'solute': ['salt'],
+            }
+        )
+    )
+
+
+@pytest.fixture
+def valid_generalized_mean_property_predictor_data():
+    """Produce valid data used for tests."""
+    from citrine.informatics.descriptors import FormulationDescriptor
+    from citrine.informatics.data_sources import AraTableDataSource
+    return dict(
+        module_type='PREDICTOR',
+        status='VALID',
+        status_info=[],
+        active=True,
+        display_name='Mean property predictor',
+        schema_id='29e53222-3217-4f81-b3b8-4197a8211ade',
+        id=str(uuid.uuid4()),
+        config=dict(
+            type='GeneralizedMeanProperty',
+            name='Mean property predictor',
+            description='Computes mean ingredient properties',
+            input=FormulationDescriptor('simple mixture').dump(),
+            properties=['density'],
+            p=2,
+            impute_properties=True,
+            training_data=AraTableDataSource(uuid.uuid4(), 0).dump(),
+            default_properties={'density': 1.0},
+            label='solvent'
+        )
+    )
+
+
+@pytest.fixture
 def invalid_predictor_data():
     """Produce valid data used for tests."""
     from citrine.informatics.descriptors import RealDescriptor
