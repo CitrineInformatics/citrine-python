@@ -1,6 +1,7 @@
 """Tests for citrine.informatics.reports serialization."""
 import pytest
 from copy import deepcopy
+import warnings
 
 from citrine.informatics.descriptors import RealDescriptor
 from citrine.informatics.reports import Report, ModelSummary, FeatureImportanceReport
@@ -53,8 +54,11 @@ def test_bad_predictor_report_build(valid_predictor_report_data):
     # Multiple descriptors with the same key
     other_x = RealDescriptor("x", 0, 100, "")
     too_many_descriptors['report']['descriptors'].append(other_x.dump())
-    # this should build but throw a warning
     Report.build(too_many_descriptors)
+    with warnings.catch_warnings(record=True) as w:
+        Report.build(too_many_descriptors)
+        assert len(w) == 1
+        assert issubclass(w[-1].category, RuntimeWarning)
 
     # A key that appears in inputs and/or outputs, but there is no corresponding descriptor.
     # This is done twice for coverage, once to catch a missing input and once for a missing output.
