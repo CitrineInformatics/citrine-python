@@ -231,8 +231,8 @@ def valid_generalized_mean_property_predictor_data():
             input=FormulationDescriptor('simple mixture').dump(),
             properties=['density'],
             p=2,
-            impute_properties=True,
             training_data=AraTableDataSource(uuid.uuid4(), 0).dump(),
+            impute_properties=True,
             default_properties={'density': 1.0},
             label='solvent'
         )

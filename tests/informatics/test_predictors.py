@@ -72,12 +72,12 @@ def generalized_mean_property_predictor() -> GeneralizedMeanPropertyPredictor:
     """Build a mean property predictor for testing."""
     return GeneralizedMeanPropertyPredictor(
         name='Mean property predictor',
-        description='Computes mean component properties',
+        description='Computes mean ingredient properties',
         input_descriptor=formulation,
         properties=['density'],
         p=2,
-        impute_properties=True,
         training_data=data_source,
+        impute_properties=True,
         default_properties={'density': 1.0},
         label='solvent'
     )
