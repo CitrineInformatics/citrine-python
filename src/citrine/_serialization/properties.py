@@ -77,10 +77,13 @@ class Property(typing.Generic[DeserializedType, SerializedType]):
 
     def deserialize_from_dict(self, data: dict) -> DeserializedType:
         value = data
+        # `serialization_path` is expected to be a sequence of nested dictionary keys
         fields = self.serialization_path.split('.')
         for field in fields:
             next_value = value.get(field)
             if next_value is None:
+                # This occurs if a `field` is unexpectedly not present in the data dictionary
+                # Stop traversing and use the default value
                 value = self.default
                 break
             else:
