@@ -1,4 +1,5 @@
 """Tools for working with Predictors."""
+# flake8: noqa
 from abc import abstractmethod
 from typing import List, Optional, Type, Union
 from uuid import UUID
@@ -293,59 +294,61 @@ class MolecularStructureFeaturizer(Serializable['MolecularStructureFeaturizer'],
     features: List[str]
         the list of features to compute (first 3 are aliases for feature sets).
         Valid values include:
-        - all
-        - standard
-        - expensive
-        - PetitjeanShapeIndex
-        - TopologicalSurfaceArea
-        - EccentricConnectivityIndex
-        - MomentOfInertia
-        - KappaShapeIndices
-        - RuleOfFive
-        - ALOGP
-        - PolarizabilityAutocorr
-        - BondCount
-        - Volume
-        - VertexAdjacencyMagnitude
-        - ZagrebIndex
-        - HBondDonorCount
-        - ChiPathCluster
-        - MannholdLogP
-        - AtomCount
-        - AutocorrelationDescriptorCharge
-        - AromaticAtomCount
-        - LargestPiSystem
-        - HybridizationRatioDescriptor
-        - LargestChain
-        - MDE
-        - Weight
-        - LengthOverBreadth
-        - FMF
-        - AtomicPolarizability
-        - CarbonTypes
-        - PetitjeanNumber
-        - HBondAcceptorCount
-        - RotatableBondsCount
-        - BCUT
-        - WeightedPath
-        - AromaticBondCount
-        - GravitationalIndex
-        - XLogP
-        - ChiPath
-        - WHIM
-        - FragmentComplexity
-        - ChiChain
-        - KierHallSmarts
-        - MassAutocorr
-        - AcidGroupCount
-        - BPol
-        - WienerNumbers
-        - LongestAliphaticChain
-        - CPSA
-        - ChiCluster
-        - BasicGroupCount
+        - all (alias for all below)
+        - standard (alias for AcidGroupCount, AtomicPolarizability, MassAutocorr,
+        PolarizabilityAutocorr, HBondAcceptorCount, BondCount, and AtomCount)
+        - expensive (alias for WeightedPath, ChiChain, ChiCluster, ChiPathCluster, and ChiPath)
+        - PetitjeanShapeIndex `CDK Link<https://cdk.github.io/cdk/1.5/docs/api/org/openscience/cdk/qsar/descriptors/molecular/PetitjeanShapeIndexDescriptor.html>`
+        - TopologicalSurfaceArea `CDK Link<https://cdk.github.io/cdk/1.5/docs/api/org/openscience/cdk/qsar/descriptors/molecular/FractionalPSADescriptor.html>`
+        - EccentricConnectivityIndex `CDK Link<http://cdk.github.io/cdk/2.2/docs/api/org/openscience/cdk/qsar/descriptors/molecular/EccentricConnectivityIndexDescriptor.html>`
+        - MomentOfInertia `CDK Link<http://cdk.github.io/cdk/latest/docs/api/org/openscience/cdk/qsar/descriptors/molecular/MomentOfInertiaDescriptor.html>`
+        - KappaShapeIndices `CDK Link<https://cdk.github.io/cdk/1.5/docs/api/org/openscience/cdk/qsar/descriptors/molecular/KappaShapeIndicesDescriptor.html>`
+        - RuleOfFive `CDK Link<https://cdk.github.io/cdk/1.5/docs/api/org/openscience/cdk/qsar/descriptors/molecular/RuleOfFiveDescriptor.html>`
+        - ALOGP `CDK Link<http://cdk.github.io/cdk/1.4/docs/api/org/openscience/cdk/qsar/descriptors/molecular/ALOGPDescriptor.html>`
+        - PolarizabilityAutocorr `CDK Link<https://cdk.github.io/cdk/1.5/docs/api/org/openscience/cdk/qsar/descriptors/molecular/AutocorrelationDescriptorPolarizability.html>`
+        - BondCount `CDK Link<https://cdk.github.io/cdk/1.5/docs/api/org/openscience/cdk/AtomContainer.html>`
+        - Volume `CDK Link<https://cdk.github.io/cdk/1.5/docs/api/org/openscience/cdk/geometry/volume/VABCVolume.html>`
+        - VertexAdjacencyMagnitude `CDK Link<https://cdk.github.io/cdk/1.5/docs/api/org/openscience/cdk/qsar/descriptors/molecular/VAdjMaDescriptor.html>`
+        - ZagrebIndex `CDK Link<http://cdk.github.io/cdk/latest/docs/api/org/openscience/cdk/qsar/descriptors/molecular/ZagrebIndexDescriptor.html>`
+        - HBondDonorCount `CDK Link<http://cdk.github.io/cdk/2.2/docs/api/org/openscience/cdk/qsar/descriptors/molecular/HBondDonorCountDescriptor.html>`
+        - ChiPathCluster `CDK Link<http://cdk.github.io/cdk/2.2/docs/api/org/openscience/cdk/qsar/descriptors/molecular/ChiPathClusterDescriptor.html>`
+        - MannholdLogP `CDK Link<https://cdk.github.io/cdk/1.5/docs/api/org/openscience/cdk/qsar/descriptors/molecular/MannholdLogPDescriptor.html>`
+        - AtomCount `CDK Link<https://cdk.github.io/cdk/1.5/docs/api/org/openscience/cdk/AtomContainer.html>`
+        - AutocorrelationDescriptorCharge `CDK Link<http://cdk.github.io/cdk/1.4/docs/api/org/openscience/cdk/qsar/descriptors/molecular/AutocorrelationDescriptorCharge.html>`
+        - AromaticAtomCount `CDK Link<https://cdk.github.io/cdk/1.5/docs/api/org/openscience/cdk/qsar/descriptors/molecular/AromaticAtomsCountDescriptor.html>`
+        - LargestPiSystem `CDK Link<http://cdk.github.io/cdk/2.2/docs/api/org/openscience/cdk/qsar/descriptors/molecular/LargestPiSystemDescriptor.html>`
+        - HybridizationRatioDescriptor `CDK Link<https://cdk.github.io/cdk/1.5/docs/api/org/openscience/cdk/qsar/descriptors/molecular/HybridizationRatioDescriptor.html>`
+        - LargestChain `CDK Link<https://cdk.github.io/cdk/1.5/docs/api/org/openscience/cdk/qsar/descriptors/molecular/LargestChainDescriptor.html>`
+        - MDE `CDK Link<https://cdk.github.io/cdk/1.5/docs/api/org/openscience/cdk/qsar/descriptors/molecular/MDEDescriptor.html>`
+        - Weight `CDK Link<https://cdk.github.io/cdk/1.5/docs/api/org/openscience/cdk/qsar/descriptors/molecular/WeightDescriptor.html>`
+        - LengthOverBreadth `CDK Link<http://cdk.github.io/cdk/2.2/docs/api/org/openscience/cdk/qsar/descriptors/molecular/LengthOverBreadthDescriptor.html>`
+        - FMF `CDK Link<https://cdk.github.io/cdk/1.5/docs/api/org/openscience/cdk/qsar/descriptors/molecular/FMFDescriptor.html>`
+        - AtomicPolarizability `CDK Link<https://cdk.github.io/cdk/1.5/docs/api/org/openscience/cdk/charges/Polarizability.html>`
+        - CarbonTypes `CDK Link<https://cdk.github.io/cdk/1.5/docs/api/org/openscience/cdk/qsar/descriptors/molecular/CarbonTypesDescriptor.html>`
+        - PetitjeanNumber `CDK Link<http://cdk.github.io/cdk/latest/docs/api/org/openscience/cdk/qsar/descriptors/molecular/PetitjeanNumberDescriptor.html>`
+        - HBondAcceptorCount `CDK Link<http://cdk.github.io/cdk/latest/docs/api/org/openscience/cdk/qsar/descriptors/molecular/HBondAcceptorCountDescriptor.html>`
+        - RotatableBondsCount `CDK Link<https://cdk.github.io/cdk/1.5/docs/api/org/openscience/cdk/qsar/descriptors/molecular/RotatableBondsCountDescriptor.html>`
+        - BCUT `CDK Link<https://cdk.github.io/cdk/1.5/docs/api/org/openscience/cdk/qsar/descriptors/molecular/BCUTDescriptor.html>`
+        - WeightedPath `CDK Link<https://cdk.github.io/cdk/1.5/docs/api/org/openscience/cdk/qsar/descriptors/molecular/WeightedPathDescriptor.html>`
+        - AromaticBondCount `CDK Link<http://cdk.github.io/cdk/2.2/docs/api/org/openscience/cdk/aromaticity/Aromaticity.html>`
+        - GravitationalIndex `CDK Link<http://cdk.github.io/cdk/latest/docs/api/org/openscience/cdk/qsar/descriptors/molecular/GravitationalIndexDescriptor.html>`
+        - XLogP `CDK Link<https://cdk.github.io/cdk/1.5/docs/api/org/openscience/cdk/qsar/descriptors/molecular/XLogPDescriptor.html>`
+        - ChiPath `CDK Link<https://cdk.github.io/cdk/1.5/docs/api/org/openscience/cdk/qsar/descriptors/molecular/ChiPathDescriptor.html>`
+        - WHIM `CDK Link<http://cdk.github.io/cdk/2.2/docs/api/org/openscience/cdk/qsar/descriptors/molecular/WHIMDescriptor.html>`
+        - FragmentComplexity `CDK Link<https://cdk.github.io/cdk/1.5/docs/api/org/openscience/cdk/qsar/descriptors/molecular/FragmentComplexityDescriptor.html>`
+        - ChiChain `CDK Link<http://cdk.github.io/cdk/2.2/docs/api/org/openscience/cdk/qsar/descriptors/molecular/ChiChainDescriptor.html>`
+        - KierHallSmarts `CDK Link<https://cdk.github.io/cdk/1.5/docs/api/org/openscience/cdk/qsar/descriptors/molecular/KierHallSmartsDescriptor.html>`
+        - MassAutocorr `CDK Link<http://cdk.github.io/cdk/2.2/docs/api/org/openscience/cdk/qsar/descriptors/molecular/AutocorrelationDescriptorMass.html>`
+        - AcidGroupCount `CDK Link<https://cdk.github.io/cdk/1.5/docs/api/org/openscience/cdk/qsar/descriptors/molecular/AcidicGroupCountDescriptor.html>`
+        - BPol `CDK Link<Couldn't find BPol>`
+        - WienerNumbers `CDK Link<https://cdk.github.io/cdk/1.5/docs/api/org/openscience/cdk/qsar/descriptors/molecular/WienerNumbersDescriptor.html>`
+        - LongestAliphaticChain `CDK Link<http://cdk.github.io/cdk/2.2/docs/api/org/openscience/cdk/qsar/descriptors/molecular/LongestAliphaticChainDescriptor.html>`
+        - CPSA `CDK Link<https://cdk.github.io/cdk/1.5/docs/api/org/openscience/cdk/qsar/descriptors/molecular/CPSADescriptor.html>`
+        - ChiCluster `CDK Link<https://cdk.github.io/cdk/1.5/docs/api/org/openscience/cdk/qsar/descriptors/molecular/ChiClusterDescriptor.html>`
+        - BasicGroupCount `CDK Link<https://cdk.github.io/cdk/1.5/docs/api/org/openscience/cdk/qsar/descriptors/molecular/BasicGroupCountDescriptor.html>`
     excludes: List[str]
-        list of features to exclude (accepts same set of values as features)
+        list of features to exclude (accepts same set of values as features). The final set
+        of outputs generated by the predictor is set(features) - set(excludes).
 
     """
 
