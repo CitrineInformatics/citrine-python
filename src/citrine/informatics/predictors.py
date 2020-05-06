@@ -351,7 +351,7 @@ class IngredientsToSimpleMixturePredictor(
 
 class GeneralizedMeanPropertyPredictor(
         Serializable['GeneralizedMeanPropertyPredictor'], Predictor):
-    """[ALPHA] A predictor interface that mean component properties.
+    """[ALPHA] A predictor interface that computes generalized mean component properties.
 
     Parameters
     ----------
@@ -390,9 +390,9 @@ class GeneralizedMeanPropertyPredictor(
     label = _properties.Optional(_properties.String, 'config.label')
     typ = _properties.String('config.type', default='GeneralizedMeanProperty',
                              deserializable=False)
-    status = _properties.Optional(_properties.String(), 'status', serializable=False)
+    status = _properties.Optional(_properties.String, 'status', serializable=False)
     status_info = _properties.Optional(
-        _properties.List(_properties.String()),
+        _properties.List(_properties.String),
         'status_info',
         serializable=False
     )
