@@ -366,14 +366,23 @@ class GeneralizedMeanPropertyPredictor(
     p: float
         Power of the generalized mean
     impute_properties: bool
-        Whether to impute missing component properties
+        Whether to impute missing ingredient properties.
+        If ``False`` an error is thrown when a missing ingredient property is encountered.
+        If ``True`` and no ``default_properties`` are specified, then the average over the
+        entire dataset is used.
+        If ``True`` and a default is specified in ``default_properties``, then the specified
+        default is used in place of missing values.
     training_data: DataSource
         Source of the training data, which can be either a CSV or an Ara table
     label: Optional[str]
         Optional label
     default_properties: Optional[Dict[str, float]]
-        Default values to use for imputed properties. ``impute_properties`` must be ``True``
+        Default values to use for imputed properties.
         Defaults are specified as a map from descriptor key to its default value.
+        If not specified and ``impute_properties == True`` the average over the entire dataset
+        will be used to fill in missing values. Any specified defaults will be used in place of
+        the average over the dataset. ``impute_properties`` must be ``True`` if
+        ``default_properties`` are provided.
 
     """
 
