@@ -22,7 +22,7 @@ from citrine.resources.workflow_executions import WorkflowExecution, WorkflowExe
 arbitrary_uuid = uuid.uuid4()
 
 resource_string_data = [
-    (IngredientRun, {'name': 'foo'}, "<Ingredient run 'foo'>"),
+    (IngredientRun, {}, "<Ingredient run None>"),
     (IngredientSpec, {'name': 'foo'}, "<Ingredient spec 'foo'>"),
     (MaterialSpec, {'name': 'foo'}, "<Material spec 'foo'>"),
     (MaterialTemplate, {'name': 'foo'}, "<Material template 'foo'>"),
