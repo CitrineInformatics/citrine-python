@@ -4,8 +4,9 @@ import pytest
 import uuid
 
 from citrine.informatics.data_sources import AraTableDataSource
-from citrine.informatics.descriptors import RealDescriptor
-from citrine.informatics.predictors import ExpressionPredictor, GraphPredictor, SimpleMLPredictor
+from citrine.informatics.descriptors import RealDescriptor, MolecularStructureDescriptor
+from citrine.informatics.predictors import ExpressionPredictor, GraphPredictor, SimpleMLPredictor, \
+    MolecularStructureFeaturizer
 
 x = RealDescriptor("x", 0, 100, "")
 y = RealDescriptor("y", 0, 100, "")
@@ -25,6 +26,17 @@ def simple_predictor() -> SimpleMLPredictor:
 
 
 @pytest.fixture
+def molecule_featurizer() -> MolecularStructureFeaturizer:
+    return MolecularStructureFeaturizer(
+        name="Molecule featurizer",
+        description="description",
+        descriptor=MolecularStructureDescriptor("SMILES"),
+        features=["all"],
+        excludes=["standard"]
+    )
+
+
+@pytest.fixture
 def graph_predictor() -> GraphPredictor:
     """Build a GraphPredictor for testing."""
     return GraphPredictor(name='Graph predictor', description='description', predictors=[uuid.uuid4(), uuid.uuid4()])
@@ -38,9 +50,9 @@ def expression_predictor() -> ExpressionPredictor:
         description='Computes shear modulus from Youngs modulus and Poissons ratio',
         expression='Y / (2 * (1 + v))',
         output=shear_modulus,
-        aliases = {
-             'Y': "Property~Young's modulus",
-             'v': "Property~Poisson's ratio"
+        aliases={
+            'Y': "Property~Young's modulus",
+            'v': "Property~Poisson's ratio"
         })
 
 
@@ -110,3 +122,40 @@ def test_expression_post_build(expression_predictor):
     assert session.get_resource.call_count == 1
     assert expression_predictor.report is not None
     assert expression_predictor.report.status == 'OK'
+
+
+def test_molecule_featurizer(molecule_featurizer):
+    assert molecule_featurizer.name == "Molecule featurizer"
+    assert molecule_featurizer.description == "description"
+    assert molecule_featurizer.descriptor == MolecularStructureDescriptor("SMILES")
+    assert molecule_featurizer.features == ["all"]
+    assert molecule_featurizer.excludes == ["standard"]
+
+    assert str(molecule_featurizer) == "<MolecularStructureFeaturizer 'Molecule featurizer'>"
+
+    assert molecule_featurizer.dump() == {
+        'config': {
+            'name': 'Molecule featurizer', 'description': 'description',
+            'descriptor': {'descriptor_key': 'SMILES', 'type': 'Organic'},
+            'features': ['all'], 'excludes': ['standard'],
+            'type': 'MoleculeFeaturizer'
+        },
+        'active': True,
+        'module_type': 'PREDICTOR',
+        'schema_id': '24183b2f-848c-46fa-8640-21b7743e38a3',
+        'display_name': 'Molecule featurizer'
+    }
+
+
+def test_molecule_featurizer_post_build(molecule_featurizer):
+    """Ensures we get a report from a molecule featurizer post_build call."""
+    predictor = molecule_featurizer
+
+    assert predictor.report is None
+    session = mock.Mock()
+    session.get_resource.return_value = dict(status='OK', report=dict(), uid=uuid.uuid4())
+    predictor.session = session
+    predictor.post_build(uuid.uuid4(), dict(id=uuid.uuid4()))
+    assert session.get_resource.call_count == 1
+    assert predictor.report is not None
+    assert predictor.report.status == 'OK'
