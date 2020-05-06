@@ -152,12 +152,6 @@
 <code class="sig-name descname">name</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.GraphPredictor.name" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
-<dt id="citrine.informatics.predictors.GraphPredictor.post_build">
-<code class="sig-name descname">post_build</code><span class="sig-paren">(</span><em class="sig-param">project_id: uuid.UUID</em>, <em class="sig-param">data: dict</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.predictors.GraphPredictor.post_build" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates the predictor report object.</p>
-</dd></dl>
-
 <dl class="attribute">
 <dt id="citrine.informatics.predictors.GraphPredictor.predictors">
 <code class="sig-name descname">predictors</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.GraphPredictor.predictors" title="Permalink to this definition">¶</a></dt>
@@ -211,7 +205,7 @@ based on the ‘type’ value of the passed in dict.</p>
 
 <dl class="method">
 <dt id="citrine.informatics.predictors.Predictor.post_build">
-<em class="property">abstract </em><code class="sig-name descname">post_build</code><span class="sig-paren">(</span><em class="sig-param">project_id: uuid.UUID</em>, <em class="sig-param">data: dict</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.predictors.Predictor.post_build" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">post_build</code><span class="sig-paren">(</span><em class="sig-param">project_id: uuid.UUID</em>, <em class="sig-param">data: dict</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.predictors.Predictor.post_build" title="Permalink to this definition">¶</a></dt>
 <dd><p>Executes after a .build() is called in [[PredictorCollection]].</p>
 </dd></dl>
 
@@ -272,12 +266,6 @@ models are built for each latent variable and output.</p>
 <code class="sig-name descname">outputs</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.SimpleMLPredictor.outputs" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
-<dt id="citrine.informatics.predictors.SimpleMLPredictor.post_build">
-<code class="sig-name descname">post_build</code><span class="sig-paren">(</span><em class="sig-param">project_id: uuid.UUID</em>, <em class="sig-param">data: dict</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.predictors.SimpleMLPredictor.post_build" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates the predictor report object.</p>
-</dd></dl>
-
 <dl class="attribute">
 <dt id="citrine.informatics.predictors.SimpleMLPredictor.schema_id">
 <code class="sig-name descname">schema_id</code><em class="property"> = UUID('08d20e5f-e329-4de0-a90a-4b5e36b91703')</em><a class="headerlink" href="#citrine.informatics.predictors.SimpleMLPredictor.schema_id" title="Permalink to this definition">¶</a></dt>
@@ -306,6 +294,134 @@ models are built for each latent variable and output.</p>
 <dl class="attribute">
 <dt id="citrine.informatics.predictors.SimpleMLPredictor.uid">
 <code class="sig-name descname">uid</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.SimpleMLPredictor.uid" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="citrine.informatics.predictors.MolecularStructureFeaturizer">
+<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.predictors.</code><code class="sig-name descname">MolecularStructureFeaturizer</code><span class="sig-paren">(</span><em class="sig-param">name: str, description: str, descriptor: citrine.informatics.descriptors.MolecularStructureDescriptor, features: List[str] = ['standard'], excludes: List[str] = [], session: Optional[citrine._session.Session] = None, report: Optional[citrine.informatics.reports.Report] = None, active: bool = True</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.predictors.MolecularStructureFeaturizer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.informatics.predictors.Predictor" title="citrine.informatics.predictors.Predictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.predictors.Predictor</span></code></a></p>
+<p>[ALPHA] A “batteries-included” featurizer for organic molecules. Powered by CDK.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – name of the configuration</p></li>
+<li><p><strong>description</strong> (<em>str</em>) – the description of the predictor</p></li>
+<li><p><strong>descriptor</strong> (<a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.MolecularStructureDescriptor" title="citrine.informatics.descriptors.MolecularStructureDescriptor"><em>MolecularStructureDescriptor</em></a>) – the descriptor to featurize</p></li>
+<li><p><strong>features</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – the list of features to compute (first 3 are aliases for feature sets).
+Valid values include:
+- all (alias for all below)
+- standard (alias for AcidGroupCount, AtomicPolarizability, MassAutocorr,
+PolarizabilityAutocorr, HBondAcceptorCount, BondCount, and AtomCount)
+- expensive (alias for WeightedPath, ChiChain, ChiCluster, ChiPathCluster, and ChiPath)
+- TopologicalSurfaceArea <cite>CDK Link&lt;https://cdk.github.io/cdk/1.5/docs/api/org/openscience/cdk/qsar/descriptors/molecular/FractionalPSADescriptor.html&gt;</cite>
+- EccentricConnectivityIndex <cite>CDK Link&lt;http://cdk.github.io/cdk/2.2/docs/api/org/openscience/cdk/qsar/descriptors/molecular/EccentricConnectivityIndexDescriptor.html&gt;</cite>
+- KappaShapeIndices <cite>CDK Link&lt;https://cdk.github.io/cdk/1.5/docs/api/org/openscience/cdk/qsar/descriptors/molecular/KappaShapeIndicesDescriptor.html&gt;</cite>
+- RuleOfFive <cite>CDK Link&lt;https://cdk.github.io/cdk/1.5/docs/api/org/openscience/cdk/qsar/descriptors/molecular/RuleOfFiveDescriptor.html&gt;</cite>
+- ALOGP <cite>CDK Link&lt;http://cdk.github.io/cdk/1.4/docs/api/org/openscience/cdk/qsar/descriptors/molecular/ALOGPDescriptor.html&gt;</cite>
+- PolarizabilityAutocorr <cite>CDK Link&lt;https://cdk.github.io/cdk/1.5/docs/api/org/openscience/cdk/qsar/descriptors/molecular/AutocorrelationDescriptorPolarizability.html&gt;</cite>
+- BondCount <cite>CDK Link&lt;https://cdk.github.io/cdk/1.5/docs/api/org/openscience/cdk/AtomContainer.html&gt;</cite>
+- VertexAdjacencyMagnitude <cite>CDK Link&lt;https://cdk.github.io/cdk/1.5/docs/api/org/openscience/cdk/qsar/descriptors/molecular/VAdjMaDescriptor.html&gt;</cite>
+- ZagrebIndex <cite>CDK Link&lt;http://cdk.github.io/cdk/latest/docs/api/org/openscience/cdk/qsar/descriptors/molecular/ZagrebIndexDescriptor.html&gt;</cite>
+- HBondDonorCount <cite>CDK Link&lt;http://cdk.github.io/cdk/2.2/docs/api/org/openscience/cdk/qsar/descriptors/molecular/HBondDonorCountDescriptor.html&gt;</cite>
+- ChiPathCluster <cite>CDK Link&lt;http://cdk.github.io/cdk/2.2/docs/api/org/openscience/cdk/qsar/descriptors/molecular/ChiPathClusterDescriptor.html&gt;</cite>
+- MannholdLogP <cite>CDK Link&lt;https://cdk.github.io/cdk/1.5/docs/api/org/openscience/cdk/qsar/descriptors/molecular/MannholdLogPDescriptor.html&gt;</cite>
+- AtomCount <cite>CDK Link&lt;https://cdk.github.io/cdk/1.5/docs/api/org/openscience/cdk/AtomContainer.html&gt;</cite>
+- AromaticAtomCount <cite>CDK Link&lt;https://cdk.github.io/cdk/1.5/docs/api/org/openscience/cdk/qsar/descriptors/molecular/AromaticAtomsCountDescriptor.html&gt;</cite>
+- LargestPiSystem <cite>CDK Link&lt;http://cdk.github.io/cdk/2.2/docs/api/org/openscience/cdk/qsar/descriptors/molecular/LargestPiSystemDescriptor.html&gt;</cite>
+- HybridizationRatioDescriptor <cite>CDK Link&lt;https://cdk.github.io/cdk/1.5/docs/api/org/openscience/cdk/qsar/descriptors/molecular/HybridizationRatioDescriptor.html&gt;</cite>
+- LargestChain <cite>CDK Link&lt;https://cdk.github.io/cdk/1.5/docs/api/org/openscience/cdk/qsar/descriptors/molecular/LargestChainDescriptor.html&gt;</cite>
+- MDE <cite>CDK Link&lt;https://cdk.github.io/cdk/1.5/docs/api/org/openscience/cdk/qsar/descriptors/molecular/MDEDescriptor.html&gt;</cite>
+- Weight <cite>CDK Link&lt;https://cdk.github.io/cdk/1.5/docs/api/org/openscience/cdk/qsar/descriptors/molecular/WeightDescriptor.html&gt;</cite>
+- FMF <cite>CDK Link&lt;https://cdk.github.io/cdk/1.5/docs/api/org/openscience/cdk/qsar/descriptors/molecular/FMFDescriptor.html&gt;</cite>
+- AtomicPolarizability <cite>CDK Link&lt;https://cdk.github.io/cdk/1.5/docs/api/org/openscience/cdk/charges/Polarizability.html&gt;</cite>
+- CarbonTypes <cite>CDK Link&lt;https://cdk.github.io/cdk/1.5/docs/api/org/openscience/cdk/qsar/descriptors/molecular/CarbonTypesDescriptor.html&gt;</cite>
+- PetitjeanNumber <cite>CDK Link&lt;http://cdk.github.io/cdk/latest/docs/api/org/openscience/cdk/qsar/descriptors/molecular/PetitjeanNumberDescriptor.html&gt;</cite>
+- HBondAcceptorCount <cite>CDK Link&lt;http://cdk.github.io/cdk/latest/docs/api/org/openscience/cdk/qsar/descriptors/molecular/HBondAcceptorCountDescriptor.html&gt;</cite>
+- RotatableBondsCount <cite>CDK Link&lt;https://cdk.github.io/cdk/1.5/docs/api/org/openscience/cdk/qsar/descriptors/molecular/RotatableBondsCountDescriptor.html&gt;</cite>
+- WeightedPath <cite>CDK Link&lt;https://cdk.github.io/cdk/1.5/docs/api/org/openscience/cdk/qsar/descriptors/molecular/WeightedPathDescriptor.html&gt;</cite>
+- AromaticBondCount <cite>CDK Link&lt;http://cdk.github.io/cdk/2.2/docs/api/org/openscience/cdk/aromaticity/Aromaticity.html&gt;</cite>
+- XLogP <cite>CDK Link&lt;https://cdk.github.io/cdk/1.5/docs/api/org/openscience/cdk/qsar/descriptors/molecular/XLogPDescriptor.html&gt;</cite>
+- ChiPath <cite>CDK Link&lt;https://cdk.github.io/cdk/1.5/docs/api/org/openscience/cdk/qsar/descriptors/molecular/ChiPathDescriptor.html&gt;</cite>
+- FragmentComplexity <cite>CDK Link&lt;https://cdk.github.io/cdk/1.5/docs/api/org/openscience/cdk/qsar/descriptors/molecular/FragmentComplexityDescriptor.html&gt;</cite>
+- ChiChain <cite>CDK Link&lt;http://cdk.github.io/cdk/2.2/docs/api/org/openscience/cdk/qsar/descriptors/molecular/ChiChainDescriptor.html&gt;</cite>
+- KierHallSmarts <cite>CDK Link&lt;https://cdk.github.io/cdk/1.5/docs/api/org/openscience/cdk/qsar/descriptors/molecular/KierHallSmartsDescriptor.html&gt;</cite>
+- MassAutocorr <cite>CDK Link&lt;http://cdk.github.io/cdk/2.2/docs/api/org/openscience/cdk/qsar/descriptors/molecular/AutocorrelationDescriptorMass.html&gt;</cite>
+- AcidGroupCount <cite>CDK Link&lt;https://cdk.github.io/cdk/1.5/docs/api/org/openscience/cdk/qsar/descriptors/molecular/AcidicGroupCountDescriptor.html&gt;</cite>
+- BPol <cite>CDK Link&lt;https://cdk.github.io/cdk/1.5/docs/api/org/openscience/cdk/qsar/descriptors/molecular/BPolDescriptor.html&gt;</cite>
+- WienerNumbers <cite>CDK Link&lt;https://cdk.github.io/cdk/1.5/docs/api/org/openscience/cdk/qsar/descriptors/molecular/WienerNumbersDescriptor.html&gt;</cite>
+- ChiCluster <cite>CDK Link&lt;https://cdk.github.io/cdk/1.5/docs/api/org/openscience/cdk/qsar/descriptors/molecular/ChiClusterDescriptor.html&gt;</cite>
+- BasicGroupCount <cite>CDK Link&lt;https://cdk.github.io/cdk/1.5/docs/api/org/openscience/cdk/qsar/descriptors/molecular/BasicGroupCountDescriptor.html&gt;</cite></p></li>
+<li><p><strong>excludes</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – list of features to exclude (accepts same set of values as features). The final set
+of outputs generated by the predictor is set(features) - set(excludes).</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.MolecularStructureFeaturizer.active">
+<code class="sig-name descname">active</code><em class="property"> = True</em><a class="headerlink" href="#citrine.informatics.predictors.MolecularStructureFeaturizer.active" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.MolecularStructureFeaturizer.description">
+<code class="sig-name descname">description</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.MolecularStructureFeaturizer.description" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.MolecularStructureFeaturizer.descriptor">
+<code class="sig-name descname">descriptor</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.MolecularStructureFeaturizer.descriptor" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.MolecularStructureFeaturizer.excludes">
+<code class="sig-name descname">excludes</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.MolecularStructureFeaturizer.excludes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.MolecularStructureFeaturizer.features">
+<code class="sig-name descname">features</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.MolecularStructureFeaturizer.features" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.MolecularStructureFeaturizer.module_type">
+<code class="sig-name descname">module_type</code><em class="property"> = 'PREDICTOR'</em><a class="headerlink" href="#citrine.informatics.predictors.MolecularStructureFeaturizer.module_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.MolecularStructureFeaturizer.name">
+<code class="sig-name descname">name</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.MolecularStructureFeaturizer.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="citrine.informatics.predictors.MolecularStructureFeaturizer.post_build">
+<code class="sig-name descname">post_build</code><span class="sig-paren">(</span><em class="sig-param">project_id: uuid.UUID</em>, <em class="sig-param">data: dict</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.predictors.MolecularStructureFeaturizer.post_build" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates the predictor report object.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.MolecularStructureFeaturizer.schema_id">
+<code class="sig-name descname">schema_id</code><em class="property"> = UUID('24183b2f-848c-46fa-8640-21b7743e38a3')</em><a class="headerlink" href="#citrine.informatics.predictors.MolecularStructureFeaturizer.schema_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.MolecularStructureFeaturizer.status">
+<code class="sig-name descname">status</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.MolecularStructureFeaturizer.status" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.MolecularStructureFeaturizer.status_info">
+<code class="sig-name descname">status_info</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.MolecularStructureFeaturizer.status_info" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.MolecularStructureFeaturizer.typ">
+<code class="sig-name descname">typ</code><em class="property"> = 'MoleculeFeaturizer'</em><a class="headerlink" href="#citrine.informatics.predictors.MolecularStructureFeaturizer.typ" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.MolecularStructureFeaturizer.uid">
+<code class="sig-name descname">uid</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.MolecularStructureFeaturizer.uid" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>

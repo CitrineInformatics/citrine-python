@@ -35,7 +35,7 @@
             
   <div class="section" id="design-spaces">
 <h1>4.3. Design spaces<a class="headerlink" href="#design-spaces" title="Permalink to this headline">¶</a></h1>
-<p>A design space defines a finite or infinite set of materials that can be made.
+<p>A design space defines a set of materials that should be searched over when performing a material design.
 Currently, there are two design spaces:</p>
 <ul class="simple">
 <li><p><a class="reference external" href="#product-design-space">ProductDesignSpace</a></p></li>
@@ -43,34 +43,35 @@ Currently, there are two design spaces:</p>
 </ul>
 <div class="section" id="product-design-space">
 <h2>4.3.1. Product design space<a class="headerlink" href="#product-design-space" title="Permalink to this headline">¶</a></h2>
-<p>Materials from a product design space are composed from the Cartesian product of univariate dimensions.
+<p>Materials from a product design space are composed from the <a class="reference external" href="https://en.wikipedia.org/wiki/Cartesian_product">Cartesian product</a> of univariate dimensions.
 A dimension defines valid values of a single variable.
-Valid values can be finite (i.e. enumerated using a list) or infinite (i.e. defined by upper and lower bounds on real numbers).
-This design space samples materials by taking the Cartesian product of all dimensions.
+Valid values can be discrete sets (i.e. enumerated using a list) or continuous ranges (i.e. defined by upper and lower bounds on real numbers).
+This design space samples materials by taking one element from each of the dimensions.
 For example, given dimensions <code class="docutils literal notranslate"><span class="pre">temperature</span> <span class="pre">=</span> <span class="pre">[300,</span> <span class="pre">400]</span></code> and <code class="docutils literal notranslate"><span class="pre">time</span> <span class="pre">=</span> <span class="pre">[1,</span> <span class="pre">5,</span> <span class="pre">10]</span></code> the Cartesian product is:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">candidates</span> <span class="o">=</span> <span class="p">[</span>
-  <span class="p">[</span><span class="mi">300</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
-  <span class="p">[</span><span class="mi">300</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span>
-  <span class="p">[</span><span class="mi">300</span><span class="p">,</span> <span class="mi">10</span><span class="p">],</span>
-  <span class="p">[</span><span class="mi">400</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
-  <span class="p">[</span><span class="mi">400</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span>
-  <span class="p">[</span><span class="mi">400</span><span class="p">,</span> <span class="mi">10</span><span class="p">]</span>
+  <span class="p">{</span><span class="s2">&quot;temperature&quot;</span><span class="p">:</span> <span class="mi">300</span><span class="p">,</span> <span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
+  <span class="p">{</span><span class="s2">&quot;temperature&quot;</span><span class="p">:</span> <span class="mi">300</span><span class="p">,</span> <span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">},</span>
+  <span class="p">{</span><span class="s2">&quot;temperature&quot;</span><span class="p">:</span> <span class="mi">300</span><span class="p">,</span> <span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">},</span>
+  <span class="p">{</span><span class="s2">&quot;temperature&quot;</span><span class="p">:</span> <span class="mi">400</span><span class="p">,</span> <span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
+  <span class="p">{</span><span class="s2">&quot;temperature&quot;</span><span class="p">:</span> <span class="mi">400</span><span class="p">,</span> <span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">},</span>
+  <span class="p">{</span><span class="s2">&quot;temperature&quot;</span><span class="p">:</span> <span class="mi">400</span><span class="p">,</span> <span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">},</span>
 <span class="p">]</span>
 </pre></div>
 </div>
-<p>If an infinite dimension is included, a random sample is drawn for that variable, and finite variables are exhaustively enumerated.
+<p>The defining method of a design space is the ability to draw samples from it.
+If a continuous range is included, a random sample is drawn for that variable, and finite variables are exhaustively enumerated.
 Once all combinations of finite variables have been sampled, the cycle repeats while continuing to sample new values from the infinite dimension.</p>
-<p>Finite variables are defined using an <a class="reference internal" href="../reference/citrine.informatics.dimensions.html#citrine.informatics.dimensions.EnumeratedDimension" title="citrine.informatics.dimensions.EnumeratedDimension"><code class="xref py py-class docutils literal notranslate"><span class="pre">EnumeratedDimension</span></code></a>.
+<p>Finite sets of value are defined using an <a class="reference internal" href="../reference/citrine.informatics.dimensions.html#citrine.informatics.dimensions.EnumeratedDimension" title="citrine.informatics.dimensions.EnumeratedDimension"><code class="xref py py-class docutils literal notranslate"><span class="pre">EnumeratedDimension</span></code></a>.
 Valid variable values are specified using a list of strings.
 An enumerated dimension of two temperatures, for example, can be specified using the python SDK via:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.informatics.descriptors</span> <span class="kn">import</span> <span class="n">RealDescriptor</span>
 <span class="kn">from</span> <span class="nn">citrine.informatics.dimensions</span> <span class="kn">import</span> <span class="n">EnumeratedDimension</span>
 
 <span class="n">descriptor</span> <span class="o">=</span> <span class="n">RealDescriptor</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;Temperature&#39;</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=</span><span class="mi">273</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;K&#39;</span><span class="p">)</span>
-<span class="n">dimension</span> <span class="o">=</span> <span class="n">EnumeratedDimension</span><span class="p">(</span><span class="n">descriptor</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;300&#39;</span><span class="p">,</span> <span class="s1">&#39;400&#39;</span><span class="p">])</span>
+<span class="n">dimension</span> <span class="o">=</span> <span class="n">EnumeratedDimension</span><span class="p">(</span><span class="n">descriptor</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;300&#39;</span><span class="p">,</span> <span class="s1">&#39;400&#39;</span><span class="p">])</span>
 </pre></div>
 </div>
-<p>Infinite variables are defined using a <a class="reference internal" href="../reference/citrine.informatics.dimensions.html#citrine.informatics.dimensions.ContinuousDimension" title="citrine.informatics.dimensions.ContinuousDimension"><code class="xref py py-class docutils literal notranslate"><span class="pre">ContinuousDimension</span></code></a>.
+<p>Continuous ranges of values are defined using a <a class="reference internal" href="../reference/citrine.informatics.dimensions.html#citrine.informatics.dimensions.ContinuousDimension" title="citrine.informatics.dimensions.ContinuousDimension"><code class="xref py py-class docutils literal notranslate"><span class="pre">ContinuousDimension</span></code></a>.
 Upper and lower bounds define the range of values we wish to uniformly sample from.
 If, using the previous example, temperature can be any value between 300 and 400K the dimension would be created using:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.informatics.dimensions</span> <span class="kn">import</span> <span class="n">ContinuousDimension</span>
@@ -78,14 +79,32 @@ If, using the previous example, temperature can be any value between 300 and 400
 <span class="n">dimension</span> <span class="o">=</span> <span class="n">ContinuousDimension</span><span class="p">(</span><span class="n">descriptor</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mi">400</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Note, the upper and lower bounds of the dimension do not match those of the descriptor.
+<p>Note, the upper and lower bounds of the dimension do not need to match those of the descriptor.
 The bounds of the descriptor define the minimum and maximum temperatures that could be considered valid, e.g. our furnace can only reach 1000K.
 The bounds of the dimension are the bounds we wish to search between, e.g. restrict the search between 300 and 400K (even though the furnace heat go to much higher temperatures).</p>
+<p>Multiple <a class="reference internal" href="../reference/citrine.informatics.dimensions.html#citrine.informatics.dimensions.EnumeratedDimension" title="citrine.informatics.dimensions.EnumeratedDimension"><code class="xref py py-class docutils literal notranslate"><span class="pre">EnumeratedDimension</span></code></a> and <a class="reference internal" href="../reference/citrine.informatics.dimensions.html#citrine.informatics.dimensions.ContinuousDimension" title="citrine.informatics.dimensions.ContinuousDimension"><code class="xref py py-class docutils literal notranslate"><span class="pre">ContinuousDimension</span></code></a> objects can be combined to form a <a class="reference internal" href="../reference/citrine.informatics.design_spaces.html#citrine.informatics.design_spaces.ProductDesignSpace" title="citrine.informatics.design_spaces.ProductDesignSpace"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProductDesignSpace</span></code></a>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.informatics.descriptors</span> <span class="kn">import</span> <span class="n">RealDescriptor</span><span class="p">,</span> <span class="n">CategoricalDescriptor</span>
+<span class="kn">from</span> <span class="nn">citrine.informatics.dimensions</span> <span class="kn">import</span> <span class="n">ContinuousDimension</span><span class="p">,</span> <span class="n">EnumeratedDimension</span>
+<span class="kn">from</span> <span class="nn">citrine.informatics.design_spaces</span> <span class="kn">import</span> <span class="n">ProductDesignSpace</span>
+
+<span class="n">temp_descriptor</span> <span class="o">=</span> <span class="n">RealDescriptor</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;Temperature&#39;</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=</span><span class="mi">273</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;K&#39;</span><span class="p">)</span>
+<span class="n">temp_dimension</span> <span class="o">=</span> <span class="n">ContinuousDimension</span><span class="p">(</span><span class="n">temp_descriptor</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mi">400</span><span class="p">)</span>
+
+<span class="n">speed_descriptor</span> <span class="o">=</span> <span class="n">CategoricalDescriptor</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;Mixing Speed&#39;</span><span class="p">,</span> <span class="n">categories</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Slow&quot;</span><span class="p">,</span> <span class="s2">&quot;Medium&quot;</span><span class="p">,</span> <span class="s2">&quot;Fast&quot;</span><span class="p">])</span>
+<span class="n">speed_dimension</span> <span class="o">=</span> <span class="n">EnumeratedDimension</span><span class="p">(</span><span class="n">speed_descriptor</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Slow&quot;</span><span class="p">,</span> <span class="s2">&quot;Fast&quot;</span><span class="p">])</span>
+
+<span class="n">speed_and_temp</span> <span class="o">=</span> <span class="n">ProductDesignSpace</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Speed and temperature&quot;</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Temperatures between 300 and 400 K and either Slow or Fast&quot;</span><span class="p">,</span>
+    <span class="n">dimensions</span><span class="o">=</span><span class="p">[</span><span class="n">temp_dimension</span><span class="p">,</span> <span class="n">speed_dimension</span><span class="p">]</span>
+<span class="p">)</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="enumerated-design-space">
 <span id="id1"></span><h2>4.3.2. Enumerated design space<a class="headerlink" href="#enumerated-design-space" title="Permalink to this headline">¶</a></h2>
 <p>An enumerated design space is composed of an explicit list of candidates.
-Each candidate is specified using a dictionary keyed on descriptor key.
+Each candidate is specified using a dictionary keyed on the key of a corresponding <code class="xref py py-class docutils literal notranslate"><span class="pre">descriptor</span></code>.
 A list of descriptors defines what key-value pairs must be present in each candidate.
 If a candidate is missing a descriptor key-value pair, contains extra key-value pairs or any value is not valid for the corresponding descriptor, it is removed from the design space.</p>
 <p>As an example, an enumerated design space that represents points from a 2D Cartesian coordinate system can be created using the python SDK:</p>

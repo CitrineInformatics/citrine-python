@@ -139,8 +139,9 @@ can be used to ‘flatten’ data objects into useful projections.</p>
 
 <dl class="method">
 <dt id="citrine.resources.table.TableCollection.read">
-<code class="sig-name descname">read</code><span class="sig-paren">(</span><em class="sig-param">table: citrine.resources.table.Table</em>, <em class="sig-param">local_path: str</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.table.TableCollection.read" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">read</code><span class="sig-paren">(</span><em class="sig-param">table: Union[citrine.resources.table.Table, Tuple[str, int]], local_path: str</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.table.TableCollection.read" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read the Table file from S3.</p>
+<p>If a Table object is not provided, retrieve it using the provided table and version ids.</p>
 </dd></dl>
 
 <dl class="method">

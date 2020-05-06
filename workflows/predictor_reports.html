@@ -35,9 +35,11 @@
             
   <div class="section" id="predictor-reports">
 <h1>4.7. Predictor reports<a class="headerlink" href="#predictor-reports" title="Permalink to this headline">¶</a></h1>
-<p>A predictor report describes a machine-learned model, for example, its settings and what features are important to the model.
-It does not include performance metrics. To learn more about performance metrics, please see <a class="reference internal" href="performance_workflows.html"><span class="doc">PerformanceWorkflows</span></a>.
-The report can be accessed via the python SDK via <code class="docutils literal notranslate"><span class="pre">predictor.report</span></code>.</p>
+<p>Training a predictor generally produces a set of inter-connected models.
+A predictor report describes those models, for example their settings and what features are important to the model.
+It does not include performance metrics.
+To learn more about performance metrics, please see <a class="reference internal" href="performance_workflows.html"><span class="doc">PerformanceWorkflows</span></a>.
+The report can be accessed via <code class="docutils literal notranslate"><span class="pre">predictor.report</span></code>.</p>
 <p>A task to generate a predictor report is scheduled when a predictor is registered.
 The report has a <code class="docutils literal notranslate"><span class="pre">status</span></code> and <code class="docutils literal notranslate"><span class="pre">json</span></code> member variables.
 Status can be one of:</p>
@@ -46,16 +48,43 @@ Status can be one of:</p>
 <li><p><code class="docutils literal notranslate"><span class="pre">ERROR</span></code> An error was thrown while generating the report.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">OK</span></code> The report was generated successfully and the results are ready.</p></li>
 </ul>
-<p>Results of the report are stored as a dictionary in the <code class="docutils literal notranslate"><span class="pre">json</span></code> member variable.
-For the <a class="reference internal" href="../reference/citrine.informatics.predictors.html#citrine.informatics.predictors.SimpleMLPredictor" title="citrine.informatics.predictors.SimpleMLPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleMLPredictor</span></code></a>, this dictionary contains one key: <code class="docutils literal notranslate"><span class="pre">important_features</span></code>.
-Feature importances are computed for each output descriptor.
-Important features are the input features that the machine learning model depends on most strongly.
-These importances can be useful in gaining some insight into how the machine learning model is making its predictions.</p>
-<p>An as example, consider a model with <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">y</span></code> inputs and a numeric output <code class="docutils literal notranslate"><span class="pre">z</span></code>.
-The following illustrates how to register a predictor, wait for the report to finish and view the results.</p>
+<p>Results of the report are in the <code class="docutils literal notranslate"><span class="pre">descriptors</span></code> and <code class="docutils literal notranslate"><span class="pre">model_summaries</span></code> attributes.
+<code class="docutils literal notranslate"><span class="pre">descriptors</span></code> is a list of <a class="reference internal" href="../reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.Descriptor" title="citrine.informatics.descriptors.Descriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">Descriptor</span></code></a> objects that may be inputs or outputs to models in the predictor.</p>
+<p><code class="docutils literal notranslate"><span class="pre">model_summaries</span></code> is a list of <a class="reference internal" href="../reference/citrine.informatics.reports.html#citrine.informatics.reports.ModelSummary" title="citrine.informatics.reports.ModelSummary"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelSummary</span></code></a> objects, each one corresponding to a single model in the predictor.
+Each <code class="docutils literal notranslate"><span class="pre">ModelSummary</span></code> includes the name of the model, a list of input descriptors, a list of output descriptors, the model’s settings, and its feature importances.
+<code class="docutils literal notranslate"><span class="pre">model_settings</span></code> is a dictionary of settings and values, the details of which depend on the type of model.
+One possible model settings dictionary is shown below:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s1">&#39;Algorithm&#39;</span><span class="p">:</span> <span class="s1">&#39;Ensemble of non-linear estimators&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Number of estimators&#39;</span><span class="p">:</span> <span class="mi">64</span><span class="p">,</span>
+    <span class="s1">&#39;Use jackknife&#39;</span><span class="p">:</span> <span class="kc">True</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">feature_importances</span></code> is a list of <a class="reference internal" href="../reference/citrine.informatics.reports.html#citrine.informatics.reports.FeatureImportanceReport" title="citrine.informatics.reports.FeatureImportanceReport"><code class="xref py py-class docutils literal notranslate"><span class="pre">FeatureImportanceReport</span></code></a> objects, each of which corresponds to a single output of the model.
+It has fields <code class="docutils literal notranslate"><span class="pre">output_key</span></code>, which is the key of the output descriptor, and <code class="docutils literal notranslate"><span class="pre">importances</span></code>, which is a dictionary from input keys to their importance.
+The input and output keys correspond to descriptors that can be found in the predictor report’s <code class="docutils literal notranslate"><span class="pre">descriptors</span></code> field.
+An example is shown below:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s1">&#39;output_key&#39;</span><span class="p">:</span> <span class="s1">&#39;shear modulus&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;importances&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;Young&#39;</span><span class="n">s</span> <span class="n">modulus</span><span class="s1">&#39;: 0.85,</span>
+        <span class="s1">&#39;Poisson&#39;</span><span class="n">s</span> <span class="n">ratio</span><span class="s1">&#39;: 0.15</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>For simple models, such as those that featurize inputs, the <code class="docutils literal notranslate"><span class="pre">model_settings</span></code> and <code class="docutils literal notranslate"><span class="pre">feature_importances</span></code> fields might be empty.</p>
+<p>As an example, consider a <a class="reference internal" href="../reference/citrine.informatics.predictors.html#citrine.informatics.predictors.SimpleMLPredictor" title="citrine.informatics.predictors.SimpleMLPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleMLPredictor</span></code></a> with numeric inputs <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">y</span></code> and numeric output <code class="docutils literal notranslate"><span class="pre">z</span></code>.
+This predictor will produce a single model to predict <code class="docutils literal notranslate"><span class="pre">z</span></code> from <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">y</span></code>.
+In cases involving latent variables and/or input featurization, more models will be produced.
+The code below shows how to create the predictor, register it, and view the report.
+Assume that there is a training data table with known id and version.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">sleep</span>
 
 <span class="kn">from</span> <span class="nn">citrine.informatics.predictors</span> <span class="kn">import</span> <span class="n">SimpleMLPredictor</span>
+<span class="kn">from</span> <span class="nn">citrine.informatics.descriptors</span> <span class="kn">import</span> <span class="n">RealDescriptor</span>
+<span class="kn">from</span> <span class="nn">citrine.informatics.data_sources</span> <span class="kn">import</span> <span class="n">AraTableDataSource</span>
 
 <span class="c1"># create input descriptors</span>
 <span class="n">x</span> <span class="o">=</span> <span class="n">RealDescriptor</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
@@ -64,35 +93,26 @@ The following illustrates how to register a predictor, wait for the report to fi
 
 <span class="c1"># register a predictor with a project</span>
 <span class="n">predictor</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">predictors</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
-    <span class="n">SimpleMLPredictor</span><span class="p">(</span>
-        <span class="n">name</span><span class="o">=</span><span class="s1">&#39;ML predictor for z&#39;</span><span class="p">,</span>
-        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Predicts z from x and y&#39;</span><span class="p">,</span>
-        <span class="n">inputs</span><span class="o">=</span><span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">],</span>
-        <span class="n">latent_variables</span><span class="o">=</span><span class="p">[],</span>
-        <span class="n">outputs</span><span class="o">=</span><span class="p">[</span><span class="n">z</span><span class="p">],</span>
-        <span class="n">training_data</span><span class="o">=</span><span class="s1">&#39;training-data-id&#39;</span>
-    <span class="p">)</span>
+   <span class="n">SimpleMLPredictor</span><span class="p">(</span>
+       <span class="n">name</span><span class="o">=</span><span class="s1">&#39;ML predictor for z&#39;</span><span class="p">,</span>
+       <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Predicts z from x and y&#39;</span><span class="p">,</span>
+       <span class="n">inputs</span><span class="o">=</span><span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">],</span>
+       <span class="n">latent_variables</span><span class="o">=</span><span class="p">[],</span>
+       <span class="n">outputs</span><span class="o">=</span><span class="p">[</span><span class="n">z</span><span class="p">],</span>
+       <span class="n">training_data</span><span class="o">=</span><span class="n">AraTableDataSource</span><span class="p">(</span>
+        <span class="n">table_id</span> <span class="o">=</span> <span class="n">training_table_id</span><span class="p">,</span>
+        <span class="n">table_version</span> <span class="o">=</span> <span class="n">training_table_version</span>
+       <span class="p">)</span>
+   <span class="p">)</span>
 <span class="p">)</span>
 
 <span class="c1"># wait for the predictor report to be ready</span>
 <span class="k">while</span> <span class="n">project</span><span class="o">.</span><span class="n">predictors</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">predictor</span><span class="o">.</span><span class="n">uid</span><span class="p">)</span><span class="o">.</span><span class="n">report</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="s1">&#39;PENDING&#39;</span><span class="p">:</span>
-    <span class="n">sleep</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+   <span class="n">sleep</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
 
 <span class="c1"># print the json report</span>
 <span class="n">report</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">predictors</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">predictor</span><span class="o">.</span><span class="n">uid</span><span class="p">)</span><span class="o">.</span><span class="n">report</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">report</span><span class="o">.</span><span class="n">json</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>For this example, the report would resemble the following.
-Note, feature importances and performance metrics are keyed on the response (<code class="docutils literal notranslate"><span class="pre">z</span></code>).</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-  <span class="s2">&quot;important_features&quot;</span><span class="p">:</span> <span class="p">{</span>
-    <span class="s2">&quot;z&quot;</span><span class="p">:</span> <span class="p">{</span>
-      <span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="mf">0.62</span><span class="p">,</span>
-      <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="mf">0.38</span>
-    <span class="p">}</span>
-  <span class="p">},</span>
-<span class="p">}</span>
 </pre></div>
 </div>
 </div>
