@@ -11,7 +11,6 @@ from citrine.resources.process_template import ProcessTemplate
 from gemd.entity.bounds.base_bounds import BaseBounds
 from gemd.entity.link_by_uid import LinkByUID
 from gemd.entity.template.attribute_template import AttributeTemplate
-from gemd.util import substitute_links
 
 
 class DataObject(DataConcepts, ABC):
@@ -162,14 +161,14 @@ class DataObjectCollection(DataConceptsCollection[DataObjectResourceType], ABC):
         :return: List[ValidationError] of validation errors encountered. Empty if successful.
         """
         path = self._get_path(ignore_dataset=True) + "/validate-templates"
-        dumped_data = substitute_links(scrub_none(model.dump()))
+        dumped_data = replace_objects_with_links(scrub_none(model.dump()))
         request_data = {"dataObject": dumped_data}
         if object_template is not None:
             request_data["objectTemplate"] = \
-                substitute_links(scrub_none(object_template.dump()))
+                replace_objects_with_links(scrub_none(object_template.dump()))
         if ingredient_process_template is not None:
             request_data["ingredientProcessTemplate"] = \
-                substitute_links(scrub_none(ingredient_process_template.dump()))
+                replace_objects_with_links(scrub_none(ingredient_process_template.dump()))
         try:
             self.session.put_resource(path, request_data)
             return []

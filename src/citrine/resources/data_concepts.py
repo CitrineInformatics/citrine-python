@@ -15,7 +15,6 @@ from citrine.resources.response import Response
 from gemd.entity.dict_serializable import DictSerializable
 from gemd.entity.link_by_uid import LinkByUID
 from gemd.json import GEMDJson
-from gemd.util import substitute_links
 
 
 class DataConcepts(PolymorphicSerializable['DataConcepts'], DictSerializable, ABC):
@@ -364,7 +363,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         # know how to replace the objects with link-by-uids. loads() converts this string into
         # nested gemd objects, and then the final dumps() converts that to a json-ready string
         # in which all of the object references have been replaced with link-by-uids.
-        dumped_data = substitute_links(scrub_none(model.dump()))
+        dumped_data = replace_objects_with_links(scrub_none(model.dump()))
         data = self.session.post_resource(path, dumped_data, params=params)
         full_model = self.build(data)
         return full_model
