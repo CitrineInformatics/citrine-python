@@ -1,4 +1,4 @@
-from typing import Union, Iterable, Optional, Any
+from typing import Union, Iterable, Optional, Any, Tuple
 
 import deprecation
 import requests
@@ -99,13 +99,17 @@ class TableCollection(Collection[Table]):
         :param per_page: The number of items to fetch per-page.
         :return: An iterable of the versions of the Tables (as Table objects).
         """
-        def fetch_versions(page: Optional[int], per_page: int) -> Iterable[Table]:
+        def fetch_versions(page: Optional[int],
+                           per_page: int) -> Tuple[Iterable[dict], str]:
             data = self.session.get_resource(self._get_path() + '/' + str(uid),
                                              params=self._page_params(page, per_page))
-            for item in data[self._collection_key]:
+            return (data[self._collection_key], data.get('next', ""))
+
+        def build_versions(collection: Iterable[dict]) -> Iterable[Table]:
+            for item in collection:
                 yield self.build(item)
 
-        return self._paginator.paginate(fetch_versions, page, per_page)
+        return self._paginator.paginate(fetch_versions, build_versions, page, per_page)
 
     def build(self, data: dict) -> Table:
         """Build an individual Table from a dictionary."""
@@ -118,10 +122,16 @@ class TableCollection(Collection[Table]):
         """Tables cannot be created at this time."""
         raise RuntimeError('Creating Tables is not supported at this time.')
 
-    def read(self, table: Table, local_path: str):
-        """Read the Table file from S3."""
+    def read(self, table: Union[Table, Tuple[str, int]], local_path: str):
+        """
+        Read the Table file from S3.
+
+        If a Table object is not provided, retrieve it using the provided table and version ids.
+        """
         # NOTE: this uses the pre-signed S3 download url. If we need to download larger files,
         # we have other options available (using multi-part downloads in parallel , for example).
+        if isinstance(table, Tuple):
+            table = self.get(table[0], table[1])
 
         data_location = table.download_url
         data_location = rewrite_s3_links_locally(data_location, self.session.s3_endpoint_url)
