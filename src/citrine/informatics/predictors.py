@@ -451,7 +451,7 @@ class GeneralizedMeanPropertyPredictor(
 
 class LabelFractionPredictor(
         Serializable['LabelFractionPredictor'], Predictor):
-    """[ALPHA] A predictor interface that computes the relative proportions of formulations ingredients with a given label.
+    """[ALPHA] A predictor interface that computes the relative proportions of ingredients.
 
     Parameters
     ----------
@@ -463,6 +463,7 @@ class LabelFractionPredictor(
         descriptor that contains formulation data
     label: str
         label to search for
+
     """
 
     uid = _properties.Optional(_properties.UUID, 'id', serializable=False)
@@ -510,4 +511,3 @@ class LabelFractionPredictor(
     def post_build(self, project_id: UUID, data: dict):
         """Creates the predictor report object."""
         self.report = ReportResource(project_id, self.session).get(data['id'])
-
