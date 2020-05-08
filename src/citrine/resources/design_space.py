@@ -22,6 +22,7 @@ class DesignSpaceCollection(Collection[DesignSpace]):
     _path_template = '/projects/{project_id}/modules'
     _individual_key = None
     _resource = DesignSpace
+    _module_type = 'DESIGN_SPACE'
 
     def __init__(self, project_id: UUID, session: Session = Session()):
         self.project_id = project_id
