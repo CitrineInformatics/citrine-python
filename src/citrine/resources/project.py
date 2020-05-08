@@ -106,7 +106,7 @@ class Project(Resource['Project']):
 
     @property
     def descriptors(self) -> DescriptorMethods:
-        """Return a resource containing a set of methods returning descriptors."""
+        """[ALPHA] Return a resource containing a set of methods returning descriptors."""
         return DescriptorMethods(self.uid, self.session)
 
     @property

@@ -14,7 +14,8 @@ class DescriptorMethods:
         self.project_id = project_id
         self.session: Session = session
 
-    def from_predictor_responses(self, predictor: Predictor, inputs: List[Descriptor]) -> List[Descriptor]:
+    def from_predictor_responses(self, predictor: Predictor,
+                                 inputs: List[Descriptor]) -> List[Descriptor]:
         """
         [ALPHA] Get responses for a predictor, given a set of inputs.
 
