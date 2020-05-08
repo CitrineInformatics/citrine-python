@@ -4,7 +4,8 @@ from uuid import UUID
 from copy import deepcopy
 
 from citrine.informatics.predictors import ExpressionPredictor, GeneralizedMeanPropertyPredictor, \
-    GraphPredictor, Predictor, SimpleMLPredictor, IngredientsToSimpleMixturePredictor
+    GraphPredictor, Predictor, SimpleMLPredictor, IngredientsToSimpleMixturePredictor, \
+    LabelFractionPredictor
 from citrine.informatics.descriptors import RealDescriptor
 
 
@@ -81,6 +82,14 @@ def test_generalized_mean_property_serialization(valid_generalized_mean_property
     serialized = predictor.dump()
     serialized['id'] = valid_generalized_mean_property_predictor_data['id']
     assert serialized == valid_serialization_output(valid_generalized_mean_property_predictor_data)
+
+
+def test_label_fraction_serialization(valid_label_fraction_predictor_data):
+    """Ensure that a serialized LabelFractionPredictor looks sane."""
+    predictor = LabelFractionPredictor.build(valid_label_fraction_predictor_data)
+    serialized = predictor.dump()
+    serialized['id'] = valid_label_fraction_predictor_data['id']
+    assert serialized == valid_serialization_output(valid_label_fraction_predictor_data)
 
 
 def test_invalid_predictor_type(invalid_predictor_data):

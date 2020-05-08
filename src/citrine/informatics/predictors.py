@@ -447,3 +447,67 @@ class GeneralizedMeanPropertyPredictor(
     def post_build(self, project_id: UUID, data: dict):
         """Creates the predictor report object."""
         self.report = ReportResource(project_id, self.session).get(data['id'])
+
+
+class LabelFractionPredictor(
+        Serializable['LabelFractionPredictor'], Predictor):
+    """[ALPHA] A predictor interface that computes the relative proportions of formulations ingredients with a given label.
+
+    Parameters
+    ----------
+    name: str
+        name of the configuration
+    description: str
+        description of the predictor
+    input_descriptor: FormulationDescriptor
+        descriptor that contains formulation data
+    label: str
+        label to search for
+    """
+
+    uid = _properties.Optional(_properties.UUID, 'id', serializable=False)
+    name = _properties.String('config.name')
+    description = _properties.String('config.description')
+    input_descriptor = _properties.Object(FormulationDescriptor, 'config.input')
+    label = _properties.String('config.label')
+    typ = _properties.String('config.type', default='LabelFraction',
+                             deserializable=False)
+    status = _properties.Optional(_properties.String(), 'status', serializable=False)
+    status_info = _properties.Optional(
+        _properties.List(_properties.String()),
+        'status_info',
+        serializable=False
+    )
+    active = _properties.Boolean('active', default=True)
+
+    # NOTE: These could go here or in _post_dump - it's unclear which is better right now
+    module_type = _properties.String('module_type', default='PREDICTOR')
+    schema_id = _properties.UUID('schema_id', default=UUID('997a7e11-2c16-4e30-b531-9e657a863019'))
+
+    def __init__(self,
+                 name: str,
+                 description: str,
+                 input_descriptor: FormulationDescriptor,
+                 label: str,
+                 session: Optional[Session] = None,
+                 report: Optional[Report] = None,
+                 active: bool = True):
+        self.name: str = name
+        self.description: str = description
+        self.input_descriptor: FormulationDescriptor = input_descriptor
+        self.label: str = label
+        self.session: Optional[Session] = session
+        self.report: Optional[Report] = report
+        self.active: bool = active
+
+    def _post_dump(self, data: dict) -> dict:
+        data['display_name'] = data['config']['name']
+        return data
+
+    def __str__(self):
+        return '<LabelFractionPredictor {!r}>'.format(self.name)
+
+    def post_build(self, project_id: UUID, data: dict):
+        """Creates the predictor report object."""
+        self.report = ReportResource(project_id, self.session).get(data['id'])
+
