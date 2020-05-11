@@ -29,7 +29,7 @@ class DescriptorMethods:
         Returns
         -------
         List[Descriptor]
-            The computable responses of the predictor given the provided inputs.
+            The computable responses of the predictor given the provided input space (as descriptors).
 
         """
         response = self.session.post_resource(
