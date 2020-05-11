@@ -15,15 +15,21 @@ Uploading a new file with the same name will produce a new version of the file w
 The columns in the CSV are extracted and parsed by a mapping of column header names to user-created descriptors.
 Columns in the CSV that are not mapped with a descriptor are ignored.
 
+An optional list of identifiers can be specified.
+Each identifier is a column header name.
+These may overlap with the keys defined in the mapping from column header names to descriptors if a column should be parsed as data and used as an identifier.
+Identifiers should be globally unique.
+No two rows should contain the same value.
+
 Assume that a file data.csv exists with the following contents:
 
 .. code::
 
-    Chemical Formula,Gap,Crystallinity
-    Bi2Te3,0.153,Single crystalline
-    Mg2Ge,0.567,Single crystalline
-    GeTe,0.7,Amorphous
-    Sb2Se3,1.15,Polycrystalline
+    Chemical Formula,Gap,Crystallinity,Sample ID
+    Bi2Te3,0.153,Single crystalline,0
+    Mg2Ge,0.567,Single crystalline,1
+    GeTe,0.7,Amorphous,2
+    Sb2Se3,1.15,Polycrystalline,3
 
 That file could be used as the training data for a predictor as:
 
@@ -44,7 +50,8 @@ That file could be used as the training data for a predictor as:
             "Gap": RealDescriptor("Band gap", lower_bound=0, upper_bound=20, units="eV"),
             "Crystallinity": CategoricalDescriptor("Crystallinity", categories=[
                 "Single crystalline", "Amorphous", "Polycrystalline"])
-        }
+        },
+        identifiers = ["Sample ID"]
     )
 
     predictor = SimpleMLPredictor(
