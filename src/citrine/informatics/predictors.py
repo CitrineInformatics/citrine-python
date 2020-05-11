@@ -449,6 +449,7 @@ class GeneralizedMeanPropertyPredictor(
         """Creates the predictor report object."""
         self.report = ReportResource(project_id, self.session).get(data['id'])
 
+
 class SimpleMixturePredictor(Serializable['SimpleMixturePredictor'], Predictor):
     """
     [ALPHA] A predictor interface that builds a simple graphical model.
@@ -463,7 +464,9 @@ class SimpleMixturePredictor(Serializable['SimpleMixturePredictor'], Predictor):
         input descriptor for the hierarchical (un-mixed) formulation
     output:
         output descriptor for the flat (mixed) formulation
+
     """
+
     uid = _properties.Optional(_properties.UUID, 'id', serializable=False)
     name = _properties.String('config.name')
     description = _properties.String('config.description')
@@ -472,11 +475,9 @@ class SimpleMixturePredictor(Serializable['SimpleMixturePredictor'], Predictor):
     typ = _properties.String('config.type', default='SimpleMixture',
                              deserializable=False)
     status = _properties.Optional(_properties.String, 'status', serializable=False)
-    status_info = _properties.Optional(
-        _properties.List(_properties.String),
-        'status_info',
-        serializable=False
-    )
+    status_info = _properties.Optional(_properties.List(_properties.String),
+                                       'status_info',
+                                       serializable=False)
     active = _properties.Boolean('active', default=True)
 
     # NOTE: These could go here or in _post_dump - it's unclear which is better right now
@@ -484,13 +485,13 @@ class SimpleMixturePredictor(Serializable['SimpleMixturePredictor'], Predictor):
     schema_id = _properties.UUID('schema_id', default=UUID('e82a993c-e6ab-46a2-b636-c71d0ba224d1'))
 
     def __init__(self,
-            name: str,
-            description: str,
-            input_descriptor: FormulationDescriptor,
-            output_descriptor: FormulationDescriptor,
-            session: Optional[Session] = None,
-            report: Optional[Report] = None,
-            active: bool = True):
+                 name: str,
+                 description: str,
+                 input_descriptor: FormulationDescriptor,
+                 output_descriptor: FormulationDescriptor,
+                 session: Optional[Session] = None,
+                 report: Optional[Report] = None,
+                 active: bool = True):
         self.name: str = name
         self.description: str = description
         self.input_descriptor: FormulationDescriptor = input_descriptor
