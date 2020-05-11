@@ -4,6 +4,7 @@ from uuid import UUID
 
 from citrine._session import Session
 from citrine.resources.ara_definition import AraDefinitionCollection
+from citrine.resources.descriptors import DescriptorMethods
 from citrine.resources.module import ModuleCollection
 from citrine.resources.design_space import DesignSpaceCollection
 from citrine.resources.processor import ProcessorCollection
@@ -102,6 +103,11 @@ class Project(Resource['Project']):
     def predictors(self) -> PredictorCollection:
         """Return a resource representing all visible predictors."""
         return PredictorCollection(self.uid, self.session)
+
+    @property
+    def descriptors(self) -> DescriptorMethods:
+        """[ALPHA] Return a resource containing a set of methods returning descriptors."""
+        return DescriptorMethods(self.uid, self.session)
 
     @property
     def workflows(self) -> WorkflowCollection:
