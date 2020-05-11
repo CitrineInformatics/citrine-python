@@ -6,13 +6,14 @@ import uuid
 from citrine.informatics.data_sources import AraTableDataSource
 from citrine.informatics.descriptors import RealDescriptor, FormulationDescriptor
 from citrine.informatics.predictors import ExpressionPredictor, GeneralizedMeanPropertyPredictor, GraphPredictor, \
-    SimpleMLPredictor, IngredientsToSimpleMixturePredictor
+    SimpleMLPredictor, IngredientsToSimpleMixturePredictor, SimpleMixturePredictor
 
 x = RealDescriptor("x", 0, 100, "")
 y = RealDescriptor("y", 0, 100, "")
 z = RealDescriptor("z", 0, 100, "")
 shear_modulus = RealDescriptor('Property~Shear modulus', lower_bound=0, upper_bound=100, units='GPa')
 formulation = FormulationDescriptor('formulation')
+formulation_output = FormulationDescriptor('output formulation')
 water_quantity = RealDescriptor('water quantity', 0, 1)
 salt_quantity = RealDescriptor('salt quantity', 0, 1)
 data_source = AraTableDataSource(uuid.UUID('e5c51369-8e71-4ec6-b027-1f92bdc14762'), 0)
@@ -80,6 +81,17 @@ def generalized_mean_property_predictor() -> GeneralizedMeanPropertyPredictor:
         impute_properties=True,
         default_properties={'density': 1.0},
         label='solvent'
+    )
+
+
+@pytest.fixture
+def simple_mixture_predictor() -> SimpleMixturePredictor:
+    """Build a simple mixture predictor for testing."""
+    return SimpleMixturePredictor(
+        name='Simple mixture predictor',
+        description='Computes mean ingredient properties',
+        input_descriptor=formulation,
+        output_descriptor=formulation_output
     )
 
 
@@ -197,3 +209,24 @@ def test_generalized_mean_property_post_build(generalized_mean_property_predicto
     assert session.get_resource.call_count == 1
     assert generalized_mean_property_predictor.report is not None
     assert generalized_mean_property_predictor.report.status == 'OK'
+
+
+def test_simple_mixture_predictor_initialization(simple_mixture_predictor):
+    """Make sure the correct fields go to the correct places for a simple mixture predictor."""
+    assert simple_mixture_predictor.name == 'Simple mixture predictor'
+    assert simple_mixture_predictor.input_descriptor.key == 'formulation'
+    assert simple_mixture_predictor.output_descriptor.key == 'output formulation'
+    expected_str = '<SimpleMixturePredictor \'Simple mixture predictor\'>'
+    assert str(simple_mixture_predictor) == expected_str
+
+
+def test_simple_mixture_relation_post_build(simple_mixture_predictor):
+    """Ensures we get a report from a simple mixture predictor post_build call."""
+    assert simple_mixture_predictor.report is None
+    session = mock.Mock()
+    session.get_resource.return_value = dict(status='OK', report=dict(), uid=uuid.uuid4())
+    simple_mixture_predictor.session = session
+    simple_mixture_predictor.post_build(uuid.uuid4(), dict(id=uuid.uuid4()))
+    assert session.get_resource.call_count == 1
+    assert simple_mixture_predictor.report is not None
+    assert simple_mixture_predictor.report.status == 'OK'

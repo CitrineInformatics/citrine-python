@@ -4,7 +4,7 @@ from uuid import UUID
 from copy import deepcopy
 
 from citrine.informatics.predictors import ExpressionPredictor, GeneralizedMeanPropertyPredictor, \
-    GraphPredictor, Predictor, SimpleMLPredictor, IngredientsToSimpleMixturePredictor
+    GraphPredictor, Predictor, SimpleMLPredictor, IngredientsToSimpleMixturePredictor, SimpleMixturePredictor
 from citrine.informatics.descriptors import RealDescriptor
 
 
@@ -81,6 +81,13 @@ def test_generalized_mean_property_serialization(valid_generalized_mean_property
     serialized = predictor.dump()
     serialized['id'] = valid_generalized_mean_property_predictor_data['id']
     assert serialized == valid_serialization_output(valid_generalized_mean_property_predictor_data)
+
+
+def test_simple_mixture_predictor_serialization(valid_simple_mixture_predictor_data):
+    predictor = SimpleMixturePredictor.build(valid_simple_mixture_predictor_data)
+    serialized = predictor.dump()
+    serialized['id'] = valid_simple_mixture_predictor_data['id']
+    assert serialized == valid_serialization_output(valid_simple_mixture_predictor_data)
 
 
 def test_invalid_predictor_type(invalid_predictor_data):
