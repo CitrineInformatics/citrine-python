@@ -17,19 +17,20 @@ class DescriptorMethods:
     def from_predictor_responses(self, predictor: Predictor,
                                  inputs: List[Descriptor]) -> List[Descriptor]:
         """
-        [ALPHA] Get responses for a predictor, given a set of inputs.
+        [ALPHA] Get responses for a predictor, given an input space.
 
         Parameters
         ----------
         predictor : Predictor
             The predictor whose available responses are to be computed.
         inputs : List[Descriptor]
-            The inputs to the predictor
+            The input space to the predictor.
 
         Returns
         -------
         List[Descriptor]
-            The computable responses of the predictor given the provided input space (as descriptors).
+            The computable responses of the predictor given the provided input space (as
+            descriptors).
 
         """
         response = self.session.post_resource(
