@@ -21,8 +21,10 @@ class DescriptorMethods:
 
         Parameters
         ----------
-        predictor The predictor whose available responses are to be computed.
-        inputs The inputs to the predictor
+        predictor : Predictor
+            The predictor whose available responses are to be computed.
+        inputs : List[Descriptor]
+            The inputs to the predictor
 
         Returns
         -------
