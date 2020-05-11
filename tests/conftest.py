@@ -240,7 +240,7 @@ def valid_generalized_mean_property_predictor_data():
 
 
 @pytest.fixture
-def valid_label_fraction_predictor_data():
+def valid_label_fractions_predictor_data():
     """Produce valid data used for tests."""
     from citrine.informatics.descriptors import FormulationDescriptor
     return dict(
@@ -248,15 +248,15 @@ def valid_label_fraction_predictor_data():
         status='VALID',
         status_info=[],
         active=True,
-        display_name='Label fraction predictor',
+        display_name='Label fractions predictor',
         schema_id='997a7e11-2c16-4e30-b531-9e657a863019',
         id=str(uuid.uuid4()),
         config=dict(
-            type='LabelFraction',
-            name='Label fraction predictor',
-            description='Computes relative proportions of formulation ingredients',
+            type='LabelFractions',
+            name='Label fractions predictor',
+            description='Computes relative proportions of labeled ingredients',
             input=FormulationDescriptor('simple mixture').dump(),
-            label='solvent'
+            labels=['solvent']
         )
     )
 

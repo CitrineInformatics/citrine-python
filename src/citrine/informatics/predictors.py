@@ -13,7 +13,7 @@ from citrine.resources.report import ReportResource
 from citrine.informatics.modules import Module
 
 __all__ = ['ExpressionPredictor', 'GraphPredictor', 'IngredientsToSimpleMixturePredictor',
-           'Predictor', 'SimpleMLPredictor', 'GeneralizedMeanPropertyPredictor']
+           'Predictor', 'SimpleMLPredictor', 'GeneralizedMeanPropertyPredictor', 'LabelFractionsPredictor']
 
 
 class Predictor(Module):
@@ -39,6 +39,7 @@ class Predictor(Module):
             "Expression": ExpressionPredictor,
             "IngredientsToSimpleMixture": IngredientsToSimpleMixturePredictor,
             "GeneralizedMeanProperty": GeneralizedMeanPropertyPredictor,
+            "LabelFractions": LabelFractionsPredictor,
         }
         typ = type_dict.get(data['config']['type'])
 
@@ -449,9 +450,8 @@ class GeneralizedMeanPropertyPredictor(
         self.report = ReportResource(project_id, self.session).get(data['id'])
 
 
-class LabelFractionPredictor(
-        Serializable['LabelFractionPredictor'], Predictor):
-    """[ALPHA] A predictor interface that computes the relative proportions of ingredients.
+class LabelFractionsPredictor(Serializable['LabelFractionsPredictor'], Predictor):
+    """[ALPHA] A predictor interface that computes the relative proportions of labeled ingredients.
 
     Parameters
     ----------
@@ -461,8 +461,8 @@ class LabelFractionPredictor(
         description of the predictor
     input_descriptor: FormulationDescriptor
         descriptor that contains formulation data
-    label: str
-        label to search for
+    labels: List[str]
+        labels to search for
 
     """
 
@@ -470,8 +470,8 @@ class LabelFractionPredictor(
     name = _properties.String('config.name')
     description = _properties.String('config.description')
     input_descriptor = _properties.Object(FormulationDescriptor, 'config.input')
-    label = _properties.String('config.label')
-    typ = _properties.String('config.type', default='LabelFraction',
+    labels = _properties.List(_properties.String, 'config.labels')
+    typ = _properties.String('config.type', default='LabelFractions',
                              deserializable=False)
     status = _properties.Optional(_properties.String(), 'status', serializable=False)
     status_info = _properties.Optional(
@@ -489,14 +489,14 @@ class LabelFractionPredictor(
                  name: str,
                  description: str,
                  input_descriptor: FormulationDescriptor,
-                 label: str,
+                 labels: List[str],
                  session: Optional[Session] = None,
                  report: Optional[Report] = None,
                  active: bool = True):
         self.name: str = name
         self.description: str = description
         self.input_descriptor: FormulationDescriptor = input_descriptor
-        self.label: str = label
+        self.labels: List[str] = labels
         self.session: Optional[Session] = session
         self.report: Optional[Report] = report
         self.active: bool = active
@@ -506,7 +506,7 @@ class LabelFractionPredictor(
         return data
 
     def __str__(self):
-        return '<LabelFractionPredictor {!r}>'.format(self.name)
+        return '<LabelFractionsPredictor {!r}>'.format(self.name)
 
     def post_build(self, project_id: UUID, data: dict):
         """Creates the predictor report object."""
