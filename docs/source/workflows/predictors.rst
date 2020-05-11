@@ -214,6 +214,34 @@ The following example illustrates how an :class:`~citrine.informatics.predictors
         }
     )
 
+Simple mixture predictor
+---------------------------------------
+
+Simple mixtures may contain ingredients that are blends of other simple mixtures.
+Along the lines of the example above, hypertonic saline can be mixed with water to form isotonic saline.
+Often, the properties of a hierarchical mixture are strongly associated with its atomic ingredients.
+The :class:`~citrine.informatics.predictors.SimpleMixturePredictor` flattens a hierarchical recipe into a recipe that contains only those atomic ingredients.
+
+The formulation to be flattened is specified by an ``input`` formulation descriptor; the associated material history of the input formulation is traversed to determine the leaf ingredients.
+These leaf ingredients are then summed across all leaves of the mixing processes, with the resulting candidates described by an ``output`` formulation descriptor.
+
+The following example illustrates how a :class:`~citrine.informatics.predictors.SimpleMixturePredictor` can be used to flatten the ingredients used in aqueous dilutions of hypertonic saline, yielding just the quantities of the atomic constituents salt and water.
+
+.. code:: python
+
+    from citrine.informatics.descriptors import FormulationDescriptor
+    from citrine.informatics.predictors import SimpleMixturePredictor
+
+    input_formulation = FormulationDescriptor('diluted saline')
+    output_formulation = FormulationDescriptor('diluted saline (flattened)')
+
+    SimpleMixturePredictor(
+        name='Simple mixture predictor',
+        description='Constructs a formulation descriptor that flattens a hierarchy of simple mixtures into the quantities of atomic ingredients',
+        input=input_formulation,
+        output=output_formulation,
+    )
+
 Generalized mean property predictor
 -----------------------------------
 
