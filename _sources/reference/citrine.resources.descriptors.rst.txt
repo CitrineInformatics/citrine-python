@@ -1,0 +1,7 @@
+citrine.resources.descriptors module
+====================================
+
+.. automodule:: citrine.resources.descriptors
+   :members:
+   :undoc-members:
+   :show-inheritance:

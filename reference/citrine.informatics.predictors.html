@@ -12,6 +12,7 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="shortcut icon" href="../_static/favicon.png"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -84,12 +85,6 @@
 <dt id="citrine.informatics.predictors.ExpressionPredictor.output">
 <code class="sig-name descname">output</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.ExpressionPredictor.output" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
-
-<dl class="method">
-<dt id="citrine.informatics.predictors.ExpressionPredictor.post_build">
-<code class="sig-name descname">post_build</code><span class="sig-paren">(</span><em class="sig-param">project_id: uuid.UUID</em>, <em class="sig-param">data: dict</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.predictors.ExpressionPredictor.post_build" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates the predictor report object.</p>
-</dd></dl>
 
 <dl class="attribute">
 <dt id="citrine.informatics.predictors.ExpressionPredictor.schema_id">
@@ -186,6 +181,86 @@
 <dl class="attribute">
 <dt id="citrine.informatics.predictors.GraphPredictor.uid">
 <code class="sig-name descname">uid</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.GraphPredictor.uid" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="citrine.informatics.predictors.IngredientsToSimpleMixturePredictor">
+<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.predictors.</code><code class="sig-name descname">IngredientsToSimpleMixturePredictor</code><span class="sig-paren">(</span><em class="sig-param">name: str, description: str, output: citrine.informatics.descriptors.FormulationDescriptor, id_to_quantity: Dict[str, citrine.informatics.descriptors.RealDescriptor], labels: Dict[str, List[str]], session: Optional[citrine._session.Session] = None, report: Optional[citrine.informatics.reports.Report] = None, active: bool = True</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.predictors.IngredientsToSimpleMixturePredictor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.informatics.predictors.Predictor" title="citrine.informatics.predictors.Predictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.predictors.Predictor</span></code></a></p>
+<p>[ALPHA] A predictor interface that constructs a simple mixture from ingredient quantities.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – name of the configuration</p></li>
+<li><p><strong>description</strong> (<em>str</em>) – description of the predictor</p></li>
+<li><p><strong>output</strong> (<a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.FormulationDescriptor" title="citrine.informatics.descriptors.FormulationDescriptor"><em>FormulationDescriptor</em></a>) – descriptor that represents the output formulation</p></li>
+<li><p><strong>id_to_quantity</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.RealDescriptor" title="citrine.informatics.descriptors.RealDescriptor"><em>RealDescriptor</em></a><em>]</em>) – Map from ingredient identifier to the descriptor that represents its quantity,
+e.g. <code class="docutils literal notranslate"><span class="pre">{'water':</span> <span class="pre">RealDescriptor('water</span> <span class="pre">quantity',</span> <span class="pre">0,</span> <span class="pre">1)}</span></code></p></li>
+<li><p><strong>labels</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>List</em><em>[</em><em>str</em><em>]</em><em>]</em>) – Map from each label to all ingredients assigned that label, when present in a mixture,
+e.g. <code class="docutils literal notranslate"><span class="pre">{'solvent':</span> <span class="pre">['water']}</span></code></p></li>
+</ul>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.IngredientsToSimpleMixturePredictor.active">
+<code class="sig-name descname">active</code><em class="property"> = True</em><a class="headerlink" href="#citrine.informatics.predictors.IngredientsToSimpleMixturePredictor.active" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.IngredientsToSimpleMixturePredictor.description">
+<code class="sig-name descname">description</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.IngredientsToSimpleMixturePredictor.description" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.IngredientsToSimpleMixturePredictor.id_to_quantity">
+<code class="sig-name descname">id_to_quantity</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.IngredientsToSimpleMixturePredictor.id_to_quantity" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.IngredientsToSimpleMixturePredictor.labels">
+<code class="sig-name descname">labels</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.IngredientsToSimpleMixturePredictor.labels" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.IngredientsToSimpleMixturePredictor.module_type">
+<code class="sig-name descname">module_type</code><em class="property"> = 'PREDICTOR'</em><a class="headerlink" href="#citrine.informatics.predictors.IngredientsToSimpleMixturePredictor.module_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.IngredientsToSimpleMixturePredictor.name">
+<code class="sig-name descname">name</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.IngredientsToSimpleMixturePredictor.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.IngredientsToSimpleMixturePredictor.output">
+<code class="sig-name descname">output</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.IngredientsToSimpleMixturePredictor.output" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.IngredientsToSimpleMixturePredictor.schema_id">
+<code class="sig-name descname">schema_id</code><em class="property"> = UUID('873e4541-da8a-4698-a981-732c0c729c3d')</em><a class="headerlink" href="#citrine.informatics.predictors.IngredientsToSimpleMixturePredictor.schema_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.IngredientsToSimpleMixturePredictor.status">
+<code class="sig-name descname">status</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.IngredientsToSimpleMixturePredictor.status" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.IngredientsToSimpleMixturePredictor.status_info">
+<code class="sig-name descname">status_info</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.IngredientsToSimpleMixturePredictor.status_info" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.IngredientsToSimpleMixturePredictor.typ">
+<code class="sig-name descname">typ</code><em class="property"> = 'IngredientsToSimpleMixture'</em><a class="headerlink" href="#citrine.informatics.predictors.IngredientsToSimpleMixturePredictor.typ" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.IngredientsToSimpleMixturePredictor.uid">
+<code class="sig-name descname">uid</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.IngredientsToSimpleMixturePredictor.uid" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -300,7 +375,7 @@ models are built for each latent variable and output.</p>
 
 <dl class="class">
 <dt id="citrine.informatics.predictors.MolecularStructureFeaturizer">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.predictors.</code><code class="sig-name descname">MolecularStructureFeaturizer</code><span class="sig-paren">(</span><em class="sig-param">name: str, description: str, descriptor: citrine.informatics.descriptors.MolecularStructureDescriptor, features: List[str] = ['standard'], excludes: List[str] = [], session: Optional[citrine._session.Session] = None, report: Optional[citrine.informatics.reports.Report] = None, active: bool = True</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.predictors.MolecularStructureFeaturizer" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.predictors.</code><code class="sig-name descname">MolecularStructureFeaturizer</code><span class="sig-paren">(</span><em class="sig-param">name: str</em>, <em class="sig-param">description: str</em>, <em class="sig-param">descriptor: citrine.informatics.descriptors.MolecularStructureDescriptor</em>, <em class="sig-param">features: List[str] = ('standard'</em>, <em class="sig-param">)</em>, <em class="sig-param">excludes: List[str] = ()</em>, <em class="sig-param">session: Optional[citrine._session.Session] = None</em>, <em class="sig-param">report: Optional[citrine.informatics.reports.Report] = None</em>, <em class="sig-param">active: bool = True</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.predictors.MolecularStructureFeaturizer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.informatics.predictors.Predictor" title="citrine.informatics.predictors.Predictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.predictors.Predictor</span></code></a></p>
 <p>[ALPHA] A “batteries-included” featurizer for organic molecules. Powered by CDK.</p>
 <dl class="field-list simple">
@@ -393,12 +468,6 @@ of outputs generated by the predictor is set(features) - set(excludes).</p></li>
 <code class="sig-name descname">name</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.MolecularStructureFeaturizer.name" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="method">
-<dt id="citrine.informatics.predictors.MolecularStructureFeaturizer.post_build">
-<code class="sig-name descname">post_build</code><span class="sig-paren">(</span><em class="sig-param">project_id: uuid.UUID</em>, <em class="sig-param">data: dict</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.predictors.MolecularStructureFeaturizer.post_build" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates the predictor report object.</p>
-</dd></dl>
-
 <dl class="attribute">
 <dt id="citrine.informatics.predictors.MolecularStructureFeaturizer.schema_id">
 <code class="sig-name descname">schema_id</code><em class="property"> = UUID('24183b2f-848c-46fa-8640-21b7743e38a3')</em><a class="headerlink" href="#citrine.informatics.predictors.MolecularStructureFeaturizer.schema_id" title="Permalink to this definition">¶</a></dt>
@@ -422,6 +491,268 @@ of outputs generated by the predictor is set(features) - set(excludes).</p></li>
 <dl class="attribute">
 <dt id="citrine.informatics.predictors.MolecularStructureFeaturizer.uid">
 <code class="sig-name descname">uid</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.MolecularStructureFeaturizer.uid" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="citrine.informatics.predictors.GeneralizedMeanPropertyPredictor">
+<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.predictors.</code><code class="sig-name descname">GeneralizedMeanPropertyPredictor</code><span class="sig-paren">(</span><em class="sig-param">name: str, description: str, input_descriptor: citrine.informatics.descriptors.FormulationDescriptor, properties: List[str], p: float, training_data: citrine.informatics.data_sources.DataSource, impute_properties: bool, default_properties: Optional[Dict[str, float]] = None, label: Optional[str] = None, session: Optional[citrine._session.Session] = None, report: Optional[citrine.informatics.reports.Report] = None, active: bool = True</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.predictors.GeneralizedMeanPropertyPredictor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.informatics.predictors.Predictor" title="citrine.informatics.predictors.Predictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.predictors.Predictor</span></code></a></p>
+<p>[ALPHA] A predictor interface that computes generalized mean component properties.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – name of the configuration</p></li>
+<li><p><strong>description</strong> (<em>str</em>) – description of the predictor</p></li>
+<li><p><strong>input_descriptor</strong> (<a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.FormulationDescriptor" title="citrine.informatics.descriptors.FormulationDescriptor"><em>FormulationDescriptor</em></a>) – descriptor that represents the input formulation</p></li>
+<li><p><strong>properties</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – List of component properties to featurize</p></li>
+<li><p><strong>p</strong> (<em>float</em>) – Power of the generalized mean</p></li>
+<li><p><strong>impute_properties</strong> (<em>bool</em>) – Whether to impute missing ingredient properties.
+If <code class="docutils literal notranslate"><span class="pre">False</span></code> an error is thrown when a missing ingredient property is encountered.
+If <code class="docutils literal notranslate"><span class="pre">True</span></code> and no <code class="docutils literal notranslate"><span class="pre">default_properties</span></code> are specified, then the average over the
+entire dataset is used.
+If <code class="docutils literal notranslate"><span class="pre">True</span></code> and a default is specified in <code class="docutils literal notranslate"><span class="pre">default_properties</span></code>, then the specified
+default is used in place of missing values.</p></li>
+<li><p><strong>training_data</strong> (<a class="reference internal" href="citrine.informatics.data_sources.html#citrine.informatics.data_sources.DataSource" title="citrine.informatics.data_sources.DataSource"><em>DataSource</em></a>) – Source of the training data, which can be either a CSV or an Ara table</p></li>
+<li><p><strong>label</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Optional label</p></li>
+<li><p><strong>default_properties</strong> (<em>Optional</em><em>[</em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>float</em><em>]</em><em>]</em>) – Default values to use for imputed properties.
+Defaults are specified as a map from descriptor key to its default value.
+If not specified and <code class="docutils literal notranslate"><span class="pre">impute_properties</span> <span class="pre">==</span> <span class="pre">True</span></code> the average over the entire dataset
+will be used to fill in missing values. Any specified defaults will be used in place of
+the average over the dataset. <code class="docutils literal notranslate"><span class="pre">impute_properties</span></code> must be <code class="docutils literal notranslate"><span class="pre">True</span></code> if
+<code class="docutils literal notranslate"><span class="pre">default_properties</span></code> are provided.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.GeneralizedMeanPropertyPredictor.active">
+<code class="sig-name descname">active</code><em class="property"> = True</em><a class="headerlink" href="#citrine.informatics.predictors.GeneralizedMeanPropertyPredictor.active" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.GeneralizedMeanPropertyPredictor.default_properties">
+<code class="sig-name descname">default_properties</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.GeneralizedMeanPropertyPredictor.default_properties" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.GeneralizedMeanPropertyPredictor.description">
+<code class="sig-name descname">description</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.GeneralizedMeanPropertyPredictor.description" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.GeneralizedMeanPropertyPredictor.impute_properties">
+<code class="sig-name descname">impute_properties</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.GeneralizedMeanPropertyPredictor.impute_properties" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.GeneralizedMeanPropertyPredictor.input_descriptor">
+<code class="sig-name descname">input_descriptor</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.GeneralizedMeanPropertyPredictor.input_descriptor" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.GeneralizedMeanPropertyPredictor.label">
+<code class="sig-name descname">label</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.GeneralizedMeanPropertyPredictor.label" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.GeneralizedMeanPropertyPredictor.module_type">
+<code class="sig-name descname">module_type</code><em class="property"> = 'PREDICTOR'</em><a class="headerlink" href="#citrine.informatics.predictors.GeneralizedMeanPropertyPredictor.module_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.GeneralizedMeanPropertyPredictor.name">
+<code class="sig-name descname">name</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.GeneralizedMeanPropertyPredictor.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.GeneralizedMeanPropertyPredictor.p">
+<code class="sig-name descname">p</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.GeneralizedMeanPropertyPredictor.p" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.GeneralizedMeanPropertyPredictor.properties">
+<code class="sig-name descname">properties</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.GeneralizedMeanPropertyPredictor.properties" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.GeneralizedMeanPropertyPredictor.schema_id">
+<code class="sig-name descname">schema_id</code><em class="property"> = UUID('29e53222-3217-4f81-b3b8-4197a8211ade')</em><a class="headerlink" href="#citrine.informatics.predictors.GeneralizedMeanPropertyPredictor.schema_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.GeneralizedMeanPropertyPredictor.status">
+<code class="sig-name descname">status</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.GeneralizedMeanPropertyPredictor.status" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.GeneralizedMeanPropertyPredictor.status_info">
+<code class="sig-name descname">status_info</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.GeneralizedMeanPropertyPredictor.status_info" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.GeneralizedMeanPropertyPredictor.training_data">
+<code class="sig-name descname">training_data</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.GeneralizedMeanPropertyPredictor.training_data" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.GeneralizedMeanPropertyPredictor.typ">
+<code class="sig-name descname">typ</code><em class="property"> = 'GeneralizedMeanProperty'</em><a class="headerlink" href="#citrine.informatics.predictors.GeneralizedMeanPropertyPredictor.typ" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.GeneralizedMeanPropertyPredictor.uid">
+<code class="sig-name descname">uid</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.GeneralizedMeanPropertyPredictor.uid" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="citrine.informatics.predictors.LabelFractionsPredictor">
+<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.predictors.</code><code class="sig-name descname">LabelFractionsPredictor</code><span class="sig-paren">(</span><em class="sig-param">name: str, description: str, input_descriptor: citrine.informatics.descriptors.FormulationDescriptor, labels: List[str], session: Optional[citrine._session.Session] = None, report: Optional[citrine.informatics.reports.Report] = None, active: bool = True</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.predictors.LabelFractionsPredictor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.informatics.predictors.Predictor" title="citrine.informatics.predictors.Predictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.predictors.Predictor</span></code></a></p>
+<p>[ALPHA] A predictor interface that computes the relative proportions of labeled ingredients.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – name of the configuration</p></li>
+<li><p><strong>description</strong> (<em>str</em>) – description of the predictor</p></li>
+<li><p><strong>input_descriptor</strong> (<a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.FormulationDescriptor" title="citrine.informatics.descriptors.FormulationDescriptor"><em>FormulationDescriptor</em></a>) – descriptor that contains formulation data</p></li>
+<li><p><strong>labels</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – labels to compute the quantity fractions of</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.LabelFractionsPredictor.active">
+<code class="sig-name descname">active</code><em class="property"> = True</em><a class="headerlink" href="#citrine.informatics.predictors.LabelFractionsPredictor.active" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.LabelFractionsPredictor.description">
+<code class="sig-name descname">description</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.LabelFractionsPredictor.description" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.LabelFractionsPredictor.input_descriptor">
+<code class="sig-name descname">input_descriptor</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.LabelFractionsPredictor.input_descriptor" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.LabelFractionsPredictor.labels">
+<code class="sig-name descname">labels</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.LabelFractionsPredictor.labels" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.LabelFractionsPredictor.module_type">
+<code class="sig-name descname">module_type</code><em class="property"> = 'PREDICTOR'</em><a class="headerlink" href="#citrine.informatics.predictors.LabelFractionsPredictor.module_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.LabelFractionsPredictor.name">
+<code class="sig-name descname">name</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.LabelFractionsPredictor.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.LabelFractionsPredictor.schema_id">
+<code class="sig-name descname">schema_id</code><em class="property"> = UUID('997a7e11-2c16-4e30-b531-9e657a863019')</em><a class="headerlink" href="#citrine.informatics.predictors.LabelFractionsPredictor.schema_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.LabelFractionsPredictor.status">
+<code class="sig-name descname">status</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.LabelFractionsPredictor.status" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.LabelFractionsPredictor.status_info">
+<code class="sig-name descname">status_info</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.LabelFractionsPredictor.status_info" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.LabelFractionsPredictor.typ">
+<code class="sig-name descname">typ</code><em class="property"> = 'LabelFractions'</em><a class="headerlink" href="#citrine.informatics.predictors.LabelFractionsPredictor.typ" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.LabelFractionsPredictor.uid">
+<code class="sig-name descname">uid</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.LabelFractionsPredictor.uid" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="citrine.informatics.predictors.SimpleMixturePredictor">
+<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.predictors.</code><code class="sig-name descname">SimpleMixturePredictor</code><span class="sig-paren">(</span><em class="sig-param">name: str</em>, <em class="sig-param">description: str</em>, <em class="sig-param">input_descriptor: citrine.informatics.descriptors.FormulationDescriptor</em>, <em class="sig-param">output_descriptor: citrine.informatics.descriptors.FormulationDescriptor</em>, <em class="sig-param">training_data: citrine.informatics.data_sources.DataSource</em>, <em class="sig-param">session: Optional[citrine._session.Session] = None</em>, <em class="sig-param">report: Optional[citrine.informatics.reports.Report] = None</em>, <em class="sig-param">active: bool = True</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.predictors.SimpleMixturePredictor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.informatics.predictors.Predictor" title="citrine.informatics.predictors.Predictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.predictors.Predictor</span></code></a></p>
+<p>[ALPHA] A predictor interface that builds a simple graphical model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – name of the configuration</p></li>
+<li><p><strong>description</strong> (<em>str</em>) – description of the predictor</p></li>
+<li><p><strong>input_descriptor</strong> (<a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.FormulationDescriptor" title="citrine.informatics.descriptors.FormulationDescriptor"><em>FormulationDescriptor</em></a>) – input descriptor for the hierarchical (un-mixed) formulation</p></li>
+<li><p><strong>output_descriptor</strong> (<a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.FormulationDescriptor" title="citrine.informatics.descriptors.FormulationDescriptor"><em>FormulationDescriptor</em></a>) – output descriptor for the flat (mixed) formulation</p></li>
+<li><p><strong>training_data</strong> (<a class="reference internal" href="citrine.informatics.data_sources.html#citrine.informatics.data_sources.DataSource" title="citrine.informatics.data_sources.DataSource"><em>DataSource</em></a>) – Source of the training data, which can be either a CSV or an Ara table</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.SimpleMixturePredictor.active">
+<code class="sig-name descname">active</code><em class="property"> = True</em><a class="headerlink" href="#citrine.informatics.predictors.SimpleMixturePredictor.active" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.SimpleMixturePredictor.description">
+<code class="sig-name descname">description</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.SimpleMixturePredictor.description" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.SimpleMixturePredictor.input_descriptor">
+<code class="sig-name descname">input_descriptor</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.SimpleMixturePredictor.input_descriptor" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.SimpleMixturePredictor.module_type">
+<code class="sig-name descname">module_type</code><em class="property"> = 'PREDICTOR'</em><a class="headerlink" href="#citrine.informatics.predictors.SimpleMixturePredictor.module_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.SimpleMixturePredictor.name">
+<code class="sig-name descname">name</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.SimpleMixturePredictor.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.SimpleMixturePredictor.output_descriptor">
+<code class="sig-name descname">output_descriptor</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.SimpleMixturePredictor.output_descriptor" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.SimpleMixturePredictor.schema_id">
+<code class="sig-name descname">schema_id</code><em class="property"> = UUID('e82a993c-e6ab-46a2-b636-c71d0ba224d1')</em><a class="headerlink" href="#citrine.informatics.predictors.SimpleMixturePredictor.schema_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.SimpleMixturePredictor.status">
+<code class="sig-name descname">status</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.SimpleMixturePredictor.status" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.SimpleMixturePredictor.status_info">
+<code class="sig-name descname">status_info</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.SimpleMixturePredictor.status_info" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.SimpleMixturePredictor.training_data">
+<code class="sig-name descname">training_data</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.SimpleMixturePredictor.training_data" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.SimpleMixturePredictor.typ">
+<code class="sig-name descname">typ</code><em class="property"> = 'SimpleMixture'</em><a class="headerlink" href="#citrine.informatics.predictors.SimpleMixturePredictor.typ" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.SimpleMixturePredictor.uid">
+<code class="sig-name descname">uid</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.SimpleMixturePredictor.uid" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>

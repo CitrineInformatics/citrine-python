@@ -12,6 +12,7 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="shortcut icon" href="../_static/favicon.png"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -84,6 +85,105 @@ Columns in the CSV that are not mapped with a descriptor are ignored.</p>
     <span class="n">outputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">data_source</span><span class="o">.</span><span class="n">column_definitions</span><span class="p">[</span><span class="s2">&quot;Gap&quot;</span><span class="p">]],</span>
     <span class="n">latent_variables</span> <span class="o">=</span> <span class="p">[],</span>
     <span class="n">training_data</span> <span class="o">=</span> <span class="n">data_source</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>An optional list of identifiers can be specified.
+Identifiers uniquely identify a row and are used in the context of simple mixtures to link from an ingredient to the its properties.
+Each identifier must correspond to a column header name.
+No two rows within this column can contain the same value.
+If a column should be parsed as data and used as an identifier, identifier columns may overlap with the keys defined in the mapping from column header names to descriptors.</p>
+<p>Identifiers are required in two circumstances.
+These circumstances are only relevant if CSV data source represents simple mixture data.</p>
+<ol class="arabic simple">
+<li><p>Ingredient properties are featurized using a <a class="reference internal" href="../reference/citrine.informatics.predictors.html#citrine.informatics.predictors.GeneralizedMeanPropertyPredictor" title="citrine.informatics.predictors.GeneralizedMeanPropertyPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">GeneralizedMeanPropertyPredictor</span></code></a>.
+In this case, the link from identifier to row is used to compute mean ingredient property values.</p></li>
+<li><p>Simple mixtures that contain mixtures are simplified to recipes that contain only leaf ingredients using a <a class="reference internal" href="../reference/citrine.informatics.predictors.html#citrine.informatics.predictors.SimpleMixturePredictor" title="citrine.informatics.predictors.SimpleMixturePredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleMixturePredictor</span></code></a>.
+In this case, links from each mixture’s ingredients to its row (which may also be a mixture) are used to recursively crawl hierarchical blends of blends and construct a recipe that contains only leaf ingredients.</p></li>
+</ol>
+<p>Note: to build a formulation from a CSV data source an <a class="reference internal" href="../reference/citrine.informatics.predictors.html#citrine.informatics.predictors.IngredientsToSimpleMixturePredictor" title="citrine.informatics.predictors.IngredientsToSimpleMixturePredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientsToSimpleMixturePredictor</span></code></a> must be present in the workflow.
+Additionally, each ingredient id used as a key in the predictor’s map from ingredient id to its quantity must exist in an identifier column.</p>
+<p>As an example, consider the following saline solution data.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 32%" />
+<col style="width: 27%" />
+<col style="width: 25%" />
+<col style="width: 15%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Ingredient id</p></th>
+<th class="head"><p>water quantity</p></th>
+<th class="head"><p>salt quantity</p></th>
+<th class="head"><p>density</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>hypertonic saline</p></td>
+<td><p>0.93</p></td>
+<td><p>0.07</p></td>
+<td><p>1.08</p></td>
+</tr>
+<tr class="row-odd"><td><p>isotonic saline</p></td>
+<td><p>0.99</p></td>
+<td><p>0.01</p></td>
+<td><p>1.01</p></td>
+</tr>
+<tr class="row-even"><td><p>water</p></td>
+<td></td>
+<td></td>
+<td><p>1.0</p></td>
+</tr>
+<tr class="row-odd"><td><p>salt</p></td>
+<td></td>
+<td></td>
+<td><p>2.16</p></td>
+</tr>
+</tbody>
+</table>
+<p>Hypertonic and isotonic saline are mixtures formed by mixing water and salt.
+Ingredient identifiers are given by the first column.
+A CSV data source and <a class="reference internal" href="../reference/citrine.informatics.predictors.html#citrine.informatics.predictors.IngredientsToSimpleMixturePredictor" title="citrine.informatics.predictors.IngredientsToSimpleMixturePredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientsToSimpleMixturePredictor</span></code></a> can be configured to construct simple mixtures from this data via the following:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.informatics.data_sources</span> <span class="kn">import</span> <span class="n">CSVDataSource</span>
+<span class="kn">from</span> <span class="nn">citrine.informatics.descriptors</span> <span class="kn">import</span> <span class="n">FormulationDescriptor</span><span class="p">,</span> <span class="n">RealDescriptor</span>
+<span class="kn">from</span> <span class="nn">citrine.informatics.predictors</span> <span class="kn">import</span> <span class="n">IngredientsToSimpleMixturePredictor</span>
+
+<span class="n">file_link</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">upload</span><span class="p">(</span><span class="s2">&quot;./saline_solutions.csv&quot;</span><span class="p">,</span> <span class="s2">&quot;saline_solutions.csv&quot;</span><span class="p">)</span>
+
+<span class="c1"># create descriptors for each ingredient quantity</span>
+<span class="n">water_quantity</span> <span class="o">=</span> <span class="n">RealDescriptor</span><span class="p">(</span><span class="s1">&#39;water quantity&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">salt_quantity</span> <span class="o">=</span> <span class="n">RealDescriptor</span><span class="p">(</span><span class="s1">&#39;salt quantity&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># create a descriptor to hold density data</span>
+<span class="n">density</span> <span class="o">=</span> <span class="n">RealDescriptor</span><span class="p">(</span><span class="s1">&#39;density&#39;</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;g/cc&#39;</span><span class="p">)</span>
+
+<span class="n">data_source</span> <span class="o">=</span> <span class="n">CsvDataSource</span><span class="p">(</span>
+    <span class="n">file_link</span> <span class="o">=</span> <span class="n">file_link</span><span class="p">,</span>
+    <span class="n">column_definitions</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;water quantity&#39;</span><span class="p">:</span> <span class="n">water_quantity</span><span class="p">,</span>
+        <span class="s1">&#39;salt quantity&#39;</span><span class="p">:</span> <span class="n">salt_quantity</span><span class="p">,</span>
+        <span class="s1">&#39;density&#39;</span><span class="p">:</span> <span class="n">density</span>
+    <span class="p">},</span>
+    <span class="n">identifiers</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Ingredient id&#39;</span><span class="p">]</span>
+<span class="p">)</span>
+
+<span class="c1"># create a descriptor to hold simple mixtures</span>
+<span class="n">formulation</span> <span class="o">=</span> <span class="n">FormulationDescriptor</span><span class="p">(</span><span class="s1">&#39;simple mixture&#39;</span><span class="p">)</span>
+
+<span class="n">IngredientsToSimpleMixturePredictor</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Ingredients to simple mixture predictor&#39;</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Constructs a mixture from ingredient quantities&#39;</span><span class="p">,</span>
+    <span class="n">output</span><span class="o">=</span><span class="n">formulation</span><span class="p">,</span>
+    <span class="c1"># map from ingredient id to its quantity</span>
+    <span class="n">id_to_quantity</span><span class="o">=</span><span class="p">{</span>
+        <span class="s1">&#39;water&#39;</span><span class="p">:</span> <span class="n">water_quantity</span><span class="p">,</span>
+        <span class="s1">&#39;salt&#39;</span><span class="p">:</span> <span class="n">salt_quantity</span>
+    <span class="p">},</span>
+    <span class="c1"># label water as a solvent and salt a solute</span>
+    <span class="n">labels</span><span class="o">=</span><span class="p">{</span>
+        <span class="s1">&#39;solvent&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;water&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;solute&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;salt&#39;</span><span class="p">]</span>
+    <span class="p">}</span>
 <span class="p">)</span>
 </pre></div>
 </div>

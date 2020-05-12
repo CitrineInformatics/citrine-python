@@ -12,6 +12,7 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="shortcut icon" href="../_static/favicon.png"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -67,7 +68,7 @@
 
 <dl class="class">
 <dt id="citrine.informatics.data_sources.CSVDataSource">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.data_sources.</code><code class="sig-name descname">CSVDataSource</code><span class="sig-paren">(</span><em class="sig-param">file_link: citrine.resources.file_link.FileLink, column_definitions: Mapping[str, citrine.informatics.descriptors.Descriptor]</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.data_sources.CSVDataSource" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.data_sources.</code><code class="sig-name descname">CSVDataSource</code><span class="sig-paren">(</span><em class="sig-param">file_link: citrine.resources.file_link.FileLink, column_definitions: Mapping[str, citrine.informatics.descriptors.Descriptor], identifiers: Optional[List[str]] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.data_sources.CSVDataSource" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.informatics.data_sources.DataSource" title="citrine.informatics.data_sources.DataSource"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.data_sources.DataSource</span></code></a></p>
 <p>[ALPHA] A data source based on a CSV file stored on the data platform.</p>
 <dl class="field-list simple">
@@ -75,6 +76,10 @@
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>file_link</strong> (<a class="reference internal" href="citrine.resources.file_link.html#citrine.resources.file_link.FileLink" title="citrine.resources.file_link.FileLink"><em>FileLink</em></a>) – link to the CSV file to read the data from</p></li>
 <li><p><strong>column_definitions</strong> (<em>Mapping</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.Descriptor" title="citrine.informatics.descriptors.Descriptor"><em>Descriptor</em></a><em>]</em>) – Map the column headers to the descriptors that will be used to interpret the cell contents</p></li>
+<li><p><strong>identifiers</strong> (<em>Optional</em><em>[</em><em>List</em><em>[</em><em>str</em><em>]</em><em>]</em>) – List of one or more column headers whose values uniquely identify a row. These may overlap
+with <code class="docutils literal notranslate"><span class="pre">column_definitions</span></code> if a column should be used as data and as an identifier,
+but this is not necessary. Identifiers must be unique within a dataset. No two rows can
+contain the same value.</p></li>
 </ul>
 </dd>
 </dl>
@@ -86,6 +91,11 @@
 <dl class="attribute">
 <dt id="citrine.informatics.data_sources.CSVDataSource.file_link">
 <code class="sig-name descname">file_link</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.data_sources.CSVDataSource.file_link" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.data_sources.CSVDataSource.identifiers">
+<code class="sig-name descname">identifiers</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.data_sources.CSVDataSource.identifiers" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">

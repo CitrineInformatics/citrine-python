@@ -104,12 +104,15 @@ If an alias isn't defined, the expression argument is expected to match the desc
 
 The syntax is described in the `mXparser documentation <http://mathparser.org/mxparser-math-collection>`_.
 Citrine-python currently supports the following operators and functions:
+
 - basic operators: addition `+`, subtraction `-`, multiplication `*`, division `/`, exponentiation `^`
 - built-in math functions:
+
   - trigonometric: `sin`, `cos`, `tan`, `asin`, `acos`, `atan`
   - hyperbolic: `sinh`, `cosh`, `tanh`
   - logarithm: `log10`, `ln`
   - exponential: `exp`
+
 - constants: `pi`, `e`
 
 The following example demonstrates how to create an :class:`~citrine.informatics.predictors.ExpressionPredictor`.
@@ -134,8 +137,218 @@ The following example demonstrates how to create an :class:`~citrine.informatics
    # register predictor
    predictor = project.predictors.register(shear_modulus_predictor)
 
+Ingredients to simple mixture predictor
+---------------------------------------
+
+The :class:`~citrine.informatics.predictors.IngredientsToSimpleMixturePredictor` constructs a simple mixture from a list of ingredients.
+Ingredients are specified by a map from ingredient id to the descriptor that contains the ingredient's quantity.
+For example, ``{'water': RealDescriptor('water quantity', 0, 1}`` defines an ingredient ``water`` with quantity held by the descriptor ``water quantity``.
+There must be a corresponding (id, quantity) pair in the map for all possible ingredients.
+If a material does not contain data for a given quantity descriptor key it is assumed that ingredient is not present in the mixture.
+
+Let's add another ingredient ``salt`` to our map and say we are given data in the form:
+
++-------------------+----------------+---------------+----------------+
+| Ingredient id     | water quantity | salt quantity | density (g/cc) |
++===================+================+===============+================+
+| hypertonic saline | 0.93           | 0.07          | 1.08           |
++-------------------+----------------+---------------+----------------+
+| isotonic saline   | 0.99           | 0.01          | 1.01           |
++-------------------+----------------+---------------+----------------+
+| water             |                |               | 1.0            |
++-------------------+----------------+---------------+----------------+
+| salt              |                |               | 2.16           |
++-------------------+----------------+---------------+----------------+
+
+There are two mixtures, hypertonic and isotonic saline formed by mixing water and salt together in different amounts.
+(Note, water and salt are leaf ingredients; and, hence these rows do not contain quantity data.)
+Mixtures are defined by a map from ingredient id to quantity, so this predictor would form 2 mixtures with recipes:
+
+.. code:: python
+
+    # hypertonic saline
+    {'water': 0.93, 'salt': 0.07}
+
+    # isotonic saline
+    {'water': 0.99, 'salt': 0.01}
+
+Ingredients may be given 0 or more labels.
+Labels provide a way to group or distinguish one or more ingredients and can be used to featurize mixtures (discussed in the next section).
+The same label may be given to multiple ingredients, and a single ingredient may be given multiple labels.
+Labels are specified using a map from each label to a list of all ingredients that should be given that label.
+Anytime a recipe contains a non-zero amount of labeled ingredient, the ingredient is assigned the label.
+For example, we may wish to label ``water`` as a solute and ``salt`` as a solvent.
+These labels are specified via:
+
+.. code:: python
+
+    labels = {'solvent': ['water'], 'solute': ['salt']}
+
+The following example illustrates how an :class:`~citrine.informatics.predictors.IngredientsToSimpleMixturePredictor` is constructed for the saline example.
+
+.. code:: python
+
+    from citrine.informatics.descriptors import FormulationDescriptor, RealDescriptor
+    from citrine.informatics.predictors import IngredientsToSimpleMixturePredictor
+
+    # create a descriptor to hold simple mixtures
+    formulation = FormulationDescriptor('simple mixture')
+
+    # create descriptors for each ingredient quantity
+    water_quantity = RealDescriptor('water quantity', 0, 1)
+    salt_quantity = RealDescriptor('salt quantity', 0, 1)
+
+    IngredientsToSimpleMixturePredictor(
+        name='Ingredients to simple mixture predictor',
+        description='Constructs a mixture from ingredient quantities',
+        output=formulation,
+        # map from ingredient id to its quantity
+        id_to_quantity={
+            'water': water_quantity,
+            'salt': salt_quantity
+        },
+        # label water as a solvent and salt a solute
+        labels={
+            'solvent': ['water'],
+            'solute': ['salt']
+        }
+    )
+
+Simple mixture predictor
+---------------------------------------
+
+Simple mixtures may contain ingredients that are blends of other simple mixtures.
+Along the lines of the example above, hypertonic saline can be mixed with water to form isotonic saline.
+Often, the properties of a hierarchical mixture are strongly associated with its leaf ingredients.
+The :class:`~citrine.informatics.predictors.SimpleMixturePredictor` flattens a hierarchical recipe into a recipe that contains only those leaf ingredients.
+
+The formulation to be flattened is specified by an ``input`` formulation descriptor; the associated material history of the input formulation is traversed to determine the leaf ingredients.
+These leaf ingredients are then summed across all leaves of the mixing processes, with the resulting candidates described by an ``output`` formulation descriptor.
+
+The following example illustrates how a :class:`~citrine.informatics.predictors.SimpleMixturePredictor` can be used to flatten the ingredients used in aqueous dilutions of hypertonic saline, yielding just the quantities of the leaf constituents salt and water.
+
+.. code:: python
+
+    from citrine.informatics.descriptors import FormulationDescriptor
+    from citrine.informatics.predictors import SimpleMixturePredictor
+
+    input_formulation = FormulationDescriptor('diluted saline')
+    output_formulation = FormulationDescriptor('diluted saline (flattened)')
+
+    SimpleMixturePredictor(
+        name='Simple mixture predictor',
+        description='Constructs a formulation descriptor that flattens a hierarchy of simple mixtures into the quantities of leaf ingredients',
+        input=input_formulation,
+        output=output_formulation,
+    )
+
+Generalized mean property predictor
+-----------------------------------
+
+Often, properties of a mixture are proportional to the properties of it's ingredients.
+For example, the density of a saline solution can be computed from the densities of water and salt multiplied by their respective amounts:
+
+.. math::
+
+    d_{saline} = d_{water} * f_{water} + d_{salt} * f_{salt}
+
+where :math:`d` is density and :math:`f` is relative ingredient fraction.
+If the densities of water and salt are known, we can compute the expected density of a candidate mixture using this predictor.
+
+The :class:`~citrine.informatics.predictors.GeneralizedMeanPropertyPredictor` computes mean properties of simple mixture ingredients.
+To configure a mean property predictor, we must specify:
+
+- an input descriptor that holds the mixture's recipe and ingredient labels
+- a list of properties to featurize
+- the power of the `generalized mean <https://en.wikipedia.org/wiki/Generalized_mean>`_
+  (A power of 1 is equivalent to the arithmetic mean, and a power 2 is equivalent to the root mean square.)
+- a data source that contains all ingredients and their properties
+- how to handle missing ingredient properties
+
+An optional label may also be specified if the mean should only be computed over ingredients given a specific label.
+
+Missing ingredient properties can be handled one of three ways:
+
+1. If ``impute_properties == False``, an error will be thrown if an ingredient is missing a featurized property.
+   Use this option if you expect ingredient properties to be dense (always present) and would like to be notified when properties are missing.
+2. If ``impute_properties == True`` and no ``default_properties`` are specified, missing properties will be filled in using the average value across the entire dataset.
+   The average is computed from any row with data corresponding to the missing property, regardless of label or material type (i.e. the average is computed from all leaf ingredients and mixtures).
+3. If ``impute_properties == True`` and ``default_properties`` are specified, the specified property value will be used when an ingredient property is missing (instead of the average over the dataset).
+   This allows complete control over what values are imputed.
+   Default properties cannot be specified if ``impute_properties == False`` (because missing properties are not filled in).
+
+For example, say we add boric acid (a common antiseptic) as a possible ingredient to a saline solution but do not know its density.
+Our leaf ingredient data might resemble:
+
++---------------+----------------+
+| Ingredient id | Density (g/cc) |
++===============+================+
+| water         | 1.0            |
++---------------+----------------+
+| salt          | 2.16           |
++---------------+----------------+
+| boric acid    | N/A            |
++---------------+----------------+
+
+If ``impute_properties == False``, an error will be thrown every time a mixture that includes boric acid is encountered.
+If ``impute_properties == True`` and no ``default_properties`` are specified, an density of :math:`\left( 1.0 + 2.16 \right) / 2 = 1.58` will be used.
+If a value other than 1.58 should be used, e.g. 2.0, this can be specified by setting ``default_properties = {'density': 2.0}``.
+
+The example below show how to configure a mean property predictor to compute mean solute density in simple mixtures.
+
+.. code:: python
+
+    from citrine.informatics.data_sources import AraTableDataSource
+    from citrine.informatics.descriptors import FormulationDescriptor
+    from citrine.informatics.predictors import GeneralizedMeanPropertyPredictor
+
+    # descriptor that holds simple mixture data
+    formulation = FormulationDescriptor('simple mixture')
+
+    # table with simple mixtures and their ingredients
+    data_source = AraTableDataSource(table_uid, 0)
+
+    GeneralizedMeanPropertyPredictor(
+        name='Mean property predictor',
+        description='Computes 1-mean ingredient properties',
+        input_descriptor=formulation,
+        # featurize ingredient density
+        properties=['density'],
+        # compute the 1-mean
+        p=1,
+        training_data=data_source,
+        # impute ingredient properties, if missing
+        impute_properties=True,
+        # if missing, use with 2.0
+        default_properties={'density': 2.0},
+        # only featurize ingredients labeled as a solute
+        label='solute'
+    )
+
+Label fractions predictor
+-------------------------
+
+The :class:`~citrine.informatics.predictors.LabelFractionsPredictor` computes total fraction of ingredients with a given label.
+The predictor is configured by specifying a formulation descriptor that holds simple mixture data (i.e. recipes and ingredient labels) and a list of labels to featurize.
+A separate response is computed for each featurized label by summing all quantities in the recipe associated with ingredients given the label.
+
+The following example demonstrates how to create a predictor that computes the total fractions of solute and solvent in a simple mixture.
+
+.. code:: python
+
+    from citrine.informatics.descriptors import FormulationDescriptor
+    # descriptor that holds simple mixture data
+    formulation = FormulationDescriptor('simple mixture')
+
+    label_fractions = LabelFractionsPredictor(
+        name='Saline solution label fractions',
+        description='Computes total fraction of solute and solvent',
+        input_descriptor=formulation,
+        labels=['solute', 'solvent']
+    )
+
 Predictor Reports
---------------------
+-----------------
 
 A :doc:`predictor report <predictor_reports>` describes a machine-learned model, for example its settings and what features are important to the model. 
 It does not include performance metrics. To learn more about performance metrics, please see :doc:`PerformanceWorkflows <performance_workflows>`.
