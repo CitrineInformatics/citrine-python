@@ -273,10 +273,6 @@ class ExpressionPredictor(Serializable['ExpressionPredictor'], Predictor):
     def __str__(self):
         return '<ExpressionPredictor {!r}>'.format(self.name)
 
-    def post_build(self, project_id: UUID, data: dict):
-        """Creates the predictor report object."""
-        self.report = ReportResource(project_id, self.session).get(data['id'])
-
 
 class MolecularStructureFeaturizer(Serializable['MolecularStructureFeaturizer'], Predictor):
     """
@@ -385,10 +381,6 @@ class MolecularStructureFeaturizer(Serializable['MolecularStructureFeaturizer'],
     def __str__(self):
         return '<MolecularStructureFeaturizer {!r}>'.format(self.name)
 
-    def post_build(self, project_id: UUID, data: dict):
-        """Creates the predictor report object."""
-        self.report = ReportResource(project_id, self.session).get(data['id'])
-
 
 class IngredientsToSimpleMixturePredictor(
         Serializable['IngredientsToSimpleMixturePredictor'], Predictor):
@@ -457,10 +449,6 @@ class IngredientsToSimpleMixturePredictor(
 
     def __str__(self):
         return '<IngredientsToSimpleMixturePredictor {!r}>'.format(self.name)
-
-    def post_build(self, project_id: UUID, data: dict):
-        """Creates the predictor report object."""
-        self.report = ReportResource(project_id, self.session).get(data['id'])
 
 
 class GeneralizedMeanPropertyPredictor(
@@ -558,10 +546,6 @@ class GeneralizedMeanPropertyPredictor(
     def __str__(self):
         return '<GeneralizedMeanPropertyPredictor {!r}>'.format(self.name)
 
-    def post_build(self, project_id: UUID, data: dict):
-        """Creates the predictor report object."""
-        self.report = ReportResource(project_id, self.session).get(data['id'])
-
 
 class SimpleMixturePredictor(Serializable['SimpleMixturePredictor'], Predictor):
     """
@@ -624,7 +608,3 @@ class SimpleMixturePredictor(Serializable['SimpleMixturePredictor'], Predictor):
 
     def __str__(self):
         return '<SimpleMixturePredictor {!r}>'.format(self.name)
-
-    def post_build(self, project_id: UUID, data: dict):
-        """Creates the predictor report object."""
-        self.report = ReportResource(project_id, self.session).get(data['id'])
