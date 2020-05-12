@@ -20,6 +20,17 @@ class CompositionSortOrder(BaseEnumeration):
     QUANTITY = "quantity"
 
 
+class ChemicalDisplayFormat(BaseEnumeration):
+    """[ALPHA] Format to use when rendering a molecular structure.
+
+    * SMILES Simplified molecular-input line-entry system
+    * INCHI International Chemical Identifier
+    """
+
+    SMILES = "smiles"
+    INCHI = "inchi"
+
+
 class Column(PolymorphicSerializable['Column']):
     """[ALPHA] A column in the Ara table, defined as some operation on a variable.
 
@@ -48,7 +59,8 @@ class Column(PolymorphicSerializable['Column']):
             MeanColumn, StdDevColumn, QuantileColumn, OriginalUnitsColumn,
             MostLikelyCategoryColumn, MostLikelyProbabilityColumn,
             FlatCompositionColumn, ComponentQuantityColumn,
-            NthBiggestComponentNameColumn, NthBiggestComponentQuantityColumn
+            NthBiggestComponentNameColumn, NthBiggestComponentQuantityColumn,
+            MolecularStructureColumn
         ]
         res = next((x for x in types if x.typ == data["type"]), None)
         if res is None:
@@ -353,3 +365,27 @@ class IdentityColumn(Serializable['IdentityColumn'], Column):
     def __init__(self, *,
                  data_source: str):
         self.data_source = data_source
+
+
+class MolecularStructureColumn(Serializable['MolecularStructureColumn'], Column):
+    """[ALPHA] Column containing a rendering of a molecular structure value.
+
+    Parameters
+    ----------
+    data_source: str
+        name of the variable to use when populating the column
+    format: ChemicalDisplayFormat
+        the format in which to display the molecular structure
+
+    """
+
+    data_source = properties.String('data_source')
+    format = properties.Enumeration(ChemicalDisplayFormat, 'format')
+    typ = properties.String('type', default="molecular_structure_column", deserializable=False)
+
+    def _attrs(self) -> List[str]:
+        return ["data_source", "format", "typ"]
+
+    def __init__(self, *, data_source: str, format: ChemicalDisplayFormat):
+        self.data_source = data_source
+        self.format = format
