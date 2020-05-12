@@ -1,10 +1,7 @@
 """Tests for citrine.informatics.columns."""
 import pytest
 
-from citrine.ara.columns import MeanColumn, IdentityColumn, Column, StdDevColumn, QuantileColumn, \
-    OriginalUnitsColumn, MostLikelyProbabilityColumn, MostLikelyCategoryColumn, \
-    FlatCompositionColumn, CompositionSortOrder, ComponentQuantityColumn, \
-    NthBiggestComponentNameColumn, NthBiggestComponentQuantityColumn
+from citrine.ara.columns import *
 
 
 @pytest.fixture(params=[
@@ -19,6 +16,7 @@ from citrine.ara.columns import MeanColumn, IdentityColumn, Column, StdDevColumn
     ComponentQuantityColumn(data_source="formula", component_name="Si", normalize=True),
     NthBiggestComponentNameColumn(data_source="formula", n=1),
     NthBiggestComponentQuantityColumn(data_source="formula", n=2),
+    MolecularStructureColumn(data_source="molecule", format=ChemicalDisplayFormat.SMILES)
 ])
 def column(request):
     return request.param

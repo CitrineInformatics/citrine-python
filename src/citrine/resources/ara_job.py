@@ -77,7 +77,7 @@ class JobStatusResponse(Resource['JobStatusResponse']):
         the type of job for this status report
     status: str
         the actual status of the job.
-        One of "Submitted", "Pending", "Running", "Success", or "Failure".
+        One of "Running", "Success", or "Failure".
     tasks: List[TaskNode]
         all of the constituent task required to complete this job
     output: Optional[Map[String,String]]
