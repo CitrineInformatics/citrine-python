@@ -1,7 +1,5 @@
 """Tools for working with Predictors."""
 # flake8: noqa
-from typing import List, Optional, Type, Union
-from abc import abstractmethod
 from typing import Dict, List, Optional, Type, Union
 from uuid import UUID
 
@@ -9,8 +7,8 @@ from citrine._serialization import properties as _properties
 from citrine._serialization.serializable import Serializable
 from citrine._session import Session
 from citrine.informatics.data_sources import DataSource
-from citrine.informatics.descriptors import Descriptor, FormulationDescriptor, RealDescriptor
-from citrine.informatics.descriptors import Descriptor, MolecularStructureDescriptor
+from citrine.informatics.descriptors import Descriptor, FormulationDescriptor, RealDescriptor, \
+    MolecularStructureDescriptor
 from citrine.informatics.reports import Report
 from citrine.resources.report import ReportResource
 from citrine.informatics.modules import Module
@@ -557,9 +555,9 @@ class SimpleMixturePredictor(Serializable['SimpleMixturePredictor'], Predictor):
         name of the configuration
     description: str
         description of the predictor
-    input: str
+    input_descriptor: FormulationDescriptor
         input descriptor for the hierarchical (un-mixed) formulation
-    output:
+    output_descriptor: FormulationDescriptor
         output descriptor for the flat (mixed) formulation
     training_data: DataSource
         Source of the training data, which can be either a CSV or an Ara table
