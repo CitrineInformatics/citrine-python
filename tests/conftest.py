@@ -306,6 +306,7 @@ def valid_enumerated_processor_data():
 @pytest.fixture
 def valid_simple_mixture_predictor_data():
     """Produce valid data used for tests."""
+    from citrine.informatics.data_sources import AraTableDataSource
     from citrine.informatics.descriptors import RealDescriptor
     return dict(
         module_type='PREDICTOR',
@@ -327,5 +328,6 @@ def valid_simple_mixture_predictor_data():
                 type='Formulation',
                 descriptor_key='output formulation',
             ),
+            training_data=AraTableDataSource(uuid.uuid4(), 0).dump(),
         ),
     )

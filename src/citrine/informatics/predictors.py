@@ -464,6 +464,8 @@ class SimpleMixturePredictor(Serializable['SimpleMixturePredictor'], Predictor):
         input descriptor for the hierarchical (un-mixed) formulation
     output:
         output descriptor for the flat (mixed) formulation
+    training_data: DataSource
+        Source of the training data, which can be either a CSV or an Ara table
 
     """
 
@@ -472,6 +474,7 @@ class SimpleMixturePredictor(Serializable['SimpleMixturePredictor'], Predictor):
     description = _properties.String('config.description')
     input_descriptor = _properties.Object(FormulationDescriptor, 'config.input')
     output_descriptor = _properties.Object(FormulationDescriptor, 'config.output')
+    training_data = _properties.Object(DataSource, 'config.training_data')
     typ = _properties.String('config.type', default='SimpleMixture',
                              deserializable=False)
     status = _properties.Optional(_properties.String, 'status', serializable=False)
@@ -489,6 +492,7 @@ class SimpleMixturePredictor(Serializable['SimpleMixturePredictor'], Predictor):
                  description: str,
                  input_descriptor: FormulationDescriptor,
                  output_descriptor: FormulationDescriptor,
+                 training_data: DataSource,
                  session: Optional[Session] = None,
                  report: Optional[Report] = None,
                  active: bool = True):
@@ -496,6 +500,7 @@ class SimpleMixturePredictor(Serializable['SimpleMixturePredictor'], Predictor):
         self.description: str = description
         self.input_descriptor: FormulationDescriptor = input_descriptor
         self.output_descriptor: FormulationDescriptor = output_descriptor
+        self.training_data = training_data
         self.session: Optional[Session] = session
         self.report: Optional[Report] = report
         self.active: bool = active

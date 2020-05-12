@@ -91,7 +91,8 @@ def simple_mixture_predictor() -> SimpleMixturePredictor:
         name='Simple mixture predictor',
         description='Computes mean ingredient properties',
         input_descriptor=formulation,
-        output_descriptor=formulation_output
+        output_descriptor=formulation_output,
+        training_data=data_source
     )
 
 
@@ -216,6 +217,7 @@ def test_simple_mixture_predictor_initialization(simple_mixture_predictor):
     assert simple_mixture_predictor.name == 'Simple mixture predictor'
     assert simple_mixture_predictor.input_descriptor.key == 'formulation'
     assert simple_mixture_predictor.output_descriptor.key == 'output formulation'
+    assert simple_mixture_predictor.training_data == data_source
     expected_str = '<SimpleMixturePredictor \'Simple mixture predictor\'>'
     assert str(simple_mixture_predictor) == expected_str
 
