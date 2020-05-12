@@ -1,7 +1,5 @@
 """Tools for working with Predictors."""
 # flake8: noqa
-from typing import List, Optional, Type, Union
-from abc import abstractmethod
 from typing import Dict, List, Optional, Type, Union
 from uuid import UUID
 
@@ -9,8 +7,8 @@ from citrine._serialization import properties as _properties
 from citrine._serialization.serializable import Serializable
 from citrine._session import Session
 from citrine.informatics.data_sources import DataSource
-from citrine.informatics.descriptors import Descriptor, FormulationDescriptor, RealDescriptor
-from citrine.informatics.descriptors import Descriptor, MolecularStructureDescriptor
+from citrine.informatics.descriptors import Descriptor, FormulationDescriptor, RealDescriptor, \
+    MolecularStructureDescriptor
 from citrine.informatics.reports import Report
 from citrine.resources.report import ReportResource
 from citrine.informatics.modules import Module
@@ -272,10 +270,6 @@ class ExpressionPredictor(Serializable['ExpressionPredictor'], Predictor):
     def __str__(self):
         return '<ExpressionPredictor {!r}>'.format(self.name)
 
-    def post_build(self, project_id: UUID, data: dict):
-        """Creates the predictor report object."""
-        self.report = ReportResource(project_id, self.session).get(data['id'])
-
 
 class MolecularStructureFeaturizer(Serializable['MolecularStructureFeaturizer'], Predictor):
     """
@@ -384,10 +378,6 @@ class MolecularStructureFeaturizer(Serializable['MolecularStructureFeaturizer'],
     def __str__(self):
         return '<MolecularStructureFeaturizer {!r}>'.format(self.name)
 
-    def post_build(self, project_id: UUID, data: dict):
-        """Creates the predictor report object."""
-        self.report = ReportResource(project_id, self.session).get(data['id'])
-
 
 class IngredientsToSimpleMixturePredictor(
         Serializable['IngredientsToSimpleMixturePredictor'], Predictor):
@@ -456,10 +446,6 @@ class IngredientsToSimpleMixturePredictor(
 
     def __str__(self):
         return '<IngredientsToSimpleMixturePredictor {!r}>'.format(self.name)
-
-    def post_build(self, project_id: UUID, data: dict):
-        """Creates the predictor report object."""
-        self.report = ReportResource(project_id, self.session).get(data['id'])
 
 
 class GeneralizedMeanPropertyPredictor(
@@ -556,7 +542,3 @@ class GeneralizedMeanPropertyPredictor(
 
     def __str__(self):
         return '<GeneralizedMeanPropertyPredictor {!r}>'.format(self.name)
-
-    def post_build(self, project_id: UUID, data: dict):
-        """Creates the predictor report object."""
-        self.report = ReportResource(project_id, self.session).get(data['id'])
