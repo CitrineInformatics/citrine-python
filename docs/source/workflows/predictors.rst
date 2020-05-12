@@ -261,6 +261,7 @@ To configure a mean property predictor, we must specify:
 - an input descriptor that holds the mixture's recipe and ingredient labels
 - a list of properties to featurize
 - the power of the `generalized mean <https://en.wikipedia.org/wiki/Generalized_mean>`_
+  (A power of 1 is equivalent to the arithmetic mean, and a power 2 is equivalent to the root mean square.)
 - a data source that contains all ingredients and their properties
 - how to handle missing ingredient properties
 

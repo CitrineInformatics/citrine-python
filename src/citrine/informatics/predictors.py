@@ -19,7 +19,8 @@ __all__ = ['ExpressionPredictor',
            'Predictor',
            'SimpleMLPredictor',
            'MolecularStructureFeaturizer',
-           'GeneralizedMeanPropertyPredictor']
+           'GeneralizedMeanPropertyPredictor',
+           'SimpleMixturePredictor']
 
 
 class Predictor(Module):
