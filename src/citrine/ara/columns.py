@@ -368,7 +368,7 @@ class IdentityColumn(Serializable['IdentityColumn'], Column):
 
 
 class MolecularStructureColumn(Serializable['MolecularStructureColumn'], Column):
-    """[ALPHA] Column containing a rendering of a molecular structure value.
+    """[ALPHA] Column containing a representation of a molecular structure.
 
     Parameters
     ----------
