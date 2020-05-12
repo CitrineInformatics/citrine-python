@@ -558,7 +558,7 @@ class LabelFractionsPredictor(Serializable['LabelFractionsPredictor'], Predictor
     input_descriptor: FormulationDescriptor
         descriptor that contains formulation data
     labels: List[str]
-        labels to search for
+        labels to compute the quantity fractions of
 
     """
 
