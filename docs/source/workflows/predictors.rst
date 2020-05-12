@@ -222,7 +222,7 @@ For example, the density of a saline solution can be computed from the densities
 
 .. math::
 
-    d_{saline} = d_{water} * f_{water} + d_{salt} + f_{salt}
+    d_{saline} = d_{water} * f_{water} + d_{salt} * f_{salt}
 
 where :math:`d` is density and :math:`f` is relative ingredient fraction.
 If the densities of water and salt are known, we can compute the expected density of a candidate mixture using this predictor.
@@ -263,7 +263,7 @@ Our leaf ingredient data might resemble:
 
 If ``impute_properties == False``, an error will be thrown every time a mixture that includes boric acid is encountered.
 If ``impute_properties == True`` and no ``default_properties`` are specified, an density of :math:`\left( 1.0 + 2.16 \right) / 2 = 1.58` will be used.
-If a value other than 1.58 should be used, e.g. 2.0, this can be specifeid by setting ``default_properties = {'density': 2.0}``.
+If a value other than 1.58 should be used, e.g. 2.0, this can be specified by setting ``default_properties = {'density': 2.0}``.
 
 The example below show how to configure a mean property predictor to compute mean solute density in simple mixtures.
 

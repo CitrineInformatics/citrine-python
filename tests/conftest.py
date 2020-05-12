@@ -183,6 +183,67 @@ def valid_expression_predictor_data():
 
 
 @pytest.fixture
+def valid_predictor_report_data():
+    """Produce valid data used for tests."""
+    from citrine.informatics.descriptors import RealDescriptor
+    x = RealDescriptor("x", 0, 1, "")
+    y = RealDescriptor("y", 0, 100, "")
+    z = RealDescriptor("z", 0, 101, "")
+    return dict(
+        id='7c2dda5d-675a-41b6-829c-e485163f0e43',
+        module_id='31c7f311-6f3d-4a93-9387-94cc877f170c',
+        status='OK',
+        create_time='2020-04-23T15:46:26Z',
+        update_time='2020-04-23T15:46:26Z',
+        report=dict(
+            models=[
+                dict(
+                    name='GeneralLoloModel_1',
+                    type='GeneralLoloModel',
+                    inputs=[x.key],
+                    outputs=[y.key],
+                    display_name='ML Model',
+                    model_settings=[
+                        dict(
+                            name='Algorithm',
+                            value='Ensemble of non-linear estimators',
+                            children=[
+                                dict(name='Number of estimators', value=64, children=[]),
+                                dict(name='Leaf model', value='Mean', children=[]),
+                                dict(name='Use jackknife', value=True, children=[])
+                            ]
+                        )
+                    ],
+                    feature_importances=[
+                        dict(
+                            response_key='y',
+                            importances=dict(x=1.00),
+                            top_features=5
+                        )
+                    ]
+                ),
+                dict(
+                    name='GeneralLosslessModel_2',
+                    type='GeneralLosslessModel',
+                    inputs=[x.key, y.key],
+                    outputs=[z.key],
+                    display_name='GeneralLosslessModel_2',
+                    model_settings=[
+                        dict(
+                            name="Expression",
+                            value="(z) <- (x + y)",
+                            children=[]
+                        )
+                    ],
+                    feature_importances=[]
+                )
+            ],
+            descriptors=[x.dump(), y.dump(), z.dump()]
+        )
+    )
+
+
+@pytest.fixture
 def valid_ing_to_simple_mixture_predictor_data():
     """Produce valid data used for tests."""
     from citrine.informatics.descriptors import FormulationDescriptor, RealDescriptor
