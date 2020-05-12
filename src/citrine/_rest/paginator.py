@@ -1,5 +1,5 @@
 import warnings
-from typing import TypeVar, Generic, Callable, Optional, Iterable, Any
+from typing import TypeVar, Generic, Callable, Optional, Iterable, Any, Tuple
 
 ResourceType = TypeVar('ResourceType')
 
@@ -13,7 +13,8 @@ class Paginator(Generic[ResourceType]):
     """
 
     def paginate(self,
-                 page_fetcher: Callable[[Optional[int], int], Iterable[ResourceType]],
+                 page_fetcher: Callable[[Optional[int], int], Tuple[Iterable[dict], str]],
+                 collection_builder: Callable[[Iterable[dict]], Iterable[ResourceType]],
                  page: Optional[int] = None,
                  per_page: int = 100) -> Iterable[ResourceType]:
         """
@@ -27,6 +28,10 @@ class Paginator(Generic[ResourceType]):
 
         Parameters
         ---------
+        page_fetcher: Callable[[Optional[int], int], Tuple[Iterable[dict], str]]
+            Fetches the next page of elements
+        collection_builder: Callable[[Iterable[dict]], Iterable[ResourceType]]
+            Builds each element in the collection into the appropriate resource
         page: int, optional
             The "page" of results to list. Default is to read all pages and yield
             all results.  This option is deprecated.
@@ -49,7 +54,8 @@ class Paginator(Generic[ResourceType]):
         page_idx = page
 
         while True:
-            subset = page_fetcher(page_idx, per_page)
+            subset_collection, next_uri = page_fetcher(page_idx, per_page)
+            subset = collection_builder(subset_collection)
 
             count = 0
             for idx, element in enumerate(subset):
@@ -74,7 +80,7 @@ class Paginator(Generic[ResourceType]):
                 break
 
             # Handle the case where we get an unexpected number of results (e.g. last page)
-            if count == 0 or count < per_page:
+            if next_uri == "" and count < per_page:
                 break
 
             if page_idx is None:
