@@ -4,6 +4,7 @@ from logging import getLogger
 from datetime import datetime, timedelta
 
 from requests import Response
+from requests.exceptions import ConnectionError
 from json.decoder import JSONDecodeError
 from urllib3.util.retry import Retry
 
@@ -22,6 +23,14 @@ import requests
 # expiring during the check for expiration
 EXPIRATION_BUFFER_MILLIS: timedelta = timedelta(milliseconds=5000)
 logger = getLogger(__name__)
+
+
+class ConnectionRetry(Retry):
+    def _is_connection_error(self, err):
+        """ Extend the Retry super class to include Requests ConnectionError as a retry-able
+        connection error.
+        """
+        return super()._is_connection_error(err) or isinstance(err, ConnectionError)
 
 
 class Session(requests.Session):
@@ -50,12 +59,12 @@ class Session(requests.Session):
         # Custom adapter so we can use custom retry parameters. The default HTTP status
         # codes for retries are [503, 413, 429]. We're using status_force list to add
         # additional codes to retry on, focusing on specific CloudFlare 5XX errors.
-        retries = Retry(total=10,
-                        connect=5,
-                        read=5,
-                        status=5,
-                        backoff_factor=0.25,
-                        status_forcelist=[500, 502, 504, 520, 521, 522, 524, 527])
+        retries = ConnectionRetry(total=10,
+                                  connect=5,
+                                  read=5,
+                                  status=5,
+                                  backoff_factor=0.25,
+                                  status_forcelist=[500, 502, 504, 520, 521, 522, 524, 527])
         adapter = requests.adapters.HTTPAdapter(max_retries=retries)
         self.mount('https://', adapter)
         self.mount('http://', adapter)
