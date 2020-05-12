@@ -63,7 +63,7 @@ That file could be used as the training data for a predictor as:
 
 An optional list of identifiers can be specified.
 Identifiers uniquely identify a row and are used in the context of simple mixtures to link from an ingredient to the its properties.
-Each identifier must correspond to a column header name
+Each identifier must correspond to a column header name.
 No two rows within this column can contain the same value.
 If a column should be parsed as data and used as an identifier, identifier columns may overlap with the keys defined in the mapping from column header names to descriptors.
 
