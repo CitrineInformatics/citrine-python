@@ -569,9 +569,9 @@ class LabelFractionsPredictor(Serializable['LabelFractionsPredictor'], Predictor
     labels = _properties.List(_properties.String, 'config.labels')
     typ = _properties.String('config.type', default='LabelFractions',
                              deserializable=False)
-    status = _properties.Optional(_properties.String(), 'status', serializable=False)
+    status = _properties.Optional(_properties.String, 'status', serializable=False)
     status_info = _properties.Optional(
-        _properties.List(_properties.String()),
+        _properties.List(_properties.String),
         'status_info',
         serializable=False
     )
