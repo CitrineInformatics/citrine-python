@@ -302,7 +302,7 @@ Label fractions predictor
 
 The :class:`~citrine.informatics.predictors.LabelFractionsPredictor` computes total fraction of ingredients with a given label.
 The predictor is configured by specifying a formulation descriptor that holds simple mixture data (i.e. recipes and ingredient labels) and a list of labels to featurize.
-A separate response is computed for each featurized label by summing all quantities in the recipe associated with ingredient with the label.
+A separate response is computed for each featurized label by summing all quantities in the recipe associated with ingredients given the label.
 
 The following example demonstrates how to create a predictor that computes the total fractions of solute and solvent in a simple mixture.
 
