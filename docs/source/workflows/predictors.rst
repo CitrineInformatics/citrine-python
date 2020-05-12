@@ -347,6 +347,34 @@ The following example demonstrates how to create a predictor that computes the t
         labels=['solute', 'solvent']
     )
 
+Ingredient Fractions Predictor
+------------------------------
+
+The :class:`~citrine.informatics.predictors.IngredientFractionsPredictor` is used to expand a formulation recipe into a ``(RealDescriptor, ContinuousDistribution)`` pair for each ingredient in the formulation.
+
+An ``IngredientFractionsPredictor`` can be created as shown below.
+
+.. code:: python
+
+    from citrine.informatics.predictors import IngredientFractionsPredictor
+    from citrine.informatics.descriptors import FormulationDescriptor
+
+    IngredientFractionsPredictor(
+        name="Ingredient Fractions Predictor",
+        description="compute ingredient fractions for provided ingredients",
+        input_descriptor=FormulationDescriptor("formulation")
+        ingredients=['water', 'alcohol']
+    )
+
+If particular ingredients are not present in the provided ingredients list, it will be given a fraction of ``0.0``.
+For example, if a formulation has components ``(water -> 1.0)``, then the predictor as defined above would compue two responses:
+
+    - ``water fraction in formulation -> 1.0``
+    - ``alcohol fraction in formulation -> 0.0``
+
+
+If the formulation contains an ingredient that wasn't specified when the predictor was created, then an error will be thrown.
+
 Predictor Reports
 -----------------
 

@@ -7,7 +7,7 @@ from citrine.informatics.data_sources import AraTableDataSource
 from citrine.informatics.descriptors import RealDescriptor, MolecularStructureDescriptor, FormulationDescriptor
 from citrine.informatics.predictors import ExpressionPredictor, GraphPredictor, SimpleMLPredictor, \
     MolecularStructureFeaturizer, GeneralizedMeanPropertyPredictor, IngredientsToSimpleMixturePredictor, \
-    SimpleMixturePredictor, LabelFractionsPredictor
+    SimpleMixturePredictor, LabelFractionsPredictor, IngredientFractionsPredictor
 
 x = RealDescriptor("x", 0, 100, "")
 y = RealDescriptor("y", 0, 100, "")
@@ -116,6 +116,17 @@ def label_fractions_predictor() -> LabelFractionsPredictor:
         description='Compute relative proportions of labeled ingredients',
         input_descriptor=formulation,
         labels=['solvent']
+    )
+
+
+@pytest.fixture
+def ingredient_fractions_predictor() -> IngredientFractionsPredictor:
+    """Build a Ingredient Fractions predictor for testing."""
+    return IngredientFractionsPredictor(
+        name='Ingredient fractions predictor',
+        description='Computes mean ingredient properties',
+        input_descriptor=formulation,
+        ingredients=["Green Paste", "Blue Paste"]
     )
 
 
@@ -313,3 +324,24 @@ def test_simple_mixture_relation_post_build(simple_mixture_predictor):
     assert session.get_resource.call_count == 1
     assert simple_mixture_predictor.report is not None
     assert simple_mixture_predictor.report.status == 'OK'
+
+
+def test_ingredient_fractions_property_initialization(ingredient_fractions_predictor):
+    """Make sure the correct fields go to the correct places for an ingredients to ingredient_fractions_predictor."""
+    assert ingredient_fractions_predictor.name == 'Ingredient fractions predictor'
+    assert ingredient_fractions_predictor.input_descriptor.key == 'formulation'
+    assert ingredient_fractions_predictor.ingredients == ["Green Paste", "Blue Paste"]
+    expected_str = '<IngredientFractionsPredictor \'Ingredient fractions predictor\'>'
+    assert str(ingredient_fractions_predictor) == expected_str
+
+
+def test_ingredient_fractions_property_post_build(ingredient_fractions_predictor):
+    """Ensures we get a report from a ingredient fraction predictor post_build call."""
+    assert ingredient_fractions_predictor.report is None
+    session = mock.Mock()
+    session.get_resource.return_value = dict(status='OK', report=dict(), uid=uuid.uuid4())
+    ingredient_fractions_predictor.session = session
+    ingredient_fractions_predictor.post_build(uuid.uuid4(), dict(id=uuid.uuid4()))
+    assert session.get_resource.call_count == 1
+    assert ingredient_fractions_predictor.report is not None
+    assert ingredient_fractions_predictor.report.status == 'OK'
