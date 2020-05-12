@@ -5,6 +5,7 @@ from citrine.informatics.design_spaces import ProductDesignSpace, EnumeratedDesi
 from citrine.informatics.objectives import ScalarMaxObjective, ScalarMinObjective
 from citrine.informatics.processors import GridProcessor, EnumeratedProcessor
 from citrine.informatics.scores import LIScore, EIScore
+from citrine.informatics.reports import ModelSummary, FeatureImportanceReport
 
 
 informatics_string_data = [
@@ -18,6 +19,8 @@ informatics_string_data = [
     (EnumeratedProcessor('my enumerated thing', 'enumerates', 10), "<EnumeratedProcessor 'my enumerated thing'>"),
     (LIScore("LI(z)", "score for z", [], []), "<LIScore 'LI(z)'>"),
     (EIScore("EI(x)", "score for x", [], [], []), "<EIScore 'EI(x)'>"),
+    (FeatureImportanceReport("reflectivity", {}), "<FeatureImportanceReport 'reflectivity'>"),
+    (ModelSummary("my model", [], [], {}, []), "<ModelSummary 'my model'>"),
 ]
 
 

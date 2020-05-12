@@ -222,7 +222,7 @@ def test_register_data_concepts(dataset):
         MeasurementSpecCollection: MeasurementSpec("foo"),
         MeasurementRunCollection: MeasurementRun("foo"),
         IngredientSpecCollection: IngredientSpec("foo"),
-        IngredientRunCollection: IngredientRun("foo"),
+        IngredientRunCollection: IngredientRun(),
         PropertyTemplateCollection: PropertyTemplate("bar", bounds=IntegerBounds(0, 1)),
         ParameterTemplateCollection: ParameterTemplate("bar", bounds=IntegerBounds(0, 1)),
         ConditionTemplateCollection: ConditionTemplate("bar", bounds=IntegerBounds(0, 1))
@@ -255,7 +255,7 @@ def test_register_all_data_concepts(dataset):
     foo_measurement_spec = MeasurementSpec("foo", template=foo_measurement_template)
     foo_measurement_run = MeasurementRun("foo", spec=foo_measurement_spec, material=foo_material_run)
     foo_ingredient_spec = IngredientSpec("foo", material=foo_material_spec, process=foo_process_spec)
-    foo_ingredient_run = IngredientRun("foo", spec=foo_ingredient_spec, material=foo_material_run, process=foo_process_run)
+    foo_ingredient_run = IngredientRun(spec=foo_ingredient_spec, material=foo_material_run, process=foo_process_run)
     baz_run = MeasurementRun("baz")
 
     # worst order possible
