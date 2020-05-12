@@ -46,3 +46,9 @@ def test_failed_replacement():
         some_field={'my_id': '1', 'id': '17'}
     ))
     assert json == replace_objects_with_links(json)  # no uids field
+
+    json = dict(object=dict(
+        type='material_run',
+        uids={}
+    ))
+    assert json == replace_objects_with_links(json)  # uids is an empty dictionary
