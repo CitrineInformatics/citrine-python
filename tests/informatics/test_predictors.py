@@ -6,7 +6,8 @@ import uuid
 from citrine.informatics.data_sources import AraTableDataSource
 from citrine.informatics.descriptors import RealDescriptor, MolecularStructureDescriptor, FormulationDescriptor
 from citrine.informatics.predictors import ExpressionPredictor, GraphPredictor, SimpleMLPredictor, \
-    MolecularStructureFeaturizer, GeneralizedMeanPropertyPredictor, IngredientsToSimpleMixturePredictor
+    MolecularStructureFeaturizer, GeneralizedMeanPropertyPredictor, IngredientsToSimpleMixturePredictor, \
+    LabelFractionsPredictor
 
 x = RealDescriptor("x", 0, 100, "")
 y = RealDescriptor("y", 0, 100, "")
@@ -91,6 +92,17 @@ def generalized_mean_property_predictor() -> GeneralizedMeanPropertyPredictor:
         impute_properties=True,
         default_properties={'density': 1.0},
         label='solvent'
+    )
+
+
+@pytest.fixture
+def label_fractions_predictor() -> LabelFractionsPredictor:
+    """Build a label fractions predictor for testing"""
+    return LabelFractionsPredictor(
+        name='Label fractions predictor',
+        description='Compute relative proportions of labeled ingredients',
+        input_descriptor=formulation,
+        labels=['solvent']
     )
 
 
@@ -245,3 +257,24 @@ def test_generalized_mean_property_post_build(generalized_mean_property_predicto
     assert session.get_resource.call_count == 1
     assert generalized_mean_property_predictor.report is not None
     assert generalized_mean_property_predictor.report.status == 'OK'
+
+
+def test_label_fractions_property_initialization(label_fractions_predictor):
+    """Make sure the correct fields go to the correct places for a label fraction predictor."""
+    assert label_fractions_predictor.name == 'Label fractions predictor'
+    assert label_fractions_predictor.input_descriptor.key == 'formulation'
+    assert label_fractions_predictor.labels == ['solvent']
+    expected_str = '<LabelFractionsPredictor \'Label fractions predictor\'>'
+    assert str(label_fractions_predictor) == expected_str
+
+
+def test_label_fractions_property_post_build(label_fractions_predictor):
+    """Ensures we get a report from a label fraction predictor post_build call."""
+    assert label_fractions_predictor.report is None
+    session = mock.Mock()
+    session.get_resource.return_value = dict(status='OK', report=dict(), uid=uuid.uuid4())
+    label_fractions_predictor.session = session
+    label_fractions_predictor.post_build(uuid.uuid4(), dict(id=uuid.uuid4()))
+    assert session.get_resource.call_count == 1
+    assert label_fractions_predictor.report is not None
+    assert label_fractions_predictor.report.status == 'OK'

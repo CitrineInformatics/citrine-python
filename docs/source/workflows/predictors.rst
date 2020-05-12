@@ -297,6 +297,28 @@ The example below show how to configure a mean property predictor to compute mea
         label='solute'
     )
 
+Label fractions predictor
+-------------------------
+
+The :class:`~citrine.informatics.predictors.LabelFractionsPredictor` computes total fraction of ingredients with a given label.
+The predictor is configured by specifying a formulation descriptor that holds simple mixture data (i.e. recipes and ingredient labels) and a list of labels to featurize.
+A separate response is computed for each featurized label by summing all quantities in the recipe associated with ingredients given the label.
+
+The following example demonstrates how to create a predictor that computes the total fractions of solute and solvent in a simple mixture.
+
+.. code:: python
+
+    from citrine.informatics.descriptors import FormulationDescriptor
+    # descriptor that holds simple mixture data
+    formulation = FormulationDescriptor('simple mixture')
+
+    label_fractions = LabelFractionsPredictor(
+        name='Saline solution label fractions',
+        description='Computes total fraction of solute and solvent',
+        input_descriptor=formulation,
+        labels=['solute', 'solvent']
+    )
+
 Predictor Reports
 -----------------
 
