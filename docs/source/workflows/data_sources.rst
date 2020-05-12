@@ -72,7 +72,7 @@ These circumstances are only relevant if CSV data source represents simple mixtu
 
 1. Ingredient properties are featurized using a :class:`~citrine.informatics.predictors.GeneralizedMeanPropertyPredictor`.
    In this case, the link from identifier to row is used to compute mean ingredient property values.
-2. Simple mixtures are boiled down to recipes that contain only atomic ingredients using a :class:`~citrine.informatics.predictors.SimpleMixturePredictor`.
+2. Simple mixtures are boiled down to recipes that contain only leaf ingredients using a :class:`~citrine.informatics.predictors.SimpleMixturePredictor`.
    In this case, links from each mixture's ingredients to its row (which may also be a mixture) are used to to recursively crawl hierarchical blends of blends and construct a recipe that contains only leaf ingredients.
 
 Note, to build a formulation from a CSV data source an :class:`~citrine.informatics.predictors.IngredientsToSimpleMixturePredictor` must be present in the workflow.
