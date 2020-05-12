@@ -384,3 +384,33 @@ def valid_enumerated_processor_data():
             max_size=10,
         )
     )
+
+
+@pytest.fixture
+def valid_simple_mixture_predictor_data():
+    """Produce valid data used for tests."""
+    from citrine.informatics.data_sources import AraTableDataSource
+    from citrine.informatics.descriptors import RealDescriptor
+    return dict(
+        module_type='PREDICTOR',
+        status='VALID',
+        status_info=[],
+        active=True,
+        display_name='Simple mixture predictor',
+        schema_id='e82a993c-e6ab-46a2-b636-c71d0ba224d1',
+        id=str(uuid.uuid4()),
+        config=dict(
+            type='SimpleMixture',
+            name='Simple mixture predictor',
+            description='simple mixture description',
+            input=dict(
+                type='Formulation',
+                descriptor_key='input formulation',
+            ),
+            output=dict(
+                type='Formulation',
+                descriptor_key='output formulation',
+            ),
+            training_data=AraTableDataSource(uuid.uuid4(), 0).dump(),
+        ),
+    )
