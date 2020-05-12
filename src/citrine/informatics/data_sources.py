@@ -56,7 +56,7 @@ class CSVDataSource(Serializable['CSVDataSource'], DataSource):
     identifiers: Optional[List[str]]
         List of one or more column headers whose values uniquely identify a row. These may overlap
         with ``column_definitions`` if a column should be used as data and as an identifier,
-        but this is not necessary. Identifiers should be globally unique. No two rows should
+        but this is not necessary. Identifiers must be unique within a dataset. No two rows can
         contain the same value.
 
     """

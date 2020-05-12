@@ -22,10 +22,11 @@ class Descriptor(PolymorphicSerializable['Descriptor']):
         except KeyError:
             t = data["category"]
         return {
-            "Real": RealDescriptor,
-            "Inorganic": ChemicalFormulaDescriptor,
             "Categorical": CategoricalDescriptor,
+            "Formulation": FormulationDescriptor,
+            "Inorganic": ChemicalFormulaDescriptor,
             "Organic": MolecularStructureDescriptor,
+            "Real": RealDescriptor,
         }[t]
 
 
@@ -177,3 +178,32 @@ class CategoricalDescriptor(Serializable['CategoricalDescriptor'], Descriptor):
 
     def __str__(self):
         return "<CategoricalDescriptor {!r}>".format(self.key)
+
+
+class FormulationDescriptor(Serializable['FormulationDescriptor'], Descriptor):
+    """[ALPHA] A descriptor to hold formulations.
+
+    Parameters
+    ----------
+    key: str
+        the key corresponding to a descriptor
+
+    """
+
+    key = properties.String('descriptor_key')
+    typ = properties.String('type', default='Formulation', deserializable=False)
+
+    def __eq__(self, other):
+        try:
+            attrs = ["key", "typ"]
+            return all([
+                self.__getattribute__(key) == other.__getattribute__(key) for key in attrs
+            ])
+        except AttributeError:
+            return False
+
+    def __init__(self, key: str):
+        self.key: str = key
+
+    def __str__(self):
+        return "<FormulationDescriptor {!r}>".format(self.key)

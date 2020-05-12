@@ -10,7 +10,8 @@ from citrine.informatics.descriptors import InorganicDescriptor
     ChemicalFormulaDescriptor('formula'),
     MolecularStructureDescriptor("organic"),
     CategoricalDescriptor("my categorical", ["a", "b"]),
-    CategoricalDescriptor("categorical", ["*"])
+    CategoricalDescriptor("categorical", ["*"]),
+    FormulationDescriptor("formulation")
 ])
 def descriptor(request):
     return request.param

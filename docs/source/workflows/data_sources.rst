@@ -15,21 +15,15 @@ Uploading a new file with the same name will produce a new version of the file w
 The columns in the CSV are extracted and parsed by a mapping of column header names to user-created descriptors.
 Columns in the CSV that are not mapped with a descriptor are ignored.
 
-An optional list of identifiers can be specified.
-Each identifier is a column header name.
-These may overlap with the keys defined in the mapping from column header names to descriptors if a column should be parsed as data and used as an identifier.
-Identifiers should be globally unique.
-No two rows should contain the same value.
-
 Assume that a file data.csv exists with the following contents:
 
 .. code::
 
-    Chemical Formula,Gap,Crystallinity,Sample ID
-    Bi2Te3,0.153,Single crystalline,0
-    Mg2Ge,0.567,Single crystalline,1
-    GeTe,0.7,Amorphous,2
-    Sb2Se3,1.15,Polycrystalline,3
+    Chemical Formula,Gap,Crystallinity
+    Bi2Te3,0.153,Single crystalline
+    Mg2Ge,0.567,Single crystalline
+    GeTe,0.7,Amorphous
+    Sb2Se3,1.15,Polycrystalline
 
 That file could be used as the training data for a predictor as:
 
@@ -50,8 +44,7 @@ That file could be used as the training data for a predictor as:
             "Gap": RealDescriptor("Band gap", lower_bound=0, upper_bound=20, units="eV"),
             "Crystallinity": CategoricalDescriptor("Crystallinity", categories=[
                 "Single crystalline", "Amorphous", "Polycrystalline"])
-        },
-        identifiers = ["Sample ID"]
+        }
     )
 
     predictor = SimpleMLPredictor(
@@ -66,6 +59,85 @@ That file could be used as the training data for a predictor as:
         outputs = [data_source.column_definitions["Gap"]],
         latent_variables = [],
         training_data = data_source
+    )
+
+An optional list of identifiers can be specified.
+Identifiers uniquely identify a row and are used in the context of simple mixtures to link from an ingredient to the its properties.
+Each identifier must correspond to a column header name.
+No two rows within this column can contain the same value.
+If a column should be parsed as data and used as an identifier, identifier columns may overlap with the keys defined in the mapping from column header names to descriptors.
+
+Identifiers are required in two circumstances.
+These circumstances are only relevant if CSV data source represents simple mixture data.
+
+1. Ingredient properties are featurized using a :class:`~citrine.informatics.predictors.GeneralizedMeanPropertyPredictor`.
+   In this case, the link from identifier to row is used to compute mean ingredient property values.
+2. Simple mixtures that contain mixtures are simplified to recipes that contain only atomic ingredients using a :class:`~citrine.informatics.predictors.SimpleMixturePredictor`.
+   In this case, links from each mixture's ingredients to its row (which may also be a mixture) are used to recursively crawl hierarchical blends of blends and construct a recipe that contains only leaf ingredients.
+
+Note: to build a formulation from a CSV data source an :class:`~citrine.informatics.predictors.IngredientsToSimpleMixturePredictor` must be present in the workflow.
+Additionally, each ingredient id used as a key in the predictor's map from ingredient id to its quantity must exist in an identifier column.
+
+As an example, consider the following saline solution data.
+
++-------------------+----------------+---------------+---------+
+| Ingredient id     | water quantity | salt quantity | density |
++===================+================+===============+=========+
+| hypertonic saline | 0.93           | 0.07          | 1.08    |
++-------------------+----------------+---------------+---------+
+| isotonic saline   | 0.99           | 0.01          | 1.01    |
++-------------------+----------------+---------------+---------+
+| water             |                |               | 1.0     |
++-------------------+----------------+---------------+---------+
+| salt              |                |               | 2.16    |
++-------------------+----------------+---------------+---------+
+
+Hypertonic and isotonic saline are mixtures formed by mixing water and salt.
+Ingredient identifiers are given by the first column.
+A CSV data source and :class:`~citrine.informatics.predictors.IngredientsToSimpleMixturePredictor` can be configured to construct simple mixtures from this data via the following:
+
+.. code:: python
+
+    from citrine.informatics.data_sources import CSVDataSource
+    from citrine.informatics.descriptors import FormulationDescriptor, RealDescriptor
+    from citrine.informatics.predictors import IngredientsToSimpleMixturePredictor
+
+    file_link = dataset.files.upload("./saline_solutions.csv", "saline_solutions.csv")
+
+    # create descriptors for each ingredient quantity
+    water_quantity = RealDescriptor('water quantity', 0, 1)
+    salt_quantity = RealDescriptor('salt quantity', 0, 1)
+
+    # create a descriptor to hold density data
+    density = RealDescriptor('density', lower_bound=0, upper_bound=1000, units='g/cc')
+
+    data_source = CsvDataSource(
+        file_link = file_link,
+        column_definitions = {
+            'water quantity': water_quantity,
+            'salt quantity': salt_quantity,
+            'density': density
+        },
+        identifiers=['Ingredient id']
+    )
+
+    # create a descriptor to hold simple mixtures
+    formulation = FormulationDescriptor('simple mixture')
+
+    IngredientsToSimpleMixturePredictor(
+        name='Ingredients to simple mixture predictor',
+        description='Constructs a mixture from ingredient quantities',
+        output=formulation,
+        # map from ingredient id to its quantity
+        id_to_quantity={
+            'water': water_quantity,
+            'salt': salt_quantity
+        },
+        # label water as a solvent and salt a solute
+        labels={
+            'solvent': ['water'],
+            'solute': ['salt']
+        }
     )
 
 Ara Table Data Source
