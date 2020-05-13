@@ -363,16 +363,16 @@ class MolecularStructureFeaturizer(Serializable['MolecularStructureFeaturizer'],
                  name: str,
                  description: str,
                  descriptor: MolecularStructureDescriptor,
-                 features: List[str] = ("standard",),
-                 excludes: List[str] = (),
+                 features: List[str] = None,
+                 excludes: List[str] = None,
                  session: Optional[Session] = None,
                  report: Optional[Report] = None,
                  active: bool = True):
         self.name: str = name
         self.description: str = description
         self.descriptor = descriptor
-        self.features = features
-        self.excludes = excludes
+        self.features = features if features is not None else ["standard"]
+        self.excludes = excludes if excludes is not None else []
         self.session: Optional[Session] = session
         self.report: Optional[Report] = report
         self.active: bool = active
