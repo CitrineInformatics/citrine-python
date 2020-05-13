@@ -338,7 +338,7 @@ def valid_ingredient_fractions_predictor_data():
             name="Ingredient fractions predictor",
             description="Computes ingredient fractions",
             input=FormulationDescriptor('ingredients').dump(),
-            ingredient_names=['Blue dye', 'Red dye']
+            ingredients=['Blue dye', 'Red dye']
         )
     )
 

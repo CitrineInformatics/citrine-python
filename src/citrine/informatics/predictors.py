@@ -21,7 +21,8 @@ __all__ = ['ExpressionPredictor',
            'MolecularStructureFeaturizer',
            'GeneralizedMeanPropertyPredictor',
            'LabelFractionsPredictor',
-           'SimpleMixturePredictor']
+           'SimpleMixturePredictor',
+           'IngredientFractionsPredictor']
 
 
 class Predictor(Module):
@@ -50,6 +51,7 @@ class Predictor(Module):
             "GeneralizedMeanProperty": GeneralizedMeanPropertyPredictor,
             "LabelFractions": LabelFractionsPredictor,
             "SimpleMixture": SimpleMixturePredictor,
+            "IngredientFractions": IngredientFractionsPredictor
         }
         typ = type_dict.get(data['config']['type'])
 
@@ -688,7 +690,7 @@ class IngredientFractionsPredictor(Serializable["IngredientFractionsPredictor"],
     name = _properties.String('config.name')
     description = _properties.String('config.description')
     input_descriptor = _properties.Object(FormulationDescriptor, 'config.input')
-    ingredients = _properties.List(_properties.String, 'config.ingredient_names')
+    ingredients = _properties.List(_properties.String, 'config.ingredients')
 
     # NOTE: These could go here or in _post_dump - it's unclear which is better right now
     module_type = _properties.String('module_type', default='PREDICTOR')
