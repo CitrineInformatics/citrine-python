@@ -330,13 +330,13 @@ def valid_ingredient_fractions_predictor_data():
         status='VALID',
         status_info=[],
         active=True,
-        display_name="Ingredient fractions predictor",
-        schema_id="eb02a095-8cdc-45d8-bc82-1013b6e8e700",
+        display_name='Ingredient fractions predictor',
+        schema_id='eb02a095-8cdc-45d8-bc82-1013b6e8e700',
         id=str(uuid.uuid4()),
         config=dict(
             type='IngredientFractions',
-            name="Ingredient fractions predictor",
-            description="Computes ingredient fractions",
+            name='Ingredient fractions predictor',
+            description='Computes ingredient fractions',
             input=FormulationDescriptor('ingredients').dump(),
             ingredients=['Blue dye', 'Red dye']
         )

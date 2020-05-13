@@ -124,7 +124,7 @@ def ingredient_fractions_predictor() -> IngredientFractionsPredictor:
     """Build a Ingredient Fractions predictor for testing."""
     return IngredientFractionsPredictor(
         name='Ingredient fractions predictor',
-        description='Computes mean ingredient properties',
+        description='Computes total ingredient fractions',
         input_descriptor=formulation,
         ingredients=["Green Paste", "Blue Paste"]
     )
@@ -327,7 +327,7 @@ def test_simple_mixture_relation_post_build(simple_mixture_predictor):
 
 
 def test_ingredient_fractions_property_initialization(ingredient_fractions_predictor):
-    """Make sure the correct fields go to the correct places for an ingredients to ingredient_fractions_predictor."""
+    """Make sure the correct fields go to the correct places for an ingredient fractions predictor."""
     assert ingredient_fractions_predictor.name == 'Ingredient fractions predictor'
     assert ingredient_fractions_predictor.input_descriptor.key == 'formulation'
     assert ingredient_fractions_predictor.ingredients == ["Green Paste", "Blue Paste"]

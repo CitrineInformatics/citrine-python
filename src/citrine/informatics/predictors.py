@@ -51,7 +51,7 @@ class Predictor(Module):
             "GeneralizedMeanProperty": GeneralizedMeanPropertyPredictor,
             "LabelFractions": LabelFractionsPredictor,
             "SimpleMixture": SimpleMixturePredictor,
-            "IngredientFractions": IngredientFractionsPredictor
+            "IngredientFractions": IngredientFractionsPredictor,
         }
         typ = type_dict.get(data['config']['type'])
 
@@ -673,7 +673,7 @@ class LabelFractionsPredictor(Serializable['LabelFractionsPredictor'], Predictor
 
 
 class IngredientFractionsPredictor(Serializable["IngredientFractionsPredictor"], Predictor):
-    """[ALPHA] A predictor interface that allows expressing ingredient fractions.
+    """[ALPHA] A predictor interface that computes ingredient fractions.
 
     Parameters
     ----------
@@ -684,7 +684,9 @@ class IngredientFractionsPredictor(Serializable["IngredientFractionsPredictor"],
     input_descriptor: FormulationDescriptor
         descriptor that represents the input formulation
     ingredients: List[str]
-
+        list of ingredients to featurize.
+        This list should contain all possible ingredients.
+        If an unknown ingredient is encountered, an error will be thrown.
     """
     uid = _properties.Optional(_properties.UUID, 'id', serializable=False)
     name = _properties.String('config.name')
