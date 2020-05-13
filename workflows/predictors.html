@@ -363,8 +363,36 @@ If a value other than 1.58 should be used, e.g. 2.0, this can be specified by se
 </pre></div>
 </div>
 </div>
+<div class="section" id="ingredient-fractions-predictor">
+<h2>4.2.7. Ingredient Fractions Predictor<a class="headerlink" href="#ingredient-fractions-predictor" title="Permalink to this headline">¶</a></h2>
+<p>The <a class="reference internal" href="../reference/citrine.informatics.predictors.html#citrine.informatics.predictors.IngredientFractionsPredictor" title="citrine.informatics.predictors.IngredientFractionsPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientFractionsPredictor</span></code></a> featurizes ingredient fractions in a simple mixture.
+The predictor is configured by specifying a descriptor that contains simple mixture data and a list of known ingredients to featurize.
+The list of ingredients should be the list of all possible ingredients for the input mixture.
+If the mixture contains an ingredient that wasn’t specified when the predictor was created, an error will be thrown.</p>
+<p>For each featurized ingredient, the predictor will inspect the recipe and compute a response equal to the ingredient’s total fraction in the recipe.
+If an ingredient is not present in the mixture’s recipe, the response for that ingredient fraction will be 0.
+For example, given a recipe <code class="docutils literal notranslate"><span class="pre">{'water':</span> <span class="pre">0.9,</span> <span class="pre">'salt':</span> <span class="pre">0.1}</span></code> and featurized ingredients <code class="docutils literal notranslate"><span class="pre">['water',</span> <span class="pre">'salt',</span> <span class="pre">'boric</span> <span class="pre">acid']</span></code>,
+this predictor would compute outputs:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">water</span> <span class="pre">share</span> <span class="pre">in</span> <span class="pre">simple</span> <span class="pre">mixture</span> <span class="pre">==</span> <span class="pre">0.9</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">salt</span> <span class="pre">share</span> <span class="pre">in</span> <span class="pre">simple</span> <span class="pre">mixture</span> <span class="pre">==</span> <span class="pre">0.1</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">boric</span> <span class="pre">acid</span> <span class="pre">share</span> <span class="pre">in</span> <span class="pre">simple</span> <span class="pre">mixture</span> <span class="pre">==</span> <span class="pre">0.0</span></code></p></li>
+</ul>
+<p>The example below shows how to configure an <code class="docutils literal notranslate"><span class="pre">IngredientFractionsPredictor</span></code> that computes these responses.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.informatics.predictors</span> <span class="kn">import</span> <span class="n">IngredientFractionsPredictor</span>
+<span class="kn">from</span> <span class="nn">citrine.informatics.descriptors</span> <span class="kn">import</span> <span class="n">FormulationDescriptor</span>
+
+<span class="n">IngredientFractionsPredictor</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Ingredient Fractions Predictor&#39;</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Computes fractions of provided ingredients&#39;</span><span class="p">,</span>
+    <span class="n">input_descriptor</span><span class="o">=</span><span class="n">FormulationDescriptor</span><span class="p">(</span><span class="s1">&#39;simple mixture&#39;</span><span class="p">)</span>
+    <span class="n">ingredients</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;water&#39;</span><span class="p">,</span> <span class="s1">&#39;salt&#39;</span><span class="p">,</span> <span class="s1">&#39;boric acid&#39;</span><span class="p">]</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
 <div class="section" id="label-fractions-predictor">
-<h2>4.2.7. Label fractions predictor<a class="headerlink" href="#label-fractions-predictor" title="Permalink to this headline">¶</a></h2>
+<h2>4.2.8. Label fractions predictor<a class="headerlink" href="#label-fractions-predictor" title="Permalink to this headline">¶</a></h2>
 <p>The <a class="reference internal" href="../reference/citrine.informatics.predictors.html#citrine.informatics.predictors.LabelFractionsPredictor" title="citrine.informatics.predictors.LabelFractionsPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">LabelFractionsPredictor</span></code></a> computes total fraction of ingredients with a given label.
 The predictor is configured by specifying a formulation descriptor that holds simple mixture data (i.e. recipes and ingredient labels) and a list of labels to featurize.
 A separate response is computed for each featurized label by summing all quantities in the recipe associated with ingredients given the label.</p>
@@ -383,12 +411,12 @@ A separate response is computed for each featurized label by summing all quantit
 </div>
 </div>
 <div class="section" id="predictor-reports">
-<h2>4.2.8. Predictor Reports<a class="headerlink" href="#predictor-reports" title="Permalink to this headline">¶</a></h2>
+<h2>4.2.9. Predictor Reports<a class="headerlink" href="#predictor-reports" title="Permalink to this headline">¶</a></h2>
 <p>A <a class="reference internal" href="predictor_reports.html"><span class="doc">predictor report</span></a> describes a machine-learned model, for example its settings and what features are important to the model.
 It does not include performance metrics. To learn more about performance metrics, please see <a class="reference internal" href="performance_workflows.html"><span class="doc">PerformanceWorkflows</span></a>.</p>
 </div>
 <div class="section" id="data-sources">
-<h2>4.2.9. Data Sources<a class="headerlink" href="#data-sources" title="Permalink to this headline">¶</a></h2>
+<h2>4.2.10. Data Sources<a class="headerlink" href="#data-sources" title="Permalink to this headline">¶</a></h2>
 <p>A <a class="reference internal" href="data_sources.html"><span class="doc">data source</span></a> references the training data used by a predictor.</p>
 </div>
 </div>
