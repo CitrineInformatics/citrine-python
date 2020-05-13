@@ -70,7 +70,8 @@ class Session(requests.Session):
         """Optionally refresh our access token (if the previous one is about to expire)."""
         data = {'refresh_token': self.refresh_token}
 
-        response = self._request_with_retry('POST', self._versioned_base_url() + 'tokens/refresh', json=data)
+        response = self._request_with_retry('POST', self._versioned_base_url() + 'tokens/refresh',
+                                            json=data)
 
         if response.status_code != 200:
             raise UnauthorizedRefreshToken()
@@ -80,8 +81,7 @@ class Session(requests.Session):
         )
 
     def _request_with_retry(self, method, uri, **kwargs):
-        """Wrap a request with a try/except to retry when ConnectionErrors are seen"""
-
+        """Wrap a request with a try/except to retry when ConnectionErrors are seen."""
         # The urllib3 Retry object does not handle this situation so retry manually"
         try:
             response = self.request(method, uri, **kwargs)
