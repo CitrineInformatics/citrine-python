@@ -5,6 +5,14 @@ from citrine._serialization.serializable import Serializable
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
 from citrine._serialization import properties
 
+__all__ = ['Descriptor',
+           'RealDescriptor',
+           'ChemicalFormulaDescriptor',
+           'InorganicDescriptor',
+           'MolecularStructureDescriptor',
+           'CategoricalDescriptor',
+           'FormulationDescriptor']
+
 
 class Descriptor(PolymorphicSerializable['Descriptor']):
     """[ALPHA] A Citrine Descriptor describes the range of values that a quantity can take on.
