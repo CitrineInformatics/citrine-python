@@ -82,6 +82,7 @@ def test_get_not_found(session: Session):
         with pytest.raises(NotFound):
             session.get_resource('/foo')
 
+
 class SessionTests(unittest.TestCase):
     @mock.patch.object(Session, '_refresh_access_token')
     @mock.patch.object(requests.Session, 'request')
@@ -146,6 +147,28 @@ class SessionTests(unittest.TestCase):
         mock_request.return_value = resp
         with pytest.raises(NonRetryableException):
             Session().checked_request('method', 'path')
+
+    @mock.patch.object(Session, '_refresh_access_token')
+    @mock.patch.object(requests.Session, 'request')
+    def test_connection_error(self, mock_request, _):
+
+        data = {'stuff': 'not_used'}
+        call_count = 0
+
+        # Simulate a request using a stale session that raises
+        # a ConnectionError then works on the second call.
+        def request_side_effect(method, uri):
+            nonlocal call_count
+            if call_count == 0:
+                call_count += 1
+                raise requests.exceptions.ConnectionError
+            else:
+                return data
+
+        mock_request.side_effect = request_side_effect
+        resp = Session()._request_with_retry('method', 'path')
+
+        assert resp == data
 
 
 def test_post_refreshes_token_when_denied(session: Session):
