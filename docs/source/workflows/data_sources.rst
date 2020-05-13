@@ -35,7 +35,7 @@ That file could be used as the training data for a predictor as:
 
     file_link = dataset.files.upload("./data.csv", "bandgap_data.csv")
 
-    data_source = CsvDataSource(
+    data_source = CSVDataSource(
         file_link = file_link,
         # `column_definitions` maps a column header to a descriptor
         # the column header and the descriptor key do not need to be identical
@@ -111,7 +111,7 @@ A CSV data source and :class:`~citrine.informatics.predictors.IngredientsToSimpl
     # create a descriptor to hold density data
     density = RealDescriptor('density', lower_bound=0, upper_bound=1000, units='g/cc')
 
-    data_source = CsvDataSource(
+    data_source = CSVDataSource(
         file_link = file_link,
         column_definitions = {
             'water quantity': water_quantity,
@@ -171,3 +171,6 @@ The example below assumes that the uuid and the version of the desired Ara table
         latent_variables = [],
         training_data = data_source
     )
+
+  Note that the descriptor keys above are the headers of the *variable* not the column in the table.
+  The last term in the column header corresponds to a projection of a Value type into something that can be displayed in a cell.
