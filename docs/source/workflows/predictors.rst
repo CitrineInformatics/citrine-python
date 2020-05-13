@@ -215,7 +215,7 @@ The following example illustrates how an :class:`~citrine.informatics.predictors
     )
 
 Simple mixture predictor
----------------------------------------
+------------------------
 
 Simple mixtures may contain ingredients that are blends of other simple mixtures.
 Along the lines of the example above, hypertonic saline can be mixed with water to form isotonic saline.
@@ -323,6 +323,37 @@ The example below show how to configure a mean property predictor to compute mea
         default_properties={'density': 2.0},
         # only featurize ingredients labeled as a solute
         label='solute'
+    )
+
+Ingredient Fractions Predictor
+------------------------------
+
+The :class:`~citrine.informatics.predictors.IngredientFractionsPredictor` featurizes ingredient fractions in a simple mixture.
+The predictor is configured by specifying a descriptor that contains simple mixture data and a list of known ingredients to featurize.
+The list of ingredients should be the list of all possible ingredients for the input mixture.
+If the mixture contains an ingredient that wasn't specified when the predictor was created, an error will be thrown.
+
+For each featurized ingredient, the predictor will inspect the recipe and compute a response equal to the ingredient's total fraction in the recipe.
+If an ingredient is not present in the mixture's recipe, the response for that ingredient fraction will be 0.
+For example, given a recipe ``{'water': 0.9, 'salt': 0.1}`` and featurized ingredients ``['water', 'salt', 'boric acid']``,
+this predictor would compute outputs:
+
+- ``water share in simple mixture == 0.9``
+- ``salt share in simple mixture == 0.1``
+- ``boric acid share in simple mixture == 0.0``
+
+The example below shows how to configure an ``IngredientFractionsPredictor`` that computes these responses.
+
+.. code:: python
+
+    from citrine.informatics.predictors import IngredientFractionsPredictor
+    from citrine.informatics.descriptors import FormulationDescriptor
+
+    IngredientFractionsPredictor(
+        name='Ingredient Fractions Predictor',
+        description='Computes fractions of provided ingredients',
+        input_descriptor=FormulationDescriptor('simple mixture')
+        ingredients=['water', 'salt', 'boric acid']
     )
 
 Label fractions predictor

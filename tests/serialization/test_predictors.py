@@ -5,7 +5,7 @@ from copy import deepcopy
 
 from citrine.informatics.predictors import ExpressionPredictor, GeneralizedMeanPropertyPredictor, \
     GraphPredictor, Predictor, SimpleMLPredictor, IngredientsToSimpleMixturePredictor, \
-    LabelFractionsPredictor, SimpleMixturePredictor
+    LabelFractionsPredictor, SimpleMixturePredictor, IngredientFractionsPredictor
 from citrine.informatics.descriptors import RealDescriptor
 
 
@@ -97,6 +97,14 @@ def test_label_fractions_serialization(valid_label_fractions_predictor_data):
     serialized = predictor.dump()
     serialized['id'] = valid_label_fractions_predictor_data['id']
     assert serialized == valid_serialization_output(valid_label_fractions_predictor_data)
+
+
+def test_ingredient_fractions_serialization(valid_ingredient_fractions_predictor_data):
+    """"Ensure that a serialized IngredientsFractionsPredictor looks sane."""
+    predictor = IngredientFractionsPredictor.build(valid_ingredient_fractions_predictor_data)
+    serialized = predictor.dump()
+    serialized["id"] = valid_ingredient_fractions_predictor_data['id']
+    assert serialized == valid_serialization_output(valid_ingredient_fractions_predictor_data)
 
 
 def test_invalid_predictor_type(invalid_predictor_data):
