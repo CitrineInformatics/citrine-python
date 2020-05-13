@@ -67,10 +67,14 @@ and a list of :class:`~citrine.ara.columns.Column` objects to transform those va
    ara_defn = AraDefinition(
          name = "cookies",
          description = "Cookie densities",
-         datasets = [UUID("7d040451-7cfb-45ca-9e0e-4b2b7010edd6")],
+         datasets = [UUID("7d040451-7cfb-45ca-9e0e-4b2b7010edd6"),
+                     UUID("7cfb45ca-9e0e-4b2b-7010-edd67d040451")],
          variables = [final_density],
          rows = [row_def],
          columns = [final_density_mean, final_density_std])
+
+Note the inclusion of two datasets above.
+In general, you should have at least two datasets referenced because Objects and Templates are generally associated with different datasets.
 
 In addition to defining variables, rows, and columns individually, there are convenience methods that simultaneously add multiple elements to an existing Ara definition.
 One such method is :func:`~citrine.resources.Ara.Definition.add_all_ingredients`, which creates variables and columns for every potential ingredient in a process.
@@ -126,6 +130,25 @@ For example, if you wanted to print the warnings and then load the preview into 
    preview = defns.preview(ara_defn, preview_roots)
    print("\n\n".join(preview["warnings"]))
    data_frame = pd.read_csv(StringIO(preview["csv"]))
+
+or even wrap it in a method that displays multi-row headers:
+
+.. code-block:: python
+
+    def resp_to_pandas(resp):
+        import warnings
+        from io import StringIO
+        import pandas as pd
+        if resp["warnings"]:
+            warnings.warn("\n\n".join(resp["warnings"]))
+
+        df = pd.read_csv(StringIO(resp["csv"]))
+
+        headers = [x.split('~') for x in df]
+        for header in headers:
+            header.extend([''] * (max(len(x) for x in headers) - len(header)))
+
+        return pd.DataFrame(df.values, columns=[x for x in np.array(headers).T])
 
 Building and downloading tables
 --------------------
