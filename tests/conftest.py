@@ -321,6 +321,27 @@ def valid_label_fractions_predictor_data():
         )
     )
 
+@pytest.fixture
+def valid_ingredient_fractions_predictor_data():
+    """Produce valid data used for tests."""
+    from citrine.informatics.descriptors import FormulationDescriptor
+    return dict(
+        module_type='PREDICTOR',
+        status='VALID',
+        status_info=[],
+        active=True,
+        display_name='Ingredient fractions predictor',
+        schema_id='eb02a095-8cdc-45d8-bc82-1013b6e8e700',
+        id=str(uuid.uuid4()),
+        config=dict(
+            type='IngredientFractions',
+            name='Ingredient fractions predictor',
+            description='Computes ingredient fractions',
+            input=FormulationDescriptor('ingredients').dump(),
+            ingredients=['Blue dye', 'Red dye']
+        )
+    )
+
 
 @pytest.fixture
 def invalid_predictor_data():
