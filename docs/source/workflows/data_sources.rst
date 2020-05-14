@@ -173,4 +173,5 @@ The example below assumes that the uuid and the version of the desired Ara table
     )
 
   Note that the descriptor keys above are the headers of the *variable* not the column in the table.
-  The last term in the column header corresponds to a projection of a Value type into something that can be displayed in a cell.
+  The last term in the column header is a suffix associated with the specific column definition rather than the variable.
+  It should be omitted from the descriptor key.
