@@ -50,13 +50,13 @@ For a cross-validation analysis, cross-validation is performed against the suppl
 For each test set, the rest of the data are used to train the predictor, and the ensuing model is applied to the held-out test set.
 By comparing the model's predictions to the true values, we can compute several performance metrics that provide information about model quality.
 
-- Root-mean squared error (RMSE): the square root of the average of the squared prediction error
-- Non-dimensional model error (NDME): The RMSE, normalized by the standard deviation of the output variable (which is the RMSE of a trivial model that always predicts the mean value of the data).
-- Standard residual: The RMSE of the standardized error (the prediction error divided by the prediction uncertainty)
-- Standard confidence: The fraction of predictions for which the prediction error is less than the prediction uncertainty
+- Root-mean squared error (RMSE): the square root of the average of the squared prediction error.
+- Non-dimensional model error (NDME): the RMSE, normalized by the standard deviation of the output variable (which is the RMSE of a trivial model that always predicts the mean value of the data).
+- Standard residual: the RMSE of the standardized error (the prediction error divided by the prediction uncertainty).
+- Coverage probability: how often the measured error is within some expected bounds.
 
 Performance metrics included in the results depend on whether the response is numeric or categorical.
-For numeric responses, performance metrics include root mean squared error (RMSE), non-dimensiona model error (NDME), standard residual and standard confidence.
+For numeric responses, performance metrics include root mean squared error (RMSE), non-dimensiona model error (NDME), standard residual and coverage probability.
 
 -  RMSE is a useful and popular statistical metric for model quality.
    Lower RMSE means the model is more accurate.
@@ -73,8 +73,10 @@ For numeric responses, performance metrics include root mean squared error (RMSE
    Residuals are calculated using ``(Predicted - Actual)/(Uncertainty Estimate)``.
    A value below 1 indicates the model is underconfident, i.e. actual values are within predicted error bars, on average.
    A value over 1 indicates the model is overconfident, i.e. actual values fall outside predicted error bars, on average.
--  Standard confidence is the fraction of actual values within the predicted error bars.
-   (0.68 is perfectly calibrated.)
+-  Coverage probability is the fraction of observations for which the magnitude of the error is within a confidence interval of a given coverage level.
+   The default coverage level is 0.683, corresponding to error bars that are one standard deviation of a normal distribution.
+   A value greater than the coverage level indicates that the model is under-confident.
+   A value less than the coverage level indicates the model is over-confident.
 
 For categorical responses, performance metrics include either the area under the receiver operating characteristic (ROC) curve (if there are 2 categories) or the F1 score (if there are > 2 categories).
 
@@ -112,7 +114,7 @@ Below shows an example of the results object.
           'ndme': {'value': 0.4777230639684575, 'description': 'Non-dimensional model error (0.0 for a perfect model)'},
           'rmse': {'value': 21.307943307393984, 'description': 'Root mean squared error (0.0 for a perfect model)'},
           'std_residual': {'value': 1.8288119041155286, 'description': 'Uncertainty calibration: root mean square of standardized errors (1.0 is perfectly calibrated)'},
-          'std_confidence': {'value': 0.59375, 'description': 'Uncertainty calibration: fraction of actual values within the prediction error bars (0.68 is perfectly calibrated)'}
+          'coverage_prob': {'value': 0.59375, 'description': 'Uncertainty calibration: fraction of actual values within the prediction error bars (0.68 is perfectly calibrated)'}
         }
       }
     }
