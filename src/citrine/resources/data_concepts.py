@@ -341,7 +341,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         model: ResourceType
             The DataConcepts object.
         dry_run: bool
-            Whether to actually delete the item or run a dry run of the delete operation.
+            Whether to actually register the item or run a dry run of the register operation.
             Dry run is intended to be used for validation. Default: false
 
         Returns
