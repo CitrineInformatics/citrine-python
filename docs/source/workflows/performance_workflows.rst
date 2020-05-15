@@ -73,10 +73,10 @@ For numeric responses, performance metrics include root mean squared error (RMSE
    Residuals are calculated using ``(Predicted - Actual)/(Uncertainty Estimate)``.
    A value below 1 indicates the model is underconfident, i.e. actual values are within predicted error bars, on average.
    A value over 1 indicates the model is overconfident, i.e. actual values fall outside predicted error bars, on average.
--  Coverage probability is the fraction of observations for which the magnitude of the error is within a confidence interval of a given coverage level.
+-  Coverage probability is the fraction of observations for which the magnitude of the error is within a prediction interval of a given coverage level.
    The default coverage level is 0.683, corresponding to error bars that are one standard deviation of a normal distribution.
-   A value greater than the coverage level indicates that the model is under-confident.
-   A value less than the coverage level indicates the model is over-confident.
+   A value greater than the coverage level indicates that the model is underconfident.
+   A value less than the coverage level indicates the model is overconfident.
 
 For categorical responses, performance metrics include either the area under the receiver operating characteristic (ROC) curve (if there are 2 categories) or the F1 score (if there are > 2 categories).
 
