@@ -5,6 +5,14 @@ from citrine._serialization.serializable import Serializable
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
 from citrine._serialization import properties
 
+__all__ = ['Descriptor',
+           'RealDescriptor',
+           'ChemicalFormulaDescriptor',
+           'InorganicDescriptor',
+           'MolecularStructureDescriptor',
+           'CategoricalDescriptor',
+           'FormulationDescriptor']
+
 
 class Descriptor(PolymorphicSerializable['Descriptor']):
     """[ALPHA] A Citrine Descriptor describes the range of values that a quantity can take on.
@@ -15,12 +23,19 @@ class Descriptor(PolymorphicSerializable['Descriptor']):
     @classmethod
     def get_type(cls, data) -> Type[Serializable]:
         """Return the subtype."""
+        # Current backend bug PLA-4036 means that some descriptors come back with "category"
+        # as type key. This should be resolved soon
+        try:
+            t = data["type"]
+        except KeyError:
+            t = data["category"]
         return {
-            "Real": RealDescriptor,
-            "Inorganic": ChemicalFormulaDescriptor,
             "Categorical": CategoricalDescriptor,
+            "Formulation": FormulationDescriptor,
+            "Inorganic": ChemicalFormulaDescriptor,
             "Organic": MolecularStructureDescriptor,
-        }[data["type"]]
+            "Real": RealDescriptor,
+        }[t]
 
 
 class RealDescriptor(Serializable['RealDescriptor'], Descriptor):
@@ -62,6 +77,9 @@ class RealDescriptor(Serializable['RealDescriptor'], Descriptor):
         self.upper_bound: float = upper_bound
         self.units: Optional[str] = units
 
+    def __str__(self):
+        return "<RealDescriptor {!r}>".format(self.key)
+
 
 class ChemicalFormulaDescriptor(Serializable['ChemicalFormulaDescriptor'], Descriptor):
     """[ALPHA] Captures domain-specific context about a stoichiometric chemical formula.
@@ -90,6 +108,9 @@ class ChemicalFormulaDescriptor(Serializable['ChemicalFormulaDescriptor'], Descr
 
     def __init__(self, key: str):
         self.key: str = key
+
+    def __str__(self):
+        return "<ChemicalFormulaDescriptor {!r}>".format(self.key)
 
 
 def InorganicDescriptor(key: str, threshold: Optional[float] = 1.0):
@@ -128,6 +149,9 @@ class MolecularStructureDescriptor(Serializable['MolecularStructureDescriptor'],
     def __init__(self, key: str):
         self.key: str = key
 
+    def __str__(self):
+        return "<MolecularStructureDescriptor {!r}>".format(self.key)
+
 
 class CategoricalDescriptor(Serializable['CategoricalDescriptor'], Descriptor):
     """[ALPHA] A descriptor to hold categorical variables.
@@ -159,3 +183,35 @@ class CategoricalDescriptor(Serializable['CategoricalDescriptor'], Descriptor):
     def __init__(self, key: str, categories: List[str]):
         self.key: str = key
         self.categories: List[str] = categories
+
+    def __str__(self):
+        return "<CategoricalDescriptor {!r}>".format(self.key)
+
+
+class FormulationDescriptor(Serializable['FormulationDescriptor'], Descriptor):
+    """[ALPHA] A descriptor to hold formulations.
+
+    Parameters
+    ----------
+    key: str
+        the key corresponding to a descriptor
+
+    """
+
+    key = properties.String('descriptor_key')
+    typ = properties.String('type', default='Formulation', deserializable=False)
+
+    def __eq__(self, other):
+        try:
+            attrs = ["key", "typ"]
+            return all([
+                self.__getattribute__(key) == other.__getattribute__(key) for key in attrs
+            ])
+        except AttributeError:
+            return False
+
+    def __init__(self, key: str):
+        self.key: str = key
+
+    def __str__(self):
+        return "<FormulationDescriptor {!r}>".format(self.key)

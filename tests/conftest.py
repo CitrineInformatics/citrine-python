@@ -183,6 +183,167 @@ def valid_expression_predictor_data():
 
 
 @pytest.fixture
+def valid_predictor_report_data():
+    """Produce valid data used for tests."""
+    from citrine.informatics.descriptors import RealDescriptor
+    x = RealDescriptor("x", 0, 1, "")
+    y = RealDescriptor("y", 0, 100, "")
+    z = RealDescriptor("z", 0, 101, "")
+    return dict(
+        id='7c2dda5d-675a-41b6-829c-e485163f0e43',
+        module_id='31c7f311-6f3d-4a93-9387-94cc877f170c',
+        status='OK',
+        create_time='2020-04-23T15:46:26Z',
+        update_time='2020-04-23T15:46:26Z',
+        report=dict(
+            models=[
+                dict(
+                    name='GeneralLoloModel_1',
+                    type='GeneralLoloModel',
+                    inputs=[x.key],
+                    outputs=[y.key],
+                    display_name='ML Model',
+                    model_settings=[
+                        dict(
+                            name='Algorithm',
+                            value='Ensemble of non-linear estimators',
+                            children=[
+                                dict(name='Number of estimators', value=64, children=[]),
+                                dict(name='Leaf model', value='Mean', children=[]),
+                                dict(name='Use jackknife', value=True, children=[])
+                            ]
+                        )
+                    ],
+                    feature_importances=[
+                        dict(
+                            response_key='y',
+                            importances=dict(x=1.00),
+                            top_features=5
+                        )
+                    ]
+                ),
+                dict(
+                    name='GeneralLosslessModel_2',
+                    type='GeneralLosslessModel',
+                    inputs=[x.key, y.key],
+                    outputs=[z.key],
+                    display_name='GeneralLosslessModel_2',
+                    model_settings=[
+                        dict(
+                            name="Expression",
+                            value="(z) <- (x + y)",
+                            children=[]
+                        )
+                    ],
+                    feature_importances=[]
+                )
+            ],
+            descriptors=[x.dump(), y.dump(), z.dump()]
+        )
+    )
+
+
+@pytest.fixture
+def valid_ing_to_simple_mixture_predictor_data():
+    """Produce valid data used for tests."""
+    from citrine.informatics.descriptors import FormulationDescriptor, RealDescriptor
+    return dict(
+        module_type='PREDICTOR',
+        status='VALID',
+        status_info=[],
+        active=True,
+        display_name='Ingredients to simple mixture predictor',
+        schema_id='873e4541-da8a-4698-a981-732c0c729c3d',
+        id=str(uuid.uuid4()),
+        config=dict(
+            type='IngredientsToSimpleMixture',
+            name='Ingredients to simple mixture predictor',
+            description='Constructs mixtures from ingredients',
+            output=FormulationDescriptor('simple mixture').dump(),
+            id_to_quantity={
+                'water': RealDescriptor('water quantity', 0, 1).dump(),
+                'salt': RealDescriptor('salt quantity', 0, 1).dump()
+            },
+            labels={
+                'solvent': ['water'],
+                'solute': ['salt'],
+            }
+        )
+    )
+
+
+@pytest.fixture
+def valid_generalized_mean_property_predictor_data():
+    """Produce valid data used for tests."""
+    from citrine.informatics.descriptors import FormulationDescriptor
+    from citrine.informatics.data_sources import AraTableDataSource
+    return dict(
+        module_type='PREDICTOR',
+        status='VALID',
+        status_info=[],
+        active=True,
+        display_name='Mean property predictor',
+        schema_id='29e53222-3217-4f81-b3b8-4197a8211ade',
+        id=str(uuid.uuid4()),
+        config=dict(
+            type='GeneralizedMeanProperty',
+            name='Mean property predictor',
+            description='Computes mean ingredient properties',
+            input=FormulationDescriptor('simple mixture').dump(),
+            properties=['density'],
+            p=2,
+            training_data=AraTableDataSource(uuid.uuid4(), 0).dump(),
+            impute_properties=True,
+            default_properties={'density': 1.0},
+            label='solvent'
+        )
+    )
+
+
+@pytest.fixture
+def valid_label_fractions_predictor_data():
+    """Produce valid data used for tests."""
+    from citrine.informatics.descriptors import FormulationDescriptor
+    return dict(
+        module_type='PREDICTOR',
+        status='VALID',
+        status_info=[],
+        active=True,
+        display_name='Label fractions predictor',
+        schema_id='997a7e11-2c16-4e30-b531-9e657a863019',
+        id=str(uuid.uuid4()),
+        config=dict(
+            type='LabelFractions',
+            name='Label fractions predictor',
+            description='Computes relative proportions of labeled ingredients',
+            input=FormulationDescriptor('simple mixture').dump(),
+            labels=['solvent']
+        )
+    )
+
+@pytest.fixture
+def valid_ingredient_fractions_predictor_data():
+    """Produce valid data used for tests."""
+    from citrine.informatics.descriptors import FormulationDescriptor
+    return dict(
+        module_type='PREDICTOR',
+        status='VALID',
+        status_info=[],
+        active=True,
+        display_name='Ingredient fractions predictor',
+        schema_id='eb02a095-8cdc-45d8-bc82-1013b6e8e700',
+        id=str(uuid.uuid4()),
+        config=dict(
+            type='IngredientFractions',
+            name='Ingredient fractions predictor',
+            description='Computes ingredient fractions',
+            input=FormulationDescriptor('ingredients').dump(),
+            ingredients=['Blue dye', 'Red dye']
+        )
+    )
+
+
+@pytest.fixture
 def invalid_predictor_data():
     """Produce valid data used for tests."""
     from citrine.informatics.descriptors import RealDescriptor
@@ -243,4 +404,34 @@ def valid_enumerated_processor_data():
             description='enumerates all the things',
             max_size=10,
         )
+    )
+
+
+@pytest.fixture
+def valid_simple_mixture_predictor_data():
+    """Produce valid data used for tests."""
+    from citrine.informatics.data_sources import AraTableDataSource
+    from citrine.informatics.descriptors import RealDescriptor
+    return dict(
+        module_type='PREDICTOR',
+        status='VALID',
+        status_info=[],
+        active=True,
+        display_name='Simple mixture predictor',
+        schema_id='e82a993c-e6ab-46a2-b636-c71d0ba224d1',
+        id=str(uuid.uuid4()),
+        config=dict(
+            type='SimpleMixture',
+            name='Simple mixture predictor',
+            description='simple mixture description',
+            input=dict(
+                type='Formulation',
+                descriptor_key='input formulation',
+            ),
+            output=dict(
+                type='Formulation',
+                descriptor_key='output formulation',
+            ),
+            training_data=AraTableDataSource(uuid.uuid4(), 0).dump(),
+        ),
     )

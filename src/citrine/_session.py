@@ -69,8 +69,10 @@ class Session(requests.Session):
     def _refresh_access_token(self) -> None:
         """Optionally refresh our access token (if the previous one is about to expire)."""
         data = {'refresh_token': self.refresh_token}
-        response = self.request(
-            'POST', self._versioned_base_url() + 'tokens/refresh', json=data)
+
+        response = self._request_with_retry('POST', self._versioned_base_url() + 'tokens/refresh',
+                                            json=data)
+
         if response.status_code != 200:
             raise UnauthorizedRefreshToken()
         self.access_token = response.json()['access_token']
@@ -78,28 +80,41 @@ class Session(requests.Session):
             jwt.decode(self.access_token, verify=False)['exp']
         )
 
+    def _request_with_retry(self, method, uri, **kwargs):
+        """Wrap a request with a try/except to retry when ConnectionErrors are seen."""
+        # The urllib3 Retry object does not handle this situation so retry manually"
+        try:
+            response = self.request(method, uri, **kwargs)
+        except requests.exceptions.ConnectionError:
+            logger.warning('requests.exceptions.ConnectionError seen, retrying request')
+            response = self.request(method, uri, **kwargs)
+
+        return response
+
     def checked_request(self, method: str, path: str,
                         version: str = 'v1', **kwargs) -> requests.Response:
         """Check response status code and throw an exception if relevant."""
+        logger.debug('BEGIN request details:')
+        logger.debug('\tmethod: {}'.format(method))
+        logger.debug('\tpath: {}'.format(path))
+        logger.debug('\tversion: {}'.format(version))
+
         if self._is_access_token_expired():
             self._refresh_access_token()
         uri = self._versioned_base_url(version) + path.lstrip('/')
 
-        logger.debug('BEGIN request details:')
-        logger.debug('\tmethod: {}'.format(method))
-        logger.debug('\tpath: {}'.format(path))
         logger.debug('\turi: {}'.format(uri))
-        logger.debug('\tversion: {}'.format(version))
+
         for k, v in kwargs.items():
             logger.debug('\t{}: {}'.format(k, v))
         logger.debug('END request details.')
 
-        response = self.request(method, uri, **kwargs)
+        response = self._request_with_retry(method, uri, **kwargs)
 
         try:
             if response.status_code == 401 and response.json().get("reason") == "invalid-token":
                 self._refresh_access_token()
-                response = self.request(method, uri, **kwargs)
+                response = self._request_with_retry(method, uri, **kwargs)
         except ValueError:
             # Ignore ValueErrors thrown by attempting to decode json bodies. This
             # might occur if we get a 401 response without a JSON body
