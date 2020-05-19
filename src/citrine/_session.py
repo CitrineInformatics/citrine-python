@@ -60,6 +60,13 @@ class Session(requests.Session):
         self.mount('https://', adapter)
         self.mount('http://', adapter)
 
+        # Requests has it's own set of exceptions that do not inherit from the
+        # built-in exceptions. The built-in ConnectionError handles 4 different
+        # child exceptions: https://docs.python.org/3/library/exceptions.html#ConnectionError
+        self.retry_errs = (ConnectionError,
+                           requests.exceptions.ConnectionError,
+                           requests.exceptions.ChunkedEncodingError)
+
     def _versioned_base_url(self, version: str = 'v1'):
         return '{}://{}/api/{}/'.format(self.scheme, self.authority, version)
 
@@ -82,11 +89,13 @@ class Session(requests.Session):
 
     def _request_with_retry(self, method, uri, **kwargs):
         """Wrap a request with a try/except to retry when ConnectionErrors are seen."""
-        # The urllib3 Retry object does not handle this situation so retry manually"
+        # The urllib3 Retry object does not handle retries when ConnectionErrors
+        # (or other similar errors) and raised.  Using a stale connection causes
+        # these issues.  Retrying the request uses a new connection.  See PLA-3449/4183.
         try:
             response = self.request(method, uri, **kwargs)
-        except requests.exceptions.ConnectionError:
-            logger.warning('requests.exceptions.ConnectionError seen, retrying request')
+        except self.retry_errs as e:
+            logger.warning('{} seen, retrying request'.format(repr(e)))
             response = self.request(method, uri, **kwargs)
 
         return response
