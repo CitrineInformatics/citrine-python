@@ -79,5 +79,7 @@ html_theme_options = {
     'github_repo': 'citrine-python',
     'sidebar_collapse': False,
     'head_font_family': ['Barlow', 'Helvetica', 'Arial', 'Sans-Serif'],
-    'font_family': ['Lusitana', 'Times New Roman', 'serif']
+    'font_family': ['Lusitana', 'Times New Roman', 'serif'],
+    'page_width': '1024px', # default is 940 https://github.com/bitprophet/alabaster/blob/master/alabaster/theme.conf#L29
+    'sidebar_width': '250px' # default is 220 https://github.com/bitprophet/alabaster/blob/master/alabaster/theme.conf#L38
 }
