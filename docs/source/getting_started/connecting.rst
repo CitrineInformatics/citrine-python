@@ -9,7 +9,7 @@ To create a client, you must specify the specific site that you want to connect 
 
     from citrine import Citrine
     import os
-    citrine_client = Citrine(host="stage.citrine-platform.com", api_key=os.environ.get("CITRINE_API_KEY")
+    citrine_client = Citrine(host="stage.citrine-platform.com", api_key=os.environ.get("CITRINE_API_KEY"))
 
 Your API key serves both as your identity and your password.
 Anyone with your API key can take actions as you would on the platform.
