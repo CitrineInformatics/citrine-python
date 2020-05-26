@@ -138,7 +138,7 @@ class AttributeByTemplate(Serializable['AttributeByTemplate'], Variable):
 
 
 class AttributeByTemplateAfterProcessTemplate(
-    Serializable['AttributeByTemplateAfterProcessTemplate'], Variable):
+        Serializable['AttributeByTemplateAfterProcessTemplate'], Variable):
     """[ALPHA] Attribute of an object marked by an attribute template and a parent process template.
 
     Parameters
@@ -188,7 +188,7 @@ class AttributeByTemplateAfterProcessTemplate(
 
 
 class AttributeByTemplateAndObjectTemplate(
-    Serializable['AttributeByTemplateAndObjectTemplate'], Variable):
+        Serializable['AttributeByTemplateAndObjectTemplate'], Variable):
     """[ALPHA] Attribute marked by an attribute template and an object template.
 
     For example, one property may be measured by two different measurement techniques.  In this
@@ -243,7 +243,7 @@ class AttributeByTemplateAndObjectTemplate(
 
 
 class IngredientIdentifierByProcessTemplateAndName(
-    Serializable['IngredientIdentifierByProcessAndName'], Variable):
+        Serializable['IngredientIdentifierByProcessAndName'], Variable):
     """[ALPHA] Ingredient identifier associated with a process template and a name.
 
     Parameters
@@ -332,7 +332,7 @@ class IngredientLabelByProcessAndName(Serializable['IngredientLabelByProcessAndN
 
 
 class IngredientQuantityByProcessAndName(
-    Serializable['IngredientQuantityByProcessAndName'], Variable):
+        Serializable['IngredientQuantityByProcessAndName'], Variable):
     """[ALPHA] Get the quantity of an ingredient associated with a process template and a name.
 
     Parameters
