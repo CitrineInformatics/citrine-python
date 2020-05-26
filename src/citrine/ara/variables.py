@@ -513,7 +513,8 @@ class IngredientIdentifierInOutput(Serializable['IngredientIdentifierInOutput'],
         Name of the ingredient to search for
     process_templates: list[LinkByUID]
         Process templates halt the search for a matching ingredient name.
-        These process templates are inclusive. The ingredient may be present in these processes but not after.
+        These process templates are inclusive.
+        The ingredient may be present in these processes but not after.
 
     """
 
@@ -577,7 +578,8 @@ class IngredientQuantityInOutput(Serializable['IngredientQuantityInOutput'], Var
         valid options are defined by :class:`~citrine.ara.variables.IngredientQuantityDimension`
     process_templates: list[LinkByUID]
         Process templates halt the search for a matching ingredient name.
-        These process templates are inclusive. The ingredient may be present in these processes but not after.
+        These process templates are inclusive.
+        The ingredient may be present in these processes but not after.
 
     """
 
