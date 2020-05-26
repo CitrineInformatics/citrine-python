@@ -41,6 +41,7 @@ class AraDefinition(Resource["AraDefinition"]):
 
     @staticmethod
     def _get_dups(lst: List) -> List:
+        # Hmmn, this looks like a potentially costly operation?!
         return [x for x in lst if lst.count(x) > 1]
 
     definition_uid = properties.Optional(properties.UUID(), 'definition_id')
@@ -205,7 +206,10 @@ class AraDefinitionCollection(Collection[AraDefinition]):
     """[ALPHA] Represents the collection of all Ara Definitions associated with a project."""
 
     _path_template = 'projects/{project_id}/ara-definitions'
-    _individual_key = 'version'
+    _collection_key = 'definitions'
+
+    # NOTE: This isn't actually an 'individual key' - both parts (version and definition) are necessary
+    _individual_key = None
 
     def __init__(self, project_id: UUID, session: Session):
         self.project_id = project_id
@@ -221,10 +225,10 @@ class AraDefinitionCollection(Collection[AraDefinition]):
 
     def build(self, data: dict) -> AraDefinition:
         """[ALPHA] Build an individual Ara Definition from a dictionary."""
-        defn = AraDefinition.build(data['ara_definition'])
-        defn.definition_uid = data['definition_id']
-        defn.version_number = data['version_number']
-        defn.version_uid = data['id']
+        defn = AraDefinition.build(data['version']['ara_definition'])
+        defn.definition_uid = data['definition']['id']
+        defn.version_number = data['version']['version_number']
+        defn.version_uid = data['version']['id']
         defn.project_id = self.project_id
         defn.session = self.session
         return defn
