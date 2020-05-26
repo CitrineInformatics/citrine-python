@@ -53,7 +53,8 @@ class Variable(PolymorphicSerializable['Variable']):
             RootInfo, AttributeByTemplate, AttributeByTemplateAfterProcessTemplate,
             AttributeByTemplateAndObjectTemplate, IngredientIdentifierByProcessTemplateAndName,
             IngredientLabelByProcessAndName, IngredientQuantityByProcessAndName,
-            RootIdentifier, AttributeInOutput
+            RootIdentifier, AttributeInOutput, IngredientIdentifierInOutput,
+            IngredientQuantityInOutput
         ]
         res = next((x for x in types if x.typ == data["type"]), None)
         if res is None:
@@ -137,7 +138,7 @@ class AttributeByTemplate(Serializable['AttributeByTemplate'], Variable):
 
 
 class AttributeByTemplateAfterProcessTemplate(
-        Serializable['AttributeByTemplateAfterProcessTemplate'], Variable):
+    Serializable['AttributeByTemplateAfterProcessTemplate'], Variable):
     """[ALPHA] Attribute of an object marked by an attribute template and a parent process template.
 
     Parameters
@@ -187,7 +188,7 @@ class AttributeByTemplateAfterProcessTemplate(
 
 
 class AttributeByTemplateAndObjectTemplate(
-        Serializable['AttributeByTemplateAndObjectTemplate'], Variable):
+    Serializable['AttributeByTemplateAndObjectTemplate'], Variable):
     """[ALPHA] Attribute marked by an attribute template and an object template.
 
     For example, one property may be measured by two different measurement techniques.  In this
@@ -242,7 +243,7 @@ class AttributeByTemplateAndObjectTemplate(
 
 
 class IngredientIdentifierByProcessTemplateAndName(
-        Serializable['IngredientIdentifierByProcessAndName'], Variable):
+    Serializable['IngredientIdentifierByProcessAndName'], Variable):
     """[ALPHA] Ingredient identifier associated with a process template and a name.
 
     Parameters
@@ -331,7 +332,7 @@ class IngredientLabelByProcessAndName(Serializable['IngredientLabelByProcessAndN
 
 
 class IngredientQuantityByProcessAndName(
-        Serializable['IngredientQuantityByProcessAndName'], Variable):
+    Serializable['IngredientQuantityByProcessAndName'], Variable):
     """[ALPHA] Get the quantity of an ingredient associated with a process template and a name.
 
     Parameters
@@ -406,8 +407,7 @@ class RootIdentifier(Serializable['RootIdentifier'], Variable):
         self.scope = scope
 
 
-class AttributeInOutput(
-        Serializable['AttributeInOutput'], Variable):
+class AttributeInOutput(Serializable['AttributeInOutput'], Variable):
     """[ALPHA] Attribute marked by an attribute template in the trunk of the history tree.
 
     The search for an attribute that marks the given attribute template starts at the root
@@ -439,7 +439,7 @@ class AttributeInOutput(
     process_templates: list[LinkByUID]
         process templates that should not be traversed through when searching for a matching
         attribute.  The attribute may be present in these processes but not their ingredients.
-    attribute_constraints: list[(LinkByUID, Bounds)]
+    attribute_constraints: Optional[list[(LinkByUID, Bounds)]]
         constraints on object attributes in the target object that must be satisfied. Constraints
         are expressed as Bounds.  Attributes are expressed with links. The attribute that the
         variable is being set to may be the target of a constraint as well.
@@ -467,9 +467,138 @@ class AttributeInOutput(
                  headers: List[str],
                  attribute_template: LinkByUID,
                  process_templates: List[LinkByUID],
-                 attribute_constraints: List[List[Union[LinkByUID, BaseBounds]]] = None):
+                 attribute_constraints: Optional[List[List[Union[LinkByUID, BaseBounds]]]] = None):
         self.name = name
         self.headers = headers
         self.attribute_template = attribute_template
         self.process_templates = process_templates
         self.attribute_constraints = attribute_constraints
+
+
+class IngredientIdentifierInOutput(Serializable['IngredientIdentifierInOutput'], Variable):
+    """[ALPHA] Ingredient quantity in the trunk of a material history tree.
+
+    The search for an ingredient quantity starts at the root of the material history tree
+    and proceeds until any of the given process templates are reached. Those templates block
+    the search from continuing but are inclusive: a match is extracted if an ingredient with
+    the specified ingredient name is found at or before a cutoff.
+
+    This variable definition allows a quantity to be extracted when an ingredient is used
+    in multiple processes. As an example, consider a paint formed by mixing red and yellow
+    pigments, where the red pigment is formed by mixing yellow and magenta. This variable could be
+    used represent the quantity of yellow in both mixing processes (red and the final paint)
+    in a single column provided the process templates that mixed red and the final paint
+    are included as cutoffs.
+
+    In general, this variable should be preferred over an
+    :class:`~citrine.ara.variables.IngredientQuantityByProcessTemplateAndName` when mixtures are
+    hierarchical (i.e. blends of blends). It allows an ingredient with a single name to be used in
+    multiple processes without defining additional variables that manifest as additional columns
+    in your table, and must be used in place of the former if the same process template is used to
+    represent mixing at multiple levels in the material history hierarchy. Going back to the
+    previous example, this variable must be used in place of an
+    :class:`~citrine.ara.variables.IngredientQuantityByProcessTemplateAndName` if the same
+    process template was used to represent the process that mixed red and the final paint.
+    Using :class:`~citrine.ara.variables.IngredientQuantityByProcessTemplateAndName` would result
+    in an ambiguous match because yellow would be found twice in the material history,
+    once when mixing red and again when mixing the final paint.
+
+    Parameters
+    ---------
+    name: str
+        a short human-readable name to use when referencing the variable
+    headers: list[str]
+        sequence of column headers
+    ingredient_name: str
+        Name of the ingredient to search for
+    process_templates: list[LinkByUID]
+        Process templates halt the search for a matching ingredient name.
+        These process templates are inclusive. The ingredient may be present in these processes but not after.
+
+    """
+
+    name = properties.String('name')
+    headers = properties.List(properties.String, 'headers')
+    ingredient_name = properties.String('ingredient_name')
+    process_templates = properties.List(properties.Object(LinkByUID), 'process_templates')
+    typ = properties.String('type', default="ing_id_in_output", deserializable=False)
+
+    def _attrs(self) -> List[str]:
+        return ["name", "headers", "ingredient_name", "process_templates", "typ"]
+
+    def __init__(self, *,
+                 name: str,
+                 headers: List[str],
+                 ingredient_name: str,
+                 process_templates: List[LinkByUID]):
+        self.name = name
+        self.headers = headers
+        self.ingredient_name = ingredient_name
+        self.process_templates = process_templates
+
+
+class IngredientQuantityInOutput(Serializable['IngredientQuantityInOutput'], Variable):
+    """[ALPHA] Ingredient identifier in the trunk of a material history tree.
+
+    The search for an identifier starts at the root of the material history tree and proceeds
+    until any of the given process templates are reached. Those templates block the search from
+    continuing but are inclusive: a match is extracted if an ingredient with the specified
+    ingredient name is found at or before a cutoff.
+
+    This variable definition allows an identifier to be extracted when an ingredient is used
+    in multiple processes. As an example, consider a paint formed by mixing red and yellow
+    pigments, where the red pigment is formed by mixing yellow and magenta. This variable could be
+    used represent yellow in both mixing processes (red and the final paint) in a single column
+    provided the process templates that mixed red and the final paint are included as cutoffs.
+
+    In general, this variable should be preferred over an
+    :class:`~citrine.ara.variables.IngredientIdentifierByProcessTemplateAndName` when mixtures are
+    hierarchical (i.e. blends of blends). It allows an ingredient with a single name to be used in
+    multiple processes without defining additional variables that manifest as additional columns
+    in your table, and must be used in place of the former if the same process template is used to
+    represent mixing at multiple levels in the material history hierarchy. Going back to the
+    previous example, this variable must be used in place of an
+    :class:`~citrine.ara.variables.IngredientIdentifierByProcessTemplateAndName` if the same
+    process template was used to represent the process that mixed red and the final paint.
+    Using :class:`~citrine.ara.variables.IngredientIdentifierByProcessTemplateAndName` would result
+    in an ambiguous match because yellow would be found twice in the material history,
+    once when mixing red and again when mixing the final paint.
+
+    Parameters
+    ---------
+    name: str
+        a short human-readable name to use when referencing the variable
+    headers: list[str]
+        sequence of column headers
+    ingredient_name: str
+        Name of the ingredient to search for
+    quantity_dimension: IngredientQuantityDimension
+        dimension of the ingredient quantity: absolute quantity, number, mass, or volume fraction.
+        valid options are defined by :class:`~citrine.ara.variables.IngredientQuantityDimension`
+    process_templates: list[LinkByUID]
+        Process templates halt the search for a matching ingredient name.
+        These process templates are inclusive. The ingredient may be present in these processes but not after.
+
+    """
+
+    name = properties.String('name')
+    headers = properties.List(properties.String, 'headers')
+    ingredient_name = properties.String('ingredient_name')
+    quantity_dimension = properties.Enumeration(IngredientQuantityDimension, 'quantity_dimension')
+    process_templates = properties.List(properties.Object(LinkByUID), 'process_templates')
+    typ = properties.String('type', default="ing_id_in_output", deserializable=False)
+
+    def _attrs(self) -> List[str]:
+        return ["name", "headers", "ingredient_name", "process_templates", "typ"]
+
+    def __init__(self, *,
+                 name: str,
+                 headers: List[str],
+                 ingredient_name: str,
+                 quantity_dimension: IngredientQuantityDimension,
+                 process_templates: List[LinkByUID]):
+        self.name = name
+        self.headers = headers
+        self.ingredient_name = ingredient_name
+        self.quantity_dimension = quantity_dimension
+        self.process_templates = process_templates
