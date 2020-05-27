@@ -1,11 +1,11 @@
 Data Sources
-=============
+============
 
 Data sources are used by modules to pull data from outside of the AI engine.
 For example, a :doc:`predictor <predictors>` may need to define external training data.
 
 CSV Data Source
-----------------
+---------------
 
 The :class:`~citrine.informatics.data_sources.CSVDataSource` draws data from a CSV file stored on the data platform and annotates it by mapping each column name to a :class:`~citrine.informatics.descriptors.Descriptor`.
 The file is referenced via a :class:`~citrine.resources.file_link.FileLink`.
@@ -141,7 +141,7 @@ A CSV data source and :class:`~citrine.informatics.predictors.IngredientsToSimpl
     )
 
 Ara Table Data Source
----------------
+---------------------
 
 An :class:`~citrine.informatics.data_sources.AraTableDataSource` references an Ara table.
 As explained more in the :doc:`documentation <../data_extraction>`, Ara tables provide a structured version of on-platform data.

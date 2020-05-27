@@ -38,7 +38,6 @@ Table of Contents
    data_entry
    data_extraction
    workflows/index
-   development
    FAQ/index
 
 Indices and tables
