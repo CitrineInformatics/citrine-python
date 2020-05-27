@@ -198,6 +198,9 @@ The following example illustrates how an :class:`~citrine.informatics.predictors
     water_quantity = RealDescriptor('water quantity', 0, 1)
     salt_quantity = RealDescriptor('salt quantity', 0, 1)
 
+    # table with simple mixtures and their ingredients
+    data_source = AraTableDataSource(table_uid, 0)
+
     IngredientsToSimpleMixturePredictor(
         name='Ingredients to simple mixture predictor',
         description='Constructs a mixture from ingredient quantities',
@@ -211,7 +214,8 @@ The following example illustrates how an :class:`~citrine.informatics.predictors
         labels={
             'solvent': ['water'],
             'solute': ['salt']
-        }
+        },
+        training_data=data_source
     )
 
 Simple mixture predictor
@@ -222,8 +226,9 @@ Along the lines of the example above, hypertonic saline can be mixed with water 
 Often, the properties of a hierarchical mixture are strongly associated with its leaf ingredients.
 The :class:`~citrine.informatics.predictors.SimpleMixturePredictor` flattens a hierarchical recipe into a recipe that contains only those leaf ingredients.
 
-The formulation to be flattened is specified by an ``input`` formulation descriptor; the associated material history of the input formulation is traversed to determine the leaf ingredients.
-These leaf ingredients are then summed across all leaves of the mixing processes, with the resulting candidates described by an ``output`` formulation descriptor.
+The formulation to be flattened is specified by an ``input_descriptor`` formulation descriptor; the associated material history of the input formulation is traversed to determine the leaf ingredients.
+These leaf ingredients are then summed across all leaves of the mixing processes, with the resulting candidates described by an ``output_descriptor`` formulation descriptor.
+The ``training_data`` parameter is used as a source of formulation recipes to be used in flattening hierarchical simple mixtures.
 
 The following example illustrates how a :class:`~citrine.informatics.predictors.SimpleMixturePredictor` can be used to flatten the ingredients used in aqueous dilutions of hypertonic saline, yielding just the quantities of the leaf constituents salt and water.
 
@@ -235,11 +240,15 @@ The following example illustrates how a :class:`~citrine.informatics.predictors.
     input_formulation = FormulationDescriptor('diluted saline')
     output_formulation = FormulationDescriptor('diluted saline (flattened)')
 
+    # table with simple mixtures and their ingredients
+    data_source = AraTableDataSource(table_uid, 0)
+
     SimpleMixturePredictor(
         name='Simple mixture predictor',
         description='Constructs a formulation descriptor that flattens a hierarchy of simple mixtures into the quantities of leaf ingredients',
-        input=input_formulation,
-        output=output_formulation,
+        input_descriptor=input_formulation,
+        output_descriptor=output_formulation,
+        training_data=data_source
     )
 
 Generalized mean property predictor

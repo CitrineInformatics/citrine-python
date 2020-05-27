@@ -235,6 +235,9 @@ These labels are specified via:</p>
 <span class="n">water_quantity</span> <span class="o">=</span> <span class="n">RealDescriptor</span><span class="p">(</span><span class="s1">&#39;water quantity&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 <span class="n">salt_quantity</span> <span class="o">=</span> <span class="n">RealDescriptor</span><span class="p">(</span><span class="s1">&#39;salt quantity&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 
+<span class="c1"># table with simple mixtures and their ingredients</span>
+<span class="n">data_source</span> <span class="o">=</span> <span class="n">AraTableDataSource</span><span class="p">(</span><span class="n">table_uid</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
 <span class="n">IngredientsToSimpleMixturePredictor</span><span class="p">(</span>
     <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Ingredients to simple mixture predictor&#39;</span><span class="p">,</span>
     <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Constructs a mixture from ingredient quantities&#39;</span><span class="p">,</span>
@@ -248,7 +251,8 @@ These labels are specified via:</p>
     <span class="n">labels</span><span class="o">=</span><span class="p">{</span>
         <span class="s1">&#39;solvent&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;water&#39;</span><span class="p">],</span>
         <span class="s1">&#39;solute&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;salt&#39;</span><span class="p">]</span>
-    <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="n">training_data</span><span class="o">=</span><span class="n">data_source</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -259,8 +263,9 @@ These labels are specified via:</p>
 Along the lines of the example above, hypertonic saline can be mixed with water to form isotonic saline.
 Often, the properties of a hierarchical mixture are strongly associated with its leaf ingredients.
 The <a class="reference internal" href="../reference/citrine.informatics.predictors.html#citrine.informatics.predictors.SimpleMixturePredictor" title="citrine.informatics.predictors.SimpleMixturePredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleMixturePredictor</span></code></a> flattens a hierarchical recipe into a recipe that contains only those leaf ingredients.</p>
-<p>The formulation to be flattened is specified by an <code class="docutils literal notranslate"><span class="pre">input</span></code> formulation descriptor; the associated material history of the input formulation is traversed to determine the leaf ingredients.
-These leaf ingredients are then summed across all leaves of the mixing processes, with the resulting candidates described by an <code class="docutils literal notranslate"><span class="pre">output</span></code> formulation descriptor.</p>
+<p>The formulation to be flattened is specified by an <code class="docutils literal notranslate"><span class="pre">input_descriptor</span></code> formulation descriptor; the associated material history of the input formulation is traversed to determine the leaf ingredients.
+These leaf ingredients are then summed across all leaves of the mixing processes, with the resulting candidates described by an <code class="docutils literal notranslate"><span class="pre">output_descriptor</span></code> formulation descriptor.
+The <code class="docutils literal notranslate"><span class="pre">training_data</span></code> parameter is used as a source of formulation recipes to be used in flattening hierarchical simple mixtures.</p>
 <p>The following example illustrates how a <a class="reference internal" href="../reference/citrine.informatics.predictors.html#citrine.informatics.predictors.SimpleMixturePredictor" title="citrine.informatics.predictors.SimpleMixturePredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleMixturePredictor</span></code></a> can be used to flatten the ingredients used in aqueous dilutions of hypertonic saline, yielding just the quantities of the leaf constituents salt and water.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.informatics.descriptors</span> <span class="kn">import</span> <span class="n">FormulationDescriptor</span>
 <span class="kn">from</span> <span class="nn">citrine.informatics.predictors</span> <span class="kn">import</span> <span class="n">SimpleMixturePredictor</span>
@@ -268,11 +273,15 @@ These leaf ingredients are then summed across all leaves of the mixing processes
 <span class="n">input_formulation</span> <span class="o">=</span> <span class="n">FormulationDescriptor</span><span class="p">(</span><span class="s1">&#39;diluted saline&#39;</span><span class="p">)</span>
 <span class="n">output_formulation</span> <span class="o">=</span> <span class="n">FormulationDescriptor</span><span class="p">(</span><span class="s1">&#39;diluted saline (flattened)&#39;</span><span class="p">)</span>
 
+<span class="c1"># table with simple mixtures and their ingredients</span>
+<span class="n">data_source</span> <span class="o">=</span> <span class="n">AraTableDataSource</span><span class="p">(</span><span class="n">table_uid</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
 <span class="n">SimpleMixturePredictor</span><span class="p">(</span>
     <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Simple mixture predictor&#39;</span><span class="p">,</span>
     <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Constructs a formulation descriptor that flattens a hierarchy of simple mixtures into the quantities of leaf ingredients&#39;</span><span class="p">,</span>
-    <span class="nb">input</span><span class="o">=</span><span class="n">input_formulation</span><span class="p">,</span>
-    <span class="n">output</span><span class="o">=</span><span class="n">output_formulation</span><span class="p">,</span>
+    <span class="n">input_descriptor</span><span class="o">=</span><span class="n">input_formulation</span><span class="p">,</span>
+    <span class="n">output_descriptor</span><span class="o">=</span><span class="n">output_formulation</span><span class="p">,</span>
+    <span class="n">training_data</span><span class="o">=</span><span class="n">data_source</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -486,10 +495,11 @@ It does not include performance metrics. To learn more about performance metrics
 <li class="toctree-l2 current"><a class="current reference internal" href="#">4.2. Predictors</a></li>
 <li class="toctree-l2"><a class="reference internal" href="design_spaces.html">4.3. Design spaces</a></li>
 <li class="toctree-l2"><a class="reference internal" href="processors.html">4.4. Processors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="scores.html">4.5. Scores</a></li>
-<li class="toctree-l2"><a class="reference internal" href="data_sources.html">4.6. Data Sources</a></li>
-<li class="toctree-l2"><a class="reference internal" href="predictor_reports.html">4.7. Predictor reports</a></li>
-<li class="toctree-l2"><a class="reference internal" href="performance_workflows.html">4.8. Performance workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="design_workflows.html">4.5. Design workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scores.html">4.6. Scores</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_sources.html">4.7. Data Sources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="predictor_reports.html">4.8. Predictor reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="performance_workflows.html">4.9. Performance workflows</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">5. FAQ</a><ul>

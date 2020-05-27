@@ -94,7 +94,7 @@ have a <cite>type</cite> field that corresponds to the response key of this clas
 
 <dl class="attribute">
 <dt id="citrine.resources.data_concepts.DataConcepts.client_specific_fields">
-<code class="sig-name descname">client_specific_fields</code><em class="property"> = {'audit_info': citrine.resources.audit_info.AuditInfo, 'dataset': citrine._serialization.properties.UUID}</em><a class="headerlink" href="#citrine.resources.data_concepts.DataConcepts.client_specific_fields" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">client_specific_fields</code><em class="property"> = {'audit_info': &lt;class 'citrine.resources.audit_info.AuditInfo'&gt;, 'dataset': &lt;class 'citrine._serialization.properties.UUID'&gt;}</em><a class="headerlink" href="#citrine.resources.data_concepts.DataConcepts.client_specific_fields" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fields that are added to the gemd data objects when they are used in this client</p>
 <ul class="simple">
 <li><p>AuditInfo contains who/when information about the resource on the citrine platform</p></li>
@@ -397,7 +397,7 @@ pre-existence of objects with their IDs is asserted before attempting to write
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>model</strong> (<em>ResourceType</em>) – The DataConcepts object.</p></li>
-<li><p><strong>dry_run</strong> (<em>bool</em>) – Whether to actually delete the item or run a dry run of the delete operation.
+<li><p><strong>dry_run</strong> (<em>bool</em>) – Whether to actually register the item or run a dry run of the register operation.
 Dry run is intended to be used for validation. Default: false</p></li>
 </ul>
 </dd>
@@ -479,10 +479,11 @@ Dry run is intended to be used for validation. Default: false</p></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/predictors.html">4.2. Predictors</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/design_spaces.html">4.3. Design spaces</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/processors.html">4.4. Processors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/scores.html">4.5. Scores</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/data_sources.html">4.6. Data Sources</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/predictor_reports.html">4.7. Predictor reports</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/performance_workflows.html">4.8. Performance workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/design_workflows.html">4.5. Design workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/scores.html">4.6. Scores</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/data_sources.html">4.7. Data Sources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/predictor_reports.html">4.8. Predictor reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/performance_workflows.html">4.9. Performance workflows</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">5. FAQ</a><ul>

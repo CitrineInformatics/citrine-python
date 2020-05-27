@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>4.5. Scores &#8212; Citrine Python 0.0.1 documentation</title>
+    <title>4.6. Scores &#8212; Citrine Python 0.0.1 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -16,8 +16,8 @@
     <link rel="shortcut icon" href="../_static/favicon.png"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="4.6. Data Sources" href="data_sources.html" />
-    <link rel="prev" title="4.4. Processors" href="processors.html" />
+    <link rel="next" title="4.7. Data Sources" href="data_sources.html" />
+    <link rel="prev" title="4.5. Design workflows" href="design_workflows.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -35,7 +35,7 @@
           <div class="body" role="main">
             
   <div class="section" id="scores">
-<h1>4.5. Scores<a class="headerlink" href="#scores" title="Permalink to this headline">¶</a></h1>
+<h1>4.6. Scores<a class="headerlink" href="#scores" title="Permalink to this headline">¶</a></h1>
 <p>Scores rank materials according to a set of objectives and constraints.
 An objective defines the goal for a scalar value associated with a particular descriptor.
 The goal can be to either maximize or minimize a value by using <a class="reference internal" href="../reference/citrine.informatics.objectives.html#citrine.informatics.objectives.ScalarMaxObjective" title="citrine.informatics.objectives.ScalarMaxObjective"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScalarMaxObjective</span></code></a> or <a class="reference internal" href="../reference/citrine.informatics.objectives.html#citrine.informatics.objectives.ScalarMinObjective" title="citrine.informatics.objectives.ScalarMinObjective"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScalarMinObjective</span></code></a>, respectively.
@@ -53,7 +53,7 @@ Higher scores represent “better” materials.</p>
 <li><p><a class="reference external" href="#expected-value">Expected value</a></p></li>
 </ul>
 <div class="section" id="expected-improvement">
-<h2>4.5.1. Expected improvement<a class="headerlink" href="#expected-improvement" title="Permalink to this headline">¶</a></h2>
+<h2>4.6.1. Expected improvement<a class="headerlink" href="#expected-improvement" title="Permalink to this headline">¶</a></h2>
 <p>Expected improvement (EI) is the magnitude of the expected value of improvement calculated as the integral from the best training objective (i.e. baseline) to infinity of <code class="docutils literal notranslate"><span class="pre">p(x)(x-a)</span></code>, where <code class="docutils literal notranslate"><span class="pre">a</span></code> is the best objective value in the training set.
 <a class="reference internal" href="../reference/citrine.informatics.scores.html#citrine.informatics.scores.EIScore" title="citrine.informatics.scores.EIScore"><code class="xref py py-class docutils literal notranslate"><span class="pre">EIScore</span></code></a> supports 0 or 1 objective.
 If no objective is provided, the score is the probability of satisfying all constraints.</p>
@@ -63,7 +63,7 @@ Higher predicted values exploit information known about the current dataset, e.g
 Higher uncertainty leads to exploration of a design space, e.g. little is known about a certain class materials, but materials from this region of the design space could perform well.</p>
 </div>
 <div class="section" id="likelihood-of-improvement">
-<h2>4.5.2. Likelihood of improvement<a class="headerlink" href="#likelihood-of-improvement" title="Permalink to this headline">¶</a></h2>
+<h2>4.6.2. Likelihood of improvement<a class="headerlink" href="#likelihood-of-improvement" title="Permalink to this headline">¶</a></h2>
 <p>Likelihood of improvement (LI) is the probability that a candidate satisfies a set of constraints and is an improvement over known objective values.
 <a class="reference internal" href="../reference/citrine.informatics.scores.html#citrine.informatics.scores.LIScore" title="citrine.informatics.scores.LIScore"><code class="xref py py-class docutils literal notranslate"><span class="pre">LIScore</span></code></a> supports 0 or more objectives.
 If no objectives are provided, the LI score is 0.
@@ -94,7 +94,7 @@ LI scores are bounded by 0 and 1.</p>
 </div>
 </div>
 <div class="section" id="expected-value">
-<h2>4.5.3. Expected value<a class="headerlink" href="#expected-value" title="Permalink to this headline">¶</a></h2>
+<h2>4.6.3. Expected value<a class="headerlink" href="#expected-value" title="Permalink to this headline">¶</a></h2>
 <p>Expected value (EV) is the expected value of the objective, penalized if the constraints are unlikely to be satisfied.
 <a class="reference internal" href="../reference/citrine.informatics.scores.html#citrine.informatics.scores.EVScore" title="citrine.informatics.scores.EVScore"><code class="xref py py-class docutils literal notranslate"><span class="pre">EVScore</span></code></a> supports 0 or 1 objective.
 If no objective is provided, the score is the probability of satisfying all constraints.</p>
@@ -170,10 +170,11 @@ EV is unique among the currently available scores in that it ignores the predict
 <li class="toctree-l2"><a class="reference internal" href="predictors.html">4.2. Predictors</a></li>
 <li class="toctree-l2"><a class="reference internal" href="design_spaces.html">4.3. Design spaces</a></li>
 <li class="toctree-l2"><a class="reference internal" href="processors.html">4.4. Processors</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">4.5. Scores</a></li>
-<li class="toctree-l2"><a class="reference internal" href="data_sources.html">4.6. Data Sources</a></li>
-<li class="toctree-l2"><a class="reference internal" href="predictor_reports.html">4.7. Predictor reports</a></li>
-<li class="toctree-l2"><a class="reference internal" href="performance_workflows.html">4.8. Performance workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="design_workflows.html">4.5. Design workflows</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">4.6. Scores</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_sources.html">4.7. Data Sources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="predictor_reports.html">4.8. Predictor reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="performance_workflows.html">4.9. Performance workflows</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">5. FAQ</a><ul>
@@ -187,8 +188,8 @@ EV is unique among the currently available scores in that it ignores the predict
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="index.html">4. [ALPHA] AI Engine</a><ul>
-      <li>Previous: <a href="processors.html" title="previous chapter">4.4. Processors</a></li>
-      <li>Next: <a href="data_sources.html" title="next chapter">4.6. Data Sources</a></li>
+      <li>Previous: <a href="design_workflows.html" title="previous chapter">4.5. Design workflows</a></li>
+      <li>Next: <a href="data_sources.html" title="next chapter">4.7. Data Sources</a></li>
   </ul></li>
   </ul></li>
 </ul>

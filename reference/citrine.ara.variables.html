@@ -185,7 +185,7 @@ variable is being set to may be the target of a constraint as well.</p></li>
 
 <dl class="class">
 <dt id="citrine.ara.variables.AttributeInOutput">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.ara.variables.</code><code class="sig-name descname">AttributeInOutput</code><span class="sig-paren">(</span><em class="sig-param">*, name: str, headers: List[str], attribute_template: gemd.entity.link_by_uid.LinkByUID, process_templates: List[gemd.entity.link_by_uid.LinkByUID], attribute_constraints: List[List[Union[gemd.entity.link_by_uid.LinkByUID, gemd.entity.bounds.base_bounds.BaseBounds]]] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.ara.variables.AttributeInOutput" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">citrine.ara.variables.</code><code class="sig-name descname">AttributeInOutput</code><span class="sig-paren">(</span><em class="sig-param">*, name: str, headers: List[str], attribute_template: gemd.entity.link_by_uid.LinkByUID, process_templates: List[gemd.entity.link_by_uid.LinkByUID], attribute_constraints: Optional[List[List[Union[gemd.entity.link_by_uid.LinkByUID, gemd.entity.bounds.base_bounds.BaseBounds]]]] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.ara.variables.AttributeInOutput" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.ara.variables.Variable" title="citrine.ara.variables.Variable"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.ara.variables.Variable</span></code></a></p>
 <p>[ALPHA] Attribute marked by an attribute template in the trunk of the history tree.</p>
 <p>The search for an attribute that marks the given attribute template starts at the root
@@ -211,7 +211,7 @@ colors can be assigned to the same variable and rendered into the same columns i
 <li><p><strong>attribute_template</strong> (<em>LinkByUID</em>) – attribute template that identifies the attribute to assign to the variable</p></li>
 <li><p><strong>process_templates</strong> (<em>list</em><em>[</em><em>LinkByUID</em><em>]</em>) – process templates that should not be traversed through when searching for a matching
 attribute.  The attribute may be present in these processes but not their ingredients.</p></li>
-<li><p><strong>attribute_constraints</strong> (<em>list</em><em>[</em><em>(</em><em>LinkByUID</em><em>, </em><em>Bounds</em><em>)</em><em>]</em>) – constraints on object attributes in the target object that must be satisfied. Constraints
+<li><p><strong>attribute_constraints</strong> (<em>Optional</em><em>[</em><em>list</em><em>[</em><em>(</em><em>LinkByUID</em><em>, </em><em>Bounds</em><em>)</em><em>]</em><em>]</em>) – constraints on object attributes in the target object that must be satisfied. Constraints
 are expressed as Bounds.  Attributes are expressed with links. The attribute that the
 variable is being set to may be the target of a constraint as well.</p></li>
 </ul>
@@ -293,6 +293,72 @@ variable is being set to may be the target of a constraint as well.</p></li>
 <dl class="attribute">
 <dt id="citrine.ara.variables.IngredientIdentifierByProcessTemplateAndName.typ">
 <code class="sig-name descname">typ</code><em class="property"> = 'ing_id_by_process_and_name'</em><a class="headerlink" href="#citrine.ara.variables.IngredientIdentifierByProcessTemplateAndName.typ" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="citrine.ara.variables.IngredientIdentifierInOutput">
+<em class="property">class </em><code class="sig-prename descclassname">citrine.ara.variables.</code><code class="sig-name descname">IngredientIdentifierInOutput</code><span class="sig-paren">(</span><em class="sig-param">*, name: str, headers: List[str], ingredient_name: str, process_templates: List[gemd.entity.link_by_uid.LinkByUID]</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.ara.variables.IngredientIdentifierInOutput" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.ara.variables.Variable" title="citrine.ara.variables.Variable"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.ara.variables.Variable</span></code></a></p>
+<p>[ALPHA] Ingredient quantity in the trunk of a material history tree.</p>
+<p>The search for an ingredient quantity starts at the terminal material and proceeds until
+any of the given process templates are reached. Those templates block the search from
+continuing but are inclusive: a match is extracted if an ingredient with the specified
+ingredient name is found at or before a cutoff.</p>
+<p>This variable definition allows a quantity to be extracted when an ingredient is used
+in multiple processes. As an example, consider a paint formed by mixing red and yellow
+pigments, where the red pigment is formed by mixing yellow and magenta. This variable could be
+used represent the quantity of yellow in both mixing processes (red and the final paint)
+in a single column provided the process templates that mixed red and the final paint
+are included as cutoffs.</p>
+<p>In general, this variable should be preferred over an
+<code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientQuantityByProcessTemplateAndName</span></code> when mixtures are
+hierarchical (i.e. blends of blends). It allows an ingredient with a single name to be used in
+multiple processes without defining additional variables that manifest as additional columns
+in your table, and must be used in place of the former if the same process template is used to
+represent mixing at multiple levels in the material history hierarchy. Going back to the
+previous example, this variable must be used in place of an
+<code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientQuantityByProcessTemplateAndName</span></code> if the same
+process template was used to represent the process that mixed red and the final paint.
+Using <code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientQuantityByProcessTemplateAndName</span></code> would result
+in an ambiguous match because yellow would be found twice in the material history,
+once when mixing red and again when mixing the final paint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – a short human-readable name to use when referencing the variable</p></li>
+<li><p><strong>headers</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – sequence of column headers</p></li>
+<li><p><strong>ingredient_name</strong> (<em>str</em>) – Name of the ingredient to search for</p></li>
+<li><p><strong>process_templates</strong> (<em>list</em><em>[</em><em>LinkByUID</em><em>]</em>) – Process templates halt the search for a matching ingredient name.
+These process templates are inclusive.
+The ingredient may be present in these processes but not after.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="citrine.ara.variables.IngredientIdentifierInOutput.headers">
+<code class="sig-name descname">headers</code><em class="property"> = None</em><a class="headerlink" href="#citrine.ara.variables.IngredientIdentifierInOutput.headers" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.ara.variables.IngredientIdentifierInOutput.ingredient_name">
+<code class="sig-name descname">ingredient_name</code><em class="property"> = None</em><a class="headerlink" href="#citrine.ara.variables.IngredientIdentifierInOutput.ingredient_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.ara.variables.IngredientIdentifierInOutput.name">
+<code class="sig-name descname">name</code><em class="property"> = None</em><a class="headerlink" href="#citrine.ara.variables.IngredientIdentifierInOutput.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.ara.variables.IngredientIdentifierInOutput.process_templates">
+<code class="sig-name descname">process_templates</code><em class="property"> = None</em><a class="headerlink" href="#citrine.ara.variables.IngredientIdentifierInOutput.process_templates" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.ara.variables.IngredientIdentifierInOutput.typ">
+<code class="sig-name descname">typ</code><em class="property"> = 'ing_id_in_output'</em><a class="headerlink" href="#citrine.ara.variables.IngredientIdentifierInOutput.typ" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -427,6 +493,78 @@ valid options are defined by <a class="reference internal" href="#citrine.ara.va
 <dl class="attribute">
 <dt id="citrine.ara.variables.IngredientQuantityDimension.VOLUME">
 <code class="sig-name descname">VOLUME</code><em class="property"> = 'volume'</em><a class="headerlink" href="#citrine.ara.variables.IngredientQuantityDimension.VOLUME" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="citrine.ara.variables.IngredientQuantityInOutput">
+<em class="property">class </em><code class="sig-prename descclassname">citrine.ara.variables.</code><code class="sig-name descname">IngredientQuantityInOutput</code><span class="sig-paren">(</span><em class="sig-param">*, name: str, headers: List[str], ingredient_name: str, quantity_dimension: citrine.ara.variables.IngredientQuantityDimension, process_templates: List[gemd.entity.link_by_uid.LinkByUID]</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.ara.variables.IngredientQuantityInOutput" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.ara.variables.Variable" title="citrine.ara.variables.Variable"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.ara.variables.Variable</span></code></a></p>
+<p>[ALPHA] Ingredient identifier in the trunk of a material history tree.</p>
+<p>The search for an identifier starts at the terminal material and proceeds until any of the
+given process templates are reached. Those templates block the search from continuing but
+are inclusive: a match is extracted if an ingredient with the specified ingredient name
+is found at or before a cutoff.</p>
+<p>This variable definition allows an identifier to be extracted when an ingredient is used
+in multiple processes. As an example, consider a paint formed by mixing red and yellow
+pigments, where the red pigment is formed by mixing yellow and magenta. This variable could be
+used represent yellow in both mixing processes (red and the final paint) in a single column
+provided the process templates that mixed red and the final paint are included as cutoffs.</p>
+<p>In general, this variable should be preferred over an
+<a class="reference internal" href="#citrine.ara.variables.IngredientIdentifierByProcessTemplateAndName" title="citrine.ara.variables.IngredientIdentifierByProcessTemplateAndName"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientIdentifierByProcessTemplateAndName</span></code></a> when mixtures are
+hierarchical (i.e. blends of blends). It allows an ingredient with a single name to be used in
+multiple processes without defining additional variables that manifest as additional columns
+in your table, and must be used in place of the former if the same process template is used to
+represent mixing at multiple levels in the material history hierarchy. Going back to the
+previous example, this variable must be used in place of an
+<a class="reference internal" href="#citrine.ara.variables.IngredientIdentifierByProcessTemplateAndName" title="citrine.ara.variables.IngredientIdentifierByProcessTemplateAndName"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientIdentifierByProcessTemplateAndName</span></code></a> if the same
+process template was used to represent the process that mixed red and the final paint.
+Using <a class="reference internal" href="#citrine.ara.variables.IngredientIdentifierByProcessTemplateAndName" title="citrine.ara.variables.IngredientIdentifierByProcessTemplateAndName"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientIdentifierByProcessTemplateAndName</span></code></a> would result
+in an ambiguous match because yellow would be found twice in the material history,
+once when mixing red and again when mixing the final paint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – a short human-readable name to use when referencing the variable</p></li>
+<li><p><strong>headers</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – sequence of column headers</p></li>
+<li><p><strong>ingredient_name</strong> (<em>str</em>) – Name of the ingredient to search for</p></li>
+<li><p><strong>quantity_dimension</strong> (<a class="reference internal" href="#citrine.ara.variables.IngredientQuantityDimension" title="citrine.ara.variables.IngredientQuantityDimension"><em>IngredientQuantityDimension</em></a>) – dimension of the ingredient quantity: absolute quantity, number, mass, or volume fraction.
+valid options are defined by <a class="reference internal" href="#citrine.ara.variables.IngredientQuantityDimension" title="citrine.ara.variables.IngredientQuantityDimension"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientQuantityDimension</span></code></a></p></li>
+<li><p><strong>process_templates</strong> (<em>list</em><em>[</em><em>LinkByUID</em><em>]</em>) – Process templates halt the search for a matching ingredient name.
+These process templates are inclusive.
+The ingredient may be present in these processes but not after.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="citrine.ara.variables.IngredientQuantityInOutput.headers">
+<code class="sig-name descname">headers</code><em class="property"> = None</em><a class="headerlink" href="#citrine.ara.variables.IngredientQuantityInOutput.headers" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.ara.variables.IngredientQuantityInOutput.ingredient_name">
+<code class="sig-name descname">ingredient_name</code><em class="property"> = None</em><a class="headerlink" href="#citrine.ara.variables.IngredientQuantityInOutput.ingredient_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.ara.variables.IngredientQuantityInOutput.name">
+<code class="sig-name descname">name</code><em class="property"> = None</em><a class="headerlink" href="#citrine.ara.variables.IngredientQuantityInOutput.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.ara.variables.IngredientQuantityInOutput.process_templates">
+<code class="sig-name descname">process_templates</code><em class="property"> = None</em><a class="headerlink" href="#citrine.ara.variables.IngredientQuantityInOutput.process_templates" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.ara.variables.IngredientQuantityInOutput.quantity_dimension">
+<code class="sig-name descname">quantity_dimension</code><em class="property"> = None</em><a class="headerlink" href="#citrine.ara.variables.IngredientQuantityInOutput.quantity_dimension" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.ara.variables.IngredientQuantityInOutput.typ">
+<code class="sig-name descname">typ</code><em class="property"> = 'ing_id_in_output'</em><a class="headerlink" href="#citrine.ara.variables.IngredientQuantityInOutput.typ" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -584,10 +722,11 @@ valid options are defined by <a class="reference internal" href="#citrine.ara.va
 <li class="toctree-l2"><a class="reference internal" href="../workflows/predictors.html">4.2. Predictors</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/design_spaces.html">4.3. Design spaces</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/processors.html">4.4. Processors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/scores.html">4.5. Scores</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/data_sources.html">4.6. Data Sources</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/predictor_reports.html">4.7. Predictor reports</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/performance_workflows.html">4.8. Performance workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/design_workflows.html">4.5. Design workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/scores.html">4.6. Scores</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/data_sources.html">4.7. Data Sources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/predictor_reports.html">4.8. Predictor reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/performance_workflows.html">4.9. Performance workflows</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">5. FAQ</a><ul>

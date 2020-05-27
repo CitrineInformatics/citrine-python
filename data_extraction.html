@@ -88,12 +88,15 @@ and a list of <a class="reference internal" href="reference/citrine.ara.columns.
 <span class="n">ara_defn</span> <span class="o">=</span> <span class="n">AraDefinition</span><span class="p">(</span>
       <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;cookies&quot;</span><span class="p">,</span>
       <span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;Cookie densities&quot;</span><span class="p">,</span>
-      <span class="n">datasets</span> <span class="o">=</span> <span class="p">[</span><span class="n">UUID</span><span class="p">(</span><span class="s2">&quot;7d040451-7cfb-45ca-9e0e-4b2b7010edd6&quot;</span><span class="p">)],</span>
+      <span class="n">datasets</span> <span class="o">=</span> <span class="p">[</span><span class="n">UUID</span><span class="p">(</span><span class="s2">&quot;7d040451-7cfb-45ca-9e0e-4b2b7010edd6&quot;</span><span class="p">),</span>
+                  <span class="n">UUID</span><span class="p">(</span><span class="s2">&quot;7cfb45ca-9e0e-4b2b-7010-edd67d040451&quot;</span><span class="p">)],</span>
       <span class="n">variables</span> <span class="o">=</span> <span class="p">[</span><span class="n">final_density</span><span class="p">],</span>
       <span class="n">rows</span> <span class="o">=</span> <span class="p">[</span><span class="n">row_def</span><span class="p">],</span>
       <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">final_density_mean</span><span class="p">,</span> <span class="n">final_density_std</span><span class="p">])</span>
 </pre></div>
 </div>
+<p>Note the inclusion of two datasets above.
+In general, you should have at least two datasets referenced because Objects and Templates are generally associated with different datasets.</p>
 <p>In addition to defining variables, rows, and columns individually, there are convenience methods that simultaneously add multiple elements to an existing Ara definition.
 One such method is <code class="xref py py-func docutils literal notranslate"><span class="pre">add_all_ingredients()</span></code>, which creates variables and columns for every potential ingredient in a process.
 The user provides a link to a process template that has a non-empty set of <cite>allowed_names</cite> (the allowed names of the ingredient runs and specs in the process).
@@ -138,6 +141,23 @@ Via such an object, one can preview a draft AraDefinition on an explicit set of 
 <span class="n">preview</span> <span class="o">=</span> <span class="n">defns</span><span class="o">.</span><span class="n">preview</span><span class="p">(</span><span class="n">ara_defn</span><span class="p">,</span> <span class="n">preview_roots</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">preview</span><span class="p">[</span><span class="s2">&quot;warnings&quot;</span><span class="p">]))</span>
 <span class="n">data_frame</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">StringIO</span><span class="p">(</span><span class="n">preview</span><span class="p">[</span><span class="s2">&quot;csv&quot;</span><span class="p">]))</span>
+</pre></div>
+</div>
+<p>or even wrap it in a method that displays multi-row headers:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">resp_to_pandas</span><span class="p">(</span><span class="n">resp</span><span class="p">):</span>
+    <span class="kn">import</span> <span class="nn">warnings</span>
+    <span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">StringIO</span>
+    <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+    <span class="k">if</span> <span class="n">resp</span><span class="p">[</span><span class="s2">&quot;warnings&quot;</span><span class="p">]:</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">resp</span><span class="p">[</span><span class="s2">&quot;warnings&quot;</span><span class="p">]))</span>
+
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">StringIO</span><span class="p">(</span><span class="n">resp</span><span class="p">[</span><span class="s2">&quot;csv&quot;</span><span class="p">]))</span>
+
+    <span class="n">headers</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;~&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">df</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">header</span> <span class="ow">in</span> <span class="n">headers</span><span class="p">:</span>
+        <span class="n">header</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s1">&#39;&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">headers</span><span class="p">)</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">header</span><span class="p">)))</span>
+
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">headers</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
@@ -206,6 +226,7 @@ By including one or both of those templates, you can define a table of Cakes, Br
 <li><p><code class="xref py py-class docutils literal notranslate"><span class="pre">AttributeByTemplateAfterProcess</span></code>: for when measurements are distinguished by the process that precedes them</p></li>
 <li><p><a class="reference internal" href="reference/citrine.ara.variables.html#citrine.ara.variables.AttributeInOutput" title="citrine.ara.variables.AttributeInOutput"><code class="xref py py-class docutils literal notranslate"><span class="pre">AttributeInOutput</span></code></a>: for when attributes occur both in a process output and one or more of its inputs</p></li>
 <li><p><a class="reference internal" href="reference/citrine.ara.variables.html#citrine.ara.variables.IngredientQuantityByProcessAndName" title="citrine.ara.variables.IngredientQuantityByProcessAndName"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientQuantityByProcessAndName</span></code></a>: for the specific case of the volume fraction, mass fraction, number fraction, or absolute quantity of an ingredient</p></li>
+<li><p><a class="reference internal" href="reference/citrine.ara.variables.html#citrine.ara.variables.IngredientQuantityInOutput" title="citrine.ara.variables.IngredientQuantityInOutput"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientQuantityInOutput</span></code></a>: for the quantity an ingredient used in multiple processes</p></li>
 </ul>
 </li>
 <li><p>Fields</p>
@@ -213,6 +234,7 @@ By including one or both of those templates, you can define a table of Cakes, Br
 <li><p><a class="reference internal" href="reference/citrine.ara.variables.html#citrine.ara.variables.RootInfo" title="citrine.ara.variables.RootInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">RootInfo</span></code></a>: for fields defined on the material at the root of the Material History, like the name of the material</p></li>
 <li><p><a class="reference internal" href="reference/citrine.ara.variables.html#citrine.ara.variables.RootIdentifier" title="citrine.ara.variables.RootIdentifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">RootIdentifier</span></code></a>: for the id of the Material History, which can be used as a unique identifier for the rows</p></li>
 <li><p><a class="reference internal" href="reference/citrine.ara.variables.html#citrine.ara.variables.IngredientIdentifierByProcessTemplateAndName" title="citrine.ara.variables.IngredientIdentifierByProcessTemplateAndName"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientIdentifierByProcessTemplateAndName</span></code></a>: for the id of the material being used in an ingredient, which can be used as a key for looking up that input material</p></li>
+<li><p><a class="reference internal" href="reference/citrine.ara.variables.html#citrine.ara.variables.IngredientIdentifierInOutput" title="citrine.ara.variables.IngredientIdentifierInOutput"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientIdentifierInOutput</span></code></a>: for the id of an ingredient used in multiple processes</p></li>
 <li><p><a class="reference internal" href="reference/citrine.ara.variables.html#citrine.ara.variables.IngredientLabelByProcessAndName" title="citrine.ara.variables.IngredientLabelByProcessAndName"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientLabelByProcessAndName</span></code></a>: for a boolean that indicates whether an ingredient is assigned a given label</p></li>
 </ul>
 </li>
@@ -328,10 +350,11 @@ By including one or both of those templates, you can define a table of Cakes, Br
 <li class="toctree-l2"><a class="reference internal" href="workflows/predictors.html">4.2. Predictors</a></li>
 <li class="toctree-l2"><a class="reference internal" href="workflows/design_spaces.html">4.3. Design spaces</a></li>
 <li class="toctree-l2"><a class="reference internal" href="workflows/processors.html">4.4. Processors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="workflows/scores.html">4.5. Scores</a></li>
-<li class="toctree-l2"><a class="reference internal" href="workflows/data_sources.html">4.6. Data Sources</a></li>
-<li class="toctree-l2"><a class="reference internal" href="workflows/predictor_reports.html">4.7. Predictor reports</a></li>
-<li class="toctree-l2"><a class="reference internal" href="workflows/performance_workflows.html">4.8. Performance workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="workflows/design_workflows.html">4.5. Design workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="workflows/scores.html">4.6. Scores</a></li>
+<li class="toctree-l2"><a class="reference internal" href="workflows/data_sources.html">4.7. Data Sources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="workflows/predictor_reports.html">4.8. Predictor reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="workflows/performance_workflows.html">4.9. Performance workflows</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="FAQ/index.html">5. FAQ</a><ul>

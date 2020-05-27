@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>4.8. Performance workflows &#8212; Citrine Python 0.0.1 documentation</title>
+    <title>4.9. Performance workflows &#8212; Citrine Python 0.0.1 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -17,7 +17,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="5. FAQ" href="../FAQ/index.html" />
-    <link rel="prev" title="4.7. Predictor reports" href="predictor_reports.html" />
+    <link rel="prev" title="4.8. Predictor reports" href="predictor_reports.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -35,7 +35,7 @@
           <div class="body" role="main">
             
   <div class="section" id="performance-workflows">
-<h1>4.8. Performance workflows<a class="headerlink" href="#performance-workflows" title="Permalink to this headline">¶</a></h1>
+<h1>4.9. Performance workflows<a class="headerlink" href="#performance-workflows" title="Permalink to this headline">¶</a></h1>
 <p>A <a class="reference internal" href="../reference/citrine.informatics.workflows.html#citrine.informatics.workflows.PerformanceWorkflow" title="citrine.informatics.workflows.PerformanceWorkflow"><code class="xref py py-class docutils literal notranslate"><span class="pre">performance</span> <span class="pre">workflow</span></code></a> performs analysis on a module.
 On construction, a performance workflow requires a configuration object which stores all settings required to run the analysis.
 Currently, the only implemented analysis performs cross-validation on a predictor.
@@ -75,19 +75,19 @@ This analysis configuration defines cross-validation parameters such as the numb
 </pre></div>
 </div>
 <div class="section" id="execution-and-results">
-<h2>4.8.1. Execution and results<a class="headerlink" href="#execution-and-results" title="Permalink to this headline">¶</a></h2>
+<h2>4.9.1. Execution and results<a class="headerlink" href="#execution-and-results" title="Permalink to this headline">¶</a></h2>
 <p>When a performance workflow is executed against a module, it performs the analysis and returns an “analysis results” dictionary that contains performance metrics.
 For a cross-validation analysis, cross-validation is performed against the supplied predictor: the predictor’s training data are partitioned into several “folds,” and each fold takes a turn acting as the “test set.”
 For each test set, the rest of the data are used to train the predictor, and the ensuing model is applied to the held-out test set.
 By comparing the model’s predictions to the true values, we can compute several performance metrics that provide information about model quality.</p>
 <ul class="simple">
-<li><p>Root-mean squared error (RMSE): the square root of the average of the squared prediction error</p></li>
-<li><p>Non-dimensional model error (NDME): The RMSE, normalized by the standard deviation of the output variable (which is the RMSE of a trivial model that always predicts the mean value of the data).</p></li>
-<li><p>Standard residual: The RMSE of the standardized error (the prediction error divided by the prediction uncertainty)</p></li>
-<li><p>Standard confidence: The fraction of predictions for which the prediction error is less than the prediction uncertainty</p></li>
+<li><p>Root-mean squared error (RMSE): the square root of the average of the squared prediction error.</p></li>
+<li><p>Non-dimensional model error (NDME): the RMSE, normalized by the standard deviation of the output variable (which is the RMSE of a trivial model that always predicts the mean value of the data).</p></li>
+<li><p>Standard residual: the RMSE of the standardized error (the prediction error divided by the prediction uncertainty).</p></li>
+<li><p>Coverage probability: how often the measured error is within some expected bounds.</p></li>
 </ul>
 <p>Performance metrics included in the results depend on whether the response is numeric or categorical.
-For numeric responses, performance metrics include root mean squared error (RMSE), non-dimensiona model error (NDME), standard residual and standard confidence.</p>
+For numeric responses, performance metrics include root mean squared error (RMSE), non-dimensiona model error (NDME), standard residual and coverage probability.</p>
 <ul class="simple">
 <li><p>RMSE is a useful and popular statistical metric for model quality.
 Lower RMSE means the model is more accurate.</p></li>
@@ -104,8 +104,10 @@ Standard residual provides a way to determine whether uncertainty estimates are 
 Residuals are calculated using <code class="docutils literal notranslate"><span class="pre">(Predicted</span> <span class="pre">-</span> <span class="pre">Actual)/(Uncertainty</span> <span class="pre">Estimate)</span></code>.
 A value below 1 indicates the model is underconfident, i.e. actual values are within predicted error bars, on average.
 A value over 1 indicates the model is overconfident, i.e. actual values fall outside predicted error bars, on average.</p></li>
-<li><p>Standard confidence is the fraction of actual values within the predicted error bars.
-(0.68 is perfectly calibrated.)</p></li>
+<li><p>Coverage probability is the fraction of observations for which the magnitude of the error is within a prediction interval of a given coverage level.
+The default coverage level is 0.683, corresponding to error bars that are one standard deviation of a normal distribution.
+A value greater than the coverage level indicates that the model is underconfident.
+A value less than the coverage level indicates the model is overconfident.</p></li>
 </ul>
 <p>For categorical responses, performance metrics include either the area under the receiver operating characteristic (ROC) curve (if there are 2 categories) or the F1 score (if there are &gt; 2 categories).</p>
 <ul class="simple">
@@ -138,7 +140,7 @@ Below shows an example of the results object.</p>
         <span class="s1">&#39;ndme&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="mf">0.4777230639684575</span><span class="p">,</span> <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;Non-dimensional model error (0.0 for a perfect model)&#39;</span><span class="p">},</span>
         <span class="s1">&#39;rmse&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="mf">21.307943307393984</span><span class="p">,</span> <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;Root mean squared error (0.0 for a perfect model)&#39;</span><span class="p">},</span>
         <span class="s1">&#39;std_residual&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="mf">1.8288119041155286</span><span class="p">,</span> <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;Uncertainty calibration: root mean square of standardized errors (1.0 is perfectly calibrated)&#39;</span><span class="p">},</span>
-        <span class="s1">&#39;std_confidence&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="mf">0.59375</span><span class="p">,</span> <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;Uncertainty calibration: fraction of actual values within the prediction error bars (0.68 is perfectly calibrated)&#39;</span><span class="p">}</span>
+        <span class="s1">&#39;coverage_prob&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="mf">0.59375</span><span class="p">,</span> <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;Uncertainty calibration: fraction of actual values within the prediction error bars (0.68 is perfectly calibrated)&#39;</span><span class="p">}</span>
       <span class="p">}</span>
     <span class="p">}</span>
   <span class="p">}</span>
@@ -213,10 +215,11 @@ Below shows an example of the results object.</p>
 <li class="toctree-l2"><a class="reference internal" href="predictors.html">4.2. Predictors</a></li>
 <li class="toctree-l2"><a class="reference internal" href="design_spaces.html">4.3. Design spaces</a></li>
 <li class="toctree-l2"><a class="reference internal" href="processors.html">4.4. Processors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="scores.html">4.5. Scores</a></li>
-<li class="toctree-l2"><a class="reference internal" href="data_sources.html">4.6. Data Sources</a></li>
-<li class="toctree-l2"><a class="reference internal" href="predictor_reports.html">4.7. Predictor reports</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">4.8. Performance workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="design_workflows.html">4.5. Design workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scores.html">4.6. Scores</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_sources.html">4.7. Data Sources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="predictor_reports.html">4.8. Predictor reports</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">4.9. Performance workflows</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">5. FAQ</a><ul>
@@ -230,7 +233,7 @@ Below shows an example of the results object.</p>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="index.html">4. [ALPHA] AI Engine</a><ul>
-      <li>Previous: <a href="predictor_reports.html" title="previous chapter">4.7. Predictor reports</a></li>
+      <li>Previous: <a href="predictor_reports.html" title="previous chapter">4.8. Predictor reports</a></li>
       <li>Next: <a href="../FAQ/index.html" title="next chapter">5. FAQ</a></li>
   </ul></li>
   </ul></li>

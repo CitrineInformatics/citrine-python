@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>4.6. Data Sources &#8212; Citrine Python 0.0.1 documentation</title>
+    <title>4.7. Data Sources &#8212; Citrine Python 0.0.1 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -16,8 +16,8 @@
     <link rel="shortcut icon" href="../_static/favicon.png"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="4.7. Predictor reports" href="predictor_reports.html" />
-    <link rel="prev" title="4.5. Scores" href="scores.html" />
+    <link rel="next" title="4.8. Predictor reports" href="predictor_reports.html" />
+    <link rel="prev" title="4.6. Scores" href="scores.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -35,11 +35,11 @@
           <div class="body" role="main">
             
   <div class="section" id="data-sources">
-<h1>4.6. Data Sources<a class="headerlink" href="#data-sources" title="Permalink to this headline">¶</a></h1>
+<h1>4.7. Data Sources<a class="headerlink" href="#data-sources" title="Permalink to this headline">¶</a></h1>
 <p>Data sources are used by modules to pull data from outside of the AI engine.
 For example, a <a class="reference internal" href="predictors.html"><span class="doc">predictor</span></a> may need to define external training data.</p>
 <div class="section" id="csv-data-source">
-<h2>4.6.1. CSV Data Source<a class="headerlink" href="#csv-data-source" title="Permalink to this headline">¶</a></h2>
+<h2>4.7.1. CSV Data Source<a class="headerlink" href="#csv-data-source" title="Permalink to this headline">¶</a></h2>
 <p>The <a class="reference internal" href="../reference/citrine.informatics.data_sources.html#citrine.informatics.data_sources.CSVDataSource" title="citrine.informatics.data_sources.CSVDataSource"><code class="xref py py-class docutils literal notranslate"><span class="pre">CSVDataSource</span></code></a> draws data from a CSV file stored on the data platform and annotates it by mapping each column name to a <a class="reference internal" href="../reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.Descriptor" title="citrine.informatics.descriptors.Descriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">Descriptor</span></code></a>.
 The file is referenced via a <a class="reference internal" href="../reference/citrine.resources.file_link.html#citrine.resources.file_link.FileLink" title="citrine.resources.file_link.FileLink"><code class="xref py py-class docutils literal notranslate"><span class="pre">FileLink</span></code></a>.
 Each FileLink references an explicit version of the CSV file.
@@ -61,7 +61,7 @@ Columns in the CSV that are not mapped with a descriptor are ignored.</p>
 
 <span class="n">file_link</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">upload</span><span class="p">(</span><span class="s2">&quot;./data.csv&quot;</span><span class="p">,</span> <span class="s2">&quot;bandgap_data.csv&quot;</span><span class="p">)</span>
 
-<span class="n">data_source</span> <span class="o">=</span> <span class="n">CsvDataSource</span><span class="p">(</span>
+<span class="n">data_source</span> <span class="o">=</span> <span class="n">CSVDataSource</span><span class="p">(</span>
     <span class="n">file_link</span> <span class="o">=</span> <span class="n">file_link</span><span class="p">,</span>
     <span class="c1"># `column_definitions` maps a column header to a descriptor</span>
     <span class="c1"># the column header and the descriptor key do not need to be identical</span>
@@ -157,7 +157,7 @@ A CSV data source and <a class="reference internal" href="../reference/citrine.i
 <span class="c1"># create a descriptor to hold density data</span>
 <span class="n">density</span> <span class="o">=</span> <span class="n">RealDescriptor</span><span class="p">(</span><span class="s1">&#39;density&#39;</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;g/cc&#39;</span><span class="p">)</span>
 
-<span class="n">data_source</span> <span class="o">=</span> <span class="n">CsvDataSource</span><span class="p">(</span>
+<span class="n">data_source</span> <span class="o">=</span> <span class="n">CSVDataSource</span><span class="p">(</span>
     <span class="n">file_link</span> <span class="o">=</span> <span class="n">file_link</span><span class="p">,</span>
     <span class="n">column_definitions</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s1">&#39;water quantity&#39;</span><span class="p">:</span> <span class="n">water_quantity</span><span class="p">,</span>
@@ -189,32 +189,36 @@ A CSV data source and <a class="reference internal" href="../reference/citrine.i
 </div>
 </div>
 <div class="section" id="ara-table-data-source">
-<h2>4.6.2. Ara Table Data Source<a class="headerlink" href="#ara-table-data-source" title="Permalink to this headline">¶</a></h2>
+<h2>4.7.2. Ara Table Data Source<a class="headerlink" href="#ara-table-data-source" title="Permalink to this headline">¶</a></h2>
 <p>An <a class="reference internal" href="../reference/citrine.informatics.data_sources.html#citrine.informatics.data_sources.AraTableDataSource" title="citrine.informatics.data_sources.AraTableDataSource"><code class="xref py py-class docutils literal notranslate"><span class="pre">AraTableDataSource</span></code></a> references an Ara table.
 As explained more in the <a class="reference internal" href="../data_extraction.html"><span class="doc">documentation</span></a>, Ara tables provide a structured version of on-platform data.
 Ara tables are specified by the display table uuid and version number.
 The example below assumes that the uuid and the version of the desired Ara table are known.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.informatics.data_sources</span> <span class="kn">import</span> <span class="n">AraTableDataSource</span>
-<span class="kn">from</span> <span class="nn">citrine.informatics.predictors</span> <span class="kn">import</span> <span class="n">SimpleMLPredictor</span>
-<span class="kn">from</span> <span class="nn">citrine.informatics.descriptors</span> <span class="kn">import</span> <span class="n">RealDescriptor</span><span class="p">,</span> <span class="n">CategoricalDescriptor</span><span class="p">,</span> <span class="n">ChemicalFormulaDescriptor</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>  <span class="kn">from</span> <span class="nn">citrine.informatics.data_sources</span> <span class="kn">import</span> <span class="n">AraTableDataSource</span>
+  <span class="kn">from</span> <span class="nn">citrine.informatics.predictors</span> <span class="kn">import</span> <span class="n">SimpleMLPredictor</span>
+  <span class="kn">from</span> <span class="nn">citrine.informatics.descriptors</span> <span class="kn">import</span> <span class="n">RealDescriptor</span><span class="p">,</span> <span class="n">CategoricalDescriptor</span><span class="p">,</span> <span class="n">ChemicalFormulaDescriptor</span>
 
-<span class="n">data_source</span> <span class="o">=</span> <span class="n">AraTableDataSource</span><span class="p">(</span>
-    <span class="n">table_id</span> <span class="o">=</span> <span class="s2">&quot;842434fd-11fe-4324-815c-7db93c7ed81e&quot;</span><span class="p">,</span>
-    <span class="n">table_version</span> <span class="o">=</span> <span class="s2">&quot;2&quot;</span>
-<span class="p">)</span>
+  <span class="n">data_source</span> <span class="o">=</span> <span class="n">AraTableDataSource</span><span class="p">(</span>
+      <span class="n">table_id</span> <span class="o">=</span> <span class="s2">&quot;842434fd-11fe-4324-815c-7db93c7ed81e&quot;</span><span class="p">,</span>
+      <span class="n">table_version</span> <span class="o">=</span> <span class="s2">&quot;2&quot;</span>
+  <span class="p">)</span>
 
-<span class="n">predictor</span> <span class="o">=</span> <span class="n">SimpleMLPredictor</span><span class="p">(</span>
-    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Band gap predictor&quot;</span><span class="p">,</span>
-    <span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;Predict the band gap from the chemical formula and crystallinity&quot;</span><span class="p">,</span>
-    <span class="n">inputs</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="n">ChemicalFormulaDescriptor</span><span class="p">(</span><span class="s2">&quot;root~formula&quot;</span><span class="p">),</span>
-        <span class="n">CategoricalDescriptor</span><span class="p">(</span><span class="s2">&quot;root~crystallinity&quot;</span><span class="p">,</span> <span class="n">categories</span><span class="o">=</span><span class="p">[</span>
-            <span class="s2">&quot;Single crystalline&quot;</span><span class="p">,</span> <span class="s2">&quot;Amorphous&quot;</span><span class="p">,</span> <span class="s2">&quot;Polycrystalline&quot;</span><span class="p">])</span>
-    <span class="p">],</span>
-    <span class="n">outputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">RealDescriptor</span><span class="p">(</span><span class="s2">&quot;root~band gap&quot;</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;eV&quot;</span><span class="p">)],</span>
-    <span class="n">latent_variables</span> <span class="o">=</span> <span class="p">[],</span>
-    <span class="n">training_data</span> <span class="o">=</span> <span class="n">data_source</span>
-<span class="p">)</span>
+  <span class="n">predictor</span> <span class="o">=</span> <span class="n">SimpleMLPredictor</span><span class="p">(</span>
+      <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Band gap predictor&quot;</span><span class="p">,</span>
+      <span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;Predict the band gap from the chemical formula and crystallinity&quot;</span><span class="p">,</span>
+      <span class="n">inputs</span> <span class="o">=</span> <span class="p">[</span>
+          <span class="n">ChemicalFormulaDescriptor</span><span class="p">(</span><span class="s2">&quot;root~formula&quot;</span><span class="p">),</span>
+          <span class="n">CategoricalDescriptor</span><span class="p">(</span><span class="s2">&quot;root~crystallinity&quot;</span><span class="p">,</span> <span class="n">categories</span><span class="o">=</span><span class="p">[</span>
+              <span class="s2">&quot;Single crystalline&quot;</span><span class="p">,</span> <span class="s2">&quot;Amorphous&quot;</span><span class="p">,</span> <span class="s2">&quot;Polycrystalline&quot;</span><span class="p">])</span>
+      <span class="p">],</span>
+      <span class="n">outputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">RealDescriptor</span><span class="p">(</span><span class="s2">&quot;root~band gap&quot;</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;eV&quot;</span><span class="p">)],</span>
+      <span class="n">latent_variables</span> <span class="o">=</span> <span class="p">[],</span>
+      <span class="n">training_data</span> <span class="o">=</span> <span class="n">data_source</span>
+  <span class="p">)</span>
+
+<span class="n">Note</span> <span class="n">that</span> <span class="n">the</span> <span class="n">descriptor</span> <span class="n">keys</span> <span class="n">above</span> <span class="n">are</span> <span class="n">the</span> <span class="n">headers</span> <span class="n">of</span> <span class="n">the</span> <span class="o">*</span><span class="n">variable</span><span class="o">*</span> <span class="ow">not</span> <span class="n">the</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">table</span><span class="o">.</span>
+<span class="n">The</span> <span class="n">last</span> <span class="n">term</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">column</span> <span class="n">header</span> <span class="ow">is</span> <span class="n">a</span> <span class="n">suffix</span> <span class="n">associated</span> <span class="k">with</span> <span class="n">the</span> <span class="n">specific</span> <span class="n">column</span> <span class="n">definition</span> <span class="n">rather</span> <span class="n">than</span> <span class="n">the</span> <span class="n">variable</span><span class="o">.</span>
+<span class="n">It</span> <span class="n">should</span> <span class="n">be</span> <span class="n">omitted</span> <span class="kn">from</span> <span class="nn">the</span> <span class="n">descriptor</span> <span class="n">key</span><span class="o">.</span>
 </pre></div>
 </div>
 </div>
@@ -285,10 +289,11 @@ The example below assumes that the uuid and the version of the desired Ara table
 <li class="toctree-l2"><a class="reference internal" href="predictors.html">4.2. Predictors</a></li>
 <li class="toctree-l2"><a class="reference internal" href="design_spaces.html">4.3. Design spaces</a></li>
 <li class="toctree-l2"><a class="reference internal" href="processors.html">4.4. Processors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="scores.html">4.5. Scores</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">4.6. Data Sources</a></li>
-<li class="toctree-l2"><a class="reference internal" href="predictor_reports.html">4.7. Predictor reports</a></li>
-<li class="toctree-l2"><a class="reference internal" href="performance_workflows.html">4.8. Performance workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="design_workflows.html">4.5. Design workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scores.html">4.6. Scores</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">4.7. Data Sources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="predictor_reports.html">4.8. Predictor reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="performance_workflows.html">4.9. Performance workflows</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">5. FAQ</a><ul>
@@ -302,8 +307,8 @@ The example below assumes that the uuid and the version of the desired Ara table
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="index.html">4. [ALPHA] AI Engine</a><ul>
-      <li>Previous: <a href="scores.html" title="previous chapter">4.5. Scores</a></li>
-      <li>Next: <a href="predictor_reports.html" title="next chapter">4.7. Predictor reports</a></li>
+      <li>Previous: <a href="scores.html" title="previous chapter">4.6. Scores</a></li>
+      <li>Next: <a href="predictor_reports.html" title="next chapter">4.8. Predictor reports</a></li>
   </ul></li>
   </ul></li>
 </ul>

@@ -283,13 +283,13 @@ and delete objects in the dataset.</p>
 
 <dl class="method">
 <dt id="citrine.resources.dataset.Dataset.register">
-<code class="sig-name descname">register</code><span class="sig-paren">(</span><em class="sig-param">data_concepts_resource: ResourceType</em><span class="sig-paren">)</span> &#x2192; ResourceType<a class="headerlink" href="#citrine.resources.dataset.Dataset.register" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">register</code><span class="sig-paren">(</span><em class="sig-param">data_concepts_resource: ResourceType</em>, <em class="sig-param">dry_run=False</em><span class="sig-paren">)</span> &#x2192; ResourceType<a class="headerlink" href="#citrine.resources.dataset.Dataset.register" title="Permalink to this definition">¶</a></dt>
 <dd><p>Register a data concepts resource to the appropriate collection.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="citrine.resources.dataset.Dataset.register_all">
-<code class="sig-name descname">register_all</code><span class="sig-paren">(</span><em class="sig-param">data_concepts_resources: List[ResourceType]</em><span class="sig-paren">)</span> &#x2192; List[ResourceType]<a class="headerlink" href="#citrine.resources.dataset.Dataset.register_all" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">register_all</code><span class="sig-paren">(</span><em class="sig-param">data_concepts_resources: List[ResourceType], dry_run=False</em><span class="sig-paren">)</span> &#x2192; List[ResourceType]<a class="headerlink" href="#citrine.resources.dataset.Dataset.register_all" title="Permalink to this definition">¶</a></dt>
 <dd><p>Register multiple data concepts resources to each of their appropriate collections.</p>
 <p>Does so in an order that is guaranteed to store all linked items before the item that
 references them.</p>
@@ -297,10 +297,19 @@ references them.</p>
 This supports storing an object that has a reference to an object that doesn’t have a uid.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>data_concepts_resources</strong> – the resources to register. Can be different types.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data_concepts_resources</strong> (<em>List</em><em>[</em><em>ResourceType</em><em>]</em>) – The resources to register. Can be different types.</p></li>
+<li><p><strong>dry_run</strong> (<em>bool</em>) – Whether to actually register the item or run a dry run of the register operation.
+Dry run is intended to be used for validation. Default: false</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The registered versions</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>List[ResourceType]</p>
 </dd>
 </dl>
-<p>:return the registered versions</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -445,10 +454,11 @@ will be unified in the backend, and one register() method will suffice.</p>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/predictors.html">4.2. Predictors</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/design_spaces.html">4.3. Design spaces</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/processors.html">4.4. Processors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/scores.html">4.5. Scores</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/data_sources.html">4.6. Data Sources</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/predictor_reports.html">4.7. Predictor reports</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/performance_workflows.html">4.8. Performance workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/design_workflows.html">4.5. Design workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/scores.html">4.6. Scores</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/data_sources.html">4.7. Data Sources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/predictor_reports.html">4.8. Predictor reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/performance_workflows.html">4.9. Performance workflows</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">5. FAQ</a><ul>

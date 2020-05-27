@@ -1,7 +1,7 @@
 .. _getting-started:
 
 Getting Started
-=================
+===============
 
 The Citrine Platform provides tools to make data-driven decisions for materials research and development using artificial intelligence (AI) workflows.
 AI Workflows are composed of modules, which provide the ability to programmatically codify domain knowledge, research capabilities and experimental objectives.
@@ -9,14 +9,14 @@ Workflows leverage data and domain knowledge to help materials researchers make 
 These capabilities include generating candidates for sequential learning, identifying outliers or imputing missing values.
 
 Workflows Overview
--------
+------------------
 
 Currently, there are two types of workflows on the AI Engine: the :doc:`DesignWorkflow <design_workflows>` and the :doc:`PerformanceWorkflow <performance_workflows>`.
 Workflows employ reusable modules in order to execute.
 There are three different types of modules, and these are discussed in greater detail below.
 
 DesignWorkflow
-**********
+**************
 
 The :doc:`DesignWorkflow <design_workflows>` is the core AI workflow on the platform.
 This workflow generates scored candidates for sequential learning.
@@ -32,14 +32,14 @@ After a given number of iterations, candidates are ranked according to their sco
 Design workflows are further parameterized by :doc:`Scores <scores>`, which codify experimental objectives and constraints on desired candidates, and define the strategy for candidate acquisition.
 
 PerformanceWorkflow
-**********
+*******************
 
 The :doc:`PerformanceWorkflow <performance_workflows>` is used to perform analysis on a predictor module.
 The PerformanceWorkflow exists to help the user understand how well their predictor module works with their data: in essence, it describes the trustworthiness of their model.
 These outcomes are captured in a series of performance metrics.
 
 Modules Overview
--------
+----------------
 
 Modules are re-usable computational tools used to construct workflows.
 The modules dictate how the platform utilizes research data to generate computational results.
