@@ -186,40 +186,44 @@ class Dataset(Resource['Dataset']):
         """Return a resource representing all files in the dataset."""
         return FileCollection(self.project_id, self.uid, self.session)
 
-    def register(self, data_concepts_resource: ResourceType, dry_run=False) -> ResourceType:
-        """Register a data concepts resource to the appropriate collection."""
+    def _collection_for(self, data_concepts_resource):
         if isinstance(data_concepts_resource, MeasurementTemplate):
-            return self.measurement_templates.register(data_concepts_resource, dry_run)
+            return self.measurement_templates
         if isinstance(data_concepts_resource, MeasurementSpec):
-            return self.measurement_specs.register(data_concepts_resource, dry_run)
+            return self.measurement_specs
         if isinstance(data_concepts_resource, MeasurementRun):
-            return self.measurement_runs.register(data_concepts_resource, dry_run)
+            return self.measurement_runs
 
         if isinstance(data_concepts_resource, MaterialTemplate):
-            return self.material_templates.register(data_concepts_resource, dry_run)
+            return self.material_templates
         if isinstance(data_concepts_resource, MaterialSpec):
-            return self.material_specs.register(data_concepts_resource, dry_run)
+            return self.material_specs
         if isinstance(data_concepts_resource, MaterialRun):
-            return self.material_runs.register(data_concepts_resource, dry_run)
+            return self.material_runs
 
         if isinstance(data_concepts_resource, ProcessTemplate):
-            return self.process_templates.register(data_concepts_resource, dry_run)
+            return self.process_templates
         if isinstance(data_concepts_resource, ProcessSpec):
-            return self.process_specs.register(data_concepts_resource, dry_run)
+            return self.process_specs
         if isinstance(data_concepts_resource, ProcessRun):
-            return self.process_runs.register(data_concepts_resource, dry_run)
+            return self.process_runs
 
         if isinstance(data_concepts_resource, IngredientSpec):
-            return self.ingredient_specs.register(data_concepts_resource, dry_run)
+            return self.ingredient_specs
         if isinstance(data_concepts_resource, IngredientRun):
-            return self.ingredient_runs.register(data_concepts_resource, dry_run)
+            return self.ingredient_runs
 
         if isinstance(data_concepts_resource, PropertyTemplate):
-            return self.property_templates.register(data_concepts_resource, dry_run)
+            return self.property_templates
         if isinstance(data_concepts_resource, ParameterTemplate):
-            return self.parameter_templates.register(data_concepts_resource, dry_run)
+            return self.parameter_templates
         if isinstance(data_concepts_resource, ConditionTemplate):
-            return self.condition_templates.register(data_concepts_resource, dry_run)
+            return self.condition_templates
+
+    def register(self, data_concepts_resource: ResourceType, dry_run=False) -> ResourceType:
+        """Register a data concepts resource to the appropriate collection."""
+        return self._collection_for(data_concepts_resource)\
+            .register(data_concepts_resource, dry_run=dry_run)
 
     def register_all(self, data_concepts_resources: List[ResourceType],
                      dry_run=False) -> List[ResourceType]:

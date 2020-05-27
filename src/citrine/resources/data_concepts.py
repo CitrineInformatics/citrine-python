@@ -368,6 +368,43 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         full_model = self.build(data)
         return full_model
 
+    def register_all(self, models: List[ResourceType], dry_run=False) -> List[ResourceType]:
+        """
+        [ALPHA] Create or update each model in models.
+
+        This method has the same behavior as `register`, except that all no models will be
+        written if any one of them is invalid.
+
+        Using this method should yield significant improvements to write speed over separate
+        calls to `register`.
+
+        Parameters
+        ----------
+        models: List[ResourceType]
+            The objects to be written.
+        dry_run: bool
+            Whether to actually register the objects or run a dry run of the register operation.
+            Dry run is intended to be used for validation. Default: false
+
+        Returns
+        -------
+        List[ResourceType]
+            Each object model as it now exists in the database. The order and number of models
+            is guaranteed to be the same as originally specified.
+
+        """
+        if self.dataset_id is None:
+            raise RuntimeError("Must specify a dataset in order to register a data model object.")
+        path = self._get_path()
+        params = {'dry_run': dry_run}
+        objects = [replace_objects_with_links(scrub_none(model.dump())) for model in models]
+        response_data = self.session.put_resource(
+            path + '/batch',
+            json={'objects': objects},
+            params=params
+        )
+        return [self.build(obj) for obj in response_data['objects']]
+
     def get(self, uid: Union[UUID, str], scope: str = 'id') -> ResourceType:
         """
         Get the element of the collection with ID equal to uid.
