@@ -290,7 +290,7 @@ def test_register_existing(collection, session):
 
     # Ensure we PUT if we were called with a definition id
     assert session.last_call.method == "PUT"
-    assert session.last_call.path == f"projects/{project_id}/ara-definitions/6b608f78-e341-422c-8076-35adc8828545"
+    assert session.last_call.path == "projects/{}/ara-definitions/6b608f78-e341-422c-8076-35adc8828545".format(project_id)
 
 
 def test_update(collection, session):
@@ -315,7 +315,7 @@ def test_update(collection, session):
 
     # Ensure we POST if we weren't created with a definition id
     assert session.last_call.method == "PUT"
-    assert session.last_call.path == f"projects/{project_id}/ara-definitions/6b608f78-e341-422c-8076-35adc8828545"
+    assert session.last_call.path == "projects/{}/ara-definitions/6b608f78-e341-422c-8076-35adc8828545".format(project_id)
 
 
 def test_update_unregistered_fail(collection, session):
