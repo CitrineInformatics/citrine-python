@@ -9,14 +9,25 @@ pylint = "*"
 flake8 = "*"
 flake8-docstrings = "*"
 pydocstyle = "==3.0.0"
-sphinx = "*"
 sphinxcontrib-apidoc = "*"
 factory-boy = "*"
 requests-mock = "*"
+Sphinx = "*"
 
 [packages]
 citrine = {editable = true,path = "."}
-gemd = {git = "https://github.com/CitrineInformatics/gemd-python.git", editable = true, ref="master"}
+gemd = {git = "https://github.com/CitrineInformatics/gemd-python.git",editable = true,ref = "master"}
 boto3 = "*"
 botocore = "*"
 deprecation = "*"
+flake8 = "==3.7.8"
+flake8-docstrings = "==1.3.1"
+mock = "==3.0.5"
+pytest = "==4.3.1"
+pytz = "==2019.3"
+pydocstyle = "==3.0.0"
+pytest-cov = "==2.7.1"
+pytest-flake8 = "==1.0.4"
+factory-boy = "==2.12.0"
+requests-mock = "==1.7.0"
+strip-hints = "==0.1.8"
