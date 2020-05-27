@@ -12,7 +12,7 @@ from citrine._session import Session
 from citrine.resources.process_template import ProcessTemplate  # noqa: F401
 from citrine.ara.columns import Column, MeanColumn, IdentityColumn, OriginalUnitsColumn
 from citrine.ara.rows import Row
-from citrine.ara.variables import Variable, IngredientIdentifierByProcessTemplateAndName,\
+from citrine.ara.variables import Variable, IngredientIdentifierByProcessTemplateAndName, \
     IngredientQuantityByProcessAndName, IngredientQuantityDimension
 
 
@@ -208,7 +208,8 @@ class AraDefinitionCollection(Collection[AraDefinition]):
     _path_template = 'projects/{project_id}/ara-definitions'
     _collection_key = 'definitions'
 
-    # NOTE: This isn't actually an 'individual key' - both parts (version and definition) are necessary
+    # NOTE: This isn't actually an 'individual key' - both parts (version and
+    # definition) are necessary
     _individual_key = None
 
     def __init__(self, project_id: UUID, session: Session):
@@ -299,8 +300,7 @@ class AraDefinitionCollection(Collection[AraDefinition]):
         return self.session.post_resource(path, body)
 
     def register(self, defn: AraDefinition) -> AraDefinition:
-        """
-        [ALPHA] Register an Ara Definition.
+        """[ALPHA] Register an Ara Definition.
 
         If the provided AraDefinition does not have a definition_uid, create a new element of the
         AraDefinitionCollection by registering the provided AraDefinition. If the provided
@@ -313,11 +313,11 @@ class AraDefinitionCollection(Collection[AraDefinition]):
 
         TODO: Consider validating that a resource exists at the given uid before updating.
             The code to do so is not yet implemented on the backend
-
         """
-
-        # TODO: This is dumping our AraDefinition (which encapsulates both the definition properties, versioned
-        # properties, as well as the definition JSON) into the Ara Definition JSON blob ('definition')- probably not ideal.
+        # TODO: This is dumping our AraDefinition (which encapsulates both
+        #  the definition properties, versioned properties, as well as the
+        #  definition JSON) into the Ara Definition JSON blob ('definition')
+        #  - probably not ideal.
         body = {"definition": defn.dump()}
         if defn.definition_uid is None:
             data = self.session.post_resource(self._get_path(), body)
