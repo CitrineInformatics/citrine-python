@@ -312,7 +312,11 @@ class AraDefinitionCollection(Collection[AraDefinition]):
 
         TODO: Consider validating that a resource exists at the given uid before updating.
             The code to do so is not yet implemented on the backend
+
         """
+
+        # TODO: This is dumping our AraDefinition (which encapsulates both the definition properties, versioned
+        # properties, as well as the definition JSON) into the Ara Definition JSON blob ('definition')- probably not ideal.
         body = {"definition": defn.dump()}
         if defn.definition_uid is None:
             data = self.session.post_resource(self._get_path(), body)
