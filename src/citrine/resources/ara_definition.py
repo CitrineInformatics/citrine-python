@@ -225,10 +225,11 @@ class AraDefinitionCollection(Collection[AraDefinition]):
 
     def build(self, data: dict) -> AraDefinition:
         """[ALPHA] Build an individual Ara Definition from a dictionary."""
-        defn = AraDefinition.build(data['version']['ara_definition'])
+        version_data = data['version']
+        defn = AraDefinition.build(version_data['ara_definition'])
+        defn.version_number = version_data['version_number']
+        defn.version_uid = version_data['id']
         defn.definition_uid = data['definition']['id']
-        defn.version_number = data['version']['version_number']
-        defn.version_uid = data['version']['id']
         defn.project_id = self.project_id
         defn.session = self.session
         return defn
