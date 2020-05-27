@@ -478,10 +478,10 @@ class AttributeInOutput(Serializable['AttributeInOutput'], Variable):
 class IngredientIdentifierInOutput(Serializable['IngredientIdentifierInOutput'], Variable):
     """[ALPHA] Ingredient quantity in the trunk of a material history tree.
 
-    The search for an ingredient quantity starts at the root of the material history tree
-    and proceeds until any of the given process templates are reached. Those templates block
-    the search from continuing but are inclusive: a match is extracted if an ingredient with
-    the specified ingredient name is found at or before a cutoff.
+    The search for an ingredient quantity starts at the terminal material and proceeds until
+    any of the given process templates are reached. Those templates block the search from
+    continuing but are inclusive: a match is extracted if an ingredient with the specified
+    ingredient name is found at or before a cutoff.
 
     This variable definition allows a quantity to be extracted when an ingredient is used
     in multiple processes. As an example, consider a paint formed by mixing red and yellow
@@ -541,10 +541,10 @@ class IngredientIdentifierInOutput(Serializable['IngredientIdentifierInOutput'],
 class IngredientQuantityInOutput(Serializable['IngredientQuantityInOutput'], Variable):
     """[ALPHA] Ingredient identifier in the trunk of a material history tree.
 
-    The search for an identifier starts at the root of the material history tree and proceeds
-    until any of the given process templates are reached. Those templates block the search from
-    continuing but are inclusive: a match is extracted if an ingredient with the specified
-    ingredient name is found at or before a cutoff.
+    The search for an identifier starts at the terminal material and proceeds until any of the
+    given process templates are reached. Those templates block the search from continuing but
+    are inclusive: a match is extracted if an ingredient with the specified ingredient name
+    is found at or before a cutoff.
 
     This variable definition allows an identifier to be extracted when an ingredient is used
     in multiple processes. As an example, consider a paint formed by mixing red and yellow
