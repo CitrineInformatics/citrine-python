@@ -1,7 +1,7 @@
 .. data_extraction:
 
 [ALPHA] Data Extraction
-=========================
+=======================
 
 Ara is a component of the Citrine Platform data service that extracts data from GEMD's complex and expressive graphical representations into a tabular structure (like a CSV file) that is easier to consume in analytical contexts.
 An Ara table is defined on a set of material histories, and the rows in the resulting Ara Table are in 1-to-1 correspondence with those material histories.
@@ -99,7 +99,7 @@ Assume that the process template is accessible from a known project, `project`.
 If the process template's allowed names includes, for example, "flour" then there will now be columns "batter mixing~flour~id" and "batter mixing~flour~mass fraction~mean."
 
 Previewing tables
----------------------------
+-----------------
 
 Calling :func:`~citrine.resources.project.Project.ara_definitions` on a project returns an :class:`~citrine.resources.ara_definition.AraDefinitionCollection` object, which facilitates access to the collection of all Ara definitions visible to a Project.
 Via such an object, one can preview a draft AraDefinition on an explicit set of Material Histories, defined by their root materials:
@@ -151,7 +151,7 @@ or even wrap it in a method that displays multi-row headers:
         return pd.DataFrame(df.values, columns=[x for x in np.array(headers).T])
 
 Building and downloading tables
---------------------
+-------------------------------
 
 After iteratively adjusting the AraDefinition with the ``preview`` method above, the definition can be registered to save it.
 
@@ -199,12 +199,12 @@ The table id and version can be used to get a :class:`~citrine.resources.table.T
 Just like the :class:`~citrine.resources.file_link.FileLink` resource, :class:`~citrine.resources.table.Table` does not literally contain the table but does expose a ``read`` method that will download it.
 
 Available Row Definitions
-------------------------------
+-------------------------
 
 Currently, Ara provides only a single way to define Rows: by the :class:`~gemd.entity.templates.MaterialTemplate` of the roots of the material histories that correspond to each row.
 
 :class:`~citrine.ara.rows.MaterialRunByTemplate`
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The :class:`~citrine.ara.rows.MaterialRunByTemplate` class defines Rows through a list of :class:`~gemd.entity.templates.MaterialTemplate`.
 Every :class:`~gemd.entity.object.MaterialRun` that is assigned to any template in the list is used as the root of a  Material History to be mapped to a Row.
@@ -214,7 +214,7 @@ of the cakes and another called "Brownies" that is used in all of the brownies.
 By including one or both of those templates, you can define a table of Cakes, Brownies, or both.
 
 Available Variable Definitions
-------------------------------------------
+------------------------------
 
 There are several ways to define variables that take their values from Attributes and fields in GEMD objects.
 
@@ -225,16 +225,18 @@ There are several ways to define variables that take their values from Attribute
   * :class:`~citrine.ara.variables.AttributeByTemplateAfterProcess`: for when measurements are distinguished by the process that precedes them
   * :class:`~citrine.ara.variables.AttributeInOutput`: for when attributes occur both in a process output and one or more of its inputs
   * :class:`~citrine.ara.variables.IngredientQuantityByProcessAndName`: for the specific case of the volume fraction, mass fraction, number fraction, or absolute quantity of an ingredient
+  * :class:`~citrine.ara.variables.IngredientQuantityInOutput`: for the quantity an ingredient used in multiple processes
 
 * Fields
 
   * :class:`~citrine.ara.variables.RootInfo`: for fields defined on the material at the root of the Material History, like the name of the material
   * :class:`~citrine.ara.variables.RootIdentifier`: for the id of the Material History, which can be used as a unique identifier for the rows
   * :class:`~citrine.ara.variables.IngredientIdentifierByProcessTemplateAndName`: for the id of the material being used in an ingredient, which can be used as a key for looking up that input material
+  * :class:`~citrine.ara.variables.IngredientIdentifierInOutput`: for the id of an ingredient used in multiple processes
   * :class:`~citrine.ara.variables.IngredientLabelByProcessAndName`: for a boolean that indicates whether an ingredient is assigned a given label
 
 Available Column Definitions
------------------------------------------------
+----------------------------
 
 There are several ways to define columns, depending on the type of the attribute that is being used as the data source for the column.
 

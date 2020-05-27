@@ -11,7 +11,7 @@
     predictors
     design_spaces
     processors
-    desigh_workflows
+    design_workflows
     scores
     data_sources
     predictor_reports
