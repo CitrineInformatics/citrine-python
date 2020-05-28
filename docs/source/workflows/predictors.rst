@@ -317,7 +317,7 @@ The example below show how to configure a mean property predictor to compute mea
     # table with simple mixtures and their ingredients
     data_source = AraTableDataSource(table_uid, 0)
 
-    GeneralizedMeanPropertyPredictor(
+    mean_property_predictor = GeneralizedMeanPropertyPredictor(
         name='Mean property predictor',
         description='Computes 1-mean ingredient properties',
         input_descriptor=formulation,
@@ -333,6 +333,13 @@ The example below show how to configure a mean property predictor to compute mea
         # only featurize ingredients labeled as a solute
         label='solute'
     )
+
+This predictor will compute a response ``1.0-mean of property density with label solute in simple mixture`` which can be retrieved from a project using:
+
+.. code:: python
+
+    mean_property_descriptors = project.descriptors.from_predictor_responses(
+        mean_property_predictor, [formulation_descriptor])
 
 Ingredient Fractions Predictor
 ------------------------------
@@ -358,12 +365,21 @@ The example below shows how to configure an ``IngredientFractionsPredictor`` tha
     from citrine.informatics.predictors import IngredientFractionsPredictor
     from citrine.informatics.descriptors import FormulationDescriptor
 
-    IngredientFractionsPredictor(
+    formulation_descriptor = FormulationDescriptor('simple mixture')
+
+    ingredient_fractions = IngredientFractionsPredictor(
         name='Ingredient Fractions Predictor',
         description='Computes fractions of provided ingredients',
-        input_descriptor=FormulationDescriptor('simple mixture')
+        input_descriptor=formulation_descriptor,
         ingredients=['water', 'salt', 'boric acid']
     )
+
+The responses can be retrieved from a project using:
+
+.. code:: python
+
+    ingredient_fraction_descriptors = project.descriptors.from_predictor_responses(
+        ingredient_fractions, [formulation_descriptor])
 
 Label fractions predictor
 -------------------------
@@ -378,14 +394,21 @@ The following example demonstrates how to create a predictor that computes the t
 
     from citrine.informatics.descriptors import FormulationDescriptor
     # descriptor that holds simple mixture data
-    formulation = FormulationDescriptor('simple mixture')
+    formulation_descriptor = FormulationDescriptor('simple mixture')
 
     label_fractions = LabelFractionsPredictor(
         name='Saline solution label fractions',
         description='Computes total fraction of solute and solvent',
-        input_descriptor=formulation,
+        input_descriptor=formulation_descriptor,
         labels=['solute', 'solvent']
     )
+
+This predictor will compute 2 responses, ``solute share in simple mixture`` and ``solvent share in simple mixture``, which can be retrieved from a project using:
+
+.. code:: python
+
+    label_fractions_descriptors = project.descriptors.from_predictor_responses(
+        label_fractions, [formulation_descriptor])
 
 Predictor Reports
 -----------------
