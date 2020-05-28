@@ -43,7 +43,8 @@ class ListTableVersionsDataFactory(factory.DictFactory):
     tables = [TableDataFactory()]
 
 
-class AraDefinitionDataFactory(factory.DictFactory):
+class AraDefinitionJSONDataFactory(factory.DictFactory):
+    """ This is simply the JSON Blob stored in an Ara Definition Version"""
     name = factory.Faker("company")
     description = factory.Faker('bs')
     rows = []
@@ -51,13 +52,19 @@ class AraDefinitionDataFactory(factory.DictFactory):
     variables = []
     datasets = []
 
-
-class AraDefinitionFactory(factory.DictFactory):
-    ara_definition = factory.SubFactory(AraDefinitionDataFactory)
+class AraDefinitionVersionJSONDataFactory(factory.DictFactory):
+    ara_definition = factory.SubFactory(AraDefinitionJSONDataFactory)
     id = factory.Faker('uuid4')
     version_number = randrange(10)
-    definition_id = factory.Faker('uuid4')
 
+class WithIdDataFactory(factory.DictFactory):
+    id = factory.Faker('uuid4')
+
+class AraDefinitionResponseDataFactory(factory.DictFactory):
+    """This is the AraDefinition object that encapsulates both version and definition info from the server"""
+
+    definition = factory.SubFactory(WithIdDataFactory)
+    version = factory.SubFactory(AraDefinitionVersionJSONDataFactory)
 
 class DatasetDataFactory(factory.DictFactory):
     id = factory.Faker('uuid4')
