@@ -42,6 +42,19 @@ def test_register_material_run(collection, session):
     assert "<Material run 'Test MR 123'>" == str(registered)
 
 
+def test_register_all(collection, session):
+    runs = [MaterialRunFactory(name='1'), MaterialRunFactory(name='2'),  MaterialRunFactory(name='3')]
+    session.set_response({'objects': [r.dump() for r in runs]})
+    registered = collection.register_all(runs)
+    assert [r.name for r in runs] == [r.name for r in registered]
+    assert len(session.calls) == 1
+    assert session.calls[0].method == 'PUT'
+    assert session.calls[0].path == 'projects/{}/datasets/{}/material-runs/batch'.format(
+        collection.project_id, collection.dataset_id)
+    with pytest.raises(RuntimeError):
+        MaterialRunCollection(collection.project_id, dataset_id=None, session=session).register_all([])
+
+
 def test_dry_run_register_material_run(collection, session):
     # Given
     session.set_response(MaterialRunDataFactory(name='Test MR 123'))
