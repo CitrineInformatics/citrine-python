@@ -94,7 +94,7 @@ have a <cite>type</cite> field that corresponds to the response key of this clas
 
 <dl class="attribute">
 <dt id="citrine.resources.data_concepts.DataConcepts.client_specific_fields">
-<code class="sig-name descname">client_specific_fields</code><em class="property"> = {'audit_info': citrine.resources.audit_info.AuditInfo, 'dataset': citrine._serialization.properties.UUID}</em><a class="headerlink" href="#citrine.resources.data_concepts.DataConcepts.client_specific_fields" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">client_specific_fields</code><em class="property"> = {'audit_info': &lt;class 'citrine.resources.audit_info.AuditInfo'&gt;, 'dataset': &lt;class 'citrine._serialization.properties.UUID'&gt;}</em><a class="headerlink" href="#citrine.resources.data_concepts.DataConcepts.client_specific_fields" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fields that are added to the gemd data objects when they are used in this client</p>
 <ul class="simple">
 <li><p>AuditInfo contains who/when information about the resource on the citrine platform</p></li>
@@ -406,6 +406,32 @@ Dry run is intended to be used for validation. Default: false</p></li>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>ResourceType</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="citrine.resources.data_concepts.DataConceptsCollection.register_all">
+<code class="sig-name descname">register_all</code><span class="sig-paren">(</span><em class="sig-param">models: List[ResourceType], dry_run=False</em><span class="sig-paren">)</span> &#x2192; List[ResourceType]<a class="headerlink" href="#citrine.resources.data_concepts.DataConceptsCollection.register_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>[ALPHA] Create or update each model in models.</p>
+<p>This method has the same behavior as <cite>register</cite>, except that all no models will be
+written if any one of them is invalid.</p>
+<p>Using this method should yield significant improvements to write speed over separate
+calls to <cite>register</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>models</strong> (<em>List</em><em>[</em><em>ResourceType</em><em>]</em>) – The objects to be written.</p></li>
+<li><p><strong>dry_run</strong> (<em>bool</em>) – Whether to actually register the objects or run a dry run of the register operation.
+Dry run is intended to be used for validation. Default: false</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Each object model as it now exists in the database. The order and number of models
+is guaranteed to be the same as originally specified.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>List[ResourceType]</p>
 </dd>
 </dl>
 </dd></dl>
