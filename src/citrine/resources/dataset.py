@@ -252,12 +252,22 @@ class Dataset(Resource['Dataset']):
 
         """
         resources = list()
-        for resource in (sorted(data_concepts_resources,
-                                key=lambda resource: writable_sort_order(resource.typ))):
-            registered_resource = self.register(resource, dry_run)
-            if isinstance(registered_resource, BaseEntity):
-                resource.uids = registered_resource.uids
-            resources.append(resource)
+        by_type = {}
+        for obj in data_concepts_resources:
+            if obj.typ not in by_type:
+                by_type[obj.typ] = []
+            by_type[obj.typ].append(obj)
+        typ_groups = sorted(list(by_type.values()), key=lambda x: writable_sort_order(x[0]))
+        batch_size = 50
+        for typ_group in typ_groups:
+            num_batches = len(typ_group) // batch_size
+            for batch_num in range(num_batches + 1):
+                batch = typ_group[batch_num: batch_num + batch_size]
+                registered = self._collection_for(batch[0]).register_all(batch, dry_run=dry_run)
+                for prewrite, postwrite in zip(batch, registered):
+                    if isinstance(postwrite, BaseEntity):
+                        prewrite.uids = postwrite.uids
+                resources.extend(registered)
         return resources
 
 

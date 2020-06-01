@@ -80,7 +80,7 @@ class FakeSession:
 
     def checked_put(self, path: str, json: dict, **kwargs) -> dict:
         self.calls.append(FakeCall('PUT', path, json, params=kwargs.get('params')))
-        return self._get_response()
+        return self._get_response(default_response=json)
 
     def checked_delete(self, path: str, **kwargs) -> dict:
         self.calls.append(FakeCall('DELETE', path, params=kwargs.get('params')))
