@@ -20,7 +20,7 @@ informatics_string_data = [
     (LIScore("LI(z)", "score for z", [], []), "<LIScore 'LI(z)'>"),
     (EIScore("EI(x)", "score for x", [], [], []), "<EIScore 'EI(x)'>"),
     (FeatureImportanceReport("reflectivity", {}), "<FeatureImportanceReport 'reflectivity'>"),
-    (ModelSummary("my model", [], [], {}, []), "<ModelSummary 'my model'>"),
+    (ModelSummary("my model", "ML Model", [], [], {}, [], "predictor name"), "<ModelSummary 'my model'>"),
 ]
 
 
