@@ -263,7 +263,8 @@ class Dataset(Resource['Dataset']):
             for batch_num in range(num_batches + 1):
                 batch = typ_group[batch_num * batch_size: (batch_num + 1) * batch_size]
                 if batch:  # final batch is empty when batch_size divides len(typ_group)
-                    registered = self._collection_for(batch[0]).register_all(batch, dry_run=dry_run)
+                    registered = self._collection_for(batch[0])\
+                        .register_all(batch, dry_run=dry_run)
                     for prewrite, postwrite in zip(batch, registered):
                         if isinstance(postwrite, BaseEntity):
                             prewrite.uids = postwrite.uids
