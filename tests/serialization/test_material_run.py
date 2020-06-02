@@ -48,7 +48,7 @@ def test_serialization():
 def test_process_attachment():
     """Test that a process can be attached to a material, and that the connection survives serde"""
     cake = MaterialRun('Final cake')
-    cake.process = ProcessRun('Icing')
+    cake.process = ProcessRun('Icing', uids={'id': '12345'})
     cake_data = cake.dump()
 
     cake_copy = loads(dumps(cake_data)).as_dict()

@@ -6,7 +6,6 @@ from citrine._rest.resource import Resource
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Optional as PropertyOptional
 from citrine._serialization.properties import String, Object, Mapping, LinkOrElse
-from citrine._utils.functions import set_default_uid
 from citrine.resources.data_concepts import DataConcepts
 from citrine.resources.object_specs import ObjectSpec, ObjectSpecCollection
 from gemd.entity.attribute.condition import Condition
@@ -61,7 +60,7 @@ class MeasurementSpec(ObjectSpec, Resource['MeasurementSpec'], GEMDMeasurementSp
 
     def __init__(self,
                  name: str,
-                 uids: Optional[Dict[str, str]] = None,
+                 uids: Optional[Dict[str, str]] = dict(),
                  tags: Optional[List[str]] = None,
                  notes: Optional[str] = None,
                  conditions: Optional[List[Condition]] = None,
@@ -69,7 +68,7 @@ class MeasurementSpec(ObjectSpec, Resource['MeasurementSpec'], GEMDMeasurementSp
                  template: Optional[GEMDMeasurementTemplate] = None,
                  file_links: Optional[List[FileLink]] = None):
         DataConcepts.__init__(self, GEMDMeasurementSpec.typ)
-        GEMDMeasurementSpec.__init__(self, name=name, uids=set_default_uid(uids),
+        GEMDMeasurementSpec.__init__(self, name=name, uids=uids,
                                      tags=tags, conditions=conditions, parameters=parameters,
                                      template=template, file_links=file_links, notes=notes)
 

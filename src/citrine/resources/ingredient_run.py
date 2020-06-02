@@ -6,7 +6,6 @@ from citrine._rest.resource import Resource
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Mapping, String, LinkOrElse, Object
 from citrine._serialization.properties import Optional as PropertyOptional
-from citrine._utils.functions import set_default_uid
 from citrine.resources.data_concepts import DataConcepts
 from citrine.resources.object_runs import ObjectRun, ObjectRunCollection
 from gemd.entity.file_link import FileLink
@@ -84,7 +83,7 @@ class IngredientRun(ObjectRun, Resource['IngredientRun'], GEMDIngredientRun):
 
     def __init__(self,
                  name: Optional[str] = None,
-                 uids: Optional[Dict[str, str]] = None,
+                 uids: Optional[Dict[str, str]] = dict(),
                  tags: Optional[List[str]] = None,
                  notes: Optional[str] = None,
                  material: Optional[GEMDMaterialRun] = None,
@@ -97,7 +96,7 @@ class IngredientRun(ObjectRun, Resource['IngredientRun'], GEMDIngredientRun):
                  spec: Optional[GEMDIngredientSpec] = None,
                  file_links: Optional[List[FileLink]] = None):
         DataConcepts.__init__(self, GEMDIngredientRun.typ)
-        GEMDIngredientRun.__init__(self, uids=set_default_uid(uids), tags=tags, notes=notes,
+        GEMDIngredientRun.__init__(self, uids=uids, tags=tags, notes=notes,
                                    material=material, process=process,
                                    mass_fraction=mass_fraction, volume_fraction=volume_fraction,
                                    number_fraction=number_fraction,

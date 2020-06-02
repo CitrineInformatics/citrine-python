@@ -16,6 +16,8 @@ from gemd.entity.dict_serializable import DictSerializable
 from gemd.entity.link_by_uid import LinkByUID
 from gemd.json import GEMDJson
 
+CITRINE_SCOPE = 'id'
+
 
 class DataConcepts(PolymorphicSerializable['DataConcepts'], DictSerializable, ABC):
     """
@@ -194,7 +196,7 @@ class DataConcepts(PolymorphicSerializable['DataConcepts'], DictSerializable, AB
         """Get a DataConcepts-compatible json serializer/deserializer."""
         if cls.json_support is None:
             DataConcepts._make_class_dict()
-            cls.json_support = GEMDJson()
+            cls.json_support = GEMDJson(scope=CITRINE_SCOPE)
             cls.json_support.register_classes(
                 {k: v for k, v in DataConcepts.class_dict.items() if k != "link_by_uid"}
             )
@@ -405,7 +407,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         )
         return [self.build(obj) for obj in response_data['objects']]
 
-    def get(self, uid: Union[UUID, str], scope: str = 'id') -> ResourceType:
+    def get(self, uid: Union[UUID, str], scope: str = CITRINE_SCOPE) -> ResourceType:
         """
         Get the element of the collection with ID equal to uid.
 
@@ -414,7 +416,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         uid: Union[UUID, str]
             The ID.
         scope: str
-            The scope of the uid, defaults to Citrine scope ('id')
+            The scope of the uid, defaults to Citrine scope (CITRINE_SCOPE)
 
         Returns
         -------
@@ -607,7 +609,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
             params=params)
         return (self.build(raw) for raw in raw_objects)
 
-    def delete(self, uid: Union[UUID, str], scope: str = 'id', dry_run: bool = False):
+    def delete(self, uid: Union[UUID, str], scope: str = CITRINE_SCOPE, dry_run: bool = False):
         """
         Delete the element of the collection with ID equal to uid.
 
@@ -616,7 +618,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         uid: Union[UUID, str]
             The ID.
         scope: str
-            The scope of the uid, defaults to Citrine scope ('id')
+            The scope of the uid, defaults to Citrine scope (CITRINE_SCOPE)
         dry_run: bool
             Whether to actually delete the item or run a dry run of the delete operation.
             Dry run is intended to be used for validation. Default: false

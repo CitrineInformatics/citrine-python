@@ -5,7 +5,6 @@ from citrine._rest.resource import Resource
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Optional as PropertyOptional
 from citrine._serialization.properties import String, Mapping, Object
-from citrine._utils.functions import set_default_uid
 from citrine.resources.attribute_templates import AttributeTemplate, AttributeTemplateCollection
 from citrine.resources.data_concepts import DataConcepts
 from gemd.entity.bounds.base_bounds import BaseBounds
@@ -47,12 +46,12 @@ class PropertyTemplate(AttributeTemplate, Resource['PropertyTemplate'], GEMDProp
     def __init__(self,
                  name: str,
                  bounds: BaseBounds,
-                 uids: Optional[Dict[str, str]] = None,
+                 uids: Optional[Dict[str, str]] = dict(),
                  description: Optional[str] = None,
                  tags: Optional[List[str]] = None):
         DataConcepts.__init__(self, GEMDPropertyTemplate.typ)
         GEMDPropertyTemplate.__init__(self, name=name, bounds=bounds, tags=tags,
-                                      uids=set_default_uid(uids), description=description)
+                                      uids=uids, description=description)
 
     def __str__(self):
         return '<Property template {!r}>'.format(self.name)

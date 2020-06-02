@@ -6,7 +6,6 @@ from citrine._rest.resource import Resource
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Mapping, String, LinkOrElse, Object
 from citrine._serialization.properties import Optional as PropertyOptional
-from citrine._utils.functions import set_default_uid
 from citrine.resources.data_concepts import DataConcepts
 from citrine.resources.object_specs import ObjectSpec, ObjectSpecCollection
 from gemd.entity.file_link import FileLink
@@ -78,7 +77,7 @@ class IngredientSpec(ObjectSpec, Resource['IngredientSpec'], GEMDIngredientSpec)
 
     def __init__(self,
                  name: str,
-                 uids: Optional[Dict[str, str]] = None,
+                 uids: Optional[Dict[str, str]] = dict(),
                  tags: Optional[List[str]] = None,
                  notes: Optional[str] = None,
                  material: Optional[GEMDMaterialSpec] = None,
@@ -90,7 +89,7 @@ class IngredientSpec(ObjectSpec, Resource['IngredientSpec'], GEMDIngredientSpec)
                  labels: Optional[List[str]] = None,
                  file_links: Optional[List[FileLink]] = None):
         DataConcepts.__init__(self, GEMDIngredientSpec.typ)
-        GEMDIngredientSpec.__init__(self, uids=set_default_uid(uids), tags=tags, notes=notes,
+        GEMDIngredientSpec.__init__(self, uids=uids, tags=tags, notes=notes,
                                     material=material, process=process,
                                     mass_fraction=mass_fraction, volume_fraction=volume_fraction,
                                     number_fraction=number_fraction,
