@@ -365,6 +365,8 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         # know how to replace the objects with link-by-uids. loads() converts this string into
         # nested gemd objects, and then the final dumps() converts that to a json-ready string
         # in which all of the object references have been replaced with link-by-uids.
+
+        GEMDJson(scope=CITRINE_SCOPE).dumps(model)  # This apparent no-op populates uids
         dumped_data = replace_objects_with_links(scrub_none(model.dump()))
         data = self.session.post_resource(path, dumped_data, params=params)
         full_model = self.build(data)
@@ -399,6 +401,10 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
             raise RuntimeError("Must specify a dataset in order to register a data model object.")
         path = self._get_path()
         params = {'dry_run': dry_run}
+
+        json = GEMDJson(scope=CITRINE_SCOPE)  # This apparent no-op populates uids
+        [json.dumps(x) for x in models]  # This apparent no-op populates uids
+
         objects = [replace_objects_with_links(scrub_none(model.dump())) for model in models]
         response_data = self.session.put_resource(
             path + '/batch',
