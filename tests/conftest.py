@@ -199,7 +199,7 @@ def valid_predictor_report_data():
             models=[
                 dict(
                     name='GeneralLoloModel_1',
-                    type='GeneralLoloModel',
+                    type='ML Model',
                     inputs=[x.key],
                     outputs=[y.key],
                     display_name='ML Model',
@@ -220,11 +220,12 @@ def valid_predictor_report_data():
                             importances=dict(x=1.00),
                             top_features=5
                         )
-                    ]
+                    ],
+                    predictor_configuration_name="Predict y from x with ML"
                 ),
                 dict(
                     name='GeneralLosslessModel_2',
-                    type='GeneralLosslessModel',
+                    type='Analytic Model',
                     inputs=[x.key, y.key],
                     outputs=[z.key],
                     display_name='GeneralLosslessModel_2',
@@ -235,7 +236,9 @@ def valid_predictor_report_data():
                             children=[]
                         )
                     ],
-                    feature_importances=[]
+                    feature_importances=[],
+                    predictor_configuration_name="Expression for z",
+                    predictor_configuration_uid="249bf32c-6f3d-4a93-9387-94cc877f170c"
                 )
             ],
             descriptors=[x.dump(), y.dump(), z.dump()]

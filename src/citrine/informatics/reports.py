@@ -3,6 +3,7 @@ from typing import Optional, Type, List, Dict, TypeVar, Iterable, Any
 from abc import abstractmethod
 from itertools import groupby
 import warnings
+from uuid import UUID
 
 from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
@@ -76,6 +77,8 @@ class ModelSummary(Serializable['ModelSummary']):
     ----------
     name: str
         the name of the model
+    type_: str
+        the type of the model (e.g., "ML Model", "Featurizer", etc.)
     inputs: List[Descriptor]
         list of input descriptors
     outputs: List[Descriptor]
@@ -84,27 +87,40 @@ class ModelSummary(Serializable['ModelSummary']):
         settings of the model, as a dictionary (details depend on model type)
     feature_importances: List[FeatureImportanceReport]
         list of feature importance reports, one for each output
+    predictor_name: str
+        the name of the predictor that created this model
+    predictor_uid: Optional[uuid]
+        the uid of the predictor that created this model
 
     """
 
     name = properties.String('name')
+    type_ = properties.String('type')
     inputs = properties.List(properties.String(), 'inputs')
     outputs = properties.List(properties.String(), 'outputs')
     model_settings = properties.Raw('model_settings')
     feature_importances = properties.List(
         properties.Object(FeatureImportanceReport), 'feature_importances')
+    predictor_name = properties.String('predictor_configuration_name', default='')
+    predictor_uid = properties.Optional(properties.UUID(), 'predictor_configuration_uid')
 
     def __init__(self,
                  name: str,
+                 type_: str,
                  inputs: List[Descriptor],
                  outputs: List[Descriptor],
                  model_settings: Dict[str, Any],
-                 feature_importances: List[FeatureImportanceReport]):
+                 feature_importances: List[FeatureImportanceReport],
+                 predictor_name: str,
+                 predictor_uid: Optional[UUID] = None):
         self.name = name
+        self.type_ = type_
         self.inputs = inputs
         self.outputs = outputs
         self.model_settings = model_settings
         self.feature_importances = feature_importances
+        self.predictor_name = predictor_name
+        self.predictor_uid = predictor_uid
 
     def __str__(self):
         return '<ModelSummary {!r}>'.format(self.name)

@@ -18,8 +18,10 @@ def test_model_summary_init():
     z = RealDescriptor('z', 0, 1)
     feat_importance = FeatureImportanceReport(output_key='z', importances={'x': 0.8, 'y': 0.2})
     ModelSummary(name='General model',
+                 type_="ML Model",
                  inputs=[x, y],
                  outputs=[z],
                  model_settings={'optimization restarts': 15, 'backpropagation': False},
-                 feature_importances=[feat_importance]
+                 feature_importances=[feat_importance],
+                 predictor_name="a predictor"
                  )
