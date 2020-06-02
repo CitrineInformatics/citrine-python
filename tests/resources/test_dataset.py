@@ -279,9 +279,10 @@ def test_register_all_data_concepts(dataset):
     }
     registered = dataset.register_all(expected.keys())
     assert len(registered) == len(expected)
-    call_basenames = [basename(call.path) for call in dataset.session.calls]
+    call_basenames = [call.path.split('/')[-2] for call in dataset.session.calls]
     collection_basenames = [basename(collection._path_template) for collection in expected.values()]
-    assert sorted(call_basenames) == sorted(collection_basenames)
+    assert set(call_basenames) == set(collection_basenames)
+    assert len(set(call_basenames)) == len(call_basenames)  # calls are batched internally
 
     # spot check order. Does not check every constraint
     assert call_basenames.index(basename(IngredientRunCollection._path_template)) > call_basenames.index(basename(IngredientSpecCollection._path_template))
