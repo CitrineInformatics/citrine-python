@@ -311,6 +311,7 @@ def test_register_all_data_concepts(dataset):
     for obj in expected:
         assert len(obj.uids) == 1  # All should now have exactly 1 id
         for pair in obj.uids.items():
+            assert pair not in seen_ids  # All ids are different
             seen_ids.add(pair)
     for obj in registered:
         for pair in obj.uids.items():
