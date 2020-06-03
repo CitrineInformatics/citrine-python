@@ -56,7 +56,7 @@ class MaterialTemplate(ObjectTemplate, Resource['MaterialTemplate'], GEMDMateria
 
     def __init__(self,
                  name: str,
-                 uids: Optional[Dict[str, str]] = dict(),
+                 uids: Optional[Dict[str, str]] = None,
                  properties: Optional[Sequence[Union[PropertyTemplate,
                                                      LinkByUID,
                                                      Sequence[Union[PropertyTemplate, LinkByUID,
@@ -67,6 +67,8 @@ class MaterialTemplate(ObjectTemplate, Resource['MaterialTemplate'], GEMDMateria
         # properties is a list, each element of which is a PropertyTemplate OR is a list with
         # 2 entries: [PropertyTemplate, BaseBounds]. Python typing is not expressive enough, so
         # the typing above is more general.
+        if uids is None:
+            uids = dict()
         DataConcepts.__init__(self, GEMDMaterialTemplate.typ)
         GEMDMaterialTemplate.__init__(self, name=name, properties=properties,
                                       uids=uids, tags=tags,

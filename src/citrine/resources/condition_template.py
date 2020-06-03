@@ -46,10 +46,12 @@ class ConditionTemplate(AttributeTemplate, Resource['ConditionTemplate'], GEMDCo
     def __init__(self,
                  name: str,
                  bounds: BaseBounds,
-                 uids: Optional[Dict[str, str]] = dict(),
+                 uids: Optional[Dict[str, str]] = None,
                  description: Optional[str] = None,
                  tags: Optional[List[str]] = None
                  ):
+        if uids is None:
+            uids = dict()
         DataConcepts.__init__(self, GEMDConditionTemplate.typ)
         GEMDConditionTemplate.__init__(self, name=name, bounds=bounds, tags=tags,
                                        uids=uids, description=description)

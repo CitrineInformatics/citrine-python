@@ -66,7 +66,7 @@ class ProcessTemplate(ObjectTemplate, Resource['ProcessTemplate'], GEMDProcessTe
 
     def __init__(self,
                  name: str,
-                 uids: Optional[Dict[str, str]] = dict(),
+                 uids: Optional[Dict[str, str]] = None,
                  conditions: Optional[Sequence[Union[ConditionTemplate,
                                                      LinkByUID,
                                                      Sequence[Union[ConditionTemplate, LinkByUID,
@@ -81,6 +81,8 @@ class ProcessTemplate(ObjectTemplate, Resource['ProcessTemplate'], GEMDProcessTe
                  allowed_names: Optional[List[str]] = None,
                  description: Optional[str] = None,
                  tags: Optional[List[str]] = None):
+        if uids is None:
+            uids = dict()
         DataConcepts.__init__(self, GEMDProcessTemplate.typ)
         GEMDProcessTemplate.__init__(self, name=name, uids=uids,
                                      conditions=conditions, parameters=parameters, tags=tags,

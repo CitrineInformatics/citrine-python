@@ -74,7 +74,7 @@ class ProcessRun(ObjectRun, Resource['ProcessRun'], GEMDProcessRun):
 
     def __init__(self,
                  name: str,
-                 uids: Optional[Dict[str, str]] = dict(),
+                 uids: Optional[Dict[str, str]] = None,
                  tags: Optional[List[str]] = None,
                  notes: Optional[str] = None,
                  conditions: Optional[List[Condition]] = None,
@@ -82,6 +82,8 @@ class ProcessRun(ObjectRun, Resource['ProcessRun'], GEMDProcessRun):
                  spec: Optional[GEMDProcessSpec] = None,
                  file_links: Optional[List[FileLink]] = None,
                  source: Optional[PerformedSource] = None):
+        if uids is None:
+            uids = dict()
         DataConcepts.__init__(self, GEMDProcessRun.typ)
         GEMDProcessRun.__init__(self, name=name, uids=uids,
                                 tags=tags, conditions=conditions, parameters=parameters,

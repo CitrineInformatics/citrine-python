@@ -72,7 +72,7 @@ class MeasurementRun(ObjectRun, Resource['MeasurementRun'], GEMDMeasurementRun):
 
     def __init__(self,
                  name: str,
-                 uids: Optional[Dict[str, str]] = dict(),
+                 uids: Optional[Dict[str, str]] = None,
                  tags: Optional[List[str]] = None,
                  notes: Optional[str] = None,
                  conditions: Optional[List[Condition]] = None,
@@ -82,6 +82,8 @@ class MeasurementRun(ObjectRun, Resource['MeasurementRun'], GEMDMeasurementRun):
                  material: Optional[GEMDMaterialRun] = None,
                  file_links: Optional[List[FileLink]] = None,
                  source: Optional[PerformedSource] = None):
+        if uids is None:
+            uids = dict()
         DataConcepts.__init__(self, GEMDMeasurementRun.typ)
         GEMDMeasurementRun.__init__(self, name=name, uids=uids,
                                     material=material,

@@ -65,13 +65,15 @@ class MaterialSpec(ObjectSpec, Resource['MaterialSpec'], GEMDMaterialSpec):
 
     def __init__(self,
                  name: str,
-                 uids: Optional[Dict[str, str]] = dict(),
+                 uids: Optional[Dict[str, str]] = None,
                  tags: Optional[List[str]] = None,
                  notes: Optional[str] = None,
                  process: Optional[GEMDProcessSpec] = None,
                  properties: Optional[List[PropertyAndConditions]] = None,
                  template: Optional[GEMDMaterialTemplate] = None,
                  file_links: Optional[List[FileLink]] = None):
+        if uids is None:
+            uids = dict()
         DataConcepts.__init__(self, GEMDMaterialSpec.typ)
         GEMDMaterialSpec.__init__(self, name=name, uids=uids,
                                   tags=tags, process=process, properties=properties,

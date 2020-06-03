@@ -70,7 +70,7 @@ class ProcessSpec(ObjectSpec, Resource['ProcessSpec'], GEMDProcessSpec):
 
     def __init__(self,
                  name: str,
-                 uids: Optional[Dict[str, str]] = dict(),
+                 uids: Optional[Dict[str, str]] = None,
                  tags: Optional[List[str]] = None,
                  notes: Optional[str] = None,
                  conditions: Optional[List[Condition]] = None,
@@ -78,6 +78,8 @@ class ProcessSpec(ObjectSpec, Resource['ProcessSpec'], GEMDProcessSpec):
                  template: Optional[GEMDProcessTemplate] = None,
                  file_links: Optional[List[FileLink]] = None
                  ):
+        if uids is None:
+            uids = dict()
         DataConcepts.__init__(self, GEMDProcessSpec.typ)
         GEMDProcessSpec.__init__(self, name=name, uids=uids,
                                  tags=tags, conditions=conditions, parameters=parameters,

@@ -74,7 +74,7 @@ class MeasurementTemplate(ObjectTemplate,
 
     def __init__(self,
                  name: str,
-                 uids: Optional[Dict[str, str]] = dict(),
+                 uids: Optional[Dict[str, str]] = None,
                  properties: Optional[Sequence[Union[PropertyTemplate,
                                                      LinkByUID,
                                                      Sequence[Union[PropertyTemplate, LinkByUID,
@@ -92,6 +92,8 @@ class MeasurementTemplate(ObjectTemplate,
                                                      ]]] = None,
                  description: Optional[str] = None,
                  tags: Optional[List[str]] = None):
+        if uids is None:
+            uids = dict()
         DataConcepts.__init__(self, GEMDMeasurementTemplate.typ)
         GEMDMeasurementTemplate.__init__(self, name=name, properties=properties,
                                          conditions=conditions, parameters=parameters, tags=tags,

@@ -76,13 +76,15 @@ class MaterialRun(ObjectRun, Resource['MaterialRun'], GEMDMaterialRun):
 
     def __init__(self,
                  name: str,
-                 uids: Optional[Dict[str, str]] = dict(),
+                 uids: Optional[Dict[str, str]] = None,
                  tags: Optional[List[str]] = None,
                  notes: Optional[str] = None,
                  process: Optional[GEMDProcessRun] = None,
                  sample_type: Optional[str] = "unknown",
                  spec: Optional[GEMDMaterialSpec] = None,
                  file_links: Optional[List[FileLink]] = None):
+        if uids is None:
+            uids = dict()
         DataConcepts.__init__(self, GEMDMaterialRun.typ)
         GEMDMaterialRun.__init__(self, name=name, uids=uids,
                                  tags=tags, process=process,

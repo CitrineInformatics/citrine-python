@@ -77,7 +77,7 @@ class IngredientSpec(ObjectSpec, Resource['IngredientSpec'], GEMDIngredientSpec)
 
     def __init__(self,
                  name: str,
-                 uids: Optional[Dict[str, str]] = dict(),
+                 uids: Optional[Dict[str, str]] = None,
                  tags: Optional[List[str]] = None,
                  notes: Optional[str] = None,
                  material: Optional[GEMDMaterialSpec] = None,
@@ -88,6 +88,9 @@ class IngredientSpec(ObjectSpec, Resource['IngredientSpec'], GEMDIngredientSpec)
                  absolute_quantity: Optional[ContinuousValue] = None,
                  labels: Optional[List[str]] = None,
                  file_links: Optional[List[FileLink]] = None):
+        if uids is None:
+            uids = dict()
+
         DataConcepts.__init__(self, GEMDIngredientSpec.typ)
         GEMDIngredientSpec.__init__(self, uids=uids, tags=tags, notes=notes,
                                     material=material, process=process,

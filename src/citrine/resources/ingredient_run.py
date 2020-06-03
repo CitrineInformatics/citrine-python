@@ -83,7 +83,7 @@ class IngredientRun(ObjectRun, Resource['IngredientRun'], GEMDIngredientRun):
 
     def __init__(self,
                  name: Optional[str] = None,
-                 uids: Optional[Dict[str, str]] = dict(),
+                 uids: Optional[Dict[str, str]] = None,
                  tags: Optional[List[str]] = None,
                  notes: Optional[str] = None,
                  material: Optional[GEMDMaterialRun] = None,
@@ -95,6 +95,8 @@ class IngredientRun(ObjectRun, Resource['IngredientRun'], GEMDIngredientRun):
                  labels: Optional[List[str]] = None,
                  spec: Optional[GEMDIngredientSpec] = None,
                  file_links: Optional[List[FileLink]] = None):
+        if uids is None:
+            uids = dict()
         DataConcepts.__init__(self, GEMDIngredientRun.typ)
         GEMDIngredientRun.__init__(self, uids=uids, tags=tags, notes=notes,
                                    material=material, process=process,
