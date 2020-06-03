@@ -402,7 +402,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         path = self._get_path()
         params = {'dry_run': dry_run}
 
-        json = GEMDJson(scope=CITRINE_SCOPE)  # This apparent no-op populates uids
+        json = GEMDJson(scope=CITRINE_SCOPE)
         [json.dumps(x) for x in models]  # This apparent no-op populates uids
 
         objects = [replace_objects_with_links(scrub_none(model.dump())) for model in models]
