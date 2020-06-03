@@ -9,7 +9,6 @@ from citrine._rest.resource import Resource
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Optional as PropertyOptional
 from citrine._serialization.properties import String, LinkOrElse, Mapping, Object
-from citrine._utils.functions import set_default_uid
 from citrine.resources.data_concepts import DataConcepts
 from citrine.resources.object_specs import ObjectSpec, ObjectSpecCollection
 from gemd.entity.attribute.property_and_conditions import PropertyAndConditions
@@ -73,8 +72,10 @@ class MaterialSpec(ObjectSpec, Resource['MaterialSpec'], GEMDMaterialSpec):
                  properties: Optional[List[PropertyAndConditions]] = None,
                  template: Optional[GEMDMaterialTemplate] = None,
                  file_links: Optional[List[FileLink]] = None):
+        if uids is None:
+            uids = dict()
         DataConcepts.__init__(self, GEMDMaterialSpec.typ)
-        GEMDMaterialSpec.__init__(self, name=name, uids=set_default_uid(uids),
+        GEMDMaterialSpec.__init__(self, name=name, uids=uids,
                                   tags=tags, process=process, properties=properties,
                                   template=template, file_links=file_links, notes=notes)
 

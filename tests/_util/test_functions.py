@@ -5,20 +5,10 @@ from mock import patch, call, MagicMock, mock_open
 from gemd.entity.bounds.real_bounds import RealBounds
 from gemd.entity.link_by_uid import LinkByUID
 
-from citrine._utils.functions import set_default_uid, get_object_id, validate_type, object_to_link_by_uid, \
+from citrine._utils.functions import get_object_id, validate_type, object_to_link_by_uid, \
     rewrite_s3_links_locally, write_file_locally
 from gemd.entity.attribute.property import Property
 from citrine.resources.condition_template import ConditionTemplate
-
-
-def test_set_default_id_non_uuid():
-    with pytest.raises(ValueError):
-        set_default_uid({'id': 'not-valid'})
-
-
-def test_set_default_id_non_dict():
-    with pytest.raises(Exception):
-        set_default_uid('not a dict')
 
 
 def test_get_object_id_from_base_attribute():

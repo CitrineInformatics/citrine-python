@@ -229,8 +229,33 @@ def test_register_data_concepts(dataset):
     }
 
     for collection, obj in expected.items():
-        dataset.register(obj)
+        assert len(obj.uids) == 0
+        registered = dataset.register(obj)
+        assert len(obj.uids) == 1
+        assert len(registered.uids) == 1
         assert basename(dataset.session.calls[-1].path) == basename(collection._path_template)
+        for pair in obj.uids.items():
+            assert pair[1] == registered.uids[pair[0]]
+
+
+def test_register_data_concepts_no_mutate(dataset):
+    """Check that register routes to the correct collections"""
+    expected = {
+        MaterialTemplateCollection: MaterialTemplate("foo",
+                                                     uids={'scope1': 'A',
+                                                           'scope2': 'B'
+                                                           }
+                                                     ),
+        MaterialSpecCollection: MaterialSpec("foo",
+                                             uids={'id': str(uuid4())}
+                                             ),
+    }
+    for collection, obj in expected.items():
+        len_before = len(obj.uids)
+        registered = dataset.register(obj)
+        assert len(obj.uids) == len_before
+        for pair in registered.uids.items():
+            assert pair[1] == obj.uids.get(pair[0], 'No such key')
 
 
 def test_register_all_data_concepts(dataset):
@@ -277,8 +302,21 @@ def test_register_all_data_concepts(dataset):
         parameter_template: ParameterTemplateCollection,
         condition_template: ConditionTemplateCollection
     }
+    for obj in expected:
+        assert len(obj.uids) == 0  # All should be without ids
     registered = dataset.register_all(expected.keys())
     assert len(registered) == len(expected)
+
+    seen_ids = set()
+    for obj in expected:
+        assert len(obj.uids) == 1  # All should now have exactly 1 id
+        for pair in obj.uids.items():
+            assert pair not in seen_ids  # All ids are different
+            seen_ids.add(pair)
+    for obj in registered:
+        for pair in obj.uids.items():
+            assert pair in seen_ids  # registered items have the same ids
+
     call_basenames = [call.path.split('/')[-2] for call in dataset.session.calls]
     collection_basenames = [basename(collection._path_template) for collection in expected.values()]
     assert set(call_basenames) == set(collection_basenames)

@@ -6,7 +6,6 @@ from citrine._rest.resource import Resource
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Optional as PropertyOptional
 from citrine._serialization.properties import String, Mapping, Object, LinkOrElse
-from citrine._utils.functions import set_default_uid
 from citrine.resources.data_concepts import DataConcepts
 from citrine.resources.object_runs import ObjectRun, ObjectRunCollection
 from gemd.entity.attribute.condition import Condition
@@ -83,8 +82,10 @@ class ProcessRun(ObjectRun, Resource['ProcessRun'], GEMDProcessRun):
                  spec: Optional[GEMDProcessSpec] = None,
                  file_links: Optional[List[FileLink]] = None,
                  source: Optional[PerformedSource] = None):
+        if uids is None:
+            uids = dict()
         DataConcepts.__init__(self, GEMDProcessRun.typ)
-        GEMDProcessRun.__init__(self, name=name, uids=set_default_uid(uids),
+        GEMDProcessRun.__init__(self, name=name, uids=uids,
                                 tags=tags, conditions=conditions, parameters=parameters,
                                 spec=spec, file_links=file_links, notes=notes, source=source)
 

@@ -11,7 +11,6 @@ from citrine._rest.resource import Resource
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Optional as PropertyOptional
 from citrine._serialization.properties import String, LinkOrElse, Mapping, Object
-from citrine._utils.functions import set_default_uid
 from citrine.resources.data_concepts import DataConcepts
 from citrine.resources.material_spec import MaterialSpecCollection
 from citrine.resources.object_runs import ObjectRun, ObjectRunCollection
@@ -84,8 +83,10 @@ class MaterialRun(ObjectRun, Resource['MaterialRun'], GEMDMaterialRun):
                  sample_type: Optional[str] = "unknown",
                  spec: Optional[GEMDMaterialSpec] = None,
                  file_links: Optional[List[FileLink]] = None):
+        if uids is None:
+            uids = dict()
         DataConcepts.__init__(self, GEMDMaterialRun.typ)
-        GEMDMaterialRun.__init__(self, name=name, uids=set_default_uid(uids),
+        GEMDMaterialRun.__init__(self, name=name, uids=uids,
                                  tags=tags, process=process,
                                  sample_type=sample_type, spec=spec,
                                  file_links=file_links, notes=notes)

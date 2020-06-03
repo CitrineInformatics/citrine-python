@@ -1,61 +1,30 @@
-from typing import Dict, Any
-from copy import deepcopy
+from typing import Any
 from urllib.parse import urlparse
-from uuid import uuid4, UUID
 import os
 
 from gemd.entity.link_by_uid import LinkByUID
 
-
-def set_default_uid(id_dict: Dict[str, str]) -> Dict[str, str]:
-    """
-    Validates a dictionary of ids, adding a default id if necessary.
-
-    The scope 'id' is reserved for a Citrine id, and it must be a UUID4.
-    If there is no id with scope 'id', it is set to an automatically generated UUID4.
-    If 'id' corresponds to an id that is not a UUID4, an exception is thrown.
-
-    :return the input id dictionary, with the Citrine id added, if necessary.
-
-    """
-    reserved_scope = 'id'
-    if isinstance(id_dict, dict):
-        if reserved_scope in id_dict:
-            try:
-                # If id_dict['id'] is a string of a valid uuid, then this call will be successful
-                UUID(id_dict[reserved_scope])
-            except Exception:
-                raise ValueError("{} scope must correspond to a UUID, "
-                                 "instead got {}".format(reserved_scope, id_dict[reserved_scope]))
-            return id_dict
-        else:
-            id_dict_copy = deepcopy(id_dict)
-            id_dict_copy[reserved_scope] = str(uuid4())
-            return id_dict_copy
-    elif id_dict is None:
-        return {reserved_scope: str(uuid4())}
-    else:
-        raise Exception("Cannot validate id for {}".format(id_dict))
+CITRINE_SCOPE = 'id'
 
 
 def get_object_id(object_or_id):
     """Extract the citrine id from a data concepts object or LinkByUID."""
     from gemd.entity.attribute.base_attribute import BaseAttribute
     from citrine.resources.data_concepts import DataConcepts
+
     if isinstance(object_or_id, BaseAttribute):
         raise ValueError("Attributes do not have ids.")
-    citrine_scope = 'id'
     if isinstance(object_or_id, DataConcepts):
-        citrine_id = object_or_id.uids.get(citrine_scope)
+        citrine_id = object_or_id.uids.get(CITRINE_SCOPE)
         if citrine_id is not None:
             return citrine_id
         raise ValueError("Data concepts object {!r} must have a citrine uuid with "
-                         "scope".format(object_or_id, citrine_scope))
+                         "scope".format(object_or_id, CITRINE_SCOPE))
     if isinstance(object_or_id, LinkByUID):
-        if object_or_id.scope == citrine_scope:
+        if object_or_id.scope == CITRINE_SCOPE:
             return object_or_id.id
         raise ValueError("LinkByUID must be scoped to citrine scope {}, "
-                         "instead is {}".format(citrine_scope, object_or_id.scope))
+                         "instead is {}".format(CITRINE_SCOPE, object_or_id.scope))
     raise TypeError("{} must be a data concepts object or LinkByUID".format(object_or_id))
 
 

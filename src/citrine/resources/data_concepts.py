@@ -16,6 +16,8 @@ from gemd.entity.dict_serializable import DictSerializable
 from gemd.entity.link_by_uid import LinkByUID
 from gemd.json import GEMDJson
 
+CITRINE_SCOPE = 'id'
+
 
 class DataConcepts(PolymorphicSerializable['DataConcepts'], DictSerializable, ABC):
     """
@@ -194,7 +196,7 @@ class DataConcepts(PolymorphicSerializable['DataConcepts'], DictSerializable, AB
         """Get a DataConcepts-compatible json serializer/deserializer."""
         if cls.json_support is None:
             DataConcepts._make_class_dict()
-            cls.json_support = GEMDJson()
+            cls.json_support = GEMDJson(scope=CITRINE_SCOPE)
             cls.json_support.register_classes(
                 {k: v for k, v in DataConcepts.class_dict.items() if k != "link_by_uid"}
             )
@@ -363,6 +365,8 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         # know how to replace the objects with link-by-uids. loads() converts this string into
         # nested gemd objects, and then the final dumps() converts that to a json-ready string
         # in which all of the object references have been replaced with link-by-uids.
+
+        GEMDJson(scope=CITRINE_SCOPE).dumps(model)  # This apparent no-op populates uids
         dumped_data = replace_objects_with_links(scrub_none(model.dump()))
         data = self.session.post_resource(path, dumped_data, params=params)
         full_model = self.build(data)
@@ -397,6 +401,10 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
             raise RuntimeError("Must specify a dataset in order to register a data model object.")
         path = self._get_path()
         params = {'dry_run': dry_run}
+
+        json = GEMDJson(scope=CITRINE_SCOPE)
+        [json.dumps(x) for x in models]  # This apparent no-op populates uids
+
         objects = [replace_objects_with_links(scrub_none(model.dump())) for model in models]
         response_data = self.session.put_resource(
             path + '/batch',
@@ -405,7 +413,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         )
         return [self.build(obj) for obj in response_data['objects']]
 
-    def get(self, uid: Union[UUID, str], scope: str = 'id') -> ResourceType:
+    def get(self, uid: Union[UUID, str], scope: str = CITRINE_SCOPE) -> ResourceType:
         """
         Get the element of the collection with ID equal to uid.
 
@@ -414,7 +422,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         uid: Union[UUID, str]
             The ID.
         scope: str
-            The scope of the uid, defaults to Citrine scope ('id')
+            The scope of the uid, defaults to Citrine scope (CITRINE_SCOPE)
 
         Returns
         -------
@@ -607,7 +615,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
             params=params)
         return (self.build(raw) for raw in raw_objects)
 
-    def delete(self, uid: Union[UUID, str], scope: str = 'id', dry_run: bool = False):
+    def delete(self, uid: Union[UUID, str], scope: str = CITRINE_SCOPE, dry_run: bool = False):
         """
         Delete the element of the collection with ID equal to uid.
 
@@ -616,7 +624,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         uid: Union[UUID, str]
             The ID.
         scope: str
-            The scope of the uid, defaults to Citrine scope ('id')
+            The scope of the uid, defaults to Citrine scope (CITRINE_SCOPE)
         dry_run: bool
             Whether to actually delete the item or run a dry run of the delete operation.
             Dry run is intended to be used for validation. Default: false

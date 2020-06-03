@@ -6,7 +6,6 @@ from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Optional as PropertyOptional
 from citrine._serialization.properties import String, Mapping, Object, SpecifiedMixedList, \
     LinkOrElse
-from citrine._utils.functions import set_default_uid
 from citrine.resources.data_concepts import DataConcepts
 from citrine.resources.object_templates import ObjectTemplateCollection, ObjectTemplate
 from citrine.resources.property_template import PropertyTemplate
@@ -68,9 +67,11 @@ class MaterialTemplate(ObjectTemplate, Resource['MaterialTemplate'], GEMDMateria
         # properties is a list, each element of which is a PropertyTemplate OR is a list with
         # 2 entries: [PropertyTemplate, BaseBounds]. Python typing is not expressive enough, so
         # the typing above is more general.
+        if uids is None:
+            uids = dict()
         DataConcepts.__init__(self, GEMDMaterialTemplate.typ)
         GEMDMaterialTemplate.__init__(self, name=name, properties=properties,
-                                      uids=set_default_uid(uids), tags=tags,
+                                      uids=uids, tags=tags,
                                       description=description)
 
     def __str__(self):

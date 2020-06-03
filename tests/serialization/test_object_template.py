@@ -36,5 +36,6 @@ def test_object_template_serde():
     assert ProcessTemplate.build(proc_template.dump()) == proc_template
 
     # Check that serde still works if the template is a LinkByUID
+    pressure_template.uids['id'] = '12345'  # uids['id'] not populated by default
     proc_template.conditions[0][0] = LinkByUID('id', pressure_template.uids['id'])
     assert ProcessTemplate.build(proc_template.dump()) == proc_template
