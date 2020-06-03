@@ -280,12 +280,8 @@ def test_delete_project(collection, session):
     uid = '151199ec-e9aa-49a1-ac8e-da722aaf74c4'
 
     # When
-    resp = collection.delete(uid)
-
-    # Then
-    assert 1 == session.num_calls
-    expected_call = FakeCall(method='DELETE', path='/projects/{}'.format(uid))
-    assert expected_call == session.last_call
+    with pytest.raises(NotImplementedError):
+        collection.delete(uid)
 
 
 def test_list_members(project, session):
