@@ -133,6 +133,56 @@ def test_upload(mock_isfile, mock_stat, mock_open, mock_boto3_client, collection
     assert session.num_calls == 4
 
 
+@pytest.mark.xfail(reason="MIME type resolution depends on file extension")
+@patch('citrine.resources.file_link.boto3_client')
+@patch('citrine.resources.file_link.open')
+@patch('citrine.resources.file_link.os.stat')
+@patch('citrine.resources.file_link.os.path.isfile')
+def test_upload_fail(mock_isfile, mock_stat, mock_open, mock_boto3_client, collection, session):
+    """Test signaling that an upload has completed and the creation of a FileLink object."""
+    StatStub = namedtuple('StatStub', ['st_size'])
+
+    mock_isfile.return_value = True
+    mock_stat.return_value = StatStub(st_size=22300)
+    mock_open.return_value.__enter__.return_value = 'Random file contents'
+    mock_boto3_client.return_value = FakeS3Client({'VersionId': '3'})
+
+    dest_name = 'foo.bar'
+    file_id = '12345'
+    version = '13'
+
+    # This is the dictionary structure we expect from the upload completion request
+    file_info_response = {
+        'file_info': {
+            'file_id': file_id,
+            'version': version
+        }
+    }
+    uploads_response = {
+        's3_region': 'us-east-1',
+        's3_bucket': 'temp-bucket',
+        'temporary_credentials': {
+            'access_key_id': '1234',
+            'secret_access_key': 'abbb8777',
+            'session_token': 'hefheuhuhhu83772333',
+        },
+        'uploads': [
+            {
+                's3_key': '66377378',
+                'upload_id': '111',
+            }
+        ]
+    }
+
+    session.set_responses(uploads_response, file_info_response)
+    file_link = collection.upload(dest_name)
+    assert session.num_calls == 2
+
+    url = 'projects/{}/datasets/{}/files/{}/versions/{}' \
+        .format(collection.project_id, collection.dataset_id, file_id, version)
+    assert file_link.dump() == FileLink(dest_name, url=url).dump()
+
+
 def test_upload_missing_file(collection):
     with pytest.raises(ValueError):
         collection.upload('this-file-does-not-exist.xls')
