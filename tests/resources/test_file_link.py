@@ -95,7 +95,7 @@ def test_upload(mock_isfile, mock_stat, mock_open, mock_boto3_client, collection
     mock_open.return_value.__enter__.return_value = 'Random file contents'
     mock_boto3_client.return_value = FakeS3Client({'VersionId': '3'})
 
-    dest_name = 'foo.txt'
+    dest_names = ['foo.txt', 'foo.TXT']  # Verify that capitalization in extension is fine
     file_id = '12345'
     version = '13'
 
@@ -122,13 +122,15 @@ def test_upload(mock_isfile, mock_stat, mock_open, mock_boto3_client, collection
         ]
     }
 
-    session.set_responses(uploads_response, file_info_response)
-    file_link = collection.upload(dest_name)
+    for dest_name in dest_names:
+        session.set_responses(uploads_response, file_info_response)
+        file_link = collection.upload(dest_name)
 
-    assert session.num_calls == 2
-    url = 'projects/{}/datasets/{}/files/{}/versions/{}'\
-        .format(collection.project_id, collection.dataset_id, file_id, version)
-    assert file_link.dump() == FileLink(dest_name, url=url).dump()
+        url = 'projects/{}/datasets/{}/files/{}/versions/{}'\
+            .format(collection.project_id, collection.dataset_id, file_id, version)
+        assert file_link.dump() == FileLink(dest_name, url=url).dump()
+
+    assert session.num_calls == 4
 
 
 def test_upload_missing_file(collection):
