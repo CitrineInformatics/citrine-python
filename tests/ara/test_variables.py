@@ -8,6 +8,7 @@ from gemd.entity.link_by_uid import LinkByUID
 
 @pytest.fixture(params=[
     RootInfo(name="root name", headers=["Root", "Name"], field="name"),
+    XOR(name="root name or sample_type", headers=["Root", "Info"], variables=[RootInfo(name="root name", headers=["Root", "Name"], field="name"), RootInfo(name="root name", headers=["Root", "Sample Type"], field="sample_type")]),
     AttributeByTemplate(name="density", headers=["density"], template=LinkByUID(scope="templates", id="density"), attribute_constraints=[[LinkByUID(scope="templates", id="density"), RealBounds(0, 100, "g/cm**3")]]),
     AttributeByTemplateAfterProcessTemplate(name="density", headers=["density"], attribute_template=LinkByUID(scope="template", id="density"), process_template=LinkByUID(scope="template", id="process")),
     AttributeByTemplateAndObjectTemplate(name="density", headers=["density"], attribute_template=LinkByUID(scope="template", id="density"), object_template=LinkByUID(scope="template", id="object")),

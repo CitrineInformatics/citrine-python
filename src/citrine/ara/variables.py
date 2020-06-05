@@ -54,7 +54,7 @@ class Variable(PolymorphicSerializable['Variable']):
             AttributeByTemplateAndObjectTemplate, IngredientIdentifierByProcessTemplateAndName,
             IngredientLabelByProcessAndName, IngredientQuantityByProcessAndName,
             RootIdentifier, AttributeInOutput, IngredientIdentifierInOutput,
-            IngredientQuantityInOutput
+            IngredientQuantityInOutput, XOR
         ]
         res = next((x for x in types if x.typ == data["type"]), None)
         if res is None:
@@ -588,7 +588,7 @@ class IngredientQuantityInOutput(Serializable['IngredientQuantityInOutput'], Var
     ingredient_name = properties.String('ingredient_name')
     quantity_dimension = properties.Enumeration(IngredientQuantityDimension, 'quantity_dimension')
     process_templates = properties.List(properties.Object(LinkByUID), 'process_templates')
-    typ = properties.String('type', default="ing_id_in_output", deserializable=False)
+    typ = properties.String('type', default="ing_quantity_in_output", deserializable=False)
 
     def _attrs(self) -> List[str]:
         return ["name", "headers", "ingredient_name", "process_templates", "typ"]
@@ -604,3 +604,44 @@ class IngredientQuantityInOutput(Serializable['IngredientQuantityInOutput'], Var
         self.ingredient_name = ingredient_name
         self.quantity_dimension = quantity_dimension
         self.process_templates = process_templates
+
+
+class XOR(Serializable['XOR'], Variable):
+    """[ALPHA] Logical exclusive OR for GEM table variables.
+
+    This variable combines the results of 2 or more variables into a single variable according to
+    exclusive OR logic. XOR is defined when exactly one of its inputs is defined. Otherwise it is
+    undefined.
+
+    XOR can only operate on inputs with the same output type. For example, you may XOR
+    :class:`~citrine.ara.variables.RootIdentifier` with
+    :class:`~citrine.ara.variables.IngredientIdentifierByProcessTemplateAndName` because they both
+    produce simple strings, but not with :class:`~citrine.ara.variables.IngredientQuantityInOutput`
+    which produces a real numeric quantity.
+
+    The input variables to XOR need not exist elsewhere in the table definition, and the name and
+    headers assigned to them have no bearing on how the table is constructed. That they are required
+    at all is simply a limitation of the current API.
+
+    Parameters
+    ---------
+    name: str
+        a short human-readable name to use when referencing the variable
+    headers: list[str]
+        sequence of column headers
+    variables: list[Variable]
+        set of 2 or more Variables to XOR
+    """
+
+    name = properties.String('name')
+    headers = properties.List(properties.String, 'headers')
+    variables = properties.List(properties.Object(Variable), 'variables')
+    typ = properties.String('type', default="xor", deserializable=False)
+
+    def _attrs(self) -> List[str]:
+        return ["name", "headers", "variables"]
+
+    def __init__(self, *, name, headers, variables):
+        self.name = name
+        self.headers = headers
+        self.variables = variables
