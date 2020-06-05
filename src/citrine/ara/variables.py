@@ -640,7 +640,7 @@ class XOR(Serializable['XOR'], Variable):
     typ = properties.String('type', default="xor", deserializable=False)
 
     def _attrs(self) -> List[str]:
-        return ["name", "headers", "variables"]
+        return ["name", "headers", "variables", "typ"]
 
     def __init__(self, *, name, headers, variables):
         self.name = name
