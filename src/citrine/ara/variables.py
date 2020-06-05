@@ -38,8 +38,8 @@ class Variable(PolymorphicSerializable['Variable']):
 
     def __eq__(self, other):
         try:
-            return all([
-                self.__getattribute__(key) == other.__getattribute__(key) for key in self._attrs()
+            return type(self) == type(other) and all([
+                getattr(self, key) == getattr(other, key) for key in self._attrs()
             ])
         except AttributeError:
             return False
