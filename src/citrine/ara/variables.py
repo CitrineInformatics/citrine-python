@@ -620,8 +620,8 @@ class XOR(Serializable['XOR'], Variable):
     which produces a real numeric quantity.
 
     The input variables to XOR need not exist elsewhere in the table definition, and the name and
-    headers assigned to them have no bearing on how the table is constructed. That they are required
-    at all is simply a limitation of the current API.
+    headers assigned to them have no bearing on how the table is constructed. That they are
+    required at all is simply a limitation of the current API.
 
     Parameters
     ---------
@@ -631,6 +631,7 @@ class XOR(Serializable['XOR'], Variable):
         sequence of column headers
     variables: list[Variable]
         set of 2 or more Variables to XOR
+
     """
 
     name = properties.String('name')
