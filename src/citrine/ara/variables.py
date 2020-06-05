@@ -37,12 +37,9 @@ class Variable(PolymorphicSerializable['Variable']):
         pass  # pragma: no cover
 
     def __eq__(self, other):
-        try:
-            return type(self) == type(other) and all([
-                getattr(self, key) == getattr(other, key) for key in self._attrs()
-            ])
-        except AttributeError:
-            return False
+        return type(self) == type(other) and all([
+            getattr(self, key) == getattr(other, key) for key in self._attrs()
+        ])
 
     @classmethod
     def get_type(cls, data) -> Type[Serializable]:
