@@ -133,7 +133,7 @@ def test_upload(mock_isfile, mock_stat, mock_open, mock_boto3_client, collection
     assert session.num_calls == 4
 
 
-@pytest.mark.xfail(reason="MIME type resolution depends on file extension")
+@pytest.mark.xfail(reason="PLA-4395: MIME type resolution depends on file extension")
 @patch('citrine.resources.file_link.boto3_client')
 @patch('citrine.resources.file_link.open')
 @patch('citrine.resources.file_link.os.stat')
