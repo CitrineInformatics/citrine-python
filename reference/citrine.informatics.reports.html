@@ -64,7 +64,7 @@ should not be user-instantiated.</p>
 
 <dl class="class">
 <dt id="citrine.informatics.reports.ModelSummary">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.reports.</code><code class="sig-name descname">ModelSummary</code><span class="sig-paren">(</span><em class="sig-param">name: str, inputs: List[citrine.informatics.descriptors.Descriptor], outputs: List[citrine.informatics.descriptors.Descriptor], model_settings: Dict[str, Any], feature_importances: List[citrine.informatics.reports.FeatureImportanceReport]</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.reports.ModelSummary" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.reports.</code><code class="sig-name descname">ModelSummary</code><span class="sig-paren">(</span><em class="sig-param">name: str, type_: str, inputs: List[citrine.informatics.descriptors.Descriptor], outputs: List[citrine.informatics.descriptors.Descriptor], model_settings: Dict[str, Any], feature_importances: List[citrine.informatics.reports.FeatureImportanceReport], predictor_name: str, predictor_uid: Optional[uuid.UUID] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.reports.ModelSummary" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code></p>
 <p>[ALPHA] Summary of information about a single model in a predictor.</p>
 <p>ModelSummary objects are constructed from saved models and should not be user-instantiated.</p>
@@ -72,10 +72,13 @@ should not be user-instantiated.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>name</strong> (<em>str</em>) – the name of the model</p></li>
+<li><p><strong>type_</strong> (<em>str</em>) – the type of the model (e.g., “ML Model”, “Featurizer”, etc.)</p></li>
 <li><p><strong>inputs</strong> (<em>List</em><em>[</em><a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.Descriptor" title="citrine.informatics.descriptors.Descriptor"><em>Descriptor</em></a><em>]</em>) – list of input descriptors</p></li>
 <li><p><strong>outputs</strong> (<em>List</em><em>[</em><a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.Descriptor" title="citrine.informatics.descriptors.Descriptor"><em>Descriptor</em></a><em>]</em>) – list of output descriptors</p></li>
 <li><p><strong>model_settings</strong> (<em>dict</em>) – settings of the model, as a dictionary (details depend on model type)</p></li>
 <li><p><strong>feature_importances</strong> (<em>List</em><em>[</em><a class="reference internal" href="#citrine.informatics.reports.FeatureImportanceReport" title="citrine.informatics.reports.FeatureImportanceReport"><em>FeatureImportanceReport</em></a><em>]</em>) – list of feature importance reports, one for each output</p></li>
+<li><p><strong>predictor_name</strong> (<em>str</em>) – the name of the predictor that created this model</p></li>
+<li><p><strong>predictor_uid</strong> (<em>Optional</em><em>[</em><em>uuid</em><em>]</em>) – the uid of the predictor that created this model</p></li>
 </ul>
 </dd>
 </dl>
@@ -102,6 +105,21 @@ should not be user-instantiated.</p>
 <dl class="attribute">
 <dt id="citrine.informatics.reports.ModelSummary.outputs">
 <code class="sig-name descname">outputs</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.reports.ModelSummary.outputs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.reports.ModelSummary.predictor_name">
+<code class="sig-name descname">predictor_name</code><em class="property"> = ''</em><a class="headerlink" href="#citrine.informatics.reports.ModelSummary.predictor_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.reports.ModelSummary.predictor_uid">
+<code class="sig-name descname">predictor_uid</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.reports.ModelSummary.predictor_uid" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.reports.ModelSummary.type_">
+<code class="sig-name descname">type_</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.reports.ModelSummary.type_" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>

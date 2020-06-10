@@ -94,7 +94,7 @@ have a <cite>type</cite> field that corresponds to the response key of this clas
 
 <dl class="attribute">
 <dt id="citrine.resources.data_concepts.DataConcepts.client_specific_fields">
-<code class="sig-name descname">client_specific_fields</code><em class="property"> = {'audit_info': citrine.resources.audit_info.AuditInfo, 'dataset': citrine._serialization.properties.UUID}</em><a class="headerlink" href="#citrine.resources.data_concepts.DataConcepts.client_specific_fields" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">client_specific_fields</code><em class="property"> = {'audit_info': &lt;class 'citrine.resources.audit_info.AuditInfo'&gt;, 'dataset': &lt;class 'citrine._serialization.properties.UUID'&gt;}</em><a class="headerlink" href="#citrine.resources.data_concepts.DataConcepts.client_specific_fields" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fields that are added to the gemd data objects when they are used in this client</p>
 <ul class="simple">
 <li><p>AuditInfo contains who/when information about the resource on the citrine platform</p></li>
@@ -198,7 +198,7 @@ but when using <a class="reference internal" href="#citrine.resources.data_conce
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>uid</strong> (<em>Union</em><em>[</em><em>UUID</em><em>, </em><em>str</em><em>]</em>) – The ID.</p></li>
-<li><p><strong>scope</strong> (<em>str</em>) – The scope of the uid, defaults to Citrine scope (‘id’)</p></li>
+<li><p><strong>scope</strong> (<em>str</em>) – The scope of the uid, defaults to Citrine scope (CITRINE_SCOPE)</p></li>
 <li><p><strong>dry_run</strong> (<em>bool</em>) – Whether to actually delete the item or run a dry run of the delete operation.
 Dry run is intended to be used for validation. Default: false</p></li>
 </ul>
@@ -260,7 +260,7 @@ See (insert link) for a discussion of how to match on tags.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>uid</strong> (<em>Union</em><em>[</em><em>UUID</em><em>, </em><em>str</em><em>]</em>) – The ID.</p></li>
-<li><p><strong>scope</strong> (<em>str</em>) – The scope of the uid, defaults to Citrine scope (‘id’)</p></li>
+<li><p><strong>scope</strong> (<em>str</em>) – The scope of the uid, defaults to Citrine scope (CITRINE_SCOPE)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
