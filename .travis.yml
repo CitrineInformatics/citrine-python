@@ -22,12 +22,12 @@ script:
 deploy:
 - provider: pages
   skip_cleanup: true
-  skip_existing: true
   github_token: "$GH_SECRET_TOKEN"
   keep_history: true
   local_dir: "./docs/_build/html/"
   on:
     tags: true
+    python: '3.6' # only need this to run once
 - provider: pypi
   user: CitrineInformatics
   password: "$PYPI_PASSWORD"
