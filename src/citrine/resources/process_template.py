@@ -57,9 +57,9 @@ class ProcessTemplate(ObjectTemplate, Resource['ProcessTemplate'], GEMDProcessTe
     uids = Mapping(String('scope'), String('id'), 'uids')
     tags = PropertyOptional(PropertyList(String()), 'tags')
     conditions = PropertyOptional(PropertyList(
-        SpecifiedMixedList([LinkOrElse, PropertyOptional(Object(BaseBounds))])), 'conditions')
+        SpecifiedMixedList([LinkOrElse, Object(BaseBounds)])), 'conditions')
     parameters = PropertyOptional(PropertyList(
-        SpecifiedMixedList([LinkOrElse, PropertyOptional(Object(BaseBounds))])), 'parameters')
+        SpecifiedMixedList([LinkOrElse, Object(BaseBounds)])), 'parameters')
     allowed_labels = PropertyOptional(PropertyList(String()), 'allowed_labels')
     allowed_names = PropertyOptional(PropertyList(String()), 'allowed_names')
     typ = String('type')
@@ -70,12 +70,12 @@ class ProcessTemplate(ObjectTemplate, Resource['ProcessTemplate'], GEMDProcessTe
                  conditions: Optional[Sequence[Union[ConditionTemplate,
                                                      LinkByUID,
                                                      Sequence[Union[ConditionTemplate, LinkByUID,
-                                                                    Optional[BaseBounds]]]
+                                                                    BaseBounds]]
                                                      ]]] = None,
                  parameters: Optional[Sequence[Union[ParameterTemplate,
                                                      LinkByUID,
                                                      Sequence[Union[ParameterTemplate, LinkByUID,
-                                                                    Optional[BaseBounds]]]
+                                                                    BaseBounds]]
                                                      ]]] = None,
                  allowed_labels: Optional[List[str]] = None,
                  allowed_names: Optional[List[str]] = None,
