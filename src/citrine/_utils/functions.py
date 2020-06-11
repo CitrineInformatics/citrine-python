@@ -43,7 +43,7 @@ def validate_type(data_dict: dict, type_name: str) -> dict:
 
 def scrub_none(json):
     """
-    Recursively delete dictionary keys and remove list entries with the value ``None``.
+    Recursively delete dictionary keys with the value ``None``.
 
     This action modifies the data structure in place.
     """
@@ -55,9 +55,7 @@ def scrub_none(json):
                 json[key] = scrub_none(json[key])
     elif isinstance(json, list):
         for idx, element in reversed(list(enumerate(json))):
-            if element is None:
-                del (json[idx])
-            else:
+            if element is not None:
                 json[idx] = scrub_none(element)
     return json
 
