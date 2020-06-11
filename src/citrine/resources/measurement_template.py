@@ -65,11 +65,11 @@ class MeasurementTemplate(ObjectTemplate,
     uids = Mapping(String('scope'), String('id'), 'uids')
     tags = PropertyOptional(PropertyList(String()), 'tags')
     properties = PropertyOptional(PropertyList(
-        SpecifiedMixedList([LinkOrElse, PropertyOptional(Object(BaseBounds))])), 'properties')
+        SpecifiedMixedList([LinkOrElse, Object(BaseBounds)])), 'properties')
     conditions = PropertyOptional(PropertyList(
-        SpecifiedMixedList([LinkOrElse, PropertyOptional(Object(BaseBounds))])), 'conditions')
+        SpecifiedMixedList([LinkOrElse, Object(BaseBounds)])), 'conditions')
     parameters = PropertyOptional(PropertyList(
-        SpecifiedMixedList([LinkOrElse, PropertyOptional(Object(BaseBounds))])), 'parameters')
+        SpecifiedMixedList([LinkOrElse, Object(BaseBounds)])), 'parameters')
     typ = String('type')
 
     def __init__(self,
@@ -78,17 +78,17 @@ class MeasurementTemplate(ObjectTemplate,
                  properties: Optional[Sequence[Union[PropertyTemplate,
                                                      LinkByUID,
                                                      Sequence[Union[PropertyTemplate, LinkByUID,
-                                                                    Optional[BaseBounds]]]
+                                                                    BaseBounds]]
                                                      ]]] = None,
                  conditions: Optional[Sequence[Union[ConditionTemplate,
                                                      LinkByUID,
                                                      Sequence[Union[ConditionTemplate, LinkByUID,
-                                                                    Optional[BaseBounds]]]
+                                                                    BaseBounds]]
                                                      ]]] = None,
                  parameters: Optional[Sequence[Union[ParameterTemplate,
                                                      LinkByUID,
                                                      Sequence[Union[ParameterTemplate, LinkByUID,
-                                                                    Optional[BaseBounds]]]
+                                                                    BaseBounds]]
                                                      ]]] = None,
                  description: Optional[str] = None,
                  tags: Optional[List[str]] = None):

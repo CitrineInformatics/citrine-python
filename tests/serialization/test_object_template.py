@@ -1,6 +1,4 @@
 """Tests of the object template schema."""
-from uuid import uuid4
-
 from citrine.resources.material_template import MaterialTemplate
 from citrine.resources.measurement_template import MeasurementTemplate
 from citrine.resources.process_template import ProcessTemplate
@@ -41,41 +39,3 @@ def test_object_template_serde():
     pressure_template.uids['id'] = '12345'  # uids['id'] not populated by default
     proc_template.conditions[0][0] = LinkByUID('id', pressure_template.uids['id'])
     assert ProcessTemplate.build(proc_template.dump()) == proc_template
-
-
-def test_bounds_optional():
-    """Test that each object template can have passthrough bounds for any of its attributes."""
-    def link():
-        return LinkByUID(id=str(uuid4()), scope=str(uuid4()))
-    for template_type, attribute_args in [
-        (MaterialTemplate, [
-            ('properties', PropertyTemplate),
-        ]),
-        (ProcessTemplate, [
-            ('conditions', ConditionTemplate),
-            ('parameters', ParameterTemplate),
-        ]),
-        (MeasurementTemplate, [
-            ('properties', PropertyTemplate),
-            ('conditions', ConditionTemplate),
-            ('parameters', ParameterTemplate),
-        ]),
-    ]:
-        kwargs = {}
-        for name, attribute_type in attribute_args:
-            kwargs[name] = [
-                [link(), IntegerBounds(0, 10)],
-                link(),
-                attribute_type('foo', bounds=IntegerBounds(0, 10)),
-                (link(), None)
-            ]
-        template = template_type(name='foo', **kwargs)
-        for name, _ in attribute_args:
-            attributes = getattr(template, name)
-            assert len(attributes) == 4
-            for _, bounds in attributes[1:]:
-                assert bounds is None
-            dumped = template.dump()
-            for _, bounds in dumped[name][1:]:
-                assert bounds is None
-            assert template_type.build(dumped) == template
