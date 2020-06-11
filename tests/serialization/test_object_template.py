@@ -1,4 +1,6 @@
 """Tests of the object template schema."""
+from uuid import uuid4
+
 from citrine.resources.material_template import MaterialTemplate
 from citrine.resources.measurement_template import MeasurementTemplate
 from citrine.resources.process_template import ProcessTemplate
@@ -39,3 +41,25 @@ def test_object_template_serde():
     pressure_template.uids['id'] = '12345'  # uids['id'] not populated by default
     proc_template.conditions[0][0] = LinkByUID('id', pressure_template.uids['id'])
     assert ProcessTemplate.build(proc_template.dump()) == proc_template
+
+
+def test_bounds_optional():
+    def link():
+        return LinkByUID(id=str(uuid4()), scope=str(uuid4()))
+    material_template = MaterialTemplate(
+        name='foo',
+        properties=[
+            [link(), IntegerBounds(0, 10)],
+            link(),
+            PropertyTemplate('foo', bounds=IntegerBounds(0, 10)),
+            (link(), None)
+        ],
+    )
+    assert len(material_template.properties) == 4
+    for _, bounds in material_template.properties[1:]:
+        assert bounds is None
+    dumped = material_template.dump()
+    assert len(dumped['properties']) == 4
+    for _, bounds in dumped['properties'][1:]:
+        assert bounds is None
+    assert MaterialTemplate.build(dumped) == material_template
