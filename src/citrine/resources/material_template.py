@@ -51,7 +51,7 @@ class MaterialTemplate(ObjectTemplate, Resource['MaterialTemplate'], GEMDMateria
     uids = Mapping(String('scope'), String('id'), 'uids')
     tags = PropertyOptional(PropertyList(String()), 'tags')
     properties = PropertyOptional(PropertyList(
-        SpecifiedMixedList([LinkOrElse, Object(BaseBounds)])), 'properties')
+        SpecifiedMixedList([LinkOrElse, PropertyOptional(Object(BaseBounds))])), 'properties')
     typ = String('type')
 
     def __init__(self,
@@ -60,7 +60,7 @@ class MaterialTemplate(ObjectTemplate, Resource['MaterialTemplate'], GEMDMateria
                  properties: Optional[Sequence[Union[PropertyTemplate,
                                                      LinkByUID,
                                                      Sequence[Union[PropertyTemplate, LinkByUID,
-                                                                    BaseBounds]]
+                                                                    Optional[BaseBounds]]]
                                                      ]]] = None,
                  description: Optional[str] = None,
                  tags: Optional[List[str]] = None):
