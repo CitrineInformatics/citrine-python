@@ -44,22 +44,38 @@ def test_object_template_serde():
 
 
 def test_bounds_optional():
+    """Test that each object template can have passthrough bounds for any of its attributes."""
     def link():
         return LinkByUID(id=str(uuid4()), scope=str(uuid4()))
-    material_template = MaterialTemplate(
-        name='foo',
-        properties=[
-            [link(), IntegerBounds(0, 10)],
-            link(),
-            PropertyTemplate('foo', bounds=IntegerBounds(0, 10)),
-            (link(), None)
-        ],
-    )
-    assert len(material_template.properties) == 4
-    for _, bounds in material_template.properties[1:]:
-        assert bounds is None
-    dumped = material_template.dump()
-    assert len(dumped['properties']) == 4
-    for _, bounds in dumped['properties'][1:]:
-        assert bounds is None
-    assert MaterialTemplate.build(dumped) == material_template
+    for template_type, attribute_args in [
+        (MaterialTemplate, [
+            ('properties', PropertyTemplate),
+        ]),
+        (ProcessTemplate, [
+            ('conditions', ConditionTemplate),
+            ('parameters', ParameterTemplate),
+        ]),
+        (MeasurementTemplate, [
+            ('properties', PropertyTemplate),
+            ('conditions', ConditionTemplate),
+            ('parameters', ParameterTemplate),
+        ]),
+    ]:
+        kwargs = {}
+        for name, attribute_type in attribute_args:
+            kwargs[name] = [
+                [link(), IntegerBounds(0, 10)],
+                link(),
+                attribute_type('foo', bounds=IntegerBounds(0, 10)),
+                (link(), None)
+            ]
+        template = template_type(name='foo', **kwargs)
+        for name, _ in attribute_args:
+            attributes = getattr(template, name)
+            assert len(attributes) == 4
+            for _, bounds in attributes[1:]:
+                assert bounds is None
+            dumped = template.dump()
+            for _, bounds in dumped[name][1:]:
+                assert bounds is None
+            assert template_type.build(dumped) == template
