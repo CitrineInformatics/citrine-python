@@ -1,7 +1,0 @@
-citrine.attributes.property\_and\_conditions module
-===================================================
-
-.. automodule:: citrine.attributes.property_and_conditions
-   :members:
-   :undoc-members:
-   :show-inheritance:
