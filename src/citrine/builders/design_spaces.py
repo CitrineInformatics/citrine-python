@@ -1,15 +1,19 @@
 import pandas as pd
 from itertools import product
+from typing import Mapping, Sequence, Any
 
-def EnumeratedProductDesignSpaceData(dof_grids:dict):
+
+def enumerate_cartesian_product(
+    dof_grids: Mapping[str, Sequence]
+    )->Sequence[Mapping[str,Any]]:
     ''' Given a dict of lists or tuples of values for each degree of freedom,
-    create the list of candidates representing the outer product of all values
-    for each degree of freedom
+    create the list of candidates representing the Cartesian product of all
+    values for each degree of freedom
     
     Parameters
     ----------
-    dof_grids: dict(str:list)
-        {'degree of freedom':[list, of, values]} for each DoF
+    dof_grids: Mapping[str, Sequence]
+        {'degree of freedom':[sequence, of, values]} for each DoF
     '''
     design_space_tuples = list(product(*dof_grids.values()))
     design_space_cols = list(dof_grids.keys())
@@ -18,28 +22,39 @@ def EnumeratedProductDesignSpaceData(dof_grids:dict):
     return candidates
 
 
-def SimpleMixtureProductDesignSpaceData(formulation_grids:dict,
-                                        balance_component:str
-                                        ):
+def enumerate_simple_mixture_cartesian_product(
+    formulation_grids:Mapping[str, Seq],
+    balance_component:str
+    )->Sequence[Mapping[str, Any]]:
     ''' Given a dict of lists or tuples of ingredient amounts (must be
-    fractions of some kind, i.e. between 0-1), create
-    a DataFrame that is the outer product of all possible combinations of
-    ingredients *except* for the balance_component. The balance_component
-    will then be filled in as 1-(all other ingredients) for each row.
+    fractions of some kind, i.e. between 0-1), create candidates that are
+    the Cartesian product of all possible combinations of ingredients *except*
+    for the balance_component. The balance_component will then be filled in
+    as 1-(all other ingredients) for each row.
     
-    Many points generated through this process will be invalid (negative
-    balance ingredient amount). These rows are filtered out as a last step,
-    if the balance ingredient amount is below the lowest value in its list
-    in formulation_grids, or above its highest value in that list (i.e.
-    the limits do not have to be 0-1).
+    The balance component's [list, of, values] can be similar to the other
+    components'; in this way, the balance component can be swapped out easily.
+    However, the balance component's discretization will be ignored - only
+    its minimum and maximum values will be considered. Mixtures in which
+    the balance component amount falls outside its min and max values will be
+    filtered out of the design space. In other words, formulation_grids could
+    look like:
+    
+    {'balance component':[0.8, 0.85, 0.9],
+     'other component':[0.1, 0.2, 0.3, 0.4, 0.5]}
+    
+    and the result would be:
+    
+    [{'balance component': 0.8, 'other component': 0.2},
+     {'balance component': 0.9, 'other component': 0.1}]
     
     Parameters
     ----------
-    formulation_grids: dict
+    formulation_grids: Mapping[str, Sequence]
         {'component name':[list, of, values]} for each component
     balance_component: str
         name of the component that should make up the balance of the
-        formulation (1-others). Must be a key in formulation_grids.
+        mixture (1-others). Must be a key in formulation_grids.
     '''
 
     assert balance_component in list(formulation_grids.keys()), \
@@ -75,13 +90,23 @@ def SimpleMixtureProductDesignSpaceData(formulation_grids:dict,
     return data
 
 
-def JointDesignSpaceData(data_list:list):
+def cartesian_join_design_spaces(
+    data_list: Sequence[Sequence[Mapping[str, Any]]]
+    )->Sequence[Mapping[str, Any]]:
     ''' Given multiple input design spaces (lists of candidates), create a
-    set of candidates that is the outer product of candidates from each
+    set of candidates that is the Cartesian product of candidates from each
     input design space.
     
     ultimate length will be len(data_list[0])*len(data_list[2])*...
+    
+    Parameters
+    ----------
+    data_list: Sequence[Sequence[Mapping[str, Any]]]
+        A list of [lists of candidates] (data for individual design subspaces)
     '''
+    
+    assert 'join_key' not in [*data[0].keys() for data in data_list], \
+        '"join_key" cannot be a descriptor key when using this function'
     
     ds_list = [pd.DataFrame(data) for data in data_list]
     
