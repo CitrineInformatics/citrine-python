@@ -65,6 +65,7 @@ class MaterialSpec(ObjectSpec, Resource['MaterialSpec'], GEMDMaterialSpec):
 
     def __init__(self,
                  name: str,
+                 *,
                  uids: Optional[Dict[str, str]] = None,
                  tags: Optional[List[str]] = None,
                  notes: Optional[str] = None,

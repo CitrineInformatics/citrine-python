@@ -45,6 +45,7 @@ class ParameterTemplate(AttributeTemplate, Resource['ParameterTemplate'], GEMDPa
 
     def __init__(self,
                  name: str,
+                 *,
                  bounds: BaseBounds,
                  uids: Optional[Dict[str, str]] = None,
                  description: Optional[str] = None,

@@ -74,6 +74,7 @@ class MeasurementTemplate(ObjectTemplate,
 
     def __init__(self,
                  name: str,
+                 *,
                  uids: Optional[Dict[str, str]] = None,
                  properties: Optional[Sequence[Union[PropertyTemplate,
                                                      LinkByUID,
