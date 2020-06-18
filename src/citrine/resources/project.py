@@ -366,10 +366,6 @@ class ProjectCollection(Collection[Project]):
         """
         return super().register(Project(name, description))
 
-    def delete(self, uuid):
-        """Delete the project with the provided uid."""
-        raise NotImplementedError("Delete is not supported for projects")
-
 
     def search(self, search_params: Optional[dict] = None, 
                     page: Optional[int] = None, per_page: int = 100) -> Iterable[Project]:
