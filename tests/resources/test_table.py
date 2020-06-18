@@ -98,6 +98,21 @@ def test_list_table_versions(collection, session):
     assert results[0].uid is not None
 
 
+def test_list_for_ara_definition(collection, session):
+    # Given
+    tableVersions = ListTableVersionsDataFactory()
+    session.set_response(tableVersions)
+
+    # When
+    # NOTE: list_for_ara_definition returns slightly more info in this call, but it's a superset of
+    # a typical Table, and parsed identically in citrine-python.
+    results = list(collection.list_for_ara_definition(tableVersions['tables'][0]['id']))
+
+    # Then
+    assert len(results) == 1
+    assert results[0].uid is not None
+
+
 def test_init_table():
     table = Table()
     assert table.uid is None
