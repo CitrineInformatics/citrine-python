@@ -1,5 +1,5 @@
 import warnings
-from typing import TypeVar, Generic, Callable, Optional, Iterable, Any, Tuple
+from typing import TypeVar, Generic, Callable, Optional, Iterable, Any, Tuple, Dict
 
 ResourceType = TypeVar('ResourceType')
 
@@ -16,7 +16,8 @@ class Paginator(Generic[ResourceType]):
                  page_fetcher: Callable[[Optional[int], int], Tuple[Iterable[dict], str]],
                  collection_builder: Callable[[Iterable[dict]], Iterable[ResourceType]],
                  page: Optional[int] = None,
-                 per_page: int = 100) -> Iterable[ResourceType]:
+                 per_page: int = 100,
+                 search_params: Optional[dict] = None) -> Iterable[ResourceType]:
         """
         A generic support class to paginate requests into an iterable of a built object.
 
@@ -39,6 +40,11 @@ class Paginator(Generic[ResourceType]):
             Max number of results to return per page. Default is 100.  This parameter
             is used when making requests to the backend service.  If the page parameter
             is specified it limits the maximum number of elements in the response.
+        search_params: dict, Optional
+            A dictionary representing the request body to a page fetcher function. The
+            page_fetcher function should have a key word argument "search_params" should it
+            pass a request body to the target endpoint. If no search_params are supplied,
+            no search_params argument will get passed to the page_fetcher function.
 
         Returns
         -------
@@ -46,6 +52,11 @@ class Paginator(Generic[ResourceType]):
             Resources in this collection.
 
         """
+
+        # To avoid setting default to {} -> reduce mutation risk, and to make more extensible
+        # Also making 'search_params' key of outermost dict for keyword expansion by page_fetcher func 
+        search_params = {} if search_params is None else { 'search_params': search_params }
+
         if page is not None:
             warnings.warn("The page parameter is deprecated, default is automatic pagination",
                           DeprecationWarning)
@@ -54,7 +65,7 @@ class Paginator(Generic[ResourceType]):
         page_idx = page
 
         while True:
-            subset_collection, next_uri = page_fetcher(page_idx, per_page)
+            subset_collection, next_uri = page_fetcher(page_idx, per_page, **search_params)
             subset = collection_builder(subset_collection)
 
             count = 0
