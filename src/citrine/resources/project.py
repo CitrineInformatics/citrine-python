@@ -1,5 +1,5 @@
 """Resources that represent both individual and collections of projects."""
-from typing import Optional, Dict, List, Union
+from typing import Optional, Dict, List, Union, Iterable
 from uuid import UUID
 
 from citrine._session import Session
@@ -369,3 +369,60 @@ class ProjectCollection(Collection[Project]):
     def delete(self, uuid):
         """Delete the project with the provided uid."""
         raise NotImplementedError("Delete is not supported for projects")
+
+
+    def search(self, search_params: Optional[dict] = None, 
+                    page: Optional[int] = None, per_page: int = 100) -> Iterable[Project]:
+        
+        """
+        Search for projects matching the desired name, description, and/or status by exact
+        match or substring match, as specified by the search_params argument. Defaults to
+        no search criteria.
+        
+        Like list, this method allows for pagination.
+
+         Parameters
+        ----------
+        search_params: dict, optional
+            A dict representing the request body to the POST /projects/search endpoint. ie.
+            {
+                "search_params": {
+                    "name": {
+                        "value": "Polymer",
+                        "search_method": "SUBSTRING"
+                    },
+                    "description": {
+                        "value": "polymer chain length",
+                        "search_method": "SUBSTRING"
+                    },
+                    "status": {
+                        "value": "not-started",
+                        "search_method": "EXACT"
+                    }
+                }
+            }
+            The dict can constain any combination of (one or all) search specifications
+            for the name, description, and status fields of a project. For each parameter
+            specified, the "value" to match, as well as the "search_method" must be provided.
+            The available search_methods are "SUBSTRING" and "EXACT". The example above demonstrates
+            the input necessary to list projects with names including the word "Polymer,"
+            descriptions containing the phrase "polymer chain length," and statuses exactly
+            equal to "not-started."
+        page: int, optional
+            The "page" of results to list. Default is to read all pages and yield
+            all results.  This option is deprecated.
+        per_page: int, optional
+            Max number of results to return per page. Default is 100.  This parameter
+            is used when making requests to the backend service.  If the page parameter
+            is specified it limits the maximum number of elements in the response.
+
+        Returns
+        -------
+        Iterable[Project]
+            Projects matching the search conditions denoted by the search_params.
+
+        """
+        return super().search(search_params=search_params, page=page, per_page=per_page)
+    
+
+
