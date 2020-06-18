@@ -7,7 +7,7 @@ from citrine.resources.table import TableCollection
 from citrine.resources.project_member import ProjectMember
 from citrine.resources.project_roles import MEMBER, LEAD, WRITE
 from tests.utils.factories import ProjectDataFactory, UserDataFactory
-from tests.utils.session import FakeSession, FakeCall
+from tests.utils.session import FakeSession, FakeCall, FakePaginatedSession
 
 
 from logging import getLogger
@@ -16,6 +16,16 @@ logger = getLogger(__name__)
 @pytest.fixture
 def session() -> FakeSession:
     return FakeSession()
+
+@pytest.fixture
+def paginated_session() -> FakePaginatedSession:
+    return FakePaginatedSession()
+
+@pytest.fixture
+def paginated_collection(paginated_session) -> ProjectCollection:
+    return ProjectCollection(
+        session=paginated_session
+    )
 
 
 @pytest.fixture
@@ -307,37 +317,43 @@ def test_search_projects(collection, session):
     assert len(expected_response) == len(projects)
 
 
-def test_search_projects_with_pagination(collection, session):
+def test_search_projects_with_pagination(paginated_collection, paginated_session):
     # Given
-    projects_data = ProjectDataFactory.create_batch(20)
+    common_name = "same name"
 
-    # all projects should have status 'CREATED'
-    project_status_to_match = projects_data[0]['status']
+    same_name_projects_data = ProjectDataFactory.create_batch(35, name=common_name)
+    more_data = ProjectDataFactory.create_batch(35, name="some other name")
 
-    page = 1
+
     per_page = 10
 
-    expected_response = list(filter(lambda p: p["status"] == project_status_to_match, projects_data))[page - 1: per_page]
-
-    session.set_response({'projects': expected_response})
+    paginated_session.set_response({ 'projects': same_name_projects_data })
 
     search_params = { 'search_params': { 
                         'status': { 
-                            'value': project_status_to_match, 
+                            'value': common_name, 
                             'search_method': 'EXACT' 
                             } 
                         } 
                     }
-    
+
     # When
-    projects = list(collection.search(page=page, per_page=per_page, search_params=search_params))
+    projects = list(paginated_collection.search(per_page=per_page, search_params=search_params))
 
     # Then
-    assert 1 == session.num_calls
-    expected_call = FakeCall(method='POST', path='/projects/search', 
-                                        params={'page': page, 'per_page': per_page}, json=search_params )
-    assert expected_call == session.last_call
-    assert len(expected_response) == len(projects)
+    assert 4 == paginated_session.num_calls
+    expected_first_call = FakeCall(method='POST', path='/projects/search', 
+                                        params={'per_page': per_page}, json=search_params )
+    expected_last_call = FakeCall(method='POST', path='/projects/search', 
+                                        params={'page': 4, 'per_page': per_page}, json=search_params )
+    
+    assert expected_first_call == paginated_session.calls[0]
+    assert expected_last_call == paginated_session.last_call
+
+    project_ids = [str(p.uid) for p in projects]
+    expected_ids = [p['id'] for p in same_name_projects_data]
+
+    assert project_ids == expected_ids
 
 
 def test_delete_project(collection, session):
