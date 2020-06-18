@@ -366,32 +366,34 @@ class ProjectCollection(Collection[Project]):
         """
         return super().register(Project(name, description))
 
-
-    def search(self, search_params: Optional[dict] = None, per_page: int = 100) -> Iterable[Project]:
+    def search(self, search_params: Optional[dict] = None,
+               per_page: int = 100) -> Iterable[Project]:
         """
-        Search for projects matching the desired name, description, and/or status by exact
-        match or substring match, as specified by the search_params argument. Defaults to
-        no search criteria.
-        
-        Like list, this method allows for pagination. This differs from the list function, 
-        because it makes a POST request to resourceType/search with search fields in a post body.
+        Search for projects matching the desired name or description.
 
-        Leaving page and per_page as default values will yield all elements in the
-        collection, paginating over all available pages.
+        You can search for projects matching the desired name or description by either exact match
+        or substring match, as specified by the search_params argument. Defaults to no search
+        criteria.
 
-        Leaving search_params as its default value will return mimic the behavior of 
-        a full list with no search parameters.
+        Like list, this method allows for pagination. This differs from the list function, because
+        it makes a POST request to resourceType/search with search fields in a post body.
+
+        Leaving page and per_page as default values will yield all elements in the collection,
+        paginating over all available pages.
+
+        Leaving search_params as its default value will return mimic the behavior of a full list
+        with no search parameters.
 
         Parameters
         ---------
         search_params: dict, optional
-            A dict representing the body of the post request that will be sent to the
-            search endpoint to filter the results ie.
+            A dict representing the body of the post request that will be sent to the search
+            endpoint to filter the results ie.
             {
                 "search_params": {
                     "name": {
-                        "value": "Polymer",
-                        "search_method": "SUBSTRING"
+                        "value": "Polymer Project",
+                        "search_method": "EXACT"
                     },
                     "description": {
                         "value": "polymer chain length",
@@ -399,43 +401,41 @@ class ProjectCollection(Collection[Project]):
                     },
                 }
             }
-            The dict can constain any combination of (one or all) search specifications
-            for the name, description, and status fields of a project. For each parameter
-            specified, the "value" to match, as well as the "search_method" must be provided.
-            The available search_methods are "SUBSTRING" and "EXACT". The example above demonstrates
-            the input necessary to list projects with names including the word "Polymer,"
-            descriptions containing the phrase "polymer chain length," and statuses exactly
-            equal to "not-started."
+            The dict can constain any combination of (one or all) search specifications for the
+            name, description, and status fields of a project. For each parameter specified, the
+            "value" to match, as well as the "search_method" must be provided. The available
+            search_methods are "SUBSTRING" and "EXACT". The example above demonstrates the input
+            necessary to list projects with the exact name "Polymer Project," and descriptions
+            including the phrase "polymer chain length,"
 
         per_page: int, optional
-            Max number of results to return per page. Default is 100.  This parameter
-            is used when making requests to the backend service.  If the page parameter
-            is specified it limits the maximum number of elements in the response.
+            Max number of results to return per page. Default is 100.  This parameter is used when
+            making requests to the backend service.  If the page parameter is specified it limits
+            the maximum number of elements in the response.
 
         Returns
         -------
         Iterable[Project]
-            Resources in this collection.
-            """
+            Projects in this collection.
 
+        """
         # To avoid setting default to {} -> reduce mutation risk, and to make more extensible
         search_params = {} if search_params is None else search_params
-    
 
         return self._paginator.paginate(page_fetcher=self._fetch_page_search,
                                         collection_builder=self._build_collection_elements,
                                         per_page=per_page,
                                         search_params=search_params)
 
-
-    def _fetch_page_search(self,
-                    page: Optional[int] = None,
-                    per_page: Optional[int] = None,
-                    search_params: Optional[dict] = None) -> Tuple[Iterable[dict], str]:
+    def _fetch_page_search(self, page: Optional[int] = None,
+                           per_page: Optional[int] = None,
+                           search_params: Optional[dict] = None) -> Tuple[Iterable[dict], str]:
         """
-        Fetches resources that match the supplied search_params, by calling _fetch_page with checked_post,
-        the path to the POST resource-type/search endpoint, any pagination parameters, and the request body
-        to the search endpoint.
+        Fetch resources that match the supplied search parameters.
+
+        Fetches resources that match the supplied search_params, by calling _fetch_page with
+        checked_post, the path to the POST resource-type/search endpoint, any pagination
+        parameters, and the request body to the search endpoint.
 
         Parameters
         ---------
@@ -444,9 +444,10 @@ class ProjectCollection(Collection[Project]):
         per_page: int, optional
             Max number of results to return. Default is 20.
         search_params: dict, optional
-            A dict representing a request body that could be sent to a POST request. The "json" field should
-            be passed as the key for the outermost dict, with its value the request body, so that we
-            can easily unpack the keyword argument when it gets passed to fetch_func.
+            A dict representing a request body that could be sent to a POST request. The "json"
+            field should be passed as the key for the outermost dict, with its value the request
+            body, so that we can easily unpack the keyword argument when it gets passed to
+            fetch_func.
             ie. { 'search_params': {'name': {'value': 'Project', 'search_method': 'SUBSTRING'} } }
 
         Returns
@@ -457,17 +458,12 @@ class ProjectCollection(Collection[Project]):
             The next uri if one is available, empty string otherwise
 
         """
-
         # Making 'json' the key of the outermost dict, so that search_params can be passed
         # directly to the function making the request with keyword expansion
-        json_body = {} if search_params is None else { 'json': search_params }
+        json_body = {} if search_params is None else {'json': search_params}
 
         path = self._get_path() + "/search"
 
-        return self._fetch_page(path=path, fetch_func=self.session.checked_post, 
-                                page=page, per_page=per_page, 
+        return self._fetch_page(path=path, fetch_func=self.session.checked_post,
+                                page=page, per_page=per_page,
                                 json_body=json_body)
-    
-
-
-

@@ -1,5 +1,5 @@
 import warnings
-from typing import TypeVar, Generic, Callable, Optional, Iterable, Any, Tuple, Dict
+from typing import TypeVar, Generic, Callable, Optional, Iterable, Any, Tuple
 
 ResourceType = TypeVar('ResourceType')
 
@@ -41,7 +41,7 @@ class Paginator(Generic[ResourceType]):
             is used when making requests to the backend service.  If the page parameter
             is specified it limits the maximum number of elements in the response.
         search_params: dict, Optional
-            A dictionary representing the request body to a page fetcher function. The
+            A dictionary representing the request body to a page_fetcher function. The
             page_fetcher function should have a key word argument "search_params" should it
             pass a request body to the target endpoint. If no search_params are supplied,
             no search_params argument will get passed to the page_fetcher function.
@@ -52,10 +52,9 @@ class Paginator(Generic[ResourceType]):
             Resources in this collection.
 
         """
-
-        # To avoid setting default to {} -> reduce mutation risk, and to make more extensible
-        # Also making 'search_params' key of outermost dict for keyword expansion by page_fetcher func 
-        search_params = {} if search_params is None else { 'search_params': search_params }
+        # To avoid setting default to {} -> reduce mutation risk, and to make more extensible. Also
+        # making 'search_params' key of outermost dict for keyword expansion by page_fetcher func
+        search_params = {} if search_params is None else {'search_params': search_params}
 
         if page is not None:
             warnings.warn("The page parameter is deprecated, default is automatic pagination",
@@ -65,7 +64,9 @@ class Paginator(Generic[ResourceType]):
         page_idx = page
 
         while True:
-            subset_collection, next_uri = page_fetcher(page=page_idx, per_page=per_page, **search_params)
+            subset_collection, next_uri = page_fetcher(page=page_idx, per_page=per_page,
+                                                       **search_params)
+
             subset = collection_builder(subset_collection)
 
             count = 0

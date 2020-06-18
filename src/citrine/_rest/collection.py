@@ -53,7 +53,6 @@ class Collection(Generic[ResourceType]):
             return self.build(data)
         except NonRetryableException as e:
             raise ModuleRegistrationFailedException(model.__class__.__name__, e)
-    
 
     def list(self,
              page: Optional[int] = None,
@@ -85,7 +84,6 @@ class Collection(Generic[ResourceType]):
                                         page=page,
                                         per_page=per_page)
 
-
     def update(self, model: CreationType) -> CreationType:
         """Update a particular element of the collection."""
         url = self._get_path(model.uid)
@@ -99,7 +97,6 @@ class Collection(Generic[ResourceType]):
         data = self.session.delete_resource(url)
         return Response(body=data)
 
-    
     def _fetch_page(self,
                     path: Optional[str] = None,
                     fetch_func: Optional[Callable[..., dict]] = None,
@@ -107,29 +104,35 @@ class Collection(Generic[ResourceType]):
                     per_page: Optional[int] = None,
                     json_body: Optional[dict] = None) -> Tuple[Iterable[dict], str]:
         """
-        Fetch visible elements in the collection.  This does not handle pagination. It can
-        be used with any function that fetches a list of resources.
+        Fetch visible elements in the collection.  This does not handle pagination.
 
-        This method will return the first page of results using the default page/per_page
-        behavior of the backend service.  Specify page/per_page to override these defaults
-        which are passed to the backend service.
+        Method can be used with any function that fetches a list of resources.
+
+        This method will return the first page of results using the default page/per_page behavior
+        of the backend service.  Specify page/per_page to override these defaults which are passed
+        to the backend service.
 
         Parameters
         ---------
         path: str, optional
-            The path for the endpoint that will be called to fetch the resources. Will default to root path
+            The path for the endpoint that will be called to fetch the resources. Will default to
+            root path
         fetch_func: Callable[..., dict], optional
-            The function that will make the official request that returns the list of resources 
-            ie. (checked_post, etc.). Will default to get_resource
+            The function that will make the official request that returns the list of resources ie.
+            (checked_post, etc.). Will default to get_resource
         page: int, optional
             The "page" of results to list. Default is the first page, which is 1.
         per_page: int, optional
             Max number of results to return. Default is 20.
         json_body: dict, optional
-            A dict representing a request body that could be sent to a POST request. The "json" field should
-            be passed as the key for the outermost dict, with its value the request body, so that we
-            can easily unpack the keyword argument when it gets passed to fetch_func.
-            ie. {'json': {'search_params': {'name': {'value': 'Project', 'search_method': 'SUBSTRING'}}}}
+            A dict representing a request body that could be sent to a POST request. The "json"
+            field should be passed as the key for the outermost dict, with its value the request
+            body, so that we can easily unpack the keyword argument when it gets passed to
+            fetch_func.
+            ie.
+            {'json':
+                {'search_params': {'name': {'value': 'Project', 'search_method': 'SUBSTRING'}}}
+            }
 
         Returns
         -------
@@ -139,8 +142,7 @@ class Collection(Generic[ResourceType]):
             The next uri if one is available, empty string otherwise
 
         """
-
-        # To avoid setting default to {} -> reduce mutation risk, and to make more extensible
+        # To avoid setting defaults -> reduce mutation risk, and to make more extensible
         path = self._get_path() if path is None else path
         fetch_func = self.session.get_resource if fetch_func is None else fetch_func
         json_body = {} if json_body is None else json_body
