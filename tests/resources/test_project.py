@@ -10,6 +10,9 @@ from tests.utils.factories import ProjectDataFactory, UserDataFactory
 from tests.utils.session import FakeSession, FakeCall
 
 
+from logging import getLogger
+logger = getLogger(__name__)
+
 @pytest.fixture
 def session() -> FakeSession:
     return FakeSession()
@@ -275,6 +278,68 @@ def test_list_projects_with_page_params(collection, session):
     assert expected_call == session.last_call
 
 
+def test_search_projects(collection, session):
+    # Given
+    projects_data = ProjectDataFactory.create_batch(2)
+
+    project_name_to_match = projects_data[0]['name']
+
+    expected_response = list(filter(lambda p: p["name"] == project_name_to_match, projects_data))
+
+    session.set_response({'projects': expected_response})
+
+    search_params = { 'search_params': { 
+                            'name': { 
+                                'value': project_name_to_match, 
+                                'search_method': 'EXACT' 
+                                } 
+                            } 
+                        }
+    
+    # When
+    projects = list(collection.search(search_params=search_params))
+
+    # Then
+    assert 1 == session.num_calls
+    expected_call = FakeCall(method='POST', path='/projects/search', 
+                                        params={'per_page': 100}, json=search_params)
+    assert expected_call == session.last_call
+    assert len(expected_response) == len(projects)
+
+
+def test_search_projects_with_pagination(collection, session):
+    # Given
+    projects_data = ProjectDataFactory.create_batch(20)
+
+    # all projects should have status 'CREATED'
+    project_status_to_match = projects_data[0]['status']
+
+    page = 1
+    per_page = 10
+
+    expected_response = list(filter(lambda p: p["status"] == project_status_to_match, projects_data))[page - 1: per_page]
+
+    session.set_response({'projects': expected_response})
+
+    search_params = { 'search_params': { 
+                        'status': { 
+                            'value': project_status_to_match, 
+                            'search_method': 'EXACT' 
+                            } 
+                        } 
+                    }
+    
+    # When
+    projects = list(collection.search(page=page, per_page=per_page, search_params=search_params))
+
+    # Then
+    assert 1 == session.num_calls
+    expected_call = FakeCall(method='POST', path='/projects/search', 
+                                        params={'page': page, 'per_page': per_page}, json=search_params )
+    assert expected_call == session.last_call
+    assert len(expected_response) == len(projects)
+
+
 def test_delete_project(collection, session):
     # Given
     uid = '151199ec-e9aa-49a1-ac8e-da722aaf74c4'
@@ -368,3 +433,4 @@ def test_remove_user(project, session):
 
 def test_project_tables(project):
     assert isinstance(project.tables, TableCollection)
+
