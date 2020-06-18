@@ -1,5 +1,5 @@
 """Resources that represent both individual and collections of projects."""
-from typing import Optional, Dict, List, Union, Iterable
+from typing import Optional, Dict, List, Union, Iterable, Tuple
 from uuid import UUID
 
 from citrine._session import Session
@@ -368,19 +368,26 @@ class ProjectCollection(Collection[Project]):
 
 
     def search(self, search_params: Optional[dict] = None, 
-                    page: Optional[int] = None, per_page: int = 100) -> Iterable[Project]:
-        
+                page: Optional[int] = None, per_page: int = 100) -> Iterable[Project]:
         """
         Search for projects matching the desired name, description, and/or status by exact
         match or substring match, as specified by the search_params argument. Defaults to
         no search criteria.
         
-        Like list, this method allows for pagination.
+        Like list, this method allows for pagination. This differs from the list function, 
+        because it makes a POST request to resourceType/search with search fields in a post body.
 
-         Parameters
-        ----------
+        Leaving page and per_page as default values will yield all elements in the
+        collection, paginating over all available pages.
+
+        Leaving search_params as its default value will return mimic the behavior of 
+        a full list with no search parameters.
+
+        Parameters
+        ---------
         search_params: dict, optional
-            A dict representing the request body to the POST /projects/search endpoint. ie.
+            A dict representing the body of the post request that will be sent to the
+            search endpoint to filter the results ie.
             {
                 "search_params": {
                     "name": {
@@ -415,10 +422,60 @@ class ProjectCollection(Collection[Project]):
         Returns
         -------
         Iterable[Project]
-            Projects matching the search conditions denoted by the search_params.
+            Resources in this collection.
+            """
+
+        # To avoid setting default to {} -> reduce mutation risk, and to make more extensible
+        search_params = {} if search_params is None else search_params
+    
+
+        return self._paginator.paginate(self._fetch_page_search,
+                                        self._build_collection_elements,
+                                        page,
+                                        per_page,
+                                        search_params=search_params)
+
+
+    def _fetch_page_search(self,
+                    page: Optional[int] = None,
+                    per_page: Optional[int] = None,
+                    search_params: Optional[dict] = None) -> Tuple[Iterable[dict], str]:
+        """
+        Fetches resources that match the supplied search_params, by calling _fetch_page with checked_post,
+        the path to the POST resource-type/search endpoint, any pagination parameters, and the request body
+        to the search endpoint.
+
+        Parameters
+        ---------
+        page: int, optional
+            The "page" of results to list. Default is the first page, which is 1.
+        per_page: int, optional
+            Max number of results to return. Default is 20.
+        search_params: dict, optional
+            A dict representing a request body that could be sent to a POST request. The "json" field should
+            be passed as the key for the outermost dict, with its value the request body, so that we
+            can easily unpack the keyword argument when it gets passed to fetch_func.
+            ie. { 'search_params': {'name': {'value': 'Project', 'search_method': 'SUBSTRING'} } }
+
+        Returns
+        -------
+        Iterable[dict]
+            Elements in this collection.
+        str
+            The next uri if one is available, empty string otherwise
 
         """
-        return super().search(search_params=search_params, page=page, per_page=per_page)
+
+        # Making 'json' the key of the outermost dict, so that search_params can be passed
+        # directly to the function making the request with keyword expansion
+        json_body = {} if search_params is None else { 'json': search_params }
+
+        path = self._get_path() + "/search"
+
+        return self._fetch_page(path=path, fetch_func=self.session.checked_post, 
+                                page=page, per_page=per_page, 
+                                json_body=json_body)
     
+
 
 

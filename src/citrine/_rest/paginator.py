@@ -65,7 +65,7 @@ class Paginator(Generic[ResourceType]):
         page_idx = page
 
         while True:
-            subset_collection, next_uri = page_fetcher(page_idx, per_page, **search_params)
+            subset_collection, next_uri = page_fetcher(page=page_idx, per_page=per_page, **search_params)
             subset = collection_builder(subset_collection)
 
             count = 0

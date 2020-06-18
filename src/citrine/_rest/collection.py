@@ -80,54 +80,10 @@ class Collection(Generic[ResourceType]):
             Resources in this collection.
 
         """
-        return self._paginator.paginate(self._fetch_page_list,
-                                        self._build_collection_elements,
-                                        page,
-                                        per_page)
-
-
-    def search(self, search_params: Optional[dict] = None, 
-                    page: Optional[int] = None, per_page: int = 100) -> Iterable[ResourceType]:
-        """
-            Search for elements matching search_params in the collection, and paginate over
-            the results. This differs from the list function, because it makes a POST request
-            to resourceType/search with search parameters.
-
-            Leaving page and per_page as default values will yield all elements in the
-            collection, paginating over all available pages.
-
-            Leaving search_params as its default value will return mimic the behavior of 
-            a full list with no search parameters.
-
-            Parameters
-            ---------
-            search_params: dict, optional
-                A dict representing the body of the post request that will be sent to the
-                search endpoint to filter the results.
-                ie. { 'search_params': { "name": { "value": "resource name", search_method: "EXACT" } } }
-            page: int, optional
-                The "page" of results to list. Default is to read all pages and yield
-                all results.  This option is deprecated.
-            per_page: int, optional
-                Max number of results to return per page. Default is 100.  This parameter
-                is used when making requests to the backend service.  If the page parameter
-                is specified it limits the maximum number of elements in the response.
-
-            Returns
-            -------
-            Iterable[ResourceType]
-                Resources in this collection.
-        """
-  
-        # To avoid setting default to {} -> reduce mutation risk, and to make more extensible
-        search_params = {} if search_params is None else search_params
-    
-
-        return self._paginator.paginate(self._fetch_page_search,
-                                        self._build_collection_elements,
-                                        page,
-                                        per_page,
-                                        search_params=search_params)
+        return self._paginator.paginate(page_fetcher=self._fetch_page,
+                                        collection_builder=self._build_collection_elements,
+                                        page=page,
+                                        per_page=per_page)
 
 
     def update(self, model: CreationType) -> CreationType:
@@ -208,77 +164,6 @@ class Collection(Generic[ResourceType]):
             collection = data[self._collection_key]
 
         return collection, next_uri
-
-
-    def _fetch_page_list(self,
-                    page: Optional[int] = None,
-                    per_page: Optional[int] = None) -> Tuple[Iterable[dict], str]:
-        """
-        Fetches per_page resources on the desired page by calling _fetch_page with the get_resource
-        method for the session, the path to the GET resource-type/ endpoint, and any pagination 
-        parameters.
-
-        Parameters
-        ---------
-        page: int, optional
-            The "page" of results to list. Default is the first page, which is 1.
-        per_page: int, optional
-            Max number of results to return. Default is 20.
-        
-        Returns
-        -------
-        Iterable[dict]
-            Elements in this collection.
-        str
-            The next uri if one is available, empty string otherwise
-
-        """
-  
-
-        return self._fetch_page(page=page, per_page=per_page)
-
-
-
-    def _fetch_page_search(self,
-                    page: Optional[int] = None,
-                    per_page: Optional[int] = None,
-                    search_params: Optional[dict] = None) -> Tuple[Iterable[dict], str]:
-        """
-        Fetches resources that match the supplied search_params, by calling _fetch_page with checked_post,
-        the path to the POST resource-type/search endpoint, any pagination parameters, and the request body
-        to the search endpoint.
-
-        Parameters
-        ---------
-        page: int, optional
-            The "page" of results to list. Default is the first page, which is 1.
-        per_page: int, optional
-            Max number of results to return. Default is 20.
-        search_params: dict, optional
-            A dict representing a request body that could be sent to a POST request. The "json" field should
-            be passed as the key for the outermost dict, with its value the request body, so that we
-            can easily unpack the keyword argument when it gets passed to fetch_func.
-            ie. { 'search_params': {'name': {'value': 'Project', 'search_method': 'SUBSTRING'} } }
-
-        Returns
-        -------
-        Iterable[dict]
-            Elements in this collection.
-        str
-            The next uri if one is available, empty string otherwise
-
-        """
-
-        # Making 'json' the key of the outermost dict, so that search_params can be passed
-        # directly to the function making the request with keyword expansion
-        json_body = {} if search_params is None else { 'json': search_params }
-
-        path = self._get_path() + "/search"
-
-        return self._fetch_page(path=path, fetch_func=self.session.checked_post, 
-                                page=page, per_page=per_page, 
-                                json_body=json_body)
-    
 
     def _build_collection_elements(self,
                                    collection: Iterable[dict]) -> Iterable[ResourceType]:
