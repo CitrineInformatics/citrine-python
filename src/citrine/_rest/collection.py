@@ -145,8 +145,8 @@ class Collection(Generic[ResourceType]):
 
     
     def _fetch_page(self,
-                    path: str,
-                    fetch_func: Callable[..., dict],
+                    path: Optional[str] = None,
+                    fetch_func: Optional[Callable[..., dict]] = None,
                     page: Optional[int] = None,
                     per_page: Optional[int] = None,
                     json_body: Optional[dict] = None) -> Tuple[Iterable[dict], str]:
@@ -160,11 +160,11 @@ class Collection(Generic[ResourceType]):
 
         Parameters
         ---------
-        path: str,
-            The path for the endpoint that will be called to fetch the resources
-        fetch_func: Callable[..., dict],
+        path: str, optional
+            The path for the endpoint that will be called to fetch the resources. Will default to root path
+        fetch_func: Callable[..., dict], optional
             The function that will make the official request that returns the list of resources 
-            ie. (checked_post, get_resource, etc.)
+            ie. (checked_post, etc.). Will default to get_resource
         page: int, optional
             The "page" of results to list. Default is the first page, which is 1.
         per_page: int, optional
@@ -185,6 +185,8 @@ class Collection(Generic[ResourceType]):
         """
 
         # To avoid setting default to {} -> reduce mutation risk, and to make more extensible
+        path = self._get_path() if path is None else path
+        fetch_func = self.session.get_resource if fetch_func is None else fetch_func
         json_body = {} if json_body is None else json_body
 
         module_type = getattr(self, '_module_type', None)
@@ -232,10 +234,8 @@ class Collection(Generic[ResourceType]):
 
         """
   
-        path = self._get_path()
 
-        return self._fetch_page(path=path, fetch_func=self.session.get_resource, 
-                                page=page, per_page=per_page)
+        return self._fetch_page(page=page, per_page=per_page)
 
 
 
