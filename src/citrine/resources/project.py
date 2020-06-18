@@ -367,8 +367,7 @@ class ProjectCollection(Collection[Project]):
         return super().register(Project(name, description))
 
 
-    def search(self, search_params: Optional[dict] = None, 
-                page: Optional[int] = None, per_page: int = 100) -> Iterable[Project]:
+    def search(self, search_params: Optional[dict] = None, per_page: int = 100) -> Iterable[Project]:
         """
         Search for projects matching the desired name, description, and/or status by exact
         match or substring match, as specified by the search_params argument. Defaults to
@@ -398,10 +397,6 @@ class ProjectCollection(Collection[Project]):
                         "value": "polymer chain length",
                         "search_method": "SUBSTRING"
                     },
-                    "status": {
-                        "value": "not-started",
-                        "search_method": "EXACT"
-                    }
                 }
             }
             The dict can constain any combination of (one or all) search specifications
@@ -411,9 +406,7 @@ class ProjectCollection(Collection[Project]):
             the input necessary to list projects with names including the word "Polymer,"
             descriptions containing the phrase "polymer chain length," and statuses exactly
             equal to "not-started."
-        page: int, optional
-            The "page" of results to list. Default is to read all pages and yield
-            all results.  This option is deprecated.
+
         per_page: int, optional
             Max number of results to return per page. Default is 100.  This parameter
             is used when making requests to the backend service.  If the page parameter
@@ -429,10 +422,9 @@ class ProjectCollection(Collection[Project]):
         search_params = {} if search_params is None else search_params
     
 
-        return self._paginator.paginate(self._fetch_page_search,
-                                        self._build_collection_elements,
-                                        page,
-                                        per_page,
+        return self._paginator.paginate(page_fetcher=self._fetch_page_search,
+                                        collection_builder=self._build_collection_elements,
+                                        per_page=per_page,
                                         search_params=search_params)
 
 
