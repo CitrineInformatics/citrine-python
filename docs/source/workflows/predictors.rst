@@ -408,13 +408,13 @@ Here we show an example of how to combine these modules to accomplish those many
 Using ExpressionPredictors to perform pre-processing can be used to featurize data, which is a valuable way to leverage domain knowledge by transforming raw inputs into quantities known to be relevant.
 In the example below, we use an ExpressionPredictor to annotate the training data with a "hydration ratio".
 The hydration ratio is the mass ratio of water to flour.
-Bakers know this quantity to be of fundamental importance to the taste and texture of sourdough bread, so computing this quantity might be expected to help the SimpleMLPredictor make more efficient use of scarce training data.
-(For a more standard materials science example, an ExpressionPredictor might be used to annotate semiconductor data with an analytical expression of idealized electron mobility as a function of dopant concentrations.)
+Bakers know this quantity to be of fundamental importance to the taste and texture of bread, so computing this quantity might be expected to help the SimpleMLPredictor make more efficient use of scarce training data.
+(In a more standard materials science context, an ExpressionPredictor might be used to annotate semiconductor data with an analytical expression of idealized electron mobility as a function of dopant concentrations.)
 
-Post-processing the SimpleMLPredictor's outputs can be used to define complex figures of merit.
-Using ExpressionPredictors to post-process data is extremely useful for performing optimization over complex objectives.
-In the example below, we use the ExpressionPredictor feature to optimize for a product's profitability per loaf.
-The profitability is estimated as ``0.34 * (market appeal) / (shelf life) - (production cost)``, where shelf life is determined by another ExpressionPredictor as a function of the ``final pH`` and ``final hydration`` outputs of the SimpleMLPredictor, another ExpressionPredictor is used to convert objectively-measurable ``crust color`` and ``final density`` into ``market appeal`` that estimates the purchasing rate based on market research, and ``production cost`` is an explicit function of the training data.
+In the example below, we use the ExpressionPredictor feature to compute a bread loaf product's shelf life.
+This simulates a scenario where shelf life is determined by a quality control rule of a few physically measurable quantities: ``final pH`` and ``final hydration`` as estimated by the SimpleMLPredictor, as well as the fraction of salt in the ingredients.
+Using ExpressionPredictors in this manner to post-process learned data is often useful for displaying information on the platform based on transformations of the learned physical properties.
+This pattern is also extremely useful for performing optimization over complex objectives: in the following example, we can use shelf life as an objective or constraint in a :doc:`DesignWorkflows <design workflow>`.
 
 .. code:: python
 
@@ -427,17 +427,13 @@ The profitability is estimated as ``0.34 * (market appeal) / (shelf life) - (pro
     # water_quantity = RealDescriptor('water mass', lower_bound=200, upper_bound=400, units="g")
     # salt_quantity = RealDescriptor('salt mass', lower_bound=4, upper_bound=8, units="g")
     # starter_quantity = RealDescriptor('starter mass', lower_bound=5, upper_bound=30, units="g")
-    # crust_color = RealDescriptor('crust color', lower_bound=0, upper_bound=100, units="")
-    # final_density = RealDescriptor('final density', lower_bound=0.4, upper_bound=0.8, units="g/cm^3")
     # final_ph = RealDescriptor('final pH', lower_bound=2.5, upper_bound=5, units="")
     # final_loaf_hydration = RealDescriptor('final loaf hydration', lower_bound=0, upper_bound=100, units="")
     #
     # data_source = create_ara_data_source_from_breads_gemd(descriptors=[...descriptors above...])
 
     dough_hydration = RealDescriptor('dough hydration', lower_bound=0, upper_bound=1)
-    production_cost = RealDescriptor('production cost', lower_bound=0, upper_bound=2)
-    market_appeal = RealDescriptor('market_appeal', lower_bound=0, upper_bound=1)
-    profitability = RealDescriptor('profitability', lower_bound=0, upper_bound=2)
+    shelf_life = RealDescriptor('shelf life', lower_bound=0, upper_bound=72)
 
     dough_hydration_calculator = ExpressionPredictor(
         name = 'dough hydration calculator',
@@ -450,44 +446,7 @@ The profitability is estimated as ``0.34 * (market appeal) / (shelf life) - (pro
             'starter': 'starter mass'
         }
     )
-    production_cost_calculator = ExpressionPredictor(
-        name = 'production cost calculator',
-        expression = '0.0003*wheat + 0.0002*rye + 0.0003*starter',
-        output = dough_hydration,
-        aliases = {
-            'wheat': 'wheat flour mass',
-            'rye': 'rye flour mass',
-            'starter': 'starter mass'
-        }
-    )
-    market_appeal_calculator = ExpressionPredictor(
-        name = 'market appeal calculator',
-        expression = '-70 + 1.6 * x - 0.01 * x^2 + 12 * y - 10 y^2'
-        output = market_appeal,
-        aliases = {
-            'x': 'crust color',
-            'y': 'final density'
-        }
-    )
-    shelf_life_calculator = ExpressionPredictor(
-        name = 'shelf life predictor',
-        expression = '4*exp(-0.1*pH - w^2)',
-        output = shelf_life,
-        aliases = {
-            'pH': 'final pH',
-            'w': 'final loaf hydration'
-        }
-    )
-    profitability_calculator = ExpressionPredictor(
-        name = 'profitability calculator',
-        expression = '0.34 * a / l - c',
-        output = market_appeal,
-        aliases = {
-            'a': 'market appeal',
-            'l': 'shelf life',
-            'c': 'production cost'
-        }
-    )
+
     physical_properties_predictor = SimpleMLModel(
         name = 'physical properties predictor',
         inputs = [
@@ -499,12 +458,24 @@ The profitability is estimated as ``0.34 * (market appeal) / (shelf life) - (pro
             dough_hydration
         ],
         outputs = [
-            crust_color,
-            final_density,
             final_ph,
             final_loaf_hydration,
         ],
         training_data=training_table
+    )
+
+    shelf_life_calculator = ExpressionPredictor(
+        name = 'shelf life predictor',
+        expression = '4*exp(-0.1*pH - 1.3*w^2 + 5*s/(wheat+rye+water+starter))',
+        output = shelf_life,
+        aliases = {
+            'pH': 'final pH',
+            'w': 'final loaf hydration',
+            'wheat': 'wheat flour mass',
+            'rye': 'rye flour mass',
+            'water': 'water mass',
+            'starter': 'starter mass'
+        }
     )
 
     graph_predictor = GraphPredictor(
@@ -512,13 +483,10 @@ The profitability is estimated as ``0.34 * (market appeal) / (shelf life) - (pro
         description = 'Uses bread ingredients to estimate profitability, given a fixed manufacturing process',
         predictors = [
             dough_hydration_calculator,
-            production_cost_calculator,
-            market_appeal_calculator,
-            shelf_life_calculator,
-            profitability_calculator,
-            physical_properties_calculator
+            physical_properties_calculator,
+            shelf_life_calculator
         ]
-   )
+    )
 
 Computing the hydration ratio provides a convenient way to impose constraints on the design space: constraining the hydration ratio within a baker's known reasonable limits will implicitly constrain the allowed combinations of flour and water.
 This constrained space of flour+water combinations is more complicated than the 3-dimensional box achieved by the bounds on individual ingredients, but it is more physically meaningful and simple to impose by use of an ExpressionPredictor.
