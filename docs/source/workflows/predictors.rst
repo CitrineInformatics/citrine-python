@@ -414,7 +414,7 @@ Bakers know this quantity to be of fundamental importance to the taste and textu
 In the example below, we use the ExpressionPredictor feature to compute a bread loaf product's shelf life.
 This simulates a scenario where shelf life is determined by a quality control rule of a few physically measurable quantities: ``final pH`` and ``final hydration`` as estimated by the SimpleMLPredictor, as well as the fraction of salt in the ingredients.
 Using ExpressionPredictors in this manner to post-process learned data is often useful for displaying information on the platform based on transformations of the learned physical properties.
-This pattern is also extremely useful for performing optimization over complex objectives: in the following example, we can use shelf life as an objective or constraint in a :doc:`DesignWorkflows <design workflow>`.
+This pattern is also extremely useful for performing optimization over complex objectives: in the following example, we can use shelf life as an objective or constraint in a :doc:`DesignWorkflows <design_workflows>`.
 
 .. code:: python
 
@@ -487,6 +487,3 @@ This pattern is also extremely useful for performing optimization over complex o
             shelf_life_calculator
         ]
     )
-
-Computing the hydration ratio provides a convenient way to impose constraints on the design space: constraining the hydration ratio within a baker's known reasonable limits will implicitly constrain the allowed combinations of flour and water.
-This constrained space of flour+water combinations is more complicated than the 3-dimensional box achieved by the bounds on individual ingredients, but it is more physically meaningful and simple to impose by use of an ExpressionPredictor.
