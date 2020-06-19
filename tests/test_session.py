@@ -76,6 +76,14 @@ def test_get_no_refresh(session: Session):
     assert {'foo': 'bar'} == resp
 
 
+def test_get_resource_post(session: Session):
+    with requests_mock.Mocker() as m:
+        m.post('http://citrine-testing.fake/api/v1/foo', json={'foo': 'bar'})
+        resp = session.get_resource_post('/foo', json={})
+
+    assert {'foo': 'bar'} == resp
+
+
 def test_get_not_found(session: Session):
     with requests_mock.Mocker() as m:
         m.get('http://citrine-testing.fake/api/v1/foo', status_code=404)
