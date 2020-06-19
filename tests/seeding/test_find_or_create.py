@@ -1,8 +1,9 @@
-from typing import Optional
+from typing import Optional, Callable
 from uuid import UUID
 
 import pytest
 from citrine._rest.collection import Collection
+from citrine.exceptions import NotFound
 from citrine.resources.dataset import Dataset, DatasetCollection
 from citrine.resources.process_spec import ProcessSpecCollection, ProcessSpec
 from citrine.resources.project import ProjectCollection, Project
@@ -48,9 +49,13 @@ def session() -> FakeSession:
 
 
 @pytest.fixture
-def project_collection() -> ProjectCollection:
+def project_collection() -> Callable[[bool], ProjectCollection]:
     class SeedingTestProjectCollection(ProjectCollection):
         projects = []
+
+        def __init__(self, search_implemented: bool = True):
+            ProjectCollection.__init__(self)
+            self.search_implemented = search_implemented
 
         def register(self, name: str, description: Optional[str] = None) -> Project:
             project = Project(name=name)
@@ -64,6 +69,9 @@ def project_collection() -> ProjectCollection:
                 return self.projects[(page - 1)*per_page:page*per_page]
 
         def search(self, search_params: Optional[dict] = None, per_page: int = 100):
+            if not self.search_implemented:
+                raise NotFound("search")
+
             ans = self.projects
             if search_params.get("name"):
                 method = search_params["name"]["search_method"]
@@ -85,12 +93,15 @@ def project_collection() -> ProjectCollection:
         def delete(self, uuid):
             raise NotImplementedError
 
-    projects = SeedingTestProjectCollection()
-    for i in range(0, 5):
-        projects.register("project " + str(i))
-    for i in range(0, 2):
-        projects.register(duplicate_name)
-    return projects
+    def _make_project(search_implemented: bool = True):
+        projects = SeedingTestProjectCollection(search_implemented)
+        for i in range(0, 5):
+            projects.register("project " + str(i))
+        for i in range(0, 2):
+            projects.register(duplicate_name)
+        return projects
+
+    return _make_project
 
 
 @pytest.fixture
@@ -170,18 +181,30 @@ def test_get_by_name_or_raise_error_exist(fake_collection):
 
 def test_find_or_create_project_no_exist(project_collection):
     # test when project doesn't exist
-    old_project_count = len(list(project_collection.list()))
-    result = find_or_create_project(project_collection, absent_name)
-    new_project_count = len(list(project_collection.list()))
+    collection = project_collection()
+    old_project_count = len(list(collection.list()))
+    result = find_or_create_project(collection, absent_name)
+    new_project_count = len(list(collection.list()))
     assert result.name == absent_name
     assert new_project_count == old_project_count + 1
 
 
 def test_find_or_create_project_exist(project_collection):
     # test when project exists
-    old_project_count = len(list(project_collection.list()))
-    result = find_or_create_project(project_collection, "project 2")
-    new_project_count = len(list(project_collection.list()))
+    collection = project_collection()
+    old_project_count = len(list(collection.list()))
+    result = find_or_create_project(collection, "project 2")
+    new_project_count = len(list(collection.list()))
+    assert result.name == "project 2"
+    assert new_project_count == old_project_count
+
+
+def test_find_or_create_project_exist_no_search(project_collection):
+    # test when project exists
+    collection = project_collection(False)
+    old_project_count = len(list(collection.list()))
+    result = find_or_create_project(collection, "project 2")
+    new_project_count = len(list(collection.list()))
     assert result.name == "project 2"
     assert new_project_count == old_project_count
 
@@ -189,20 +212,21 @@ def test_find_or_create_project_exist(project_collection):
 def test_find_or_create_project_exist_multiple(project_collection):
     # test when project exists multiple times
     with pytest.raises(ValueError):
-        find_or_create_project(project_collection, duplicate_name)
+        find_or_create_project(project_collection(), duplicate_name)
 
 
 def test_find_or_create_raise_error_project_no_exist(project_collection):
     # test when project doesn't exist and raise_error flag is on
     with pytest.raises(ValueError):
-        find_or_create_project(project_collection, absent_name, raise_error=True)
+        find_or_create_project(project_collection(), absent_name, raise_error=True)
 
 
 def test_find_or_create_raise_error_project_exist(project_collection):
     # test when project exists and raise_error flag is on
-    old_project_count = len(list(project_collection.list()))
-    result = find_or_create_project(project_collection, "project 3", raise_error=True)
-    new_project_count = len(list(project_collection.list()))
+    collection = project_collection()
+    old_project_count = len(list(collection.list()))
+    result = find_or_create_project(collection, "project 3", raise_error=True)
+    new_project_count = len(list(collection.list()))
     assert result.name == "project 3"
     assert new_project_count == old_project_count
 
@@ -210,7 +234,7 @@ def test_find_or_create_raise_error_project_exist(project_collection):
 def test_find_or_create_raise_error_project_exist_multiple(project_collection):
     # test when project exists multiple times and raise_error flag is on
     with pytest.raises(ValueError):
-        find_or_create_project(project_collection, duplicate_name, raise_error=True)
+        find_or_create_project(project_collection(), duplicate_name, raise_error=True)
 
 
 def test_find_or_create_dataset_no_exist(dataset_collection):

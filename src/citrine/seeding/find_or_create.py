@@ -1,3 +1,4 @@
+from citrine.exceptions import NotFound
 from citrine.resources import ProjectCollection
 from citrine.resources.dataset import Dataset
 
@@ -9,13 +10,17 @@ def find_collection(collection, name):
     Returns it, or if not found, returns None
     """
     if isinstance(collection, ProjectCollection):
-
-        collection_list = collection.search(search_params={
-            "name": {
-                "value": name,
-                "search_method": "EXACT"
-            }
-        })
+        try:
+            # try to use search if it is available
+            collection_list = collection.search(search_params={
+                "name": {
+                    "value": name,
+                    "search_method": "EXACT"
+                }
+            })
+        except NotFound:
+            # Search must not be available yet
+            collection_list = collection.list()
     else:
         collection_list = collection.list()
     matching_resources = [resource for resource in collection_list if resource.name == name]
