@@ -464,6 +464,6 @@ class ProjectCollection(Collection[Project]):
 
         path = self._get_path() + "/search"
 
-        return self._fetch_page(path=path, fetch_func=self.session.checked_post,
+        return self._fetch_page(path=path, fetch_func=self.session.post_resource,
                                 page=page, per_page=per_page,
                                 json_body=json_body)

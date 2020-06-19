@@ -1,3 +1,4 @@
+from citrine.resources import ProjectCollection
 from citrine.resources.dataset import Dataset
 
 
@@ -7,7 +8,16 @@ def find_collection(collection, name):
 
     Returns it, or if not found, returns None
     """
-    collection_list = collection.list()
+    if isinstance(collection, ProjectCollection):
+
+        collection_list = collection.search(search_params={
+            "name": {
+                "value": name,
+                "search_method": "EXACT"
+            }
+        })
+    else:
+        collection_list = collection.list()
     matching_resources = [resource for resource in collection_list if resource.name == name]
     if len(matching_resources) > 1:
         raise ValueError("Found multiple collections with name '{}'".format(name))

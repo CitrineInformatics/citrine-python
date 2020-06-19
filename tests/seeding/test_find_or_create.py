@@ -63,6 +63,25 @@ def project_collection() -> ProjectCollection:
             else:
                 return self.projects[(page - 1)*per_page:page*per_page]
 
+        def search(self, search_params: Optional[dict] = None, per_page: int = 100):
+            ans = self.projects
+            if search_params.get("name"):
+                method = search_params["name"]["search_method"]
+                value = search_params["name"]["value"]
+                if method == "EXACT":
+                    ans = [x for x in ans if x.name == value]
+                elif method == "SUBSTRING":
+                    ans = [x for x in ans if value in x.name]
+            if search_params.get("description"):
+                method = search_params["description"]["search_method"]
+                value = search_params["description"]["value"]
+                if method == "EXACT":
+                    ans = [x for x in ans if x.description == value]
+                elif method == "SUBSTRING":
+                    ans = [x for x in ans if value in x.description]
+
+            return ans
+
         def delete(self, uuid):
             raise NotImplementedError
 
