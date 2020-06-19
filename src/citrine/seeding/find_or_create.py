@@ -12,12 +12,14 @@ def find_collection(collection, name):
     if isinstance(collection, ProjectCollection):
         try:
             # try to use search if it is available
-            collection_list = collection.search(search_params={
+            # call list() to collapse the iterator, otherwise the NotFound
+            # won't show up until collection_list is used
+            collection_list = list(collection.search(search_params={
                 "name": {
                     "value": name,
                     "search_method": "EXACT"
                 }
-            })
+            }))
         except NotFound:
             # Search must not be available yet
             collection_list = collection.list()
