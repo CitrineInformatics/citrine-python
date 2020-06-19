@@ -61,9 +61,6 @@ class FakeSession:
     def get_resource(self, path: str, **kwargs) -> dict:
         return self.checked_get(path, **kwargs)
 
-    def get_resource_post(self, path: str, json: dict, **kwargs) -> dict:
-        return self.checked_post(path, json=json, **kwargs)
-
     def post_resource(self, path: str, json: dict, **kwargs) -> dict:
         return self.checked_post(path, json, **kwargs)
 

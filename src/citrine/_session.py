@@ -174,14 +174,6 @@ class Session(requests.Session):
         response = self.checked_get(path, **kwargs)
         return self._extract_response_json(path, response)
 
-    def get_resource_post(self, path: str, json: dict, **kwargs) -> dict:
-        """POST with a body to get a particular resource as JSON.
-
-        This is used when performing queries, e.g. projects.search.
-        """
-        response = self.checked_post(path, json=json, **kwargs)
-        return self._extract_response_json(path, response)
-
     def post_resource(self, path: str, json: dict, **kwargs) -> dict:
         """POST to a particular resource as JSON."""
         response = self.checked_post(path, json=json, **kwargs)
