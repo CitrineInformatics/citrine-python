@@ -23,9 +23,9 @@ def enumerate_cartesian_product(
 
 
 def enumerate_simple_mixture_cartesian_product(
-    formulation_grids:Mapping[str, Seq],
+    formulation_grids:Mapping[str, Sequence[float]],
     balance_component:str
-    ) -> Sequence[Mapping[str, Any]]:
+    ) -> Sequence[Mapping[str, float]]:
     '''[ALPHA] Given a dict of lists or tuples of ingredient amounts (must be
     fractions of some kind, i.e. between 0-1), create candidates that are
     the Cartesian product of all possible combinations of ingredients *except*
@@ -64,7 +64,7 @@ def enumerate_simple_mixture_cartesian_product(
 
     # Start by making a naive product design space of non-balance components
     form_ds = pd.DataFrame(
-        EnumeratedProductDesignSpaceData(
+        enumerate_cartesian_product(
             {k: v for k, v in formulation_grids.items()
              if k in non_balance_comps}
         )
@@ -105,7 +105,7 @@ def cartesian_join_design_spaces(
         A list of [lists of candidates] (data for individual design subspaces)
     '''
     
-    assert 'join_key' not in [*data[0].keys() for data in data_list], \
+    assert 'join_key' not in [data[0].keys() for data in data_list], \
         '"join_key" cannot be a descriptor key when using this function'
     
     ds_list = [pd.DataFrame(data) for data in data_list]
