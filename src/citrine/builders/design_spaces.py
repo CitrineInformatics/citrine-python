@@ -4,8 +4,8 @@ from typing import Mapping, Sequence, Any
 
 
 def enumerate_cartesian_product(
-    dof_grids: Mapping[str, Sequence]
-    ) -> Sequence[Mapping[str, Any]]:
+    dof_grids: Mapping[str, Sequence],
+) -> Sequence[Mapping[str, Any]]:
     '''[ALPHA] Given a dict of lists or tuples of values for each degree of freedom,
     create the list of candidates representing the Cartesian product of all
     values for each degree of freedom
@@ -23,9 +23,9 @@ def enumerate_cartesian_product(
 
 
 def enumerate_simple_mixture_cartesian_product(
-    formulation_grids:Mapping[str, Sequence[float]],
-    balance_component:str
-    ) -> Sequence[Mapping[str, float]]:
+    formulation_grids: Mapping[str, Sequence[float]],
+    balance_component: str,
+) -> Sequence[Mapping[str, float]]:
     '''[ALPHA] Given a dict of lists or tuples of ingredient amounts (must be
     fractions of some kind, i.e. between 0-1), create candidates that are
     the Cartesian product of all possible combinations of ingredients *except*
@@ -60,7 +60,7 @@ def enumerate_simple_mixture_cartesian_product(
     assert balance_component in list(formulation_grids.keys()), \
         "balance component must be in formulation_grids' keys"
     non_balance_comps = [comp for comp in list(formulation_grids.keys())
-                         if comp!=balance_component]
+                         if comp != balance_component]
 
     # Start by making a naive product design space of non-balance components
     form_ds = pd.DataFrame(
@@ -72,16 +72,17 @@ def enumerate_simple_mixture_cartesian_product(
     
     # Re-calculate the balance component column as 1-all others
     form_ds[balance_component] = form_ds.apply(
-        lambda r: 1-sum([r[col] for col in non_balance_comps]),
-        axis= 1
+        lambda r: 1 - sum([r[col] for col in non_balance_comps]),
+        axis=1
     )
     
     # Order columns so balance component is first
-    form_ds = form_ds[[balance_component]+non_balance_comps]
+    form_ds = form_ds[[balance_component] + non_balance_comps]
     
     # Eliminate out-of-range rows
-    balance_range = (min(formulation_grids[balance_component]),
-                     max(formulation_grids[balance_component])
+    balance_range = (
+        min(formulation_grids[balance_component]),
+        max(formulation_grids[balance_component])
     )
     form_ds = form_ds[form_ds[balance_component] >= balance_range[0]]
     form_ds = form_ds[form_ds[balance_component] <= balance_range[1]]
@@ -91,8 +92,8 @@ def enumerate_simple_mixture_cartesian_product(
 
 
 def cartesian_join_design_spaces(
-    data_list: Sequence[Sequence[Mapping[str, Any]]]
-    ) -> Sequence[Mapping[str, Any]]:
+    data_list: Sequence[Sequence[Mapping[str, Any]]],
+) -> Sequence[Mapping[str, Any]]:
     ''' Given multiple input design spaces (lists of candidates), create a
     set of candidates that is the Cartesian product of candidates from each
     input design space.
