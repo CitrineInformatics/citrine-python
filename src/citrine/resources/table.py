@@ -112,9 +112,9 @@ class TableCollection(Collection[Table]):
         return self._paginator.paginate(fetch_versions, build_versions, page, per_page)
 
     def list_for_ara_definition(self,
-                      ara_definition_uid: UUID,
-                      page: Optional[int] = None,
-                      per_page: int = 100) -> Iterable[Table]:
+                                ara_definition_uid: UUID,
+                                page: Optional[int] = None,
+                                per_page: int = 100) -> Iterable[Table]:
         """
         List the versions of a table associated with a given Ara Definition.
 
@@ -128,8 +128,10 @@ class TableCollection(Collection[Table]):
         """
         def fetch_versions(page: Optional[int],
                            per_page: int) -> Tuple[Iterable[dict], str]:
-            data = self.session.get_resource('projects/{project_id}/gem-tables/for-table-config/'.format(**self.__dict__) + str(ara_definition_uid),
-                                             params=self._page_params(page, per_page))
+            data = self.session.get_resource(
+                'projects/{project_id}/gem-tables/for-table-config/'.format(
+                    **self.__dict__) + str(ara_definition_uid),
+                params=self._page_params(page, per_page))
             return (data[self._collection_key], data.get('next', ""))
 
         def build_versions(collection: Iterable[dict]) -> Iterable[Table]:
