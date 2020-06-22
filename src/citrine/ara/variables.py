@@ -30,7 +30,7 @@ class DataObjectTypeSelector(BaseEnumeration):
     """[ALPHA] The strategy for selecting types to consider for variable matching.
 
     Variables can potentially match many objects in a material history, creating
-    ambiguity around the which value should be assigned. In particular, 
+    ambiguity around which value should be assigned. In particular, 
     associated runs and specs often share attributes and thus will often match 
     the same variable. To enable disambiguation in such
     circumstances, many variables allow specification of a `type_selector`, with
