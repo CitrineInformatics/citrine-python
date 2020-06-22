@@ -39,7 +39,8 @@ class DataObjectTypeSelector(BaseEnumeration):
     * SPEC_ONLY only match spec objects
     * PREFER_RUN match either run or spec objects, and if both types match 
                  only return the result for runs
-    * ANY match run and spec objects, ambiguous when both run and spec match
+    * ANY match either run or spec objects, and if both types match
+          return an ambiguous error result
     """
 
     RUN_ONLY = "run_only"
