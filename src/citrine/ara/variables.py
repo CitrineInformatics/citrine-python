@@ -129,7 +129,7 @@ class AttributeByTemplate(Serializable['AttributeByTemplate'], Variable):
         are expressed as Bounds.  Attributes are expressed with links. The attribute that the
         variable is being set to may be the target of a constraint as well.
     type_selector: DataObjectTypeSelector
-        strategy for selecting data object types to consider when matching.
+        strategy for selecting data object types to consider when matching, defaults to PREFER_RUN
 
     """
 
@@ -180,7 +180,7 @@ class AttributeByTemplateAfterProcessTemplate(
         are expressed as Bounds.  Attributes are expressed with links. The attribute that the
         variable is being set to may be the target of a constraint as well.
     type_selector: DataObjectTypeSelector
-        strategy for selecting data object types to consider when matching.
+        strategy for selecting data object types to consider when matching, defaults to PREFER_RUN
 
     """
 
@@ -240,7 +240,7 @@ class AttributeByTemplateAndObjectTemplate(
         are expressed as Bounds.  Attributes are expressed with links. The attribute that the
         variable is being set to may be the target of a constraint as well.
     type_selector: DataObjectTypeSelector
-        strategy for selecting data object types to consider when matching.
+        strategy for selecting data object types to consider when matching, defaults to PREFER_RUN
 
     """
 
@@ -293,7 +293,7 @@ class IngredientIdentifierByProcessTemplateAndName(
     scope: str
         scope of the identifier (default: the Citrine scope)
     type_selector: DataObjectTypeSelector
-        strategy for selecting data object types to consider when matching.
+        strategy for selecting data object types to consider when matching, defaults to PREFER_RUN
 
     """
 
@@ -346,7 +346,7 @@ class IngredientLabelByProcessAndName(Serializable['IngredientLabelByProcessAndN
     label: str
         label to test
     type_selector: DataObjectTypeSelector
-        strategy for selecting data object types to consider when matching.
+        strategy for selecting data object types to consider when matching, defaults to PREFER_RUN
 
     """
 
@@ -395,7 +395,7 @@ class IngredientQuantityByProcessAndName(
         dimension of the ingredient quantity: absolute quantity, number, mass, or volume fraction.
         valid options are defined by :class:`~citrine.ara.variables.IngredientQuantityDimension`
     type_selector: DataObjectTypeSelector
-        strategy for selecting data object types to consider when matching.
+        strategy for selecting data object types to consider when matching, defaults to PREFER_RUN
 
     """
 
@@ -495,7 +495,7 @@ class AttributeInOutput(Serializable['AttributeInOutput'], Variable):
         are expressed as Bounds.  Attributes are expressed with links. The attribute that the
         variable is being set to may be the target of a constraint as well.
     type_selector: DataObjectTypeSelector
-        strategy for selecting data object types to consider when matching.
+        strategy for selecting data object types to consider when matching, defaults to PREFER_RUN
 
     """
 
@@ -572,7 +572,7 @@ class IngredientIdentifierInOutput(Serializable['IngredientIdentifierInOutput'],
         These process templates are inclusive.
         The ingredient may be present in these processes but not after.
     type_selector: DataObjectTypeSelector
-        strategy for selecting data object types to consider when matching.
+        strategy for selecting data object types to consider when matching, defaults to PREFER_RUN
 
     """
 
@@ -642,7 +642,7 @@ class IngredientQuantityInOutput(Serializable['IngredientQuantityInOutput'], Var
         These process templates are inclusive.
         The ingredient may be present in these processes but not after.
     type_selector: DataObjectTypeSelector
-        strategy for selecting data object types to consider when matching.
+        strategy for selecting data object types to consider when matching, defaults to PREFER_RUN
 
     """
 
