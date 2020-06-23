@@ -448,7 +448,7 @@ This pattern is also extremely useful for performing optimization over complex o
     )
 
     physical_properties_predictor = SimpleMLModel(
-        name = 'physical properties predictor',
+        name = 'physical properties model',
         inputs = [
             wheat_flour_quantity,
             rye_flour_quantity,
@@ -465,7 +465,7 @@ This pattern is also extremely useful for performing optimization over complex o
     )
 
     shelf_life_calculator = ExpressionPredictor(
-        name = 'shelf life predictor',
+        name = 'shelf life estimator',
         expression = '4*exp(-0.1*pH - 1.3*w^2 + 5*s/(wheat+rye+water+starter))',
         output = shelf_life,
         aliases = {
