@@ -411,8 +411,8 @@ The hydration ratio is the mass ratio of water to flour.
 Bakers know this quantity to be of fundamental importance to the taste and texture of bread, so computing this quantity might be expected to help the SimpleMLPredictor make more efficient use of scarce training data.
 (In a more standard materials science context, an ExpressionPredictor might be used to annotate semiconductor data with an analytical expression of idealized electron mobility as a function of dopant concentrations.)
 
-In the example below, we use the ExpressionPredictor feature to compute a bread loaf product's shelf life.
-This simulates a scenario where shelf life is determined by a quality control rule of a few physically measurable quantities: ``final pH`` and ``final hydration`` as estimated by the SimpleMLPredictor, as well as the fraction of salt in the ingredients.
+In the example below, we use the ExpressionPredictor feature to compute a bread loaf product's shelf life as a figure of merit.
+This simulates a scenario where shelf life is determined by a deterministic quality control rule that depends on a few physically measurable quantities: ``final pH`` and ``final hydration`` as estimated by the SimpleMLPredictor, as well as the fraction of salt in the ingredients.
 Using ExpressionPredictors in this manner to post-process learned data is often useful for displaying information on the platform based on transformations of the learned physical properties.
 This pattern is also extremely useful for performing optimization over complex objectives: in the following example, we can use shelf life as an objective or constraint in a :doc:`DesignWorkflows <design_workflows>`.
 
