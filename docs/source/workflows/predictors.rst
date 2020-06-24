@@ -419,21 +419,35 @@ This pattern is also extremely useful for performing optimization over complex o
 .. code:: python
 
     from citrine.informatics.descriptors import RealDescriptor
-    from citrine.informatics.predictors import ExpressionPredictor, GraphPredictor, SimpleMLPredictor
+    from citrine.informatics.predictors import (
+        ExpressionPredictor,
+        GraphPredictor,
+        SimpleMLPredictor
+    )
 
     ######## Omitted step: create DataSource with columns associated with the following descriptors ########
-    # wheat_flour_quantity = RealDescriptor('wheat flour mass', lower_bound=300, upper_bound=550, units="g")
-    # rye_flour_quantity = RealDescriptor('rye wheat flour mass', lower_bound=0, upper_bound=100, units="g")
-    # water_quantity = RealDescriptor('water mass', lower_bound=200, upper_bound=400, units="g")
-    # salt_quantity = RealDescriptor('salt mass', lower_bound=4, upper_bound=8, units="g")
-    # starter_quantity = RealDescriptor('starter mass', lower_bound=5, upper_bound=30, units="g")
-    # final_ph = RealDescriptor('final pH', lower_bound=2.5, upper_bound=5, units="")
-    # final_loaf_hydration = RealDescriptor('final loaf hydration', lower_bound=0, upper_bound=100, units="")
+    # wheat_flour_quantity = RealDescriptor(
+    #     'wheat flour mass', lower_bound=300, upper_bound=550, units="g")
+    # rye_flour_quantity = RealDescriptor(
+    #     'rye flour mass', lower_bound=0, upper_bound=100, units="g")
+    # water_quantity = RealDescriptor(
+    #    'water mass', lower_bound=200, upper_bound=400, units="g")
+    # salt_quantity = RealDescriptor(
+    #    'salt mass', lower_bound=4, upper_bound=8, units="g")
+    # starter_quantity = RealDescriptor(
+    #    'starter mass', lower_bound=5, upper_bound=30, units="g")
+    # final_ph = RealDescriptor(
+    #    'final pH', lower_bound=2.5, upper_bound=5, units="")
+    # final_loaf_hydration = RealDescriptor(
+    #    'final loaf hydration', lower_bound=0, upper_bound=100, units="")
     #
-    # data_source = create_ara_data_source_from_breads_gemd(descriptors=[...descriptors above...])
+    # data_source = create_ara_data_source_from_breads_gemd(
+    #    descriptors=[...descriptors above...])
 
-    dough_hydration = RealDescriptor('dough hydration', lower_bound=0, upper_bound=1)
-    shelf_life = RealDescriptor('shelf life', lower_bound=0, upper_bound=72)
+    dough_hydration = RealDescriptor(
+        'dough hydration', lower_bound=0, upper_bound=1)
+    shelf_life = RealDescriptor(
+        'approximate shelf life', lower_bound=0, upper_bound=72)
 
     dough_hydration_calculator = ExpressionPredictor(
         name = 'dough hydration calculator',
@@ -466,7 +480,7 @@ This pattern is also extremely useful for performing optimization over complex o
 
     shelf_life_calculator = ExpressionPredictor(
         name = 'shelf life estimator',
-        expression = '4*exp(-0.1*pH - 1.3*w^2 + 5*s/(wheat+rye+water+starter))',
+        expression = '4*exp(-0.1*pH - 1.3*w^2 + 5*(water+0.5*starter)/(wheat+rye+water+starter))',
         output = shelf_life,
         aliases = {
             'pH': 'final pH',
@@ -479,11 +493,21 @@ This pattern is also extremely useful for performing optimization over complex o
     )
 
     graph_predictor = GraphPredictor(
-        name = 'bread profitability predictor',
-        description = 'Uses bread ingredients to estimate profitability, given a fixed manufacturing process',
+        name = 'bread shelf life predictor',
+        description = 'Uses bread ingredients to estimate shelf life, given a fixed manufacturing process',
         predictors = [
             dough_hydration_calculator,
-            physical_properties_calculator,
+            physical_properties_predictor,
             shelf_life_calculator
         ]
     )
+
+.. |Bread Predictor Graph Visualization| image:: bread_predictor_graph_viz.jpg
+   :width: 800
+   :alt: Visualization of graph predictor.
+
+This example is shown below.
+Nodes with dashed outlines represent degrees of freedom in the recipe, and those with solid outlines represent predictors.
+Nodes with dotted outlines represent predicted quantities; note that only ``final pH`` and ``final loaf hydration`` are the only predicted quantities that exist in the training data.
+
+|Bread Predictor Graph Visualization|
