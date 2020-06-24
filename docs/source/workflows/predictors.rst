@@ -506,7 +506,7 @@ This pattern is also extremely useful for performing optimization over complex o
    :width: 800
    :alt: Visualization of graph predictor.
 
-This example is shown below.
+This example is visualized below.
 Nodes with dashed outlines represent degrees of freedom in the recipe, and those with solid outlines represent predictors.
 Nodes with dotted outlines represent predicted quantities; note that only ``final pH`` and ``final loaf hydration`` are the only predicted quantities that exist in the training data.
 
