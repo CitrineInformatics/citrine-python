@@ -1,0 +1,44 @@
+// To compile with graphviz: dot -Tjpg bread_predictor_graph_viz.dot -o bread_predictor_graph_viz.jpg
+digraph g {
+    ranksep=2;
+    node [shape=record, style="dashed"];
+    h [label="water mass"];
+    r [label="rye flour mass"];
+    w [label="wheat flour mass"];
+    s [label="starter mass"];
+    n [label="salt mass"];
+    dh [label="dough hydration", style="dotted"];
+    fph [label="final pH", style="dotted"];
+    fh [label="final loaf hydration", style="dotted"];
+    sl [label="shelf life", style="dotted"];
+    er1 [label="hydration estimator", style="solid"];
+    er2 [label="shelf life estimator", style="solid"];
+    ml1 [label="ML model", style="solid"];
+    ml2 [label="ML model", style="solid"];
+    h -> er1;
+    r -> er1;
+    w -> er1;
+    s -> er1;
+    er1 -> dh;
+    n -> ml1;
+    n -> ml2;
+    dh -> ml1;
+    dh -> ml2;
+    h -> ml1;
+    r -> ml1;
+    w -> ml1;
+    s -> ml1;
+    ml1 -> fph;
+    ml2 -> fh;
+    h -> ml2;
+    r -> ml2;
+    w -> ml2;
+    s -> ml2;
+    h -> er2;
+    r -> er2;
+    w -> er2;
+    s -> er2;
+    fph -> er2;
+    fh -> er2;
+    er2 -> sl
+}
