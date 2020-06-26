@@ -67,6 +67,12 @@ class DesignWorkflow(Resource['DesignWorkflow'], Workflow):
         'status_info',
         serializable=False
     )
+    experimental = properties.Boolean("experimental", serializable=False)
+    experimental_reasons = properties.Optional(
+        properties.List(properties.String()),
+        'experimental_reasons',
+        serializable=False
+    )
     active = properties.Boolean('active', default=True)
     created_by = properties.Optional(properties.UUID, 'created_by', serializable=False)
     create_time = properties.Optional(properties.Datetime, 'create_time', serializable=False)
@@ -119,6 +125,12 @@ class PerformanceWorkflow(Resource['PerformanceWorkflow'], Workflow):
     status_info = properties.Optional(
         properties.List(properties.String()),
         'status_info',
+        serializable=False
+    )
+    experimental = properties.Boolean("experimental", serializable=False)
+    experimental_reasons = properties.Optional(
+        properties.List(properties.String()),
+        'experimental_reasons',
         serializable=False
     )
     active = properties.Boolean('active', default=True)

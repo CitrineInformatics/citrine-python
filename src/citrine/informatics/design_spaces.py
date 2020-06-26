@@ -60,6 +60,12 @@ class ProductDesignSpace(Resource['ProductDesignSpace'], DesignSpace):
         serializable=False
     )
     active = properties.Boolean('active', default=True)
+    experimental = properties.Boolean("experimental", serializable=False)
+    experimental_reasons = properties.Optional(
+        properties.List(properties.String()),
+        'experimental_reasons',
+        serializable=False
+    )
 
     # NOTE: These could go here or in _post_dump - it's unclear which is better right now
     module_type = properties.String('module_type', default='DESIGN_SPACE')
@@ -119,6 +125,12 @@ class EnumeratedDesignSpace(Resource['EnumeratedDesignSpace'], DesignSpace):
         serializable=False
     )
     active = properties.Boolean('active', default=True)
+    experimental = properties.Boolean("experimental", serializable=False)
+    experimental_reasons = properties.Optional(
+        properties.List(properties.String()),
+        'experimental_reasons',
+        serializable=False
+    )
 
     # NOTE: These could go here or in _post_dump - it's unclear which is better right now
     module_type = properties.String('module_type', default='DESIGN_SPACE')
