@@ -378,8 +378,8 @@ Use the update_user_rule method to change a User’s role.</p>
 
 <dl class="method">
 <dt id="citrine.resources.project.ProjectCollection.delete">
-<code class="sig-name descname">delete</code><span class="sig-paren">(</span><em class="sig-param">uuid</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.project.ProjectCollection.delete" title="Permalink to this definition">¶</a></dt>
-<dd><p>Delete the project with the provided uid.</p>
+<code class="sig-name descname">delete</code><span class="sig-paren">(</span><em class="sig-param">uid: Union[uuid.UUID, str]</em><span class="sig-paren">)</span> &#x2192; citrine.resources.response.Response<a class="headerlink" href="#citrine.resources.project.ProjectCollection.delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>[ALPHA] Delete a particular element of the collection.</p>
 </dd></dl>
 
 <dl class="method">
@@ -392,6 +392,65 @@ Use the update_user_rule method to change a User’s role.</p>
 <li><p><strong>name</strong> (<em>str</em>) – Name of the project to be created.</p></li>
 <li><p><strong>description</strong> (<em>str</em>) – Long-form description of the project to be created.</p></li>
 </ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="citrine.resources.project.ProjectCollection.search">
+<code class="sig-name descname">search</code><span class="sig-paren">(</span><em class="sig-param">search_params: Optional[dict] = None</em>, <em class="sig-param">per_page: int = 100</em><span class="sig-paren">)</span> &#x2192; Iterable[citrine.resources.project.Project]<a class="headerlink" href="#citrine.resources.project.ProjectCollection.search" title="Permalink to this definition">¶</a></dt>
+<dd><p>Search for projects matching the desired name or description.</p>
+<p>You can search for projects matching the desired name or description by either exact match
+or substring match, as specified by the search_params argument. Defaults to no search
+criteria.</p>
+<p>Like list, this method allows for pagination. This differs from the list function, because
+it makes a POST request to resourceType/search with search fields in a post body.</p>
+<p>Leaving page and per_page as default values will yield all elements in the collection,
+paginating over all available pages.</p>
+<p>Leaving search_params as its default value will return mimic the behavior of a full list
+with no search parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>search_params</strong> (<em>dict</em><em>, </em><em>optional</em>) – <p>A dict representing the body of the post request that will be sent to the search
+endpoint to filter the results ie.
+{</p>
+<blockquote>
+<div><dl>
+<dt>”search_params”: {</dt><dd><dl class="simple">
+<dt>“name”: {</dt><dd><p>“value”: “Polymer Project”,
+“search_method”: “EXACT”</p>
+</dd>
+</dl>
+<p>},
+“description”: {</p>
+<blockquote>
+<div><p>”value”: “polymer chain length”,
+“search_method”: “SUBSTRING”</p>
+</div></blockquote>
+<p>},</p>
+</dd>
+</dl>
+<p>}</p>
+</div></blockquote>
+<p>}
+The dict can constain any combination of (one or all) search specifications for the
+name, description, and status fields of a project. For each parameter specified, the
+“value” to match, as well as the “search_method” must be provided. The available
+search_methods are “SUBSTRING” and “EXACT”. The example above demonstrates the input
+necessary to list projects with the exact name “Polymer Project,” and descriptions
+including the phrase “polymer chain length,”</p>
+</p></li>
+<li><p><strong>per_page</strong> (<em>int</em><em>, </em><em>optional</em>) – Max number of results to return per page. Default is 100.  This parameter is used when
+making requests to the backend service.  If the page parameter is specified it limits
+the maximum number of elements in the response.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Projects in this collection.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Iterable[<a class="reference internal" href="#citrine.resources.project.Project" title="citrine.resources.project.Project">Project</a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -470,6 +529,7 @@ Use the update_user_rule method to change a User’s role.</p>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/data_sources.html">4.7. Data Sources</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/predictor_reports.html">4.8. Predictor reports</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/performance_workflows.html">4.9. Performance workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/code_examples.html">4.10. AI Engine Code Examples</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">5. FAQ</a><ul>

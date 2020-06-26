@@ -37,7 +37,7 @@
 <p>Variable definitions for Ara.</p>
 <dl class="class">
 <dt id="citrine.ara.variables.AttributeByTemplate">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.ara.variables.</code><code class="sig-name descname">AttributeByTemplate</code><span class="sig-paren">(</span><em class="sig-param">*, name: str, headers: List[str], template: gemd.entity.link_by_uid.LinkByUID, attribute_constraints: Optional[List[List[Union[gemd.entity.link_by_uid.LinkByUID, gemd.entity.bounds.base_bounds.BaseBounds]]]] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.ara.variables.AttributeByTemplate" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">citrine.ara.variables.</code><code class="sig-name descname">AttributeByTemplate</code><span class="sig-paren">(</span><em class="sig-param">*, name: str, headers: List[str], template: gemd.entity.link_by_uid.LinkByUID, attribute_constraints: Optional[List[List[Union[gemd.entity.link_by_uid.LinkByUID, gemd.entity.bounds.base_bounds.BaseBounds]]]] = None, type_selector: citrine.ara.variables.DataObjectTypeSelector = &lt;DataObjectTypeSelector.PREFER_RUN: 'prefer_run'&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.ara.variables.AttributeByTemplate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.ara.variables.Variable" title="citrine.ara.variables.Variable"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.ara.variables.Variable</span></code></a></p>
 <p>[ALPHA] Attribute marked by an attribute template.</p>
 <dl class="field-list simple">
@@ -49,6 +49,7 @@
 <li><p><strong>attribute_constraints</strong> (<em>list</em><em>[</em><em>(</em><em>LinkByUID</em><em>, </em><em>Bounds</em><em>)</em><em>]</em>) – constraints on object attributes in the target object that must be satisfied. Constraints
 are expressed as Bounds.  Attributes are expressed with links. The attribute that the
 variable is being set to may be the target of a constraint as well.</p></li>
+<li><p><strong>type_selector</strong> (<a class="reference internal" href="#citrine.ara.variables.DataObjectTypeSelector" title="citrine.ara.variables.DataObjectTypeSelector"><em>DataObjectTypeSelector</em></a>) – strategy for selecting data object types to consider when matching, defaults to PREFER_RUN</p></li>
 </ul>
 </dd>
 </dl>
@@ -77,11 +78,16 @@ variable is being set to may be the target of a constraint as well.</p></li>
 <code class="sig-name descname">typ</code><em class="property"> = 'attribute_by_template'</em><a class="headerlink" href="#citrine.ara.variables.AttributeByTemplate.typ" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
+<dl class="attribute">
+<dt id="citrine.ara.variables.AttributeByTemplate.type_selector">
+<code class="sig-name descname">type_selector</code><em class="property"> = None</em><a class="headerlink" href="#citrine.ara.variables.AttributeByTemplate.type_selector" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 <dl class="class">
 <dt id="citrine.ara.variables.AttributeByTemplateAfterProcessTemplate">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.ara.variables.</code><code class="sig-name descname">AttributeByTemplateAfterProcessTemplate</code><span class="sig-paren">(</span><em class="sig-param">*, name: str, headers: List[str], attribute_template: gemd.entity.link_by_uid.LinkByUID, process_template: gemd.entity.link_by_uid.LinkByUID, attribute_constraints: Optional[List[List[Union[gemd.entity.link_by_uid.LinkByUID, gemd.entity.bounds.base_bounds.BaseBounds]]]] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.ara.variables.AttributeByTemplateAfterProcessTemplate" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">citrine.ara.variables.</code><code class="sig-name descname">AttributeByTemplateAfterProcessTemplate</code><span class="sig-paren">(</span><em class="sig-param">*, name: str, headers: List[str], attribute_template: gemd.entity.link_by_uid.LinkByUID, process_template: gemd.entity.link_by_uid.LinkByUID, attribute_constraints: Optional[List[List[Union[gemd.entity.link_by_uid.LinkByUID, gemd.entity.bounds.base_bounds.BaseBounds]]]] = None, type_selector: citrine.ara.variables.DataObjectTypeSelector = &lt;DataObjectTypeSelector.PREFER_RUN: 'prefer_run'&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.ara.variables.AttributeByTemplateAfterProcessTemplate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.ara.variables.Variable" title="citrine.ara.variables.Variable"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.ara.variables.Variable</span></code></a></p>
 <p>[ALPHA] Attribute of an object marked by an attribute template and a parent process template.</p>
 <dl class="field-list simple">
@@ -94,6 +100,7 @@ variable is being set to may be the target of a constraint as well.</p></li>
 <li><p><strong>attribute_constraints</strong> (<em>list</em><em>[</em><em>(</em><em>LinkByUID</em><em>, </em><em>Bounds</em><em>)</em><em>]</em>) – constraints on object attributes in the target object that must be satisfied. Constraints
 are expressed as Bounds.  Attributes are expressed with links. The attribute that the
 variable is being set to may be the target of a constraint as well.</p></li>
+<li><p><strong>type_selector</strong> (<a class="reference internal" href="#citrine.ara.variables.DataObjectTypeSelector" title="citrine.ara.variables.DataObjectTypeSelector"><em>DataObjectTypeSelector</em></a>) – strategy for selecting data object types to consider when matching, defaults to PREFER_RUN</p></li>
 </ul>
 </dd>
 </dl>
@@ -127,11 +134,16 @@ variable is being set to may be the target of a constraint as well.</p></li>
 <code class="sig-name descname">typ</code><em class="property"> = 'attribute_after_process'</em><a class="headerlink" href="#citrine.ara.variables.AttributeByTemplateAfterProcessTemplate.typ" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
+<dl class="attribute">
+<dt id="citrine.ara.variables.AttributeByTemplateAfterProcessTemplate.type_selector">
+<code class="sig-name descname">type_selector</code><em class="property"> = None</em><a class="headerlink" href="#citrine.ara.variables.AttributeByTemplateAfterProcessTemplate.type_selector" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 <dl class="class">
 <dt id="citrine.ara.variables.AttributeByTemplateAndObjectTemplate">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.ara.variables.</code><code class="sig-name descname">AttributeByTemplateAndObjectTemplate</code><span class="sig-paren">(</span><em class="sig-param">*, name: str, headers: List[str], attribute_template: gemd.entity.link_by_uid.LinkByUID, object_template: gemd.entity.link_by_uid.LinkByUID, attribute_constraints: List[List[Union[gemd.entity.link_by_uid.LinkByUID, gemd.entity.bounds.base_bounds.BaseBounds]]] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.ara.variables.AttributeByTemplateAndObjectTemplate" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">citrine.ara.variables.</code><code class="sig-name descname">AttributeByTemplateAndObjectTemplate</code><span class="sig-paren">(</span><em class="sig-param">*, name: str, headers: List[str], attribute_template: gemd.entity.link_by_uid.LinkByUID, object_template: gemd.entity.link_by_uid.LinkByUID, attribute_constraints: List[List[Union[gemd.entity.link_by_uid.LinkByUID, gemd.entity.bounds.base_bounds.BaseBounds]]] = None, type_selector: citrine.ara.variables.DataObjectTypeSelector = &lt;DataObjectTypeSelector.PREFER_RUN: 'prefer_run'&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.ara.variables.AttributeByTemplateAndObjectTemplate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.ara.variables.Variable" title="citrine.ara.variables.Variable"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.ara.variables.Variable</span></code></a></p>
 <p>[ALPHA] Attribute marked by an attribute template and an object template.</p>
 <p>For example, one property may be measured by two different measurement techniques.  In this
@@ -148,6 +160,7 @@ measure that otherwise ambiguous property.</p>
 <li><p><strong>attribute_constraints</strong> (<em>list</em><em>[</em><em>(</em><em>LinkByUID</em><em>, </em><em>Bounds</em><em>)</em><em>]</em>) – constraints on object attributes in the target object that must be satisfied. Constraints
 are expressed as Bounds.  Attributes are expressed with links. The attribute that the
 variable is being set to may be the target of a constraint as well.</p></li>
+<li><p><strong>type_selector</strong> (<a class="reference internal" href="#citrine.ara.variables.DataObjectTypeSelector" title="citrine.ara.variables.DataObjectTypeSelector"><em>DataObjectTypeSelector</em></a>) – strategy for selecting data object types to consider when matching, defaults to PREFER_RUN</p></li>
 </ul>
 </dd>
 </dl>
@@ -181,11 +194,16 @@ variable is being set to may be the target of a constraint as well.</p></li>
 <code class="sig-name descname">typ</code><em class="property"> = 'attribute_by_object'</em><a class="headerlink" href="#citrine.ara.variables.AttributeByTemplateAndObjectTemplate.typ" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
+<dl class="attribute">
+<dt id="citrine.ara.variables.AttributeByTemplateAndObjectTemplate.type_selector">
+<code class="sig-name descname">type_selector</code><em class="property"> = None</em><a class="headerlink" href="#citrine.ara.variables.AttributeByTemplateAndObjectTemplate.type_selector" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 <dl class="class">
 <dt id="citrine.ara.variables.AttributeInOutput">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.ara.variables.</code><code class="sig-name descname">AttributeInOutput</code><span class="sig-paren">(</span><em class="sig-param">*, name: str, headers: List[str], attribute_template: gemd.entity.link_by_uid.LinkByUID, process_templates: List[gemd.entity.link_by_uid.LinkByUID], attribute_constraints: Optional[List[List[Union[gemd.entity.link_by_uid.LinkByUID, gemd.entity.bounds.base_bounds.BaseBounds]]]] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.ara.variables.AttributeInOutput" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">citrine.ara.variables.</code><code class="sig-name descname">AttributeInOutput</code><span class="sig-paren">(</span><em class="sig-param">*, name: str, headers: List[str], attribute_template: gemd.entity.link_by_uid.LinkByUID, process_templates: List[gemd.entity.link_by_uid.LinkByUID], attribute_constraints: Optional[List[List[Union[gemd.entity.link_by_uid.LinkByUID, gemd.entity.bounds.base_bounds.BaseBounds]]]] = None, type_selector: citrine.ara.variables.DataObjectTypeSelector = &lt;DataObjectTypeSelector.PREFER_RUN: 'prefer_run'&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.ara.variables.AttributeInOutput" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.ara.variables.Variable" title="citrine.ara.variables.Variable"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.ara.variables.Variable</span></code></a></p>
 <p>[ALPHA] Attribute marked by an attribute template in the trunk of the history tree.</p>
 <p>The search for an attribute that marks the given attribute template starts at the root
@@ -214,6 +232,7 @@ attribute.  The attribute may be present in these processes but not their ingred
 <li><p><strong>attribute_constraints</strong> (<em>Optional</em><em>[</em><em>list</em><em>[</em><em>(</em><em>LinkByUID</em><em>, </em><em>Bounds</em><em>)</em><em>]</em><em>]</em>) – constraints on object attributes in the target object that must be satisfied. Constraints
 are expressed as Bounds.  Attributes are expressed with links. The attribute that the
 variable is being set to may be the target of a constraint as well.</p></li>
+<li><p><strong>type_selector</strong> (<a class="reference internal" href="#citrine.ara.variables.DataObjectTypeSelector" title="citrine.ara.variables.DataObjectTypeSelector"><em>DataObjectTypeSelector</em></a>) – strategy for selecting data object types to consider when matching, defaults to PREFER_RUN</p></li>
 </ul>
 </dd>
 </dl>
@@ -247,11 +266,62 @@ variable is being set to may be the target of a constraint as well.</p></li>
 <code class="sig-name descname">typ</code><em class="property"> = 'attribute_in_trunk'</em><a class="headerlink" href="#citrine.ara.variables.AttributeInOutput.typ" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
+<dl class="attribute">
+<dt id="citrine.ara.variables.AttributeInOutput.type_selector">
+<code class="sig-name descname">type_selector</code><em class="property"> = None</em><a class="headerlink" href="#citrine.ara.variables.AttributeInOutput.type_selector" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="citrine.ara.variables.DataObjectTypeSelector">
+<em class="property">class </em><code class="sig-prename descclassname">citrine.ara.variables.</code><code class="sig-name descname">DataObjectTypeSelector</code><span class="sig-paren">(</span><em class="sig-param">*args</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.ara.variables.DataObjectTypeSelector" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.enumeration.base_enumeration.html#gemd.enumeration.base_enumeration.BaseEnumeration" title="(in GEMD-python)"><code class="xref py py-class docutils literal notranslate"><span class="pre">gemd.enumeration.base_enumeration.BaseEnumeration</span></code></a></p>
+<p>[ALPHA] The strategy for selecting types to consider for variable matching.</p>
+<p>Variables can potentially match many objects in a material history, creating
+ambiguity around which value should be assigned. In particular, associated
+runs and specs often share attributes and thus will often match the same
+variable. To enable disambiguation in such circumstances, many variables allow
+specification of a <cite>type_selector</cite>, with the following choices:</p>
+<ul class="simple">
+<li><p>RUN_ONLY only match run objects</p></li>
+<li><p>SPEC_ONLY only match spec objects</p></li>
+<li><dl class="simple">
+<dt>PREFER_RUN match either run or spec objects, and if both types match</dt><dd><p>only return the result for runs</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>ANY match either run or spec objects, and if both types match</dt><dd><p>return an ambiguous error result</p>
+</dd>
+</dl>
+</li>
+</ul>
+<dl class="attribute">
+<dt id="citrine.ara.variables.DataObjectTypeSelector.ANY">
+<code class="sig-name descname">ANY</code><em class="property"> = 'any'</em><a class="headerlink" href="#citrine.ara.variables.DataObjectTypeSelector.ANY" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.ara.variables.DataObjectTypeSelector.PREFER_RUN">
+<code class="sig-name descname">PREFER_RUN</code><em class="property"> = 'prefer_run'</em><a class="headerlink" href="#citrine.ara.variables.DataObjectTypeSelector.PREFER_RUN" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.ara.variables.DataObjectTypeSelector.RUN_ONLY">
+<code class="sig-name descname">RUN_ONLY</code><em class="property"> = 'run_only'</em><a class="headerlink" href="#citrine.ara.variables.DataObjectTypeSelector.RUN_ONLY" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.ara.variables.DataObjectTypeSelector.SPEC_ONLY">
+<code class="sig-name descname">SPEC_ONLY</code><em class="property"> = 'spec_only'</em><a class="headerlink" href="#citrine.ara.variables.DataObjectTypeSelector.SPEC_ONLY" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 <dl class="class">
 <dt id="citrine.ara.variables.IngredientIdentifierByProcessTemplateAndName">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.ara.variables.</code><code class="sig-name descname">IngredientIdentifierByProcessTemplateAndName</code><span class="sig-paren">(</span><em class="sig-param">*, name: str, headers: List[str], process_template: gemd.entity.link_by_uid.LinkByUID, ingredient_name: str, scope: str</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.ara.variables.IngredientIdentifierByProcessTemplateAndName" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">citrine.ara.variables.</code><code class="sig-name descname">IngredientIdentifierByProcessTemplateAndName</code><span class="sig-paren">(</span><em class="sig-param">*, name: str, headers: List[str], process_template: gemd.entity.link_by_uid.LinkByUID, ingredient_name: str, scope: str, type_selector: citrine.ara.variables.DataObjectTypeSelector = &lt;DataObjectTypeSelector.PREFER_RUN: 'prefer_run'&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.ara.variables.IngredientIdentifierByProcessTemplateAndName" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.ara.variables.Variable" title="citrine.ara.variables.Variable"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.ara.variables.Variable</span></code></a></p>
 <p>[ALPHA] Ingredient identifier associated with a process template and a name.</p>
 <dl class="field-list simple">
@@ -262,6 +332,7 @@ variable is being set to may be the target of a constraint as well.</p></li>
 <li><p><strong>process_template</strong> (<em>LinkByUID</em>) – process template associated with this ingredient identifier</p></li>
 <li><p><strong>ingredient_name</strong> (<em>str</em>) – name of ingredient</p></li>
 <li><p><strong>scope</strong> (<em>str</em>) – scope of the identifier (default: the Citrine scope)</p></li>
+<li><p><strong>type_selector</strong> (<a class="reference internal" href="#citrine.ara.variables.DataObjectTypeSelector" title="citrine.ara.variables.DataObjectTypeSelector"><em>DataObjectTypeSelector</em></a>) – strategy for selecting data object types to consider when matching, defaults to PREFER_RUN</p></li>
 </ul>
 </dd>
 </dl>
@@ -295,11 +366,16 @@ variable is being set to may be the target of a constraint as well.</p></li>
 <code class="sig-name descname">typ</code><em class="property"> = 'ing_id_by_process_and_name'</em><a class="headerlink" href="#citrine.ara.variables.IngredientIdentifierByProcessTemplateAndName.typ" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
+<dl class="attribute">
+<dt id="citrine.ara.variables.IngredientIdentifierByProcessTemplateAndName.type_selector">
+<code class="sig-name descname">type_selector</code><em class="property"> = None</em><a class="headerlink" href="#citrine.ara.variables.IngredientIdentifierByProcessTemplateAndName.type_selector" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 <dl class="class">
 <dt id="citrine.ara.variables.IngredientIdentifierInOutput">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.ara.variables.</code><code class="sig-name descname">IngredientIdentifierInOutput</code><span class="sig-paren">(</span><em class="sig-param">*, name: str, headers: List[str], ingredient_name: str, process_templates: List[gemd.entity.link_by_uid.LinkByUID]</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.ara.variables.IngredientIdentifierInOutput" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">citrine.ara.variables.</code><code class="sig-name descname">IngredientIdentifierInOutput</code><span class="sig-paren">(</span><em class="sig-param">*, name: str, headers: List[str], ingredient_name: str, process_templates: List[gemd.entity.link_by_uid.LinkByUID], type_selector: citrine.ara.variables.DataObjectTypeSelector = &lt;DataObjectTypeSelector.PREFER_RUN: 'prefer_run'&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.ara.variables.IngredientIdentifierInOutput" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.ara.variables.Variable" title="citrine.ara.variables.Variable"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.ara.variables.Variable</span></code></a></p>
 <p>[ALPHA] Ingredient quantity in the trunk of a material history tree.</p>
 <p>The search for an ingredient quantity starts at the terminal material and proceeds until
@@ -333,6 +409,7 @@ once when mixing red and again when mixing the final paint.</p>
 <li><p><strong>process_templates</strong> (<em>list</em><em>[</em><em>LinkByUID</em><em>]</em>) – Process templates halt the search for a matching ingredient name.
 These process templates are inclusive.
 The ingredient may be present in these processes but not after.</p></li>
+<li><p><strong>type_selector</strong> (<a class="reference internal" href="#citrine.ara.variables.DataObjectTypeSelector" title="citrine.ara.variables.DataObjectTypeSelector"><em>DataObjectTypeSelector</em></a>) – strategy for selecting data object types to consider when matching, defaults to PREFER_RUN</p></li>
 </ul>
 </dd>
 </dl>
@@ -361,11 +438,16 @@ The ingredient may be present in these processes but not after.</p></li>
 <code class="sig-name descname">typ</code><em class="property"> = 'ing_id_in_output'</em><a class="headerlink" href="#citrine.ara.variables.IngredientIdentifierInOutput.typ" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
+<dl class="attribute">
+<dt id="citrine.ara.variables.IngredientIdentifierInOutput.type_selector">
+<code class="sig-name descname">type_selector</code><em class="property"> = None</em><a class="headerlink" href="#citrine.ara.variables.IngredientIdentifierInOutput.type_selector" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 <dl class="class">
 <dt id="citrine.ara.variables.IngredientLabelByProcessAndName">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.ara.variables.</code><code class="sig-name descname">IngredientLabelByProcessAndName</code><span class="sig-paren">(</span><em class="sig-param">*, name: str, headers: List[str], process_template: gemd.entity.link_by_uid.LinkByUID, ingredient_name: str, label: str</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.ara.variables.IngredientLabelByProcessAndName" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">citrine.ara.variables.</code><code class="sig-name descname">IngredientLabelByProcessAndName</code><span class="sig-paren">(</span><em class="sig-param">*, name: str, headers: List[str], process_template: gemd.entity.link_by_uid.LinkByUID, ingredient_name: str, label: str, type_selector: citrine.ara.variables.DataObjectTypeSelector = &lt;DataObjectTypeSelector.PREFER_RUN: 'prefer_run'&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.ara.variables.IngredientLabelByProcessAndName" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.ara.variables.Variable" title="citrine.ara.variables.Variable"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.ara.variables.Variable</span></code></a></p>
 <p>[ALPHA] Define a boolean variable indicating whether a given label is applied.</p>
 <p>Matches by process template, ingredient name, and the label string to check.</p>
@@ -380,6 +462,7 @@ average density of the solvents”.</p>
 <li><p><strong>process_template</strong> (<em>LinkByUID</em>) – process template associated with this ingredient identifier</p></li>
 <li><p><strong>ingredient_name</strong> (<em>str</em>) – name of ingredient</p></li>
 <li><p><strong>label</strong> (<em>str</em>) – label to test</p></li>
+<li><p><strong>type_selector</strong> (<a class="reference internal" href="#citrine.ara.variables.DataObjectTypeSelector" title="citrine.ara.variables.DataObjectTypeSelector"><em>DataObjectTypeSelector</em></a>) – strategy for selecting data object types to consider when matching, defaults to PREFER_RUN</p></li>
 </ul>
 </dd>
 </dl>
@@ -413,11 +496,16 @@ average density of the solvents”.</p>
 <code class="sig-name descname">typ</code><em class="property"> = 'ing_label_by_process_and_name'</em><a class="headerlink" href="#citrine.ara.variables.IngredientLabelByProcessAndName.typ" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
+<dl class="attribute">
+<dt id="citrine.ara.variables.IngredientLabelByProcessAndName.type_selector">
+<code class="sig-name descname">type_selector</code><em class="property"> = None</em><a class="headerlink" href="#citrine.ara.variables.IngredientLabelByProcessAndName.type_selector" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 <dl class="class">
 <dt id="citrine.ara.variables.IngredientQuantityByProcessAndName">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.ara.variables.</code><code class="sig-name descname">IngredientQuantityByProcessAndName</code><span class="sig-paren">(</span><em class="sig-param">*, name: str, headers: List[str], process_template: gemd.entity.link_by_uid.LinkByUID, ingredient_name: str, quantity_dimension: citrine.ara.variables.IngredientQuantityDimension</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.ara.variables.IngredientQuantityByProcessAndName" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">citrine.ara.variables.</code><code class="sig-name descname">IngredientQuantityByProcessAndName</code><span class="sig-paren">(</span><em class="sig-param">*, name: str, headers: List[str], process_template: gemd.entity.link_by_uid.LinkByUID, ingredient_name: str, quantity_dimension: citrine.ara.variables.IngredientQuantityDimension, type_selector: citrine.ara.variables.DataObjectTypeSelector = &lt;DataObjectTypeSelector.PREFER_RUN: 'prefer_run'&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.ara.variables.IngredientQuantityByProcessAndName" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.ara.variables.Variable" title="citrine.ara.variables.Variable"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.ara.variables.Variable</span></code></a></p>
 <p>[ALPHA] Get the quantity of an ingredient associated with a process template and a name.</p>
 <dl class="field-list simple">
@@ -429,6 +517,7 @@ average density of the solvents”.</p>
 <li><p><strong>ingredient_name</strong> (<em>str</em>) – name of ingredient</p></li>
 <li><p><strong>quantity_dimension</strong> (<a class="reference internal" href="#citrine.ara.variables.IngredientQuantityDimension" title="citrine.ara.variables.IngredientQuantityDimension"><em>IngredientQuantityDimension</em></a>) – dimension of the ingredient quantity: absolute quantity, number, mass, or volume fraction.
 valid options are defined by <a class="reference internal" href="#citrine.ara.variables.IngredientQuantityDimension" title="citrine.ara.variables.IngredientQuantityDimension"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientQuantityDimension</span></code></a></p></li>
+<li><p><strong>type_selector</strong> (<a class="reference internal" href="#citrine.ara.variables.DataObjectTypeSelector" title="citrine.ara.variables.DataObjectTypeSelector"><em>DataObjectTypeSelector</em></a>) – strategy for selecting data object types to consider when matching, defaults to PREFER_RUN</p></li>
 </ul>
 </dd>
 </dl>
@@ -460,6 +549,11 @@ valid options are defined by <a class="reference internal" href="#citrine.ara.va
 <dl class="attribute">
 <dt id="citrine.ara.variables.IngredientQuantityByProcessAndName.typ">
 <code class="sig-name descname">typ</code><em class="property"> = 'ing_quantity_by_process_and_name'</em><a class="headerlink" href="#citrine.ara.variables.IngredientQuantityByProcessAndName.typ" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.ara.variables.IngredientQuantityByProcessAndName.type_selector">
+<code class="sig-name descname">type_selector</code><em class="property"> = None</em><a class="headerlink" href="#citrine.ara.variables.IngredientQuantityByProcessAndName.type_selector" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -499,7 +593,7 @@ valid options are defined by <a class="reference internal" href="#citrine.ara.va
 
 <dl class="class">
 <dt id="citrine.ara.variables.IngredientQuantityInOutput">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.ara.variables.</code><code class="sig-name descname">IngredientQuantityInOutput</code><span class="sig-paren">(</span><em class="sig-param">*, name: str, headers: List[str], ingredient_name: str, quantity_dimension: citrine.ara.variables.IngredientQuantityDimension, process_templates: List[gemd.entity.link_by_uid.LinkByUID]</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.ara.variables.IngredientQuantityInOutput" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">citrine.ara.variables.</code><code class="sig-name descname">IngredientQuantityInOutput</code><span class="sig-paren">(</span><em class="sig-param">*, name: str, headers: List[str], ingredient_name: str, quantity_dimension: citrine.ara.variables.IngredientQuantityDimension, process_templates: List[gemd.entity.link_by_uid.LinkByUID], type_selector: citrine.ara.variables.DataObjectTypeSelector = &lt;DataObjectTypeSelector.PREFER_RUN: 'prefer_run'&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.ara.variables.IngredientQuantityInOutput" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.ara.variables.Variable" title="citrine.ara.variables.Variable"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.ara.variables.Variable</span></code></a></p>
 <p>[ALPHA] Ingredient identifier in the trunk of a material history tree.</p>
 <p>The search for an identifier starts at the terminal material and proceeds until any of the
@@ -534,6 +628,7 @@ valid options are defined by <a class="reference internal" href="#citrine.ara.va
 <li><p><strong>process_templates</strong> (<em>list</em><em>[</em><em>LinkByUID</em><em>]</em>) – Process templates halt the search for a matching ingredient name.
 These process templates are inclusive.
 The ingredient may be present in these processes but not after.</p></li>
+<li><p><strong>type_selector</strong> (<a class="reference internal" href="#citrine.ara.variables.DataObjectTypeSelector" title="citrine.ara.variables.DataObjectTypeSelector"><em>DataObjectTypeSelector</em></a>) – strategy for selecting data object types to consider when matching, defaults to PREFER_RUN</p></li>
 </ul>
 </dd>
 </dl>
@@ -565,6 +660,11 @@ The ingredient may be present in these processes but not after.</p></li>
 <dl class="attribute">
 <dt id="citrine.ara.variables.IngredientQuantityInOutput.typ">
 <code class="sig-name descname">typ</code><em class="property"> = 'ing_quantity_in_output'</em><a class="headerlink" href="#citrine.ara.variables.IngredientQuantityInOutput.typ" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.ara.variables.IngredientQuantityInOutput.type_selector">
+<code class="sig-name descname">type_selector</code><em class="property"> = None</em><a class="headerlink" href="#citrine.ara.variables.IngredientQuantityInOutput.type_selector" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -774,6 +874,7 @@ required at all is simply a limitation of the current API.</p>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/data_sources.html">4.7. Data Sources</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/predictor_reports.html">4.8. Predictor reports</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/performance_workflows.html">4.9. Performance workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/code_examples.html">4.10. AI Engine Code Examples</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">5. FAQ</a><ul>

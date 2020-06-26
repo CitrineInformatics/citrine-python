@@ -1,0 +1,273 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>4.10. AI Engine Code Examples &#8212; Citrine Python 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="../_static/favicon.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="5. FAQ" href="../FAQ/index.html" />
+    <link rel="prev" title="4.9. Performance workflows" href="performance_workflows.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="ai-engine-code-examples">
+<h1>4.10. AI Engine Code Examples<a class="headerlink" href="#ai-engine-code-examples" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="example-preprocessing-and-postprocessing-in-a-graphpredictor">
+<h2>4.10.1. Example: preprocessing and postprocessing in a GraphPredictor<a class="headerlink" href="#example-preprocessing-and-postprocessing-in-a-graphpredictor" title="Permalink to this headline">¶</a></h2>
+<p>Within a <a class="reference internal" href="../reference/citrine.informatics.predictors.html#citrine.informatics.predictors.GraphPredictor" title="citrine.informatics.predictors.GraphPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">GraphPredictor</span></code></a>, one can use <a class="reference internal" href="../reference/citrine.informatics.predictors.html#citrine.informatics.predictors.ExpressionPredictor" title="citrine.informatics.predictors.ExpressionPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExpressionPredictor</span></code></a> modules to preprocess data before performing machine learning with a <a class="reference internal" href="../reference/citrine.informatics.predictors.html#citrine.informatics.predictors.SimpleMLPredictor" title="citrine.informatics.predictors.SimpleMLPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleMLPredictor</span></code></a>, and to post-process the SimpleMLPredictor’s output.
+This is a very common and powerful use case for graphical modeling.
+Here we show an example of how to combine these modules to accomplish those many suitable tasks.</p>
+<p>Using ExpressionPredictors to perform pre-processing can be used to featurize data, which is a valuable way to leverage domain knowledge by transforming raw inputs into quantities known to be relevant.
+In the example below, we use an ExpressionPredictor to annotate the training data with a “hydration ratio”.
+The hydration ratio is the mass ratio of water to flour.
+Bakers know this quantity to be of fundamental importance to the taste and texture of bread, so computing this quantity might be expected to help the SimpleMLPredictor make more efficient use of scarce training data.
+(In a more standard materials science context, an ExpressionPredictor might be used to annotate semiconductor data with an analytical expression of idealized electron mobility as a function of dopant concentrations.)</p>
+<p>In the example below, we use the ExpressionPredictor feature to compute a bread loaf product’s shelf life as a figure of merit.
+This simulates a scenario where shelf life is determined by a deterministic quality control rule that depends on a few physically measurable quantities: <code class="docutils literal notranslate"><span class="pre">final</span> <span class="pre">pH</span></code> and <code class="docutils literal notranslate"><span class="pre">final</span> <span class="pre">hydration</span></code> as estimated by the SimpleMLPredictor, as well as the fraction of salt in the ingredients.
+Using ExpressionPredictors in this manner to post-process learned data is often useful for displaying information on the platform based on transformations of the learned physical properties.
+This pattern is also extremely useful for performing optimization over complex objectives: in the following example, we can use shelf life as an objective or constraint in a <a class="reference internal" href="design_workflows.html"><span class="doc">DesignWorkflow</span></a>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.informatics.descriptors</span> <span class="kn">import</span> <span class="n">RealDescriptor</span>
+<span class="kn">from</span> <span class="nn">citrine.informatics.predictors</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ExpressionPredictor</span><span class="p">,</span>
+    <span class="n">GraphPredictor</span><span class="p">,</span>
+    <span class="n">SimpleMLPredictor</span>
+<span class="p">)</span>
+
+<span class="c1">######## Omitted step: create DataSource with columns associated with the following descriptors ########</span>
+<span class="c1"># wheat_flour_quantity = RealDescriptor(</span>
+<span class="c1">#     &#39;wheat flour mass&#39;, lower_bound=300, upper_bound=550, units=&quot;g&quot;)</span>
+<span class="c1"># rye_flour_quantity = RealDescriptor(</span>
+<span class="c1">#     &#39;rye flour mass&#39;, lower_bound=0, upper_bound=100, units=&quot;g&quot;)</span>
+<span class="c1"># water_quantity = RealDescriptor(</span>
+<span class="c1">#    &#39;water mass&#39;, lower_bound=200, upper_bound=400, units=&quot;g&quot;)</span>
+<span class="c1"># salt_quantity = RealDescriptor(</span>
+<span class="c1">#    &#39;salt mass&#39;, lower_bound=4, upper_bound=8, units=&quot;g&quot;)</span>
+<span class="c1"># starter_quantity = RealDescriptor(</span>
+<span class="c1">#    &#39;starter mass&#39;, lower_bound=5, upper_bound=30, units=&quot;g&quot;)</span>
+<span class="c1"># final_ph = RealDescriptor(</span>
+<span class="c1">#    &#39;final pH&#39;, lower_bound=2.5, upper_bound=5, units=&quot;&quot;)</span>
+<span class="c1"># final_loaf_hydration = RealDescriptor(</span>
+<span class="c1">#    &#39;final loaf hydration&#39;, lower_bound=0, upper_bound=100, units=&quot;&quot;)</span>
+<span class="c1">#</span>
+<span class="c1"># data_source = create_ara_data_source_from_breads_gemd(</span>
+<span class="c1">#    descriptors=[...descriptors above...])</span>
+
+<span class="n">dough_hydration</span> <span class="o">=</span> <span class="n">RealDescriptor</span><span class="p">(</span>
+    <span class="s1">&#39;dough hydration&#39;</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">shelf_life</span> <span class="o">=</span> <span class="n">RealDescriptor</span><span class="p">(</span>
+    <span class="s1">&#39;approximate shelf life&#39;</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mi">72</span><span class="p">)</span>
+
+<span class="n">dough_hydration_calculator</span> <span class="o">=</span> <span class="n">ExpressionPredictor</span><span class="p">(</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;dough hydration calculator&#39;</span><span class="p">,</span>
+    <span class="n">expression</span> <span class="o">=</span> <span class="s1">&#39;(water + 0.5*starter) / (wheat + rye + 0.5*starter)&#39;</span><span class="p">,</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">dough_hydration</span><span class="p">,</span>
+    <span class="n">aliases</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;wheat&#39;</span><span class="p">:</span> <span class="s1">&#39;wheat flour mass&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;rye&#39;</span><span class="p">:</span> <span class="s1">&#39;rye flour mass&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;water&#39;</span><span class="p">:</span> <span class="s1">&#39;water mass&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;starter&#39;</span><span class="p">:</span> <span class="s1">&#39;starter mass&#39;</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+
+<span class="n">physical_properties_predictor</span> <span class="o">=</span> <span class="n">SimpleMLModel</span><span class="p">(</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;physical properties model&#39;</span><span class="p">,</span>
+    <span class="n">inputs</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">wheat_flour_quantity</span><span class="p">,</span>
+        <span class="n">rye_flour_quantity</span><span class="p">,</span>
+        <span class="n">water_quantity</span><span class="p">,</span>
+        <span class="n">salt_quantity</span><span class="p">,</span>
+        <span class="n">starter_quantity</span><span class="p">,</span>
+        <span class="n">dough_hydration</span>
+    <span class="p">],</span>
+    <span class="n">outputs</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">final_ph</span><span class="p">,</span>
+        <span class="n">final_loaf_hydration</span><span class="p">,</span>
+    <span class="p">],</span>
+    <span class="n">training_data</span><span class="o">=</span><span class="n">training_table</span>
+<span class="p">)</span>
+
+<span class="n">shelf_life_calculator</span> <span class="o">=</span> <span class="n">ExpressionPredictor</span><span class="p">(</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;shelf life estimator&#39;</span><span class="p">,</span>
+    <span class="n">expression</span> <span class="o">=</span> <span class="s1">&#39;4*exp(-0.1*pH - 1.3*w^2 + 5*(water+0.5*starter)/(wheat+rye+water+starter))&#39;</span><span class="p">,</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">shelf_life</span><span class="p">,</span>
+    <span class="n">aliases</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;pH&#39;</span><span class="p">:</span> <span class="s1">&#39;final pH&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;w&#39;</span><span class="p">:</span> <span class="s1">&#39;final loaf hydration&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;wheat&#39;</span><span class="p">:</span> <span class="s1">&#39;wheat flour mass&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;rye&#39;</span><span class="p">:</span> <span class="s1">&#39;rye flour mass&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;water&#39;</span><span class="p">:</span> <span class="s1">&#39;water mass&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;starter&#39;</span><span class="p">:</span> <span class="s1">&#39;starter mass&#39;</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+
+<span class="n">graph_predictor</span> <span class="o">=</span> <span class="n">GraphPredictor</span><span class="p">(</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;bread shelf life predictor&#39;</span><span class="p">,</span>
+    <span class="n">description</span> <span class="o">=</span> <span class="s1">&#39;Uses bread ingredients to estimate shelf life, given a fixed manufacturing process&#39;</span><span class="p">,</span>
+    <span class="n">predictors</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">dough_hydration_calculator</span><span class="p">,</span>
+        <span class="n">physical_properties_predictor</span><span class="p">,</span>
+        <span class="n">shelf_life_calculator</span>
+    <span class="p">]</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>This example is visualized below.
+Nodes with dashed outlines represent degrees of freedom in the recipe, and those with solid outlines represent predictors.
+Nodes with dotted outlines represent predicted quantities; note that only <code class="docutils literal notranslate"><span class="pre">final</span> <span class="pre">pH</span></code> and <code class="docutils literal notranslate"><span class="pre">final</span> <span class="pre">loaf</span> <span class="pre">hydration</span></code> are the only predicted quantities that exist in the training data.</p>
+<p><a class="reference internal" href="../_images/bread_predictor_graph_viz.jpg"><img alt="Visualization of graph predictor." src="../_images/bread_predictor_graph_viz.jpg" style="width: 800px;" /></a></p>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../index.html">
+    <img class="logo" src="../_static/logo.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=CitrineInformatics&repo=citrine-python&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/index.html">1. Getting Started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/connecting.html">1.1. Connecting to the Citrine Platform</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/basic_structure.html">1.2. Structure of the Citrine Python Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/basic_functionality.html">1.3. Using the Citrine Python Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/data_model.html">1.4. Data Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/public_access.html">1.5. Dataset Access Control</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/working_with_files.html">1.6. Working With Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/projects_and_users.html">1.7. Projects and Users</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/code_examples.html">1.8. Code Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../data_entry.html">2. Data Entry</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#creating-data-model-objects">2.1. Creating Data Model Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#identifiying-data-model-objects">2.2. Identifiying Data Model Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#registering-data-model-objects">2.3. Registering Data Model Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#finding-data-model-objects">2.4. Finding Data Model Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#referencing-data-model-objects">2.5. Referencing Data Model Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#validating-data-model-objects">2.6. Validating Data Model Objects</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../data_extraction.html">3. [ALPHA] Data Extraction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#defining-row-and-columns">3.1. Defining row and columns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#defining-tables">3.2. Defining tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#previewing-tables">3.3. Previewing tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#building-and-downloading-tables">3.4. Building and downloading tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-row-definitions">3.5. Available Row Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-variable-definitions">3.6. Available Variable Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-column-definitions">3.7. Available Column Definitions</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">4. [ALPHA] AI Engine</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="getting_started.html">4.1. Getting Started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="predictors.html">4.2. Predictors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="design_spaces.html">4.3. Design spaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="processors.html">4.4. Processors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="design_workflows.html">4.5. Design workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scores.html">4.6. Scores</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_sources.html">4.7. Data Sources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="predictor_reports.html">4.8. Predictor reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="performance_workflows.html">4.9. Performance workflows</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">4.10. AI Engine Code Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">5. FAQ</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../FAQ/prohibited_data_patterns.html">5.1. Prohibited Data Patterns</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">4. [ALPHA] AI Engine</a><ul>
+      <li>Previous: <a href="performance_workflows.html" title="previous chapter">4.9. Performance workflows</a></li>
+      <li>Next: <a href="../FAQ/index.html" title="next chapter">5. FAQ</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Citrine Informatics.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/workflows/code_examples.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

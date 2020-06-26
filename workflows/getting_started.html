@@ -104,6 +104,20 @@ Validation status can be one of the following states:</p>
 <li><p><strong>Error:</strong> Validation did not complete. An error was raised during the validation process that prevented an invalid or ready status to be determined.</p></li>
 </ul>
 <p>Validation of a workflow and all constituent modules must complete with ready status before the workflow can be executed.</p>
+<div class="section" id="experimental-functionality">
+<h3>4.1.3.1. Experimental functionality<a class="headerlink" href="#experimental-functionality" title="Permalink to this headline">¶</a></h3>
+<p>Both modules and workflows can be used to access experimental functionality on the platform.
+In some cases, the module or workflow type itself may be experimental.
+In other cases, whether a module or workflow represents experimental functionality may depend on the specific configuration of the module or workflow.
+For example, a module might have an experimental option that is turned off by default.
+Another example could be a workflow that contains an experimental module.
+Because the experimental status of a module or workflow may not be known at registration time, it is computed as part
+of the validation process and then returned via two fields:</p>
+<ul class="simple">
+<li><p><cite>experimental</cite> is a boolean field that is true when the module or workflow is experimental</p></li>
+<li><p><cite>experimental_reasons</cite> is a list of strings that describe what about the module or workflow makes it experimental</p></li>
+</ul>
+</div>
 </div>
 </div>
 
@@ -177,6 +191,7 @@ Validation status can be one of the following states:</p>
 <li class="toctree-l2"><a class="reference internal" href="data_sources.html">4.7. Data Sources</a></li>
 <li class="toctree-l2"><a class="reference internal" href="predictor_reports.html">4.8. Predictor reports</a></li>
 <li class="toctree-l2"><a class="reference internal" href="performance_workflows.html">4.9. Performance workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="code_examples.html">4.10. AI Engine Code Examples</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">5. FAQ</a><ul>
