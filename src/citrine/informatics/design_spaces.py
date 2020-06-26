@@ -60,7 +60,7 @@ class ProductDesignSpace(Resource['ProductDesignSpace'], DesignSpace):
         serializable=False
     )
     active = properties.Boolean('active', default=True)
-    experimental = properties.Boolean("experimental", serializable=False)
+    experimental = properties.Boolean("experimental", serializable=False, default=True)
     experimental_reasons = properties.Optional(
         properties.List(properties.String()),
         'experimental_reasons',
@@ -125,7 +125,7 @@ class EnumeratedDesignSpace(Resource['EnumeratedDesignSpace'], DesignSpace):
         serializable=False
     )
     active = properties.Boolean('active', default=True)
-    experimental = properties.Boolean("experimental", serializable=False)
+    experimental = properties.Boolean("experimental", serializable=False, default=True)
     experimental_reasons = properties.Optional(
         properties.List(properties.String()),
         'experimental_reasons',

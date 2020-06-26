@@ -67,7 +67,7 @@ class DesignWorkflow(Resource['DesignWorkflow'], Workflow):
         'status_info',
         serializable=False
     )
-    experimental = properties.Boolean("experimental", serializable=False)
+    experimental = properties.Boolean("experimental", serializable=False, default=True)
     experimental_reasons = properties.Optional(
         properties.List(properties.String()),
         'experimental_reasons',
@@ -127,7 +127,7 @@ class PerformanceWorkflow(Resource['PerformanceWorkflow'], Workflow):
         'status_info',
         serializable=False
     )
-    experimental = properties.Boolean("experimental", serializable=False)
+    experimental = properties.Boolean("experimental", serializable=False, default=True)
     experimental_reasons = properties.Optional(
         properties.List(properties.String()),
         'experimental_reasons',

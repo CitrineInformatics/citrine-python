@@ -103,7 +103,7 @@ class SimpleMLPredictor(Serializable['SimplePredictor'], Predictor):
         serializable=False
     )
     active = _properties.Boolean('active', default=True)
-    experimental = _properties.Boolean("experimental", serializable=False)
+    experimental = _properties.Boolean("experimental", serializable=False, default=True)
     experimental_reasons = _properties.Optional(
         _properties.List(_properties.String()),
         'experimental_reasons',
@@ -170,7 +170,7 @@ class GraphPredictor(Serializable['GraphPredictor'], Predictor):
         'status_info',
         serializable=False
     )
-    experimental = _properties.Boolean("experimental", serializable=False)
+    experimental = _properties.Boolean("experimental", serializable=False, default=True)
     experimental_reasons = _properties.Optional(
         _properties.List(_properties.String()),
         'experimental_reasons',
@@ -257,7 +257,7 @@ class ExpressionPredictor(Serializable['ExpressionPredictor'], Predictor):
         'status_info',
         serializable=False
     )
-    experimental = _properties.Boolean("experimental", serializable=False)
+    experimental = _properties.Boolean("experimental", serializable=False, default=True)
     experimental_reasons = _properties.Optional(
         _properties.List(_properties.String()),
         'experimental_reasons',
@@ -373,7 +373,7 @@ class MolecularStructureFeaturizer(Serializable['MolecularStructureFeaturizer'],
         serializable=False
     )
     active = _properties.Boolean('active', default=True)
-    experimental = _properties.Boolean("experimental", serializable=False)
+    experimental = _properties.Boolean("experimental", serializable=False, default=True)
     experimental_reasons = _properties.Optional(
         _properties.List(_properties.String()),
         'experimental_reasons',
@@ -448,7 +448,7 @@ class IngredientsToSimpleMixturePredictor(
         serializable=False
     )
     active = _properties.Boolean('active', default=True)
-    experimental = _properties.Boolean("experimental", serializable=False)
+    experimental = _properties.Boolean("experimental", serializable=False, default=True)
     experimental_reasons = _properties.Optional(
         _properties.List(_properties.String()),
         'experimental_reasons',
@@ -542,7 +542,7 @@ class GeneralizedMeanPropertyPredictor(
         serializable=False
     )
     active = _properties.Boolean('active', default=True)
-    experimental = _properties.Boolean("experimental", serializable=False)
+    experimental = _properties.Boolean("experimental", serializable=False, default=True)
     experimental_reasons = _properties.Optional(
         _properties.List(_properties.String()),
         'experimental_reasons',
@@ -619,7 +619,7 @@ class SimpleMixturePredictor(Serializable['SimpleMixturePredictor'], Predictor):
                                        'status_info',
                                        serializable=False)
     active = _properties.Boolean('active', default=True)
-    experimental = _properties.Boolean("experimental", serializable=False)
+    experimental = _properties.Boolean("experimental", serializable=False, default=True)
     experimental_reasons = _properties.Optional(
         _properties.List(_properties.String()),
         'experimental_reasons',
@@ -686,7 +686,7 @@ class LabelFractionsPredictor(Serializable['LabelFractionsPredictor'], Predictor
         serializable=False
     )
     active = _properties.Boolean('active', default=True)
-    experimental = _properties.Boolean("experimental", serializable=False)
+    experimental = _properties.Boolean("experimental", serializable=False, default=True)
     experimental_reasons = _properties.Optional(
         _properties.List(_properties.String()),
         'experimental_reasons',
@@ -755,7 +755,7 @@ class IngredientFractionsPredictor(Serializable["IngredientFractionsPredictor"],
         serializable=False
     )
     active = _properties.Boolean('active', default=True)
-    experimental = _properties.Boolean("experimental", serializable=False)
+    experimental = _properties.Boolean("experimental", serializable=False, default=True)
     experimental_reasons = _properties.Optional(
         _properties.List(_properties.String()),
         'experimental_reasons',

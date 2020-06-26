@@ -63,7 +63,7 @@ class GridProcessor(Serializable['GridProcessor'], Processor):
         serializable=False
     )
     active = properties.Boolean('active', default=True)
-    experimental = properties.Boolean("experimental", serializable=False)
+    experimental = properties.Boolean("experimental", serializable=False, default=True)
     experimental_reasons = properties.Optional(
         properties.List(properties.String()),
         'experimental_reasons',
@@ -120,7 +120,7 @@ class EnumeratedProcessor(Serializable['EnumeratedProcessor'], Processor):
         serializable=False
     )
     active = properties.Boolean('active', default=True)
-    experimental = properties.Boolean("experimental", serializable=False)
+    experimental = properties.Boolean("experimental", serializable=False, default=True)
     experimental_reasons = properties.Optional(
         properties.List(properties.String()),
         'experimental_reasons',
