@@ -76,7 +76,7 @@ setup(name='citrine',
       ],
       extras_require=[
           "pandas>=1.0.4,<2"
-      ]
+      ],
       cmdclass={
           'install': PostInstallCommand,
           'develop': PostDevelopCommand,
