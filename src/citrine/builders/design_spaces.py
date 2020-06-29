@@ -1,9 +1,9 @@
 import pandas as pd
 from itertools import product
-from typing import Mapping, Sequence, Any, List
-
+from typing import Mapping, Sequence, List
 from citrine.informatics.design_spaces import EnumeratedDesignSpace
 from citrine.informatics.descriptors import Descriptor
+
 
 def enumerate_cartesian_product(
     design_grids: Mapping[str, Sequence],
@@ -93,11 +93,12 @@ def enumerate_simple_mixture_cartesian_product(
     non_balance_grids = {
         k: v for k, v in formulation_grids.items()
         if k in non_balance_comps
-        }
+    }
     
     # Check that all grid values are between 0 and 1
     for kk, val_list in formulation_grids.items():
-        assert all([x>=0 for x in val_list]) and all([x<=1 for x in val_list]), \
+        assert all([x >= 0 for x in val_list]) and \
+            all([x <= 1 for x in val_list]), \
             f'values in {kk} are not between 0 and 1'
 
     # Start by making a naive product design space of non-balance components

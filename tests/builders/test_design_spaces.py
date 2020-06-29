@@ -3,7 +3,9 @@ import pytest
 
 from citrine.informatics.descriptors import RealDescriptor, CategoricalDescriptor
 from citrine.informatics.design_spaces import EnumeratedDesignSpace
-from citrine.builders.design_spaces import *
+from citrine.builders.design_spaces import enumerate_cartesian_product, \
+    enumerate_simple_mixture_cartesian_product, cartesian_join_design_spaces
+
 
 @pytest.fixture
 def basic_cartesian_space() -> EnumeratedDesignSpace:
@@ -14,7 +16,7 @@ def basic_cartesian_space() -> EnumeratedDesignSpace:
     design_grids = {
         'alpha': [0, 50, 100],
         'beta': [0, 25, 50, 75, 100],
-        'gamma': ['a','b','c']
+        'gamma': ['a', 'b', 'c']
     }
     basic_space = enumerate_cartesian_product(
         design_grids=design_grids,
