@@ -74,9 +74,11 @@ setup(name='citrine',
           "deprecation>=2.0.7,<3",
           "urllib3>=1.25.7,<2"
       ],
-      extras_require=[
-          "pandas>=1.0.4,<2"
-      ],
+      extras_require={
+          "builders": [
+              "pandas>=1.0.4,<2"
+          ]
+      },
       cmdclass={
           'install': PostInstallCommand,
           'develop': PostDevelopCommand,
