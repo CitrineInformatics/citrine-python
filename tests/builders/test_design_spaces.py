@@ -49,7 +49,7 @@ def simple_mixture_space() -> EnumeratedDesignSpace:
 
 
 @pytest.fixture
-def joint_design_space() -> EnumeratedDesignSpace:
+def joint_design_space(basic_cartesian_space, simple_mixture_space) -> EnumeratedDesignSpace:
     """Build joint design space from above two examples"""
     ds_list = [basic_cartesian_space, simple_mixture_space]
     joint_space = cartesian_join_design_spaces(

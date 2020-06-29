@@ -30,7 +30,6 @@ def enumerate_cartesian_product(
         description for the EnumeratedDesignSpace
 
     """
-
     design_space_tuples = list(product(*design_grids.values()))
     design_space_cols = list(design_grids.keys())
     df_ds = pd.DataFrame(data=design_space_tuples, columns=design_space_cols)
@@ -89,7 +88,6 @@ def enumerate_simple_mixture_cartesian_product(
         description for the EnumeratedDesignSpace
 
     """
-
     # Check that the passed balance component is in the grid keys
     assert balance_component in list(formulation_grids.keys()), \
         "balance component must be in formulation_grids' keys"
@@ -106,7 +104,7 @@ def enumerate_simple_mixture_cartesian_product(
     for kk, val_list in formulation_grids.items():
         assert all([x >= 0 for x in val_list]) and \
             all([x <= 1 for x in val_list]), \
-            f'values in {kk} are not between 0 and 1'
+            'values in {} are not between 0 and 1'.format(kk)
 
     # Start by making a naive product design space of non-balance components
 
@@ -161,7 +159,6 @@ def cartesian_join_design_spaces(
         A list of EnumeratedDesignSpaces
 
     """
-
     assert 'join_key' not in [ds.data[0].keys() for ds in design_space_list], \
         '"join_key" cannot be a descriptor key when using this function'
 
