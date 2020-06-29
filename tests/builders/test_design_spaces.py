@@ -51,7 +51,7 @@ def simple_mixture_space() -> EnumeratedDesignSpace:
 @pytest.fixture
 def joint_design_space() -> EnumeratedDesignSpace:
     """Build joint design space from above two examples"""
-    ds_list = [basic_cartesian_space(), simple_mixture_space()]
+    ds_list = [basic_cartesian_space, simple_mixture_space]
     joint_space = cartesian_join_design_spaces(
         design_space_list=ds_list,
         name='Joined enumerated design space',
@@ -68,8 +68,8 @@ def test_enumerated_cartesian(basic_cartesian_space):
 def test_simple_mixture(simple_mixture_space):
     """Check data length"""
     assert len(simple_mixture_space.data) == 25
-    
-    
+
+
 def test_joined(joint_design_space):
     """Check data length and number of descriptors"""
     assert len(joint_design_space.data) == 1125

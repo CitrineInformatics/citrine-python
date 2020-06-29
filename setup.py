@@ -76,7 +76,7 @@ setup(name='citrine',
       ],
       extras_require={
           "builders": [
-              "pandas>=1.0.4,<2"
+              "pandas>=0.25,<2"
           ]
       },
       cmdclass={
