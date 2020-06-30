@@ -142,12 +142,23 @@ class FakePaginatedSession(FakeSession):
         """
         if not self.responses:
             return {}
-
+        
         page = kwargs.get('page', 1)
         per_page = kwargs.get('per_page', 20)
 
         start_idx = (page - 1) * per_page
-        return self.responses[0][start_idx:start_idx + per_page]
+
+        # in case the response takes the shape of something like 
+        # {'projects': [Project1, Project2, etc.]}
+        has_collection_key = isinstance(self.responses[0], dict)
+
+        if has_collection_key:
+            key = list(self.responses[0].keys())[0]
+            list_values = self.responses[0][key][start_idx:start_idx + per_page]
+            return dict.fromkeys([key], list_values)
+
+        else:
+            return self.responses[0][start_idx:start_idx + per_page]
 
 
 class FakeS3Client:

@@ -16,3 +16,4 @@
     data_sources
     predictor_reports
     performance_workflows
+    code_examples
