@@ -24,7 +24,7 @@ class DesignSpaceCollection(Collection[DesignSpace]):
     _resource = DesignSpace
     _module_type = 'DESIGN_SPACE'
     _enumerated_descriptor_limit = 10
-    _enumerated_candidate_limit = 500
+    _enumerated_candidate_limit = 5000
 
     def __init__(self, project_id: UUID, session: Session = Session()):
         self.project_id = project_id
@@ -37,30 +37,32 @@ class DesignSpaceCollection(Collection[DesignSpace]):
         return design_space
 
     def validate_write_request(self, design_space: DesignSpace):
-        """Perform write-time validations of the design space registration or update
+        """Perform write-time validations of the design space registration or update.
 
-        EnumeratedDesignSpaces can be pretty big, so we want to return a helpful error message rather than let the
-        POST or PUT call fail because the request body is too big.  This validation is performed when the design
-        space is sent to the platform in case a user creates a large intermediate design space but then filters it down
-        before registering it.
+        EnumeratedDesignSpaces can be pretty big, so we want to return a helpful error message
+        rather than let the POST or PUT call fail because the request body is too big.  This
+        validation is performed when the design space is sent to the platform in case a user
+        creates a large intermediate design space but then filters it down before registering it.
         """
         if isinstance(design_space, EnumeratedDesignSpace):
-            if len(design_space.descriptors) > self._enumerated_descriptor_limit:
-                msg = "EnumeratedDesignSpace only supports up to {} descriptors but {} were given".format(
-                    self._enumerated_descriptor_limit, len(design_space.descriptors)
-                )
-                raise ValueError(msg)
-            if len(design_space.data) > self._enumerated_candidate_limit:
-                msg = "EnumeratedDesignSpace only supports up to {} candidates but {} were given".format(
-                    self._enumerated_candidate_limit, len(design_space.data)
-                )
-                raise ValueError(msg)
+            width = len(design_space.descriptors)
+            length = len(design_space.data)
+            if width > self._enumerated_descriptor_limit:
+                msg = "EnumeratedDesignSpace only supports up to {} descriptors, " \
+                      "but {} were given"
+                raise ValueError(msg.format(self._enumerated_descriptor_limit, width))
+            if length > self._enumerated_candidate_limit:
+                msg = "EnumeratedDesignSpace only supports up to {} candidates, " \
+                      "but {} were given"
+                raise ValueError(msg.format(self._enumerated_candidate_limit, length))
         return
 
     def register(self, model: DesignSpace) -> DesignSpace:
+        """Create a new design space."""
         self.validate_write_request(model)
         return Collection.register(self, model)
 
     def update(self, model: DesignSpace) -> DesignSpace:
+        """Update an existing design space by uid."""
         self.validate_write_request(model)
         return Collection.update(self, model)

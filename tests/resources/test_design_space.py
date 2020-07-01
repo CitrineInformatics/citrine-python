@@ -1,6 +1,12 @@
 import uuid
+from random import random
 
+import pytest
+
+from citrine.informatics.descriptors import RealDescriptor
+from citrine.informatics.design_spaces import EnumeratedDesignSpace
 from citrine.resources.design_space import DesignSpaceCollection
+from tests.utils.session import FakeSession
 
 
 def test_design_space_build():
@@ -39,3 +45,49 @@ def test_design_space_build():
     assert design_space.uid == design_space_id
     assert design_space.name == 'My Design Space'
     assert design_space.dimensions[0].descriptor.key == 'foo'
+
+
+def test_design_space_limits():
+    """Test that the validation logic is triggered before post/put-ing enumerated design spaces."""
+    # Given
+    collection = DesignSpaceCollection(uuid.uuid4(), FakeSession())
+
+    too_long = EnumeratedDesignSpace(
+        "foo",
+        "bar",
+        descriptors=[RealDescriptor("x", 0, 1)],
+        data=[{"x": random()} for _ in range(11000)]
+    )
+
+    too_wide = EnumeratedDesignSpace(
+        "foo",
+        "bar",
+        descriptors=[RealDescriptor("R-{}".format(i), 0, 1) for i in range(11)],
+        data=[]
+    )
+
+    just_right = EnumeratedDesignSpace(
+        "foo",
+        "bar",
+        descriptors=[RealDescriptor("R-{}".format(i), 0, 1) for i in range(10)],
+        data=[{"R-{}".format(i): random() for i in range(10)} for _ in range(1000)]
+    )
+
+    # Then
+    with pytest.raises(ValueError) as excinfo:
+        collection.register(too_long)
+    assert "only supports" in str(excinfo.value)
+
+    with pytest.raises(ValueError):
+        collection.update(too_wide)
+    assert "only supports" in str(excinfo.value)
+
+    # These still throw exceptions because we haven't setup the mock response
+    # But we can check the message to make sure it is NOT the exception from above
+    with pytest.raises(ValueError) as excinfo:
+        collection.register(just_right)
+    assert "only supports" not in str(excinfo.value)
+
+    with pytest.raises(ValueError) as excinfo:
+        collection.update(just_right)
+    assert "only supports" not in str(excinfo.value)
