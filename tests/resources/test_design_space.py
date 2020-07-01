@@ -56,7 +56,7 @@ def test_design_space_limits():
         "foo",
         "bar",
         descriptors=[RealDescriptor("x", 0, 1)],
-        data=[{"x": random()} for _ in range(11000)]
+        data=[{"x": random()} for _ in range(2001)]
     )
 
     too_wide = EnumeratedDesignSpace(

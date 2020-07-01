@@ -24,7 +24,7 @@ class DesignSpaceCollection(Collection[DesignSpace]):
     _resource = DesignSpace
     _module_type = 'DESIGN_SPACE'
     _enumerated_descriptor_limit = 10
-    _enumerated_candidate_limit = 5000
+    _enumerated_candidate_limit = 2000
 
     def __init__(self, project_id: UUID, session: Session = Session()):
         self.project_id = project_id
