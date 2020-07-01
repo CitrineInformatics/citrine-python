@@ -100,7 +100,8 @@ def large_joint_design_space(
 def test_cartesian(basic_cartesian_space):
     """Check data length, uniqueness, completeness"""
     assert len(basic_cartesian_space.data) == 45
-    assert len(basic_cartesian_space.data) == len(set(basic_cartesian_space.data))
+    assert len(basic_cartesian_space.data) == len(
+        set([tuple(cc.values()) for cc in basic_cartesian_space.data]))
     assert len(set([cc['alpha'] for cc in basic_cartesian_space.data])) == 3
     assert len(set([cc['beta'] for cc in basic_cartesian_space.data])) == 5
     assert len(set([cc['gamma'] for cc in basic_cartesian_space.data])) == 3
@@ -110,8 +111,10 @@ def test_formulation(simple_mixture_space, overspec_mixture_space):
     """Check data length, uniqueness, completeness for both cases above"""
     assert len(simple_mixture_space.data) == 25
     assert len(overspec_mixture_space.data) == 7
-    assert len(simple_mixture_space.data) == len(set(simple_mixture_space.data))
-    assert len(overspec_mixture_space) == len(set(overspec_mixture_space))
+    assert len(simple_mixture_space.data) == len(
+        set([tuple(cc.values()) for cc in simple_mixture_space.data]))
+    assert len(overspec_mixture_space.data) == len(
+        set([tuple(cc.values()) for cc in overspec_mixture_space.data]))
     # Check that all members of ing_B and ing_C values made it into candidates
     assert len(set([cc['ing_B'] for cc in simple_mixture_space.data])) == 5
     assert len(set([cc['ing_C'] for cc in simple_mixture_space.data])) == 6
@@ -126,5 +129,7 @@ def test_joined(joint_design_space, large_joint_design_space):
     assert len(large_joint_design_space.data) == 7875
     assert len(joint_design_space.descriptors) == 6
     assert len(large_joint_design_space.descriptors) == 9
-    assert len(joint_design_space) == len(set(joint_design_space))
-    assert len(large_joint_design_space) == len(set(large_joint_design_space))
+    assert len(joint_design_space.data) == len(
+        set([tuple(cc.values()) for cc in joint_design_space.data]))
+    assert len(large_joint_design_space.data) == len(
+        set([tuple(cc.values()) for cc in large_joint_design_space.data]))
