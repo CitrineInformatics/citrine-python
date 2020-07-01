@@ -57,7 +57,7 @@ def overspec_mixture_space() -> EnumeratedDesignSpace:
     formulation_grids = {
         'ing_D': [0.6, 0.7],
         'ing_E': [0, 0.1, 0.2, 0.3, 0.4, 0.5],
-        'ing_F': [0.0, 0.25, 0.5, 0.75, 1]
+        'ing_F': [0.0, 0.2, 0.3, 0.4, 0.5, 0.6]
     }
     overspec_mixture_space = enumerate_formulation_grid(
         formulation_grids=formulation_grids,
