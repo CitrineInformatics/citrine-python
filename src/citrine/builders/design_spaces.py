@@ -1,13 +1,16 @@
-import pandas as pd
+try:
+    import pandas as pd
+except ImportError:
+    raise ImportError('pandas>=0.25 is a requirement for the builders module')
 from itertools import product
 from typing import Mapping, Sequence, List
 from citrine.informatics.design_spaces import EnumeratedDesignSpace
-from citrine.informatics.descriptors import Descriptor
+from citrine.informatics.descriptors import Descriptor, RealDescriptor
 
 
 def enumerate_cartesian_product(
     design_grids: Mapping[str, Sequence],
-    descriptors: List[Descriptor],
+    descriptors: List[Descriptor] = None,
     name: str = 'Enumerated Cartesian product design space',
     description: str = '',
 ) -> EnumeratedDesignSpace:
@@ -23,13 +26,17 @@ def enumerate_cartesian_product(
         {'descriptor key': [sequence, of, values]} for each descriptor
     descriptors: List[Descriptor]
         design descriptors representing the degrees of freedom of the design
-        space. descriptors' keys should match the keys of design_grids
+        space. descriptors' keys should match the keys of design_grids. If
+        none are passed, they will be auto-generated based on the keys
+        of design_grids.
     name: str
         name for the EnumeratedDesignSpace
     description: str
         description for the EnumeratedDesignSpace
 
     """
+    if descriptors is None:
+        descriptors = [RealDescriptor(kk, 0, 1) for kk in design_grids.keys()]
     design_space_tuples = list(product(*design_grids.values()))
     design_space_cols = list(design_grids.keys())
     df_ds = pd.DataFrame(data=design_space_tuples, columns=design_space_cols)
@@ -41,33 +48,32 @@ def enumerate_cartesian_product(
     return design_space
 
 
-def enumerate_simple_mixture_cartesian_product(
+def enumerate_formulation_grid(
     formulation_grids: Mapping[str, Sequence[float]],
     balance_component: str,
-    descriptors: List[Descriptor],
-    name: str = 'Enumerated Cartesian product simple mixture design space',
+    descriptors: List[Descriptor] = None,
+    name: str = 'Enumerated Formulation Grid',
     description: str = '',
 ) -> EnumeratedDesignSpace:
-    """[ALPHA] Enumerate a Cartesian product following simple mixture constraints.
+    """[ALPHA] Enumerate a Cartesian product following formulation constraints.
 
-    Given a dict of lists or tuples of ingredient amounts (must be
-    fractions of some kind, i.e. between 0-1), create candidates that are
-    the Cartesian product of all possible combinations of ingredients *except*
-    for the balance_component. The balance_component will then be filled in
-    as 1-(all other ingredients) for each row.
+    Given a dict of grids (lists) of ingredient amounts (fractions, between
+    0-1), create candidates that are the Cartesian product of all possible
+    formulations with combinations of the specified ingredient amounts.
+    The balance_component will make up the balance of the formulation. In
+    other words, this function first takes the Cartesian product of all
+    ingredient amounts *except* the balance_component, then fills in the
+    amount of balance_component as 1-(other ingredients). Results for which
+    the balance component falls outside of the min and max values in its list
+    will be filtered out. Because of this, not all values in the balance
+    component's list will necessarily be present in the final candidates.
 
-    The balance component's [list, of, values] can be similar to the other
-    components'; in this way, the balance component can be swapped out easily.
-    However, the balance component's intermediate values will be ignored - only
-    its minimum and maximum values will be considered. Mixtures in which
-    the balance component amount falls outside its min and max values will be
-    filtered out of the design space. In other words, formulation_grids could
-    look like:
+    For example:
 
     {'balance component':[0.8, 0.85, 0.9],
      'other component':[0.1, 0.2, 0.3, 0.4, 0.5]}
 
-    and the result would be:
+    would yield:
 
     [{'balance component': 0.8, 'other component': 0.2},
      {'balance component': 0.9, 'other component': 0.1}]
@@ -81,16 +87,28 @@ def enumerate_simple_mixture_cartesian_product(
         mixture (1-others). Must be a key in formulation_grids.
     descriptors: List[Descriptor]
         design descriptors representing the degrees of freedom of the design
-        space. descriptors' keys should match the keys of formulation_grids
+        space. descriptors' keys should match the keys of formulation_grids.
+        If none are passed, they will be auto-generated based on the keys
+        of formulation_grids.
     name: str
         name for the EnumeratedDesignSpace
     description: str
         description for the EnumeratedDesignSpace
 
     """
+    # Generate descriptors if none passed
+    if descriptors is None:
+        descriptors = [RealDescriptor(kk, 0, 1) for kk in formulation_grids.keys()]
+
     # Check that the passed balance component is in the grid keys
-    assert balance_component in list(formulation_grids.keys()), \
-        "balance component must be in formulation_grids' keys"
+    if balance_component not in list(formulation_grids.keys()):
+        raise ValueError("balance_component must be in formulation_grids' keys")
+
+    # Check that all grid values are between 0 and 1
+    for kk, val_list in formulation_grids.items():
+        if not (all([x >= 0 for x in val_list]) and all([x <= 1 for x in val_list])):
+            raise ValueError('values in {} are not between 0 and 1'.format(kk))
+
     non_balance_comps = [comp for comp in list(formulation_grids.keys())
                          if comp != balance_component]
     non_balance_descriptors = [dd for dd in descriptors
@@ -100,14 +118,7 @@ def enumerate_simple_mixture_cartesian_product(
         if k in non_balance_comps
     }
 
-    # Check that all grid values are between 0 and 1
-    for kk, val_list in formulation_grids.items():
-        assert all([x >= 0 for x in val_list]) and \
-            all([x <= 1 for x in val_list]), \
-            'values in {} are not between 0 and 1'.format(kk)
-
     # Start by making a naive product design space of non-balance components
-
     form_ds = pd.DataFrame(
         enumerate_cartesian_product(
             design_grids=non_balance_grids,
@@ -159,8 +170,14 @@ def cartesian_join_design_spaces(
         A list of EnumeratedDesignSpaces
 
     """
-    assert 'join_key' not in [ds.data[0].keys() for ds in design_space_list], \
-        '"join_key" cannot be a descriptor key when using this function'
+    # Test for duplicate or invalid descriptor keys
+    all_keys = []
+    for ds in design_space_list:
+        if 'join_key' in ds.data[0].keys():
+            raise ValueError('"join_key" cannot be a descriptor key when using this function')
+        all_keys.extend(list(ds.data[0].keys()))
+    if len(all_keys) != len(set(all_keys)):
+        raise ValueError('Duplicate keys are not allowed across design spaces')
 
     # Convert data fields of EDS into DataFrames to prep for join
     data_list = [ds.data for ds in design_space_list]
