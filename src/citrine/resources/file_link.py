@@ -127,7 +127,7 @@ class FileCollection(Collection[FileLink]):
         This is necessary because the database resource contains additional information that is
         not in the FileLink object, such as file size and the id of the user who uploaded the file.
 
-        Paramters
+        Parameters
         ---------
         file: dict
             A JSON dictionary corresponding to the file link as it is saved in the database.
@@ -195,9 +195,7 @@ class FileCollection(Collection[FileLink]):
 
     def _make_upload_request(self, file_path: str, dest_name: str):
         """
-        Make a request to the backend to upload a file.
-        Uses mimetypes.guess_type to guess the mime type of the file, including 
-        commonly used but not IANA approved mime types (like .xlsx).
+        Make a request to the backend to upload a file. Uses mimetypes.guess_type.
 
         Parameters
         ----------
