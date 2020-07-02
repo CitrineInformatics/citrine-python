@@ -30,9 +30,6 @@ def basic_cartesian_space() -> EnumeratedDesignSpace:
 @pytest.fixture
 def simple_mixture_space() -> EnumeratedDesignSpace:
     """Build simple mixture space for testing."""
-    ing_A = RealDescriptor('ing_A', 0, 1)
-    ing_B = RealDescriptor('ing_B', 0, 1)
-    ing_C = RealDescriptor('ing_C', 0, 1)
     formulation_grids = {
         'ing_A': [0.6, 0.7, 0.8, 0.9, 1.0],
         'ing_B': [0, 0.1, 0.2, 0.3, 0.4],
@@ -41,7 +38,6 @@ def simple_mixture_space() -> EnumeratedDesignSpace:
     simple_mixture_space = enumerate_formulation_grid(
         formulation_grids=formulation_grids,
         balance_component='ing_A',
-        descriptors=[ing_A, ing_B, ing_C],
         name='basic simple mixture space',
         description=''
     )
@@ -51,9 +47,6 @@ def simple_mixture_space() -> EnumeratedDesignSpace:
 @pytest.fixture
 def overspec_mixture_space() -> EnumeratedDesignSpace:
     """Build overspeced mixture space for testing."""
-    ing_D = RealDescriptor('ing_D', 0, 1)
-    ing_E = RealDescriptor('ing_E', 0, 1)
-    ing_F = RealDescriptor('ing_F', 0, 1)
     formulation_grids = {
         'ing_D': [0.6, 0.7],
         'ing_E': [0, 0.1, 0.2, 0.3, 0.4, 0.5],
@@ -62,7 +55,6 @@ def overspec_mixture_space() -> EnumeratedDesignSpace:
     overspec_mixture_space = enumerate_formulation_grid(
         formulation_grids=formulation_grids,
         balance_component='ing_D',
-        descriptors=[ing_D, ing_E, ing_F],
         name='overspeced simple mixture space',
         description=''
     )
@@ -133,3 +125,57 @@ def test_joined(joint_design_space, large_joint_design_space):
         set([tuple(cc.values()) for cc in joint_design_space.data]))
     assert len(large_joint_design_space.data) == len(
         set([tuple(cc.values()) for cc in large_joint_design_space.data]))
+
+
+def test_exceptions(basic_cartesian_space, simple_mixture_space):
+    """Test that exceptions are raised"""
+    form_grids_1 = {
+        'ing_D': [0.6, 1.1],
+        'ing_E': [0, 0.1, 0.2, 0.3, 0.4, 0.5],
+        'ing_F': [0.0, 0.2, 0.3, 0.4, 0.5, 0.6]
+    }
+    # Test the 'incorrect balance component' error
+    with pytest.raises(ValueError):
+        enumerate_formulation_grid(
+            formulation_grids=form_grids_1,
+            balance_component='wrong'
+        )
+    # Test ingredient outside of [0,1]
+    with pytest.raises(ValueError):
+        enumerate_formulation_grid(
+            formulation_grids=form_grids_1,
+            balance_component='ing_D'
+        )
+    # Test the 'join_key' error
+    form_grids_2 = {
+        'ing_D': [0.6, 1.0],
+        'ing_E': [0, 0.1, 0.2, 0.3, 0.4, 0.5],
+        'join_key': [0.0, 0.2, 0.3, 0.4, 0.5, 0.6]
+    }
+    form_ds_2 = enumerate_formulation_grid(
+        formulation_grids=form_grids_2,
+        balance_component='ing_D'
+    )
+    with pytest.raises(ValueError):
+        cartesian_join_design_spaces(
+            design_space_list=[
+                basic_cartesian_space,
+                form_ds_2
+            ]
+        )
+    # Test the duplicate keys error
+    form_grids_3 = {
+        'ing_C': [0.8, 1.0],
+        'ing_D': [0, 0.1, 0.15, 0.2]
+    }
+    form_ds_3 = enumerate_formulation_grid(
+        formulation_grids=form_grids_3,
+        balance_component='ing_C'
+    )
+    with pytest.raises(ValueError):
+        cartesian_join_design_spaces(
+            design_space_list=[
+                simple_mixture_space,
+                form_ds_3
+            ]
+        )

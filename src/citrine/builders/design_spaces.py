@@ -1,6 +1,6 @@
 try:
     import pandas as pd
-except ImportError:
+except ImportError:  # pragma: no cover
     raise ImportError('pandas>=0.25 is a requirement for the builders module')
 from itertools import product
 from typing import Mapping, Sequence, List
@@ -10,7 +10,7 @@ from citrine.informatics.descriptors import Descriptor, RealDescriptor
 
 def enumerate_cartesian_product(
     design_grids: Mapping[str, Sequence],
-    descriptors: List[Descriptor] = None,
+    descriptors: List[Descriptor],
     name: str = 'Enumerated Cartesian product design space',
     description: str = '',
 ) -> EnumeratedDesignSpace:
@@ -35,8 +35,6 @@ def enumerate_cartesian_product(
         description for the EnumeratedDesignSpace
 
     """
-    if descriptors is None:
-        descriptors = [RealDescriptor(kk, 0, 1) for kk in design_grids.keys()]
     design_space_tuples = list(product(*design_grids.values()))
     design_space_cols = list(design_grids.keys())
     df_ds = pd.DataFrame(data=design_space_tuples, columns=design_space_cols)
