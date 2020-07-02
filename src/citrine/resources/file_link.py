@@ -196,6 +196,8 @@ class FileCollection(Collection[FileLink]):
     def _make_upload_request(self, file_path: str, dest_name: str):
         """
         Make a request to the backend to upload a file.
+        Uses mimetypes.guess_type to guess the mime type of the file, including 
+        commonly used but not IANA approved mime types (like .xlsx).
 
         Parameters
         ----------
@@ -213,8 +215,7 @@ class FileCollection(Collection[FileLink]):
 
         """
         path = self._get_path() + "/uploads"
-        extension = os.path.splitext(file_path)[1]
-        mime_type = mimetypes.types_map.get(extension.lower(), "application/octet-stream")
+        mime_type = self._mime_type(file_path)
         file_size = os.stat(file_path).st_size
         assert isinstance(file_size, int)
         upload_json = {
@@ -250,6 +251,13 @@ class FileCollection(Collection[FileLink]):
             raise RuntimeError("Upload initiation response is missing some fields: "
                                "{}".format(upload_request))
         return uploader
+
+    @staticmethod
+    def _mime_type(file_path: str):
+        mime_type = mimetypes.guess_type(file_path)[0]
+        if mime_type is None:
+            mime_type = "application/octet-stream"
+        return mime_type
 
     @staticmethod
     def _upload_file(file_path: str, uploader: _Uploader):
