@@ -214,7 +214,7 @@ class FileCollection(Collection[FileLink]):
         """
         path = self._get_path() + "/uploads"
         extension = os.path.splitext(file_path)[1]
-        mime_type = mimetypes.types_map[extension.lower()]
+        mime_type = mimetypes.types_map.get(extension.lower(), "application/octet-stream")
         file_size = os.stat(file_path).st_size
         assert isinstance(file_size, int)
         upload_json = {
