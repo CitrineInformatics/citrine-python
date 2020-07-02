@@ -50,7 +50,8 @@ def test_design_space_build():
 def test_design_space_limits():
     """Test that the validation logic is triggered before post/put-ing enumerated design spaces."""
     # Given
-    collection = DesignSpaceCollection(uuid.uuid4(), FakeSession())
+    session = FakeSession()
+    collection = DesignSpaceCollection(uuid.uuid4(), session)
 
     too_long = EnumeratedDesignSpace(
         "foo",
@@ -73,6 +74,11 @@ def test_design_space_limits():
         data=[{"R-{}".format(i): random() for i in range(10)} for _ in range(1000)]
     )
 
+    # create mock post response by setting the status
+    mock_response = just_right.dump()
+    mock_response["status"] = "READY"
+    session.responses.append(mock_response)
+
     # Then
     with pytest.raises(ValueError) as excinfo:
         collection.register(too_long)
@@ -82,12 +88,11 @@ def test_design_space_limits():
         collection.update(too_wide)
     assert "only supports" in str(excinfo.value)
 
-    # These still throw exceptions because we haven't setup the mock response
-    # But we can check the message to make sure it is NOT the exception from above
-    with pytest.raises(ValueError) as excinfo:
-        collection.register(just_right)
-    assert "only supports" not in str(excinfo.value)
+    # test register
+    collection.register(just_right)
 
-    with pytest.raises(ValueError) as excinfo:
-        collection.update(just_right)
-    assert "only supports" not in str(excinfo.value)
+    # add back the response for the next test
+    session.responses.append(mock_response)
+
+    # test update
+    collection.update(just_right)
