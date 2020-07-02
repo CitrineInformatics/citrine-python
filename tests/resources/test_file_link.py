@@ -98,7 +98,7 @@ def test_upload(mock_isfile, mock_stat, mock_open, mock_boto3_client, collection
     # It would be good to test these, but the values assigned are not accessible
     dest_names = {
         'foo.txt': 'text/plain',
-        'foo.TXT': 'text/plain',  # Verify that capitalization in extension is fine
+        'foo.TXT': 'text/plain',  # Capitalization in extension is fine
         'foo.bar': 'application/octet-stream'  # No match == generic binary
     }
     file_id = '12345'
