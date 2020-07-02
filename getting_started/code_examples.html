@@ -108,9 +108,7 @@ This assumes that you have a dataset named <code class="docutils literal notrans
 a process template <code class="docutils literal notranslate"><span class="pre">purchase_template</span></code>, a material template <code class="docutils literal notranslate"><span class="pre">toluene_template</span></code>, a measurement template <code class="docutils literal notranslate"><span class="pre">refractive_index_template</span></code>,
 a process template <code class="docutils literal notranslate"><span class="pre">reaction_template</span></code>, a condition template <code class="docutils literal notranslate"><span class="pre">temperature_template</span></code>,
 a parameter template <code class="docutils literal notranslate"><span class="pre">wavelength_template</span></code>, and a property template <code class="docutils literal notranslate"><span class="pre">refractive_index_template</span></code>.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.attributes.condition</span> <span class="kn">import</span> <span class="n">Condition</span>
-<span class="kn">from</span> <span class="nn">citrine.attributes.parameter</span> <span class="kn">import</span> <span class="n">Parameter</span>
-<span class="kn">from</span> <span class="nn">citrine.attributes.property</span> <span class="kn">import</span> <span class="n">Property</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">gemd.entity.attribute</span> <span class="kn">import</span> <span class="n">Condition</span><span class="p">,</span> <span class="n">Parameter</span><span class="p">,</span> <span class="n">Property</span>
 <span class="kn">from</span> <span class="nn">citrine.resources.ingredient_run</span> <span class="kn">import</span> <span class="n">IngredientRun</span>
 <span class="kn">from</span> <span class="nn">citrine.resources.ingredient_spec</span> <span class="kn">import</span> <span class="n">IngredientSpec</span>
 <span class="kn">from</span> <span class="nn">citrine.resources.material_run</span> <span class="kn">import</span> <span class="n">MaterialRun</span>
@@ -214,7 +212,7 @@ the material. Traversal “forward in time” is not possible.</p>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../data_entry.html">2. Data Entry</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../data_entry.html#creating-data-model-objects">2.1. Creating Data Model Objects</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#identifiying-data-model-objects">2.2. Identifiying Data Model Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#identifying-data-model-objects">2.2. Identifying Data Model Objects</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../data_entry.html#registering-data-model-objects">2.3. Registering Data Model Objects</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../data_entry.html#finding-data-model-objects">2.4. Finding Data Model Objects</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../data_entry.html#referencing-data-model-objects">2.5. Referencing Data Model Objects</a></li>
