@@ -1,4 +1,4 @@
-"""Tests for citrine.informatics.design_spaces."""
+"""Tests for citrine.builders.design_spaces."""
 import pytest
 
 from citrine.informatics.descriptors import RealDescriptor, CategoricalDescriptor
@@ -13,13 +13,13 @@ def basic_cartesian_space() -> EnumeratedDesignSpace:
     alpha = RealDescriptor('alpha', 0, 100)
     beta = RealDescriptor('beta', 0, 100)
     gamma = CategoricalDescriptor('gamma', ['a', 'b', 'c'])
-    design_grids = {
+    design_grid = {
         'alpha': [0, 50, 100],
         'beta': [0, 25, 50, 75, 100],
         'gamma': ['a', 'b', 'c']
     }
     basic_space = enumerate_cartesian_product(
-        design_grids=design_grids,
+        design_grid=design_grid,
         descriptors=[alpha, beta, gamma],
         name='basic space',
         description=''
@@ -30,14 +30,14 @@ def basic_cartesian_space() -> EnumeratedDesignSpace:
 @pytest.fixture
 def simple_mixture_space() -> EnumeratedDesignSpace:
     """Build simple mixture space for testing."""
-    formulation_grids = {
+    formulation_grid = {
         'ing_A': [0.6, 0.7, 0.8, 0.9, 1.0],
         'ing_B': [0, 0.1, 0.2, 0.3, 0.4],
         'ing_C': [0.0, 0.01, 0.02, 0.03, 0.04, 0.05]
     }
     simple_mixture_space = enumerate_formulation_grid(
-        formulation_grids=formulation_grids,
-        balance_component='ing_A',
+        formulation_grid=formulation_grid,
+        balance_ingredient='ing_A',
         name='basic simple mixture space',
         description=''
     )
@@ -47,14 +47,14 @@ def simple_mixture_space() -> EnumeratedDesignSpace:
 @pytest.fixture
 def overspec_mixture_space() -> EnumeratedDesignSpace:
     """Build overspeced mixture space for testing."""
-    formulation_grids = {
+    formulation_grid = {
         'ing_D': [0.6, 0.7],
         'ing_E': [0, 0.1, 0.2, 0.3, 0.4, 0.5],
         'ing_F': [0.0, 0.2, 0.3, 0.4, 0.5, 0.6]
     }
     overspec_mixture_space = enumerate_formulation_grid(
-        formulation_grids=formulation_grids,
-        balance_component='ing_D',
+        formulation_grid=formulation_grid,
+        balance_ingredient='ing_D',
         name='overspeced simple mixture space',
         description=''
     )
@@ -66,7 +66,7 @@ def joint_design_space(basic_cartesian_space, simple_mixture_space) -> Enumerate
     """Build joint design space from above two examples"""
     ds_list = [basic_cartesian_space, simple_mixture_space]
     joint_space = cartesian_join_design_spaces(
-        design_space_list=ds_list,
+        subspaces=ds_list,
         name='Joined enumerated design space',
         description='',
     )
@@ -82,7 +82,7 @@ def large_joint_design_space(
     """Build joint design space from above two examples"""
     ds_list = [basic_cartesian_space, simple_mixture_space, overspec_mixture_space]
     joint_space = cartesian_join_design_spaces(
-        design_space_list=ds_list,
+        subspaces=ds_list,
         name='Joined enumerated design space',
         description='',
     )
@@ -134,17 +134,17 @@ def test_exceptions(basic_cartesian_space, simple_mixture_space):
         'ing_E': [0, 0.1, 0.2, 0.3, 0.4, 0.5],
         'ing_F': [0.0, 0.2, 0.3, 0.4, 0.5, 0.6]
     }
-    # Test the 'incorrect balance component' error
+    # Test the 'incorrect balance ingredient' error
     with pytest.raises(ValueError):
         enumerate_formulation_grid(
-            formulation_grids=form_grids_1,
-            balance_component='wrong'
+            formulation_grid=form_grids_1,
+            balance_ingredient='wrong'
         )
     # Test ingredient outside of [0,1]
     with pytest.raises(ValueError):
         enumerate_formulation_grid(
-            formulation_grids=form_grids_1,
-            balance_component='ing_D'
+            formulation_grid=form_grids_1,
+            balance_ingredient='ing_D'
         )
     # Test the 'join_key' error
     form_grids_2 = {
@@ -153,12 +153,12 @@ def test_exceptions(basic_cartesian_space, simple_mixture_space):
         'join_key': [0.0, 0.2, 0.3, 0.4, 0.5, 0.6]
     }
     form_ds_2 = enumerate_formulation_grid(
-        formulation_grids=form_grids_2,
-        balance_component='ing_D'
+        formulation_grid=form_grids_2,
+        balance_ingredient='ing_D'
     )
     with pytest.raises(ValueError):
         cartesian_join_design_spaces(
-            design_space_list=[
+            subspaces=[
                 basic_cartesian_space,
                 form_ds_2
             ]
@@ -169,12 +169,12 @@ def test_exceptions(basic_cartesian_space, simple_mixture_space):
         'ing_D': [0, 0.1, 0.15, 0.2]
     }
     form_ds_3 = enumerate_formulation_grid(
-        formulation_grids=form_grids_3,
-        balance_component='ing_C'
+        formulation_grid=form_grids_3,
+        balance_ingredient='ing_C'
     )
     with pytest.raises(ValueError):
         cartesian_join_design_spaces(
-            design_space_list=[
+            subspaces=[
                 simple_mixture_space,
                 form_ds_3
             ]

@@ -9,7 +9,7 @@ from citrine.informatics.descriptors import Descriptor, RealDescriptor
 
 
 def enumerate_cartesian_product(
-    design_grids: Mapping[str, Sequence],
+    design_grid: Mapping[str, Sequence],
     descriptors: List[Descriptor],
     name: str = 'Enumerated Cartesian product design space',
     description: str = '',
@@ -22,21 +22,21 @@ def enumerate_cartesian_product(
 
     Parameters
     ----------
-    design_grids: Mapping[str, Sequence]
+    design_grid: Mapping[str, Sequence]
         {'descriptor key': [sequence, of, values]} for each descriptor
     descriptors: List[Descriptor]
         design descriptors representing the degrees of freedom of the design
-        space. descriptors' keys should match the keys of design_grids. If
+        space. descriptors' keys should match the keys of design_grid. If
         none are passed, they will be auto-generated based on the keys
-        of design_grids.
+        of design_grid.
     name: str
         name for the EnumeratedDesignSpace
     description: str
         description for the EnumeratedDesignSpace
 
     """
-    design_space_tuples = list(product(*design_grids.values()))
-    design_space_cols = list(design_grids.keys())
+    design_space_tuples = list(product(*design_grid.values()))
+    design_space_cols = list(design_grid.keys())
     df_ds = pd.DataFrame(data=design_space_tuples, columns=design_space_cols)
     data = df_ds.to_dict('records')
     design_space = EnumeratedDesignSpace(name=name,
@@ -47,8 +47,8 @@ def enumerate_cartesian_product(
 
 
 def enumerate_formulation_grid(
-    formulation_grids: Mapping[str, Sequence[float]],
-    balance_component: str,
+    formulation_grid: Mapping[str, Sequence[float]],
+    balance_ingredient: str,
     descriptors: List[Descriptor] = None,
     name: str = 'Enumerated Formulation Grid',
     description: str = '',
@@ -58,36 +58,36 @@ def enumerate_formulation_grid(
     Given a dict of grids (lists) of ingredient amounts (fractions, between
     0-1), create candidates that are the Cartesian product of all possible
     formulations with combinations of the specified ingredient amounts.
-    The balance_component will make up the balance of the formulation. In
+    The balance_ingredient will make up the balance of the formulation. In
     other words, this function first takes the Cartesian product of all
-    ingredient amounts *except* the balance_component, then fills in the
-    amount of balance_component as 1-(other ingredients). Results for which
-    the balance component falls outside of the min and max values in its list
+    ingredient amounts *except* the balance_ingredient, then fills in the
+    amount of balance_ingredient as 1-(other ingredients). Results for which
+    the balance ingredient falls outside of the min and max values in its list
     will be filtered out. Because of this, not all values in the balance
-    component's list will necessarily be present in the final candidates.
+    ingredient's list will necessarily be present in the final candidates.
 
     For example:
 
-    {'balance component':[0.8, 0.85, 0.9],
-     'other component':[0.1, 0.2, 0.3, 0.4, 0.5]}
+    {'balance ingredient':[0.8, 0.85, 0.9],
+     'other ingredient':[0.1, 0.2, 0.3, 0.4, 0.5]}
 
     would yield:
 
-    [{'balance component': 0.8, 'other component': 0.2},
-     {'balance component': 0.9, 'other component': 0.1}]
+    [{'balance ingredient': 0.8, 'other ingredient': 0.2},
+     {'balance ingredient': 0.9, 'other ingredient': 0.1}]
 
     Parameters
     ----------
-    formulation_grids: Mapping[str, Sequence]
-        {'component name':[list, of, values]} for each component
-    balance_component: str
-        name of the component that should make up the balance of the
-        mixture (1-others). Must be a key in formulation_grids.
+    formulation_grid: Mapping[str, Sequence]
+        {'ingredient name':[list, of, values]} for each ingredient
+    balance_ingredient: str
+        name of the ingredient that should make up the balance of the
+        mixture (1-others). Must be a key in formulation_grid.
     descriptors: List[Descriptor]
         design descriptors representing the degrees of freedom of the design
-        space. descriptors' keys should match the keys of formulation_grids.
+        space. descriptors' keys should match the keys of formulation_grid.
         If none are passed, they will be auto-generated based on the keys
-        of formulation_grids.
+        of formulation_grid.
     name: str
         name for the EnumeratedDesignSpace
     description: str
@@ -96,50 +96,50 @@ def enumerate_formulation_grid(
     """
     # Generate descriptors if none passed
     if descriptors is None:
-        descriptors = [RealDescriptor(kk, 0, 1) for kk in formulation_grids.keys()]
+        descriptors = [RealDescriptor(kk, 0, 1) for kk in formulation_grid.keys()]
 
-    # Check that the passed balance component is in the grid keys
-    if balance_component not in list(formulation_grids.keys()):
-        raise ValueError("balance_component must be in formulation_grids' keys")
+    # Check that the passed balance ingredient is in the grid keys
+    if balance_ingredient not in list(formulation_grid.keys()):
+        raise ValueError("balance_ingredient must be in formulation_grid' keys")
 
     # Check that all grid values are between 0 and 1
-    for kk, val_list in formulation_grids.items():
+    for kk, val_list in formulation_grid.items():
         if not (all([x >= 0 for x in val_list]) and all([x <= 1 for x in val_list])):
             raise ValueError('values in {} are not between 0 and 1'.format(kk))
 
-    non_balance_comps = [comp for comp in list(formulation_grids.keys())
-                         if comp != balance_component]
+    non_balance_ingrs = [ingr for ingr in list(formulation_grid.keys())
+                         if ingr != balance_ingredient]
     non_balance_descriptors = [dd for dd in descriptors
-                               if dd.key != balance_component]
+                               if dd.key != balance_ingredient]
     non_balance_grids = {
-        k: v for k, v in formulation_grids.items()
-        if k in non_balance_comps
+        k: v for k, v in formulation_grid.items()
+        if k in non_balance_ingrs
     }
 
-    # Start by making a naive product design space of non-balance components
+    # Start by making a naive product design space of non-balance ingredients
     form_ds = pd.DataFrame(
         enumerate_cartesian_product(
-            design_grids=non_balance_grids,
+            design_grid=non_balance_grids,
             descriptors=non_balance_descriptors
         ).data
     )
 
-    # Re-calculate the balance component column as 1-all others
-    form_ds[balance_component] = form_ds.apply(
-        lambda r: 1 - sum([r[col] for col in non_balance_comps]),
+    # Re-calculate the balance ingredient column as 1-all others
+    form_ds[balance_ingredient] = form_ds.apply(
+        lambda r: 1 - sum([r[col] for col in non_balance_ingrs]),
         axis=1
     )
 
-    # Order columns so balance component is first
-    form_ds = form_ds[[balance_component] + non_balance_comps]
+    # Order columns so balance ingredient is first
+    form_ds = form_ds[[balance_ingredient] + non_balance_ingrs]
 
     # Eliminate out-of-range rows
     balance_range = (
-        min(formulation_grids[balance_component]),
-        max(formulation_grids[balance_component])
+        min(formulation_grid[balance_ingredient]),
+        max(formulation_grid[balance_ingredient])
     )
-    form_ds = form_ds[form_ds[balance_component] >= balance_range[0]]
-    form_ds = form_ds[form_ds[balance_component] <= balance_range[1]]
+    form_ds = form_ds[form_ds[balance_ingredient] >= balance_range[0]]
+    form_ds = form_ds[form_ds[balance_ingredient] <= balance_range[1]]
     data = form_ds.to_dict('records')
     design_space = EnumeratedDesignSpace(name=name,
                                          description=description,
@@ -149,7 +149,7 @@ def enumerate_formulation_grid(
 
 
 def cartesian_join_design_spaces(
-    design_space_list: List[EnumeratedDesignSpace],
+    subspaces: List[EnumeratedDesignSpace],
     name: str = 'Joined enumerated design space',
     description: str = '',
 ) -> EnumeratedDesignSpace:
@@ -164,13 +164,13 @@ def cartesian_join_design_spaces(
 
     Parameters
     ----------
-    design_space_list: List[EnumeratedDesignSpace]
+    subspaces: List[EnumeratedDesignSpace]
         A list of EnumeratedDesignSpaces
 
     """
     # Test for duplicate or invalid descriptor keys
     all_keys = []
-    for ds in design_space_list:
+    for ds in subspaces:
         if 'join_key' in ds.data[0].keys():
             raise ValueError('"join_key" cannot be a descriptor key when using this function')
         all_keys.extend(list(ds.data[0].keys()))
@@ -178,8 +178,7 @@ def cartesian_join_design_spaces(
         raise ValueError('Duplicate keys are not allowed across design spaces')
 
     # Convert data fields of EDS into DataFrames to prep for join
-    data_list = [ds.data for ds in design_space_list]
-    ds_list = [pd.DataFrame(data) for data in data_list]
+    ds_list = [pd.DataFrame(ds.data) for ds in subspaces]
 
     # Set a dummy column to do the join
     for df in ds_list:
@@ -196,7 +195,7 @@ def cartesian_join_design_spaces(
 
     # Build the final DesignSpace
     descriptors = []
-    for ds in design_space_list:
+    for ds in subspaces:
         descriptors.extend(ds.descriptors)
     design_space = EnumeratedDesignSpace(name=name,
                                          description=description,
