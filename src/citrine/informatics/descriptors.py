@@ -182,7 +182,11 @@ class CategoricalDescriptor(Serializable['CategoricalDescriptor'], Descriptor):
 
     def __init__(self, key: str, categories: List[str]):
         self.key: str = key
+        for category in categories:
+            if not isinstance(category, str):
+                raise TypeError("All categories must be strings")
         self.categories: List[str] = categories
+
 
     def __str__(self):
         return "<CategoricalDescriptor {!r}>".format(self.key)
