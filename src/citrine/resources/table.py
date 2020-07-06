@@ -128,9 +128,11 @@ class TableCollection(Collection[Table]):
         """
         def fetch_versions(page: Optional[int],
                            per_page: int) -> Tuple[Iterable[dict], str]:
+
+            ara_definition_uid_str = str(ara_definition_uid)
             data = self.session.get_resource(
-                'projects/{project_id}/gem-tables/for-table-config/'.format(
-                    **self.__dict__) + str(ara_definition_uid),
+                'projects/{project_id}/gem-tables/{ara_definition_uid_str}/gem-tables'.format(
+                    **{**self.__dict__, **vars()}),
                 params=self._page_params(page, per_page))
             return (data[self._collection_key], data.get('next', ""))
 
