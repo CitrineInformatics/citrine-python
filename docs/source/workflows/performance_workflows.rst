@@ -55,7 +55,7 @@ Cross-validation can be performed on most predictors but will not produce result
 - Training data contain simple mixtures from an :class:`~citrine.informatics.data_sources.AraTableDataSource` *and* an :class:`~citrine.informatics.predictors.IngredientsToSimpleMixturePredictor` is included in the graph.
 - The graph includes a :class:`~citrine.informatics.predictors.SimpleMixturePredictor` or :class:`~citrine.informatics.predictors.GeneralizedMeanPropertyPredictor`.
 
-Both are known issues and will be resolved in a future release.
+Both are known issues in experimental functionality and will be resolved in a future release.
 
 Execution and results
 ---------------------
@@ -200,5 +200,4 @@ If there was a second categorical response ``~~y`` with 2 categories, the respon
            }
        }
    }
-
 
