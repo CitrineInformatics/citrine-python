@@ -97,7 +97,6 @@ In addition to the aforementioned metrics, predicted vs. actual data are also av
 The structure of the data will depend on whether the response is numeric or categorical.
 For numeric responses, predicted and actual data contain the value and standard error associated with each data point.
 For categorical responses, class probabilities are returned.
-(If desired, a precision-based metric for categorical responses can be computed using the equation ``1 / max(class_probability) - 1``.)
 
 The following demonstrates how to trigger workflow execution using an already existing ``predictor`` and the ``workflow`` created in the example above.:
 
