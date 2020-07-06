@@ -64,7 +64,6 @@ Modules come `active` by default when created. If you would like to deactivate a
 
 Modules that are not `active` cannot be used in workflows and will not show up when listing.
 
-
 Registration and validation
 ---------------------------
 
@@ -78,3 +77,17 @@ Validation status can be one of the following states:
 -  **Error:** Validation did not complete. An error was raised during the validation process that prevented an invalid or ready status to be determined.
 
 Validation of a workflow and all constituent modules must complete with ready status before the workflow can be executed.
+
+Experimental functionality
+***************************
+
+Both modules and workflows can be used to access experimental functionality on the platform.
+In some cases, the module or workflow type itself may be experimental.
+In other cases, whether a module or workflow represents experimental functionality may depend on the specific configuration of the module or workflow.
+For example, a module might have an experimental option that is turned off by default.
+Another example could be a workflow that contains an experimental module.
+Because the experimental status of a module or workflow may not be known at registration time, it is computed as part
+of the validation process and then returned via two fields:
+
+- `experimental` is a boolean field that is true when the module or workflow is experimental
+- `experimental_reasons` is a list of strings that describe what about the module or workflow makes it experimental

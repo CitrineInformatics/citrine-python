@@ -9,6 +9,7 @@ from citrine.resources.module import ModuleCollection
 from citrine.resources.design_space import DesignSpaceCollection
 from citrine.resources.processor import ProcessorCollection
 from citrine.resources.predictor import PredictorCollection
+from citrine.resources.response import Response
 from citrine.resources.workflow import WorkflowCollection
 from citrine.resources.dataset import DatasetCollection
 from citrine.resources.condition_template import ConditionTemplateCollection
@@ -426,6 +427,10 @@ class ProjectCollection(Collection[Project]):
                                         collection_builder=self._build_collection_elements,
                                         per_page=per_page,
                                         search_params=search_params)
+
+    def delete(self, uid: Union[UUID, str]) -> Response:
+        """[ALPHA] Delete a particular element of the collection."""
+        return super().delete(uid)  # pragma: no cover
 
     def _fetch_page_search(self, page: Optional[int] = None,
                            per_page: Optional[int] = None,

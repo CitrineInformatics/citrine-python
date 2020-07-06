@@ -87,9 +87,7 @@ a parameter template ``wavelength_template``, and a property template ``refracti
 
 .. code-block:: python
 
-    from citrine.attributes.condition import Condition
-    from citrine.attributes.parameter import Parameter
-    from citrine.attributes.property import Property
+    from gemd.entity.attribute import Condition, Parameter, Property
     from citrine.resources.ingredient_run import IngredientRun
     from citrine.resources.ingredient_spec import IngredientSpec
     from citrine.resources.material_run import MaterialRun
