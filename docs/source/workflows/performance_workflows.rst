@@ -2,15 +2,12 @@ Performance workflows
 =====================
 
 A :class:`performance workflow <citrine.informatics.workflows.PerformanceWorkflow>` performs analysis on a module.
+Running a performance workflow produces a report (currently in JSON format) that describes the results of the analysis.
 Each analysis computes one or more performance metrics, e.g. accuracy of an ML predictor.
 An analysis is codified by a configuration object that stores all relevant settings and parameters required to run the workflow.
 By storing the configuration, the object captures domain-specific knowledge used to characterize a module.
 With this information we know what settings were used in past analyses and can run the same analysis again in the future.
 For example, we might reuse an analysis to compute a specific metric across a range of modules (to determine which module is best suited for our application) or to record the same analysis for a range of different module settings.
-
-On construction, a performance workflow requires an analysis configuration object that stores all settings required to run the analysis.
-Each unique analysis requires a configuration object.
-Running a performance workflow produces a report (currently in JSON format) that describes the results of the analysis.
 
 Cross-validation analysis
 -------------------------
@@ -100,7 +97,7 @@ In addition to the aforementioned metrics, predicted vs. actual data are also av
 The structure of the data will depend on whether the response is numeric or categorical.
 For numeric responses, predicted and actual data contain the value and standard error associated with each data point.
 For categorical responses, class probabilities are returned.
-(If desired, standard error of categorical responses can be computed using the equation ``1 / max(class_probability) - 1`` or other desired metric.)
+(If desired, a precision-based metric for categorical responses can be computed using the equation ``1 / max(class_probability) - 1``.)
 
 The following demonstrates how to trigger workflow execution using an already existing ``predictor`` and the ``workflow`` created in the example above.:
 
