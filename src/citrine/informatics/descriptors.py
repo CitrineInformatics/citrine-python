@@ -187,7 +187,6 @@ class CategoricalDescriptor(Serializable['CategoricalDescriptor'], Descriptor):
                 raise TypeError("All categories must be strings")
         self.categories: List[str] = categories
 
-
     def __str__(self):
         return "<CategoricalDescriptor {!r}>".format(self.key)
 
