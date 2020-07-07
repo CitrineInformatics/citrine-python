@@ -184,6 +184,9 @@ The citrine-python library follows [PEP8](https://www.python.org/dev/peps/pep-00
 
 Type hints are strongly encouraged.
 
+Positional arguments are strongly discouraged for methods with multiple arguments.
+Any positional argument should be required.
+
 Docstrings must follow [Numpy style](https://numpydoc.readthedocs.io/en/latest/format.html) so that Sphinx can parse them to make the docs.
 
 For additional (non-binding) inspiration, check out the [Google Python Style Guide](https://github.com/google/styleguide/blob/gh-pages/pyguide.md).
