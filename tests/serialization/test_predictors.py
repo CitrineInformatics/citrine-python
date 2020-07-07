@@ -1,12 +1,13 @@
 """Tests for citrine.informatics.predictors serialization."""
-import pytest
-from uuid import UUID
 from copy import deepcopy
+from uuid import UUID
 
+import pytest
+
+from citrine.informatics.descriptors import RealDescriptor
 from citrine.informatics.predictors import ExpressionPredictor, GeneralizedMeanPropertyPredictor, \
     GraphPredictor, Predictor, SimpleMLPredictor, IngredientsToSimpleMixturePredictor, \
     LabelFractionsPredictor, SimpleMixturePredictor, IngredientFractionsPredictor
-from citrine.informatics.descriptors import RealDescriptor
 
 
 def valid_serialization_output(data):
@@ -25,7 +26,7 @@ def test_simple_legacy_deserialization(valid_simple_ml_predictor_data):
     assert predictor.outputs[0] == RealDescriptor("z", 0, 100, "")
     assert len(predictor.latent_variables) == 1
     assert predictor.latent_variables[0] == RealDescriptor("y", 0, 100, "")
-    assert predictor.training_data.table_id == UUID('e5c51369-8e71-4ec6-b027-1f92bdc14762')
+    assert predictor.training_data[0].table_id == UUID('e5c51369-8e71-4ec6-b027-1f92bdc14762')
 
 
 def test_polymorphic_legacy_deserialization(valid_simple_ml_predictor_data):
@@ -39,7 +40,7 @@ def test_polymorphic_legacy_deserialization(valid_simple_ml_predictor_data):
     assert predictor.outputs[0] == RealDescriptor("z", 0, 100, "")
     assert len(predictor.latent_variables) == 1
     assert predictor.latent_variables[0] == RealDescriptor("y", 0, 100, "")
-    assert predictor.training_data.table_id == UUID('e5c51369-8e71-4ec6-b027-1f92bdc14762')
+    assert predictor.training_data[0].table_id == UUID('e5c51369-8e71-4ec6-b027-1f92bdc14762')
 
 
 def test_legacy_serialization(valid_simple_ml_predictor_data):

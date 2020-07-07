@@ -1,7 +1,8 @@
 """Tests for citrine.informatics.processors."""
+import uuid
+
 import mock
 import pytest
-import uuid
 
 from citrine.informatics.data_sources import AraTableDataSource
 from citrine.informatics.descriptors import RealDescriptor, MolecularStructureDescriptor, FormulationDescriptor
@@ -28,7 +29,7 @@ def simple_predictor() -> SimpleMLPredictor:
                              inputs=[x],
                              outputs=[z],
                              latent_variables=[y],
-                             training_data=data_source)
+                             training_data=[data_source])
 
 
 @pytest.fixture
@@ -45,7 +46,12 @@ def molecule_featurizer() -> MolecularStructureFeaturizer:
 @pytest.fixture
 def graph_predictor() -> GraphPredictor:
     """Build a GraphPredictor for testing."""
-    return GraphPredictor(name='Graph predictor', description='description', predictors=[uuid.uuid4(), uuid.uuid4()])
+    return GraphPredictor(
+        name='Graph predictor',
+        description='description',
+        predictors=[uuid.uuid4(), uuid.uuid4()],
+        training_data=[data_source]
+    )
 
 
 @pytest.fixture
@@ -89,7 +95,7 @@ def generalized_mean_property_predictor() -> GeneralizedMeanPropertyPredictor:
         input_descriptor=formulation,
         properties=['density'],
         p=2,
-        training_data=data_source,
+        training_data=[data_source],
         impute_properties=True,
         default_properties={'density': 1.0},
         label='solvent'
@@ -104,7 +110,7 @@ def simple_mixture_predictor() -> SimpleMixturePredictor:
         description='Computes mean ingredient properties',
         input_descriptor=formulation,
         output_descriptor=formulation_output,
-        training_data=data_source
+        training_data=[data_source]
     )
 
 
@@ -140,7 +146,7 @@ def test_simple_initialization(simple_predictor):
     assert simple_predictor.outputs[0] == z
     assert len(simple_predictor.latent_variables) == 1
     assert simple_predictor.latent_variables[0] == y
-    assert simple_predictor.training_data.table_id == uuid.UUID('e5c51369-8e71-4ec6-b027-1f92bdc14762')
+    assert simple_predictor.training_data[0].table_id == uuid.UUID('e5c51369-8e71-4ec6-b027-1f92bdc14762')
     assert str(simple_predictor) == '<SimplePredictor \'ML predictor\'>'
     assert hasattr(simple_predictor, 'report')
 
@@ -162,6 +168,7 @@ def test_graph_initialization(graph_predictor):
     assert graph_predictor.name == 'Graph predictor'
     assert graph_predictor.description == 'description'
     assert len(graph_predictor.predictors) == 2
+    assert graph_predictor.training_data == [data_source]
     assert str(graph_predictor) == '<GraphPredictor \'Graph predictor\'>'
 
 
@@ -264,7 +271,7 @@ def test_generalized_mean_property_initialization(generalized_mean_property_pred
     assert generalized_mean_property_predictor.properties == ['density']
     assert generalized_mean_property_predictor.p == 2
     assert generalized_mean_property_predictor.impute_properties == True
-    assert generalized_mean_property_predictor.training_data == data_source
+    assert generalized_mean_property_predictor.training_data == [data_source]
     assert generalized_mean_property_predictor.default_properties == {'density': 1.0}
     assert generalized_mean_property_predictor.label == 'solvent'
     expected_str = '<GeneralizedMeanPropertyPredictor \'Mean property predictor\'>'
@@ -309,7 +316,7 @@ def test_simple_mixture_predictor_initialization(simple_mixture_predictor):
     assert simple_mixture_predictor.name == 'Simple mixture predictor'
     assert simple_mixture_predictor.input_descriptor.key == 'formulation'
     assert simple_mixture_predictor.output_descriptor.key == 'output formulation'
-    assert simple_mixture_predictor.training_data == data_source
+    assert simple_mixture_predictor.training_data == [data_source]
     expected_str = '<SimpleMixturePredictor \'Simple mixture predictor\'>'
     assert str(simple_mixture_predictor) == expected_str
 

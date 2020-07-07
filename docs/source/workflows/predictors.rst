@@ -43,7 +43,7 @@ The following example demonstrates how to use the python SDK to create a :class:
        inputs = [input_descriptor_1, input_descriptor_2],
        outputs = [output_descriptor_1, output_descriptor_2],
        latent_variables = [latent_variable_descriptor_1],
-       training_data = AraTableDataSource(training_data_table_uid, 0)
+       training_data = [AraTableDataSource(training_data_table_uid, 0)]
    )
 
    # register predictor
@@ -84,7 +84,8 @@ The following example demonstrates how to use the python SDK to create a :class:
    graph_predictor = GraphPredictor(
        name = 'Predictor name',
        description = 'Predictor description',
-       predictors = [predictor1.uid, predictor2.uid, predictor3.uid]
+       predictors = [predictor1.uid, predictor2.uid, predictor3.uid],
+       training_data = [AraTableDataSource(training_data_table_uid, 0)] # training data shared by all sub-predictors
    )
 
    # register predictor
@@ -219,7 +220,7 @@ The following example illustrates how an :class:`~citrine.informatics.predictors
             'solvent': ['water'],
             'solute': ['salt']
         },
-        training_data=data_source
+        training_data=[data_source]
     )
 
 Simple mixture predictor
@@ -252,7 +253,7 @@ The following example illustrates how a :class:`~citrine.informatics.predictors.
         description='Constructs a formulation descriptor that flattens a hierarchy of simple mixtures into the quantities of leaf ingredients',
         input_descriptor=input_formulation,
         output_descriptor=output_formulation,
-        training_data=data_source
+        training_data=[data_source]
     )
 
 Generalized mean property predictor
@@ -329,7 +330,7 @@ The example below show how to configure a mean property predictor to compute mea
         properties=['density'],
         # compute the 1-mean
         p=1,
-        training_data=data_source,
+        training_data=[data_source],
         # impute ingredient properties, if missing
         impute_properties=True,
         # if missing, use with 2.0

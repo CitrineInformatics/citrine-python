@@ -76,10 +76,10 @@ Assume that there is a training data table with known id and version.
            inputs=[x, y],
            latent_variables=[],
            outputs=[z],
-           training_data=AraTableDataSource(
+           training_data=[AraTableDataSource(
             table_id = training_table_id,
             table_version = training_table_version
-           )
+           )]
        )
     )
 

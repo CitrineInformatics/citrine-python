@@ -83,8 +83,13 @@ class SimpleMLPredictor(Serializable['SimplePredictor'], Predictor):
         Descriptors that represent outputs of relations
     latent_variables: list[Descriptor]
         Descriptors that are predicted from inputs and used when predicting the outputs
-    training_data: DataSource
-        Source of the training data, which can be either a CSV or an Ara table
+    training_data: Optional[List[DataSource]]
+        Sources of training data. Each can be either a CSV or an Ara table.
+        Candidates from multiple data sources will be combined into a flattened list and deduplicated by uid
+        and identifiers. Deduplication is performed if a uid or identifier is shared between two or more rows.
+        The content of a deduplicated row will contain the union of data across all rows that share the same uid
+        or at least 1 identifier. Training data is optional if the predictor is part of a graph that includes
+        all training data required by this predictor.
 
     """
 
@@ -94,7 +99,7 @@ class SimpleMLPredictor(Serializable['SimplePredictor'], Predictor):
     inputs = _properties.List(_properties.Object(Descriptor), 'config.inputs')
     outputs = _properties.List(_properties.Object(Descriptor), 'config.outputs')
     latent_variables = _properties.List(_properties.Object(Descriptor), 'config.latent_variables')
-    training_data = _properties.Object(DataSource, 'config.training_data')
+    training_data = _properties.Optional(_properties.List(_properties.Object(DataSource)), 'config.training_data')
     typ = _properties.String('config.type', default='Simple', deserializable=False)
     status = _properties.Optional(_properties.String(), 'status', serializable=False)
     status_info = _properties.Optional(
@@ -120,7 +125,7 @@ class SimpleMLPredictor(Serializable['SimplePredictor'], Predictor):
                  inputs: List[Descriptor],
                  outputs: List[Descriptor],
                  latent_variables: List[Descriptor],
-                 training_data: DataSource,
+                 training_data: Optional[List[DataSource]] = None,
                  session: Optional[Session] = None,
                  report: Optional[Report] = None,
                  active: bool = True):
@@ -129,7 +134,7 @@ class SimpleMLPredictor(Serializable['SimplePredictor'], Predictor):
         self.inputs: List[Descriptor] = inputs
         self.outputs: List[Descriptor] = outputs
         self.latent_variables: List[Descriptor] = latent_variables
-        self.training_data: DataSource = training_data
+        self.training_data: Optional[List[DataSource]] = training_data
         self.session: Optional[Session] = session
         self.report: Optional[Report] = report
         self.active: bool = active
@@ -151,8 +156,15 @@ class GraphPredictor(Serializable['GraphPredictor'], Predictor):
         name of the configuration
     description: str
         the description of the predictor
-    predictors: list[UUID, Predictor]
+    predictors: List[Union[UUID, Predictor]]
         the list of predictors to use in the grpah, either UUIDs or serialized predictors
+    training_data: Optional[List[DataSource]]
+        Optional sources of training data shared by all predictors in the graph.
+        Training data provided by this graph predictor does not need to be specified as part of the
+        configuration of sub-predictors. Shared training data and any training data specified by a sub-predictor
+        will be combined into a flattened list and deduplicated by uid and identifiers. Deduplication is performed
+        if a uid or identifier is shared between two or more rows. The content of a deduplicated row will contain
+        the union of data across all rows that share the same uid or at least 1 identifier.
 
     """
 
@@ -161,6 +173,7 @@ class GraphPredictor(Serializable['GraphPredictor'], Predictor):
     description = _properties.String('config.description')
     predictors = _properties.List(_properties.Union(
         [_properties.UUID, _properties.Object(Predictor)]), 'config.predictors')
+    training_data = _properties.Optional(_properties.List(_properties.Object(DataSource)), 'config.training_data')
     typ = _properties.String('config.type', default='Graph', deserializable=False)
     # Graph predictors may not be embedded in other predictors, hence while status is optional
     # for deserializing most predictors, it is required for deserializing a graph
@@ -186,12 +199,14 @@ class GraphPredictor(Serializable['GraphPredictor'], Predictor):
                  name: str,
                  description: str,
                  predictors: List[Union[UUID, Predictor]],
+                 training_data: Optional[List[DataSource]] = None,
                  session: Optional[Session] = None,
                  report: Optional[Report] = None,
                  active: bool = True):
         self.name: str = name
         self.description: str = description
         self.predictors: List[Union[UUID, Predictor]] = predictors
+        self.training_data: Optional[List[DataSource]] = training_data
         self.session: Optional[Session] = session
         self.report: Optional[Report] = report
         self.active: bool = active
@@ -411,7 +426,7 @@ class MolecularStructureFeaturizer(Serializable['MolecularStructureFeaturizer'],
 
 
 class IngredientsToSimpleMixturePredictor(
-        Serializable['IngredientsToSimpleMixturePredictor'], Predictor):
+    Serializable['IngredientsToSimpleMixturePredictor'], Predictor):
     """[ALPHA] A predictor interface that constructs a simple mixture from ingredient quantities.
 
     Parameters
@@ -486,7 +501,7 @@ class IngredientsToSimpleMixturePredictor(
 
 
 class GeneralizedMeanPropertyPredictor(
-        Serializable['GeneralizedMeanPropertyPredictor'], Predictor):
+    Serializable['GeneralizedMeanPropertyPredictor'], Predictor):
     """[ALPHA] A predictor interface that computes generalized mean component properties.
 
     Parameters
@@ -508,8 +523,13 @@ class GeneralizedMeanPropertyPredictor(
         entire dataset is used.
         If ``True`` and a default is specified in ``default_properties``, then the specified
         default is used in place of missing values.
-    training_data: DataSource
-        Source of the training data, which can be either a CSV or an Ara table
+    training_data: Optional[List[DataSource]]
+        Sources of training data. Each can be either a CSV or an Ara table.
+        Candidates from multiple data sources will be combined into a flattened list and deduplicated by uid
+        and identifiers. Deduplication is performed if a uid or identifier is shared between two or more rows.
+        The content of a deduplicated row will contain the union of data across all rows that share the same uid
+        or at least 1 identifier. Training data is optional if the predictor is part of a graph that includes
+        all training data required by this predictor.
     label: Optional[str]
         Optional label
     default_properties: Optional[Dict[str, float]]
@@ -528,7 +548,7 @@ class GeneralizedMeanPropertyPredictor(
     input_descriptor = _properties.Object(FormulationDescriptor, 'config.input')
     properties = _properties.List(_properties.String, 'config.properties')
     p = _properties.Float('config.p')
-    training_data = _properties.Object(DataSource, 'config.training_data')
+    training_data = _properties.Optional(_properties.List(_properties.Object(DataSource)), 'config.training_data')
     impute_properties = _properties.Boolean('config.impute_properties')
     default_properties = _properties.Optional(
         _properties.Mapping(_properties.String, _properties.Float), 'config.default_properties')
@@ -559,7 +579,7 @@ class GeneralizedMeanPropertyPredictor(
                  input_descriptor: FormulationDescriptor,
                  properties: List[str],
                  p: float,
-                 training_data: DataSource,
+                 training_data: Optional[List[DataSource]],
                  impute_properties: bool,
                  default_properties: Optional[Dict[str, float]] = None,
                  label: Optional[str] = None,
@@ -571,7 +591,7 @@ class GeneralizedMeanPropertyPredictor(
         self.input_descriptor: FormulationDescriptor = input_descriptor
         self.properties: List[str] = properties
         self.p: float = p
-        self.training_data = training_data
+        self.training_data: Optional[List[DataSource]] = training_data
         self.impute_properties: bool = impute_properties
         self.default_properties: Optional[Dict[str, float]] = default_properties
         self.label: Optional[str] = label
@@ -601,8 +621,13 @@ class SimpleMixturePredictor(Serializable['SimpleMixturePredictor'], Predictor):
         input descriptor for the hierarchical (un-mixed) formulation
     output_descriptor: FormulationDescriptor
         output descriptor for the flat (mixed) formulation
-    training_data: DataSource
-        Source of the training data, which can be either a CSV or an Ara table
+    training_data: Optional[List[DataSource]]
+        Sources of training data. Each can be either a CSV or an Ara table.
+        Candidates from multiple data sources will be combined into a flattened list and deduplicated by uid
+        and identifiers. Deduplication is performed if a uid or identifier is shared between two or more rows.
+        The content of a deduplicated row will contain the union of data across all rows that share the same uid
+        or at least 1 identifier. Training data is optional if the predictor is part of a graph that includes
+        all training data required by this predictor.
 
     """
 
@@ -611,7 +636,7 @@ class SimpleMixturePredictor(Serializable['SimpleMixturePredictor'], Predictor):
     description = _properties.String('config.description')
     input_descriptor = _properties.Object(FormulationDescriptor, 'config.input')
     output_descriptor = _properties.Object(FormulationDescriptor, 'config.output')
-    training_data = _properties.Object(DataSource, 'config.training_data')
+    training_data = _properties.Optional(_properties.List(_properties.Object(DataSource)), 'config.training_data')
     typ = _properties.String('config.type', default='SimpleMixture',
                              deserializable=False)
     status = _properties.Optional(_properties.String, 'status', serializable=False)
@@ -635,7 +660,7 @@ class SimpleMixturePredictor(Serializable['SimpleMixturePredictor'], Predictor):
                  description: str,
                  input_descriptor: FormulationDescriptor,
                  output_descriptor: FormulationDescriptor,
-                 training_data: DataSource,
+                 training_data: Optional[List[DataSource]] = None,
                  session: Optional[Session] = None,
                  report: Optional[Report] = None,
                  active: bool = True):
@@ -643,7 +668,7 @@ class SimpleMixturePredictor(Serializable['SimpleMixturePredictor'], Predictor):
         self.description: str = description
         self.input_descriptor: FormulationDescriptor = input_descriptor
         self.output_descriptor: FormulationDescriptor = output_descriptor
-        self.training_data = training_data
+        self.training_data: Optional[List[DataSource]] = training_data
         self.session: Optional[Session] = session
         self.report: Optional[Report] = report
         self.active: bool = active

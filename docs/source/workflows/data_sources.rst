@@ -58,7 +58,7 @@ That file could be used as the training data for a predictor as:
         ],
         outputs = [data_source.column_definitions["Gap"]],
         latent_variables = [],
-        training_data = data_source
+        training_data = [data_source]
     )
 
 An optional list of identifiers can be specified.
@@ -169,7 +169,7 @@ The example below assumes that the uuid and the version of the desired Ara table
         ],
         outputs = [RealDescriptor("root~band gap", lower_bound=0, upper_bound=20, units="eV")],
         latent_variables = [],
-        training_data = data_source
+        training_data = [data_source]
     )
 
   Note that the descriptor keys above are the headers of the *variable* not the column in the table.
