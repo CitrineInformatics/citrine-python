@@ -116,12 +116,12 @@ class TableCollection(Collection[Table]):
                        page: Optional[int] = None,
                        per_page: int = 100) -> Iterable[Table]:
         """
-        List the versions of a table associated with a given Ara Definition.
+        List the versions of a table associated with a given Table Config UID.
 
         This is a paginated collection, similar to a .list() call.
 
 
-        :param uid: The Ara Definition UID.
+        :param uid: The Table Config UID.
         :param page: The page number to display (eg: 1)
         :param per_page: The number of items to fetch per-page.
         :return: An iterable of the versions of the Tables (as Table objects).
