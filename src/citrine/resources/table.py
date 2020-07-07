@@ -112,9 +112,9 @@ class TableCollection(Collection[Table]):
         return self._paginator.paginate(fetch_versions, build_versions, page, per_page)
 
     def list_by_config(self,
-                                ara_definition_uid: UUID,
-                                page: Optional[int] = None,
-                                per_page: int = 100) -> Iterable[Table]:
+                       ara_definition_uid: UUID,
+                       page: Optional[int] = None,
+                       per_page: int = 100) -> Iterable[Table]:
         """
         List the versions of a table associated with a given Ara Definition.
 
