@@ -48,6 +48,20 @@ def test_register(valid_simple_ml_predictor_data, basic_predictor_report_data):
     assert registered.name == 'ML predictor'
 
 
+def test_register_experimental(valid_simple_ml_predictor_data, basic_predictor_report_data):
+    session = mock.Mock()
+    post_response = deepcopy(valid_simple_ml_predictor_data)
+    post_response["experimental"] = True
+    post_response["experimental_reasons"] = ["This is a test", "Of experimental reasons"]
+    session.post_resource.return_value = post_response
+    session.get_resource.return_value = basic_predictor_report_data
+    pc = PredictorCollection(uuid.uuid4(), session)
+    predictor = SimpleMLPredictor.build(valid_simple_ml_predictor_data)
+    with pytest.warns(UserWarning) as record:
+        pc.register(predictor)
+    assert len(str(record[0].message).split("\n")) == 3
+
+
 def test_graph_register(valid_graph_predictor_data, basic_predictor_report_data):
     copy_graph_data = deepcopy(valid_graph_predictor_data)
     session = mock.Mock()
