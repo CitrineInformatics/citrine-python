@@ -63,7 +63,7 @@ def test_design_space_limits():
     too_wide = EnumeratedDesignSpace(
         "foo",
         "bar",
-        descriptors=[RealDescriptor("R-{}".format(i), 0, 1) for i in range(11)],
+        descriptors=[RealDescriptor("R-{}".format(i), 0, 1) for i in range(129)],
         data=[]
     )
 
@@ -71,12 +71,14 @@ def test_design_space_limits():
         "foo",
         "bar",
         descriptors=[RealDescriptor("R-{}".format(i), 0, 1) for i in range(10)],
-        data=[{"R-{}".format(i): random() for i in range(10)} for _ in range(1000)]
+        data=[{"R-{}".format(i): random() for i in range(128)} for _ in range(1000)]
     )
 
     # create mock post response by setting the status
     mock_response = just_right.dump()
     mock_response["status"] = "READY"
+    mock_response["experimental"] = True
+    mock_response["experimental_reasons"] = ["This is a test", "That experimental reasons work"]
     session.responses.append(mock_response)
 
     # Then
