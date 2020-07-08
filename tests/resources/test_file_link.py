@@ -30,6 +30,20 @@ def valid_data() -> dict:
     return FileLinkDataFactory(url='www.citrine.io', filename='materials.txt')
 
 
+def test_mime_types(collection):
+    expected_xlsx = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    expected_xls = "application/vnd.ms-excel"
+    expected_txt = "text/plain"
+    expected_unk = "application/octet-stream"
+    expected_csv = "text/csv"
+
+    assert collection._mime_type("asdf.xlsx") == expected_xlsx
+    assert collection._mime_type("asdf.XLSX") == expected_xlsx
+    assert collection._mime_type("asdf.xls") == expected_xls
+    assert collection._mime_type("asdf.TXT") == expected_txt
+    assert collection._mime_type("asdf.csv") == expected_csv
+    assert collection._mime_type("asdf.FAKE") == expected_unk
+
 def test_build_equivalence(collection, valid_data):
     """Test that build() works the same whether called from FileLink or FileCollection."""
     assert collection.build(valid_data).dump() == FileLink.build(valid_data).dump()
@@ -141,7 +155,6 @@ def test_upload(mock_isfile, mock_stat, mock_open, mock_boto3_client, collection
 def test_upload_missing_file(collection):
     with pytest.raises(ValueError):
         collection.upload('this-file-does-not-exist.xls')
-
 
 @patch('citrine.resources.file_link.os.stat')
 def test_upload_request(mock_stat, collection, session, uploader):
