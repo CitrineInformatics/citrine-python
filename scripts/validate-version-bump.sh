@@ -15,7 +15,7 @@ extract_minor() {
 }
 
 extract_patch() {
-  sed -En "s/.*([0-9])/\1/p" <<< "$1"
+  sed -En "s/.*([0-9]+)/\1/p" <<< "$1"
 }
 
 trap "$(set +eu)" EXIT
