@@ -90,6 +90,8 @@ The following example demonstrates how to use the python SDK to create a :class:
    # register predictor
    predictor = project.predictors.register(graph_predictor)
 
+For a more complete example of graph predictor usage, see :ref:`AI Engine Code Examples <graph_predictor_example>`.
+
 Expression predictor
 --------------------
 
@@ -136,6 +138,8 @@ The following example demonstrates how to create an :class:`~citrine.informatics
 
    # register predictor
    predictor = project.predictors.register(shear_modulus_predictor)
+
+For an example of expression predictors used in a graph predictor, see :ref:`AI Engine Code Examples <graph_predictor_example>`.
 
 Ingredients to simple mixture predictor
 ---------------------------------------

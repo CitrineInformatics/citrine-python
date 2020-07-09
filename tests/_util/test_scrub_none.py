@@ -34,4 +34,9 @@ def test_scrub_none():
         key3=[None, None, None]
     )
     scrub_none(json)
-    assert json == dict(key1=1, key2=['foo', 'bar'], key3=[])
+    # None should not be removed from lists
+    assert json == dict(
+        key1=1,
+        key2=[None, 'foo', None, None, 'bar', None],
+        key3=[None, None, None]
+    )

@@ -127,7 +127,7 @@ class FileCollection(Collection[FileLink]):
         This is necessary because the database resource contains additional information that is
         not in the FileLink object, such as file size and the id of the user who uploaded the file.
 
-        Paramters
+        Parameters
         ---------
         file: dict
             A JSON dictionary corresponding to the file link as it is saved in the database.
@@ -195,7 +195,7 @@ class FileCollection(Collection[FileLink]):
 
     def _make_upload_request(self, file_path: str, dest_name: str):
         """
-        Make a request to the backend to upload a file.
+        Make a request to the backend to upload a file. Uses mimetypes.guess_type.
 
         Parameters
         ----------
@@ -213,8 +213,8 @@ class FileCollection(Collection[FileLink]):
 
         """
         path = self._get_path() + "/uploads"
-        extension = os.path.splitext(file_path)[1]
-        mime_type = mimetypes.types_map[extension.lower()]
+        # This string coersion is for supporting pathlib.Path objects in python 3.6
+        mime_type = self._mime_type(str(file_path))
         file_size = os.stat(file_path).st_size
         assert isinstance(file_size, int)
         upload_json = {
@@ -250,6 +250,13 @@ class FileCollection(Collection[FileLink]):
             raise RuntimeError("Upload initiation response is missing some fields: "
                                "{}".format(upload_request))
         return uploader
+
+    @staticmethod
+    def _mime_type(file_path: str):
+        mime_type = mimetypes.guess_type(file_path)[0]
+        if mime_type is None:
+            mime_type = "application/octet-stream"
+        return mime_type
 
     @staticmethod
     def _upload_file(file_path: str, uploader: _Uploader):

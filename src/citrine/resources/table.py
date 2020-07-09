@@ -111,6 +111,38 @@ class TableCollection(Collection[Table]):
 
         return self._paginator.paginate(fetch_versions, build_versions, page, per_page)
 
+    def list_by_config(self,
+                       ara_definition_uid: UUID,
+                       page: Optional[int] = None,
+                       per_page: int = 100) -> Iterable[Table]:
+        """
+        List the versions of a table associated with a given Table Config UID.
+
+        This is a paginated collection, similar to a .list() call.
+
+
+        :param uid: The Table Config UID.
+        :param page: The page number to display (eg: 1)
+        :param per_page: The number of items to fetch per-page.
+        :return: An iterable of the versions of the Tables (as Table objects).
+        """
+        def fetch_versions(page: Optional[int],
+                           per_page: int) -> Tuple[Iterable[dict], str]:
+            path_params = {'ara_definition_uid_str': str(ara_definition_uid)}
+            path_params.update(self.__dict__)
+            path = 'projects/{project_id}/table-configs/{ara_definition_uid_str}/gem-tables'\
+                .format(**path_params)
+            data = self.session.get_resource(
+                path,
+                params=self._page_params(page, per_page))
+            return (data[self._collection_key], data.get('next', ""))
+
+        def build_versions(collection: Iterable[dict]) -> Iterable[Table]:
+            for item in collection:
+                yield self.build(item)
+
+        return self._paginator.paginate(fetch_versions, build_versions, page, per_page)
+
     def build(self, data: dict) -> Table:
         """Build an individual Table from a dictionary."""
         table = Table.build(data)
