@@ -130,7 +130,7 @@ class TableCollection(Collection[Table]):
                            per_page: int) -> Tuple[Iterable[dict], str]:
             path_params = {'ara_definition_uid_str': str(ara_definition_uid)}
             path_params.update(self.__dict__)
-            path = 'projects/{project_id}/gem-table-configs/{ara_definition_uid_str}/gem-tables'\
+            path = 'projects/{project_id}/table-configs/{ara_definition_uid_str}/gem-tables'\
                 .format(**path_params)
             data = self.session.get_resource(
                 path,
