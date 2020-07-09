@@ -76,9 +76,6 @@ def test_design_space_limits():
 
     # create mock post response by setting the status
     mock_response = just_right.dump()
-    mock_response["status"] = "READY"
-    mock_response["experimental"] = True
-    mock_response["experimental_reasons"] = ["This is a test", "That experimental reasons work"]
     session.responses.append(mock_response)
 
     # Then
