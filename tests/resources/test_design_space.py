@@ -76,6 +76,7 @@ def test_design_space_limits():
 
     # create mock post response by setting the status
     mock_response = just_right.dump()
+    mock_response["status"] = "READY"
     session.responses.append(mock_response)
 
     # Then
