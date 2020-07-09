@@ -9,9 +9,10 @@ from citrine.informatics.descriptors import Descriptor, RealDescriptor
 
 
 def enumerate_cartesian_product(
+    *,
     design_grid: Mapping[str, Sequence],
     descriptors: List[Descriptor],
-    name: str = 'Enumerated Cartesian product design space',
+    name: str,
     description: str = '',
 ) -> EnumeratedDesignSpace:
     """[ALPHA] Enumerate a Cartesian product from 1-D grids.
@@ -47,10 +48,11 @@ def enumerate_cartesian_product(
 
 
 def enumerate_formulation_grid(
+    *,
     formulation_grid: Mapping[str, Sequence[float]],
     balance_ingredient: str,
     descriptors: List[Descriptor] = None,
-    name: str = 'Enumerated Formulation Grid',
+    name: str,
     description: str = '',
 ) -> EnumeratedDesignSpace:
     """[ALPHA] Enumerate a Cartesian product following formulation constraints.
@@ -149,8 +151,9 @@ def enumerate_formulation_grid(
 
 
 def cartesian_join_design_spaces(
+    *,
     subspaces: List[EnumeratedDesignSpace],
-    name: str = 'Joined enumerated design space',
+    name: str,
     description: str = '',
 ) -> EnumeratedDesignSpace:
     """[ALPHA] Cartesian join of multiple enumerated design spaces.
@@ -166,6 +169,10 @@ def cartesian_join_design_spaces(
     ----------
     subspaces: List[EnumeratedDesignSpace]
         A list of EnumeratedDesignSpaces
+    name: str
+        name for the output EnumeratedDesignSpace
+    description: str
+        description for the output EnumeratedDesignSpace
 
     """
     # Test for duplicate or invalid descriptor keys
