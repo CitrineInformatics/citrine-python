@@ -13,7 +13,7 @@ def enumerate_cartesian_product(
     design_grid: Mapping[str, Sequence],
     descriptors: List[Descriptor],
     name: str,
-    description: str = '',
+    description: str = ''
 ) -> EnumeratedDesignSpace:
     """[ALPHA] Enumerate a Cartesian product from 1-D grids.
 
@@ -53,7 +53,7 @@ def enumerate_formulation_grid(
     balance_ingredient: str,
     descriptors: List[Descriptor] = None,
     name: str,
-    description: str = '',
+    description: str = ''
 ) -> EnumeratedDesignSpace:
     """[ALPHA] Enumerate a Cartesian product following formulation constraints.
 
@@ -124,7 +124,7 @@ def enumerate_formulation_grid(
             design_grid=non_balance_grids,
             descriptors=non_balance_descriptors,
             name='',
-            description='',
+            description=''
         ).data
     )
 
@@ -156,7 +156,7 @@ def cartesian_join_design_spaces(
     *,
     subspaces: List[EnumeratedDesignSpace],
     name: str,
-    description: str = '',
+    description: str = ''
 ) -> EnumeratedDesignSpace:
     """[ALPHA] Cartesian join of multiple enumerated design spaces.
 

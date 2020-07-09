@@ -138,13 +138,17 @@ def test_exceptions(basic_cartesian_space, simple_mixture_space):
     with pytest.raises(ValueError):
         enumerate_formulation_grid(
             formulation_grid=form_grids_1,
-            balance_ingredient='wrong'
+            balance_ingredient='wrong',
+            name='invalid formulation space 1',
+            description=''
         )
     # Test ingredient outside of [0,1]
     with pytest.raises(ValueError):
         enumerate_formulation_grid(
             formulation_grid=form_grids_1,
-            balance_ingredient='ing_D'
+            balance_ingredient='ing_D',
+            name='invalid formulation space 2',
+            description=''
         )
     # Test the 'join_key' error
     form_grids_2 = {
@@ -154,14 +158,18 @@ def test_exceptions(basic_cartesian_space, simple_mixture_space):
     }
     form_ds_2 = enumerate_formulation_grid(
         formulation_grid=form_grids_2,
-        balance_ingredient='ing_D'
+        balance_ingredient='ing_D',
+        name='dummy formulation space 2',
+        description=''
     )
     with pytest.raises(ValueError):
         cartesian_join_design_spaces(
             subspaces=[
                 basic_cartesian_space,
                 form_ds_2
-            ]
+            ],
+            name='invalid join space 1',
+            description=''
         )
     # Test the duplicate keys error
     form_grids_3 = {
@@ -170,12 +178,16 @@ def test_exceptions(basic_cartesian_space, simple_mixture_space):
     }
     form_ds_3 = enumerate_formulation_grid(
         formulation_grid=form_grids_3,
-        balance_ingredient='ing_C'
+        balance_ingredient='ing_C',
+        name='dummy formulation space 3',
+        description=''
     )
     with pytest.raises(ValueError):
         cartesian_join_design_spaces(
             subspaces=[
                 simple_mixture_space,
                 form_ds_3
-            ]
+            ],
+            name='invalid join space 2',
+            description=''
         )
