@@ -210,7 +210,10 @@ class Collection(Generic[ResourceType]):
 
     def _check_experimental(self, data):
         if data.get("experimental", False):
-            msg = "The resource is experimental because: \n  {}".format(
+            uid = data.get("id")
+            typ = self._resource().__class__.__name__
+            msg = "The {} with id {} is experimental because: \n  {}".format(
+                typ, uid,
                 "\n  ".join(data.get("experimental_reasons") or ["Unknown reason"])
             )
             warnings.warn(msg)

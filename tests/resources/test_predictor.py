@@ -59,7 +59,10 @@ def test_register_experimental(valid_simple_ml_predictor_data, basic_predictor_r
     predictor = SimpleMLPredictor.build(valid_simple_ml_predictor_data)
     with pytest.warns(UserWarning) as record:
         pc.register(predictor)
-    assert len(str(record[0].message).split("\n")) == 3
+    msg = str(record[0].message)
+    assert "Predictor" in msg
+    assert "This is a test" in msg
+    assert "Of experimental reasons" in msg
 
 
 def test_graph_register(valid_graph_predictor_data, basic_predictor_report_data):
