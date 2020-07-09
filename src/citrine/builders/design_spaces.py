@@ -122,7 +122,9 @@ def enumerate_formulation_grid(
     form_ds = pd.DataFrame(
         enumerate_cartesian_product(
             design_grid=non_balance_grids,
-            descriptors=non_balance_descriptors
+            descriptors=non_balance_descriptors,
+            name='',
+            description='',
         ).data
     )
 
