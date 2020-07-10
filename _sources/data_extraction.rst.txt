@@ -40,8 +40,10 @@ One might assign ``headers = ["Product", "Hardness"]`` to this measurement in or
          attribute_template = LinkByUID(scope="templates", id="cookie density"),
          process_template = LinkByUID(scope="templates", id="apply glaze"))
 
-A :class:`~citrine.ara.columns.Column` object describes how to transform a Variable into a primitive value (e.g. a real number, an integer, or a string) that can be entered into a cell in a table.
-This is necessary because GEMD Attributes are more general than primitive values; they often convey uncertainty estimates, for example.
+A :class:`~citrine.ara.columns.Column` object describes how to transform a :class:`~citrine.ara.variables.Variable` into a primitive value (e.g., a real number, an integer, or a string) that can be entered into a cell in a table.
+This is necessary because `GEMD Attributes`__ are more general than primitive values; they often convey uncertainty estimates, for example.
+
+__ https://citrineinformatics.github.io/gemd-docs/specification/attributes/
 
 .. code-block:: python
 
@@ -49,7 +51,7 @@ This is necessary because GEMD Attributes are more general than primitive values
    final_density_mean = MeanColumn(data_source="final density", target_units="g/cm^3")
    final_density_std = StdDevColumn(data_source="final density", target_units="g/cm^3")
 
-The data_source parameter is a reference to a Variable for this Column to describe, so the value of data_source must match the name of a Variable.
+The data_source parameter is a reference to a :class:`~citrine.ara.variables.Variable` for this :class:`~citrine.ara.columns.Column` to describe, so the value of ``data_source`` must match the ``name`` of a :class:`~citrine.ara.variables.Variable`.
 
 Defining tables
 ---------------
@@ -77,7 +79,7 @@ Note the inclusion of two datasets above.
 In general, you should have at least two datasets referenced because Objects and Templates are generally associated with different datasets.
 
 In addition to defining variables, rows, and columns individually, there are convenience methods that simultaneously add multiple elements to an existing Ara definition.
-One such method is :func:`~citrine.resources.Ara.Definition.add_all_ingredients`, which creates variables and columns for every potential ingredient in a process.
+One such method is :func:`~citrine.resources.ara_definition.AraDefinition.add_all_ingredients`, which creates variables and columns for every potential ingredient in a process.
 The user provides a link to a process template that has a non-empty set of `allowed_names` (the allowed names of the ingredient runs and specs in the process).
 This creates an id variable/column and a quantity variable/column for each allowed name.
 The user specifies the dimension to report the quantity in: mass fraction, volume fraction, number fraction, or absolute quantity.
@@ -118,7 +120,7 @@ For example:
 The preview returns a dictionary with two keys:
 
 * The ``csv`` key will get a preview of the table in the comma-separated-values format.
-* The ``warnings`` key will get a list of String-valued warnings that describe possible issues with the Ara definition, e.g. that one of the columns is completely empty.
+* The ``warnings`` key will get a list of String-valued warnings that describe possible issues with the Ara definition, e.g., that one of the columns is completely empty.
 
 For example, if you wanted to print the warnings and then load the preview into a pandas dataframe, you could:
 
@@ -201,33 +203,33 @@ Just like the :class:`~citrine.resources.file_link.FileLink` resource, :class:`~
 Available Row Definitions
 -------------------------
 
-Currently, Ara provides only a single way to define Rows: by the :class:`~gemd.entity.templates.MaterialTemplate` of the roots of the material histories that correspond to each row.
+Currently, Ara provides only a single way to define Rows: by the :class:`~gemd.entity.template.material_template.MaterialTemplate` of the roots of the material histories that correspond to each row.
 
 :class:`~citrine.ara.rows.MaterialRunByTemplate`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The :class:`~citrine.ara.rows.MaterialRunByTemplate` class defines Rows through a list of :class:`~gemd.entity.templates.MaterialTemplate`.
-Every :class:`~gemd.entity.object.MaterialRun` that is assigned to any template in the list is used as the root of a  Material History to be mapped to a Row.
+The :class:`~citrine.ara.rows.MaterialRunByTemplate` class defines Rows through a list of :class:`~gemd.entity.template.material_template.MaterialTemplate`.
+Every :class:`~gemd.entity.object.material_run.MaterialRun` that is assigned to any template in the list is used as the root of a  Material History to be mapped to a Row.
 This is helpful when the rows correspond to classes of materials that are defined through their templates.
-For example, there could be a :class:`~gemd.entity.templates.MaterialTemplate` called "Cake" that is used in all
+For example, there could be a :class:`~gemd.entity.template.material_template.MaterialTemplate` called "Cake" that is used in all
 of the cakes and another called "Brownies" that is used in all of the brownies.
 By including one or both of those templates, you can define a table of Cakes, Brownies, or both.
 
 Available Variable Definitions
 ------------------------------
 
-There are several ways to define variables that take their values from Attributes and fields in GEMD objects.
+There are several ways to define variables that take their values from Attributes and identifiers in GEMD objects.
 
 * Attributes
 
   * :class:`~citrine.ara.variables.AttributeByTemplate`: for when the attribute occurs once per material history
   * :class:`~citrine.ara.variables.AttributeByTemplateAndObjectTemplate`: for when the attributes are distinguished by the object that they are contained in
-  * :class:`~citrine.ara.variables.AttributeByTemplateAfterProcess`: for when measurements are distinguished by the process that precedes them
+  * :class:`~citrine.ara.variables.AttributeByTemplateAfterProcessTemplate`: for when measurements are distinguished by the process that precedes them
   * :class:`~citrine.ara.variables.AttributeInOutput`: for when attributes occur both in a process output and one or more of its inputs
   * :class:`~citrine.ara.variables.IngredientQuantityByProcessAndName`: for the specific case of the volume fraction, mass fraction, number fraction, or absolute quantity of an ingredient
   * :class:`~citrine.ara.variables.IngredientQuantityInOutput`: for the quantity an ingredient used in multiple processes
 
-* Fields
+* Identifiers
 
   * :class:`~citrine.ara.variables.RootInfo`: for fields defined on the material at the root of the Material History, like the name of the material
   * :class:`~citrine.ara.variables.RootIdentifier`: for the id of the Material History, which can be used as a unique identifier for the rows
@@ -235,30 +237,38 @@ There are several ways to define variables that take their values from Attribute
   * :class:`~citrine.ara.variables.IngredientIdentifierInOutput`: for the id of an ingredient used in multiple processes
   * :class:`~citrine.ara.variables.IngredientLabelByProcessAndName`: for a boolean that indicates whether an ingredient is assigned a given label
 
+* Compound Variables
+
+  * :class:`~citrine.ara.variables.XOR`: for combining multiple variable definitions into one variable, when only one of those definitions yields a result for a given tree (logical exclusive OR)
+
 Available Column Definitions
 ----------------------------
 
 There are several ways to define columns, depending on the type of the attribute that is being used as the data source for the column.
 
-* Numeric attributes values, like :class:`~gemd.entity.continuous_value.ContinuousValue` and :class:`~gemd.entity.integer_value.IntegerValue`
+* Numeric attributes values, like :class:`~gemd.entity.value.continuous_value.ContinuousValue` and :class:`~gemd.entity.value.integer_value.IntegerValue`
 
  * :class:`~citrine.ara.columns.MeanColumn`: for the mean value of the numeric distribution
  * :class:`~citrine.ara.columns.StdDevColumn`: for the standard deviation of the numeric distribution, or empty if the value is *nominal*
  * :class:`~citrine.ara.columns.QuantileColumn`: for a user-defined quantile of the numeric distribution, or empty if the value is *nominal*
  * :class:`~citrine.ara.columns.OriginalUnitsColumn`: for getting the units, as entered by the data author, from the specific attribute value; valid for continuous values only
 
-* Enumerated attribute values, like :class:`~gemd.entity.categorical_value.CategoricalValue`
+* Enumerated attribute values, like :class:`~gemd.entity.value.categorical_value.CategoricalValue`
 
  * :class:`~citrine.ara.columns.MostLikelyCategoryColumn`: for getting the mode
  * :class:`~citrine.ara.columns.MostLikelyProbabilityColumn`: for getting the probability of the mode
 
-* Composition and chemical formula attribute values, like :class:`~gemd.entity.composition_value.CompositionValue`
+* Composition and chemical formula attribute values, like :class:`~gemd.entity.value.composition_value.CompositionValue`
 
  * :class:`~citrine.ara.columns.FlatCompositionColumn`: for flattening the composition into a chemical-formula-like string
  * :class:`~citrine.ara.columns.ComponentQuantityColumn`: for getting the (optionally normalized) quantity of a specific component, by name
  * :class:`~citrine.ara.columns.NthBiggestComponentNameColumn`: for getting the name of the n-th biggest component (by quantity)
  * :class:`~citrine.ara.columns.NthBiggestComponentQuantityColumn`: for getting the (optionally normalized) quantity of the n-th biggest component (by quantity)
 
+* Molecular structure attribute values, like :class:`~gemd.entity.value.molecular_value.MolecularValue`
+
+ * :class:`~citrine.ara.columns.MolecularStructureColumn`: for getting molecular structures in a line notation
+
 * String and boolean valued fields, like identifiers and non-attribute fields
 
- * :class:`~citrine.ara.columns.IdentityColumn`: for simply casting the value to a string, which doesn't work on values from attributes
+ * :class:`~citrine.ara.columns.IdentityColumn`: for simply casting the value to a string, which doesn't work on values from Attributes

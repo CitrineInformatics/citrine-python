@@ -67,14 +67,14 @@ One might assign <code class="docutils literal notranslate"><span class="pre">he
       <span class="n">process_template</span> <span class="o">=</span> <span class="n">LinkByUID</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s2">&quot;templates&quot;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;apply glaze&quot;</span><span class="p">))</span>
 </pre></div>
 </div>
-<p>A <a class="reference internal" href="reference/citrine.ara.columns.html#citrine.ara.columns.Column" title="citrine.ara.columns.Column"><code class="xref py py-class docutils literal notranslate"><span class="pre">Column</span></code></a> object describes how to transform a Variable into a primitive value (e.g. a real number, an integer, or a string) that can be entered into a cell in a table.
-This is necessary because GEMD Attributes are more general than primitive values; they often convey uncertainty estimates, for example.</p>
+<p>A <a class="reference internal" href="reference/citrine.ara.columns.html#citrine.ara.columns.Column" title="citrine.ara.columns.Column"><code class="xref py py-class docutils literal notranslate"><span class="pre">Column</span></code></a> object describes how to transform a <a class="reference internal" href="reference/citrine.ara.variables.html#citrine.ara.variables.Variable" title="citrine.ara.variables.Variable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Variable</span></code></a> into a primitive value (e.g., a real number, an integer, or a string) that can be entered into a cell in a table.
+This is necessary because <a class="reference external" href="https://citrineinformatics.github.io/gemd-docs/specification/attributes/">GEMD Attributes</a> are more general than primitive values; they often convey uncertainty estimates, for example.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.ara.columns</span> <span class="kn">import</span> <span class="n">MeanColumn</span><span class="p">,</span> <span class="n">StdDevColumn</span>
 <span class="n">final_density_mean</span> <span class="o">=</span> <span class="n">MeanColumn</span><span class="p">(</span><span class="n">data_source</span><span class="o">=</span><span class="s2">&quot;final density&quot;</span><span class="p">,</span> <span class="n">target_units</span><span class="o">=</span><span class="s2">&quot;g/cm^3&quot;</span><span class="p">)</span>
 <span class="n">final_density_std</span> <span class="o">=</span> <span class="n">StdDevColumn</span><span class="p">(</span><span class="n">data_source</span><span class="o">=</span><span class="s2">&quot;final density&quot;</span><span class="p">,</span> <span class="n">target_units</span><span class="o">=</span><span class="s2">&quot;g/cm^3&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>The data_source parameter is a reference to a Variable for this Column to describe, so the value of data_source must match the name of a Variable.</p>
+<p>The data_source parameter is a reference to a <a class="reference internal" href="reference/citrine.ara.variables.html#citrine.ara.variables.Variable" title="citrine.ara.variables.Variable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Variable</span></code></a> for this <a class="reference internal" href="reference/citrine.ara.columns.html#citrine.ara.columns.Column" title="citrine.ara.columns.Column"><code class="xref py py-class docutils literal notranslate"><span class="pre">Column</span></code></a> to describe, so the value of <code class="docutils literal notranslate"><span class="pre">data_source</span></code> must match the <code class="docutils literal notranslate"><span class="pre">name</span></code> of a <a class="reference internal" href="reference/citrine.ara.variables.html#citrine.ara.variables.Variable" title="citrine.ara.variables.Variable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Variable</span></code></a>.</p>
 </div>
 <div class="section" id="defining-tables">
 <h2>3.2. Defining tables<a class="headerlink" href="#defining-tables" title="Permalink to this headline">¶</a></h2>
@@ -98,7 +98,7 @@ and a list of <a class="reference internal" href="reference/citrine.ara.columns.
 <p>Note the inclusion of two datasets above.
 In general, you should have at least two datasets referenced because Objects and Templates are generally associated with different datasets.</p>
 <p>In addition to defining variables, rows, and columns individually, there are convenience methods that simultaneously add multiple elements to an existing Ara definition.
-One such method is <code class="xref py py-func docutils literal notranslate"><span class="pre">add_all_ingredients()</span></code>, which creates variables and columns for every potential ingredient in a process.
+One such method is <a class="reference internal" href="reference/citrine.resources.ara_definition.html#citrine.resources.ara_definition.AraDefinition.add_all_ingredients" title="citrine.resources.ara_definition.AraDefinition.add_all_ingredients"><code class="xref py py-func docutils literal notranslate"><span class="pre">add_all_ingredients()</span></code></a>, which creates variables and columns for every potential ingredient in a process.
 The user provides a link to a process template that has a non-empty set of <cite>allowed_names</cite> (the allowed names of the ingredient runs and specs in the process).
 This creates an id variable/column and a quantity variable/column for each allowed name.
 The user specifies the dimension to report the quantity in: mass fraction, volume fraction, number fraction, or absolute quantity.
@@ -132,7 +132,7 @@ Via such an object, one can preview a draft AraDefinition on an explicit set of 
 <p>The preview returns a dictionary with two keys:</p>
 <ul class="simple">
 <li><p>The <code class="docutils literal notranslate"><span class="pre">csv</span></code> key will get a preview of the table in the comma-separated-values format.</p></li>
-<li><p>The <code class="docutils literal notranslate"><span class="pre">warnings</span></code> key will get a list of String-valued warnings that describe possible issues with the Ara definition, e.g. that one of the columns is completely empty.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">warnings</span></code> key will get a list of String-valued warnings that describe possible issues with the Ara definition, e.g., that one of the columns is completely empty.</p></li>
 </ul>
 <p>For example, if you wanted to print the warnings and then load the preview into a pandas dataframe, you could:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">StringIO</span>
@@ -204,32 +204,32 @@ Just like the <a class="reference internal" href="reference/citrine.resources.fi
 </div>
 <div class="section" id="available-row-definitions">
 <h2>3.5. Available Row Definitions<a class="headerlink" href="#available-row-definitions" title="Permalink to this headline">¶</a></h2>
-<p>Currently, Ara provides only a single way to define Rows: by the <code class="xref py py-class docutils literal notranslate"><span class="pre">MaterialTemplate</span></code> of the roots of the material histories that correspond to each row.</p>
+<p>Currently, Ara provides only a single way to define Rows: by the <a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.template.material_template.html#gemd.entity.template.material_template.MaterialTemplate" title="(in GEMD-python)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MaterialTemplate</span></code></a> of the roots of the material histories that correspond to each row.</p>
 <div class="section" id="materialrunbytemplate">
 <h3>3.5.1. <a class="reference internal" href="reference/citrine.ara.rows.html#citrine.ara.rows.MaterialRunByTemplate" title="citrine.ara.rows.MaterialRunByTemplate"><code class="xref py py-class docutils literal notranslate"><span class="pre">MaterialRunByTemplate</span></code></a><a class="headerlink" href="#materialrunbytemplate" title="Permalink to this headline">¶</a></h3>
-<p>The <a class="reference internal" href="reference/citrine.ara.rows.html#citrine.ara.rows.MaterialRunByTemplate" title="citrine.ara.rows.MaterialRunByTemplate"><code class="xref py py-class docutils literal notranslate"><span class="pre">MaterialRunByTemplate</span></code></a> class defines Rows through a list of <code class="xref py py-class docutils literal notranslate"><span class="pre">MaterialTemplate</span></code>.
-Every <code class="xref py py-class docutils literal notranslate"><span class="pre">MaterialRun</span></code> that is assigned to any template in the list is used as the root of a  Material History to be mapped to a Row.
+<p>The <a class="reference internal" href="reference/citrine.ara.rows.html#citrine.ara.rows.MaterialRunByTemplate" title="citrine.ara.rows.MaterialRunByTemplate"><code class="xref py py-class docutils literal notranslate"><span class="pre">MaterialRunByTemplate</span></code></a> class defines Rows through a list of <a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.template.material_template.html#gemd.entity.template.material_template.MaterialTemplate" title="(in GEMD-python)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MaterialTemplate</span></code></a>.
+Every <a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.object.material_run.html#gemd.entity.object.material_run.MaterialRun" title="(in GEMD-python)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MaterialRun</span></code></a> that is assigned to any template in the list is used as the root of a  Material History to be mapped to a Row.
 This is helpful when the rows correspond to classes of materials that are defined through their templates.
-For example, there could be a <code class="xref py py-class docutils literal notranslate"><span class="pre">MaterialTemplate</span></code> called “Cake” that is used in all
+For example, there could be a <a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.template.material_template.html#gemd.entity.template.material_template.MaterialTemplate" title="(in GEMD-python)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MaterialTemplate</span></code></a> called “Cake” that is used in all
 of the cakes and another called “Brownies” that is used in all of the brownies.
 By including one or both of those templates, you can define a table of Cakes, Brownies, or both.</p>
 </div>
 </div>
 <div class="section" id="available-variable-definitions">
 <h2>3.6. Available Variable Definitions<a class="headerlink" href="#available-variable-definitions" title="Permalink to this headline">¶</a></h2>
-<p>There are several ways to define variables that take their values from Attributes and fields in GEMD objects.</p>
+<p>There are several ways to define variables that take their values from Attributes and identifiers in GEMD objects.</p>
 <ul class="simple">
 <li><p>Attributes</p>
 <ul>
 <li><p><a class="reference internal" href="reference/citrine.ara.variables.html#citrine.ara.variables.AttributeByTemplate" title="citrine.ara.variables.AttributeByTemplate"><code class="xref py py-class docutils literal notranslate"><span class="pre">AttributeByTemplate</span></code></a>: for when the attribute occurs once per material history</p></li>
 <li><p><a class="reference internal" href="reference/citrine.ara.variables.html#citrine.ara.variables.AttributeByTemplateAndObjectTemplate" title="citrine.ara.variables.AttributeByTemplateAndObjectTemplate"><code class="xref py py-class docutils literal notranslate"><span class="pre">AttributeByTemplateAndObjectTemplate</span></code></a>: for when the attributes are distinguished by the object that they are contained in</p></li>
-<li><p><code class="xref py py-class docutils literal notranslate"><span class="pre">AttributeByTemplateAfterProcess</span></code>: for when measurements are distinguished by the process that precedes them</p></li>
+<li><p><a class="reference internal" href="reference/citrine.ara.variables.html#citrine.ara.variables.AttributeByTemplateAfterProcessTemplate" title="citrine.ara.variables.AttributeByTemplateAfterProcessTemplate"><code class="xref py py-class docutils literal notranslate"><span class="pre">AttributeByTemplateAfterProcessTemplate</span></code></a>: for when measurements are distinguished by the process that precedes them</p></li>
 <li><p><a class="reference internal" href="reference/citrine.ara.variables.html#citrine.ara.variables.AttributeInOutput" title="citrine.ara.variables.AttributeInOutput"><code class="xref py py-class docutils literal notranslate"><span class="pre">AttributeInOutput</span></code></a>: for when attributes occur both in a process output and one or more of its inputs</p></li>
 <li><p><a class="reference internal" href="reference/citrine.ara.variables.html#citrine.ara.variables.IngredientQuantityByProcessAndName" title="citrine.ara.variables.IngredientQuantityByProcessAndName"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientQuantityByProcessAndName</span></code></a>: for the specific case of the volume fraction, mass fraction, number fraction, or absolute quantity of an ingredient</p></li>
 <li><p><a class="reference internal" href="reference/citrine.ara.variables.html#citrine.ara.variables.IngredientQuantityInOutput" title="citrine.ara.variables.IngredientQuantityInOutput"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientQuantityInOutput</span></code></a>: for the quantity an ingredient used in multiple processes</p></li>
 </ul>
 </li>
-<li><p>Fields</p>
+<li><p>Identifiers</p>
 <ul>
 <li><p><a class="reference internal" href="reference/citrine.ara.variables.html#citrine.ara.variables.RootInfo" title="citrine.ara.variables.RootInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">RootInfo</span></code></a>: for fields defined on the material at the root of the Material History, like the name of the material</p></li>
 <li><p><a class="reference internal" href="reference/citrine.ara.variables.html#citrine.ara.variables.RootIdentifier" title="citrine.ara.variables.RootIdentifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">RootIdentifier</span></code></a>: for the id of the Material History, which can be used as a unique identifier for the rows</p></li>
@@ -238,13 +238,18 @@ By including one or both of those templates, you can define a table of Cakes, Br
 <li><p><a class="reference internal" href="reference/citrine.ara.variables.html#citrine.ara.variables.IngredientLabelByProcessAndName" title="citrine.ara.variables.IngredientLabelByProcessAndName"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientLabelByProcessAndName</span></code></a>: for a boolean that indicates whether an ingredient is assigned a given label</p></li>
 </ul>
 </li>
+<li><p>Compound Variables</p>
+<ul>
+<li><p><a class="reference internal" href="reference/citrine.ara.variables.html#citrine.ara.variables.XOR" title="citrine.ara.variables.XOR"><code class="xref py py-class docutils literal notranslate"><span class="pre">XOR</span></code></a>: for combining multiple variable definitions into one variable, when only one of those definitions yields a result for a given tree (logical exclusive OR)</p></li>
+</ul>
+</li>
 </ul>
 </div>
 <div class="section" id="available-column-definitions">
 <h2>3.7. Available Column Definitions<a class="headerlink" href="#available-column-definitions" title="Permalink to this headline">¶</a></h2>
 <p>There are several ways to define columns, depending on the type of the attribute that is being used as the data source for the column.</p>
 <ul class="simple">
-<li><p>Numeric attributes values, like <code class="xref py py-class docutils literal notranslate"><span class="pre">ContinuousValue</span></code> and <code class="xref py py-class docutils literal notranslate"><span class="pre">IntegerValue</span></code></p></li>
+<li><p>Numeric attributes values, like <a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.value.continuous_value.html#gemd.entity.value.continuous_value.ContinuousValue" title="(in GEMD-python)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ContinuousValue</span></code></a> and <a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.value.integer_value.html#gemd.entity.value.integer_value.IntegerValue" title="(in GEMD-python)"><code class="xref py py-class docutils literal notranslate"><span class="pre">IntegerValue</span></code></a></p></li>
 </ul>
 <blockquote>
 <div><ul class="simple">
@@ -255,7 +260,7 @@ By including one or both of those templates, you can define a table of Cakes, Br
 </ul>
 </div></blockquote>
 <ul class="simple">
-<li><p>Enumerated attribute values, like <code class="xref py py-class docutils literal notranslate"><span class="pre">CategoricalValue</span></code></p></li>
+<li><p>Enumerated attribute values, like <a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.value.categorical_value.html#gemd.entity.value.categorical_value.CategoricalValue" title="(in GEMD-python)"><code class="xref py py-class docutils literal notranslate"><span class="pre">CategoricalValue</span></code></a></p></li>
 </ul>
 <blockquote>
 <div><ul class="simple">
@@ -264,7 +269,7 @@ By including one or both of those templates, you can define a table of Cakes, Br
 </ul>
 </div></blockquote>
 <ul class="simple">
-<li><p>Composition and chemical formula attribute values, like <code class="xref py py-class docutils literal notranslate"><span class="pre">CompositionValue</span></code></p></li>
+<li><p>Composition and chemical formula attribute values, like <a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.value.composition_value.html#gemd.entity.value.composition_value.CompositionValue" title="(in GEMD-python)"><code class="xref py py-class docutils literal notranslate"><span class="pre">CompositionValue</span></code></a></p></li>
 </ul>
 <blockquote>
 <div><ul class="simple">
@@ -275,11 +280,19 @@ By including one or both of those templates, you can define a table of Cakes, Br
 </ul>
 </div></blockquote>
 <ul class="simple">
+<li><p>Molecular structure attribute values, like <a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.value.molecular_value.html#gemd.entity.value.molecular_value.MolecularValue" title="(in GEMD-python)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MolecularValue</span></code></a></p></li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li><p><a class="reference internal" href="reference/citrine.ara.columns.html#citrine.ara.columns.MolecularStructureColumn" title="citrine.ara.columns.MolecularStructureColumn"><code class="xref py py-class docutils literal notranslate"><span class="pre">MolecularStructureColumn</span></code></a>: for getting molecular structures in a line notation</p></li>
+</ul>
+</div></blockquote>
+<ul class="simple">
 <li><p>String and boolean valued fields, like identifiers and non-attribute fields</p></li>
 </ul>
 <blockquote>
 <div><ul class="simple">
-<li><p><a class="reference internal" href="reference/citrine.ara.columns.html#citrine.ara.columns.IdentityColumn" title="citrine.ara.columns.IdentityColumn"><code class="xref py py-class docutils literal notranslate"><span class="pre">IdentityColumn</span></code></a>: for simply casting the value to a string, which doesn’t work on values from attributes</p></li>
+<li><p><a class="reference internal" href="reference/citrine.ara.columns.html#citrine.ara.columns.IdentityColumn" title="citrine.ara.columns.IdentityColumn"><code class="xref py py-class docutils literal notranslate"><span class="pre">IdentityColumn</span></code></a>: for simply casting the value to a string, which doesn’t work on values from Attributes</p></li>
 </ul>
 </div></blockquote>
 </div>
