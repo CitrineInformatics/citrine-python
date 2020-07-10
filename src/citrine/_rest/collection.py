@@ -1,4 +1,3 @@
-import warnings
 from abc import abstractmethod
 from typing import Optional, Union, Generic, TypeVar, Iterable, Dict, Tuple, Callable
 from uuid import UUID
@@ -51,7 +50,6 @@ class Collection(Generic[ResourceType]):
         try:
             data = self.session.post_resource(path, model.dump())
             data = data[self._individual_key] if self._individual_key else data
-            self._check_experimental(data)
             return self.build(data)
         except NonRetryableException as e:
             raise ModuleRegistrationFailedException(model.__class__.__name__, e)
@@ -91,7 +89,6 @@ class Collection(Generic[ResourceType]):
         url = self._get_path(model.uid)
         updated = self.session.put_resource(url, model.dump())
         data = updated[self._individual_key] if self._individual_key else updated
-        self._check_experimental(data)
         return self.build(data)
 
     def delete(self, uid: Union[UUID, str]) -> Response:
@@ -207,13 +204,3 @@ class Collection(Generic[ResourceType]):
         if module_type is not None:
             params["module_type"] = module_type
         return params
-
-    def _check_experimental(self, data):
-        if data.get("experimental", False):
-            uid = data.get("id")
-            typ = self._resource().__class__.__name__
-            msg = "The {} with id {} is experimental because: \n  {}".format(
-                typ, uid,
-                "\n  ".join(data.get("experimental_reasons") or ["Unknown reason"])
-            )
-            warnings.warn(msg)
