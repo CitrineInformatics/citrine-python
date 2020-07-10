@@ -6,7 +6,8 @@ import sys
 from os.path import join
 from os import walk
 
-STRIP_DIRS = ["src", "tests"] 
+STRIP_DIRS = ["src", "tests"]
+
 
 def strip_file(file_path):
     from strip_hints import strip_file_to_string
@@ -56,7 +57,7 @@ class PreBuildCommand(build_py):
 
 
 setup(name='citrine',
-      version='0.43.3',
+      version='0.43.4',
       url='http://github.com/CitrineInformatics/citrine-python',
       description='Python library for the Citrine Platform',
       author='Citrine Informatics',

@@ -73,6 +73,7 @@ class TableCollection(Collection[Table]):
     _path_template = 'projects/{project_id}/display-tables'
     _collection_key: str = 'tables'
     _paginator: Paginator = TableVersionPaginator()
+    _resource = Table
 
     def __init__(self, project_id: UUID, session: Session):
         self.project_id = project_id

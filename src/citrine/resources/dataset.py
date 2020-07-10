@@ -288,6 +288,7 @@ class DatasetCollection(Collection[Dataset]):
     _path_template = 'projects/{project_id}/datasets'
     _individual_key = None
     _collection_key = None
+    _resource = Dataset
 
     def __init__(self, project_id: UUID, session: Session):
         self.project_id = project_id

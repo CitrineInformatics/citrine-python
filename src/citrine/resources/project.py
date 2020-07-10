@@ -330,6 +330,7 @@ class ProjectCollection(Collection[Project]):
     _path_template = '/projects'
     _individual_key = 'project'
     _collection_key = 'projects'
+    _resource = Project
 
     def __init__(self, session: Session = Session()):
         self.session = session

@@ -207,6 +207,7 @@ class AraDefinitionCollection(Collection[AraDefinition]):
 
     _path_template = 'projects/{project_id}/ara-definitions'
     _collection_key = 'definitions'
+    _resource = AraDefinition
 
     # NOTE: This isn't actually an 'individual key' - both parts (version and
     # definition) are necessary
