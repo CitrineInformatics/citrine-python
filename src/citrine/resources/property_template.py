@@ -66,6 +66,7 @@ class PropertyTemplateCollection(AttributeTemplateCollection[PropertyTemplate]):
     _dataset_agnostic_path_template = 'projects/{project_id}/property-templates'
     _individual_key = 'property_template'
     _collection_key = 'property_templates'
+    _resource = PropertyTemplate
 
     @classmethod
     def get_type(cls) -> Type[PropertyTemplate]:
