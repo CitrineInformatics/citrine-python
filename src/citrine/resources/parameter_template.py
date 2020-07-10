@@ -66,6 +66,7 @@ class ParameterTemplateCollection(AttributeTemplateCollection[ParameterTemplate]
     _dataset_agnostic_path_template = 'projects/{project_id}/parameter-templates'
     _individual_key = 'parameter_template'
     _collection_key = 'parameter_templates'
+    _resource = ParameterTemplate
 
     @classmethod
     def get_type(cls) -> Type[ParameterTemplate]:

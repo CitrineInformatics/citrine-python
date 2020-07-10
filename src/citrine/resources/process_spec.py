@@ -96,6 +96,7 @@ class ProcessSpecCollection(ObjectSpecCollection[ProcessSpec]):
     _dataset_agnostic_path_template = 'projects/{project_id}/process-specs'
     _individual_key = 'process_spec'
     _collection_key = 'process_specs'
+    _resource = ProcessSpec
 
     @classmethod
     def get_type(cls) -> Type[ProcessSpec]:

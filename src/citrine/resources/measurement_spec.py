@@ -85,6 +85,7 @@ class MeasurementSpecCollection(ObjectSpecCollection[MeasurementSpec]):
     _dataset_agnostic_path_template = 'projects/{project_id}/measurement-specs'
     _individual_key = 'measurement_spec'
     _collection_key = 'measurement_specs'
+    _resource = MeasurementSpec
 
     @classmethod
     def get_type(cls) -> Type[MeasurementSpec]:
