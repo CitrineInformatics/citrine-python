@@ -110,6 +110,7 @@ class MeasurementTemplateCollection(ObjectTemplateCollection[MeasurementTemplate
     _dataset_agnostic_path_template = 'projects/{project_id}/measurement-templates'
     _individual_key = 'measurement_template'
     _collection_key = 'measurement_templates'
+    _resource = MeasurementTemplate
 
     @classmethod
     def get_type(cls) -> Type[MeasurementTemplate]:
