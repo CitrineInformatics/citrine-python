@@ -53,25 +53,18 @@ def test_design_space_limits():
     session = FakeSession()
     collection = DesignSpaceCollection(uuid.uuid4(), session)
 
-    too_long = EnumeratedDesignSpace(
+    too_big = EnumeratedDesignSpace(
         "foo",
         "bar",
-        descriptors=[RealDescriptor("x", 0, 1)],
-        data=[{"x": random()} for _ in range(2001)]
-    )
-
-    too_wide = EnumeratedDesignSpace(
-        "foo",
-        "bar",
-        descriptors=[RealDescriptor("R-{}".format(i), 0, 1) for i in range(129)],
-        data=[]
+        descriptors=[RealDescriptor("R-{}".format(i), 0, 1) for i in range(128)],
+        data=[{"R-{}".format(i): random() for i in range(128)} for _ in range(2001)]
     )
 
     just_right = EnumeratedDesignSpace(
         "foo",
         "bar",
-        descriptors=[RealDescriptor("R-{}".format(i), 0, 1) for i in range(10)],
-        data=[{"R-{}".format(i): random() for i in range(128)} for _ in range(1000)]
+        descriptors=[RealDescriptor("R-{}".format(i), 0, 1) for i in range(128)],
+        data=[{"R-{}".format(i): random() for i in range(128)} for _ in range(2000)]
     )
 
     # create mock post response by setting the status
@@ -81,11 +74,7 @@ def test_design_space_limits():
 
     # Then
     with pytest.raises(ValueError) as excinfo:
-        collection.register(too_long)
-    assert "only supports" in str(excinfo.value)
-
-    with pytest.raises(ValueError):
-        collection.update(too_wide)
+        collection.register(too_big)
     assert "only supports" in str(excinfo.value)
 
     # test register

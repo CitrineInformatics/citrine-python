@@ -23,8 +23,7 @@ class DesignSpaceCollection(Collection[DesignSpace]):
     _individual_key = None
     _resource = DesignSpace
     _module_type = 'DESIGN_SPACE'
-    _enumerated_descriptor_limit = 128
-    _enumerated_candidate_limit = 2000
+    _enumerated_cell_limit = 128 * 2000
 
     def __init__(self, project_id: UUID, session: Session = Session()):
         self.project_id = project_id
@@ -47,14 +46,11 @@ class DesignSpaceCollection(Collection[DesignSpace]):
         if isinstance(design_space, EnumeratedDesignSpace):
             width = len(design_space.descriptors)
             length = len(design_space.data)
-            if width > self._enumerated_descriptor_limit:
-                msg = "EnumeratedDesignSpace only supports up to {} descriptors, " \
-                      "but {} were given"
-                raise ValueError(msg.format(self._enumerated_descriptor_limit, width))
-            if length > self._enumerated_candidate_limit:
-                msg = "EnumeratedDesignSpace only supports up to {} candidates, " \
-                      "but {} were given"
-                raise ValueError(msg.format(self._enumerated_candidate_limit, length))
+            if width * length > self._enumerated_cell_limit:
+                msg = "EnumeratedDesignSpace only supports up to {} descriptor-values, " \
+                      "but {} were given. Please reduce the number of descriptors or candidates " \
+                      "in this EnumeratedDesignSpace"
+                raise ValueError(msg.format(self._enumerated_cell_limit, width * length))
         return
 
     def register(self, model: DesignSpace) -> DesignSpace:
