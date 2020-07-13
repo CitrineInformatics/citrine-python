@@ -64,7 +64,7 @@ def test_design_space_limits():
         "foo",
         "bar",
         descriptors=[RealDescriptor("R-{}".format(i), 0, 1) for i in range(128)],
-        data=[{"R-{}".format(i): random() for i in range(128)} for _ in range(1000)]
+        data=[{"R-{}".format(i): random() for i in range(128)} for _ in range(2000)]
     )
 
     # create mock post response by setting the status
