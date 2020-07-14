@@ -101,6 +101,7 @@ class ProcessTemplateCollection(ObjectTemplateCollection[ProcessTemplate]):
     _dataset_agnostic_path_template = 'projects/{project_id}/process-templates'
     _individual_key = 'process_template'
     _collection_key = 'process_templates'
+    _resource = ProcessTemplate
 
     @classmethod
     def get_type(cls) -> Type[ProcessTemplate]:

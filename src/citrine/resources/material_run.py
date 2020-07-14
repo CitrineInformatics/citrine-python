@@ -103,6 +103,7 @@ class MaterialRunCollection(ObjectRunCollection[MaterialRun]):
     _dataset_agnostic_path_template = 'projects/{project_id}/material-runs'
     _individual_key = 'material_run'
     _collection_key = 'material_runs'
+    _resource = MaterialRun
 
     @classmethod
     def get_type(cls) -> Type[MaterialRun]:

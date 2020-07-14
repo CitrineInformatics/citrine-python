@@ -91,6 +91,7 @@ class MaterialSpecCollection(ObjectSpecCollection[MaterialSpec]):
     _dataset_agnostic_path_template = 'projects/{project_id}/material-specs'
     _individual_key = 'material_spec'
     _collection_key = 'material_specs'
+    _resource = MaterialSpec
 
     @classmethod
     def get_type(cls) -> Type[MaterialSpec]:

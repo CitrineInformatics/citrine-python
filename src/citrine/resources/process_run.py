@@ -101,6 +101,7 @@ class ProcessRunCollection(ObjectRunCollection[ProcessRun]):
     _dataset_agnostic_path_template = 'projects/{project_id}/process-runs'
     _individual_key = 'process_run'
     _collection_key = 'process_runs'
+    _resource = ProcessRun
 
     @classmethod
     def get_type(cls) -> Type[ProcessRun]:

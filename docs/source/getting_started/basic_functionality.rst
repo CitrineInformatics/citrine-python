@@ -133,7 +133,7 @@ Filter
 Filter lies somewhere between Get and List, returning only those objects that meet a given criterion.
 There are currently three ways to filter, and they work on each data model object type:
 :func:`~citrine.resources.data_concepts.DataConceptsCollection.filter_by_tags`,
-:func:`~citrine.resources.data_concepts.DataConceptsCollection.filter_by_attribute_bounds`,
+:func:`~citrine.resources.data_objects.DataObjectCollection.filter_by_attribute_bounds`,
 and :func:`~citrine.resources.data_concepts.DataConceptsCollection.filter_by_name`.
 
 Filtering by tags or attribute bounds can be scoped to a dataset or to a project.
@@ -147,4 +147,3 @@ you can retrieve the complete material history--every process, ingredient and ma
 into the root material, as well as the measurements that were performed on all of those materials
 The method is :func:`~citrine.resources.material_run.MaterialRunCollection.get_history`,
 and it requires you to know a unique identifier (scope/id pair) for the material.
-

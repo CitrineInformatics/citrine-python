@@ -68,6 +68,7 @@ class ConditionTemplateCollection(AttributeTemplateCollection[ConditionTemplate]
     _dataset_agnostic_path_template = 'projects/{project_id}/condition-templates'
     _individual_key = 'condition_template'
     _collection_key = 'condition_templates'
+    _resource = ConditionTemplate
 
     @classmethod
     def get_type(cls) -> Type[ConditionTemplate]:

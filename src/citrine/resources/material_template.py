@@ -86,6 +86,7 @@ class MaterialTemplateCollection(ObjectTemplateCollection[MaterialTemplate]):
     _dataset_agnostic_path_template = 'projects/{project_id}/material-templates'
     _individual_key = 'material_template'
     _collection_key = 'material_templates'
+    _resource = MaterialTemplate
 
     @classmethod
     def get_type(cls) -> Type[MaterialTemplate]:

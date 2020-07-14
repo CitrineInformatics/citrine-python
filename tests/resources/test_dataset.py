@@ -346,3 +346,24 @@ def test_register_all_object_update(dataset):
 
     assert process.uids == registered_process.uids
     assert material.uids == registered_material.uids
+
+
+def test_delete_data_concepts(dataset):
+    """Check that delete routes to the correct collections"""
+    expected = {
+        MaterialTemplateCollection: MaterialTemplate("foo", uids={"foo": "bar"}),
+        MaterialSpecCollection: MaterialSpec("foo", uids={"foo": "bar"}),
+        MaterialRunCollection: MaterialRun("foo", uids={"foo": "bar"}),
+        ProcessTemplateCollection: ProcessTemplate("foo", uids={"foo": "bar"}),
+    }
+
+    for collection, obj in expected.items():
+        dataset.delete(obj)
+        assert dataset.session.calls[-1].path.split("/")[-3] == basename(collection._path_template)
+
+
+def test_delete_missing_uid(dataset):
+    """Check that delete raises an error when there are no uids"""
+    obj = MaterialTemplate("foo")
+    with pytest.raises(ValueError):
+        dataset.delete(obj)

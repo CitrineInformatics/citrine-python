@@ -108,6 +108,7 @@ class IngredientRunCollection(ObjectRunCollection[IngredientRun]):
     _dataset_agnostic_path_template = 'projects/{project_id}/ingredient-runs'
     _individual_key = 'ingredient_run'
     _collection_key = 'ingredient_runs'
+    _resource = IngredientRun
 
     @classmethod
     def get_type(cls) -> Type[IngredientRun]:

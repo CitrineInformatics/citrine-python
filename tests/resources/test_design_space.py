@@ -1,6 +1,12 @@
 import uuid
+from random import random
 
+import pytest
+
+from citrine.informatics.descriptors import RealDescriptor
+from citrine.informatics.design_spaces import EnumeratedDesignSpace
 from citrine.resources.design_space import DesignSpaceCollection
+from tests.utils.session import FakeSession
 
 
 def test_design_space_build():
@@ -39,3 +45,43 @@ def test_design_space_build():
     assert design_space.uid == design_space_id
     assert design_space.name == 'My Design Space'
     assert design_space.dimensions[0].descriptor.key == 'foo'
+
+
+def test_design_space_limits():
+    """Test that the validation logic is triggered before post/put-ing enumerated design spaces."""
+    # Given
+    session = FakeSession()
+    collection = DesignSpaceCollection(uuid.uuid4(), session)
+
+    too_big = EnumeratedDesignSpace(
+        "foo",
+        "bar",
+        descriptors=[RealDescriptor("R-{}".format(i), 0, 1) for i in range(128)],
+        data=[{"R-{}".format(i): random() for i in range(128)} for _ in range(2001)]
+    )
+
+    just_right = EnumeratedDesignSpace(
+        "foo",
+        "bar",
+        descriptors=[RealDescriptor("R-{}".format(i), 0, 1) for i in range(128)],
+        data=[{"R-{}".format(i): random() for i in range(128)} for _ in range(2000)]
+    )
+
+    # create mock post response by setting the status
+    mock_response = just_right.dump()
+    mock_response["status"] = "READY"
+    session.responses.append(mock_response)
+
+    # Then
+    with pytest.raises(ValueError) as excinfo:
+        collection.register(too_big)
+    assert "only supports" in str(excinfo.value)
+
+    # test register
+    collection.register(just_right)
+
+    # add back the response for the next test
+    session.responses.append(mock_response)
+
+    # test update
+    collection.update(just_right)

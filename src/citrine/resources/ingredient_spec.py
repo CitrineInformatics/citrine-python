@@ -111,6 +111,7 @@ class IngredientSpecCollection(ObjectSpecCollection[IngredientSpec]):
     _dataset_agnostic_path_template = 'projects/{project_id}/ingredient-specs'
     _individual_key = 'ingredient_spec'
     _collection_key = 'ingredient_specs'
+    _resource = IngredientSpec
 
     @classmethod
     def get_type(cls) -> Type[IngredientSpec]:

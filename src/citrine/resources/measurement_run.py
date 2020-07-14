@@ -103,6 +103,7 @@ class MeasurementRunCollection(ObjectRunCollection[MeasurementRun]):
     _dataset_agnostic_path_template = 'projects/{project_id}/measurement-runs'
     _individual_key = 'measurement_run'
     _collection_key = 'measurement_runs'
+    _resource = MeasurementRun
 
     @classmethod
     def get_type(cls) -> Type[MeasurementRun]:
