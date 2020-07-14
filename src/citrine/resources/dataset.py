@@ -271,6 +271,14 @@ class Dataset(Resource['Dataset']):
                     resources.extend(registered)
         return resources
 
+    def delete(self, data_concepts_resource: ResourceType, dry_run=False) -> ResourceType:
+        """Delete a data concepts resource to the appropriate collection."""
+        uid = next(iter(data_concepts_resource.uids.items()), None)
+        if uid is None:
+            raise ValueError("Only objects that contain identifiers can be deleted.")
+        return self._collection_for(data_concepts_resource) \
+            .delete(uid[1], scope=uid[0], dry_run=dry_run)
+
 
 class DatasetCollection(Collection[Dataset]):
     """
