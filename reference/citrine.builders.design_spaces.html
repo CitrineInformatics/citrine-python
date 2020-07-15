@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>src &#8212; Citrine Python 0.0.1 documentation</title>
+    <title>citrine.builders.design_spaces module &#8212; Citrine Python 0.0.1 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -32,50 +32,91 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="src">
-<h1>src<a class="headerlink" href="#src" title="Permalink to this headline">¶</a></h1>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="citrine.html">citrine package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="citrine.html#subpackages">Subpackages</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="citrine.ara.html">citrine.ara package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="citrine.ara.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="citrine.ara.html#module-citrine.ara">Module contents</a></li>
+  <div class="section" id="module-citrine.builders.design_spaces">
+<span id="citrine-builders-design-spaces-module"></span><h1>citrine.builders.design_spaces module<a class="headerlink" href="#module-citrine.builders.design_spaces" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="citrine.builders.design_spaces.cartesian_join_design_spaces">
+<code class="sig-prename descclassname">citrine.builders.design_spaces.</code><code class="sig-name descname">cartesian_join_design_spaces</code><span class="sig-paren">(</span><em class="sig-param">*, subspaces: List[citrine.informatics.design_spaces.EnumeratedDesignSpace], name: str, description: str = ''</em><span class="sig-paren">)</span> &#x2192; citrine.informatics.design_spaces.EnumeratedDesignSpace<a class="headerlink" href="#citrine.builders.design_spaces.cartesian_join_design_spaces" title="Permalink to this definition">¶</a></dt>
+<dd><p>[ALPHA] Cartesian join of multiple enumerated design spaces.</p>
+<p>Given a list of multiple input EnumeratedDesignSpaces, create a new
+EnumeratedDesignSpace that is the Cartesian product of candidates from each
+input design space.</p>
+<p>Ultimate length will be the product of the number of candidates in each
+individual design space</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>subspaces</strong> (<em>List</em><em>[</em><a class="reference internal" href="citrine.informatics.design_spaces.html#citrine.informatics.design_spaces.EnumeratedDesignSpace" title="citrine.informatics.design_spaces.EnumeratedDesignSpace"><em>EnumeratedDesignSpace</em></a><em>]</em>) – A list of EnumeratedDesignSpaces</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – name for the output EnumeratedDesignSpace</p></li>
+<li><p><strong>description</strong> (<em>str</em>) – description for the output EnumeratedDesignSpace</p></li>
 </ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="citrine.builders.html">citrine.builders package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="citrine.builders.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="citrine.builders.html#module-citrine.builders">Module contents</a></li>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="citrine.builders.design_spaces.enumerate_cartesian_product">
+<code class="sig-prename descclassname">citrine.builders.design_spaces.</code><code class="sig-name descname">enumerate_cartesian_product</code><span class="sig-paren">(</span><em class="sig-param">*, design_grid: Mapping[str, Sequence], descriptors: List[citrine.informatics.descriptors.Descriptor], name: str, description: str = ''</em><span class="sig-paren">)</span> &#x2192; citrine.informatics.design_spaces.EnumeratedDesignSpace<a class="headerlink" href="#citrine.builders.design_spaces.enumerate_cartesian_product" title="Permalink to this definition">¶</a></dt>
+<dd><p>[ALPHA] Enumerate a Cartesian product from 1-D grids.</p>
+<p>Given a dict of lists or tuples of values for each design descriptor,
+create the list of candidates representing the Cartesian product of all
+values for each descriptor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>design_grid</strong> (<em>Mapping</em><em>[</em><em>str</em><em>, </em><em>Sequence</em><em>]</em>) – {‘descriptor key’: [sequence, of, values]} for each descriptor</p></li>
+<li><p><strong>descriptors</strong> (<em>List</em><em>[</em><a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.Descriptor" title="citrine.informatics.descriptors.Descriptor"><em>Descriptor</em></a><em>]</em>) – design descriptors representing the degrees of freedom of the design
+space. descriptors’ keys should match the keys of design_grid. If
+none are passed, they will be auto-generated based on the keys
+of design_grid.</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – name for the EnumeratedDesignSpace</p></li>
+<li><p><strong>description</strong> (<em>str</em>) – description for the EnumeratedDesignSpace</p></li>
 </ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="citrine.informatics.html">citrine.informatics package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="citrine.informatics.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="citrine.informatics.html#module-citrine.informatics">Module contents</a></li>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="citrine.builders.design_spaces.enumerate_formulation_grid">
+<code class="sig-prename descclassname">citrine.builders.design_spaces.</code><code class="sig-name descname">enumerate_formulation_grid</code><span class="sig-paren">(</span><em class="sig-param">*, formulation_grid: Mapping[str, Sequence[float]], balance_ingredient: str, descriptors: List[citrine.informatics.descriptors.Descriptor] = None, name: str, description: str = ''</em><span class="sig-paren">)</span> &#x2192; citrine.informatics.design_spaces.EnumeratedDesignSpace<a class="headerlink" href="#citrine.builders.design_spaces.enumerate_formulation_grid" title="Permalink to this definition">¶</a></dt>
+<dd><p>[ALPHA] Enumerate a Cartesian product following formulation constraints.</p>
+<p>Given a dict of grids (lists) of ingredient amounts (fractions, between
+0-1), create candidates that are the Cartesian product of all possible
+formulations with combinations of the specified ingredient amounts.
+The balance_ingredient will make up the balance of the formulation. In
+other words, this function first takes the Cartesian product of all
+ingredient amounts <em>except</em> the balance_ingredient, then fills in the
+amount of balance_ingredient as 1-(other ingredients). Results for which
+the balance ingredient falls outside of the min and max values in its list
+will be filtered out. Because of this, not all values in the balance
+ingredient’s list will necessarily be present in the final candidates.</p>
+<p>For example:</p>
+<dl class="simple">
+<dt>{‘balance ingredient’:[0.8, 0.85, 0.9],</dt><dd><p>‘other ingredient’:[0.1, 0.2, 0.3, 0.4, 0.5]}</p>
+</dd>
+</dl>
+<p>would yield:</p>
+<dl class="simple">
+<dt>[{‘balance ingredient’: 0.8, ‘other ingredient’: 0.2},</dt><dd><p>{‘balance ingredient’: 0.9, ‘other ingredient’: 0.1}]</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>formulation_grid</strong> (<em>Mapping</em><em>[</em><em>str</em><em>, </em><em>Sequence</em><em>]</em>) – {‘ingredient name’:[list, of, values]} for each ingredient</p></li>
+<li><p><strong>balance_ingredient</strong> (<em>str</em>) – name of the ingredient that should make up the balance of the
+mixture (1-others). Must be a key in formulation_grid.</p></li>
+<li><p><strong>descriptors</strong> (<em>List</em><em>[</em><a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.Descriptor" title="citrine.informatics.descriptors.Descriptor"><em>Descriptor</em></a><em>]</em>) – design descriptors representing the degrees of freedom of the design
+space. descriptors’ keys should match the keys of formulation_grid.
+If none are passed, they will be auto-generated based on the keys
+of formulation_grid.</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – name for the EnumeratedDesignSpace</p></li>
+<li><p><strong>description</strong> (<em>str</em>) – description for the EnumeratedDesignSpace</p></li>
 </ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="citrine.resources.html">citrine.resources package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="citrine.resources.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="citrine.resources.html#module-citrine.resources">Module contents</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="citrine.seeding.html">citrine.seeding package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="citrine.seeding.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="citrine.seeding.html#module-citrine.seeding">Module contents</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="citrine.html#submodules">Submodules</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="citrine.citrine.html">citrine.citrine module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="citrine.exceptions.html">citrine.exceptions module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="citrine.test_session.html">citrine.test_session module</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="citrine.html#module-citrine">Module contents</a></li>
-</ul>
-</li>
-</ul>
-</div>
+</dd>
+</dl>
+</dd></dl>
+
 </div>
 
 
@@ -194,7 +235,7 @@
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
-      <a href="../_sources/reference/modules.rst.txt"
+      <a href="../_sources/reference/citrine.builders.design_spaces.rst.txt"
           rel="nofollow">Page source</a>
     </div>
 

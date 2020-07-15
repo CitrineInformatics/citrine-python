@@ -1,0 +1,17 @@
+citrine.builders package
+========================
+
+Submodules
+----------
+
+.. toctree::
+
+   citrine.builders.design_spaces
+
+Module contents
+---------------
+
+.. automodule:: citrine.builders
+   :members:
+   :undoc-members:
+   :show-inheritance:
