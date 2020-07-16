@@ -15,11 +15,9 @@ def find_collection(collection, name):
             # call list() to collapse the iterator, otherwise the NotFound
             # won't show up until collection_list is used
             collection_list = list(collection.search(search_params={
-                "search_params": {
-                    "name": {
-                        "value": name,
-                        "search_method": "EXACT"
-                    }
+                "name": {
+                    "value": name,
+                    "search_method": "EXACT"
                 }
             }))
         except NotFound:
