@@ -35,11 +35,13 @@ def test_mime_types(collection):
     expected_xls = "application/vnd.ms-excel"
     expected_txt = "text/plain"
     expected_unk = "application/octet-stream"
+    expected_csv = "text/csv"
 
     assert collection._mime_type("asdf.xlsx") == expected_xlsx
     assert collection._mime_type("asdf.XLSX") == expected_xlsx
     assert collection._mime_type("asdf.xls") == expected_xls
     assert collection._mime_type("asdf.TXT") == expected_txt
+    assert collection._mime_type("asdf.csv") == expected_csv
     assert collection._mime_type("asdf.FAKE") == expected_unk
 
 def test_build_equivalence(collection, valid_data):

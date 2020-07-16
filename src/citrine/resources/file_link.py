@@ -74,6 +74,7 @@ class FileCollection(Collection[FileLink]):
     _path_template = 'projects/{project_id}/datasets/{dataset_id}/files'
     _individual_key = 'file'
     _collection_key = 'files'
+    _resource = FileLink
 
     def __init__(self, project_id: UUID, dataset_id: UUID, session: Session):
         self.project_id = project_id
@@ -213,7 +214,8 @@ class FileCollection(Collection[FileLink]):
 
         """
         path = self._get_path() + "/uploads"
-        mime_type = self._mime_type(file_path)
+        # This string coersion is for supporting pathlib.Path objects in python 3.6
+        mime_type = self._mime_type(str(file_path))
         file_size = os.stat(file_path).st_size
         assert isinstance(file_size, int)
         upload_json = {
