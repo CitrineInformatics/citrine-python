@@ -17,6 +17,7 @@ from citrine.exceptions import (
 
 import jwt
 import requests
+import requests.auth
 
 # Choose a 5 second buffer so that there's no chance of the access token
 # expiring during the check for expiration
@@ -86,6 +87,9 @@ class Session(requests.Session):
         self.access_token_expiration = datetime.utcfromtimestamp(
             jwt.decode(self.access_token, verify=False)['exp']
         )
+
+        # Explicitly set an updated 'auth', so as to not rely on implicit cookie handling.
+        self.auth = BearerAuth(self.access_token)
 
     def _request_with_retry(self, method, uri, **kwargs):
         """Wrap a request with a try/except to retry when ConnectionErrors are seen."""
@@ -240,3 +244,15 @@ class Session(requests.Session):
     def checked_get(self, path: str, **kwargs) -> Response:
         """Execute a GET request to a URL and utilize error filtering on the response."""
         return self.checked_request('GET', path, **kwargs)
+
+
+class BearerAuth(requests.auth.AuthBase):
+    """A lightweight Auth class to support Bearer tokens."""
+
+    def __init__(self, token):
+        self.token = token
+
+    def __call__(self, r):
+        """Generate the appropriate Authorization header."""
+        r.headers["Authorization"] = "Bearer " + self.token
+        return r
