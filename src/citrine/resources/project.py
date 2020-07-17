@@ -392,16 +392,14 @@ class ProjectCollection(Collection[Project]):
             A dict representing the body of the post request that will be sent to the search
             endpoint to filter the results ie.
             {
-                "search_params": {
-                    "name": {
-                        "value": "Polymer Project",
-                        "search_method": "EXACT"
-                    },
-                    "description": {
-                        "value": "polymer chain length",
-                        "search_method": "SUBSTRING"
-                    },
-                }
+                "name": {
+                    "value": "Polymer Project",
+                    "search_method": "EXACT"
+                },
+                "description": {
+                    "value": "polymer chain length",
+                    "search_method": "SUBSTRING"
+                },
             }
             The dict can constain any combination of (one or all) search specifications for the
             name, description, and status fields of a project. For each parameter specified, the
@@ -454,7 +452,7 @@ class ProjectCollection(Collection[Project]):
             field should be passed as the key for the outermost dict, with its value the request
             body, so that we can easily unpack the keyword argument when it gets passed to
             fetch_func.
-            ie. { 'search_params': {'name': {'value': 'Project', 'search_method': 'SUBSTRING'} } }
+            ie. {'name': {'value': 'Project', 'search_method': 'SUBSTRING'} }
 
         Returns
         -------
@@ -466,7 +464,7 @@ class ProjectCollection(Collection[Project]):
         """
         # Making 'json' the key of the outermost dict, so that search_params can be passed
         # directly to the function making the request with keyword expansion
-        json_body = {} if search_params is None else {'json': search_params}
+        json_body = {} if search_params is None else {'json': {'search_params': search_params}}
 
         path = self._get_path() + "/search"
 
