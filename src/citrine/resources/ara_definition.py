@@ -268,7 +268,7 @@ class AraDefinitionCollection(Collection[AraDefinition]):
             'projects/{}/table-configs/default'.format(self.project_id),
             params=params,
         )
-        config = self.build(data['config'])
+        config = AraDefinition.build(data['config'])
         ambiguous = [(Variable.build(v), Column.build(c)) for v, c in data['ambiguous']]
         return config, ambiguous
 
