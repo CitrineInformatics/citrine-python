@@ -276,7 +276,7 @@ class AraDefinitionCollection(Collection[AraDefinition]):
         """
         if isinstance(material, MaterialRun):
             if scope is not None:
-                logger.warning(  # pragma: no cover
+                logger.warning(
                     'Ignoring scope {} since material run object was specified.'.format(scope))
             uid_tup = next(iter(material.uids.items()), None)
             if uid_tup is None:
