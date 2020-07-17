@@ -402,7 +402,7 @@ class ProjectCollection(Collection[Project]):
                 },
             }
             The dict can constain any combination of (one or all) search specifications for the
-        name, description, and status fields of a project. For each parameter specified, the
+            name, description, and status fields of a project. For each parameter specified, the
             "value" to match, as well as the "search_method" must be provided. The available
             search_methods are "SUBSTRING" and "EXACT". The example above demonstrates the input
             necessary to list projects with the exact name "Polymer Project," and descriptions
