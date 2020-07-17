@@ -1,6 +1,9 @@
 from copy import copy
-from typing import List, Union, Optional
+from logging import getLogger
+from typing import List, Union, Optional, Tuple
 from uuid import UUID, uuid4
+
+from gemd.entity.object import MaterialRun
 
 from citrine.resources.ara_job import JobSubmissionResponse, JobStatusResponse
 from gemd.entity.link_by_uid import LinkByUID
@@ -14,6 +17,8 @@ from citrine.ara.columns import Column, MeanColumn, IdentityColumn, OriginalUnit
 from citrine.ara.rows import Row
 from citrine.ara.variables import Variable, IngredientIdentifierByProcessTemplateAndName, \
     IngredientQuantityByProcessAndName, IngredientQuantityDimension
+
+logger = getLogger(__name__)
 
 
 class AraDefinition(Resource["AraDefinition"]):
@@ -235,6 +240,37 @@ class AraDefinitionCollection(Collection[AraDefinition]):
         defn.project_id = self.project_id
         defn.session = self.session
         return defn
+
+    def default_for_material(
+            self, *, material: Union[MaterialRun, str, UUID],
+            name: str, description: str = None, scope: str = None
+    ) -> Tuple[AraDefinition, List[Tuple[Variable, Column]]]:
+        if isinstance(material, MaterialRun):
+            if scope is not None:
+                logger.warning('Ignoring scope {} since material run object was specified.'.format(scope))
+            uid_tup = next(iter(material.uids.items()), None)
+            if uid_tup is None:
+                raise ValueError('Material must have a uid to build default table config.')
+            scope, uid = uid_tup
+        elif isinstance(material, (str, UUID)):
+            uid = str(material)
+            scope = scope or 'id'
+        else:
+            raise TypeError('material must be one of MaterialRun, str, or UUID but was {}'.format(type(material)))
+        params = {
+            'id': uid,
+            'scope': scope,
+            'name': name,
+        }
+        if description is not None:
+            params['description'] = description
+        data = self.session.get_resource(
+            'projects/{}/table-configs/default'.format(self.project_id),
+            params=params,
+        )
+        config = self.build(data['config'])
+        ambiguous = [(Variable.build(v), Column.build(c)) for v, c in data['ambiguous']]
+        return config, ambiguous
 
     def build_ara_table(self, ara_def: AraDefinition) -> JobSubmissionResponse:
         """[ALPHA] submit an ara table construction job.
