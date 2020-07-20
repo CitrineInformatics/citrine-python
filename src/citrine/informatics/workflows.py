@@ -74,6 +74,7 @@ class DesignWorkflow(Resource['DesignWorkflow'], Workflow):
         serializable=False
     )
     active = properties.Boolean('active', default=True)
+    archived = properties.Boolean('archived', default=True)
     created_by = properties.Optional(properties.UUID, 'created_by', serializable=False)
     create_time = properties.Optional(properties.Datetime, 'create_time', serializable=False)
     design_space_id = properties.UUID('config.design_space_id')
@@ -134,6 +135,7 @@ class PerformanceWorkflow(Resource['PerformanceWorkflow'], Workflow):
         serializable=False
     )
     active = properties.Boolean('active', default=True)
+    archived = properties.Boolean('archived', default=True)
     created_by = properties.Optional(properties.UUID, 'created_by', serializable=False)
     create_time = properties.Optional(properties.Datetime, 'create_time', serializable=False)
     analysis = properties.Object(CrossValidationAnalysisConfiguration, 'config.analysis')

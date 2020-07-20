@@ -14,6 +14,7 @@ def valid_data():
         status='READY',
         status_info=['Things are looking good'],
         active=True,
+        archived=False,
         config=dict(
             design_space_id=str(uuid4()),
             processor_id=str(uuid4()),
