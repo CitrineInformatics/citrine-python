@@ -1,3 +1,4 @@
+import json
 from logging import getLogger
 from time import time, sleep
 from typing import Union, Iterable, Optional, Any, Tuple
@@ -233,16 +234,21 @@ class TableCollection(Collection[Table]):
         else:
             table_id = status.output['display_table_id']
             table_version = status.output['display_table_version']
-            warnings = status.output.get('table_warnings', [])
+            warning_blob = status.output.get('table_warnings')
+            if warning_blob is None:
+                warnings = []
+            else:
+                warnings = json.loads(warning_blob)
             if warnings:
-                logger.warning('Table build completed with warnings:')
-            for warning in warnings:
-                limited_results = warning.get('limited_results', [])
-                for full_warning in limited_results:
-                    logger.warning(full_warning)
-                total_count = warning.get('total_count', 0)
-                if total_count > len(limited_results):
-                    logger.warning('and {} more similar.'.format(total_count - len(limited_results)))
+                warn_str = 'Table build completed with warnings:'
+                for warning in warnings:
+                    limited_results = warning.get('limited_results', [])
+                    for full_warning in limited_results:
+                        warn_str += '\n\t' + full_warning
+                    total_count = warning.get('total_count', 0)
+                    if total_count > len(limited_results):
+                        warn_str += '\n\t' + 'and {} more similar.'.format(total_count - len(limited_results))
+                logger.warning(warn_str)
             return self.get(table_id, table_version)
 
     def build(self, data: dict) -> Table:
