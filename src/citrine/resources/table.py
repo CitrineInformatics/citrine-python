@@ -184,7 +184,7 @@ class TableCollection(Collection[Table]):
         return JobSubmissionResponse.build(response)
 
     def build_from_config(self, config: Union[AraDefinition, str, UUID], *,
-                          version: Union[str, UUID] = None,
+                          version: Union[str, int] = None,
                           timeout: int = 15 * 60) -> Table:
         """
         Builds table from table config, waiting for build job to complete and returning the
@@ -235,10 +235,7 @@ class TableCollection(Collection[Table]):
             table_id = status.output['display_table_id']
             table_version = status.output['display_table_version']
             warning_blob = status.output.get('table_warnings')
-            if warning_blob is None:
-                warnings = []
-            else:
-                warnings = json.loads(warning_blob)
+            warnings = json.loads(warning_blob) if warning_blob is not None else []
             if warnings:
                 warn_str = 'Table build completed with warnings:'
                 for warning in warnings:
