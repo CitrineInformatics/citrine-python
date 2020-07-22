@@ -5,9 +5,10 @@ from gemd.entity.link_by_uid import LinkByUID
 
 from citrine.ara.columns import MeanColumn, OriginalUnitsColumn, StdDevColumn, IdentityColumn
 from citrine.ara.rows import MaterialRunByTemplate
-from citrine.ara.variables import AttributeByTemplate, RootInfo, IngredientQuantityDimension,\
-    IngredientQuantityByProcessAndName, IngredientIdentifierByProcessTemplateAndName
+from citrine.ara.variables import AttributeByTemplate, RootInfo, IngredientQuantityDimension, \
+    IngredientQuantityByProcessAndName, IngredientIdentifierByProcessTemplateAndName, RootIdentifier
 from citrine.resources.ara_definition import AraDefinitionCollection, AraDefinition
+from citrine.resources.material_run import MaterialRun
 from citrine.resources.project import Project
 from citrine.resources.process_template import ProcessTemplate
 from tests.utils.factories import AraDefinitionResponseDataFactory
@@ -152,6 +153,74 @@ def test_preview(collection, session):
         json={"definition": empty_defn().dump(), "rows": []}
     )
     assert session.last_call == expect_call
+
+
+def test_default_for_material(collection: AraDefinitionCollection, session):
+    """Test that default for material hits the right route"""
+    # Given
+    project_id = '6b608f78-e341-422c-8076-35adc8828545'
+    dummy_resp = {
+        'config': AraDefinition(
+            name='foo',
+            description='foo',
+            variables=[],
+            columns=[],
+            rows=[],
+            datasets=[]
+        ).dump(),
+        'ambiguous': [
+            [
+                RootIdentifier(name='foo', headers=['foo'], scope='id').dump(),
+                IdentityColumn(data_source='foo').dump(),
+            ]
+        ],
+    }
+    session.responses.append(dummy_resp)
+    collection.default_for_material(
+        material='my_id',
+        scope='my_scope',
+        name='my_name',
+        description='my_description',
+    )
+
+    assert 1 == session.num_calls
+    assert session.last_call == FakeCall(
+        method="GET",
+        path="projects/{}/table-configs/default".format(project_id),
+        params={
+            'id': 'my_id',
+            'scope': 'my_scope',
+            'name': 'my_name',
+            'description': 'my_description'
+        }
+    )
+    session.calls.clear()
+    session.responses.append(dummy_resp)
+    collection.default_for_material(
+        material=MaterialRun('foo', uids={'scope': 'id'}),
+        scope='ignored',
+        name='my_name',
+        description='my_description',
+    )
+    assert 1 == session.num_calls
+    assert session.last_call == FakeCall(
+        method="GET",
+        path="projects/{}/table-configs/default".format(project_id),
+        params={
+            'id': 'id',
+            'scope': 'scope',
+            'name': 'my_name',
+            'description': 'my_description'
+        }
+    )
+
+
+def test_default_for_material_failure(collection: AraDefinitionCollection):
+    with pytest.raises(ValueError):
+        collection.default_for_material(
+            material=MaterialRun('foo'),
+            name='foo'
+        )
 
 
 def test_add_columns():
