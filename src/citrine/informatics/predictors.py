@@ -2,6 +2,7 @@
 # flake8: noqa
 from typing import List, Optional, Type, Union, Mapping
 from uuid import UUID
+from warnings import warn
 
 from citrine._serialization import properties as _properties
 from citrine._serialization.serializable import Serializable
@@ -337,6 +338,8 @@ class DeprecatedExpressionPredictor(Serializable['DeprecatedExpressionPredictor'
                  session: Optional[Session] = None,
                  report: Optional[Report] = None,
                  active: bool = True):
+        warn("{this_class} is deprecated. Please use {replacement} instead"
+             .format(this_class=self.__class__.name, replacement=ExpressionPredictor.__name__))
         self.name: str = name
         self.description: str = description
         self.expression: str = expression
