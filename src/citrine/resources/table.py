@@ -153,7 +153,7 @@ class TableCollection(Collection[Table]):
         return self._paginator.paginate(fetch_versions, build_versions, page, per_page)
 
     def initiate_build(self, config: Union[AraDefinition, str, UUID],
-                       version: Optional[Union[str, UUID]]) -> JobSubmissionResponse:
+                       version: Union[str, UUID] = None) -> JobSubmissionResponse:
         """
         [ALPHA] Initiates tables build with provided config.
 
