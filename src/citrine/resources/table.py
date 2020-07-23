@@ -156,7 +156,8 @@ class TableCollection(Collection[Table]):
                                     version: Optional[Union[str, UUID]]) -> JobSubmissionResponse:
         if isinstance(config, AraDefinition):
             if version is not None:
-                logger.warning('Ignoring version {} since config object was provided.'.format(version))
+                logger.warning('Ignoring version {} since config object was provided.'
+                               .format(version))
             if config.version_number is None:
                 raise ValueError('Cannot build table from config which has no version. '
                                  'Try registering the config before building.')
@@ -170,7 +171,8 @@ class TableCollection(Collection[Table]):
                 raise ValueError('Version must be specified when building by config uid.')
             uid = config
         job_id = uuid4()
-        logger.info('Building table from config {} version {} with job ID {}...'.format(uid, version, job_id))
+        logger.info('Building table from config {} version {} with job ID {}...'
+                    .format(uid, version, job_id))
         path = 'projects/{}/ara-definitions/{}/versions/{}/build'.format(
             self.project_id, uid, version
         )
@@ -187,8 +189,7 @@ class TableCollection(Collection[Table]):
                           version: Union[str, int] = None,
                           timeout: int = 15 * 60) -> Table:
         """
-        Builds table from table config, waiting for build job to complete and returning the
-        resulting table.
+        Builds table from table config, waiting for build job to complete.
 
         Parameters
         ----------
@@ -244,7 +245,8 @@ class TableCollection(Collection[Table]):
                         warn_str += '\n\t' + full_warning
                     total_count = warning.get('total_count', 0)
                     if total_count > len(limited_results):
-                        warn_str += '\n\t' + 'and {} more similar.'.format(total_count - len(limited_results))
+                        warn_str += '\n\t' + 'and {} more similar.'\
+                            .format(total_count - len(limited_results))
                 logger.warning(warn_str)
             return self.get(table_id, table_version)
 

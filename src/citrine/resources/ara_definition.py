@@ -1,7 +1,7 @@
 from copy import copy
 from logging import getLogger
 from typing import List, Union, Optional, Tuple
-from uuid import UUID, uuid4
+from uuid import UUID
 
 from gemd.entity.object import MaterialRun
 
@@ -318,17 +318,9 @@ class AraDefinitionCollection(Collection[AraDefinition]):
             the ara definition describing the new table
 
         """
-        job_id = uuid4()
-        url_suffix: str = "/{ara_definition}/versions/{version_number}/build?job_id={job_id}"
-        path: str = self._path_template.format(
-            project_id=self.project_id
-        ) + url_suffix.format(
-            ara_definition=ara_def.definition_uid,
-            version_number=ara_def.version_number,
-            job_id=job_id
-        )
-        response: dict = self.session.post_resource(path=path, json={})
-        return JobSubmissionResponse.build(response)
+        from citrine.resources.table import TableCollection
+        table_collection = TableCollection(self.project_id, self.session)
+        return table_collection._initiate_build_from_config(ara_def, None)
 
     def get_job_status(self, job_id: str):
         """[ALPHA] get status of a running job.
