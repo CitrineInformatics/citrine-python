@@ -189,7 +189,7 @@ class TableCollection(Collection[Table]):
                           version: Union[str, int] = None,
                           timeout: int = 15 * 60) -> Table:
         """
-        Builds table from table config, waiting for build job to complete.
+        [ALPHA] Builds table from table config, waiting for build job to complete.
 
         Parameters
         ----------
