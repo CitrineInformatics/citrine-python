@@ -86,10 +86,10 @@ This pattern is also extremely useful for performing optimization over complex o
     <span class="n">expression</span> <span class="o">=</span> <span class="s1">&#39;(water + 0.5*starter) / (wheat + rye + 0.5*starter)&#39;</span><span class="p">,</span>
     <span class="n">output</span> <span class="o">=</span> <span class="n">dough_hydration</span><span class="p">,</span>
     <span class="n">aliases</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s1">&#39;wheat&#39;</span><span class="p">:</span> <span class="s1">&#39;wheat flour mass&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;rye&#39;</span><span class="p">:</span> <span class="s1">&#39;rye flour mass&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;water&#39;</span><span class="p">:</span> <span class="s1">&#39;water mass&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;starter&#39;</span><span class="p">:</span> <span class="s1">&#39;starter mass&#39;</span>
+        <span class="s1">&#39;wheat&#39;</span><span class="p">:</span> <span class="n">wheat_flour_quantity</span><span class="p">,</span>
+        <span class="s1">&#39;rye&#39;</span><span class="p">:</span> <span class="n">rye_flour_quantity</span><span class="p">,</span>
+        <span class="s1">&#39;water&#39;</span><span class="p">:</span> <span class="n">water_quantity</span><span class="p">,</span>
+        <span class="s1">&#39;starter&#39;</span><span class="p">:</span> <span class="n">starter_quantity</span>
     <span class="p">}</span>
 <span class="p">)</span>
 
@@ -115,12 +115,12 @@ This pattern is also extremely useful for performing optimization over complex o
     <span class="n">expression</span> <span class="o">=</span> <span class="s1">&#39;4*exp(-0.1*pH - 1.3*w^2 + 5*(water+0.5*starter)/(wheat+rye+water+starter))&#39;</span><span class="p">,</span>
     <span class="n">output</span> <span class="o">=</span> <span class="n">shelf_life</span><span class="p">,</span>
     <span class="n">aliases</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s1">&#39;pH&#39;</span><span class="p">:</span> <span class="s1">&#39;final pH&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;w&#39;</span><span class="p">:</span> <span class="s1">&#39;final loaf hydration&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;wheat&#39;</span><span class="p">:</span> <span class="s1">&#39;wheat flour mass&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;rye&#39;</span><span class="p">:</span> <span class="s1">&#39;rye flour mass&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;water&#39;</span><span class="p">:</span> <span class="s1">&#39;water mass&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;starter&#39;</span><span class="p">:</span> <span class="s1">&#39;starter mass&#39;</span>
+        <span class="s1">&#39;pH&#39;</span><span class="p">:</span> <span class="n">final_ph</span><span class="p">,</span>
+        <span class="s1">&#39;w&#39;</span><span class="p">:</span> <span class="n">final_loaf_hydration</span><span class="p">,</span>
+        <span class="s1">&#39;wheat&#39;</span><span class="p">:</span> <span class="n">wheat_flour_quantity</span><span class="p">,</span>
+        <span class="s1">&#39;rye&#39;</span><span class="p">:</span> <span class="n">rye_flour_quantity</span><span class="p">,</span>
+        <span class="s1">&#39;water&#39;</span><span class="p">:</span> <span class="n">water_quantity</span><span class="p">,</span>
+        <span class="s1">&#39;starter&#39;</span><span class="p">:</span> <span class="n">starter_quantity</span>
     <span class="p">}</span>
 <span class="p">)</span>
 
