@@ -26,6 +26,7 @@ def test_simple_legacy_deserialization(valid_simple_ml_predictor_data):
     assert predictor.outputs[0] == RealDescriptor("z", 0, 100, "")
     assert len(predictor.latent_variables) == 1
     assert predictor.latent_variables[0] == RealDescriptor("y", 0, 100, "")
+    assert len(predictor.training_data) == 1
     assert predictor.training_data[0].table_id == UUID('e5c51369-8e71-4ec6-b027-1f92bdc14762')
 
 
@@ -40,6 +41,7 @@ def test_polymorphic_legacy_deserialization(valid_simple_ml_predictor_data):
     assert predictor.outputs[0] == RealDescriptor("z", 0, 100, "")
     assert len(predictor.latent_variables) == 1
     assert predictor.latent_variables[0] == RealDescriptor("y", 0, 100, "")
+    assert len(predictor.training_data) == 1
     assert predictor.training_data[0].table_id == UUID('e5c51369-8e71-4ec6-b027-1f92bdc14762')
 
 
