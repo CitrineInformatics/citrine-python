@@ -87,7 +87,7 @@ Enumerated design space
 -----------------------
 
 An enumerated design space is composed of an explicit list of candidates.
-Each candidate is specified using a dictionary keyed on the key of a corresponding :class:`~citrine.informatics.descriptors.descriptor`.
+Each candidate is specified using a dictionary keyed on the key of a corresponding :class:`~citrine.informatics.descriptors.Descriptor`.
 A list of descriptors defines what key-value pairs must be present in each candidate.
 If a candidate is missing a descriptor key-value pair, contains extra key-value pairs or any value is not valid for the corresponding descriptor, it is removed from the design space.
 

@@ -159,7 +159,7 @@ def valid_graph_predictor_data():
 
 
 @pytest.fixture
-def valid_expression_predictor_data():
+def valid_deprecated_expression_predictor_data():
     """Produce valid data used for tests."""
     from citrine.informatics.descriptors import RealDescriptor
     shear_modulus = RealDescriptor('Property~Shear modulus', lower_bound=0, upper_bound=100, units='GPa')
@@ -169,7 +169,7 @@ def valid_expression_predictor_data():
         status_info=[],
         active=True,
         display_name='Expression predictor',
-        schema_id='e7d79c73-8bf3-4609-887a-7f31b9cef566',
+        schema_id='866e72a6-0a01-4c5f-8c35-146eb2540166',
         id=str(uuid.uuid4()),
         config=dict(
             type='Expression',
@@ -178,8 +178,37 @@ def valid_expression_predictor_data():
             expression='Y / (2 * (1 + v))',
             output=shear_modulus.dump(),
             aliases={
-                "Property~Young's modulus": 'Y',
-                "Property~Poisson's ratio": 'v',
+                'Y': "Property~Young's modulus",
+                'v': "Property~Poisson's ratio",
+            }
+        )
+    )
+
+
+@pytest.fixture
+def valid_expression_predictor_data():
+    """Produce valid data used for tests."""
+    from citrine.informatics.descriptors import RealDescriptor
+    shear_modulus = RealDescriptor('Property~Shear modulus', lower_bound=0, upper_bound=100, units='GPa')
+    youngs_modulus = RealDescriptor('Property~Young\'s modulus', lower_bound=0, upper_bound=100, units='GPa')
+    poissons_ratio = RealDescriptor('Property~Poisson\'s ratio', lower_bound=-1, upper_bound=0.5, units='')
+    return dict(
+        module_type='PREDICTOR',
+        status='VALID',
+        status_info=[],
+        active=True,
+        display_name='Expression predictor',
+        schema_id='f1601161-bb98-4fa9-bdd2-a2a673547532',
+        id=str(uuid.uuid4()),
+        config=dict(
+            type='AnalyticExpression',
+            name='Expression predictor',
+            description='Computes shear modulus from Youngs modulus and Poissons ratio',
+            expression='Y / (2 * (1 + v))',
+            output=shear_modulus.dump(),
+            aliases={
+                'Y': youngs_modulus.dump(),
+                'v': poissons_ratio.dump(),
             }
         )
     )

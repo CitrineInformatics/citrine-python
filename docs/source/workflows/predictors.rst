@@ -97,13 +97,14 @@ Expression predictor
 --------------------
 
 The :class:`~citrine.informatics.predictors.ExpressionPredictor` defines an analytic (lossless) model that computes one real-valued output descriptor from one or more input descriptors.
-An ExpressionPredictor should be used when the relationship between inputs and outputs is known.
+An ``ExpressionPredictor`` should be used when the relationship between inputs and outputs is known.
 
 A string is used to define the expression, and the corresponding output is defined by a :class:`~citrine.informatics.descriptors.RealDescriptor`.
-The ``aliases`` parameter defines a mapping from expression arguments to descriptor keys.
-Expression arguments with spaces are not supported, so an alias must be created for each input that has a space in its name.
-Aliases are not required for inputs that do not contain spaces, but may be useful to avoid typing out the verbose descriptors in the expression string.
-If an alias isn't defined, the expression argument is expected to match the descriptor key exactly.
+An alias is required for each expression argument.
+The ``aliases`` parameter defines a mapping from expression arguments to their associated input descriptors.
+The expression argument does not need to match its descriptor key.
+This is useful to avoid typing out the verbose descriptor keys in the expression string.
+Note, spaces are not supported in expression arguments, e.g. ``Y`` is a valid argument while ``Young's modulus`` is not.
 
 The syntax is described in the `mXparser documentation <http://mathparser.org/mxparser-math-collection>`_.
 Citrine-python currently supports the following operators and functions:
@@ -124,6 +125,8 @@ The following example demonstrates how to create an :class:`~citrine.informatics
 
    from citrine.informatics.predictors import ExpressionPredictor
 
+   youngs_modulus = RealDescriptor('Property~Young\'s modulus', lower_bound=0, upper_bound=100, units='GPa')
+   poissons_ratio = RealDescriptor('Property~Poisson\'s ratio', lower_bound=-1, upper_bound=0.5, units='')
    shear_modulus = RealDescriptor('Property~Shear modulus', lower_bound=0, upper_bound=100, units='GPa')
 
    shear_modulus_predictor = ExpressionPredictor(
@@ -132,8 +135,8 @@ The following example demonstrates how to create an :class:`~citrine.informatics
        expression = 'Y / (2 * (1 + v))',
        output = shear_modulus,
        aliases = {
-           'Y': "Property~Young's modulus",
-           'v': "Property~Poisson's ratio"
+           'Y': youngs_modulus,
+           'v': poissons_ratio
        }
    )
 

@@ -298,21 +298,17 @@ def test_search_projects(collection, session):
 
     session.set_response({'projects': expected_response})
 
-    search_params = { 'search_params': { 
-                            'name': { 
-                                'value': project_name_to_match, 
-                                'search_method': 'EXACT' 
-                                } 
-                            } 
-                        }
-    
+    search_params = {'name': {
+        'value': project_name_to_match,
+        'search_method': 'EXACT'}}
+
     # When
     projects = list(collection.search(search_params=search_params))
 
     # Then
     assert 1 == session.num_calls
     expected_call = FakeCall(method='POST', path='/projects/search', 
-                                        params={'per_page': 100}, json=search_params)
+                                        params={'per_page': 100}, json={'search_params': search_params})
     assert expected_call == session.last_call
     assert len(expected_response) == len(projects)
 
@@ -329,13 +325,10 @@ def test_search_projects_with_pagination(paginated_collection, paginated_session
 
     paginated_session.set_response({ 'projects': same_name_projects_data })
 
-    search_params = { 'search_params': { 
-                        'status': { 
-                            'value': common_name, 
-                            'search_method': 'EXACT' 
-                            } 
-                        } 
-                    }
+    search_params = {'status': {
+        'value': common_name,
+        'search_method': 'EXACT'}}
+
 
     # When
     projects = list(paginated_collection.search(per_page=per_page, search_params=search_params))
@@ -343,10 +336,10 @@ def test_search_projects_with_pagination(paginated_collection, paginated_session
     # Then
     assert 4 == paginated_session.num_calls
     expected_first_call = FakeCall(method='POST', path='/projects/search', 
-                                        params={'per_page': per_page}, json=search_params )
+                                        params={'per_page': per_page}, json={'search_params': search_params} )
     expected_last_call = FakeCall(method='POST', path='/projects/search', 
-                                        params={'page': 4, 'per_page': per_page}, json=search_params )
-    
+                                        params={'page': 4, 'per_page': per_page}, json={'search_params': search_params})
+
     assert expected_first_call == paginated_session.calls[0]
     assert expected_last_call == paginated_session.last_call
 

@@ -1,7 +1,8 @@
 """Tools for working with Predictors."""
 # flake8: noqa
-from typing import Dict, List, Optional, Type, Union
+from typing import List, Optional, Type, Union, Mapping
 from uuid import UUID
+from warnings import warn
 
 from citrine._serialization import properties as _properties
 from citrine._serialization.serializable import Serializable
@@ -9,11 +10,12 @@ from citrine._session import Session
 from citrine.informatics.data_sources import DataSource
 from citrine.informatics.descriptors import Descriptor, FormulationDescriptor, RealDescriptor, \
     MolecularStructureDescriptor
+from citrine.informatics.modules import Module
 from citrine.informatics.reports import Report
 from citrine.resources.report import ReportResource
-from citrine.informatics.modules import Module
 
-__all__ = ['ExpressionPredictor',
+__all__ = ['DeprecatedExpressionPredictor',
+           'ExpressionPredictor',
            'GraphPredictor',
            'IngredientsToSimpleMixturePredictor',
            'Predictor',
@@ -45,7 +47,8 @@ class Predictor(Module):
         type_dict = {
             "Simple": SimpleMLPredictor,
             "Graph": GraphPredictor,
-            "Expression": ExpressionPredictor,
+            "Expression": DeprecatedExpressionPredictor,
+            "AnalyticExpression": ExpressionPredictor,
             "MoleculeFeaturizer": MolecularStructureFeaturizer,
             "IngredientsToSimpleMixture": IngredientsToSimpleMixturePredictor,
             "GeneralizedMeanProperty": GeneralizedMeanPropertyPredictor,
@@ -241,8 +244,63 @@ class GraphPredictor(Serializable['GraphPredictor'], Predictor):
         return '<GraphPredictor {!r}>'.format(self.name)
 
 
-class ExpressionPredictor(Serializable['ExpressionPredictor'], Predictor):
-    """[ALPHA] A predictor interface that allows calculator expressions.
+class DeprecatedExpressionPredictor(Serializable['DeprecatedExpressionPredictor'], Predictor):
+    """[DEPRECATED] A predictor that computes an output from an analytic expression.
+
+    This predictor is deprecated. Please use the :class:`~citrine.informatics.predictors.ExpressionPredictor` instead.
+    To migrate to the new predictor:
+
+    1. add an alias for all unknown expression arguments and
+    2. replace descriptor keys in ``aliases`` with the associated descriptor
+
+    These changes allow the expression to respect descriptor bounds when computing the output and avoid potential
+    descriptor mismatches if a descriptor with an identical key and different bounds is present in the graph.
+
+    The following example shows how to migrate a deprecated expression predictor to the new format.
+    In the deprecated format, an expression that computes shear modulus from Young's modulus and Poisson's ratio is given by:
+
+    .. code-block:: python
+
+       from citrine.informatics.predictors import DeprecatedExpressionPredictor
+
+       shear_modulus = RealDescriptor('Property~Shear modulus', lower_bound=0, upper_bound=100, units='GPa')
+
+       shear_modulus_predictor = DeprecatedExpressionPredictor(
+           name = 'Shear modulus predictor',
+           description = "Computes shear modulus from Young's modulus and Poisson's ratio.",
+           expression = 'Y / (2 * (1 + v))',
+           output = shear_modulus,
+           aliases = {
+               'Y': "Young's modulus",
+               'v': "Poisson's ratio"
+           }
+       )
+
+    To create a predictor using the format, we need to create descriptors for the expression inputs: Young's modulus and Poisson's ratio.
+    We also need to replace references to the descriptor keys in ``aliases`` with the new descriptors:
+
+    .. code-block:: python
+
+       from citrine.informatics.predictors import ExpressionPredictor
+
+       # create a descriptor for each input in addition to the output
+       youngs_modulus = RealDescriptor('Property~Young\'s modulus', lower_bound=0, upper_bound=100, units='GPa')
+       poissons_ratio = RealDescriptor('Property~Poisson\'s ratio', lower_bound=-1, upper_bound=0.5, units='')
+       shear_modulus = RealDescriptor('Property~Shear modulus', lower_bound=0, upper_bound=100, units='GPa')
+
+       shear_modulus_predictor = ExpressionPredictor(
+           name = 'Shear modulus predictor',
+           description = "Computes shear modulus from Young's modulus and Poisson's ratio.",
+           expression = 'Y / (2 * (1 + v))',
+           output = shear_modulus,
+           # note, arguments map to descriptors not descriptor keys
+           aliases = {
+               'Y': youngs_modulus,
+               'v': poissons_ratio
+           }
+       )
+
+    .. seealso:: :class:`~citrine.informatics.predictors.ExpressionPredictor`
 
     Parameters
     ----------
@@ -251,11 +309,12 @@ class ExpressionPredictor(Serializable['ExpressionPredictor'], Predictor):
     description: str
         the description of the predictor
     expression: str
-        the expression that uses the aliased values
-    output: Descriptor
-        the Descriptor that represents the output relation
-    aliases: dict
-        a mapping from expression argument to descriptor key
+        expression that computes an output from a set of inputs
+    output: RealDescriptor
+        descriptor that represents the output of the expression
+    aliases: Optional[Mapping[str, str]]
+        a mapping from each each argument as it appears in the ``expression`` to its descriptor key.
+        If an unknown argument is not aliased, the argument and descriptor key are assumed to be identical.
 
     """
 
@@ -263,8 +322,8 @@ class ExpressionPredictor(Serializable['ExpressionPredictor'], Predictor):
     name = _properties.String('config.name')
     description = _properties.String('config.description')
     expression = _properties.String('config.expression')
-    output = _properties.Object(Descriptor, 'config.output')
-    aliases = _properties.Mapping(_properties.String, _properties.String, 'config.aliases')
+    output = _properties.Object(RealDescriptor, 'config.output')
+    aliases = _properties.Optional(_properties.Mapping(_properties.String, _properties.String), 'config.aliases')
     typ = _properties.String('config.type', default='Expression', deserializable=False)
     status = _properties.Optional(_properties.String(), 'status', serializable=False)
     status_info = _properties.Optional(
@@ -289,8 +348,86 @@ class ExpressionPredictor(Serializable['ExpressionPredictor'], Predictor):
                  name: str,
                  description: str,
                  expression: str,
-                 output: Descriptor,
-                 aliases: dict,
+                 output: RealDescriptor,
+                 aliases: Optional[Mapping[str, str]] = None,
+                 session: Optional[Session] = None,
+                 report: Optional[Report] = None,
+                 active: bool = True):
+        warn("{this_class} is deprecated. Please use {replacement} instead"
+             .format(this_class=self.__class__.name, replacement=ExpressionPredictor.__name__))
+        self.name: str = name
+        self.description: str = description
+        self.expression: str = expression
+        self.output: RealDescriptor = output
+        self.aliases: Optional[Mapping[str, str]] = aliases
+        self.session: Optional[Session] = session
+        self.report: Optional[Report] = report
+        self.active: bool = active
+
+    def _post_dump(self, data: dict) -> dict:
+        data['display_name'] = data['config']['name']
+        return data
+
+    def __str__(self):
+        return '<DeprecatedExpressionPredictor {!r}>'.format(self.name)
+
+
+class ExpressionPredictor(Serializable['ExpressionPredictor'], Predictor):
+    """[ALPHA] A predictor that computes an output from an expression and set of bounded inputs.
+
+    .. seealso::
+       If you are using the deprecated predictor please see
+       :class:`~citrine.informatics.predictors.DeprecatedExpressionPredictor` for an example that shows how to migrate
+       to the new format.
+
+    Parameters
+    ----------
+    name: str
+        name of the configuration
+    description: str
+        the description of the predictor
+    expression: str
+        expression that computes an output from aliased inputs
+    output: RealDescriptor
+        descriptor that represents the output relation
+    aliases: Mapping[str, RealDescriptor]
+        a mapping from each unknown argument to its descriptor.
+        All unknown arguments must have an associated descriptor.
+
+    """
+
+    uid = _properties.Optional(_properties.UUID, 'id', serializable=False)
+    name = _properties.String('config.name')
+    description = _properties.String('config.description')
+    expression = _properties.String('config.expression')
+    output = _properties.Object(RealDescriptor, 'config.output')
+    aliases = _properties.Mapping(_properties.String, _properties.Object(RealDescriptor), 'config.aliases')
+    typ = _properties.String('config.type', default='AnalyticExpression', deserializable=False)
+    status = _properties.Optional(_properties.String(), 'status', serializable=False)
+    status_info = _properties.Optional(
+        _properties.List(_properties.String()),
+        'status_info',
+        serializable=False
+    )
+    experimental = _properties.Boolean("experimental", serializable=False, default=True)
+    experimental_reasons = _properties.Optional(
+        _properties.List(_properties.String()),
+        'experimental_reasons',
+        serializable=False
+    )
+
+    active = _properties.Boolean('active', default=True)
+
+    # NOTE: These could go here or in _post_dump - it's unclear which is better right now
+    module_type = _properties.String('module_type', default='PREDICTOR')
+    schema_id = _properties.UUID('schema_id', default=UUID('f1601161-bb98-4fa9-bdd2-a2a673547532'))
+
+    def __init__(self,
+                 name: str,
+                 description: str,
+                 expression: str,
+                 output: RealDescriptor,
+                 aliases: Mapping[str, RealDescriptor],
                  session: Optional[Session] = None,
                  report: Optional[Report] = None,
                  active: bool = True):
@@ -298,7 +435,7 @@ class ExpressionPredictor(Serializable['ExpressionPredictor'], Predictor):
         self.description: str = description
         self.expression: str = expression
         self.output: Descriptor = output
-        self.aliases: dict = aliases
+        self.aliases: Mapping[str, RealDescriptor] = aliases
         self.session: Optional[Session] = session
         self.report: Optional[Report] = report
         self.active: bool = active
@@ -437,10 +574,10 @@ class IngredientsToSimpleMixturePredictor(
         description of the predictor
     output: FormulationDescriptor
         descriptor that represents the output formulation
-    id_to_quantity: Dict[str, RealDescriptor]
+    id_to_quantity: Mapping[str, RealDescriptor]
         Map from ingredient identifier to the descriptor that represents its quantity,
         e.g. ``{'water': RealDescriptor('water quantity', 0, 1)}``
-    labels: Dict[str, List[str]]
+    labels: Mapping[str, List[str]]
         Map from each label to all ingredients assigned that label, when present in a mixture,
         e.g. ``{'solvent': ['water']}``
 
@@ -478,16 +615,16 @@ class IngredientsToSimpleMixturePredictor(
                  name: str,
                  description: str,
                  output: FormulationDescriptor,
-                 id_to_quantity: Dict[str, RealDescriptor],
-                 labels: Dict[str, List[str]],
+                 id_to_quantity: Mapping[str, RealDescriptor],
+                 labels: Mapping[str, List[str]],
                  session: Optional[Session] = None,
                  report: Optional[Report] = None,
                  active: bool = True):
         self.name: str = name
         self.description: str = description
         self.output: FormulationDescriptor = output
-        self.id_to_quantity: Dict[str, RealDescriptor] = id_to_quantity
-        self.labels: Dict[str, List[str]] = labels
+        self.id_to_quantity: Mapping[str, RealDescriptor] = id_to_quantity
+        self.labels: Mapping[str, List[str]] = labels
         self.session: Optional[Session] = session
         self.report: Optional[Report] = report
         self.active: bool = active
@@ -532,7 +669,7 @@ class GeneralizedMeanPropertyPredictor(
         all training data required by this predictor.
     label: Optional[str]
         Optional label
-    default_properties: Optional[Dict[str, float]]
+    default_properties: Optional[Mapping[str, float]]
         Default values to use for imputed properties.
         Defaults are specified as a map from descriptor key to its default value.
         If not specified and ``impute_properties == True`` the average over the entire dataset
@@ -581,7 +718,7 @@ class GeneralizedMeanPropertyPredictor(
                  p: float,
                  training_data: Optional[List[DataSource]],
                  impute_properties: bool,
-                 default_properties: Optional[Dict[str, float]] = None,
+                 default_properties: Optional[Mapping[str, float]] = None,
                  label: Optional[str] = None,
                  session: Optional[Session] = None,
                  report: Optional[Report] = None,
@@ -593,7 +730,7 @@ class GeneralizedMeanPropertyPredictor(
         self.p: float = p
         self.training_data: Optional[List[DataSource]] = training_data
         self.impute_properties: bool = impute_properties
-        self.default_properties: Optional[Dict[str, float]] = default_properties
+        self.default_properties: Optional[Mapping[str, float]] = default_properties
         self.label: Optional[str] = label
         self.session: Optional[Session] = session
         self.report: Optional[Report] = report
