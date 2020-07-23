@@ -241,8 +241,7 @@ class TableCollection(Collection[Table]):
                 warn_lines = ['Table build completed with warnings:']
                 for warning in warnings:
                     limited_results = warning.get('limited_results', [])
-                    for full_warning in limited_results:
-                        warn_lines.append(full_warning)
+                    warn_lines.extend(limited_results)
                     total_count = warning.get('total_count', 0)
                     if total_count > len(limited_results):
                         warn_lines.append('and {} more similar.'
