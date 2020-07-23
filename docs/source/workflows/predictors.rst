@@ -342,7 +342,7 @@ The example below show how to configure a mean property predictor to compute mea
         label='solute'
     )
 
-Ingredient Fractions Predictor
+Ingredient fractions predictor
 ------------------------------
 
 The :class:`~citrine.informatics.predictors.IngredientFractionsPredictor` featurizes ingredient fractions in a simple mixture.
@@ -395,13 +395,27 @@ The following example demonstrates how to create a predictor that computes the t
         labels=['solute', 'solvent']
     )
 
-Predictor Reports
+Predictor reports
 -----------------
 
 A :doc:`predictor report <predictor_reports>` describes a machine-learned model, for example its settings and what features are important to the model. 
 It does not include performance metrics. To learn more about performance metrics, please see :doc:`PerformanceWorkflows <performance_workflows>`.
 
-Data Sources
+Training data
 -------------
 
-A :doc:`data source <data_sources>` references the training data used by a predictor.
+Training data are defined by a list of :doc:`data sources <data_sources>`.
+When multiple data sources are specified, data from all sources is combined into a flattened list of candidates and deduplicated by uid and identifiers prior to training a predictor.
+Deduplication is performed if a uid or identifier is shared between two or more rows.
+The content of a deduplicated row will contain the union of data across all rows that share the same uid or at least 1 identifier.
+An error will be thrown if two deduplicated rows contain different data for the same descriptor because it's unclear which value should be used in the deduplcated row.
+
+Deduplication is additive.
+Given three rows with identifiers ``[a]``, ``[b]`` and ``[a, b]``, deduplication will result in a single row with three identifiers (``[a, b, c]``) and the union of all data from these rows.
+Care must be taken to ensure uids and identifiers aren't shared across multiple data sources to avoid unwanted deduplication.
+
+When using a :class:`~citrine.informatics.predictors.GraphPredictor`, training data provided by the graph predictor and all subpredictors are combined into a single deduplicated list.
+Each predictor is trained on the subset of the combined data that is valid for the model.
+Note, data may come from sources defined by other subpredictors in the graph.
+Because training data are shared by all predictors in the graph, a data source does not need to be redefined by all subpredictors that require it.
+If all data sources required train a predictor are specified elsewhere in the graph, the ``training_data`` parameter may be omitted.

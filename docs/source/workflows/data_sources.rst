@@ -172,6 +172,6 @@ The example below assumes that the uuid and the version of the desired Ara table
         training_data = [data_source]
     )
 
-  Note that the descriptor keys above are the headers of the *variable* not the column in the table.
-  The last term in the column header is a suffix associated with the specific column definition rather than the variable.
-  It should be omitted from the descriptor key.
+Note that the descriptor keys above are the headers of the *variable* not the column in the table.
+The last term in the column header is a suffix associated with the specific column definition rather than the variable.
+It should be omitted from the descriptor key.
