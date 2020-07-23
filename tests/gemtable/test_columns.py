@@ -1,7 +1,7 @@
 """Tests for citrine.informatics.columns."""
 import pytest
 
-from citrine.ara.columns import *
+from citrine.gemtables.columns import *
 
 
 @pytest.fixture(params=[

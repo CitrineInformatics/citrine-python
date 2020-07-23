@@ -36,7 +36,7 @@ class DataSource(PolymorphicSerializable['DataSource']):
         if "type" not in data:
             raise ValueError("Can only get types from dicts with a 'type' key")
         types: List[Type[Serializable]] = [
-            CSVDataSource, AraTableDataSource
+            CSVDataSource, GemTableDataSource
         ]
         res = next((x for x in types if x.typ == data["type"]), None)
         if res is None:
@@ -79,17 +79,16 @@ class CSVDataSource(Serializable['CSVDataSource'], DataSource):
         self.identifiers = identifiers
 
 
-class AraTableDataSource(Serializable['AraTableDataSource'], DataSource):
-    """[ALPHA] A data source based on an Ara table hosted on the data platform.
-
-    TODO: replace "Ara" with whatever non-codename we pick for that component of the platform
+class GemTableDataSource(Serializable['GemTableDataSource'], DataSource):
+    """[ALPHA] A data source based on a GEM Table hosted on the data platform.
 
     Parameters
     ----------
     table_id: UUID
-        Unique identifier for the table
+        Unique identifier for the GEM Table
     table_version: Union[str,int]
-        Version number for the table, which starts at 1 rather than 0.  Strings are cast to ints
+        Version number for the GEM Table, which starts at 1 rather than 0.  Strings
+        are cast to ints
 
     """
 
@@ -105,3 +104,11 @@ class AraTableDataSource(Serializable['AraTableDataSource'], DataSource):
                  table_version: Union[int, str]):
         self.table_id = table_id
         self.table_version = table_version
+
+
+def AraTableDataSource(*args, **kwargs):
+    """[DEPRECATED] Use GemTableDataSource instead."""
+    from warnings import warn
+    warn("AraTableDataSource is deprecated and will soon be removed. "
+         "Please use GemTableDataSource instead", DeprecationWarning)
+    return GemTableDataSource(*args, **kwargs)

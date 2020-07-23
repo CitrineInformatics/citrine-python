@@ -1,7 +1,7 @@
 """Tests for citrine.informatics.rows."""
 import pytest
 
-from citrine.ara.rows import MaterialRunByTemplate, Row
+from citrine.gemtables.rows import MaterialRunByTemplate, Row
 from gemd.entity.link_by_uid import LinkByUID
 
 

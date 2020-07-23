@@ -2,7 +2,7 @@
 import pytest
 from gemd.entity.bounds.real_bounds import RealBounds
 
-from citrine.ara.variables import *
+from citrine.gemtables.variables import *
 from gemd.entity.link_by_uid import LinkByUID
 
 

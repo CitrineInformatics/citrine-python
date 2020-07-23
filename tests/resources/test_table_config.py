@@ -3,15 +3,16 @@ from uuid import UUID, uuid4
 import pytest
 from gemd.entity.link_by_uid import LinkByUID
 
-from citrine.ara.columns import MeanColumn, OriginalUnitsColumn, StdDevColumn, IdentityColumn
-from citrine.ara.rows import MaterialRunByTemplate
-from citrine.ara.variables import AttributeByTemplate, RootInfo, IngredientQuantityDimension, \
+from citrine.gemtables.columns import MeanColumn, OriginalUnitsColumn, StdDevColumn, IdentityColumn
+from citrine.gemtables.rows import MaterialRunByTemplate
+from citrine.gemtables.variables import AttributeByTemplate, RootInfo, IngredientQuantityDimension, \
     IngredientQuantityByProcessAndName, IngredientIdentifierByProcessTemplateAndName, RootIdentifier
 from citrine.resources.ara_definition import AraDefinitionCollection, AraDefinition
 from citrine.resources.material_run import MaterialRun
 from citrine.resources.project import Project
 from citrine.resources.process_template import ProcessTemplate
-from tests.utils.factories import AraDefinitionResponseDataFactory
+from citrine.resources.table_config import TableConfig
+from tests.utils.factories import TableConfigResponseDataFactory
 from tests.utils.session import FakeSession, FakeCall
 
 @pytest.fixture
@@ -22,7 +23,7 @@ def session() -> FakeSession:
 @pytest.fixture
 def project(session) -> Project:
     project = Project(
-        name="Test Ara project",
+        name="Test GEM Table project",
         session=session
     )
     project.uid = UUID('6b608f78-e341-422c-8076-35adc8828545')
@@ -38,29 +39,29 @@ def collection(session) -> AraDefinitionCollection:
 
 
 @pytest.fixture
-def ara_definition() -> AraDefinition:
-    def _ara_definition():
-        return AraDefinition.build(AraDefinitionResponseDataFactory())
-    return _ara_definition
+def table_config() -> AraDefinition:
+    def _table_config():
+        return AraDefinition.build(TableConfigResponseDataFactory())
+    return _table_config
 
 
 def empty_defn() -> AraDefinition:
-    return AraDefinition(name="empty", description="empty",
+    return TableConfig(name="empty", description="empty",
                          datasets=[], rows=[], variables=[], columns=[])
 
 
-def test_get_ara_definition_metadata(collection, session):
+def test_get_table_config_metadata(collection, session):
     """Get with version gets TBD"""
 
     # Given
     project_id = '6b608f78-e341-422c-8076-35adc8828545'
-    ara_definition_response = AraDefinitionResponseDataFactory()
-    session.set_response(ara_definition_response)
-    defn_id = ara_definition_response["definition"]["id"]
-    ver_number = ara_definition_response["version"]["version_number"]
+    table_config_response = TableConfigResponseDataFactory()
+    session.set_response(table_config_response)
+    defn_id = table_config_response["definition"]["id"]
+    ver_number = table_config_response["version"]["version_number"]
 
     # When
-    retrieved_ara_definition: AraDefinition = collection.get_with_version(defn_id, ver_number)
+    retrieved_table_config: AraDefinition = collection.get_with_version(defn_id, ver_number)
 
     # Then
     assert 1 == session.num_calls
@@ -69,20 +70,20 @@ def test_get_ara_definition_metadata(collection, session):
         path="projects/{}/ara-definitions/{}/versions/{}".format(project_id, defn_id, ver_number)
     )
     assert session.last_call == expect_call
-    assert str(retrieved_ara_definition.definition_uid) == defn_id
-    assert retrieved_ara_definition.version_number == ver_number
+    assert str(retrieved_table_config.config_uid) == defn_id
+    assert retrieved_table_config.version_number == ver_number
 
 
-def test_init_ara_definition():
-    ara_definition = AraDefinition(name="foo", description="bar", rows=[], columns=[], variables=[], datasets=[])
-    assert ara_definition.definition_uid is None
-    assert ara_definition.version_number is None
+def test_init_table_config():
+    table_config = TableConfig(name="foo", description="bar", rows=[], columns=[], variables=[], datasets=[])
+    assert table_config.config_uid is None
+    assert table_config.version_number is None
 
 
 def test_dup_names():
-    """Make sure that variable name and headers are unique across an ara definition"""
+    """Make sure that variable name and headers are unique across a table config"""
     with pytest.raises(ValueError) as excinfo:
-        AraDefinition(
+        TableConfig(
             name="foo", description="bar", datasets=[], rows=[], columns=[],
             variables=[
                 RootInfo(name="foo", headers=["foo", "bar"], field="name"),
@@ -93,7 +94,7 @@ def test_dup_names():
     assert "foo" in str(excinfo.value)
 
     with pytest.raises(ValueError) as excinfo:
-        AraDefinition(
+        TableConfig(
             name="foo", description="bar", datasets=[], rows=[], columns=[],
             variables=[
                 RootInfo(name="foo", headers=["spam", "eggs"], field="name"),
@@ -107,7 +108,7 @@ def test_dup_names():
 def test_missing_variable():
     """Make sure that every data_source matches a name of a variable"""
     with pytest.raises(ValueError) as excinfo:
-        AraDefinition(
+        TableConfig(
             name="foo", description="bar", datasets=[], rows=[], variables=[],
             columns=[
                 MeanColumn(data_source="density")
@@ -123,9 +124,9 @@ def test_dump_example():
         headers=["Slice", "Density"],
         template=LinkByUID(scope="templates", id="density")
     )
-    ara_definition = AraDefinition(
+    table_config = TableConfig(
         name="Example Table",
-        description="Illustrative example that's meant to show how Ara Definitions will look serialized",
+        description="Illustrative example that's meant to show how Table Configs will look serialized",
         datasets=[uuid4()],
         variables=[density],
         rows=[MaterialRunByTemplate(templates=[LinkByUID(scope="templates", id="slices")])],
@@ -160,7 +161,7 @@ def test_default_for_material(collection: AraDefinitionCollection, session):
     # Given
     project_id = '6b608f78-e341-422c-8076-35adc8828545'
     dummy_resp = {
-        'config': AraDefinition(
+        'config': TableConfig(
             name='foo',
             description='foo',
             variables=[],
@@ -278,7 +279,7 @@ def test_add_all_ingredients(session, project):
     session.set_response(
         ProcessTemplate(process_name, uids={'id': process_id}, allowed_names=allowed_names).dump()
     )
-    # WHEN we add all ingredients to the same Ara definition as absolute quantities
+    # WHEN we add all ingredients to the same Table Config as absolute quantities
     def2 = def1.add_all_ingredients(process_template=process_link, project=project,
                                     quantity_dimension=IngredientQuantityDimension.ABSOLUTE)
     # THEN there should be 1 new variable for each name, corresponding to the quantity
@@ -295,7 +296,7 @@ def test_add_all_ingredients(session, project):
     session.set_response(
         ProcessTemplate(process_name, uids={'id': process_id}, allowed_names=allowed_names).dump()
     )
-    # WHEN we add all ingredients to the same Ara definition in a volume basis
+    # WHEN we add all ingredients to the same Table Config in a volume basis
     # THEN it raises an exception because these variables and columns already exist
     with pytest.raises(ValueError):
         def2.add_all_ingredients(process_template=process_link, project=project,
@@ -315,22 +316,22 @@ def test_register_new(collection, session):
 
     # Given
     project_id = '6b608f78-e341-422c-8076-35adc8828545'
-    ara_definition = AraDefinition(name="name", description="description", datasets=[], rows=[], variables=[], columns=[])
+    table_config = TableConfig(name="name", description="description", datasets=[], rows=[], variables=[], columns=[])
 
-    ara_definition_response = AraDefinitionResponseDataFactory()
-    defn_uid = ara_definition_response["definition"]["id"]
-    ver_uid = ara_definition_response["version"]["id"]
-    session.set_response(ara_definition_response)
+    table_config_response = TableConfigResponseDataFactory()
+    defn_uid = table_config_response["definition"]["id"]
+    ver_uid = table_config_response["version"]["id"]
+    session.set_response(table_config_response)
 
     # When
-    registered = collection.register(ara_definition)
+    registered = collection.register(table_config)
 
     # Then
     assert registered.definition_uid == UUID(defn_uid)
     assert registered.version_uid == UUID(ver_uid)
     assert session.num_calls == 1
 
-    # Ensure we POST if we weren't created with a definition id
+    # Ensure we POST if we weren't created with a table config id
     assert session.last_call.method == "POST"
     assert session.last_call.path == "projects/{}/ara-definitions".format(project_id)
 
@@ -339,25 +340,25 @@ def test_register_existing(collection, session):
     """Test the behavior of AraDefinitionCollection.register() on a registered AraDefinition"""
     # Given
     project_id = '6b608f78-e341-422c-8076-35adc8828545'
-    # ara_definition = AraDefinitionResponseDataFactory()
-    # definition_uid = ara_definition["definition_id"]
+    # table_config = TableConfigResponseDataFactory()
+    # config_uid = table_config["definition_id"]
 
-    ara_definition = AraDefinition(name="name", description="description", datasets=[], rows=[], variables=[], columns=[],
+    table_config = TableConfig(name="name", description="description", datasets=[], rows=[], variables=[], columns=[],
                                    definition_uid = UUID('6b608f78-e341-422c-8076-35adc8828545'))
 
-    ara_definition_response = AraDefinitionResponseDataFactory()
-    defn_uid = ara_definition_response["definition"]["id"]
-    ver_uid = ara_definition_response["version"]["id"]
-    session.set_response(ara_definition_response)
+    table_config_response = TableConfigResponseDataFactory()
+    defn_uid = table_config_response["definition"]["id"]
+    ver_uid = table_config_response["version"]["id"]
+    session.set_response(table_config_response)
 
     # When
-    registered = collection.register(ara_definition)
+    registered = collection.register(table_config)
 
     assert registered.definition_uid == UUID(defn_uid)
     assert registered.version_uid == UUID(ver_uid)
     assert session.num_calls == 1
 
-    # Ensure we PUT if we were called with a definition id
+    # Ensure we PUT if we were called with a table config id
     assert session.last_call.method == "PUT"
     assert session.last_call.path == "projects/{}/ara-definitions/6b608f78-e341-422c-8076-35adc8828545".format(project_id)
 
@@ -366,23 +367,23 @@ def test_update(collection, session):
     """Test the behavior of AraDefinitionCollection.update() on a registered AraDefinition"""
     # Given
     project_id = '6b608f78-e341-422c-8076-35adc8828545'
-    ara_definition = AraDefinition(name="name", description="description", datasets=[], rows=[], variables=[], columns=[],
+    table_config = TableConfig(name="name", description="description", datasets=[], rows=[], variables=[], columns=[],
                                    definition_uid = UUID('6b608f78-e341-422c-8076-35adc8828545'))
 
-    ara_definition_response = AraDefinitionResponseDataFactory()
-    defn_uid = ara_definition_response["definition"]["id"]
-    ver_uid = ara_definition_response["version"]["id"]
-    session.set_response(ara_definition_response)
+    table_config_response = TableConfigResponseDataFactory()
+    defn_uid = table_config_response["definition"]["id"]
+    ver_uid = table_config_response["version"]["id"]
+    session.set_response(table_config_response)
 
     # When
-    registered = collection.update(ara_definition)
+    registered = collection.update(table_config)
 
     # Then
-    assert registered.definition_uid == UUID(defn_uid)
+    assert registered.config_uid == UUID(defn_uid)
     assert registered.version_uid == UUID(ver_uid)
     assert session.num_calls == 1
 
-    # Ensure we POST if we weren't created with a definition id
+    # Ensure we POST if we weren't created with a table config id
     assert session.last_call.method == "PUT"
     assert session.last_call.path == "projects/{}/ara-definitions/6b608f78-e341-422c-8076-35adc8828545".format(project_id)
 
@@ -392,9 +393,9 @@ def test_update_unregistered_fail(collection, session):
 
     # Given
 
-    ara_definition = AraDefinition(name="name", description="description", datasets=[], rows=[], variables=[], columns=[],
+    table_config = TableConfig(name="name", description="description", datasets=[], rows=[], variables=[], columns=[],
                                    definition_uid = None)
 
     # When
-    with pytest.raises(ValueError, match="Cannot update Ara Definition without a definition_uid."):
-        collection.update(ara_definition)
+    with pytest.raises(ValueError, match="Cannot update Table Config without a config_uid."):
+        collection.update(table_config)
