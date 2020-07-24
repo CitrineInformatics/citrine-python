@@ -155,12 +155,12 @@ are compatible (yet, at least).</p>
 the respective table for a given AraDefinition.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>project</strong> (<a class="reference internal" href="citrine.resources.project.html#citrine.resources.project.Project" title="citrine.resources.project.Project"><em>Project</em></a>) – The project on behalf of which the job executes.</p></li>
-<li><p><strong>ara_def</strong> (<a class="reference internal" href="#citrine.resources.ara_definition.AraDefinition" title="citrine.resources.ara_definition.AraDefinition"><em>AraDefinition</em></a>) – the ara definition describing the new table</p></li>
-</ul>
+<dd class="field-odd"><p><strong>ara_def</strong> (<a class="reference internal" href="#citrine.resources.ara_definition.AraDefinition" title="citrine.resources.ara_definition.AraDefinition"><em>AraDefinition</em></a>) – the ara definition describing the new table</p>
 </dd>
 </dl>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version Please: </span>use TableCollection.build_from config or TableCollection.initiate_build</p>
+</div>
 </dd></dl>
 
 <dl class="method">
@@ -196,12 +196,12 @@ persisted instance of material run, or if it is a Citrine ID.</p></li>
 <p>This method grabs a JobStatusResponse object for the given job_id.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>project</strong> (<a class="reference internal" href="citrine.resources.project.html#citrine.resources.project.Project" title="citrine.resources.project.Project"><em>Project</em></a>) – The project on behalf of which we retrieve a job status</p></li>
-<li><p><strong>job_id</strong> (<em>str</em>) – The job we retrieve the status for</p></li>
-</ul>
+<dd class="field-odd"><p><strong>job_id</strong> (<em>str</em>) – The job we retrieve the status for</p>
 </dd>
 </dl>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version Table: </span>build job status does not have a stable format. Please use TableCollection.build_from_config or TableCollection.get_by_build_job</p>
+</div>
 </dd></dl>
 
 <dl class="method">

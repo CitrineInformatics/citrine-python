@@ -114,9 +114,78 @@ can be used to ‘flatten’ data objects into useful projections.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="citrine.resources.table.TableCollection.build_from_config">
+<code class="sig-name descname">build_from_config</code><span class="sig-paren">(</span><em class="sig-param">config: Union[citrine.resources.ara_definition.AraDefinition, str, citrine._serialization.properties.UUID], *, version: Union[str, int] = None, timeout: float = 900</em><span class="sig-paren">)</span> &#x2192; citrine.resources.table.Table<a class="headerlink" href="#citrine.resources.table.TableCollection.build_from_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>[ALPHA] Builds table from table config, waiting for build job to complete.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config</strong> – The persisted table config from which to build a table (or its ID).</p></li>
+<li><p><strong>version</strong> – The version of the table config, only necessary when config is a uid.</p></li>
+<li><p><strong>timeout</strong> – Amount of time to wait on build job (in seconds) before giving up. Defaults
+to 15 minutes. Note that this number has no effect on the build job itself,
+which can also time out server-side.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A new table built from the supplied config.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#citrine.resources.table.Table" title="citrine.resources.table.Table">Table</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
 <dt id="citrine.resources.table.TableCollection.get">
 <code class="sig-name descname">get</code><span class="sig-paren">(</span><em class="sig-param">uid: Union[citrine._serialization.properties.UUID, str], version: int</em><span class="sig-paren">)</span> &#x2192; citrine.resources.table.Table<a class="headerlink" href="#citrine.resources.table.TableCollection.get" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a Table’s metadata.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="citrine.resources.table.TableCollection.get_by_build_job">
+<code class="sig-name descname">get_by_build_job</code><span class="sig-paren">(</span><em class="sig-param">job: Union[citrine.resources.ara_job.JobSubmissionResponse, citrine._serialization.properties.UUID], *, timeout: float = 900</em><span class="sig-paren">)</span> &#x2192; citrine.resources.table.Table<a class="headerlink" href="#citrine.resources.table.TableCollection.get_by_build_job" title="Permalink to this definition">¶</a></dt>
+<dd><p>[ALPHA] Gets table by build job, waiting for it to complete if necessary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>job</strong> – The job submission object or job ID for the table build.</p></li>
+<li><p><strong>timeout</strong> – Amount of time to wait on build job (in seconds) before giving up. Defaults
+to 15 minutes. Note that this number has no effect on the build job itself,
+which can also time out server-side.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The table built by the specified job.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#citrine.resources.table.Table" title="citrine.resources.table.Table">Table</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="citrine.resources.table.TableCollection.initiate_build">
+<code class="sig-name descname">initiate_build</code><span class="sig-paren">(</span><em class="sig-param">config: Union[citrine.resources.ara_definition.AraDefinition, str, citrine._serialization.properties.UUID], version: Union[str, citrine._serialization.properties.UUID] = None</em><span class="sig-paren">)</span> &#x2192; citrine.resources.ara_job.JobSubmissionResponse<a class="headerlink" href="#citrine.resources.table.TableCollection.initiate_build" title="Permalink to this definition">¶</a></dt>
+<dd><p>[ALPHA] Initiates tables build with provided config.</p>
+<p>This method does not wait for job completion. If you do not need to build
+multiple tables in parallel, using build_from_config is preferable to using
+this method. Use get_by_build_job to wait for the result of this method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config</strong> – The persisted table config from which to build a table (or its ID).</p></li>
+<li><p><strong>version</strong> – The version of the table config, only necessary when config is a uid.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>Information about the submitted job. Note the format of this object</em></p></li>
+<li><p><em>may be unstable.</em></p></li>
+</ul>
+</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
