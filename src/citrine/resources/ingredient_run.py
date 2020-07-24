@@ -76,6 +76,7 @@ class IngredientRun(ObjectRun, Resource['IngredientRun'], GEMDIngredientRun):
     typ = String('type')
 
     def __init__(self,
+                 *,
                  uids: Optional[Dict[str, str]] = None,
                  tags: Optional[List[str]] = None,
                  notes: Optional[str] = None,
