@@ -1,4 +1,5 @@
 """Tools for working with Descriptors."""
+import warnings
 from typing import Type, Optional, List  # noqa: F401
 
 from citrine._serialization.serializable import Serializable
@@ -8,7 +9,6 @@ from citrine._serialization import properties
 __all__ = ['Descriptor',
            'RealDescriptor',
            'ChemicalFormulaDescriptor',
-           'InorganicDescriptor',
            'MolecularStructureDescriptor',
            'CategoricalDescriptor',
            'FormulationDescriptor']
@@ -71,11 +71,18 @@ class RealDescriptor(Serializable['RealDescriptor'], Descriptor):
                  key: str,
                  lower_bound: float,
                  upper_bound: float,
-                 units: str = ''):
+                 units: Optional[str] = None):
         self.key: str = key
         self.lower_bound: float = lower_bound
         self.upper_bound: float = upper_bound
-        self.units: Optional[str] = units
+
+        if units is None:
+            msg = "Default of dimensionless is deprecated; \
+            please specify an empty string explicitly."
+            warnings.warn(msg, category=DeprecationWarning)
+            self.units = ""
+        else:
+            self.units = units
 
     def __str__(self):
         return "<RealDescriptor {!r}>".format(self.key)
@@ -92,14 +99,11 @@ class ChemicalFormulaDescriptor(Serializable['ChemicalFormulaDescriptor'], Descr
     """
 
     key = properties.String('descriptor_key')
-    # `threshold` exists in the backend but is not configurable through this client. It is fixed
-    # to 1.0 which means that chemical formula string parsing is strict with regards to typos.
-    threshold = properties.Float('threshold', deserializable=False, default=1.0)
     typ = properties.String('type', default='Inorganic', deserializable=False)
 
     def __eq__(self, other):
         try:
-            attrs = ["key", "threshold", "typ"]
+            attrs = ["key", "typ"]
             return all([
                 self.__getattribute__(key) == other.__getattribute__(key) for key in attrs
             ])
@@ -111,14 +115,6 @@ class ChemicalFormulaDescriptor(Serializable['ChemicalFormulaDescriptor'], Descr
 
     def __str__(self):
         return "<ChemicalFormulaDescriptor {!r}>".format(self.key)
-
-
-def InorganicDescriptor(key: str, threshold: Optional[float] = 1.0):
-    """[DEPRECATED] Use ChemicalFormulaDescriptor instead."""
-    from warnings import warn
-    warn("InorganicDescriptor is deprecated and will soon be removed. "
-         "Use ChemicalFormulaDescriptor instead.", DeprecationWarning)
-    return ChemicalFormulaDescriptor(key)
 
 
 class MolecularStructureDescriptor(Serializable['MolecularStructureDescriptor'], Descriptor):

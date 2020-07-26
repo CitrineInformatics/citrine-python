@@ -2,7 +2,6 @@
 import pytest
 
 from citrine.informatics.descriptors import *
-from citrine.informatics.descriptors import InorganicDescriptor
 
 
 @pytest.fixture(params=[
@@ -41,12 +40,6 @@ def test_buggy_deserialization():
 def test_invalid_eq(descriptor):
     other = None
     assert not descriptor == other
-
-
-def test_inorganic_deprecated():
-    # InorganicDescriptor is still callable but creates a ChemicalFormulaDescriptor
-    old_descriptor = InorganicDescriptor("formula")
-    assert isinstance(old_descriptor, ChemicalFormulaDescriptor)
 
 
 def test_string_rep(descriptor):

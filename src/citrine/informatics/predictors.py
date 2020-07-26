@@ -338,8 +338,9 @@ class DeprecatedExpressionPredictor(Serializable['DeprecatedExpressionPredictor'
                  session: Optional[Session] = None,
                  report: Optional[Report] = None,
                  active: bool = True):
-        warn("{this_class} is deprecated. Please use {replacement} instead"
-             .format(this_class=self.__class__.name, replacement=ExpressionPredictor.__name__))
+        deprecation_msg = "{this_class} is deprecated. Please use {replacement} instead".format(
+            this_class=self.__class__.name, replacement=ExpressionPredictor.__name__)
+        warn(deprecation_msg, category=DeprecationWarning)
         self.name: str = name
         self.description: str = description
         self.expression: str = expression

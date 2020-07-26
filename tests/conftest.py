@@ -76,8 +76,7 @@ def valid_enumerated_design_space_data():
                 ),
                 dict(
                     type='Inorganic',
-                    descriptor_key='formula',
-                    threshold=1.0
+                    descriptor_key='formula'
                 )
             ],
             data=[
