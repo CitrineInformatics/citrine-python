@@ -102,7 +102,7 @@ class SimpleMLPredictor(Serializable['SimplePredictor'], Predictor):
     inputs = _properties.List(_properties.Object(Descriptor), 'config.inputs')
     outputs = _properties.List(_properties.Object(Descriptor), 'config.outputs')
     latent_variables = _properties.List(_properties.Object(Descriptor), 'config.latent_variables')
-    training_data = _properties.Optional(_properties.List(_properties.Object(DataSource)), 'config.training_data')
+    training_data = _properties.List(_properties.Object(DataSource), 'config.training_data')
     typ = _properties.String('config.type', default='Simple', deserializable=False)
     status = _properties.Optional(_properties.String(), 'status', serializable=False)
     status_info = _properties.Optional(
@@ -137,7 +137,7 @@ class SimpleMLPredictor(Serializable['SimplePredictor'], Predictor):
         self.inputs: List[Descriptor] = inputs
         self.outputs: List[Descriptor] = outputs
         self.latent_variables: List[Descriptor] = latent_variables
-        self.training_data: Optional[List[DataSource]] = training_data
+        self.training_data: Optional[List[DataSource]] = training_data or []
         self.session: Optional[Session] = session
         self.report: Optional[Report] = report
         self.active: bool = active
@@ -176,7 +176,7 @@ class GraphPredictor(Serializable['GraphPredictor'], Predictor):
     description = _properties.String('config.description')
     predictors = _properties.List(_properties.Union(
         [_properties.UUID, _properties.Object(Predictor)]), 'config.predictors')
-    training_data = _properties.Optional(_properties.List(_properties.Object(DataSource)), 'config.training_data')
+    training_data = _properties.List(_properties.Object(DataSource), 'config.training_data')
     typ = _properties.String('config.type', default='Graph', deserializable=False)
     # Graph predictors may not be embedded in other predictors, hence while status is optional
     # for deserializing most predictors, it is required for deserializing a graph
@@ -209,7 +209,7 @@ class GraphPredictor(Serializable['GraphPredictor'], Predictor):
         self.name: str = name
         self.description: str = description
         self.predictors: List[Union[UUID, Predictor]] = predictors
-        self.training_data: Optional[List[DataSource]] = training_data
+        self.training_data: Optional[List[DataSource]] = training_data or []
         self.session: Optional[Session] = session
         self.report: Optional[Report] = report
         self.active: bool = active
@@ -685,7 +685,7 @@ class GeneralizedMeanPropertyPredictor(
     input_descriptor = _properties.Object(FormulationDescriptor, 'config.input')
     properties = _properties.List(_properties.String, 'config.properties')
     p = _properties.Float('config.p')
-    training_data = _properties.Optional(_properties.List(_properties.Object(DataSource)), 'config.training_data')
+    training_data = _properties.List(_properties.Object(DataSource), 'config.training_data')
     impute_properties = _properties.Boolean('config.impute_properties')
     default_properties = _properties.Optional(
         _properties.Mapping(_properties.String, _properties.Float), 'config.default_properties')
@@ -728,7 +728,7 @@ class GeneralizedMeanPropertyPredictor(
         self.input_descriptor: FormulationDescriptor = input_descriptor
         self.properties: List[str] = properties
         self.p: float = p
-        self.training_data: Optional[List[DataSource]] = training_data
+        self.training_data: Optional[List[DataSource]] = training_data or []
         self.impute_properties: bool = impute_properties
         self.default_properties: Optional[Mapping[str, float]] = default_properties
         self.label: Optional[str] = label
@@ -773,7 +773,7 @@ class SimpleMixturePredictor(Serializable['SimpleMixturePredictor'], Predictor):
     description = _properties.String('config.description')
     input_descriptor = _properties.Object(FormulationDescriptor, 'config.input')
     output_descriptor = _properties.Object(FormulationDescriptor, 'config.output')
-    training_data = _properties.Optional(_properties.List(_properties.Object(DataSource)), 'config.training_data')
+    training_data = _properties.List(_properties.Object(DataSource), 'config.training_data')
     typ = _properties.String('config.type', default='SimpleMixture',
                              deserializable=False)
     status = _properties.Optional(_properties.String, 'status', serializable=False)
@@ -805,7 +805,7 @@ class SimpleMixturePredictor(Serializable['SimpleMixturePredictor'], Predictor):
         self.description: str = description
         self.input_descriptor: FormulationDescriptor = input_descriptor
         self.output_descriptor: FormulationDescriptor = output_descriptor
-        self.training_data: Optional[List[DataSource]] = training_data
+        self.training_data: Optional[List[DataSource]] = training_data or []
         self.session: Optional[Session] = session
         self.report: Optional[Report] = report
         self.active: bool = active
