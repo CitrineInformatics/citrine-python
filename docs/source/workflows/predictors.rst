@@ -119,6 +119,8 @@ Citrine-python currently supports the following operators and functions:
 
 - constants: `pi`, `e`
 
+ExpressionPredictors do not support complex numbers.
+
 The following example demonstrates how to create an :class:`~citrine.informatics.predictors.ExpressionPredictor`.
 
 .. code:: python
