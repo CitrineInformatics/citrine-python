@@ -660,6 +660,8 @@ class GeneralizedMeanPropertyPredictor(
         entire dataset is used.
         If ``True`` and a default is specified in ``default_properties``, then the specified
         default is used in place of missing values.
+    label: Optional[str]
+        Optional label
     training_data: Optional[List[DataSource]]
         Sources of training data. Each can be either a CSV or an Ara table.
         Candidates from multiple data sources will be combined into a flattened list and deduplicated by uid
@@ -667,8 +669,6 @@ class GeneralizedMeanPropertyPredictor(
         The content of a deduplicated row will contain the union of data across all rows that share the same uid
         or at least 1 identifier. Training data is optional if the predictor is part of a graph that includes
         all training data required by this predictor.
-    label: Optional[str]
-        Optional label
     default_properties: Optional[Mapping[str, float]]
         Default values to use for imputed properties.
         Defaults are specified as a map from descriptor key to its default value.
@@ -716,10 +716,10 @@ class GeneralizedMeanPropertyPredictor(
                  input_descriptor: FormulationDescriptor,
                  properties: List[str],
                  p: float,
-                 training_data: Optional[List[DataSource]],
                  impute_properties: bool,
                  default_properties: Optional[Mapping[str, float]] = None,
                  label: Optional[str] = None,
+                 training_data: Optional[List[DataSource]] = None,
                  session: Optional[Session] = None,
                  report: Optional[Report] = None,
                  active: bool = True):
