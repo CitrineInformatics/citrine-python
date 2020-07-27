@@ -66,6 +66,7 @@ class ProcessTemplate(ObjectTemplate, Resource['ProcessTemplate'], GEMDProcessTe
 
     def __init__(self,
                  name: str,
+                 *,
                  uids: Optional[Dict[str, str]] = None,
                  conditions: Optional[Sequence[Union[ConditionTemplate,
                                                      LinkByUID,
