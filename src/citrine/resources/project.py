@@ -203,7 +203,7 @@ class Project(Resource['Project']):
         return TableConfigCollection(self.uid, self.session)
 
     @property
-    @deprecated(deprecated_in="0.51.2", details="Use table_configs instead")
+    @deprecated(deprecated_in="0.52.2", details="Use table_configs instead")
     def ara_definitions(self) -> TableConfigCollection:  # pragma: no cover
         """[DEPRECATED] Use table_configs instead."""
         from warnings import warn
