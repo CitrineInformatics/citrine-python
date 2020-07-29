@@ -1,6 +1,9 @@
 from typing import Any
 from urllib.parse import urlparse
 import os
+import inspect
+
+import sys
 
 from gemd.entity.link_by_uid import LinkByUID
 
@@ -131,3 +134,10 @@ def write_file_locally(content, local_path: str):
         os.makedirs(directory)
     with open(local_path, 'wb') as output_file:
         output_file.write(content)
+
+def shadow_classes_in_module(source_module, target_module):
+    """Shadow classes from a source to a target module, for backwards compatibility purposes"""
+
+    for c in [cls for _, cls in inspect.getmembers(source_module, inspect.isclass) if
+              cls.__module__ == source_module.__name__]:
+        setattr(target_module, c.__qualname__, c)

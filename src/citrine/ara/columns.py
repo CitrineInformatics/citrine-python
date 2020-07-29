@@ -1,10 +1,6 @@
-import inspect
+from citrine._utils.functions import shadow_classes_in_module
 
 import sys
+import citrine.gemtables.columns as columns_module
 
-import citrine.gemtables.columns as updated_module
-
-current_module = sys.modules[__name__]
-for c in [cls for _, cls in inspect.getmembers(updated_module, inspect.isclass) if
-          cls.__module__ == updated_module.__name__]:
-    setattr(current_module, c.__qualname__, c)
+shadow_classes_in_module(columns_module, sys.modules[__name__])
