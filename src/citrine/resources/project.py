@@ -210,6 +210,26 @@ class Project(Resource['Project']):
             "resource": {"type": resource_type, "id": resource_id}
         })
 
+    def transfer_resources(self, receiving_project_id: str) -> bool:
+        """
+        Transfers all resources from this project to the project with id = receiving_project_id.
+
+        Parameters
+        ----------
+        receiving_project_id: string
+            The id of the project to which the resources are being transferred.
+
+        Returns
+        -------
+        bool
+            Returns True upon successful resource transfer.
+
+        """
+        self.session.checked_post(self._path() + "/transfer-resources", {
+            "to_project_id": receiving_project_id})
+
+        return True
+
     def make_public(self,
                     resource: Resource) -> bool:
         """

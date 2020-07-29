@@ -103,6 +103,17 @@ def test_make_resource_private_post_content(project, session):
     )
     assert expected_call == session.last_call
 
+def test_transfer_resources_post_content(project, session):
+    assert project.transfer_resources(str(project.uid))
+
+    expected_call = FakeCall(
+        method='POST',
+        path='/projects/{}/transfer-resources'.format(project.uid),
+        json={
+            'to_project_id': str(project.uid),
+        }
+    )
+    assert expected_call == session.last_call
 
 def test_datasets_get_project_id(project):
     assert project.uid == project.datasets.project_id
