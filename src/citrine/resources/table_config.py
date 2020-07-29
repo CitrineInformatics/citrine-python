@@ -71,7 +71,7 @@ class TableConfig(Resource["TableConfig"]):
         return self.config_uid
 
     @definition_uid.setter
-    def definition_uid(self, value):
+    def definition_uid(self, value):  # pragma: no cover
         """[[DEPRECATED]] This is a deprecated alias to config_uid. Please use that instead."""
         from warnings import warn
         warn("definition_uid is deprecated and will soon be removed. "

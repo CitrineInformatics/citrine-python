@@ -204,7 +204,7 @@ class Project(Resource['Project']):
 
     @property
     @deprecated(deprecated_in="0.51.2", details="Use table_configs instead")
-    def ara_definitions(self) -> TableConfigCollection:
+    def ara_definitions(self) -> TableConfigCollection:  # pragma: no cover
         """[DEPRECATED] Use table_configs instead."""
         from warnings import warn
         warn("ara_definitions is deprecated and will soon be removed. "

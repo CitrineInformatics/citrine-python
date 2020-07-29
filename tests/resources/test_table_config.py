@@ -80,6 +80,21 @@ def test_init_table_config():
     assert table_config.version_number is None
 
 
+def test_init_table_config_with_old_definition_uid():
+    uid = UUID('6b608f78-e341-422c-8076-35adc8828566')
+    table_config = TableConfig(name="foo", description="bar", rows=[], columns=[], variables=[], datasets=[],
+                               definition_uid=uid)
+    assert table_config.config_uid == uid
+    assert table_config.definition_uid == uid
+
+def test_init_table_config_with_new_config_uid():
+    uid = UUID('6b608f78-e341-422c-8076-35adc8828566')
+    table_config = TableConfig(name="foo", description="bar", rows=[], columns=[], variables=[], datasets=[],
+                               config_uid=uid)
+    assert table_config.config_uid == uid
+    assert table_config.definition_uid == uid
+
+
 def test_dup_names():
     """Make sure that variable name and headers are unique across a table config"""
     with pytest.raises(ValueError) as excinfo:

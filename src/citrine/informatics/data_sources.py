@@ -106,7 +106,7 @@ class GemTableDataSource(Serializable['GemTableDataSource'], DataSource):
         self.table_version = table_version
 
 
-def AraTableDataSource(*args, **kwargs):
+def AraTableDataSource(*args, **kwargs):  # pragma: no cover
     """[DEPRECATED] Use GemTableDataSource instead."""
     from warnings import warn
     warn("AraTableDataSource is deprecated and will soon be removed. "
