@@ -65,7 +65,7 @@ and a list of :class:`~citrine.ara.columns.Column` objects to transform those va
 .. code-block:: python
 
    from citrine.resources.ara_definition import AraDefinition
-   from citrine._serialization.properties import UUID
+   from uuid import UUID
    ara_defn = AraDefinition(
          name = "cookies",
          description = "Cookie densities",
