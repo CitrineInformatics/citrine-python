@@ -103,7 +103,7 @@ If the process template's allowed names includes, for example, "flour" then ther
 Previewing tables
 -----------------
 
-Calling :func:`~citrine.resources.project.Project.table_configs` on a project returns an :class:`~citrine.resources.ara_definition.TableConfigCollection` object, which facilitates access to the collection of all Ara definitions visible to a Project.
+Calling :func:`~citrine.resources.project.Project.table_configs` on a project returns an :class:`~citrine.resources.ara_definition.TableConfigCollection` object, which facilitates access to the collection of all TableConfigs visible to a Project.
 Via such an object, one can preview a draft TableConfig on an explicit set of Material Histories, defined by their root materials:
 
 For example:

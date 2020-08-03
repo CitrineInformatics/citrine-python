@@ -140,12 +140,12 @@ A CSV data source and :class:`~citrine.informatics.predictors.IngredientsToSimpl
         }
     )
 
-Ara Table Data Source
+GEM Table Data Source
 ---------------------
 
 An :class:`~citrine.informatics.data_sources.GemTableDataSource` references a GEM Table.
 As explained more in the :doc:`documentation <../data_extraction>`, GEM Tables provide a structured version of on-platform data.
-Ara tables are specified by the display table uuid and version number.
+GEM Tables are specified by the display table uuid and version number.
 The example below assumes that the uuid and the version of the desired GEM Table are known.
 
 .. code:: python
