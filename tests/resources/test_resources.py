@@ -37,7 +37,7 @@ resource_string_data = [
     (ConditionTemplate, {'name': 'foo', 'bounds': RealBounds(0, 1, '')}, "<Condition template 'foo'>"),
     (Response, {'status_code': 200}, "<Response '200'>"),
     (WorkflowExecution,
-     {'uid': arbitrary_uuid, 'project_id': arbitrary_uuid, 'workflow_id': arbitrary_uuid, 'version_number': 1},
+     {'uid': arbitrary_uuid, 'project_id': arbitrary_uuid, 'workflow_id': arbitrary_uuid},
      "<WorkflowExecution '{}'>".format(arbitrary_uuid)),
     (WorkflowExecutionStatus, {'status': 'Failed', 'session': None}, "<WorkflowExecutionStatus 'Failed'>"),
 ]
