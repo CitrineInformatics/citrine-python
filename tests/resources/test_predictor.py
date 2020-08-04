@@ -129,3 +129,15 @@ def test_list_predictors(valid_simple_ml_predictor_data, valid_expression_predic
     assert 3 == session.num_calls, session.calls  # This is a little strange, the report is fetched eagerly
     assert expected_call == session.calls[0]
     assert len(predictors) == 2
+
+
+def test_get_none():
+    """Test that trying to get a predictor with uid=None results in an informative error."""
+    session = mock.Mock()
+    session.get_resource.return_value = basic_predictor_report_data
+    pc = PredictorCollection(uuid.uuid4(), session)
+
+    with pytest.raises(ValueError) as excinfo:
+        pc.get(uid=None)
+
+    assert "uid=None" in str(excinfo.value)

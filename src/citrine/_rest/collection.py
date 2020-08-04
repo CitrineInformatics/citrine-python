@@ -40,6 +40,8 @@ class Collection(Generic[ResourceType]):
 
     def get(self, uid: Union[UUID, str]) -> ResourceType:
         """Get a particular element of the collection."""
+        if uid is None:
+            raise ValueError("Cannot get when uid=None.  Are you using a registered resource?")
         path = self._get_path(uid)
         data = self.session.get_resource(path)
         data = data[self._individual_key] if self._individual_key else data
