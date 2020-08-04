@@ -180,7 +180,7 @@ class GraphPredictor(Serializable['GraphPredictor'], Predictor):
         serializable=False
     )
     active = _properties.Boolean('active', default=True)
-    archived = _properties.Boolean('archived', default=True)
+    archived = _properties.Boolean('archived', default=False)
 
     # NOTE: These could go here or in _post_dump - it's unclear which is better right now
     module_type = _properties.String('module_type', default='PREDICTOR')
@@ -224,8 +224,8 @@ class GraphPredictor(Serializable['GraphPredictor'], Predictor):
         return dict(
             module_type='PREDICTOR',
             config=predictor,
-            # TODO: What's this for?
             active=False,
+            archived=False,
             schema_id='43c61ad4-7e33-45d0-a3de-504acb4e0737'  # TODO: what should this be?
         )
 
@@ -272,7 +272,7 @@ class ExpressionPredictor(Serializable['ExpressionPredictor'], Predictor):
     )
 
     active = _properties.Boolean('active', default=True)
-    archived = _properties.Boolean('archived', default=True)
+    archived = _properties.Boolean('archived', default=False)
 
     # NOTE: These could go here or in _post_dump - it's unclear which is better right now
     module_type = _properties.String('module_type', default='PREDICTOR')
@@ -383,7 +383,7 @@ class MolecularStructureFeaturizer(Serializable['MolecularStructureFeaturizer'],
         serializable=False
     )
     active = _properties.Boolean('active', default=True)
-    archived = _properties.Boolean('archived', default=True)
+    archived = _properties.Boolean('archived', default=False)
     experimental = _properties.Boolean("experimental", serializable=False, default=True)
     experimental_reasons = _properties.Optional(
         _properties.List(_properties.String()),
@@ -461,7 +461,7 @@ class IngredientsToSimpleMixturePredictor(
         serializable=False
     )
     active = _properties.Boolean('active', default=True)
-    archived = _properties.Boolean('archived', default=True)
+    archived = _properties.Boolean('archived', default=False)
     experimental = _properties.Boolean("experimental", serializable=False, default=True)
     experimental_reasons = _properties.Optional(
         _properties.List(_properties.String()),
@@ -558,7 +558,7 @@ class GeneralizedMeanPropertyPredictor(
         serializable=False
     )
     active = _properties.Boolean('active', default=True)
-    archived = _properties.Boolean('archived', default=True)
+    archived = _properties.Boolean('archived', default=False)
     experimental = _properties.Boolean("experimental", serializable=False, default=True)
     experimental_reasons = _properties.Optional(
         _properties.List(_properties.String()),
@@ -638,7 +638,7 @@ class SimpleMixturePredictor(Serializable['SimpleMixturePredictor'], Predictor):
                                        'status_info',
                                        serializable=False)
     active = _properties.Boolean('active', default=True)
-    archived = _properties.Boolean('archived', default=True)
+    archived = _properties.Boolean('archived', default=False)
     experimental = _properties.Boolean("experimental", serializable=False, default=True)
     experimental_reasons = _properties.Optional(
         _properties.List(_properties.String()),
@@ -708,7 +708,7 @@ class LabelFractionsPredictor(Serializable['LabelFractionsPredictor'], Predictor
         serializable=False
     )
     active = _properties.Boolean('active', default=True)
-    archived = _properties.Boolean('archived', default=True)
+    archived = _properties.Boolean('archived', default=False)
     experimental = _properties.Boolean("experimental", serializable=False, default=True)
     experimental_reasons = _properties.Optional(
         _properties.List(_properties.String()),
@@ -780,7 +780,7 @@ class IngredientFractionsPredictor(Serializable["IngredientFractionsPredictor"],
         serializable=False
     )
     active = _properties.Boolean('active', default=True)
-    archived = _properties.Boolean('archived', default=True)
+    archived = _properties.Boolean('archived', default=False)
     experimental = _properties.Boolean("experimental", serializable=False, default=True)
     experimental_reasons = _properties.Optional(
         _properties.List(_properties.String()),
