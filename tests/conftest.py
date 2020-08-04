@@ -55,7 +55,7 @@ def valid_enumerated_design_space_data():
         status='VALIDATING',
         status_info=None,
         active=False,
-        archived=False,
+        archived=True,
         display_name='my enumerated design space',
         schema_id='f3907a58-aa46-462c-8837-a5aa9605e79e',
         id=str(uuid.uuid4()),
@@ -367,7 +367,7 @@ def invalid_predictor_data():
         status='INVALID',
         status_info=['Something is wrong', 'Very wrong'],
         active=False,
-        archived=True, # TODO: is this right?
+        archived=True,
         display_name='my predictor',
         schema_id='ff26b280-8a8b-46ab-b7aa-0c73ff84b0fd',
         id=str(uuid.uuid4()),
