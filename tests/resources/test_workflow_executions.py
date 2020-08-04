@@ -29,14 +29,13 @@ def workflow_execution(session) -> WorkflowExecution:
         project_id=str(uuid.uuid4()),
         workflow_id=str(uuid.uuid4()),
         session=session,
-        version_number=1
     )
 
 
 def test_build_new_execution(collection):
     # Given
     workflow_execution_id = uuid.uuid4()
-    build_data = {'id': str(workflow_execution_id), 'version_number': 1}
+    build_data = {'id': str(workflow_execution_id)}
 
     # When
     execution = collection.build(build_data)
