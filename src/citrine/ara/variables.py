@@ -594,7 +594,7 @@ class IngredientIdentifierInOutput(Serializable['IngredientIdentifierInOutput'],
                  headers: List[str],
                  ingredient_name: str,
                  process_templates: List[LinkByUID],
-                 scope: str,
+                 scope: str = 'id',
                  type_selector: DataObjectTypeSelector = DataObjectTypeSelector.PREFER_RUN):
         self.name = name
         self.headers = headers
