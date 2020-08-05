@@ -15,6 +15,8 @@ from gemd.entity.object.process_run import ProcessRun as GEMDProcessRun
 from gemd.entity.object.process_spec import ProcessSpec as GEMDProcessSpec
 from gemd.entity.source.performed_source import PerformedSource
 
+CITRINE_SCOPE = 'id'
+
 
 class ProcessRun(ObjectRun, Resource['ProcessRun'], GEMDProcessRun):
     """
@@ -108,7 +110,9 @@ class ProcessRunCollection(ObjectRunCollection[ProcessRun]):
         """Return the resource type in the collection."""
         return ProcessRun
 
-    def list_by_spec(self, uid: Union[UUID, str], scope: str = 'id') -> Iterator[ProcessRun]:
+    def list_by_spec(self,
+                     uid: Union[UUID, str],
+                     scope: str = CITRINE_SCOPE) -> Iterator[ProcessRun]:
         """
         [ALPHA] Get the process runs using the specified process spec.
 

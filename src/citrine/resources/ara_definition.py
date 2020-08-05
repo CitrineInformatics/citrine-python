@@ -19,6 +19,8 @@ from citrine.ara.rows import Row
 from citrine.ara.variables import Variable, IngredientIdentifierByProcessTemplateAndName, \
     IngredientQuantityByProcessAndName, IngredientQuantityDimension
 
+CITRINE_SCOPE = 'id'
+
 logger = getLogger(__name__)
 
 
@@ -138,7 +140,7 @@ class AraDefinition(Resource["AraDefinition"]):
                             process_template: LinkByUID,
                             project,
                             quantity_dimension: IngredientQuantityDimension,
-                            scope: str = 'id'
+                            scope: str = CITRINE_SCOPE
                             ):
         """[ALPHA] Add variables and columns for all of the possible ingredients in a process.
 
@@ -285,7 +287,7 @@ class AraDefinitionCollection(Collection[AraDefinition]):
             scope, uid = uid_tup
         elif isinstance(material, (str, UUID)):
             uid = str(material)
-            scope = scope or 'id'
+            scope = scope or CITRINE_SCOPE
         else:
             raise TypeError(  # pragma: no cover
                 'material must be one of MaterialRun, str, or UUID but was {}'

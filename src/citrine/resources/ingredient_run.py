@@ -15,6 +15,8 @@ from gemd.entity.object.material_run import MaterialRun as GEMDMaterialRun
 from gemd.entity.object.process_run import ProcessRun as GEMDProcessRun
 from gemd.entity.value.continuous_value import ContinuousValue
 
+CITRINE_SCOPE = 'id'
+
 
 class IngredientRun(ObjectRun, Resource['IngredientRun'], GEMDIngredientRun):
     """
@@ -116,7 +118,9 @@ class IngredientRunCollection(ObjectRunCollection[IngredientRun]):
         """Return the resource type in the collection."""
         return IngredientRun
 
-    def list_by_spec(self, uid: Union[UUID, str], scope: str = 'id') -> Iterator[IngredientRun]:
+    def list_by_spec(self,
+                     uid: Union[UUID, str],
+                     scope: str = CITRINE_SCOPE) -> Iterator[IngredientRun]:
         """
         [ALPHA] Get the ingredient runs using the specified ingredient spec.
 
@@ -134,7 +138,9 @@ class IngredientRunCollection(ObjectRunCollection[IngredientRun]):
         """
         return self._get_relation('ingredient-specs', uid=uid, scope=scope)
 
-    def list_by_process(self, uid: Union[UUID, str], scope: str = 'id') -> Iterator[IngredientRun]:
+    def list_by_process(self,
+                        uid: Union[UUID, str],
+                        scope: str = CITRINE_SCOPE) -> Iterator[IngredientRun]:
         """
         [ALPHA] Get ingredients to a process.
 
@@ -152,8 +158,9 @@ class IngredientRunCollection(ObjectRunCollection[IngredientRun]):
         """
         return self._get_relation(relation='process-runs', uid=uid, scope=scope)
 
-    def list_by_material(self, uid: Union[UUID, str],
-                         scope: str = 'id') -> Iterator[IngredientRun]:
+    def list_by_material(self,
+                         uid: Union[UUID, str],
+                         scope: str = CITRINE_SCOPE) -> Iterator[IngredientRun]:
         """
         [ALPHA] Get ingredients using the specified material.
 

@@ -85,10 +85,10 @@ def object_to_link_by_uid(json: dict) -> dict:
         uids = json['uids']
         if not isinstance(uids, dict) or not uids:
             return json
-        if 'id' in uids:
-            scope = 'id'
+        if CITRINE_SCOPE in uids:
+            scope = CITRINE_SCOPE
         else:
-            scope = list(uids.keys())[0]
+            scope = next(iter(uids))
         this_id = uids[scope]
         return LinkByUID(scope, this_id).as_dict()
     else:

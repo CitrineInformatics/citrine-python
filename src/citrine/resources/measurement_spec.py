@@ -15,6 +15,8 @@ from gemd.entity.object.measurement_spec import MeasurementSpec as GEMDMeasureme
 from gemd.entity.template.measurement_template import \
     MeasurementTemplate as GEMDMeasurementTemplate
 
+CITRINE_SCOPE = 'id'
+
 
 class MeasurementSpec(ObjectSpec, Resource['MeasurementSpec'], GEMDMeasurementSpec):
     """
@@ -94,7 +96,7 @@ class MeasurementSpecCollection(ObjectSpecCollection[MeasurementSpec]):
         return MeasurementSpec
 
     def list_by_template(self, uid: Union[UUID, str],
-                         scope: str = 'id') -> Iterator[MeasurementSpec]:
+                         scope: str = CITRINE_SCOPE) -> Iterator[MeasurementSpec]:
         """
         [ALPHA] Get the measurement specs using the specified measurement template.
 

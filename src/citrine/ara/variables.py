@@ -1,6 +1,6 @@
 """Variable definitions for Ara."""
 from abc import abstractmethod
-from typing import Type, Optional, List, Tuple, Union  # noqa: F401
+from typing import Type, Optional, List, Union  # noqa: F401
 
 from gemd.entity.bounds.base_bounds import BaseBounds
 from gemd.entity.link_by_uid import LinkByUID
@@ -9,6 +9,8 @@ from gemd.enumeration.base_enumeration import BaseEnumeration
 from citrine._serialization.serializable import Serializable
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
 from citrine._serialization import properties
+
+CITRINE_SCOPE = 'id'
 
 
 class IngredientQuantityDimension(BaseEnumeration):
@@ -594,7 +596,7 @@ class IngredientIdentifierInOutput(Serializable['IngredientIdentifierInOutput'],
                  headers: List[str],
                  ingredient_name: str,
                  process_templates: List[LinkByUID],
-                 scope: str = 'id',
+                 scope: str = CITRINE_SCOPE,
                  type_selector: DataObjectTypeSelector = DataObjectTypeSelector.PREFER_RUN):
         self.name = name
         self.headers = headers

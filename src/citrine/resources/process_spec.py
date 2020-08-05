@@ -14,6 +14,8 @@ from gemd.entity.file_link import FileLink
 from gemd.entity.object.process_spec import ProcessSpec as GEMDProcessSpec
 from gemd.entity.template.process_template import ProcessTemplate as GEMDProcessTemplate
 
+CITRINE_SCOPE = 'id'
+
 
 class ProcessSpec(ObjectSpec, Resource['ProcessSpec'], GEMDProcessSpec):
     """
@@ -104,7 +106,8 @@ class ProcessSpecCollection(ObjectSpecCollection[ProcessSpec]):
         """Return the resource type in the collection."""
         return ProcessSpec
 
-    def list_by_template(self, uid: Union[UUID, str], scope: str = 'id') -> Iterator[ProcessSpec]:
+    def list_by_template(self, uid: Union[UUID, str],
+                         scope: str = CITRINE_SCOPE) -> Iterator[ProcessSpec]:
         """
         [ALPHA] Get the process specs using the specified process template.
 

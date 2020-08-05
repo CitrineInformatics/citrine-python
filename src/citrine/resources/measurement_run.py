@@ -17,6 +17,8 @@ from gemd.entity.object.measurement_run import MeasurementRun as GEMDMeasurement
 from gemd.entity.object.measurement_spec import MeasurementSpec as GEMDMeasurementSpec
 from gemd.entity.source.performed_source import PerformedSource
 
+CITRINE_SCOPE = 'id'
+
 
 class MeasurementRun(ObjectRun, Resource['MeasurementRun'], GEMDMeasurementRun):
     """
@@ -110,7 +112,9 @@ class MeasurementRunCollection(ObjectRunCollection[MeasurementRun]):
         """Return the resource type in the collection."""
         return MeasurementRun
 
-    def list_by_spec(self, uid: Union[UUID, str], scope: str = 'id') -> Iterator[MeasurementRun]:
+    def list_by_spec(self,
+                     uid: Union[UUID, str],
+                     scope: str = CITRINE_SCOPE) -> Iterator[MeasurementRun]:
         """
         [ALPHA] Get the measurement runs using the specified measurement spec.
 
@@ -128,8 +132,9 @@ class MeasurementRunCollection(ObjectRunCollection[MeasurementRun]):
         """
         return self._get_relation('measurement-specs', uid=uid, scope=scope)
 
-    def list_by_material(self, uid: Union[UUID, str],
-                         scope: str = 'id') -> Iterator[MeasurementRun]:
+    def list_by_material(self,
+                         uid: Union[UUID, str],
+                         scope: str = CITRINE_SCOPE) -> Iterator[MeasurementRun]:
         """
         [ALPHA] Get measurements of the specified material.
 
