@@ -2,8 +2,10 @@
 from typing import Optional, Dict, List, Union, Iterable, Tuple
 from uuid import UUID
 
+from deprecation import deprecated
+
 from citrine._session import Session
-from citrine.resources.ara_definition import AraDefinitionCollection
+from citrine.resources.table_config import TableConfigCollection
 from citrine.resources.descriptors import DescriptorMethods
 from citrine.resources.module import ModuleCollection
 from citrine.resources.design_space import DesignSpaceCollection
@@ -32,7 +34,7 @@ from citrine.resources.ingredient_spec import IngredientSpecCollection
 from citrine._rest.collection import Collection
 from citrine._rest.resource import Resource
 from citrine._serialization import properties
-from citrine.resources.table import TableCollection
+from citrine.resources.gemtables import GemTableCollection
 from citrine.resources.user import User
 
 
@@ -121,9 +123,9 @@ class Project(Resource['Project']):
         return DatasetCollection(self.uid, self.session)
 
     @property
-    def tables(self) -> TableCollection:
+    def tables(self) -> GemTableCollection:
         """Return a resource representing all visible Tables."""
-        return TableCollection(self.uid, self.session)
+        return GemTableCollection(self.uid, self.session)
 
     @property
     def property_templates(self) -> PropertyTemplateCollection:
@@ -196,9 +198,18 @@ class Project(Resource['Project']):
         return IngredientSpecCollection(self.uid, None, self.session)
 
     @property
-    def ara_definitions(self) -> AraDefinitionCollection:
-        """Return a resource representing all ara definitions in the project."""
-        return AraDefinitionCollection(self.uid, self.session)
+    def table_configs(self) -> TableConfigCollection:
+        """Return a resource representing all Table Configs in the project."""
+        return TableConfigCollection(self.uid, self.session)
+
+    @property
+    @deprecated(deprecated_in="0.52.2", details="Use table_configs instead")
+    def ara_definitions(self) -> TableConfigCollection:  # pragma: no cover
+        """[DEPRECATED] Use table_configs instead."""
+        from warnings import warn
+        warn("ara_definitions is deprecated and will soon be removed. "
+             "Please call table_configs instead.", DeprecationWarning)
+        return self.table_configs
 
     def share(self,
               project_id: str,

@@ -52,7 +52,7 @@ The following example demonstrates how to use the Python SDK to register a perfo
 
 Cross-validation can be performed on most predictors but will not produce results in the following scenarios:
 
-- Training data contain simple mixtures from an :class:`~citrine.informatics.data_sources.AraTableDataSource` *and* an :class:`~citrine.informatics.predictors.IngredientsToSimpleMixturePredictor` is included in the graph.
+- Training data contain simple mixtures from an :class:`~citrine.informatics.data_sources.GemTableDataSource` *and* an :class:`~citrine.informatics.predictors.IngredientsToSimpleMixturePredictor` is included in the graph.
 - The graph includes a :class:`~citrine.informatics.predictors.SimpleMixturePredictor` or :class:`~citrine.informatics.predictors.GeneralizedMeanPropertyPredictor`.
 
 Both are known issues in experimental functionality and will be resolved in a future release.

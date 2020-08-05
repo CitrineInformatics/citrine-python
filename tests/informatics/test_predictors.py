@@ -3,7 +3,7 @@ import mock
 import pytest
 import uuid
 
-from citrine.informatics.data_sources import AraTableDataSource
+from citrine.informatics.data_sources import GemTableDataSource
 from citrine.informatics.descriptors import RealDescriptor, MolecularStructureDescriptor, FormulationDescriptor
 from citrine.informatics.predictors import ExpressionPredictor, GraphPredictor, SimpleMLPredictor, \
     MolecularStructureFeaturizer, GeneralizedMeanPropertyPredictor, IngredientsToSimpleMixturePredictor, \
@@ -19,7 +19,7 @@ formulation = FormulationDescriptor('formulation')
 formulation_output = FormulationDescriptor('output formulation')
 water_quantity = RealDescriptor('water quantity', 0, 1)
 salt_quantity = RealDescriptor('salt quantity', 0, 1)
-data_source = AraTableDataSource(uuid.UUID('e5c51369-8e71-4ec6-b027-1f92bdc14762'), 0)
+data_source = GemTableDataSource(uuid.UUID('e5c51369-8e71-4ec6-b027-1f92bdc14762'), 0)
 
 
 @pytest.fixture
