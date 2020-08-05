@@ -45,6 +45,7 @@ class ConditionTemplate(AttributeTemplate, Resource['ConditionTemplate'], GEMDCo
 
     def __init__(self,
                  name: str,
+                 *,
                  bounds: BaseBounds,
                  uids: Optional[Dict[str, str]] = None,
                  description: Optional[str] = None,

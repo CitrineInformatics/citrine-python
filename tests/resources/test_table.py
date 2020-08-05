@@ -1,9 +1,11 @@
-from uuid import UUID
+import json
+from uuid import UUID, uuid4
 
 import pytest
 import requests_mock
 from mock import patch, call
 
+from citrine.resources.ara_definition import AraDefinition
 from citrine.resources.table import TableCollection, Table
 from tests.utils.factories import TableDataFactory, ListTableVersionsDataFactory
 from tests.utils.session import FakeSession, FakeCall
@@ -23,8 +25,8 @@ def collection(session) -> TableCollection:
 
 
 @pytest.fixture
-def table() -> Table:
-    def _table(download_url: str):
+def table():
+    def _table(download_url: str) -> Table:
         return Table.build(TableDataFactory(signed_download_url=download_url, version=2))
 
     return _table
@@ -128,6 +130,72 @@ def test_str_serialization(table):
 def test_register_table(collection):
     with pytest.raises(RuntimeError):
         collection.register(Table.build(TableDataFactory()))
+
+
+def test_build_from_config(collection: TableCollection, session):
+    config_uid = uuid4()
+    config_version = 2
+    config = AraDefinition(
+        name='foo',
+        description='bar',
+        columns=[],
+        rows=[],
+        variables=[],
+        datasets=[],
+        definition_uid=config_uid,
+        version_number=config_version,
+    )
+    expected_table_data = TableDataFactory()
+    session.set_responses(
+        {'job_id': '12345678-1234-1234-1234-123456789ccc'},
+        {'job_type': 'foo', 'status': 'In Progress', 'tasks': []},
+        {'job_type': 'foo', 'status': 'Success', 'tasks': [], 'output': {
+            'display_table_id': expected_table_data['id'],
+            'display_table_version': str(expected_table_data['version']),
+            'table_warnings': json.dumps([
+                {'limited_results': ['foo', 'bar'], 'total_count': 3},
+            ])
+        }},
+        expected_table_data,
+    )
+    table = collection.build_from_config(config, version='ignored')
+    assert isinstance(table, Table)
+    assert session.num_calls == 4
+
+
+def test_build_from_config_failures(collection: TableCollection, session):
+    with pytest.raises(ValueError):
+        collection.build_from_config(uuid4())
+    config = AraDefinition(
+        name='foo',
+        description='bar',
+        columns=[],
+        rows=[],
+        variables=[],
+        datasets=[],
+        definition_uid=uuid4()
+    )
+    with pytest.raises(ValueError):
+        collection.build_from_config(config)
+    config.version_number = 1
+    config.definition_uid = None
+    with pytest.raises(ValueError):
+        collection.build_from_config(config)
+    config.definition_uid = uuid4()
+    session.set_responses(
+        {'job_id': '12345678-1234-1234-1234-123456789ccc'},
+        {'job_type': 'foo', 'status': 'Failure', 'tasks': [
+            {'task_type': 'foo', 'id': 'foo', 'status': 'Failure', 'failure_reason': 'because', 'dependencies': []}
+        ]},
+    )
+    with pytest.raises(RuntimeError):
+        collection.build_from_config(uuid4(), version=1)
+    session.set_responses(
+        {'job_id': '12345678-1234-1234-1234-123456789ccc'},
+        {'job_type': 'foo', 'status': 'In Progress', 'tasks': []},
+    )
+    with pytest.raises(TimeoutError):
+        collection.build_from_config(config, timeout=0)
 
 
 @patch("citrine.resources.table.write_file_locally")

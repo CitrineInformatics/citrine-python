@@ -1,4 +1,8 @@
+import json
+from logging import getLogger
+from time import time, sleep
 from typing import Union, Iterable, Optional, Any, Tuple
+from uuid import uuid4
 
 import deprecation
 import requests
@@ -10,6 +14,10 @@ from citrine._serialization import properties
 from citrine._serialization.properties import UUID
 from citrine._session import Session
 from citrine._utils.functions import rewrite_s3_links_locally, write_file_locally
+from citrine.resources.ara_definition import AraDefinition
+from citrine.resources.ara_job import JobSubmissionResponse, JobStatusResponse
+
+logger = getLogger(__name__)
 
 
 class Table(Resource['Table']):
@@ -136,13 +144,157 @@ class TableCollection(Collection[Table]):
             data = self.session.get_resource(
                 path,
                 params=self._page_params(page, per_page))
-            return (data[self._collection_key], data.get('next', ""))
+            return data[self._collection_key], data.get('next', "")
 
         def build_versions(collection: Iterable[dict]) -> Iterable[Table]:
             for item in collection:
                 yield self.build(item)
 
         return self._paginator.paginate(fetch_versions, build_versions, page, per_page)
+
+    def initiate_build(self, config: Union[AraDefinition, str, UUID],
+                       version: Union[str, UUID] = None) -> JobSubmissionResponse:
+        """
+        [ALPHA] Initiates tables build with provided config.
+
+        This method does not wait for job completion. If you do not need to build
+        multiple tables in parallel, using build_from_config is preferable to using
+        this method. Use get_by_build_job to wait for the result of this method.
+
+        Parameters
+        ----------
+        config:
+            The persisted table config from which to build a table (or its ID).
+        version
+            The version of the table config, only necessary when config is a uid.
+
+        Returns
+        -------
+            Information about the submitted job. Note the format of this object
+            may be unstable.
+
+        """
+        if isinstance(config, AraDefinition):
+            if version is not None:
+                logger.warning('Ignoring version {} since config object was provided.'
+                               .format(version))
+            if config.version_number is None:
+                raise ValueError('Cannot build table from config which has no version. '
+                                 'Try registering the config before building.')
+            if config.definition_uid is None:
+                raise ValueError('Cannot build table from config which has no uid. '
+                                 'Try registering the config before building.')
+            uid = config.definition_uid
+            version = config.version_number
+        else:
+            if version is None:
+                raise ValueError('Version must be specified when building by config uid.')
+            uid = config
+        job_id = uuid4()
+        logger.info('Building table from config {} version {} with job ID {}...'
+                    .format(uid, version, job_id))
+        path = 'projects/{}/ara-definitions/{}/versions/{}/build'.format(
+            self.project_id, uid, version
+        )
+        response = self.session.post_resource(
+            path=path,
+            json={},
+            params={
+                'job_id': job_id
+            }
+        )
+        submission = JobSubmissionResponse.build(response)
+        logger.info('Build job submitted with job ID {}.'.format(submission.job_id))
+        return submission
+
+    def get_by_build_job(self, job: Union[JobSubmissionResponse, UUID], *,
+                         timeout: float = 15 * 60) -> Table:
+        """
+        [ALPHA] Gets table by build job, waiting for it to complete if necessary.
+
+        Parameters
+        ----------
+        job
+            The job submission object or job ID for the table build.
+        timeout
+            Amount of time to wait on build job (in seconds) before giving up. Defaults
+            to 15 minutes. Note that this number has no effect on the build job itself,
+            which can also time out server-side.
+
+        Returns
+        -------
+        Table
+            The table built by the specified job.
+
+        """
+        if isinstance(job, JobSubmissionResponse):
+            job_id = job.job_id
+        else:
+            job_id = job  # pragma: no cover
+        path = 'projects/{}/execution/job-status'.format(self.project_id)
+        params = {'job_id': job_id}
+        start_time = time()
+        while True:
+            response = self.session.get_resource(path=path, params=params)
+            status: JobStatusResponse = JobStatusResponse.build(response)
+            if status.status in ['Success', 'Failure']:
+                break
+            elif time() - start_time < timeout:
+                logger.info('Build job still in progress, polling status again in 2 seconds.')
+                sleep(2)
+            else:
+                logger.error('Build job exceeded user timeout of {} seconds.'.format(timeout))
+                logger.debug('Last status: {}'.format(status.dump()))
+                raise TimeoutError('Build job {} timed out.'.format(job_id))
+        if status.status == 'Failure':
+            logger.debug('Job terminated with Failure status: {}'.format(status.dump()))
+            for task in status.tasks:
+                if task.status == 'Failure':
+                    logger.error('Task {} failed with reason "{}"'.format(
+                        task.id, task.failure_reason))
+            raise RuntimeError('Job {} terminated with Failure status.'.format(job_id))
+        else:
+            table_id = status.output['display_table_id']
+            table_version = status.output['display_table_version']
+            warning_blob = status.output.get('table_warnings')
+            warnings = json.loads(warning_blob) if warning_blob is not None else []
+            if warnings:
+                warn_lines = ['Table build completed with warnings:']
+                for warning in warnings:
+                    limited_results = warning.get('limited_results', [])
+                    warn_lines.extend(limited_results)
+                    total_count = warning.get('total_count', 0)
+                    if total_count > len(limited_results):
+                        warn_lines.append('and {} more similar.'
+                                          .format(total_count - len(limited_results)))
+                logger.warning('\n\t'.join(warn_lines))
+            return self.get(table_id, table_version)
+
+    def build_from_config(self, config: Union[AraDefinition, str, UUID], *,
+                          version: Union[str, int] = None,
+                          timeout: float = 15 * 60) -> Table:
+        """
+        [ALPHA] Builds table from table config, waiting for build job to complete.
+
+        Parameters
+        ----------
+        config:
+            The persisted table config from which to build a table (or its ID).
+        version
+            The version of the table config, only necessary when config is a uid.
+        timeout
+            Amount of time to wait on build job (in seconds) before giving up. Defaults
+            to 15 minutes. Note that this number has no effect on the build job itself,
+            which can also time out server-side.
+
+        Returns
+        -------
+        Table
+            A new table built from the supplied config.
+
+        """
+        job = self.initiate_build(config, version)
+        return self.get_by_build_job(job, timeout=timeout)
 
     def build(self, data: dict) -> Table:
         """Build an individual Table from a dictionary."""

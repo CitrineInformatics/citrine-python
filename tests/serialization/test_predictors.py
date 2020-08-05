@@ -5,7 +5,7 @@ from copy import deepcopy
 
 from citrine.informatics.predictors import ExpressionPredictor, GeneralizedMeanPropertyPredictor, \
     GraphPredictor, Predictor, SimpleMLPredictor, IngredientsToSimpleMixturePredictor, \
-    LabelFractionsPredictor, SimpleMixturePredictor, IngredientFractionsPredictor
+    LabelFractionsPredictor, SimpleMixturePredictor, IngredientFractionsPredictor, DeprecatedExpressionPredictor
 from citrine.informatics.descriptors import RealDescriptor
 
 
@@ -58,6 +58,14 @@ def test_graph_serialization(valid_graph_predictor_data):
     serialized['id'] = graph_data_copy['id']
     assert serialized['config']['predictors'] == graph_data_copy['config']['predictors']
     assert serialized == valid_serialization_output(graph_data_copy)
+
+
+def test_deprecated_expression_serialization(valid_deprecated_expression_predictor_data):
+    """Ensure that a serialized DeprecatedExpressionPredictor looks sane."""
+    predictor = DeprecatedExpressionPredictor.build(valid_deprecated_expression_predictor_data)
+    serialized = predictor.dump()
+    serialized['id'] = valid_deprecated_expression_predictor_data['id']
+    assert serialized == valid_serialization_output(valid_deprecated_expression_predictor_data)
 
 
 def test_expression_serialization(valid_expression_predictor_data):

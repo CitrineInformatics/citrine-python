@@ -58,10 +58,10 @@ This pattern is also extremely useful for performing optimization over complex o
         expression = '(water + 0.5*starter) / (wheat + rye + 0.5*starter)',
         output = dough_hydration,
         aliases = {
-            'wheat': 'wheat flour mass',
-            'rye': 'rye flour mass',
-            'water': 'water mass',
-            'starter': 'starter mass'
+            'wheat': wheat_flour_quantity,
+            'rye': rye_flour_quantity,
+            'water': water_quantity,
+            'starter': starter_quantity
         }
     )
 
@@ -87,12 +87,12 @@ This pattern is also extremely useful for performing optimization over complex o
         expression = '4*exp(-0.1*pH - 1.3*w^2 + 5*(water+0.5*starter)/(wheat+rye+water+starter))',
         output = shelf_life,
         aliases = {
-            'pH': 'final pH',
-            'w': 'final loaf hydration',
-            'wheat': 'wheat flour mass',
-            'rye': 'rye flour mass',
-            'water': 'water mass',
-            'starter': 'starter mass'
+            'pH': final_ph,
+            'w': final_loaf_hydration,
+            'wheat': wheat_flour_quantity,
+            'rye': rye_flour_quantity,
+            'water': water_quantity,
+            'starter': starter_quantity
         }
     )
 

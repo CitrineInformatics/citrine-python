@@ -1,8 +1,9 @@
 from copy import copy
 from logging import getLogger
 from typing import List, Union, Optional, Tuple
-from uuid import UUID, uuid4
+from uuid import UUID
 
+from deprecation import deprecated
 from gemd.entity.object import MaterialRun
 
 from citrine.resources.ara_job import JobSubmissionResponse, JobStatusResponse
@@ -304,6 +305,8 @@ class AraDefinitionCollection(Collection[AraDefinition]):
         ambiguous = [(Variable.build(v), Column.build(c)) for v, c in data['ambiguous']]
         return config, ambiguous
 
+    @deprecated(details='Please use TableCollection.build_from config or '
+                        'TableCollection.initiate_build')
     def build_ara_table(self, ara_def: AraDefinition) -> JobSubmissionResponse:
         """[ALPHA] submit an ara table construction job.
 
@@ -312,24 +315,16 @@ class AraDefinitionCollection(Collection[AraDefinition]):
 
         Parameters
         ----------
-        project: Project
-            The project on behalf of which the job executes.
         ara_def: AraDefinition
             the ara definition describing the new table
 
         """
-        job_id = uuid4()
-        url_suffix: str = "/{ara_definition}/versions/{version_number}/build?job_id={job_id}"
-        path: str = self._path_template.format(
-            project_id=self.project_id
-        ) + url_suffix.format(
-            ara_definition=ara_def.definition_uid,
-            version_number=ara_def.version_number,
-            job_id=job_id
-        )
-        response: dict = self.session.post_resource(path=path, json={})
-        return JobSubmissionResponse.build(response)
+        from citrine.resources.table import TableCollection
+        table_collection = TableCollection(self.project_id, self.session)
+        return table_collection.initiate_build(ara_def, None)
 
+    @deprecated(details='Table build job status does not have a stable format. Please use '
+                        'TableCollection.build_from_config or TableCollection.get_by_build_job')
     def get_job_status(self, job_id: str):
         """[ALPHA] get status of a running job.
 
@@ -337,8 +332,6 @@ class AraDefinitionCollection(Collection[AraDefinition]):
 
         Parameters
         ----------
-        project: Project
-            The project on behalf of which we retrieve a job status
         job_id: str
             The job we retrieve the status for
 

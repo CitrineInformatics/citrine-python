@@ -50,12 +50,6 @@ class IngredientRun(ObjectRun, Resource['IngredientRun'], GEMDIngredientRun):
     absolute_quantity: :py:class:`ContinuousValue \
     <gemd.entity.value.continuous_value.ContinuousValue>`, optional
         The absolute quantity of the ingredient in the process.
-    name: str, optional
-        Label on the ingredient that is unique within the process that contains it. This property
-        will be overwritten by its value in `spec` if it is present.
-    labels: List[str], optional
-        Additional labels on the ingredient. This property will be overwritten by its value in
-        `spec` if it is present.
     spec: IngredientSpec
         The specification of which this ingredient is a realization.
     file_links: List[FileLink], optional
@@ -82,7 +76,7 @@ class IngredientRun(ObjectRun, Resource['IngredientRun'], GEMDIngredientRun):
     typ = String('type')
 
     def __init__(self,
-                 name: Optional[str] = None,
+                 *,
                  uids: Optional[Dict[str, str]] = None,
                  tags: Optional[List[str]] = None,
                  notes: Optional[str] = None,
@@ -92,7 +86,6 @@ class IngredientRun(ObjectRun, Resource['IngredientRun'], GEMDIngredientRun):
                  volume_fraction: Optional[ContinuousValue] = None,
                  number_fraction: Optional[ContinuousValue] = None,
                  absolute_quantity: Optional[ContinuousValue] = None,
-                 labels: Optional[List[str]] = None,
                  spec: Optional[GEMDIngredientSpec] = None,
                  file_links: Optional[List[FileLink]] = None):
         if uids is None:
@@ -102,8 +95,8 @@ class IngredientRun(ObjectRun, Resource['IngredientRun'], GEMDIngredientRun):
                                    material=material, process=process,
                                    mass_fraction=mass_fraction, volume_fraction=volume_fraction,
                                    number_fraction=number_fraction,
-                                   absolute_quantity=absolute_quantity, labels=labels,
-                                   name=name, spec=spec, file_links=file_links)
+                                   absolute_quantity=absolute_quantity,
+                                   spec=spec, file_links=file_links)
 
     def __str__(self):
         return '<Ingredient run {!r}>'.format(self.name)
