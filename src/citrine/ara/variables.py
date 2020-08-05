@@ -581,22 +581,26 @@ class IngredientIdentifierInOutput(Serializable['IngredientIdentifierInOutput'],
     headers = properties.List(properties.String, 'headers')
     ingredient_name = properties.String('ingredient_name')
     process_templates = properties.List(properties.Object(LinkByUID), 'process_templates')
+    scope = properties.String('scope')
     type_selector = properties.Enumeration(DataObjectTypeSelector, "type_selector")
     typ = properties.String('type', default="ing_id_in_output", deserializable=False)
 
     def _attrs(self) -> List[str]:
-        return ["name", "headers", "ingredient_name", "process_templates", "type_selector", "typ"]
+        return ["name", "headers", "ingredient_name", "process_templates", "scope",
+                "type_selector", "typ"]
 
     def __init__(self, *,
                  name: str,
                  headers: List[str],
                  ingredient_name: str,
                  process_templates: List[LinkByUID],
+                 scope: str,
                  type_selector: DataObjectTypeSelector = DataObjectTypeSelector.PREFER_RUN):
         self.name = name
         self.headers = headers
         self.ingredient_name = ingredient_name
         self.process_templates = process_templates
+        self.scope = scope
         self.type_selector = type_selector
 
 
