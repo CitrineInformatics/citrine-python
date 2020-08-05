@@ -6,8 +6,8 @@ import requests_mock
 from mock import patch, call
 
 from citrine.resources.ara_definition import AraDefinition
-from citrine.resources.table import TableCollection, Table
-from tests.utils.factories import TableDataFactory, ListTableVersionsDataFactory
+from citrine.resources.gemtables import GemTableCollection, GemTable
+from tests.utils.factories import GemTableDataFactory, ListGemTableVersionsDataFactory
 from tests.utils.session import FakeSession, FakeCall
 
 
@@ -17,8 +17,8 @@ def session() -> FakeSession:
 
 
 @pytest.fixture
-def collection(session) -> TableCollection:
-    return TableCollection(
+def collection(session) -> GemTableCollection:
+    return GemTableCollection(
         project_id=UUID('6b608f78-e341-422c-8076-35adc8828545'),
         session=session
     )
@@ -26,14 +26,14 @@ def collection(session) -> TableCollection:
 
 @pytest.fixture
 def table():
-    def _table(download_url: str) -> Table:
-        return Table.build(TableDataFactory(signed_download_url=download_url, version=2))
+    def _table(download_url: str) -> GemTable:
+        return GemTable.build(GemTableDataFactory(signed_download_url=download_url, version=2))
 
     return _table
 
 
-@patch("citrine.resources.table.write_file_locally")
-def test_read_table(mock_write_files_locally, table):
+@patch("citrine.resources.gemtables.write_file_locally")
+def test_read_gem_table(mock_write_files_locally, table):
     # When
     with requests_mock.mock() as mock_get:
         remote_url = "http://otherhost:4572/anywhere"
@@ -56,27 +56,27 @@ def test_read_table(mock_write_files_locally, table):
 def test_get_table_metadata(collection, session):
     # Given
     project_id = '6b608f78-e341-422c-8076-35adc8828545'
-    table = TableDataFactory()
-    session.set_response(table)
+    gem_table = GemTableDataFactory()
+    session.set_response(gem_table)
 
     # When
-    retrieved_table: Table = collection.get(table["id"], table["version"])
+    retrieved_table: GemTable = collection.get(gem_table["id"], gem_table["version"])
 
     # Then
     assert 1 == session.num_calls
     expect_call = FakeCall(
         method="GET",
-        path="projects/{}/display-tables/{}/versions/{}".format(project_id, table["id"], table["version"])
+        path="projects/{}/display-tables/{}/versions/{}".format(project_id, gem_table["id"], gem_table["version"])
     )
     assert session.last_call == expect_call
-    assert str(retrieved_table.uid) == table["id"]
-    assert retrieved_table.version == table["version"]
-    assert retrieved_table.download_url == table["signed_download_url"]
+    assert str(retrieved_table.uid) == gem_table["id"]
+    assert retrieved_table.version == gem_table["version"]
+    assert retrieved_table.download_url == gem_table["signed_download_url"]
 
 
 def test_list_tables(collection, session):
     # Given
-    tableVersions = ListTableVersionsDataFactory()
+    tableVersions = ListGemTableVersionsDataFactory()
     session.set_response(tableVersions)
 
     # When
@@ -89,7 +89,7 @@ def test_list_tables(collection, session):
 
 def test_list_table_versions(collection, session):
     # Given
-    tableVersions = ListTableVersionsDataFactory()
+    tableVersions = ListGemTableVersionsDataFactory()
     session.set_response(tableVersions)
 
     # When
@@ -102,7 +102,7 @@ def test_list_table_versions(collection, session):
 
 def test_list_by_config(collection, session):
     # Given
-    tableVersions = ListTableVersionsDataFactory()
+    tableVersions = ListGemTableVersionsDataFactory()
     session.set_response(tableVersions)
 
     # When
@@ -116,23 +116,23 @@ def test_list_by_config(collection, session):
 
 
 def test_init_table():
-    table = Table()
-    assert table.uid is None
-    assert table.version is None
-    assert table.download_url is None
+    gem_table = GemTable()
+    assert gem_table.uid is None
+    assert gem_table.version is None
+    assert gem_table.download_url is None
 
 
 def test_str_serialization(table):
     t = table("http://somewhere.cool")
-    assert str(t) == "<Table {!r}, version {}>".format(t.uid, 2)
+    assert str(t) == "<GEM Table {!r}, version {}>".format(t.uid, 2)
 
 
 def test_register_table(collection):
     with pytest.raises(RuntimeError):
-        collection.register(Table.build(TableDataFactory()))
+        collection.register(GemTable.build(GemTableDataFactory()))
 
 
-def test_build_from_config(collection: TableCollection, session):
+def test_build_from_config(collection: GemTableCollection, session):
     config_uid = uuid4()
     config_version = 2
     config = AraDefinition(
@@ -145,7 +145,7 @@ def test_build_from_config(collection: TableCollection, session):
         definition_uid=config_uid,
         version_number=config_version,
     )
-    expected_table_data = TableDataFactory()
+    expected_table_data = GemTableDataFactory()
     session.set_responses(
         {'job_id': '12345678-1234-1234-1234-123456789ccc'},
         {'job_type': 'foo', 'status': 'In Progress', 'tasks': []},
@@ -158,12 +158,12 @@ def test_build_from_config(collection: TableCollection, session):
         }},
         expected_table_data,
     )
-    table = collection.build_from_config(config, version='ignored')
-    assert isinstance(table, Table)
+    gem_table = collection.build_from_config(config, version='ignored')
+    assert isinstance(gem_table, GemTable)
     assert session.num_calls == 4
 
 
-def test_build_from_config_failures(collection: TableCollection, session):
+def test_build_from_config_failures(collection: GemTableCollection, session):
     with pytest.raises(ValueError):
         collection.build_from_config(uuid4())
     config = AraDefinition(
@@ -178,10 +178,10 @@ def test_build_from_config_failures(collection: TableCollection, session):
     with pytest.raises(ValueError):
         collection.build_from_config(config)
     config.version_number = 1
-    config.definition_uid = None
+    config.config_uid = None
     with pytest.raises(ValueError):
         collection.build_from_config(config)
-    config.definition_uid = uuid4()
+    config.config_uid = uuid4()
     session.set_responses(
         {'job_id': '12345678-1234-1234-1234-123456789ccc'},
         {'job_type': 'foo', 'status': 'Failure', 'tasks': [
@@ -198,7 +198,7 @@ def test_build_from_config_failures(collection: TableCollection, session):
         collection.build_from_config(config, timeout=0)
 
 
-@patch("citrine.resources.table.write_file_locally")
+@patch("citrine.resources.gemtables.write_file_locally")
 def test_read_table_from_collection(mock_write_files_locally, collection, table):
     # When
     with requests_mock.mock() as mock_get:
@@ -230,7 +230,7 @@ def test_read_table_from_collection(mock_write_files_locally, collection, table)
         assert mock_write_files_locally.call_args == call(b'stuff', "table3.pdf")
 
 
-@patch("citrine.resources.table.write_file_locally")
+@patch("citrine.resources.gemtables.write_file_locally")
 def test_get_and_read_table_from_collection(mock_write_files_locally, table, session, collection):
     with requests_mock.mock() as mock_get:
         # Given
