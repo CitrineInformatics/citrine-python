@@ -19,6 +19,8 @@ from citrine.gemtables.rows import Row
 from citrine.gemtables.variables import Variable, IngredientIdentifierByProcessTemplateAndName, \
     IngredientQuantityByProcessAndName, IngredientQuantityDimension
 
+CITRINE_SCOPE = 'id'
+
 logger = getLogger(__name__)
 
 
@@ -162,8 +164,7 @@ class TableConfig(Resource["TableConfig"]):
                             process_template: LinkByUID,
                             project,
                             quantity_dimension: IngredientQuantityDimension,
-                            scope: str = 'id'
-                            ):
+                            scope: str = CITRINE_SCOPE):
         """[ALPHA] Add variables and columns for all of the possible ingredients in a process.
 
         For each allowed ingredient name in the process template there is a column for the if of
@@ -310,7 +311,7 @@ class TableConfigCollection(Collection[TableConfig]):
             scope, uid = uid_tup
         elif isinstance(material, (str, UUID)):
             uid = str(material)
-            scope = scope or 'id'
+            scope = scope or CITRINE_SCOPE
         else:
             raise TypeError(  # pragma: no cover
                 'material must be one of MaterialRun, str, or UUID but was {}'
