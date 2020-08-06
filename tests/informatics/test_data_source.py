@@ -4,7 +4,7 @@ import uuid
 import pytest
 
 from citrine.informatics.data_sources import DataSource, CSVDataSource, GemTableDataSource
-from citrine.informatics.descriptors import RealDescriptor
+from citrine.informatics.descriptors import RealDescriptor, FormulationDescriptor
 from citrine.resources.file_link import FileLink
 
 
@@ -12,6 +12,7 @@ from citrine.resources.file_link import FileLink
     CSVDataSource(FileLink("foo.spam", "http://example.com"), {"spam": RealDescriptor("eggs", lower_bound=0, upper_bound=1.0)}, ["identifier"]),
     GemTableDataSource(uuid.uuid4(), 1),
     GemTableDataSource(uuid.uuid4(), "2"),
+    GemTableDataSource(uuid.uuid4(), "2", FormulationDescriptor("formulation")),
 ])
 def data_source(request):
     return request.param

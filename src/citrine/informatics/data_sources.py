@@ -6,7 +6,7 @@ from uuid import UUID
 from citrine._serialization.serializable import Serializable
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
 from citrine._serialization import properties
-from citrine.informatics.descriptors import Descriptor
+from citrine.informatics.descriptors import Descriptor, FormulationDescriptor
 from citrine.resources.file_link import FileLink
 
 
@@ -87,23 +87,28 @@ class GemTableDataSource(Serializable['GemTableDataSource'], DataSource):
     table_id: UUID
         Unique identifier for the GEM Table
     table_version: Union[str,int]
-        Version number for the GEM Table, which starts at 1 rather than 0.  Strings
-        are cast to ints
+        Version number for the GEM Table, which starts at 1 rather than 0.
+        Strings are cast to ints.
+    formulation_descriptor: Optional[FormulationDescriptor]
+        Optional descriptor used to store formulations emitted by the data source.
 
     """
 
     typ = properties.String('type', default='hosted_table_data_source', deserializable=False)
     table_id = properties.UUID("table_id")
     table_version = properties.Integer("table_version")
+    formulation_descriptor = properties.Optional(properties.Object(FormulationDescriptor), "formulation_descriptor")
 
     def _attrs(self) -> List[str]:
         return ["table_id", "table_version", "typ"]
 
     def __init__(self,
                  table_id: UUID,
-                 table_version: Union[int, str]):
-        self.table_id = table_id
-        self.table_version = table_version
+                 table_version: Union[int, str],
+                 formulation_descriptor: Optional[FormulationDescriptor] = None):
+        self.table_id: UUID = table_id
+        self.table_version: Union[int, str] = table_version
+        self.formulation_descriptor: Optional[FormulationDescriptor] = formulation_descriptor
 
 
 def AraTableDataSource(*args, **kwargs):  # pragma: no cover
