@@ -6,6 +6,7 @@ from citrine._rest.resource import Resource
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Mapping, String, LinkOrElse, Object
 from citrine._serialization.properties import Optional as PropertyOptional
+from citrine._serialization.serializable import CITRINE_SCOPE
 from citrine.resources.data_concepts import DataConcepts
 from citrine.resources.object_runs import ObjectRun, ObjectRunCollection
 from gemd.entity.file_link import FileLink
@@ -14,8 +15,6 @@ from gemd.entity.object.ingredient_spec import IngredientSpec as GEMDIngredientS
 from gemd.entity.object.material_run import MaterialRun as GEMDMaterialRun
 from gemd.entity.object.process_run import ProcessRun as GEMDProcessRun
 from gemd.entity.value.continuous_value import ContinuousValue
-
-CITRINE_SCOPE = 'id'
 
 
 class IngredientRun(ObjectRun, Resource['IngredientRun'], GEMDIngredientRun):

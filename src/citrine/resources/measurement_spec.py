@@ -6,6 +6,7 @@ from citrine._rest.resource import Resource
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Optional as PropertyOptional
 from citrine._serialization.properties import String, Object, Mapping, LinkOrElse
+from citrine._serialization.serializable import CITRINE_SCOPE
 from citrine.resources.data_concepts import DataConcepts
 from citrine.resources.object_specs import ObjectSpec, ObjectSpecCollection
 from gemd.entity.attribute.condition import Condition
@@ -14,8 +15,6 @@ from gemd.entity.file_link import FileLink
 from gemd.entity.object.measurement_spec import MeasurementSpec as GEMDMeasurementSpec
 from gemd.entity.template.measurement_template import \
     MeasurementTemplate as GEMDMeasurementTemplate
-
-CITRINE_SCOPE = 'id'
 
 
 class MeasurementSpec(ObjectSpec, Resource['MeasurementSpec'], GEMDMeasurementSpec):

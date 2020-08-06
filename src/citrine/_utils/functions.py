@@ -4,8 +4,7 @@ from typing import Any
 from urllib.parse import urlparse
 
 from gemd.entity.link_by_uid import LinkByUID
-
-CITRINE_SCOPE = 'id'
+from citrine._serialization.serializable import CITRINE_SCOPE
 
 
 def get_object_id(object_or_id):

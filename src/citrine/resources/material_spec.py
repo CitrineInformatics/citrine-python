@@ -9,6 +9,7 @@ from citrine._rest.resource import Resource
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Optional as PropertyOptional
 from citrine._serialization.properties import String, LinkOrElse, Mapping, Object
+from citrine._serialization.serializable import CITRINE_SCOPE
 from citrine.resources.data_concepts import DataConcepts
 from citrine.resources.object_specs import ObjectSpec, ObjectSpecCollection
 from gemd.entity.attribute.property_and_conditions import PropertyAndConditions
@@ -16,8 +17,6 @@ from gemd.entity.file_link import FileLink
 from gemd.entity.object.material_spec import MaterialSpec as GEMDMaterialSpec
 from gemd.entity.object.process_spec import ProcessSpec as GEMDProcessSpec
 from gemd.entity.template.material_template import MaterialTemplate as GEMDMaterialTemplate
-
-CITRINE_SCOPE = 'id'
 
 logger = getLogger(__name__)
 

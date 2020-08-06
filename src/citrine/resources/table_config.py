@@ -12,14 +12,13 @@ from gemd.entity.link_by_uid import LinkByUID
 from citrine._rest.collection import Collection
 from citrine._rest.resource import Resource
 from citrine._serialization import properties
+from citrine._serialization.serializable import CITRINE_SCOPE
 from citrine._session import Session
 from citrine.resources.process_template import ProcessTemplate  # noqa: F401
 from citrine.gemtables.columns import Column, MeanColumn, IdentityColumn, OriginalUnitsColumn
 from citrine.gemtables.rows import Row
 from citrine.gemtables.variables import Variable, IngredientIdentifierByProcessTemplateAndName, \
     IngredientQuantityByProcessAndName, IngredientQuantityDimension
-
-CITRINE_SCOPE = 'id'
 
 logger = getLogger(__name__)
 

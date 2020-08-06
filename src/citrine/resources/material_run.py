@@ -8,6 +8,7 @@ from uuid import UUID
 import deprecation
 
 from citrine._rest.resource import Resource
+from citrine._serialization.serializable import CITRINE_SCOPE
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Optional as PropertyOptional
 from citrine._serialization.properties import String, LinkOrElse, Mapping, Object
@@ -21,8 +22,6 @@ from gemd.entity.object.material_spec import MaterialSpec as GEMDMaterialSpec
 from gemd.entity.object.process_run import ProcessRun as GEMDProcessRun
 from gemd.json import GEMDEncoder
 from gemd.util import writable_sort_order
-
-CITRINE_SCOPE = 'id'
 
 logger = getLogger(__name__)
 
