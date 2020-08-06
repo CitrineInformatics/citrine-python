@@ -65,7 +65,7 @@ and a list of :class:`~citrine.gemtables.columns.Column` objects to transform th
 .. code-block:: python
 
    from citrine.resources.ara_definition import TableConfig
-   from citrine._serialization.properties import UUID
+   from uuid import UUID
    table_config = TableConfig(
          name = "cookies",
          description = "Cookie densities",
