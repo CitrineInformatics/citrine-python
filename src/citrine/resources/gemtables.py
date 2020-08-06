@@ -54,6 +54,10 @@ class GemTable(Resource['Table']):
     def __str__(self):
         return '<GEM Table {!r}, version {}>'.format(self.uid, self.version)
 
+    def resource_type(self) -> str:
+        """Get the access control resource type of this resource."""
+        return 'TABLE'
+
     @deprecation.deprecated(deprecated_in="0.16.0", details="Use TableCollection.read() instead")
     def read(self, local_path):
         """[DEPRECATED] Use TableCollection.read() instead."""  # noqa: D402
