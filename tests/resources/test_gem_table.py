@@ -242,3 +242,12 @@ def test_get_and_read_table_from_collection(mock_write_files_locally, table, ses
         assert mock_get.call_count == 1
         assert mock_write_files_locally.call_count == 1
         assert mock_write_files_locally.call_args == call(b'stuff', "table4.csv")
+
+def test_gem_table_entity_dict():
+    table = GemTable.build(GemTableDataFactory())
+    entity = table.as_entity_dict()
+
+    assert entity == {
+        'id': str(table.uid),
+        'type': 'TABLE'
+    }
