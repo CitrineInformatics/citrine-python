@@ -6,7 +6,7 @@ from citrine._rest.resource import Resource
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Optional as PropertyOptional
 from citrine._serialization.properties import String, Object, Mapping, LinkOrElse
-from citrine.resources.data_concepts import DataConcepts
+from citrine.resources.data_concepts import DataConcepts, CITRINE_SCOPE
 from citrine.resources.object_specs import ObjectSpec, ObjectSpecCollection
 from gemd.entity.attribute.condition import Condition
 from gemd.entity.attribute.parameter import Parameter
@@ -94,7 +94,7 @@ class MeasurementSpecCollection(ObjectSpecCollection[MeasurementSpec]):
         return MeasurementSpec
 
     def list_by_template(self, uid: Union[UUID, str],
-                         scope: str = 'id') -> Iterator[MeasurementSpec]:
+                         scope: str = CITRINE_SCOPE) -> Iterator[MeasurementSpec]:
         """
         [ALPHA] Get the measurement specs using the specified measurement template.
 
