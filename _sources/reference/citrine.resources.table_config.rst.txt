@@ -1,0 +1,7 @@
+citrine.resources.table\_config module
+======================================
+
+.. automodule:: citrine.resources.table_config
+   :members:
+   :undoc-members:
+   :show-inheritance:

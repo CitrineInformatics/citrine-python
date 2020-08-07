@@ -55,7 +55,7 @@ Thus, all inputs and latent variables are used to predict outputs.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">sleep</span>
 <span class="kn">from</span> <span class="nn">citrine</span> <span class="kn">import</span> <span class="n">Citrine</span>
 <span class="kn">from</span> <span class="nn">citrine.informatics.predictors</span> <span class="kn">import</span> <span class="n">SimpleMLPredictor</span>
-<span class="kn">from</span> <span class="nn">citrine.informatics.data_sources</span> <span class="kn">import</span> <span class="n">AraTableDataSource</span>
+<span class="kn">from</span> <span class="nn">citrine.informatics.data_sources</span> <span class="kn">import</span> <span class="n">GemTableDataSource</span>
 
 <span class="c1"># create a session with citrine using your API key</span>
 <span class="n">session</span> <span class="o">=</span> <span class="n">Citrine</span><span class="p">(</span><span class="n">api_key</span> <span class="o">=</span> <span class="n">API_KEY</span><span class="p">)</span>
@@ -71,7 +71,7 @@ Thus, all inputs and latent variables are used to predict outputs.</p>
     <span class="n">inputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">input_descriptor_1</span><span class="p">,</span> <span class="n">input_descriptor_2</span><span class="p">],</span>
     <span class="n">outputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">output_descriptor_1</span><span class="p">,</span> <span class="n">output_descriptor_2</span><span class="p">],</span>
     <span class="n">latent_variables</span> <span class="o">=</span> <span class="p">[</span><span class="n">latent_variable_descriptor_1</span><span class="p">],</span>
-    <span class="n">training_data</span> <span class="o">=</span> <span class="n">AraTableDataSource</span><span class="p">(</span><span class="n">training_data_table_uid</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">training_data</span> <span class="o">=</span> <span class="n">GemTableDataSource</span><span class="p">(</span><span class="n">training_data_table_uid</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 <span class="p">)</span>
 
 <span class="c1"># register predictor</span>
@@ -242,7 +242,7 @@ These labels are specified via:</p>
 <span class="n">salt_quantity</span> <span class="o">=</span> <span class="n">RealDescriptor</span><span class="p">(</span><span class="s1">&#39;salt quantity&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 
 <span class="c1"># table with simple mixtures and their ingredients</span>
-<span class="n">data_source</span> <span class="o">=</span> <span class="n">AraTableDataSource</span><span class="p">(</span><span class="n">table_uid</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">data_source</span> <span class="o">=</span> <span class="n">GemTableDataSource</span><span class="p">(</span><span class="n">table_uid</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 
 <span class="n">IngredientsToSimpleMixturePredictor</span><span class="p">(</span>
     <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Ingredients to simple mixture predictor&#39;</span><span class="p">,</span>
@@ -280,7 +280,7 @@ The <code class="docutils literal notranslate"><span class="pre">training_data</
 <span class="n">output_formulation</span> <span class="o">=</span> <span class="n">FormulationDescriptor</span><span class="p">(</span><span class="s1">&#39;diluted saline (flattened)&#39;</span><span class="p">)</span>
 
 <span class="c1"># table with simple mixtures and their ingredients</span>
-<span class="n">data_source</span> <span class="o">=</span> <span class="n">AraTableDataSource</span><span class="p">(</span><span class="n">table_uid</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">data_source</span> <span class="o">=</span> <span class="n">GemTableDataSource</span><span class="p">(</span><span class="n">table_uid</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 
 <span class="n">SimpleMixturePredictor</span><span class="p">(</span>
     <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Simple mixture predictor&#39;</span><span class="p">,</span>
@@ -349,7 +349,7 @@ Our leaf ingredient data might resemble:</p>
 If <code class="docutils literal notranslate"><span class="pre">impute_properties</span> <span class="pre">==</span> <span class="pre">True</span></code> and no <code class="docutils literal notranslate"><span class="pre">default_properties</span></code> are specified, an density of <span class="math notranslate nohighlight">\(\left( 1.0 + 2.16 \right) / 2 = 1.58\)</span> will be used.
 If a value other than 1.58 should be used, e.g. 2.0, this can be specified by setting <code class="docutils literal notranslate"><span class="pre">default_properties</span> <span class="pre">=</span> <span class="pre">{'density':</span> <span class="pre">2.0}</span></code>.</p>
 <p>The example below show how to configure a mean property predictor to compute mean solute density in simple mixtures.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.informatics.data_sources</span> <span class="kn">import</span> <span class="n">AraTableDataSource</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.informatics.data_sources</span> <span class="kn">import</span> <span class="n">GemTableDataSource</span>
 <span class="kn">from</span> <span class="nn">citrine.informatics.descriptors</span> <span class="kn">import</span> <span class="n">FormulationDescriptor</span>
 <span class="kn">from</span> <span class="nn">citrine.informatics.predictors</span> <span class="kn">import</span> <span class="n">GeneralizedMeanPropertyPredictor</span>
 
@@ -357,7 +357,7 @@ If a value other than 1.58 should be used, e.g. 2.0, this can be specified by se
 <span class="n">formulation</span> <span class="o">=</span> <span class="n">FormulationDescriptor</span><span class="p">(</span><span class="s1">&#39;simple mixture&#39;</span><span class="p">)</span>
 
 <span class="c1"># table with simple mixtures and their ingredients</span>
-<span class="n">data_source</span> <span class="o">=</span> <span class="n">AraTableDataSource</span><span class="p">(</span><span class="n">table_uid</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">data_source</span> <span class="o">=</span> <span class="n">GemTableDataSource</span><span class="p">(</span><span class="n">table_uid</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 
 <span class="n">GeneralizedMeanPropertyPredictor</span><span class="p">(</span>
     <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Mean property predictor&#39;</span><span class="p">,</span>

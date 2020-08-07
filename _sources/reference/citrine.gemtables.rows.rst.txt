@@ -1,0 +1,7 @@
+citrine.gemtables.rows module
+=============================
+
+.. automodule:: citrine.gemtables.rows
+   :members:
+   :undoc-members:
+   :show-inheritance:

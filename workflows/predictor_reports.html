@@ -85,7 +85,7 @@ Assume that there is a training data table with known id and version.</p>
 
 <span class="kn">from</span> <span class="nn">citrine.informatics.predictors</span> <span class="kn">import</span> <span class="n">SimpleMLPredictor</span>
 <span class="kn">from</span> <span class="nn">citrine.informatics.descriptors</span> <span class="kn">import</span> <span class="n">RealDescriptor</span>
-<span class="kn">from</span> <span class="nn">citrine.informatics.data_sources</span> <span class="kn">import</span> <span class="n">AraTableDataSource</span>
+<span class="kn">from</span> <span class="nn">citrine.informatics.data_sources</span> <span class="kn">import</span> <span class="n">GemTableDataSource</span>
 
 <span class="c1"># create input descriptors</span>
 <span class="n">x</span> <span class="o">=</span> <span class="n">RealDescriptor</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
@@ -100,7 +100,7 @@ Assume that there is a training data table with known id and version.</p>
        <span class="n">inputs</span><span class="o">=</span><span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">],</span>
        <span class="n">latent_variables</span><span class="o">=</span><span class="p">[],</span>
        <span class="n">outputs</span><span class="o">=</span><span class="p">[</span><span class="n">z</span><span class="p">],</span>
-       <span class="n">training_data</span><span class="o">=</span><span class="n">AraTableDataSource</span><span class="p">(</span>
+       <span class="n">training_data</span><span class="o">=</span><span class="n">GemTableDataSource</span><span class="p">(</span>
         <span class="n">table_id</span> <span class="o">=</span> <span class="n">training_table_id</span><span class="p">,</span>
         <span class="n">table_version</span> <span class="o">=</span> <span class="n">training_table_version</span>
        <span class="p">)</span>

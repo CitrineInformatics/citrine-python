@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>citrine.ara package &#8212; Citrine Python 0.0.1 documentation</title>
+    <title>citrine.gemtables.rows module &#8212; Citrine Python 0.0.1 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -32,22 +32,45 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="citrine-ara-package">
-<h1>citrine.ara package<a class="headerlink" href="#citrine-ara-package" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="citrine.ara.columns.html">citrine.ara.columns module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="citrine.ara.rows.html">citrine.ara.rows module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="citrine.ara.variables.html">citrine.ara.variables module</a></li>
-</ul>
-</div>
-</div>
-<div class="section" id="module-citrine.ara">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-citrine.ara" title="Permalink to this headline">¶</a></h2>
-<p>[[DEPRECATED]] Please use citrine.gemtables instead.</p>
-</div>
+  <div class="section" id="module-citrine.gemtables.rows">
+<span id="citrine-gemtables-rows-module"></span><h1>citrine.gemtables.rows module<a class="headerlink" href="#module-citrine.gemtables.rows" title="Permalink to this headline">¶</a></h1>
+<p>Row definitions for GEM Tables.</p>
+<dl class="class">
+<dt id="citrine.gemtables.rows.MaterialRunByTemplate">
+<em class="property">class </em><code class="sig-prename descclassname">citrine.gemtables.rows.</code><code class="sig-name descname">MaterialRunByTemplate</code><span class="sig-paren">(</span><em class="sig-param">*, templates: List[gemd.entity.link_by_uid.LinkByUID]</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.gemtables.rows.MaterialRunByTemplate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.gemtables.rows.Row" title="citrine.gemtables.rows.Row"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.gemtables.rows.Row</span></code></a></p>
+<p>[ALPHA] Rows rooted in MaterialRuns, marked by their template.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>templates</strong> (<em>list</em><em>[</em><em>LinkByUID</em><em>]</em>) – templates of materials to include</p>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="citrine.gemtables.rows.MaterialRunByTemplate.templates">
+<code class="sig-name descname">templates</code><em class="property"> = None</em><a class="headerlink" href="#citrine.gemtables.rows.MaterialRunByTemplate.templates" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.gemtables.rows.MaterialRunByTemplate.typ">
+<code class="sig-name descname">typ</code><em class="property"> = 'material_run_by_template'</em><a class="headerlink" href="#citrine.gemtables.rows.MaterialRunByTemplate.typ" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="citrine.gemtables.rows.Row">
+<em class="property">class </em><code class="sig-prename descclassname">citrine.gemtables.rows.</code><code class="sig-name descname">Row</code><a class="headerlink" href="#citrine.gemtables.rows.Row" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.polymorphic_serializable.PolymorphicSerializable</span></code></p>
+<p>[ALPHA] A rule for defining rows in a GEM Table.</p>
+<p>Abstract type that returns the proper type given a serialized dict.</p>
+<dl class="method">
+<dt id="citrine.gemtables.rows.Row.get_type">
+<em class="property">classmethod </em><code class="sig-name descname">get_type</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span> &#x2192; Type[citrine._serialization.serializable.Serializable]<a class="headerlink" href="#citrine.gemtables.rows.Row.get_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the subtype.</p>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 
 
@@ -166,7 +189,7 @@
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
-      <a href="../_sources/reference/citrine.ara.rst.txt"
+      <a href="../_sources/reference/citrine.gemtables.rows.rst.txt"
           rel="nofollow">Page source</a>
     </div>
 

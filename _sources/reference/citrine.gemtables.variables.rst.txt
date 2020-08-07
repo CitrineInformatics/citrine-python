@@ -1,0 +1,7 @@
+citrine.gemtables.variables module
+==================================
+
+.. automodule:: citrine.gemtables.variables
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -8,6 +8,7 @@ Subpackages
 
    citrine.ara
    citrine.builders
+   citrine.gemtables
    citrine.informatics
    citrine.resources
    citrine.seeding

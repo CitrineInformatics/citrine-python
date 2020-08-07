@@ -18,8 +18,10 @@ Submodules
    citrine.resources.descriptors
    citrine.resources.design_space
    citrine.resources.file_link
+   citrine.resources.gemtables
    citrine.resources.ingredient_run
    citrine.resources.ingredient_spec
+   citrine.resources.job
    citrine.resources.material_run
    citrine.resources.material_spec
    citrine.resources.material_template
@@ -43,6 +45,7 @@ Submodules
    citrine.resources.report
    citrine.resources.response
    citrine.resources.table
+   citrine.resources.table_config
    citrine.resources.templates
    citrine.resources.user
    citrine.resources.workflow

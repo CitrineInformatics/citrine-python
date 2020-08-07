@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>citrine.ara package &#8212; Citrine Python 0.0.1 documentation</title>
+    <title>citrine.resources.job module &#8212; Citrine Python 0.0.1 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -32,22 +32,110 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="citrine-ara-package">
-<h1>citrine.ara package<a class="headerlink" href="#citrine-ara-package" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="citrine.ara.columns.html">citrine.ara.columns module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="citrine.ara.rows.html">citrine.ara.rows module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="citrine.ara.variables.html">citrine.ara.variables module</a></li>
+  <div class="section" id="module-citrine.resources.job">
+<span id="citrine-resources-job-module"></span><h1>citrine.resources.job module<a class="headerlink" href="#module-citrine.resources.job" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="citrine.resources.job.JobStatusResponse">
+<em class="property">class </em><code class="sig-prename descclassname">citrine.resources.job.</code><code class="sig-name descname">JobStatusResponse</code><span class="sig-paren">(</span><em class="sig-param">job_type: str, status: str, tasks: List[citrine.resources.job.TaskNode], output: Optional[Dict[str, str]]</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.job.JobStatusResponse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.resource.Resource</span></code></p>
+<p>[ALPHA] a response to a job status check.</p>
+<p>The JobStatusResponse summarizes the status for the entire job.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>job_type</strong> (<em>str</em>) – the type of job for this status report</p></li>
+<li><p><strong>status</strong> (<em>str</em>) – the actual status of the job.
+One of “Running”, “Success”, or “Failure”.</p></li>
+<li><p><strong>tasks</strong> (<em>List</em><em>[</em><a class="reference internal" href="#citrine.resources.job.TaskNode" title="citrine.resources.job.TaskNode"><em>TaskNode</em></a><em>]</em>) – all of the constituent task required to complete this job</p></li>
+<li><p><strong>output</strong> (<em>Optional</em><em>[</em><em>Map</em><em>[</em><em>String</em><em>,</em><em>String</em><em>]</em><em>]</em>) – job output properties and results</p></li>
 </ul>
-</div>
-</div>
-<div class="section" id="module-citrine.ara">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-citrine.ara" title="Permalink to this headline">¶</a></h2>
-<p>[[DEPRECATED]] Please use citrine.gemtables instead.</p>
-</div>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="citrine.resources.job.JobStatusResponse.job_type">
+<code class="sig-name descname">job_type</code><em class="property"> = None</em><a class="headerlink" href="#citrine.resources.job.JobStatusResponse.job_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.resources.job.JobStatusResponse.output">
+<code class="sig-name descname">output</code><em class="property"> = None</em><a class="headerlink" href="#citrine.resources.job.JobStatusResponse.output" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.resources.job.JobStatusResponse.status">
+<code class="sig-name descname">status</code><em class="property"> = None</em><a class="headerlink" href="#citrine.resources.job.JobStatusResponse.status" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.resources.job.JobStatusResponse.tasks">
+<code class="sig-name descname">tasks</code><em class="property"> = None</em><a class="headerlink" href="#citrine.resources.job.JobStatusResponse.tasks" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="citrine.resources.job.JobSubmissionResponse">
+<em class="property">class </em><code class="sig-prename descclassname">citrine.resources.job.</code><code class="sig-name descname">JobSubmissionResponse</code><span class="sig-paren">(</span><em class="sig-param">job_id: uuid.UUID</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.job.JobSubmissionResponse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.resource.Resource</span></code></p>
+<p>[ALPHA] a response to a submit-job request for the job submission framework.</p>
+<p>This is returned as a successful response from the remote service.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>job_id</strong> (<em>UUID</em>) – job id of the of a job submission request</p>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="citrine.resources.job.JobSubmissionResponse.job_id">
+<code class="sig-name descname">job_id</code><em class="property"> = None</em><a class="headerlink" href="#citrine.resources.job.JobSubmissionResponse.job_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="citrine.resources.job.TaskNode">
+<em class="property">class </em><code class="sig-prename descclassname">citrine.resources.job.</code><code class="sig-name descname">TaskNode</code><span class="sig-paren">(</span><em class="sig-param">id: str, task_type: str, status: str, dependencies: Set[str], failure_reason: Optional[str]</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.job.TaskNode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.resource.Resource</span></code></p>
+<p>[ALPHA] individual task status.</p>
+<p>The TaskNode describes a component of an overall job.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>id</strong> (<em>str</em>) – unique identification number for the job task.</p></li>
+<li><p><strong>task_type</strong> (<em>str</em>) – the type of task running</p></li>
+<li><p><strong>status</strong> (<em>str</em>) – the last reported status of this particular task.
+One of “Submitted”, “Pending”, “Running”, “Success”, or “Failure”.</p></li>
+<li><p><strong>dependencies</strong> (<em>Set</em><em>[</em><em>str</em><em>]</em>) – all the tasks that this task is dependent on.</p></li>
+<li><p><strong>failure_reason</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – if a task has failed, the failure reason will be in this parameter.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="citrine.resources.job.TaskNode.dependencies">
+<code class="sig-name descname">dependencies</code><em class="property"> = None</em><a class="headerlink" href="#citrine.resources.job.TaskNode.dependencies" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.resources.job.TaskNode.failure_reason">
+<code class="sig-name descname">failure_reason</code><em class="property"> = None</em><a class="headerlink" href="#citrine.resources.job.TaskNode.failure_reason" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.resources.job.TaskNode.id">
+<code class="sig-name descname">id</code><em class="property"> = None</em><a class="headerlink" href="#citrine.resources.job.TaskNode.id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.resources.job.TaskNode.status">
+<code class="sig-name descname">status</code><em class="property"> = None</em><a class="headerlink" href="#citrine.resources.job.TaskNode.status" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.resources.job.TaskNode.task_type">
+<code class="sig-name descname">task_type</code><em class="property"> = None</em><a class="headerlink" href="#citrine.resources.job.TaskNode.task_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </div>
 
 
@@ -166,7 +254,7 @@
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
-      <a href="../_sources/reference/citrine.ara.rst.txt"
+      <a href="../_sources/reference/citrine.resources.job.rst.txt"
           rel="nofollow">Page source</a>
     </div>
 

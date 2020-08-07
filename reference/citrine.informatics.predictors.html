@@ -480,7 +480,7 @@ models are built for each latent variable and output.</p>
 <li><p><strong>inputs</strong> (<em>list</em><em>[</em><a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.Descriptor" title="citrine.informatics.descriptors.Descriptor"><em>Descriptor</em></a><em>]</em>) – Descriptors that represent inputs to relations</p></li>
 <li><p><strong>outputs</strong> (<em>list</em><em>[</em><a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.Descriptor" title="citrine.informatics.descriptors.Descriptor"><em>Descriptor</em></a><em>]</em>) – Descriptors that represent outputs of relations</p></li>
 <li><p><strong>latent_variables</strong> (<em>list</em><em>[</em><a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.Descriptor" title="citrine.informatics.descriptors.Descriptor"><em>Descriptor</em></a><em>]</em>) – Descriptors that are predicted from inputs and used when predicting the outputs</p></li>
-<li><p><strong>training_data</strong> (<a class="reference internal" href="citrine.informatics.data_sources.html#citrine.informatics.data_sources.DataSource" title="citrine.informatics.data_sources.DataSource"><em>DataSource</em></a>) – Source of the training data, which can be either a CSV or an Ara table</p></li>
+<li><p><strong>training_data</strong> (<a class="reference internal" href="citrine.informatics.data_sources.html#citrine.informatics.data_sources.DataSource" title="citrine.informatics.data_sources.DataSource"><em>DataSource</em></a>) – Source of the training data, which can be either a CSV or a GEM Table</p></li>
 </ul>
 </dd>
 </dl>
@@ -712,7 +712,7 @@ If <code class="docutils literal notranslate"><span class="pre">True</span></cod
 entire dataset is used.
 If <code class="docutils literal notranslate"><span class="pre">True</span></code> and a default is specified in <code class="docutils literal notranslate"><span class="pre">default_properties</span></code>, then the specified
 default is used in place of missing values.</p></li>
-<li><p><strong>training_data</strong> (<a class="reference internal" href="citrine.informatics.data_sources.html#citrine.informatics.data_sources.DataSource" title="citrine.informatics.data_sources.DataSource"><em>DataSource</em></a>) – Source of the training data, which can be either a CSV or an Ara table</p></li>
+<li><p><strong>training_data</strong> (<a class="reference internal" href="citrine.informatics.data_sources.html#citrine.informatics.data_sources.DataSource" title="citrine.informatics.data_sources.DataSource"><em>DataSource</em></a>) – Source of the training data, which can be either a CSV or a GEM Table</p></li>
 <li><p><strong>label</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Optional label</p></li>
 <li><p><strong>default_properties</strong> (<em>Optional</em><em>[</em><em>Mapping</em><em>[</em><em>str</em><em>, </em><em>float</em><em>]</em><em>]</em>) – Default values to use for imputed properties.
 Defaults are specified as a map from descriptor key to its default value.
@@ -909,7 +909,7 @@ the average over the dataset. <code class="docutils literal notranslate"><span c
 <li><p><strong>description</strong> (<em>str</em>) – description of the predictor</p></li>
 <li><p><strong>input_descriptor</strong> (<a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.FormulationDescriptor" title="citrine.informatics.descriptors.FormulationDescriptor"><em>FormulationDescriptor</em></a>) – input descriptor for the hierarchical (un-mixed) formulation</p></li>
 <li><p><strong>output_descriptor</strong> (<a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.FormulationDescriptor" title="citrine.informatics.descriptors.FormulationDescriptor"><em>FormulationDescriptor</em></a>) – output descriptor for the flat (mixed) formulation</p></li>
-<li><p><strong>training_data</strong> (<a class="reference internal" href="citrine.informatics.data_sources.html#citrine.informatics.data_sources.DataSource" title="citrine.informatics.data_sources.DataSource"><em>DataSource</em></a>) – Source of the training data, which can be either a CSV or an Ara table</p></li>
+<li><p><strong>training_data</strong> (<a class="reference internal" href="citrine.informatics.data_sources.html#citrine.informatics.data_sources.DataSource" title="citrine.informatics.data_sources.DataSource"><em>DataSource</em></a>) – Source of the training data, which can be either a CSV or a GEM Table</p></li>
 </ul>
 </dd>
 </dl>

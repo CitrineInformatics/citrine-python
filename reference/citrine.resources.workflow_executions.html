@@ -37,9 +37,20 @@
 <p>Resources that represent both individual and collections of workflow executions.</p>
 <dl class="class">
 <dt id="citrine.resources.workflow_executions.WorkflowExecution">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.resources.workflow_executions.</code><code class="sig-name descname">WorkflowExecution</code><span class="sig-paren">(</span><em class="sig-param">uid: Optional[str] = None</em>, <em class="sig-param">project_id: Optional[str] = None</em>, <em class="sig-param">workflow_id: Optional[str] = None</em>, <em class="sig-param">session: Optional[citrine._session.Session] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.workflow_executions.WorkflowExecution" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">citrine.resources.workflow_executions.</code><code class="sig-name descname">WorkflowExecution</code><span class="sig-paren">(</span><em class="sig-param">uid: Optional[str] = None</em>, <em class="sig-param">project_id: Optional[str] = None</em>, <em class="sig-param">workflow_id: Optional[str] = None</em>, <em class="sig-param">session: Optional[citrine._session.Session] = None</em>, <em class="sig-param">version_number: Optional[int] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.workflow_executions.WorkflowExecution" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.resource.Resource</span></code></p>
 <p>[ALPHA] A Citrine Workflow Execution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>uid</strong> (<em>str</em>) – Unique identifier of the workflow execution</p></li>
+<li><p><strong>project_id</strong> (<em>str</em>) – Unique identifier of the project that contains the workflow execution</p></li>
+<li><p><strong>workflow_id</strong> (<em>str</em>) – Unique identifier of the workflow that was executed</p></li>
+<li><p><strong>version_number</strong> (<em>int</em>) – Integer identifier that increases each time the workflow is executed.  The first execution
+has version_number = 1.</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="attribute">
 <dt id="citrine.resources.workflow_executions.WorkflowExecution.project_id">
 <code class="sig-name descname">project_id</code><em class="property"> = None</em><a class="headerlink" href="#citrine.resources.workflow_executions.WorkflowExecution.project_id" title="Permalink to this definition">¶</a></dt>
@@ -60,6 +71,11 @@
 <dl class="attribute">
 <dt id="citrine.resources.workflow_executions.WorkflowExecution.uid">
 <code class="sig-name descname">uid</code><em class="property"> = None</em><a class="headerlink" href="#citrine.resources.workflow_executions.WorkflowExecution.uid" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.resources.workflow_executions.WorkflowExecution.version_number">
+<code class="sig-name descname">version_number</code><em class="property"> = None</em><a class="headerlink" href="#citrine.resources.workflow_executions.WorkflowExecution.version_number" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">

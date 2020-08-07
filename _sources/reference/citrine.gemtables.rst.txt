@@ -1,0 +1,19 @@
+citrine.gemtables package
+=========================
+
+Submodules
+----------
+
+.. toctree::
+
+   citrine.gemtables.columns
+   citrine.gemtables.rows
+   citrine.gemtables.variables
+
+Module contents
+---------------
+
+.. automodule:: citrine.gemtables
+   :members:
+   :undoc-members:
+   :show-inheritance:
