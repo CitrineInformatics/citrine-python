@@ -3,8 +3,6 @@ from typing import Generic, TypeVar
 
 Self = TypeVar('Self', bound='Serializable')
 
-CITRINE_SCOPE = 'id'
-
 
 class Serializable(Generic[Self]):
     """A Serializable object."""

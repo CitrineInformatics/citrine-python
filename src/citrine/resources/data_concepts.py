@@ -7,7 +7,7 @@ from citrine._rest.collection import Collection
 from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
 from citrine._serialization.properties import Property as SerializableProperty
-from citrine._serialization.serializable import Serializable, CITRINE_SCOPE
+from citrine._serialization.serializable import Serializable
 from citrine._session import Session
 from citrine._utils.functions import scrub_none, replace_objects_with_links
 from citrine.resources.audit_info import AuditInfo
@@ -15,6 +15,8 @@ from citrine.resources.response import Response
 from gemd.entity.dict_serializable import DictSerializable
 from gemd.entity.link_by_uid import LinkByUID
 from gemd.json import GEMDJson
+
+CITRINE_SCOPE = 'id'
 
 
 class DataConcepts(PolymorphicSerializable['DataConcepts'], DictSerializable, ABC):

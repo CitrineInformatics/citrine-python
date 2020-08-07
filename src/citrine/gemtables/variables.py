@@ -6,9 +6,10 @@ from gemd.entity.bounds.base_bounds import BaseBounds
 from gemd.entity.link_by_uid import LinkByUID
 from gemd.enumeration.base_enumeration import BaseEnumeration
 
-from citrine._serialization.serializable import Serializable, CITRINE_SCOPE
+from citrine._serialization.serializable import Serializable
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
 from citrine._serialization import properties
+from citrine.resources.data_concepts import CITRINE_SCOPE
 
 
 class IngredientQuantityDimension(BaseEnumeration):

@@ -6,8 +6,7 @@ from citrine._rest.resource import Resource
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Mapping, String, LinkOrElse, Object
 from citrine._serialization.properties import Optional as PropertyOptional
-from citrine._serialization.serializable import CITRINE_SCOPE
-from citrine.resources.data_concepts import DataConcepts
+from citrine.resources.data_concepts import DataConcepts, CITRINE_SCOPE
 from citrine.resources.object_specs import ObjectSpec, ObjectSpecCollection
 from gemd.entity.file_link import FileLink
 from gemd.entity.object.ingredient_spec import IngredientSpec as GEMDIngredientSpec

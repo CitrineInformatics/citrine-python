@@ -4,13 +4,12 @@ from typing import Any
 from urllib.parse import urlparse
 
 from gemd.entity.link_by_uid import LinkByUID
-from citrine._serialization.serializable import CITRINE_SCOPE
 
 
 def get_object_id(object_or_id):
     """Extract the citrine id from a data concepts object or LinkByUID."""
     from gemd.entity.attribute.base_attribute import BaseAttribute
-    from citrine.resources.data_concepts import DataConcepts
+    from citrine.resources.data_concepts import DataConcepts, CITRINE_SCOPE
 
     if isinstance(object_or_id, BaseAttribute):
         raise ValueError("Attributes do not have ids.")
@@ -81,6 +80,7 @@ def object_to_link(obj: Any) -> Any:
 
 def object_to_link_by_uid(json: dict) -> dict:
     """Convert an object dictionary into a LinkByUID dictionary, if possible."""
+    from citrine.resources.data_concepts import CITRINE_SCOPE
     if 'uids' in json:
         uids = json['uids']
         if not isinstance(uids, dict) or not uids:
