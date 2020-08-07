@@ -1,7 +1,8 @@
 """Tests for citrine.informatics.rows."""
 import pytest
 
-from citrine.ara.rows import MaterialRunByTemplate, Row
+from citrine.gemtables.rows import MaterialRunByTemplate, Row
+import citrine.ara.rows as oldrows
 from gemd.entity.link_by_uid import LinkByUID
 
 
@@ -32,3 +33,7 @@ def test_invalid_deser():
 
     with pytest.raises(ValueError):
         Row.build({"type": "foo"})
+
+def test_renamed_classes_are_the_same():
+    # Mostly make code coverage happy
+    assert oldrows.MaterialRunByTemplate == MaterialRunByTemplate

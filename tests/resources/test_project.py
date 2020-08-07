@@ -3,7 +3,7 @@ import pytest
 from dateutil.parser import parse
 
 from citrine.resources.project import Project, ProjectCollection
-from citrine.resources.table import TableCollection
+from citrine.resources.gemtables import GemTableCollection
 from citrine.resources.project_member import ProjectMember
 from citrine.resources.project_roles import MEMBER, LEAD, WRITE
 from tests.utils.factories import ProjectDataFactory, UserDataFactory
@@ -189,7 +189,7 @@ def test_workflows_get_project_id(project):
 
 
 def test_ara_definitions_get_project_id(project):
-    assert project.uid == project.ara_definitions.project_id
+    assert project.uid == project.table_configs.project_id
 
 
 def test_project_registration(collection, session):
@@ -445,5 +445,5 @@ def test_remove_user(project, session):
 
 
 def test_project_tables(project):
-    assert isinstance(project.tables, TableCollection)
+    assert isinstance(project.tables, GemTableCollection)
 

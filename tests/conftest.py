@@ -308,7 +308,7 @@ def valid_ing_to_simple_mixture_predictor_data():
 def valid_generalized_mean_property_predictor_data():
     """Produce valid data used for tests."""
     from citrine.informatics.descriptors import FormulationDescriptor
-    from citrine.informatics.data_sources import AraTableDataSource
+    from citrine.informatics.data_sources import GemTableDataSource
     return dict(
         module_type='PREDICTOR',
         status='VALID',
@@ -324,7 +324,7 @@ def valid_generalized_mean_property_predictor_data():
             input=FormulationDescriptor('simple mixture').dump(),
             properties=['density'],
             p=2,
-            training_data=AraTableDataSource(uuid.uuid4(), 0).dump(),
+            training_data=GemTableDataSource(uuid.uuid4(), 0).dump(),
             impute_properties=True,
             default_properties={'density': 1.0},
             label='solvent'
@@ -442,7 +442,7 @@ def valid_enumerated_processor_data():
 @pytest.fixture
 def valid_simple_mixture_predictor_data():
     """Produce valid data used for tests."""
-    from citrine.informatics.data_sources import AraTableDataSource
+    from citrine.informatics.data_sources import GemTableDataSource
     from citrine.informatics.descriptors import RealDescriptor
     return dict(
         module_type='PREDICTOR',
@@ -464,6 +464,6 @@ def valid_simple_mixture_predictor_data():
                 type='Formulation',
                 descriptor_key='output formulation',
             ),
-            training_data=AraTableDataSource(uuid.uuid4(), 0).dump(),
+            training_data=GemTableDataSource(uuid.uuid4(), 0).dump(),
         ),
     )
