@@ -3,9 +3,9 @@ from abc import abstractmethod
 from typing import Type, List, Mapping, Optional, Union  # noqa: F401
 from uuid import UUID
 
-from citrine._serialization.serializable import Serializable
-from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
 from citrine._serialization import properties
+from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
+from citrine._serialization.serializable import Serializable
 from citrine.informatics.descriptors import Descriptor, FormulationDescriptor
 from citrine.resources.file_link import FileLink
 
@@ -97,7 +97,10 @@ class GemTableDataSource(Serializable['GemTableDataSource'], DataSource):
     typ = properties.String('type', default='hosted_table_data_source', deserializable=False)
     table_id = properties.UUID("table_id")
     table_version = properties.Integer("table_version")
-    formulation_descriptor = properties.Optional(properties.Object(FormulationDescriptor), "formulation_descriptor")
+    formulation_descriptor = properties.Optional(
+        properties.Object(FormulationDescriptor),
+        "formulation_descriptor"
+    )
 
     def _attrs(self) -> List[str]:
         return ["table_id", "table_version", "typ"]
