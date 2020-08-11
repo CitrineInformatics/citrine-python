@@ -420,26 +420,6 @@ def valid_grid_processor_data():
 
 
 @pytest.fixture
-def valid_enumerated_processor_data():
-    """Valid EnumeratedProcessor data."""
-    return dict(
-        module_type='PROCESSOR',
-        status='READY',
-        status_info=['valid'],
-        active=True,
-        display_name='my enumerated processor',
-        schema_id='272791a5-5468-4344-ac9f-2811d9266a4d',
-        id=str(uuid.uuid4()),
-        config=dict(
-            type='Enumerated',
-            name='my enumerated processor',
-            description='enumerates all the things',
-            max_size=10,
-        )
-    )
-
-
-@pytest.fixture
 def valid_simple_mixture_predictor_data():
     """Produce valid data used for tests."""
     from citrine.informatics.data_sources import GemTableDataSource
