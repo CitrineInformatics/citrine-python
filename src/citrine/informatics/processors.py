@@ -1,5 +1,4 @@
 """Tools for working with Processors."""
-from abc import abstractmethod
 from typing import Optional, Mapping, Type, List
 from uuid import UUID
 
@@ -30,9 +29,8 @@ class Processor(Module):
             'ContinuousSearch': MonteCarloProcessor
         }[data['config']['type']]
 
-    @abstractmethod
     def _attrs(self) -> List[str]:
-        pass  # pragma: no cover
+        return ["name", "description", "id"]  # pragma: no cover
 
     def __eq__(self, other):
         try:
