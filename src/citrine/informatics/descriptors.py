@@ -1,5 +1,5 @@
 """Tools for working with Descriptors."""
-from typing import Type, Optional, List  # noqa: F401
+from typing import Type, Optional, List, Iterable, Set  # noqa: F401
 
 from citrine._serialization.serializable import Serializable
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
@@ -79,6 +79,10 @@ class RealDescriptor(Serializable['RealDescriptor'], Descriptor):
 
     def __str__(self):
         return "<RealDescriptor {!r}>".format(self.key)
+
+    def __repr__(self):
+        return "RealDescriptor({}, {}, {}, {})".format(
+            self.key, self.lower_bound, self.upper_bound, self.units)
 
 
 class ChemicalFormulaDescriptor(Serializable['ChemicalFormulaDescriptor'], Descriptor):
@@ -169,23 +173,23 @@ class CategoricalDescriptor(Serializable['CategoricalDescriptor'], Descriptor):
 
     key = properties.String('descriptor_key')
     typ = properties.String('type', default='Categorical', deserializable=False)
-    categories = properties.List(properties.String, 'descriptor_values')
+    categories = properties.Set(properties.String, 'descriptor_values')
 
     def __eq__(self, other):
         try:
             attrs = ["key", "categories", "typ"]
             return all([
                 self.__getattribute__(key) == other.__getattribute__(key) for key in attrs
-            ]) and set(self.categories) == set(self.categories + other.categories)
+            ])
         except AttributeError:
             return False
 
-    def __init__(self, key: str, categories: List[str]):
+    def __init__(self, key: str, categories: Iterable[str]):
         self.key: str = key
         for category in categories:
             if not isinstance(category, str):
                 raise TypeError("All categories must be strings")
-        self.categories: List[str] = categories
+        self.categories: Set[str] = set(categories)
 
     def __str__(self):
         return "<CategoricalDescriptor {!r}>".format(self.key)

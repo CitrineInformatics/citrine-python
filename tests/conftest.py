@@ -37,7 +37,7 @@ def valid_product_design_space_data():
                     descriptor=dict(
                         type='Categorical',
                         descriptor_key='color',
-                        descriptor_values=['red', 'green', 'blue'],
+                        descriptor_values={'red', 'green', 'blue'},
                     ),
                     list=['red']
                 )
@@ -72,7 +72,7 @@ def valid_enumerated_design_space_data():
                 dict(
                     type='Categorical',
                     descriptor_key='color',
-                    descriptor_values=['red', 'green', 'blue'],
+                    descriptor_values={'red', 'green', 'blue'},
                 ),
                 dict(
                     type='Inorganic',
