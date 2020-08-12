@@ -437,3 +437,5 @@ Each predictor is trained on the subset of the combined data that is valid for t
 Note, data may come from sources defined by other subpredictors in the graph.
 Because training data are shared by all predictors in the graph, a data source does not need to be redefined by all subpredictors that require it.
 If all data sources required train a predictor are specified elsewhere in the graph, the ``training_data`` parameter may be omitted.
+If the graph contains a predictor that requires formulations data, e.g. a :class:`~citrine.informatics.predictors.SimpleMixturePredictor` or :class:`~citrine.informatics.predictors.GeneralizedMeanPropertyPredictor`, any GEM Tables specified by the graph predictor that contain formulation data must provide a formulation descriptor,
+and this descriptor must match the input formulation descriptor of the sub-predictors that require these data.
