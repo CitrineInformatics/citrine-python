@@ -131,14 +131,6 @@ def enumerate_formulation_grid(
         if k in non_balance_ingrs
     }
 
-    # Check that the grid size is small enough to not cause memory issues
-    non_balance_grid_size = np.prod(
-        [len(grid_points) for grid_points in non_balance_grids.values()]
-    )
-    if non_balance_grid_size > 2E8:
-        warn("Non-balance formulation grid contains {n} grid points. This may cause memory "
-             "issues downstream.".format(n=non_balance_grid_size))
-
     # Start by making a naive product design space of non-balance ingredients
     form_ds = pd.DataFrame(
         enumerate_cartesian_product(
