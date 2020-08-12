@@ -87,7 +87,7 @@ class SimpleMLPredictor(Serializable['SimplePredictor'], Predictor):
     latent_variables: list[Descriptor]
         Descriptors that are predicted from inputs and used when predicting the outputs
     training_data: DataSource
-        Source of the training data, which can be either a CSV or an Ara table
+        Source of the training data, which can be either a CSV or a GEM Table
 
     """
 
@@ -646,7 +646,7 @@ class GeneralizedMeanPropertyPredictor(
         If ``True`` and a default is specified in ``default_properties``, then the specified
         default is used in place of missing values.
     training_data: DataSource
-        Source of the training data, which can be either a CSV or an Ara table
+        Source of the training data, which can be either a CSV or a GEM Table
     label: Optional[str]
         Optional label
     default_properties: Optional[Mapping[str, float]]
@@ -739,7 +739,7 @@ class SimpleMixturePredictor(Serializable['SimpleMixturePredictor'], Predictor):
     output_descriptor: FormulationDescriptor
         output descriptor for the flat (mixed) formulation
     training_data: DataSource
-        Source of the training data, which can be either a CSV or an Ara table
+        Source of the training data, which can be either a CSV or a GEM Table
 
     """
 

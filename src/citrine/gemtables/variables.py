@@ -1,15 +1,15 @@
-"""Variable definitions for Ara."""
+"""Variable definitions for GEM Tables."""
 from abc import abstractmethod
 from typing import Type, Optional, List, Union  # noqa: F401
 
-import citrine.gemtables.variables
-from citrine._utils.functions import shadow_classes_in_module
+from gemd.entity.bounds.base_bounds import BaseBounds
+from gemd.entity.link_by_uid import LinkByUID
+from gemd.enumeration.base_enumeration import BaseEnumeration
 
 from citrine._serialization.serializable import Serializable
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
 from citrine._serialization import properties
-
-CITRINE_SCOPE = 'id'
+from citrine.resources.data_concepts import CITRINE_SCOPE
 
 
 class IngredientQuantityDimension(BaseEnumeration):
@@ -395,7 +395,8 @@ class IngredientQuantityByProcessAndName(
         name of ingredient
     quantity_dimension: IngredientQuantityDimension
         dimension of the ingredient quantity: absolute quantity, number, mass, or volume fraction.
-        valid options are defined by :class:`~citrine.ara.variables.IngredientQuantityDimension`
+        valid options are defined by
+        :class:`~citrine.gemtables.variables.IngredientQuantityDimension`
     type_selector: DataObjectTypeSelector
         strategy for selecting data object types to consider when matching, defaults to PREFER_RUN
 
@@ -479,7 +480,8 @@ class AttributeInOutput(Serializable['AttributeInOutput'], Variable):
 
     Unlike "AttributeByTemplateAfterProcess", AttributeInOutput will also match on the color
     attribute of the pigments in the rows that correspond to those pigments.  This way, all the
-    colors can be assigned to the same variable and rendered into the same columns in the table.
+    colors can be assigned to the same variable and rendered into the same columns in the GEM
+    table.
 
     Parameters
     ---------
@@ -549,17 +551,18 @@ class IngredientIdentifierInOutput(Serializable['IngredientIdentifierInOutput'],
     are included as cutoffs.
 
     In general, this variable should be preferred over an
-    :class:`~citrine.ara.variables.IngredientQuantityByProcessTemplateAndName` when mixtures are
-    hierarchical (i.e. blends of blends). It allows an ingredient with a single name to be used in
+    :class:`~citrine.gemtables.variables.IngredientQuantityByProcessTemplateAndName` when
+    mixtures are hierarchical (i.e. blends of blends).
+    It allows an ingredient with a single name to be used in
     multiple processes without defining additional variables that manifest as additional columns
-    in your table, and must be used in place of the former if the same process template is used to
-    represent mixing at multiple levels in the material history hierarchy. Going back to the
-    previous example, this variable must be used in place of an
-    :class:`~citrine.ara.variables.IngredientQuantityByProcessTemplateAndName` if the same
+    in your GEM table, and must be used in place of the former if the same process template is
+    used to represent mixing at multiple levels in the material history hierarchy. Going back
+    to the previous example, this variable must be used in place of an
+    :class:`~citrine.gemtables.variables.IngredientQuantityByProcessTemplateAndName` if the same
     process template was used to represent the process that mixed red and the final paint.
-    Using :class:`~citrine.ara.variables.IngredientQuantityByProcessTemplateAndName` would result
-    in an ambiguous match because yellow would be found twice in the material history,
-    once when mixing red and again when mixing the final paint.
+    Using :class:`~citrine.gemtables.variables.IngredientQuantityByProcessTemplateAndName`
+    would result in an ambiguous match because yellow would be found twice in the
+    material history, once when mixing red and again when mixing the final paint.
 
     Parameters
     ---------
@@ -582,13 +585,11 @@ class IngredientIdentifierInOutput(Serializable['IngredientIdentifierInOutput'],
     headers = properties.List(properties.String, 'headers')
     ingredient_name = properties.String('ingredient_name')
     process_templates = properties.List(properties.Object(LinkByUID), 'process_templates')
-    scope = properties.String('scope')
     type_selector = properties.Enumeration(DataObjectTypeSelector, "type_selector")
     typ = properties.String('type', default="ing_id_in_output", deserializable=False)
 
     def _attrs(self) -> List[str]:
-        return ["name", "headers", "ingredient_name", "process_templates", "scope",
-                "type_selector", "typ"]
+        return ["name", "headers", "ingredient_name", "process_templates", "type_selector", "typ"]
 
     def __init__(self, *,
                  name: str,
@@ -601,7 +602,6 @@ class IngredientIdentifierInOutput(Serializable['IngredientIdentifierInOutput'],
         self.headers = headers
         self.ingredient_name = ingredient_name
         self.process_templates = process_templates
-        self.scope = scope
         self.type_selector = type_selector
 
 
@@ -620,16 +620,17 @@ class IngredientQuantityInOutput(Serializable['IngredientQuantityInOutput'], Var
     provided the process templates that mixed red and the final paint are included as cutoffs.
 
     In general, this variable should be preferred over an
-    :class:`~citrine.ara.variables.IngredientIdentifierByProcessTemplateAndName` when mixtures are
-    hierarchical (i.e. blends of blends). It allows an ingredient with a single name to be used in
-    multiple processes without defining additional variables that manifest as additional columns
-    in your table, and must be used in place of the former if the same process template is used to
-    represent mixing at multiple levels in the material history hierarchy. Going back to the
-    previous example, this variable must be used in place of an
-    :class:`~citrine.ara.variables.IngredientIdentifierByProcessTemplateAndName` if the same
+    :class:`~citrine.gemtables.variables.IngredientIdentifierByProcessTemplateAndName`
+    when mixtures are hierarchical (i.e. blends of blends). It allows an ingredient with a
+    single name to be used in multiple processes without defining additional variables
+    that manifest as additional columns in your table, and must be used in place of the
+    former if the same process template is used to represent mixing at multiple levels
+    in the material history hierarchy.
+    Going back to the previous example, this variable must be used in place of an
+    :class:`~citrine.gemtables.variables.IngredientIdentifierByProcessTemplateAndName` if the same
     process template was used to represent the process that mixed red and the final paint.
-    Using :class:`~citrine.ara.variables.IngredientIdentifierByProcessTemplateAndName` would result
-    in an ambiguous match because yellow would be found twice in the material history,
+    Using :class:`~citrine.gemtables.variables.IngredientIdentifierByProcessTemplateAndName`
+    would result in an ambiguous match because yellow would be found twice in the material history,
     once when mixing red and again when mixing the final paint.
 
     Parameters
@@ -642,7 +643,8 @@ class IngredientQuantityInOutput(Serializable['IngredientQuantityInOutput'], Var
         Name of the ingredient to search for
     quantity_dimension: IngredientQuantityDimension
         dimension of the ingredient quantity: absolute quantity, number, mass, or volume fraction.
-        valid options are defined by :class:`~citrine.ara.variables.IngredientQuantityDimension`
+        valid options are defined by
+        :class:`~citrine.gemtables.variables.IngredientQuantityDimension`
     process_templates: list[LinkByUID]
         Process templates halt the search for a matching ingredient name.
         These process templates are inclusive.
@@ -686,12 +688,13 @@ class XOR(Serializable['XOR'], Variable):
     undefined.
 
     XOR can only operate on inputs with the same output type. For example, you may XOR
-    :class:`~citrine.ara.variables.RootIdentifier` with
-    :class:`~citrine.ara.variables.IngredientIdentifierByProcessTemplateAndName` because they both
-    produce simple strings, but not with :class:`~citrine.ara.variables.IngredientQuantityInOutput`
+    :class:`~citrine.gemtables.variables.RootIdentifier` with
+    :class:`~citrine.gemtables.variables.IngredientIdentifierByProcessTemplateAndName`
+    because they both produce simple strings, but not with
+    :class:`~citrine.gemtables.variables.IngredientQuantityInOutput`
     which produces a real numeric quantity.
 
-    The input variables to XOR need not exist elsewhere in the table definition, and the name and
+    The input variables to XOR need not exist elsewhere in the table config, and the name and
     headers assigned to them have no bearing on how the table is constructed. That they are
     required at all is simply a limitation of the current API.
 

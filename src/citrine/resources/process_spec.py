@@ -6,7 +6,7 @@ from citrine._rest.resource import Resource
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Optional as PropertyOptional
 from citrine._serialization.properties import String, Mapping, Object, LinkOrElse
-from citrine.resources.data_concepts import DataConcepts
+from citrine.resources.data_concepts import DataConcepts, CITRINE_SCOPE
 from citrine.resources.object_specs import ObjectSpec, ObjectSpecCollection
 from gemd.entity.attribute.condition import Condition
 from gemd.entity.attribute.parameter import Parameter
@@ -104,7 +104,8 @@ class ProcessSpecCollection(ObjectSpecCollection[ProcessSpec]):
         """Return the resource type in the collection."""
         return ProcessSpec
 
-    def list_by_template(self, uid: Union[UUID, str], scope: str = 'id') -> Iterator[ProcessSpec]:
+    def list_by_template(self, uid: Union[UUID, str],
+                         scope: str = CITRINE_SCOPE) -> Iterator[ProcessSpec]:
         """
         [ALPHA] Get the process specs using the specified process template.
 

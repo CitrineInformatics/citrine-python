@@ -1,26 +1,38 @@
-from warnings import warn
+from copy import copy
+from logging import getLogger
+from typing import List, Union, Optional, Tuple
+from uuid import UUID
 
-from citrine.resources.table_config import TableConfig
-from citrine.resources.table_config import TableConfigCollection
+from deprecation import deprecated
+from gemd.entity.object import MaterialRun
 
+from citrine.resources.job import JobSubmissionResponse, JobStatusResponse
+from gemd.entity.link_by_uid import LinkByUID
 
-# This is provided for backwards compatibility with the old Ara related names
-
-CITRINE_SCOPE = 'id'
+from citrine._rest.collection import Collection
+from citrine._rest.resource import Resource
+from citrine._serialization import properties
+from citrine._session import Session
+from citrine.resources.data_concepts import CITRINE_SCOPE
+from citrine.resources.process_template import ProcessTemplate  # noqa: F401
+from citrine.gemtables.columns import Column, MeanColumn, IdentityColumn, OriginalUnitsColumn
+from citrine.gemtables.rows import Row
+from citrine.gemtables.variables import Variable, IngredientIdentifierByProcessTemplateAndName, \
+    IngredientQuantityByProcessAndName, IngredientQuantityDimension
 
 logger = getLogger(__name__)
 
 
-class AraDefinition(Resource["AraDefinition"]):
+class TableConfig(Resource["TableConfig"]):
     """
-    [ALPHA] The definition of an Ara Table.
+    [ALPHA] The Table Configuration used to build GEM Tables.
 
     Parameters
     ----------
     name: str
-        Name of the table being defined
+        Name of the Table Configuration
     description: str
-        Description of the table being defined
+        Description of the Table Configuration
     datasets: list[UUID]
         Datasets that are in scope for the table, as a list of dataset uuids
     variables: list[Variable]
@@ -32,6 +44,7 @@ class AraDefinition(Resource["AraDefinition"]):
 
     """
 
+    # FIXME (DML): rename this (this is dependent on the server side)
     _response_key = "ara_definition"
 
     @staticmethod
@@ -39,7 +52,7 @@ class AraDefinition(Resource["AraDefinition"]):
         # Hmmn, this looks like a potentially costly operation?!
         return [x for x in lst if lst.count(x) > 1]
 
-    definition_uid = properties.Optional(properties.UUID(), 'definition_id')
+    config_uid = properties.Optional(properties.UUID(), 'definition_id')
     version_uid = properties.Optional(properties.UUID(), 'id')
     version_number = properties.Optional(properties.Integer, 'version_number')
     name = properties.String("name")
@@ -49,10 +62,27 @@ class AraDefinition(Resource["AraDefinition"]):
     rows = properties.List(properties.Object(Row), "rows")
     columns = properties.List(properties.Object(Column), "columns")
 
+    # Provide some backwards compatible support for definition_uid, redirecting to config_uid
+    @property
+    def definition_uid(self):
+        """[[DEPRECATED]] This is a deprecated alias to config_uid. Please use that instead."""
+        from warnings import warn
+        warn("definition_uid is deprecated and will soon be removed. "
+             "Please use config_uid instead", DeprecationWarning)
+        return self.config_uid
+
+    @definition_uid.setter
+    def definition_uid(self, value):  # pragma: no cover
+        """[[DEPRECATED]] This is a deprecated alias to config_uid. Please use that instead."""
+        from warnings import warn
+        warn("definition_uid is deprecated and will soon be removed. "
+             "Please use config_uid instead", DeprecationWarning)
+        self.config_uid = value
+
     def __init__(self, *, name: str, description: str, datasets: List[UUID],
                  variables: List[Variable], rows: List[Row], columns: List[Column],
                  version_uid: Optional[UUID] = None, version_number: Optional[int] = None,
-                 definition_uid: Optional[UUID] = None):
+                 definition_uid: Optional[UUID] = None, config_uid: Optional[UUID] = None):
         self.name = name
         self.description = description
         self.datasets = datasets
@@ -61,7 +91,13 @@ class AraDefinition(Resource["AraDefinition"]):
         self.columns = columns
         self.version_uid = version_uid
         self.version_number = version_number
-        self.definition_uid = definition_uid
+
+        if config_uid is not None:
+            assert definition_uid is None, "Please supply config_uid " \
+                                           "instead of definition_uid, and not both"
+            self.config_uid = config_uid
+        else:
+            self.config_uid = definition_uid
 
         # Note that these validations only apply at construction time. The current intended usage
         # is for this object to be created holistically; if changed, then these will need
@@ -87,8 +123,8 @@ class AraDefinition(Resource["AraDefinition"]):
                     columns: List[Column],
                     name: Optional[str] = None,
                     description: Optional[str] = None
-                    ) -> 'AraDefinition':
-        """[ALPHA] Add a variable and one or more columns to this AraDefinition (out-of-place).
+                    ) -> 'TableConfig':
+        """[ALPHA] Add a variable and one or more columns to this TableConfig (out-of-place).
 
         This method checks that the variable name is not already in use and that the columns
         only reference that variable.  It is *not* able to check if the columns and the variable
@@ -114,7 +150,7 @@ class AraDefinition(Resource["AraDefinition"]):
             raise ValueError("Column.data_source must be {} but found {}"
                              .format(variable.name, mismatched_data_source))
 
-        return AraDefinition(
+        return TableConfig(
             name=name or self.name,
             description=description or self.description,
             datasets=copy(self.datasets),
@@ -127,8 +163,7 @@ class AraDefinition(Resource["AraDefinition"]):
                             process_template: LinkByUID,
                             project,
                             quantity_dimension: IngredientQuantityDimension,
-                            scope: str = CITRINE_SCOPE
-                            ):
+                            scope: str = CITRINE_SCOPE):
         """[ALPHA] Add variables and columns for all of the possible ingredients in a process.
 
         For each allowed ingredient name in the process template there is a column for the if of
@@ -187,7 +222,7 @@ class AraDefinition(Resource["AraDefinition"]):
             if quantity_dimension == IngredientQuantityDimension.ABSOLUTE:
                 new_columns.append(OriginalUnitsColumn(data_source=quantity_variable.name))
 
-        return AraDefinition(
+        return TableConfig(
             name=self.name,
             description=self.description,
             datasets=copy(self.datasets),
@@ -197,12 +232,13 @@ class AraDefinition(Resource["AraDefinition"]):
         )
 
 
-class AraDefinitionCollection(Collection[AraDefinition]):
-    """[ALPHA] Represents the collection of all Ara Definitions associated with a project."""
+class TableConfigCollection(Collection[TableConfig]):
+    """[ALPHA] Represents the collection of all Table Configs associated with a project."""
 
+    # FIXME (DML): use newly named properties when they're available
     _path_template = 'projects/{project_id}/ara-definitions'
     _collection_key = 'definitions'
-    _resource = AraDefinition
+    _resource = TableConfig
 
     # NOTE: This isn't actually an 'individual key' - both parts (version and
     # definition) are necessary
@@ -212,29 +248,29 @@ class AraDefinitionCollection(Collection[AraDefinition]):
         self.project_id = project_id
         self.session: Session = session
 
-    def get_with_version(self, definition_uid: Union[UUID, str],
-                         version_number: int) -> AraDefinition:
-        """[ALPHA] Get an Ara Definition at a specific version."""
-        path = self._get_path(definition_uid) + "/versions/{}".format(version_number)
+    def get_with_version(self, table_config_uid: Union[UUID, str],
+                         version_number: int) -> TableConfig:
+        """[ALPHA] Get a Table Config at a specific version."""
+        path = self._get_path(table_config_uid) + "/versions/{}".format(version_number)
         data = self.session.get_resource(path)
         data = data[self._individual_key] if self._individual_key else data
         return self.build(data)
 
-    def build(self, data: dict) -> AraDefinition:
-        """[ALPHA] Build an individual Ara Definition from a dictionary."""
+    def build(self, data: dict) -> TableConfig:
+        """[ALPHA] Build an individual Table Config from a dictionary."""
         version_data = data['version']
-        defn = AraDefinition.build(version_data['ara_definition'])
-        defn.version_number = version_data['version_number']
-        defn.version_uid = version_data['id']
-        defn.definition_uid = data['definition']['id']
-        defn.project_id = self.project_id
-        defn.session = self.session
-        return defn
+        table_config = TableConfig.build(version_data['ara_definition'])
+        table_config.version_number = version_data['version_number']
+        table_config.version_uid = version_data['id']
+        table_config.config_uid = data['definition']['id']
+        table_config.project_id = self.project_id
+        table_config.session = self.session
+        return table_config
 
     def default_for_material(
             self, *, material: Union[MaterialRun, str, UUID],
             name: str, description: str = None, scope: str = None
-    ) -> Tuple[AraDefinition, List[Tuple[Variable, Column]]]:
+    ) -> Tuple[TableConfig, List[Tuple[Variable, Column]]]:
         """
         [ALPHA] Build best-guess default table config for provided terminal material's history.
 
@@ -290,26 +326,26 @@ class AraDefinitionCollection(Collection[AraDefinition]):
             'projects/{}/table-configs/default'.format(self.project_id),
             params=params,
         )
-        config = AraDefinition.build(data['config'])
+        config = TableConfig.build(data['config'])
         ambiguous = [(Variable.build(v), Column.build(c)) for v, c in data['ambiguous']]
         return config, ambiguous
 
     @deprecated(details='Please use TableCollection.build_from config or '
                         'TableCollection.initiate_build')
-    def build_ara_table(self, ara_def: AraDefinition) -> JobSubmissionResponse:
-        """[ALPHA] submit an ara table construction job.
+    def build_ara_table(self, ara_def: TableConfig) -> JobSubmissionResponse:
+        """[ALPHA] submit a Table construction job.
 
         This method makes a call out to the job framework to start a new job to build
-        the respective table for a given AraDefinition.
+        the respective table for a given Table Config.
 
         Parameters
         ----------
-        ara_def: AraDefinition
-            the ara definition describing the new table
+        ara_def: TableConfig
+            the Table Config describing the new table
 
         """
-        from citrine.resources.table import TableCollection
-        table_collection = TableCollection(self.project_id, self.session)
+        from citrine.resources.gemtables import GemTableCollection
+        table_collection = GemTableCollection(self.project_id, self.session)
         return table_collection.initiate_build(ara_def, None)
 
     @deprecated(details='Table build job status does not have a stable format. Please use '
@@ -332,72 +368,72 @@ class AraDefinitionCollection(Collection[AraDefinition]):
         response: dict = self.session.get_resource(path=path)
         return JobStatusResponse.build(response)
 
-    def preview(self, defn: AraDefinition, preview_roots: List[LinkByUID]) -> dict:
-        """[ALPHA] Preview an AraDefinition on an explicit set of roots.
+    def preview(self, table_config: TableConfig, preview_roots: List[LinkByUID]) -> dict:
+        """[ALPHA] Preview a Table Config on an explicit set of roots.
 
          Parameters
         ----------
-        defn: AraDefinition
-            Definition to preview
+        defn: TableConfig
+            Table Config to preview
         preview_roots: list[LinkByUID]
             List of links to the material history roots to use in the preview
 
         """
         path = self._get_path() + "/preview"
         body = {
-            "definition": defn.dump(),
+            "definition": table_config.dump(),
             "rows": [x.as_dict() for x in preview_roots]
         }
         return self.session.post_resource(path, body)
 
-    def register(self, defn: AraDefinition) -> AraDefinition:
-        """[ALPHA] Register an Ara Definition.
+    def register(self, table_config: TableConfig) -> TableConfig:
+        """[ALPHA] Register a Table Config.
 
-        If the provided AraDefinition does not have a definition_uid, create a new element of the
-        AraDefinitionCollection by registering the provided AraDefinition. If the provided
-        AraDefinition does have a uid, update (replace) the AraDefinition at that uid with the
-        provided AraDefinition.
+        If the provided TableConfig does not have a definition_uid, create a new element of the
+        TableConfigCollection by registering the provided TableConfig. If the provided
+        TableConfig does have a uid, update (replace) the TableConfig at that uid with the
+        provided TableConfig.
 
-        :param defn: The AraDefinition to register
+        :param table_config: The TableConfig to register
 
-        :return: The registered AraDefinition with updated metadata
+        :return: The registered TableConfig with updated metadata
 
         TODO: Consider validating that a resource exists at the given uid before updating.
             The code to do so is not yet implemented on the backend
         """
-        # TODO: This is dumping our AraDefinition (which encapsulates both
-        #  the definition properties, versioned properties, as well as the
-        #  definition JSON) into the Ara Definition JSON blob ('definition')
+        # TODO: This is dumping our TableConfig (which encapsulates both
+        #  the table config properties, versioned table config properties, as well as the
+        #  underlying table config JSON blob) into the Table Config's JSON blob ('definition')
         #  - probably not ideal.
-        body = {"definition": defn.dump()}
-        if defn.definition_uid is None:
+        body = {"definition": table_config.dump()}
+        if table_config.config_uid is None:
             data = self.session.post_resource(self._get_path(), body)
             data = data[self._individual_key] if self._individual_key else data
             return self.build(data)
         else:
             # Implement update as a part of register both because:
             # 1) The validation requirements are the same for updating and registering an
-            #    AraDefinition
-            # 2) This prevents users from accidentally registering duplicate AraDefinitions
-            data = self.session.put_resource(self._get_path(defn.definition_uid), body)
+            #    TableConfig
+            # 2) This prevents users from accidentally registering duplicate Table Configs
+            data = self.session.put_resource(self._get_path(table_config.config_uid), body)
             data = data[self._individual_key] if self._individual_key else data
             return self.build(data)
 
-    def update(self, defn: AraDefinition) -> AraDefinition:
+    def update(self, table_config: TableConfig) -> TableConfig:
         """
-        [ALPHA] Update an AraDefinition.
+        [ALPHA] Update a Table Config.
 
-        If the provided AraDefinition does have a uid, update (replace) the AraDefinition at that
-        uid with the provided AraDefinition.
+        If the provided Table Config does have a uid, update (replace) the Table Config at that
+        uid with the provided TableConfig.
 
-        Raise a ValueError if the provided AraDefinition does not have a definition_uid.
+        Raise a ValueError if the provided Table Config does not have a config_uid.
 
-        :param defn: The AraDefinition to updated
-        :return: The updated AraDefinition with updated metadata
+        :param table_config: The Table Config to updated
+        :return: The updated Table Config with updated metadata
         """
-        if defn.definition_uid is None:
-            raise ValueError("Cannot update Ara Definition without a definition_uid."
+        if table_config.config_uid is None:
+            raise ValueError("Cannot update Table Config without a config_uid."
                              " Please either use register() to initially register this"
-                             " Ara Definition or retrieve the registered details before calling"
+                             " Table Config or retrieve the registered details before calling"
                              " update()")
-        return self.register(defn)
+        return self.register(table_config)

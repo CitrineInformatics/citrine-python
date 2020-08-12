@@ -27,7 +27,7 @@ The following example demonstrates how to use the python SDK to create a :class:
    from time import sleep
    from citrine import Citrine
    from citrine.informatics.predictors import SimpleMLPredictor
-   from citrine.informatics.data_sources import AraTableDataSource
+   from citrine.informatics.data_sources import GemTableDataSource
 
    # create a session with citrine using your API key
    session = Citrine(api_key = API_KEY)
@@ -43,7 +43,7 @@ The following example demonstrates how to use the python SDK to create a :class:
        inputs = [input_descriptor_1, input_descriptor_2],
        outputs = [output_descriptor_1, output_descriptor_2],
        latent_variables = [latent_variable_descriptor_1],
-       training_data = AraTableDataSource(training_data_table_uid, 0)
+       training_data = GemTableDataSource(training_data_table_uid, 0)
    )
 
    # register predictor
@@ -208,7 +208,7 @@ The following example illustrates how an :class:`~citrine.informatics.predictors
     salt_quantity = RealDescriptor('salt quantity', 0, 1)
 
     # table with simple mixtures and their ingredients
-    data_source = AraTableDataSource(table_uid, 0)
+    data_source = GemTableDataSource(table_uid, 0)
 
     IngredientsToSimpleMixturePredictor(
         name='Ingredients to simple mixture predictor',
@@ -250,7 +250,7 @@ The following example illustrates how a :class:`~citrine.informatics.predictors.
     output_formulation = FormulationDescriptor('diluted saline (flattened)')
 
     # table with simple mixtures and their ingredients
-    data_source = AraTableDataSource(table_uid, 0)
+    data_source = GemTableDataSource(table_uid, 0)
 
     SimpleMixturePredictor(
         name='Simple mixture predictor',
@@ -316,7 +316,7 @@ The example below show how to configure a mean property predictor to compute mea
 
 .. code:: python
 
-    from citrine.informatics.data_sources import AraTableDataSource
+    from citrine.informatics.data_sources import GemTableDataSource
     from citrine.informatics.descriptors import FormulationDescriptor
     from citrine.informatics.predictors import GeneralizedMeanPropertyPredictor
 
@@ -324,7 +324,7 @@ The example below show how to configure a mean property predictor to compute mea
     formulation = FormulationDescriptor('simple mixture')
 
     # table with simple mixtures and their ingredients
-    data_source = AraTableDataSource(table_uid, 0)
+    data_source = GemTableDataSource(table_uid, 0)
 
     GeneralizedMeanPropertyPredictor(
         name='Mean property predictor',
