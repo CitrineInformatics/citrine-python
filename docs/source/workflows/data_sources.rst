@@ -145,7 +145,9 @@ GEM Table Data Source
 
 An :class:`~citrine.informatics.data_sources.GemTableDataSource` references a GEM Table.
 As explained more in the :doc:`documentation <../data_extraction>`, GEM Tables provide a structured version of on-platform data.
-GEM Tables are specified by the display table uuid and version number.
+GEM Tables are specified by the display table uuid, version number and optional formulation descriptor.
+A formulation descriptor must be specified if formulations should be built from the data source.
+If specified, any formulations emitted by the data source are stored using the provided descriptor.
 The example below assumes that the uuid and the version of the desired GEM Table are known.
 
 .. code:: python
@@ -172,6 +174,6 @@ The example below assumes that the uuid and the version of the desired GEM Table
         training_data = data_source
     )
 
-  Note that the descriptor keys above are the headers of the *variable* not the column in the table.
-  The last term in the column header is a suffix associated with the specific column definition rather than the variable.
-  It should be omitted from the descriptor key.
+Note that the descriptor keys above are the headers of the *variable* not the column in the table.
+The last term in the column header is a suffix associated with the specific column definition rather than the variable.
+It should be omitted from the descriptor key.
