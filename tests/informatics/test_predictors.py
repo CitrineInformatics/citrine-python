@@ -4,7 +4,7 @@ import uuid
 import mock
 import pytest
 
-from citrine.informatics.data_sources import AraTableDataSource
+from citrine.informatics.data_sources import GemTableDataSource
 from citrine.informatics.descriptors import RealDescriptor, MolecularStructureDescriptor, FormulationDescriptor
 from citrine.informatics.predictors import ExpressionPredictor, GraphPredictor, SimpleMLPredictor, \
     MolecularStructureFeaturizer, GeneralizedMeanPropertyPredictor, IngredientsToSimpleMixturePredictor, \
@@ -20,7 +20,8 @@ formulation = FormulationDescriptor('formulation')
 formulation_output = FormulationDescriptor('output formulation')
 water_quantity = RealDescriptor('water quantity', 0, 1)
 salt_quantity = RealDescriptor('salt quantity', 0, 1)
-data_source = AraTableDataSource(uuid.UUID('e5c51369-8e71-4ec6-b027-1f92bdc14762'), 0)
+data_source = GemTableDataSource(uuid.UUID('e5c51369-8e71-4ec6-b027-1f92bdc14762'), 0)
+formulation_data_source = GemTableDataSource(uuid.UUID('6894a181-81d2-4304-9dfa-a6c5b114d8bc'), 0, formulation)
 
 
 @pytest.fixture
@@ -111,7 +112,7 @@ def generalized_mean_property_predictor() -> GeneralizedMeanPropertyPredictor:
         input_descriptor=formulation,
         properties=['density'],
         p=2,
-        training_data=[data_source],
+        training_data=[formulation_data_source],
         impute_properties=True,
         default_properties={'density': 1.0},
         label='solvent'
@@ -126,7 +127,7 @@ def simple_mixture_predictor() -> SimpleMixturePredictor:
         description='Computes mean ingredient properties',
         input_descriptor=formulation,
         output_descriptor=formulation_output,
-        training_data=[data_source]
+        training_data=[formulation_data_source]
     )
 
 
@@ -308,7 +309,7 @@ def test_generalized_mean_property_initialization(generalized_mean_property_pred
     assert generalized_mean_property_predictor.properties == ['density']
     assert generalized_mean_property_predictor.p == 2
     assert generalized_mean_property_predictor.impute_properties == True
-    assert generalized_mean_property_predictor.training_data == [data_source]
+    assert generalized_mean_property_predictor.training_data == [formulation_data_source]
     assert generalized_mean_property_predictor.default_properties == {'density': 1.0}
     assert generalized_mean_property_predictor.label == 'solvent'
     expected_str = '<GeneralizedMeanPropertyPredictor \'Mean property predictor\'>'
@@ -353,7 +354,7 @@ def test_simple_mixture_predictor_initialization(simple_mixture_predictor):
     assert simple_mixture_predictor.name == 'Simple mixture predictor'
     assert simple_mixture_predictor.input_descriptor.key == 'formulation'
     assert simple_mixture_predictor.output_descriptor.key == 'output formulation'
-    assert simple_mixture_predictor.training_data == [data_source]
+    assert simple_mixture_predictor.training_data == [formulation_data_source]
     expected_str = '<SimpleMixturePredictor \'Simple mixture predictor\'>'
     assert str(simple_mixture_predictor) == expected_str
 

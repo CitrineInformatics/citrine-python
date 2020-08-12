@@ -11,7 +11,7 @@ from citrine._rest.resource import Resource
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Optional as PropertyOptional
 from citrine._serialization.properties import String, LinkOrElse, Mapping, Object
-from citrine.resources.data_concepts import DataConcepts
+from citrine.resources.data_concepts import DataConcepts, CITRINE_SCOPE
 from citrine.resources.material_spec import MaterialSpecCollection
 from citrine.resources.object_runs import ObjectRun, ObjectRunCollection
 from gemd.entity.file_link import FileLink
@@ -21,7 +21,6 @@ from gemd.entity.object.material_spec import MaterialSpec as GEMDMaterialSpec
 from gemd.entity.object.process_run import ProcessRun as GEMDProcessRun
 from gemd.json import GEMDEncoder
 from gemd.util import writable_sort_order
-
 
 logger = getLogger(__name__)
 
@@ -153,7 +152,9 @@ class MaterialRunCollection(ObjectRunCollection[MaterialRun]):
         return MaterialRun.get_json_support().loads(
             json.dumps(blob, cls=GEMDEncoder, sort_keys=True))
 
-    def get_by_process(self, uid: Union[UUID, str], scope: str = 'id') -> Optional[MaterialRun]:
+    def get_by_process(self,
+                       uid: Union[UUID, str],
+                       scope: str = CITRINE_SCOPE) -> Optional[MaterialRun]:
         """
         [ALPHA] Get output material of a process.
 
@@ -175,7 +176,7 @@ class MaterialRunCollection(ObjectRunCollection[MaterialRun]):
     @deprecation.deprecated(details='Use list_by_spec instead.')
     def filter_by_spec(self,
                        spec_id: str,
-                       spec_scope: str = 'id',
+                       spec_scope: str = CITRINE_SCOPE,
                        per_page: int = None) -> Iterator[MaterialRun]:
         """
         [ALPHA] Get all material runs associated with a material spec.
@@ -196,7 +197,7 @@ class MaterialRunCollection(ObjectRunCollection[MaterialRun]):
     @deprecation.deprecated(details='Use list_by_template instead.')
     def filter_by_template(self,
                            template_id: str,
-                           template_scope: str = 'id',
+                           template_scope: str = CITRINE_SCOPE,
                            per_page: int = None) -> Iterator[MaterialRun]:
         """
         [ALPHA] Get all material runs associated with a material template.
@@ -215,7 +216,9 @@ class MaterialRunCollection(ObjectRunCollection[MaterialRun]):
             logger.warning('The per_page parameter will be ignored. Please remove it.')
         return self.list_by_template(uid=template_id, scope=template_scope)
 
-    def list_by_spec(self, uid: Union[UUID, str], scope: str = 'id') -> Iterator[MaterialRun]:
+    def list_by_spec(self,
+                     uid: Union[UUID, str],
+                     scope: str = CITRINE_SCOPE) -> Iterator[MaterialRun]:
         """
         [ALPHA] Get the material runs using the specified material spec.
 
@@ -234,7 +237,7 @@ class MaterialRunCollection(ObjectRunCollection[MaterialRun]):
         return self._get_relation('material-specs', uid=uid, scope=scope)
 
     def list_by_template(self, uid: Union[UUID, str],
-                         scope: str = 'id') -> Iterator[MaterialRun]:
+                         scope: str = CITRINE_SCOPE) -> Iterator[MaterialRun]:
         """
         [ALPHA] Get the material runs using the specified material template.
 
@@ -252,5 +255,5 @@ class MaterialRunCollection(ObjectRunCollection[MaterialRun]):
         """
         spec_collection = MaterialSpecCollection(self.project_id, self.dataset_id, self.session)
         specs = spec_collection.list_by_template(uid=uid, scope=scope)
-        return (run for runs in (self.list_by_spec(spec.uids['id']) for spec in specs)
+        return (run for runs in (self.list_by_spec(spec.uids[CITRINE_SCOPE]) for spec in specs)
                 for run in runs)

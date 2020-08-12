@@ -6,7 +6,7 @@ from gemd.entity.bounds.real_bounds import RealBounds
 from gemd.entity.link_by_uid import LinkByUID
 
 from citrine._utils.functions import get_object_id, validate_type, object_to_link_by_uid, \
-    rewrite_s3_links_locally, write_file_locally
+    rewrite_s3_links_locally, write_file_locally, shadow_classes_in_module
 from gemd.entity.attribute.property import Property
 from citrine.resources.condition_template import ConditionTemplate
 
@@ -81,3 +81,21 @@ def test_write_file_locally(mock_makedirs, mock_join, mock_isdir):
 def test_write_file_locally_fails_with_no_filename():
     with pytest.raises(ValueError):
         write_file_locally(b"anything", "/user/is/")
+
+
+def test_shadow_classes_in_module():
+
+    # Given
+    from tests._util import source_mod, target_mod
+    assert getattr(target_mod, 'ExampleClass', None) == None
+
+    # When
+    shadow_classes_in_module(source_mod, target_mod)
+
+    # Then (ensure the class is copied over)
+    copied_class = getattr(target_mod, 'ExampleClass', None) # Do this vs a direct ref so IJ doesn't warn us
+    assert copied_class == source_mod.ExampleClass
+
+    # Python also considers the classes equivalent
+    assert issubclass(copied_class, source_mod.ExampleClass)
+    assert issubclass(source_mod.ExampleClass, copied_class)

@@ -87,7 +87,7 @@ class SimpleMLPredictor(Serializable['SimplePredictor'], Predictor):
     latent_variables: list[Descriptor]
         Descriptors that are predicted from inputs and used when predicting the outputs
     training_data: Optional[List[DataSource]]
-        Sources of training data. Each can be either a CSV or an Ara table.
+        Sources of training data. Each can be either a CSV or an GEM Table.
         Candidates from multiple data sources will be combined into a flattened list and deduplicated by uid
         and identifiers. Deduplication is performed if a uid or identifier is shared between two or more rows.
         The content of a deduplicated row will contain the union of data across all rows that share the same uid
@@ -563,7 +563,7 @@ class MolecularStructureFeaturizer(Serializable['MolecularStructureFeaturizer'],
 
 
 class IngredientsToSimpleMixturePredictor(
-    Serializable['IngredientsToSimpleMixturePredictor'], Predictor):
+        Serializable['IngredientsToSimpleMixturePredictor'], Predictor):
     """[ALPHA] A predictor interface that constructs a simple mixture from ingredient quantities.
 
     Parameters
@@ -638,7 +638,7 @@ class IngredientsToSimpleMixturePredictor(
 
 
 class GeneralizedMeanPropertyPredictor(
-    Serializable['GeneralizedMeanPropertyPredictor'], Predictor):
+        Serializable['GeneralizedMeanPropertyPredictor'], Predictor):
     """[ALPHA] A predictor interface that computes generalized mean component properties.
 
     Parameters
@@ -663,7 +663,7 @@ class GeneralizedMeanPropertyPredictor(
     label: Optional[str]
         Optional label
     training_data: Optional[List[DataSource]]
-        Sources of training data. Each can be either a CSV or an Ara table.
+        Sources of training data. Each can be either a CSV or an GEM Table.
         Candidates from multiple data sources will be combined into a flattened list and deduplicated by uid
         and identifiers. Deduplication is performed if a uid or identifier is shared between two or more rows.
         The content of a deduplicated row will contain the union of data across all rows that share the same uid
@@ -759,7 +759,7 @@ class SimpleMixturePredictor(Serializable['SimpleMixturePredictor'], Predictor):
     output_descriptor: FormulationDescriptor
         output descriptor for the flat (mixed) formulation
     training_data: Optional[List[DataSource]]
-        Sources of training data. Each can be either a CSV or an Ara table.
+        Sources of training data. Each can be either a CSV or an GEM Table.
         Candidates from multiple data sources will be combined into a flattened list and deduplicated by uid
         and identifiers. Deduplication is performed if a uid or identifier is shared between two or more rows.
         The content of a deduplicated row will contain the union of data across all rows that share the same uid

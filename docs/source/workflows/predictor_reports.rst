@@ -61,7 +61,7 @@ Assume that there is a training data table with known id and version.
 
     from citrine.informatics.predictors import SimpleMLPredictor
     from citrine.informatics.descriptors import RealDescriptor
-    from citrine.informatics.data_sources import AraTableDataSource
+    from citrine.informatics.data_sources import GemTableDataSource
 
     # create input descriptors
     x = RealDescriptor('x', lower_bound=0, upper_bound=10)
@@ -76,7 +76,7 @@ Assume that there is a training data table with known id and version.
            inputs=[x, y],
            latent_variables=[],
            outputs=[z],
-           training_data=[AraTableDataSource(
+           training_data=[GemTableDataSource(
             table_id = training_table_id,
             table_version = training_table_version
            )]
