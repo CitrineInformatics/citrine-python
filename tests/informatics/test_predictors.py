@@ -404,6 +404,7 @@ def test_wrap_training_data():
     assert predictor_without_data.training_data == []
 
     with warnings.catch_warnings(record=True) as w:
+        warnings.simplefilter("always")
         predictor_single_data_source = GraphPredictor(
             name="",
             description="",
