@@ -150,6 +150,10 @@ Ingredients to simple mixture predictor
 ---------------------------------------
 
 The :class:`~citrine.informatics.predictors.IngredientsToSimpleMixturePredictor` constructs a simple mixture from a list of ingredients.
+This predictor is only required to construct simple mixtures from CSV data sources.
+Formulations are constructed automatically by GEM Tables when a ``formulation_descriptor`` is specified by the data source, so
+an :class:`~citrine.informatics.predictors.IngredientsToSimpleMixturePredictor` in not required in those cases.
+
 Ingredients are specified by a map from ingredient id to the descriptor that contains the ingredient's quantity.
 For example, ``{'water': RealDescriptor('water quantity', 0, 1}`` defines an ingredient ``water`` with quantity held by the descriptor ``water quantity``.
 There must be a corresponding (id, quantity) pair in the map for all possible ingredients.
@@ -200,15 +204,27 @@ The following example illustrates how an :class:`~citrine.informatics.predictors
     from citrine.informatics.descriptors import FormulationDescriptor, RealDescriptor
     from citrine.informatics.predictors import IngredientsToSimpleMixturePredictor
 
-    # create a descriptor to hold simple mixtures
-    formulation = FormulationDescriptor('simple mixture')
+    file_link = dataset.files.upload("./saline_solutions.csv", "saline_solutions.csv")
 
     # create descriptors for each ingredient quantity
     water_quantity = RealDescriptor('water quantity', 0, 1)
     salt_quantity = RealDescriptor('salt quantity', 0, 1)
 
-    # table with simple mixtures and their ingredients
-    data_source = GemTableDataSource(table_uid, 0)
+    # create a descriptor to hold density data
+    density = RealDescriptor('density', lower_bound=0, upper_bound=1000, units='g/cc')
+
+    data_source = CSVDataSource(
+        file_link = file_link,
+        column_definitions = {
+            'water quantity': water_quantity,
+            'salt quantity': salt_quantity,
+            'density': density
+        },
+        identifiers=['Ingredient id']
+    )
+
+    # create a descriptor to hold simple mixtures
+    formulation = FormulationDescriptor('simple mixture')
 
     IngredientsToSimpleMixturePredictor(
         name='Ingredients to simple mixture predictor',
@@ -250,7 +266,7 @@ The following example illustrates how a :class:`~citrine.informatics.predictors.
     output_formulation = FormulationDescriptor('diluted saline (flattened)')
 
     # table with simple mixtures and their ingredients
-    data_source = GemTableDataSource(table_uid, 0)
+    data_source = GemTableDataSource(table_uid, 0, input_descriptor)
 
     SimpleMixturePredictor(
         name='Simple mixture predictor',
@@ -324,7 +340,7 @@ The example below show how to configure a mean property predictor to compute mea
     formulation = FormulationDescriptor('simple mixture')
 
     # table with simple mixtures and their ingredients
-    data_source = GemTableDataSource(table_uid, 0)
+    data_source = GemTableDataSource(table_uid, 0, formulation)
 
     GeneralizedMeanPropertyPredictor(
         name='Mean property predictor',
