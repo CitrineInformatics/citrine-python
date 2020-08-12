@@ -1,5 +1,6 @@
 """Tools for working with Predictors."""
 # flake8: noqa
+from collections import Iterable
 from typing import List, Optional, Type, Union, Mapping
 from uuid import UUID
 from warnings import warn
@@ -65,6 +66,28 @@ class Predictor(Module):
                 '{} is not a valid predictor type. '
                 'Must be in {}.'.format(data['config']['type'], type_dict.keys())
             )
+
+    def _wrap_training_data(self, training_data: Optional[Union[DataSource, List[DataSource]]]) -> List[DataSource]:
+        """
+        Converts ``None`` to an empty list and wraps a single data source in a list that contains a single element.
+
+        Parameters
+        ----------
+        training_data: Optional[Union[DataSource, List[DataSource]]]
+            Either a single data source, list of data sources or ``None``
+        Returns
+        -------
+        List[DataSource]
+            A list of data sources
+        """
+        if training_data is None:
+            return []
+        if not isinstance(training_data, Iterable):
+            warn("Specifying training data as a single data source is deprecated. "
+                 "Please use a list of data sources to create {} instead.".format(self),
+                 DeprecationWarning)
+            return [training_data]
+        return training_data
 
 
 class SimpleMLPredictor(Serializable['SimplePredictor'], Predictor):
@@ -137,7 +160,7 @@ class SimpleMLPredictor(Serializable['SimplePredictor'], Predictor):
         self.inputs: List[Descriptor] = inputs
         self.outputs: List[Descriptor] = outputs
         self.latent_variables: List[Descriptor] = latent_variables
-        self.training_data: List[DataSource] = training_data or []
+        self.training_data: List[DataSource] = self._wrap_training_data(training_data)
         self.session: Optional[Session] = session
         self.report: Optional[Report] = report
         self.active: bool = active
@@ -209,7 +232,7 @@ class GraphPredictor(Serializable['GraphPredictor'], Predictor):
         self.name: str = name
         self.description: str = description
         self.predictors: List[Union[UUID, Predictor]] = predictors
-        self.training_data: List[DataSource] = training_data or []
+        self.training_data: List[DataSource] = self._wrap_training_data(training_data)
         self.session: Optional[Session] = session
         self.report: Optional[Report] = report
         self.active: bool = active
@@ -728,7 +751,7 @@ class GeneralizedMeanPropertyPredictor(
         self.input_descriptor: FormulationDescriptor = input_descriptor
         self.properties: List[str] = properties
         self.p: float = p
-        self.training_data: List[DataSource] = training_data or []
+        self.training_data: List[DataSource] = self._wrap_training_data(training_data)
         self.impute_properties: bool = impute_properties
         self.default_properties: Optional[Mapping[str, float]] = default_properties
         self.label: Optional[str] = label
@@ -805,7 +828,7 @@ class SimpleMixturePredictor(Serializable['SimpleMixturePredictor'], Predictor):
         self.description: str = description
         self.input_descriptor: FormulationDescriptor = input_descriptor
         self.output_descriptor: FormulationDescriptor = output_descriptor
-        self.training_data: List[DataSource] = training_data or []
+        self.training_data: List[DataSource] = self._wrap_training_data(training_data)
         self.session: Optional[Session] = session
         self.report: Optional[Report] = report
         self.active: bool = active

@@ -1,5 +1,6 @@
 """Tests for citrine.informatics.processors."""
 import uuid
+import warnings
 
 import mock
 import pytest
@@ -390,3 +391,37 @@ def test_ingredient_fractions_property_post_build(ingredient_fractions_predictor
     assert session.get_resource.call_count == 1
     assert ingredient_fractions_predictor.report is not None
     assert ingredient_fractions_predictor.report.status == 'OK'
+
+
+def test_wrap_training_data():
+    """Test training data is converted to a list if ``None`` or a single source."""
+    predictor_without_data = GraphPredictor(
+        name="",
+        description="",
+        predictors=[],
+        training_data=None
+    )
+    assert predictor_without_data.training_data == []
+
+    with warnings.catch_warnings(record=True) as w:
+        predictor_single_data_source = GraphPredictor(
+            name="",
+            description="",
+            predictors=[],
+            training_data=data_source
+        )
+        assert predictor_single_data_source.training_data == [data_source]
+        assert len(w) == 1
+        recorded_warning = w[0]
+        assert issubclass(recorded_warning.category, DeprecationWarning)
+        assert str(recorded_warning.message).startswith(
+            "Specifying training data as a single data source is deprecated."
+        )
+
+    predictor_multiple_data_sources = GraphPredictor(
+        name="",
+        description="",
+        predictors=[],
+        training_data=[data_source, formulation_data_source]
+    )
+    assert predictor_multiple_data_sources.training_data == [data_source, formulation_data_source]
