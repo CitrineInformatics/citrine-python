@@ -41,14 +41,13 @@ def enumerate_cartesian_product(
         description for the EnumeratedDesignSpace
 
     """
-
     # Check that the grid size is small enough to not cause memory issues
     grid_size = np.prod(
         [len(grid_points) for grid_points in design_grid.values()]
     )
-    if grid_size > 2E8:
-        warn("Product design grid contains {n} grid points. This may cause memory issues downstream."
-             .format(n=grid_size))
+    if grid_size > 2:
+        warn("Product design grid contains {n} grid points. This may cause memory issues "
+             "downstream.".format(n=grid_size))
 
     design_space_tuples = list(product(*design_grid.values()))
     design_space_cols = list(design_grid.keys())
@@ -137,8 +136,8 @@ def enumerate_formulation_grid(
         [len(grid_points) for grid_points in non_balance_grids.values()]
     )
     if non_balance_grid_size > 2E8:
-        warn("Non-balance formulation grid contains {n} grid points. This may cause memory issues downstream."
-             .format(n=non_balance_grid_size))
+        warn("Non-balance formulation grid contains {n} grid points. This may cause memory "
+             "issues downstream.".format(n=non_balance_grid_size))
 
     # Start by making a naive product design space of non-balance ingredients
     form_ds = pd.DataFrame(
@@ -209,9 +208,10 @@ def cartesian_join_design_spaces(
         raise ValueError('Duplicate keys are not allowed across design spaces')
 
     # Check that the grid size is small enough to not cause memory issues
-    grid_size = np.prod([len(ds.data)*len(ds.data[0]) for ds in subspaces])
+    grid_size = np.prod([len(ds.data) * len(ds.data[0]) for ds in subspaces])
     if grid_size > 2e8:
-        warn("Product design grid contains {n} grid points. This may cause memory issues downstream."
+        warn("Product design grid contains {n} grid points. This may cause memory issues "
+             "downstream."
              .format(n=grid_size))
 
     # Convert data fields of EDS into DataFrames to prep for join
