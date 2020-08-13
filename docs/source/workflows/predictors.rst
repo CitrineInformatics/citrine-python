@@ -83,7 +83,7 @@ The following demonstrates how to create an :class:`~citrine.informatics.predict
     # create a descriptor to store simple mixtures
     formulation_descriptor = FormulationDescriptor('simple mixture')
 
-    # create a predictor that compute ingredient fractions
+    # create a predictor that computes ingredient fractions
     ingredient_fractions = IngredientFractionsPredictor(
         name = 'Ingredient Fractions Predictor',
         description = 'Computes fractions of provided ingredients',
