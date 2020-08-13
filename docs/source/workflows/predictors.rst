@@ -413,7 +413,7 @@ This predictor will compute a real descriptor with a key ``1.0-mean of property 
 
     from citrine.resources.descriptors import DescriptorMethods
 
-    # create an object that retrieves predictor responses from the project
+    # create an object to retrieve predictor responses
     descriptor_methods = DescriptorMethods(project.uid, session)
 
     mean_property_descriptors = descriptor_methods.from_predictor_responses(
@@ -458,7 +458,7 @@ The response descriptors can be retrieved using:
 
     from citrine.resources.descriptors import DescriptorMethods
 
-    # create an object that retrieves predictor responses from the project
+    # create an object to retrieve predictor responses
     descriptor_methods = DescriptorMethods(project.uid, session)
 
     ingredient_fraction_descriptors = descriptor_methods.from_predictor_responses(
@@ -494,7 +494,7 @@ This predictor will compute 2 responses, ``solute share in simple mixture`` and 
 
     from citrine.resources.descriptors import DescriptorMethods
 
-    # create an object that retrieves predictor responses from the project
+    # create an object to retrieve predictor responses
     descriptor_methods = DescriptorMethods(project.uid, session)
 
     label_fractions_descriptors = descriptor_methods.from_predictor_responses(
