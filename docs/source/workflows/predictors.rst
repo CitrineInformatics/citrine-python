@@ -464,7 +464,7 @@ The response descriptors can be retrieved using:
     ingredient_fraction_descriptors = descriptor_methods.from_predictor_responses(
         ingredient_fractions, [formulation_descriptor])
 
-This will return a real descriptor for each featurized ingredient with bounds ``[0, 1]`` and key in the form ``'{ingredient} share in simple mixture'``.
+This will return a real descriptor for each featurized ingredient with bounds ``[0, 1]`` and key in the form ``'{ingredient} share in simple mixture'`` where ``{ingredient}`` is either ``water``, ``salt`` or ``boric acid``.
 
 Label fractions predictor
 -------------------------
