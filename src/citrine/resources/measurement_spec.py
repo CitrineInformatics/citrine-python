@@ -6,8 +6,7 @@ from citrine._rest.resource import Resource
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Optional as PropertyOptional
 from citrine._serialization.properties import String, Object, Mapping, LinkOrElse
-from citrine._utils.functions import set_default_uid
-from citrine.resources.data_concepts import DataConcepts
+from citrine.resources.data_concepts import DataConcepts, CITRINE_SCOPE
 from citrine.resources.object_specs import ObjectSpec, ObjectSpecCollection
 from gemd.entity.attribute.condition import Condition
 from gemd.entity.attribute.parameter import Parameter
@@ -61,6 +60,7 @@ class MeasurementSpec(ObjectSpec, Resource['MeasurementSpec'], GEMDMeasurementSp
 
     def __init__(self,
                  name: str,
+                 *,
                  uids: Optional[Dict[str, str]] = None,
                  tags: Optional[List[str]] = None,
                  notes: Optional[str] = None,
@@ -68,8 +68,10 @@ class MeasurementSpec(ObjectSpec, Resource['MeasurementSpec'], GEMDMeasurementSp
                  parameters: Optional[List[Parameter]] = None,
                  template: Optional[GEMDMeasurementTemplate] = None,
                  file_links: Optional[List[FileLink]] = None):
+        if uids is None:
+            uids = dict()
         DataConcepts.__init__(self, GEMDMeasurementSpec.typ)
-        GEMDMeasurementSpec.__init__(self, name=name, uids=set_default_uid(uids),
+        GEMDMeasurementSpec.__init__(self, name=name, uids=uids,
                                      tags=tags, conditions=conditions, parameters=parameters,
                                      template=template, file_links=file_links, notes=notes)
 
@@ -84,6 +86,7 @@ class MeasurementSpecCollection(ObjectSpecCollection[MeasurementSpec]):
     _dataset_agnostic_path_template = 'projects/{project_id}/measurement-specs'
     _individual_key = 'measurement_spec'
     _collection_key = 'measurement_specs'
+    _resource = MeasurementSpec
 
     @classmethod
     def get_type(cls) -> Type[MeasurementSpec]:
@@ -91,7 +94,7 @@ class MeasurementSpecCollection(ObjectSpecCollection[MeasurementSpec]):
         return MeasurementSpec
 
     def list_by_template(self, uid: Union[UUID, str],
-                         scope: str = 'id') -> Iterator[MeasurementSpec]:
+                         scope: str = CITRINE_SCOPE) -> Iterator[MeasurementSpec]:
         """
         [ALPHA] Get the measurement specs using the specified measurement template.
 

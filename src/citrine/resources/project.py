@@ -1,14 +1,17 @@
 """Resources that represent both individual and collections of projects."""
-from typing import Optional, Dict, List, Union
+from typing import Optional, Dict, List, Union, Iterable, Tuple
 from uuid import UUID
 
+from deprecation import deprecated
+
 from citrine._session import Session
-from citrine.resources.ara_definition import AraDefinitionCollection
+from citrine.resources.table_config import TableConfigCollection
 from citrine.resources.descriptors import DescriptorMethods
 from citrine.resources.module import ModuleCollection
 from citrine.resources.design_space import DesignSpaceCollection
 from citrine.resources.processor import ProcessorCollection
 from citrine.resources.predictor import PredictorCollection
+from citrine.resources.response import Response
 from citrine.resources.workflow import WorkflowCollection
 from citrine.resources.dataset import DatasetCollection
 from citrine.resources.condition_template import ConditionTemplateCollection
@@ -31,7 +34,7 @@ from citrine.resources.ingredient_spec import IngredientSpecCollection
 from citrine._rest.collection import Collection
 from citrine._rest.resource import Resource
 from citrine._serialization import properties
-from citrine.resources.table import TableCollection
+from citrine.resources.gemtables import GemTableCollection
 from citrine.resources.user import User
 
 
@@ -120,9 +123,9 @@ class Project(Resource['Project']):
         return DatasetCollection(self.uid, self.session)
 
     @property
-    def tables(self) -> TableCollection:
+    def tables(self) -> GemTableCollection:
         """Return a resource representing all visible Tables."""
-        return TableCollection(self.uid, self.session)
+        return GemTableCollection(self.uid, self.session)
 
     @property
     def property_templates(self) -> PropertyTemplateCollection:
@@ -195,9 +198,18 @@ class Project(Resource['Project']):
         return IngredientSpecCollection(self.uid, None, self.session)
 
     @property
-    def ara_definitions(self) -> AraDefinitionCollection:
-        """Return a resource representing all ara definitions in the project."""
-        return AraDefinitionCollection(self.uid, self.session)
+    def table_configs(self) -> TableConfigCollection:
+        """Return a resource representing all Table Configs in the project."""
+        return TableConfigCollection(self.uid, self.session)
+
+    @property
+    @deprecated(deprecated_in="0.52.2", details="Use table_configs instead")
+    def ara_definitions(self) -> TableConfigCollection:  # pragma: no cover
+        """[DEPRECATED] Use table_configs instead."""
+        from warnings import warn
+        warn("ara_definitions is deprecated and will soon be removed. "
+             "Please call table_configs instead.", DeprecationWarning)
+        return self.table_configs
 
     def share(self,
               project_id: str,
@@ -329,6 +341,7 @@ class ProjectCollection(Collection[Project]):
     _path_template = '/projects'
     _individual_key = 'project'
     _collection_key = 'projects'
+    _resource = Project
 
     def __init__(self, session: Session = Session()):
         self.session = session
@@ -366,6 +379,106 @@ class ProjectCollection(Collection[Project]):
         """
         return super().register(Project(name, description))
 
-    def delete(self, uuid):
-        """Delete the project with the provided uid."""
-        raise NotImplementedError("Delete is not supported for projects")
+    def search(self, search_params: Optional[dict] = None,
+               per_page: int = 100) -> Iterable[Project]:
+        """
+        Search for projects matching the desired name or description.
+
+        You can search for projects matching the desired name or description by either exact match
+        or substring match, as specified by the search_params argument. Defaults to no search
+        criteria.
+
+        Like list, this method allows for pagination. This differs from the list function, because
+        it makes a POST request to resourceType/search with search fields in a post body.
+
+        Leaving page and per_page as default values will yield all elements in the collection,
+        paginating over all available pages.
+
+        Leaving search_params as its default value will return mimic the behavior of a full list
+        with no search parameters.
+
+        Parameters
+        ---------
+        search_params: dict, optional
+            A dict representing the body of the post request that will be sent to the search
+            endpoint to filter the results ie.
+            {
+                "name": {
+                    "value": "Polymer Project",
+                    "search_method": "EXACT"
+                },
+                "description": {
+                    "value": "polymer chain length",
+                    "search_method": "SUBSTRING"
+                },
+            }
+            The dict can constain any combination of (one or all) search specifications for the
+            name, description, and status fields of a project. For each parameter specified, the
+            "value" to match, as well as the "search_method" must be provided. The available
+            search_methods are "SUBSTRING" and "EXACT". The example above demonstrates the input
+            necessary to list projects with the exact name "Polymer Project," and descriptions
+            including the phrase "polymer chain length,"
+
+        per_page: int, optional
+            Max number of results to return per page. Default is 100.  This parameter is used when
+            making requests to the backend service.  If the page parameter is specified it limits
+            the maximum number of elements in the response.
+
+        Returns
+        -------
+        Iterable[Project]
+            Projects in this collection.
+
+        """
+        # To avoid setting default to {} -> reduce mutation risk, and to make more extensible
+        search_params = {} if search_params is None else search_params
+
+        return self._paginator.paginate(page_fetcher=self._fetch_page_search,
+                                        collection_builder=self._build_collection_elements,
+                                        per_page=per_page,
+                                        search_params=search_params)
+
+    def delete(self, uid: Union[UUID, str]) -> Response:
+        """[ALPHA] Delete a particular element of the collection."""
+        return super().delete(uid)  # pragma: no cover
+
+    def _fetch_page_search(self, page: Optional[int] = None,
+                           per_page: Optional[int] = None,
+                           search_params: Optional[dict] = None) -> Tuple[Iterable[dict], str]:
+        """
+        Fetch resources that match the supplied search parameters.
+
+        Fetches resources that match the supplied search_params, by calling _fetch_page with
+        checked_post, the path to the POST resource-type/search endpoint, any pagination
+        parameters, and the request body to the search endpoint.
+
+        Parameters
+        ---------
+        page: int, optional
+            The "page" of results to list. Default is the first page, which is 1.
+        per_page: int, optional
+            Max number of results to return. Default is 20.
+        search_params: dict, optional
+            A dict representing a request body that could be sent to a POST request. The "json"
+            field should be passed as the key for the outermost dict, with its value the request
+            body, so that we can easily unpack the keyword argument when it gets passed to
+            fetch_func.
+            ie. {'name': {'value': 'Project', 'search_method': 'SUBSTRING'} }
+
+        Returns
+        -------
+        Iterable[dict]
+            Elements in this collection.
+        str
+            The next uri if one is available, empty string otherwise
+
+        """
+        # Making 'json' the key of the outermost dict, so that search_params can be passed
+        # directly to the function making the request with keyword expansion
+        json_body = {} if search_params is None else {'json': {'search_params': search_params}}
+
+        path = self._get_path() + "/search"
+
+        return self._fetch_page(path=path, fetch_func=self.session.post_resource,
+                                page=page, per_page=per_page,
+                                json_body=json_body)

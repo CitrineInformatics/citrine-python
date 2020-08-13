@@ -6,8 +6,7 @@ from citrine._rest.resource import Resource
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Optional as PropertyOptional
 from citrine._serialization.properties import String, Mapping, Object, LinkOrElse
-from citrine._utils.functions import set_default_uid
-from citrine.resources.data_concepts import DataConcepts
+from citrine.resources.data_concepts import DataConcepts, CITRINE_SCOPE
 from citrine.resources.object_specs import ObjectSpec, ObjectSpecCollection
 from gemd.entity.attribute.condition import Condition
 from gemd.entity.attribute.parameter import Parameter
@@ -71,6 +70,7 @@ class ProcessSpec(ObjectSpec, Resource['ProcessSpec'], GEMDProcessSpec):
 
     def __init__(self,
                  name: str,
+                 *,
                  uids: Optional[Dict[str, str]] = None,
                  tags: Optional[List[str]] = None,
                  notes: Optional[str] = None,
@@ -79,8 +79,10 @@ class ProcessSpec(ObjectSpec, Resource['ProcessSpec'], GEMDProcessSpec):
                  template: Optional[GEMDProcessTemplate] = None,
                  file_links: Optional[List[FileLink]] = None
                  ):
+        if uids is None:
+            uids = dict()
         DataConcepts.__init__(self, GEMDProcessSpec.typ)
-        GEMDProcessSpec.__init__(self, name=name, uids=set_default_uid(uids),
+        GEMDProcessSpec.__init__(self, name=name, uids=uids,
                                  tags=tags, conditions=conditions, parameters=parameters,
                                  template=template, file_links=file_links, notes=notes)
 
@@ -95,13 +97,15 @@ class ProcessSpecCollection(ObjectSpecCollection[ProcessSpec]):
     _dataset_agnostic_path_template = 'projects/{project_id}/process-specs'
     _individual_key = 'process_spec'
     _collection_key = 'process_specs'
+    _resource = ProcessSpec
 
     @classmethod
     def get_type(cls) -> Type[ProcessSpec]:
         """Return the resource type in the collection."""
         return ProcessSpec
 
-    def list_by_template(self, uid: Union[UUID, str], scope: str = 'id') -> Iterator[ProcessSpec]:
+    def list_by_template(self, uid: Union[UUID, str],
+                         scope: str = CITRINE_SCOPE) -> Iterator[ProcessSpec]:
         """
         [ALPHA] Get the process specs using the specified process template.
 

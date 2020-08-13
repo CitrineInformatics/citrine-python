@@ -6,8 +6,7 @@ from citrine._rest.resource import Resource
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Optional as PropertyOptional
 from citrine._serialization.properties import String, Mapping, Object, LinkOrElse
-from citrine._utils.functions import set_default_uid
-from citrine.resources.data_concepts import DataConcepts
+from citrine.resources.data_concepts import DataConcepts, CITRINE_SCOPE
 from citrine.resources.object_runs import ObjectRun, ObjectRunCollection
 from gemd.entity.attribute.condition import Condition
 from gemd.entity.attribute.parameter import Parameter
@@ -75,6 +74,7 @@ class ProcessRun(ObjectRun, Resource['ProcessRun'], GEMDProcessRun):
 
     def __init__(self,
                  name: str,
+                 *,
                  uids: Optional[Dict[str, str]] = None,
                  tags: Optional[List[str]] = None,
                  notes: Optional[str] = None,
@@ -83,8 +83,10 @@ class ProcessRun(ObjectRun, Resource['ProcessRun'], GEMDProcessRun):
                  spec: Optional[GEMDProcessSpec] = None,
                  file_links: Optional[List[FileLink]] = None,
                  source: Optional[PerformedSource] = None):
+        if uids is None:
+            uids = dict()
         DataConcepts.__init__(self, GEMDProcessRun.typ)
-        GEMDProcessRun.__init__(self, name=name, uids=set_default_uid(uids),
+        GEMDProcessRun.__init__(self, name=name, uids=uids,
                                 tags=tags, conditions=conditions, parameters=parameters,
                                 spec=spec, file_links=file_links, notes=notes, source=source)
 
@@ -99,13 +101,16 @@ class ProcessRunCollection(ObjectRunCollection[ProcessRun]):
     _dataset_agnostic_path_template = 'projects/{project_id}/process-runs'
     _individual_key = 'process_run'
     _collection_key = 'process_runs'
+    _resource = ProcessRun
 
     @classmethod
     def get_type(cls) -> Type[ProcessRun]:
         """Return the resource type in the collection."""
         return ProcessRun
 
-    def list_by_spec(self, uid: Union[UUID, str], scope: str = 'id') -> Iterator[ProcessRun]:
+    def list_by_spec(self,
+                     uid: Union[UUID, str],
+                     scope: str = CITRINE_SCOPE) -> Iterator[ProcessRun]:
         """
         [ALPHA] Get the process runs using the specified process spec.
 

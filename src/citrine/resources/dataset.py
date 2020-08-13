@@ -1,4 +1,5 @@
 """Resources that represent both individual and collections of datasets."""
+from collections import defaultdict
 from typing import TypeVar, List
 from uuid import UUID
 
@@ -252,13 +253,31 @@ class Dataset(Resource['Dataset']):
 
         """
         resources = list()
-        for resource in (sorted(data_concepts_resources,
-                                key=lambda resource: writable_sort_order(resource.typ))):
-            registered_resource = self.register(resource, dry_run)
-            if isinstance(registered_resource, BaseEntity):
-                resource.uids = registered_resource.uids
-            resources.append(resource)
+        by_type = defaultdict(list)
+        for obj in data_concepts_resources:
+            by_type[obj.typ].append(obj)
+        typ_groups = sorted(list(by_type.values()), key=lambda x: writable_sort_order(x[0]))
+        batch_size = 50
+        for typ_group in typ_groups:
+            num_batches = len(typ_group) // batch_size
+            for batch_num in range(num_batches + 1):
+                batch = typ_group[batch_num * batch_size: (batch_num + 1) * batch_size]
+                if batch:  # final batch is empty when batch_size divides len(typ_group)
+                    registered = self._collection_for(batch[0])\
+                        .register_all(batch, dry_run=dry_run)
+                    for prewrite, postwrite in zip(batch, registered):
+                        if isinstance(postwrite, BaseEntity):
+                            prewrite.uids = postwrite.uids
+                    resources.extend(registered)
         return resources
+
+    def delete(self, data_concepts_resource: ResourceType, dry_run=False) -> ResourceType:
+        """Delete a data concepts resource to the appropriate collection."""
+        uid = next(iter(data_concepts_resource.uids.items()), None)
+        if uid is None:
+            raise ValueError("Only objects that contain identifiers can be deleted.")
+        return self._collection_for(data_concepts_resource) \
+            .delete(uid[1], scope=uid[0], dry_run=dry_run)
 
 
 class DatasetCollection(Collection[Dataset]):
@@ -277,6 +296,7 @@ class DatasetCollection(Collection[Dataset]):
     _path_template = 'projects/{project_id}/datasets'
     _individual_key = None
     _collection_key = None
+    _resource = Dataset
 
     def __init__(self, project_id: UUID, session: Session):
         self.project_id = project_id

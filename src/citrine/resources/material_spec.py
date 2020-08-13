@@ -9,15 +9,13 @@ from citrine._rest.resource import Resource
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Optional as PropertyOptional
 from citrine._serialization.properties import String, LinkOrElse, Mapping, Object
-from citrine._utils.functions import set_default_uid
-from citrine.resources.data_concepts import DataConcepts
+from citrine.resources.data_concepts import DataConcepts, CITRINE_SCOPE
 from citrine.resources.object_specs import ObjectSpec, ObjectSpecCollection
 from gemd.entity.attribute.property_and_conditions import PropertyAndConditions
 from gemd.entity.file_link import FileLink
 from gemd.entity.object.material_spec import MaterialSpec as GEMDMaterialSpec
 from gemd.entity.object.process_spec import ProcessSpec as GEMDProcessSpec
 from gemd.entity.template.material_template import MaterialTemplate as GEMDMaterialTemplate
-
 
 logger = getLogger(__name__)
 
@@ -66,6 +64,7 @@ class MaterialSpec(ObjectSpec, Resource['MaterialSpec'], GEMDMaterialSpec):
 
     def __init__(self,
                  name: str,
+                 *,
                  uids: Optional[Dict[str, str]] = None,
                  tags: Optional[List[str]] = None,
                  notes: Optional[str] = None,
@@ -73,8 +72,10 @@ class MaterialSpec(ObjectSpec, Resource['MaterialSpec'], GEMDMaterialSpec):
                  properties: Optional[List[PropertyAndConditions]] = None,
                  template: Optional[GEMDMaterialTemplate] = None,
                  file_links: Optional[List[FileLink]] = None):
+        if uids is None:
+            uids = dict()
         DataConcepts.__init__(self, GEMDMaterialSpec.typ)
-        GEMDMaterialSpec.__init__(self, name=name, uids=set_default_uid(uids),
+        GEMDMaterialSpec.__init__(self, name=name, uids=uids,
                                   tags=tags, process=process, properties=properties,
                                   template=template, file_links=file_links, notes=notes)
 
@@ -89,6 +90,7 @@ class MaterialSpecCollection(ObjectSpecCollection[MaterialSpec]):
     _dataset_agnostic_path_template = 'projects/{project_id}/material-specs'
     _individual_key = 'material_spec'
     _collection_key = 'material_specs'
+    _resource = MaterialSpec
 
     @classmethod
     def get_type(cls) -> Type[MaterialSpec]:
@@ -98,7 +100,7 @@ class MaterialSpecCollection(ObjectSpecCollection[MaterialSpec]):
     @deprecation.deprecated(details='Use list_by_template instead.')
     def filter_by_template(self,
                            template_id: str,
-                           template_scope: str = 'id',
+                           template_scope: str = CITRINE_SCOPE,
                            per_page: int = None) -> Iterator[MaterialSpec]:
         """
         [ALPHA] Get all material specs associated with a material template.
@@ -116,7 +118,9 @@ class MaterialSpecCollection(ObjectSpecCollection[MaterialSpec]):
             logger.warning('The per_page parameter will be ignored. Please remove it.')
         return self.list_by_template(uid=template_id, scope=template_scope)
 
-    def list_by_template(self, uid: Union[UUID, str], scope: str = 'id') -> Iterator[MaterialSpec]:
+    def list_by_template(self,
+                         uid: Union[UUID, str],
+                         scope: str = CITRINE_SCOPE) -> Iterator[MaterialSpec]:
         """
         [ALPHA] Get the material specs using the specified material template.
 
@@ -134,7 +138,9 @@ class MaterialSpecCollection(ObjectSpecCollection[MaterialSpec]):
         """
         return self._get_relation('material-templates', uid=uid, scope=scope)
 
-    def get_by_process(self, uid: Union[UUID, str], scope: str = 'id') -> Optional[MaterialSpec]:
+    def get_by_process(self,
+                       uid: Union[UUID, str],
+                       scope: str = CITRINE_SCOPE) -> Optional[MaterialSpec]:
         """
         [ALPHA] Get output material of a process.
 

@@ -140,21 +140,23 @@ A CSV data source and :class:`~citrine.informatics.predictors.IngredientsToSimpl
         }
     )
 
-Ara Table Data Source
+GEM Table Data Source
 ---------------------
 
-An :class:`~citrine.informatics.data_sources.AraTableDataSource` references an Ara table.
-As explained more in the :doc:`documentation <../data_extraction>`, Ara tables provide a structured version of on-platform data.
-Ara tables are specified by the display table uuid and version number.
-The example below assumes that the uuid and the version of the desired Ara table are known.
+An :class:`~citrine.informatics.data_sources.GemTableDataSource` references a GEM Table.
+As explained more in the :doc:`documentation <../data_extraction>`, GEM Tables provide a structured version of on-platform data.
+GEM Tables are specified by the display table uuid, version number and optional formulation descriptor.
+A formulation descriptor must be specified if formulations should be built from the data source.
+If specified, any formulations emitted by the data source are stored using the provided descriptor.
+The example below assumes that the uuid and the version of the desired GEM Table are known.
 
 .. code:: python
 
-    from citrine.informatics.data_sources import AraTableDataSource
+    from citrine.informatics.data_sources import GemTableDataSource
     from citrine.informatics.predictors import SimpleMLPredictor
     from citrine.informatics.descriptors import RealDescriptor, CategoricalDescriptor, ChemicalFormulaDescriptor
 
-    data_source = AraTableDataSource(
+    data_source = GemTableDataSource(
         table_id = "842434fd-11fe-4324-815c-7db93c7ed81e",
         table_version = "2"
     )
@@ -172,6 +174,6 @@ The example below assumes that the uuid and the version of the desired Ara table
         training_data = data_source
     )
 
-  Note that the descriptor keys above are the headers of the *variable* not the column in the table.
-  The last term in the column header is a suffix associated with the specific column definition rather than the variable.
-  It should be omitted from the descriptor key.
+Note that the descriptor keys above are the headers of the *variable* not the column in the table.
+The last term in the column header is a suffix associated with the specific column definition rather than the variable.
+It should be omitted from the descriptor key.

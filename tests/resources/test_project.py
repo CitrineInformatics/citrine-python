@@ -3,16 +3,29 @@ import pytest
 from dateutil.parser import parse
 
 from citrine.resources.project import Project, ProjectCollection
-from citrine.resources.table import TableCollection
+from citrine.resources.gemtables import GemTableCollection
 from citrine.resources.project_member import ProjectMember
 from citrine.resources.project_roles import MEMBER, LEAD, WRITE
 from tests.utils.factories import ProjectDataFactory, UserDataFactory
-from tests.utils.session import FakeSession, FakeCall
+from tests.utils.session import FakeSession, FakeCall, FakePaginatedSession
 
+
+from logging import getLogger
+logger = getLogger(__name__)
 
 @pytest.fixture
 def session() -> FakeSession:
     return FakeSession()
+
+@pytest.fixture
+def paginated_session() -> FakePaginatedSession:
+    return FakePaginatedSession()
+
+@pytest.fixture
+def paginated_collection(paginated_session) -> ProjectCollection:
+    return ProjectCollection(
+        session=paginated_session
+    )
 
 
 @pytest.fixture
@@ -176,7 +189,7 @@ def test_workflows_get_project_id(project):
 
 
 def test_ara_definitions_get_project_id(project):
-    assert project.uid == project.ara_definitions.project_id
+    assert project.uid == project.table_configs.project_id
 
 
 def test_project_registration(collection, session):
@@ -275,13 +288,78 @@ def test_list_projects_with_page_params(collection, session):
     assert expected_call == session.last_call
 
 
+def test_search_projects(collection, session):
+    # Given
+    projects_data = ProjectDataFactory.create_batch(2)
+
+    project_name_to_match = projects_data[0]['name']
+
+    expected_response = list(filter(lambda p: p["name"] == project_name_to_match, projects_data))
+
+    session.set_response({'projects': expected_response})
+
+    search_params = {'name': {
+        'value': project_name_to_match,
+        'search_method': 'EXACT'}}
+
+    # When
+    projects = list(collection.search(search_params=search_params))
+
+    # Then
+    assert 1 == session.num_calls
+    expected_call = FakeCall(method='POST', path='/projects/search', 
+                                        params={'per_page': 100}, json={'search_params': search_params})
+    assert expected_call == session.last_call
+    assert len(expected_response) == len(projects)
+
+
+def test_search_projects_with_pagination(paginated_collection, paginated_session):
+    # Given
+    common_name = "same name"
+
+    same_name_projects_data = ProjectDataFactory.create_batch(35, name=common_name)
+    more_data = ProjectDataFactory.create_batch(35, name="some other name")
+
+
+    per_page = 10
+
+    paginated_session.set_response({ 'projects': same_name_projects_data })
+
+    search_params = {'status': {
+        'value': common_name,
+        'search_method': 'EXACT'}}
+
+
+    # When
+    projects = list(paginated_collection.search(per_page=per_page, search_params=search_params))
+
+    # Then
+    assert 4 == paginated_session.num_calls
+    expected_first_call = FakeCall(method='POST', path='/projects/search', 
+                                        params={'per_page': per_page}, json={'search_params': search_params} )
+    expected_last_call = FakeCall(method='POST', path='/projects/search', 
+                                        params={'page': 4, 'per_page': per_page}, json={'search_params': search_params})
+
+    assert expected_first_call == paginated_session.calls[0]
+    assert expected_last_call == paginated_session.last_call
+
+    project_ids = [str(p.uid) for p in projects]
+    expected_ids = [p['id'] for p in same_name_projects_data]
+
+    assert project_ids == expected_ids
+
+
 def test_delete_project(collection, session):
     # Given
     uid = '151199ec-e9aa-49a1-ac8e-da722aaf74c4'
 
     # When
-    with pytest.raises(NotImplementedError):
-        collection.delete(uid)
+    resp = collection.delete(uid)
+
+    # Then
+    assert 1 == session.num_calls
+    expected_call = FakeCall(method='DELETE', path='/projects/{}'.format(uid))
+    assert expected_call == session.last_call
 
 
 def test_list_members(project, session):
@@ -367,4 +445,5 @@ def test_remove_user(project, session):
 
 
 def test_project_tables(project):
-    assert isinstance(project.tables, TableCollection)
+    assert isinstance(project.tables, GemTableCollection)
+

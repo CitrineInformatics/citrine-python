@@ -1,5 +1,6 @@
+import warnings
 from abc import abstractmethod
-from typing import Optional, Union, Generic, TypeVar, Iterable, Dict, Tuple
+from typing import Optional, Union, Generic, TypeVar, Iterable, Dict, Tuple, Callable
 from uuid import UUID
 
 from citrine._rest.paginator import Paginator
@@ -39,6 +40,8 @@ class Collection(Generic[ResourceType]):
 
     def get(self, uid: Union[UUID, str]) -> ResourceType:
         """Get a particular element of the collection."""
+        if uid is None:
+            raise ValueError("Cannot get when uid=None.  Are you using a registered resource?")
         path = self._get_path(uid)
         data = self.session.get_resource(path)
         data = data[self._individual_key] if self._individual_key else data
@@ -50,6 +53,7 @@ class Collection(Generic[ResourceType]):
         try:
             data = self.session.post_resource(path, model.dump())
             data = data[self._individual_key] if self._individual_key else data
+            self._check_experimental(data)
             return self.build(data)
         except NonRetryableException as e:
             raise ModuleRegistrationFailedException(model.__class__.__name__, e)
@@ -79,16 +83,17 @@ class Collection(Generic[ResourceType]):
             Resources in this collection.
 
         """
-        return self._paginator.paginate(self._fetch_page,
-                                        self._build_collection_elements,
-                                        page,
-                                        per_page)
+        return self._paginator.paginate(page_fetcher=self._fetch_page,
+                                        collection_builder=self._build_collection_elements,
+                                        page=page,
+                                        per_page=per_page)
 
     def update(self, model: CreationType) -> CreationType:
         """Update a particular element of the collection."""
         url = self._get_path(model.uid)
         updated = self.session.put_resource(url, model.dump())
         data = updated[self._individual_key] if self._individual_key else updated
+        self._check_experimental(data)
         return self.build(data)
 
     def delete(self, uid: Union[UUID, str]) -> Response:
@@ -98,21 +103,41 @@ class Collection(Generic[ResourceType]):
         return Response(body=data)
 
     def _fetch_page(self,
+                    path: Optional[str] = None,
+                    fetch_func: Optional[Callable[..., dict]] = None,
                     page: Optional[int] = None,
-                    per_page: Optional[int] = None) -> Tuple[Iterable[dict], str]:
+                    per_page: Optional[int] = None,
+                    json_body: Optional[dict] = None) -> Tuple[Iterable[dict], str]:
         """
         Fetch visible elements in the collection.  This does not handle pagination.
 
-        This method will return the first page of results using the default page/per_page
-        behavior of the backend service.  Specify page/per_page to override these defaults
-        which are passed to the backend service.
+        Method can be used with any function that fetches a list of resources.
+
+        This method will return the first page of results using the default page/per_page behavior
+        of the backend service.  Specify page/per_page to override these defaults which are passed
+        to the backend service.
 
         Parameters
         ---------
+        path: str, optional
+            The path for the endpoint that will be called to fetch the resources. Will default to
+            root path
+        fetch_func: Callable[..., dict], optional
+            The function that will make the official request that returns the list of resources ie.
+            (checked_post, etc.). Will default to get_resource
         page: int, optional
             The "page" of results to list. Default is the first page, which is 1.
         per_page: int, optional
             Max number of results to return. Default is 20.
+        json_body: dict, optional
+            A dict representing a request body that could be sent to a POST request. The "json"
+            field should be passed as the key for the outermost dict, with its value the request
+            body, so that we can easily unpack the keyword argument when it gets passed to
+            fetch_func.
+            ie.
+            {'json':
+                {'search_params': {'name': {'value': 'Project', 'search_method': 'SUBSTRING'}}}
+            }
 
         Returns
         -------
@@ -122,12 +147,15 @@ class Collection(Generic[ResourceType]):
             The next uri if one is available, empty string otherwise
 
         """
-        path = self._get_path()
+        # To avoid setting defaults -> reduce mutation risk, and to make more extensible
+        path = self._get_path() if path is None else path
+        fetch_func = self.session.get_resource if fetch_func is None else fetch_func
+        json_body = {} if json_body is None else json_body
 
         module_type = getattr(self, '_module_type', None)
         params = self._page_params(page, per_page, module_type)
 
-        data = self.session.get_resource(path, params=params)
+        data = fetch_func(path, params=params, **json_body)
 
         try:
             next_uri = data.get('next', "")
@@ -181,3 +209,13 @@ class Collection(Generic[ResourceType]):
         if module_type is not None:
             params["module_type"] = module_type
         return params
+
+    def _check_experimental(self, data):
+        if data.get("experimental", False):
+            uid = data.get("id")
+            typ = self._resource().__class__.__name__
+            msg = "The {} with id {} is experimental because: \n  {}".format(
+                typ, uid,
+                "\n  ".join(data.get("experimental_reasons") or ["Unknown reason"])
+            )
+            warnings.warn(msg)

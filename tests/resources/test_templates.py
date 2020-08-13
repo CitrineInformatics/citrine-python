@@ -17,9 +17,12 @@ from gemd.entity.attribute.condition import Condition
 
 def test_object_template_validation():
     """Test that attribute templates are validated against given bounds."""
-    length_template = PropertyTemplate("Length", RealBounds(2.0, 3.5, 'cm'))
-    dial_template = ConditionTemplate("dial", IntegerBounds(0, 5))
-    color_template = ParameterTemplate("Color", CategoricalBounds(["red", "green", "blue"]))
+    length_template = PropertyTemplate("Length", bounds=RealBounds(2.0, 3.5, 'cm'))
+    dial_template = ConditionTemplate("dial", bounds=IntegerBounds(0, 5))
+    color_template = ParameterTemplate("Color", bounds=CategoricalBounds(["red", "green", "blue"]))
+
+    with pytest.raises(TypeError):
+        MaterialTemplate()
 
     with pytest.raises(ValueError):
         MaterialTemplate("Block", properties=[[length_template, RealBounds(3.0, 4.0, 'cm')]])
@@ -33,7 +36,7 @@ def test_object_template_validation():
 
 def test_template_assignment():
     """Test that an object and its attributes can both be assigned templates."""
-    humidity_template = ConditionTemplate("Humidity", RealBounds(0.5, 0.75, ""))
+    humidity_template = ConditionTemplate("Humidity", bounds=RealBounds(0.5, 0.75, ""))
     template = ProcessTemplate("Dry", conditions=[[humidity_template, RealBounds(0.5, 0.65, "")]])
     ProcessSpec("Dry a polymer", template=template, conditions=[
         Condition("Humidity", value=NominalReal(0.6, ""), template=humidity_template)])

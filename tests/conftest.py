@@ -91,10 +91,15 @@ def valid_enumerated_design_space_data():
 @pytest.fixture
 def valid_simple_ml_predictor_data():
     """Produce valid data used for tests."""
+    from citrine.informatics.data_sources import GemTableDataSource
     from citrine.informatics.descriptors import RealDescriptor
     x = RealDescriptor("x", 0, 100, "")
     y = RealDescriptor("y", 0, 100, "")
     z = RealDescriptor("z", 0, 100, "")
+    data_source = GemTableDataSource(
+        table_id=uuid.UUID('e5c51369-8e71-4ec6-b027-1f92bdc14762'),
+        table_version=2
+    )
     return dict(
         module_type='PREDICTOR',
         status='VALID',
@@ -110,11 +115,7 @@ def valid_simple_ml_predictor_data():
             inputs=[x.dump()],
             outputs=[z.dump()],
             latent_variables=[y.dump()],
-            training_data=dict(
-                table_id='e5c51369-8e71-4ec6-b027-1f92bdc14762',
-                table_version=2,
-                type="hosted_table_data_source"
-            )
+            training_data=data_source.dump()
         )
     )
 
@@ -156,7 +157,7 @@ def valid_graph_predictor_data():
 
 
 @pytest.fixture
-def valid_expression_predictor_data():
+def valid_deprecated_expression_predictor_data():
     """Produce valid data used for tests."""
     from citrine.informatics.descriptors import RealDescriptor
     shear_modulus = RealDescriptor('Property~Shear modulus', lower_bound=0, upper_bound=100, units='GPa')
@@ -166,7 +167,7 @@ def valid_expression_predictor_data():
         status_info=[],
         active=True,
         display_name='Expression predictor',
-        schema_id='e7d79c73-8bf3-4609-887a-7f31b9cef566',
+        schema_id='866e72a6-0a01-4c5f-8c35-146eb2540166',
         id=str(uuid.uuid4()),
         config=dict(
             type='Expression',
@@ -175,8 +176,37 @@ def valid_expression_predictor_data():
             expression='Y / (2 * (1 + v))',
             output=shear_modulus.dump(),
             aliases={
-                "Property~Young's modulus": 'Y',
-                "Property~Poisson's ratio": 'v',
+                'Y': "Property~Young's modulus",
+                'v': "Property~Poisson's ratio",
+            }
+        )
+    )
+
+
+@pytest.fixture
+def valid_expression_predictor_data():
+    """Produce valid data used for tests."""
+    from citrine.informatics.descriptors import RealDescriptor
+    shear_modulus = RealDescriptor('Property~Shear modulus', lower_bound=0, upper_bound=100, units='GPa')
+    youngs_modulus = RealDescriptor('Property~Young\'s modulus', lower_bound=0, upper_bound=100, units='GPa')
+    poissons_ratio = RealDescriptor('Property~Poisson\'s ratio', lower_bound=-1, upper_bound=0.5, units='')
+    return dict(
+        module_type='PREDICTOR',
+        status='VALID',
+        status_info=[],
+        active=True,
+        display_name='Expression predictor',
+        schema_id='f1601161-bb98-4fa9-bdd2-a2a673547532',
+        id=str(uuid.uuid4()),
+        config=dict(
+            type='AnalyticExpression',
+            name='Expression predictor',
+            description='Computes shear modulus from Youngs modulus and Poissons ratio',
+            expression='Y / (2 * (1 + v))',
+            output=shear_modulus.dump(),
+            aliases={
+                'Y': youngs_modulus.dump(),
+                'v': poissons_ratio.dump(),
             }
         )
     )
@@ -199,7 +229,7 @@ def valid_predictor_report_data():
             models=[
                 dict(
                     name='GeneralLoloModel_1',
-                    type='GeneralLoloModel',
+                    type='ML Model',
                     inputs=[x.key],
                     outputs=[y.key],
                     display_name='ML Model',
@@ -220,11 +250,12 @@ def valid_predictor_report_data():
                             importances=dict(x=1.00),
                             top_features=5
                         )
-                    ]
+                    ],
+                    predictor_configuration_name="Predict y from x with ML"
                 ),
                 dict(
                     name='GeneralLosslessModel_2',
-                    type='GeneralLosslessModel',
+                    type='Analytic Model',
                     inputs=[x.key, y.key],
                     outputs=[z.key],
                     display_name='GeneralLosslessModel_2',
@@ -235,7 +266,9 @@ def valid_predictor_report_data():
                             children=[]
                         )
                     ],
-                    feature_importances=[]
+                    feature_importances=[],
+                    predictor_configuration_name="Expression for z",
+                    predictor_configuration_uid="249bf32c-6f3d-4a93-9387-94cc877f170c"
                 )
             ],
             descriptors=[x.dump(), y.dump(), z.dump()]
@@ -276,7 +309,8 @@ def valid_ing_to_simple_mixture_predictor_data():
 def valid_generalized_mean_property_predictor_data():
     """Produce valid data used for tests."""
     from citrine.informatics.descriptors import FormulationDescriptor
-    from citrine.informatics.data_sources import AraTableDataSource
+    from citrine.informatics.data_sources import GemTableDataSource
+    formulation_descriptor = FormulationDescriptor('simple mixture')
     return dict(
         module_type='PREDICTOR',
         status='VALID',
@@ -289,10 +323,10 @@ def valid_generalized_mean_property_predictor_data():
             type='GeneralizedMeanProperty',
             name='Mean property predictor',
             description='Computes mean ingredient properties',
-            input=FormulationDescriptor('simple mixture').dump(),
+            input=formulation_descriptor.dump(),
             properties=['density'],
             p=2,
-            training_data=AraTableDataSource(uuid.uuid4(), 0).dump(),
+            training_data=GemTableDataSource(uuid.uuid4(), 0, formulation_descriptor).dump(),
             impute_properties=True,
             default_properties={'density': 1.0},
             label='solvent'
@@ -410,8 +444,10 @@ def valid_enumerated_processor_data():
 @pytest.fixture
 def valid_simple_mixture_predictor_data():
     """Produce valid data used for tests."""
-    from citrine.informatics.data_sources import AraTableDataSource
-    from citrine.informatics.descriptors import RealDescriptor
+    from citrine.informatics.data_sources import GemTableDataSource
+    from citrine.informatics.descriptors import FormulationDescriptor
+    input_formulation = FormulationDescriptor('input formulation')
+    output_formulation = FormulationDescriptor('output formulation')
     return dict(
         module_type='PREDICTOR',
         status='VALID',
@@ -424,14 +460,8 @@ def valid_simple_mixture_predictor_data():
             type='SimpleMixture',
             name='Simple mixture predictor',
             description='simple mixture description',
-            input=dict(
-                type='Formulation',
-                descriptor_key='input formulation',
-            ),
-            output=dict(
-                type='Formulation',
-                descriptor_key='output formulation',
-            ),
-            training_data=AraTableDataSource(uuid.uuid4(), 0).dump(),
+            input=input_formulation.dump(),
+            output=output_formulation.dump(),
+            training_data=GemTableDataSource(uuid.uuid4(), 0, input_formulation).dump(),
         ),
     )

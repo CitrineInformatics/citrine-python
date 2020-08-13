@@ -5,7 +5,6 @@ from citrine._rest.resource import Resource
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Optional as PropertyOptional
 from citrine._serialization.properties import String, Mapping, Object
-from citrine._utils.functions import set_default_uid
 from citrine.resources.attribute_templates import AttributeTemplate, AttributeTemplateCollection
 from citrine.resources.data_concepts import DataConcepts
 from gemd.entity.bounds.base_bounds import BaseBounds
@@ -46,14 +45,17 @@ class ConditionTemplate(AttributeTemplate, Resource['ConditionTemplate'], GEMDCo
 
     def __init__(self,
                  name: str,
+                 *,
                  bounds: BaseBounds,
                  uids: Optional[Dict[str, str]] = None,
                  description: Optional[str] = None,
                  tags: Optional[List[str]] = None
                  ):
+        if uids is None:
+            uids = dict()
         DataConcepts.__init__(self, GEMDConditionTemplate.typ)
         GEMDConditionTemplate.__init__(self, name=name, bounds=bounds, tags=tags,
-                                       uids=set_default_uid(uids), description=description)
+                                       uids=uids, description=description)
 
     def __str__(self):
         return '<Condition template {!r}>'.format(self.name)
@@ -66,6 +68,7 @@ class ConditionTemplateCollection(AttributeTemplateCollection[ConditionTemplate]
     _dataset_agnostic_path_template = 'projects/{project_id}/condition-templates'
     _individual_key = 'condition_template'
     _collection_key = 'condition_templates'
+    _resource = ConditionTemplate
 
     @classmethod
     def get_type(cls) -> Type[ConditionTemplate]:

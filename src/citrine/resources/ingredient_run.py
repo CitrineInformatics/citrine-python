@@ -6,8 +6,7 @@ from citrine._rest.resource import Resource
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Mapping, String, LinkOrElse, Object
 from citrine._serialization.properties import Optional as PropertyOptional
-from citrine._utils.functions import set_default_uid
-from citrine.resources.data_concepts import DataConcepts
+from citrine.resources.data_concepts import DataConcepts, CITRINE_SCOPE
 from citrine.resources.object_runs import ObjectRun, ObjectRunCollection
 from gemd.entity.file_link import FileLink
 from gemd.entity.object.ingredient_run import IngredientRun as GEMDIngredientRun
@@ -51,12 +50,6 @@ class IngredientRun(ObjectRun, Resource['IngredientRun'], GEMDIngredientRun):
     absolute_quantity: :py:class:`ContinuousValue \
     <gemd.entity.value.continuous_value.ContinuousValue>`, optional
         The absolute quantity of the ingredient in the process.
-    name: str, optional
-        Label on the ingredient that is unique within the process that contains it. This property
-        will be overwritten by its value in `spec` if it is present.
-    labels: List[str], optional
-        Additional labels on the ingredient. This property will be overwritten by its value in
-        `spec` if it is present.
     spec: IngredientSpec
         The specification of which this ingredient is a realization.
     file_links: List[FileLink], optional
@@ -83,7 +76,7 @@ class IngredientRun(ObjectRun, Resource['IngredientRun'], GEMDIngredientRun):
     typ = String('type')
 
     def __init__(self,
-                 name: Optional[str] = None,
+                 *,
                  uids: Optional[Dict[str, str]] = None,
                  tags: Optional[List[str]] = None,
                  notes: Optional[str] = None,
@@ -93,16 +86,17 @@ class IngredientRun(ObjectRun, Resource['IngredientRun'], GEMDIngredientRun):
                  volume_fraction: Optional[ContinuousValue] = None,
                  number_fraction: Optional[ContinuousValue] = None,
                  absolute_quantity: Optional[ContinuousValue] = None,
-                 labels: Optional[List[str]] = None,
                  spec: Optional[GEMDIngredientSpec] = None,
                  file_links: Optional[List[FileLink]] = None):
+        if uids is None:
+            uids = dict()
         DataConcepts.__init__(self, GEMDIngredientRun.typ)
-        GEMDIngredientRun.__init__(self, uids=set_default_uid(uids), tags=tags, notes=notes,
+        GEMDIngredientRun.__init__(self, uids=uids, tags=tags, notes=notes,
                                    material=material, process=process,
                                    mass_fraction=mass_fraction, volume_fraction=volume_fraction,
                                    number_fraction=number_fraction,
-                                   absolute_quantity=absolute_quantity, labels=labels,
-                                   name=name, spec=spec, file_links=file_links)
+                                   absolute_quantity=absolute_quantity,
+                                   spec=spec, file_links=file_links)
 
     def __str__(self):
         return '<Ingredient run {!r}>'.format(self.name)
@@ -115,13 +109,16 @@ class IngredientRunCollection(ObjectRunCollection[IngredientRun]):
     _dataset_agnostic_path_template = 'projects/{project_id}/ingredient-runs'
     _individual_key = 'ingredient_run'
     _collection_key = 'ingredient_runs'
+    _resource = IngredientRun
 
     @classmethod
     def get_type(cls) -> Type[IngredientRun]:
         """Return the resource type in the collection."""
         return IngredientRun
 
-    def list_by_spec(self, uid: Union[UUID, str], scope: str = 'id') -> Iterator[IngredientRun]:
+    def list_by_spec(self,
+                     uid: Union[UUID, str],
+                     scope: str = CITRINE_SCOPE) -> Iterator[IngredientRun]:
         """
         [ALPHA] Get the ingredient runs using the specified ingredient spec.
 
@@ -139,7 +136,9 @@ class IngredientRunCollection(ObjectRunCollection[IngredientRun]):
         """
         return self._get_relation('ingredient-specs', uid=uid, scope=scope)
 
-    def list_by_process(self, uid: Union[UUID, str], scope: str = 'id') -> Iterator[IngredientRun]:
+    def list_by_process(self,
+                        uid: Union[UUID, str],
+                        scope: str = CITRINE_SCOPE) -> Iterator[IngredientRun]:
         """
         [ALPHA] Get ingredients to a process.
 
@@ -157,8 +156,9 @@ class IngredientRunCollection(ObjectRunCollection[IngredientRun]):
         """
         return self._get_relation(relation='process-runs', uid=uid, scope=scope)
 
-    def list_by_material(self, uid: Union[UUID, str],
-                         scope: str = 'id') -> Iterator[IngredientRun]:
+    def list_by_material(self,
+                         uid: Union[UUID, str],
+                         scope: str = CITRINE_SCOPE) -> Iterator[IngredientRun]:
         """
         [ALPHA] Get ingredients using the specified material.
 

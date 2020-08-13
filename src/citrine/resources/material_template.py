@@ -6,7 +6,6 @@ from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Optional as PropertyOptional
 from citrine._serialization.properties import String, Mapping, Object, SpecifiedMixedList, \
     LinkOrElse
-from citrine._utils.functions import set_default_uid
 from citrine.resources.data_concepts import DataConcepts
 from citrine.resources.object_templates import ObjectTemplateCollection, ObjectTemplate
 from citrine.resources.property_template import PropertyTemplate
@@ -52,25 +51,28 @@ class MaterialTemplate(ObjectTemplate, Resource['MaterialTemplate'], GEMDMateria
     uids = Mapping(String('scope'), String('id'), 'uids')
     tags = PropertyOptional(PropertyList(String()), 'tags')
     properties = PropertyOptional(PropertyList(
-        SpecifiedMixedList([LinkOrElse, Object(BaseBounds)])), 'properties')
+        SpecifiedMixedList([LinkOrElse, PropertyOptional(Object(BaseBounds))])), 'properties')
     typ = String('type')
 
     def __init__(self,
                  name: str,
+                 *,
                  uids: Optional[Dict[str, str]] = None,
                  properties: Optional[Sequence[Union[PropertyTemplate,
                                                      LinkByUID,
                                                      Sequence[Union[PropertyTemplate, LinkByUID,
-                                                                    BaseBounds]]
+                                                                    Optional[BaseBounds]]]
                                                      ]]] = None,
                  description: Optional[str] = None,
                  tags: Optional[List[str]] = None):
         # properties is a list, each element of which is a PropertyTemplate OR is a list with
         # 2 entries: [PropertyTemplate, BaseBounds]. Python typing is not expressive enough, so
         # the typing above is more general.
+        if uids is None:
+            uids = dict()
         DataConcepts.__init__(self, GEMDMaterialTemplate.typ)
         GEMDMaterialTemplate.__init__(self, name=name, properties=properties,
-                                      uids=set_default_uid(uids), tags=tags,
+                                      uids=uids, tags=tags,
                                       description=description)
 
     def __str__(self):
@@ -84,6 +86,7 @@ class MaterialTemplateCollection(ObjectTemplateCollection[MaterialTemplate]):
     _dataset_agnostic_path_template = 'projects/{project_id}/material-templates'
     _individual_key = 'material_template'
     _collection_key = 'material_templates'
+    _resource = MaterialTemplate
 
     @classmethod
     def get_type(cls) -> Type[MaterialTemplate]:

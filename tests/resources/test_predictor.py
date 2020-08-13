@@ -48,6 +48,23 @@ def test_register(valid_simple_ml_predictor_data, basic_predictor_report_data):
     assert registered.name == 'ML predictor'
 
 
+def test_register_experimental(valid_simple_ml_predictor_data, basic_predictor_report_data):
+    session = mock.Mock()
+    post_response = deepcopy(valid_simple_ml_predictor_data)
+    post_response["experimental"] = True
+    post_response["experimental_reasons"] = ["This is a test", "Of experimental reasons"]
+    session.post_resource.return_value = post_response
+    session.get_resource.return_value = basic_predictor_report_data
+    pc = PredictorCollection(uuid.uuid4(), session)
+    predictor = SimpleMLPredictor.build(valid_simple_ml_predictor_data)
+    with pytest.warns(UserWarning) as record:
+        pc.register(predictor)
+    msg = str(record[0].message)
+    assert "Predictor" in msg
+    assert "This is a test" in msg
+    assert "Of experimental reasons" in msg
+
+
 def test_graph_register(valid_graph_predictor_data, basic_predictor_report_data):
     copy_graph_data = deepcopy(valid_graph_predictor_data)
     session = mock.Mock()
@@ -112,3 +129,15 @@ def test_list_predictors(valid_simple_ml_predictor_data, valid_expression_predic
     assert 3 == session.num_calls, session.calls  # This is a little strange, the report is fetched eagerly
     assert expected_call == session.calls[0]
     assert len(predictors) == 2
+
+
+def test_get_none():
+    """Test that trying to get a predictor with uid=None results in an informative error."""
+    session = mock.Mock()
+    session.get_resource.return_value = basic_predictor_report_data
+    pc = PredictorCollection(uuid.uuid4(), session)
+
+    with pytest.raises(ValueError) as excinfo:
+        pc.get(uid=None)
+
+    assert "uid=None" in str(excinfo.value)

@@ -6,8 +6,7 @@ from citrine._rest.resource import Resource
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Mapping, String, LinkOrElse, Object
 from citrine._serialization.properties import Optional as PropertyOptional
-from citrine._utils.functions import set_default_uid
-from citrine.resources.data_concepts import DataConcepts
+from citrine.resources.data_concepts import DataConcepts, CITRINE_SCOPE
 from citrine.resources.object_specs import ObjectSpec, ObjectSpecCollection
 from gemd.entity.file_link import FileLink
 from gemd.entity.object.ingredient_spec import IngredientSpec as GEMDIngredientSpec
@@ -78,6 +77,7 @@ class IngredientSpec(ObjectSpec, Resource['IngredientSpec'], GEMDIngredientSpec)
 
     def __init__(self,
                  name: str,
+                 *,
                  uids: Optional[Dict[str, str]] = None,
                  tags: Optional[List[str]] = None,
                  notes: Optional[str] = None,
@@ -89,8 +89,11 @@ class IngredientSpec(ObjectSpec, Resource['IngredientSpec'], GEMDIngredientSpec)
                  absolute_quantity: Optional[ContinuousValue] = None,
                  labels: Optional[List[str]] = None,
                  file_links: Optional[List[FileLink]] = None):
+        if uids is None:
+            uids = dict()
+
         DataConcepts.__init__(self, GEMDIngredientSpec.typ)
-        GEMDIngredientSpec.__init__(self, uids=set_default_uid(uids), tags=tags, notes=notes,
+        GEMDIngredientSpec.__init__(self, uids=uids, tags=tags, notes=notes,
                                     material=material, process=process,
                                     mass_fraction=mass_fraction, volume_fraction=volume_fraction,
                                     number_fraction=number_fraction,
@@ -108,14 +111,16 @@ class IngredientSpecCollection(ObjectSpecCollection[IngredientSpec]):
     _dataset_agnostic_path_template = 'projects/{project_id}/ingredient-specs'
     _individual_key = 'ingredient_spec'
     _collection_key = 'ingredient_specs'
+    _resource = IngredientSpec
 
     @classmethod
     def get_type(cls) -> Type[IngredientSpec]:
         """Return the resource type in the collection."""
         return IngredientSpec
 
-    def list_by_process(self, uid: Union[UUID, str],
-                        scope: str = 'id') -> Iterator[IngredientSpec]:
+    def list_by_process(self,
+                        uid: Union[UUID, str],
+                        scope: str = CITRINE_SCOPE) -> Iterator[IngredientSpec]:
         """
         [ALPHA] Get ingredients to a process.
 
@@ -133,8 +138,9 @@ class IngredientSpecCollection(ObjectSpecCollection[IngredientSpec]):
         """
         return self._get_relation(relation='process-specs', uid=uid, scope=scope)
 
-    def list_by_material(self, uid: Union[UUID, str],
-                         scope: str = 'id') -> Iterator[IngredientSpec]:
+    def list_by_material(self,
+                         uid: Union[UUID, str],
+                         scope: str = CITRINE_SCOPE) -> Iterator[IngredientSpec]:
         """
         [ALPHA] Get ingredients using the specified material.
 

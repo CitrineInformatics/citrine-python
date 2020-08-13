@@ -13,7 +13,7 @@ There are two constraint types:
 A candidate is scored based on the objective value and likelihood of satisfying the constraints.
 Higher scores represent “better” materials.
 
-Currently, there are two scores:
+Currently, there are three scores:
 
 -  `Expected improvement <#expected-improvement>`__
 -  `Likelihood of improvement <#likelihood-of-improvement>`__

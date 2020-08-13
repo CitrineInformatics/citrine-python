@@ -27,7 +27,7 @@ The following example demonstrates how to use the python SDK to create a :class:
    from time import sleep
    from citrine import Citrine
    from citrine.informatics.predictors import SimpleMLPredictor
-   from citrine.informatics.data_sources import AraTableDataSource
+   from citrine.informatics.data_sources import GemTableDataSource
 
    # create a session with citrine using your API key
    session = Citrine(api_key = API_KEY)
@@ -43,7 +43,7 @@ The following example demonstrates how to use the python SDK to create a :class:
        inputs = [input_descriptor_1, input_descriptor_2],
        outputs = [output_descriptor_1, output_descriptor_2],
        latent_variables = [latent_variable_descriptor_1],
-       training_data = AraTableDataSource(training_data_table_uid, 0)
+       training_data = GemTableDataSource(training_data_table_uid, 0)
    )
 
    # register predictor
@@ -90,17 +90,20 @@ The following example demonstrates how to use the python SDK to create a :class:
    # register predictor
    predictor = project.predictors.register(graph_predictor)
 
+For a more complete example of graph predictor usage, see :ref:`AI Engine Code Examples <graph_predictor_example>`.
+
 Expression predictor
 --------------------
 
 The :class:`~citrine.informatics.predictors.ExpressionPredictor` defines an analytic (lossless) model that computes one real-valued output descriptor from one or more input descriptors.
-An ExpressionPredictor should be used when the relationship between inputs and outputs is known.
+An ``ExpressionPredictor`` should be used when the relationship between inputs and outputs is known.
 
 A string is used to define the expression, and the corresponding output is defined by a :class:`~citrine.informatics.descriptors.RealDescriptor`.
-The ``aliases`` parameter defines a mapping from expression arguments to descriptor keys.
-Expression arguments with spaces are not supported, so an alias must be created for each input that has a space in its name.
-Aliases are not required for inputs that do not contain spaces, but may be useful to avoid typing out the verbose descriptors in the expression string.
-If an alias isn't defined, the expression argument is expected to match the descriptor key exactly.
+An alias is required for each expression argument.
+The ``aliases`` parameter defines a mapping from expression arguments to their associated input descriptors.
+The expression argument does not need to match its descriptor key.
+This is useful to avoid typing out the verbose descriptor keys in the expression string.
+Note, spaces are not supported in expression arguments, e.g. ``Y`` is a valid argument while ``Young's modulus`` is not.
 
 The syntax is described in the `mXparser documentation <http://mathparser.org/mxparser-math-collection>`_.
 Citrine-python currently supports the following operators and functions:
@@ -115,12 +118,16 @@ Citrine-python currently supports the following operators and functions:
 
 - constants: `pi`, `e`
 
+ExpressionPredictors do not support complex numbers.
+
 The following example demonstrates how to create an :class:`~citrine.informatics.predictors.ExpressionPredictor`.
 
 .. code:: python
 
    from citrine.informatics.predictors import ExpressionPredictor
 
+   youngs_modulus = RealDescriptor('Property~Young\'s modulus', lower_bound=0, upper_bound=100, units='GPa')
+   poissons_ratio = RealDescriptor('Property~Poisson\'s ratio', lower_bound=-1, upper_bound=0.5, units='')
    shear_modulus = RealDescriptor('Property~Shear modulus', lower_bound=0, upper_bound=100, units='GPa')
 
    shear_modulus_predictor = ExpressionPredictor(
@@ -129,18 +136,24 @@ The following example demonstrates how to create an :class:`~citrine.informatics
        expression = 'Y / (2 * (1 + v))',
        output = shear_modulus,
        aliases = {
-           'Y': "Property~Young's modulus",
-           'v': "Property~Poisson's ratio"
+           'Y': youngs_modulus,
+           'v': poissons_ratio
        }
    )
 
    # register predictor
    predictor = project.predictors.register(shear_modulus_predictor)
 
+For an example of expression predictors used in a graph predictor, see :ref:`AI Engine Code Examples <graph_predictor_example>`.
+
 Ingredients to simple mixture predictor
 ---------------------------------------
 
 The :class:`~citrine.informatics.predictors.IngredientsToSimpleMixturePredictor` constructs a simple mixture from a list of ingredients.
+This predictor is only required to construct simple mixtures from CSV data sources.
+Formulations are constructed automatically by GEM Tables when a ``formulation_descriptor`` is specified by the data source, so
+an :class:`~citrine.informatics.predictors.IngredientsToSimpleMixturePredictor` in not required in those cases.
+
 Ingredients are specified by a map from ingredient id to the descriptor that contains the ingredient's quantity.
 For example, ``{'water': RealDescriptor('water quantity', 0, 1}`` defines an ingredient ``water`` with quantity held by the descriptor ``water quantity``.
 There must be a corresponding (id, quantity) pair in the map for all possible ingredients.
@@ -191,15 +204,27 @@ The following example illustrates how an :class:`~citrine.informatics.predictors
     from citrine.informatics.descriptors import FormulationDescriptor, RealDescriptor
     from citrine.informatics.predictors import IngredientsToSimpleMixturePredictor
 
-    # create a descriptor to hold simple mixtures
-    formulation = FormulationDescriptor('simple mixture')
+    file_link = dataset.files.upload("./saline_solutions.csv", "saline_solutions.csv")
 
     # create descriptors for each ingredient quantity
     water_quantity = RealDescriptor('water quantity', 0, 1)
     salt_quantity = RealDescriptor('salt quantity', 0, 1)
 
-    # table with simple mixtures and their ingredients
-    data_source = AraTableDataSource(table_uid, 0)
+    # create a descriptor to hold density data
+    density = RealDescriptor('density', lower_bound=0, upper_bound=1000, units='g/cc')
+
+    data_source = CSVDataSource(
+        file_link = file_link,
+        column_definitions = {
+            'water quantity': water_quantity,
+            'salt quantity': salt_quantity,
+            'density': density
+        },
+        identifiers=['Ingredient id']
+    )
+
+    # create a descriptor to hold simple mixtures
+    formulation = FormulationDescriptor('simple mixture')
 
     IngredientsToSimpleMixturePredictor(
         name='Ingredients to simple mixture predictor',
@@ -241,7 +266,7 @@ The following example illustrates how a :class:`~citrine.informatics.predictors.
     output_formulation = FormulationDescriptor('diluted saline (flattened)')
 
     # table with simple mixtures and their ingredients
-    data_source = AraTableDataSource(table_uid, 0)
+    data_source = GemTableDataSource(table_uid, 0, input_descriptor)
 
     SimpleMixturePredictor(
         name='Simple mixture predictor',
@@ -307,7 +332,7 @@ The example below show how to configure a mean property predictor to compute mea
 
 .. code:: python
 
-    from citrine.informatics.data_sources import AraTableDataSource
+    from citrine.informatics.data_sources import GemTableDataSource
     from citrine.informatics.descriptors import FormulationDescriptor
     from citrine.informatics.predictors import GeneralizedMeanPropertyPredictor
 
@@ -315,7 +340,7 @@ The example below show how to configure a mean property predictor to compute mea
     formulation = FormulationDescriptor('simple mixture')
 
     # table with simple mixtures and their ingredients
-    data_source = AraTableDataSource(table_uid, 0)
+    data_source = GemTableDataSource(table_uid, 0, formulation)
 
     mean_property_predictor = GeneralizedMeanPropertyPredictor(
         name='Mean property predictor',

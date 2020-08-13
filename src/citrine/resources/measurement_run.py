@@ -6,8 +6,7 @@ from citrine._rest.resource import Resource
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Optional as PropertyOptional
 from citrine._serialization.properties import String, Object, Mapping, LinkOrElse
-from citrine._utils.functions import set_default_uid
-from citrine.resources.data_concepts import DataConcepts
+from citrine.resources.data_concepts import DataConcepts, CITRINE_SCOPE
 from citrine.resources.object_runs import ObjectRun, ObjectRunCollection
 from gemd.entity.attribute.condition import Condition
 from gemd.entity.attribute.parameter import Parameter
@@ -73,6 +72,7 @@ class MeasurementRun(ObjectRun, Resource['MeasurementRun'], GEMDMeasurementRun):
 
     def __init__(self,
                  name: str,
+                 *,
                  uids: Optional[Dict[str, str]] = None,
                  tags: Optional[List[str]] = None,
                  notes: Optional[str] = None,
@@ -83,8 +83,10 @@ class MeasurementRun(ObjectRun, Resource['MeasurementRun'], GEMDMeasurementRun):
                  material: Optional[GEMDMaterialRun] = None,
                  file_links: Optional[List[FileLink]] = None,
                  source: Optional[PerformedSource] = None):
+        if uids is None:
+            uids = dict()
         DataConcepts.__init__(self, GEMDMeasurementRun.typ)
-        GEMDMeasurementRun.__init__(self, name=name, uids=set_default_uid(uids),
+        GEMDMeasurementRun.__init__(self, name=name, uids=uids,
                                     material=material,
                                     tags=tags, conditions=conditions, properties=properties,
                                     parameters=parameters, spec=spec,
@@ -101,13 +103,16 @@ class MeasurementRunCollection(ObjectRunCollection[MeasurementRun]):
     _dataset_agnostic_path_template = 'projects/{project_id}/measurement-runs'
     _individual_key = 'measurement_run'
     _collection_key = 'measurement_runs'
+    _resource = MeasurementRun
 
     @classmethod
     def get_type(cls) -> Type[MeasurementRun]:
         """Return the resource type in the collection."""
         return MeasurementRun
 
-    def list_by_spec(self, uid: Union[UUID, str], scope: str = 'id') -> Iterator[MeasurementRun]:
+    def list_by_spec(self,
+                     uid: Union[UUID, str],
+                     scope: str = CITRINE_SCOPE) -> Iterator[MeasurementRun]:
         """
         [ALPHA] Get the measurement runs using the specified measurement spec.
 
@@ -125,8 +130,9 @@ class MeasurementRunCollection(ObjectRunCollection[MeasurementRun]):
         """
         return self._get_relation('measurement-specs', uid=uid, scope=scope)
 
-    def list_by_material(self, uid: Union[UUID, str],
-                         scope: str = 'id') -> Iterator[MeasurementRun]:
+    def list_by_material(self,
+                         uid: Union[UUID, str],
+                         scope: str = CITRINE_SCOPE) -> Iterator[MeasurementRun]:
         """
         [ALPHA] Get measurements of the specified material.
 
