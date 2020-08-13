@@ -61,6 +61,54 @@ The following example demonstrates how to use the python SDK to create a :class:
    # status info will contain relevant validation information
    print(validated_predictor.status_info)
 
+Often, a :class:`~citrine.informatics.predictors.SimpleMLPredictor` will include outputs from other predictors as inputs to its model.
+Instead of entering these manually, outputs from a predictor can be retrieved programmatically using ``outputs = DescriptorMethods.from_predictor_responses(predictor, inputs)``, where ``outputs`` is the list of output descriptors returned by the ``predictor`` given a list of descriptors as ``inputs``.
+
+The following demonstrates how to create an :class:`~citrine.informatics.predictors.IngredientFractionsPredictor` and use its outputs as inputs to a :class:`~citrine.informatics.predictors.SimpleMLPredictor`.
+
+.. code:: python
+
+    from citrine import Citrine
+    from citrine.informatics.predictors import SimpleMLPredictor
+    from citrine.informatics.data_sources import GemTableDataSource
+    from citrine.informatics.predictors import IngredientFractionsPredictor
+    from citrine.informatics.descriptors import FormulationDescriptor
+    from citrine.resources.descriptors import DescriptorMethods
+
+    # create a session with citrine using your API key
+    session = Citrine(api_key = API_KEY)
+
+    # create project
+    project = session.projects.register('Example project')
+
+    # create an object that retrieves predictor responses from the project
+    descriptor_methods = DescriptorMethods(project.uid, session)
+
+    # create a descriptor to store simple mixtures
+    formulation_descriptor = FormulationDescriptor('simple mixture')
+
+    # create a predictor that compute ingredient fractions
+    ingredient_fractions = IngredientFractionsPredictor(
+        name='Ingredient Fractions Predictor',
+        description='Computes fractions of provided ingredients',
+        input_descriptor=formulation_descriptor,
+        ingredients=['water', 'salt', 'boric acid']
+    )
+
+    # get the descriptors the ingredient fractions predictor returns given the formulation descriptor
+    ingredient_fraction_descriptors = descriptor_methods.from_predictor_responses(
+        ingredient_fractions, [formulation_descriptor])
+    # ^^ in this case, ingredient_fraction_descriptors will contain 3 real descriptors: one for each featurized ingredient
+
+    simple_ml_predictor = SimpleMLPredictor(
+        name = 'Predictor name',
+        description = 'Predictor description',
+        inputs = ingredient_fraction_descriptors,
+        outputs = [output_descriptor],
+        latent_variables = [],
+        training_data = GemTableDataSource(training_data_table_uid, 0, formulation_descriptor)
+    )
+
 Graph predictor
 ---------------
 
@@ -359,11 +407,16 @@ The example below show how to configure a mean property predictor to compute mea
         label='solute'
     )
 
-This predictor will compute a response ``1.0-mean of property density with label solute in simple mixture`` which can be retrieved from a project using:
+This predictor will compute a real descriptor with a key ``1.0-mean of property density with label solute in simple mixture`` which can be retrieved using:
 
 .. code:: python
 
-    mean_property_descriptors = project.descriptors.from_predictor_responses(
+    from citrine.resources.descriptors import DescriptorMethods
+
+    # create an object that retrieves predictor responses from the project
+    descriptor_methods = DescriptorMethods(project.uid, session)
+
+    mean_property_descriptors = descriptor_methods.from_predictor_responses(
         mean_property_predictor, [formulation_descriptor])
 
 Ingredient Fractions Predictor
@@ -399,12 +452,19 @@ The example below shows how to configure an ``IngredientFractionsPredictor`` tha
         ingredients=['water', 'salt', 'boric acid']
     )
 
-The responses can be retrieved from a project using:
+The response descriptors can be retrieved using:
 
 .. code:: python
 
-    ingredient_fraction_descriptors = project.descriptors.from_predictor_responses(
+    from citrine.resources.descriptors import DescriptorMethods
+
+    # create an object that retrieves predictor responses from the project
+    descriptor_methods = DescriptorMethods(project.uid, session)
+
+    ingredient_fraction_descriptors = descriptor_methods.from_predictor_responses(
         ingredient_fractions, [formulation_descriptor])
+
+This will return a real descriptor for each featurized ingredient with bounds ``[0, 1]`` and key in the form ``'{ingredient} share in simple mixture'``.
 
 Label fractions predictor
 -------------------------
@@ -428,11 +488,16 @@ The following example demonstrates how to create a predictor that computes the t
         labels=['solute', 'solvent']
     )
 
-This predictor will compute 2 responses, ``solute share in simple mixture`` and ``solvent share in simple mixture``, which can be retrieved from a project using:
+This predictor will compute 2 responses, ``solute share in simple mixture`` and ``solvent share in simple mixture``, which can be retrieved using:
 
 .. code:: python
 
-    label_fractions_descriptors = project.descriptors.from_predictor_responses(
+    from citrine.resources.descriptors import DescriptorMethods
+
+    # create an object that retrieves predictor responses from the project
+    descriptor_methods = DescriptorMethods(project.uid, session)
+
+    label_fractions_descriptors = descriptor_methods.from_predictor_responses(
         label_fractions, [formulation_descriptor])
 
 Predictor Reports
