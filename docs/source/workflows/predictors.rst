@@ -89,10 +89,10 @@ The following demonstrates how to create an :class:`~citrine.informatics.predict
 
     # create a predictor that compute ingredient fractions
     ingredient_fractions = IngredientFractionsPredictor(
-        name='Ingredient Fractions Predictor',
-        description='Computes fractions of provided ingredients',
-        input_descriptor=formulation_descriptor,
-        ingredients=['water', 'salt', 'boric acid']
+        name = 'Ingredient Fractions Predictor',
+        description = 'Computes fractions of provided ingredients',
+        input_descriptor = formulation_descriptor,
+        ingredients = ['water', 'salt', 'boric acid']
     )
 
     # get the descriptors the ingredient fractions predictor returns given the formulation descriptor
