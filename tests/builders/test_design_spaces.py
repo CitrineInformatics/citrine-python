@@ -1,5 +1,7 @@
 """Tests for citrine.builders.design_spaces."""
 import pytest
+import warnings
+import numpy as np
 
 from citrine.informatics.descriptors import RealDescriptor, CategoricalDescriptor
 from citrine.informatics.design_spaces import EnumeratedDesignSpace
@@ -191,3 +193,25 @@ def test_exceptions(basic_cartesian_space, simple_mixture_space):
             name='invalid join space 2',
             description=''
         )
+
+
+def test_warnings():
+    """Test that warnings are raised"""
+    with warnings.catch_warnings():
+        warnings.simplefilter('error')
+        with pytest.warns(UserWarning):
+            too_big_formulation_grid = {
+                'ing_F': np.linspace(0, 1),
+                'ing_G': np.linspace(0, 1),
+                'ing_H': np.linspace(0, 1),
+                'ing_I': np.linspace(0, 1),
+                'ing_J': np.linspace(0, 1),
+                'ing_K': np.linspace(0, 1)
+            }
+            too__big_mixture_space = enumerate_formulation_grid(
+                formulation_grid=too_big_formulation_grid,
+                balance_ingredient='ing_K',
+                name='too big mixture space',
+                description=''
+            )
+
