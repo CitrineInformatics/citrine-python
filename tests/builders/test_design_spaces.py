@@ -195,11 +195,13 @@ def test_exceptions(basic_cartesian_space, simple_mixture_space):
         )
 
 
-def test_warnings():
+def test_oversize_warnings(large_joint_design_space):
     """Test that warnings are raised"""
-    with warnings.catch_warnings():
-        warnings.simplefilter('error')
-        with pytest.warns(UserWarning):
+    # Test oversized formulation grid
+    with pytest.raises(UserWarning):
+        # Fail on error (so code stops running)
+        with warnings.catch_warnings():
+            warnings.simplefilter('error')
             too_big_formulation_grid = {
                 'ing_F': np.linspace(0, 1),
                 'ing_G': np.linspace(0, 1),
@@ -208,10 +210,90 @@ def test_warnings():
                 'ing_J': np.linspace(0, 1),
                 'ing_K': np.linspace(0, 1)
             }
-            too__big_mixture_space = enumerate_formulation_grid(
+            enumerate_formulation_grid(
                 formulation_grid=too_big_formulation_grid,
                 balance_ingredient='ing_K',
                 name='too big mixture space',
                 description=''
             )
 
+    # Test oversized enumerated space
+    with pytest.raises(UserWarning):
+        # Fail on error (so code stops running)
+        with warnings.catch_warnings():
+            warnings.simplefilter('error')
+            delta = RealDescriptor('delta', 0, 100)
+            epsilon = RealDescriptor('epsilon', 0, 100)
+            zeta = RealDescriptor('zeta', 0, 100)
+            too_big_enumerated_grid = {
+                'delta': np.linspace(0, 100, 600),
+                'epsilon': np.linspace(0, 100, 600),
+                'zeta': np.linspace(0, 100, 600),
+            }
+            enumerate_cartesian_product(
+                design_grid=too_big_enumerated_grid,
+                descriptors=[delta, epsilon, zeta],
+                name='too big space',
+                description=''
+            )
+
+    # Test oversized joined spaces
+    with pytest.raises(UserWarning):
+        # Fail on error (so code stops running)
+        with warnings.catch_warnings():
+            warnings.simplefilter('error')
+
+            delta = RealDescriptor('delta', 0, 100)
+            epsilon = RealDescriptor('epsilon', 0, 100)
+            zeta = CategoricalDescriptor('zeta', ['a', 'b', 'c'])
+            design_grid = {
+                'delta': [0, 50, 100],
+                'epsilon': [0, 25, 50, 75, 100],
+                'zeta': ['a', 'b', 'c']
+            }
+            basic_space_2 = enumerate_cartesian_product(
+                design_grid=design_grid,
+                descriptors=[delta, epsilon, zeta],
+                name='basic space 2',
+                description=''
+            )
+
+            eta = RealDescriptor('eta', 0, 100)
+            theta = RealDescriptor('theta', 0, 100)
+            iota = CategoricalDescriptor('iota', ['a', 'b', 'c'])
+            design_grid = {
+                'eta': [0, 50, 100],
+                'theta': [0, 25, 50, 75, 100],
+                'iota': ['a', 'b', 'c']
+            }
+            basic_space_3 = enumerate_cartesian_product(
+                design_grid=design_grid,
+                descriptors=[eta, theta, iota],
+                name='basic space 3',
+                description=''
+            )
+
+            kappa = RealDescriptor('kappa', 0, 100)
+            mu = RealDescriptor('mu', 0, 100)
+            nu = CategoricalDescriptor('nu', ['a', 'b', 'c'])
+            design_grid = {
+                'kappa': [0, 50, 100],
+                'mu': [0, 25, 50, 75, 100],
+                'nu': ['a', 'b', 'c']
+            }
+            basic_space_4 = enumerate_cartesian_product(
+                design_grid=design_grid,
+                descriptors=[kappa, mu, nu],
+                name='basic space 4',
+                description=''
+            )
+            cartesian_join_design_spaces(
+                subspaces=[
+                    basic_space_2,
+                    basic_space_3,
+                    basic_space_4,
+                    large_joint_design_space
+                ],
+                name='too big join space',
+                description=''
+            )
