@@ -45,8 +45,12 @@ With this information we know what settings were used in past analyses and can r
 For example, we might reuse an analysis to compute a specific metric across a range of modules (to determine which module is best suited for our application) or to record the same analysis for a range of different module settings.</p>
 <div class="section" id="cross-validation-analysis">
 <h2>4.9.1. Cross-validation analysis<a class="headerlink" href="#cross-validation-analysis" title="Permalink to this headline">¶</a></h2>
-<p>A <a class="reference internal" href="../reference/citrine.informatics.analysis_configuration.html#citrine.informatics.analysis_configuration.CrossValidationAnalysisConfiguration" title="citrine.informatics.analysis_configuration.CrossValidationAnalysisConfiguration"><code class="xref py py-class docutils literal notranslate"><span class="pre">CrossValidationAnalysisConfiguration</span></code></a> performs cross-validation on a predictor.
+<p>A <a class="reference internal" href="../reference/citrine.informatics.analysis_configuration.html#citrine.informatics.analysis_configuration.CrossValidationAnalysisConfiguration" title="citrine.informatics.analysis_configuration.CrossValidationAnalysisConfiguration"><code class="xref py py-class docutils literal notranslate"><span class="pre">CrossValidationAnalysisConfiguration</span></code></a> performs k-fold cross-validation on a predictor.
 This analysis configuration defines cross-validation parameters such as the number of folds, group-by keys (descriptor keys used to group and deduplicate candidates across folds) and others.</p>
+<p>Cross-validation can only be performed on predictors that define training data.
+During cross-validation, the predictor’s training data is partitioned into k equally sized folds.
+Each fold acts as the test set once, and the remaining k-1 folds are used as training data.
+When the number of folds equals the number of training data points, the analysis is equivalent to leave-one-out cross-validation.</p>
 <p>The following example demonstrates how to use the Python SDK to register a performance workflow, wait for validation to complete and check the final status:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">sleep</span>
 <span class="kn">from</span> <span class="nn">citrine.informatics.workflows</span> <span class="kn">import</span> <span class="n">PerformanceWorkflow</span>

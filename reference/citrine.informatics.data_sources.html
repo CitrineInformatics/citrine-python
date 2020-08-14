@@ -97,18 +97,24 @@ training data for predictors and the input data for some design spaces.</p>
 
 <dl class="class">
 <dt id="citrine.informatics.data_sources.GemTableDataSource">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.data_sources.</code><code class="sig-name descname">GemTableDataSource</code><span class="sig-paren">(</span><em class="sig-param">table_id: uuid.UUID, table_version: Union[int, str]</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.data_sources.GemTableDataSource" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.data_sources.</code><code class="sig-name descname">GemTableDataSource</code><span class="sig-paren">(</span><em class="sig-param">table_id: uuid.UUID, table_version: Union[int, str], formulation_descriptor: Optional[citrine.informatics.descriptors.FormulationDescriptor] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.data_sources.GemTableDataSource" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.informatics.data_sources.DataSource" title="citrine.informatics.data_sources.DataSource"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.data_sources.DataSource</span></code></a></p>
 <p>[ALPHA] A data source based on a GEM Table hosted on the data platform.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>table_id</strong> (<em>UUID</em>) – Unique identifier for the GEM Table</p></li>
-<li><p><strong>table_version</strong> (<em>Union</em><em>[</em><em>str</em><em>,</em><em>int</em><em>]</em>) – Version number for the GEM Table, which starts at 1 rather than 0.  Strings
-are cast to ints</p></li>
+<li><p><strong>table_version</strong> (<em>Union</em><em>[</em><em>str</em><em>,</em><em>int</em><em>]</em>) – Version number for the GEM Table, which starts at 1 rather than 0.
+Strings are cast to ints.</p></li>
+<li><p><strong>formulation_descriptor</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.FormulationDescriptor" title="citrine.informatics.descriptors.FormulationDescriptor"><em>FormulationDescriptor</em></a><em>]</em>) – Optional descriptor used to store formulations emitted by the data source.</p></li>
 </ul>
 </dd>
 </dl>
+<dl class="attribute">
+<dt id="citrine.informatics.data_sources.GemTableDataSource.formulation_descriptor">
+<code class="sig-name descname">formulation_descriptor</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.data_sources.GemTableDataSource.formulation_descriptor" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="attribute">
 <dt id="citrine.informatics.data_sources.GemTableDataSource.table_id">
 <code class="sig-name descname">table_id</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.data_sources.GemTableDataSource.table_id" title="Permalink to this definition">¶</a></dt>

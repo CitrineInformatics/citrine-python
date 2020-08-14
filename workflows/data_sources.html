@@ -192,35 +192,36 @@ A CSV data source and <a class="reference internal" href="../reference/citrine.i
 <h2>4.7.2. GEM Table Data Source<a class="headerlink" href="#gem-table-data-source" title="Permalink to this headline">¶</a></h2>
 <p>An <a class="reference internal" href="../reference/citrine.informatics.data_sources.html#citrine.informatics.data_sources.GemTableDataSource" title="citrine.informatics.data_sources.GemTableDataSource"><code class="xref py py-class docutils literal notranslate"><span class="pre">GemTableDataSource</span></code></a> references a GEM Table.
 As explained more in the <a class="reference internal" href="../data_extraction.html"><span class="doc">documentation</span></a>, GEM Tables provide a structured version of on-platform data.
-GEM Tables are specified by the display table uuid and version number.
+GEM Tables are specified by the display table uuid, version number and optional formulation descriptor.
+A formulation descriptor must be specified if formulations should be built from the data source.
+If specified, any formulations emitted by the data source are stored using the provided descriptor.
 The example below assumes that the uuid and the version of the desired GEM Table are known.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>  <span class="kn">from</span> <span class="nn">citrine.informatics.data_sources</span> <span class="kn">import</span> <span class="n">GemTableDataSource</span>
-  <span class="kn">from</span> <span class="nn">citrine.informatics.predictors</span> <span class="kn">import</span> <span class="n">SimpleMLPredictor</span>
-  <span class="kn">from</span> <span class="nn">citrine.informatics.descriptors</span> <span class="kn">import</span> <span class="n">RealDescriptor</span><span class="p">,</span> <span class="n">CategoricalDescriptor</span><span class="p">,</span> <span class="n">ChemicalFormulaDescriptor</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.informatics.data_sources</span> <span class="kn">import</span> <span class="n">GemTableDataSource</span>
+<span class="kn">from</span> <span class="nn">citrine.informatics.predictors</span> <span class="kn">import</span> <span class="n">SimpleMLPredictor</span>
+<span class="kn">from</span> <span class="nn">citrine.informatics.descriptors</span> <span class="kn">import</span> <span class="n">RealDescriptor</span><span class="p">,</span> <span class="n">CategoricalDescriptor</span><span class="p">,</span> <span class="n">ChemicalFormulaDescriptor</span>
 
-  <span class="n">data_source</span> <span class="o">=</span> <span class="n">GemTableDataSource</span><span class="p">(</span>
-      <span class="n">table_id</span> <span class="o">=</span> <span class="s2">&quot;842434fd-11fe-4324-815c-7db93c7ed81e&quot;</span><span class="p">,</span>
-      <span class="n">table_version</span> <span class="o">=</span> <span class="s2">&quot;2&quot;</span>
-  <span class="p">)</span>
+<span class="n">data_source</span> <span class="o">=</span> <span class="n">GemTableDataSource</span><span class="p">(</span>
+    <span class="n">table_id</span> <span class="o">=</span> <span class="s2">&quot;842434fd-11fe-4324-815c-7db93c7ed81e&quot;</span><span class="p">,</span>
+    <span class="n">table_version</span> <span class="o">=</span> <span class="s2">&quot;2&quot;</span>
+<span class="p">)</span>
 
-  <span class="n">predictor</span> <span class="o">=</span> <span class="n">SimpleMLPredictor</span><span class="p">(</span>
-      <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Band gap predictor&quot;</span><span class="p">,</span>
-      <span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;Predict the band gap from the chemical formula and crystallinity&quot;</span><span class="p">,</span>
-      <span class="n">inputs</span> <span class="o">=</span> <span class="p">[</span>
-          <span class="n">ChemicalFormulaDescriptor</span><span class="p">(</span><span class="s2">&quot;root~formula&quot;</span><span class="p">),</span>
-          <span class="n">CategoricalDescriptor</span><span class="p">(</span><span class="s2">&quot;root~crystallinity&quot;</span><span class="p">,</span> <span class="n">categories</span><span class="o">=</span><span class="p">[</span>
-              <span class="s2">&quot;Single crystalline&quot;</span><span class="p">,</span> <span class="s2">&quot;Amorphous&quot;</span><span class="p">,</span> <span class="s2">&quot;Polycrystalline&quot;</span><span class="p">])</span>
-      <span class="p">],</span>
-      <span class="n">outputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">RealDescriptor</span><span class="p">(</span><span class="s2">&quot;root~band gap&quot;</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;eV&quot;</span><span class="p">)],</span>
-      <span class="n">latent_variables</span> <span class="o">=</span> <span class="p">[],</span>
-      <span class="n">training_data</span> <span class="o">=</span> <span class="n">data_source</span>
-  <span class="p">)</span>
-
-<span class="n">Note</span> <span class="n">that</span> <span class="n">the</span> <span class="n">descriptor</span> <span class="n">keys</span> <span class="n">above</span> <span class="n">are</span> <span class="n">the</span> <span class="n">headers</span> <span class="n">of</span> <span class="n">the</span> <span class="o">*</span><span class="n">variable</span><span class="o">*</span> <span class="ow">not</span> <span class="n">the</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">table</span><span class="o">.</span>
-<span class="n">The</span> <span class="n">last</span> <span class="n">term</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">column</span> <span class="n">header</span> <span class="ow">is</span> <span class="n">a</span> <span class="n">suffix</span> <span class="n">associated</span> <span class="k">with</span> <span class="n">the</span> <span class="n">specific</span> <span class="n">column</span> <span class="n">definition</span> <span class="n">rather</span> <span class="n">than</span> <span class="n">the</span> <span class="n">variable</span><span class="o">.</span>
-<span class="n">It</span> <span class="n">should</span> <span class="n">be</span> <span class="n">omitted</span> <span class="kn">from</span> <span class="nn">the</span> <span class="n">descriptor</span> <span class="n">key</span><span class="o">.</span>
+<span class="n">predictor</span> <span class="o">=</span> <span class="n">SimpleMLPredictor</span><span class="p">(</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Band gap predictor&quot;</span><span class="p">,</span>
+    <span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;Predict the band gap from the chemical formula and crystallinity&quot;</span><span class="p">,</span>
+    <span class="n">inputs</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">ChemicalFormulaDescriptor</span><span class="p">(</span><span class="s2">&quot;root~formula&quot;</span><span class="p">),</span>
+        <span class="n">CategoricalDescriptor</span><span class="p">(</span><span class="s2">&quot;root~crystallinity&quot;</span><span class="p">,</span> <span class="n">categories</span><span class="o">=</span><span class="p">[</span>
+            <span class="s2">&quot;Single crystalline&quot;</span><span class="p">,</span> <span class="s2">&quot;Amorphous&quot;</span><span class="p">,</span> <span class="s2">&quot;Polycrystalline&quot;</span><span class="p">])</span>
+    <span class="p">],</span>
+    <span class="n">outputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">RealDescriptor</span><span class="p">(</span><span class="s2">&quot;root~band gap&quot;</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;eV&quot;</span><span class="p">)],</span>
+    <span class="n">latent_variables</span> <span class="o">=</span> <span class="p">[],</span>
+    <span class="n">training_data</span> <span class="o">=</span> <span class="n">data_source</span>
+<span class="p">)</span>
 </pre></div>
 </div>
+<p>Note that the descriptor keys above are the headers of the <em>variable</em> not the column in the table.
+The last term in the column header is a suffix associated with the specific column definition rather than the variable.
+It should be omitted from the descriptor key.</p>
 </div>
 </div>
 

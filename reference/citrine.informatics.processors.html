@@ -205,6 +205,78 @@ The number of points along each dimension is specified by <cite>grid_sizes</cite
 
 </dd></dl>
 
+<dl class="class">
+<dt id="citrine.informatics.processors.MonteCarloProcessor">
+<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.processors.</code><code class="sig-name descname">MonteCarloProcessor</code><span class="sig-paren">(</span><em class="sig-param">name: str</em>, <em class="sig-param">description: str</em>, <em class="sig-param">session: Optional[citrine._session.Session] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.processors.MonteCarloProcessor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.informatics.processors.Processor" title="citrine.informatics.processors.Processor"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.processors.Processor</span></code></a></p>
+<p>[ALPHA] Using a Monte Carlo optimizer to search for the best candidate.</p>
+<p>The moves that the MonteCarlo optimizer makes are inferred from the descriptors in the
+design space.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – name of the processor</p></li>
+<li><p><strong>description</strong> (<em>str</em>) – description of the processor</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="citrine.informatics.processors.MonteCarloProcessor.active">
+<code class="sig-name descname">active</code><em class="property"> = True</em><a class="headerlink" href="#citrine.informatics.processors.MonteCarloProcessor.active" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.processors.MonteCarloProcessor.description">
+<code class="sig-name descname">description</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.processors.MonteCarloProcessor.description" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.processors.MonteCarloProcessor.experimental">
+<code class="sig-name descname">experimental</code><em class="property"> = True</em><a class="headerlink" href="#citrine.informatics.processors.MonteCarloProcessor.experimental" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.processors.MonteCarloProcessor.experimental_reasons">
+<code class="sig-name descname">experimental_reasons</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.processors.MonteCarloProcessor.experimental_reasons" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.processors.MonteCarloProcessor.module_type">
+<code class="sig-name descname">module_type</code><em class="property"> = 'PROCESSOR'</em><a class="headerlink" href="#citrine.informatics.processors.MonteCarloProcessor.module_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.processors.MonteCarloProcessor.name">
+<code class="sig-name descname">name</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.processors.MonteCarloProcessor.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.processors.MonteCarloProcessor.schema_id">
+<code class="sig-name descname">schema_id</code><em class="property"> = UUID('d8ddfe73-10f7-4456-9de9-9a1638bae403')</em><a class="headerlink" href="#citrine.informatics.processors.MonteCarloProcessor.schema_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.processors.MonteCarloProcessor.status">
+<code class="sig-name descname">status</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.processors.MonteCarloProcessor.status" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.processors.MonteCarloProcessor.status_info">
+<code class="sig-name descname">status_info</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.processors.MonteCarloProcessor.status_info" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.processors.MonteCarloProcessor.typ">
+<code class="sig-name descname">typ</code><em class="property"> = 'ContinuousSearch'</em><a class="headerlink" href="#citrine.informatics.processors.MonteCarloProcessor.typ" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.processors.MonteCarloProcessor.uid">
+<code class="sig-name descname">uid</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.processors.MonteCarloProcessor.uid" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </div>
 
 
