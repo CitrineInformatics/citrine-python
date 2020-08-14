@@ -31,6 +31,7 @@ class CrossValidationAnalysisConfiguration(Serializable['CrossValidationAnalysis
     responses: list[str], optional
         Set of keys used to limit the outputs that CV will be executed against.
         If not provided all responses will have analysis performed.
+
     """
 
     name = properties.String('name')
