@@ -74,16 +74,16 @@ class PlatformVocabulary(Mapping[str, Descriptor]):
     """
 
     def __init__(self, entries: Mapping[str, Descriptor]):
-        self.entries = entries
+        self._entries = entries
 
     def __getitem__(self, k: str) -> Descriptor:
-        return self.entries[k]
+        return self._entries[k]
 
     def __len__(self):
-        return len(self.entries)
+        return len(self._entries)
 
     def __iter__(self) -> Iterator[str]:
-        return iter(self.entries)
+        return iter(self._entries)
 
     @staticmethod
     def from_templates(project: Project, scope: str):

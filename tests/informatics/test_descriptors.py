@@ -52,6 +52,8 @@ def test_inorganic_deprecated():
 def test_string_rep(descriptor):
     """String representation of descriptor should contain the descriptor key."""
     assert str(descriptor).__contains__(descriptor.key)
+    assert repr(descriptor).__contains__(descriptor.key)
+
 
 def test_categorical_descriptor_categories_types():
     """Categories in a categorical descriptor should be of type str, and other types should raise TypeError."""

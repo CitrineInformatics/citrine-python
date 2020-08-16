@@ -116,6 +116,9 @@ class ChemicalFormulaDescriptor(Serializable['ChemicalFormulaDescriptor'], Descr
     def __str__(self):
         return "<ChemicalFormulaDescriptor {!r}>".format(self.key)
 
+    def __repr__(self):
+        return "ChemicalFormulaDescriptor(key={})".format(self.key)
+
 
 def InorganicDescriptor(key: str, threshold: Optional[float] = 1.0):
     """[DEPRECATED] Use ChemicalFormulaDescriptor instead."""
@@ -156,6 +159,9 @@ class MolecularStructureDescriptor(Serializable['MolecularStructureDescriptor'],
     def __str__(self):
         return "<MolecularStructureDescriptor {!r}>".format(self.key)
 
+    def __repr__(self):
+        return "MolecularStructureDescriptor(key={})".format(self.key)
+
 
 class CategoricalDescriptor(Serializable['CategoricalDescriptor'], Descriptor):
     """[ALPHA] A descriptor to hold categorical variables.
@@ -194,6 +200,9 @@ class CategoricalDescriptor(Serializable['CategoricalDescriptor'], Descriptor):
     def __str__(self):
         return "<CategoricalDescriptor {!r}>".format(self.key)
 
+    def __repr__(self):
+        return "CategoricalDescriptor(key={}, categories={})".format(self.key, self.categories)
+
 
 class FormulationDescriptor(Serializable['FormulationDescriptor'], Descriptor):
     """[ALPHA] A descriptor to hold formulations.
@@ -222,3 +231,6 @@ class FormulationDescriptor(Serializable['FormulationDescriptor'], Descriptor):
 
     def __str__(self):
         return "<FormulationDescriptor {!r}>".format(self.key)
+
+    def __repr__(self):
+        return "FormulationDescriptor(key={})".format(self.key)
