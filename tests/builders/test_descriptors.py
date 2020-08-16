@@ -124,7 +124,7 @@ def test_dict_behavior():
     v = PlatformVocabulary(entries)
 
     assert len(v) == 2
-    assert list(v) == ["density", "pressure"]
+    assert set(v) == {"density", "pressure"}
     assert v["density"] == entries["density"]
     assert v["pressure"] == entries["pressure"]
 
