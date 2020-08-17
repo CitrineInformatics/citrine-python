@@ -492,7 +492,7 @@ Training data
 -------------
 
 Training data are defined by a list of :doc:`data sources <data_sources>`.
-When multiple data sources are specified, data from all sources is combined into a flattened list of candidates and deduplicated by uid and identifiers prior to training a predictor.
+When multiple data sources are specified, data from all sources is combined into a flattened list and deduplicated prior to training a predictor.
 Deduplication is performed if a uid or identifier is shared between two or more rows.
 The content of a deduplicated row will contain the union of data across all rows that share the same uid or at least 1 identifier.
 An error will be thrown if two deduplicated rows contain different data for the same descriptor because it's unclear which value should be used in the deduplcated row.
