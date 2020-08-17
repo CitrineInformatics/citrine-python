@@ -82,7 +82,7 @@ class Predictor(Module):
         """
         if training_data is None:
             return []
-        if not isinstance(training_data, Iterable):
+        if isinstance(training_data, DataSource):
             warn("Specifying training data as a single data source is deprecated. "
                  "Please use a list of data sources to create {} instead.".format(self),
                  DeprecationWarning)
