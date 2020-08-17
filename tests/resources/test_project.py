@@ -111,7 +111,7 @@ def test_transfer_resource_post_content(project, session):
         name="dataset to transfer", summary="test", description="test"
     ))
 
-    assert project.transfer_resource(project.uid, dataset)
+    assert project.transfer_resource(dataset, project.uid)
 
     expected_call = FakeCall(
         method='POST',

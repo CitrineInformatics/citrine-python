@@ -221,8 +221,8 @@ class Project(Resource['Project']):
             "resource": {"type": resource_type, "id": resource_id}
         })
 
-    def transfer_resource(self, receiving_project_uid: Union[str, UUID],
-                          resource: Resource) -> bool:
+    def transfer_resource(self, resource: Resource,
+                          receiving_project_uid: Union[str, UUID]) -> bool:
         """
         Transfer ownership of a resource.
 
@@ -231,11 +231,11 @@ class Project(Resource['Project']):
 
         Parameters
         ----------
-        receiving_project_uid: Union[string, UUID]
-            The uid of the project to which the resource will be transferred.
         resource: Resource
             The resource owned by this project, which will get transferred to
             the project with uid = receiving_project_uid.
+        receiving_project_uid: Union[string, UUID]
+            The uid of the project to which the resource will be transferred.
 
         Returns
         -------
