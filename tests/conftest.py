@@ -93,10 +93,15 @@ def valid_enumerated_design_space_data():
 @pytest.fixture
 def valid_simple_ml_predictor_data():
     """Produce valid data used for tests."""
+    from citrine.informatics.data_sources import GemTableDataSource
     from citrine.informatics.descriptors import RealDescriptor
     x = RealDescriptor("x", 0, 100, "")
     y = RealDescriptor("y", 0, 100, "")
     z = RealDescriptor("z", 0, 100, "")
+    data_source = GemTableDataSource(
+        table_id=uuid.UUID('e5c51369-8e71-4ec6-b027-1f92bdc14762'),
+        table_version=2
+    )
     return dict(
         module_type='PREDICTOR',
         status='VALID',
@@ -113,11 +118,7 @@ def valid_simple_ml_predictor_data():
             inputs=[x.dump()],
             outputs=[z.dump()],
             latent_variables=[y.dump()],
-            training_data=dict(
-                table_id='e5c51369-8e71-4ec6-b027-1f92bdc14762',
-                table_version=2,
-                type="hosted_table_data_source"
-            )
+            training_data=data_source.dump()
         )
     )
 
@@ -314,7 +315,8 @@ def valid_ing_to_simple_mixture_predictor_data():
 def valid_generalized_mean_property_predictor_data():
     """Produce valid data used for tests."""
     from citrine.informatics.descriptors import FormulationDescriptor
-    from citrine.informatics.data_sources import AraTableDataSource
+    from citrine.informatics.data_sources import GemTableDataSource
+    formulation_descriptor = FormulationDescriptor('simple mixture')
     return dict(
         module_type='PREDICTOR',
         status='VALID',
@@ -328,10 +330,10 @@ def valid_generalized_mean_property_predictor_data():
             type='GeneralizedMeanProperty',
             name='Mean property predictor',
             description='Computes mean ingredient properties',
-            input=FormulationDescriptor('simple mixture').dump(),
+            input=formulation_descriptor.dump(),
             properties=['density'],
             p=2,
-            training_data=AraTableDataSource(uuid.uuid4(), 0).dump(),
+            training_data=GemTableDataSource(uuid.uuid4(), 0, formulation_descriptor).dump(),
             impute_properties=True,
             default_properties={'density': 1.0},
             label='solvent'
@@ -431,31 +433,12 @@ def valid_grid_processor_data():
 
 
 @pytest.fixture
-def valid_enumerated_processor_data():
-    """Valid EnumeratedProcessor data."""
-    return dict(
-        module_type='PROCESSOR',
-        status='READY',
-        status_info=['valid'],
-        active=True,
-        archived=False,
-        display_name='my enumerated processor',
-        schema_id='272791a5-5468-4344-ac9f-2811d9266a4d',
-        id=str(uuid.uuid4()),
-        config=dict(
-            type='Enumerated',
-            name='my enumerated processor',
-            description='enumerates all the things',
-            max_size=10,
-        )
-    )
-
-
-@pytest.fixture
 def valid_simple_mixture_predictor_data():
     """Produce valid data used for tests."""
-    from citrine.informatics.data_sources import AraTableDataSource
-    from citrine.informatics.descriptors import RealDescriptor
+    from citrine.informatics.data_sources import GemTableDataSource
+    from citrine.informatics.descriptors import FormulationDescriptor
+    input_formulation = FormulationDescriptor('input formulation')
+    output_formulation = FormulationDescriptor('output formulation')
     return dict(
         module_type='PREDICTOR',
         status='VALID',
@@ -469,14 +452,8 @@ def valid_simple_mixture_predictor_data():
             type='SimpleMixture',
             name='Simple mixture predictor',
             description='simple mixture description',
-            input=dict(
-                type='Formulation',
-                descriptor_key='input formulation',
-            ),
-            output=dict(
-                type='Formulation',
-                descriptor_key='output formulation',
-            ),
-            training_data=AraTableDataSource(uuid.uuid4(), 0).dump(),
+            input=input_formulation.dump(),
+            output=output_formulation.dump(),
+            training_data=GemTableDataSource(uuid.uuid4(), 0, input_formulation).dump(),
         ),
     )

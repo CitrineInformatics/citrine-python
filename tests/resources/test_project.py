@@ -3,7 +3,7 @@ import pytest
 from dateutil.parser import parse
 
 from citrine.resources.project import Project, ProjectCollection
-from citrine.resources.table import TableCollection
+from citrine.resources.gemtables import GemTableCollection
 from citrine.resources.project_member import ProjectMember
 from citrine.resources.project_roles import MEMBER, LEAD, WRITE
 from tests.utils.factories import ProjectDataFactory, UserDataFactory
@@ -103,6 +103,25 @@ def test_make_resource_private_post_content(project, session):
     )
     assert expected_call == session.last_call
 
+def test_transfer_resource_post_content(project, session):
+
+    dataset_id = str(uuid.uuid4())
+    dataset = project.datasets.build(dict(
+        id=dataset_id,
+        name="dataset to transfer", summary="test", description="test"
+    ))
+
+    assert project.transfer_resource(dataset, project.uid)
+
+    expected_call = FakeCall(
+        method='POST',
+        path='/projects/{}/transfer-resource'.format(project.uid),
+        json={
+            'to_project_id': str(project.uid),
+            'resource': dataset.as_entity_dict()
+        }
+    )
+    assert expected_call == session.last_call
 
 def test_datasets_get_project_id(project):
     assert project.uid == project.datasets.project_id
@@ -189,7 +208,7 @@ def test_workflows_get_project_id(project):
 
 
 def test_ara_definitions_get_project_id(project):
-    assert project.uid == project.ara_definitions.project_id
+    assert project.uid == project.table_configs.project_id
 
 
 def test_project_registration(collection, session):
@@ -445,5 +464,5 @@ def test_remove_user(project, session):
 
 
 def test_project_tables(project):
-    assert isinstance(project.tables, TableCollection)
+    assert isinstance(project.tables, GemTableCollection)
 

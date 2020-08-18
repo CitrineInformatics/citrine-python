@@ -12,8 +12,13 @@ For example, we might reuse an analysis to compute a specific metric across a ra
 Cross-validation analysis
 -------------------------
 
-A :class:`~citrine.informatics.analysis_configuration.CrossValidationAnalysisConfiguration` performs cross-validation on a predictor.
+A :class:`~citrine.informatics.analysis_configuration.CrossValidationAnalysisConfiguration` performs k-fold cross-validation on a predictor.
 This analysis configuration defines cross-validation parameters such as the number of folds, group-by keys (descriptor keys used to group and deduplicate candidates across folds) and others.
+
+Cross-validation can only be performed on predictors that define training data.
+During cross-validation, the predictor's training data is partitioned into k equally sized folds.
+Each fold acts as the test set once, and the remaining k-1 folds are used as training data.
+When the number of folds equals the number of training data points, the analysis is equivalent to leave-one-out cross-validation.
 
 The following example demonstrates how to use the Python SDK to register a performance workflow, wait for validation to complete and check the final status:
 
@@ -52,7 +57,7 @@ The following example demonstrates how to use the Python SDK to register a perfo
 
 Cross-validation can be performed on most predictors but will not produce results in the following scenarios:
 
-- Training data contain simple mixtures from an :class:`~citrine.informatics.data_sources.AraTableDataSource` *and* an :class:`~citrine.informatics.predictors.IngredientsToSimpleMixturePredictor` is included in the graph.
+- Training data contain simple mixtures from an :class:`~citrine.informatics.data_sources.GemTableDataSource` *and* an :class:`~citrine.informatics.predictors.IngredientsToSimpleMixturePredictor` is included in the graph.
 - The graph includes a :class:`~citrine.informatics.predictors.SimpleMixturePredictor` or :class:`~citrine.informatics.predictors.GeneralizedMeanPropertyPredictor`.
 
 Both are known issues in experimental functionality and will be resolved in a future release.
@@ -200,4 +205,3 @@ If there was a second categorical response ``~~y`` with 2 categories, the respon
            }
        }
    }
-

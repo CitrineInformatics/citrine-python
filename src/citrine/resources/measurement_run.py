@@ -6,7 +6,7 @@ from citrine._rest.resource import Resource
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Optional as PropertyOptional
 from citrine._serialization.properties import String, Object, Mapping, LinkOrElse
-from citrine.resources.data_concepts import DataConcepts
+from citrine.resources.data_concepts import DataConcepts, CITRINE_SCOPE
 from citrine.resources.object_runs import ObjectRun, ObjectRunCollection
 from gemd.entity.attribute.condition import Condition
 from gemd.entity.attribute.parameter import Parameter
@@ -110,7 +110,9 @@ class MeasurementRunCollection(ObjectRunCollection[MeasurementRun]):
         """Return the resource type in the collection."""
         return MeasurementRun
 
-    def list_by_spec(self, uid: Union[UUID, str], scope: str = 'id') -> Iterator[MeasurementRun]:
+    def list_by_spec(self,
+                     uid: Union[UUID, str],
+                     scope: str = CITRINE_SCOPE) -> Iterator[MeasurementRun]:
         """
         [ALPHA] Get the measurement runs using the specified measurement spec.
 
@@ -128,8 +130,9 @@ class MeasurementRunCollection(ObjectRunCollection[MeasurementRun]):
         """
         return self._get_relation('measurement-specs', uid=uid, scope=scope)
 
-    def list_by_material(self, uid: Union[UUID, str],
-                         scope: str = 'id') -> Iterator[MeasurementRun]:
+    def list_by_material(self,
+                         uid: Union[UUID, str],
+                         scope: str = CITRINE_SCOPE) -> Iterator[MeasurementRun]:
         """
         [ALPHA] Get measurements of the specified material.
 

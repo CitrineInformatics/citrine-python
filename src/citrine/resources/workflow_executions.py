@@ -11,23 +11,41 @@ from citrine._session import Session
 
 
 class WorkflowExecution(Resource['WorkflowExecution']):
-    """[ALPHA] A Citrine Workflow Execution."""
+    """[ALPHA] A Citrine Workflow Execution.
+
+    Parameters
+    ----------
+    uid: str
+        Unique identifier of the workflow execution
+    project_id: str
+        Unique identifier of the project that contains the workflow execution
+    workflow_id: str
+        Unique identifier of the workflow that was executed
+    version_number: int
+        Integer identifier that increases each time the workflow is executed.  The first execution
+        has version_number = 1.
+
+    """
 
     _response_key = 'WorkflowExecutions'
 
     uid = properties.UUID('id')
     project_id = properties.UUID('project_id', deserializable=False)
     workflow_id = properties.UUID('workflow_id', deserializable=False)
+    version_number = properties.Integer("version_number")
 
     def __init__(self,
                  uid: Optional[str] = None,
                  project_id: Optional[str] = None,
                  workflow_id: Optional[str] = None,
-                 session: Optional[Session] = None):
+                 session: Optional[Session] = None,
+                 version_number: Optional[int] = None,
+                 ):
         self.uid: str = uid
         self.project_id: str = project_id
         self.workflow_id: str = workflow_id
         self.session: Session = session
+        self.version_number = version_number
 
     def __str__(self):
         return '<WorkflowExecution {!r}>'.format(str(self.uid))
