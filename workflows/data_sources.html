@@ -84,7 +84,7 @@ Columns in the CSV that are not mapped with a descriptor are ignored.</p>
     <span class="p">],</span>
     <span class="n">outputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">data_source</span><span class="o">.</span><span class="n">column_definitions</span><span class="p">[</span><span class="s2">&quot;Gap&quot;</span><span class="p">]],</span>
     <span class="n">latent_variables</span> <span class="o">=</span> <span class="p">[],</span>
-    <span class="n">training_data</span> <span class="o">=</span> <span class="n">data_source</span>
+    <span class="n">training_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">data_source</span><span class="p">]</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -215,7 +215,7 @@ The example below assumes that the uuid and the version of the desired GEM Table
     <span class="p">],</span>
     <span class="n">outputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">RealDescriptor</span><span class="p">(</span><span class="s2">&quot;root~band gap&quot;</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;eV&quot;</span><span class="p">)],</span>
     <span class="n">latent_variables</span> <span class="o">=</span> <span class="p">[],</span>
-    <span class="n">training_data</span> <span class="o">=</span> <span class="n">data_source</span>
+    <span class="n">training_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">data_source</span><span class="p">]</span>
 <span class="p">)</span>
 </pre></div>
 </div>

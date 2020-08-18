@@ -329,6 +329,29 @@ Use the update_user_rule method to change a User’s role.</p>
 <dd><p>Return a resource representing all visible Tables.</p>
 </dd></dl>
 
+<dl class="method">
+<dt id="citrine.resources.project.Project.transfer_resource">
+<code class="sig-name descname">transfer_resource</code><span class="sig-paren">(</span><em class="sig-param">resource: citrine._rest.resource.Resource, receiving_project_uid: Union[str, uuid.UUID]</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#citrine.resources.project.Project.transfer_resource" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transfer ownership of a resource.</p>
+<p>The new owner of the the supplied resource becomes the project
+with uid = receiving_project_uid.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>resource</strong> (<em>Resource</em>) – The resource owned by this project, which will get transferred to
+the project with uid = receiving_project_uid.</p></li>
+<li><p><strong>receiving_project_uid</strong> (<em>Union</em><em>[</em><em>string</em><em>, </em><em>UUID</em><em>]</em>) – The uid of the project to which the resource will be transferred.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Returns True upon successful resource transfer.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="attribute">
 <dt>
 <code class="sig-name descname">uid</code><em class="property"> = None</em></dt>

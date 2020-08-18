@@ -43,7 +43,7 @@ The following example demonstrates how to use the python SDK to create a :class:
        inputs = [input_descriptor_1, input_descriptor_2],
        outputs = [output_descriptor_1, output_descriptor_2],
        latent_variables = [latent_variable_descriptor_1],
-       training_data = GemTableDataSource(training_data_table_uid, 0)
+       training_data = [GemTableDataSource(training_data_table_uid, 0)]
    )
 
    # register predictor
@@ -128,7 +128,8 @@ The following example demonstrates how to use the python SDK to create a :class:
    graph_predictor = GraphPredictor(
        name = 'Predictor name',
        description = 'Predictor description',
-       predictors = [predictor1.uid, predictor2.uid, predictor3.uid]
+       predictors = [predictor1.uid, predictor2.uid, predictor3.uid],
+       training_data = [GemTableDataSource(training_data_table_uid, 0)] # training data shared by all sub-predictors
    )
 
    # register predictor
@@ -284,7 +285,7 @@ The following example illustrates how an :class:`~citrine.informatics.predictors
             'solvent': ['water'],
             'solute': ['salt']
         },
-        training_data=data_source
+        training_data=[data_source]
     )
 
 Simple mixture predictor
@@ -317,7 +318,7 @@ The following example illustrates how a :class:`~citrine.informatics.predictors.
         description='Constructs a formulation descriptor that flattens a hierarchy of simple mixtures into the quantities of leaf ingredients',
         input_descriptor=input_formulation,
         output_descriptor=output_formulation,
-        training_data=data_source
+        training_data=[data_source]
     )
 
 Generalized mean property predictor
@@ -394,7 +395,7 @@ The example below show how to configure a mean property predictor to compute mea
         properties=['density'],
         # compute the 1-mean
         p=1,
-        training_data=data_source,
+        training_data=[data_source],
         # impute ingredient properties, if missing
         impute_properties=True,
         # if missing, use with 2.0
@@ -410,7 +411,7 @@ This predictor will compute a real descriptor with a key ``1.0-mean of property 
     mean_property_descriptors = project.descriptors.from_predictor_responses(
         mean_property_predictor, [formulation_descriptor])
 
-Ingredient Fractions Predictor
+Ingredient fractions predictor
 ------------------------------
 
 The :class:`~citrine.informatics.predictors.IngredientFractionsPredictor` featurizes ingredient fractions in a simple mixture.
@@ -481,13 +482,29 @@ This predictor will compute 2 responses, ``solute share in simple mixture`` and 
     label_fractions_descriptors = project.descriptors.from_predictor_responses(
         label_fractions, [formulation_descriptor])
 
-Predictor Reports
+Predictor reports
 -----------------
 
 A :doc:`predictor report <predictor_reports>` describes a machine-learned model, for example its settings and what features are important to the model. 
 It does not include performance metrics. To learn more about performance metrics, please see :doc:`PerformanceWorkflows <performance_workflows>`.
 
-Data Sources
+Training data
 -------------
 
-A :doc:`data source <data_sources>` references the training data used by a predictor.
+Training data are defined by a list of :doc:`data sources <data_sources>`.
+When multiple data sources are specified, data from all sources is combined into a flattened list and deduplicated prior to training a predictor.
+Deduplication is performed if a uid or identifier is shared between two or more rows.
+The content of a deduplicated row will contain the union of data across all rows that share the same uid or at least 1 identifier.
+An error will be thrown if two deduplicated rows contain different data for the same descriptor because it's unclear which value should be used in the deduplcated row.
+
+Deduplication is additive.
+Given three rows with identifiers ``[a]``, ``[b]`` and ``[a, b]``, deduplication will result in a single row with three identifiers (``[a, b, c]``) and the union of all data from these rows.
+Care must be taken to ensure uids and identifiers aren't shared across multiple data sources to avoid unwanted deduplication.
+
+When using a :class:`~citrine.informatics.predictors.GraphPredictor`, training data provided by the graph predictor and all subpredictors are combined into a single deduplicated list.
+Each predictor is trained on the subset of the combined data that is valid for the model.
+Note, data may come from sources defined by other subpredictors in the graph.
+Because training data are shared by all predictors in the graph, a data source does not need to be redefined by all subpredictors that require it.
+If all data sources required train a predictor are specified elsewhere in the graph, the ``training_data`` parameter may be omitted.
+If the graph contains a predictor that requires formulations data, e.g. a :class:`~citrine.informatics.predictors.SimpleMixturePredictor` or :class:`~citrine.informatics.predictors.GeneralizedMeanPropertyPredictor`, any GEM Tables specified by the graph predictor that contain formulation data must provide a formulation descriptor,
+and this descriptor must match the input formulation descriptor of the sub-predictors that require these data.
