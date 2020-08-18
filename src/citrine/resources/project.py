@@ -221,6 +221,34 @@ class Project(Resource['Project']):
             "resource": {"type": resource_type, "id": resource_id}
         })
 
+    def transfer_resource(self, resource: Resource,
+                          receiving_project_uid: Union[str, UUID]) -> bool:
+        """
+        Transfer ownership of a resource.
+
+        The new owner of the the supplied resource becomes the project
+        with uid = receiving_project_uid.
+
+        Parameters
+        ----------
+        resource: Resource
+            The resource owned by this project, which will get transferred to
+            the project with uid = receiving_project_uid.
+        receiving_project_uid: Union[string, UUID]
+            The uid of the project to which the resource will be transferred.
+
+        Returns
+        -------
+        bool
+            Returns True upon successful resource transfer.
+
+        """
+        self.session.checked_post(self._path() + "/transfer-resource", {
+            "to_project_id": str(receiving_project_uid),
+            "resource": resource.as_entity_dict()})
+
+        return True
+
     def make_public(self,
                     resource: Resource) -> bool:
         """
