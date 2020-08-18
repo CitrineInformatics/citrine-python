@@ -1,7 +1,7 @@
 """Top-level class for all data concepts objects and collections thereof."""
 from abc import abstractmethod, ABC
 from typing import TypeVar, Type, List, Union, Optional, Iterator, Iterable
-from uuid import UUID
+from uuid import UUID, uuid4
 
 from citrine._rest.collection import Collection
 from citrine._serialization import properties
@@ -15,6 +15,7 @@ from citrine.resources.response import Response
 from gemd.entity.dict_serializable import DictSerializable
 from gemd.entity.link_by_uid import LinkByUID
 from gemd.json import GEMDJson
+from gemd.util import recursive_foreach
 
 CITRINE_SCOPE = 'id'
 
@@ -366,8 +367,12 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         # nested gemd objects, and then the final dumps() converts that to a json-ready string
         # in which all of the object references have been replaced with link-by-uids.
 
-        GEMDJson(scope=CITRINE_SCOPE).dumps(model)  # This apparent no-op populates uids
+        temp_scope = str(uuid4())
+        scope = temp_scope if dry_run else CITRINE_SCOPE
+        GEMDJson(scope=scope).dumps(model)  # This apparent no-op populates uids
         dumped_data = replace_objects_with_links(scrub_none(model.dump()))
+        recursive_foreach(model, lambda x: x.uids.pop(temp_scope, None))  # Strip temp uids
+
         data = self.session.post_resource(path, dumped_data, params=params)
         full_model = self.build(data)
         return full_model
@@ -402,10 +407,15 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         path = self._get_path()
         params = {'dry_run': dry_run}
 
-        json = GEMDJson(scope=CITRINE_SCOPE)
+        temp_scope = str(uuid4())
+        scope = temp_scope if dry_run else CITRINE_SCOPE
+        json = GEMDJson(scope=scope)
         [json.dumps(x) for x in models]  # This apparent no-op populates uids
 
         objects = [replace_objects_with_links(scrub_none(model.dump())) for model in models]
+
+        recursive_foreach(models, lambda x: x.uids.pop(temp_scope, None))  # Strip temp uids
+
         response_data = self.session.put_resource(
             path + '/batch',
             json={'objects': objects},
