@@ -1,13 +1,15 @@
 """Top-level class for all data object (i.e. spec and run) objects and collections thereof."""
 from abc import ABC
 from typing import Dict, Union, Optional, Iterator, List, TypeVar
+from uuid import uuid4
 
 from gemd.json import GEMDJson
+from gemd.util import recursive_foreach
 
 from citrine._utils.functions import get_object_id, replace_objects_with_links, scrub_none
 from citrine.exceptions import BadRequest
 from citrine.resources.api_error import ValidationError
-from citrine.resources.data_concepts import DataConcepts, DataConceptsCollection, CITRINE_SCOPE
+from citrine.resources.data_concepts import DataConcepts, DataConceptsCollection
 from citrine.resources.object_templates import ObjectTemplateResourceType
 from citrine.resources.process_template import ProcessTemplate
 from gemd.entity.bounds.base_bounds import BaseBounds
@@ -163,8 +165,12 @@ class DataObjectCollection(DataConceptsCollection[DataObjectResourceType], ABC):
         :return: List[ValidationError] of validation errors encountered. Empty if successful.
         """
         path = self._get_path(ignore_dataset=True) + "/validate-templates"
-        GEMDJson(scope=CITRINE_SCOPE).dumps(model)  # This apparent no-op populates uids
+
+        temp_scope = str(uuid4())
+        GEMDJson(scope=temp_scope).dumps(model)  # This apparent no-op populates uids
         dumped_data = replace_objects_with_links(scrub_none(model.dump()))
+        recursive_foreach(model, lambda x: x.uids.pop(temp_scope, None))  # Strip temp uids
+
         request_data = {"dataObject": dumped_data}
         if object_template is not None:
             request_data["objectTemplate"] = \
