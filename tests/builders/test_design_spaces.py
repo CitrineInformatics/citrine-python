@@ -273,25 +273,10 @@ def test_oversize_warnings(large_joint_design_space):
                 description=''
             )
 
-            kappa = RealDescriptor('kappa', 0, 100)
-            mu = RealDescriptor('mu', 0, 100)
-            nu = CategoricalDescriptor('nu', ['a', 'b', 'c'])
-            design_grid = {
-                'kappa': [0, 50, 100],
-                'mu': [0, 25, 50, 75, 100],
-                'nu': ['a', 'b', 'c']
-            }
-            basic_space_4 = enumerate_cartesian_product(
-                design_grid=design_grid,
-                descriptors=[kappa, mu, nu],
-                name='basic space 4',
-                description=''
-            )
             cartesian_join_design_spaces(
                 subspaces=[
                     basic_space_2,
                     basic_space_3,
-                    basic_space_4,
                     large_joint_design_space
                 ],
                 name='too big join space',

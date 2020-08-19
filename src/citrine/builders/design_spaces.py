@@ -200,8 +200,8 @@ def cartesian_join_design_spaces(
         raise ValueError('Duplicate keys are not allowed across design spaces')
 
     # Check that the grid size is small enough to not cause memory issues
-    grid_size = np.prod([len(ds.data[0]) for ds in subspaces]) \
-        * np.sum([len(ds.data) for ds in subspaces])
+    grid_size = np.prod([len(ds.data) for ds in subspaces]) \
+        * np.sum([len(ds.data[0]) for ds in subspaces])
     if grid_size > 2e8:
         warn("Product design grid contains {n} grid points. This may cause memory issues "
              "downstream.".format(n=grid_size))
