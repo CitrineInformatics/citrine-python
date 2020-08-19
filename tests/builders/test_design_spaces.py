@@ -205,12 +205,12 @@ def test_oversize_warnings(large_joint_design_space):
         with warnings.catch_warnings():
             warnings.simplefilter('error')
             too_big_formulation_grid = {
-                'ing_F': np.linspace(0, 1),
-                'ing_G': np.linspace(0, 1),
-                'ing_H': np.linspace(0, 1),
-                'ing_I': np.linspace(0, 1),
-                'ing_J': np.linspace(0, 1),
-                'ing_K': np.linspace(0, 1)
+                'ing_F': np.linspace(0, 1, 50),
+                'ing_G': np.linspace(0, 1, 50),
+                'ing_H': np.linspace(0, 1, 50),
+                'ing_I': np.linspace(0, 1, 50),
+                'ing_J': np.linspace(0, 1, 50),
+                'ing_K': np.linspace(0, 1, 50)
             }
             enumerate_formulation_grid(
                 formulation_grid=too_big_formulation_grid,
