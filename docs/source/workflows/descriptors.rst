@@ -17,7 +17,7 @@ Real Descriptor
 -----------------------------------
 :class:`~citrine.informatics.descriptors.RealDescriptor` is used to represent continuous variables.
 Each Real Descriptor must provide a lower and upper bound, which is used to both validate input data and as a prior when making predictions.
-If you are not sure what to use bounds, you may want to look at the attribute templates to see if another user has defined bounds for you.
+If you are not sure what bounds to use, you may want to look at the attribute templates to see if another user has defined bounds for you.
 It is better to err on the side of broader bounds rather than narrower ones.
 
 Additionally, each Real Descriptor defines the units of every variable associated with that descriptor.
