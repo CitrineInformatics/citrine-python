@@ -44,7 +44,7 @@ def enumerate_cartesian_product(
     # Check that the grid size is small enough to not cause memory issues
     grid_size = np.prod(
         [len(grid_points) for grid_points in design_grid.values()]
-    )
+    ) * len(design_grid)
     if grid_size > 2E8:
         warn("Product design grid contains {n} grid points. This may cause memory issues "
              "downstream.".format(n=grid_size))
