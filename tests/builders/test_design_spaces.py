@@ -198,9 +198,7 @@ def test_exceptions(basic_cartesian_space, simple_mixture_space):
 def test_oversize_warnings(large_joint_design_space):
     """Test that warnings are raised"""
     # Test oversized formulation grid
-    with pytest.raises(UserWarning,
-                       match="Product design grid contains 1562500000 grid points. "
-                             "This may cause memory issues downstream."):
+    with pytest.raises(UserWarning, match="1562500000"):
         # Fail on error (so code stops running)
         with warnings.catch_warnings():
             warnings.simplefilter('error')
@@ -220,10 +218,7 @@ def test_oversize_warnings(large_joint_design_space):
             )
 
     # Test oversized enumerated space
-    with pytest.raises(UserWarning,
-                       match="Product design grid contains 648000000 grid points. "
-                             "This may cause memory issues downstream."
-                       ):
+    with pytest.raises(UserWarning, match="648000000"):
         # Fail on error (so code stops running)
         with warnings.catch_warnings():
             warnings.simplefilter('error')
@@ -243,9 +238,7 @@ def test_oversize_warnings(large_joint_design_space):
             )
 
     # Test oversized joined spaces
-    with pytest.raises(UserWarning,
-                       match="Product design grid contains 239203125 grid points. "
-                             "This may cause memory issues downstream."):
+    with pytest.raises(UserWarning, match="239203125"):
         # Fail on error (so code stops running)
         with warnings.catch_warnings():
             warnings.simplefilter('error')
