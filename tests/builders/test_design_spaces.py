@@ -195,11 +195,10 @@ def test_exceptions(basic_cartesian_space, simple_mixture_space):
         )
 
 
-def test_oversize_warnings(large_joint_design_space):
-    """Test that warnings are raised"""
-    # Test oversized formulation grid
+def test_formulation_oversize_warnings():
+    """Test that oversized formulation grid warnings are raised"""
     with pytest.raises(UserWarning, match="1562500000"):
-        # Fail on error (so code stops running)
+        # Fail on warning (so code stops running)
         with warnings.catch_warnings():
             warnings.simplefilter('error')
             too_big_formulation_grid = {
@@ -217,9 +216,11 @@ def test_oversize_warnings(large_joint_design_space):
                 description=''
             )
 
-    # Test oversized enumerated space
+
+def test_enumerated_oversize_warnings():
+    """Test that oversized enumerated space warnings are raised"""
     with pytest.raises(UserWarning, match="648000000"):
-        # Fail on error (so code stops running)
+        # Fail on warning (so code stops running)
         with warnings.catch_warnings():
             warnings.simplefilter('error')
             delta = RealDescriptor('delta', 0, 100)
@@ -237,9 +238,11 @@ def test_oversize_warnings(large_joint_design_space):
                 description=''
             )
 
-    # Test oversized joined spaces
+
+def test_joined_oversize_warnings(large_joint_design_space):
+    """Test that oversized joined space warnings are raised"""
     with pytest.raises(UserWarning, match="239203125"):
-        # Fail on error (so code stops running)
+        # Fail on warning (so code stops running)
         with warnings.catch_warnings():
             warnings.simplefilter('error')
 
