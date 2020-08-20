@@ -1,5 +1,7 @@
 """Tests for citrine.builders.design_spaces."""
 import pytest
+import warnings
+import numpy as np
 
 from citrine.informatics.descriptors import RealDescriptor, CategoricalDescriptor
 from citrine.informatics.design_spaces import EnumeratedDesignSpace
@@ -191,3 +193,95 @@ def test_exceptions(basic_cartesian_space, simple_mixture_space):
             name='invalid join space 2',
             description=''
         )
+
+
+def test_formulation_oversize_warnings():
+    """Test that oversized formulation grid warnings are raised"""
+    with pytest.raises(UserWarning, match="1562500000"):
+        # Fail on warning (so code stops running)
+        with warnings.catch_warnings():
+            warnings.simplefilter('error')
+            too_big_formulation_grid = {
+                'ing_F': np.linspace(0, 1, 50),
+                'ing_G': np.linspace(0, 1, 50),
+                'ing_H': np.linspace(0, 1, 50),
+                'ing_I': np.linspace(0, 1, 50),
+                'ing_J': np.linspace(0, 1, 50),
+                'ing_K': np.linspace(0, 1, 50)
+            }
+            enumerate_formulation_grid(
+                formulation_grid=too_big_formulation_grid,
+                balance_ingredient='ing_K',
+                name='too big mixture space',
+                description=''
+            )
+
+
+def test_enumerated_oversize_warnings():
+    """Test that oversized enumerated space warnings are raised"""
+    with pytest.raises(UserWarning, match="648000000"):
+        # Fail on warning (so code stops running)
+        with warnings.catch_warnings():
+            warnings.simplefilter('error')
+            delta = RealDescriptor('delta', 0, 100)
+            epsilon = RealDescriptor('epsilon', 0, 100)
+            zeta = RealDescriptor('zeta', 0, 100)
+            too_big_enumerated_grid = {
+                'delta': np.linspace(0, 100, 600),
+                'epsilon': np.linspace(0, 100, 600),
+                'zeta': np.linspace(0, 100, 600),
+            }
+            enumerate_cartesian_product(
+                design_grid=too_big_enumerated_grid,
+                descriptors=[delta, epsilon, zeta],
+                name='too big space',
+                description=''
+            )
+
+
+def test_joined_oversize_warnings(large_joint_design_space):
+    """Test that oversized joined space warnings are raised"""
+    with pytest.raises(UserWarning, match="239203125"):
+        # Fail on warning (so code stops running)
+        with warnings.catch_warnings():
+            warnings.simplefilter('error')
+
+            delta = RealDescriptor('delta', 0, 100)
+            epsilon = RealDescriptor('epsilon', 0, 100)
+            zeta = CategoricalDescriptor('zeta', ['a', 'b', 'c'])
+            design_grid = {
+                'delta': [0, 50, 100],
+                'epsilon': [0, 25, 50, 75, 100],
+                'zeta': ['a', 'b', 'c']
+            }
+            basic_space_2 = enumerate_cartesian_product(
+                design_grid=design_grid,
+                descriptors=[delta, epsilon, zeta],
+                name='basic space 2',
+                description=''
+            )
+
+            eta = RealDescriptor('eta', 0, 100)
+            theta = RealDescriptor('theta', 0, 100)
+            iota = CategoricalDescriptor('iota', ['a', 'b', 'c'])
+            design_grid = {
+                'eta': [0, 50, 100],
+                'theta': [0, 25, 50, 75, 100],
+                'iota': ['a', 'b', 'c']
+            }
+            basic_space_3 = enumerate_cartesian_product(
+                design_grid=design_grid,
+                descriptors=[eta, theta, iota],
+                name='basic space 3',
+                description=''
+            )
+
+            cartesian_join_design_spaces(
+                subspaces=[
+                    basic_space_2,
+                    basic_space_3,
+                    large_joint_design_space
+                ],
+                name='too big join space',
+                description=''
+            )
