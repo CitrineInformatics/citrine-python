@@ -2,8 +2,13 @@ try:
     import pandas as pd
 except ImportError:  # pragma: no cover
     raise ImportError('pandas>=0.25 is a requirement for the builders module')
+try:
+    import numpy as np
+except ImportError:  # pragma: no cover
+    raise ImportError('numpy is a requirement for the builders module')
 from itertools import product
 from typing import Mapping, Sequence, List
+from warnings import warn
 from citrine.informatics.design_spaces import EnumeratedDesignSpace
 from citrine.informatics.descriptors import Descriptor, RealDescriptor
 
@@ -36,6 +41,16 @@ def enumerate_cartesian_product(
         description for the EnumeratedDesignSpace
 
     """
+    # Check that the grid size is small enough to not cause memory issues
+    grid_size = np.prod(
+        [len(grid_points) for grid_points in design_grid.values()]
+    ) * len(design_grid)
+    if grid_size > 2E8:
+        warn(
+            "Product design grid contains {n} grid points. This may cause memory issues "
+            "downstream.".format(n=grid_size)
+        )
+
     design_space_tuples = list(product(*design_grid.values()))
     design_space_cols = list(design_grid.keys())
     df_ds = pd.DataFrame(data=design_space_tuples, columns=design_space_cols)
@@ -185,6 +200,15 @@ def cartesian_join_design_spaces(
         all_keys.extend(list(ds.data[0].keys()))
     if len(all_keys) != len(set(all_keys)):
         raise ValueError('Duplicate keys are not allowed across design spaces')
+
+    # Check that the grid size is small enough to not cause memory issues
+    grid_size = np.prod([len(ds.data) for ds in subspaces]) \
+        * np.sum([len(ds.data[0]) for ds in subspaces])
+    if grid_size > 2E8:
+        warn(
+            "Product design grid contains {n} grid points. This may cause memory issues "
+            "downstream.".format(n=grid_size)
+        )
 
     # Convert data fields of EDS into DataFrames to prep for join
     ds_list = [pd.DataFrame(ds.data) for ds in subspaces]

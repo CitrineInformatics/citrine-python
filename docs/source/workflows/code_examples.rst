@@ -79,7 +79,7 @@ This pattern is also extremely useful for performing optimization over complex o
             final_ph,
             final_loaf_hydration,
         ],
-        training_data=training_table
+        training_data=[training_table]
     )
 
     shelf_life_calculator = ExpressionPredictor(
