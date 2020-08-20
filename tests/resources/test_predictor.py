@@ -36,6 +36,7 @@ def test_graph_build(valid_graph_predictor_data, basic_predictor_report_data):
     assert predictor.name == 'Graph predictor'
     assert predictor.description == 'description'
     assert len(predictor.predictors) == 2
+    assert len(predictor.training_data) == 1
 
 
 def test_register(valid_simple_ml_predictor_data, basic_predictor_report_data):

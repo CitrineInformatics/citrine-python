@@ -1,4 +1,5 @@
 import uuid
+
 import pytest
 
 
@@ -118,7 +119,7 @@ def valid_simple_ml_predictor_data():
             inputs=[x.dump()],
             outputs=[z.dump()],
             latent_variables=[y.dump()],
-            training_data=data_source.dump()
+            training_data=[data_source.dump()]
         )
     )
 
@@ -126,6 +127,7 @@ def valid_simple_ml_predictor_data():
 @pytest.fixture
 def valid_graph_predictor_data():
     """Produce valid data used for tests."""
+    from citrine.informatics.data_sources import GemTableDataSource
     from citrine.informatics.descriptors import RealDescriptor
     return dict(
         module_type='PREDICTOR',
@@ -155,7 +157,8 @@ def valid_graph_predictor_data():
                         "Property~Y": "Y"
                     }
                 )
-            ]
+            ],
+            training_data=[GemTableDataSource(uuid.uuid4(), 0).dump()]
         )
     )
 
@@ -333,7 +336,7 @@ def valid_generalized_mean_property_predictor_data():
             input=formulation_descriptor.dump(),
             properties=['density'],
             p=2,
-            training_data=GemTableDataSource(uuid.uuid4(), 0, formulation_descriptor).dump(),
+            training_data=[GemTableDataSource(uuid.uuid4(), 0, formulation_descriptor).dump()],
             impute_properties=True,
             default_properties={'density': 1.0},
             label='solvent'
@@ -362,6 +365,7 @@ def valid_label_fractions_predictor_data():
             labels=['solvent']
         )
     )
+
 
 @pytest.fixture
 def valid_ingredient_fractions_predictor_data():
@@ -411,6 +415,7 @@ def invalid_predictor_data():
         )
     )
 
+
 @pytest.fixture
 def valid_grid_processor_data():
     """Valid GridProcessor data."""
@@ -454,6 +459,6 @@ def valid_simple_mixture_predictor_data():
             description='simple mixture description',
             input=input_formulation.dump(),
             output=output_formulation.dump(),
-            training_data=GemTableDataSource(uuid.uuid4(), 0, input_formulation).dump(),
+            training_data=[GemTableDataSource(uuid.uuid4(), 0, input_formulation).dump()]
         ),
     )
