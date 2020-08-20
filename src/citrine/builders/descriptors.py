@@ -12,13 +12,19 @@ from citrine.resources.data_concepts import DataConceptsCollection
 from citrine.resources.project import Project
 
 
+class NoEquivalentDescriptorError(ValueError):
+    """Error that is raised when the bounds in a template have no equivalent descriptor."""
+
+    pass
+
+
 def template_to_descriptor(template: AttributeTemplate) -> Descriptor:
     """
     Convert a GEMD attribute template into an AI Engine Descriptor.
 
     IntBounds cannot be converted because they have no matching descriptor type.
-    CompositionBounds cannot be converted because they may correspond to Formulations or
-    ChemicalFormulas.
+    CompositionBounds can only be converted when every component is an element, in which case
+    they are converted to ChemicalFormulaDescriptors.
 
     Parameters
     ----------
@@ -55,9 +61,9 @@ def template_to_descriptor(template: AttributeTemplate) -> Descriptor:
             )
         else:
             msg = "Cannot create descriptor for CompositionBounds with non-atomic components"
-            raise ValueError(msg)
+            raise NoEquivalentDescriptorError(msg)
     if isinstance(bounds, IntegerBounds):
-        raise ValueError("Cannot create a descriptor for integer-valued data")
+        raise NoEquivalentDescriptorError("Cannot create a descriptor for integer-valued data")
     raise ValueError("Template has unrecognized bounds: {}".format(type(bounds)))
 
 
@@ -119,7 +125,7 @@ class PlatformVocabulary(Mapping[str, Descriptor]):
             try:
                 desc = template_to_descriptor(v)
                 res[k] = desc
-            except ValueError:
+            except NoEquivalentDescriptorError:
                 continue
 
         return PlatformVocabulary(res)
