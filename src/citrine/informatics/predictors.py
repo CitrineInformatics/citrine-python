@@ -446,7 +446,7 @@ class ExpressionPredictor(Serializable['ExpressionPredictor'], Predictor):
         'experimental_reasons',
         serializable=False
     )
-
+    archived = _properties.Boolean('archived', default=False)
     active = _properties.Boolean('active', default=True)
 
     # NOTE: These could go here or in _post_dump - it's unclear which is better right now
