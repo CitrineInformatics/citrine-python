@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>4.3. Design spaces &#8212; Citrine Python 0.0.1 documentation</title>
+    <title>4.5. Design spaces &#8212; Citrine Python 0.0.1 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -16,8 +16,8 @@
     <link rel="shortcut icon" href="../_static/favicon.png"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="4.4. Processors" href="processors.html" />
-    <link rel="prev" title="4.2. Predictors" href="predictors.html" />
+    <link rel="next" title="4.6. Processors" href="processors.html" />
+    <link rel="prev" title="4.4. Predictors" href="predictors.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -35,7 +35,7 @@
           <div class="body" role="main">
             
   <div class="section" id="design-spaces">
-<h1>4.3. Design spaces<a class="headerlink" href="#design-spaces" title="Permalink to this headline">¶</a></h1>
+<h1>4.5. Design spaces<a class="headerlink" href="#design-spaces" title="Permalink to this headline">¶</a></h1>
 <p>A design space defines a set of materials that should be searched over when performing a material design.
 Currently, there are two design spaces:</p>
 <ul class="simple">
@@ -43,7 +43,7 @@ Currently, there are two design spaces:</p>
 <li><p><a class="reference external" href="#enumerated-design-space">EnumeratedDesignSpace</a></p></li>
 </ul>
 <div class="section" id="product-design-space">
-<h2>4.3.1. Product design space<a class="headerlink" href="#product-design-space" title="Permalink to this headline">¶</a></h2>
+<h2>4.5.1. Product design space<a class="headerlink" href="#product-design-space" title="Permalink to this headline">¶</a></h2>
 <p>Materials from a product design space are composed from the <a class="reference external" href="https://en.wikipedia.org/wiki/Cartesian_product">Cartesian product</a> of univariate dimensions.
 A dimension defines valid values of a single variable.
 Valid values can be discrete sets (i.e. enumerated using a list) or continuous ranges (i.e. defined by upper and lower bounds on real numbers).
@@ -103,7 +103,7 @@ The bounds of the dimension are the bounds we wish to search between, e.g. rest
 </div>
 </div>
 <div class="section" id="enumerated-design-space">
-<span id="id1"></span><h2>4.3.2. Enumerated design space<a class="headerlink" href="#enumerated-design-space" title="Permalink to this headline">¶</a></h2>
+<span id="id1"></span><h2>4.5.2. Enumerated design space<a class="headerlink" href="#enumerated-design-space" title="Permalink to this headline">¶</a></h2>
 <p>An enumerated design space is composed of an explicit list of candidates.
 Each candidate is specified using a dictionary keyed on the key of a corresponding <a class="reference internal" href="../reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.Descriptor" title="citrine.informatics.descriptors.Descriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">Descriptor</span></code></a>.
 A list of descriptors defines what key-value pairs must be present in each candidate.
@@ -204,15 +204,17 @@ If a candidate is missing a descriptor key-value pair, contains extra key-value 
 </li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">4. [ALPHA] AI Engine</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="getting_started.html">4.1. Getting Started</a></li>
-<li class="toctree-l2"><a class="reference internal" href="predictors.html">4.2. Predictors</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">4.3. Design spaces</a></li>
-<li class="toctree-l2"><a class="reference internal" href="processors.html">4.4. Processors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="design_workflows.html">4.5. Design workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="scores.html">4.6. Scores</a></li>
-<li class="toctree-l2"><a class="reference internal" href="data_sources.html">4.7. Data Sources</a></li>
-<li class="toctree-l2"><a class="reference internal" href="predictor_reports.html">4.8. Predictor reports</a></li>
-<li class="toctree-l2"><a class="reference internal" href="performance_workflows.html">4.9. Performance workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="code_examples.html">4.10. AI Engine Code Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="descriptors.html">4.2. Descriptors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="descriptors.html#platform-vocabularies">4.3. Platform Vocabularies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="predictors.html">4.4. Predictors</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">4.5. Design spaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="processors.html">4.6. Processors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="design_workflows.html">4.7. Design workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scores.html">4.8. Scores</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_sources.html">4.9. Data Sources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="predictor_reports.html">4.10. Predictor reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="performance_workflows.html">4.11. Performance workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="code_examples.html">4.12. AI Engine Code Examples</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">5. FAQ</a><ul>
@@ -226,8 +228,8 @@ If a candidate is missing a descriptor key-value pair, contains extra key-value 
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="index.html">4. [ALPHA] AI Engine</a><ul>
-      <li>Previous: <a href="predictors.html" title="previous chapter">4.2. Predictors</a></li>
-      <li>Next: <a href="processors.html" title="next chapter">4.4. Processors</a></li>
+      <li>Previous: <a href="predictors.html" title="previous chapter">4.4. Predictors</a></li>
+      <li>Next: <a href="processors.html" title="next chapter">4.6. Processors</a></li>
   </ul></li>
   </ul></li>
 </ul>

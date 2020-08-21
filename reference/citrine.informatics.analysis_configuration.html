@@ -37,7 +37,7 @@
 <p>Settings for working Analysis workflows.</p>
 <dl class="class">
 <dt id="citrine.informatics.analysis_configuration.CrossValidationAnalysisConfiguration">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.analysis_configuration.</code><code class="sig-name descname">CrossValidationAnalysisConfiguration</code><span class="sig-paren">(</span><em class="sig-param">name: str</em>, <em class="sig-param">description: str</em>, <em class="sig-param">n_folds: int</em>, <em class="sig-param">n_trials: int</em>, <em class="sig-param">max_rows: int</em>, <em class="sig-param">seed: Optional[int] = None</em>, <em class="sig-param">group_by_keys: Optional[List[str]] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.analysis_configuration.CrossValidationAnalysisConfiguration" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.analysis_configuration.</code><code class="sig-name descname">CrossValidationAnalysisConfiguration</code><span class="sig-paren">(</span><em class="sig-param">name: str</em>, <em class="sig-param">description: str</em>, <em class="sig-param">n_folds: int</em>, <em class="sig-param">n_trials: int</em>, <em class="sig-param">max_rows: int</em>, <em class="sig-param">seed: Optional[int] = None</em>, <em class="sig-param">group_by_keys: Optional[List[str]] = None</em>, <em class="sig-param">responses: Optional[List[str]] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.analysis_configuration.CrossValidationAnalysisConfiguration" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code></p>
 <p>[ALPHA] Configuration settings for running cross-validation in a performance workflow.</p>
 <dl class="field-list simple">
@@ -54,6 +54,8 @@ If not provided, a random seed is used.</p></li>
 If present, candidates are grouped by the hash of
 <code class="docutils literal notranslate"><span class="pre">(key,</span> <span class="pre">value)</span></code> pairs computed on the given keys.
 If not provided, candidates are not grouped.</p></li>
+<li><p><strong>responses</strong> (<em>list</em><em>[</em><em>str</em><em>]</em><em>, </em><em>optional</em>) – Set of keys used to limit the outputs that CV will be executed against.
+If not provided all responses will have analysis performed.</p></li>
 </ul>
 </dd>
 </dl>
@@ -85,6 +87,11 @@ If not provided, candidates are not grouped.</p></li>
 <dl class="attribute">
 <dt id="citrine.informatics.analysis_configuration.CrossValidationAnalysisConfiguration.name">
 <code class="sig-name descname">name</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.analysis_configuration.CrossValidationAnalysisConfiguration.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.analysis_configuration.CrossValidationAnalysisConfiguration.responses">
+<code class="sig-name descname">responses</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.analysis_configuration.CrossValidationAnalysisConfiguration.responses" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
@@ -163,15 +170,17 @@ If not provided, candidates are not grouped.</p></li>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">4. [ALPHA] AI Engine</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/getting_started.html">4.1. Getting Started</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/predictors.html">4.2. Predictors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/design_spaces.html">4.3. Design spaces</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/processors.html">4.4. Processors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/design_workflows.html">4.5. Design workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/scores.html">4.6. Scores</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/data_sources.html">4.7. Data Sources</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/predictor_reports.html">4.8. Predictor reports</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/performance_workflows.html">4.9. Performance workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/code_examples.html">4.10. AI Engine Code Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/descriptors.html">4.2. Descriptors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/descriptors.html#platform-vocabularies">4.3. Platform Vocabularies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/predictors.html">4.4. Predictors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/design_spaces.html">4.5. Design spaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/processors.html">4.6. Processors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/design_workflows.html">4.7. Design workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/scores.html">4.8. Scores</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/data_sources.html">4.9. Data Sources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/predictor_reports.html">4.10. Predictor reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/performance_workflows.html">4.11. Performance workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/code_examples.html">4.12. AI Engine Code Examples</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">5. FAQ</a><ul>

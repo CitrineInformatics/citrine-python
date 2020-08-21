@@ -1,0 +1,268 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>4.2. Descriptors &#8212; Citrine Python 0.0.1 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="../_static/favicon.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="4.4. Predictors" href="predictors.html" />
+    <link rel="prev" title="4.1. Getting Started" href="getting_started.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="descriptors">
+<h1>4.2. Descriptors<a class="headerlink" href="#descriptors" title="Permalink to this headline">¶</a></h1>
+<p>Descriptors allow users to define a controlled vocabulary with which to describe the physical context of an AI task.
+Each descriptor defines a term in that vocabulary, which is comprised of a name, a datatype, and bounds on that data type.
+If you are familiar with the GEMD data model, descriptors are roughly equivalent to <a href="#id1"><span class="problematic" id="id2">`</span></a>AttributeTemplate`s.</p>
+<p>The AI Engine currently supports _ kinds of descriptors:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="#real-descriptor">Real Descriptors</a></p></li>
+<li><p><a class="reference external" href="#categorical-descriptor">Categorical Descriptor</a></p></li>
+<li><p><a class="reference external" href="#chemical-formula-descriptor">Chemical Formula Descriptor</a></p></li>
+<li><p><a class="reference external" href="#molecular-structure-descriptor">Molecular Structure Descriptor</a></p></li>
+<li><p><a class="reference external" href="#formulation-descriptor">Formulation Descriptor</a></p></li>
+</ul>
+<div class="section" id="real-descriptor">
+<h2>4.2.1. Real Descriptor<a class="headerlink" href="#real-descriptor" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference internal" href="../reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.RealDescriptor" title="citrine.informatics.descriptors.RealDescriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">RealDescriptor</span></code></a> is used to represent continuous variables.
+Each Real Descriptor must provide a lower and upper bound, which is used to both validate input data and as a prior when making predictions.
+If you are not sure what bounds to use, you may want to look at the attribute templates to see if another user has defined bounds for you.
+It is better to err on the side of broader bounds rather than narrower ones.</p>
+<p>Additionally, each Real Descriptor defines the units of every variable associated with that descriptor.
+Any <a class="reference external" href="https://citrineinformatics.github.io/gemd-python/depth/unit_parsing.html">GEMD-compatible</a> unit string may be used.
+If a variable is dimensionless, you can use an empty string.</p>
+</div>
+<div class="section" id="categorical-descriptor">
+<h2>4.2.2. Categorical Descriptor<a class="headerlink" href="#categorical-descriptor" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference internal" href="../reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.CategoricalDescriptor" title="citrine.informatics.descriptors.CategoricalDescriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">CategoricalDescriptor</span></code></a> is used to represent variables that can take one of
+a set of values, i.e. categories.
+All of the possible categories must be known ahead of time and specified in the Categorical Descriptor.</p>
+</div>
+<div class="section" id="chemical-formula-descriptor">
+<h2>4.2.3. Chemical Formula Descriptor<a class="headerlink" href="#chemical-formula-descriptor" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference internal" href="../reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.ChemicalFormulaDescriptor" title="citrine.informatics.descriptors.ChemicalFormulaDescriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChemicalFormulaDescriptor</span></code></a> is used to represent variables that should be
+interpreted as chemical formulas.
+The Chemical Formula Descriptor has no parameters other than a name.</p>
+</div>
+<div class="section" id="molecular-structure-descriptor">
+<h2>4.2.4. Molecular Structure Descriptor<a class="headerlink" href="#molecular-structure-descriptor" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference internal" href="../reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.MolecularStructureDescriptor" title="citrine.informatics.descriptors.MolecularStructureDescriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">MolecularStructureDescriptor</span></code></a> is used to represent variables that should be
+interpreted as molecular structures.
+Both <a class="reference external" href="https://en.wikipedia.org/wiki/Simplified_molecular-input_line-entry_system">SMILES</a>
+and <a class="reference external" href="https://en.wikipedia.org/wiki/International_Chemical_Identifier">InChI</a> are supported.
+The Molecular Structure Descriptor has no parameters other than a name.</p>
+</div>
+<div class="section" id="formulation-descriptor">
+<h2>4.2.5. Formulation Descriptor<a class="headerlink" href="#formulation-descriptor" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference internal" href="../reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.FormulationDescriptor" title="citrine.informatics.descriptors.FormulationDescriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">FormulationDescriptor</span></code></a> is used to represent variables that contain information
+about mixtures of other materials.
+The Formulation Descriptor has no parameters other than a name.</p>
+</div>
+</div>
+<div class="section" id="platform-vocabularies">
+<h1>4.3. Platform Vocabularies<a class="headerlink" href="#platform-vocabularies" title="Permalink to this headline">¶</a></h1>
+<p>A set of descriptors defines a controlled vocabulary with which to describe AI tasks.
+The <a class="reference internal" href="../reference/citrine.builders.descriptors.html#citrine.builders.descriptors.PlatformVocabulary" title="citrine.builders.descriptors.PlatformVocabulary"><code class="xref py py-class docutils literal notranslate"><span class="pre">PlatformVocabulary</span></code></a> class is provided to collect a set of descriptors,
+associate them with short convenient names, and provide them via a familiar dictionary interface.</p>
+<p>While descriptors cannot be independently saved on the platform for reuse, AttributeTemplates can be.
+Therefore, common descriptors can be saved as AttributeTemplates to the data platform, effectively sharing them with
+other users.
+The <cite>PlatformVocabulary.from_templates</cite> method facilitates this pattern by automatically downloading AttributeTemplates
+and converting them into descriptors.
+AttributeTemplates must be associated with a namespace via Alternative Identifiers (the <cite>uids</cite> field).
+When calling <cite>from_templates</cite>, a scope is provided to select one of those namespaces.
+The descriptors can then be associated with the names from that namespace.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine</span> <span class="kn">import</span> <span class="n">Citrine</span>
+<span class="kn">from</span> <span class="nn">citrine.resources.property_template</span> <span class="kn">import</span> <span class="n">PropertyTemplate</span>
+<span class="kn">from</span> <span class="nn">citrine.builders.descriptors</span> <span class="kn">import</span> <span class="n">PlatformVocabulary</span>
+
+<span class="c1"># create a session with citrine using your API key</span>
+<span class="n">session</span> <span class="o">=</span> <span class="n">Citrine</span><span class="p">(</span><span class="n">api_key</span> <span class="o">=</span> <span class="n">API_KEY</span><span class="p">)</span>
+
+<span class="c1"># create project</span>
+<span class="n">project</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">projects</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s1">&#39;Example project&#39;</span><span class="p">)</span>
+
+<span class="c1"># create an property template for density</span>
+<span class="n">project</span><span class="o">.</span><span class="n">property_templates</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">PropertyTemplate</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;density&quot;</span><span class="p">,</span>
+    <span class="n">uids</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;my_templates&quot;</span><span class="p">:</span> <span class="s2">&quot;rho&quot;</span><span class="p">},</span>
+    <span class="n">bounds</span><span class="o">=</span><span class="n">RealBounds</span><span class="p">(</span><span class="n">lower_bound</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">default_units</span><span class="o">=</span><span class="s2">&quot;g/cm^3&quot;</span><span class="p">)</span>
+<span class="p">))</span>
+
+<span class="c1"># create a condition template for temperature</span>
+<span class="n">project</span><span class="o">.</span><span class="n">property_templates</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">PropertyTemplate</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;temperature&quot;</span><span class="p">,</span>
+    <span class="n">uids</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;my_templates&quot;</span><span class="p">:</span> <span class="s2">&quot;T&quot;</span><span class="p">},</span>
+    <span class="n">bounds</span><span class="o">=</span><span class="n">RealBounds</span><span class="p">(</span><span class="n">lower_bound</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mi">1000000</span><span class="p">,</span> <span class="n">default_units</span><span class="o">=</span><span class="s2">&quot;kelvin&quot;</span><span class="p">)</span>
+<span class="p">))</span>
+
+<span class="c1"># create a PlatformVocabulary from the templates</span>
+<span class="n">pv</span> <span class="o">=</span> <span class="n">PlatformVocabulary</span><span class="o">.</span><span class="n">from_templates</span><span class="p">(</span><span class="n">project</span><span class="p">,</span> <span class="s2">&quot;my_templates&quot;</span><span class="p">)</span>
+
+<span class="c1"># see the terms in the platform vocabulary</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">pv</span><span class="p">))</span>
+<span class="c1"># returns [&quot;rho&quot;, &quot;T&quot;]</span>
+
+<span class="c1"># access a descriptor from the platform vocabulary</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">pv</span><span class="p">[</span><span class="s2">&quot;T&quot;</span><span class="p">])</span>
+<span class="c1"># returns RealDescriptor(key=&quot;temperature&quot;, lower_bound=0, upper_bound=1000000, units=&quot;K&quot;)</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../index.html">
+    <img class="logo" src="../_static/logo.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=CitrineInformatics&repo=citrine-python&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/index.html">1. Getting Started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/connecting.html">1.1. Connecting to the Citrine Platform</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/basic_structure.html">1.2. Structure of the Citrine Python Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/basic_functionality.html">1.3. Using the Citrine Python Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/data_model.html">1.4. Data Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/public_access.html">1.5. Dataset Access Control</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/working_with_files.html">1.6. Working With Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/projects_and_users.html">1.7. Projects and Users</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/code_examples.html">1.8. Code Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../data_entry.html">2. Data Entry</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#creating-data-model-objects">2.1. Creating Data Model Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#identifying-data-model-objects">2.2. Identifying Data Model Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#registering-data-model-objects">2.3. Registering Data Model Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#finding-data-model-objects">2.4. Finding Data Model Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#referencing-data-model-objects">2.5. Referencing Data Model Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#validating-data-model-objects">2.6. Validating Data Model Objects</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../data_extraction.html">3. [ALPHA] Data Extraction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#defining-row-and-columns">3.1. Defining row and columns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#defining-tables">3.2. Defining tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#previewing-tables">3.3. Previewing tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#building-and-downloading-tables">3.4. Building and downloading tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-row-definitions">3.5. Available Row Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-variable-definitions">3.6. Available Variable Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-column-definitions">3.7. Available Column Definitions</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">4. [ALPHA] AI Engine</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="getting_started.html">4.1. Getting Started</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">4.2. Descriptors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#platform-vocabularies">4.3. Platform Vocabularies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="predictors.html">4.4. Predictors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="design_spaces.html">4.5. Design spaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="processors.html">4.6. Processors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="design_workflows.html">4.7. Design workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scores.html">4.8. Scores</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_sources.html">4.9. Data Sources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="predictor_reports.html">4.10. Predictor reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="performance_workflows.html">4.11. Performance workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="code_examples.html">4.12. AI Engine Code Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">5. FAQ</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../FAQ/prohibited_data_patterns.html">5.1. Prohibited Data Patterns</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">4. [ALPHA] AI Engine</a><ul>
+      <li>Previous: <a href="getting_started.html" title="previous chapter">4.1. Getting Started</a></li>
+      <li>Next: <a href="predictors.html" title="next chapter">4.4. Predictors</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Citrine Informatics.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/workflows/descriptors.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

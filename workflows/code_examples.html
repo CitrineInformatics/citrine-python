@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>4.10. AI Engine Code Examples &#8212; Citrine Python 0.0.1 documentation</title>
+    <title>4.12. AI Engine Code Examples &#8212; Citrine Python 0.0.1 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -17,7 +17,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="5. FAQ" href="../FAQ/index.html" />
-    <link rel="prev" title="4.9. Performance workflows" href="performance_workflows.html" />
+    <link rel="prev" title="4.11. Performance workflows" href="performance_workflows.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -35,9 +35,9 @@
           <div class="body" role="main">
             
   <div class="section" id="ai-engine-code-examples">
-<h1>4.10. AI Engine Code Examples<a class="headerlink" href="#ai-engine-code-examples" title="Permalink to this headline">¶</a></h1>
+<h1>4.12. AI Engine Code Examples<a class="headerlink" href="#ai-engine-code-examples" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="example-preprocessing-and-postprocessing-in-a-graphpredictor">
-<h2>4.10.1. Example: preprocessing and postprocessing in a GraphPredictor<a class="headerlink" href="#example-preprocessing-and-postprocessing-in-a-graphpredictor" title="Permalink to this headline">¶</a></h2>
+<h2>4.12.1. Example: preprocessing and postprocessing in a GraphPredictor<a class="headerlink" href="#example-preprocessing-and-postprocessing-in-a-graphpredictor" title="Permalink to this headline">¶</a></h2>
 <p>Within a <a class="reference internal" href="../reference/citrine.informatics.predictors.html#citrine.informatics.predictors.GraphPredictor" title="citrine.informatics.predictors.GraphPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">GraphPredictor</span></code></a>, one can use <a class="reference internal" href="../reference/citrine.informatics.predictors.html#citrine.informatics.predictors.ExpressionPredictor" title="citrine.informatics.predictors.ExpressionPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExpressionPredictor</span></code></a> modules to preprocess data before performing machine learning with a <a class="reference internal" href="../reference/citrine.informatics.predictors.html#citrine.informatics.predictors.SimpleMLPredictor" title="citrine.informatics.predictors.SimpleMLPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleMLPredictor</span></code></a>, and to post-process the SimpleMLPredictor’s output.
 This is a very common and powerful use case for graphical modeling.
 Here we show an example of how to combine these modules to accomplish those many suitable tasks.</p>
@@ -204,15 +204,17 @@ Nodes with dotted outlines represent predicted quantities; note that only <code 
 </li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">4. [ALPHA] AI Engine</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="getting_started.html">4.1. Getting Started</a></li>
-<li class="toctree-l2"><a class="reference internal" href="predictors.html">4.2. Predictors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="design_spaces.html">4.3. Design spaces</a></li>
-<li class="toctree-l2"><a class="reference internal" href="processors.html">4.4. Processors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="design_workflows.html">4.5. Design workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="scores.html">4.6. Scores</a></li>
-<li class="toctree-l2"><a class="reference internal" href="data_sources.html">4.7. Data Sources</a></li>
-<li class="toctree-l2"><a class="reference internal" href="predictor_reports.html">4.8. Predictor reports</a></li>
-<li class="toctree-l2"><a class="reference internal" href="performance_workflows.html">4.9. Performance workflows</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">4.10. AI Engine Code Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="descriptors.html">4.2. Descriptors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="descriptors.html#platform-vocabularies">4.3. Platform Vocabularies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="predictors.html">4.4. Predictors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="design_spaces.html">4.5. Design spaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="processors.html">4.6. Processors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="design_workflows.html">4.7. Design workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scores.html">4.8. Scores</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_sources.html">4.9. Data Sources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="predictor_reports.html">4.10. Predictor reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="performance_workflows.html">4.11. Performance workflows</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">4.12. AI Engine Code Examples</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">5. FAQ</a><ul>
@@ -226,7 +228,7 @@ Nodes with dotted outlines represent predicted quantities; note that only <code 
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="index.html">4. [ALPHA] AI Engine</a><ul>
-      <li>Previous: <a href="performance_workflows.html" title="previous chapter">4.9. Performance workflows</a></li>
+      <li>Previous: <a href="performance_workflows.html" title="previous chapter">4.11. Performance workflows</a></li>
       <li>Next: <a href="../FAQ/index.html" title="next chapter">5. FAQ</a></li>
   </ul></li>
   </ul></li>

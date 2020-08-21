@@ -6,6 +6,7 @@ Submodules
 
 .. toctree::
 
+   citrine.builders.descriptors
    citrine.builders.design_spaces
 
 Module contents

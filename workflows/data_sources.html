@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>4.7. Data Sources &#8212; Citrine Python 0.0.1 documentation</title>
+    <title>4.9. Data Sources &#8212; Citrine Python 0.0.1 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -16,8 +16,8 @@
     <link rel="shortcut icon" href="../_static/favicon.png"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="4.8. Predictor reports" href="predictor_reports.html" />
-    <link rel="prev" title="4.6. Scores" href="scores.html" />
+    <link rel="next" title="4.10. Predictor reports" href="predictor_reports.html" />
+    <link rel="prev" title="4.8. Scores" href="scores.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -35,11 +35,11 @@
           <div class="body" role="main">
             
   <div class="section" id="data-sources">
-<h1>4.7. Data Sources<a class="headerlink" href="#data-sources" title="Permalink to this headline">¶</a></h1>
+<h1>4.9. Data Sources<a class="headerlink" href="#data-sources" title="Permalink to this headline">¶</a></h1>
 <p>Data sources are used by modules to pull data from outside of the AI engine.
 For example, a <a class="reference internal" href="predictors.html"><span class="doc">predictor</span></a> may need to define external training data.</p>
 <div class="section" id="csv-data-source">
-<h2>4.7.1. CSV Data Source<a class="headerlink" href="#csv-data-source" title="Permalink to this headline">¶</a></h2>
+<h2>4.9.1. CSV Data Source<a class="headerlink" href="#csv-data-source" title="Permalink to this headline">¶</a></h2>
 <p>The <a class="reference internal" href="../reference/citrine.informatics.data_sources.html#citrine.informatics.data_sources.CSVDataSource" title="citrine.informatics.data_sources.CSVDataSource"><code class="xref py py-class docutils literal notranslate"><span class="pre">CSVDataSource</span></code></a> draws data from a CSV file stored on the data platform and annotates it by mapping each column name to a <a class="reference internal" href="../reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.Descriptor" title="citrine.informatics.descriptors.Descriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">Descriptor</span></code></a>.
 The file is referenced via a <a class="reference internal" href="../reference/citrine.resources.file_link.html#citrine.resources.file_link.FileLink" title="citrine.resources.file_link.FileLink"><code class="xref py py-class docutils literal notranslate"><span class="pre">FileLink</span></code></a>.
 Each FileLink references an explicit version of the CSV file.
@@ -189,7 +189,7 @@ A CSV data source and <a class="reference internal" href="../reference/citrine.i
 </div>
 </div>
 <div class="section" id="gem-table-data-source">
-<h2>4.7.2. GEM Table Data Source<a class="headerlink" href="#gem-table-data-source" title="Permalink to this headline">¶</a></h2>
+<h2>4.9.2. GEM Table Data Source<a class="headerlink" href="#gem-table-data-source" title="Permalink to this headline">¶</a></h2>
 <p>An <a class="reference internal" href="../reference/citrine.informatics.data_sources.html#citrine.informatics.data_sources.GemTableDataSource" title="citrine.informatics.data_sources.GemTableDataSource"><code class="xref py py-class docutils literal notranslate"><span class="pre">GemTableDataSource</span></code></a> references a GEM Table.
 As explained more in the <a class="reference internal" href="../data_extraction.html"><span class="doc">documentation</span></a>, GEM Tables provide a structured version of on-platform data.
 GEM Tables are specified by the display table uuid, version number and optional formulation descriptor.
@@ -287,15 +287,17 @@ It should be omitted from the descriptor key.</p>
 </li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">4. [ALPHA] AI Engine</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="getting_started.html">4.1. Getting Started</a></li>
-<li class="toctree-l2"><a class="reference internal" href="predictors.html">4.2. Predictors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="design_spaces.html">4.3. Design spaces</a></li>
-<li class="toctree-l2"><a class="reference internal" href="processors.html">4.4. Processors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="design_workflows.html">4.5. Design workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="scores.html">4.6. Scores</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">4.7. Data Sources</a></li>
-<li class="toctree-l2"><a class="reference internal" href="predictor_reports.html">4.8. Predictor reports</a></li>
-<li class="toctree-l2"><a class="reference internal" href="performance_workflows.html">4.9. Performance workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="code_examples.html">4.10. AI Engine Code Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="descriptors.html">4.2. Descriptors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="descriptors.html#platform-vocabularies">4.3. Platform Vocabularies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="predictors.html">4.4. Predictors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="design_spaces.html">4.5. Design spaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="processors.html">4.6. Processors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="design_workflows.html">4.7. Design workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scores.html">4.8. Scores</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">4.9. Data Sources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="predictor_reports.html">4.10. Predictor reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="performance_workflows.html">4.11. Performance workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="code_examples.html">4.12. AI Engine Code Examples</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">5. FAQ</a><ul>
@@ -309,8 +311,8 @@ It should be omitted from the descriptor key.</p>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="index.html">4. [ALPHA] AI Engine</a><ul>
-      <li>Previous: <a href="scores.html" title="previous chapter">4.6. Scores</a></li>
-      <li>Next: <a href="predictor_reports.html" title="next chapter">4.8. Predictor reports</a></li>
+      <li>Previous: <a href="scores.html" title="previous chapter">4.8. Scores</a></li>
+      <li>Next: <a href="predictor_reports.html" title="next chapter">4.10. Predictor reports</a></li>
   </ul></li>
   </ul></li>
 </ul>

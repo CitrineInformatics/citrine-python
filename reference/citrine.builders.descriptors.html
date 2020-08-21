@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>src &#8212; Citrine Python 0.0.1 documentation</title>
+    <title>citrine.builders.descriptors module &#8212; Citrine Python 0.0.1 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -32,55 +32,72 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="src">
-<h1>src<a class="headerlink" href="#src" title="Permalink to this headline">¶</a></h1>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="citrine.html">citrine package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="citrine.html#subpackages">Subpackages</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="citrine.ara.html">citrine.ara package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="citrine.ara.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="citrine.ara.html#module-citrine.ara">Module contents</a></li>
+  <div class="section" id="module-citrine.builders.descriptors">
+<span id="citrine-builders-descriptors-module"></span><h1>citrine.builders.descriptors module<a class="headerlink" href="#module-citrine.builders.descriptors" title="Permalink to this headline">¶</a></h1>
+<dl class="exception">
+<dt id="citrine.builders.descriptors.NoEquivalentDescriptorError">
+<em class="property">exception </em><code class="sig-prename descclassname">citrine.builders.descriptors.</code><code class="sig-name descname">NoEquivalentDescriptorError</code><a class="headerlink" href="#citrine.builders.descriptors.NoEquivalentDescriptorError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ValueError</span></code></p>
+<p>Error that is raised when the bounds in a template have no equivalent descriptor.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="citrine.builders.descriptors.PlatformVocabulary">
+<em class="property">class </em><code class="sig-prename descclassname">citrine.builders.descriptors.</code><code class="sig-name descname">PlatformVocabulary</code><span class="sig-paren">(</span><em class="sig-param">entries: Mapping[str, citrine.informatics.descriptors.Descriptor]</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.builders.descriptors.PlatformVocabulary" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">typing.Mapping</span></code></p>
+<p>Dictionary of descriptors that define a controlled vocabulary for the AI Engine.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>entries</strong> (<em>Mapping</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.Descriptor" title="citrine.informatics.descriptors.Descriptor"><em>Descriptor</em></a><em>]</em>) – Entries in the dictionary, indexed by a convenient name.
+To build from templates, use PlatformVocabulary.from_templates</p>
+</dd>
+</dl>
+<dl class="method">
+<dt id="citrine.builders.descriptors.PlatformVocabulary.from_templates">
+<em class="property">static </em><code class="sig-name descname">from_templates</code><span class="sig-paren">(</span><em class="sig-param">project: citrine.resources.project.Project</em>, <em class="sig-param">scope: str</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.builders.descriptors.PlatformVocabulary.from_templates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build a PlatformVocabulary from the templates visible to a project.</p>
+<p>All of the templates with the given scope are downloaded and converted into descriptors.
+The uid values associated with that scope are used as the index into the dictionary.
+For example, using scope “my_templates” with a template with
+uids={“my_templates”: “density”} would be indexed into the dictionary as “density”.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>project</strong> (<a class="reference internal" href="citrine.resources.project.html#citrine.resources.project.Project" title="citrine.resources.project.Project"><em>Project</em></a>) – Project on the Citrine Platform to read templates from</p></li>
+<li><p><strong>scope</strong> (<em>str</em>) – Unique ID scope from which to pull the template names</p></li>
 </ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="citrine.builders.html">citrine.builders package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="citrine.builders.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="citrine.builders.html#module-citrine.builders">Module contents</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="citrine.gemtables.html">citrine.gemtables package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="citrine.gemtables.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="citrine.gemtables.html#module-citrine.gemtables">Module contents</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="citrine.informatics.html">citrine.informatics package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="citrine.informatics.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="citrine.informatics.html#module-citrine.informatics">Module contents</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="citrine.resources.html">citrine.resources package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="citrine.resources.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="citrine.resources.html#module-citrine.resources">Module contents</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="citrine.seeding.html">citrine.seeding package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="citrine.seeding.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="citrine.seeding.html#module-citrine.seeding">Module contents</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="citrine.html#submodules">Submodules</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="citrine.citrine.html">citrine.citrine module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="citrine.exceptions.html">citrine.exceptions module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="citrine.test_session.html">citrine.test_session module</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="citrine.html#module-citrine">Module contents</a></li>
-</ul>
-</li>
-</ul>
-</div>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#citrine.builders.descriptors.PlatformVocabulary" title="citrine.builders.descriptors.PlatformVocabulary">PlatformVocabulary</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="citrine.builders.descriptors.template_to_descriptor">
+<code class="sig-prename descclassname">citrine.builders.descriptors.</code><code class="sig-name descname">template_to_descriptor</code><span class="sig-paren">(</span><em class="sig-param">template: gemd.entity.template.attribute_template.AttributeTemplate</em><span class="sig-paren">)</span> &#x2192; citrine.informatics.descriptors.Descriptor<a class="headerlink" href="#citrine.builders.descriptors.template_to_descriptor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a GEMD attribute template into an AI Engine Descriptor.</p>
+<p>IntBounds cannot be converted because they have no matching descriptor type.
+CompositionBounds can only be converted when every component is an element, in which case
+they are converted to ChemicalFormulaDescriptors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>template</strong> (<a class="reference internal" href="citrine.resources.attribute_templates.html#citrine.resources.attribute_templates.AttributeTemplate" title="citrine.resources.attribute_templates.AttributeTemplate"><em>AttributeTemplate</em></a>) – Template to convert into a descriptor</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Descriptor with a key matching the template name and type corresponding to the bounds</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.Descriptor" title="citrine.informatics.descriptors.Descriptor">Descriptor</a></p>
+</dd>
+</dl>
+</dd></dl>
+
 </div>
 
 
@@ -201,7 +218,7 @@
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
-      <a href="../_sources/reference/modules.rst.txt"
+      <a href="../_sources/reference/citrine.builders.descriptors.rst.txt"
           rel="nofollow">Page source</a>
     </div>
 

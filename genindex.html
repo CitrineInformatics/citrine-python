@@ -280,6 +280,8 @@
 </li>
       <li><a href="reference/citrine.builders.html#module-citrine.builders">citrine.builders (module)</a>
 </li>
+      <li><a href="reference/citrine.builders.descriptors.html#module-citrine.builders.descriptors">citrine.builders.descriptors (module)</a>
+</li>
       <li><a href="reference/citrine.builders.design_spaces.html#module-citrine.builders.design_spaces">citrine.builders.design_spaces (module)</a>
 </li>
       <li><a href="reference/citrine.citrine.html#module-citrine.citrine">citrine.citrine (module)</a>
@@ -850,10 +852,10 @@
 </li>
       <li><a href="reference/citrine.resources.file_link.html#citrine.resources.file_link.FileLink">FileLink (class in citrine.resources.file_link)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference/citrine.resources.file_link.html#citrine.resources.file_link.FileLink.filename">filename (citrine.resources.file_link.FileLink attribute)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference/citrine.resources.dataset.html#citrine.resources.dataset.Dataset.files">files() (citrine.resources.dataset.Dataset property)</a>
 </li>
       <li><a href="reference/citrine.resources.data_objects.html#citrine.resources.data_objects.DataObjectCollection.filter_by_attribute_bounds">filter_by_attribute_bounds() (citrine.resources.data_objects.DataObjectCollection method)</a>
@@ -891,6 +893,8 @@
 </li>
       </ul></li>
       <li><a href="reference/citrine.resources.descriptors.html#citrine.resources.descriptors.DescriptorMethods.from_predictor_responses">from_predictor_responses() (citrine.resources.descriptors.DescriptorMethods method)</a>
+</li>
+      <li><a href="reference/citrine.builders.descriptors.html#citrine.builders.descriptors.PlatformVocabulary.from_templates">from_templates() (citrine.builders.descriptors.PlatformVocabulary static method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -1572,6 +1576,8 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference/citrine.resources.file_link.html#citrine.resources.file_link.FileLink.name">name() (citrine.resources.file_link.FileLink property)</a>
 </li>
+      <li><a href="reference/citrine.builders.descriptors.html#citrine.builders.descriptors.NoEquivalentDescriptorError">NoEquivalentDescriptorError</a>
+</li>
       <li><a href="reference/citrine.exceptions.html#citrine.exceptions.NonRetryableException">NonRetryableException</a>
 </li>
       <li><a href="reference/citrine.exceptions.html#citrine.exceptions.NonRetryableHttpException">NonRetryableHttpException</a>
@@ -1707,6 +1713,8 @@
       <li><a href="reference/citrine.resources.parameter_template.html#citrine.resources.parameter_template.ParameterTemplateCollection">ParameterTemplateCollection (class in citrine.resources.parameter_template)</a>
 </li>
       <li><a href="reference/citrine.informatics.workflows.html#citrine.informatics.workflows.PerformanceWorkflow">PerformanceWorkflow (class in citrine.informatics.workflows)</a>
+</li>
+      <li><a href="reference/citrine.builders.descriptors.html#citrine.builders.descriptors.PlatformVocabulary">PlatformVocabulary (class in citrine.builders.descriptors)</a>
 </li>
       <li><a href="reference/citrine.resources.user.html#citrine.resources.user.User.position">position (citrine.resources.user.User attribute)</a>
 </li>
@@ -1911,6 +1919,8 @@
       <li><a href="reference/citrine.resources.gemtables.html#citrine.resources.gemtables.GemTable.resource_type">resource_type() (citrine.resources.gemtables.GemTable method)</a>
 </li>
       <li><a href="reference/citrine.resources.response.html#citrine.resources.response.Response">Response (class in citrine.resources.response)</a>
+</li>
+      <li><a href="reference/citrine.informatics.analysis_configuration.html#citrine.informatics.analysis_configuration.CrossValidationAnalysisConfiguration.responses">responses (citrine.informatics.analysis_configuration.CrossValidationAnalysisConfiguration attribute)</a>
 </li>
       <li><a href="reference/citrine.resources.workflow_executions.html#citrine.resources.workflow_executions.WorkflowExecution.results">results() (citrine.resources.workflow_executions.WorkflowExecution method)</a>
 </li>
@@ -2200,6 +2210,8 @@
         <li><a href="reference/citrine.informatics.dimensions.html#citrine.informatics.dimensions.EnumeratedDimension.template_id">(citrine.informatics.dimensions.EnumeratedDimension attribute)</a>
 </li>
       </ul></li>
+      <li><a href="reference/citrine.builders.descriptors.html#citrine.builders.descriptors.template_to_descriptor">template_to_descriptor() (in module citrine.builders.descriptors)</a>
+</li>
       <li><a href="reference/citrine.resources.templates.html#citrine.resources.templates.TemplateCollection">TemplateCollection (class in citrine.resources.templates)</a>
 </li>
       <li><a href="reference/citrine.gemtables.rows.html#citrine.gemtables.rows.MaterialRunByTemplate.templates">templates (citrine.gemtables.rows.MaterialRunByTemplate attribute)</a>
@@ -2664,15 +2676,17 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="workflows/index.html">4. [ALPHA] AI Engine</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="workflows/getting_started.html">4.1. Getting Started</a></li>
-<li class="toctree-l2"><a class="reference internal" href="workflows/predictors.html">4.2. Predictors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="workflows/design_spaces.html">4.3. Design spaces</a></li>
-<li class="toctree-l2"><a class="reference internal" href="workflows/processors.html">4.4. Processors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="workflows/design_workflows.html">4.5. Design workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="workflows/scores.html">4.6. Scores</a></li>
-<li class="toctree-l2"><a class="reference internal" href="workflows/data_sources.html">4.7. Data Sources</a></li>
-<li class="toctree-l2"><a class="reference internal" href="workflows/predictor_reports.html">4.8. Predictor reports</a></li>
-<li class="toctree-l2"><a class="reference internal" href="workflows/performance_workflows.html">4.9. Performance workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="workflows/code_examples.html">4.10. AI Engine Code Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="workflows/descriptors.html">4.2. Descriptors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="workflows/descriptors.html#platform-vocabularies">4.3. Platform Vocabularies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="workflows/predictors.html">4.4. Predictors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="workflows/design_spaces.html">4.5. Design spaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="workflows/processors.html">4.6. Processors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="workflows/design_workflows.html">4.7. Design workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="workflows/scores.html">4.8. Scores</a></li>
+<li class="toctree-l2"><a class="reference internal" href="workflows/data_sources.html">4.9. Data Sources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="workflows/predictor_reports.html">4.10. Predictor reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="workflows/performance_workflows.html">4.11. Performance workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="workflows/code_examples.html">4.12. AI Engine Code Examples</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="FAQ/index.html">5. FAQ</a><ul>
