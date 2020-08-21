@@ -1,5 +1,5 @@
 """Tools for working with Descriptors."""
-from typing import Type, Optional, List  # noqa: F401
+from typing import Type, Optional, List, Iterable, Set  # noqa: F401
 
 from citrine._serialization.serializable import Serializable
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
@@ -80,6 +80,10 @@ class RealDescriptor(Serializable['RealDescriptor'], Descriptor):
     def __str__(self):
         return "<RealDescriptor {!r}>".format(self.key)
 
+    def __repr__(self):
+        return "RealDescriptor({}, {}, {}, {})".format(
+            self.key, self.lower_bound, self.upper_bound, self.units)
+
 
 class ChemicalFormulaDescriptor(Serializable['ChemicalFormulaDescriptor'], Descriptor):
     """[ALPHA] Captures domain-specific context about a stoichiometric chemical formula.
@@ -111,6 +115,9 @@ class ChemicalFormulaDescriptor(Serializable['ChemicalFormulaDescriptor'], Descr
 
     def __str__(self):
         return "<ChemicalFormulaDescriptor {!r}>".format(self.key)
+
+    def __repr__(self):
+        return "ChemicalFormulaDescriptor(key={})".format(self.key)
 
 
 def InorganicDescriptor(key: str, threshold: Optional[float] = 1.0):
@@ -152,6 +159,9 @@ class MolecularStructureDescriptor(Serializable['MolecularStructureDescriptor'],
     def __str__(self):
         return "<MolecularStructureDescriptor {!r}>".format(self.key)
 
+    def __repr__(self):
+        return "MolecularStructureDescriptor(key={})".format(self.key)
+
 
 class CategoricalDescriptor(Serializable['CategoricalDescriptor'], Descriptor):
     """[ALPHA] A descriptor to hold categorical variables.
@@ -169,26 +179,29 @@ class CategoricalDescriptor(Serializable['CategoricalDescriptor'], Descriptor):
 
     key = properties.String('descriptor_key')
     typ = properties.String('type', default='Categorical', deserializable=False)
-    categories = properties.List(properties.String, 'descriptor_values')
+    categories = properties.Set(properties.String, 'descriptor_values')
 
     def __eq__(self, other):
         try:
             attrs = ["key", "categories", "typ"]
             return all([
                 self.__getattribute__(key) == other.__getattribute__(key) for key in attrs
-            ]) and set(self.categories) == set(self.categories + other.categories)
+            ])
         except AttributeError:
             return False
 
-    def __init__(self, key: str, categories: List[str]):
+    def __init__(self, key: str, categories: Iterable[str]):
         self.key: str = key
         for category in categories:
             if not isinstance(category, str):
                 raise TypeError("All categories must be strings")
-        self.categories: List[str] = categories
+        self.categories: Set[str] = set(categories)
 
     def __str__(self):
         return "<CategoricalDescriptor {!r}>".format(self.key)
+
+    def __repr__(self):
+        return "CategoricalDescriptor(key={}, categories={})".format(self.key, self.categories)
 
 
 class FormulationDescriptor(Serializable['FormulationDescriptor'], Descriptor):
@@ -218,3 +231,6 @@ class FormulationDescriptor(Serializable['FormulationDescriptor'], Descriptor):
 
     def __str__(self):
         return "<FormulationDescriptor {!r}>".format(self.key)
+
+    def __repr__(self):
+        return "FormulationDescriptor(key={})".format(self.key)

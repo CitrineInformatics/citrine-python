@@ -8,6 +8,7 @@
     :maxdepth: 2
 
     getting_started
+    descriptors
     predictors
     design_spaces
     processors
