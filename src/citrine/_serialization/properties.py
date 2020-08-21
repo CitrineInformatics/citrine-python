@@ -364,11 +364,11 @@ class Set(Property[set, typing.Iterable]):
             deserialized.add(self.element_type.deserialize(element))
         return deserialized
 
-    def _serialize(self, value: set) -> set:
-        serialized = set()
+    def _serialize(self, value: set) -> list:
+        serialized = list()
         for element in value:
-            serialized.add(self.element_type.serialize(element))
-        return serialized
+            serialized.append(self.element_type.serialize(element))
+        return sorted(serialized)
 
 
 class Union(Property[typing.Any, typing.Any]):

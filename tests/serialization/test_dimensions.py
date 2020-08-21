@@ -34,7 +34,7 @@ def valid_enumerated_data():
         descriptor=dict(
             type='Categorical',
             descriptor_key='color',
-            descriptor_values={'red', 'green', 'blue'},
+            descriptor_values=['blue', 'green', 'red'],
         ),
         list=['red']
     )
