@@ -60,7 +60,7 @@ def test_simple_enumerated_deserialization(valid_enumerated_design_space_data):
 
         assert type(categorical) == CategoricalDescriptor
         assert categorical.key == 'color'
-        assert categorical.categories == ['red', 'green', 'blue']
+        assert categorical.categories == {'red', 'green', 'blue'}
 
         assert type(formula) == ChemicalFormulaDescriptor
         assert formula.key == 'formula'
