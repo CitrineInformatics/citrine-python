@@ -10,13 +10,13 @@ from tests.utils.session import FakeSession
 
 def task_node_1() -> dict:
     tn1 = {'id': 'dave_id1', 'task_type': 'dave_type', 'status': 'dave_status',
-                   'dependencies': {'dep1', 'dep2'}}
+                   'dependencies': ['dep1', 'dep2']}
     return tn1
 
 
 def task_node_2() -> dict:
     tn2 = {'id': 'dave_id2', 'task_type': 'dave_type', 'status': 'dave_status', 'failure_reason': 'because I failed',
-                   'dependencies': {'dep3', 'dep4'}}
+                   'dependencies': ['dep3', 'dep4']}
     return tn2
 
 

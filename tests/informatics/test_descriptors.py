@@ -1,4 +1,6 @@
 """Tests for citrine.informatics.descriptors."""
+import json
+
 import pytest
 
 from citrine.informatics.descriptors import *
@@ -61,3 +63,11 @@ def test_categorical_descriptor_categories_types():
         CategoricalDescriptor("my categorical", ["a", "b", 1])
     with pytest.raises(TypeError):
         CategoricalDescriptor("my categorical", ["a", "b", None])
+
+
+def test_to_json(descriptor):
+    """Make sure we can dump the descriptors to json"""
+    json_str = json.dumps(descriptor.dump())
+    desc = Descriptor.build(json.loads(json_str))
+    assert desc == descriptor
+
