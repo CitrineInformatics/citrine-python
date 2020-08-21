@@ -203,6 +203,7 @@ def valid_expression_predictor_data():
         status='VALID',
         status_info=[],
         active=True,
+        archived=False,
         display_name='Expression predictor',
         schema_id='f1601161-bb98-4fa9-bdd2-a2a673547532',
         id=str(uuid.uuid4()),
