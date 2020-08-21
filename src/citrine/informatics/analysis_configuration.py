@@ -28,6 +28,9 @@ class CrossValidationAnalysisConfiguration(Serializable['CrossValidationAnalysis
         If present, candidates are grouped by the hash of
         ``(key, value)`` pairs computed on the given keys.
         If not provided, candidates are not grouped.
+    responses: list[str], optional
+        Set of keys used to limit the outputs that CV will be executed against.
+        If not provided all responses will have analysis performed.
 
     """
 
@@ -37,6 +40,7 @@ class CrossValidationAnalysisConfiguration(Serializable['CrossValidationAnalysis
     n_trials = properties.Integer('n_trials')
     seed = properties.Optional(properties.Integer, 'seed')
     group_by_keys = properties.Optional(properties.List(properties.String), 'group_by_keys')
+    responses = properties.Optional(properties.List(properties.String), 'responses')
     max_rows = properties.Integer('max_rows')
     typ = properties.String('type', default='CrossValidationAnalysis', deserializable=False)
 
@@ -49,6 +53,7 @@ class CrossValidationAnalysisConfiguration(Serializable['CrossValidationAnalysis
             max_rows: int,
             seed: Optional[int] = None,
             group_by_keys: Optional[List[str]] = None,
+            responses: Optional[List[str]] = None,
     ):
         self.name = name
         self.description = description
@@ -57,3 +62,4 @@ class CrossValidationAnalysisConfiguration(Serializable['CrossValidationAnalysis
         self.seed = seed
         self.group_by_keys = group_by_keys
         self.max_rows = max_rows
+        self.responses = responses
