@@ -158,8 +158,6 @@ class TableConfig(Resource["TableConfig"]):
             variables=copy(self.variables) + [variable],
             columns=copy(self.columns) + columns,
             config_uid=copy(self.config_uid),
-            version_uid=copy(self.version_uid),
-            version_number=self.version_number,
             definition_uid=copy(self.definition_uid)
         )
 
@@ -234,8 +232,6 @@ class TableConfig(Resource["TableConfig"]):
             variables=copy(self.variables) + new_variables,
             columns=copy(self.columns) + new_columns,
             config_uid=copy(self.config_uid),
-            version_uid=copy(self.version_uid),
-            version_number=self.version_number,
             definition_uid=copy(self.definition_uid)
         )
 
