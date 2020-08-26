@@ -46,8 +46,8 @@ def table_config() -> AraDefinition:
 
 
 def empty_defn() -> AraDefinition:
-    return TableConfig(name="empty", description="empty",
-                         datasets=[], rows=[], variables=[], columns=[])
+    return TableConfig(name="empty", description="empty", datasets=[], rows=[], variables=[],
+                       columns=[], config_uid=UUID("6b608f78-e341-422c-8076-35adc8828545"))
 
 
 def test_get_table_config_metadata(collection, session):
@@ -258,6 +258,7 @@ def test_add_columns():
     )
     assert with_name_col.variables == [RootInfo(name="name", headers=["bar"], field="name")]
     assert with_name_col.columns == [IdentityColumn(data_source="name")]
+    assert with_name_col.config_uid == UUID('6b608f78-e341-422c-8076-35adc8828545')
 
     # Check duplicate variable name error
     with pytest.raises(ValueError) as excinfo:
@@ -304,6 +305,7 @@ def test_add_all_ingredients(session, project):
     new_columns = def2.columns[len(def1.columns):]
     assert len(new_variables) == len(allowed_names)
     assert len(new_columns) == len(allowed_names) * 2
+    assert def2.config_uid == UUID("6b608f78-e341-422c-8076-35adc8828545")
     for name in allowed_names:
         assert next((var for var in new_variables if name in var.headers
                      and isinstance(var, IngredientQuantityByProcessAndName)), None) is not None
