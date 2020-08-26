@@ -156,7 +156,11 @@ class TableConfig(Resource["TableConfig"]):
             datasets=copy(self.datasets),
             rows=copy(self.rows),
             variables=copy(self.variables) + [variable],
-            columns=copy(self.columns) + columns
+            columns=copy(self.columns) + columns,
+            config_uid=copy(self.config_uid),
+            version_uid=copy(self.version_uid),
+            version_number=self.version_number,
+            definition_uid=copy(self.definition_uid)
         )
 
     def add_all_ingredients(self, *,
@@ -228,7 +232,11 @@ class TableConfig(Resource["TableConfig"]):
             datasets=copy(self.datasets),
             rows=copy(self.rows),
             variables=copy(self.variables) + new_variables,
-            columns=copy(self.columns) + new_columns
+            columns=copy(self.columns) + new_columns,
+            config_uid=copy(self.config_uid),
+            version_uid=copy(self.version_uid),
+            version_number=self.version_number,
+            definition_uid=copy(self.definition_uid)
         )
 
 
