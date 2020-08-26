@@ -157,8 +157,7 @@ class TableConfig(Resource["TableConfig"]):
             rows=copy(self.rows),
             variables=copy(self.variables) + [variable],
             columns=copy(self.columns) + columns,
-            config_uid=copy(self.config_uid),
-            definition_uid=copy(self.definition_uid)
+            config_uid=copy(self.config_uid)
         )
 
     def add_all_ingredients(self, *,
@@ -231,8 +230,7 @@ class TableConfig(Resource["TableConfig"]):
             rows=copy(self.rows),
             variables=copy(self.variables) + new_variables,
             columns=copy(self.columns) + new_columns,
-            config_uid=copy(self.config_uid),
-            definition_uid=copy(self.definition_uid)
+            config_uid=copy(self.config_uid)
         )
 
 
