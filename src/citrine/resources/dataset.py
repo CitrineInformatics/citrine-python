@@ -81,6 +81,7 @@ class Dataset(Resource['Dataset']):
 
     uid = properties.Optional(properties.UUID(), 'id')
     name = properties.String('name')
+    unique_name = properties.Optional(properties.String(), 'unique_name')
     summary = properties.String('summary')
     description = properties.String('description')
     deleted = properties.Optional(properties.Boolean(), 'deleted')
@@ -92,10 +93,11 @@ class Dataset(Resource['Dataset']):
     delete_time = properties.Optional(properties.Datetime(), 'delete_time')
     public = properties.Optional(properties.Boolean(), 'public')
 
-    def __init__(self, name: str, summary: str, description: str):
+    def __init__(self, name: str, summary: str, description: str, unique_name: str = None):
         self.name: str = name
         self.summary: str = summary
         self.description: str = description
+        self.unique_name = unique_name
 
         # The attributes below should not be set by the user. Instead they will be updated as the
         # dataset interacts with the backend data service
