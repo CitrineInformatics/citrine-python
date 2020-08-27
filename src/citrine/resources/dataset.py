@@ -8,6 +8,7 @@ from citrine._rest.resource import Resource
 from citrine._serialization import properties
 from citrine._session import Session
 from citrine._utils.functions import scrub_none
+from citrine.exceptions import NotFound
 from citrine.resources.condition_template import ConditionTemplateCollection
 from citrine.resources.file_link import FileCollection
 from citrine.resources.ingredient_run import IngredientRunCollection
@@ -360,3 +361,17 @@ class DatasetCollection(Collection[Dataset]):
         full_model = self.build(data)
         full_model.project_id = self.project_id
         return full_model
+
+    def get_with_unique_name(self, unique_name: str) -> ResourceType:
+        """Get a Dataset with the given unique name."""
+        if unique_name is None:
+            raise ValueError("You must supply a unique_name")
+        path = self._get_path() + "?unique_name=" + unique_name
+        data = self.session.get_resource(path)
+
+        if len(data) == 1:
+            return self.build( data[0])
+        elif len(data) > 1:
+            raise RuntimeError("Received multiple results when requesting a unique dataset")
+        else:
+            raise NotFound(path)
