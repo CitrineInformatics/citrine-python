@@ -349,20 +349,21 @@ class DatasetCollection(Collection[Dataset]):
         dumped_dataset = model.dump()
         dumped_dataset["deleted"] = None
 
-        # Only use the idempotent put approach if a) a unique name is provided, and b) the session is configured to use
-        # it (default to False for backwards compatibility).
+        # Only use the idempotent put approach if a) a unique name is provided, and b)
+        # the session is configured to use it (default to False for backwards compatibility).
         if model.unique_name is not None and self.session.use_idempotent_dataset_put:
             # Leverage the create-or-update endpoint if we've got a unique name
             data = self.session.put_resource(path, scrub_none(dumped_dataset))
         else:
-            # Otherwise fall back to using the POST approach (which may fail if the resource already exists)
+            # Otherwise fall back to using the POST approach (which may fail if the
+            # resource already exists)
             data = self.session.post_resource(path, scrub_none(dumped_dataset))
 
         full_model = self.build(data)
         full_model.project_id = self.project_id
         return full_model
 
-    def get_with_unique_name(self, unique_name: str) -> ResourceType:
+    def get_by_unique_name(self, unique_name: str) -> ResourceType:
         """Get a Dataset with the given unique name."""
         if unique_name is None:
             raise ValueError("You must supply a unique_name")
@@ -370,7 +371,7 @@ class DatasetCollection(Collection[Dataset]):
         data = self.session.get_resource(path)
 
         if len(data) == 1:
-            return self.build( data[0])
+            return self.build(data[0])
         elif len(data) > 1:
             raise RuntimeError("Received multiple results when requesting a unique dataset")
         else:

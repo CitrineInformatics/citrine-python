@@ -48,7 +48,8 @@ class Session(requests.Session):
         self.s3_use_ssl = True
         self.s3_addressing_style = 'auto'
 
-        # Feature flag for enabling the use of Dataset idempotent PUT. Will be removed in a future release.
+        # Feature flag for enabling the use of Dataset idempotent PUT. Will be removed
+        # in a future release.
         self.use_idempotent_dataset_put = False
 
         # Custom adapter so we can use custom retry parameters. The default HTTP status
