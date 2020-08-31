@@ -43,6 +43,7 @@ class FakeSession:
         self.s3_endpoint_url = None
         self.s3_use_ssl = True
         self.s3_addressing_style = 'auto'
+        self.use_idempotent_dataset_put = False
 
     def set_response(self, resp):
         self.responses = [resp]
