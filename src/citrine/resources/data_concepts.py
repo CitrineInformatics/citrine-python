@@ -2,6 +2,7 @@
 from abc import abstractmethod, ABC
 from typing import TypeVar, Type, List, Union, Optional, Iterator, Iterable
 from uuid import UUID, uuid4
+import deprecation
 
 from citrine._rest.collection import Collection
 from citrine._serialization import properties
@@ -259,25 +260,6 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         data_concepts_object = self.get_type().build(data)
         return data_concepts_object
 
-    def _fetch_page(self, page: Optional[int] = None, per_page: Optional[int] = None):
-        """
-        List all visible elements of the collection.  Does not handle pagination.
-
-        Parameters
-        ----------
-        page: Optional[int]
-            The page of results to list, 1-indexed (i.e. the first page is page=1)
-        per_page: Optional[int]
-            The number of results to list per page
-
-        Returns
-        -------
-        List[ResourceType]
-            Every object in this collection.
-
-        """
-        return self.filter_by_tags([], page, per_page), ""
-
     def _build_collection_elements(self,
                                    collection: Iterable[dict]) -> Iterable[ResourceType]:
         """
@@ -322,7 +304,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
 
         """
         # Convert the iterator to a list to avoid breaking existing client relying on lists
-        return list(super().list(page=page, per_page=per_page))
+        return [x for x in self.list_all()]
 
     def register(self, model: ResourceType, dry_run=False):
         """
@@ -444,6 +426,8 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         data = self.session.get_resource(path)
         return self.build(data)
 
+    @deprecation.deprecated(details="filter_by_tags is deprecated due to poor "
+                                    "performance. Please use list_by_tag instead.")
     def filter_by_tags(self, tags: List[str],
                        page: Optional[int] = None, per_page: Optional[int] = None):
         """
@@ -483,6 +467,8 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
             params=params)
         return [self.build(content) for content in response["contents"]]
 
+    @deprecation.deprecated(details="filter_by_name is deprecated due to poor "
+                                    "performance. Please use list_by_name instead.")
     def filter_by_name(self, name: str, exact: bool = False,
                        page: Optional[int] = None, per_page: Optional[int] = None):
         """
