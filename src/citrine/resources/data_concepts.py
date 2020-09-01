@@ -266,18 +266,17 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         """
         List all visible elements of the collection.
 
-        Leaving page and per_page as default values will return a list of all elements
+        page and per_page parameters of this method are deprecated and ignored. This method will as default values will return a list of all elements
         in the collection, paginating over all available pages.
 
         Parameters
         ---------
         page: int, optional
-            The "page" of results to list. Default is to read all pages and return
-            all results.  This option is deprecated.
+            [DEPRECATED][IGNORED] This parameter is ignored. To load individual pages lazily, use the list_all method. 
         per_page: int, optional
-            Max number of results to return per page.  This parameter is used when
-            making requests to the backend service.  If the page parameter is
-            specified it limits the maximum number of elements in the response.
+            Max number of results to return per page. It is very unlikely that setting this parameters to something
+            other than the default is useful. It exists for rare situations where the client is bandwidth constrained
+            or experiencing latency from large payload sizes.
 
         Returns
         -------
@@ -286,7 +285,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
 
         """
         # Convert the iterator to a list to avoid breaking existing client relying on lists
-        return [x for x in self.list_all()]
+        return [x for x in self.list_all(per_page=per_page)]
 
     def register(self, model: ResourceType, dry_run=False):
         """
