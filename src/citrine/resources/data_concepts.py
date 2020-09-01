@@ -1,6 +1,6 @@
 """Top-level class for all data concepts objects and collections thereof."""
 from abc import abstractmethod, ABC
-from typing import TypeVar, Type, List, Union, Optional, Iterator, Iterable
+from typing import TypeVar, Type, List, Union, Optional, Iterator
 from uuid import UUID, uuid4
 import deprecation
 
