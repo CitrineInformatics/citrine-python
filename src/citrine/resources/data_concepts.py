@@ -260,24 +260,6 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         data_concepts_object = self.get_type().build(data)
         return data_concepts_object
 
-    def _build_collection_elements(self,
-                                   collection: Iterable[dict]) -> Iterable[ResourceType]:
-        """
-        For each element in the collection, build the appropriate resource type.
-
-        Parameters
-        ---------
-        collection: Iterable[dict]
-            collection containing the elements to be built
-
-        Returns
-        -------
-        Iterable[ResourceType]
-            Resources in this collection.
-
-        """
-        return collection
-
     def list(self,
              page: Optional[int] = None,
              per_page: Optional[int] = 100) -> List[ResourceType]:
