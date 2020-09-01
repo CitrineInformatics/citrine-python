@@ -95,7 +95,7 @@ def test_mark_predictor_invalid(valid_simple_ml_predictor_data, valid_predictor_
     session.set_responses(valid_simple_ml_predictor_data, valid_predictor_report_data)
 
     # When
-    predictor.active = False
+    predictor.archived = False
     collection.update(predictor)
 
     # Then
@@ -104,7 +104,7 @@ def test_mark_predictor_invalid(valid_simple_ml_predictor_data, valid_predictor_
     first_call = session.calls[0]  # First call is the update
     assert first_call.method == 'PUT'
     assert first_call.path == '/projects/{}/modules/{}'.format(collection.project_id, predictor.uid)
-    assert not first_call.json['active']
+    assert not first_call.json['archived']
 
 
 def test_list_predictors(valid_simple_ml_predictor_data, valid_expression_predictor_data,

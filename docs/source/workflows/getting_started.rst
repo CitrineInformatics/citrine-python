@@ -51,18 +51,18 @@ There are 3 types of modules on the platform:
 -  :doc:`Processors <processors>` define the method used to search the design space.
    The processor and design space are coupled: depending on the design space used, only a subset of processors are applicable.
 
-Activation
+Archiving
 **********
 
-Modules come `active` by default when created. If you would like to deactivate a module so it cannot be used again consider this example:
+Modules come active by default when created. If you would like to `archive` a module so it cannot be used again consider this example:
 
 .. code:: python
 
    predictor = project.predictors.get(predictor_uuid)
-   predictor.active = False
+   predictor.archived = True
    project.predictors.update(predictor)
 
-Modules that are not `active` cannot be used in workflows and will not show up when listing.
+Modules that are `archived` cannot be used in workflows and will not show up when listing.
 
 Registration and validation
 ---------------------------
