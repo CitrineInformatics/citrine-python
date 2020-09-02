@@ -266,16 +266,18 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         """
         List all visible elements of the collection.
 
-        page and per_page parameters of this method are deprecated and ignored. This method will as default values will return a list of all elements
-        in the collection, paginating over all available pages.
+        page and per_page parameters of this method are deprecated and ignored.
+        This method will will return a list of all elements in the collection.
 
         Parameters
         ---------
         page: int, optional
-            [DEPRECATED][IGNORED] This parameter is ignored. To load individual pages lazily, use the list_all method. 
+            [DEPRECATED][IGNORED] This parameter is ignored. To load individual
+            pages lazily, use the list_all method.
         per_page: int, optional
-            Max number of results to return per page. It is very unlikely that setting this parameters to something
-            other than the default is useful. It exists for rare situations where the client is bandwidth constrained
+            Max number of results to return per page. It is very unlikely that
+            setting this parameter to something other than the default is useful.
+            It exists for rare situations where the client is bandwidth constrained
             or experiencing latency from large payload sizes.
 
         Returns
