@@ -23,14 +23,23 @@ class CrossValidationAnalysisConfiguration(Serializable['CrossValidationAnalysis
     seed: int, optional
         Seed used to generate random test/train splits.
         If not provided, a random seed is used.
-    group_by_keys: list[str], optional
+    group_by_keys: List[str], optional
         Set of keys used to group candidates.
         If present, candidates are grouped by the hash of
         ``(key, value)`` pairs computed on the given keys.
         If not provided, candidates are not grouped.
-    responses: list[str], optional
-        Set of keys used to limit the outputs that CV will be executed against.
-        If not provided all responses will have analysis performed.
+    responses: List[str], optional
+        Set of descriptor keys to cross-validate.
+        All requested responses must be present as an output of the predictor being analyzed.
+        If not provided cross-validation metrics will be computed for all predictor responses.
+        These cross-validated responses are removed from the data during the analysis,
+        so which responses are requested can affect the performance metrics if the predictor contains latent variables.
+        For example, if only the final output (leaf) responses are requested, latent variables are not removed
+        during cross-validation. In this case the actual (and not predicted) values for latent variables are fed into
+        the models used to compute leaf responses. Often this will manifest as a lower model error for
+        the final response, compared to the model error computed when latent variables are requested and
+        hence removed from the data. Note, if no responses are specified all leaf and latent variables are removed
+        from the data during cross-validation.
 
     """
 
