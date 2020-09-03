@@ -21,7 +21,7 @@ class Paginator(Generic[ResourceType]):
                  search_params: Optional[dict] = None,
                  deduplicate: bool = True) -> Iterable[ResourceType]:
         """
-        A generic support class to paginate requests into an itcerable of a built object.
+        A generic support class to paginate requests into an iterable of a built object.
 
         Leaving page and per_page as default values will yield all elements in the
         collection, paginating over all available pages.
