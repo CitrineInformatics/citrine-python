@@ -2,6 +2,7 @@ from typing import List
 from uuid import UUID
 
 from citrine._session import Session
+from citrine.informatics.data_sources import DataSource
 from citrine.informatics.descriptors import Descriptor
 from citrine.informatics.predictors import Predictor
 
@@ -41,3 +42,26 @@ class DescriptorMethods:
             }
         )
         return [Descriptor.build(r) for r in response['responses']]
+
+    def descriptors_from_data_source(self, data_source: DataSource) -> List[Descriptor]:
+        """
+        [ALPHA] Get all descriptors associated with a data source
+
+        Parameters
+        ----------
+        data_source : DataSource
+            A CSVDataSource or AraTableDataSource to get descriptors for
+
+        Returns
+        -------
+        List[Descriptor]
+            The list of descriptors associated with the given data_source.
+
+        """
+        response = self.session.post_resource(
+            path='/projects/{}/material-descriptors/from-data-source'.format(self.project_id),
+            json={
+                'data_source': data_source.dump()
+            }
+        )
+        return [Descriptor.build(r) for r in response['descriptors']]
