@@ -1,17 +1,17 @@
 """Resources that represent both individual and collections of workflow executions."""
-from typing import Optional
+from functools import lru_cache
+from typing import Optional, Set
 from uuid import UUID
 
-from citrine.informatics.modules import ModuleRef
-from citrine.informatics.scores import Score
+from citrine.informatics.predictor_evaluation_result import PredictorEvaluationResult
 from citrine._rest.collection import Collection
 from citrine._rest.resource import Resource
 from citrine._serialization import properties
 from citrine._session import Session
 
 
-class WorkflowExecution(Resource['WorkflowExecution']):
-    """[ALPHA] A Citrine Workflow Execution.
+class PredictorEvaluationExecution(Resource['PredictorEvaluationExecution']):
+    """[ALPHA] The execution of a PredictorEvaluationWorkflow.
 
     Parameters
     ----------
@@ -33,22 +33,36 @@ class WorkflowExecution(Resource['WorkflowExecution']):
     project_id = properties.UUID('project_id', deserializable=False)
     workflow_id = properties.UUID('workflow_id', deserializable=False)
     version_number = properties.Integer("version_number")
+    status = properties.Optional(properties.String(), 'status', serializable=False)
+    status_info = properties.Optional(
+        properties.List(properties.String()),
+        'status_info',
+        serializable=False
+    )
 
-    def __init__(self,
+    def __init__(self, *,
                  uid: Optional[str] = None,
+                 version_number: Optional[int] = None,
                  project_id: Optional[str] = None,
                  workflow_id: Optional[str] = None,
+                 predictor_id: Optional[str] = None,
+                 metric_names: Optional[Set[str]] = None,
+                 response_names: Optional[Set[str]] = None,
+                 evaluator_names: Optional[Set[str]] = None,
                  session: Optional[Session] = None,
-                 version_number: Optional[int] = None,
                  ):
         self.uid: str = uid
+        self.version_number = version_number
         self.project_id: str = project_id
         self.workflow_id: str = workflow_id
         self.session: Session = session
-        self.version_number = version_number
+        self.predictor_id: str = predictor_id
+        self.metric_names: Set[str] = metric_names
+        self.response_names: Set[str] = response_names
+        self.evaluator_names: Set[str] = evaluator_names
 
     def __str__(self):
-        return '<WorkflowExecution {!r}>'.format(str(self.uid))
+        return '<PredictorEvaluationExecution {!r}>'.format(str(self.uid))
 
     def _path(self):
         return '/projects/{project_id}/workflows/{workflow_id}/executions/{execution_id}'.format(
@@ -59,69 +73,45 @@ class WorkflowExecution(Resource['WorkflowExecution']):
             }
         )
 
-    def status(self):
-        """Get the current status of this execution."""
-        response = self.session.get_resource(self._path() + "/status")
-        return WorkflowExecutionStatus.build(response)
+    @lru_cache
+    def results(self, evaluator_name) -> PredictorEvaluationResult:
+        """
 
-    def results(self):
-        """Get the results of this execution."""
+        Parameters
+        ----------
+        evaluator_name: str
+            Name of the evaluator for which to get the results
+
+        Returns
+        -------
+        The evaluation result from the evaluator with the given name
+
+        """
         return self.session.get_resource(self._path() + "/results")
 
 
-class WorkflowExecutionCollection(Collection[WorkflowExecution]):
-    """[ALPHA] A collection of WorkflowExecutions."""
+class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExecution"]):
+    """[ALPHA] A collection of PredictorEvaluationExecutions."""
 
     _path_template = '/projects/{project_id}/workflows/{workflow_id}/executions'
     _individual_key = None
     _collection_key = 'response'
-    _resource = WorkflowExecution
+    _resource = PredictorEvaluationExecution
 
-    def __init__(self, project_id: UUID, workflow_id: Optional[UUID], session: Optional[Session] = None):
+    def __init__(self, *,
+                 project_id: UUID,
+                 workflow_id: Optional[UUID] = None,
+                 session: Optional[Session] = None
+                 ):
         self.project_id: UUID = project_id
         self.workflow_id: Optional[UUID] = workflow_id
         self.session: Optional[Session] = session
 
-    def build(self, data: dict) -> WorkflowExecution:
-        """Build an individual WorkflowExecution."""
-        execution = WorkflowExecution.build(data)
+    def build(self, data: dict) -> PredictorEvaluationExecution:
+        """Build an individual PredictorEvaluationExecution."""
+        execution = PredictorEvaluationExecution.build(data)
         execution.session = self.session
         execution.project_id = self.project_id
         if self.workflow_id is not None:
             execution.workflow_id = self.workflow_id
         return execution
-
-    def trigger(self, execution_input: [Score, ModuleRef]) -> WorkflowExecution:
-        """Create a new workflow execution."""
-        return self.register(execution_input)
-
-
-
-
-class WorkflowExecutionStatus(Resource['WorkflowExecutionStatus']):
-    """[ALPHA] The status for a specific workflow execution."""
-
-    status = properties.String('status')
-
-    def __init__(self,
-                 status: str,
-                 session: Optional[Session]):
-        self.status = status
-
-    @property
-    def succeeded(self):
-        """Determine whether or not the execution succeeded."""
-        return self.status == "Succeeded"
-
-    @property
-    def in_progress(self):
-        """Determine whether or not the execution is in progress."""
-        return self.status == "InProgress"
-
-    @property
-    def failed(self):
-        """Determine whether or not the execution failed."""
-        return self.status == "Failed"
-
-    def __str__(self):
-        return '<WorkflowExecutionStatus {!r}>'.format(self.status)
