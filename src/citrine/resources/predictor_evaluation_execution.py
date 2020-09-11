@@ -87,7 +87,8 @@ class PredictorEvaluationExecution(Resource['PredictorEvaluationExecution']):
         The evaluation result from the evaluator with the given name
 
         """
-        return self.session.get_resource(self._path() + "/results")
+        params = {"evaluator_name": evaluator_name}
+        return PredictorEvaluationResult.build(self.session.get_resource(self._path() + "/results", params=params))
 
 
 class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExecution"]):
