@@ -56,6 +56,12 @@ class RealPredictedVsActual(Serializable["RealPredictedVsActual"], PredictedVsAc
     """ [ALPHA] Predicted vs. actual data for a single real-valued data point.
 
     """
+    uuid = properties.UUID("uuid")
+    identifiers = properties.Set(properties.String, "identifiers")
+    trial = properties.Integer("trial")
+    fold = properties.Integer("fold")
+    predicted = properties.Object(RealMetricValue, "predicted")
+    actual = properties.Object(RealMetricValue, "actual")
     typ = properties.String('type', default='RealPredictedVsActual', deserializable=False)
 
     def __init__(self, *,
@@ -77,6 +83,12 @@ class CategoricalPredictedVsActual(Serializable["CategoricalPredictedVsActual"],
     """ [ALPHA] Predicted vs. actual data for a single categorical data point.
 
     """
+    uuid = properties.UUID("uuid")
+    identifiers = properties.Set(properties.String, "identifiers")
+    trial = properties.Integer("trial")
+    fold = properties.Integer("fold")
+    predicted = properties.Mapping(properties.String, properties.Float, "predicted")
+    actual = properties.Mapping(properties.String, properties.Float, "actual")
     typ = properties.String('type', default='CategoricalPredictedVsActual', deserializable=False)
 
     def __init__(self, *,
