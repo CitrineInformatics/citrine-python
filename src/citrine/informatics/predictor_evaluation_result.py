@@ -151,16 +151,29 @@ class PredictorEvaluationResult(PolymorphicSerializable["PredictorEvaluationResu
         }[data["type"]]
 
     def evaluator(self) -> PredictorEvaluator:
+        """Evaluator that produced the result."""
         raise NotImplementedError()
 
     def responses(self) -> Set[str]:
+        """Predictor responses that were evaluated."""
         raise NotImplementedError()
 
     def metrics(self) -> Set[PredictorEvaluationMetric]:
+        """Metrics computed for predictor responses."""
         raise NotImplementedError()
 
 
 class CrossValidationResult(Serializable["CrossValidationResult"], PredictorEvaluationResult):
+    """[ALPHA] Result of performing a cross-validation evaluation on a predictor.
+
+    Parameters
+    ----------
+    evaluator: PredictorEvaluator
+        Evaluator that produced this result.
+    response_results: Mapping[str, ResponseMetrics]
+        Map from response key to all metrics compute for that response.
+
+    """
     _evaluator = properties.Object(PredictorEvaluator, "evaluator")
     _response_results = properties.Mapping(properties.String, properties.Object(ResponseMetrics), "response_results")
     typ = properties.String('type', default='CrossValidationResult', deserializable=False)

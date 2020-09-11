@@ -27,6 +27,9 @@ class PredictorEvaluationMetric(PolymorphicSerializable["PredictorEvaluationMetr
 
 
 class RMSE(Serializable["RMSE"], PredictorEvaluationMetric):
+    """[ALPHA] Root-mean-square error
+
+    """
     typ = properties.String("type", default="RMSE", deserializable=False)
 
     def __repr__(self):
@@ -37,6 +40,9 @@ class RMSE(Serializable["RMSE"], PredictorEvaluationMetric):
 
 
 class NDME(Serializable["NDME"], PredictorEvaluationMetric):
+    """[ALPHA] Non-dimensional model error
+
+    """
     typ = properties.String("type", default="NDME", deserializable=False)
 
     def __repr__(self):
@@ -47,6 +53,9 @@ class NDME(Serializable["NDME"], PredictorEvaluationMetric):
 
 
 class StandardRMSE(Serializable["StandardRMSE"], PredictorEvaluationMetric):
+    """[ALPHA] Standardized root-mean-square error
+
+    """
     typ = properties.String("type", default="StandardRMSE", deserializable=False)
 
     def __repr__(self):
@@ -57,6 +66,11 @@ class StandardRMSE(Serializable["StandardRMSE"], PredictorEvaluationMetric):
 
 
 class PVA(Serializable["PVA"], PredictorEvaluationMetric):
+    """[ALPHA] Predicted vs. actual data.
+    Results are returned as a flattened list, where each item represents
+    predicted vs. actual data for a single point.
+
+    """
     typ = properties.String("type", default="PVA", deserializable=False)
 
     def __repr__(self):
@@ -67,6 +81,9 @@ class PVA(Serializable["PVA"], PredictorEvaluationMetric):
 
 
 class F1(Serializable["F1"], PredictorEvaluationMetric):
+    """[ALPHA] Support-weighted F1 score.
+
+    """
     typ = properties.String("type", default="F1", deserializable=False)
 
     def __repr__(self):
@@ -77,6 +94,9 @@ class F1(Serializable["F1"], PredictorEvaluationMetric):
 
 
 class AreaUnderROC(Serializable["AreaUnderROC"], PredictorEvaluationMetric):
+    """[ALPHA] Area under the receiver operating characteristic (ROC) curve.
+
+    """
     typ = properties.String("type", default="AreaUnderROC", deserializable=False)
 
     def __repr__(self):
@@ -87,6 +107,16 @@ class AreaUnderROC(Serializable["AreaUnderROC"], PredictorEvaluationMetric):
 
 
 class CoverageProbability(Serializable["CoverageProbability"], PredictorEvaluationMetric):
+    """[ALPHA] Fraction of observations for which the magnitude of the error is within a
+    confidence interval of a given coverage level.
+
+    Parameters
+    ----------
+    coverage_level: Union[str, float]
+        Confidence-interval coverage level.
+        The coverage level must both be between 0 and 1.0 (non-inclusive) and specified to 3 significant figures.
+
+    """
     _level_str = properties.String("coverage_level")
     typ = properties.String("type", default="CoverageProbability", deserializable=False)
 
