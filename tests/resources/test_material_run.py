@@ -138,7 +138,8 @@ def test_list_material_runs(collection, session):
         path='projects/{}/material-runs'.format(collection.project_id),
         params={
             'dataset_id': str(collection.dataset_id),
-            'tags': [],
+            'forward': True,
+            'ascending': True,
             'per_page': 100
         }
     )
