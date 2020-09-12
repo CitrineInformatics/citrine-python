@@ -1,6 +1,8 @@
 from citrine.exceptions import NotFound
 from citrine.resources import ProjectCollection
 from citrine.resources.dataset import Dataset
+from citrine._rest.collection import Collection, CreationType
+from copy import deepcopy
 
 
 def find_collection(collection, name):
@@ -91,3 +93,32 @@ def find_or_create_dataset(dataset_collection, dataset_name, raise_error=False):
             return dataset_collection.register(Dataset(dataset_name, "seed summ.", "seed desc."))
         dataset = get_by_name_or_create(dataset_collection, dataset_name, default_provider)
     return dataset
+
+
+def create_or_update(collection: Collection,
+                     resource: CreationType)->CreationType:
+    """Update a resource of a given name belonging to a collection.
+    Create it if it doesn't exist. 
+    Parameters
+    ----------
+    collection : Collection
+        Collection within which you want to update or create a resource
+    resource : CreationType
+        Resource that you want to create or update. If collection already contains
+        a resource with the same name it will be updated. Otherwise it will be created.
+    Returns
+    -------
+    ResourceType
+        Registered updated or created resource.
+    """    
+    try:
+        old_resource = get_by_name_or_raise_error(collection, resource.name)
+        print(f"Updating module: {resource.name}")
+        # Copy so that passed-in resource is unaffected
+        new_resource = deepcopy(resource)
+        new_resource.uid = old_resource.uid
+        return collection.update(new_resource)
+    except ValueError:
+        print(f"Registering new module: {resource.name}")
+        return collection.register(resource)
+        
