@@ -364,7 +364,7 @@ class DatasetCollection(Collection[Dataset]):
         return full_model
 
     def get_by_unique_name(self, unique_name: str) -> ResourceType:
-        """Get a Dataset with the given unique name."""
+        """ALPHA: Get a Dataset with the given unique name."""
         if unique_name is None:
             raise ValueError("You must supply a unique_name")
         path = self._get_path() + "?unique_name=" + unique_name
