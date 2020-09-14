@@ -6,7 +6,7 @@ from citrine._serialization.serializable import Serializable
 
 
 class PredictorEvaluationMetric(PolymorphicSerializable["PredictorEvaluationMetric"]):
-    """[ALPHA] A Citrine Evaluation Metric represents a metric computed for a predictor.
+    """[ALPHA] A Citrine Evaluation Metric represents a metric computed during a Predictor Evaluation Workflow.
 
     Abstract type that returns the proper type given a serialized dict.
     """

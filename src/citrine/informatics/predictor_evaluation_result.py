@@ -10,7 +10,7 @@ from citrine.informatics.predictor_evaluator import PredictorEvaluator
 
 
 class MetricValue(PolymorphicSerializable["MetricValue"]):
-    """[ALPHA] Value associated with a computed metric.
+    """[ALPHA] Value associated with a metric computed during a Predictor Evaluation Workflow.
 
     """
 
@@ -25,6 +25,13 @@ class MetricValue(PolymorphicSerializable["MetricValue"]):
 
 class RealMetricValue(Serializable["RealMetricValue"], MetricValue):
     """[ALPHA] Mean and standard error computed for a real-valued metric
+
+    Parameters
+    ----------
+    mean: float
+        Mean value
+    standard_error: float
+        Standard error of the mean
 
     """
     mean = properties.Float("mean")
@@ -55,6 +62,21 @@ class PredictedVsActual(PolymorphicSerializable["PredictedVsActual"]):
 class RealPredictedVsActual(Serializable["RealPredictedVsActual"], PredictedVsActual):
     """ [ALPHA] Predicted vs. actual data for a single real-valued data point.
 
+    Parameters
+    ----------
+    uuid: UUID
+        Unique Citrine id given to the candidate
+    identifiers: Set[str]
+        Set of globally unique identfiers given to the candidate
+    trial: int
+        1-based index of the trial this candidate belonged to
+    fold: int
+        1-based index of the fold this candidate belonged to
+    predicted: RealMetricValue
+        Predicted value
+    actual: RealMetricValue
+        Actual value
+
     """
     uuid = properties.UUID("uuid")
     identifiers = properties.Set(properties.String, "identifiers")
@@ -81,6 +103,21 @@ class RealPredictedVsActual(Serializable["RealPredictedVsActual"], PredictedVsAc
 
 class CategoricalPredictedVsActual(Serializable["CategoricalPredictedVsActual"], PredictedVsActual):
     """ [ALPHA] Predicted vs. actual data for a single categorical data point.
+
+    Parameters
+    ----------
+    uuid: UUID
+        Unique Citrine id given to the candidate
+    identifiers: Set[str]
+        Set of globally unique identfiers given to the candidate
+    trial: int
+        1-based index of the trial this candidate belonged to
+    fold: int
+        1-based index of the fold this candidate belonged to
+    predicted: RealMetricValue
+        Predicted value
+    actual: RealMetricValue
+        Actual value
 
     """
     uuid = properties.UUID("uuid")
@@ -109,6 +146,12 @@ class CategoricalPredictedVsActual(Serializable["CategoricalPredictedVsActual"],
 class PredictedVsActualValue(Serializable["PredictedVsActualValue"], MetricValue):
     """[ALPHA] List of predicted vs. actual data points.
 
+    Parameters
+    ----------
+    value: List[PredictedVsActual]
+        List of predicted vs. actual data computed during a predictor evaluation.
+        This is a flattened list that contains data for all trials and folds.
+
     """
     value = properties.List(properties.Object(PredictedVsActual), "value")
     typ = properties.String('type', default='PredictedVsActualValue', deserializable=False)
@@ -120,6 +163,11 @@ class PredictedVsActualValue(Serializable["PredictedVsActualValue"], MetricValue
 class ResponseMetrics(Serializable["ResponseMetrics"]):
     """[ALPHA] Set of metrics computed by a Predictor Evaluator for a single response.
     Results computed for a metric can be accessed by the metric's ``__repr__`` or by the metric itself.
+
+    Parameters
+    ----------
+    metrics: Mapping[str, MetricValue]
+        Metrics computed for a single response, keyed by the metric's ``__repr__``.
 
     """
     metrics = properties.Mapping(properties.String, properties.Object(MetricValue), "metrics")

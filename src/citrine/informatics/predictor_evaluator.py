@@ -31,6 +31,26 @@ class CrossValidationEvaluator(Serializable["CrossValidationEvaluator"], Predict
     """[ALPHA] Performs cross-validation on requested predictor responses and
     computes the requested metrics on each response.
 
+    Parameters
+    ----------
+    name: str
+        Name of the evaluator
+    description: str
+        Description of the evaluator
+    responses: Set[str]
+        Set of descriptor keys to evaluate
+    n_folds: int
+        Number of cross-validation folds
+    n_trials: int
+        Number of cross-valiation trials, each contains ``n_folds`` folds
+    metrics: Optional[Set[PredictorEvaluationMetric]]
+        Optional set of metrics to compute for each response.
+        Default is all metrics.
+    group_together: Optional[Set[str]]
+        Set of descriptor keys to group together.
+        Candidates with different values for the given keys and identical values
+        for all other descriptors will be in the same group.
+
     """
     name = properties.String("name")
     description = properties.String("description")
