@@ -3,11 +3,11 @@ from functools import lru_cache
 from typing import Optional, Set
 from uuid import UUID
 
-from citrine.informatics.predictor_evaluation_result import PredictorEvaluationResult
 from citrine._rest.collection import Collection
 from citrine._rest.resource import Resource
 from citrine._serialization import properties
 from citrine._session import Session
+from citrine.informatics.predictor_evaluation_result import PredictorEvaluationResult
 
 
 class PredictorEvaluationExecution(Resource['PredictorEvaluationExecution']):
@@ -22,8 +22,8 @@ class PredictorEvaluationExecution(Resource['PredictorEvaluationExecution']):
     workflow_id: str
         Unique identifier of the workflow that was executed
     version_number: int
-        Integer identifier that increases each time the workflow is executed.  The first execution
-        has version_number = 1.
+        Integer identifier that increases each time the workflow is executed.
+        The first execution has version_number = 1.
 
     """
 
@@ -51,15 +51,15 @@ class PredictorEvaluationExecution(Resource['PredictorEvaluationExecution']):
                  evaluator_names: Optional[Set[str]] = None,
                  session: Optional[Session] = None,
                  ):
-        self.uid: str = uid
-        self.version_number = version_number
-        self.project_id: str = project_id
-        self.workflow_id: str = workflow_id
+        self.uid: Optional[str] = uid
+        self.version_number: Optional[int] = version_number
+        self.project_id: Optional[str] = project_id
+        self.workflow_id: Optional[str] = workflow_id
         self.session: Session = session
-        self.predictor_id: str = predictor_id
-        self.metric_names: Set[str] = metric_names
-        self.response_names: Set[str] = response_names
-        self.evaluator_names: Set[str] = evaluator_names
+        self.predictor_id: Optional[str] = predictor_id
+        self.metric_names: Optional[Set[str]] = metric_names
+        self.response_names: Optional[Set[str]] = response_names
+        self.evaluator_names: Optional[Set[str]] = evaluator_names
 
     def __str__(self):
         return '<PredictorEvaluationExecution {!r}>'.format(str(self.uid))
