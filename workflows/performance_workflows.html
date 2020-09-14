@@ -84,12 +84,6 @@ When the number of folds equals the number of training data points, the analysis
 <span class="nb">print</span><span class="p">(</span><span class="n">validated_workflow</span><span class="o">.</span><span class="n">status_info</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Cross-validation can be performed on most predictors but will not produce results in the following scenarios:</p>
-<ul class="simple">
-<li><p>Training data contain simple mixtures from an <a class="reference internal" href="../reference/citrine.informatics.data_sources.html#citrine.informatics.data_sources.GemTableDataSource" title="citrine.informatics.data_sources.GemTableDataSource"><code class="xref py py-class docutils literal notranslate"><span class="pre">GemTableDataSource</span></code></a> <em>and</em> an <a class="reference internal" href="../reference/citrine.informatics.predictors.html#citrine.informatics.predictors.IngredientsToSimpleMixturePredictor" title="citrine.informatics.predictors.IngredientsToSimpleMixturePredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientsToSimpleMixturePredictor</span></code></a> is included in the graph.</p></li>
-<li><p>The graph includes a <a class="reference internal" href="../reference/citrine.informatics.predictors.html#citrine.informatics.predictors.SimpleMixturePredictor" title="citrine.informatics.predictors.SimpleMixturePredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleMixturePredictor</span></code></a> or <a class="reference internal" href="../reference/citrine.informatics.predictors.html#citrine.informatics.predictors.GeneralizedMeanPropertyPredictor" title="citrine.informatics.predictors.GeneralizedMeanPropertyPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">GeneralizedMeanPropertyPredictor</span></code></a>.</p></li>
-</ul>
-<p>Both are known issues in experimental functionality and will be resolved in a future release.</p>
 </div>
 <div class="section" id="execution-and-results">
 <h2>4.11.2. Execution and results<a class="headerlink" href="#execution-and-results" title="Permalink to this headline">¶</a></h2>
@@ -109,7 +103,7 @@ Lower RMSE means the model is more accurate.</p></li>
 NDME is a useful non-dimensional model quality metric.
 A value of NDME = 0 is a perfect model.
 If NDME = 1, then the model is uninformative.
-An acceptable NDE depends on how the model is used.
+An acceptable NDME depends on how the model is used.
 Generally, NDME &gt; 0.9 indicates a model with low accuracy.
 If 0.9 &gt; NDME &gt; 0.6, this model is typically a good candidate for a design workflow.
 Lower values of NDE indicate increasingly accurate models.</p></li>

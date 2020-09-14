@@ -340,7 +340,7 @@ To configure a mean property predictor, we must specify:
 - an input descriptor that holds the mixture's recipe and ingredient labels
 - a list of properties to featurize
 - the power of the `generalized mean <https://en.wikipedia.org/wiki/Generalized_mean>`_
-  (A power of 1 is equivalent to the arithmetic mean, and a power 2 is equivalent to the root mean square.)
+  (a power of 1 is equivalent to the arithmetic mean, and a power 2 is equivalent to the root mean square.)
 - a data source that contains all ingredients and their properties
 - how to handle missing ingredient properties
 
@@ -393,7 +393,7 @@ The example below show how to configure a mean property predictor to compute mea
         input_descriptor=formulation,
         # featurize ingredient density
         properties=['density'],
-        # compute the 1-mean
+        # compute the arithmetic mean
         p=1,
         training_data=[data_source],
         # impute ingredient properties, if missing
@@ -404,12 +404,14 @@ The example below show how to configure a mean property predictor to compute mea
         label='solute'
     )
 
-This predictor will compute a real descriptor with a key ``1.0-mean of property density with label solute in simple mixture`` which can be retrieved using:
+This predictor will compute a real descriptor with a key ``mean of property density with label solute in simple mixture`` which can be retrieved using:
 
 .. code:: python
 
     mean_property_descriptors = project.descriptors.from_predictor_responses(
         mean_property_predictor, [formulation_descriptor])
+
+If ``p`` is given a value other than ``1.0``, that value will be included in the key for the feature, e.g. ``2.0-mean of property viscosity``.
 
 Ingredient fractions predictor
 ------------------------------

@@ -363,7 +363,7 @@ To configure a mean property predictor, we must specify:</p>
 <li><p>an input descriptor that holds the mixture’s recipe and ingredient labels</p></li>
 <li><p>a list of properties to featurize</p></li>
 <li><p>the power of the <a class="reference external" href="https://en.wikipedia.org/wiki/Generalized_mean">generalized mean</a>
-(A power of 1 is equivalent to the arithmetic mean, and a power 2 is equivalent to the root mean square.)</p></li>
+(a power of 1 is equivalent to the arithmetic mean, and a power 2 is equivalent to the root mean square.)</p></li>
 <li><p>a data source that contains all ingredients and their properties</p></li>
 <li><p>how to handle missing ingredient properties</p></li>
 </ul>
@@ -422,7 +422,7 @@ If a value other than 1.58 should be used, e.g. 2.0, this can be specified by se
     <span class="n">input_descriptor</span><span class="o">=</span><span class="n">formulation</span><span class="p">,</span>
     <span class="c1"># featurize ingredient density</span>
     <span class="n">properties</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;density&#39;</span><span class="p">],</span>
-    <span class="c1"># compute the 1-mean</span>
+    <span class="c1"># compute the arithmetic mean</span>
     <span class="n">p</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
     <span class="n">training_data</span><span class="o">=</span><span class="p">[</span><span class="n">data_source</span><span class="p">],</span>
     <span class="c1"># impute ingredient properties, if missing</span>
@@ -434,11 +434,12 @@ If a value other than 1.58 should be used, e.g. 2.0, this can be specified by se
 <span class="p">)</span>
 </pre></div>
 </div>
-<p>This predictor will compute a real descriptor with a key <code class="docutils literal notranslate"><span class="pre">1.0-mean</span> <span class="pre">of</span> <span class="pre">property</span> <span class="pre">density</span> <span class="pre">with</span> <span class="pre">label</span> <span class="pre">solute</span> <span class="pre">in</span> <span class="pre">simple</span> <span class="pre">mixture</span></code> which can be retrieved using:</p>
+<p>This predictor will compute a real descriptor with a key <code class="docutils literal notranslate"><span class="pre">mean</span> <span class="pre">of</span> <span class="pre">property</span> <span class="pre">density</span> <span class="pre">with</span> <span class="pre">label</span> <span class="pre">solute</span> <span class="pre">in</span> <span class="pre">simple</span> <span class="pre">mixture</span></code> which can be retrieved using:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">mean_property_descriptors</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">descriptors</span><span class="o">.</span><span class="n">from_predictor_responses</span><span class="p">(</span>
     <span class="n">mean_property_predictor</span><span class="p">,</span> <span class="p">[</span><span class="n">formulation_descriptor</span><span class="p">])</span>
 </pre></div>
 </div>
+<p>If <code class="docutils literal notranslate"><span class="pre">p</span></code> is given a value other than <code class="docutils literal notranslate"><span class="pre">1.0</span></code>, that value will be included in the key for the feature, e.g. <code class="docutils literal notranslate"><span class="pre">2.0-mean</span> <span class="pre">of</span> <span class="pre">property</span> <span class="pre">viscosity</span></code>.</p>
 </div>
 <div class="section" id="ingredient-fractions-predictor">
 <h2>4.4.7. Ingredient fractions predictor<a class="headerlink" href="#ingredient-fractions-predictor" title="Permalink to this headline">¶</a></h2>
