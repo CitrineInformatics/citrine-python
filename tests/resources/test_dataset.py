@@ -2,8 +2,6 @@ from os.path import basename
 from uuid import UUID, uuid4
 
 import pytest
-
-from citrine.exceptions import NotFound
 from citrine.resources.condition_template import ConditionTemplateCollection, ConditionTemplate
 from citrine.resources.dataset import DatasetCollection
 from citrine.resources.ingredient_run import IngredientRun, IngredientRunCollection
@@ -82,74 +80,6 @@ def test_register_dataset(collection, session):
     assert session.num_calls == 1
     assert expected_call == session.last_call
     assert name == dataset.name
-
-
-def test_register_dataset_with_idempotent_put(collection, session):
-    # Given
-    name = 'Test Dataset'
-    summary = 'testing summary'
-    description = 'testing description'
-    unique_name = 'foo'
-    session.set_response(DatasetDataFactory(name=name, summary=summary, description=description, unique_name=unique_name))
-
-    # When
-    session.use_idempotent_dataset_put = True
-    dataset = collection.register(DatasetFactory(name=name, summary=summary, description=description, unique_name=unique_name))
-
-    expected_call = FakeCall(
-        method='PUT',
-        path='projects/{}/datasets'.format(collection.project_id),
-        json={'name': name, 'summary': summary, 'description': description, 'unique_name': unique_name}
-    )
-    assert session.num_calls == 1
-    assert expected_call == session.last_call
-    assert name == dataset.name
-
-
-def test_get_by_unique_name_with_single_result(collection, session):
-    # Given
-    name = 'Test Dataset'
-    unique_name = "foo"
-    session.set_response([DatasetDataFactory(name=name, unique_name=unique_name)])
-
-    # When
-    result_ds = collection.get_by_unique_name(unique_name)
-
-    # Then
-    expected_call = FakeCall(
-        method='GET',
-        path='projects/{}/datasets?unique_name={}'.format(collection.project_id, unique_name)
-    )
-    assert session.num_calls == 1
-    assert expected_call == session.last_call
-    assert result_ds.name == name
-    assert result_ds.unique_name == unique_name
-
-
-def test_get_by_unique_name_with_no_result(collection, session):
-    # Given
-    session.set_response([])
-
-    # When
-    with pytest.raises(NotFound):
-        collection.get_by_unique_name("unimportant")
-
-
-def test_get_by_unique_name_no_unique_name_present(collection, session):
-    # When
-    with pytest.raises(ValueError):
-        collection.get_by_unique_name(None)
-
-def test_get_by_unique_name_multiple_results(collection, session):
-
-    # This really shouldn't happen
-
-    # Given
-    session.set_response([DatasetDataFactory(), DatasetDataFactory()])
-
-    # When
-    with pytest.raises(RuntimeError):
-        collection.get_by_unique_name("blah")
 
 
 def test_list_datasets(paginated_collection, paginated_session):
