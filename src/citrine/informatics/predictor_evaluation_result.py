@@ -185,7 +185,7 @@ class ResponseMetrics(Serializable["ResponseMetrics"]):
             raise TypeError("Cannot index ResponseMetrics with a {}".format(type(item)))
 
 
-class PredictorEvaluationResult(PolymorphicSerializable["PredictorEvaluationResult"]):
+class PredictorEvaluationResult(PolymorphicSerializable["PredictorEvaluationResult"], metaclass=ABCMeta):
     """[ALPHA] A Citrine Predictor Evaluation Result represents a set of metrics
     computed by a Predictor Evaluator.
 
@@ -198,17 +198,20 @@ class PredictorEvaluationResult(PolymorphicSerializable["PredictorEvaluationResu
             "CrossValidationResult": CrossValidationResult,
         }[data["type"]]
 
+    @property
     def evaluator(self) -> PredictorEvaluator:
         """Evaluator that produced the result."""
-        raise NotImplementedError()
+        raise NotImplementedError
 
+    @property
     def responses(self) -> Set[str]:
         """Predictor responses that were evaluated."""
-        raise NotImplementedError()
+        raise NotImplementedError
 
+    @property
     def metrics(self) -> Set[PredictorEvaluationMetric]:
         """Metrics computed for predictor responses."""
-        raise NotImplementedError()
+        raise NotImplementedError
 
 
 class CrossValidationResult(Serializable["CrossValidationResult"], PredictorEvaluationResult):
@@ -236,16 +239,19 @@ class CrossValidationResult(Serializable["CrossValidationResult"], PredictorEval
                  evaluator: PredictorEvaluator,
                  response_results: Mapping[str, ResponseMetrics]):
         self._evaluator = evaluator
-        self._response_results = response_results
+        self.response_results = response_results
 
     def __getitem__(self, item):
         return self._response_results[item]
 
+    @property
     def evaluator(self) -> PredictorEvaluator:
         return self._evaluator
 
+    @property
     def responses(self) -> Set[str]:
         return set(self._response_results.keys())
 
+    @property
     def metrics(self) -> Set[PredictorEvaluationMetric]:
         return self._evaluator.metrics()

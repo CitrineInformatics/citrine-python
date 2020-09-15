@@ -18,10 +18,12 @@ class PredictorEvaluator(PolymorphicSerializable["PredictorEvaluator"]):
             "CrossValidationEvaluator": CrossValidationEvaluator,
         }[data["type"]]
 
+    @property
     def responses(self) -> Set[str]:
         """Responses to compute metrics for."""
         raise NotImplementedError
 
+    @property
     def metrics(self) -> Set[PredictorEvaluationMetric]:
         """Metrics to compute for each response."""
         raise NotImplementedError
@@ -76,10 +78,12 @@ class CrossValidationEvaluator(Serializable["CrossValidationEvaluator"], Predict
         self.n_trials: int = n_trials
         self.group_together: Optional[Set[str]] = group_together
 
+    @property
     def responses(self) -> Set[str]:
         """Set of predictor responses cross-validated by the evaluator."""
         return self._responses
 
+    @property
     def metrics(self) -> Set[PredictorEvaluationMetric]:
         """Set of metrics computed during cross-validation."""
         return self._metrics
