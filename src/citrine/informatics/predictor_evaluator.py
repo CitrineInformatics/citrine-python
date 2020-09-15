@@ -68,13 +68,13 @@ class CrossValidationEvaluator(Serializable["CrossValidationEvaluator"], Predict
                  n_trials: int = 3,
                  metrics: Optional[Set[PredictorEvaluationMetric]] = None,
                  group_together: Optional[Set[str]] = None):
-        self.name = name
-        self.description = description
-        self._responses = responses
-        self._metrics = metrics
-        self.n_folds = n_folds
-        self.n_trials = n_trials
-        self.group_together = group_together or {}
+        self.name: str = name
+        self.description: str = description
+        self._responses: Set[str] = responses
+        self._metrics: Optional[Set[PredictorEvaluationMetric]] = metrics
+        self.n_folds: int = n_folds
+        self.n_trials: int = n_trials
+        self.group_together: Optional[Set[str]] = group_together
 
     def responses(self) -> Set[str]:
         """Set of predictor responses cross-validated by the evaluator."""
