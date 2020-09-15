@@ -21,9 +21,6 @@ class PredictorEvaluationExecution(Resource['PredictorEvaluationExecution']):
         Unique identifier of the project that contains the workflow execution
     workflow_id: str
         Unique identifier of the workflow that was executed
-    version_number: int
-        Integer identifier that increases each time the workflow is executed.
-        The first execution has version_number = 1.
 
     """
 
@@ -32,7 +29,6 @@ class PredictorEvaluationExecution(Resource['PredictorEvaluationExecution']):
     uid = properties.UUID('id')
     project_id = properties.UUID('project_id', deserializable=False)
     workflow_id = properties.UUID('workflow_id', deserializable=False)
-    version_number = properties.Integer("version_number")
     status = properties.Optional(properties.String(), 'status', serializable=False)
     status_info = properties.Optional(
         properties.List(properties.String()),
@@ -42,7 +38,6 @@ class PredictorEvaluationExecution(Resource['PredictorEvaluationExecution']):
 
     def __init__(self, *,
                  uid: Optional[str] = None,
-                 version_number: Optional[int] = None,
                  project_id: Optional[str] = None,
                  workflow_id: Optional[str] = None,
                  predictor_id: Optional[str] = None,
@@ -52,7 +47,6 @@ class PredictorEvaluationExecution(Resource['PredictorEvaluationExecution']):
                  session: Optional[Session] = None,
                  ):
         self.uid: Optional[str] = uid
-        self.version_number: Optional[int] = version_number
         self.project_id: Optional[str] = project_id
         self.workflow_id: Optional[str] = workflow_id
         self.session: Session = session
