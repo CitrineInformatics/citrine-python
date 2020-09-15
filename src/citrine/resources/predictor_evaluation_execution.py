@@ -35,6 +35,12 @@ class PredictorEvaluationExecution(Resource['PredictorEvaluationExecution']):
         'status_info',
         serializable=False
     )
+    experimental = properties.Boolean("experimental", serializable=False, default=True)
+    experimental_reasons = properties.Optional(
+        properties.List(properties.String()),
+        'experimental_reasons',
+        serializable=False
+    )
 
     def __init__(self, *,
                  uid: Optional[str] = None,

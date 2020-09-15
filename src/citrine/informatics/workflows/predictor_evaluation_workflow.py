@@ -43,12 +43,11 @@ class PredictorEvaluationWorkflow(Resource['PredictorEvaluationWorkflow'], Workf
         'experimental_reasons',
         serializable=False
     )
-    active = properties.Boolean('active', default=True)
     archived = properties.Boolean('archived', default=False)
     created_by = properties.Optional(properties.UUID, 'created_by', serializable=False)
     create_time = properties.Optional(properties.Datetime, 'create_time', serializable=False)
     module_type = properties.String('module_type', default='PREDICTOR_EVALUATION_WORKFLOW')
-    typ = properties.String('config.type', default='PredictorEvaluationWorkflow', deserializable=False)
+    typ = properties.String('type', default='PredictorEvaluationWorkflow', deserializable=False)
 
     def __init__(self, *,
                  name: str,
