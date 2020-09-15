@@ -6,7 +6,7 @@ from citrine._serialization.serializable import Serializable
 
 
 class PredictorEvaluationMetric(PolymorphicSerializable["PredictorEvaluationMetric"]):
-    """[ALPHA] A Citrine Evaluation Metric represents a metric computed during a Predictor Evaluation Workflow.
+    """[ALPHA] A metric computed during a Predictor Evaluation Workflow.
 
     Abstract type that returns the proper type given a serialized dict.
     """
@@ -114,7 +114,8 @@ class CoverageProbability(Serializable["CoverageProbability"], PredictorEvaluati
     ----------
     coverage_level: Union[str, float]
         Confidence-interval coverage level.
-        The coverage level must both be between 0 and 1.0 (non-inclusive) and specified to 3 significant figures.
+        The coverage level must both be between 0 and 1.0 (non-inclusive) and specified
+        to 3 significant figures.
 
     """
     _level_str = properties.String("coverage_level")
