@@ -65,13 +65,11 @@ class PredictorEvaluationExecution(Resource['PredictorEvaluationExecution']):
         return '<PredictorEvaluationExecution {!r}>'.format(str(self.uid))
 
     def _path(self):
-        return '/projects/{project_id}/workflows/{workflow_id}/executions/{execution_id}'.format(
-            **{
-                "project_id": self.project_id,
-                "workflow_id": self.workflow_id,
-                "execution_id": self.uid
-            }
-        )
+        return '/projects/{project_id}/predictor-evaluation-workflows/{workflow_id}' \
+               '/executions/{execution_id}'\
+            .format(project_id=self.project_id,
+                    workflow_id=self.workflow_id,
+                    execution_id=self.uid)
 
     @lru_cache
     def results(self, evaluator_name) -> PredictorEvaluationResult:
@@ -94,7 +92,7 @@ class PredictorEvaluationExecution(Resource['PredictorEvaluationExecution']):
 class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExecution"]):
     """[ALPHA] A collection of PredictorEvaluationExecutions."""
 
-    _path_template = '/projects/{project_id}/workflows/{workflow_id}/executions'
+    _path_template = '/projects/{project_id}/predictor-evaluation-workflows/{workflow_id}/executions'
     _individual_key = None
     _collection_key = 'response'
     _resource = PredictorEvaluationExecution
