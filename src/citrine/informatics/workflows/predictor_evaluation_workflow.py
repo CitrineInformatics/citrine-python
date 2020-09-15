@@ -6,7 +6,7 @@ from citrine._serialization import properties
 from citrine._session import Session
 from citrine.informatics.predictor_evaluator import PredictorEvaluator
 from citrine.informatics.workflows.workflow import Workflow
-from citrine.resources.workflow_executions import WorkflowExecutionCollection
+from citrine.resources.predictor_evaluation_execution import PredictorEvaluationExecutionCollection
 
 __all__ = ['PredictorEvaluationWorkflow']
 
@@ -68,8 +68,8 @@ class PredictorEvaluationWorkflow(Resource['PredictorEvaluationWorkflow'], Workf
         return '<PredictorEvaluationWorkflow {!r}>'.format(self.name)
 
     @property
-    def executions(self) -> WorkflowExecutionCollection:
+    def executions(self) -> PredictorEvaluationExecutionCollection:
         """Return a resource representing all visible executions of this workflow."""
         if getattr(self, 'project_id', None) is None:
             raise AttributeError('Cannot initialize execution without project reference!')
-        return WorkflowExecutionCollection(self.project_id, self.uid, self.session)
+        return PredictorEvaluationExecutionCollection(self.project_id, self.uid, self.session)
