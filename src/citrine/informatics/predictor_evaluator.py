@@ -28,6 +28,17 @@ class PredictorEvaluator(PolymorphicSerializable["PredictorEvaluator"]):
         """Metrics to compute for each response."""
         raise NotImplementedError
 
+    @property
+    def name(self) -> str:
+        """Name of the evaluator.
+
+        A name required by all evaluators because it is used as the top-level key
+        in the results returned by a
+        :class:`citrine.informatics.workflows.PredictorEvaluationWorkflow`.
+        As such, the names of all evaluators within a single workflow must be unique.
+        """
+        raise NotImplementedError
+
 
 class CrossValidationEvaluator(Serializable["CrossValidationEvaluator"], PredictorEvaluator):
     """[ALPHA] Performs cross-validation on requested predictor responses and
