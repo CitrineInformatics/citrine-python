@@ -1,4 +1,6 @@
+from math import isclose
 from typing import Type, Union
+from warnings import warn
 
 from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
@@ -114,7 +116,7 @@ class CoverageProbability(Serializable["CoverageProbability"], PredictorEvaluati
     ----------
     coverage_level: Union[str, float]
         Confidence-interval coverage level.
-        The coverage level must both be between 0 and 1.0 (non-inclusive) and specified
+        The coverage level must both be between 0 and 1.0 (non-inclusive) will be rounded
         to 3 significant figures.
 
     """
@@ -123,13 +125,37 @@ class CoverageProbability(Serializable["CoverageProbability"], PredictorEvaluati
 
     def __init__(self, coverage_level: Union[str, float]):
         if isinstance(coverage_level, str):
-            if len(coverage_level) != 5 or coverage_level[0:2] != "0.":
-                raise ValueError("Coverage level string must have the format '0.###'")
-            self._level_str = coverage_level
+            try:
+                _level_float = float(coverage_level)
+            except ValueError:
+                raise ValueError(
+                    "Invalid coverage level string '{requested_level}'. Coverage level must represent "
+                    "a floating point number between 0 and 1 (non-inclusive).".format(
+                        requested_level=coverage_level
+                    ))
+            if _level_float >= 1.0 or _level_float <= 0.0:
+                raise ValueError("Coverage level must be between 0 and 1 (non-inclusive).")
+            _level_float = round(_level_float, 3)
+            if len(coverage_level) > 5:
+                warn(
+                    "Coverage level can only be specified to 3 decimal places."
+                    "Requested level '{requested_level}' will be rounded to {rounded_level}.".format(
+                        requested_level=coverage_level,
+                        rounded_level=_level_float
+                    ))
         elif isinstance(coverage_level, float):
-            if coverage_level > 1.0 or coverage_level < 0.0:
-                raise ValueError("Coverage level must be between 0 and 1")
-            self._level_str = "{:5.3f}".format(coverage_level)
+            if coverage_level >= 1.0 or coverage_level <= 0.0:
+                raise ValueError("Coverage level must be between 0 and 1 (non-inclusive).")
+            _level_float = round(coverage_level, 3)
+            if not isclose(coverage_level, _level_float):
+                warn(
+                    "Coverage level can only be specified to 3 decimal places."
+                    "Requested level {requested_level} will be rounded to {rounded_level}.".format(
+                        requested_level=coverage_level,
+                        rounded_level=_level_float
+                    ))
+
+        self._level_str = "{:5.3f}".format(coverage_level)
 
     def __repr__(self):
         return "coverage_probability_{}".format(self._level_str)
