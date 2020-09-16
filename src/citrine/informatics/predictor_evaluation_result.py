@@ -220,7 +220,7 @@ class CrossValidationResult(Serializable["CrossValidationResult"], PredictorEval
     Results for a cross-validated response can be accessed via ``cvResult['response_name']``,
     where ``cvResult`` is a
     :class:`citrine.informatics.predictor_evaluation_result.CrossValidationResult`
-    and ``'response_key'`` is a response analyzed by a
+    and ``'response_name'`` is a response analyzed by a
     :class:`citrine.informatics.predictor_evaluator.PredictorEvaluator`.
 
     Parameters
