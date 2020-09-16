@@ -116,10 +116,10 @@ class CategoricalPredictedVsActual(Serializable["CategoricalPredictedVsActual"],
         1-based index of the fold this candidate belonged to
     predicted: Mapping[str, float]
         Predicted class probabilities defined as a map from each class name
-        to its relative probability
+        to its relative frequency
     actual: Mapping[str, float]
         Actual class probabilities defined as a map from each class name
-        to its relative probability
+        to its relative frequency
 
     """
     uuid = properties.UUID("uuid")
