@@ -68,11 +68,14 @@ setup(name='citrine',
           "pyjwt>=1.7.1,<2",
           "arrow>=0.15.4,<0.16",
           "strip-hints>=0.1.8,<0.2",
-          "gemd==0.14.3 @ git+ssh://git@github.com/CitrineInformatics/gemd-python@18eb70506a65be9807044675223506e24982ec3e#egg=gemd",
+          "gemd==0.14.3",
           "boto3>=1.9.226,<2",
           "botocore>=1.12.226,<2",
           "deprecation>=2.0.7,<3",
           "urllib3>=1.25.7,<2"
+      ],
+      dependency_links=[
+          'git+ssh://git@github.com/CitrineInformatics/gemd-python.git@18eb70506a65be9807044675223506e24982ec3e#egg=ExampleRepo'
       ],
       extras_require={
           "builders": [
