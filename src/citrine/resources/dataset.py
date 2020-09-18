@@ -8,7 +8,6 @@ from citrine._rest.resource import Resource
 from citrine._serialization import properties
 from citrine._session import Session
 from citrine._utils.functions import scrub_none
-from citrine.exceptions import NotFound
 from citrine.resources.condition_template import ConditionTemplateCollection
 from citrine.resources.file_link import FileCollection
 from citrine.resources.ingredient_run import IngredientRunCollection
@@ -82,7 +81,6 @@ class Dataset(Resource['Dataset']):
 
     uid = properties.Optional(properties.UUID(), 'id')
     name = properties.String('name')
-    unique_name = properties.Optional(properties.String(), 'unique_name')
     summary = properties.String('summary')
     description = properties.String('description')
     deleted = properties.Optional(properties.Boolean(), 'deleted')
@@ -94,11 +92,10 @@ class Dataset(Resource['Dataset']):
     delete_time = properties.Optional(properties.Datetime(), 'delete_time')
     public = properties.Optional(properties.Boolean(), 'public')
 
-    def __init__(self, name: str, summary: str, description: str, unique_name: str = None):
+    def __init__(self, name: str, summary: str, description: str):
         self.name: str = name
         self.summary: str = summary
         self.description: str = description
-        self.unique_name = unique_name
 
         # The attributes below should not be set by the user. Instead they will be updated as the
         # dataset interacts with the backend data service
@@ -348,31 +345,7 @@ class DatasetCollection(Collection[Dataset]):
         path = self._get_path()
         dumped_dataset = model.dump()
         dumped_dataset["deleted"] = None
-
-        # Only use the idempotent put approach if a) a unique name is provided, and b)
-        # the session is configured to use it (default to False for backwards compatibility).
-        if model.unique_name is not None and self.session.use_idempotent_dataset_put:
-            # Leverage the create-or-update endpoint if we've got a unique name
-            data = self.session.put_resource(path, scrub_none(dumped_dataset))
-        else:
-            # Otherwise fall back to using the POST approach (which may fail if the
-            # resource already exists)
-            data = self.session.post_resource(path, scrub_none(dumped_dataset))
-
+        data = self.session.post_resource(path, scrub_none(dumped_dataset))
         full_model = self.build(data)
         full_model.project_id = self.project_id
         return full_model
-
-    def get_by_unique_name(self, unique_name: str) -> ResourceType:
-        """Get a Dataset with the given unique name."""
-        if unique_name is None:
-            raise ValueError("You must supply a unique_name")
-        path = self._get_path() + "?unique_name=" + unique_name
-        data = self.session.get_resource(path)
-
-        if len(data) == 1:
-            return self.build(data[0])
-        elif len(data) > 1:
-            raise RuntimeError("Received multiple results when requesting a unique dataset")
-        else:
-            raise NotFound(path)
