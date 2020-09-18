@@ -260,7 +260,6 @@ def test_molecule_featurizer(molecule_featurizer):
             'features': ['all'], 'excludes': ['standard'],
             'type': 'MoleculeFeaturizer'
         },
-        'active': True,
         'archived': False,
         'module_type': 'PREDICTOR',
         'schema_id': '24183b2f-848c-46fa-8640-21b7743e38a3',

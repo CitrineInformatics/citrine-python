@@ -133,7 +133,6 @@ class SimpleMLPredictor(Serializable['SimplePredictor'], Predictor):
         'status_info',
         serializable=False
     )
-    active = _properties.Boolean('active', default=True)
     archived = _properties.Boolean('archived', default=False)
     experimental = _properties.Boolean("experimental", serializable=False, default=True)
     experimental_reasons = _properties.Optional(
@@ -155,7 +154,6 @@ class SimpleMLPredictor(Serializable['SimplePredictor'], Predictor):
                  training_data: Optional[List[DataSource]] = None,
                  session: Optional[Session] = None,
                  report: Optional[Report] = None,
-                 active: bool = True,
                  archived: bool = False):
         self.name: str = name
         self.description: str = description
@@ -165,7 +163,6 @@ class SimpleMLPredictor(Serializable['SimplePredictor'], Predictor):
         self.training_data: List[DataSource] = self._wrap_training_data(training_data)
         self.session: Optional[Session] = session
         self.report: Optional[Report] = report
-        self.active: bool = active
         self.archived: bool = archived
 
     def _post_dump(self, data: dict) -> dict:
@@ -218,7 +215,6 @@ class GraphPredictor(Serializable['GraphPredictor'], Predictor):
         'experimental_reasons',
         serializable=False
     )
-    active = _properties.Boolean('active', default=True)
     archived = _properties.Boolean('archived', default=False)
 
     # NOTE: These could go here or in _post_dump - it's unclear which is better right now
@@ -232,7 +228,6 @@ class GraphPredictor(Serializable['GraphPredictor'], Predictor):
                  training_data: Optional[List[DataSource]] = None,
                  session: Optional[Session] = None,
                  report: Optional[Report] = None,
-                 active: bool = True,
                  archived: bool = False):
         self.name: str = name
         self.description: str = description
@@ -240,7 +235,6 @@ class GraphPredictor(Serializable['GraphPredictor'], Predictor):
         self.training_data: List[DataSource] = self._wrap_training_data(training_data)
         self.session: Optional[Session] = session
         self.report: Optional[Report] = report
-        self.active: bool = active
         self.archived: bool = archived
 
     def _post_dump(self, data: dict) -> dict:
@@ -265,7 +259,6 @@ class GraphPredictor(Serializable['GraphPredictor'], Predictor):
         return dict(
             module_type='PREDICTOR',
             config=predictor,
-            active=False,
             archived=False,
             schema_id='43c61ad4-7e33-45d0-a3de-504acb4e0737'  # TODO: what should this be?
         )
@@ -368,7 +361,6 @@ class DeprecatedExpressionPredictor(Serializable['DeprecatedExpressionPredictor'
         serializable=False
     )
 
-    active = _properties.Boolean('active', default=True)
     archived = _properties.Boolean('archived', default=False)
 
     # NOTE: These could go here or in _post_dump - it's unclear which is better right now
@@ -383,7 +375,7 @@ class DeprecatedExpressionPredictor(Serializable['DeprecatedExpressionPredictor'
                  aliases: Optional[Mapping[str, str]] = None,
                  session: Optional[Session] = None,
                  report: Optional[Report] = None,
-                 active: bool = True):
+                 archived: bool = False):
         warn("{this_class} is deprecated. Please use {replacement} instead"
              .format(this_class=self.__class__.name, replacement=ExpressionPredictor.__name__))
         self.name: str = name
@@ -393,7 +385,7 @@ class DeprecatedExpressionPredictor(Serializable['DeprecatedExpressionPredictor'
         self.aliases: Optional[Mapping[str, str]] = aliases
         self.session: Optional[Session] = session
         self.report: Optional[Report] = report
-        self.active: bool = active
+        self.archived: bool = archived
 
     def _post_dump(self, data: dict) -> dict:
         data['display_name'] = data['config']['name']
@@ -447,7 +439,6 @@ class ExpressionPredictor(Serializable['ExpressionPredictor'], Predictor):
         serializable=False
     )
     archived = _properties.Boolean('archived', default=False)
-    active = _properties.Boolean('active', default=True)
 
     # NOTE: These could go here or in _post_dump - it's unclear which is better right now
     module_type = _properties.String('module_type', default='PREDICTOR')
@@ -461,7 +452,6 @@ class ExpressionPredictor(Serializable['ExpressionPredictor'], Predictor):
                  aliases: Mapping[str, RealDescriptor],
                  session: Optional[Session] = None,
                  report: Optional[Report] = None,
-                 active: bool = True,
                  archived: bool = False):
         self.name: str = name
         self.description: str = description
@@ -470,7 +460,6 @@ class ExpressionPredictor(Serializable['ExpressionPredictor'], Predictor):
         self.aliases: Mapping[str, RealDescriptor] = aliases
         self.session: Optional[Session] = session
         self.report: Optional[Report] = report
-        self.active: bool = active
         self.archived: bool = archived
 
     def _post_dump(self, data: dict) -> dict:
@@ -557,7 +546,6 @@ class MolecularStructureFeaturizer(Serializable['MolecularStructureFeaturizer'],
         'status_info',
         serializable=False
     )
-    active = _properties.Boolean('active', default=True)
     archived = _properties.Boolean('archived', default=False)
     experimental = _properties.Boolean("experimental", serializable=False, default=True)
     experimental_reasons = _properties.Optional(
@@ -578,7 +566,6 @@ class MolecularStructureFeaturizer(Serializable['MolecularStructureFeaturizer'],
                  excludes: List[str] = None,
                  session: Optional[Session] = None,
                  report: Optional[Report] = None,
-                 active: bool = True,
                  archived: bool = False):
         self.name: str = name
         self.description: str = description
@@ -587,7 +574,6 @@ class MolecularStructureFeaturizer(Serializable['MolecularStructureFeaturizer'],
         self.excludes = excludes if excludes is not None else []
         self.session: Optional[Session] = session
         self.report: Optional[Report] = report
-        self.active: bool = active
         self.archived: bool = archived
 
     def _post_dump(self, data: dict) -> dict:
@@ -635,7 +621,6 @@ class IngredientsToSimpleMixturePredictor(
         'status_info',
         serializable=False
     )
-    active = _properties.Boolean('active', default=True)
     archived = _properties.Boolean('archived', default=False)
     experimental = _properties.Boolean("experimental", serializable=False, default=True)
     experimental_reasons = _properties.Optional(
@@ -656,7 +641,6 @@ class IngredientsToSimpleMixturePredictor(
                  labels: Mapping[str, List[str]],
                  session: Optional[Session] = None,
                  report: Optional[Report] = None,
-                 active: bool = True,
                  archived: bool = False):
         self.name: str = name
         self.description: str = description
@@ -665,7 +649,6 @@ class IngredientsToSimpleMixturePredictor(
         self.labels: Mapping[str, List[str]] = labels
         self.session: Optional[Session] = session
         self.report: Optional[Report] = report
-        self.active: bool = active
         self.archived: bool = archived
 
     def _post_dump(self, data: dict) -> dict:
@@ -737,7 +720,6 @@ class GeneralizedMeanPropertyPredictor(
         'status_info',
         serializable=False
     )
-    active = _properties.Boolean('active', default=True)
     archived = _properties.Boolean('archived', default=False)
     experimental = _properties.Boolean("experimental", serializable=False, default=True)
     experimental_reasons = _properties.Optional(
@@ -762,7 +744,6 @@ class GeneralizedMeanPropertyPredictor(
                  training_data: Optional[List[DataSource]] = None,
                  session: Optional[Session] = None,
                  report: Optional[Report] = None,
-                 active: bool = True,
                  archived: bool = False):
         self.name: str = name
         self.description: str = description
@@ -775,7 +756,6 @@ class GeneralizedMeanPropertyPredictor(
         self.label: Optional[str] = label
         self.session: Optional[Session] = session
         self.report: Optional[Report] = report
-        self.active: bool = active
         self.archived: bool = archived
 
     def _post_dump(self, data: dict) -> dict:
@@ -822,7 +802,6 @@ class SimpleMixturePredictor(Serializable['SimpleMixturePredictor'], Predictor):
     status_info = _properties.Optional(_properties.List(_properties.String),
                                        'status_info',
                                        serializable=False)
-    active = _properties.Boolean('active', default=True)
     archived = _properties.Boolean('archived', default=False)
     experimental = _properties.Boolean("experimental", serializable=False, default=True)
     experimental_reasons = _properties.Optional(
@@ -843,7 +822,6 @@ class SimpleMixturePredictor(Serializable['SimpleMixturePredictor'], Predictor):
                  training_data: Optional[List[DataSource]] = None,
                  session: Optional[Session] = None,
                  report: Optional[Report] = None,
-                 active: bool = True,
                  archived: bool = False):
         self.name: str = name
         self.description: str = description
@@ -852,7 +830,6 @@ class SimpleMixturePredictor(Serializable['SimpleMixturePredictor'], Predictor):
         self.training_data: List[DataSource] = self._wrap_training_data(training_data)
         self.session: Optional[Session] = session
         self.report: Optional[Report] = report
-        self.active: bool = active
         self.archived: bool = archived
 
     def _post_dump(self, data: dict) -> dict:
@@ -892,7 +869,6 @@ class LabelFractionsPredictor(Serializable['LabelFractionsPredictor'], Predictor
         'status_info',
         serializable=False
     )
-    active = _properties.Boolean('active', default=True)
     archived = _properties.Boolean('archived', default=False)
     experimental = _properties.Boolean("experimental", serializable=False, default=True)
     experimental_reasons = _properties.Optional(
@@ -912,7 +888,6 @@ class LabelFractionsPredictor(Serializable['LabelFractionsPredictor'], Predictor
                  labels: List[str],
                  session: Optional[Session] = None,
                  report: Optional[Report] = None,
-                 active: bool = True,
                  archived: bool = False):
         self.name: str = name
         self.description: str = description
@@ -920,7 +895,6 @@ class LabelFractionsPredictor(Serializable['LabelFractionsPredictor'], Predictor
         self.labels: List[str] = labels
         self.session: Optional[Session] = session
         self.report: Optional[Report] = report
-        self.active: bool = active
         self.archived: bool = archived
 
     def _post_dump(self, data: dict) -> dict:
@@ -964,7 +938,6 @@ class IngredientFractionsPredictor(Serializable["IngredientFractionsPredictor"],
         'status_info',
         serializable=False
     )
-    active = _properties.Boolean('active', default=True)
     archived = _properties.Boolean('archived', default=False)
     experimental = _properties.Boolean("experimental", serializable=False, default=True)
     experimental_reasons = _properties.Optional(
@@ -980,7 +953,6 @@ class IngredientFractionsPredictor(Serializable["IngredientFractionsPredictor"],
                  ingredients: List[str],
                  session: Optional[Session] = None,
                  report: Optional[Report] = None,
-                 active: bool = True,
                  archived: bool = False):
         self.name: str = name
         self.description: str = description
@@ -988,7 +960,6 @@ class IngredientFractionsPredictor(Serializable["IngredientFractionsPredictor"],
         self.ingredients: List[str] = ingredients
         self.session: Optional[Session] = session
         self.report: Optional[Report] = report
-        self.active: bool = active
         self.archived: bool = archived
 
     def _post_dump(self, data: dict) -> dict:
