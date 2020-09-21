@@ -191,8 +191,8 @@ The following example demonstrates how to create an :class:`~citrine.informatics
 
 For an example of expression predictors used in a graph predictor, see :ref:`AI Engine Code Examples <graph_predictor_example>`.
 
-Ingredients to simple mixture predictor
----------------------------------------
+Ingredients to simple mixture predictor (ALPHA)
+--------------------------------------------------
 
 The :class:`~citrine.informatics.predictors.IngredientsToSimpleMixturePredictor` constructs a simple mixture from a list of ingredients.
 This predictor is only required to construct simple mixtures from CSV data sources.
@@ -288,8 +288,8 @@ The following example illustrates how an :class:`~citrine.informatics.predictors
         training_data=[data_source]
     )
 
-Simple mixture predictor
-------------------------
+Simple mixture predictora (ALPHA)
+--------------------------------------
 
 Simple mixtures may contain ingredients that are blends of other simple mixtures.
 Along the lines of the example above, hypertonic saline can be mixed with water to form isotonic saline.
@@ -321,8 +321,8 @@ The following example illustrates how a :class:`~citrine.informatics.predictors.
         training_data=[data_source]
     )
 
-Generalized mean property predictor
------------------------------------
+Generalized mean property predictor (ALPHA)
+---------------------------------------------
 
 Often, properties of a mixture are proportional to the properties of it's ingredients.
 For example, the density of a saline solution can be computed from the densities of water and salt multiplied by their respective amounts:
@@ -413,8 +413,8 @@ This predictor will compute a real descriptor with a key ``mean of property dens
 
 If ``p`` is given a value other than ``1.0``, that value will be included in the key for the feature, e.g. ``2.0-mean of property viscosity``.
 
-Ingredient fractions predictor
-------------------------------
+Ingredient fractions predictor (ALPHA)
+-----------------------------------------
 
 The :class:`~citrine.informatics.predictors.IngredientFractionsPredictor` featurizes ingredient fractions in a simple mixture.
 The predictor is configured by specifying a descriptor that contains simple mixture data and a list of known ingredients to featurize.
@@ -455,8 +455,8 @@ The response descriptors can be retrieved using:
 
 This will return a real descriptor for each featurized ingredient with bounds ``[0, 1]`` and key in the form ``'{ingredient} share in simple mixture'`` where ``{ingredient}`` is either ``water``, ``salt`` or ``boric acid``.
 
-Label fractions predictor
--------------------------
+Label fractions predictor (ALPHA)
+----------------------------------
 
 The :class:`~citrine.informatics.predictors.LabelFractionsPredictor` computes total fraction of ingredients with a given label.
 The predictor is configured by specifying a formulation descriptor that holds simple mixture data (i.e. recipes and ingredient labels) and a list of labels to featurize.
