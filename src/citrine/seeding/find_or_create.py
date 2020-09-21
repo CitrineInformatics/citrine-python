@@ -119,6 +119,6 @@ def create_or_update(collection: Collection,
         new_resource.uid = old_resource.uid
         return collection.update(new_resource)
     except ValueError:
-        print(f"Registering new module: {resource.name}")
+        print("Registering new module:  {}".format(resource.name))
         return collection.register(resource)
         
