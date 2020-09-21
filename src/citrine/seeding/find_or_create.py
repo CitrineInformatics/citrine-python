@@ -96,9 +96,9 @@ def find_or_create_dataset(dataset_collection, dataset_name, raise_error=False):
 
 
 def create_or_update(collection: Collection,
-                     resource: CreationType)->CreationType:
+                     resource: CreationType) -> CreationType:
     """Update a resource of a given name belonging to a collection.
-    Create it if it doesn't exist. 
+    Create it if it doesn't exist.
     Parameters
     ----------
     collection : Collection
@@ -110,7 +110,7 @@ def create_or_update(collection: Collection,
     -------
     ResourceType
         Registered updated or created resource.
-    """    
+    """
     try:
         old_resource = get_by_name_or_raise_error(collection, resource.name)
         print(f"Updating module: {resource.name}")
@@ -121,4 +121,3 @@ def create_or_update(collection: Collection,
     except ValueError:
         print("Registering new module:  {}".format(resource.name))
         return collection.register(resource)
-        
