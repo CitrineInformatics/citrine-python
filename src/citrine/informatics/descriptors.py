@@ -8,14 +8,13 @@ from citrine._serialization import properties
 __all__ = ['Descriptor',
            'RealDescriptor',
            'ChemicalFormulaDescriptor',
-           'InorganicDescriptor',
            'MolecularStructureDescriptor',
            'CategoricalDescriptor',
            'FormulationDescriptor']
 
 
 class Descriptor(PolymorphicSerializable['Descriptor']):
-    """[ALPHA] A Citrine Descriptor describes the range of values that a quantity can take on.
+    """A Citrine Descriptor describes the range of values that a quantity can take on.
 
     Abstract type that returns the proper type given a serialized dict.
     """
@@ -39,7 +38,7 @@ class Descriptor(PolymorphicSerializable['Descriptor']):
 
 
 class RealDescriptor(Serializable['RealDescriptor'], Descriptor):
-    """[ALPHA] A descriptor to hold real-valued numbers.
+    """A descriptor to hold real-valued numbers.
 
     Parameters
     ----------
@@ -86,7 +85,7 @@ class RealDescriptor(Serializable['RealDescriptor'], Descriptor):
 
 
 class ChemicalFormulaDescriptor(Serializable['ChemicalFormulaDescriptor'], Descriptor):
-    """[ALPHA] Captures domain-specific context about a stoichiometric chemical formula.
+    """Captures domain-specific context about a stoichiometric chemical formula.
 
     Parameters
     ----------
@@ -120,17 +119,9 @@ class ChemicalFormulaDescriptor(Serializable['ChemicalFormulaDescriptor'], Descr
         return "ChemicalFormulaDescriptor(key={})".format(self.key)
 
 
-def InorganicDescriptor(key: str, threshold: Optional[float] = 1.0):
-    """[DEPRECATED] Use ChemicalFormulaDescriptor instead."""
-    from warnings import warn
-    warn("InorganicDescriptor is deprecated and will soon be removed. "
-         "Use ChemicalFormulaDescriptor instead.", DeprecationWarning)
-    return ChemicalFormulaDescriptor(key)
-
-
 class MolecularStructureDescriptor(Serializable['MolecularStructureDescriptor'], Descriptor):
     """
-    [ALPHA] Material descriptor for an organic molecule.
+    Material descriptor for an organic molecule.
 
     Accepts SMILES, IUPAC, and InChI String values.
 
@@ -164,7 +155,7 @@ class MolecularStructureDescriptor(Serializable['MolecularStructureDescriptor'],
 
 
 class CategoricalDescriptor(Serializable['CategoricalDescriptor'], Descriptor):
-    """[ALPHA] A descriptor to hold categorical variables.
+    """A descriptor to hold categorical variables.
 
     An exhaustive list of categorical values may be supplied.
 

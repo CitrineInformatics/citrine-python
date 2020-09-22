@@ -1,6 +1,5 @@
 """Tools for working with Predictors."""
 # flake8: noqa
-from collections import Iterable
 from typing import List, Optional, Type, Union, Mapping
 from uuid import UUID
 from warnings import warn
@@ -29,7 +28,7 @@ __all__ = ['DeprecatedExpressionPredictor',
 
 
 class Predictor(Module):
-    """[ALPHA] Module that describes the ability to compute/predict properties of materials.
+    """Module that describes the ability to compute/predict properties of materials.
 
     Abstract type that returns the proper type given a serialized dict. subtype
     based on the 'type' value of the passed in dict.
@@ -91,7 +90,7 @@ class Predictor(Module):
 
 
 class SimpleMLPredictor(Serializable['SimplePredictor'], Predictor):
-    """[ALPHA] A predictor interface that builds a simple graphical model.
+    """A predictor interface that builds a simple graphical model.
 
     The model connects the set of inputs through latent variables to the outputs.
     Supported complex inputs (such as chemical formulas) are auto-featurized and machine learning
@@ -174,7 +173,7 @@ class SimpleMLPredictor(Serializable['SimplePredictor'], Predictor):
 
 
 class GraphPredictor(Serializable['GraphPredictor'], Predictor):
-    """[ALPHA] A predictor interface that stitches other predictors together.
+    """A predictor interface that stitches other predictors together.
 
     Parameters
     ----------
@@ -396,7 +395,7 @@ class DeprecatedExpressionPredictor(Serializable['DeprecatedExpressionPredictor'
 
 
 class ExpressionPredictor(Serializable['ExpressionPredictor'], Predictor):
-    """[ALPHA] A predictor that computes an output from an expression and set of bounded inputs.
+    """A predictor that computes an output from an expression and set of bounded inputs.
 
     .. seealso::
        If you are using the deprecated predictor please see

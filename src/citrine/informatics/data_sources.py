@@ -11,7 +11,7 @@ from citrine.resources.file_link import FileLink
 
 
 class DataSource(PolymorphicSerializable['DataSource']):
-    """[ALPHA] A source of data for the AI engine.
+    """A source of data for the AI engine.
 
     Data source provides a polymorphic interface for specifying different kinds of data as the
     training data for predictors and the input data for some design spaces.
@@ -45,7 +45,7 @@ class DataSource(PolymorphicSerializable['DataSource']):
 
 
 class CSVDataSource(Serializable['CSVDataSource'], DataSource):
-    """[ALPHA] A data source based on a CSV file stored on the data platform.
+    """A data source based on a CSV file stored on the data platform.
 
     Parameters
     ----------
@@ -112,11 +112,3 @@ class GemTableDataSource(Serializable['GemTableDataSource'], DataSource):
         self.table_id: UUID = table_id
         self.table_version: Union[int, str] = table_version
         self.formulation_descriptor: Optional[FormulationDescriptor] = formulation_descriptor
-
-
-def AraTableDataSource(*args, **kwargs):  # pragma: no cover
-    """[DEPRECATED] Use GemTableDataSource instead."""
-    from warnings import warn
-    warn("AraTableDataSource is deprecated and will soon be removed. "
-         "Please use GemTableDataSource instead", DeprecationWarning)
-    return GemTableDataSource(*args, **kwargs)
