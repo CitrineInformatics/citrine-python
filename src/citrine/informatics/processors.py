@@ -74,7 +74,6 @@ class GridProcessor(Serializable['GridProcessor'], Processor):
         'status_info',
         serializable=False
     )
-    active = properties.Boolean('active', default=True)
     archived = properties.Boolean('archived', default=False)
     experimental = properties.Boolean("experimental", serializable=False, default=True)
     experimental_reasons = properties.Optional(
@@ -135,7 +134,6 @@ class EnumeratedProcessor(Serializable['EnumeratedProcessor'], Processor):
         'status_info',
         serializable=False
     )
-    active = properties.Boolean('active', default=True)
     archived = properties.Boolean('archived', default=False)
     experimental = properties.Boolean("experimental", serializable=False, default=True)
     experimental_reasons = properties.Optional(
@@ -194,7 +192,6 @@ class MonteCarloProcessor(Serializable['GridProcessor'], Processor):
         'status_info',
         serializable=False
     )
-    active = properties.Boolean('active', default=True)
     experimental = properties.Boolean("experimental", serializable=False, default=True)
     experimental_reasons = properties.Optional(
         properties.List(properties.String()),
