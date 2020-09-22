@@ -1,8 +1,12 @@
 from citrine.exceptions import NotFound
 from citrine.resources import ProjectCollection
+from citrine.resources.design_space import DesignSpaceCollection
+from citrine.resources.workflow import WorkflowCollection
 from citrine.resources.dataset import Dataset
-from citrine._rest.collection import Collection, CreationType
+from citrine.resources.predictor import PredictorCollection
+from citrine._rest.collection import CreationType
 from copy import deepcopy
+from typing import Union
 
 
 def find_collection(collection, name):
@@ -95,29 +99,35 @@ def find_or_create_dataset(dataset_collection, dataset_name, raise_error=False):
     return dataset
 
 
-def create_or_update(collection: Collection,
-                     resource: CreationType) -> CreationType:
-    """Update a resource of a given name belonging to a collection.
-    Create it if it doesn't exist.
+def create_or_update(collection: Union[DesignSpaceCollection, PredictorCollection,
+                     WorkflowCollection], resource: CreationType) -> CreationType:
+    """
+    Update a resource of a given name belonging to a collection.
+
+    Create it if it doesn't exist. If collection already contains
+    a resource with the same name it will be updated. If there are multiple
+    resources with the same name it will throw an error.
+
     Parameters
     ----------
-    collection : Collection
+    collection : Union[DesignSpaceCollection, PredictorCollection, WorkflowCollection]
         Collection within which you want to update or create a resource
     resource : CreationType
-        Resource that you want to create or update. If collection already contains
-        a resource with the same name it will be updated. Otherwise it will be created.
+        Resource that you want to create or update.
+
     Returns
     -------
     ResourceType
         Registered updated or created resource.
+
     """
-    try:
-        old_resource = get_by_name_or_raise_error(collection, resource.name)
-        print(f"Updating module: {resource.name}")
+    old_resource = find_collection(collection, resource.name)
+    if old_resource:
+        print("Updating module: {}".format(resource.name))
         # Copy so that passed-in resource is unaffected
         new_resource = deepcopy(resource)
         new_resource.uid = old_resource.uid
         return collection.update(new_resource)
-    except ValueError:
+    else:
         print("Registering new module:  {}".format(resource.name))
         return collection.register(resource)
