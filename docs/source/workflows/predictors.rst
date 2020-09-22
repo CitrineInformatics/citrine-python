@@ -288,7 +288,7 @@ The following example illustrates how an :class:`~citrine.informatics.predictors
         training_data=[data_source]
     )
 
-Simple mixture predictora (ALPHA)
+Simple mixture predictor (ALPHA)
 --------------------------------------
 
 Simple mixtures may contain ingredients that are blends of other simple mixtures.
