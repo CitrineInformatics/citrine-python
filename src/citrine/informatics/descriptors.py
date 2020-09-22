@@ -8,7 +8,6 @@ from citrine._serialization import properties
 __all__ = ['Descriptor',
            'RealDescriptor',
            'ChemicalFormulaDescriptor',
-           'InorganicDescriptor',
            'MolecularStructureDescriptor',
            'CategoricalDescriptor',
            'FormulationDescriptor']
