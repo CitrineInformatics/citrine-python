@@ -152,12 +152,16 @@ def predictor_collection() -> PredictorCollection:
     predictors = SeedingTestPredictorCollection(UUID('6b608f78-e341-422c-8076-35adc8828545'),
                                 session)
 
+    #Adding a few predictors in the collection to have something to update
     for i in range(0, 5):
         predictors.register(SimpleMLPredictor(name = "resource " + str(i),
                                             description = '',
                                             inputs = [],
                                             outputs = [],
                                             latent_variables =[]))
+
+    #Adding a few predictors with the same name ("resource {0,1}" were made above)
+    # this is used to test behavior if there are duplicates
     for i in range(0, 2):
         predictors.register(SimpleMLPredictor(name = "resource " + str(i),
                                             description = '',
