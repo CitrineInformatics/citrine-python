@@ -328,23 +328,33 @@ def test_create_or_update_none_found(predictor_collection):
                             inputs = [],
                             outputs = [],
                             latent_variables = [])
-    create_or_update(predictor_collection, pred)
+    #verify that the returned object is updated
+    returned_pred = create_or_update(predictor_collection, pred)
+    assert returned_pred.uid == pred.uid
+    assert returned_pred.name == pred.name
+    assert returned_pred.description == pred.description
+    #verify that the collection is also updated
     assert any([r for r in list(predictor_collection.list()) if r.name == absent_name])
 
 def test_create_or_update_unique_found(predictor_collection):
     # test when there is a single unique resource that exists with the listed name and update
-    pred = SimpleMLPredictor(name="resource 4",
+    pred = SimpleMLPredictor(name="resource 4", #this is a unique name in the collection
                             description = 'I am updated!',
                             inputs = [],
                             outputs = [],
                             latent_variables = [])
-    create_or_update(predictor_collection, pred)
+    #verify that the returned object is updated
+    returned_pred = create_or_update(predictor_collection, pred)
+    assert returned_pred.uid == pred.uid
+    assert returned_pred.name == pred.name
+    assert returned_pred.description == pred.description
+    #verify that the collection is also updated
     updated_pred = [r for r in list(predictor_collection.list()) if r.name == "resource 4"][0]
     assert updated_pred.description == "I am updated!"
 
 def test_create_or_update_raise_error_multiple_found(predictor_collection):
     # test when there are multiple resources that exists with the same listed name and raise error
-    pred = SimpleMLPredictor(name="resource 1",
+    pred = SimpleMLPredictor(name="resource 1", #Not unique: two "resource 1" exists in collection
                             description = 'I am updated!',
                             inputs = [],
                             outputs = [],
