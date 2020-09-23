@@ -117,7 +117,7 @@ def create_or_update(collection: Union[DesignSpaceCollection, PredictorCollectio
 
     Returns
     -------
-    ResourceType
+    CreationType
         Registered updated or created resource.
 
     """
