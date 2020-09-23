@@ -28,10 +28,11 @@ class PredictorEvaluationWorkflow(Resource['PredictorEvaluationWorkflow'], Workf
     """
 
     uid = properties.Optional(properties.UUID, 'id', serializable=False)
-    name = properties.String('display_name')
+    name = properties.String('name')
     description = properties.String('description')
     evaluators = properties.List(properties.Object(PredictorEvaluator), "evaluators")
     status = properties.String('status', serializable=False)
+    status_description = properties.String('status_description', serializable=False)
     status_info = properties.Optional(
         properties.List(properties.String()),
         'status_info',
@@ -45,8 +46,11 @@ class PredictorEvaluationWorkflow(Resource['PredictorEvaluationWorkflow'], Workf
     )
     archived = properties.Boolean('archived', default=False)
     created_by = properties.Optional(properties.UUID, 'created_by', serializable=False)
+    updated_by = properties.Optional(properties.UUID, 'updated_by', serializable=False)
+    archived_by = properties.Optional(properties.UUID, 'archived_by', serializable=False)
     create_time = properties.Optional(properties.Datetime, 'create_time', serializable=False)
-    module_type = properties.String('module_type', default='PREDICTOR_EVALUATION_WORKFLOW')
+    update_time = properties.Optional(properties.Datetime, 'update_time', serializable=False)
+    archive_time = properties.Optional(properties.Datetime, 'archive_time', serializable=False)
     typ = properties.String('type', default='PredictorEvaluationWorkflow', deserializable=False)
 
     def __init__(self, *,
