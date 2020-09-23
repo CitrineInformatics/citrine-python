@@ -272,7 +272,7 @@ def test_list_projects(collection, session):
 
     # Then
     assert 1 == session.num_calls
-    expected_call = FakeCall(method='GET', path='/projects', params={'per_page': 100})
+    expected_call = FakeCall(method='GET', path='/projects', params={'per_page': 1000})
     assert expected_call == session.last_call
     assert 5 == len(projects)
 
@@ -288,7 +288,7 @@ def test_list_projects_filters_non_projects(collection, session):
 
     # Then
     assert 1 == session.num_calls
-    expected_call = FakeCall(method='GET', path='/projects', params={'per_page': 100})
+    expected_call = FakeCall(method='GET', path='/projects', params={'per_page': 1000})
     assert expected_call == session.last_call
     assert 5 == len(projects)   # The non-project data is filtered out
 
@@ -327,7 +327,7 @@ def test_search_projects(collection, session):
     # Then
     assert 1 == session.num_calls
     expected_call = FakeCall(method='POST', path='/projects/search', 
-                                        params={'per_page': 100}, json={'search_params': search_params})
+                                        params={'per_page': 1000}, json={'search_params': search_params})
     assert expected_call == session.last_call
     assert len(expected_response) == len(projects)
 
