@@ -1,6 +1,12 @@
 from citrine.exceptions import NotFound
 from citrine.resources import ProjectCollection
+from citrine.resources.design_space import DesignSpaceCollection
+from citrine.resources.workflow import WorkflowCollection
 from citrine.resources.dataset import Dataset
+from citrine.resources.predictor import PredictorCollection
+from citrine._rest.collection import CreationType
+from copy import deepcopy
+from typing import Union
 
 
 def find_collection(collection, name):
@@ -91,3 +97,37 @@ def find_or_create_dataset(dataset_collection, dataset_name, raise_error=False):
             return dataset_collection.register(Dataset(dataset_name, "seed summ.", "seed desc."))
         dataset = get_by_name_or_create(dataset_collection, dataset_name, default_provider)
     return dataset
+
+
+def create_or_update(collection: Union[DesignSpaceCollection, PredictorCollection,
+                     WorkflowCollection], resource: CreationType) -> CreationType:
+    """
+    Update a resource of a given name belonging to a collection.
+
+    Create it if it doesn't exist. If collection already contains
+    a resource with the same name it will be updated. If there are multiple
+    resources with the same name it will throw an error.
+
+    Parameters
+    ----------
+    collection : Union[DesignSpaceCollection, PredictorCollection, WorkflowCollection]
+        Collection within which you want to update or create a resource
+    resource : CreationType
+        Resource that you want to create or update.
+
+    Returns
+    -------
+    CreationType
+        Registered updated or created resource.
+
+    """
+    old_resource = find_collection(collection, resource.name)
+    if old_resource:
+        print("Updating module: {}".format(resource.name))
+        # Copy so that passed-in resource is unaffected
+        new_resource = deepcopy(resource)
+        new_resource.uid = old_resource.uid
+        return collection.update(new_resource)
+    else:
+        print("Registering new module:  {}".format(resource.name))
+        return collection.register(resource)
