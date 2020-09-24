@@ -79,7 +79,7 @@ def wait_while_validating(
         return status != "VALIDATING"
 
     start = time()
-    
+
     while not is_validated() and time() - start < timeout:
         sleep(interval)
     if not is_validated():
@@ -117,7 +117,6 @@ def wait_while_executing(
     ConditionTimeoutError
         If fails to finish execution within timeout
     """
-    start = time()
 
     def execution_is_finished():
         status = execution.status()
@@ -125,6 +124,7 @@ def wait_while_executing(
         return not execution.status().in_progress
 
     start = time()
+
     while not execution_is_finished() and time() - start < timeout:
         sleep(interval)
     if not execution_is_finished():
