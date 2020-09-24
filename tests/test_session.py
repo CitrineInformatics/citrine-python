@@ -189,7 +189,7 @@ def test_post_refreshes_token_when_denied(session: Session):
 
 def test_delete_unauthorized_without_json(session: Session):
     with requests_mock.Mocker() as m:
-        m.delete('http://citrine-testing.fake/api/v1/bar/something', status_code=401)
+        m.delete('http://citrine-testing.fake/api/v1/bar/something', status_code=403)
 
         with pytest.raises(Unauthorized):
             session.delete_resource('/bar/something')
