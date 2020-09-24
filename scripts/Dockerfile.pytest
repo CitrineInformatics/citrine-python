@@ -11,5 +11,5 @@ RUN pip install -U -r test_requirements.txt
 COPY . .
 RUN pip install --no-deps -e .
 ENTRYPOINT ["pytest", "--cov=src/", "--cov-report", "term-missing", "--cov-report", "term:skip-covered", \
-    "--cov-fail-under=100", "-s"]
+    "--cov-config=tox.ini", "--cov-fail-under=100", "-s", "-r", "."]
 CMD ["-r", "."]

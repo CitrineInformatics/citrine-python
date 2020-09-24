@@ -13,7 +13,6 @@ def valid_data():
         display_name='A rad new workflow',
         status='READY',
         status_info=['Things are looking good'],
-        active=True,
         archived=False,
         config=dict(
             design_space_id=str(uuid4()),
