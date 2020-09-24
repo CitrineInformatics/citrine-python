@@ -8,7 +8,7 @@ from citrine.resources.workflow_executions import (
 )
 
 
-class ConditionTimoeutError(RuntimeError):
+class ConditionTimeoutError(RuntimeError):
     """ Error that is raised when timeout is reached but the checked condition is still False"""
 
     pass
@@ -69,7 +69,7 @@ def wait_while_validating(
 
     Raises
     ------
-    ConditionTimoeutError
+    ConditionTimeoutError
         If fails to validate within timeout
     """
 
@@ -85,7 +85,7 @@ def wait_while_validating(
         sleep(interval)
     if not is_validated():
         msg = "Timeout reached, but condition is still {}".format(is_validated())
-        raise ConditionTimoeutError(msg)
+        raise ConditionTimeoutError(msg)
 
     if print_status_info:
         print("\nStatus info:")
@@ -115,7 +115,7 @@ def wait_while_executing(
 
     Raises
     ------
-    ConditionTimoeutError
+    ConditionTimeoutError
         If fails to finish execution within timeout
     """
     start = time()
@@ -130,5 +130,5 @@ def wait_while_executing(
         sleep(interval)
     if not execution_is_finished():
         msg = "Timeout reached, but condition is still {}".format(execution_is_finished())
-        raise ConditionTimoeutError(msg)
+        raise ConditionTimeoutError(msg)
 
