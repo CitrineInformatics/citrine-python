@@ -45,12 +45,12 @@ class DescriptorMethods:
 
     def descriptors_from_data_source(self, data_source: DataSource) -> List[Descriptor]:
         """
-        [ALPHA] Get all descriptors associated with a data source
+        [ALPHA] Get all descriptors associated with a data source.
 
         Parameters
         ----------
         data_source : DataSource
-            A CSVDataSource or AraTableDataSource to get descriptors for
+            A CSVDataSource or AraTableDataSource to get descriptors for.
 
         Returns
         -------
