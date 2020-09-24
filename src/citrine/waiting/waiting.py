@@ -73,14 +73,13 @@ def wait_while_validating(
         If fails to validate within timeout
     """
 
-    start = time()
-
     def is_validated():
         status = collection.get(module.uid).status
         _print_validation_status(status, start)
         return status != "VALIDATING"
 
     start = time()
+    
     while not is_validated() and time() - start < timeout:
         sleep(interval)
     if not is_validated():
