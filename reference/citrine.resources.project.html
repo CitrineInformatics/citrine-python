@@ -415,6 +415,31 @@ the project with uid = receiving_project_uid.</p></li>
 </dd></dl>
 
 <dl class="method">
+<dt id="citrine.resources.project.ProjectCollection.list">
+<code class="sig-name descname">list</code><span class="sig-paren">(</span><em class="sig-param">page: Optional[int] = None</em>, <em class="sig-param">per_page: int = 1000</em><span class="sig-paren">)</span> &#x2192; Iterable[citrine.resources.project.Project]<a class="headerlink" href="#citrine.resources.project.ProjectCollection.list" title="Permalink to this definition">¶</a></dt>
+<dd><p>List projects using pagination.</p>
+<p>Leaving page and per_page as default values will yield all elements in the
+collection, paginating over all available pages.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>page</strong> (<em>int</em><em>, </em><em>optional</em>) – The “page” of results to list. Default is to read all pages and yield
+all results.  This option is deprecated.</p></li>
+<li><p><strong>per_page</strong> (<em>int</em><em>, </em><em>optional</em>) – Max number of results to return per page. Default is 1000.  This parameter
+is used when making requests to the backend service.  If the page parameter
+is specified it limits the maximum number of elements in the response.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Projects in this collection.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Iterable[<a class="reference internal" href="#citrine.resources.project.Project" title="citrine.resources.project.Project">Project</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
 <dt id="citrine.resources.project.ProjectCollection.register">
 <code class="sig-name descname">register</code><span class="sig-paren">(</span><em class="sig-param">name: str</em>, <em class="sig-param">description: Optional[str] = None</em><span class="sig-paren">)</span> &#x2192; citrine.resources.project.Project<a class="headerlink" href="#citrine.resources.project.ProjectCollection.register" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create and upload new project.</p>
@@ -430,7 +455,7 @@ the project with uid = receiving_project_uid.</p></li>
 
 <dl class="method">
 <dt id="citrine.resources.project.ProjectCollection.search">
-<code class="sig-name descname">search</code><span class="sig-paren">(</span><em class="sig-param">search_params: Optional[dict] = None</em>, <em class="sig-param">per_page: int = 100</em><span class="sig-paren">)</span> &#x2192; Iterable[citrine.resources.project.Project]<a class="headerlink" href="#citrine.resources.project.ProjectCollection.search" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">search</code><span class="sig-paren">(</span><em class="sig-param">search_params: Optional[dict] = None</em>, <em class="sig-param">per_page: int = 1000</em><span class="sig-paren">)</span> &#x2192; Iterable[citrine.resources.project.Project]<a class="headerlink" href="#citrine.resources.project.ProjectCollection.search" title="Permalink to this definition">¶</a></dt>
 <dd><p>Search for projects matching the desired name or description.</p>
 <p>You can search for projects matching the desired name or description by either exact match
 or substring match, as specified by the search_params argument. Defaults to no search

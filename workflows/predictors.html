@@ -207,8 +207,8 @@ Citrine-python currently supports the following operators and functions:</p>
 </div>
 <p>For an example of expression predictors used in a graph predictor, see <a class="reference internal" href="code_examples.html#graph-predictor-example"><span class="std std-ref">AI Engine Code Examples</span></a>.</p>
 </div>
-<div class="section" id="ingredients-to-simple-mixture-predictor">
-<h2>4.4.4. Ingredients to simple mixture predictor<a class="headerlink" href="#ingredients-to-simple-mixture-predictor" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="ingredients-to-simple-mixture-predictor-alpha">
+<h2>4.4.4. Ingredients to simple mixture predictor (ALPHA)<a class="headerlink" href="#ingredients-to-simple-mixture-predictor-alpha" title="Permalink to this headline">¶</a></h2>
 <p>The <a class="reference internal" href="../reference/citrine.informatics.predictors.html#citrine.informatics.predictors.IngredientsToSimpleMixturePredictor" title="citrine.informatics.predictors.IngredientsToSimpleMixturePredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientsToSimpleMixturePredictor</span></code></a> constructs a simple mixture from a list of ingredients.
 This predictor is only required to construct simple mixtures from CSV data sources.
 Formulations are constructed automatically by GEM Tables when a <code class="docutils literal notranslate"><span class="pre">formulation_descriptor</span></code> is specified by the data source, so
@@ -320,8 +320,8 @@ These labels are specified via:</p>
 </pre></div>
 </div>
 </div>
-<div class="section" id="simple-mixture-predictor">
-<h2>4.4.5. Simple mixture predictor<a class="headerlink" href="#simple-mixture-predictor" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="simple-mixture-predictor-alpha">
+<h2>4.4.5. Simple mixture predictor (ALPHA)<a class="headerlink" href="#simple-mixture-predictor-alpha" title="Permalink to this headline">¶</a></h2>
 <p>Simple mixtures may contain ingredients that are blends of other simple mixtures.
 Along the lines of the example above, hypertonic saline can be mixed with water to form isotonic saline.
 Often, the properties of a hierarchical mixture are strongly associated with its leaf ingredients.
@@ -349,8 +349,8 @@ The <code class="docutils literal notranslate"><span class="pre">training_data</
 </pre></div>
 </div>
 </div>
-<div class="section" id="generalized-mean-property-predictor">
-<h2>4.4.6. Generalized mean property predictor<a class="headerlink" href="#generalized-mean-property-predictor" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="generalized-mean-property-predictor-alpha">
+<h2>4.4.6. Generalized mean property predictor (ALPHA)<a class="headerlink" href="#generalized-mean-property-predictor-alpha" title="Permalink to this headline">¶</a></h2>
 <p>Often, properties of a mixture are proportional to the properties of it’s ingredients.
 For example, the density of a saline solution can be computed from the densities of water and salt multiplied by their respective amounts:</p>
 <div class="math notranslate nohighlight">
@@ -441,8 +441,8 @@ If a value other than 1.58 should be used, e.g. 2.0, this can be specified by se
 </div>
 <p>If <code class="docutils literal notranslate"><span class="pre">p</span></code> is given a value other than <code class="docutils literal notranslate"><span class="pre">1.0</span></code>, that value will be included in the key for the feature, e.g. <code class="docutils literal notranslate"><span class="pre">2.0-mean</span> <span class="pre">of</span> <span class="pre">property</span> <span class="pre">viscosity</span></code>.</p>
 </div>
-<div class="section" id="ingredient-fractions-predictor">
-<h2>4.4.7. Ingredient fractions predictor<a class="headerlink" href="#ingredient-fractions-predictor" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="ingredient-fractions-predictor-alpha">
+<h2>4.4.7. Ingredient fractions predictor (ALPHA)<a class="headerlink" href="#ingredient-fractions-predictor-alpha" title="Permalink to this headline">¶</a></h2>
 <p>The <a class="reference internal" href="../reference/citrine.informatics.predictors.html#citrine.informatics.predictors.IngredientFractionsPredictor" title="citrine.informatics.predictors.IngredientFractionsPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientFractionsPredictor</span></code></a> featurizes ingredient fractions in a simple mixture.
 The predictor is configured by specifying a descriptor that contains simple mixture data and a list of known ingredients to featurize.
 The list of ingredients should be the list of all possible ingredients for the input mixture.
@@ -477,8 +477,8 @@ this predictor would compute outputs:</p>
 </div>
 <p>This will return a real descriptor for each featurized ingredient with bounds <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1]</span></code> and key in the form <code class="docutils literal notranslate"><span class="pre">'{ingredient}</span> <span class="pre">share</span> <span class="pre">in</span> <span class="pre">simple</span> <span class="pre">mixture'</span></code> where <code class="docutils literal notranslate"><span class="pre">{ingredient}</span></code> is either <code class="docutils literal notranslate"><span class="pre">water</span></code>, <code class="docutils literal notranslate"><span class="pre">salt</span></code> or <code class="docutils literal notranslate"><span class="pre">boric</span> <span class="pre">acid</span></code>.</p>
 </div>
-<div class="section" id="label-fractions-predictor">
-<h2>4.4.8. Label fractions predictor<a class="headerlink" href="#label-fractions-predictor" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="label-fractions-predictor-alpha">
+<h2>4.4.8. Label fractions predictor (ALPHA)<a class="headerlink" href="#label-fractions-predictor-alpha" title="Permalink to this headline">¶</a></h2>
 <p>The <a class="reference internal" href="../reference/citrine.informatics.predictors.html#citrine.informatics.predictors.LabelFractionsPredictor" title="citrine.informatics.predictors.LabelFractionsPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">LabelFractionsPredictor</span></code></a> computes total fraction of ingredients with a given label.
 The predictor is configured by specifying a formulation descriptor that holds simple mixture data (i.e. recipes and ingredient labels) and a list of labels to featurize.
 A separate response is computed for each featurized label by summing all quantities in the recipe associated with ingredients given the label.</p>

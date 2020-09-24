@@ -39,7 +39,7 @@
 <dt id="citrine.informatics.descriptors.Descriptor">
 <em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.descriptors.</code><code class="sig-name descname">Descriptor</code><a class="headerlink" href="#citrine.informatics.descriptors.Descriptor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.polymorphic_serializable.PolymorphicSerializable</span></code></p>
-<p>[ALPHA] A Citrine Descriptor describes the range of values that a quantity can take on.</p>
+<p>A Citrine Descriptor describes the range of values that a quantity can take on.</p>
 <p>Abstract type that returns the proper type given a serialized dict.</p>
 <dl class="method">
 <dt id="citrine.informatics.descriptors.Descriptor.get_type">
@@ -53,7 +53,7 @@
 <dt id="citrine.informatics.descriptors.RealDescriptor">
 <em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.descriptors.</code><code class="sig-name descname">RealDescriptor</code><span class="sig-paren">(</span><em class="sig-param">key: str</em>, <em class="sig-param">lower_bound: float</em>, <em class="sig-param">upper_bound: float</em>, <em class="sig-param">units: str = ''</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.descriptors.RealDescriptor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.informatics.descriptors.Descriptor" title="citrine.informatics.descriptors.Descriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.descriptors.Descriptor</span></code></a></p>
-<p>[ALPHA] A descriptor to hold real-valued numbers.</p>
+<p>A descriptor to hold real-valued numbers.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -94,7 +94,7 @@
 <dt id="citrine.informatics.descriptors.ChemicalFormulaDescriptor">
 <em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.descriptors.</code><code class="sig-name descname">ChemicalFormulaDescriptor</code><span class="sig-paren">(</span><em class="sig-param">key: str</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.descriptors.ChemicalFormulaDescriptor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.informatics.descriptors.Descriptor" title="citrine.informatics.descriptors.Descriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.descriptors.Descriptor</span></code></a></p>
-<p>[ALPHA] Captures domain-specific context about a stoichiometric chemical formula.</p>
+<p>Captures domain-specific context about a stoichiometric chemical formula.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>key</strong> (<em>str</em>) – the key corresponding to a descriptor</p>
@@ -117,17 +117,11 @@
 
 </dd></dl>
 
-<dl class="function">
-<dt id="citrine.informatics.descriptors.InorganicDescriptor">
-<code class="sig-prename descclassname">citrine.informatics.descriptors.</code><code class="sig-name descname">InorganicDescriptor</code><span class="sig-paren">(</span><em class="sig-param">key: str</em>, <em class="sig-param">threshold: Optional[float] = 1.0</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.descriptors.InorganicDescriptor" title="Permalink to this definition">¶</a></dt>
-<dd><p>[DEPRECATED] Use ChemicalFormulaDescriptor instead.</p>
-</dd></dl>
-
 <dl class="class">
 <dt id="citrine.informatics.descriptors.MolecularStructureDescriptor">
 <em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.descriptors.</code><code class="sig-name descname">MolecularStructureDescriptor</code><span class="sig-paren">(</span><em class="sig-param">key: str</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.descriptors.MolecularStructureDescriptor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.informatics.descriptors.Descriptor" title="citrine.informatics.descriptors.Descriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.descriptors.Descriptor</span></code></a></p>
-<p>[ALPHA] Material descriptor for an organic molecule.</p>
+<p>Material descriptor for an organic molecule.</p>
 <p>Accepts SMILES, IUPAC, and InChI String values.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -150,7 +144,7 @@
 <dt id="citrine.informatics.descriptors.CategoricalDescriptor">
 <em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.descriptors.</code><code class="sig-name descname">CategoricalDescriptor</code><span class="sig-paren">(</span><em class="sig-param">key: str, categories: Iterable[str]</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.descriptors.CategoricalDescriptor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.informatics.descriptors.Descriptor" title="citrine.informatics.descriptors.Descriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.descriptors.Descriptor</span></code></a></p>
-<p>[ALPHA] A descriptor to hold categorical variables.</p>
+<p>A descriptor to hold categorical variables.</p>
 <p>An exhaustive list of categorical values may be supplied.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>

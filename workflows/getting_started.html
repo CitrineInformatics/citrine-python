@@ -81,15 +81,15 @@ There are 3 types of modules on the platform:</p>
 <li><p><a class="reference internal" href="processors.html"><span class="doc">Processors</span></a> define the method used to search the design space.
 The processor and design space are coupled: depending on the design space used, only a subset of processors are applicable.</p></li>
 </ul>
-<div class="section" id="activation">
-<h3>4.1.2.1. Activation<a class="headerlink" href="#activation" title="Permalink to this headline">¶</a></h3>
-<p>Modules come <cite>active</cite> by default when created. If you would like to deactivate a module so it cannot be used again consider this example:</p>
+<div class="section" id="archiving">
+<h3>4.1.2.1. Archiving<a class="headerlink" href="#archiving" title="Permalink to this headline">¶</a></h3>
+<p>Modules come active by default when created. If you would like to <cite>archive</cite> a module so it cannot be used again consider this example:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">predictor</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">predictors</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">predictor_uuid</span><span class="p">)</span>
-<span class="n">predictor</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">predictor</span><span class="o">.</span><span class="n">archived</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="n">project</span><span class="o">.</span><span class="n">predictors</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">predictor</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Modules that are not <cite>active</cite> cannot be used in workflows and will not show up when listing.</p>
+<p>Modules that are <cite>archived</cite> cannot be used in workflows and will not show up when listing.</p>
 </div>
 </div>
 <div class="section" id="registration-and-validation">

@@ -35,17 +35,11 @@
   <div class="section" id="module-citrine.informatics.data_sources">
 <span id="citrine-informatics-data-sources-module"></span><h1>citrine.informatics.data_sources module<a class="headerlink" href="#module-citrine.informatics.data_sources" title="Permalink to this headline">¶</a></h1>
 <p>Tools for working with Descriptors.</p>
-<dl class="function">
-<dt id="citrine.informatics.data_sources.AraTableDataSource">
-<code class="sig-prename descclassname">citrine.informatics.data_sources.</code><code class="sig-name descname">AraTableDataSource</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.data_sources.AraTableDataSource" title="Permalink to this definition">¶</a></dt>
-<dd><p>[DEPRECATED] Use GemTableDataSource instead.</p>
-</dd></dl>
-
 <dl class="class">
 <dt id="citrine.informatics.data_sources.CSVDataSource">
 <em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.data_sources.</code><code class="sig-name descname">CSVDataSource</code><span class="sig-paren">(</span><em class="sig-param">file_link: citrine.resources.file_link.FileLink, column_definitions: Mapping[str, citrine.informatics.descriptors.Descriptor], identifiers: Optional[List[str]] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.data_sources.CSVDataSource" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.informatics.data_sources.DataSource" title="citrine.informatics.data_sources.DataSource"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.data_sources.DataSource</span></code></a></p>
-<p>[ALPHA] A data source based on a CSV file stored on the data platform.</p>
+<p>A data source based on a CSV file stored on the data platform.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -84,7 +78,7 @@ contain the same value.</p></li>
 <dt id="citrine.informatics.data_sources.DataSource">
 <em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.data_sources.</code><code class="sig-name descname">DataSource</code><a class="headerlink" href="#citrine.informatics.data_sources.DataSource" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.polymorphic_serializable.PolymorphicSerializable</span></code></p>
-<p>[ALPHA] A source of data for the AI engine.</p>
+<p>A source of data for the AI engine.</p>
 <p>Data source provides a polymorphic interface for specifying different kinds of data as the
 training data for predictors and the input data for some design spaces.</p>
 <dl class="method">
