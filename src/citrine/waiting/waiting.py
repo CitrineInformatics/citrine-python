@@ -8,19 +8,17 @@ from citrine.resources.workflow_executions import (
 )
 
 
-def _wait_until(condition: Callable[[], bool], timeout: float = 900.0, interval: float = 3.0):
-    """Poll until the provided condition is truthy or the timeout is reached."""
-    start = time()
-    while not condition() and time() - start < timeout:
-        sleep(interval)
-    assert condition(), "Timeout reached, but condition is still False."
+class ConditionTimoeutError(RuntimeError):
+    """ Error that is raised when timeout is reached but the checked condition is still False"""
+
+    pass
 
 
 def _print_validation_status(
     status: str, start_time: float, line_start: str = "", line_end: str = "\r"
 ):
     print(
-        f"{line_start}Status = {status:<25}Elapsed time"
+        "{}Status = {:<25}Elapsed time".format(line_start, status)
         " = {str(int(time() - start_time)).rjust(3)}s",
         end=line_end,
     )
@@ -36,20 +34,45 @@ def _print_execution_status(
     status: WorkflowExecutionStatus, start_time: float, line_end: str = "\r"
 ):
     print(
-        f"Status = {_pretty_execution_status(status):<25}Elapsed time"
-        " = {str(int(time() - start_time)).rjust(3)}s",
+        "Status = {:<25}Elapsed time".format(_pretty_execution_status(status))
+        " = {}s".format(str(int(time() - start_time)).rjust(3)),
         end=line_end,
     )
 
 
-def wait_until_validated(
+def wait_while_validating(
     collection: Collection,
     module,
     print_status_info: bool = False,
     timeout: float = 1800.0,
     interval: float = 3.0,
 ):
-    """Wait until module is validated."""
+    """
+    Wait until module is validated.
+    Parameters
+    ----------
+    collection : Collection
+        Type of Collection
+    module : Module
+        Module in Collection
+    print_status_info : bool, optional
+        Whether to print status info, by default False
+    timeout : float, optional
+        Maximum time spent inquiring in seconds, by default 1800.0
+    interval : float, optional
+        Inquity interval in seconds, by default 3.0
+
+    Returns
+    -------
+    Module
+        Module from Collection
+
+    Raises
+    ------
+    ConditionTimoeutError
+        If fails to validate within timeout
+    """
+
     start = time()
 
     def is_validated():
@@ -57,16 +80,44 @@ def wait_until_validated(
         _print_validation_status(status, start)
         return status != "VALIDATING"
 
-    _wait_until(is_validated, timeout=timeout, interval=interval)
+    start = time()
+    while not is_validated() and time() - start < timeout:
+        sleep(interval)
+    if not is_validated():
+        msg = "Timeout reached, but condition is still {}".format(is_validated())
+        raise ConditionTimoeutError(msg)
 
     if print_status_info:
         print("\nStatus info:")
         status_info = collection.get(module.uid).status_info
         pprint(status_info)
 
+    return collection.get(module.uid)
 
-def wait_until_execution_is_finished(execution: WorkflowExecution):
-    """Wait until execution is finished."""
+
+def wait_while_executing(
+    execution: WorkflowExecution,
+    timeout: float = 1800.0,
+    interval: float = 3.0,
+):
+    """
+    Wait until execution is finished.
+
+    Parameters
+    ----------
+    execution : WorkflowExecution
+        WorklflowExecution to monitor
+    timeout : float, optional
+        Maximum time spent inquiring in seconds, by default 1800.0
+    interval : float, optional
+        Inquiry interval in seconds, by default 3.0
+
+
+    Raises
+    ------
+    ConditionTimoeutError
+        If fails to finish execution within timeout
+    """
     start = time()
 
     def execution_is_finished():
@@ -74,4 +125,10 @@ def wait_until_execution_is_finished(execution: WorkflowExecution):
         _print_execution_status(status, start)
         return not execution.status().in_progress
 
-    _wait_until(execution_is_finished)
+    start = time()
+    while not execution_is_finished() and time() - start < timeout:
+        sleep(interval)
+    if not execution_is_finished():
+        msg = "Timeout reached, but condition is still {}".format(execution_is_finished())
+        raise ConditionTimoeutError(msg)
+
