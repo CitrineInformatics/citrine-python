@@ -18,7 +18,7 @@ def _print_validation_status(
     status: str, start_time: float, line_start: str = "", line_end: str = "\r"
 ):
     print(
-        "{}Status = {:<25}Elapsed time".format(line_start, status)
+        "{}Status = {:<25}Elapsed time".format(line_start, status),
         " = {str(int(time() - start_time)).rjust(3)}s",
         end=line_end,
     )
@@ -34,7 +34,7 @@ def _print_execution_status(
     status: WorkflowExecutionStatus, start_time: float, line_end: str = "\r"
 ):
     print(
-        "Status = {:<25}Elapsed time".format(_pretty_execution_status(status))
+        "Status = {:<25}Elapsed time".format(_pretty_execution_status(status)),
         " = {}s".format(str(int(time() - start_time)).rjust(3)),
         end=line_end,
     )
