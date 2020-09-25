@@ -60,7 +60,7 @@ def wait_while_validating(
     timeout : float, optional
         Maximum time spent inquiring in seconds, by default 1800.0
     interval : float, optional
-        Inquity interval in seconds, by default 3.0
+        Inquiry interval in seconds, by default 3.0
 
     Returns
     -------
