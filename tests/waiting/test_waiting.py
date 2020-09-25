@@ -14,12 +14,15 @@ def test_wait_while_validating():
     collection = mock.Mock()
     module = mock.Mock()
     statuses = mock.PropertyMock(side_effect = ["VALIDATING", "VALID", "VALID"])
+    status_info = mock.PropertyMock(return_value = "The predictor is now validated.")
     type(module).status = statuses
+    type(module).status_info = status_info
     collection.get.return_value = module
 
-    wait_while_validating(collection, module)
+    wait_while_validating(collection, module, print_status_info=True)
 
-    assert("VALID" in captured_output.getvalue())
+    assert("Status = VALID" in captured_output.getvalue())
+    assert("The predictor is now validated." in captured_output.getvalue())
 
 def test_wait_while_validating_timeout():
     captured_output = io.StringIO()
