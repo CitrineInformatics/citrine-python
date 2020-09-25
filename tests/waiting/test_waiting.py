@@ -30,7 +30,7 @@ def test_wait_while_validating_timeout():
 
     collection = mock.Mock()
     module = mock.Mock()
-    statuses = mock.PropertyMock(side_effect = ["VALIDATING"] * 1000)
+    statuses = mock.PropertyMock(return_value = "VALIDATING")
     type(module).status = statuses
     collection.get.return_value = module
 
@@ -62,8 +62,8 @@ def test_while_executing_timeout():
 
     workflow_execution = mock.Mock()
     execution_status = mock.Mock()
-    statuses = mock.PropertyMock(side_effect = ["InProgress"]*1000)
-    in_progress = mock.PropertyMock(side_effect = [True]*1000)
+    statuses = mock.PropertyMock(return_value = "InProgress")
+    in_progress = mock.PropertyMock(return_value = True)
     type(execution_status).status = statuses
     type(execution_status).in_progress = in_progress
     workflow_execution.status.return_value = execution_status
