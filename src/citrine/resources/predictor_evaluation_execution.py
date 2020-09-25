@@ -71,8 +71,8 @@ class PredictorEvaluationExecution(Resource['PredictorEvaluationExecution']):
                     workflow_id=self.workflow_id,
                     execution_id=self.uid)
 
-    @lru_cache
-    def results(self, evaluator_name) -> PredictorEvaluationResult:
+    @lru_cache()
+    def results(self, evaluator_name: str) -> PredictorEvaluationResult:
         """
 
         Parameters
@@ -87,6 +87,15 @@ class PredictorEvaluationExecution(Resource['PredictorEvaluationExecution']):
         """
         params = {"evaluator_name": evaluator_name}
         return PredictorEvaluationResult.build(self.session.get_resource(self._path() + "/results", params=params))
+
+    def __getitem__(self, item):
+        if isinstance(item, str):
+            return self.results(item)
+        else:
+            raise TypeError("Results are accessed by string names")
+
+    def __iter__(self):
+        return iter(self.response_names)
 
 
 class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExecution"]):

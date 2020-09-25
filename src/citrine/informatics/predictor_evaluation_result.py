@@ -1,5 +1,4 @@
-from collections import Mapping, Set
-from typing import List, Optional, Type
+from typing import List, Optional, Type, Set, Mapping
 from uuid import UUID
 
 from citrine._serialization import properties
@@ -20,6 +19,8 @@ class MetricValue(PolymorphicSerializable["MetricValue"]):
         return {
             "RealMetricValue": RealMetricValue,
             "PredictedVsActualValue": PredictedVsActualValue,
+            "RealPredictedVsActual": RealPredictedVsActual,
+            "CategoricalPredictedVsActual": CategoricalPredictedVsActual
         }[data["type"]]
 
 
@@ -45,18 +46,12 @@ class RealMetricValue(Serializable["RealMetricValue"], MetricValue):
         self.standard_error = standard_error
 
 
-class PredictedVsActual(PolymorphicSerializable["PredictedVsActual"]):
+class PredictedVsActual(MetricValue):
     """[ALPHA] Predicted vs. actual data computed for a single data point.
 
     """
+    pass
 
-    @classmethod
-    def get_type(cls, data) -> Type[Serializable]:
-        """Return the subtype."""
-        return {
-            "RealPredictedVsActual": RealPredictedVsActual,
-            "CategoricalPredictedVsActual": CategoricalPredictedVsActual,
-        }[data["type"]]
 
 
 class RealPredictedVsActual(Serializable["RealPredictedVsActual"], PredictedVsActual):
@@ -178,6 +173,9 @@ class ResponseMetrics(Serializable["ResponseMetrics"]):
     def __init__(self, *, metrics: Mapping[str, MetricValue]):
         self.metrics = metrics
 
+    def __iter__(self):
+        return iter(self.metrics)
+
     def __getitem__(self, item):
         if isinstance(item, str):
             return self.metrics[item]
@@ -187,7 +185,7 @@ class ResponseMetrics(Serializable["ResponseMetrics"]):
             raise TypeError("Cannot index ResponseMetrics with a {}".format(type(item)))
 
 
-class PredictorEvaluationResult(PolymorphicSerializable["PredictorEvaluationResult"], metaclass=ABCMeta):
+class PredictorEvaluationResult(PolymorphicSerializable["PredictorEvaluationResult"]):
     """[ALPHA] A Citrine Predictor Evaluation Result represents a set of metrics
     computed by a Predictor Evaluator.
 
@@ -246,6 +244,9 @@ class CrossValidationResult(Serializable["CrossValidationResult"], PredictorEval
     def __getitem__(self, item):
         return self._response_results[item]
 
+    def __iter__(self):
+        return iter(self.responses)
+
     @property
     def evaluator(self) -> PredictorEvaluator:
         return self._evaluator
@@ -256,4 +257,4 @@ class CrossValidationResult(Serializable["CrossValidationResult"], PredictorEval
 
     @property
     def metrics(self) -> Set[PredictorEvaluationMetric]:
-        return self._evaluator.metrics()
+        return self._evaluator.metrics

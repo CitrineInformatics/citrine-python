@@ -2,9 +2,7 @@
 from typing import Type
 
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
-from citrine.informatics.workflows.design_workflow import DesignWorkflow
-from citrine.informatics.workflows.performance_workflow import PerformanceWorkflow
-from citrine.informatics.workflows.predictor_evaluation_workflow import PredictorEvaluationWorkflow
+
 
 __all__ = ['Workflow']
 
@@ -21,6 +19,9 @@ class Workflow(PolymorphicSerializable['Workflow']):
     @classmethod
     def get_type(cls, data) -> Type['Workflow']:
         """Return the subtype."""
+        from citrine.informatics.workflows.design_workflow import DesignWorkflow
+        from citrine.informatics.workflows.performance_workflow import PerformanceWorkflow
+        from citrine.informatics.workflows.predictor_evaluation_workflow import PredictorEvaluationWorkflow
         type_dict = {
             'DESIGN_WORKFLOW': DesignWorkflow,
             'PERFORMANCE_WORKFLOW': PerformanceWorkflow,
