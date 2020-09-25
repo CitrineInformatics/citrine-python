@@ -122,7 +122,9 @@ class GemTableCollection(Collection[GemTable]):
             for item in collection:
                 yield self.build(item)
 
-        return self._paginator.paginate(fetch_versions, build_versions, page, per_page)
+        return self._paginator.paginate(
+            # Don't deduplicate on uid since uids are shared between versions
+            fetch_versions, build_versions, page, per_page, deduplicate=False)
 
     def list_by_config(self,
                        table_config_uid: UUID,
@@ -154,7 +156,9 @@ class GemTableCollection(Collection[GemTable]):
             for item in collection:
                 yield self.build(item)
 
-        return self._paginator.paginate(fetch_versions, build_versions, page, per_page)
+        return self._paginator.paginate(
+            # Don't deduplicate on uid since uids are shared between versions
+            fetch_versions, build_versions, page, per_page, deduplicate=False)
 
     def initiate_build(self, config: Union[TableConfig, str, UUID],
                        version: Union[str, UUID] = None) -> JobSubmissionResponse:

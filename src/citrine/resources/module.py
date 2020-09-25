@@ -7,7 +7,7 @@ from citrine.informatics.modules import Module
 
 
 class ModuleCollection(Collection[Module]):
-    """[ALPHA] Represents the collection of all modules as well as the resources belonging to it.
+    """Represents the collection of all modules as well as the resources belonging to it.
 
     Parameters
     ----------

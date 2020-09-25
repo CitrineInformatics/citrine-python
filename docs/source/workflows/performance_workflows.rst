@@ -55,13 +55,6 @@ The following example demonstrates how to use the Python SDK to register a perfo
    # (i.e. why the workflow is valid/invalid)
    print(validated_workflow.status_info)
 
-Cross-validation can be performed on most predictors but will not produce results in the following scenarios:
-
-- Training data contain simple mixtures from an :class:`~citrine.informatics.data_sources.GemTableDataSource` *and* an :class:`~citrine.informatics.predictors.IngredientsToSimpleMixturePredictor` is included in the graph.
-- The graph includes a :class:`~citrine.informatics.predictors.SimpleMixturePredictor` or :class:`~citrine.informatics.predictors.GeneralizedMeanPropertyPredictor`.
-
-Both are known issues in experimental functionality and will be resolved in a future release.
-
 Execution and results
 ---------------------
 
@@ -80,7 +73,7 @@ For numeric responses, the available performance metrics are as follows:
     NDME is a useful non-dimensional model quality metric.
     A value of NDME = 0 is a perfect model.
     If NDME = 1, then the model is uninformative.
-    An acceptable NDE depends on how the model is used.
+    An acceptable NDME depends on how the model is used.
     Generally, NDME > 0.9 indicates a model with low accuracy.
     If 0.9 > NDME > 0.6, this model is typically a good candidate for a design workflow.
     Lower values of NDE indicate increasingly accurate models.

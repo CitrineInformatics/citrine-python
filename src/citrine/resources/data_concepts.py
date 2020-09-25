@@ -1,7 +1,8 @@
 """Top-level class for all data concepts objects and collections thereof."""
 from abc import abstractmethod, ABC
-from typing import TypeVar, Type, List, Union, Optional, Iterator, Iterable
+from typing import TypeVar, Type, List, Union, Optional, Iterator
 from uuid import UUID, uuid4
+import deprecation
 
 from citrine._rest.collection import Collection
 from citrine._serialization import properties
@@ -259,61 +260,25 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         data_concepts_object = self.get_type().build(data)
         return data_concepts_object
 
-    def _fetch_page(self, page: Optional[int] = None, per_page: Optional[int] = None):
-        """
-        List all visible elements of the collection.  Does not handle pagination.
-
-        Parameters
-        ----------
-        page: Optional[int]
-            The page of results to list, 1-indexed (i.e. the first page is page=1)
-        per_page: Optional[int]
-            The number of results to list per page
-
-        Returns
-        -------
-        List[ResourceType]
-            Every object in this collection.
-
-        """
-        return self.filter_by_tags([], page, per_page), ""
-
-    def _build_collection_elements(self,
-                                   collection: Iterable[dict]) -> Iterable[ResourceType]:
-        """
-        For each element in the collection, build the appropriate resource type.
-
-        Parameters
-        ---------
-        collection: Iterable[dict]
-            collection containing the elements to be built
-
-        Returns
-        -------
-        Iterable[ResourceType]
-            Resources in this collection.
-
-        """
-        return collection
-
     def list(self,
              page: Optional[int] = None,
              per_page: Optional[int] = 100) -> List[ResourceType]:
         """
         List all visible elements of the collection.
 
-        Leaving page and per_page as default values will return a list of all elements
-        in the collection, paginating over all available pages.
+        page and per_page parameters of this method are deprecated and ignored.
+        This method will will return a list of all elements in the collection.
 
         Parameters
         ---------
         page: int, optional
-            The "page" of results to list. Default is to read all pages and return
-            all results.  This option is deprecated.
+            [DEPRECATED][IGNORED] This parameter is ignored. To load individual
+            pages lazily, use the list_all method.
         per_page: int, optional
-            Max number of results to return per page.  This parameter is used when
-            making requests to the backend service.  If the page parameter is
-            specified it limits the maximum number of elements in the response.
+            Max number of results to return per page. It is very unlikely that
+            setting this parameter to something other than the default is useful.
+            It exists for rare situations where the client is bandwidth constrained
+            or experiencing latency from large payload sizes.
 
         Returns
         -------
@@ -322,7 +287,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
 
         """
         # Convert the iterator to a list to avoid breaking existing client relying on lists
-        return list(super().list(page=page, per_page=per_page))
+        return [x for x in self.list_all(per_page=per_page)]
 
     def register(self, model: ResourceType, dry_run=False):
         """
@@ -444,6 +409,8 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         data = self.session.get_resource(path)
         return self.build(data)
 
+    @deprecation.deprecated(details="filter_by_tags is deprecated due to poor "
+                                    "performance. Please use list_by_tag instead.")
     def filter_by_tags(self, tags: List[str],
                        page: Optional[int] = None, per_page: Optional[int] = None):
         """
@@ -483,6 +450,8 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
             params=params)
         return [self.build(content) for content in response["contents"]]
 
+    @deprecation.deprecated(details="filter_by_name is deprecated due to poor "
+                                    "performance. Please use list_by_name instead.")
     def filter_by_name(self, name: str, exact: bool = False,
                        page: Optional[int] = None, per_page: Optional[int] = None):
         """

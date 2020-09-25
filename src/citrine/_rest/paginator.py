@@ -1,5 +1,6 @@
 import warnings
 from typing import TypeVar, Generic, Callable, Optional, Iterable, Any, Tuple
+from uuid import uuid4
 
 ResourceType = TypeVar('ResourceType')
 
@@ -17,7 +18,8 @@ class Paginator(Generic[ResourceType]):
                  collection_builder: Callable[[Iterable[dict]], Iterable[ResourceType]],
                  page: Optional[int] = None,
                  per_page: int = 100,
-                 search_params: Optional[dict] = None) -> Iterable[ResourceType]:
+                 search_params: Optional[dict] = None,
+                 deduplicate: bool = True) -> Iterable[ResourceType]:
         """
         A generic support class to paginate requests into an iterable of a built object.
 
@@ -45,6 +47,9 @@ class Paginator(Generic[ResourceType]):
             page_fetcher function should have a key word argument "search_params" should it
             pass a request body to the target endpoint. If no search_params are supplied,
             no search_params argument will get passed to the page_fetcher function.
+        deduplicate: bool, optional
+            Whether or not to deduplicate the yielded resources by their uid.  The default
+            is true.
 
         Returns
         -------
@@ -62,6 +67,7 @@ class Paginator(Generic[ResourceType]):
 
         first_entity = None
         page_idx = page
+        uids = set()
 
         while True:
             subset_collection, next_uri = page_fetcher(page=page_idx, per_page=per_page,
@@ -80,7 +86,18 @@ class Paginator(Generic[ResourceType]):
                     # TODO: raise an exception once the APIs that ignore pagination are fixed
                     break
 
-                yield element
+                # Only return new uids.  This way, if an element shows up at the end of one page
+                # and then at the beginning of the next one because a new resource in the same
+                # collection was created, it is only returned from the list method once.  uids are
+                # unique, so this should be safe.  If a user is listing enough elements that the
+                # size of uids is too big, there will be other problems first. This could be
+                # replaced by a deque with a fixed size if memory is really an issue, at the cost
+                # of slower lookups.  Or something more complex for both :-)
+                # If no uid is available, create one, which will never deduplicate
+                uid = getattr(element, "uid", uuid4())
+                if not deduplicate or uid not in uids:
+                    uids.add(uid)
+                    yield element
 
                 if first_entity is None:
                     first_entity = current_entity

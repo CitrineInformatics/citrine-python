@@ -10,7 +10,7 @@ CreationType = TypeVar('CreationType', bound=Predictor)
 
 
 class PredictorCollection(Collection[Predictor]):
-    """[ALPHA] Represents the collection of all predictors for a project.
+    """Represents the collection of all predictors for a project.
 
     Parameters
     ----------
