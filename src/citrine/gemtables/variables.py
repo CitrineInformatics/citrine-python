@@ -410,6 +410,7 @@ class IngredientQuantityByProcessAndName(
     type_selector = properties.Enumeration(DataObjectTypeSelector, "type_selector")
     typ = properties.String('type', default="ing_quantity_by_process_and_name",
                             deserializable=False)
+    unit = properties.Optional(properties.String, "unit")
 
     def _attrs(self) -> List[str]:
         return ["name", "headers", "process_template", "ingredient_name", "quantity_dimension",
@@ -421,13 +422,15 @@ class IngredientQuantityByProcessAndName(
                  process_template: LinkByUID,
                  ingredient_name: str,
                  quantity_dimension: IngredientQuantityDimension,
-                 type_selector: DataObjectTypeSelector = DataObjectTypeSelector.PREFER_RUN):
+                 type_selector: DataObjectTypeSelector = DataObjectTypeSelector.PREFER_RUN,
+                 unit: str = None):
         self.name = name
         self.headers = headers
         self.process_template = process_template
         self.ingredient_name = ingredient_name
         self.quantity_dimension = quantity_dimension
         self.type_selector = type_selector
+        self.unit = unit
 
 
 class RootIdentifier(Serializable['RootIdentifier'], Variable):
