@@ -1,5 +1,4 @@
 from time import time, sleep
-from typing import Callable
 from pprint import pprint
 from citrine._rest.collection import Collection
 from citrine.resources.workflow_executions import (
@@ -9,7 +8,8 @@ from citrine.resources.workflow_executions import (
 
 
 class ConditionTimeoutError(RuntimeError):
-    """ Error that is raised when timeout is reached but the checked condition is still False"""
+    """Error that is raised when timeout is reached but the checked condition is still False."""
+
     pass
 
 
@@ -48,6 +48,7 @@ def wait_while_validating(
 ):
     """
     Wait until module is validated.
+
     Parameters
     ----------
     collection : Collection
@@ -70,8 +71,8 @@ def wait_while_validating(
     ------
     ConditionTimeoutError
         If fails to validate within timeout
-    """
 
+    """
     def is_validated():
         status = collection.get(module.uid).status
         _print_validation_status(status, start)
@@ -115,8 +116,8 @@ def wait_while_executing(
     ------
     ConditionTimeoutError
         If fails to finish execution within timeout
-    """
 
+    """
     def execution_is_finished():
         status = execution.status()
         _print_execution_status(status, start)
@@ -129,4 +130,3 @@ def wait_while_executing(
     if not execution_is_finished():
         msg = "Timeout reached, but condition is still {}".format(execution_is_finished())
         raise ConditionTimeoutError(msg)
-
