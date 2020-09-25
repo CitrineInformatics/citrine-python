@@ -66,4 +66,4 @@ def test_while_executing_timeout():
     workflow_execution.status.return_value = execution_status
 
     with pytest.raises(ConditionTimeoutError):
-        wait_while_executing(workflow_execution)
+        wait_while_executing(workflow_execution, timeout=1.0)
