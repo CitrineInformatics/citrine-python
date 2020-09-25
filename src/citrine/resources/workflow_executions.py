@@ -77,7 +77,8 @@ class WorkflowExecutionCollection(Collection[WorkflowExecution]):
     _collection_key = 'response'
     _resource = WorkflowExecution
 
-    def __init__(self, project_id: UUID, workflow_id: Optional[UUID], session: Optional[Session] = None):
+    def __init__(self, project_id: UUID, workflow_id: Optional[UUID],
+                 session: Optional[Session] = None):
         self.project_id: UUID = project_id
         self.workflow_id: Optional[UUID] = workflow_id
         self.session: Optional[Session] = session

@@ -74,6 +74,7 @@ class PredictorEvaluationExecution(Resource['PredictorEvaluationExecution']):
     @lru_cache()
     def results(self, evaluator_name: str) -> PredictorEvaluationResult:
         """
+        Get a specific evaluation result by the name of the evaluator that produced it.
 
         Parameters
         ----------
@@ -86,7 +87,8 @@ class PredictorEvaluationExecution(Resource['PredictorEvaluationExecution']):
 
         """
         params = {"evaluator_name": evaluator_name}
-        return PredictorEvaluationResult.build(self.session.get_resource(self._path() + "/results", params=params))
+        resource = self.session.get_resource(self._path() + "/results", params=params)
+        return PredictorEvaluationResult.build(resource)
 
     def __getitem__(self, item):
         if isinstance(item, str):
@@ -101,7 +103,7 @@ class PredictorEvaluationExecution(Resource['PredictorEvaluationExecution']):
 class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExecution"]):
     """[ALPHA] A collection of PredictorEvaluationExecutions."""
 
-    _path_template = '/projects/{project_id}/predictor-evaluation-workflows/{workflow_id}/executions'
+    _path_template = '/projects/{project_id}/predictor-evaluation-workflows/{workflow_id}/executions'  # noqa
     _individual_key = None
     _collection_key = 'response'
     _resource = PredictorEvaluationExecution

@@ -29,9 +29,8 @@ class PredictorEvaluationMetric(PolymorphicSerializable["PredictorEvaluationMetr
 
 
 class RMSE(Serializable["RMSE"], PredictorEvaluationMetric):
-    """[ALPHA] Root-mean-square error
+    """[ALPHA] Root-mean-square error."""
 
-    """
     typ = properties.String("type", default="RMSE", deserializable=False)
 
     def __repr__(self):
@@ -42,9 +41,8 @@ class RMSE(Serializable["RMSE"], PredictorEvaluationMetric):
 
 
 class NDME(Serializable["NDME"], PredictorEvaluationMetric):
-    """[ALPHA] Non-dimensional model error
+    """[ALPHA] Non-dimensional model error."""
 
-    """
     typ = properties.String("type", default="NDME", deserializable=False)
 
     def __repr__(self):
@@ -55,9 +53,8 @@ class NDME(Serializable["NDME"], PredictorEvaluationMetric):
 
 
 class StandardRMSE(Serializable["StandardRMSE"], PredictorEvaluationMetric):
-    """[ALPHA] Standardized root-mean-square error
+    """[ALPHA] Standardized root-mean-square error."""
 
-    """
     typ = properties.String("type", default="StandardRMSE", deserializable=False)
 
     def __repr__(self):
@@ -69,10 +66,11 @@ class StandardRMSE(Serializable["StandardRMSE"], PredictorEvaluationMetric):
 
 class PVA(Serializable["PVA"], PredictorEvaluationMetric):
     """[ALPHA] Predicted vs. actual data.
+
     Results are returned as a flattened list, where each item represents
     predicted vs. actual data for a single point.
-
     """
+
     typ = properties.String("type", default="PVA", deserializable=False)
 
     def __repr__(self):
@@ -83,9 +81,8 @@ class PVA(Serializable["PVA"], PredictorEvaluationMetric):
 
 
 class F1(Serializable["F1"], PredictorEvaluationMetric):
-    """[ALPHA] Support-weighted F1 score.
+    """[ALPHA] Support-weighted F1 score."""
 
-    """
     typ = properties.String("type", default="F1", deserializable=False)
 
     def __repr__(self):
@@ -96,9 +93,8 @@ class F1(Serializable["F1"], PredictorEvaluationMetric):
 
 
 class AreaUnderROC(Serializable["AreaUnderROC"], PredictorEvaluationMetric):
-    """[ALPHA] Area under the receiver operating characteristic (ROC) curve.
+    """[ALPHA] Area under the receiver operating characteristic (ROC) curve."""
 
-    """
     typ = properties.String("type", default="AreaUnderROC", deserializable=False)
 
     def __repr__(self):
@@ -109,8 +105,9 @@ class AreaUnderROC(Serializable["AreaUnderROC"], PredictorEvaluationMetric):
 
 
 class CoverageProbability(Serializable["CoverageProbability"], PredictorEvaluationMetric):
-    """[ALPHA] Fraction of observations for which the magnitude of the error is within a
-    confidence interval of a given coverage level.
+    """[ALPHA] Percentage of observations that fall within a given confidence interval.
+
+    The coverage level can be specified to 3 digits, e.g. 0.123 but not 0.1234.
 
     Parameters
     ----------
@@ -120,6 +117,7 @@ class CoverageProbability(Serializable["CoverageProbability"], PredictorEvaluati
         to 3 significant figures.
 
     """
+
     _level_str = properties.String("coverage_level")
     typ = properties.String("type", default="CoverageProbability", deserializable=False)
 
@@ -129,8 +127,9 @@ class CoverageProbability(Serializable["CoverageProbability"], PredictorEvaluati
                 _level_float = float(coverage_level)
             except ValueError:
                 raise ValueError(
-                    "Invalid coverage level string '{requested_level}'. Coverage level must represent "
-                    "a floating point number between 0 and 1 (non-inclusive).".format(
+                    "Invalid coverage level string '{requested_level}'. "
+                    "Coverage level must represent a floating point number between "
+                    "0 and 1 (non-inclusive).".format(
                         requested_level=coverage_level
                     ))
             if _level_float >= 1.0 or _level_float <= 0.0:
@@ -139,7 +138,8 @@ class CoverageProbability(Serializable["CoverageProbability"], PredictorEvaluati
             if len(coverage_level) > 5:
                 warn(
                     "Coverage level can only be specified to 3 decimal places."
-                    "Requested level '{requested_level}' will be rounded to {rounded_level}.".format(
+                    "Requested level '{requested_level}' will be rounded "
+                    "to {rounded_level}.".format(
                         requested_level=coverage_level,
                         rounded_level=_level_float
                     ))

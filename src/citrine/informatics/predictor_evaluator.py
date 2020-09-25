@@ -7,9 +7,7 @@ from citrine.informatics.predictor_evaluation_metrics import PredictorEvaluation
 
 
 class PredictorEvaluator(PolymorphicSerializable["PredictorEvaluator"]):
-    """[ALPHA] A Citrine Predictor Evaluator computes metrics on a predictor.
-
-    """
+    """[ALPHA] A Citrine Predictor Evaluator computes metrics on a predictor."""
 
     @classmethod
     def get_type(cls, data) -> Type[Serializable]:
@@ -41,7 +39,9 @@ class PredictorEvaluator(PolymorphicSerializable["PredictorEvaluator"]):
 
 
 class CrossValidationEvaluator(Serializable["CrossValidationEvaluator"], PredictorEvaluator):
-    """[ALPHA] Performs cross-validation on requested predictor responses and
+    """[ALPHA] Evaluate a predictor via cross validation.
+
+    Performs cross-validation on requested predictor responses and
     computes the requested metrics on each response.
 
     Parameters
@@ -65,12 +65,14 @@ class CrossValidationEvaluator(Serializable["CrossValidationEvaluator"], Predict
         for all other descriptors will be in the same group.
 
     """
+
     name = properties.String("name")
     description = properties.String("description")
     _responses = properties.Set(properties.String, "responses")
     n_folds = properties.Integer("n_folds")
     n_trials = properties.Integer("n_trials")
-    _metrics = properties.Optional(properties.Set(properties.Object(PredictorEvaluationMetric)), "metrics")
+    _metrics = properties.Optional(properties.Set(properties.Object(PredictorEvaluationMetric)),
+                                   "metrics")
     group_together = properties.Optional(properties.Set(properties.String), "group_together")
 
     def __init__(self, *,

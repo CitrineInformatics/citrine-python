@@ -9,9 +9,7 @@ from citrine.informatics.predictor_evaluator import PredictorEvaluator
 
 
 class MetricValue(PolymorphicSerializable["MetricValue"]):
-    """[ALPHA] Value associated with a metric computed during a Predictor Evaluation Workflow.
-
-    """
+    """[ALPHA] Value associated with a metric computed during a Predictor Evaluation Workflow."""
 
     @classmethod
     def get_type(cls, data) -> Type[Serializable]:
@@ -25,7 +23,7 @@ class MetricValue(PolymorphicSerializable["MetricValue"]):
 
 
 class RealMetricValue(Serializable["RealMetricValue"], MetricValue):
-    """[ALPHA] Mean and standard error computed for a real-valued metric
+    """[ALPHA] Mean and standard error computed for a real-valued metric.
 
     Parameters
     ----------
@@ -35,6 +33,7 @@ class RealMetricValue(Serializable["RealMetricValue"], MetricValue):
         Standard error of the mean
 
     """
+
     mean = properties.Float("mean")
     standard_error = properties.Optional(properties.Float(), "standard_error")
     typ = properties.String('type', default='RealMetricValue', deserializable=False)
@@ -47,15 +46,13 @@ class RealMetricValue(Serializable["RealMetricValue"], MetricValue):
 
 
 class PredictedVsActual(MetricValue):
-    """[ALPHA] Predicted vs. actual data computed for a single data point.
+    """[ALPHA] Predicted vs. actual data computed for a single data point."""
 
-    """
     pass
 
 
-
 class RealPredictedVsActual(Serializable["RealPredictedVsActual"], PredictedVsActual):
-    """ [ALPHA] Predicted vs. actual data for a single real-valued data point.
+    """[ALPHA] Predicted vs. actual data for a single real-valued data point.
 
     Parameters
     ----------
@@ -73,6 +70,7 @@ class RealPredictedVsActual(Serializable["RealPredictedVsActual"], PredictedVsAc
         Actual value
 
     """
+
     uuid = properties.UUID("uuid")
     identifiers = properties.Set(properties.String, "identifiers")
     trial = properties.Integer("trial")
@@ -96,8 +94,8 @@ class RealPredictedVsActual(Serializable["RealPredictedVsActual"], PredictedVsAc
         self.actual = actual
 
 
-class CategoricalPredictedVsActual(Serializable["CategoricalPredictedVsActual"], PredictedVsActual):
-    """ [ALPHA] Predicted vs. actual data for a single categorical data point.
+class CategoricalPredictedVsActual(Serializable["CategoricalPredictedVsActual"], PredictedVsActual):  # noqa
+    """[ALPHA] Predicted vs. actual data for a single categorical data point.
 
     Parameters
     ----------
@@ -117,6 +115,7 @@ class CategoricalPredictedVsActual(Serializable["CategoricalPredictedVsActual"],
         to its relative frequency
 
     """
+
     uuid = properties.UUID("uuid")
     identifiers = properties.Set(properties.String, "identifiers")
     trial = properties.Integer("trial")
@@ -150,6 +149,7 @@ class PredictedVsActualValue(Serializable["PredictedVsActualValue"], MetricValue
         This is a flattened list that contains data for all trials and folds.
 
     """
+
     value = properties.List(properties.Object(PredictedVsActual), "value")
     typ = properties.String('type', default='PredictedVsActualValue', deserializable=False)
 
@@ -159,7 +159,9 @@ class PredictedVsActualValue(Serializable["PredictedVsActualValue"], MetricValue
 
 class ResponseMetrics(Serializable["ResponseMetrics"]):
     """[ALPHA] Set of metrics computed by a Predictor Evaluator for a single response.
-    Results computed for a metric can be accessed by the metric's ``__repr__`` or by the metric itself.
+
+    Results computed for a metric can be accessed by the metric's ``__repr__`` or
+    by the metric itself.
 
     Parameters
     ----------
@@ -167,6 +169,7 @@ class ResponseMetrics(Serializable["ResponseMetrics"]):
         Metrics computed for a single response, keyed by the metric's ``__repr__``.
 
     """
+
     metrics = properties.Mapping(properties.String, properties.Object(MetricValue), "metrics")
     typ = properties.String('type', default='ResponseMetrics', deserializable=False)
 
@@ -186,9 +189,9 @@ class ResponseMetrics(Serializable["ResponseMetrics"]):
 
 
 class PredictorEvaluationResult(PolymorphicSerializable["PredictorEvaluationResult"]):
-    """[ALPHA] A Citrine Predictor Evaluation Result represents a set of metrics
-    computed by a Predictor Evaluator.
+    """[ALPHA] A Citrine Predictor Evaluation Result.
 
+    This class represents a set of metrics computed by a Predictor Evaluator.
     """
 
     @classmethod
@@ -231,8 +234,10 @@ class CrossValidationResult(Serializable["CrossValidationResult"], PredictorEval
         Map from response key to all metrics compute for that response.
 
     """
+
     _evaluator = properties.Object(PredictorEvaluator, "evaluator")
-    _response_results = properties.Mapping(properties.String, properties.Object(ResponseMetrics), "response_results")
+    _response_results = properties.Mapping(properties.String, properties.Object(ResponseMetrics),
+                                           "response_results")
     typ = properties.String('type', default='CrossValidationResult', deserializable=False)
 
     def __init__(self, *,
@@ -249,12 +254,15 @@ class CrossValidationResult(Serializable["CrossValidationResult"], PredictorEval
 
     @property
     def evaluator(self) -> PredictorEvaluator:
+        """Evaluator that produced this result."""
         return self._evaluator
 
     @property
     def responses(self) -> Set[str]:
+        """Responses for which results are present."""
         return set(self._response_results.keys())
 
     @property
     def metrics(self) -> Set[PredictorEvaluationMetric]:
+        """Metrics for which results are present."""
         return self._evaluator.metrics
