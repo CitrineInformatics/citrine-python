@@ -1,6 +1,7 @@
 from time import time, sleep
 from pprint import pprint
 from citrine._rest.collection import Collection
+from citrine.resources.module import Module
 from citrine.resources.workflow_executions import (
     WorkflowExecution,
     WorkflowExecutionStatus,
@@ -40,8 +41,8 @@ def _print_execution_status(
 
 
 def wait_while_validating(
-    collection: Collection,
-    module,
+    collection: Collection[Module],
+    module: Module,
     print_status_info: bool = False,
     timeout: float = 1800.0,
     interval: float = 3.0,
@@ -51,8 +52,8 @@ def wait_while_validating(
 
     Parameters
     ----------
-    collection : Collection
-        Type of Collection
+    collection : Collection[Module]
+        Collection containing module
     module : Module
         Module in Collection
     print_status_info : bool, optional
@@ -65,7 +66,7 @@ def wait_while_validating(
     Returns
     -------
     Module
-        Module from Collection
+        Module in Collection
 
     Raises
     ------
