@@ -4,7 +4,7 @@ import mock
 import io
 import sys
 
-from citrine.waiting.waiting import wait_while_executing, wait_while_validating, ConditionTimeoutError
+from citrine.async.waiting import wait_while_executing, wait_while_validating, ConditionTimeoutError
 
 def test_wait_while_validating():
 
