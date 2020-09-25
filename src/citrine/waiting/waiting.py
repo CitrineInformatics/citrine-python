@@ -10,7 +10,6 @@ from citrine.resources.workflow_executions import (
 
 class ConditionTimeoutError(RuntimeError):
     """ Error that is raised when timeout is reached but the checked condition is still False"""
-
     pass
 
 
@@ -125,7 +124,7 @@ def wait_while_executing(
 
     start = time()
 
-    while not execution_is_finished() and time() - start < timeout:
+    while not execution_is_finished() and (time() - start < timeout):
         sleep(interval)
     if not execution_is_finished():
         msg = "Timeout reached, but condition is still {}".format(execution_is_finished())
