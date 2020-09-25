@@ -1,5 +1,5 @@
 from math import isclose
-from typing import Type, Union
+from typing import Type, Union, List
 from warnings import warn
 
 from citrine._serialization import properties
@@ -12,6 +12,20 @@ class PredictorEvaluationMetric(PolymorphicSerializable["PredictorEvaluationMetr
 
     Abstract type that returns the proper type given a serialized dict.
     """
+
+    def _attrs(self) -> List[str]:
+        return ["typ"]
+
+    def __eq__(self, other):
+        try:
+            return all([
+                self.__getattribute__(key) == other.__getattribute__(key) for key in self._attrs()
+            ])
+        except AttributeError:
+            return False
+
+    def __init__(self):
+        pass
 
     @classmethod
     def get_type(cls, data) -> Type[Serializable]:
@@ -154,8 +168,13 @@ class CoverageProbability(Serializable["CoverageProbability"], PredictorEvaluati
                         requested_level=coverage_level,
                         rounded_level=_level_float
                     ))
+        else:
+            raise TypeError("Coverage level must be a string or float")
 
-        self._level_str = "{:5.3f}".format(coverage_level)
+        self._level_str = "{:5.3f}".format(_level_float)
+
+    def _attrs(self) -> List[str]:
+        return ["typ", "_level_str"]
 
     def __repr__(self):
         return "coverage_probability_{}".format(self._level_str)
