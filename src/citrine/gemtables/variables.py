@@ -399,6 +399,10 @@ class IngredientQuantityByProcessAndName(
         :class:`~citrine.gemtables.variables.IngredientQuantityDimension`
     type_selector: DataObjectTypeSelector
         strategy for selecting data object types to consider when matching, defaults to PREFER_RUN
+    unit: str
+        an optional unit: only ingredient quantities that are convertable to this unit will be
+        matched. note that this parameter is mandatory when quantity_dimension is
+        IngredientQuantityDimension.ABSOLUTE.
 
     """
 
@@ -423,7 +427,7 @@ class IngredientQuantityByProcessAndName(
                  ingredient_name: str,
                  quantity_dimension: IngredientQuantityDimension,
                  type_selector: DataObjectTypeSelector = DataObjectTypeSelector.PREFER_RUN,
-                 unit: str = None):
+                 unit: Optional[str] = None):
         self.name = name
         self.headers = headers
         self.process_template = process_template
