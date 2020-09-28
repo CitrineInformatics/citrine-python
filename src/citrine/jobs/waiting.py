@@ -1,7 +1,7 @@
 from time import time, sleep
 from pprint import pprint
 from citrine._rest.collection import Collection
-from citrine.resources.module import Module
+from citrine.informatics.modules import Module
 from citrine.resources.workflow_executions import (
     WorkflowExecution,
     WorkflowExecutionStatus,
