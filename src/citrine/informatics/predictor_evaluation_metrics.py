@@ -16,6 +16,9 @@ class PredictorEvaluationMetric(PolymorphicSerializable["PredictorEvaluationMetr
     def _attrs(self) -> List[str]:
         return ["typ"]
 
+    def __hash__(self):
+        return hash(self.__getattribute__("typ"))
+
     def __eq__(self, other):
         try:
             return all([
@@ -175,6 +178,9 @@ class CoverageProbability(Serializable["CoverageProbability"], PredictorEvaluati
 
     def _attrs(self) -> List[str]:
         return ["typ", "_level_str"]
+
+    def __hash__(self):
+        return hash(self.typ) + hash(self._level_str)
 
     def __repr__(self):
         return "coverage_probability_{}".format(self._level_str)

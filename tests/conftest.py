@@ -463,3 +463,107 @@ def valid_simple_mixture_predictor_data():
             training_data=[GemTableDataSource(uuid.uuid4(), 0, input_formulation).dump()]
         ),
     )
+
+
+@pytest.fixture()
+def example_evaluator_dict():
+    return {
+        "type": "CrossValidationEvaluator",
+        "name": "Example evaluator",
+        "description": "An evaluator for testing",
+        "responses": ["salt?", "saltiness"],
+        "n_folds": 6,
+        "n_trials": 8,
+        "metrics": [
+            {"type": "PVA"}, {"type": "RMSE"}, {"type": "F1"}
+        ],
+        "group_together": ["temperature"]
+    }
+
+
+@pytest.fixture()
+def example_rmse_metrics():
+    return {
+        "type": "RealMetricValue",
+        "mean": 0.4,
+        "standard_error": 0.12
+    }
+
+
+@pytest.fixture
+def example_f1_metrics():
+    return {
+        "type": "RealMetricValue",
+        "mean": 0.3
+    }
+
+
+@pytest.fixture
+def example_real_pva_metrics():
+    return {
+        "type": "PredictedVsActualValue",
+        "value": [
+            {
+                "type": "RealPredictedVsActual",
+                "uuid": "0ca80829-fd17-45fb-93c9-62ea4e4c294d",
+                "identifiers": ["Foo", "Bar"],
+                "trial": 1,
+                "fold": 3,
+                "predicted": {
+                    "type": "RealMetricValue",
+                    "mean": 1.0,
+                    "standard_error": 0.12
+                },
+                "actual": {
+                    "type": "RealMetricValue",
+                    "mean": 1.2,
+                    "standard_error": 0.0
+                }
+            }
+        ]
+    }
+
+
+@pytest.fixture
+def example_categorical_pva_metrics():
+    return {
+        "type": "PredictedVsActualValue",
+        "value": [
+            {
+                "type": "CategoricalPredictedVsActual",
+                "uuid": "0ca80829-fd17-45fb-93c9-62ea4e4c294d",
+                "identifiers": ["Foo", "Bar"],
+                "trial": 1,
+                "fold": 3,
+                "predicted": {
+                    "salt": 0.3,
+                    "not salt": 0.7
+                },
+                "actual": {
+                    "not salt": 1.0
+                }
+            }
+        ]
+    }
+
+
+@pytest.fixture()
+def example_result_dict(example_evaluator_dict, example_rmse_metrics, example_categorical_pva_metrics, example_f1_metrics, example_real_pva_metrics):
+    return {
+        "type": "CrossValidationResult",
+        "evaluator": example_evaluator_dict,
+        "response_results": {
+            "salt?": {
+                "metrics": {
+                    "predicted_vs_actual": example_categorical_pva_metrics,
+                    "f1": example_f1_metrics
+                }
+            },
+            "saltiness": {
+                "metrics": {
+                    "predicted_vs_actual": example_real_pva_metrics,
+                    "rmse": example_rmse_metrics
+                }
+            }
+        }
+    }
