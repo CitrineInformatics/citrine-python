@@ -48,7 +48,13 @@ class RealMetricValue(Serializable["RealMetricValue"], MetricValue):
 class PredictedVsActual(MetricValue):
     """[ALPHA] Predicted vs. actual data computed for a single data point."""
 
-    pass
+    @classmethod
+    def get_type(cls, data) -> Type[Serializable]:
+        """Return the subtype."""
+        return {
+            "RealPredictedVsActual": RealPredictedVsActual,
+            "CategoricalPredictedVsActual": CategoricalPredictedVsActual
+        }[data["type"]]
 
 
 class RealPredictedVsActual(Serializable["RealPredictedVsActual"], PredictedVsActual):
