@@ -39,6 +39,19 @@ class Predictor(Module):
     uid = _properties.Optional(_properties.UUID, 'id', serializable=False)
     name = _properties.String('config.name')
     description = _properties.Optional(_properties.String(), 'config.description')
+    status = _properties.Optional(_properties.String(), 'status', serializable=False)
+    status_info = _properties.Optional(
+        _properties.List(_properties.String()),
+        'status_info',
+        serializable=False
+    )
+    archived = _properties.Boolean('archived', default=False)
+    experimental = _properties.Boolean("experimental", serializable=False, default=True)
+    experimental_reasons = _properties.Optional(
+        _properties.List(_properties.String()),
+        'experimental_reasons',
+        serializable=False
+    )
 
     def post_build(self, project_id: UUID, data: dict):
         """Executes after a .build() is called in [[PredictorCollection]]."""
@@ -127,19 +140,6 @@ class SimpleMLPredictor(Serializable['SimplePredictor'], Predictor):
     latent_variables = _properties.List(_properties.Object(Descriptor), 'config.latent_variables')
     training_data = _properties.List(_properties.Object(DataSource), 'config.training_data')
     typ = _properties.String('config.type', default='Simple', deserializable=False)
-    status = _properties.Optional(_properties.String(), 'status', serializable=False)
-    status_info = _properties.Optional(
-        _properties.List(_properties.String()),
-        'status_info',
-        serializable=False
-    )
-    archived = _properties.Boolean('archived', default=False)
-    experimental = _properties.Boolean("experimental", serializable=False, default=True)
-    experimental_reasons = _properties.Optional(
-        _properties.List(_properties.String()),
-        'experimental_reasons',
-        serializable=False
-    )
 
     # NOTE: These could go here or in _post_dump - it's unclear which is better right now
     module_type = _properties.String('module_type', default='PREDICTOR')
@@ -201,18 +201,6 @@ class GraphPredictor(Serializable['GraphPredictor'], Predictor):
     # Graph predictors may not be embedded in other predictors, hence while status is optional
     # for deserializing most predictors, it is required for deserializing a graph
     status = _properties.String('status', serializable=False)
-    status_info = _properties.Optional(
-        _properties.List(_properties.String()),
-        'status_info',
-        serializable=False
-    )
-    experimental = _properties.Boolean("experimental", serializable=False, default=True)
-    experimental_reasons = _properties.Optional(
-        _properties.List(_properties.String()),
-        'experimental_reasons',
-        serializable=False
-    )
-    archived = _properties.Boolean('archived', default=False)
 
     # NOTE: These could go here or in _post_dump - it's unclear which is better right now
     module_type = _properties.String('module_type', default='PREDICTOR')
@@ -342,20 +330,6 @@ class DeprecatedExpressionPredictor(Serializable['DeprecatedExpressionPredictor'
     output = _properties.Object(RealDescriptor, 'config.output')
     aliases = _properties.Optional(_properties.Mapping(_properties.String, _properties.String), 'config.aliases')
     typ = _properties.String('config.type', default='Expression', deserializable=False)
-    status = _properties.Optional(_properties.String(), 'status', serializable=False)
-    status_info = _properties.Optional(
-        _properties.List(_properties.String()),
-        'status_info',
-        serializable=False
-    )
-    experimental = _properties.Boolean("experimental", serializable=False, default=True)
-    experimental_reasons = _properties.Optional(
-        _properties.List(_properties.String()),
-        'experimental_reasons',
-        serializable=False
-    )
-
-    archived = _properties.Boolean('archived', default=False)
 
     # NOTE: These could go here or in _post_dump - it's unclear which is better right now
     module_type = _properties.String('module_type', default='PREDICTOR')
@@ -417,19 +391,6 @@ class ExpressionPredictor(Serializable['ExpressionPredictor'], Predictor):
     output = _properties.Object(RealDescriptor, 'config.output')
     aliases = _properties.Mapping(_properties.String, _properties.Object(RealDescriptor), 'config.aliases')
     typ = _properties.String('config.type', default='AnalyticExpression', deserializable=False)
-    status = _properties.Optional(_properties.String(), 'status', serializable=False)
-    status_info = _properties.Optional(
-        _properties.List(_properties.String()),
-        'status_info',
-        serializable=False
-    )
-    experimental = _properties.Boolean("experimental", serializable=False, default=True)
-    experimental_reasons = _properties.Optional(
-        _properties.List(_properties.String()),
-        'experimental_reasons',
-        serializable=False
-    )
-    archived = _properties.Boolean('archived', default=False)
 
     # NOTE: These could go here or in _post_dump - it's unclear which is better right now
     module_type = _properties.String('module_type', default='PREDICTOR')
@@ -528,19 +489,6 @@ class MolecularStructureFeaturizer(Serializable['MolecularStructureFeaturizer'],
     features = _properties.List(_properties.String, 'config.features')
     excludes = _properties.List(_properties.String, 'config.excludes')
     typ = _properties.String('config.type', default='MoleculeFeaturizer', deserializable=False)
-    status = _properties.Optional(_properties.String, 'status', serializable=False)
-    status_info = _properties.Optional(
-        _properties.List(_properties.String),
-        'status_info',
-        serializable=False
-    )
-    archived = _properties.Boolean('archived', default=False)
-    experimental = _properties.Boolean("experimental", serializable=False, default=True)
-    experimental_reasons = _properties.Optional(
-        _properties.List(_properties.String()),
-        'experimental_reasons',
-        serializable=False
-    )
 
     # NOTE: These could go here or in _post_dump - it's unclear which is better right now
     module_type = _properties.String('module_type', default='PREDICTOR')
@@ -600,19 +548,6 @@ class IngredientsToSimpleMixturePredictor(
                                  'config.labels')
     typ = _properties.String('config.type', default='IngredientsToSimpleMixture',
                              deserializable=False)
-    status = _properties.Optional(_properties.String(), 'status', serializable=False)
-    status_info = _properties.Optional(
-        _properties.List(_properties.String()),
-        'status_info',
-        serializable=False
-    )
-    archived = _properties.Boolean('archived', default=False)
-    experimental = _properties.Boolean("experimental", serializable=False, default=True)
-    experimental_reasons = _properties.Optional(
-        _properties.List(_properties.String()),
-        'experimental_reasons',
-        serializable=False
-    )
 
     # NOTE: These could go here or in _post_dump - it's unclear which is better right now
     module_type = _properties.String('module_type', default='PREDICTOR')
@@ -696,19 +631,6 @@ class GeneralizedMeanPropertyPredictor(
     label = _properties.Optional(_properties.String, 'config.label')
     typ = _properties.String('config.type', default='GeneralizedMeanProperty',
                              deserializable=False)
-    status = _properties.Optional(_properties.String, 'status', serializable=False)
-    status_info = _properties.Optional(
-        _properties.List(_properties.String),
-        'status_info',
-        serializable=False
-    )
-    archived = _properties.Boolean('archived', default=False)
-    experimental = _properties.Boolean("experimental", serializable=False, default=True)
-    experimental_reasons = _properties.Optional(
-        _properties.List(_properties.String()),
-        'experimental_reasons',
-        serializable=False
-    )
 
     # NOTE: These could go here or in _post_dump - it's unclear which is better right now
     module_type = _properties.String('module_type', default='PREDICTOR')
@@ -777,17 +699,6 @@ class SimpleMixturePredictor(Serializable['SimpleMixturePredictor'], Predictor):
     training_data = _properties.List(_properties.Object(DataSource), 'config.training_data')
     typ = _properties.String('config.type', default='SimpleMixture',
                              deserializable=False)
-    status = _properties.Optional(_properties.String, 'status', serializable=False)
-    status_info = _properties.Optional(_properties.List(_properties.String),
-                                       'status_info',
-                                       serializable=False)
-    archived = _properties.Boolean('archived', default=False)
-    experimental = _properties.Boolean("experimental", serializable=False, default=True)
-    experimental_reasons = _properties.Optional(
-        _properties.List(_properties.String()),
-        'experimental_reasons',
-        serializable=False
-    )
 
     # NOTE: These could go here or in _post_dump - it's unclear which is better right now
     module_type = _properties.String('module_type', default='PREDICTOR')
@@ -839,19 +750,6 @@ class LabelFractionsPredictor(Serializable['LabelFractionsPredictor'], Predictor
     labels = _properties.List(_properties.String, 'config.labels')
     typ = _properties.String('config.type', default='LabelFractions',
                              deserializable=False)
-    status = _properties.Optional(_properties.String, 'status', serializable=False)
-    status_info = _properties.Optional(
-        _properties.List(_properties.String),
-        'status_info',
-        serializable=False
-    )
-    archived = _properties.Boolean('archived', default=False)
-    experimental = _properties.Boolean("experimental", serializable=False, default=True)
-    experimental_reasons = _properties.Optional(
-        _properties.List(_properties.String()),
-        'experimental_reasons',
-        serializable=False
-    )
 
     # NOTE: These could go here or in _post_dump - it's unclear which is better right now
     module_type = _properties.String('module_type', default='PREDICTOR')
@@ -905,19 +803,6 @@ class IngredientFractionsPredictor(Serializable["IngredientFractionsPredictor"],
     schema_id = _properties.UUID('schema_id', default=UUID('eb02a095-8cdc-45d8-bc82-1013b6e8e700'))
     typ = _properties.String('config.type', default='IngredientFractions',
                              deserializable=False)
-    status = _properties.Optional(_properties.String, 'status', serializable=False)
-    status_info = _properties.Optional(
-        _properties.List(_properties.String),
-        'status_info',
-        serializable=False
-    )
-    archived = _properties.Boolean('archived', default=False)
-    experimental = _properties.Boolean("experimental", serializable=False, default=True)
-    experimental_reasons = _properties.Optional(
-        _properties.List(_properties.String()),
-        'experimental_reasons',
-        serializable=False
-    )
 
     def __init__(self,
                  name: str,
