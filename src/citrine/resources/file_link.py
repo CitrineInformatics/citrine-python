@@ -47,8 +47,8 @@ class FileLink(Resource['FileLink'], GEMDFileLink):
 
     """
 
-    filename = String('filename')
-    url = String('url')
+    filename = String('filename', override=True)
+    url = String('url', override=True)
     typ = String('type')
 
     def __init__(self, filename: str, url: str):

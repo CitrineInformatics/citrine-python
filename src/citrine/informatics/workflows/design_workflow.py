@@ -43,7 +43,6 @@ class DesignWorkflow(Resource['DesignWorkflow'], Workflow):
         'experimental_reasons',
         serializable=False
     )
-    active = properties.Boolean('active', default=True)
     archived = properties.Boolean('archived', default=False)
     created_by = properties.Optional(properties.UUID, 'created_by', serializable=False)
     create_time = properties.Optional(properties.Datetime, 'create_time', serializable=False)

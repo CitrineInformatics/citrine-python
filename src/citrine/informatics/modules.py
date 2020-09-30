@@ -7,7 +7,7 @@ from citrine._serialization.serializable import Serializable
 
 
 class Module(PolymorphicSerializable['Module']):
-    """[ALPHA] A Citrine Module is a reusable computational tool used to construct a workflow.
+    """A Citrine Module is a reusable computational tool used to construct a workflow.
 
     Abstract type that returns the proper type given a serialized dict.
 
