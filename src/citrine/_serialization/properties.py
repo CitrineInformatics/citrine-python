@@ -25,12 +25,15 @@ class Property(typing.Generic[DeserializedType, SerializedType]):
                  serialization_path: typing.Optional[str] = None,
                  serializable: bool = True,
                  deserializable: bool = True,
-                 default: typing.Optional[DeserializedType] = None):
+                 default: typing.Optional[DeserializedType] = None,
+                 override: bool = False
+                 ):
         self.serialization_path = serialization_path
         self._key: str = '__' + str(uuid.uuid4())  # Make this object key human readable
         self.serializable: bool = serializable
         self.deserializable: bool = deserializable
         self.default: typing.Optional[DeserializedType] = default
+        self.override = override
 
     @property
     @abstractmethod
@@ -108,7 +111,7 @@ class Property(typing.Generic[DeserializedType, SerializedType]):
     def __get__(self, obj, objtype=None) -> DeserializedType:
         """Property getter, deferring to the getter of the parent class, if applicable."""
         base_class = _get_base_class(obj, self.serialization_path)
-        if base_class is not None:
+        if base_class is not None and self.override:
             return getattr(base_class, self.serialization_path).fget(obj)
         else:
             return getattr(obj, self._key, self.default)
@@ -122,7 +125,7 @@ class Property(typing.Generic[DeserializedType, SerializedType]):
             # if value is not an underlying type, set its deserialized version.
             value_to_set = self.deserialize(value, base_class=base_class)
 
-        if base_class is not None:
+        if base_class is not None and self.override:
             getattr(base_class, self.serialization_path).fset(obj, value_to_set)
         else:
             setattr(obj, self._key, value_to_set)
@@ -308,11 +311,13 @@ class List(Property[list, list]):
                  serialization_path: typing.Optional[str] = None,
                  serializable: bool = True,
                  deserializable: bool = True,
-                 default: typing.Optional[DeserializedType] = None):
+                 default: typing.Optional[DeserializedType] = None,
+                 override: bool = False):
         super().__init__(serialization_path,
                          serializable,
                          deserializable,
-                         default)
+                         default,
+                         override)
         self.element_type = element_type if isinstance(element_type, Property) else element_type()
 
     @property
@@ -343,11 +348,13 @@ class Set(Property[set, typing.Iterable]):
                  serialization_path: typing.Optional[str] = None,
                  serializable: bool = True,
                  deserializable: bool = True,
-                 default: typing.Optional[DeserializedType] = None):
+                 default: typing.Optional[DeserializedType] = None,
+                 override: bool = False):
         super().__init__(serialization_path,
                          serializable,
                          deserializable,
-                         default)
+                         default,
+                         override)
         self.element_type = element_type if isinstance(element_type, Property) else element_type()
 
     @property
@@ -383,11 +390,13 @@ class Union(Property[typing.Any, typing.Any]):
                  serialization_path: typing.Optional[str] = None,
                  serializable: bool = True,
                  deserializable: bool = True,
-                 default: typing.Optional[DeserializedType] = None):
+                 default: typing.Optional[DeserializedType] = None,
+                 override: bool = False):
         super().__init__(serialization_path,
                          serializable,
                          deserializable,
-                         default)
+                         default,
+                         override)
         if not isinstance(element_types, typing.Iterable):
             raise ValueError("element types must be iterable: {}".format(element_types))
         self.element_types: typing.List[Property, ...] = \
@@ -432,11 +441,13 @@ class SpecifiedMixedList(Property[list, list]):
                  serialization_path: typing.Optional[str] = None,
                  serializable: bool = True,
                  deserializable: bool = True,
-                 default: typing.Optional[DeserializedType] = None):
+                 default: typing.Optional[DeserializedType] = None,
+                 override: bool = False):
         super().__init__(serialization_path,
                          serializable,
                          deserializable,
-                         default)
+                         default,
+                         override)
         if not isinstance(element_types, list):
             raise ValueError("element types must be a list: {}".format(element_types))
         self.element_types: typing.List[Property, ...] = \
@@ -486,11 +497,13 @@ class Enumeration(Property[BaseEnumeration, str]):
                  serialization_path: typing.Optional[str] = None,
                  serializable: bool = True,
                  deserializable: bool = True,
-                 default: typing.Optional[DeserializedType] = None):
+                 default: typing.Optional[DeserializedType] = None,
+                 override: bool = False):
         super().__init__(serialization_path,
                          serializable,
                          deserializable,
-                         default)
+                         default,
+                         override)
         self.klass = klass
 
     @property
@@ -515,14 +528,23 @@ class Object(Property[typing.Any, dict]):
                  serialization_path: typing.Optional[str] = None,
                  serializable: bool = True,
                  deserializable: bool = True,
-                 default: typing.Optional[DeserializedType] = None):
+                 default: typing.Optional[DeserializedType] = None,
+                 override: bool = False):
         super().__init__(serialization_path,
                          serializable,
                          deserializable,
-                         default)
+                         default,
+                         override)
         self.klass = klass
         # We need to use __dict__ here because other access methods will invoke __get__
-        self.fields = {k: v for k, v in self.klass.__dict__.items() if isinstance(v, Property)}
+        # Start with the fields from the parent classes, overwritting with any newer classes
+        self.fields = {k: v
+                       for x in self.klass.__bases__
+                       for k, v in x.__dict__.items() if isinstance(v, Property)}
+        self.fields.update(
+            {k: v for k, v in self.klass.__dict__.items() if isinstance(v, Property)})
+        self.polymorphic = "get_type" in self.klass.__dict__ and\
+                           issubclass(self.klass, PolymorphicSerializable)
 
     @property
     def underlying_types(self):
@@ -533,9 +555,10 @@ class Object(Property[typing.Any, dict]):
         return dict
 
     def _deserialize(self, data: dict) -> typing.Any:
+        if self.polymorphic:
+            return self.klass.get_type(data).build(data)
         if not self.fields:
-            if issubclass(self.klass, PolymorphicSerializable):
-                return self.klass.get_type(data).build(data)
+            # Maybe there are no fields because we hit a gemd-python class
             if issubclass(self.klass, DictSerializable):
                 return DictSerializable.build(data)
             raise AttributeError("Tried to deserialize to {!r}, which has no fields and is not an"
@@ -550,10 +573,14 @@ class Object(Property[typing.Any, dict]):
 
     def _serialize(self, obj: typing.Any) -> dict:
         serialized = {}
+        if type(obj) != self.klass and isinstance(obj, Serializable):
+            # If the object class doesn't match this one, then it is a subclass
+            # that may have more fields, so defer to them by calling the dump method
+            # it must have as a Serializable
+            return obj.dump()
         if not self.fields:
             # There are two types of objects that we expect to not have fields.
-            # One is a PolymorphicSerializable, in which case obj is some Serializable instance
-            # of a child class, and has a dump() method.
+            # One is a PolymorphicSerializable, which is handled above.
             # The other possibility is that obj is a gemd object that is not reproduced in
             # citrine-python (attribute, value, bounds, etc.). These are all DictSerializable,
             # and have a dump() method that uses the gemd json encoder client.
@@ -595,8 +622,9 @@ class LinkOrElse(Property[typing.Union[Serializable, LinkByUID], dict]):
                  serialization_path: typing.Optional[str] = None,
                  serializable: bool = True,
                  deserializable: bool = True,
-                 default: typing.Optional[DeserializedType] = None):
-        super().__init__(serialization_path, serializable, deserializable, default)
+                 default: typing.Optional[DeserializedType] = None,
+                 override: bool = False):
+        super().__init__(serialization_path, serializable, deserializable, default, override)
 
     @property
     def underlying_types(self):
@@ -631,11 +659,14 @@ class Optional(Property[typing.Optional[typing.Any], typing.Optional[typing.Any]
                  serialization_path: typing.Optional[str] = None,
                  serializable: bool = True,
                  deserializable: bool = True,
-                 default: typing.Optional[DeserializedType] = None):
+                 default: typing.Optional[DeserializedType] = None,
+                 override: bool = False
+                 ):
         super().__init__(serialization_path,
                          serializable,
                          deserializable,
-                         default)
+                         default,
+                         override)
         self.prop = prop if isinstance(prop, Property) else prop()
 
     @property
@@ -671,11 +702,13 @@ class Mapping(Property[dict, dict]):
                  serialization_path: typing.Optional[str] = None,
                  serializable: bool = True,
                  deserializable: bool = True,
-                 default: typing.Optional[dict] = None):
+                 default: typing.Optional[dict] = None,
+                 override: bool = False):
         super().__init__(serialization_path,
                          serializable,
                          deserializable,
-                         default)
+                         default,
+                         override)
         self.keys_type = keys_type if isinstance(keys_type, Property) else keys_type()
         self.values_type = values_type if isinstance(values_type, Property) else values_type()
 
