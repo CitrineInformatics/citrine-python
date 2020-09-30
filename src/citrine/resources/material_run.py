@@ -63,14 +63,14 @@ class MaterialRun(ObjectRun, Resource['MaterialRun'], GEMDMaterialRun):
 
     _response_key = GEMDMaterialRun.typ  # 'material_run'
 
-    name = String('name')
-    uids = Mapping(String('scope'), String('id'), 'uids')
-    tags = PropertyOptional(PropertyList(String()), 'tags')
-    notes = PropertyOptional(String(), 'notes')
-    process = PropertyOptional(LinkOrElse(), 'process')
-    sample_type = String('sample_type')
-    spec = PropertyOptional(LinkOrElse(), 'spec')
-    file_links = PropertyOptional(PropertyList(Object(FileLink)), 'file_links')
+    name = String('name', override=True)
+    uids = Mapping(String('scope'), String('id'), 'uids', override=True)
+    tags = PropertyOptional(PropertyList(String()), 'tags', override=True)
+    notes = PropertyOptional(String(), 'notes', override=True)
+    process = PropertyOptional(LinkOrElse(), 'process', override=True)
+    sample_type = String('sample_type', override=True)
+    spec = PropertyOptional(LinkOrElse(), 'spec', override=True)
+    file_links = PropertyOptional(PropertyList(Object(FileLink)), 'file_links', override=True)
     typ = String('type')
 
     def __init__(self,
