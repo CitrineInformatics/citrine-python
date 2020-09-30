@@ -44,6 +44,12 @@ class RealMetricValue(Serializable["RealMetricValue"], MetricValue):
         self.mean = mean
         self.standard_error = standard_error
 
+    def __eq__(self, other):
+        if isinstance(other, RealMetricValue):
+            return self.mean == other.mean and self.standard_error == other.standard_error
+        else:
+            return False
+
 
 class PredictedVsActual(MetricValue):
     """[ALPHA] Predicted vs. actual data computed for a single data point."""
@@ -161,6 +167,12 @@ class PredictedVsActualValue(Serializable["PredictedVsActualValue"], MetricValue
 
     def __init__(self, value: List[PredictedVsActual]):
         self.value = value
+
+    def __iter__(self):
+        return iter(self.value)
+
+    def __getitem__(self, item: int):
+        return self.value[item]
 
 
 class ResponseMetrics(Serializable["ResponseMetrics"]):

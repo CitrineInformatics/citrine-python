@@ -1,4 +1,4 @@
-from typing import Optional, Set, Type
+from typing import Optional, Set, Type, List
 
 from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
@@ -15,6 +15,17 @@ class PredictorEvaluator(PolymorphicSerializable["PredictorEvaluator"]):
         return {
             "CrossValidationEvaluator": CrossValidationEvaluator,
         }[data["type"]]
+
+    def _attrs(self) -> List[str]:
+        return ["typ"]
+
+    def __eq__(self, other):
+        try:
+            return all([
+                self.__getattribute__(key) == other.__getattribute__(key) for key in self._attrs()
+            ])
+        except AttributeError:
+            return False
 
     @property
     def responses(self) -> Set[str]:
@@ -66,6 +77,10 @@ class CrossValidationEvaluator(Serializable["CrossValidationEvaluator"], Predict
 
     """
 
+    def _attrs(self) -> List[str]:
+        return ["typ", "name", "description",
+                "responses", "n_folds", "n_trials", "metrics", "group_together"]
+
     name = properties.String("name")
     description = properties.String("description")
     _responses = properties.Set(properties.String, "responses")
@@ -74,6 +89,7 @@ class CrossValidationEvaluator(Serializable["CrossValidationEvaluator"], Predict
     _metrics = properties.Optional(properties.Set(properties.Object(PredictorEvaluationMetric)),
                                    "metrics")
     group_together = properties.Optional(properties.Set(properties.String), "group_together")
+    typ = properties.String("type", default="CrossValidationEvaluator", deserializable=False)
 
     def __init__(self, *,
                  name: str,
