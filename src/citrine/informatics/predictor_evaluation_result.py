@@ -16,7 +16,6 @@ class MetricValue(PolymorphicSerializable["MetricValue"]):
         """Return the subtype."""
         return {
             "RealMetricValue": RealMetricValue,
-            "PredictedVsActualValue": PredictedVsActualValue,
             "RealPredictedVsActual": RealPredictedVsActual,
             "CategoricalPredictedVsActual": CategoricalPredictedVsActual
         }[data["type"]]
@@ -51,19 +50,7 @@ class RealMetricValue(Serializable["RealMetricValue"], MetricValue):
             return False
 
 
-class PredictedVsActual(MetricValue):
-    """[ALPHA] Predicted vs. actual data computed for a single data point."""
-
-    @classmethod
-    def get_type(cls, data) -> Type[Serializable]:
-        """Return the subtype."""
-        return {
-            "RealPredictedVsActual": RealPredictedVsActual,
-            "CategoricalPredictedVsActual": CategoricalPredictedVsActual
-        }[data["type"]]
-
-
-class RealPredictedVsActual(Serializable["RealPredictedVsActual"], PredictedVsActual):
+class PredictedVsActualRealPoint(Serializable["PredictedVsActualRealPoint"]):
     """[ALPHA] Predicted vs. actual data for a single real-valued data point.
 
     Parameters
@@ -89,7 +76,6 @@ class RealPredictedVsActual(Serializable["RealPredictedVsActual"], PredictedVsAc
     fold = properties.Integer("fold")
     predicted = properties.Object(RealMetricValue, "predicted")
     actual = properties.Object(RealMetricValue, "actual")
-    typ = properties.String('type', default='RealPredictedVsActual', deserializable=False)
 
     def __init__(self, *,
                  uuid: UUID,
@@ -106,7 +92,7 @@ class RealPredictedVsActual(Serializable["RealPredictedVsActual"], PredictedVsAc
         self.actual = actual
 
 
-class CategoricalPredictedVsActual(Serializable["CategoricalPredictedVsActual"], PredictedVsActual):  # noqa
+class PredictedVsActualCategoricalPoint(Serializable["PredictedVsActualCategoricalPoint"]):
     """[ALPHA] Predicted vs. actual data for a single categorical data point.
 
     Parameters
@@ -134,7 +120,6 @@ class CategoricalPredictedVsActual(Serializable["CategoricalPredictedVsActual"],
     fold = properties.Integer("fold")
     predicted = properties.Mapping(properties.String, properties.Float, "predicted")
     actual = properties.Mapping(properties.String, properties.Float, "actual")
-    typ = properties.String('type', default='CategoricalPredictedVsActual', deserializable=False)
 
     def __init__(self, *,
                  uuid: UUID,
@@ -151,21 +136,45 @@ class CategoricalPredictedVsActual(Serializable["CategoricalPredictedVsActual"],
         self.actual = actual
 
 
-class PredictedVsActualValue(Serializable["PredictedVsActualValue"], MetricValue):
+class CategoricalPredictedVsActual(Serializable["CategoricalPredictedVsActual"], MetricValue):
     """[ALPHA] List of predicted vs. actual data points.
 
     Parameters
     ----------
-    value: List[PredictedVsActual]
+    value: List[PredictedVsActualCategoricalPoint]
         List of predicted vs. actual data computed during a predictor evaluation.
         This is a flattened list that contains data for all trials and folds.
 
     """
 
-    value = properties.List(properties.Object(PredictedVsActual), "value")
-    typ = properties.String('type', default='PredictedVsActualValue', deserializable=False)
+    value = properties.List(properties.Object(PredictedVsActualCategoricalPoint), "value")
+    typ = properties.String('type', default='CategoricalPredictedVsActual', deserializable=False)
 
-    def __init__(self, value: List[PredictedVsActual]):
+    def __init__(self, value: List[PredictedVsActualCategoricalPoint]):
+        self.value = value
+
+    def __iter__(self):
+        return iter(self.value)
+
+    def __getitem__(self, item: int):
+        return self.value[item]
+
+
+class RealPredictedVsActual(Serializable["RealPredictedVsActual"], MetricValue):
+    """[ALPHA] List of predicted vs. actual data points.
+
+    Parameters
+    ----------
+    value: List[PredictedVsActualRealPoint]
+        List of predicted vs. actual data computed during a predictor evaluation.
+        This is a flattened list that contains data for all trials and folds.
+
+    """
+
+    value = properties.List(properties.Object(PredictedVsActualRealPoint), "value")
+    typ = properties.String('type', default='RealPredictedVsActual', deserializable=False)
+
+    def __init__(self, value: List[PredictedVsActualRealPoint]):
         self.value = value
 
     def __iter__(self):
@@ -189,7 +198,6 @@ class ResponseMetrics(Serializable["ResponseMetrics"]):
     """
 
     metrics = properties.Mapping(properties.String, properties.Object(MetricValue), "metrics")
-    typ = properties.String('type', default='ResponseMetrics', deserializable=False)
 
     def __init__(self, *, metrics: Mapping[str, MetricValue]):
         self.metrics = metrics

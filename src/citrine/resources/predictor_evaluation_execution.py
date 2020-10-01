@@ -1,6 +1,6 @@
 """Resources that represent both individual and collections of workflow executions."""
-from functools import lru_cache
-from typing import Optional, Set
+from functools import lru_cache, partial
+from typing import Optional, Set, Iterable
 from uuid import UUID
 
 from citrine._rest.collection import Collection
@@ -65,8 +65,7 @@ class PredictorEvaluationExecution(Resource['PredictorEvaluationExecution']):
         return '<PredictorEvaluationExecution {!r}>'.format(str(self.uid))
 
     def _path(self):
-        return '/projects/{project_id}/predictor-evaluation-workflows/{workflow_id}' \
-               '/executions/{execution_id}'\
+        return '/projects/{project_id}/predictor-evaluation-executions/{execution_id}' \
             .format(project_id=self.project_id,
                     workflow_id=self.workflow_id,
                     execution_id=self.uid)
@@ -103,7 +102,7 @@ class PredictorEvaluationExecution(Resource['PredictorEvaluationExecution']):
 class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExecution"]):
     """[ALPHA] A collection of PredictorEvaluationExecutions."""
 
-    _path_template = '/projects/{project_id}/predictor-evaluation-workflows/{workflow_id}/executions'  # noqa
+    _path_template = '/projects/{project_id}/predictor-evaluation-executions'  # noqa
     _individual_key = None
     _collection_key = 'response'
     _resource = PredictorEvaluationExecution
@@ -125,3 +124,49 @@ class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExec
         if self.workflow_id is not None:
             execution.workflow_id = self.workflow_id
         return execution
+
+    def register(self, model: PredictorEvaluationExecution) -> PredictorEvaluationExecution:
+        raise NotImplementedError("Cannot register a PredictorEvaluationExecution.")
+
+    def update(self, model: PredictorEvaluationExecution) -> PredictorEvaluationExecution:
+        raise NotImplementedError("Cannot update a PredictorEvaluationExecution.")
+
+    def list(self,
+             page: Optional[int] = None,
+             per_page: int = 100,
+             predictor_id: Optional[UUID] = None
+             ) -> Iterable[PredictorEvaluationExecution]:
+        """
+        Paginate over the elements of the collection.
+
+        Leaving page and per_page as default values will yield all elements in the
+        collection, paginating over all available pages.
+
+        Parameters
+        ---------
+        page: int, optional
+            The "page" of results to list. Default is to read all pages and yield
+            all results.  This option is deprecated.
+        per_page: int, optional
+            Max number of results to return per page. Default is 100.  This parameter
+            is used when making requests to the backend service.  If the page parameter
+            is specified it limits the maximum number of elements in the response.
+        predictor_id: uuid, optional
+            list executions that targeted the predictor with this id
+
+        Returns
+        -------
+        Iterable[ResourceType]
+            Resources in this collection.
+
+        """
+        params = {}
+        if predictor_id is not None:
+            params["predictor_id"] = predictor_id
+        if self.workflow_id is not None:
+            params["workflow_id"] = predictor_id
+
+        return self._paginator.paginate(page_fetcher=partial(self._fetch_page, json_body=params),
+                                        collection_builder=self._build_collection_elements,
+                                        page=page,
+                                        per_page=per_page)
