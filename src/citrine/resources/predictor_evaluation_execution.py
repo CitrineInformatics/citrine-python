@@ -7,6 +7,7 @@ from citrine._rest.collection import Collection
 from citrine._rest.resource import Resource
 from citrine._serialization import properties
 from citrine._session import Session
+from citrine.informatics.modules import ModuleRef
 from citrine.informatics.predictor_evaluation_result import PredictorEvaluationResult
 
 
@@ -29,6 +30,7 @@ class PredictorEvaluationExecution(Resource['PredictorEvaluationExecution']):
     uid = properties.UUID('id', serializable=False)
     """UUID of the execution."""
 
+    evaluator_names = properties.List(properties.String, "evaluator_names", serializable=False)
     workflow_id = properties.UUID('workflow_id', serializable=False)
     predictor_id = properties.UUID('predictor_id', serializable=False)
     status = properties.Optional(properties.String(), 'status', serializable=False)
@@ -46,6 +48,7 @@ class PredictorEvaluationExecution(Resource['PredictorEvaluationExecution']):
 
     def __init__(self):
         self.project_id: Optional[UUID] = None
+        self.session: Optional[Session] = None
 
     def __str__(self):
         return '<PredictorEvaluationExecution {!r}>'.format(str(self.uid))
@@ -108,6 +111,13 @@ class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExec
         execution.session = self.session
         execution.project_id = self.project_id
         return execution
+
+    def trigger(self, predictor_id: UUID):
+        """Trigger a predictor evaluation execution against a predictor, by id."""
+        path = '/projects/{project_id}/predictor-evaluation-workflows/{workflow_id}/executions'
+        data = self.session.post_resource(path, ModuleRef(str(predictor_id)).dump())
+        self._check_experimental(data)
+        return self.build(data)
 
     def register(self, model: PredictorEvaluationExecution) -> PredictorEvaluationExecution:
         """Cannot register an execution."""
