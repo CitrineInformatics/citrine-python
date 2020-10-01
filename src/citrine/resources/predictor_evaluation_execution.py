@@ -1,6 +1,6 @@
 """Resources that represent both individual and collections of workflow executions."""
 from functools import lru_cache, partial
-from typing import Optional, Set, Iterable
+from typing import Optional, Iterable
 from uuid import UUID
 
 from citrine._rest.collection import Collection
@@ -24,11 +24,13 @@ class PredictorEvaluationExecution(Resource['PredictorEvaluationExecution']):
 
     """
 
-    _response_key = 'WorkflowExecutions'
+    _response_key = None
 
-    uid = properties.UUID('id')
-    project_id = properties.UUID('project_id', deserializable=False)
-    workflow_id = properties.UUID('workflow_id', deserializable=False)
+    uid = properties.UUID('id', serializable=False)
+    """UUID of the execution."""
+
+    workflow_id = properties.UUID('workflow_id', serializable=False)
+    predictor_id = properties.UUID('predictor_id', serializable=False)
     status = properties.Optional(properties.String(), 'status', serializable=False)
     status_info = properties.Optional(
         properties.List(properties.String()),
@@ -42,24 +44,8 @@ class PredictorEvaluationExecution(Resource['PredictorEvaluationExecution']):
         serializable=False
     )
 
-    def __init__(self, *,
-                 uid: Optional[str] = None,
-                 project_id: Optional[str] = None,
-                 workflow_id: Optional[str] = None,
-                 predictor_id: Optional[str] = None,
-                 metric_names: Optional[Set[str]] = None,
-                 response_names: Optional[Set[str]] = None,
-                 evaluator_names: Optional[Set[str]] = None,
-                 session: Optional[Session] = None,
-                 ):
-        self.uid: Optional[str] = uid
-        self.project_id: Optional[str] = project_id
-        self.workflow_id: Optional[str] = workflow_id
-        self.session: Session = session
-        self.predictor_id: Optional[str] = predictor_id
-        self.metric_names: Optional[Set[str]] = metric_names
-        self.response_names: Optional[Set[str]] = response_names
-        self.evaluator_names: Optional[Set[str]] = evaluator_names
+    def __init__(self):
+        self.project_id: Optional[UUID] = None
 
     def __str__(self):
         return '<PredictorEvaluationExecution {!r}>'.format(str(self.uid))
@@ -109,26 +95,26 @@ class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExec
 
     def __init__(self, *,
                  project_id: UUID,
+                 session: Session,
                  workflow_id: Optional[UUID] = None,
-                 session: Optional[Session] = None
                  ):
         self.project_id: UUID = project_id
+        self.session: Session = session
         self.workflow_id: Optional[UUID] = workflow_id
-        self.session: Optional[Session] = session
 
     def build(self, data: dict) -> PredictorEvaluationExecution:
         """Build an individual PredictorEvaluationExecution."""
         execution = PredictorEvaluationExecution.build(data)
         execution.session = self.session
         execution.project_id = self.project_id
-        if self.workflow_id is not None:
-            execution.workflow_id = self.workflow_id
         return execution
 
     def register(self, model: PredictorEvaluationExecution) -> PredictorEvaluationExecution:
+        """Cannot register an execution."""
         raise NotImplementedError("Cannot register a PredictorEvaluationExecution.")
 
     def update(self, model: PredictorEvaluationExecution) -> PredictorEvaluationExecution:
+        """Cannot update an execution."""
         raise NotImplementedError("Cannot update a PredictorEvaluationExecution.")
 
     def list(self,

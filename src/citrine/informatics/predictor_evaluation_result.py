@@ -1,5 +1,4 @@
-from typing import List, Optional, Type, Set, Mapping
-from uuid import UUID
+from typing import Type, Set
 
 from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
@@ -10,6 +9,10 @@ from citrine.informatics.predictor_evaluator import PredictorEvaluator
 
 class MetricValue(PolymorphicSerializable["MetricValue"]):
     """[ALPHA] Value associated with a metric computed during a Predictor Evaluation Workflow."""
+
+    def __init__(self):
+        """These are results, so they should be built rather than constructed."""
+        pass  # pragma: no cover
 
     @classmethod
     def get_type(cls, data) -> Type[Serializable]:
@@ -36,12 +39,6 @@ class RealMetricValue(Serializable["RealMetricValue"], MetricValue):
     mean = properties.Float("mean")
     standard_error = properties.Optional(properties.Float(), "standard_error")
     typ = properties.String('type', default='RealMetricValue', deserializable=False)
-
-    def __init__(self, *,
-                 mean: float,
-                 standard_error: Optional[float]):
-        self.mean = mean
-        self.standard_error = standard_error
 
     def __eq__(self, other):
         if isinstance(other, RealMetricValue):
@@ -77,19 +74,8 @@ class PredictedVsActualRealPoint(Serializable["PredictedVsActualRealPoint"]):
     predicted = properties.Object(RealMetricValue, "predicted")
     actual = properties.Object(RealMetricValue, "actual")
 
-    def __init__(self, *,
-                 uuid: UUID,
-                 identifiers: Set[str],
-                 trial: int,
-                 fold: int,
-                 predicted: RealMetricValue,
-                 actual: RealMetricValue):
-        self.uuid = uuid
-        self.identifiers = identifiers
-        self.trial = trial
-        self.fold = fold
-        self.predicted = predicted
-        self.actual = actual
+    def __init__(self):
+        pass  # pragma: no cover
 
 
 class PredictedVsActualCategoricalPoint(Serializable["PredictedVsActualCategoricalPoint"]):
@@ -121,19 +107,8 @@ class PredictedVsActualCategoricalPoint(Serializable["PredictedVsActualCategoric
     predicted = properties.Mapping(properties.String, properties.Float, "predicted")
     actual = properties.Mapping(properties.String, properties.Float, "actual")
 
-    def __init__(self, *,
-                 uuid: UUID,
-                 identifiers: Set[str],
-                 trial: int,
-                 fold: int,
-                 predicted: Mapping[str, float],
-                 actual: Mapping[str, float]):
-        self.uuid = uuid
-        self.identifiers = identifiers
-        self.trial = trial
-        self.fold = fold
-        self.predicted = predicted
-        self.actual = actual
+    def __init__(self):
+        pass  # pragma: no cover
 
 
 class CategoricalPredictedVsActual(Serializable["CategoricalPredictedVsActual"], MetricValue):
@@ -149,9 +124,6 @@ class CategoricalPredictedVsActual(Serializable["CategoricalPredictedVsActual"],
 
     value = properties.List(properties.Object(PredictedVsActualCategoricalPoint), "value")
     typ = properties.String('type', default='CategoricalPredictedVsActual', deserializable=False)
-
-    def __init__(self, value: List[PredictedVsActualCategoricalPoint]):
-        self.value = value
 
     def __iter__(self):
         return iter(self.value)
@@ -173,9 +145,6 @@ class RealPredictedVsActual(Serializable["RealPredictedVsActual"], MetricValue):
 
     value = properties.List(properties.Object(PredictedVsActualRealPoint), "value")
     typ = properties.String('type', default='RealPredictedVsActual', deserializable=False)
-
-    def __init__(self, value: List[PredictedVsActualRealPoint]):
-        self.value = value
 
     def __iter__(self):
         return iter(self.value)
@@ -199,8 +168,8 @@ class ResponseMetrics(Serializable["ResponseMetrics"]):
 
     metrics = properties.Mapping(properties.String, properties.Object(MetricValue), "metrics")
 
-    def __init__(self, *, metrics: Mapping[str, MetricValue]):
-        self.metrics = metrics
+    def __init__(self):
+        pass  # pragma: no cover
 
     def __iter__(self):
         return iter(self.metrics)
@@ -220,6 +189,9 @@ class PredictorEvaluationResult(PolymorphicSerializable["PredictorEvaluationResu
     This class represents a set of metrics computed by a Predictor Evaluator.
     """
 
+    def __init__(self):
+        pass  # pragma: no cover
+
     @classmethod
     def get_type(cls, data) -> Type[Serializable]:
         """Return the subtype."""
@@ -230,17 +202,17 @@ class PredictorEvaluationResult(PolymorphicSerializable["PredictorEvaluationResu
     @property
     def evaluator(self) -> PredictorEvaluator:
         """Evaluator that produced the result."""
-        raise NotImplementedError
+        raise NotImplementedError  # pragma: no cover
 
     @property
     def responses(self) -> Set[str]:
         """Predictor responses that were evaluated."""
-        raise NotImplementedError
+        raise NotImplementedError  # pragma: no cover
 
     @property
     def metrics(self) -> Set[PredictorEvaluationMetric]:
         """Metrics computed for predictor responses."""
-        raise NotImplementedError
+        raise NotImplementedError  # pragma: no cover
 
 
 class CrossValidationResult(Serializable["CrossValidationResult"], PredictorEvaluationResult):
@@ -265,12 +237,6 @@ class CrossValidationResult(Serializable["CrossValidationResult"], PredictorEval
     _response_results = properties.Mapping(properties.String, properties.Object(ResponseMetrics),
                                            "response_results")
     typ = properties.String('type', default='CrossValidationResult', deserializable=False)
-
-    def __init__(self, *,
-                 evaluator: PredictorEvaluator,
-                 response_results: Mapping[str, ResponseMetrics]):
-        self._evaluator = evaluator
-        self.response_results = response_results
 
     def __getitem__(self, item):
         return self._response_results[item]

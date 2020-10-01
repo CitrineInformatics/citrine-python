@@ -488,10 +488,9 @@ def example_f1_metrics():
 @pytest.fixture
 def example_real_pva_metrics():
     return {
-        "type": "PredictedVsActualValue",
+        "type": "RealPredictedVsActual",
         "value": [
             {
-                "type": "RealPredictedVsActual",
                 "uuid": "0ca80829-fd17-45fb-93c9-62ea4e4c294d",
                 "identifiers": ["Foo", "Bar"],
                 "trial": 1,
@@ -514,10 +513,9 @@ def example_real_pva_metrics():
 @pytest.fixture
 def example_categorical_pva_metrics():
     return {
-        "type": "PredictedVsActualValue",
+        "type": "CategoricalPredictedVsActual",
         "value": [
             {
-                "type": "CategoricalPredictedVsActual",
                 "uuid": "0ca80829-fd17-45fb-93c9-62ea4e4c294d",
                 "identifiers": ["Foo", "Bar"],
                 "trial": 1,

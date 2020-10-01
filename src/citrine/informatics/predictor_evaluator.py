@@ -17,7 +17,7 @@ class PredictorEvaluator(PolymorphicSerializable["PredictorEvaluator"]):
         }[data["type"]]
 
     def _attrs(self) -> List[str]:
-        return ["typ"]
+        raise NotImplementedError  # pragma: no cover
 
     def __eq__(self, other):
         try:
@@ -30,12 +30,12 @@ class PredictorEvaluator(PolymorphicSerializable["PredictorEvaluator"]):
     @property
     def responses(self) -> Set[str]:
         """Responses to compute metrics for."""
-        raise NotImplementedError
+        raise NotImplementedError  # pragma: no cover
 
     @property
     def metrics(self) -> Set[PredictorEvaluationMetric]:
         """Metrics to compute for each response."""
-        raise NotImplementedError
+        raise NotImplementedError  # pragma: no cover
 
     @property
     def name(self) -> str:
@@ -46,7 +46,7 @@ class PredictorEvaluator(PolymorphicSerializable["PredictorEvaluator"]):
         :class:`citrine.informatics.workflows.PredictorEvaluationWorkflow`.
         As such, the names of all evaluators within a single workflow must be unique.
         """
-        raise NotImplementedError
+        raise NotImplementedError  # pragma: no cover
 
 
 class CrossValidationEvaluator(Serializable["CrossValidationEvaluator"], PredictorEvaluator):

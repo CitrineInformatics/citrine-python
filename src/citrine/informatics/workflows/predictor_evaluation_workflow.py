@@ -56,16 +56,12 @@ class PredictorEvaluationWorkflow(Resource['PredictorEvaluationWorkflow'], Workf
     def __init__(self, *,
                  name: str,
                  description: str = "",
-                 evaluators: List[PredictorEvaluator],
-                 uid: Optional[UUID] = None,
-                 project_id: Optional[UUID] = None,
-                 session: Session = Session()):
+                 evaluators: List[PredictorEvaluator]):
         self.name: str = name
         self.description: str = description
         self.evaluators: List[PredictorEvaluator] = evaluators
-        self.project_id: Optional[UUID] = project_id
-        self.uid: Optional[UUID] = uid
-        self.session: Session = session
+        self.session: Optional[Session] = None
+        self.project_id: Optional[UUID] = None
 
     def __str__(self):
         return '<PredictorEvaluationWorkflow {!r}>'.format(self.name)
@@ -75,4 +71,5 @@ class PredictorEvaluationWorkflow(Resource['PredictorEvaluationWorkflow'], Workf
         """Return a resource representing all visible executions of this workflow."""
         if getattr(self, 'project_id', None) is None:
             raise AttributeError('Cannot initialize execution without project reference!')
-        return PredictorEvaluationExecutionCollection(self.project_id, self.uid, self.session)
+        return PredictorEvaluationExecutionCollection(
+            project_id=self.project_id, session=self.session, workflow_id=self.uid)
