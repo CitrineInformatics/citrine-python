@@ -141,7 +141,7 @@ class CoverageProbability(Serializable["CoverageProbability"], PredictorEvaluati
     def __init__(self, coverage_level: Union[str, float]):
         if isinstance(coverage_level, str):
             try:
-                _level_float = float(coverage_level)
+                raw_float = float(coverage_level)
             except ValueError:
                 raise ValueError(
                     "Invalid coverage level string '{requested_level}'. "
@@ -149,30 +149,22 @@ class CoverageProbability(Serializable["CoverageProbability"], PredictorEvaluati
                     "0 and 1 (non-inclusive).".format(
                         requested_level=coverage_level
                     ))
-            if _level_float >= 1.0 or _level_float <= 0.0:
-                raise ValueError("Coverage level must be between 0 and 1 (non-inclusive).")
-            _level_float = round(_level_float, 3)
-            if len(coverage_level) > 5:
-                warn(
-                    "Coverage level can only be specified to 3 decimal places."
-                    "Requested level '{requested_level}' will be rounded "
-                    "to {rounded_level}.".format(
-                        requested_level=coverage_level,
-                        rounded_level=_level_float
-                    ))
         elif isinstance(coverage_level, float):
-            if coverage_level >= 1.0 or coverage_level <= 0.0:
-                raise ValueError("Coverage level must be between 0 and 1 (non-inclusive).")
-            _level_float = round(coverage_level, 3)
-            if not isclose(coverage_level, _level_float):
-                warn(
-                    "Coverage level can only be specified to 3 decimal places."
-                    "Requested level {requested_level} will be rounded to {rounded_level}.".format(
-                        requested_level=coverage_level,
-                        rounded_level=_level_float
-                    ))
+            raw_float = coverage_level
         else:
             raise TypeError("Coverage level must be a string or float")
+
+        if raw_float >= 1.0 or raw_float <= 0.0:
+            raise ValueError("Coverage level must be between 0 and 1 (non-inclusive).")
+        _level_float = round(raw_float, 3)
+        if not isclose(_level_float, raw_float):
+            warn(
+                "Coverage level can only be specified to 3 decimal places."
+                "Requested level '{requested_level}' will be rounded "
+                "to {rounded_level}.".format(
+                    requested_level=coverage_level,
+                    rounded_level=_level_float
+                ))
 
         self._level_str = "{:5.3f}".format(_level_float)
 

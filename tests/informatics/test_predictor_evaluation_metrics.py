@@ -55,3 +55,6 @@ def test_coverage_levels():
 
     with pytest.raises(ValueError):
         CoverageProbability("68.2")
+
+    with pytest.warns(UserWarning):
+        CoverageProbability(".1111")
