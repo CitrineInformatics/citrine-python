@@ -100,8 +100,7 @@ class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExec
     def __init__(self, *,
                  project_id: UUID,
                  session: Session,
-                 workflow_id: Optional[UUID] = None,
-                 ):
+                 workflow_id: Optional[UUID] = None):
         self.project_id: UUID = project_id
         self.session: Session = session
         self.workflow_id: Optional[UUID] = workflow_id
