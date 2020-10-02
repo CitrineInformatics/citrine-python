@@ -552,3 +552,31 @@ def example_result_dict(example_evaluator_dict, example_rmse_metrics, example_ca
             }
         }
     }
+
+
+@pytest.fixture
+def generic_entity():
+    user = str(uuid.uuid4())
+    return {
+        "id": str(uuid.uuid4()),
+        "status": "INPROGRESS",
+        "status_description": "VALIDATING",
+        "status_info": ["System processing"],
+        "experimental": False,
+        "experimental_reasons": [],
+        "create_time": '2020-04-23T15:46:26Z',
+        "update_time": '2020-04-23T15:46:26Z',
+        "created_by": user,
+        "updated_by": user,
+    }
+
+
+@pytest.fixture
+def predictor_evaluation_execution_dict(generic_entity):
+    ret = generic_entity.copy()
+    ret.update({
+        "workflow_id": str(uuid.uuid4()),
+        "predictor_id": str(uuid.uuid4()),
+        "evaluator_names": ["Example evaluator"]
+    })
+    return ret

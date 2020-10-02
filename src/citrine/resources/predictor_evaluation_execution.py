@@ -47,8 +47,9 @@ class PredictorEvaluationExecution(Resource['PredictorEvaluationExecution']):
     )
 
     def __init__(self):
-        self.project_id: Optional[UUID] = None
-        self.session: Optional[Session] = None
+        """This shouldn't be called, but it defines members that are set elsewhere."""
+        self.project_id: Optional[UUID] = None  # pragma: no cover
+        self.session: Optional[Session] = None  # pragma: no cover
 
     def __str__(self):
         return '<PredictorEvaluationExecution {!r}>'.format(str(self.uid))
@@ -85,7 +86,7 @@ class PredictorEvaluationExecution(Resource['PredictorEvaluationExecution']):
             raise TypeError("Results are accessed by string names")
 
     def __iter__(self):
-        return iter(self.response_names)
+        return iter(self.evaluator_names)
 
 
 class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExecution"]):
@@ -114,7 +115,8 @@ class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExec
 
     def trigger(self, predictor_id: UUID):
         """Trigger a predictor evaluation execution against a predictor, by id."""
-        path = '/projects/{project_id}/predictor-evaluation-workflows/{workflow_id}/executions'
+        path = '/projects/{project_id}/predictor-evaluation-workflows/{workflow_id}/executions' \
+            .format(project_id=self.project_id, workflow_id=self.workflow_id)
         data = self.session.post_resource(path, ModuleRef(str(predictor_id)).dump())
         self._check_experimental(data)
         return self.build(data)

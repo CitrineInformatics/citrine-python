@@ -207,6 +207,14 @@ def test_workflows_get_project_id(project):
     assert project.uid == project.workflows.project_id
 
 
+def test_pe_workflows_get_project_id(project):
+    assert project.uid == project.predictor_evaluation_workflows.project_id
+
+
+def test_pe_executions_get_project_id(project):
+    assert project.uid == project.predictor_evaluation_executions.project_id
+
+
 def test_ara_definitions_get_project_id(project):
     assert project.uid == project.table_configs.project_id
 
