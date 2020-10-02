@@ -464,7 +464,7 @@ def example_evaluator_dict():
         "metrics": [
             {"type": "PVA"}, {"type": "RMSE"}, {"type": "F1"}
         ],
-        "group_together": ["temperature"]
+        "ignore_when_grouping": ["temperature"]
     }
 
 

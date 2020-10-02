@@ -16,8 +16,6 @@ class PredictorEvaluationWorkflow(Resource['PredictorEvaluationWorkflow'], Workf
 
     Parameters
     ----------
-    uid: str
-        Unique identifier of the predictor evaluation workflow
     name: str
         name of the predictor evaluation workflow
     description: str

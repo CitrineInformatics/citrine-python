@@ -70,7 +70,7 @@ class CrossValidationEvaluator(Serializable["CrossValidationEvaluator"], Predict
     metrics: Optional[Set[PredictorEvaluationMetric]]
         Optional set of metrics to compute for each response.
         Default is all metrics.
-    group_together: Optional[Set[str]]
+    ignore_when_grouping: Optional[Set[str]]
         Set of descriptor keys to group together.
         Candidates with different values for the given keys and identical values
         for all other descriptors will be in the same group.
@@ -79,7 +79,7 @@ class CrossValidationEvaluator(Serializable["CrossValidationEvaluator"], Predict
 
     def _attrs(self) -> List[str]:
         return ["typ", "name", "description",
-                "responses", "n_folds", "n_trials", "metrics", "group_together"]
+                "responses", "n_folds", "n_trials", "metrics", "ignore_when_grouping"]
 
     name = properties.String("name")
     description = properties.String("description")
@@ -88,7 +88,8 @@ class CrossValidationEvaluator(Serializable["CrossValidationEvaluator"], Predict
     n_trials = properties.Integer("n_trials")
     _metrics = properties.Optional(properties.Set(properties.Object(PredictorEvaluationMetric)),
                                    "metrics")
-    group_together = properties.Optional(properties.Set(properties.String), "group_together")
+    ignore_when_grouping = properties.Optional(properties.Set(properties.String),
+                                               "ignore_when_grouping")
     typ = properties.String("type", default="CrossValidationEvaluator", deserializable=False)
 
     def __init__(self, *,
@@ -98,14 +99,14 @@ class CrossValidationEvaluator(Serializable["CrossValidationEvaluator"], Predict
                  n_folds: int = 5,
                  n_trials: int = 3,
                  metrics: Optional[Set[PredictorEvaluationMetric]] = None,
-                 group_together: Optional[Set[str]] = None):
+                 ignore_when_grouping: Optional[Set[str]] = None):
         self.name: str = name
         self.description: str = description
         self._responses: Set[str] = responses
         self._metrics: Optional[Set[PredictorEvaluationMetric]] = metrics
         self.n_folds: int = n_folds
         self.n_trials: int = n_trials
-        self.group_together: Optional[Set[str]] = group_together
+        self.ignore_when_grouping: Optional[Set[str]] = ignore_when_grouping
 
     @property
     def responses(self) -> Set[str]:
