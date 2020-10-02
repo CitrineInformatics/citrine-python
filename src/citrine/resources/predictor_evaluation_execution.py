@@ -160,11 +160,12 @@ class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExec
         """
         params = {}
         if predictor_id is not None:
-            params["predictor_id"] = predictor_id
+            params["predictor_id"] = str(predictor_id)
         if self.workflow_id is not None:
-            params["workflow_id"] = predictor_id
+            params["workflow_id"] = str(self.workflow_id)
 
-        return self._paginator.paginate(page_fetcher=partial(self._fetch_page, json_body=params),
+        fetcher = partial(self._fetch_page, additional_params=params)
+        return self._paginator.paginate(page_fetcher=fetcher,
                                         collection_builder=self._build_collection_elements,
                                         page=page,
                                         per_page=per_page)

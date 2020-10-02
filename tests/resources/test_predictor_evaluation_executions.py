@@ -95,3 +95,17 @@ def test_trigger_workflow_execution(collection: PredictorEvaluationExecutionColl
         path=expected_path,
         json=ModuleRef(str(predictor_id)).dump()
     )
+
+
+def test_list(collection: PredictorEvaluationExecutionCollection, session):
+    session.set_response({"page": 2, "per_page": 4, "next": "foo", "response": []})
+    predictor_id = uuid.uuid4()
+    lst = list(collection.list(2, 4, predictor_id=predictor_id))
+    assert len(lst) == 0
+
+    expected_path = '/projects/{}/predictor-evaluation-executions'.format(collection.project_id)
+    assert session.last_call == FakeCall(
+        method='GET',
+        path=expected_path,
+        params={"page": 2, "per_page": 4, "predictor_id": str(predictor_id), "workflow_id": str(collection.workflow_id)}
+    )

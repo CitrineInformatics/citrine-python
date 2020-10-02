@@ -580,3 +580,14 @@ def predictor_evaluation_execution_dict(generic_entity):
         "evaluator_names": ["Example evaluator"]
     })
     return ret
+
+
+@pytest.fixture
+def predictor_evaluation_workflow_dict(generic_entity, example_evaluator_dict):
+    ret = generic_entity.copy()
+    ret.update({
+        "name": "Example PEW",
+        "description": "Example PEW for testing",
+        "evaluators": [example_evaluator_dict]
+    })
+    return ret
