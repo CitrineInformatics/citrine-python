@@ -19,7 +19,7 @@ class PredictorEvaluationWorkflowCollection(Collection[PredictorEvaluationWorkfl
 
     def build(self, data: dict) -> PredictorEvaluationWorkflow:
         """Build an individual PredictorEvaluationExecution."""
-        execution = PredictorEvaluationWorkflow.build(data)
-        execution.session = self.session
-        execution.project_id = self.project_id
-        return execution
+        workflow = PredictorEvaluationWorkflow.build(data)
+        workflow.session = self.session
+        workflow.project_id = self.project_id
+        return workflow
