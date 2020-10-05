@@ -204,7 +204,7 @@ This identifier can be used to get the status of the job via the ``get_job_statu
 The :class:`~citrine.resources.ara_job.JobStatusResponse` contains a ``status`` string describing the state of the job and an ``output`` map that contains the table id and version.
 
 The table id and version can be used to get a :class:`~citrine.resources.table.Table` resource that provides access the table.
-You can also use the :class:`~citrine.resources.ara_job.JobStatusResponse` to return the :class:`~citrine.resources.table.Table` resource directly with the ``get_by_build_job`` method.
+You can also use the :class:`~citrine.resources.job.JobStatusResponse` to return the :class:`~citrine.resources.gemtables.GemTable` resource directly with the ``get_by_build_job`` method.
 Just like the :class:`~citrine.resources.file_link.FileLink` resource, :class:`~citrine.resources.table.Table` does not literally contain the table but does expose a ``read`` method that will download it.
 
 Available Row Definitions
