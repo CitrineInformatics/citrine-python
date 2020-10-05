@@ -198,7 +198,7 @@ For example:
         # 4. Download the table
         project.tables.read(table, "./my_table.csv")
 
-The return type of the ``initiate_build`` method is a :class:`~citrine.resources.ara_job.JobSubmissionResponse` that contains a unique identifier for the submitted job.
+The return type of the ``initiate_build`` method is a :class:`~citrine.resources.job.JobSubmissionResponse` that contains a unique identifier for the submitted job.
 
 This identifier can be used to get the status of the job via the ``get_job_status`` method, which returns a :class:`~citrine.resources.ara_job.JobStatusResponse`.
 The :class:`~citrine.resources.ara_job.JobStatusResponse` contains a ``status`` string describing the state of the job and an ``output`` map that contains the table id and version.
