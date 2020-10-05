@@ -171,41 +171,30 @@ Registered Table Configs can be built into GEM Tables. For example:
    
 The above will build a table, wait for the build job to complete, and save the table locally.
    
-However, GEM Tables are sometimes large and time-consuming to build, so the build process can be performed asynchronously.
-The steps are:
-
-1. Submit a GEM Table Build Job
-2. Poll the Job Status until it is a ``Success`` or ``Failure``
-3. (If success) Get the built table resource
-4. (If success) Download the table
-
+However, GEM Tables are sometimes large and time-consuming to build, so the build process can be performed asynchronously with the ``initiate_build`` method.
 For example:
 
 .. code-block:: python
 
-    from time import sleep
-    # 1. Submit the GEM Table build job
     job = project.tables.initiate_build(table_config)
-    # 2. Poll the Job Status every second
-    while True:
-        status = project.table_configs.get_job_status(job.job_id)
-        if status.status in ['Success', 'Failure']:
-            break
-        sleep(1)
-    if status.status == 'Success':
-        # 3. Get the table resource as an object
-        table = project.tables.get_by_build_job(job)
-        # 4. Download the table
-        project.tables.read(table, "./my_table.csv")
 
 The return type of the ``initiate_build`` method is a :class:`~citrine.resources.job.JobSubmissionResponse` that contains a unique identifier for the submitted job.
 
 This identifier can be used to get the status of the job via the ``get_job_status`` method, which returns a :class:`~citrine.resources.ara_job.JobStatusResponse`.
 The :class:`~citrine.resources.ara_job.JobStatusResponse` contains a ``status`` string describing the state of the job and an ``output`` map that contains the table id and version.
-
 The table id and version can be used to get a :class:`~citrine.resources.table.Table` resource that provides access the table.
+
 You can also use the :class:`~citrine.resources.job.JobStatusResponse` to return the :class:`~citrine.resources.gemtables.GemTable` resource directly with the ``get_by_build_job`` method.
 Just like the :class:`~citrine.resources.file_link.FileLink` resource, :class:`~citrine.resources.table.Table` does not literally contain the table but does expose a ``read`` method that will download it.
+
+For example, once the above ``initiate_build`` method has completed:
+
+.. code-block:: python
+
+   # Get the table resource as an object
+   table = project.tables.get_by_build_job(job)
+   # Download the table
+   project.tables.read(table, "./my_table.csv")
 
 Available Row Definitions
 -------------------------
