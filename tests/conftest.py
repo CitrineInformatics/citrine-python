@@ -89,18 +89,23 @@ def valid_enumerated_design_space_data():
     )
 
 
+@pytest.fixture()
+def valid_gem_data_source_dict():
+    return {
+        "type": "hosted_table_data_source",
+        "table_id": 'e5c51369-8e71-4ec6-b027-1f92bdc14762',
+        "table_version": 2,
+        "formulation_descriptor": None
+    }
+
+
 @pytest.fixture
-def valid_simple_ml_predictor_data():
+def valid_simple_ml_predictor_data(valid_gem_data_source_dict):
     """Produce valid data used for tests."""
-    from citrine.informatics.data_sources import GemTableDataSource
     from citrine.informatics.descriptors import RealDescriptor
     x = RealDescriptor("x", 0, 100, "")
     y = RealDescriptor("y", 0, 100, "")
     z = RealDescriptor("z", 0, 100, "")
-    data_source = GemTableDataSource(
-        table_id=uuid.UUID('e5c51369-8e71-4ec6-b027-1f92bdc14762'),
-        table_version=2
-    )
     return dict(
         module_type='PREDICTOR',
         status='VALID',
@@ -116,7 +121,7 @@ def valid_simple_ml_predictor_data():
             inputs=[x.dump()],
             outputs=[z.dump()],
             latent_variables=[y.dump()],
-            training_data=[data_source.dump()]
+            training_data=[valid_gem_data_source_dict]
         )
     )
 
@@ -379,6 +384,19 @@ def valid_ingredient_fractions_predictor_data():
             ingredients=['Blue dye', 'Red dye']
         )
     )
+
+
+@pytest.fixture
+def valid_data_source_design_space_dict(valid_gem_data_source_dict):
+    return {
+        "status": "INPROGRESS",
+        "config": {
+            "type": "DataSourceDesignSpace",
+            "name": "Example valid data source design space",
+            "description": "Example valid data source design space based on a GEM Table Data Source.",
+            "data_source": valid_gem_data_source_dict
+        }
+    }
 
 
 @pytest.fixture
