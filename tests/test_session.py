@@ -187,9 +187,18 @@ def test_post_refreshes_token_when_denied(session: Session):
     assert datetime(2019, 3, 14) == session.access_token_expiration
 
 
-def test_delete_unauthorized_without_json(session: Session):
+# this test exists to provide 100% coverage for the legacy 401 status on Unauthorized responses
+def test_delete_unauthorized_without_json_legacy(session: Session):
     with requests_mock.Mocker() as m:
         m.delete('http://citrine-testing.fake/api/v1/bar/something', status_code=401)
+
+        with pytest.raises(Unauthorized):
+            session.delete_resource('/bar/something')
+
+
+def test_delete_unauthorized_without_json(session: Session):
+    with requests_mock.Mocker() as m:
+        m.delete('http://citrine-testing.fake/api/v1/bar/something', status_code=403)
 
         with pytest.raises(Unauthorized):
             session.delete_resource('/bar/something')
