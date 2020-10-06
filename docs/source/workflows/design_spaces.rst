@@ -1,7 +1,7 @@
 Design spaces
 =============
 
-A design space defines a set of materials that should be searched over when performing a material design.
+A design space defines a set of materials that should be searched over when performing a material design. Design Spaces must be registered to be used in a :doc:`design workflow <design_workflows>`.
 Currently, there are two design spaces:
 
 -  `ProductDesignSpace <#product-design-space>`__
@@ -79,6 +79,8 @@ Multiple :class:`~citrine.informatics.dimensions.EnumeratedDimension` and :class
         dimensions=[temp_dimension, speed_dimension]
     )
 
+    speed_and_temp_design_space = project.design_spaces.register(speed_and_temp)
+
 
 
 .. _enumerated-design-space:
@@ -123,3 +125,5 @@ As an example, an enumerated design space that represents points from a 2D Carte
      descriptors=descriptors,
      data=candidates
    )
+
+   registered_design_space = project.design_spaces.register(design_space)
