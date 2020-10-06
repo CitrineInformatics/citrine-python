@@ -180,8 +180,6 @@ For example:
 
 The return type of the ``initiate_build`` method is a :class:`~citrine.resources.job.JobSubmissionResponse` that contains a unique identifier for the submitted job.
 
-This identifier can be used to get the status of the job via the ``get_job_status`` method, which returns a :class:`~citrine.resources.ara_job.JobStatusResponse`.
-The :class:`~citrine.resources.ara_job.JobStatusResponse` contains a ``status`` string describing the state of the job and an ``output`` map that contains the table id and version.
 The table id and version can be used to get a :class:`~citrine.resources.table.Table` resource that provides access the table.
 
 You can also use the :class:`~citrine.resources.job.JobStatusResponse` to return the :class:`~citrine.resources.gemtables.GemTable` resource directly with the ``get_by_build_job`` method.
