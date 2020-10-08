@@ -131,14 +131,14 @@ class CoverageProbability(Serializable["CoverageProbability"], PredictorEvaluati
     coverage_level: Union[str, float]
         Confidence-interval coverage level.
         The coverage level must both be between 0 and 1.0 (non-inclusive) will be rounded
-        to 3 significant figures.
+        to 3 significant figures.  Default: 0.683 corresponds to one std. deviation
 
     """
 
     _level_str = properties.String("coverage_level")
     typ = properties.String("type", default="CoverageProbability", deserializable=False)
 
-    def __init__(self, coverage_level: Union[str, float]):
+    def __init__(self, coverage_level: Union[str, float] = "0.683"):
         if isinstance(coverage_level, str):
             try:
                 raw_float = float(coverage_level)
