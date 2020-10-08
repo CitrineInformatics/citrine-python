@@ -1,10 +1,12 @@
 from typing import Optional
 from uuid import UUID
+from warnings import warn
 
 from citrine._rest.resource import Resource
 from citrine._serialization import properties
 from citrine._session import Session
 from citrine.informatics.analysis_configuration import CrossValidationAnalysisConfiguration
+from citrine.informatics.workflows import PredictorEvaluationWorkflow
 from citrine.informatics.workflows.workflow import Workflow
 from citrine.resources.workflow_executions import WorkflowExecutionCollection
 
@@ -50,6 +52,8 @@ class PerformanceWorkflow(Resource['PerformanceWorkflow'], Workflow):
                  analysis: CrossValidationAnalysisConfiguration,
                  project_id: Optional[UUID] = None,
                  session: Session = Session()):
+        warn("{this_class} is deprecated. Please use {replacement} instead".format(
+            this_class=self.__class__.name, replacement=PredictorEvaluationWorkflow.__name__))
         self.name = name
         self.analysis = analysis
         self.project_id = project_id

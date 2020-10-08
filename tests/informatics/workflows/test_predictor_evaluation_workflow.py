@@ -1,6 +1,6 @@
 import pytest
 
-from citrine.informatics.predictor_evaluator import CrossValidationEvaluator
+from citrine.informatics.predictor_evaluator import CrossValidationEvaluator, PredictorEvaluator
 from citrine.informatics.workflows import PredictorEvaluationWorkflow
 
 
@@ -15,8 +15,11 @@ def pew():
     return pew
 
 
-def test_dump(pew):
-    assert pew.dump()["name"] == "Test"
+def test_round_robin(pew):
+    dumped = pew.dump()
+    assert dumped["name"] == "Test"
+    assert dumped["description"] == "TestWorkflow"
+    assert PredictorEvaluator.build(dumped["evaluators"][0]).name == pew.evaluators[0].name
 
 
 def test_print(pew):
