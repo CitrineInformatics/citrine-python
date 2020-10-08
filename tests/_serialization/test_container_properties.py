@@ -46,14 +46,14 @@ def test_mapping_property(key_type, value_type, key_value, value_value, key_seri
 @pytest.mark.parametrize('key_type,key_value,key_serialized', VALID_SERIALIZATIONS)
 @pytest.mark.parametrize('value_type,value_value,value_serialized', VALID_SERIALIZATIONS)
 def test_mapping_property_list_of_pairs(key_type, value_type, key_value, value_value, key_serialized, value_serialized):
-    prop = properties.Mapping(key_type, value_type, list_of_pairs = True)
+    prop = properties.Mapping(key_type, value_type, ser_as_list_of_pairs = True)
     value = {key_value: value_value}
     serialized = [(key_serialized, value_serialized),]
     assert prop.deserialize(serialized) == value
     assert prop.serialize(value) == serialized
 
 def test_mapping_property_list_of_pairs_multiple():
-    prop = properties.Mapping(properties.String, properties.Integer, list_of_pairs = True)
+    prop = properties.Mapping(properties.String, properties.Integer, ser_as_list_of_pairs = True)
     value = {'foo': 1, 'bar': 2}
     serialized = [('foo', 1), ('bar', 2)]
     assert prop.deserialize(serialized) == value
