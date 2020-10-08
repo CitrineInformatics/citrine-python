@@ -18,7 +18,7 @@ def metric(request):
 
 
 def test_deser_from_parent(metric):
-    # Serialize and deserialize the descriptors, making sure they are round-trip serializable
+    # Serialize and deserialize the metrics, making sure they are round-trip serializable
     data = metric[0].dump()
     deserialized = PredictorEvaluationMetric.build(data)
     assert deserialized != "foo"  # check eq on wrong type
@@ -32,7 +32,7 @@ def test_string_rep(metric):
 
 
 def test_to_json(metric):
-    """Make sure we can dump the descriptors to json"""
+    """Make sure we can dump the metrics to json"""
     json_str = json.dumps(metric[0].dump())
     deser = PredictorEvaluationMetric.build(json.loads(json_str))
     assert deser == metric[0]

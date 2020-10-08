@@ -112,7 +112,7 @@ class PredictedVsActualCategoricalPoint(Serializable["PredictedVsActualCategoric
 
 
 class CategoricalPredictedVsActual(Serializable["CategoricalPredictedVsActual"], MetricValue):
-    """[ALPHA] List of predicted vs. actual data points.
+    """[ALPHA] List of predicted vs. actual data points for a categorical value.
 
     Parameters
     ----------
@@ -133,7 +133,7 @@ class CategoricalPredictedVsActual(Serializable["CategoricalPredictedVsActual"],
 
 
 class RealPredictedVsActual(Serializable["RealPredictedVsActual"], MetricValue):
-    """[ALPHA] List of predicted vs. actual data points.
+    """[ALPHA] List of predicted vs. actual data points for a real value.
 
     Parameters
     ----------
