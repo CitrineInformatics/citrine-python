@@ -75,7 +75,6 @@ class Predictor(Module):
             "IngredientFractions": IngredientFractionsPredictor,
         }
         typ = type_dict.get(data['config']['type'])
-        print("Got type {}".format(typ))
 
         if typ is not None:
             return typ
