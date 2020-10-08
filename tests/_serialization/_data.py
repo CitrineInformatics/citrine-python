@@ -15,6 +15,18 @@ VALID_SERIALIZATIONS = [
 ]
 
 
+VALID_COERCED_SERIALIZATIONS = [
+    (properties.Integer, '5', 5, 5),
+    (properties.Float, 3, 3.0, 3.0),
+    # (properties.Raw, 1234, 1234),
+    # (properties.String, 'foo', 'foo'),
+    # (properties.Boolean, True, True),
+    # (properties.Boolean, False, False),
+    # (properties.UUID, uuid.UUID('284e6cec-dd05-4f8e-9a94-4abb298bde82'), '284e6cec-dd05-4f8e-9a94-4abb298bde82'),
+    # (properties.Datetime, arrow.get('2019-07-19T10:46:08+00:00').datetime, 1563533168000),
+]
+
+
 INVALID_DESERIALIZATION_TYPES = [
     (properties.Integer, object()),
     (properties.Float, object()),

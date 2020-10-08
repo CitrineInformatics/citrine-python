@@ -340,6 +340,21 @@ class List(Property[list, list]):
             serialized.append(self.element_type.serialize(element))
         return serialized
 
+    def __set__(self, obj, value: typing.Union[SerializedType, DeserializedType]):
+        """Property setter, deferring to the setter of the parent class, if applicable."""
+        base_class = _get_base_class(obj, self.serialization_path)
+        if issubclass(type(value), self.underlying_types):
+            value_to_set = value
+        else:
+            # if value is not an underlying type, set its deserialized version.
+            value_to_set = self.deserialize(value, base_class=base_class)
+
+        if base_class is not None and self.override:
+            getattr(base_class, self.serialization_path).fset(obj, value_to_set)
+        else:
+            setattr(obj, self._key, value_to_set)
+
+
 
 class Set(Property[set, typing.Iterable]):
 
