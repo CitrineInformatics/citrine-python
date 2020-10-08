@@ -52,3 +52,9 @@ def test_mapping_property_list_of_pairs(key_type, value_type, key_value, value_v
     assert prop.deserialize(serialized) == value
     assert prop.serialize(value) == serialized
 
+def test_mapping_property_list_of_pairs_multiple():
+    prop = properties.Mapping(properties.String, properties.Integer, list_of_pairs = True)
+    value = {'foo': 1, 'bar': 2}
+    serialized = [('foo', 1), ('bar', 2)]
+    assert prop.deserialize(serialized) == value
+    assert prop.serialize(value) == serialized

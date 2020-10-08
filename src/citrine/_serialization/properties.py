@@ -704,7 +704,7 @@ class Mapping(Property[dict, dict]):
                  deserializable: bool = True,
                  default: typing.Optional[dict] = None,
                  override: bool = False,
-                 list_of_pairs: bool = False):
+                 ser_as_list_of_pairs: bool = False):
         super().__init__(serialization_path,
                          serializable,
                          deserializable,
@@ -712,7 +712,7 @@ class Mapping(Property[dict, dict]):
                          override)
         self.keys_type = keys_type if isinstance(keys_type, Property) else keys_type()
         self.values_type = values_type if isinstance(values_type, Property) else values_type()
-        self.list_of_pairs = list_of_pairs
+        self.ser_as_list_of_pairs = ser_as_list_of_pairs
 
     @property
     def underlying_types(self):
@@ -720,7 +720,7 @@ class Mapping(Property[dict, dict]):
 
     @property
     def serialized_types(self):
-        if self.list_of_pairs:
+        if self.ser_as_list_of_pairs:
             return list
         else:
             return dict
@@ -728,7 +728,7 @@ class Mapping(Property[dict, dict]):
     def _deserialize(self, value: typing.Union[dict, list]) -> dict:
         deserialized = dict()
 
-        if type(value) == list:
+        if self.ser_as_list_of_pairs:
             for pair in value:
                 deserialized_key = self.keys_type.deserialize(pair[0])
                 deserialized_value = self.values_type.deserialize(pair[1])
@@ -741,8 +741,8 @@ class Mapping(Property[dict, dict]):
             deserialized[deserialized_key] = deserialized_value
         return deserialized
 
-    def _serialize(self, value: dict) -> dict:
-        if self.list_of_pairs:
+    def _serialize(self, value: dict) -> typing.Union[dict, list]:
+        if self.ser_as_list_of_pairs:
             serialized = []
             for key, value in value.items():
                 serialized_key = self.keys_type.serialize(key)
