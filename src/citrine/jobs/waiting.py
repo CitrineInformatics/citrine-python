@@ -46,7 +46,7 @@ def wait_while_validating(
     print_status_info: bool = False,
     timeout: float = 1800.0,
     interval: float = 3.0,
-):
+) -> Module:
     """
     Wait until module is validated.
 
@@ -66,7 +66,7 @@ def wait_while_validating(
     Returns
     -------
     Module
-        Module in Collection
+        Module in Collection after validation
 
     Raises
     ------
@@ -101,7 +101,7 @@ def wait_while_executing(
     interval: float = 3.0,
 ):
     """
-    Wait until execution is finished.
+    [ALPHA] Wait until execution is finished.
 
     Parameters
     ----------
@@ -131,3 +131,4 @@ def wait_while_executing(
     if not execution_is_finished():
         msg = "Timeout reached, but condition is still {}".format(execution_is_finished())
         raise ConditionTimeoutError(msg)
+    return execution
