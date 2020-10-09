@@ -50,7 +50,7 @@ def test_wait_while_executing():
     type(execution_status).in_progress = in_progress
     workflow_execution.status.return_value = execution_status
 
-    wait_while_executing(workflow_execution)
+    wait_while_executing(workflow_execution, print_status_info=True)
 
     assert("Finished" in captured_output.getvalue())
 
