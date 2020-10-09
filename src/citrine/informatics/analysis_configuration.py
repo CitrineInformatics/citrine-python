@@ -1,8 +1,10 @@
 """Settings for working Analysis workflows."""
 from typing import Optional, List
+from warnings import warn
 
 from citrine._serialization.serializable import Serializable
 from citrine._serialization import properties
+from citrine.informatics.predictor_evaluator import CrossValidationEvaluator
 
 
 class CrossValidationAnalysisConfiguration(Serializable['CrossValidationAnalysisConfiguration']):
@@ -65,6 +67,8 @@ class CrossValidationAnalysisConfiguration(Serializable['CrossValidationAnalysis
             group_by_keys: Optional[List[str]] = None,
             responses: Optional[List[str]] = None,
     ):
+        warn("{this_class} is deprecated. Please use {replacement} instead".format(
+            this_class=self.__class__.name, replacement=CrossValidationEvaluator.__name__))
         self.name = name
         self.description = description
         self.n_folds = n_folds

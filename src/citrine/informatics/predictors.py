@@ -37,6 +37,8 @@ class Predictor(Module):
 
     _response_key = None
     uid = _properties.Optional(_properties.UUID, 'id', serializable=False)
+    """UUID of the predictor, if it has been retrieved from the platform."""
+
     name = _properties.String('config.name')
     description = _properties.Optional(_properties.String(), 'config.description')
     status = _properties.Optional(_properties.String(), 'status', serializable=False)
