@@ -36,11 +36,11 @@ class ParameterTemplate(AttributeTemplate, Resource['ParameterTemplate'], GEMDPa
 
     _response_key = GEMDParameterTemplate.typ  # 'parameter_template'
 
-    name = String('name')
-    description = PropertyOptional(String(), 'description')
-    uids = Mapping(String('scope'), String('id'), 'uids')
-    tags = PropertyOptional(PropertyList(String()), 'tags')
-    bounds = Object(BaseBounds, 'bounds')
+    name = String('name', override=True)
+    description = PropertyOptional(String(), 'description', override=True)
+    uids = Mapping(String('scope'), String('id'), 'uids', override=True)
+    tags = PropertyOptional(PropertyList(String()), 'tags', override=True)
+    bounds = Object(BaseBounds, 'bounds', override=True)
     typ = String('type')
 
     def __init__(self,

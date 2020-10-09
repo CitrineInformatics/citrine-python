@@ -149,6 +149,9 @@ class Session(requests.Session):
             elif response.status_code == 401:
                 logger.error('%s %s %s', response.status_code, method, path)
                 raise Unauthorized(path, response)
+            elif response.status_code == 403:
+                logger.error('%s %s %s', response.status_code, method, path)
+                raise Unauthorized(path, response)
             elif response.status_code == 404:
                 logger.error('%s %s %s', response.status_code, method, path)
                 raise NotFound(path, response)
