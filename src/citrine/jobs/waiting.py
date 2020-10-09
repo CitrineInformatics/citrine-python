@@ -77,7 +77,7 @@ def wait_while_validating(
     def is_validated():
         status = collection.get(module.uid).status
         _print_validation_status(status, start)
-        return status != "VALIDATING"
+        return status != "VALIDATING" and status != "INPROGRESS"
 
     start = time()
 
@@ -97,9 +97,10 @@ def wait_while_validating(
 
 def wait_while_executing(
     execution: WorkflowExecution,
+    print_status_info: bool = False, 
     timeout: float = 1800.0,
     interval: float = 3.0,
-):
+) -> WorkflowExecution:
     """
     [ALPHA] Wait until execution is finished.
 
@@ -107,10 +108,17 @@ def wait_while_executing(
     ----------
     execution : WorkflowExecution
         WorklflowExecution to monitor
+    print_status_info : bool, optional
+        Whether to print status info, by default False
     timeout : float, optional
         Maximum time spent inquiring in seconds, by default 1800.0
     interval : float, optional
         Inquiry interval in seconds, by default 3.0
+
+    Returns
+    -------
+    WorkflowExecution
+        WorkflowExecution after execution
 
 
     Raises
@@ -121,7 +129,8 @@ def wait_while_executing(
     """
     def execution_is_finished():
         status = execution.status()
-        _print_execution_status(status, start)
+        if print_status_info:
+            _print_execution_status(status, start)
         return not execution.status().in_progress
 
     start = time()
