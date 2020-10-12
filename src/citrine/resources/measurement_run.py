@@ -57,17 +57,17 @@ class MeasurementRun(ObjectRun, Resource['MeasurementRun'], GEMDMeasurementRun):
 
     _response_key = GEMDMeasurementRun.typ  # 'measurement_run'
 
-    name = String('name')
-    uids = Mapping(String('scope'), String('id'), 'uids')
-    tags = PropertyOptional(PropertyList(String()), 'tags')
-    notes = PropertyOptional(String(), 'notes')
-    conditions = PropertyOptional(PropertyList(Object(Condition)), 'conditions')
-    parameters = PropertyOptional(PropertyList(Object(Parameter)), 'parameters')
-    properties = PropertyOptional(PropertyList(Object(Property)), 'properties')
-    spec = PropertyOptional(LinkOrElse(), 'spec')
-    material = PropertyOptional(LinkOrElse(), "material")
-    file_links = PropertyOptional(PropertyList(Object(FileLink)), 'file_links')
-    source = PropertyOptional(Object(PerformedSource), "source")
+    name = String('name', override=True)
+    uids = Mapping(String('scope'), String('id'), 'uids', override=True)
+    tags = PropertyOptional(PropertyList(String()), 'tags', override=True)
+    notes = PropertyOptional(String(), 'notes', override=True)
+    conditions = PropertyOptional(PropertyList(Object(Condition)), 'conditions', override=True)
+    parameters = PropertyOptional(PropertyList(Object(Parameter)), 'parameters', override=True)
+    properties = PropertyOptional(PropertyList(Object(Property)), 'properties', override=True)
+    spec = PropertyOptional(LinkOrElse(), 'spec', override=True)
+    material = PropertyOptional(LinkOrElse(), "material", override=True)
+    file_links = PropertyOptional(PropertyList(Object(FileLink)), 'file_links', override=True)
+    source = PropertyOptional(Object(PerformedSource), "source", override=True)
     typ = String('type')
 
     def __init__(self,

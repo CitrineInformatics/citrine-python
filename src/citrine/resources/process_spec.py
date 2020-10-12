@@ -58,14 +58,14 @@ class ProcessSpec(ObjectSpec, Resource['ProcessSpec'], GEMDProcessSpec):
 
     _response_key = GEMDProcessSpec.typ  # 'process_spec'
 
-    name = String('name')
-    uids = Mapping(String('scope'), String('id'), 'uids')
-    tags = PropertyOptional(PropertyList(String()), 'tags')
-    notes = PropertyOptional(String(), 'notes')
-    conditions = PropertyOptional(PropertyList(Object(Condition)), 'conditions')
-    parameters = PropertyOptional(PropertyList(Object(Parameter)), 'parameters')
-    template = PropertyOptional(LinkOrElse(), 'template')
-    file_links = PropertyOptional(PropertyList(Object(FileLink)), 'file_links')
+    name = String('name', override=True)
+    uids = Mapping(String('scope'), String('id'), 'uids', override=True)
+    tags = PropertyOptional(PropertyList(String()), 'tags', override=True)
+    notes = PropertyOptional(String(), 'notes', override=True)
+    conditions = PropertyOptional(PropertyList(Object(Condition)), 'conditions', override=True)
+    parameters = PropertyOptional(PropertyList(Object(Parameter)), 'parameters', override=True)
+    template = PropertyOptional(LinkOrElse(), 'template', override=True)
+    file_links = PropertyOptional(PropertyList(Object(FileLink)), 'file_links', override=True)
     typ = String('type')
 
     def __init__(self,
