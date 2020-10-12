@@ -74,13 +74,13 @@ def wait_while_validating(
         If fails to validate within timeout
 
     """
+    start = time()
+
     def is_validated():
         status = collection.get(module.uid).status
         if print_status_info:
             _print_validation_status(status, start)
         return status != "VALIDATING" and status != "INPROGRESS"
-
-    start = time()
 
     while not is_validated() and time() - start < timeout:
         sleep(interval)
@@ -128,13 +128,13 @@ def wait_while_executing(
         If fails to finish execution within timeout
 
     """
+    start = time()
+
     def execution_is_finished():
         status = execution.status()
         if print_status_info:
             _print_execution_status(status, start)
         return not execution.status().in_progress
-
-    start = time()
 
     while not execution_is_finished() and (time() - start < timeout):
         sleep(interval)
