@@ -132,7 +132,7 @@ def wait_while_executing(
         status = execution.status()
         if print_status_info:
             _print_execution_status(status, start)
-        return not execution.status().in_progress
+        return status.in_progress
 
     start = time()
 
