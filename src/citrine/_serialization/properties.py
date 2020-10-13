@@ -696,6 +696,14 @@ class Optional(Property[typing.Optional[typing.Any], typing.Optional[typing.Any]
 
 
 class Mapping(Property[dict, dict]):
+    """
+    Serialization is done by converting the map to a dict by default, serializing the
+    keys and the values.
+
+    If the optional parameter `ser_as_list_of_pairs` is set to True, serialization is done
+    by converting the map to a list of key value pairs. Deserialization expects a list of
+    key value pairs and converts them to a dict.
+    """
     def __init__(self,
                  keys_type: typing.Union[Property, typing.Type[Property]],
                  values_type: typing.Union[Property, typing.Type[Property]],
