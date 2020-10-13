@@ -1,4 +1,5 @@
 import pytest
+import unittest
 
 from citrine._serialization import properties
 
@@ -50,11 +51,11 @@ def test_mapping_property_list_of_pairs(key_type, value_type, key_value, value_v
     value = {key_value: value_value}
     serialized = [(key_serialized, value_serialized),]
     assert prop.deserialize(serialized) == value
-    assert prop.serialize(value) == serialized
+    unittest.TestCase().assertCountEqual(prop.serialize(value), serialized)
 
 def test_mapping_property_list_of_pairs_multiple():
     prop = properties.Mapping(properties.String, properties.Integer, ser_as_list_of_pairs = True)
     value = {'foo': 1, 'bar': 2}
     serialized = [('foo', 1), ('bar', 2)]
     assert prop.deserialize(serialized) == value
-    assert prop.serialize(value) == serialized
+    unittest.TestCase().assertCountEqual(prop.serialize(value), serialized)
