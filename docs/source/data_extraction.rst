@@ -168,9 +168,9 @@ Registered Table Configs can be built into GEM Tables. For example:
 
    table = project.tables.build_from_config(table_config)
    project.tables.read(table, "./my_table.csv")
-   
+
 The above will build a table, wait for the build job to complete, and save the table locally.
-   
+
 However, GEM Tables are sometimes large and time-consuming to build, so the build process can be performed asynchronously with the ``initiate_build`` method.
 For example:
 
