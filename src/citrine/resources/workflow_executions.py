@@ -2,12 +2,12 @@
 from typing import Optional
 from uuid import UUID
 
-from citrine.informatics.modules import ModuleRef
-from citrine.informatics.scores import Score
 from citrine._rest.collection import Collection
 from citrine._rest.resource import Resource
 from citrine._serialization import properties
 from citrine._session import Session
+from citrine.informatics.modules import ModuleRef
+from citrine.informatics.scores import Score
 
 
 class WorkflowExecution(Resource['WorkflowExecution']):
@@ -77,9 +77,10 @@ class WorkflowExecutionCollection(Collection[WorkflowExecution]):
     _collection_key = 'response'
     _resource = WorkflowExecution
 
-    def __init__(self, project_id: UUID, workflow_id: UUID, session: Optional[Session] = None):
+    def __init__(self, project_id: UUID, workflow_id: Optional[UUID],
+                 session: Optional[Session] = None):
         self.project_id: UUID = project_id
-        self.workflow_id: UUID = workflow_id
+        self.workflow_id: Optional[UUID] = workflow_id
         self.session: Optional[Session] = session
 
     def build(self, data: dict) -> WorkflowExecution:
@@ -87,7 +88,8 @@ class WorkflowExecutionCollection(Collection[WorkflowExecution]):
         execution = WorkflowExecution.build(data)
         execution.session = self.session
         execution.project_id = self.project_id
-        execution.workflow_id = self.workflow_id
+        if self.workflow_id is not None:
+            execution.workflow_id = self.workflow_id
         return execution
 
     def trigger(self, execution_input: [Score, ModuleRef]) -> WorkflowExecution:

@@ -43,7 +43,7 @@ The following example demonstrates how to use the python SDK to create a :class:
        inputs = [input_descriptor_1, input_descriptor_2],
        outputs = [output_descriptor_1, output_descriptor_2],
        latent_variables = [latent_variable_descriptor_1],
-       training_data = [GemTableDataSource(training_data_table_uid, 0)]
+       training_data = [GemTableDataSource(training_data_table_uid, 1)]
    )
 
    # register predictor
@@ -102,7 +102,7 @@ The following demonstrates how to create an :class:`~citrine.informatics.predict
         inputs = ingredient_fraction_descriptors,
         outputs = [output_descriptor],
         latent_variables = [],
-        training_data = GemTableDataSource(training_data_table_uid, 0, formulation_descriptor)
+        training_data = GemTableDataSource(training_data_table_uid, 1, formulation_descriptor)
     )
 
 Graph predictor
@@ -129,7 +129,7 @@ The following example demonstrates how to use the python SDK to create a :class:
        name = 'Predictor name',
        description = 'Predictor description',
        predictors = [predictor1.uid, predictor2.uid, predictor3.uid],
-       training_data = [GemTableDataSource(training_data_table_uid, 0)] # training data shared by all sub-predictors
+       training_data = [GemTableDataSource(training_data_table_uid, 1)] # training data shared by all sub-predictors
    )
 
    # register predictor
@@ -311,7 +311,7 @@ The following example illustrates how a :class:`~citrine.informatics.predictors.
     output_formulation = FormulationDescriptor('diluted saline (flattened)')
 
     # table with simple mixtures and their ingredients
-    data_source = GemTableDataSource(table_uid, 0, input_descriptor)
+    data_source = GemTableDataSource(table_uid, 1, input_descriptor)
 
     SimpleMixturePredictor(
         name='Simple mixture predictor',
@@ -385,7 +385,7 @@ The example below show how to configure a mean property predictor to compute mea
     formulation = FormulationDescriptor('simple mixture')
 
     # table with simple mixtures and their ingredients
-    data_source = GemTableDataSource(table_uid, 0, formulation)
+    data_source = GemTableDataSource(table_uid, 1, formulation)
 
     mean_property_predictor = GeneralizedMeanPropertyPredictor(
         name='Mean property predictor',
