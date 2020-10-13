@@ -739,7 +739,7 @@ class Mapping(Property[dict, dict]):
     def _deserialize(self, value: typing.Union[dict, list]) -> dict:
         deserialized = dict()
 
-        if self.ser_as_list_of_pairs:
+        if type(value) == list:
             for pair in value:
                 deserialized_key = self.keys_type.deserialize(pair[0])
                 deserialized_value = self.values_type.deserialize(pair[1])
