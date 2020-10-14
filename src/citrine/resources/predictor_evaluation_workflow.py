@@ -26,11 +26,26 @@ class PredictorEvaluationWorkflowCollection(Collection[PredictorEvaluationWorkfl
         return workflow
 
     def archive(self, workflow_id: UUID):
-        """Archive a predictor evaluation workflow."""
+        """Archive a predictor evaluation workflow.
+
+        Parameters
+        ----------
+        workflow_id: UUID
+            Unique identifier of the workflow to archive
+
+        """
         return self._put_module_ref('archive', workflow_id)
 
     def restore(self, workflow_id: UUID):
-        """Restore a predictor evaluation workflow."""
+        """Restore a predictor evaluation execution.
+
+
+        Parameters
+        ----------
+        workflow_id: UUID
+            Unique identifier of the workflow to restore
+
+        """
         return self._put_module_ref('restore', workflow_id)
 
     def _put_module_ref(self, subpath: str, workflow_id: UUID):

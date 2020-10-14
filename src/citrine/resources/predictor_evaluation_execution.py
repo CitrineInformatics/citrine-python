@@ -129,11 +129,26 @@ class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExec
         raise NotImplementedError("Cannot update a PredictorEvaluationExecution.")
 
     def archive(self, execution_id: UUID):
-        """Archive a predictor evaluation execution."""
+        """Archive a predictor evaluation execution.
+
+        Parameters
+        ----------
+        execution_id: UUID
+            Unique identifier of the execution to archive
+
+        """
         self._put_module_ref('archive', execution_id)
 
     def restore(self, execution_id: UUID):
-        """Restore a predictor evaluation execution."""
+        """Restore a predictor evaluation execution.
+
+
+        Parameters
+        ----------
+        execution_id: UUID
+            Unique identifier of the execution to restore
+
+        """
         self._put_module_ref('restore', execution_id)
 
     def _put_module_ref(self, subpath: str, execution_id: UUID):
