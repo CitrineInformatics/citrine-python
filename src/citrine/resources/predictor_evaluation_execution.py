@@ -142,7 +142,6 @@ class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExec
     def restore(self, execution_id: UUID):
         """Restore a predictor evaluation execution.
 
-
         Parameters
         ----------
         execution_id: UUID

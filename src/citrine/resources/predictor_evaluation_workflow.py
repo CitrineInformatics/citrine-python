@@ -39,7 +39,6 @@ class PredictorEvaluationWorkflowCollection(Collection[PredictorEvaluationWorkfl
     def restore(self, workflow_id: UUID):
         """Restore a predictor evaluation execution.
 
-
         Parameters
         ----------
         workflow_id: UUID
