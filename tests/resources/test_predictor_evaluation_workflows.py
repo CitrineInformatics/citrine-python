@@ -28,3 +28,16 @@ def workflow(collection: PredictorEvaluationWorkflowCollection, predictor_evalua
 def test_basic_methods(workflow, collection):
     assert "PredictorEvaluationWorkflow" in str(workflow)
     assert workflow.evaluators[0].name == "Example evaluator"
+
+
+def test_archive(workflow, collection):
+    collection.archive(workflow.uid)
+    expected_path = '/projects/{}/predictor-evaluation-workflows/archive'.format(collection.project_id)
+    assert collection.session.last_call == FakeCall(method='PUT', path=expected_path, json={"module_uid": str(workflow.uid)})
+
+
+def test_restore(workflow, collection):
+    collection.restore(workflow.uid)
+    expected_path = '/projects/{}/predictor-evaluation-workflows/restore'.format(collection.project_id)
+    assert collection.session.last_call == FakeCall(method='PUT', path=expected_path, json={"module_uid": str(workflow.uid)})
+

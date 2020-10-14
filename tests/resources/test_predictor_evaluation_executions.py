@@ -109,3 +109,15 @@ def test_list(collection: PredictorEvaluationExecutionCollection, session):
         path=expected_path,
         params={"page": 2, "per_page": 4, "predictor_id": str(predictor_id), "workflow_id": str(collection.workflow_id)}
     )
+
+
+def test_archive(workflow_execution, collection):
+    collection.archive(workflow_execution.uid)
+    expected_path = '/projects/{}/predictor-evaluation-executions/archive'.format(collection.project_id)
+    assert collection.session.last_call == FakeCall(method='PUT', path=expected_path, json={"module_uid": str(workflow_execution.uid)})
+
+
+def test_restore(workflow_execution, collection):
+    collection.restore(workflow_execution.uid)
+    expected_path = '/projects/{}/predictor-evaluation-executions/restore'.format(collection.project_id)
+    assert collection.session.last_call == FakeCall(method='PUT', path=expected_path, json={"module_uid": str(workflow_execution.uid)})
