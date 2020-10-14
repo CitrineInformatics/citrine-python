@@ -27,7 +27,7 @@ class PredictorEvaluationExecution(Resource['PredictorEvaluationExecution']):
 
     _response_key = None
 
-    uid = properties.UUID('id', serializable=False)
+    uid: UUID = properties.UUID('id', serializable=False)
     """UUID of the execution."""
 
     evaluator_names = properties.List(properties.String, "evaluator_names", serializable=False)
@@ -127,6 +127,33 @@ class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExec
     def update(self, model: PredictorEvaluationExecution) -> PredictorEvaluationExecution:
         """Cannot update an execution."""
         raise NotImplementedError("Cannot update a PredictorEvaluationExecution.")
+
+    def archive(self, execution_id: UUID):
+        """Archive a predictor evaluation execution.
+
+        Parameters
+        ----------
+        execution_id: UUID
+            Unique identifier of the execution to archive
+
+        """
+        self._put_module_ref('archive', execution_id)
+
+    def restore(self, execution_id: UUID):
+        """Restore a predictor evaluation execution.
+
+        Parameters
+        ----------
+        execution_id: UUID
+            Unique identifier of the execution to restore
+
+        """
+        self._put_module_ref('restore', execution_id)
+
+    def _put_module_ref(self, subpath: str, execution_id: UUID):
+        url = self._get_path(subpath)
+        ref = ModuleRef(str(execution_id))
+        self.session.put_resource(url, ref.dump())
 
     def list(self,
              page: Optional[int] = None,

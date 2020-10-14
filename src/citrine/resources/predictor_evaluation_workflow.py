@@ -3,6 +3,7 @@ from uuid import UUID
 
 from citrine._rest.collection import Collection
 from citrine._session import Session
+from citrine.informatics.modules import ModuleRef
 from citrine.informatics.workflows import PredictorEvaluationWorkflow
 
 
@@ -23,3 +24,30 @@ class PredictorEvaluationWorkflowCollection(Collection[PredictorEvaluationWorkfl
         workflow.session = self.session
         workflow.project_id = self.project_id
         return workflow
+
+    def archive(self, workflow_id: UUID):
+        """Archive a predictor evaluation workflow.
+
+        Parameters
+        ----------
+        workflow_id: UUID
+            Unique identifier of the workflow to archive
+
+        """
+        return self._put_module_ref('archive', workflow_id)
+
+    def restore(self, workflow_id: UUID):
+        """Restore a predictor evaluation workflow.
+
+        Parameters
+        ----------
+        workflow_id: UUID
+            Unique identifier of the workflow to restore
+
+        """
+        return self._put_module_ref('restore', workflow_id)
+
+    def _put_module_ref(self, subpath: str, workflow_id: UUID):
+        url = self._get_path(subpath)
+        ref = ModuleRef(str(workflow_id))
+        return self.session.put_resource(url, ref.dump())
