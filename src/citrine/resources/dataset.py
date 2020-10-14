@@ -1,6 +1,6 @@
 """Resources that represent both individual and collections of datasets."""
 from collections import defaultdict
-from typing import TypeVar, List
+from typing import TypeVar, List, Optional, Iterable
 from uuid import UUID
 
 from citrine._rest.collection import Collection

@@ -114,7 +114,7 @@ def test_list_datasets_infinite_loop_detect(paginated_collection, paginated_sess
     paginated_session.set_response(datasets_data)
 
     # When
-    datasets = list(paginated_collection.list())
+    datasets = list(paginated_collection.list(per_page=batch_size))
 
     # Then
     assert 2 == paginated_session.num_calls  # duplicate UID detected on the second call
