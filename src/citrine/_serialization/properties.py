@@ -375,7 +375,10 @@ class Set(Property[set, typing.Iterable]):
         serialized = list()
         for element in value:
             serialized.append(self.element_type.serialize(element))
-        return sorted(serialized)
+        try:
+            return sorted(serialized)
+        except TypeError:
+            return serialized
 
 
 class Union(Property[typing.Any, typing.Any]):
