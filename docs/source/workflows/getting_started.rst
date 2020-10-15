@@ -63,6 +63,15 @@ Modules come active by default when created. If you would like to `archive` a mo
    project.predictors.update(predictor)
 
 Modules that are `archived` cannot be used in workflows and will not show up when listing.
+Modules can not currently be permanently deleted.
+
+If you would like to un-archive a module and know the uid, you may do the following:
+
+.. code:: python
+
+   predictor = project.predictors.get(predictor_uuid)
+   predictor.archived = False
+   project.predictors.update(predictor)
 
 Registration and validation
 ---------------------------
