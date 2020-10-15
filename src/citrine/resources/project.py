@@ -2,6 +2,8 @@
 from typing import Optional, Dict, List, Union, Iterable, Tuple
 from uuid import UUID
 
+from citrine.resources.predictor_evaluation_execution import PredictorEvaluationExecutionCollection
+from citrine.resources.predictor_evaluation_workflow import PredictorEvaluationWorkflowCollection
 from deprecation import deprecated
 
 from citrine._session import Session
@@ -116,6 +118,16 @@ class Project(Resource['Project']):
     def workflows(self) -> WorkflowCollection:
         """Return a resource representing all visible workflows."""
         return WorkflowCollection(self.uid, self.session)
+
+    @property
+    def predictor_evaluation_workflows(self) -> PredictorEvaluationWorkflowCollection:
+        """[ALPHA] Return a collection representing all visible predictor evaluation workflows."""
+        return PredictorEvaluationWorkflowCollection(self.uid, self.session)
+
+    @property
+    def predictor_evaluation_executions(self) -> PredictorEvaluationExecutionCollection:
+        """[ALPHA] Return a collection representing all visible predictor evaluation executions."""
+        return PredictorEvaluationExecutionCollection(project_id=self.uid, session=self.session)
 
     @property
     def datasets(self) -> DatasetCollection:
