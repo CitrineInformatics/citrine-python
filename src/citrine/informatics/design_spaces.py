@@ -1,5 +1,5 @@
 """Tools for working with design spaces."""
-from typing import Any, List, Mapping, Type, Optional
+from typing import Any, List, Mapping, Type, Optional  # noqa
 from uuid import UUID
 
 from citrine._rest.resource import Resource
