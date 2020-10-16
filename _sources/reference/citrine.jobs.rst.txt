@@ -1,0 +1,17 @@
+citrine.jobs package
+====================
+
+Submodules
+----------
+
+.. toctree::
+
+   citrine.jobs.waiting
+
+Module contents
+---------------
+
+.. automodule:: citrine.jobs
+   :members:
+   :undoc-members:
+   :show-inheritance:

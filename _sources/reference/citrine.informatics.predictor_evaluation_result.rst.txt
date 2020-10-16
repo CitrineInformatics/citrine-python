@@ -1,0 +1,7 @@
+citrine.informatics.predictor\_evaluation\_result module
+========================================================
+
+.. automodule:: citrine.informatics.predictor_evaluation_result
+   :members:
+   :undoc-members:
+   :show-inheritance:

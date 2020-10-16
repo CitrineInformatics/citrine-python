@@ -1,5 +1,18 @@
-citrine.informatics.workflows module
-====================================
+citrine.informatics.workflows package
+=====================================
+
+Submodules
+----------
+
+.. toctree::
+
+   citrine.informatics.workflows.design_workflow
+   citrine.informatics.workflows.performance_workflow
+   citrine.informatics.workflows.predictor_evaluation_workflow
+   citrine.informatics.workflows.workflow
+
+Module contents
+---------------
 
 .. automodule:: citrine.informatics.workflows
    :members:

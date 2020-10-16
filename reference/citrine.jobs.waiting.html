@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>citrine.informatics.dimensions module &#8212; Citrine Python 0.0.1 documentation</title>
+    <title>citrine.jobs.waiting module &#8212; Citrine Python 0.0.1 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -32,99 +32,64 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="module-citrine.informatics.dimensions">
-<span id="citrine-informatics-dimensions-module"></span><h1>citrine.informatics.dimensions module<a class="headerlink" href="#module-citrine.informatics.dimensions" title="Permalink to this headline">¶</a></h1>
-<p>Tools for working with Dimensions.</p>
-<dl class="class">
-<dt id="citrine.informatics.dimensions.Dimension">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.dimensions.</code><code class="sig-name descname">Dimension</code><a class="headerlink" href="#citrine.informatics.dimensions.Dimension" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.polymorphic_serializable.PolymorphicSerializable</span></code></p>
-<p>[ALPHA] A Citrine Dimension describes the range of values that some quantity can take.</p>
-<p>Abstract type that returns the proper type given a serialized dict.</p>
-<dl class="method">
-<dt id="citrine.informatics.dimensions.Dimension.get_type">
-<em class="property">classmethod </em><code class="sig-name descname">get_type</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span> &#x2192; Type[citrine._serialization.serializable.Serializable]<a class="headerlink" href="#citrine.informatics.dimensions.Dimension.get_type" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the subtype.</p>
+  <div class="section" id="module-citrine.jobs.waiting">
+<span id="citrine-jobs-waiting-module"></span><h1>citrine.jobs.waiting module<a class="headerlink" href="#module-citrine.jobs.waiting" title="Permalink to this headline">¶</a></h1>
+<dl class="exception">
+<dt id="citrine.jobs.waiting.ConditionTimeoutError">
+<em class="property">exception </em><code class="sig-prename descclassname">citrine.jobs.waiting.</code><code class="sig-name descname">ConditionTimeoutError</code><a class="headerlink" href="#citrine.jobs.waiting.ConditionTimeoutError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">RuntimeError</span></code></p>
+<p>Error that is raised when timeout is reached but the checked condition is still False.</p>
 </dd></dl>
 
-</dd></dl>
-
-<dl class="class">
-<dt id="citrine.informatics.dimensions.ContinuousDimension">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.dimensions.</code><code class="sig-name descname">ContinuousDimension</code><span class="sig-paren">(</span><em class="sig-param">descriptor: citrine.informatics.descriptors.RealDescriptor</em>, <em class="sig-param">lower_bound: Optional[float] = None</em>, <em class="sig-param">upper_bound: Optional[float] = None</em>, <em class="sig-param">template_id: Optional[uuid.UUID] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.dimensions.ContinuousDimension" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.informatics.dimensions.Dimension" title="citrine.informatics.dimensions.Dimension"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.dimensions.Dimension</span></code></a></p>
-<p>[ALPHA] A continuous, real-valued dimension.</p>
+<dl class="function">
+<dt id="citrine.jobs.waiting.wait_while_executing">
+<code class="sig-prename descclassname">citrine.jobs.waiting.</code><code class="sig-name descname">wait_while_executing</code><span class="sig-paren">(</span><em class="sig-param">execution: citrine.resources.workflow_executions.WorkflowExecution</em>, <em class="sig-param">print_status_info: bool = False</em>, <em class="sig-param">timeout: float = 1800.0</em>, <em class="sig-param">interval: float = 3.0</em><span class="sig-paren">)</span> &#x2192; citrine.resources.workflow_executions.WorkflowExecution<a class="headerlink" href="#citrine.jobs.waiting.wait_while_executing" title="Permalink to this definition">¶</a></dt>
+<dd><p>[ALPHA] Wait until execution is finished.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>descriptor</strong> (<a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.RealDescriptor" title="citrine.informatics.descriptors.RealDescriptor"><em>RealDescriptor</em></a>) – a descriptor of the single dimension</p></li>
-<li><p><strong>lower_bound</strong> (<em>float</em>) – inclusive lower bound</p></li>
-<li><p><strong>upper_bound</strong> (<em>float</em>) – inclusive upper bound</p></li>
-<li><p><strong>template_id</strong> (<em>UUID</em>) – UUID that corresponds to the template in DC</p></li>
+<li><p><strong>execution</strong> (<a class="reference internal" href="citrine.resources.workflow_executions.html#citrine.resources.workflow_executions.WorkflowExecution" title="citrine.resources.workflow_executions.WorkflowExecution"><em>WorkflowExecution</em></a>) – WorklflowExecution to monitor</p></li>
+<li><p><strong>print_status_info</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to print status info, by default False</p></li>
+<li><p><strong>timeout</strong> (<em>float</em><em>, </em><em>optional</em>) – Maximum time spent inquiring in seconds, by default 1800.0</p></li>
+<li><p><strong>interval</strong> (<em>float</em><em>, </em><em>optional</em>) – Inquiry interval in seconds, by default 3.0</p></li>
 </ul>
 </dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>WorkflowExecution after execution</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="citrine.resources.workflow_executions.html#citrine.resources.workflow_executions.WorkflowExecution" title="citrine.resources.workflow_executions.WorkflowExecution">WorkflowExecution</a></p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="#citrine.jobs.waiting.ConditionTimeoutError" title="citrine.jobs.waiting.ConditionTimeoutError"><strong>ConditionTimeoutError</strong></a> – If fails to finish execution within timeout</p>
+</dd>
 </dl>
-<dl class="attribute">
-<dt id="citrine.informatics.dimensions.ContinuousDimension.descriptor">
-<code class="sig-name descname">descriptor</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.dimensions.ContinuousDimension.descriptor" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="citrine.informatics.dimensions.ContinuousDimension.lower_bound">
-<code class="sig-name descname">lower_bound</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.dimensions.ContinuousDimension.lower_bound" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="citrine.informatics.dimensions.ContinuousDimension.template_id">
-<code class="sig-name descname">template_id</code><em class="property"> = UUID('3540cd8e-a49c-4bf3-b473-8de82c3013de')</em><a class="headerlink" href="#citrine.informatics.dimensions.ContinuousDimension.template_id" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="citrine.informatics.dimensions.ContinuousDimension.typ">
-<code class="sig-name descname">typ</code><em class="property"> = 'ContinuousDimension'</em><a class="headerlink" href="#citrine.informatics.dimensions.ContinuousDimension.typ" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="citrine.informatics.dimensions.ContinuousDimension.upper_bound">
-<code class="sig-name descname">upper_bound</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.dimensions.ContinuousDimension.upper_bound" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
 </dd></dl>
 
-<dl class="class">
-<dt id="citrine.informatics.dimensions.EnumeratedDimension">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.dimensions.</code><code class="sig-name descname">EnumeratedDimension</code><span class="sig-paren">(</span><em class="sig-param">descriptor: citrine.informatics.descriptors.Descriptor, values: List[str], template_id: Optional[uuid.UUID] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.dimensions.EnumeratedDimension" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.informatics.dimensions.Dimension" title="citrine.informatics.dimensions.Dimension"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.dimensions.Dimension</span></code></a></p>
-<p>[ALPHA] A finite, enumerated dimension.</p>
+<dl class="function">
+<dt id="citrine.jobs.waiting.wait_while_validating">
+<code class="sig-prename descclassname">citrine.jobs.waiting.</code><code class="sig-name descname">wait_while_validating</code><span class="sig-paren">(</span><em class="sig-param">collection: citrine._rest.collection.Collection[citrine.informatics.modules.Module], module: citrine.informatics.modules.Module, print_status_info: bool = False, timeout: float = 1800.0, interval: float = 3.0</em><span class="sig-paren">)</span> &#x2192; citrine.informatics.modules.Module<a class="headerlink" href="#citrine.jobs.waiting.wait_while_validating" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wait until module is validated.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>descriptor</strong> (<a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.Descriptor" title="citrine.informatics.descriptors.Descriptor"><em>Descriptor</em></a>) – a descriptor of the single dimension</p></li>
-<li><p><strong>template_id</strong> (<em>UUID</em>) – UUID that corresponds to the template in DC</p></li>
-<li><p><strong>values</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – list of values that can be parsed by the descriptor</p></li>
+<li><p><strong>collection</strong> (<em>Collection</em><em>[</em><a class="reference internal" href="citrine.informatics.modules.html#citrine.informatics.modules.Module" title="citrine.informatics.modules.Module"><em>Module</em></a><em>]</em>) – Collection containing module</p></li>
+<li><p><strong>module</strong> (<a class="reference internal" href="citrine.informatics.modules.html#citrine.informatics.modules.Module" title="citrine.informatics.modules.Module"><em>Module</em></a>) – Module in Collection</p></li>
+<li><p><strong>print_status_info</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to print status info, by default False</p></li>
+<li><p><strong>timeout</strong> (<em>float</em><em>, </em><em>optional</em>) – Maximum time spent inquiring in seconds, by default 1800.0</p></li>
+<li><p><strong>interval</strong> (<em>float</em><em>, </em><em>optional</em>) – Inquiry interval in seconds, by default 3.0</p></li>
 </ul>
 </dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Module in Collection after validation</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="citrine.informatics.modules.html#citrine.informatics.modules.Module" title="citrine.informatics.modules.Module">Module</a></p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="#citrine.jobs.waiting.ConditionTimeoutError" title="citrine.jobs.waiting.ConditionTimeoutError"><strong>ConditionTimeoutError</strong></a> – If fails to validate within timeout</p>
+</dd>
 </dl>
-<dl class="attribute">
-<dt id="citrine.informatics.dimensions.EnumeratedDimension.descriptor">
-<code class="sig-name descname">descriptor</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.dimensions.EnumeratedDimension.descriptor" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="citrine.informatics.dimensions.EnumeratedDimension.template_id">
-<code class="sig-name descname">template_id</code><em class="property"> = UUID('ba79ec0a-e7b1-4aae-9b54-14fc6da90a5e')</em><a class="headerlink" href="#citrine.informatics.dimensions.EnumeratedDimension.template_id" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="citrine.informatics.dimensions.EnumeratedDimension.typ">
-<code class="sig-name descname">typ</code><em class="property"> = 'EnumeratedDimension'</em><a class="headerlink" href="#citrine.informatics.dimensions.EnumeratedDimension.typ" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="citrine.informatics.dimensions.EnumeratedDimension.values">
-<code class="sig-name descname">values</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.dimensions.EnumeratedDimension.values" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
 </dd></dl>
 
 </div>
@@ -247,7 +212,7 @@
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
-      <a href="../_sources/reference/citrine.informatics.dimensions.rst.txt"
+      <a href="../_sources/reference/citrine.jobs.waiting.rst.txt"
           rel="nofollow">Page source</a>
     </div>
 

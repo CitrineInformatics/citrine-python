@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>citrine.resources.workflow_executions module &#8212; Citrine Python 0.0.1 documentation</title>
+    <title>citrine.informatics.predictor_evaluator module &#8212; Citrine Python 0.0.1 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -32,104 +32,106 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="module-citrine.resources.workflow_executions">
-<span id="citrine-resources-workflow-executions-module"></span><h1>citrine.resources.workflow_executions module<a class="headerlink" href="#module-citrine.resources.workflow_executions" title="Permalink to this headline">¶</a></h1>
-<p>Resources that represent both individual and collections of workflow executions.</p>
+  <div class="section" id="module-citrine.informatics.predictor_evaluator">
+<span id="citrine-informatics-predictor-evaluator-module"></span><h1>citrine.informatics.predictor_evaluator module<a class="headerlink" href="#module-citrine.informatics.predictor_evaluator" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
-<dt id="citrine.resources.workflow_executions.WorkflowExecution">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.resources.workflow_executions.</code><code class="sig-name descname">WorkflowExecution</code><span class="sig-paren">(</span><em class="sig-param">uid: Optional[str] = None</em>, <em class="sig-param">project_id: Optional[str] = None</em>, <em class="sig-param">workflow_id: Optional[str] = None</em>, <em class="sig-param">session: Optional[citrine._session.Session] = None</em>, <em class="sig-param">version_number: Optional[int] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.workflow_executions.WorkflowExecution" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.resource.Resource</span></code></p>
-<p>[ALPHA] A Citrine Workflow Execution.</p>
+<dt id="citrine.informatics.predictor_evaluator.CrossValidationEvaluator">
+<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.predictor_evaluator.</code><code class="sig-name descname">CrossValidationEvaluator</code><span class="sig-paren">(</span><em class="sig-param">*, name: str, description: str = '', responses: Set[str], n_folds: int = 5, n_trials: int = 3, metrics: Optional[Set[citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric]] = None, ignore_when_grouping: Optional[Set[str]] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.predictor_evaluator.CrossValidationEvaluator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.informatics.predictor_evaluator.PredictorEvaluator" title="citrine.informatics.predictor_evaluator.PredictorEvaluator"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.predictor_evaluator.PredictorEvaluator</span></code></a></p>
+<p>[ALPHA] Evaluate a predictor via cross validation.</p>
+<p>Performs cross-validation on requested predictor responses and
+computes the requested metrics on each response.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>uid</strong> (<em>str</em>) – Unique identifier of the workflow execution</p></li>
-<li><p><strong>project_id</strong> (<em>str</em>) – Unique identifier of the project that contains the workflow execution</p></li>
-<li><p><strong>workflow_id</strong> (<em>str</em>) – Unique identifier of the workflow that was executed</p></li>
-<li><p><strong>version_number</strong> (<em>int</em>) – Integer identifier that increases each time the workflow is executed.  The first execution
-has version_number = 1.</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – Name of the evaluator</p></li>
+<li><p><strong>description</strong> (<em>str</em>) – Description of the evaluator</p></li>
+<li><p><strong>responses</strong> (<em>Set</em><em>[</em><em>str</em><em>]</em>) – Set of descriptor keys to evaluate</p></li>
+<li><p><strong>n_folds</strong> (<em>int</em>) – Number of cross-validation folds</p></li>
+<li><p><strong>n_trials</strong> (<em>int</em>) – Number of cross-valiation trials, each contains <code class="docutils literal notranslate"><span class="pre">n_folds</span></code> folds</p></li>
+<li><p><strong>metrics</strong> (<em>Optional</em><em>[</em><em>Set</em><em>[</em><a class="reference internal" href="citrine.informatics.predictor_evaluation_metrics.html#citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric" title="citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric"><em>PredictorEvaluationMetric</em></a><em>]</em><em>]</em>) – Optional set of metrics to compute for each response.
+Default is all metrics.</p></li>
+<li><p><strong>ignore_when_grouping</strong> (<em>Optional</em><em>[</em><em>Set</em><em>[</em><em>str</em><em>]</em><em>]</em>) – Set of descriptor keys to group together.
+Candidates with different values for the given keys and identical values
+for all other descriptors will be in the same group.</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="attribute">
-<dt id="citrine.resources.workflow_executions.WorkflowExecution.project_id">
-<code class="sig-name descname">project_id</code><em class="property"> = None</em><a class="headerlink" href="#citrine.resources.workflow_executions.WorkflowExecution.project_id" title="Permalink to this definition">¶</a></dt>
+<dt id="citrine.informatics.predictor_evaluator.CrossValidationEvaluator.description">
+<code class="sig-name descname">description</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictor_evaluator.CrossValidationEvaluator.description" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictor_evaluator.CrossValidationEvaluator.ignore_when_grouping">
+<code class="sig-name descname">ignore_when_grouping</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictor_evaluator.CrossValidationEvaluator.ignore_when_grouping" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="citrine.resources.workflow_executions.WorkflowExecution.results">
-<code class="sig-name descname">results</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.workflow_executions.WorkflowExecution.results" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the results of this execution.</p>
+<dt id="citrine.informatics.predictor_evaluator.CrossValidationEvaluator.metrics">
+<em class="property">property </em><code class="sig-name descname">metrics</code><a class="headerlink" href="#citrine.informatics.predictor_evaluator.CrossValidationEvaluator.metrics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set of metrics computed during cross-validation.</p>
 </dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictor_evaluator.CrossValidationEvaluator.n_folds">
+<code class="sig-name descname">n_folds</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictor_evaluator.CrossValidationEvaluator.n_folds" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictor_evaluator.CrossValidationEvaluator.n_trials">
+<code class="sig-name descname">n_trials</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictor_evaluator.CrossValidationEvaluator.n_trials" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictor_evaluator.CrossValidationEvaluator.name">
+<code class="sig-name descname">name</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictor_evaluator.CrossValidationEvaluator.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="method">
-<dt id="citrine.resources.workflow_executions.WorkflowExecution.status">
-<code class="sig-name descname">status</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.workflow_executions.WorkflowExecution.status" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the current status of this execution.</p>
+<dt id="citrine.informatics.predictor_evaluator.CrossValidationEvaluator.responses">
+<em class="property">property </em><code class="sig-name descname">responses</code><a class="headerlink" href="#citrine.informatics.predictor_evaluator.CrossValidationEvaluator.responses" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set of predictor responses cross-validated by the evaluator.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="citrine.resources.workflow_executions.WorkflowExecution.uid">
-<code class="sig-name descname">uid</code><em class="property"> = None</em><a class="headerlink" href="#citrine.resources.workflow_executions.WorkflowExecution.uid" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="citrine.resources.workflow_executions.WorkflowExecution.version_number">
-<code class="sig-name descname">version_number</code><em class="property"> = None</em><a class="headerlink" href="#citrine.resources.workflow_executions.WorkflowExecution.version_number" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="citrine.resources.workflow_executions.WorkflowExecution.workflow_id">
-<code class="sig-name descname">workflow_id</code><em class="property"> = None</em><a class="headerlink" href="#citrine.resources.workflow_executions.WorkflowExecution.workflow_id" title="Permalink to this definition">¶</a></dt>
+<dt id="citrine.informatics.predictor_evaluator.CrossValidationEvaluator.typ">
+<code class="sig-name descname">typ</code><em class="property"> = 'CrossValidationEvaluator'</em><a class="headerlink" href="#citrine.informatics.predictor_evaluator.CrossValidationEvaluator.typ" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="class">
-<dt id="citrine.resources.workflow_executions.WorkflowExecutionCollection">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.resources.workflow_executions.</code><code class="sig-name descname">WorkflowExecutionCollection</code><span class="sig-paren">(</span><em class="sig-param">project_id: uuid.UUID, workflow_id: Optional[uuid.UUID], session: Optional[citrine._session.Session] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.workflow_executions.WorkflowExecutionCollection" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.collection.Collection</span></code></p>
-<p>[ALPHA] A collection of WorkflowExecutions.</p>
+<dt id="citrine.informatics.predictor_evaluator.PredictorEvaluator">
+<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.predictor_evaluator.</code><code class="sig-name descname">PredictorEvaluator</code><a class="headerlink" href="#citrine.informatics.predictor_evaluator.PredictorEvaluator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.polymorphic_serializable.PolymorphicSerializable</span></code></p>
+<p>[ALPHA] A Citrine Predictor Evaluator computes metrics on a predictor.</p>
 <dl class="method">
-<dt id="citrine.resources.workflow_executions.WorkflowExecutionCollection.build">
-<code class="sig-name descname">build</code><span class="sig-paren">(</span><em class="sig-param">data: dict</em><span class="sig-paren">)</span> &#x2192; citrine.resources.workflow_executions.WorkflowExecution<a class="headerlink" href="#citrine.resources.workflow_executions.WorkflowExecutionCollection.build" title="Permalink to this definition">¶</a></dt>
-<dd><p>Build an individual WorkflowExecution.</p>
+<dt id="citrine.informatics.predictor_evaluator.PredictorEvaluator.get_type">
+<em class="property">classmethod </em><code class="sig-name descname">get_type</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span> &#x2192; Type[citrine._serialization.serializable.Serializable]<a class="headerlink" href="#citrine.informatics.predictor_evaluator.PredictorEvaluator.get_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the subtype.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="citrine.resources.workflow_executions.WorkflowExecutionCollection.trigger">
-<code class="sig-name descname">trigger</code><span class="sig-paren">(</span><em class="sig-param">execution_input: [citrine.informatics.scores.Score, citrine.informatics.modules.ModuleRef]</em><span class="sig-paren">)</span> &#x2192; citrine.resources.workflow_executions.WorkflowExecution<a class="headerlink" href="#citrine.resources.workflow_executions.WorkflowExecutionCollection.trigger" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create a new workflow execution.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="citrine.resources.workflow_executions.WorkflowExecutionStatus">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.resources.workflow_executions.</code><code class="sig-name descname">WorkflowExecutionStatus</code><span class="sig-paren">(</span><em class="sig-param">status: str, session: Optional[citrine._session.Session]</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.workflow_executions.WorkflowExecutionStatus" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.resource.Resource</span></code></p>
-<p>[ALPHA] The status for a specific workflow execution.</p>
-<dl class="method">
-<dt id="citrine.resources.workflow_executions.WorkflowExecutionStatus.failed">
-<em class="property">property </em><code class="sig-name descname">failed</code><a class="headerlink" href="#citrine.resources.workflow_executions.WorkflowExecutionStatus.failed" title="Permalink to this definition">¶</a></dt>
-<dd><p>Determine whether or not the execution failed.</p>
+<dt id="citrine.informatics.predictor_evaluator.PredictorEvaluator.metrics">
+<em class="property">property </em><code class="sig-name descname">metrics</code><a class="headerlink" href="#citrine.informatics.predictor_evaluator.PredictorEvaluator.metrics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Metrics to compute for each response.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="citrine.resources.workflow_executions.WorkflowExecutionStatus.in_progress">
-<em class="property">property </em><code class="sig-name descname">in_progress</code><a class="headerlink" href="#citrine.resources.workflow_executions.WorkflowExecutionStatus.in_progress" title="Permalink to this definition">¶</a></dt>
-<dd><p>Determine whether or not the execution is in progress.</p>
+<dt id="citrine.informatics.predictor_evaluator.PredictorEvaluator.name">
+<em class="property">property </em><code class="sig-name descname">name</code><a class="headerlink" href="#citrine.informatics.predictor_evaluator.PredictorEvaluator.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Name of the evaluator.</p>
+<p>A name required by all evaluators because it is used as the top-level key
+in the results returned by a
+<code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.workflows.PredictorEvaluationWorkflow</span></code>.
+As such, the names of all evaluators within a single workflow must be unique.</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="citrine.resources.workflow_executions.WorkflowExecutionStatus.status">
-<code class="sig-name descname">status</code><em class="property"> = None</em><a class="headerlink" href="#citrine.resources.workflow_executions.WorkflowExecutionStatus.status" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
 <dl class="method">
-<dt id="citrine.resources.workflow_executions.WorkflowExecutionStatus.succeeded">
-<em class="property">property </em><code class="sig-name descname">succeeded</code><a class="headerlink" href="#citrine.resources.workflow_executions.WorkflowExecutionStatus.succeeded" title="Permalink to this definition">¶</a></dt>
-<dd><p>Determine whether or not the execution succeeded.</p>
+<dt id="citrine.informatics.predictor_evaluator.PredictorEvaluator.responses">
+<em class="property">property </em><code class="sig-name descname">responses</code><a class="headerlink" href="#citrine.informatics.predictor_evaluator.PredictorEvaluator.responses" title="Permalink to this definition">¶</a></dt>
+<dd><p>Responses to compute metrics for.</p>
 </dd></dl>
 
 </dd></dl>
@@ -254,7 +256,7 @@ has version_number = 1.</p></li>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
-      <a href="../_sources/reference/citrine.resources.workflow_executions.rst.txt"
+      <a href="../_sources/reference/citrine.informatics.predictor_evaluator.rst.txt"
           rel="nofollow">Page source</a>
     </div>
 

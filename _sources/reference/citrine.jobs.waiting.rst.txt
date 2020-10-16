@@ -1,0 +1,7 @@
+citrine.jobs.waiting module
+===========================
+
+.. automodule:: citrine.jobs.waiting
+   :members:
+   :undoc-members:
+   :show-inheritance:

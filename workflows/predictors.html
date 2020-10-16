@@ -71,7 +71,7 @@ Thus, all inputs and latent variables are used to predict outputs.</p>
     <span class="n">inputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">input_descriptor_1</span><span class="p">,</span> <span class="n">input_descriptor_2</span><span class="p">],</span>
     <span class="n">outputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">output_descriptor_1</span><span class="p">,</span> <span class="n">output_descriptor_2</span><span class="p">],</span>
     <span class="n">latent_variables</span> <span class="o">=</span> <span class="p">[</span><span class="n">latent_variable_descriptor_1</span><span class="p">],</span>
-    <span class="n">training_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">GemTableDataSource</span><span class="p">(</span><span class="n">training_data_table_uid</span><span class="p">,</span> <span class="mi">0</span><span class="p">)]</span>
+    <span class="n">training_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">GemTableDataSource</span><span class="p">(</span><span class="n">training_data_table_uid</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]</span>
 <span class="p">)</span>
 
 <span class="c1"># register predictor</span>
@@ -127,7 +127,7 @@ Instead of entering these manually, outputs from a predictor can be retrieved pr
     <span class="n">inputs</span> <span class="o">=</span> <span class="n">ingredient_fraction_descriptors</span><span class="p">,</span>
     <span class="n">outputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">output_descriptor</span><span class="p">],</span>
     <span class="n">latent_variables</span> <span class="o">=</span> <span class="p">[],</span>
-    <span class="n">training_data</span> <span class="o">=</span> <span class="n">GemTableDataSource</span><span class="p">(</span><span class="n">training_data_table_uid</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">formulation_descriptor</span><span class="p">)</span>
+    <span class="n">training_data</span> <span class="o">=</span> <span class="n">GemTableDataSource</span><span class="p">(</span><span class="n">training_data_table_uid</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">formulation_descriptor</span><span class="p">)</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -149,7 +149,7 @@ one output descriptor.</p>
     <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Predictor name&#39;</span><span class="p">,</span>
     <span class="n">description</span> <span class="o">=</span> <span class="s1">&#39;Predictor description&#39;</span><span class="p">,</span>
     <span class="n">predictors</span> <span class="o">=</span> <span class="p">[</span><span class="n">predictor1</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span> <span class="n">predictor2</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span> <span class="n">predictor3</span><span class="o">.</span><span class="n">uid</span><span class="p">],</span>
-    <span class="n">training_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">GemTableDataSource</span><span class="p">(</span><span class="n">training_data_table_uid</span><span class="p">,</span> <span class="mi">0</span><span class="p">)]</span> <span class="c1"># training data shared by all sub-predictors</span>
+    <span class="n">training_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">GemTableDataSource</span><span class="p">(</span><span class="n">training_data_table_uid</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]</span> <span class="c1"># training data shared by all sub-predictors</span>
 <span class="p">)</span>
 
 <span class="c1"># register predictor</span>
@@ -337,7 +337,7 @@ The <code class="docutils literal notranslate"><span class="pre">training_data</
 <span class="n">output_formulation</span> <span class="o">=</span> <span class="n">FormulationDescriptor</span><span class="p">(</span><span class="s1">&#39;diluted saline (flattened)&#39;</span><span class="p">)</span>
 
 <span class="c1"># table with simple mixtures and their ingredients</span>
-<span class="n">data_source</span> <span class="o">=</span> <span class="n">GemTableDataSource</span><span class="p">(</span><span class="n">table_uid</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">input_descriptor</span><span class="p">)</span>
+<span class="n">data_source</span> <span class="o">=</span> <span class="n">GemTableDataSource</span><span class="p">(</span><span class="n">table_uid</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">input_descriptor</span><span class="p">)</span>
 
 <span class="n">SimpleMixturePredictor</span><span class="p">(</span>
     <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Simple mixture predictor&#39;</span><span class="p">,</span>
@@ -414,7 +414,7 @@ If a value other than 1.58 should be used, e.g. 2.0, this can be specified by se
 <span class="n">formulation</span> <span class="o">=</span> <span class="n">FormulationDescriptor</span><span class="p">(</span><span class="s1">&#39;simple mixture&#39;</span><span class="p">)</span>
 
 <span class="c1"># table with simple mixtures and their ingredients</span>
-<span class="n">data_source</span> <span class="o">=</span> <span class="n">GemTableDataSource</span><span class="p">(</span><span class="n">table_uid</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">formulation</span><span class="p">)</span>
+<span class="n">data_source</span> <span class="o">=</span> <span class="n">GemTableDataSource</span><span class="p">(</span><span class="n">table_uid</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">formulation</span><span class="p">)</span>
 
 <span class="n">mean_property_predictor</span> <span class="o">=</span> <span class="n">GeneralizedMeanPropertyPredictor</span><span class="p">(</span>
     <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Mean property predictor&#39;</span><span class="p">,</span>

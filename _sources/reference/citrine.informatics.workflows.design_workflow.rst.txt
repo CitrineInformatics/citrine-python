@@ -1,0 +1,7 @@
+citrine.informatics.workflows.design\_workflow module
+=====================================================
+
+.. automodule:: citrine.informatics.workflows.design_workflow
+   :members:
+   :undoc-members:
+   :show-inheritance:

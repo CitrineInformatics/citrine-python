@@ -34,6 +34,8 @@ Submodules
    citrine.resources.object_templates
    citrine.resources.parameter_template
    citrine.resources.predictor
+   citrine.resources.predictor_evaluation_execution
+   citrine.resources.predictor_evaluation_workflow
    citrine.resources.process_run
    citrine.resources.process_spec
    citrine.resources.process_template

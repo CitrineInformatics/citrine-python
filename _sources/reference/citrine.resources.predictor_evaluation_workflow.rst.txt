@@ -1,0 +1,7 @@
+citrine.resources.predictor\_evaluation\_workflow module
+========================================================
+
+.. automodule:: citrine.resources.predictor_evaluation_workflow
+   :members:
+   :undoc-members:
+   :show-inheritance:

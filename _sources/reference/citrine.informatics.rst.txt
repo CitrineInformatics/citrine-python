@@ -1,6 +1,13 @@
 citrine.informatics package
 ===========================
 
+Subpackages
+-----------
+
+.. toctree::
+
+   citrine.informatics.workflows
+
 Submodules
 ----------
 
@@ -14,11 +21,13 @@ Submodules
    citrine.informatics.dimensions
    citrine.informatics.modules
    citrine.informatics.objectives
+   citrine.informatics.predictor_evaluation_metrics
+   citrine.informatics.predictor_evaluation_result
+   citrine.informatics.predictor_evaluator
    citrine.informatics.predictors
    citrine.informatics.processors
    citrine.informatics.reports
    citrine.informatics.scores
-   citrine.informatics.workflows
 
 Module contents
 ---------------

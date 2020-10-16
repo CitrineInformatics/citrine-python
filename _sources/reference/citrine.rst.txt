@@ -10,6 +10,7 @@ Subpackages
    citrine.builders
    citrine.gemtables
    citrine.informatics
+   citrine.jobs
    citrine.resources
    citrine.seeding
 

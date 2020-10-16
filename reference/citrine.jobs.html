@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>citrine.resources.descriptors module &#8212; Citrine Python 0.0.1 documentation</title>
+    <title>citrine.jobs package &#8212; Citrine Python 0.0.1 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -32,53 +32,19 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="module-citrine.resources.descriptors">
-<span id="citrine-resources-descriptors-module"></span><h1>citrine.resources.descriptors module<a class="headerlink" href="#module-citrine.resources.descriptors" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
-<dt id="citrine.resources.descriptors.DescriptorMethods">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.resources.descriptors.</code><code class="sig-name descname">DescriptorMethods</code><span class="sig-paren">(</span><em class="sig-param">project_id: uuid.UUID</em>, <em class="sig-param">session: citrine._session.Session</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.descriptors.DescriptorMethods" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>[ALPHA] A set of methods returning descriptors which require connection to the backend.</p>
-<dl class="method">
-<dt id="citrine.resources.descriptors.DescriptorMethods.descriptors_from_data_source">
-<code class="sig-name descname">descriptors_from_data_source</code><span class="sig-paren">(</span><em class="sig-param">data_source: citrine.informatics.data_sources.DataSource</em><span class="sig-paren">)</span> &#x2192; List[citrine.informatics.descriptors.Descriptor]<a class="headerlink" href="#citrine.resources.descriptors.DescriptorMethods.descriptors_from_data_source" title="Permalink to this definition">¶</a></dt>
-<dd><p>[ALPHA] Get all descriptors associated with a data source.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>data_source</strong> (<a class="reference internal" href="citrine.informatics.data_sources.html#citrine.informatics.data_sources.DataSource" title="citrine.informatics.data_sources.DataSource"><em>DataSource</em></a>) – A CSVDataSource or AraTableDataSource to get descriptors for.</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>The list of descriptors associated with the given data_source.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>List[<a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.Descriptor" title="citrine.informatics.descriptors.Descriptor">Descriptor</a>]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="citrine.resources.descriptors.DescriptorMethods.from_predictor_responses">
-<code class="sig-name descname">from_predictor_responses</code><span class="sig-paren">(</span><em class="sig-param">predictor: citrine.informatics.predictors.Predictor, inputs: List[citrine.informatics.descriptors.Descriptor]</em><span class="sig-paren">)</span> &#x2192; List[citrine.informatics.descriptors.Descriptor]<a class="headerlink" href="#citrine.resources.descriptors.DescriptorMethods.from_predictor_responses" title="Permalink to this definition">¶</a></dt>
-<dd><p>[ALPHA] Get responses for a predictor, given an input space.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>predictor</strong> (<a class="reference internal" href="citrine.informatics.predictors.html#citrine.informatics.predictors.Predictor" title="citrine.informatics.predictors.Predictor"><em>Predictor</em></a>) – The predictor whose available responses are to be computed.</p></li>
-<li><p><strong>inputs</strong> (<em>List</em><em>[</em><a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.Descriptor" title="citrine.informatics.descriptors.Descriptor"><em>Descriptor</em></a><em>]</em>) – The input space to the predictor.</p></li>
+  <div class="section" id="citrine-jobs-package">
+<h1>citrine.jobs package<a class="headerlink" href="#citrine-jobs-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="citrine.jobs.waiting.html">citrine.jobs.waiting module</a></li>
 </ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>The computable responses of the predictor given the provided input space (as
-descriptors).</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>List[<a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.Descriptor" title="citrine.informatics.descriptors.Descriptor">Descriptor</a>]</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
+</div>
+</div>
+<div class="section" id="module-citrine.jobs">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-citrine.jobs" title="Permalink to this headline">¶</a></h2>
+</div>
 </div>
 
 
@@ -199,7 +165,7 @@ descriptors).</p>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
-      <a href="../_sources/reference/citrine.resources.descriptors.rst.txt"
+      <a href="../_sources/reference/citrine.jobs.rst.txt"
           rel="nofollow">Page source</a>
     </div>
 

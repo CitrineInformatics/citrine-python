@@ -89,7 +89,14 @@ The processor and design space are coupled: depending on the design space used, 
 <span class="n">project</span><span class="o">.</span><span class="n">predictors</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">predictor</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Modules that are <cite>archived</cite> cannot be used in workflows and will not show up when listing.</p>
+<p>Modules that are <cite>archived</cite> cannot be used in workflows and will not show up when listing.
+Modules can not currently be permanently deleted.</p>
+<p>If you would like to un-archive a module and know the uid, you may do the following:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">predictor</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">predictors</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">predictor_uuid</span><span class="p">)</span>
+<span class="n">predictor</span><span class="o">.</span><span class="n">archived</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">project</span><span class="o">.</span><span class="n">predictors</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">predictor</span><span class="p">)</span>
+</pre></div>
+</div>
 </div>
 </div>
 <div class="section" id="registration-and-validation">

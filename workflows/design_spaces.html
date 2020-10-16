@@ -37,6 +37,7 @@
   <div class="section" id="design-spaces">
 <h1>4.5. Design spaces<a class="headerlink" href="#design-spaces" title="Permalink to this headline">¶</a></h1>
 <p>A design space defines a set of materials that should be searched over when performing a material design.
+Design Spaces must be registered to be used in a <a class="reference internal" href="design_workflows.html"><span class="doc">design workflow</span></a>.
 Currently, there are two design spaces:</p>
 <ul class="simple">
 <li><p><a class="reference external" href="#product-design-space">ProductDesignSpace</a></p></li>
@@ -99,6 +100,8 @@ The bounds of the dimension are the bounds we wish to search between, e.g. rest
     <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Temperatures between 300 and 400 K and either Slow or Fast&quot;</span><span class="p">,</span>
     <span class="n">dimensions</span><span class="o">=</span><span class="p">[</span><span class="n">temp_dimension</span><span class="p">,</span> <span class="n">speed_dimension</span><span class="p">]</span>
 <span class="p">)</span>
+
+<span class="n">speed_and_temp_design_space</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">design_spaces</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">speed_and_temp</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -137,6 +140,8 @@ If a candidate is missing a descriptor key-value pair, contains extra key-value 
   <span class="n">descriptors</span><span class="o">=</span><span class="n">descriptors</span><span class="p">,</span>
   <span class="n">data</span><span class="o">=</span><span class="n">candidates</span>
 <span class="p">)</span>
+
+<span class="n">registered_design_space</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">design_spaces</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">design_space</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
