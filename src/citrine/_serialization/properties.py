@@ -134,9 +134,8 @@ class Property(typing.Generic[DeserializedType, SerializedType]):
         return '<Property {!r}>'.format(self.serialization_path)
 
 
-
 class PropertyCollection(Property[DeserializedType, SerializedType]):
-    """docstring for PropertyCollection"""
+
     def __set__(self, obj, value: typing.Union[SerializedType, DeserializedType]):
         """Property setter, deferring to the setter of the parent class, if applicable."""
         base_class = _get_base_class(obj, self.serialization_path)

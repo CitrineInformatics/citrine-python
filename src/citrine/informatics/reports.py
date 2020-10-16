@@ -96,8 +96,14 @@ class ModelSummary(Serializable['ModelSummary']):
 
     name = properties.String('name')
     type_ = properties.String('type')
-    inputs = properties.List(properties.Union([properties.Object(Descriptor), properties.String()]), 'inputs')
-    outputs = properties.List(properties.Union([properties.Object(Descriptor), properties.String()]), 'outputs')
+    inputs = properties.List(
+        properties.Union([properties.Object(Descriptor), properties.String()]),
+        'inputs'
+    )
+    outputs = properties.List(
+        properties.Union([properties.Object(Descriptor), properties.String()]),
+        'outputs'
+    )
     model_settings = properties.Raw('model_settings')
     feature_importances = properties.List(
         properties.Object(FeatureImportanceReport), 'feature_importances')
