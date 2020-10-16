@@ -89,18 +89,23 @@ def valid_enumerated_design_space_data():
     )
 
 
+@pytest.fixture()
+def valid_gem_data_source_dict():
+    return {
+        "type": "hosted_table_data_source",
+        "table_id": 'e5c51369-8e71-4ec6-b027-1f92bdc14762',
+        "table_version": 2,
+        "formulation_descriptor": None
+    }
+
+
 @pytest.fixture
-def valid_simple_ml_predictor_data():
+def valid_simple_ml_predictor_data(valid_gem_data_source_dict):
     """Produce valid data used for tests."""
-    from citrine.informatics.data_sources import GemTableDataSource
     from citrine.informatics.descriptors import RealDescriptor
     x = RealDescriptor("x", 0, 100, "")
     y = RealDescriptor("y", 0, 100, "")
     z = RealDescriptor("z", 0, 100, "")
-    data_source = GemTableDataSource(
-        table_id=uuid.UUID('e5c51369-8e71-4ec6-b027-1f92bdc14762'),
-        table_version=2
-    )
     return dict(
         module_type='PREDICTOR',
         status='VALID',
@@ -116,7 +121,7 @@ def valid_simple_ml_predictor_data():
             inputs=[x.dump()],
             outputs=[z.dump()],
             latent_variables=[y.dump()],
-            training_data=[data_source.dump()]
+            training_data=[valid_gem_data_source_dict]
         )
     )
 
@@ -382,6 +387,19 @@ def valid_ingredient_fractions_predictor_data():
 
 
 @pytest.fixture
+def valid_data_source_design_space_dict(valid_gem_data_source_dict):
+    return {
+        "status": "INPROGRESS",
+        "config": {
+            "type": "DataSourceDesignSpace",
+            "name": "Example valid data source design space",
+            "description": "Example valid data source design space based on a GEM Table Data Source.",
+            "data_source": valid_gem_data_source_dict
+        }
+    }
+
+
+@pytest.fixture
 def invalid_predictor_data():
     """Produce valid data used for tests."""
     from citrine.informatics.descriptors import RealDescriptor
@@ -450,3 +468,144 @@ def valid_simple_mixture_predictor_data():
             training_data=[GemTableDataSource(uuid.uuid4(), 0, input_formulation).dump()]
         ),
     )
+
+
+@pytest.fixture()
+def example_evaluator_dict():
+    return {
+        "type": "CrossValidationEvaluator",
+        "name": "Example evaluator",
+        "description": "An evaluator for testing",
+        "responses": ["salt?", "saltiness"],
+        "n_folds": 6,
+        "n_trials": 8,
+        "metrics": [
+            {"type": "PVA"}, {"type": "RMSE"}, {"type": "F1"}
+        ],
+        "ignore_when_grouping": ["temperature"]
+    }
+
+
+@pytest.fixture()
+def example_rmse_metrics():
+    return {
+        "type": "RealMetricValue",
+        "mean": 0.4,
+        "standard_error": 0.12
+    }
+
+
+@pytest.fixture
+def example_f1_metrics():
+    return {
+        "type": "RealMetricValue",
+        "mean": 0.3
+    }
+
+
+@pytest.fixture
+def example_real_pva_metrics():
+    return {
+        "type": "RealPredictedVsActual",
+        "value": [
+            {
+                "uuid": "0ca80829-fd17-45fb-93c9-62ea4e4c294d",
+                "identifiers": ["Foo", "Bar"],
+                "trial": 1,
+                "fold": 3,
+                "predicted": {
+                    "type": "RealMetricValue",
+                    "mean": 1.0,
+                    "standard_error": 0.12
+                },
+                "actual": {
+                    "type": "RealMetricValue",
+                    "mean": 1.2,
+                    "standard_error": 0.0
+                }
+            }
+        ]
+    }
+
+
+@pytest.fixture
+def example_categorical_pva_metrics():
+    return {
+        "type": "CategoricalPredictedVsActual",
+        "value": [
+            {
+                "uuid": "0ca80829-fd17-45fb-93c9-62ea4e4c294d",
+                "identifiers": ["Foo", "Bar"],
+                "trial": 1,
+                "fold": 3,
+                "predicted": {
+                    "salt": 0.3,
+                    "not salt": 0.7
+                },
+                "actual": {
+                    "not salt": 1.0
+                }
+            }
+        ]
+    }
+
+
+@pytest.fixture()
+def example_result_dict(example_evaluator_dict, example_rmse_metrics, example_categorical_pva_metrics, example_f1_metrics, example_real_pva_metrics):
+    return {
+        "type": "CrossValidationResult",
+        "evaluator": example_evaluator_dict,
+        "response_results": {
+            "salt?": {
+                "metrics": {
+                    "predicted_vs_actual": example_categorical_pva_metrics,
+                    "f1": example_f1_metrics
+                }
+            },
+            "saltiness": {
+                "metrics": {
+                    "predicted_vs_actual": example_real_pva_metrics,
+                    "rmse": example_rmse_metrics
+                }
+            }
+        }
+    }
+
+
+@pytest.fixture
+def generic_entity():
+    user = str(uuid.uuid4())
+    return {
+        "id": str(uuid.uuid4()),
+        "status": "INPROGRESS",
+        "status_description": "VALIDATING",
+        "status_info": ["System processing"],
+        "experimental": False,
+        "experimental_reasons": [],
+        "create_time": '2020-04-23T15:46:26Z',
+        "update_time": '2020-04-23T15:46:26Z',
+        "created_by": user,
+        "updated_by": user,
+    }
+
+
+@pytest.fixture
+def predictor_evaluation_execution_dict(generic_entity):
+    ret = generic_entity.copy()
+    ret.update({
+        "workflow_id": str(uuid.uuid4()),
+        "predictor_id": str(uuid.uuid4()),
+        "evaluator_names": ["Example evaluator"]
+    })
+    return ret
+
+
+@pytest.fixture
+def predictor_evaluation_workflow_dict(generic_entity, example_evaluator_dict):
+    ret = generic_entity.copy()
+    ret.update({
+        "name": "Example PEW",
+        "description": "Example PEW for testing",
+        "evaluators": [example_evaluator_dict]
+    })
+    return ret

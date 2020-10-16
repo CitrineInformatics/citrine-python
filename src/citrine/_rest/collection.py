@@ -107,7 +107,9 @@ class Collection(Generic[ResourceType]):
                     fetch_func: Optional[Callable[..., dict]] = None,
                     page: Optional[int] = None,
                     per_page: Optional[int] = None,
-                    json_body: Optional[dict] = None) -> Tuple[Iterable[dict], str]:
+                    json_body: Optional[dict] = None,
+                    additional_params: Optional[dict] = None,
+                    ) -> Tuple[Iterable[dict], str]:
         """
         Fetch visible elements in the collection.  This does not handle pagination.
 
@@ -154,6 +156,7 @@ class Collection(Generic[ResourceType]):
 
         module_type = getattr(self, '_module_type', None)
         params = self._page_params(page, per_page, module_type)
+        params.update(additional_params or {})
 
         data = fetch_func(path, params=params, **json_body)
 
