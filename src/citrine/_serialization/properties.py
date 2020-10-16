@@ -344,7 +344,13 @@ class List(Property[list, list]):
         """Property setter, deferring to the setter of the parent class, if applicable."""
         base_class = _get_base_class(obj, self.serialization_path)
         if issubclass(type(value), self.underlying_types):
-            value_to_set = value
+            elems = []
+            for sub_val in value:
+                if issubclass(type(sub_val), self.element_type.underlying_types):
+                    elems.append(sub_val)
+                else:
+                    elems.append(self.element_type.deserialize(sub_val))
+            value_to_set = elems
         else:
             # if value is not an underlying type, set its deserialized version.
             value_to_set = self.deserialize(value, base_class=base_class)
@@ -353,7 +359,6 @@ class List(Property[list, list]):
             getattr(base_class, self.serialization_path).fset(obj, value_to_set)
         else:
             setattr(obj, self._key, value_to_set)
-
 
 
 class Set(Property[set, typing.Iterable]):
