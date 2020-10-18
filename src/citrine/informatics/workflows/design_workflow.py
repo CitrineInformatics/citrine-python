@@ -51,6 +51,7 @@ class DesignWorkflow(Resource['DesignWorkflow'], Workflow):
     predictor_id = properties.UUID('config.predictor_id')
     module_type = properties.String('module_type', default='DESIGN_WORKFLOW')
     schema_id = properties.UUID('schema_id', default=UUID('8af8b007-3e81-4185-82b2-6f62f4a2e6f1'))
+    typ = properties.String('config.type', default='DesignWorkflow', deserializable=False)
 
     def __init__(self,
                  name: str,
