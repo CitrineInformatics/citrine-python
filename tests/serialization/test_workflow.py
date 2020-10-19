@@ -18,6 +18,7 @@ def valid_data():
             design_space_id=str(uuid4()),
             processor_id=str(uuid4()),
             predictor_id=str(uuid4()),
+            type="DesignWorkflow",
         ),
         module_type='DESIGN_WORKFLOW',
         schema_id='8af8b007-3e81-4185-82b2-6f62f4a2e6f1',
