@@ -1,7 +1,7 @@
-Performance workflows
+Performance Workflows
 =====================
 
-A :class:`performance workflow <citrine.informatics.workflows.PerformanceWorkflow>` performs analysis on a module.
+A :class:`performance workflow <citrine.informatics.workflows.performance_workflow.PerformanceWorkflow>` performs analysis on a module.
 Running a performance workflow produces a report (currently in JSON format) that describes the results of the analysis.
 Each analysis computes one or more performance metrics, e.g. accuracy of an ML predictor.
 An analysis is codified by a configuration object that stores all relevant settings and parameters required to run the workflow.

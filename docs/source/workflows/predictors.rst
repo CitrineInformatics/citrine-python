@@ -1,3 +1,5 @@
+.. _predictors:
+
 Predictors
 ==========
 
@@ -141,7 +143,7 @@ Expression predictor
 --------------------
 
 The :class:`~citrine.informatics.predictors.ExpressionPredictor` defines an analytic (lossless) model that computes one real-valued output descriptor from one or more input descriptors.
-An ``ExpressionPredictor`` should be used when the relationship between inputs and outputs is known.
+An :class:`~citrine.informatics.predictors.ExpressionPredictor` should be used when the relationship between inputs and outputs is known.
 
 A string is used to define the expression, and the corresponding output is defined by a :class:`~citrine.informatics.descriptors.RealDescriptor`.
 An alias is required for each expression argument.
@@ -488,7 +490,8 @@ Predictor reports
 -----------------
 
 A :doc:`predictor report <predictor_reports>` describes a machine-learned model, for example its settings and what features are important to the model. 
-It does not include performance metrics. To learn more about performance metrics, please see :doc:`PerformanceWorkflows <performance_workflows>`.
+It does not include predictor evaluation metrics.
+To learn more about predictor evaluation metrics, please see :doc:`PredictorEvaluationWorkflow <predictor_evaluation_workflows>`.
 
 Training data
 -------------

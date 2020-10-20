@@ -7,6 +7,16 @@ from citrine.informatics.predictor_evaluation_metrics import PredictorEvaluation
 from citrine.informatics.predictor_evaluator import PredictorEvaluator
 
 
+__all__ = ['MetricValue',
+           'RealMetricValue',
+           'PredictedVsActualRealPoint',
+           'PredictedVsActualCategoricalPoint',
+           'RealPredictedVsActual',
+           'CategoricalPredictedVsActual',
+           'ResponseMetrics',
+           'PredictorEvaluationResult',
+           'CrossValidationResult']
+
 class MetricValue(PolymorphicSerializable["MetricValue"]):
     """[ALPHA] Value associated with a metric computed during a Predictor Evaluation Workflow."""
 
@@ -31,7 +41,7 @@ class RealMetricValue(Serializable["RealMetricValue"], MetricValue):
     ----------
     mean: float
         Mean value
-    standard_error: float
+    standard_error: Optional[float]
         Standard error of the mean
 
     """

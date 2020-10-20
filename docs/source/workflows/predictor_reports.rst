@@ -1,10 +1,10 @@
-Predictor reports
+Predictor Reports
 =================
 
 Training a predictor generally produces a set of inter-connected models.
 A predictor report describes those models, for example their settings and what features are important to the model.
-It does not include performance metrics.
-To learn more about performance metrics, please see :doc:`PerformanceWorkflows <performance_workflows>`.
+It does not include predictor evaluation metrics.
+To learn more about predictor evaluation metrics, please see :doc:`PredictorEvaluationMetrics <predictor_evaluation_workflows>`.
 The report can be accessed via ``predictor.report``.
 
 A task to generate a predictor report is scheduled when a predictor is registered.

@@ -5,6 +5,9 @@ from citrine._serialization.polymorphic_serializable import PolymorphicSerializa
 from citrine._serialization.serializable import Serializable
 from citrine.informatics.predictor_evaluation_metrics import PredictorEvaluationMetric
 
+__all__ = ['PredictorEvaluator',
+           'CrossValidationEvaluator']
+
 
 class PredictorEvaluator(PolymorphicSerializable["PredictorEvaluator"]):
     """[ALPHA] A Citrine Predictor Evaluator computes metrics on a predictor."""
@@ -66,7 +69,7 @@ class CrossValidationEvaluator(Serializable["CrossValidationEvaluator"], Predict
     n_folds: int
         Number of cross-validation folds
     n_trials: int
-        Number of cross-valiation trials, each contains ``n_folds`` folds
+        Number of cross-validation trials, each contains ``n_folds`` folds
     metrics: Optional[Set[PredictorEvaluationMetric]]
         Optional set of metrics to compute for each response.
         Default is all metrics.
