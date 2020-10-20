@@ -19,7 +19,7 @@ def _print_validation_status(
 ):
     print(
         "{}Status = {:<25}Elapsed time".format(line_start, status),
-        " = {str(int(time() - start_time)).rjust(3)}s",
+        " = {}s".format(str(int(time() - start_time)).rjust(3)),
         end=line_end,
     )
 
