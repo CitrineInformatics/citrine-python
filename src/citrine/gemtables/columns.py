@@ -13,7 +13,8 @@ class CompositionSortOrder(BaseEnumeration):
     """[ALPHA] Order to use when sorting the components in a composition.
 
     * ``ALPHABETICAL`` is alpha-numeric order by the component name
-    * ``QUANTITY`` is ordered from the largest to smallest quantity, with ties broken alphabetically
+    * ``QUANTITY`` is ordered from the largest to smallest quantity, with ties
+      broken alphabetically
     """
 
     ALPHABETICAL = "alphabetical"
@@ -135,7 +136,7 @@ class QuantileColumn(Serializable["QuantileColumn"], Column):
 
     .. math::
 
-        mean + stddev * \sqrt{2} * erf^{-1}(2 * quantile - 1)
+        mean + stddev * \\sqrt{2} * erf^{-1}(2 * quantile - 1)
 
     Parameters
     ----------
@@ -232,8 +233,8 @@ class FlatCompositionColumn(Serializable["FlatCompositionColumn"], Column):
     """[ALPHA] Column that flattens the composition into a string of names and quantities.
 
     The numeric formatting tries to be human readable. For example, if all of the quantities
-    are round numbers like ``{"spam": 4.0, "eggs": 1.0}`` then the result omit the decimal points like
-    ``"(spam)4(eggs)1"`` (if sort_order is by quantity).
+    are round numbers like ``{"spam": 4.0, "eggs": 1.0}`` then the result omit the decimal points
+    like ``"(spam)4(eggs)1"`` (if sort_order is by quantity).
 
     Parameters
     ----------

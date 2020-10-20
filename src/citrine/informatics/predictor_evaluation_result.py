@@ -17,6 +17,7 @@ __all__ = ['MetricValue',
            'PredictorEvaluationResult',
            'CrossValidationResult']
 
+
 class MetricValue(PolymorphicSerializable["MetricValue"]):
     """[ALPHA] Value associated with a metric computed during a Predictor Evaluation Workflow."""
 

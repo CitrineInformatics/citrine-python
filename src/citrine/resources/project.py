@@ -455,14 +455,14 @@ class ProjectCollection(Collection[Project]):
         or substring match, as specified by the search_params argument. Defaults to no search
         criteria.
 
-        Like ``list``, this method allows for pagination. This differs from the list function, because
-        it makes a POST request to resourceType/search with search fields in a post body.
+        Like ``list``, this method allows for pagination. This differs from the list function,
+        because it makes a POST request to resourceType/search with search fields in a post body.
 
         Leaving page and per_page as default values will yield all elements in the collection,
         paginating over all available pages.
 
-        Leaving ``search_params`` as its default value will return mimic the behavior of a full list
-        with no search parameters.
+        Leaving ``search_params`` as its default value will return mimic the behavior of
+        a full list with no search parameters.
 
         Parameters
         ----------
@@ -485,10 +485,10 @@ class ProjectCollection(Collection[Project]):
 
             The ``dict`` can contain any combination of (one or all) search specifications for the
             name, description, and status fields of a project. For each parameter specified, the
-            ``"value"`` to match, as well as the ``"search_method"`` must be provided. The available
-            ``search_methods`` are ``"SUBSTRING"`` and ``"EXACT"``. The example above demonstrates the input
-            necessary to list projects with the exact name ``"Polymer Project"`` and descriptions
-            including the phrase ``"polymer chain length"``.
+            ``"value"`` to match, as well as the ``"search_method"`` must be provided.
+            The available ``search_methods`` are ``"SUBSTRING"`` and ``"EXACT"``. The example above
+            demonstrates the input necessary to list projects with the exact name
+            ``"Polymer Project"`` and descriptions including the phrase ``"polymer chain length"``.
 
         per_page: int, optional
             Max number of results to return per page. Default is 100.  This parameter is used when
@@ -519,8 +519,8 @@ class ProjectCollection(Collection[Project]):
         """
         Fetch resources that match the supplied search parameters.
 
-        Fetches resources that match the supplied ``search_params``, by calling ``_fetch_page`` with
-        ``checked_post``, the path to the POST resource-type/search endpoint, any pagination
+        Fetches resources that match the supplied ``search_params``, by calling ``_fetch_page``
+        with ``checked_post``, the path to the POST resource-type/search endpoint, any pagination
         parameters, and the request body to the search endpoint.
 
         Parameters
@@ -531,10 +531,9 @@ class ProjectCollection(Collection[Project]):
             Max number of results to return. Default is 20.
         search_params: dict, optional
             A ``dict`` representing a request body that could be sent to a POST request. The "json"
-            field should be passed as the key for the outermost ``dict``, with its value the request
-            body, so that we can easily unpack the keyword argument when it gets passed to
-            ``fetch_func``.
-            i.e. ``{'name': {'value': 'Project', 'search_method': 'SUBSTRING'} }``
+            field should be passed as the key for the outermost ``dict``, with its value the
+            request body, so that we can easily unpack the keyword argument when it gets passed to
+            ``fetch_func``, i.e. ``{'name': {'value': 'Project', 'search_method': 'SUBSTRING'} }``
 
         Returns
         -------
