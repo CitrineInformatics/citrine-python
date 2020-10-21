@@ -12,18 +12,17 @@ Minimally, each predictor evaluator specifies a name, a set of predictor respons
 Evaluator names must be unique within a single workflow (more on that `below <#execution-and-results>`__).
 Responses are specified as a set of strings, where each string corresponds to a descriptor key of a predictor output.
 Metrics are specified as a set of :class:`PredictorEvaluationMetrics <citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric>`.
-When defining an evaluator, the top-level metrics should be the union of all metrics computed across all responses.
-The evaluator will only compute the subset of metrics valid for each response.
+The evaluator will only compute the subset of metrics valid for each response, so the top-level metrics defined by an evaluator should contain the union of all metrics computed across all responses.
 
 Cross-validation evaluator
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 A :class:`~citrine.informatics.predictor_evaluator.CrossValidationEvaluator` performs k-fold cross-validation on a predictor.
-In addition to a name, set of responses to validate and metrics to compute, this evaluator defines the number of folds, number of trials and set of descriptor keys to ignore when grouping.
-The latter allows candidates with different values for the specified (ignored) keys and identical values for all other predictor inputs to be placed in the same fold.
+In addition to a name, set of responses to validate, trials, folds and metrics to compute, this evaluator defines a set of descriptor keys to ignore when grouping.
+Candidates with different values for ignored keys and identical values for all other predictor inputs will be placed in the same fold.
 
 Cross-validation can only be evaluated on predictors that define training data.
-During cross-validation, the predictor's training data is partitioned into k equally sized folds.
+During cross-validation, the predictor's training data is partitioned into k folds.
 Each fold acts as the test set once, and the remaining k-1 folds are used as training data.
 When the number of folds equals the number of training data points, the analysis is equivalent to leave-one-out cross-validation.
 Metrics are computed by comparing the model's predictions to observed values.
@@ -44,10 +43,7 @@ For numeric responses, the following metrics are available:
     NDME is a useful non-dimensional model quality metric.
     A value of NDME == 0 is a perfect model.
     If NDME == 1, then the model is uninformative.
-    An acceptable NDME depends on how the model is used.
-    Generally, NDME > 0.9 indicates a model with low accuracy.
-    If 0.9 > NDME > 0.6, this model is typically a good candidate for a design workflow.
-    Lower values of NDE indicate increasingly accurate models.
+    Generally, models with NDME < 0.9 can be used in a design workflow.
   - *Standard residual* (:class:`~citrine.informatics.predictor_evaluation_metrics.StandardRMSE`) is the root mean square of standardized errors (prediction errors divided by their predicted uncertainty).
     1.0 is perfectly calibrated.
     Standard residual provides a way to determine whether uncertainty estimates are well-calibrated for this model.
@@ -121,7 +117,7 @@ Predicted vs. actual data (``response_metrics[PVA()]``) is returned as a list of
 Each data point defines properties ``uuid``, ``identifiers``, ``trial``, ``fold``, ``predicted`` and ``actual``:
 
  -  ``uuid`` and ``identifiers`` allow you to link a predicted vs. actual data point to the corresponding row in the :ref:`Predictor <predictors>`'s :ref:`Data Source <data-sources>`.
- -  ``trial`` and ``fold`` return the each respective index during the evaluation.
+ -  ``trial`` and ``fold`` return the respective index assigned during the evaluation.
  -  The form of ``predicted`` and ``actual`` data depends on whether the response is numeric or categorical.
     For numeric responses, ``predicted`` and ``actual`` return a :class:`~citrine.informatics.predictor_evaluation_result.RealMetricValue` which reports mean and standard error associated the data point.
     For categorical responses, class probabilities are returned as a mapping from each class name (as a string) to its relative frequency (as a float).
@@ -135,8 +131,9 @@ The predictor we'll evaluate is defined below:
 
 .. code:: python
 
-    from citrine.informatics.predictors import SimpleMLPredictor
+    from citrine.informatics.data_sources import CSVDataSource
     from citrine.informatics.descriptors import RealDescriptor
+    from citrine.informatics.predictors import SimpleMLPredictor
 
     x = RealDescriptor('x', lower_bound=0.0, upper_bound=1.0)
     y = RealDescriptor('y', lower_bound=0.0, upper_bound=1.0)
@@ -158,7 +155,22 @@ The predictor we'll evaluate is defined below:
 This predictor expects ``x`` as an input and predicts ``y``.
 Training data is provided by a :class:`~citrine.informatics.data_sources.CSVDataSource` that assumes ``filename`` represents the path to a CSV that contains ``x`` and ``y``.
 
-Next, we'll create a cross-validation evaluator for the response ``y`` with 8 folds and 3 trials and request metrics for root-mean square error (:class:`~citrine.informatics.predictor_evaluation_metrics.RMSE`) and predicted vs. actual data (:class:`~citrine.informatics.predictor_evaluation_metrics.PVA`).
+Next, create a project and register the predictor:
+
+.. code:: python
+
+    import os
+    from citrine.jobs.waiting import wait_while_validating
+    from citrine.seeding.find_or_create import find_or_create_project
+
+    api_key = os.environ.get('CITRINE_API_KEY')
+    client = Citrine(api_key)
+    project = find_or_create_project(client.projects, 'example project')
+
+    predictor = project.predictors.register(predictor)
+    wait_while_validating(project.predictors, predictor)
+
+In this example we'll create a cross-validation evaluator for the response ``y`` with 8 folds and 3 trials and request metrics for root-mean square error (:class:`~citrine.informatics.predictor_evaluation_metrics.RMSE`) and predicted vs. actual data (:class:`~citrine.informatics.predictor_evaluation_metrics.PVA`).
 
 .. note::
     Here we're performing cross-validation on an output, but latent variables are valid cross-validation responses as well.
@@ -180,13 +192,7 @@ Then add the evaluator to a :class:`~citrine.informatics.workflows.predictor_eva
 
 .. code:: python
 
-    from citrine.seeding.find_or_create import find_or_create_project
     from citrine.informatics.workflows import PredictorEvaluationWorkflow
-    from citrine.jobs.waiting import wait_while_validating
-
-    api_key = os.environ.get('CITRINE_API_KEY')
-    client = Citrine(api_key)
-    project = find_or_create_project(client.projects, 'example project')
 
     workflow = PredictorEvaluationWorkflow(
         name='workflow that evaluates y',
@@ -196,7 +202,8 @@ Then add the evaluator to a :class:`~citrine.informatics.workflows.predictor_eva
     workflow = project.predictor_evaluation_workflows.register(workflow)
     wait_while_validating(project.predictor_evaluation_workflows, workflow)
 
-Trigger the workflow against a predictor to start an execution. Then wait for the results to be ready:
+Trigger the workflow against a predictor to start an execution.
+Then wait for the results to be ready:
 
 .. code:: python
 
