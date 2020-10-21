@@ -7,7 +7,7 @@ Each workflow is composed of one or more :class:`PredictorEvaluators <citrine.in
 Predictor evaluators
 --------------------
 
-A predictor evaluator defines a method to evaluate a predictor and any relevant configuration, e.g. k-fold cross-validation evaluation that specifies 3 folds.
+A predictor evaluator defines a method to evaluate a predictor and any relevant configuration, e.g., k-fold cross-validation evaluation that specifies 3 folds.
 Minimally, each predictor evaluator specifies a name, a set of predictor responses to evaluate and a set of metrics to compute for each response.
 Evaluator names must be unique within a single workflow (more on that `below <#execution-and-results>`__).
 Responses are specified as a set of strings, where each string corresponds to a descriptor key of a predictor output.
@@ -20,7 +20,7 @@ Cross-validation evaluator
 
 A :class:`~citrine.informatics.predictor_evaluator.CrossValidationEvaluator` performs k-fold cross-validation on a predictor.
 In addition to a name, set of responses to validate and metrics to compute, this evaluator defines the number of folds, number of trials and set of descriptor keys to ignore when grouping.
-The latter allows candidates with different values for the specified (ignored) keys and identical values all other predictor inputs to be placed in the same fold.
+The latter allows candidates with different values for the specified (ignored) keys and identical values for all other predictor inputs to be placed in the same fold.
 
 Cross-validation can only be evaluated on predictors that define training data.
 During cross-validation, the predictor's training data is partitioned into k equally sized folds.
@@ -37,7 +37,7 @@ For numeric responses, the following metrics are available:
 
   - *Root-mean squared error* (:class:`~citrine.informatics.predictor_evaluation_metrics.RMSE`): square root of the average of the squared prediction error.
     RMSE is a useful and popular statistical metric for model quality.
-    RMSE is optimized by least-squares regression, and in that sense is the most "natural" measure for it; it has the same units as the predicted quantity, and corresponds to the standard deviation of the variance not explained by the predictor.
+    RMSE is optimized by least-squares regression, and in that sense is the most "natural" measure for it; it has the same units as the predicted quantity and corresponds to the standard deviation of the variance not explained by the predictor.
     Lower RMSE means the model is more accurate.
   - *Non-dimensional error* (:class:`~citrine.informatics.predictor_evaluation_metrics.NDME`): RMSE divided by the standard deviation of the observed values in the test set.
     (If training and test set are drawn from the same distribution, the standard deviation of the test set observed values is equivalent to the RMSE of a model that always predicts the mean of the observed values).
@@ -70,7 +70,7 @@ For categorical responses, performance metrics include either the area under the
    Scores are bounded by 0 and 1.
    At a value of 1, the model has perfect precision and recall.
 
-In addition to the aforementioned metrics, predicted vs. actual data (:class:`~citrine.informatics.predictor_evaluation_metrics.PVA`) are also available.
+In addition to the aforementioned metrics, predicted vs. actual data (:class:`~citrine.informatics.predictor_evaluation_metrics.PVA`) are also available for both real and categorical responses.
 
 
 .. _execution-and-results:
@@ -81,7 +81,7 @@ Execution and results
 Triggering a Predictor Evaluation Workflow produces a :class:`~citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecution`.
 This execution allows you to track the progress using its ``status`` and ``status_info`` properties.
 The ``status`` can be one of ``INPROGRESS``, ``READY`` or ``FAILED``.
-Information about the execution status, e.g. warnings or reasons for failure, can be accessed via ``status_info``.
+Information about the execution status, e.g., warnings or reasons for failure, can be accessed via ``status_info``.
 
 When the ``status`` is ``READY``, results for each evaluation defined as part of the workflow can be accessed using the ``results`` method:
 
@@ -110,21 +110,21 @@ Values associated with computed metrics can be accessed by response key:
 This returns a :class:`~citrine.informatics.predictor_evaluation_result.ResponseMetrics` object.
 This object contains all metrics that were computed for the ``response_key``.
 These metrics can be listed using ``list(response_metrics)``,
-and the value associated with a specific metric can be accessed by the metric itself, e.g. ``response_metrics[RMSE()]`` to retrieve the root-mean squared error.
+and the value associated with a specific metric can be accessed by the metric itself, e.g., ``response_metrics[RMSE()]`` to retrieve the root-mean squared error.
 
 With the exception of predicted vs. actual data, all metric values are returned as a :class:`~citrine.informatics.predictor_evaluation_result.RealMetricValue`.
 This object defines properties ``mean`` and ``standard_error``.
 The latter optionally returns a float if the evaluation was configured with enough trials allow ``standard_error`` to be computed.
 (A :class:`~citrine.informatics.predictor_evaluator.CrossValidationEvaluator` requires at least 3 trials to compute ``standard_error``.)
 
-Predicted vs. actual data (e.g. ``response_metrics[PVA()]``) is returned as a list of predicted vs. actual data points.
+Predicted vs. actual data (``response_metrics[PVA()]``) is returned as a list of predicted vs. actual data points.
 Each data point defines properties ``uuid``, ``identifiers``, ``trial``, ``fold``, ``predicted`` and ``actual``:
 
  -  ``uuid`` and ``identifiers`` allow you to link a predicted vs. actual data point to the corresponding row in the :ref:`Predictor <predictors>`'s :ref:`Data Source <data-sources>`.
  -  ``trial`` and ``fold`` return the each respective index during the evaluation.
  -  The form of ``predicted`` and ``actual`` data depends on whether the response is numeric or categorical.
     For numeric responses, ``predicted`` and ``actual`` return a :class:`~citrine.informatics.predictor_evaluation_result.RealMetricValue` which reports mean and standard error associated the data point.
-    For categorical responses, class probabilities are returned as a mapping from each class name (as a string) to the its relative frequency (as a float).
+    For categorical responses, class probabilities are returned as a mapping from each class name (as a string) to its relative frequency (as a float).
 
 Example
 -------
@@ -161,7 +161,7 @@ Training data is provided by a :class:`~citrine.informatics.data_sources.CSVData
 Next, we'll create a cross-validation evaluator for the response ``y`` with 8 folds and 3 trials and request metrics for root-mean square error (:class:`~citrine.informatics.predictor_evaluation_metrics.RMSE`) and predicted vs. actual data (:class:`~citrine.informatics.predictor_evaluation_metrics.PVA`).
 
 .. note::
-    Here, we're performing cross-validation on an output, but latent variables are valid cross-validation responses as well.
+    Here we're performing cross-validation on an output, but latent variables are valid cross-validation responses as well.
 
 .. code:: python
 
