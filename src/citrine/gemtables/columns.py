@@ -12,8 +12,9 @@ from citrine._serialization import properties
 class CompositionSortOrder(BaseEnumeration):
     """[ALPHA] Order to use when sorting the components in a composition.
 
-    * ALPHABETICAL is alpha-numeric order by the component name
-    * QUANTITY is ordered from the largest to smallest quantity, with ties broken alphabetically
+    * ``ALPHABETICAL`` is alpha-numeric order by the component name
+    * ``QUANTITY`` is ordered from the largest to smallest quantity, with ties
+      broken alphabetically
     """
 
     ALPHABETICAL = "alphabetical"
@@ -23,8 +24,8 @@ class CompositionSortOrder(BaseEnumeration):
 class ChemicalDisplayFormat(BaseEnumeration):
     """[ALPHA] Format to use when rendering a molecular structure.
 
-    * SMILES Simplified molecular-input line-entry system
-    * INCHI International Chemical Identifier
+    * ``SMILES`` Simplified molecular-input line-entry system
+    * ``INCHI`` International Chemical Identifier
     """
 
     SMILES = "smiles"
@@ -75,7 +76,7 @@ class MeanColumn(Serializable['MeanColumn'], Column):
     ----------
     data_source: str
         name of the variable to use when populating the column
-    target_units: optional[str]
+    target_units: Optional[str]
         units to convert the real variable into
 
     """
@@ -101,7 +102,7 @@ class StdDevColumn(Serializable["StdDevColumn"], Column):
     ----------
     data_source: str
         name of the variable to use when populating the column
-    target_units: optional[str]
+    target_units: Optional[str]
         units to convert the real variable into
 
     """
@@ -126,9 +127,16 @@ class QuantileColumn(Serializable["QuantileColumn"], Column):
     The column is populated with the quantile function of the distribution evaluated at "quantile".
     For example, for a uniform distribution parameterized by a lower and upper bound, the value
     in the column would be:
+
+    .. math::
+
         lower + (upper - lower) * quantile
+
     while for a normal distribution parameterized by a mean and stddev, the value would be:
-        mean + stddev * sqrt(2) * inverse error function (2 * quantile - 1)
+
+    .. math::
+
+        mean + stddev * \\sqrt{2} * erf^{-1}(2 * quantile - 1)
 
     Parameters
     ----------
@@ -136,7 +144,7 @@ class QuantileColumn(Serializable["QuantileColumn"], Column):
         name of the variable to use when populating the column
     quantile: float
         the quantile to use for the column, defined between 0.0 and 1.0
-    target_units: optional[str]
+    target_units: Optional[str]
         units to convert the real variable into
 
     """
@@ -225,8 +233,8 @@ class FlatCompositionColumn(Serializable["FlatCompositionColumn"], Column):
     """[ALPHA] Column that flattens the composition into a string of names and quantities.
 
     The numeric formatting tries to be human readable. For example, if all of the quantities
-    are round numbers like {"spam": 4.0, "eggs": 1.0} then the result omit the decimal points like
-    "(spam)4(eggs)1" (if sort_order is by quantity).
+    are round numbers like ``{"spam": 4.0, "eggs": 1.0}`` then the result omit the decimal points
+    like ``"(spam)4(eggs)1"`` (if sort_order is by quantity).
 
     Parameters
     ----------
