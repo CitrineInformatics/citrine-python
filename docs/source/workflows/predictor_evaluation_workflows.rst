@@ -36,7 +36,8 @@ For numeric responses, the following metrics are available:
 
   - *Root-mean squared error* (:class:`~citrine.informatics.predictor_evaluation_metrics.RMSE`): square root of the average of the squared prediction error.
     RMSE is a useful and popular statistical metric for model quality.
-    RMSE is optimized by least-squares regression, and in that sense is the most "natural" measure for it; it has the same units as the predicted quantity and corresponds to the standard deviation of the variance not explained by the predictor.
+    RMSE is optimized by least-squares regression.
+    It has the same units as the predicted quantity and corresponds to the standard deviation of the residuals not explained by the predictor.
     Lower RMSE means the model is more accurate.
   - *Non-dimensional error* (:class:`~citrine.informatics.predictor_evaluation_metrics.NDME`): RMSE divided by the standard deviation of the observed values in the test set.
     (If training and test set are drawn from the same distribution, the standard deviation of the test set observed values is equivalent to the RMSE of a model that always predicts the mean of the observed values).
