@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>4.10. Predictor reports &#8212; Citrine Python 0.0.1 documentation</title>
+    <title>4.10. Predictor Reports &#8212; Citrine Python 0.0.1 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="../_static/favicon.png"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="4.11. Performance workflows" href="performance_workflows.html" />
+    <link rel="next" title="4.11. Predictor Evaluation Workflows" href="predictor_evaluation_workflows.html" />
     <link rel="prev" title="4.9. Data Sources" href="data_sources.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -35,11 +35,11 @@
           <div class="body" role="main">
             
   <div class="section" id="predictor-reports">
-<h1>4.10. Predictor reports<a class="headerlink" href="#predictor-reports" title="Permalink to this headline">¶</a></h1>
+<h1>4.10. Predictor Reports<a class="headerlink" href="#predictor-reports" title="Permalink to this headline">¶</a></h1>
 <p>Training a predictor generally produces a set of inter-connected models.
 A predictor report describes those models, for example their settings and what features are important to the model.
-It does not include performance metrics.
-To learn more about performance metrics, please see <a class="reference internal" href="performance_workflows.html"><span class="doc">PerformanceWorkflows</span></a>.
+It does not include predictor evaluation metrics.
+To learn more about predictor evaluation metrics, please see <a class="reference internal" href="predictor_evaluation_workflows.html"><span class="doc">PredictorEvaluationMetrics</span></a>.
 The report can be accessed via <code class="docutils literal notranslate"><span class="pre">predictor.report</span></code>.</p>
 <p>A task to generate a predictor report is scheduled when a predictor is registered.
 The report has a <code class="docutils literal notranslate"><span class="pre">status</span></code> and <code class="docutils literal notranslate"><span class="pre">json</span></code> member variables.
@@ -183,14 +183,15 @@ Assume that there is a training data table with known id and version.</p>
 <li class="toctree-l2"><a class="reference internal" href="descriptors.html">4.2. Descriptors</a></li>
 <li class="toctree-l2"><a class="reference internal" href="descriptors.html#platform-vocabularies">4.3. Platform Vocabularies</a></li>
 <li class="toctree-l2"><a class="reference internal" href="predictors.html">4.4. Predictors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="design_spaces.html">4.5. Design spaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="design_spaces.html">4.5. Design Spaces</a></li>
 <li class="toctree-l2"><a class="reference internal" href="processors.html">4.6. Processors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="design_workflows.html">4.7. Design workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="design_workflows.html">4.7. Design Workflows</a></li>
 <li class="toctree-l2"><a class="reference internal" href="scores.html">4.8. Scores</a></li>
 <li class="toctree-l2"><a class="reference internal" href="data_sources.html">4.9. Data Sources</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">4.10. Predictor reports</a></li>
-<li class="toctree-l2"><a class="reference internal" href="performance_workflows.html">4.11. Performance workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="code_examples.html">4.12. AI Engine Code Examples</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">4.10. Predictor Reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="predictor_evaluation_workflows.html">4.11. Predictor Evaluation Workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="performance_workflows.html">4.12. [DEPRECATED] Performance Workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="code_examples.html">4.13. AI Engine Code Examples</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">5. FAQ</a><ul>
@@ -205,7 +206,7 @@ Assume that there is a training data table with known id and version.</p>
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="index.html">4. [ALPHA] AI Engine</a><ul>
       <li>Previous: <a href="data_sources.html" title="previous chapter">4.9. Data Sources</a></li>
-      <li>Next: <a href="performance_workflows.html" title="next chapter">4.11. Performance workflows</a></li>
+      <li>Next: <a href="predictor_evaluation_workflows.html" title="next chapter">4.11. Predictor Evaluation Workflows</a></li>
   </ul></li>
   </ul></li>
 </ul>

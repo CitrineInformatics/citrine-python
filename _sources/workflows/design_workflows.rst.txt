@@ -1,4 +1,4 @@
-Design workflows
+Design Workflows
 ================
 
 A design workflow ranks materials according to a :doc:`score <scores>`.

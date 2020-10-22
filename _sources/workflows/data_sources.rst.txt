@@ -1,3 +1,5 @@
+.. _data-sources:
+
 Data Sources
 ============
 

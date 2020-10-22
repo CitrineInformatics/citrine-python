@@ -88,11 +88,11 @@ and some of which have been shared with the project.</p>
 <dt id="citrine.resources.project.Project.add_user">
 <code class="sig-name descname">add_user</code><span class="sig-paren">(</span><em class="sig-param">user_uid: Union[str, uuid.UUID]</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.project.Project.add_user" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add a User to a Project.</p>
-<p>Adds User with MEMBER role to the Project.
-Use the update_user_rule method to change a User’s role.</p>
+<p>Adds User with <code class="docutils literal notranslate"><span class="pre">MEMBER</span></code> role to the Project.
+Use the <code class="docutils literal notranslate"><span class="pre">update_user_rule</span></code> method to change a User’s role.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>Returns True if user successfully added</p>
+<dd class="field-odd"><p>Returns <code class="docutils literal notranslate"><span class="pre">True</span></code> if user successfully added</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>bool</p>
@@ -178,7 +178,7 @@ Use the update_user_rule method to change a User’s role.</p>
 <dd class="field-odd"><p><strong>resource</strong> (<em>Resource</em>) – An instance of a resource owned by this project (e.g. a dataset).</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>True if the action was performed successfully</p>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if the action was performed successfully</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>bool</p>
@@ -195,7 +195,7 @@ Use the update_user_rule method to change a User’s role.</p>
 <dd class="field-odd"><p><strong>resource</strong> (<em>Resource</em>) – An instance of a resource owned by this project (e.g. a dataset).</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>True if the action was performed successfully</p>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if the action was performed successfully</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>bool</p>
@@ -310,7 +310,7 @@ Use the update_user_rule method to change a User’s role.</p>
 <dd><p>Remove a User from a Project.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>Returns True if user successfully removed</p>
+<dd class="field-odd"><p>Returns <code class="docutils literal notranslate"><span class="pre">True</span></code> if user successfully removed</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>bool</p>
@@ -346,17 +346,17 @@ Use the update_user_rule method to change a User’s role.</p>
 <code class="sig-name descname">transfer_resource</code><span class="sig-paren">(</span><em class="sig-param">resource: citrine._rest.resource.Resource, receiving_project_uid: Union[str, uuid.UUID]</em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#citrine.resources.project.Project.transfer_resource" title="Permalink to this definition">¶</a></dt>
 <dd><p>Transfer ownership of a resource.</p>
 <p>The new owner of the the supplied resource becomes the project
-with uid = receiving_project_uid.</p>
+with <code class="docutils literal notranslate"><span class="pre">uid</span> <span class="pre">==</span> <span class="pre">receiving_project_uid</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>resource</strong> (<em>Resource</em>) – The resource owned by this project, which will get transferred to
-the project with uid = receiving_project_uid.</p></li>
+the project with <code class="docutils literal notranslate"><span class="pre">uid</span> <span class="pre">==</span> <span class="pre">receiving_project_uid</span></code>.</p></li>
 <li><p><strong>receiving_project_uid</strong> (<em>Union</em><em>[</em><em>string</em><em>, </em><em>UUID</em><em>]</em>) – The uid of the project to which the resource will be transferred.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Returns True upon successful resource transfer.</p>
+<dd class="field-even"><p>Returns <code class="docutils literal notranslate"><span class="pre">True</span></code> upon successful resource transfer.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>bool</p>
@@ -373,11 +373,11 @@ the project with uid = receiving_project_uid.</p></li>
 <dt id="citrine.resources.project.Project.update_user_role">
 <code class="sig-name descname">update_user_role</code><span class="sig-paren">(</span><em class="sig-param">user_uid: Union[str, uuid.UUID], role: Union[LEAD, MEMBER], actions: Union[WRITE, READ] = []</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.project.Project.update_user_role" title="Permalink to this definition">¶</a></dt>
 <dd><p>Update a User’s role and action permissions in the Project.</p>
-<p>Valid roles are MEMBER or LEAD.</p>
-<p>WRITE is the only action available for specification.</p>
+<p>Valid roles are <code class="docutils literal notranslate"><span class="pre">MEMBER</span></code> or <code class="docutils literal notranslate"><span class="pre">LEAD</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">WRITE</span></code> is the only action available for specification.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>Returns True if user role successfully updated</p>
+<dd class="field-odd"><p>Returns <code class="docutils literal notranslate"><span class="pre">True</span></code> if user role successfully updated</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>bool</p>
@@ -472,39 +472,35 @@ is specified it limits the maximum number of elements in the response.</p></li>
 <p>You can search for projects matching the desired name or description by either exact match
 or substring match, as specified by the search_params argument. Defaults to no search
 criteria.</p>
-<p>Like list, this method allows for pagination. This differs from the list function, because
-it makes a POST request to resourceType/search with search fields in a post body.</p>
+<p>Like <code class="docutils literal notranslate"><span class="pre">list</span></code>, this method allows for pagination. This differs from the list function,
+because it makes a POST request to resourceType/search with search fields in a post body.</p>
 <p>Leaving page and per_page as default values will yield all elements in the collection,
 paginating over all available pages.</p>
-<p>Leaving search_params as its default value will return mimic the behavior of a full list
-with no search parameters.</p>
+<p>Leaving <code class="docutils literal notranslate"><span class="pre">search_params</span></code> as its default value will return mimic the behavior of
+a full list with no search parameters.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>search_params</strong> (<em>dict</em><em>, </em><em>optional</em>) – <p>A dict representing the body of the post request that will be sent to the search
-endpoint to filter the results ie.
-{</p>
-<blockquote>
-<div><dl class="simple">
-<dt>”name”: {</dt><dd><p>“value”: “Polymer Project”,
-“search_method”: “EXACT”</p>
-</dd>
-</dl>
-<p>},
-“description”: {</p>
-<blockquote>
-<div><p>”value”: “polymer chain length”,
-“search_method”: “SUBSTRING”</p>
-</div></blockquote>
-<p>},</p>
-</div></blockquote>
-<p>}
-The dict can constain any combination of (one or all) search specifications for the
+<li><p><strong>search_params</strong> (<em>dict</em><em>, </em><em>optional</em>) – <p>A <code class="docutils literal notranslate"><span class="pre">dict</span></code> representing the body of the post request that will be sent to the search
+endpoint to filter the results i.e.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;Polymer Project&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;search_method&quot;</span><span class="p">:</span> <span class="s2">&quot;EXACT&quot;</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;polymer chain length&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;search_method&quot;</span><span class="p">:</span> <span class="s2">&quot;SUBSTRING&quot;</span>
+    <span class="p">},</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">dict</span></code> can contain any combination of (one or all) search specifications for the
 name, description, and status fields of a project. For each parameter specified, the
-“value” to match, as well as the “search_method” must be provided. The available
-search_methods are “SUBSTRING” and “EXACT”. The example above demonstrates the input
-necessary to list projects with the exact name “Polymer Project,” and descriptions
-including the phrase “polymer chain length,”</p>
+<code class="docutils literal notranslate"><span class="pre">&quot;value&quot;</span></code> to match, as well as the <code class="docutils literal notranslate"><span class="pre">&quot;search_method&quot;</span></code> must be provided.
+The available <code class="docutils literal notranslate"><span class="pre">search_methods</span></code> are <code class="docutils literal notranslate"><span class="pre">&quot;SUBSTRING&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;EXACT&quot;</span></code>. The example above
+demonstrates the input necessary to list projects with the exact name
+<code class="docutils literal notranslate"><span class="pre">&quot;Polymer</span> <span class="pre">Project&quot;</span></code> and descriptions including the phrase <code class="docutils literal notranslate"><span class="pre">&quot;polymer</span> <span class="pre">chain</span> <span class="pre">length&quot;</span></code>.</p>
 </p></li>
 <li><p><strong>per_page</strong> (<em>int</em><em>, </em><em>optional</em>) – Max number of results to return per page. Default is 100.  This parameter is used when
 making requests to the backend service.  If the page parameter is specified it limits
@@ -589,14 +585,15 @@ the maximum number of elements in the response.</p></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/descriptors.html">4.2. Descriptors</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/descriptors.html#platform-vocabularies">4.3. Platform Vocabularies</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/predictors.html">4.4. Predictors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/design_spaces.html">4.5. Design spaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/design_spaces.html">4.5. Design Spaces</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/processors.html">4.6. Processors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/design_workflows.html">4.7. Design workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/design_workflows.html">4.7. Design Workflows</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/scores.html">4.8. Scores</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/data_sources.html">4.9. Data Sources</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/predictor_reports.html">4.10. Predictor reports</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/performance_workflows.html">4.11. Performance workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/code_examples.html">4.12. AI Engine Code Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/predictor_reports.html">4.10. Predictor Reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/predictor_evaluation_workflows.html">4.11. Predictor Evaluation Workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/performance_workflows.html">4.12. [DEPRECATED] Performance Workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/code_examples.html">4.13. AI Engine Code Examples</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">5. FAQ</a><ul>

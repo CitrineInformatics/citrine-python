@@ -16,8 +16,8 @@
     <link rel="shortcut icon" href="../_static/favicon.png"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="4.7. Design workflows" href="design_workflows.html" />
-    <link rel="prev" title="4.5. Design spaces" href="design_spaces.html" />
+    <link rel="next" title="4.7. Design Workflows" href="design_workflows.html" />
+    <link rel="prev" title="4.5. Design Spaces" href="design_spaces.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -48,7 +48,7 @@ There are two processors:</p>
 The maximum number of candidates sampled from the design space is defined by the optional <code class="docutils literal notranslate"><span class="pre">max_size</span></code> parameter when creating an <a class="reference internal" href="../reference/citrine.informatics.processors.html#citrine.informatics.processors.EnumeratedProcessor" title="citrine.informatics.processors.EnumeratedProcessor"><code class="xref py py-class docutils literal notranslate"><span class="pre">EnumeratedProcessor</span></code></a> using the python SDK.
 To be valid, enumerated processors must have a maximum size of at least 1.</p>
 <p>An enumerated processor can be used with finite and infinite design spaces.
-A finite space can be defined using an <a class="reference internal" href="../reference/citrine.informatics.design_spaces.html#citrine.informatics.design_spaces.EnumeratedDesignSpace" title="citrine.informatics.design_spaces.EnumeratedDesignSpace"><code class="xref py py-class docutils literal notranslate"><span class="pre">EnumeratedDesignSpace</span></code></a> or a <a class="reference internal" href="../reference/citrine.informatics.design_spaces.html#citrine.informatics.design_spaces.ProductDesignSpace" title="citrine.informatics.design_spaces.ProductDesignSpace"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProductDesignSpace</span></code></a> composed only of <a class="reference internal" href="../reference/citrine.informatics.dimensions.html#citrine.informatics.dimensions.EnumeratedDimension" title="citrine.informatics.dimensions.EnumeratedDimension"><code class="xref py py-class docutils literal notranslate"><span class="pre">EnumeratedDimension</span></code></a> s.
+A finite space can be defined using an <a class="reference internal" href="../reference/citrine.informatics.design_spaces.html#citrine.informatics.design_spaces.EnumeratedDesignSpace" title="citrine.informatics.design_spaces.EnumeratedDesignSpace"><code class="xref py py-class docutils literal notranslate"><span class="pre">EnumeratedDesignSpace</span></code></a> or a <a class="reference internal" href="../reference/citrine.informatics.design_spaces.html#citrine.informatics.design_spaces.ProductDesignSpace" title="citrine.informatics.design_spaces.ProductDesignSpace"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProductDesignSpace</span></code></a> composed only of <a class="reference internal" href="../reference/citrine.informatics.dimensions.html#citrine.informatics.dimensions.EnumeratedDimension" title="citrine.informatics.dimensions.EnumeratedDimension"><code class="xref py py-class docutils literal notranslate"><span class="pre">EnumeratedDimensions</span></code></a>.
 In these cases, the processor will systematically pull up to <code class="docutils literal notranslate"><span class="pre">max_size</span></code> samples from the space.</p>
 <p>An infinite design space is created when a <a class="reference internal" href="../reference/citrine.informatics.design_spaces.html#citrine.informatics.design_spaces.ProductDesignSpace" title="citrine.informatics.design_spaces.ProductDesignSpace"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProductDesignSpace</span></code></a> contains one or more continuous dimensions.
 When an enumerated processor is combined with an infinite design space, <code class="docutils literal notranslate"><span class="pre">max_size</span></code> samples are always pulled from the domain.
@@ -195,14 +195,15 @@ a 2D design space of enumerated x values and continuous y values:</p>
 <li class="toctree-l2"><a class="reference internal" href="descriptors.html">4.2. Descriptors</a></li>
 <li class="toctree-l2"><a class="reference internal" href="descriptors.html#platform-vocabularies">4.3. Platform Vocabularies</a></li>
 <li class="toctree-l2"><a class="reference internal" href="predictors.html">4.4. Predictors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="design_spaces.html">4.5. Design spaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="design_spaces.html">4.5. Design Spaces</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">4.6. Processors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="design_workflows.html">4.7. Design workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="design_workflows.html">4.7. Design Workflows</a></li>
 <li class="toctree-l2"><a class="reference internal" href="scores.html">4.8. Scores</a></li>
 <li class="toctree-l2"><a class="reference internal" href="data_sources.html">4.9. Data Sources</a></li>
-<li class="toctree-l2"><a class="reference internal" href="predictor_reports.html">4.10. Predictor reports</a></li>
-<li class="toctree-l2"><a class="reference internal" href="performance_workflows.html">4.11. Performance workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="code_examples.html">4.12. AI Engine Code Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="predictor_reports.html">4.10. Predictor Reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="predictor_evaluation_workflows.html">4.11. Predictor Evaluation Workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="performance_workflows.html">4.12. [DEPRECATED] Performance Workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="code_examples.html">4.13. AI Engine Code Examples</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">5. FAQ</a><ul>
@@ -216,8 +217,8 @@ a 2D design space of enumerated x values and continuous y values:</p>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="index.html">4. [ALPHA] AI Engine</a><ul>
-      <li>Previous: <a href="design_spaces.html" title="previous chapter">4.5. Design spaces</a></li>
-      <li>Next: <a href="design_workflows.html" title="next chapter">4.7. Design workflows</a></li>
+      <li>Previous: <a href="design_spaces.html" title="previous chapter">4.5. Design Spaces</a></li>
+      <li>Next: <a href="design_workflows.html" title="next chapter">4.7. Design Workflows</a></li>
   </ul></li>
   </ul></li>
 </ul>

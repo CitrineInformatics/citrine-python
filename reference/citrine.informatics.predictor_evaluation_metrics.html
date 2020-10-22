@@ -35,6 +35,82 @@
   <div class="section" id="module-citrine.informatics.predictor_evaluation_metrics">
 <span id="citrine-informatics-predictor-evaluation-metrics-module"></span><h1>citrine.informatics.predictor_evaluation_metrics module<a class="headerlink" href="#module-citrine.informatics.predictor_evaluation_metrics" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
+<dt id="citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric">
+<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.predictor_evaluation_metrics.</code><code class="sig-name descname">PredictorEvaluationMetric</code><a class="headerlink" href="#citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.polymorphic_serializable.PolymorphicSerializable</span></code></p>
+<p>[ALPHA] A metric computed during a Predictor Evaluation Workflow.</p>
+<p>Abstract type that returns the proper type given a serialized dict.</p>
+<dl class="method">
+<dt id="citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric.get_type">
+<em class="property">classmethod </em><code class="sig-name descname">get_type</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span> &#x2192; Type[citrine._serialization.serializable.Serializable]<a class="headerlink" href="#citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric.get_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the subtype.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="citrine.informatics.predictor_evaluation_metrics.RMSE">
+<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.predictor_evaluation_metrics.</code><code class="sig-name descname">RMSE</code><a class="headerlink" href="#citrine.informatics.predictor_evaluation_metrics.RMSE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric" title="citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric</span></code></a></p>
+<p>[ALPHA] Root-mean-square error.</p>
+<dl class="attribute">
+<dt id="citrine.informatics.predictor_evaluation_metrics.RMSE.typ">
+<code class="sig-name descname">typ</code><em class="property"> = 'RMSE'</em><a class="headerlink" href="#citrine.informatics.predictor_evaluation_metrics.RMSE.typ" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="citrine.informatics.predictor_evaluation_metrics.NDME">
+<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.predictor_evaluation_metrics.</code><code class="sig-name descname">NDME</code><a class="headerlink" href="#citrine.informatics.predictor_evaluation_metrics.NDME" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric" title="citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric</span></code></a></p>
+<p>[ALPHA] Non-dimensional model error.</p>
+<dl class="attribute">
+<dt id="citrine.informatics.predictor_evaluation_metrics.NDME.typ">
+<code class="sig-name descname">typ</code><em class="property"> = 'NDME'</em><a class="headerlink" href="#citrine.informatics.predictor_evaluation_metrics.NDME.typ" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="citrine.informatics.predictor_evaluation_metrics.StandardRMSE">
+<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.predictor_evaluation_metrics.</code><code class="sig-name descname">StandardRMSE</code><a class="headerlink" href="#citrine.informatics.predictor_evaluation_metrics.StandardRMSE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric" title="citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric</span></code></a></p>
+<p>[ALPHA] Standardized root-mean-square error.</p>
+<dl class="attribute">
+<dt id="citrine.informatics.predictor_evaluation_metrics.StandardRMSE.typ">
+<code class="sig-name descname">typ</code><em class="property"> = 'StandardRMSE'</em><a class="headerlink" href="#citrine.informatics.predictor_evaluation_metrics.StandardRMSE.typ" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="citrine.informatics.predictor_evaluation_metrics.PVA">
+<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.predictor_evaluation_metrics.</code><code class="sig-name descname">PVA</code><a class="headerlink" href="#citrine.informatics.predictor_evaluation_metrics.PVA" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric" title="citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric</span></code></a></p>
+<p>[ALPHA] Predicted vs. actual data.</p>
+<p>Results are returned as a flattened list, where each item represents
+predicted vs. actual data for a single point.</p>
+<dl class="attribute">
+<dt id="citrine.informatics.predictor_evaluation_metrics.PVA.typ">
+<code class="sig-name descname">typ</code><em class="property"> = 'PVA'</em><a class="headerlink" href="#citrine.informatics.predictor_evaluation_metrics.PVA.typ" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="citrine.informatics.predictor_evaluation_metrics.F1">
+<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.predictor_evaluation_metrics.</code><code class="sig-name descname">F1</code><a class="headerlink" href="#citrine.informatics.predictor_evaluation_metrics.F1" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric" title="citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric</span></code></a></p>
+<p>[ALPHA] Support-weighted F1 score.</p>
+<dl class="attribute">
+<dt id="citrine.informatics.predictor_evaluation_metrics.F1.typ">
+<code class="sig-name descname">typ</code><em class="property"> = 'F1'</em><a class="headerlink" href="#citrine.informatics.predictor_evaluation_metrics.F1.typ" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
 <dt id="citrine.informatics.predictor_evaluation_metrics.AreaUnderROC">
 <em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.predictor_evaluation_metrics.</code><code class="sig-name descname">AreaUnderROC</code><a class="headerlink" href="#citrine.informatics.predictor_evaluation_metrics.AreaUnderROC" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric" title="citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric</span></code></a></p>
@@ -62,82 +138,6 @@ to 3 significant figures.  Default: 0.683 corresponds to one std. deviation</p>
 <dl class="attribute">
 <dt id="citrine.informatics.predictor_evaluation_metrics.CoverageProbability.typ">
 <code class="sig-name descname">typ</code><em class="property"> = 'CoverageProbability'</em><a class="headerlink" href="#citrine.informatics.predictor_evaluation_metrics.CoverageProbability.typ" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="citrine.informatics.predictor_evaluation_metrics.F1">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.predictor_evaluation_metrics.</code><code class="sig-name descname">F1</code><a class="headerlink" href="#citrine.informatics.predictor_evaluation_metrics.F1" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric" title="citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric</span></code></a></p>
-<p>[ALPHA] Support-weighted F1 score.</p>
-<dl class="attribute">
-<dt id="citrine.informatics.predictor_evaluation_metrics.F1.typ">
-<code class="sig-name descname">typ</code><em class="property"> = 'F1'</em><a class="headerlink" href="#citrine.informatics.predictor_evaluation_metrics.F1.typ" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="citrine.informatics.predictor_evaluation_metrics.NDME">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.predictor_evaluation_metrics.</code><code class="sig-name descname">NDME</code><a class="headerlink" href="#citrine.informatics.predictor_evaluation_metrics.NDME" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric" title="citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric</span></code></a></p>
-<p>[ALPHA] Non-dimensional model error.</p>
-<dl class="attribute">
-<dt id="citrine.informatics.predictor_evaluation_metrics.NDME.typ">
-<code class="sig-name descname">typ</code><em class="property"> = 'NDME'</em><a class="headerlink" href="#citrine.informatics.predictor_evaluation_metrics.NDME.typ" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="citrine.informatics.predictor_evaluation_metrics.PVA">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.predictor_evaluation_metrics.</code><code class="sig-name descname">PVA</code><a class="headerlink" href="#citrine.informatics.predictor_evaluation_metrics.PVA" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric" title="citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric</span></code></a></p>
-<p>[ALPHA] Predicted vs. actual data.</p>
-<p>Results are returned as a flattened list, where each item represents
-predicted vs. actual data for a single point.</p>
-<dl class="attribute">
-<dt id="citrine.informatics.predictor_evaluation_metrics.PVA.typ">
-<code class="sig-name descname">typ</code><em class="property"> = 'PVA'</em><a class="headerlink" href="#citrine.informatics.predictor_evaluation_metrics.PVA.typ" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.predictor_evaluation_metrics.</code><code class="sig-name descname">PredictorEvaluationMetric</code><a class="headerlink" href="#citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.polymorphic_serializable.PolymorphicSerializable</span></code></p>
-<p>[ALPHA] A metric computed during a Predictor Evaluation Workflow.</p>
-<p>Abstract type that returns the proper type given a serialized dict.</p>
-<dl class="method">
-<dt id="citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric.get_type">
-<em class="property">classmethod </em><code class="sig-name descname">get_type</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span> &#x2192; Type[citrine._serialization.serializable.Serializable]<a class="headerlink" href="#citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric.get_type" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the subtype.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="citrine.informatics.predictor_evaluation_metrics.RMSE">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.predictor_evaluation_metrics.</code><code class="sig-name descname">RMSE</code><a class="headerlink" href="#citrine.informatics.predictor_evaluation_metrics.RMSE" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric" title="citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric</span></code></a></p>
-<p>[ALPHA] Root-mean-square error.</p>
-<dl class="attribute">
-<dt id="citrine.informatics.predictor_evaluation_metrics.RMSE.typ">
-<code class="sig-name descname">typ</code><em class="property"> = 'RMSE'</em><a class="headerlink" href="#citrine.informatics.predictor_evaluation_metrics.RMSE.typ" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="citrine.informatics.predictor_evaluation_metrics.StandardRMSE">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.predictor_evaluation_metrics.</code><code class="sig-name descname">StandardRMSE</code><a class="headerlink" href="#citrine.informatics.predictor_evaluation_metrics.StandardRMSE" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric" title="citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric</span></code></a></p>
-<p>[ALPHA] Standardized root-mean-square error.</p>
-<dl class="attribute">
-<dt id="citrine.informatics.predictor_evaluation_metrics.StandardRMSE.typ">
-<code class="sig-name descname">typ</code><em class="property"> = 'StandardRMSE'</em><a class="headerlink" href="#citrine.informatics.predictor_evaluation_metrics.StandardRMSE.typ" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -209,14 +209,15 @@ predicted vs. actual data for a single point.</p>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/descriptors.html">4.2. Descriptors</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/descriptors.html#platform-vocabularies">4.3. Platform Vocabularies</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/predictors.html">4.4. Predictors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/design_spaces.html">4.5. Design spaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/design_spaces.html">4.5. Design Spaces</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/processors.html">4.6. Processors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/design_workflows.html">4.7. Design workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/design_workflows.html">4.7. Design Workflows</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/scores.html">4.8. Scores</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/data_sources.html">4.9. Data Sources</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/predictor_reports.html">4.10. Predictor reports</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/performance_workflows.html">4.11. Performance workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/code_examples.html">4.12. AI Engine Code Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/predictor_reports.html">4.10. Predictor Reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/predictor_evaluation_workflows.html">4.11. Predictor Evaluation Workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/performance_workflows.html">4.12. [DEPRECATED] Performance Workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/code_examples.html">4.13. AI Engine Code Examples</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">5. FAQ</a><ul>
