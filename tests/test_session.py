@@ -196,6 +196,18 @@ def test_delete_unauthorized_without_json_legacy(session: Session):
             session.delete_resource('/bar/something')
 
 
+def test_delete_unauthorized_with_str_json_legacy(session: Session):
+    with requests_mock.Mocker() as m:
+        m.delete(
+            'http://citrine-testing.fake/api/v1/bar/something',
+            status_code=401,
+            json='an error string'
+        )
+
+        with pytest.raises(Unauthorized):
+            session.delete_resource('/bar/something')
+
+
 def test_delete_unauthorized_without_json(session: Session):
     with requests_mock.Mocker() as m:
         m.delete('http://citrine-testing.fake/api/v1/bar/something', status_code=403)
