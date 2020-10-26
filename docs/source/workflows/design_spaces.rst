@@ -130,8 +130,6 @@ As an example, an enumerated design space that represents points from a 2D Carte
 
    registered_design_space = project.design_spaces.register(design_space)
 
-.. _data-source-design-space:
-
 Data Source Design Space
 ------------------------
 
