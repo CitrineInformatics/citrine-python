@@ -239,20 +239,20 @@ class Project(Resource['Project']):
         Transfer ownership of a resource.
 
         The new owner of the the supplied resource becomes the project
-        with uid = receiving_project_uid.
+        with ``uid == receiving_project_uid``.
 
         Parameters
         ----------
         resource: Resource
             The resource owned by this project, which will get transferred to
-            the project with uid = receiving_project_uid.
+            the project with ``uid == receiving_project_uid``.
         receiving_project_uid: Union[string, UUID]
             The uid of the project to which the resource will be transferred.
 
         Returns
         -------
         bool
-            Returns True upon successful resource transfer.
+            Returns ``True`` upon successful resource transfer.
 
         """
         self.session.checked_post(self._path() + "/transfer-resource", {
@@ -274,7 +274,7 @@ class Project(Resource['Project']):
         Returns
         -------
         bool
-            True if the action was performed successfully
+            ``True`` if the action was performed successfully
 
         """
         self.session.checked_post(self._path() + "/make-public", {
@@ -295,7 +295,7 @@ class Project(Resource['Project']):
         Returns
         -------
         bool
-            True if the action was performed successfully
+            ``True`` if the action was performed successfully
 
         """
         self.session.checked_post(self._path() + "/make-private", {
@@ -320,14 +320,14 @@ class Project(Resource['Project']):
         """
         Update a User's role and action permissions in the Project.
 
-        Valid roles are MEMBER or LEAD.
+        Valid roles are ``MEMBER`` or ``LEAD``.
 
-        WRITE is the only action available for specification.
+        ``WRITE`` is the only action available for specification.
 
         Returns
         -------
         bool
-            Returns True if user role successfully updated
+            Returns ``True`` if user role successfully updated
 
         """
         self.session.checked_post(self._path() + "/users/{}".format(user_uid),
@@ -338,13 +338,13 @@ class Project(Resource['Project']):
         """
         Add a User to a Project.
 
-        Adds User with MEMBER role to the Project.
-        Use the update_user_rule method to change a User's role.
+        Adds User with ``MEMBER`` role to the Project.
+        Use the ``update_user_rule`` method to change a User's role.
 
         Returns
         -------
         bool
-            Returns True if user successfully added
+            Returns ``True`` if user successfully added
 
         """
         self.session.checked_post(self._path() + "/users/{}".format(user_uid),
@@ -358,7 +358,7 @@ class Project(Resource['Project']):
         Returns
         -------
         bool
-            Returns True if user successfully removed
+            Returns ``True`` if user successfully removed
 
         """
         self.session.checked_delete(
@@ -455,36 +455,40 @@ class ProjectCollection(Collection[Project]):
         or substring match, as specified by the search_params argument. Defaults to no search
         criteria.
 
-        Like list, this method allows for pagination. This differs from the list function, because
-        it makes a POST request to resourceType/search with search fields in a post body.
+        Like ``list``, this method allows for pagination. This differs from the list function,
+        because it makes a POST request to resourceType/search with search fields in a post body.
 
         Leaving page and per_page as default values will yield all elements in the collection,
         paginating over all available pages.
 
-        Leaving search_params as its default value will return mimic the behavior of a full list
-        with no search parameters.
+        Leaving ``search_params`` as its default value will return mimic the behavior of
+        a full list with no search parameters.
 
         Parameters
-        ---------
+        ----------
         search_params: dict, optional
-            A dict representing the body of the post request that will be sent to the search
-            endpoint to filter the results ie.
-            {
-                "name": {
-                    "value": "Polymer Project",
-                    "search_method": "EXACT"
-                },
-                "description": {
-                    "value": "polymer chain length",
-                    "search_method": "SUBSTRING"
-                },
-            }
-            The dict can constain any combination of (one or all) search specifications for the
+            A ``dict`` representing the body of the post request that will be sent to the search
+            endpoint to filter the results i.e.
+
+            .. code:: python
+
+                {
+                    "name": {
+                        "value": "Polymer Project",
+                        "search_method": "EXACT"
+                    },
+                    "description": {
+                        "value": "polymer chain length",
+                        "search_method": "SUBSTRING"
+                    },
+                }
+
+            The ``dict`` can contain any combination of (one or all) search specifications for the
             name, description, and status fields of a project. For each parameter specified, the
-            "value" to match, as well as the "search_method" must be provided. The available
-            search_methods are "SUBSTRING" and "EXACT". The example above demonstrates the input
-            necessary to list projects with the exact name "Polymer Project," and descriptions
-            including the phrase "polymer chain length,"
+            ``"value"`` to match, as well as the ``"search_method"`` must be provided.
+            The available ``search_methods`` are ``"SUBSTRING"`` and ``"EXACT"``. The example above
+            demonstrates the input necessary to list projects with the exact name
+            ``"Polymer Project"`` and descriptions including the phrase ``"polymer chain length"``.
 
         per_page: int, optional
             Max number of results to return per page. Default is 100.  This parameter is used when
@@ -515,8 +519,8 @@ class ProjectCollection(Collection[Project]):
         """
         Fetch resources that match the supplied search parameters.
 
-        Fetches resources that match the supplied search_params, by calling _fetch_page with
-        checked_post, the path to the POST resource-type/search endpoint, any pagination
+        Fetches resources that match the supplied ``search_params``, by calling ``_fetch_page``
+        with ``checked_post``, the path to the POST resource-type/search endpoint, any pagination
         parameters, and the request body to the search endpoint.
 
         Parameters
@@ -526,11 +530,10 @@ class ProjectCollection(Collection[Project]):
         per_page: int, optional
             Max number of results to return. Default is 20.
         search_params: dict, optional
-            A dict representing a request body that could be sent to a POST request. The "json"
-            field should be passed as the key for the outermost dict, with its value the request
-            body, so that we can easily unpack the keyword argument when it gets passed to
-            fetch_func.
-            ie. {'name': {'value': 'Project', 'search_method': 'SUBSTRING'} }
+            A ``dict`` representing a request body that could be sent to a POST request. The "json"
+            field should be passed as the key for the outermost ``dict``, with its value the
+            request body, so that we can easily unpack the keyword argument when it gets passed to
+            ``fetch_func``, i.e. ``{'name': {'value': 'Project', 'search_method': 'SUBSTRING'} }``
 
         Returns
         -------

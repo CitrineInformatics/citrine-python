@@ -15,7 +15,7 @@ The maximum number of candidates sampled from the design space is defined by the
 To be valid, enumerated processors must have a maximum size of at least 1.
 
 An enumerated processor can be used with finite and infinite design spaces.
-A finite space can be defined using an :class:`~citrine.informatics.design_spaces.EnumeratedDesignSpace` or a :class:`~citrine.informatics.design_spaces.ProductDesignSpace` composed only of :class:`~citrine.informatics.dimensions.EnumeratedDimension` s.
+A finite space can be defined using an :class:`~citrine.informatics.design_spaces.EnumeratedDesignSpace` or a :class:`~citrine.informatics.design_spaces.ProductDesignSpace` composed only of :class:`EnumeratedDimensions <citrine.informatics.dimensions.EnumeratedDimension>`.
 In these cases, the processor will systematically pull up to ``max_size`` samples from the space.
 
 An infinite design space is created when a :class:`~citrine.informatics.design_spaces.ProductDesignSpace` contains one or more continuous dimensions.

@@ -6,6 +6,15 @@ from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
 from citrine._serialization.serializable import Serializable
 
+__all__ = ['PredictorEvaluationMetric',
+           'RMSE',
+           'NDME',
+           'StandardRMSE',
+           'PVA',
+           'F1',
+           'AreaUnderROC',
+           'CoverageProbability']
+
 
 class PredictorEvaluationMetric(PolymorphicSerializable["PredictorEvaluationMetric"]):
     """[ALPHA] A metric computed during a Predictor Evaluation Workflow.

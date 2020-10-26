@@ -373,11 +373,11 @@ class TableConfigCollection(Collection[TableConfig]):
     def preview(self, table_config: TableConfig, preview_roots: List[LinkByUID]) -> dict:
         """[ALPHA] Preview a Table Config on an explicit set of roots.
 
-         Parameters
+        Parameters
         ----------
-        defn: TableConfig
+        table_config: TableConfig
             Table Config to preview
-        preview_roots: list[LinkByUID]
+        preview_roots: List[LinkByUID]
             List of links to the material history roots to use in the preview
 
         """

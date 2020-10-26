@@ -16,5 +16,6 @@
     scores
     data_sources
     predictor_reports
+    predictor_evaluation_workflows
     performance_workflows
     code_examples
