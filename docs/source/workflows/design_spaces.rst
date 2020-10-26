@@ -3,10 +3,11 @@ Design Spaces
 
 A design space defines a set of materials that should be searched over when performing a material design.
 Design Spaces must be registered to be used in a :doc:`design workflow <design_workflows>`.
-Currently, there are two design spaces:
+Currently, there are three design spaces:
 
 -  `ProductDesignSpace <#product-design-space>`__
 -  `EnumeratedDesignSpace <#enumerated-design-space>`__
+-  `DataSourceDesignSpace <#data-source-design-space>`__
 
 Product design space
 --------------------
@@ -128,3 +129,34 @@ As an example, an enumerated design space that represents points from a 2D Carte
    )
 
    registered_design_space = project.design_spaces.register(design_space)
+
+.. _data-source-design-space:
+
+Data Source Design Space
+------------------------
+
+A data source design space is similar in spirit to an enumerated design space, but the candidates are drawn from an existing data source instead of being specified through a list of dictionaries.
+Any data source can be used and no additional information is needed.
+
+For example, assume you have a :class:`~citrine.resources.gemtables.GemTable` that contains one
+:class:`~citrine.gemtables.rows.Row` for each candidate that you wish to test.
+Assume the table's `table_id` and `table_version` are known.
+The example code below creates a registers a design space based on this Gem Table.
+
+.. code:: python
+
+    from citrine.informatics.data_sources import GemTableDataSource
+    from citrine.informatics.design_spaces import DataSourceDesignSpace
+
+    data_source = GemTableDataSource(
+        table_id=table_id,
+        table_version=table_version
+    )
+
+    design_space = DataSourceDesignSpace(
+        name="my candidates",
+        description="450 potential formulations",
+        data_source=data_source
+    )
+
+    registered_design_space = project.design_spaces.register(design_space)
