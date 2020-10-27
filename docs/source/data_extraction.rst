@@ -200,7 +200,7 @@ Available Row Definitions
 Currently, GEM Tables only provide a single way to define Rows: by the :class:`~gemd.entity.template.material_template.MaterialTemplate` of the roots of the material histories that correspond to each row.
 
 :class:`~citrine.gemtables.rows.MaterialRunByTemplate`
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The :class:`~citrine.gemtables.rows.MaterialRunByTemplate` class defines Rows through a list of :class:`~gemd.entity.template.material_template.MaterialTemplate`.
 Every :class:`~gemd.entity.object.material_run.MaterialRun` that is assigned to any template in the list is used as the root of a  Material History to be mapped to a Row.

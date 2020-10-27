@@ -9,6 +9,10 @@ from citrine._serialization.serializable import Serializable
 from citrine.informatics.descriptors import Descriptor, FormulationDescriptor
 from citrine.resources.file_link import FileLink
 
+__all__ = ['DataSource',
+           'CSVDataSource',
+           'GemTableDataSource']
+
 
 class DataSource(PolymorphicSerializable['DataSource']):
     """A source of data for the AI engine.

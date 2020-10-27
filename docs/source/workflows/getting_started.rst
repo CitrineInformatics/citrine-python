@@ -11,12 +11,12 @@ These capabilities include generating candidates for sequential learning, identi
 Workflows Overview
 ------------------
 
-Currently, there are two types of workflows on the AI Engine: the :doc:`DesignWorkflow <design_workflows>` and the :doc:`PerformanceWorkflow <performance_workflows>`.
+Currently, there are two workflows on the AI Engine: the :doc:`DesignWorkflow <design_workflows>` and the :doc:`PredictorEvaluationWorkflow <predictor_evaluation_workflows>`.
 Workflows employ reusable modules in order to execute.
 There are three different types of modules, and these are discussed in greater detail below.
 
-DesignWorkflow
-**************
+Design Workflow
+***************
 
 The :doc:`DesignWorkflow <design_workflows>` is the core AI workflow on the platform.
 This workflow generates scored candidates for sequential learning.
@@ -31,12 +31,12 @@ After a given number of iterations, candidates are ranked according to their sco
 
 Design workflows are further parameterized by :doc:`Scores <scores>`, which codify experimental objectives and constraints on desired candidates, and define the strategy for candidate acquisition.
 
-PerformanceWorkflow
-*******************
+Predictor Evaluation Workflow
+*****************************
 
-The :doc:`PerformanceWorkflow <performance_workflows>` is used to perform analysis on a predictor module.
-The PerformanceWorkflow exists to help the user understand how well their predictor module works with their data: in essence, it describes the trustworthiness of their model.
-These outcomes are captured in a series of performance metrics.
+The :doc:`PredictorEvaluationWorkflow <predictor_evaluation_workflows>` is used to analyze a :doc:`Predictor <predictors>`.
+This workflow helps users understand how well their predictor module works with their data: in essence, it describes the trustworthiness of their model.
+These outcomes are captured in a series of response metrics.
 
 Modules Overview
 ----------------
@@ -52,7 +52,7 @@ There are 3 types of modules on the platform:
    The processor and design space are coupled: depending on the design space used, only a subset of processors are applicable.
 
 Archiving
-**********
+*********
 
 Modules come active by default when created. If you would like to `archive` a module so it cannot be used again consider this example:
 
@@ -88,7 +88,7 @@ Validation status can be one of the following states:
 Validation of a workflow and all constituent modules must complete with ready status before the workflow can be executed.
 
 Experimental functionality
-***************************
+**************************
 
 Both modules and workflows can be used to access experimental functionality on the platform.
 In some cases, the module or workflow type itself may be experimental.
