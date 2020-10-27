@@ -159,7 +159,10 @@ def _get_base_class(obj: object, key: str) -> type:
     with key as an attribute, return None.
     """
     base_classes = obj.__class__.__bases__  # Tuple of all base classes of obj
-    classes_with_key = [base_class for base_class in base_classes if hasattr(base_class, key)]
+    try:
+        classes_with_key = [base_class for base_class in base_classes if hasattr(base_class, key)]
+    except TypeError:
+        return None
     if len(classes_with_key) == 1:
         return classes_with_key[0]
     else:

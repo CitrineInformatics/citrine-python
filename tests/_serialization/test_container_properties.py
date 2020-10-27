@@ -61,3 +61,17 @@ def test_mapping_property_list_of_pairs_multiple():
     serialized = [('foo', 1), ('bar', 2)]
     assert prop.deserialize(serialized) == value
     unittest.TestCase().assertCountEqual(prop.serialize(value), serialized)
+
+class dummyDescriptor(object):
+    """docstring for dummyDescriptor"""
+    dummy_map = properties.Mapping(properties.Float, properties.String)
+    dummy_set = properties.Set(properties.Float)
+
+
+def test_collection_setters():
+    dummy_descriptor = dummyDescriptor()
+    dummy_descriptor.dummy_map = {1: "1"}
+    dummy_descriptor.dummy_set = {1}
+    assert 1.0 in dummy_descriptor.dummy_map
+    assert 1.0 in dummy_descriptor.dummy_set
+
