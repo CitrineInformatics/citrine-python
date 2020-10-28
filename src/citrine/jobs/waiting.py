@@ -1,4 +1,4 @@
-from time import time, sleep
+import time
 from pprint import pprint
 from citrine._rest.collection import Collection
 from citrine.informatics.modules import Module
@@ -6,6 +6,10 @@ from citrine.resources.workflow_executions import (
     WorkflowExecution,
     WorkflowExecutionStatus,
 )
+from citrine.resources.predictor_evaluation_execution import (
+    PredictorEvaluationExecution
+)
+from typing import Union
 
 
 class ConditionTimeoutError(RuntimeError):
@@ -14,12 +18,12 @@ class ConditionTimeoutError(RuntimeError):
     pass
 
 
-def _print_validation_status(
+def _print_string_status(
     status: str, start_time: float, line_start: str = "", line_end: str = "\r"
 ):
     print(
         "{}Status = {:<25}Elapsed time".format(line_start, status),
-        " = {}s".format(str(int(time() - start_time)).rjust(3)),
+        " = {}s".format(str(int(time.time() - start_time)).rjust(3)),
         end=line_end,
     )
 
@@ -35,7 +39,7 @@ def _print_execution_status(
 ):
     print(
         "Status = {:<25}Elapsed time".format(_pretty_execution_status(status)),
-        " = {}s".format(str(int(time() - start_time)).rjust(3)),
+        " = {}s".format(str(int(time.time() - start_time)).rjust(3)),
         end=line_end,
     )
 
@@ -74,16 +78,16 @@ def wait_while_validating(
         If fails to validate within timeout
 
     """
-    start = time()
+    start = time.time()
 
     def is_validated():
         status = collection.get(module.uid).status
         if print_status_info:
-            _print_validation_status(status, start)
+            _print_string_status(status, start)
         return status != "VALIDATING" and status != "INPROGRESS"
 
-    while not is_validated() and time() - start < timeout:
-        sleep(interval)
+    while not is_validated() and time.time() - start < timeout:
+        time.sleep(interval)
     if not is_validated():
         msg = "Timeout reached, but condition is still {}".format(is_validated())
         raise ConditionTimeoutError(msg)
@@ -97,29 +101,32 @@ def wait_while_validating(
 
 
 def wait_while_executing(
-    execution: WorkflowExecution,
+    execution: Union[WorkflowExecution, PredictorEvaluationExecution],
     print_status_info: bool = False,
     timeout: float = 1800.0,
     interval: float = 3.0,
-) -> WorkflowExecution:
+    collection: Collection[Module] = None,
+) -> Union[WorkflowExecution, PredictorEvaluationExecution]:
     """
     [ALPHA] Wait until execution is finished.
 
     Parameters
     ----------
-    execution : WorkflowExecution
-        WorklflowExecution to monitor
+    execution : WorkflowExecution or PredictorEvaluationExecution
+        WorklflowExecution or PredictorEvaluationExecution to monitor
     print_status_info : bool, optional
         Whether to print status info, by default False
     timeout : float, optional
         Maximum time spent inquiring in seconds, by default 1800.0
     interval : float, optional
         Inquiry interval in seconds, by default 3.0
+    collection : Collection[Module]
+        Collection containing module, only needed for PredictorEvaluationExecutions
 
     Returns
     -------
-    WorkflowExecution
-        WorkflowExecution after execution
+    WorkflowExecution or PredictorEvaluationExecution
+        WorkflowExecution or PredictorEvaluationExecution after execution
 
 
     Raises
@@ -128,16 +135,24 @@ def wait_while_executing(
         If fails to finish execution within timeout
 
     """
-    start = time()
+    start = time.time()
 
     def execution_is_finished():
-        status = execution.status()
-        if print_status_info:
-            _print_execution_status(status, start)
-        return not status.in_progress
+        if isinstance(execution, PredictorEvaluationExecution):
+            if collection is None:
+                raise ValueError("Must provide collection")
+            status = collection.get(execution.uid).status
+            if print_status_info:
+                _print_string_status(status, start)
+            return status != "INPROGRESS"
+        else:
+            status = execution.status()
+            if print_status_info:
+                _print_execution_status(status, start)
+            return not status.in_progress
 
-    while not execution_is_finished() and (time() - start < timeout):
-        sleep(interval)
+    while not execution_is_finished() and (time.time() - start < timeout):
+        time.sleep(interval)
     if not execution_is_finished():
         msg = "Timeout reached, but condition is still {}".format(execution_is_finished())
         raise ConditionTimeoutError(msg)
