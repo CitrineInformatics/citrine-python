@@ -2,12 +2,10 @@ import time
 from pprint import pprint
 from citrine._rest.collection import Collection
 from citrine.informatics.modules import Module
+from citrine.resources.predictor_evaluation_execution import PredictorEvaluationExecution
 from citrine.resources.workflow_executions import (
     WorkflowExecution,
     WorkflowExecutionStatus,
-)
-from citrine.resources.predictor_evaluation_execution import (
-    PredictorEvaluationExecution
 )
 from typing import Union
 

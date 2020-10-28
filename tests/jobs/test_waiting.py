@@ -7,9 +7,7 @@ from datetime import datetime
 import time
 
 from citrine.jobs.waiting import wait_while_executing, wait_while_validating, ConditionTimeoutError
-from citrine.resources.predictor_evaluation_execution import (
-    PredictorEvaluationExecution
-)
+from citrine.resources.predictor_evaluation_execution import PredictorEvaluationExecution
 
 
 @mock.patch('time.sleep', return_value=None)
