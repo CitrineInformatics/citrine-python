@@ -4,9 +4,14 @@ from setuptools.command.develop import develop
 from setuptools.command.build_py import build_py
 import sys
 from os.path import join
-from os import walk
+from os import walk, path
 
 STRIP_DIRS = ["src", "tests"]
+
+# read the contents of your README file
+this_directory = path.abspath(path.dirname(__file__))
+with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
+    long_description = f.read()
 
 
 def strip_file(file_path):
@@ -57,9 +62,11 @@ class PreBuildCommand(build_py):
 
 
 setup(name='citrine',
-      version='0.78.1',
+      version='0.78.4',
       url='http://github.com/CitrineInformatics/citrine-python',
       description='Python library for the Citrine Platform',
+      long_description=long_description,
+      long_description_content_type='text/markdown',
       author='Citrine Informatics',
       package_dir={'': 'src'},
       packages=find_packages(where='src'),

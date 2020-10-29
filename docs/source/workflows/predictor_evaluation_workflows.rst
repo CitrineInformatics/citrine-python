@@ -208,11 +208,10 @@ Then wait for the results to be ready:
 
 .. code:: python
 
-    from time import sleep
+    from citrine.jobs.waiting import wait_while_executing
 
     execution = workflow.executions.trigger(predictor.uid)
-    while project.predictor_evaluation_exeuctions.get(execution.uid).status == 'INPROGRESS':
-        time.sleep(10)
+    wait_while_executing(execution, print_status_info=True, collection = project.predictor_evaluation_executions)
 
 Finally, load the results and inspect the metrics and their computed values:
 
