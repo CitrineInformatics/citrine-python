@@ -63,19 +63,10 @@ def test_mapping_property_list_of_pairs_multiple():
     unittest.TestCase().assertCountEqual(prop.serialize(value), serialized)
 
 
-class DummyType(properties.PropertyCollection):
-    """Property Collection that doesn't override _set_elements for testing."""
-
-    @property
-    def underlying_types(self):
-        return int
-
-
 class DummyDescriptor(object):
     dummy_map = properties.Mapping(properties.Float(), properties.String)
     dummy_list = properties.List(properties.Float, properties.String)
     dummy_set = properties.Set(type(properties.Float()))
-    dummy_bad_type = DummyType()
 
 
 def test_collection_setters():
@@ -86,6 +77,3 @@ def test_collection_setters():
     assert 1.0 in dummy_descriptor.dummy_map
     assert 1.0 in dummy_descriptor.dummy_set
     assert 1.0 in dummy_descriptor.dummy_list
-
-    with pytest.raises(NotImplementedError):
-        dummy_descriptor.dummy_bad_type = 1

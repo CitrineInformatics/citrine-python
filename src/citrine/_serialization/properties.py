@@ -161,7 +161,6 @@ class PropertyCollection(Property[DeserializedType, SerializedType]):
 
         Return the appropriate value to set
         """
-        raise NotImplementedError
 
 
 def _get_base_class(obj: object, key: str) -> type:
