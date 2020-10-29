@@ -137,7 +137,11 @@ class Property(typing.Generic[DeserializedType, SerializedType]):
 class PropertyCollection(Property[DeserializedType, SerializedType]):
 
     def __set__(self, obj, value: typing.Union[SerializedType, DeserializedType]):
-        """Property setter, deferring to the setter of the parent class, if applicable."""
+        """
+        Property setter for container property types.
+
+        This setter defers to the subclass to implement the `_set_elements` logic
+        """
         base_class = _get_base_class(obj, self.serialization_path)
         if issubclass(type(value), self.underlying_types):
             value_to_set = self._set_elements(value)
@@ -149,6 +153,15 @@ class PropertyCollection(Property[DeserializedType, SerializedType]):
             getattr(base_class, self.serialization_path).fset(obj, value_to_set)
         else:
             setattr(obj, self._key, value_to_set)
+
+    @abstractmethod
+    def _set_elements(self, value: typing.Union[SerializedType, DeserializedType]):
+        """
+        Perform any needed underlying element specific deserialization.
+
+        Return the appropriate value to set
+        """
+        raise NotImplementedError
 
 
 def _get_base_class(obj: object, key: str) -> type:
