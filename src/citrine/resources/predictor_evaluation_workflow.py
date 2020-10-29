@@ -12,6 +12,7 @@ class PredictorEvaluationWorkflowCollection(Collection[PredictorEvaluationWorkfl
 
     _path_template = '/projects/{project_id}/predictor-evaluation-workflows'
     _individual_key = None
+    _collection_key = 'response'
     _resource = PredictorEvaluationWorkflow
 
     def __init__(self, project_id: UUID, session: Session):
