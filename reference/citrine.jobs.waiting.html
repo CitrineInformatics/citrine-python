@@ -43,22 +43,23 @@
 
 <dl class="function">
 <dt id="citrine.jobs.waiting.wait_while_executing">
-<code class="sig-prename descclassname">citrine.jobs.waiting.</code><code class="sig-name descname">wait_while_executing</code><span class="sig-paren">(</span><em class="sig-param">execution: citrine.resources.workflow_executions.WorkflowExecution</em>, <em class="sig-param">print_status_info: bool = False</em>, <em class="sig-param">timeout: float = 1800.0</em>, <em class="sig-param">interval: float = 3.0</em><span class="sig-paren">)</span> &#x2192; citrine.resources.workflow_executions.WorkflowExecution<a class="headerlink" href="#citrine.jobs.waiting.wait_while_executing" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">citrine.jobs.waiting.</code><code class="sig-name descname">wait_while_executing</code><span class="sig-paren">(</span><em class="sig-param">execution: Union[citrine.resources.workflow_executions.WorkflowExecution, citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecution], print_status_info: bool = False, timeout: float = 1800.0, interval: float = 3.0, collection: citrine._rest.collection.Collection[citrine.informatics.modules.Module] = None</em><span class="sig-paren">)</span> &#x2192; Union[citrine.resources.workflow_executions.WorkflowExecution, citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecution]<a class="headerlink" href="#citrine.jobs.waiting.wait_while_executing" title="Permalink to this definition">¶</a></dt>
 <dd><p>[ALPHA] Wait until execution is finished.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>execution</strong> (<a class="reference internal" href="citrine.resources.workflow_executions.html#citrine.resources.workflow_executions.WorkflowExecution" title="citrine.resources.workflow_executions.WorkflowExecution"><em>WorkflowExecution</em></a>) – WorklflowExecution to monitor</p></li>
+<li><p><strong>execution</strong> (<a class="reference internal" href="citrine.resources.workflow_executions.html#citrine.resources.workflow_executions.WorkflowExecution" title="citrine.resources.workflow_executions.WorkflowExecution"><em>WorkflowExecution</em></a><em> or </em><a class="reference internal" href="citrine.resources.predictor_evaluation_execution.html#citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecution" title="citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecution"><em>PredictorEvaluationExecution</em></a>) – WorklflowExecution or PredictorEvaluationExecution to monitor</p></li>
 <li><p><strong>print_status_info</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to print status info, by default False</p></li>
 <li><p><strong>timeout</strong> (<em>float</em><em>, </em><em>optional</em>) – Maximum time spent inquiring in seconds, by default 1800.0</p></li>
 <li><p><strong>interval</strong> (<em>float</em><em>, </em><em>optional</em>) – Inquiry interval in seconds, by default 3.0</p></li>
+<li><p><strong>collection</strong> (<em>Collection</em><em>[</em><a class="reference internal" href="citrine.informatics.modules.html#citrine.informatics.modules.Module" title="citrine.informatics.modules.Module"><em>Module</em></a><em>]</em>) – Collection containing module, only needed for PredictorEvaluationExecutions</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>WorkflowExecution after execution</p>
+<dd class="field-even"><p>WorkflowExecution or PredictorEvaluationExecution after execution</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="citrine.resources.workflow_executions.html#citrine.resources.workflow_executions.WorkflowExecution" title="citrine.resources.workflow_executions.WorkflowExecution">WorkflowExecution</a></p>
+<dd class="field-odd"><p><a class="reference internal" href="citrine.resources.workflow_executions.html#citrine.resources.workflow_executions.WorkflowExecution" title="citrine.resources.workflow_executions.WorkflowExecution">WorkflowExecution</a> or <a class="reference internal" href="citrine.resources.predictor_evaluation_execution.html#citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecution" title="citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecution">PredictorEvaluationExecution</a></p>
 </dd>
 <dt class="field-even">Raises</dt>
 <dd class="field-even"><p><a class="reference internal" href="#citrine.jobs.waiting.ConditionTimeoutError" title="citrine.jobs.waiting.ConditionTimeoutError"><strong>ConditionTimeoutError</strong></a> – If fails to finish execution within timeout</p>

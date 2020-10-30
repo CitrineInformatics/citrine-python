@@ -371,6 +371,31 @@ Dry run is intended to be used for validation. Default: false</p></li>
 </dd></dl>
 
 <dl class="method">
+<dt id="citrine.resources.dataset.DatasetCollection.list">
+<code class="sig-name descname">list</code><span class="sig-paren">(</span><em class="sig-param">page: Optional[int] = None</em>, <em class="sig-param">per_page: int = 1000</em><span class="sig-paren">)</span> &#x2192; Iterable[citrine.resources.dataset.Dataset]<a class="headerlink" href="#citrine.resources.dataset.DatasetCollection.list" title="Permalink to this definition">¶</a></dt>
+<dd><p>List datasets using pagination.</p>
+<p>Leaving page and per_page as default values will yield all elements in the
+collection, paginating over all available pages.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>page</strong> (<em>int</em><em>, </em><em>optional</em>) – The “page” of results to list. Default is to read all pages and yield
+all results.  This option is deprecated.</p></li>
+<li><p><strong>per_page</strong> (<em>int</em><em>, </em><em>optional</em>) – Max number of results to return per page. Default is 1000.  This parameter
+is used when making requests to the backend service.  If the page parameter
+is specified it limits the maximum number of elements in the response.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Datasets in this collection.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Iterable[<a class="reference internal" href="#citrine.resources.dataset.Dataset" title="citrine.resources.dataset.Dataset">Dataset</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
 <dt id="citrine.resources.dataset.DatasetCollection.register">
 <code class="sig-name descname">register</code><span class="sig-paren">(</span><em class="sig-param">model: citrine.resources.dataset.Dataset</em><span class="sig-paren">)</span> &#x2192; citrine.resources.dataset.Dataset<a class="headerlink" href="#citrine.resources.dataset.DatasetCollection.register" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a new element of the collection by registering an existing resource.</p>
