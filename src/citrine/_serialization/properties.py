@@ -134,6 +134,35 @@ class Property(typing.Generic[DeserializedType, SerializedType]):
         return '<Property {!r}>'.format(self.serialization_path)
 
 
+class PropertyCollection(Property[DeserializedType, SerializedType]):
+
+    def __set__(self, obj, value: typing.Union[SerializedType, DeserializedType]):
+        """
+        Property setter for container property types.
+
+        This setter defers to the subclass to implement the `_set_elements` logic
+        """
+        base_class = _get_base_class(obj, self.serialization_path)
+        if issubclass(type(value), self.underlying_types):
+            value_to_set = self._set_elements(value)
+        else:
+            # if value is not an underlying type, set its deserialized version.
+            value_to_set = self.deserialize(value, base_class=base_class)
+
+        if base_class is not None and self.override:
+            getattr(base_class, self.serialization_path).fset(obj, value_to_set)
+        else:
+            setattr(obj, self._key, value_to_set)
+
+    @abstractmethod
+    def _set_elements(self, value: typing.Union[SerializedType, DeserializedType]):
+        """
+        Perform any needed underlying element specific deserialization.
+
+        Return the appropriate value to set
+        """
+
+
 def _get_base_class(obj: object, key: str) -> type:
     """
     Return the base class that has key as an attribute, if it exists.
@@ -142,7 +171,10 @@ def _get_base_class(obj: object, key: str) -> type:
     with key as an attribute, return None.
     """
     base_classes = obj.__class__.__bases__  # Tuple of all base classes of obj
-    classes_with_key = [base_class for base_class in base_classes if hasattr(base_class, key)]
+    try:
+        classes_with_key = [base_class for base_class in base_classes if hasattr(base_class, key)]
+    except TypeError:
+        return None
     if len(classes_with_key) == 1:
         return classes_with_key[0]
     else:
@@ -304,7 +336,7 @@ class Datetime(Property[datetime, int]):
         return int(arrow.get(value).float_timestamp * 1000)
 
 
-class List(Property[list, list]):
+class List(PropertyCollection[list, list]):
 
     def __init__(self,
                  element_type: typing.Union[Property, typing.Type[Property]],
@@ -340,8 +372,17 @@ class List(Property[list, list]):
             serialized.append(self.element_type.serialize(element))
         return serialized
 
+    def _set_elements(self, value):
+        elems = []
+        for sub_val in value:
+            if issubclass(type(sub_val), self.element_type.underlying_types):
+                elems.append(sub_val)
+            else:
+                elems.append(self.element_type.deserialize(sub_val))
+        return elems
 
-class Set(Property[set, typing.Iterable]):
+
+class Set(PropertyCollection[set, typing.Iterable]):
 
     def __init__(self,
                  element_type: typing.Union[Property, typing.Type[Property]],
@@ -379,6 +420,15 @@ class Set(Property[set, typing.Iterable]):
             return sorted(serialized)
         except TypeError:
             return serialized
+
+    def _set_elements(self, value):
+        elems = set()
+        for sub_val in value:
+            if issubclass(type(sub_val), self.element_type.underlying_types):
+                elems.add(sub_val)
+            else:
+                elems.add(self.element_type.deserialize(sub_val))
+        return elems
 
 
 class Union(Property[typing.Any, typing.Any]):
@@ -698,7 +748,7 @@ class Optional(Property[typing.Optional[typing.Any], typing.Optional[typing.Any]
         return '<Optional[{}] {!r}>'.format(self.prop, self.serialization_path)
 
 
-class Mapping(Property[dict, dict]):
+class Mapping(PropertyCollection[dict, dict]):
     """
     Serialization of a Mapping.
 
@@ -770,3 +820,17 @@ class Mapping(Property[dict, dict]):
             serialized_value = self.values_type.serialize(value)
             serialized[serialized_key] = serialized_value
         return serialized
+
+    def _set_elements(self, value):
+        elems = dict()
+        for key, val in value.items():
+            if issubclass(type(val), self.values_type.underlying_types):
+                deserialized_value = val
+            else:
+                deserialized_value = self.values_type.deserialize(val)
+            if issubclass(type(key), self.keys_type.underlying_types):
+                deserialized_key = key
+            else:
+                deserialized_key = self.keys_type.deserialize(key)
+            elems[deserialized_key] = deserialized_value
+        return elems
