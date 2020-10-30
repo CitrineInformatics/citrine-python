@@ -6,7 +6,7 @@ from citrine._rest.resource import Resource
 from citrine._serialization import properties
 from citrine._session import Session
 from citrine.informatics.analysis_configuration import CrossValidationAnalysisConfiguration
-from citrine.informatics.workflows import PredictorEvaluationWorkflow
+from citrine.informatics.workflows.predictor_evaluation_workflow import PredictorEvaluationWorkflow
 from citrine.informatics.workflows.workflow import Workflow
 from citrine.resources.workflow_executions import WorkflowExecutionCollection
 

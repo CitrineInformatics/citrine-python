@@ -89,6 +89,33 @@ def valid_enumerated_design_space_data():
     )
 
 
+
+@pytest.fixture
+def valid_formulation_design_space_data():
+    """Produce valid formulation design space data."""
+    from citrine.informatics.constraints import IngredientCountConstraint
+    from citrine.informatics.descriptors import FormulationDescriptor
+    descriptor = FormulationDescriptor('formulation')
+    constraint = IngredientCountConstraint(descriptor, 0, 1)
+    return dict(
+        status='VALIDATING',
+        status_info=None,
+        archived=True,
+        display_name='formulation design space',
+        id=str(uuid.uuid4()),
+        config=dict(
+            type='FormulationDesignSpace',
+            name='formulation design space',
+            description='formulates some things',
+            descriptor=descriptor.dump(),
+            ingredients={'foo'},
+            labels=dict(bar={'foo'}),
+            constraints=[constraint.dump()],
+            resolution=0.1
+        )
+    )
+
+
 @pytest.fixture()
 def valid_gem_data_source_dict():
     return {
