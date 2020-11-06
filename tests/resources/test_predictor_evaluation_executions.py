@@ -121,3 +121,8 @@ def test_restore(workflow_execution, collection):
     collection.restore(workflow_execution.uid)
     expected_path = '/projects/{}/predictor-evaluation-executions/restore'.format(collection.project_id)
     assert collection.session.last_call == FakeCall(method='PUT', path=expected_path, json={"module_uid": str(workflow_execution.uid)})
+
+
+def test_delete(collection):
+    with pytest.raises(NotImplementedError):
+        collection.delete(uuid.uuid4())
