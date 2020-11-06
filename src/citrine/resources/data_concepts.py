@@ -388,6 +388,68 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         )
         return [self.build(obj) for obj in response_data['objects']]
 
+    def update_with_data_validation(self, model: ResourceType,
+                                    dry_run: Optional[bool] = False,
+                                    wait_for_response: Optional[bool] = True,
+                                    timeout: float = 2 * 60,
+                                    polling_delay: float = 1.0) -> Union[None, UUID]:
+        """
+        [ALPHA] Update a particular element of the collection with data validation.
+
+        Update a particular element of the collection, doing a deeper check to ensure that
+        the dependent data objects are still with the (potentially) changed constraints
+        of this change. This will allow you to make bounds and allowed named/labels changes
+        to templates.
+
+        Parameters
+        ----------
+        model: ResourceType
+            The DataConcepts object.
+        dry_run: bool
+            Whether to actually update the item or run a dry run of the update operation.
+            Dry run is intended to be used for validation. Default: false
+
+        Returns
+        -------
+        ResourceType
+            If wait_for_response if True, then this call will poll the backend, waiting
+            for the eventual job result. In the case of successful validation/update,
+            a return value of None is provided which indicates success. In the case of
+            a failure validating or processing the update, an exception (RuntimeError)
+            is raised and an error message is logged with the underlying reason of the
+            failure.
+
+            If wait_for_response if False, A job ID (of type UUID) is returned that one
+            can use to poll for the job completion and result.
+
+        """
+        temp_scope = str(uuid4())
+        GEMDJson(scope=temp_scope).dumps(model)  # This apparent no-op populates uids
+        dumped_data = replace_objects_with_links(scrub_none(model.dump()))
+        recursive_foreach(model, lambda x: x.uids.pop(temp_scope, None))  # Strip temp uids
+
+        scope = CITRINE_SCOPE
+        id = dumped_data['uids']['id']
+        if self.dataset_id is None:
+            raise RuntimeError("Must specify a dataset in order to update "
+                               "a data model object with data validation.")
+
+        url = self._get_path() + \
+            "/" + scope + "/" + id + "/with-data-validation"
+
+        response_json = self.session.put_resource(url, dumped_data, params={'dry_run': dry_run})
+
+        job_id = response_json["job_id"]
+
+        if wait_for_response:
+            self._poll_for_job_completion(self.project_id, job_id, timeout=timeout,
+                                          polling_delay=polling_delay)
+
+            # That worked, nothing returned in this case
+            return None
+        else:
+            return job_id
+
     def get(self, uid: Union[UUID, str], scope: str = CITRINE_SCOPE) -> ResourceType:
         """
         Get the element of the collection with ID equal to uid.
