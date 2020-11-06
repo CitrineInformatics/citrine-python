@@ -132,6 +132,12 @@
 </dd></dl>
 
 <dl class="method">
+<dt id="citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecutionCollection.delete">
+<code class="sig-name descname">delete</code><span class="sig-paren">(</span><em class="sig-param">uid: Union[uuid.UUID, str]</em><span class="sig-paren">)</span> &#x2192; citrine.resources.response.Response<a class="headerlink" href="#citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecutionCollection.delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Predictor Evaluation Executions cannot be deleted; they can be archived instead.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecutionCollection.list">
 <code class="sig-name descname">list</code><span class="sig-paren">(</span><em class="sig-param">page: Optional[int] = None</em>, <em class="sig-param">per_page: int = 100</em>, <em class="sig-param">predictor_id: Optional[uuid.UUID] = None</em><span class="sig-paren">)</span> &#x2192; Iterable[citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecution]<a class="headerlink" href="#citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecutionCollection.list" title="Permalink to this definition">¶</a></dt>
 <dd><p>Paginate over the elements of the collection.</p>
