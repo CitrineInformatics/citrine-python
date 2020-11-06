@@ -198,6 +198,6 @@ class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExec
                                         per_page=per_page)
 
     def delete(self, uid: Union[UUID, str]) -> Response:
-        """Predictor Evaluation Workflows cannot be deleted; they can be archived instead."""
+        """Predictor Evaluation Executions cannot be deleted; they can be archived instead."""
         raise NotImplementedError(
-            "Predictor Evaluation Workflows cannot be deleted; they can be archived instead.")
+            "Predictor Evaluation Executions cannot be deleted; they can be archived instead.")
