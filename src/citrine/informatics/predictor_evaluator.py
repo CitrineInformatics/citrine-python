@@ -62,9 +62,9 @@ class CrossValidationEvaluator(Serializable["CrossValidationEvaluator"], Predict
     this evaluator defines a set of descriptor keys to ignore when grouping.  Candidates with
     different values for ignored keys and identical values for all other predictor inputs will be
     placed in the same fold.  For example, if you are baking cakes with difference ingredients and
-    different oven temperatures and want to group together the data by the ingredients, then you can
-    set `ignore_when_grouping={"oven temperature"}`. That way, to recipes that differ only in their
-    oven temperature will always end up in the same fold.
+    different oven temperatures and want to group together the data by the ingredients, then you
+    can set `ignore_when_grouping={"oven temperature"}`. That way, to recipes that differ only in
+    their oven temperature will always end up in the same fold.
 
     Parameters
     ----------
