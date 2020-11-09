@@ -18,14 +18,17 @@ Cross-validation evaluator
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 A :class:`~citrine.informatics.predictor_evaluator.CrossValidationEvaluator` performs k-fold cross-validation on a predictor.
-In addition to a name, set of responses to validate, trials, folds and metrics to compute, this evaluator defines a set of descriptor keys to ignore when grouping.
-Candidates with different values for ignored keys and identical values for all other predictor inputs will be placed in the same fold.
-
 Cross-validation can only be evaluated on predictors that define training data.
 During cross-validation, the predictor's training data is partitioned into k folds.
 Each fold acts as the test set once, and the remaining k-1 folds are used as training data.
 When the number of folds equals the number of training data points, the analysis is equivalent to leave-one-out cross-validation.
 Metrics are computed by comparing the model's predictions to observed values.
+
+In addition to a name, set of responses to validate, trials, folds and metrics to compute, this evaluator defines a set of descriptor keys to ignore when grouping.
+Candidates with different values for ignored keys and identical values for all other predictor inputs will be placed in the same fold.
+For example, if you are baking cakes with different ingredients and different oven temperatures and want to group together the data by the ingredients, then
+you can set `ignore_when_grouping={"oven temperature"}`.
+That way, two recipes that differ only in their oven temperature will always end up in the same fold.
 
 Predictor evaluation metrics
 ----------------------------

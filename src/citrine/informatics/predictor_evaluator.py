@@ -58,6 +58,14 @@ class CrossValidationEvaluator(Serializable["CrossValidationEvaluator"], Predict
     Performs cross-validation on requested predictor responses and
     computes the requested metrics on each response.
 
+    In addition to a name, set of responses to validate, trials, folds and metrics to compute,
+    this evaluator defines a set of descriptor keys to ignore when grouping.  Candidates with
+    different values for ignored keys and identical values for all other predictor inputs will be
+    placed in the same fold.  For example, if you are baking cakes with different ingredients and
+    different oven temperatures and want to group together the data by the ingredients, then you
+    can set `ignore_when_grouping={"oven temperature"}`. That way, two recipes that differ only in
+    their oven temperature will always end up in the same fold.
+
     Parameters
     ----------
     name: str
