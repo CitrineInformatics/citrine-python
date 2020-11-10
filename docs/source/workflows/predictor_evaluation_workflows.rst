@@ -24,7 +24,7 @@ Each fold acts as the test set once, and the remaining k-1 folds are used as tra
 When the number of folds equals the number of training data points, the analysis is equivalent to leave-one-out cross-validation.
 Metrics are computed by comparing the model's predictions to observed values.
 Where a metric is computed by taking an average over points in the test folds 
-the point-wise or micro average is reported as opposed to the fold-wise or macro average.
+the fold-wise average is reported as opposed to the point-wise average.
 
 In addition to a name, set of responses to validate, trials, folds and metrics to compute, this evaluator defines a set of descriptor keys to ignore when grouping.
 Candidates with different values for ignored keys and identical values for all other predictor inputs will be placed in the same fold.
