@@ -22,7 +22,8 @@ Cross-validation can only be evaluated on predictors that define training data.
 During cross-validation, the predictor's training data is partitioned into k folds.
 Each fold acts as the test set once, and the remaining k-1 folds are used as training data.
 When the number of folds equals the number of training data points, the analysis is equivalent to leave-one-out cross-validation.
-Metrics are computed by comparing the model's predictions to observed values. Where a metric is computed by taking an avergage over points in the test folds 
+Metrics are computed by comparing the model's predictions to observed values.
+Where a metric is computed by taking an average over points in the test folds 
 the point-wise or micro average is reported as opposed to the fold-wise or macro average.
 
 In addition to a name, set of responses to validate, trials, folds and metrics to compute, this evaluator defines a set of descriptor keys to ignore when grouping.
