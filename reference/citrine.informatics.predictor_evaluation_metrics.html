@@ -38,7 +38,7 @@
 <dt id="citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric">
 <em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.predictor_evaluation_metrics.</code><code class="sig-name descname">PredictorEvaluationMetric</code><a class="headerlink" href="#citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.polymorphic_serializable.PolymorphicSerializable</span></code></p>
-<p>[ALPHA] A metric computed during a Predictor Evaluation Workflow.</p>
+<p>A metric computed during a Predictor Evaluation Workflow.</p>
 <p>Abstract type that returns the proper type given a serialized dict.</p>
 <dl class="method">
 <dt id="citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric.get_type">
@@ -52,7 +52,7 @@
 <dt id="citrine.informatics.predictor_evaluation_metrics.RMSE">
 <em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.predictor_evaluation_metrics.</code><code class="sig-name descname">RMSE</code><a class="headerlink" href="#citrine.informatics.predictor_evaluation_metrics.RMSE" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric" title="citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric</span></code></a></p>
-<p>[ALPHA] Root-mean-square error.</p>
+<p>Root-mean-square error.</p>
 <dl class="attribute">
 <dt id="citrine.informatics.predictor_evaluation_metrics.RMSE.typ">
 <code class="sig-name descname">typ</code><em class="property"> = 'RMSE'</em><a class="headerlink" href="#citrine.informatics.predictor_evaluation_metrics.RMSE.typ" title="Permalink to this definition">¶</a></dt>
@@ -64,7 +64,9 @@
 <dt id="citrine.informatics.predictor_evaluation_metrics.NDME">
 <em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.predictor_evaluation_metrics.</code><code class="sig-name descname">NDME</code><a class="headerlink" href="#citrine.informatics.predictor_evaluation_metrics.NDME" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric" title="citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric</span></code></a></p>
-<p>[ALPHA] Non-dimensional model error.</p>
+<p>Non-dimensional model error.</p>
+<p>The non-dimensional model error is the RMSE divided by the standard deviation
+of the labels in the training data (including all folds, not just the training folds).</p>
 <dl class="attribute">
 <dt id="citrine.informatics.predictor_evaluation_metrics.NDME.typ">
 <code class="sig-name descname">typ</code><em class="property"> = 'NDME'</em><a class="headerlink" href="#citrine.informatics.predictor_evaluation_metrics.NDME.typ" title="Permalink to this definition">¶</a></dt>
@@ -76,7 +78,7 @@
 <dt id="citrine.informatics.predictor_evaluation_metrics.StandardRMSE">
 <em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.predictor_evaluation_metrics.</code><code class="sig-name descname">StandardRMSE</code><a class="headerlink" href="#citrine.informatics.predictor_evaluation_metrics.StandardRMSE" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric" title="citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric</span></code></a></p>
-<p>[ALPHA] Standardized root-mean-square error.</p>
+<p>Standardized root-mean-square error.</p>
 <dl class="attribute">
 <dt id="citrine.informatics.predictor_evaluation_metrics.StandardRMSE.typ">
 <code class="sig-name descname">typ</code><em class="property"> = 'StandardRMSE'</em><a class="headerlink" href="#citrine.informatics.predictor_evaluation_metrics.StandardRMSE.typ" title="Permalink to this definition">¶</a></dt>
@@ -88,7 +90,7 @@
 <dt id="citrine.informatics.predictor_evaluation_metrics.PVA">
 <em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.predictor_evaluation_metrics.</code><code class="sig-name descname">PVA</code><a class="headerlink" href="#citrine.informatics.predictor_evaluation_metrics.PVA" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric" title="citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric</span></code></a></p>
-<p>[ALPHA] Predicted vs. actual data.</p>
+<p>Predicted vs. actual data.</p>
 <p>Results are returned as a flattened list, where each item represents
 predicted vs. actual data for a single point.</p>
 <dl class="attribute">
@@ -102,7 +104,7 @@ predicted vs. actual data for a single point.</p>
 <dt id="citrine.informatics.predictor_evaluation_metrics.F1">
 <em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.predictor_evaluation_metrics.</code><code class="sig-name descname">F1</code><a class="headerlink" href="#citrine.informatics.predictor_evaluation_metrics.F1" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric" title="citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric</span></code></a></p>
-<p>[ALPHA] Support-weighted F1 score.</p>
+<p>Support-weighted F1 score.</p>
 <dl class="attribute">
 <dt id="citrine.informatics.predictor_evaluation_metrics.F1.typ">
 <code class="sig-name descname">typ</code><em class="property"> = 'F1'</em><a class="headerlink" href="#citrine.informatics.predictor_evaluation_metrics.F1.typ" title="Permalink to this definition">¶</a></dt>
@@ -114,7 +116,7 @@ predicted vs. actual data for a single point.</p>
 <dt id="citrine.informatics.predictor_evaluation_metrics.AreaUnderROC">
 <em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.predictor_evaluation_metrics.</code><code class="sig-name descname">AreaUnderROC</code><a class="headerlink" href="#citrine.informatics.predictor_evaluation_metrics.AreaUnderROC" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric" title="citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric</span></code></a></p>
-<p>[ALPHA] Area under the receiver operating characteristic (ROC) curve.</p>
+<p>Area under the receiver operating characteristic (ROC) curve.</p>
 <dl class="attribute">
 <dt id="citrine.informatics.predictor_evaluation_metrics.AreaUnderROC.typ">
 <code class="sig-name descname">typ</code><em class="property"> = 'AreaUnderROC'</em><a class="headerlink" href="#citrine.informatics.predictor_evaluation_metrics.AreaUnderROC.typ" title="Permalink to this definition">¶</a></dt>
@@ -126,7 +128,7 @@ predicted vs. actual data for a single point.</p>
 <dt id="citrine.informatics.predictor_evaluation_metrics.CoverageProbability">
 <em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.predictor_evaluation_metrics.</code><code class="sig-name descname">CoverageProbability</code><span class="sig-paren">(</span><em class="sig-param">coverage_level: Union[str</em>, <em class="sig-param">float] = '0.683'</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.predictor_evaluation_metrics.CoverageProbability" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric" title="citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric</span></code></a></p>
-<p>[ALPHA] Percentage of observations that fall within a given confidence interval.</p>
+<p>Percentage of observations that fall within a given confidence interval.</p>
 <p>The coverage level can be specified to 3 digits, e.g. 0.123 but not 0.1234.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>

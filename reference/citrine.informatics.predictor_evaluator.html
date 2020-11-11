@@ -38,7 +38,7 @@
 <dt id="citrine.informatics.predictor_evaluator.PredictorEvaluator">
 <em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.predictor_evaluator.</code><code class="sig-name descname">PredictorEvaluator</code><a class="headerlink" href="#citrine.informatics.predictor_evaluator.PredictorEvaluator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.polymorphic_serializable.PolymorphicSerializable</span></code></p>
-<p>[ALPHA] A Citrine Predictor Evaluator computes metrics on a predictor.</p>
+<p>A Citrine Predictor Evaluator computes metrics on a predictor.</p>
 <dl class="method">
 <dt id="citrine.informatics.predictor_evaluator.PredictorEvaluator.get_type">
 <em class="property">classmethod </em><code class="sig-name descname">get_type</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span> &#x2192; Type[citrine._serialization.serializable.Serializable]<a class="headerlink" href="#citrine.informatics.predictor_evaluator.PredictorEvaluator.get_type" title="Permalink to this definition">¶</a></dt>
@@ -73,9 +73,16 @@ As such, the names of all evaluators within a single workflow must be unique.</p
 <dt id="citrine.informatics.predictor_evaluator.CrossValidationEvaluator">
 <em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.predictor_evaluator.</code><code class="sig-name descname">CrossValidationEvaluator</code><span class="sig-paren">(</span><em class="sig-param">*, name: str, description: str = '', responses: Set[str], n_folds: int = 5, n_trials: int = 3, metrics: Optional[Set[citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric]] = None, ignore_when_grouping: Optional[Set[str]] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.predictor_evaluator.CrossValidationEvaluator" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.informatics.predictor_evaluator.PredictorEvaluator" title="citrine.informatics.predictor_evaluator.PredictorEvaluator"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.predictor_evaluator.PredictorEvaluator</span></code></a></p>
-<p>[ALPHA] Evaluate a predictor via cross validation.</p>
+<p>Evaluate a predictor via cross validation.</p>
 <p>Performs cross-validation on requested predictor responses and
 computes the requested metrics on each response.</p>
+<p>In addition to a name, set of responses to validate, trials, folds and metrics to compute,
+this evaluator defines a set of descriptor keys to ignore when grouping.  Candidates with
+different values for ignored keys and identical values for all other predictor inputs will be
+placed in the same fold.  For example, if you are baking cakes with different ingredients and
+different oven temperatures and want to group together the data by the ingredients, then you
+can set <cite>ignore_when_grouping={“oven temperature”}</cite>. That way, two recipes that differ only in
+their oven temperature will always end up in the same fold.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">

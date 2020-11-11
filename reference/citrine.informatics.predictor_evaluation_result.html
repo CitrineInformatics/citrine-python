@@ -38,7 +38,7 @@
 <dt id="citrine.informatics.predictor_evaluation_result.MetricValue">
 <em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.predictor_evaluation_result.</code><code class="sig-name descname">MetricValue</code><a class="headerlink" href="#citrine.informatics.predictor_evaluation_result.MetricValue" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.polymorphic_serializable.PolymorphicSerializable</span></code></p>
-<p>[ALPHA] Value associated with a metric computed during a Predictor Evaluation Workflow.</p>
+<p>Value associated with a metric computed during a Predictor Evaluation Workflow.</p>
 <dl class="method">
 <dt id="citrine.informatics.predictor_evaluation_result.MetricValue.get_type">
 <em class="property">classmethod </em><code class="sig-name descname">get_type</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span> &#x2192; Type[citrine._serialization.serializable.Serializable]<a class="headerlink" href="#citrine.informatics.predictor_evaluation_result.MetricValue.get_type" title="Permalink to this definition">¶</a></dt>
@@ -51,7 +51,7 @@
 <dt id="citrine.informatics.predictor_evaluation_result.RealMetricValue">
 <em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.predictor_evaluation_result.</code><code class="sig-name descname">RealMetricValue</code><a class="headerlink" href="#citrine.informatics.predictor_evaluation_result.RealMetricValue" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.informatics.predictor_evaluation_result.MetricValue" title="citrine.informatics.predictor_evaluation_result.MetricValue"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.predictor_evaluation_result.MetricValue</span></code></a></p>
-<p>[ALPHA] Mean and standard error computed for a real-valued metric.</p>
+<p>Mean and standard error computed for a real-valued metric.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -81,7 +81,7 @@
 <dt id="citrine.informatics.predictor_evaluation_result.PredictedVsActualRealPoint">
 <em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.predictor_evaluation_result.</code><code class="sig-name descname">PredictedVsActualRealPoint</code><a class="headerlink" href="#citrine.informatics.predictor_evaluation_result.PredictedVsActualRealPoint" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code></p>
-<p>[ALPHA] Predicted vs. actual data for a single real-valued data point.</p>
+<p>Predicted vs. actual data for a single real-valued data point.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -130,7 +130,7 @@
 <dt id="citrine.informatics.predictor_evaluation_result.PredictedVsActualCategoricalPoint">
 <em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.predictor_evaluation_result.</code><code class="sig-name descname">PredictedVsActualCategoricalPoint</code><a class="headerlink" href="#citrine.informatics.predictor_evaluation_result.PredictedVsActualCategoricalPoint" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code></p>
-<p>[ALPHA] Predicted vs. actual data for a single categorical data point.</p>
+<p>Predicted vs. actual data for a single categorical data point.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -181,7 +181,7 @@ to its relative frequency</p></li>
 <dt id="citrine.informatics.predictor_evaluation_result.RealPredictedVsActual">
 <em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.predictor_evaluation_result.</code><code class="sig-name descname">RealPredictedVsActual</code><a class="headerlink" href="#citrine.informatics.predictor_evaluation_result.RealPredictedVsActual" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.informatics.predictor_evaluation_result.MetricValue" title="citrine.informatics.predictor_evaluation_result.MetricValue"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.predictor_evaluation_result.MetricValue</span></code></a></p>
-<p>[ALPHA] List of predicted vs. actual data points for a real value.</p>
+<p>List of predicted vs. actual data points for a real value.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>value</strong> (<em>List</em><em>[</em><a class="reference internal" href="#citrine.informatics.predictor_evaluation_result.PredictedVsActualRealPoint" title="citrine.informatics.predictor_evaluation_result.PredictedVsActualRealPoint"><em>PredictedVsActualRealPoint</em></a><em>]</em>) – List of predicted vs. actual data computed during a predictor evaluation.
@@ -204,7 +204,7 @@ This is a flattened list that contains data for all trials and folds.</p>
 <dt id="citrine.informatics.predictor_evaluation_result.CategoricalPredictedVsActual">
 <em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.predictor_evaluation_result.</code><code class="sig-name descname">CategoricalPredictedVsActual</code><a class="headerlink" href="#citrine.informatics.predictor_evaluation_result.CategoricalPredictedVsActual" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.informatics.predictor_evaluation_result.MetricValue" title="citrine.informatics.predictor_evaluation_result.MetricValue"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.predictor_evaluation_result.MetricValue</span></code></a></p>
-<p>[ALPHA] List of predicted vs. actual data points for a categorical value.</p>
+<p>List of predicted vs. actual data points for a categorical value.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>value</strong> (<em>List</em><em>[</em><a class="reference internal" href="#citrine.informatics.predictor_evaluation_result.PredictedVsActualCategoricalPoint" title="citrine.informatics.predictor_evaluation_result.PredictedVsActualCategoricalPoint"><em>PredictedVsActualCategoricalPoint</em></a><em>]</em>) – List of predicted vs. actual data computed during a predictor evaluation.
@@ -227,7 +227,7 @@ This is a flattened list that contains data for all trials and folds.</p>
 <dt id="citrine.informatics.predictor_evaluation_result.ResponseMetrics">
 <em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.predictor_evaluation_result.</code><code class="sig-name descname">ResponseMetrics</code><a class="headerlink" href="#citrine.informatics.predictor_evaluation_result.ResponseMetrics" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code></p>
-<p>[ALPHA] Set of metrics computed by a Predictor Evaluator for a single response.</p>
+<p>Set of metrics computed by a Predictor Evaluator for a single response.</p>
 <p>Results computed for a metric can be accessed by the metric’s <code class="docutils literal notranslate"><span class="pre">__repr__</span></code> or
 by the metric itself.</p>
 <dl class="field-list simple">
@@ -246,7 +246,7 @@ by the metric itself.</p>
 <dt id="citrine.informatics.predictor_evaluation_result.PredictorEvaluationResult">
 <em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.predictor_evaluation_result.</code><code class="sig-name descname">PredictorEvaluationResult</code><a class="headerlink" href="#citrine.informatics.predictor_evaluation_result.PredictorEvaluationResult" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.polymorphic_serializable.PolymorphicSerializable</span></code></p>
-<p>[ALPHA] A Citrine Predictor Evaluation Result.</p>
+<p>A Citrine Predictor Evaluation Result.</p>
 <p>This class represents a set of metrics computed by a Predictor Evaluator.</p>
 <dl class="method">
 <dt id="citrine.informatics.predictor_evaluation_result.PredictorEvaluationResult.evaluator">
@@ -278,7 +278,7 @@ by the metric itself.</p>
 <dt id="citrine.informatics.predictor_evaluation_result.CrossValidationResult">
 <em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.predictor_evaluation_result.</code><code class="sig-name descname">CrossValidationResult</code><a class="headerlink" href="#citrine.informatics.predictor_evaluation_result.CrossValidationResult" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.informatics.predictor_evaluation_result.PredictorEvaluationResult" title="citrine.informatics.predictor_evaluation_result.PredictorEvaluationResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.predictor_evaluation_result.PredictorEvaluationResult</span></code></a></p>
-<p>[ALPHA] Result of performing a cross-validation evaluation on a predictor.</p>
+<p>Result of performing a cross-validation evaluation on a predictor.</p>
 <p>Results for a cross-validated response can be accessed via <code class="docutils literal notranslate"><span class="pre">cvResult['response_name']</span></code>,
 where <code class="docutils literal notranslate"><span class="pre">cvResult</span></code> is a
 <a class="reference internal" href="#citrine.informatics.predictor_evaluation_result.CrossValidationResult" title="citrine.informatics.predictor_evaluation_result.CrossValidationResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.predictor_evaluation_result.CrossValidationResult</span></code></a>
