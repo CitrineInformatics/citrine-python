@@ -70,7 +70,8 @@ class NDME(Serializable["NDME"], PredictorEvaluationMetric):
     """Non-dimensional model error.
 
     The non-dimensional model error is the RMSE divided by the standard deviation
-    of the labels in the training data (including all folds, not just the training folds)."""
+    of the labels in the training data (including all folds, not just the training folds).
+    """
 
     typ = properties.String("type", default="NDME", deserializable=False)
 
