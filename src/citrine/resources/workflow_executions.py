@@ -122,5 +122,10 @@ class WorkflowExecutionStatus(Resource['WorkflowExecutionStatus']):
         """Determine whether or not the execution failed."""
         return self.status == "Failed"
 
+    @property
+    def timed_out(self):
+        """Determine whether or not the execution timed out."""
+        return self.status == "TimedOut"
+
     def __str__(self):
         return '<WorkflowExecutionStatus {!r}>'.format(self.status)
