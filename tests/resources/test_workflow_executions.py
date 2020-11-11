@@ -109,12 +109,14 @@ def test_workflow_success_status():
     assert status.succeeded
     assert not status.in_progress
     assert not status.failed
+    assert not status.timed_out
 
 
 def test_workflow_in_progress_status():
     status = WorkflowExecutionStatus('InProgress', None)
 
     assert not status.succeeded
+    assert not status.timed_out
     assert status.in_progress
     assert not status.failed
 
@@ -124,4 +126,14 @@ def test_workflow_failed_status():
 
     assert not status.succeeded
     assert not status.in_progress
+    assert not status.timed_out
     assert status.failed
+
+
+def test_workflow_timedout_status():
+    status = WorkflowExecutionStatus('TimedOut', None)
+
+    assert not status.succeeded
+    assert not status.in_progress
+    assert not status.failed
+    assert status.timed_out
