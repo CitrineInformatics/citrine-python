@@ -10,7 +10,7 @@ __all__ = ['PredictorEvaluator',
 
 
 class PredictorEvaluator(PolymorphicSerializable["PredictorEvaluator"]):
-    """[ALPHA] A Citrine Predictor Evaluator computes metrics on a predictor."""
+    """A Citrine Predictor Evaluator computes metrics on a predictor."""
 
     @classmethod
     def get_type(cls, data) -> Type[Serializable]:
@@ -53,7 +53,7 @@ class PredictorEvaluator(PolymorphicSerializable["PredictorEvaluator"]):
 
 
 class CrossValidationEvaluator(Serializable["CrossValidationEvaluator"], PredictorEvaluator):
-    """[ALPHA] Evaluate a predictor via cross validation.
+    """Evaluate a predictor via cross validation.
 
     Performs cross-validation on requested predictor responses and
     computes the requested metrics on each response.

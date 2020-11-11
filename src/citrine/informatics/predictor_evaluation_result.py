@@ -19,7 +19,7 @@ __all__ = ['MetricValue',
 
 
 class MetricValue(PolymorphicSerializable["MetricValue"]):
-    """[ALPHA] Value associated with a metric computed during a Predictor Evaluation Workflow."""
+    """Value associated with a metric computed during a Predictor Evaluation Workflow."""
 
     def __init__(self):
         """These are results, so they should be built rather than constructed."""
@@ -36,7 +36,7 @@ class MetricValue(PolymorphicSerializable["MetricValue"]):
 
 
 class RealMetricValue(Serializable["RealMetricValue"], MetricValue):
-    """[ALPHA] Mean and standard error computed for a real-valued metric.
+    """Mean and standard error computed for a real-valued metric.
 
     Parameters
     ----------
@@ -59,7 +59,7 @@ class RealMetricValue(Serializable["RealMetricValue"], MetricValue):
 
 
 class PredictedVsActualRealPoint(Serializable["PredictedVsActualRealPoint"]):
-    """[ALPHA] Predicted vs. actual data for a single real-valued data point.
+    """Predicted vs. actual data for a single real-valued data point.
 
     Parameters
     ----------
@@ -90,7 +90,7 @@ class PredictedVsActualRealPoint(Serializable["PredictedVsActualRealPoint"]):
 
 
 class PredictedVsActualCategoricalPoint(Serializable["PredictedVsActualCategoricalPoint"]):
-    """[ALPHA] Predicted vs. actual data for a single categorical data point.
+    """Predicted vs. actual data for a single categorical data point.
 
     Parameters
     ----------
@@ -123,7 +123,7 @@ class PredictedVsActualCategoricalPoint(Serializable["PredictedVsActualCategoric
 
 
 class CategoricalPredictedVsActual(Serializable["CategoricalPredictedVsActual"], MetricValue):
-    """[ALPHA] List of predicted vs. actual data points for a categorical value.
+    """List of predicted vs. actual data points for a categorical value.
 
     Parameters
     ----------
@@ -144,7 +144,7 @@ class CategoricalPredictedVsActual(Serializable["CategoricalPredictedVsActual"],
 
 
 class RealPredictedVsActual(Serializable["RealPredictedVsActual"], MetricValue):
-    """[ALPHA] List of predicted vs. actual data points for a real value.
+    """List of predicted vs. actual data points for a real value.
 
     Parameters
     ----------
@@ -165,7 +165,7 @@ class RealPredictedVsActual(Serializable["RealPredictedVsActual"], MetricValue):
 
 
 class ResponseMetrics(Serializable["ResponseMetrics"]):
-    """[ALPHA] Set of metrics computed by a Predictor Evaluator for a single response.
+    """Set of metrics computed by a Predictor Evaluator for a single response.
 
     Results computed for a metric can be accessed by the metric's ``__repr__`` or
     by the metric itself.
@@ -195,7 +195,7 @@ class ResponseMetrics(Serializable["ResponseMetrics"]):
 
 
 class PredictorEvaluationResult(PolymorphicSerializable["PredictorEvaluationResult"]):
-    """[ALPHA] A Citrine Predictor Evaluation Result.
+    """A Citrine Predictor Evaluation Result.
 
     This class represents a set of metrics computed by a Predictor Evaluator.
     """
@@ -227,7 +227,7 @@ class PredictorEvaluationResult(PolymorphicSerializable["PredictorEvaluationResu
 
 
 class CrossValidationResult(Serializable["CrossValidationResult"], PredictorEvaluationResult):
-    """[ALPHA] Result of performing a cross-validation evaluation on a predictor.
+    """Result of performing a cross-validation evaluation on a predictor.
 
     Results for a cross-validated response can be accessed via ``cvResult['response_name']``,
     where ``cvResult`` is a

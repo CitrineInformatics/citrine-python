@@ -17,7 +17,7 @@ __all__ = ['PredictorEvaluationMetric',
 
 
 class PredictorEvaluationMetric(PolymorphicSerializable["PredictorEvaluationMetric"]):
-    """[ALPHA] A metric computed during a Predictor Evaluation Workflow.
+    """A metric computed during a Predictor Evaluation Workflow.
 
     Abstract type that returns the proper type given a serialized dict.
     """
@@ -55,7 +55,7 @@ class PredictorEvaluationMetric(PolymorphicSerializable["PredictorEvaluationMetr
 
 
 class RMSE(Serializable["RMSE"], PredictorEvaluationMetric):
-    """[ALPHA] Root-mean-square error."""
+    """Root-mean-square error."""
 
     typ = properties.String("type", default="RMSE", deserializable=False)
 
@@ -67,7 +67,10 @@ class RMSE(Serializable["RMSE"], PredictorEvaluationMetric):
 
 
 class NDME(Serializable["NDME"], PredictorEvaluationMetric):
-    """[ALPHA] Non-dimensional model error."""
+    """Non-dimensional model error.
+
+    The non-dimensional model error is the RMSE divided by the standard deviation
+    of the labels in the training data (including all folds, not just the training folds)."""
 
     typ = properties.String("type", default="NDME", deserializable=False)
 
@@ -79,7 +82,7 @@ class NDME(Serializable["NDME"], PredictorEvaluationMetric):
 
 
 class StandardRMSE(Serializable["StandardRMSE"], PredictorEvaluationMetric):
-    """[ALPHA] Standardized root-mean-square error."""
+    """Standardized root-mean-square error."""
 
     typ = properties.String("type", default="StandardRMSE", deserializable=False)
 
@@ -91,7 +94,7 @@ class StandardRMSE(Serializable["StandardRMSE"], PredictorEvaluationMetric):
 
 
 class PVA(Serializable["PVA"], PredictorEvaluationMetric):
-    """[ALPHA] Predicted vs. actual data.
+    """Predicted vs. actual data.
 
     Results are returned as a flattened list, where each item represents
     predicted vs. actual data for a single point.
@@ -107,7 +110,7 @@ class PVA(Serializable["PVA"], PredictorEvaluationMetric):
 
 
 class F1(Serializable["F1"], PredictorEvaluationMetric):
-    """[ALPHA] Support-weighted F1 score."""
+    """Support-weighted F1 score."""
 
     typ = properties.String("type", default="F1", deserializable=False)
 
@@ -119,7 +122,7 @@ class F1(Serializable["F1"], PredictorEvaluationMetric):
 
 
 class AreaUnderROC(Serializable["AreaUnderROC"], PredictorEvaluationMetric):
-    """[ALPHA] Area under the receiver operating characteristic (ROC) curve."""
+    """Area under the receiver operating characteristic (ROC) curve."""
 
     typ = properties.String("type", default="AreaUnderROC", deserializable=False)
 
@@ -131,7 +134,7 @@ class AreaUnderROC(Serializable["AreaUnderROC"], PredictorEvaluationMetric):
 
 
 class CoverageProbability(Serializable["CoverageProbability"], PredictorEvaluationMetric):
-    """[ALPHA] Percentage of observations that fall within a given confidence interval.
+    """Percentage of observations that fall within a given confidence interval.
 
     The coverage level can be specified to 3 digits, e.g. 0.123 but not 0.1234.
 

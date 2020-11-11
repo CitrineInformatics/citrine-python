@@ -62,7 +62,7 @@ class PreBuildCommand(build_py):
 
 
 setup(name='citrine',
-      version='0.79.4',
+      version='0.79.5',
       url='http://github.com/CitrineInformatics/citrine-python',
       description='Python library for the Citrine Platform',
       long_description=long_description,

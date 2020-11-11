@@ -13,7 +13,7 @@ from citrine.resources.response import Response
 
 
 class PredictorEvaluationExecution(Resource['PredictorEvaluationExecution']):
-    """[ALPHA] The execution of a PredictorEvaluationWorkflow.
+    """The execution of a PredictorEvaluationWorkflow.
 
     Parameters
     ----------
@@ -91,7 +91,7 @@ class PredictorEvaluationExecution(Resource['PredictorEvaluationExecution']):
 
 
 class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExecution"]):
-    """[ALPHA] A collection of PredictorEvaluationExecutions."""
+    """A collection of PredictorEvaluationExecutions."""
 
     _path_template = '/projects/{project_id}/predictor-evaluation-executions'  # noqa
     _individual_key = None
