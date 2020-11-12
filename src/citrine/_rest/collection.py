@@ -229,8 +229,8 @@ class Collection(Generic[ResourceType]):
             )
             warnings.warn(msg)
 
-    def _poll_for_job_completion(self, project_id: UUID,
-                                 job: Union[JobSubmissionResponse, UUID], *,
+    def _poll_for_job_completion(self, project_id: Union[UUID, str],
+                                 job: Union[JobSubmissionResponse, UUID, str], *,
                                  timeout: float = 2 * 60,
                                  polling_delay: float = 2.0) -> JobStatusResponse:
         """
