@@ -392,7 +392,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
                                     dry_run: Optional[bool] = False,
                                     wait_for_response: Optional[bool] = True,
                                     timeout: float = 2 * 60,
-                                    polling_delay: float = 1.0) -> Union[None, UUID]:
+                                    polling_delay: float = 1.0) -> Optional[UUID]:
         """
         [ALPHA] Update a particular element of the collection with data validation.
 
