@@ -10,7 +10,7 @@ from citrine.resources.response import Response
 
 
 class PredictorEvaluationWorkflowCollection(Collection[PredictorEvaluationWorkflow]):
-    """[ALPHA] A collection of PredictorEvaluationWorkflows."""
+    """A collection of PredictorEvaluationWorkflows."""
 
     _path_template = '/projects/{project_id}/predictor-evaluation-workflows'
     _individual_key = None
