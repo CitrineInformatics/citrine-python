@@ -444,8 +444,8 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         job_id = response_json["job_id"]
 
         if wait_for_response:
-            self._poll_for_job_completion(self.project_id, job_id, timeout=timeout,
-                                          polling_delay=polling_delay)
+            self.poll_update_with_data_validation_job(job_id, timeout=timeout,
+                                                      polling_delay=polling_delay)
 
             # That worked, nothing returned in this case
             return None

@@ -5,6 +5,7 @@ import pytest
 import requests_mock
 from mock import patch, call
 
+from citrine.exceptions import JobFailureError, PollingTimeoutError
 from citrine.resources.ara_definition import AraDefinition
 from citrine.resources.gemtables import GemTableCollection, GemTable
 from tests.utils.factories import GemTableDataFactory, ListGemTableVersionsDataFactory
@@ -188,13 +189,13 @@ def test_build_from_config_failures(collection: GemTableCollection, session):
             {'task_type': 'foo', 'id': 'foo', 'status': 'Failure', 'failure_reason': 'because', 'dependencies': []}
         ]},
     )
-    with pytest.raises(RuntimeError):
+    with pytest.raises(JobFailureError):
         collection.build_from_config(uuid4(), version=1)
     session.set_responses(
         {'job_id': '12345678-1234-1234-1234-123456789ccc'},
         {'job_type': 'foo', 'status': 'In Progress', 'tasks': []},
     )
-    with pytest.raises(TimeoutError):
+    with pytest.raises(PollingTimeoutError):
         collection.build_from_config(config, timeout=0)
 
 

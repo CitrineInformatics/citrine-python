@@ -7,7 +7,8 @@ from uuid import UUID
 from time import time, sleep
 
 from citrine._rest.paginator import Paginator
-from citrine.exceptions import ModuleRegistrationFailedException, NonRetryableException
+from citrine.exceptions import ModuleRegistrationFailedException, NonRetryableException, \
+    PollingTimeoutError, JobFailureError
 from citrine.resources.job import JobSubmissionResponse, JobStatusResponse
 from citrine.resources.response import Response
 
@@ -275,13 +276,17 @@ class Collection(Generic[ResourceType]):
             else:
                 logger.error('Job exceeded user timeout of {} seconds.'.format(timeout))
                 logger.debug('Last status: {}'.format(status.dump()))
-                raise TimeoutError('Job {} timed out.'.format(job_id))
+                raise PollingTimeoutError('Job {} timed out.'.format(job_id))
         if status.status == 'Failure':
             logger.debug('Job terminated with Failure status: {}'.format(status.dump()))
+            failure_reasons = []
             for task in status.tasks:
                 if task.status == 'Failure':
                     logger.error('Task {} failed with reason "{}"'.format(
                         task.id, task.failure_reason))
-            raise RuntimeError('Job {} terminated with Failure status.'.format(job_id))
+                    failure_reasons.append(task.failure_reason)
+            raise JobFailureError(
+                'Job {} terminated with Failure status. Failure reasons: {}'.format(
+                    job_id, failure_reasons), job_id, failure_reasons)
 
         return status

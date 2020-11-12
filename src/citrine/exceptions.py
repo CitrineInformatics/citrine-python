@@ -1,5 +1,6 @@
 """Citrine-specific exceptions."""
-from typing import Optional
+from typing import Optional, List
+from uuid import UUID
 
 from requests import Response
 
@@ -82,6 +83,21 @@ class WorkflowNotReadyException(RetryableException):
     """The workflow is not ready to be executed. i.e. still validating. (http status 425)."""
 
     pass
+
+
+class PollingTimeoutError(RetryableException):
+    """Polling for an asynchronous result has exceeded the timeout."""
+
+    pass
+
+
+class JobFailureError(RetryableException):
+    """The asynchronous job completed with the given failure message."""
+
+    def __init__(self, message: str, job_id: UUID, failure_reasons: List[str]):
+        super().__init__(message)
+        self.job_id = job_id
+        self.failure_reasons = failure_reasons
 
 
 class ModuleRegistrationFailedException(NonRetryableException):

@@ -6,6 +6,7 @@ from gemd.entity.bounds.integer_bounds import IntegerBounds
 from gemd.entity.object.material_spec import MaterialSpec as GemdMaterialSpec
 from gemd.entity.object.process_spec import ProcessSpec as GemdProcessSpec
 
+from citrine.exceptions import PollingTimeoutError
 from citrine.resources.condition_template import ConditionTemplateCollection, ConditionTemplate
 from citrine.resources.dataset import DatasetCollection
 from citrine.resources.ingredient_run import IngredientRun, IngredientRunCollection
@@ -305,6 +306,27 @@ def test_update_with_data_validation_and_no_dataset_id(dataset, session):
 
     with pytest.raises(RuntimeError):
         dataset.process_templates.update_with_data_validation(obj, wait_for_response=False)
+
+
+def test_update_with_data_validation_timeout(dataset, session):
+    """Ensure the proper exception is thrown on a timeout error"""
+
+    obj = ProcessTemplate(
+        "foo",
+        uids={'id': str(uuid4())}
+    )
+    fake_job_status_resp = {
+        'job_type': 'some_typ',
+        'status': 'Pending',
+        'tasks': [],
+        'output': {}
+    }
+
+    dataset.session.set_responses(JobSubmissionResponseFactory(), fake_job_status_resp)
+
+    with pytest.raises(PollingTimeoutError):
+        dataset.process_templates.update_with_data_validation(obj, wait_for_response=True,
+                                                              timeout=-1.0)
 
 
 def test_register_all_data_concepts(dataset):
