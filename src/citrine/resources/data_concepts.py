@@ -411,7 +411,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
 
         Returns
         -------
-        ResourceType
+        Optional[UUID]
             If wait_for_response if True, then this call will poll the backend, waiting
             for the eventual job result. In the case of successful validation/update,
             a return value of None is provided which indicates success. In the case of
@@ -420,7 +420,9 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
             failure.
 
             If wait_for_response if False, A job ID (of type UUID) is returned that one
-            can use to poll for the job completion and result.
+            can use to poll for the job completion and result with the
+            :func:`~citrine.resources.DataConceptsCollection.poll_update_with_data_validation_job`
+            method.
 
         """
         temp_scope = str(uuid4())
@@ -449,6 +451,38 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
             return None
         else:
             return job_id
+
+    def poll_update_with_data_validation_job(self, job_id: UUID, timeout: float = 2 * 60,
+                                             polling_delay: float = 1.0) -> None:
+        """
+        [ALPHA] Poll for the result of the async update_with_data_validation call.
+
+        This call will poll the backend given the Job ID that came from a call to
+        :func:`~citrine.resources.DataConceptsCollection.update_with_data_validation`,
+        waiting for the eventual job result. In the case of successful validation/update,
+        a return value of None is provided which indicates success. In the case of
+        a failure validating or processing the update, an exception (RuntimeError)
+        is raised and an error message is logged with the underlying reason of the
+        failure.
+
+        Parameters
+        ----------
+        job_id: UUID
+           The job ID for the asynchronous update job we wish to poll.
+
+        Returns
+        -------
+        None
+           This method will raise an appropriate exception if the job failed, else
+           it will return None to indicate the job was successful.
+
+        """
+        # Poll for job completion - this will raise an error if the job failed
+        self._poll_for_job_completion(self.project_id, job_id, timeout=timeout,
+                                      polling_delay=polling_delay)
+
+        # That worked, nothing returned in this case
+        return None
 
     def get(self, uid: Union[UUID, str], scope: str = CITRINE_SCOPE) -> ResourceType:
         """
