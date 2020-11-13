@@ -461,7 +461,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         :func:`~citrine.resources.DataConceptsCollection.async_update`,
         waiting for the eventual job result. In the case of successful validation/update,
         a return value of None is provided which indicates success. In the case of
-        a failure validating or processing the update, an exception (RuntimeError)
+        a failure validating or processing the update, an exception (JobFailureError)
         is raised and an error message is logged with the underlying reason of the
         failure.
 
