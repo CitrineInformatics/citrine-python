@@ -260,8 +260,8 @@ def test_register_data_concepts_no_mutate(dataset):
             assert pair[1] == obj.uids.get(pair[0], 'No such key')
 
 
-def test_update_with_data_validation_and_wait(dataset, session):
-    """Check that update_with_data_validation parses the response when waiting"""
+def test_async_update_and_wait(dataset, session):
+    """Check that async_update parses the response when waiting"""
 
     obj = ProcessTemplate(
         "foo",
@@ -277,11 +277,11 @@ def test_update_with_data_validation_and_wait(dataset, session):
     dataset.session.set_responses(JobSubmissionResponseFactory(), fake_job_status_resp)
 
     # This returns None on successful update with wait.
-    dataset.process_templates.update_with_data_validation(obj, wait_for_response=True)
+    dataset.process_templates.async_update(obj, wait_for_response=True)
 
 
-def test_update_with_data_validation_with_no_wait(dataset, session):
-    """Check that update_with_data_validation parses the response when not waiting"""
+def test_async_update_with_no_wait(dataset, session):
+    """Check that async_update parses the response when not waiting"""
 
     obj = ProcessTemplate(
         "foo",
@@ -289,12 +289,12 @@ def test_update_with_data_validation_with_no_wait(dataset, session):
     )
 
     dataset.session.set_response(JobSubmissionResponseFactory())
-    job_id = dataset.process_templates.update_with_data_validation(obj, wait_for_response=False)
+    job_id = dataset.process_templates.async_update(obj, wait_for_response=False)
     assert job_id is not None
 
 
-def test_update_with_data_validation_and_no_dataset_id(dataset, session):
-    """Ensure update_with_data_validation requires a dataset id"""
+def test_async_update_and_no_dataset_id(dataset, session):
+    """Ensure async_update requires a dataset id"""
 
     obj = ProcessTemplate(
         "foo",
@@ -305,10 +305,10 @@ def test_update_with_data_validation_and_no_dataset_id(dataset, session):
     dataset.uid = None
 
     with pytest.raises(RuntimeError):
-        dataset.process_templates.update_with_data_validation(obj, wait_for_response=False)
+        dataset.process_templates.async_update(obj, wait_for_response=False)
 
 
-def test_update_with_data_validation_timeout(dataset, session):
+def test_async_update_timeout(dataset, session):
     """Ensure the proper exception is thrown on a timeout error"""
 
     obj = ProcessTemplate(
@@ -325,7 +325,7 @@ def test_update_with_data_validation_timeout(dataset, session):
     dataset.session.set_responses(JobSubmissionResponseFactory(), fake_job_status_resp)
 
     with pytest.raises(PollingTimeoutError):
-        dataset.process_templates.update_with_data_validation(obj, wait_for_response=True,
+        dataset.process_templates.async_update(obj, wait_for_response=True,
                                                               timeout=-1.0)
 
 

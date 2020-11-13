@@ -388,11 +388,11 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         )
         return [self.build(obj) for obj in response_data['objects']]
 
-    def update_with_data_validation(self, model: ResourceType,
-                                    dry_run: Optional[bool] = False,
-                                    wait_for_response: Optional[bool] = True,
-                                    timeout: float = 2 * 60,
-                                    polling_delay: float = 1.0) -> Optional[UUID]:
+    def async_update(self, model: ResourceType,
+                     dry_run: Optional[bool] = False,
+                     wait_for_response: Optional[bool] = True,
+                     timeout: float = 2 * 60,
+                     polling_delay: float = 1.0) -> Optional[UUID]:
         """
         [ALPHA] Update a particular element of the collection with data validation.
 
@@ -421,7 +421,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
 
             If wait_for_response if False, A job ID (of type UUID) is returned that one
             can use to poll for the job completion and result with the
-            :func:`~citrine.resources.DataConceptsCollection.poll_update_with_data_validation_job`
+            :func:`~citrine.resources.DataConceptsCollection.poll_async_update_job`
             method.
 
         """
@@ -437,28 +437,28 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
                                "a data model object with data validation.")
 
         url = self._get_path() + \
-            "/" + scope + "/" + id + "/with-data-validation"
+            "/" + scope + "/" + id + "/async"
 
         response_json = self.session.put_resource(url, dumped_data, params={'dry_run': dry_run})
 
         job_id = response_json["job_id"]
 
         if wait_for_response:
-            self.poll_update_with_data_validation_job(job_id, timeout=timeout,
-                                                      polling_delay=polling_delay)
+            self.poll_async_update_job(job_id, timeout=timeout,
+                                       polling_delay=polling_delay)
 
             # That worked, nothing returned in this case
             return None
         else:
             return job_id
 
-    def poll_update_with_data_validation_job(self, job_id: UUID, timeout: float = 2 * 60,
-                                             polling_delay: float = 1.0) -> None:
+    def poll_async_update_job(self, job_id: UUID, timeout: float = 2 * 60,
+                              polling_delay: float = 1.0) -> None:
         """
-        [ALPHA] Poll for the result of the async update_with_data_validation call.
+        [ALPHA] Poll for the result of the async_update call.
 
         This call will poll the backend given the Job ID that came from a call to
-        :func:`~citrine.resources.DataConceptsCollection.update_with_data_validation`,
+        :func:`~citrine.resources.DataConceptsCollection.async_update`,
         waiting for the eventual job result. In the case of successful validation/update,
         a return value of None is provided which indicates success. In the case of
         a failure validating or processing the update, an exception (RuntimeError)
