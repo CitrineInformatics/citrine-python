@@ -6,7 +6,7 @@ from gemd.entity.bounds.integer_bounds import IntegerBounds
 from gemd.entity.object.material_spec import MaterialSpec as GemdMaterialSpec
 from gemd.entity.object.process_spec import ProcessSpec as GemdProcessSpec
 
-from citrine.exceptions import PollingTimeoutError
+from citrine.exceptions import PollingTimeoutError, JobFailureError
 from citrine.resources.condition_template import ConditionTemplateCollection, ConditionTemplate
 from citrine.resources.dataset import DatasetCollection
 from citrine.resources.ingredient_run import IngredientRun, IngredientRunCollection
@@ -278,6 +278,26 @@ def test_async_update_and_wait(dataset, session):
 
     # This returns None on successful update with wait.
     dataset.process_templates.async_update(obj, wait_for_response=True)
+
+
+def test_async_update_and_wait_failure(dataset, session):
+    """Check that async_update parses the failure correctly"""
+
+    obj = ProcessTemplate(
+        "foo",
+        uids={'id': str(uuid4())}
+    )
+    fake_job_status_resp = {
+        'job_type': 'some_typ',
+        'status': 'Failure',
+        'tasks': [],
+        'output': {}
+    }
+
+    dataset.session.set_responses(JobSubmissionResponseFactory(), fake_job_status_resp)
+
+    with pytest.raises(JobFailureError):
+        dataset.process_templates.async_update(obj, wait_for_response=True)
 
 
 def test_async_update_with_no_wait(dataset, session):

@@ -94,7 +94,7 @@ class PollingTimeoutError(NonRetryableException):
 class JobFailureError(NonRetryableException):
     """The asynchronous job completed with the given failure message."""
 
-    def __init__(self, message: str, *, job_id: UUID, failure_reasons: List[str]):
+    def __init__(self, *, message: str, job_id: UUID, failure_reasons: List[str]):
         super().__init__(message)
         self.job_id = job_id
         self.failure_reasons = failure_reasons

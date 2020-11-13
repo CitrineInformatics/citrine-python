@@ -288,7 +288,8 @@ class Collection(Generic[ResourceType]):
                         task.id, task.failure_reason))
                     failure_reasons.append(task.failure_reason)
             raise JobFailureError(
-                'Job {} terminated with Failure status. Failure reasons: {}'.format(
-                    job_id, failure_reasons), job_id, failure_reasons)
+                message='Job {} terminated with Failure status. Failure reasons: {}'.format(
+                    job_id, failure_reasons), job_id=job_id,
+                failure_reasons=failure_reasons)
 
         return status
