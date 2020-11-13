@@ -389,7 +389,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         return [self.build(obj) for obj in response_data['objects']]
 
     def async_update(self, model: ResourceType,
-                     dry_run: Optional[bool] = False,
+                     dry_run: bool = False,
                      wait_for_response: Optional[bool] = True,
                      timeout: float = 2 * 60,
                      polling_delay: float = 1.0) -> Optional[UUID]:
