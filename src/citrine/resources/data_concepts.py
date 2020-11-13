@@ -452,7 +452,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         else:
             return job_id
 
-    def poll_async_update_job(self, job_id: UUID, timeout: float = 2 * 60,
+    def poll_async_update_job(self, job_id: UUID, *, timeout: float = 2 * 60,
                               polling_delay: float = 1.0) -> None:
         """
         [ALPHA] Poll for the result of the async_update call.
