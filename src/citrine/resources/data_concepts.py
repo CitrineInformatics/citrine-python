@@ -390,7 +390,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
 
     def async_update(self, model: ResourceType,
                      dry_run: bool = False,
-                     wait_for_response: Optional[bool] = True,
+                     wait_for_response: bool = True,
                      timeout: float = 2 * 60,
                      polling_delay: float = 1.0) -> Optional[UUID]:
         """
