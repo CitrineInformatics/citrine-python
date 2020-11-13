@@ -388,6 +388,115 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         )
         return [self.build(obj) for obj in response_data['objects']]
 
+    def async_update(self, model: ResourceType, *,
+                     dry_run: bool = False,
+                     wait_for_response: bool = True,
+                     timeout: float = 2 * 60,
+                     polling_delay: float = 1.0) -> Optional[UUID]:
+        """
+        [ALPHA] Update a particular element of the collection with data validation.
+
+        Update a particular element of the collection, doing a deeper check to ensure that
+        the dependent data objects are still with the (potentially) changed constraints
+        of this change. This will allow you to make bounds and allowed named/labels changes
+        to templates.
+
+        Parameters
+        ----------
+        model: ResourceType
+            The DataConcepts object.
+        dry_run: bool
+            Whether to actually update the item or run a dry run of the update operation.
+            Dry run is intended to be used for validation. Default: false
+        wait_for_response:
+            Whether to poll for the eventual response. This changes the return type (see
+            below).
+        timeout:
+            How long to poll for the result before giving up. This is expressed in
+            (fractional) seconds.
+        polling_delay:
+            How long to delay between each polling retry attempt.
+
+        Returns
+        -------
+        Optional[UUID]
+            If wait_for_response if True, then this call will poll the backend, waiting
+            for the eventual job result. In the case of successful validation/update,
+            a return value of None is provided which indicates success. In the case of
+            a failure validating or processing the update, an exception (JobFailureError)
+            is raised and an error message is logged with the underlying reason of the
+            failure.
+
+            If wait_for_response if False, A job ID (of type UUID) is returned that one
+            can use to poll for the job completion and result with the
+            :func:`~citrine.resources.DataConceptsCollection.poll_async_update_job`
+            method.
+
+        """
+        temp_scope = str(uuid4())
+        GEMDJson(scope=temp_scope).dumps(model)  # This apparent no-op populates uids
+        dumped_data = replace_objects_with_links(scrub_none(model.dump()))
+        recursive_foreach(model, lambda x: x.uids.pop(temp_scope, None))  # Strip temp uids
+
+        scope = CITRINE_SCOPE
+        id = dumped_data['uids']['id']
+        if self.dataset_id is None:
+            raise RuntimeError("Must specify a dataset in order to update "
+                               "a data model object with data validation.")
+
+        url = self._get_path() + \
+            "/" + scope + "/" + id + "/async"
+
+        response_json = self.session.put_resource(url, dumped_data, params={'dry_run': dry_run})
+
+        job_id = response_json["job_id"]
+
+        if wait_for_response:
+            self.poll_async_update_job(job_id, timeout=timeout,
+                                       polling_delay=polling_delay)
+
+            # That worked, nothing returned in this case
+            return None
+        else:
+            return job_id
+
+    def poll_async_update_job(self, job_id: UUID, *, timeout: float = 2 * 60,
+                              polling_delay: float = 1.0) -> None:
+        """
+        [ALPHA] Poll for the result of the async_update call.
+
+        This call will poll the backend given the Job ID that came from a call to
+        :func:`~citrine.resources.DataConceptsCollection.async_update`,
+        waiting for the eventual job result. In the case of successful validation/update,
+        a return value of None is provided which indicates success. In the case of
+        a failure validating or processing the update, an exception (JobFailureError)
+        is raised and an error message is logged with the underlying reason of the
+        failure.
+
+        Parameters
+        ----------
+        job_id: UUID
+           The job ID for the asynchronous update job we wish to poll.
+        timeout:
+            How long to poll for the result before giving up. This is expressed in
+            (fractional) seconds.
+        polling_delay:
+            How long to delay between each polling retry attempt.
+
+        Returns
+        -------
+        None
+           This method will raise an appropriate exception if the job failed, else
+           it will return None to indicate the job was successful.
+
+        """
+        # Poll for job completion - this will raise an error if the job failed
+        self._poll_for_job_completion(self.project_id, job_id, timeout=timeout,
+                                      polling_delay=polling_delay)
+
+        # That worked, nothing returned in this case
+        return None
+
     def get(self, uid: Union[UUID, str], scope: str = CITRINE_SCOPE) -> ResourceType:
         """
         Get the element of the collection with ID equal to uid.

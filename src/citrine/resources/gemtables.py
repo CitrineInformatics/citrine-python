@@ -5,7 +5,6 @@ from uuid import uuid4
 
 import deprecation
 import requests
-from time import time, sleep
 
 from citrine._rest.collection import Collection
 from citrine._rest.paginator import Paginator
@@ -14,7 +13,7 @@ from citrine._serialization import properties
 from citrine._serialization.properties import UUID
 from citrine._session import Session
 from citrine._utils.functions import rewrite_s3_links_locally, write_file_locally
-from citrine.resources.ara_job import JobSubmissionResponse, JobStatusResponse
+from citrine.resources.job import JobSubmissionResponse
 from citrine.resources.table_config import TableConfig
 
 logger = getLogger(__name__)
@@ -235,48 +234,23 @@ class GemTableCollection(Collection[GemTable]):
             The table built by the specified job.
 
         """
-        if isinstance(job, JobSubmissionResponse):
-            job_id = job.job_id
-        else:
-            job_id = job  # pragma: no cover
-        path = 'projects/{}/execution/job-status'.format(self.project_id)
-        params = {'job_id': job_id}
-        start_time = time()
-        while True:
-            response = self.session.get_resource(path=path, params=params)
-            status: JobStatusResponse = JobStatusResponse.build(response)
-            if status.status in ['Success', 'Failure']:
-                break
-            elif time() - start_time < timeout:
-                logger.info('Build job still in progress, polling status again in 2 seconds.')
-                sleep(2)
-            else:
-                logger.error('Build job exceeded user timeout of {} seconds.'.format(timeout))
-                logger.debug('Last status: {}'.format(status.dump()))
-                raise TimeoutError('Build job {} timed out.'.format(job_id))
-        if status.status == 'Failure':
-            logger.debug('Job terminated with Failure status: {}'.format(status.dump()))
-            for task in status.tasks:
-                if task.status == 'Failure':
-                    logger.error('Task {} failed with reason "{}"'.format(
-                        task.id, task.failure_reason))
-            raise RuntimeError('Job {} terminated with Failure status.'.format(job_id))
-        else:
-            table_id = status.output['display_table_id']
-            table_version = status.output['display_table_version']
-            warning_blob = status.output.get('table_warnings')
-            warnings = json.loads(warning_blob) if warning_blob is not None else []
-            if warnings:
-                warn_lines = ['Table build completed with warnings:']
-                for warning in warnings:
-                    limited_results = warning.get('limited_results', [])
-                    warn_lines.extend(limited_results)
-                    total_count = warning.get('total_count', 0)
-                    if total_count > len(limited_results):
-                        warn_lines.append('and {} more similar.'
-                                          .format(total_count - len(limited_results)))
-                logger.warning('\n\t'.join(warn_lines))
-            return self.get(table_id, table_version)
+        status = self._poll_for_job_completion(self.project_id, job, timeout=timeout)
+
+        table_id = status.output['display_table_id']
+        table_version = status.output['display_table_version']
+        warning_blob = status.output.get('table_warnings')
+        warnings = json.loads(warning_blob) if warning_blob is not None else []
+        if warnings:
+            warn_lines = ['Table build completed with warnings:']
+            for warning in warnings:
+                limited_results = warning.get('limited_results', [])
+                warn_lines.extend(limited_results)
+                total_count = warning.get('total_count', 0)
+                if total_count > len(limited_results):
+                    warn_lines.append('and {} more similar.'
+                                      .format(total_count - len(limited_results)))
+            logger.warning('\n\t'.join(warn_lines))
+        return self.get(table_id, table_version)
 
     def build_from_config(self, config: Union[TableConfig, str, UUID], *,
                           version: Union[str, int] = None,

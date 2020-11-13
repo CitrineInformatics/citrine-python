@@ -2,6 +2,11 @@ from os.path import basename
 from uuid import UUID, uuid4
 
 import pytest
+from gemd.entity.bounds.integer_bounds import IntegerBounds
+from gemd.entity.object.material_spec import MaterialSpec as GemdMaterialSpec
+from gemd.entity.object.process_spec import ProcessSpec as GemdProcessSpec
+
+from citrine.exceptions import PollingTimeoutError, JobFailureError
 from citrine.resources.condition_template import ConditionTemplateCollection, ConditionTemplate
 from citrine.resources.dataset import DatasetCollection
 from citrine.resources.ingredient_run import IngredientRun, IngredientRunCollection
@@ -18,11 +23,8 @@ from citrine.resources.process_run import ProcessRunCollection, ProcessRun
 from citrine.resources.process_spec import ProcessSpecCollection, ProcessSpec
 from citrine.resources.process_template import ProcessTemplateCollection, ProcessTemplate
 from citrine.resources.property_template import PropertyTemplateCollection, PropertyTemplate
-from gemd.entity.object.material_spec import MaterialSpec as GemdMaterialSpec
-from gemd.entity.object.process_spec import ProcessSpec as GemdProcessSpec
-from gemd.entity.bounds.integer_bounds import IntegerBounds
-
 from tests.utils.factories import DatasetDataFactory, DatasetFactory
+from tests.utils.factories import JobSubmissionResponseFactory
 from tests.utils.session import FakeSession, FakePaginatedSession, FakeCall
 
 
@@ -256,6 +258,95 @@ def test_register_data_concepts_no_mutate(dataset):
         assert len(obj.uids) == len_before
         for pair in registered.uids.items():
             assert pair[1] == obj.uids.get(pair[0], 'No such key')
+
+
+def test_async_update_and_wait(dataset, session):
+    """Check that async_update parses the response when waiting"""
+
+    obj = ProcessTemplate(
+        "foo",
+        uids={'id': str(uuid4())}
+    )
+    fake_job_status_resp = {
+        'job_type': 'some_typ',
+        'status': 'Success',
+        'tasks': [],
+        'output': {}
+    }
+
+    dataset.session.set_responses(JobSubmissionResponseFactory(), fake_job_status_resp)
+
+    # This returns None on successful update with wait.
+    dataset.process_templates.async_update(obj, wait_for_response=True)
+
+
+def test_async_update_and_wait_failure(dataset, session):
+    """Check that async_update parses the failure correctly"""
+
+    obj = ProcessTemplate(
+        "foo",
+        uids={'id': str(uuid4())}
+    )
+    fake_job_status_resp = {
+        'job_type': 'some_typ',
+        'status': 'Failure',
+        'tasks': [],
+        'output': {}
+    }
+
+    dataset.session.set_responses(JobSubmissionResponseFactory(), fake_job_status_resp)
+
+    with pytest.raises(JobFailureError):
+        dataset.process_templates.async_update(obj, wait_for_response=True)
+
+
+def test_async_update_with_no_wait(dataset, session):
+    """Check that async_update parses the response when not waiting"""
+
+    obj = ProcessTemplate(
+        "foo",
+        uids={'id': str(uuid4())}
+    )
+
+    dataset.session.set_response(JobSubmissionResponseFactory())
+    job_id = dataset.process_templates.async_update(obj, wait_for_response=False)
+    assert job_id is not None
+
+
+def test_async_update_and_no_dataset_id(dataset, session):
+    """Ensure async_update requires a dataset id"""
+
+    obj = ProcessTemplate(
+        "foo",
+        uids={'id': str(uuid4())}
+    )
+
+    dataset.session.set_response(JobSubmissionResponseFactory())
+    dataset.uid = None
+
+    with pytest.raises(RuntimeError):
+        dataset.process_templates.async_update(obj, wait_for_response=False)
+
+
+def test_async_update_timeout(dataset, session):
+    """Ensure the proper exception is thrown on a timeout error"""
+
+    obj = ProcessTemplate(
+        "foo",
+        uids={'id': str(uuid4())}
+    )
+    fake_job_status_resp = {
+        'job_type': 'some_typ',
+        'status': 'Pending',
+        'tasks': [],
+        'output': {}
+    }
+
+    dataset.session.set_responses(JobSubmissionResponseFactory(), fake_job_status_resp)
+
+    with pytest.raises(PollingTimeoutError):
+        dataset.process_templates.async_update(obj, wait_for_response=True,
+                                                              timeout=-1.0)
 
 
 def test_register_all_data_concepts(dataset):
