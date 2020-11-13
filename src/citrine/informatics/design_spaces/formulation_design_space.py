@@ -58,6 +58,7 @@ class FormulationDesignSpace(Resource['FormulationDesignSpace'], DesignSpace):
         'experimental_reasons',
         serializable=False
     )
+    module_type = properties.String('module_type', default='DESIGN_SPACE', deserializable=False)
 
     def __init__(self,
                  name: str,

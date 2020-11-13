@@ -98,6 +98,7 @@ def valid_formulation_design_space_data():
     descriptor = FormulationDescriptor('formulation')
     constraint = IngredientCountConstraint(descriptor, 0, 1)
     return dict(
+        module_type='DESIGN_SPACE',
         status='VALIDATING',
         status_info=None,
         archived=True,
