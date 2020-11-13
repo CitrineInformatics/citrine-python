@@ -31,10 +31,9 @@ def test_get_object_id_from_data_concepts_id_is_none():
         name='test',
         bounds=RealBounds(0.0, 1.0, '')
     )
-    template.uids = {'id': None}
 
     with pytest.raises(ValueError):
-        get_object_id(template)
+        template.uids = {'id': None}
 
 
 def test_get_object_id_link_by_uid_bad_scope():

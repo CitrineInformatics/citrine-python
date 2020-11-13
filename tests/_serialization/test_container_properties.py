@@ -44,6 +44,7 @@ def test_mapping_property(key_type, value_type, key_value, value_value, key_seri
     assert prop.deserialize(serialized) == value
     assert prop.serialize(value) == serialized
 
+
 @pytest.mark.parametrize('key_type,key_value,key_serialized', VALID_SERIALIZATIONS)
 @pytest.mark.parametrize('value_type,value_value,value_serialized', VALID_SERIALIZATIONS)
 def test_mapping_property_list_of_pairs(key_type, value_type, key_value, value_value, key_serialized, value_serialized):
@@ -53,9 +54,26 @@ def test_mapping_property_list_of_pairs(key_type, value_type, key_value, value_v
     assert prop.deserialize(serialized) == value
     unittest.TestCase().assertCountEqual(prop.serialize(value), serialized)
 
+
 def test_mapping_property_list_of_pairs_multiple():
     prop = properties.Mapping(properties.String, properties.Integer, ser_as_list_of_pairs = True)
     value = {'foo': 1, 'bar': 2}
     serialized = [('foo', 1), ('bar', 2)]
     assert prop.deserialize(serialized) == value
     unittest.TestCase().assertCountEqual(prop.serialize(value), serialized)
+
+
+class DummyDescriptor(object):
+    dummy_map = properties.Mapping(properties.Float(), properties.String)
+    dummy_list = properties.List(properties.Float, properties.String)
+    dummy_set = properties.Set(type(properties.Float()))
+
+
+def test_collection_setters():
+    dummy_descriptor = DummyDescriptor()
+    dummy_descriptor.dummy_map = {1: "1"}
+    dummy_descriptor.dummy_set = {1}
+    dummy_descriptor.dummy_list = [1, 2]
+    assert 1.0 in dummy_descriptor.dummy_map
+    assert 1.0 in dummy_descriptor.dummy_set
+    assert 1.0 in dummy_descriptor.dummy_list

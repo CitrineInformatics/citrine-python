@@ -15,10 +15,7 @@ def get_object_id(object_or_id):
         raise ValueError("Attributes do not have ids.")
     if isinstance(object_or_id, DataConcepts):
         citrine_id = object_or_id.uids.get(CITRINE_SCOPE)
-        if citrine_id is not None:
-            return citrine_id
-        raise ValueError("Data concepts object {!r} must have a citrine uuid with "
-                         "scope".format(object_or_id, CITRINE_SCOPE))
+        return citrine_id
     if isinstance(object_or_id, LinkByUID):
         if object_or_id.scope == CITRINE_SCOPE:
             return object_or_id.id

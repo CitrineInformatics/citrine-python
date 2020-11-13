@@ -60,6 +60,9 @@ class TableConfigVersionJSONDataFactory(factory.DictFactory):
 class WithIdDataFactory(factory.DictFactory):
     id = factory.Faker('uuid4')
 
+class JobSubmissionResponseFactory(factory.DictFactory):
+    job_id = factory.Faker('uuid4')
+
 class TableConfigResponseDataFactory(factory.DictFactory):
     """This is the TableConfig object that encapsulates both version and definition info from the server"""
 

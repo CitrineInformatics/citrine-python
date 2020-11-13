@@ -12,7 +12,7 @@ __all__ = ['PredictorEvaluationWorkflow']
 
 
 class PredictorEvaluationWorkflow(Resource['PredictorEvaluationWorkflow'], Workflow):
-    """[ALPHA] A workflow that evaluations a predictor.
+    """A workflow that evaluations a predictor.
 
     Parameters
     ----------

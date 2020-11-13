@@ -1,14 +1,16 @@
 """Resources that represent both individual and collections of workflow executions."""
+from typing import Union
 from uuid import UUID
 
 from citrine._rest.collection import Collection
 from citrine._session import Session
 from citrine.informatics.modules import ModuleRef
 from citrine.informatics.workflows import PredictorEvaluationWorkflow
+from citrine.resources.response import Response
 
 
 class PredictorEvaluationWorkflowCollection(Collection[PredictorEvaluationWorkflow]):
-    """[ALPHA] A collection of PredictorEvaluationWorkflows."""
+    """A collection of PredictorEvaluationWorkflows."""
 
     _path_template = '/projects/{project_id}/predictor-evaluation-workflows'
     _individual_key = None
@@ -52,3 +54,8 @@ class PredictorEvaluationWorkflowCollection(Collection[PredictorEvaluationWorkfl
         url = self._get_path(subpath)
         ref = ModuleRef(str(workflow_id))
         return self.session.put_resource(url, ref.dump())
+
+    def delete(self, uid: Union[UUID, str]) -> Response:
+        """Predictor Evaluation Workflows cannot be deleted; they can be archived instead."""
+        raise NotImplementedError(
+            "Predictor Evaluation Workflows cannot be deleted; they can be archived instead.")

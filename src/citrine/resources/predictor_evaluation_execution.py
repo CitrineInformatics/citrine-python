@@ -1,6 +1,6 @@
 """Resources that represent both individual and collections of workflow executions."""
 from functools import lru_cache, partial
-from typing import Optional, Iterable
+from typing import Optional, Iterable, Union
 from uuid import UUID
 
 from citrine._rest.collection import Collection
@@ -9,10 +9,11 @@ from citrine._serialization import properties
 from citrine._session import Session
 from citrine.informatics.modules import ModuleRef
 from citrine.informatics.predictor_evaluation_result import PredictorEvaluationResult
+from citrine.resources.response import Response
 
 
 class PredictorEvaluationExecution(Resource['PredictorEvaluationExecution']):
-    """[ALPHA] The execution of a PredictorEvaluationWorkflow.
+    """The execution of a PredictorEvaluationWorkflow.
 
     Parameters
     ----------
@@ -90,7 +91,7 @@ class PredictorEvaluationExecution(Resource['PredictorEvaluationExecution']):
 
 
 class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExecution"]):
-    """[ALPHA] A collection of PredictorEvaluationExecutions."""
+    """A collection of PredictorEvaluationExecutions."""
 
     _path_template = '/projects/{project_id}/predictor-evaluation-executions'  # noqa
     _individual_key = None
@@ -195,3 +196,8 @@ class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExec
                                         collection_builder=self._build_collection_elements,
                                         page=page,
                                         per_page=per_page)
+
+    def delete(self, uid: Union[UUID, str]) -> Response:
+        """Predictor Evaluation Executions cannot be deleted; they can be archived instead."""
+        raise NotImplementedError(
+            "Predictor Evaluation Executions cannot be deleted; they can be archived instead.")

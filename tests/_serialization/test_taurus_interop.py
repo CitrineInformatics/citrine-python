@@ -20,4 +20,4 @@ def test_flatten():
     spec = ProcessSpec(name="spec", template=template)
 
     flat = flatten(spec, scope='testing')
-    assert len(flat) == 2, "Expected 2 flattened objects"
+    assert len(flat) == 3, "Expected 3 flattened objects"

@@ -16,7 +16,7 @@ def li_score() -> LIScore:
                 descriptor_key="z"
             )
         ],
-        baselines=[10.0]
+        baselines=[10]
     )
 
 

@@ -154,4 +154,8 @@ def wait_while_executing(
     if not execution_is_finished():
         msg = "Timeout reached, but condition is still {}".format(execution_is_finished())
         raise ConditionTimeoutError(msg)
+
+    # re-fetch the execution if we have a collection to fetch it with
+    if collection is not None:
+        execution = collection.get(execution.uid)
     return execution
