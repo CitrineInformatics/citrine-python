@@ -85,13 +85,13 @@ class WorkflowNotReadyException(RetryableException):
     pass
 
 
-class PollingTimeoutError(RetryableException):
+class PollingTimeoutError(NonRetryableException):
     """Polling for an asynchronous result has exceeded the timeout."""
 
     pass
 
 
-class JobFailureError(RetryableException):
+class JobFailureError(NonRetryableException):
     """The asynchronous job completed with the given failure message."""
 
     def __init__(self, message: str, *, job_id: UUID, failure_reasons: List[str]):

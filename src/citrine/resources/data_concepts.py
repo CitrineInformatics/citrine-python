@@ -388,7 +388,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         )
         return [self.build(obj) for obj in response_data['objects']]
 
-    def async_update(self, model: ResourceType, *, 
+    def async_update(self, model: ResourceType, *,
                      dry_run: bool = False,
                      wait_for_response: bool = True,
                      timeout: float = 2 * 60,
@@ -408,6 +408,14 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         dry_run: bool
             Whether to actually update the item or run a dry run of the update operation.
             Dry run is intended to be used for validation. Default: false
+        wait_for_response:
+            Whether to poll for the eventual response. This changes the return type (see
+            below).
+        timeout:
+            How long to poll for the result before giving up. This is expressed in
+            (fractional) seconds.
+        polling_delay:
+            How long to delay between each polling retry attempt.
 
         Returns
         -------
@@ -415,7 +423,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
             If wait_for_response if True, then this call will poll the backend, waiting
             for the eventual job result. In the case of successful validation/update,
             a return value of None is provided which indicates success. In the case of
-            a failure validating or processing the update, an exception (RuntimeError)
+            a failure validating or processing the update, an exception (JobFailureError)
             is raised and an error message is logged with the underlying reason of the
             failure.
 
@@ -469,6 +477,11 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         ----------
         job_id: UUID
            The job ID for the asynchronous update job we wish to poll.
+        timeout:
+            How long to poll for the result before giving up. This is expressed in
+            (fractional) seconds.
+        polling_delay:
+            How long to delay between each polling retry attempt.
 
         Returns
         -------

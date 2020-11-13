@@ -248,6 +248,8 @@ class Collection(Generic[ResourceType]):
             Amount of time to wait on the job (in seconds) before giving up. Defaults
             to 2 minutes. Note that this number has no effect on the underlying job
             itself, which can also time out server-side.
+        polling_delay:
+            How long to delay between each polling retry attempt.
 
         Returns
         -------
