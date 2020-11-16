@@ -1,4 +1,5 @@
 from typing import Mapping, Set
+from uuid import UUID
 
 from citrine._rest.resource import Resource
 from citrine._serialization import properties
@@ -59,6 +60,8 @@ class FormulationDesignSpace(Resource['FormulationDesignSpace'], DesignSpace):
         serializable=False
     )
     module_type = properties.String('module_type', default='DESIGN_SPACE', deserializable=False)
+    schema_id = properties.UUID('schema_id', default=UUID('f3907a58-aa46-462c-8837-a5aa9605e79e'),
+                                deserializable=False)
 
     def __init__(self,
                  name: str,
