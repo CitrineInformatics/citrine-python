@@ -173,6 +173,46 @@ but when using <a class="reference internal" href="#citrine.resources.data_conce
 </dd>
 </dl>
 <dl class="method">
+<dt id="citrine.resources.data_concepts.DataConceptsCollection.async_update">
+<code class="sig-name descname">async_update</code><span class="sig-paren">(</span><em class="sig-param">model: ResourceType</em>, <em class="sig-param">*</em>, <em class="sig-param">dry_run: bool = False</em>, <em class="sig-param">wait_for_response: bool = True</em>, <em class="sig-param">timeout: float = 120</em>, <em class="sig-param">polling_delay: float = 1.0</em><span class="sig-paren">)</span> &#x2192; Optional[uuid.UUID]<a class="headerlink" href="#citrine.resources.data_concepts.DataConceptsCollection.async_update" title="Permalink to this definition">¶</a></dt>
+<dd><p>[ALPHA] Update a particular element of the collection with data validation.</p>
+<p>Update a particular element of the collection, doing a deeper check to ensure that
+the dependent data objects are still with the (potentially) changed constraints
+of this change. This will allow you to make bounds and allowed named/labels changes
+to templates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>ResourceType</em>) – The DataConcepts object.</p></li>
+<li><p><strong>dry_run</strong> (<em>bool</em>) – Whether to actually update the item or run a dry run of the update operation.
+Dry run is intended to be used for validation. Default: false</p></li>
+<li><p><strong>wait_for_response</strong> – Whether to poll for the eventual response. This changes the return type (see
+below).</p></li>
+<li><p><strong>timeout</strong> – How long to poll for the result before giving up. This is expressed in
+(fractional) seconds.</p></li>
+<li><p><strong>polling_delay</strong> – How long to delay between each polling retry attempt.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><p>If wait_for_response if True, then this call will poll the backend, waiting
+for the eventual job result. In the case of successful validation/update,
+a return value of None is provided which indicates success. In the case of
+a failure validating or processing the update, an exception (JobFailureError)
+is raised and an error message is logged with the underlying reason of the
+failure.</p>
+<p>If wait_for_response if False, A job ID (of type UUID) is returned that one
+can use to poll for the job completion and result with the
+<code class="xref py py-func docutils literal notranslate"><span class="pre">poll_async_update_job()</span></code>
+method.</p>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Optional[UUID]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
 <dt id="citrine.resources.data_concepts.DataConceptsCollection.build">
 <code class="sig-name descname">build</code><span class="sig-paren">(</span><em class="sig-param">data: dict</em><span class="sig-paren">)</span> &#x2192; ResourceType<a class="headerlink" href="#citrine.resources.data_concepts.DataConceptsCollection.build" title="Permalink to this definition">¶</a></dt>
 <dd><p>Build an object of type ResourceType from a serialized dictionary.</p>
@@ -383,6 +423,36 @@ modifying this value only if you find this method is unacceptably latent.</p></l
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>Iterator[ResourceType]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="citrine.resources.data_concepts.DataConceptsCollection.poll_async_update_job">
+<code class="sig-name descname">poll_async_update_job</code><span class="sig-paren">(</span><em class="sig-param">job_id: uuid.UUID</em>, <em class="sig-param">*</em>, <em class="sig-param">timeout: float = 120</em>, <em class="sig-param">polling_delay: float = 1.0</em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#citrine.resources.data_concepts.DataConceptsCollection.poll_async_update_job" title="Permalink to this definition">¶</a></dt>
+<dd><p>[ALPHA] Poll for the result of the async_update call.</p>
+<p>This call will poll the backend given the Job ID that came from a call to
+<code class="xref py py-func docutils literal notranslate"><span class="pre">async_update()</span></code>,
+waiting for the eventual job result. In the case of successful validation/update,
+a return value of None is provided which indicates success. In the case of
+a failure validating or processing the update, an exception (JobFailureError)
+is raised and an error message is logged with the underlying reason of the
+failure.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>job_id</strong> (<em>UUID</em>) – The job ID for the asynchronous update job we wish to poll.</p></li>
+<li><p><strong>timeout</strong> – How long to poll for the result before giving up. This is expressed in
+(fractional) seconds.</p></li>
+<li><p><strong>polling_delay</strong> – How long to delay between each polling retry attempt.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>This method will raise an appropriate exception if the job failed, else
+it will return None to indicate the job was successful.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>None</p>
 </dd>
 </dl>
 </dd></dl>

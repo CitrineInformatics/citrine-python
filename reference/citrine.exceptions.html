@@ -50,6 +50,13 @@
 </dd></dl>
 
 <dl class="exception">
+<dt id="citrine.exceptions.JobFailureError">
+<em class="property">exception </em><code class="sig-prename descclassname">citrine.exceptions.</code><code class="sig-name descname">JobFailureError</code><span class="sig-paren">(</span><em class="sig-param">*, message: str, job_id: uuid.UUID, failure_reasons: List[str]</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.exceptions.JobFailureError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#citrine.exceptions.NonRetryableException" title="citrine.exceptions.NonRetryableException"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.exceptions.NonRetryableException</span></code></a></p>
+<p>The asynchronous job completed with the given failure message.</p>
+</dd></dl>
+
+<dl class="exception">
 <dt id="citrine.exceptions.ModuleRegistrationFailedException">
 <em class="property">exception </em><code class="sig-prename descclassname">citrine.exceptions.</code><code class="sig-name descname">ModuleRegistrationFailedException</code><span class="sig-paren">(</span><em class="sig-param">moduleType: str</em>, <em class="sig-param">exc: Exception</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.exceptions.ModuleRegistrationFailedException" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#citrine.exceptions.NonRetryableException" title="citrine.exceptions.NonRetryableException"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.exceptions.NonRetryableException</span></code></a></p>
@@ -75,6 +82,13 @@
 <em class="property">exception </em><code class="sig-prename descclassname">citrine.exceptions.</code><code class="sig-name descname">NotFound</code><span class="sig-paren">(</span><em class="sig-param">path: str</em>, <em class="sig-param">response: Optional[requests.models.Response] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.exceptions.NotFound" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#citrine.exceptions.NonRetryableHttpException" title="citrine.exceptions.NonRetryableHttpException"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.exceptions.NonRetryableHttpException</span></code></a></p>
 <p>A particular url was not found. (http status 404).</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="citrine.exceptions.PollingTimeoutError">
+<em class="property">exception </em><code class="sig-prename descclassname">citrine.exceptions.</code><code class="sig-name descname">PollingTimeoutError</code><a class="headerlink" href="#citrine.exceptions.PollingTimeoutError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#citrine.exceptions.NonRetryableException" title="citrine.exceptions.NonRetryableException"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.exceptions.NonRetryableException</span></code></a></p>
+<p>Polling for an asynchronous result has exceeded the timeout.</p>
 </dd></dl>
 
 <dl class="exception">
