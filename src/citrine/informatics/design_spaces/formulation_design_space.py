@@ -20,7 +20,7 @@ class FormulationDesignSpace(Resource['FormulationDesignSpace'], DesignSpace):
         the name of the design space
     description: str
         the description of the design space
-    descriptor: FormulationDescriptor
+    formulation_descriptor: FormulationDescriptor
         descriptor used to store formulations sampled from the design space
     ingredients: Set[str]
         set of ingredients that can be used in a formulation
@@ -40,7 +40,7 @@ class FormulationDesignSpace(Resource['FormulationDesignSpace'], DesignSpace):
     uid = properties.Optional(properties.UUID, 'id', serializable=False)
     name = properties.String('config.name')
     description = properties.Optional(properties.String(), 'config.description')
-    descriptor = properties.Object(FormulationDescriptor, 'config.descriptor')
+    formulation_descriptor = properties.Object(FormulationDescriptor, 'config.formulation_descriptor')
     ingredients = properties.Set(properties.String, 'config.ingredients')
     labels = properties.Mapping(properties.String, properties.Set(properties.String), 'config.labels')
     constraints = properties.Set(properties.Object(Constraint), 'config.constraints')
@@ -66,7 +66,7 @@ class FormulationDesignSpace(Resource['FormulationDesignSpace'], DesignSpace):
     def __init__(self,
                  name: str,
                  description: str,
-                 descriptor: FormulationDescriptor,
+                 formulation_descriptor: FormulationDescriptor,
                  ingredients: Set[str],
                  labels: Mapping[str, Set[str]],
                  constraints: Set[Constraint],
@@ -74,7 +74,7 @@ class FormulationDesignSpace(Resource['FormulationDesignSpace'], DesignSpace):
                  session: Session = Session()):
         self.name: str = name
         self.description: str = description
-        self.descriptor: FormulationDescriptor = descriptor
+        self.formulation_descriptor: FormulationDescriptor = formulation_descriptor
         self.ingredients: Set[str] = ingredients
         self.labels: Mapping[str, Set[str]] = labels
         self.constraints: Set[Constraint] = constraints

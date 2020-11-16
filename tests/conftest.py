@@ -108,7 +108,7 @@ def valid_formulation_design_space_data():
             type='FormulationDesignSpace',
             name='formulation design space',
             description='formulates some things',
-            descriptor=descriptor.dump(),
+            formulation_descriptor=descriptor.dump(),
             ingredients={'foo'},
             labels=dict(bar={'foo'}),
             constraints=[constraint.dump()],

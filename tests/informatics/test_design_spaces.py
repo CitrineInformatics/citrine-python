@@ -42,7 +42,7 @@ def formulation_design_space() -> FormulationDesignSpace:
     return FormulationDesignSpace(
         name='formulation',
         description='desc',
-        descriptor=formulation_descriptor,
+        formulation_descriptor=formulation_descriptor,
         ingredients={'foo'},
         labels={'bar': {'foo'}},
         constraints={ingredient_count_constraint},
@@ -74,7 +74,7 @@ def test_formulation_initialization(formulation_design_space):
     """Make sure the correct fields go to the correct places."""
     assert formulation_design_space.name == 'formulation'
     assert formulation_design_space.description == 'desc'
-    assert formulation_design_space.descriptor == formulation_descriptor
+    assert formulation_design_space.formulation_descriptor == formulation_descriptor
     assert formulation_design_space.ingredients == {'foo'}
     assert formulation_design_space.labels == {'bar': {'foo'}}
     assert formulation_design_space.constraints == {ingredient_count_constraint}
