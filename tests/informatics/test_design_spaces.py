@@ -1,7 +1,8 @@
 """Tests for citrine.informatics.design_spaces."""
 import pytest
 
-from citrine.informatics.constraints import IngredientCountConstraint
+from citrine.informatics.constraints import IngredientCountConstraint, IngredientFractionConstraint, \
+    LabelFractionConstraint
 from citrine.informatics.data_sources import DataSource, CSVDataSource
 from citrine.informatics.descriptors import RealDescriptor, CategoricalDescriptor, FormulationDescriptor
 from citrine.informatics.design_spaces import *
@@ -34,6 +35,13 @@ def enumerated_design_space() -> EnumeratedDesignSpace:
 
 formulation_descriptor = FormulationDescriptor('formulation')
 ingredient_count_constraint = IngredientCountConstraint(formulation_descriptor, 0, 1)
+ingredient_fraction_constraint = IngredientFractionConstraint(formulation_descriptor, 'foo', 0, 1)
+label_fraction_constraint = LabelFractionConstraint(formulation_descriptor, 'bar', 0, 1)
+formulation_constraints = {
+    ingredient_count_constraint,
+    ingredient_fraction_constraint,
+    label_fraction_constraint
+}
 
 
 @pytest.fixture
@@ -45,7 +53,7 @@ def formulation_design_space() -> FormulationDesignSpace:
         formulation_descriptor=formulation_descriptor,
         ingredients={'foo'},
         labels={'bar': {'foo'}},
-        constraints={ingredient_count_constraint},
+        constraints=formulation_constraints,
         resolution=0.1
     )
 
@@ -77,7 +85,7 @@ def test_formulation_initialization(formulation_design_space):
     assert formulation_design_space.formulation_descriptor == formulation_descriptor
     assert formulation_design_space.ingredients == {'foo'}
     assert formulation_design_space.labels == {'bar': {'foo'}}
-    assert formulation_design_space.constraints == {ingredient_count_constraint}
+    assert formulation_design_space.constraints == formulation_constraints
     assert formulation_design_space.resolution == 0.1
 
 

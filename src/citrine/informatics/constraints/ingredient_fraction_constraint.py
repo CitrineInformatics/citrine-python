@@ -14,7 +14,7 @@ class IngredientFractionConstraint(Serializable['IngredientFractionConstraint'],
 
     Parameters
     ----------
-    descriptor: FormulationDescriptor
+    formulation_descriptor: FormulationDescriptor
         descriptor to constrain
     ingredient: str
         name of the ingredient to constrain
@@ -22,7 +22,7 @@ class IngredientFractionConstraint(Serializable['IngredientFractionConstraint'],
         minimum ingredient value
     max: float
         maximum ingredient value
-    required: bool, optional
+    is_required: bool, optional
         whether this ingredient is required.
         If ``True`` the ingredient must be present and its value must be within the
         specified range. if ``False`` the ingredient must be within the specified range
@@ -30,26 +30,26 @@ class IngredientFractionConstraint(Serializable['IngredientFractionConstraint'],
 
     """
 
-    descriptor = properties.Object(FormulationDescriptor, 'descriptor')
+    formulation_descriptor = properties.Object(FormulationDescriptor, 'formulation_descriptor')
     ingredient = properties.String('ingredient')
     min = properties.Optional(properties.Float, 'min')
     max = properties.Optional(properties.Float, 'max')
-    required = properties.Boolean('required')
+    is_required = properties.Boolean('is_required')
     typ = properties.String('type', default='IngredientFractionConstraint')
 
     def __init__(self,
-                 descriptor: FormulationDescriptor,
+                 formulation_descriptor: FormulationDescriptor,
                  ingredient: str,
                  min: float,
                  max: float,
-                 required: bool = True,
+                 is_required: bool = True,
                  session: Optional[Session] = None):
-        self.descriptor = descriptor
-        self.ingredient = ingredient
-        self.min = min
-        self.max = max
-        self.required = required
+        self.formulation_descriptor: FormulationDescriptor = formulation_descriptor
+        self.ingredient: str = ingredient
+        self.min: float = min
+        self.max: float = max
+        self.is_required: bool = is_required
         self.session: Optional[Session] = session
 
     def __str__(self):
-        return '<IngredientFractionConstraint {!r}::{!r}>'.format(self.descriptor.key, self.ingredient)
+        return '<IngredientFractionConstraint {!r}::{!r}>'.format(self.formulation_descriptor.key, self.ingredient)

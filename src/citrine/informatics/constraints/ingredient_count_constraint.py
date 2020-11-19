@@ -14,29 +14,36 @@ class IngredientCountConstraint(Serializable['IngredientCountConstraint'], Const
 
     Parameters
     ----------
-    descriptor: FormulationDescriptor
+    formulation_descriptor: FormulationDescriptor
         descriptor to constrain
     min: int
         minimum ingredient count
     max: int
         maximum ingredient count
+    label: Optional[str]
+        Optional label to constrain.
+        If specified only ingredients with the specified label will count towards the total.
+        Default is ``None``; all ingredients count towards the total
 
     """
 
-    descriptor = properties.Object(FormulationDescriptor, 'descriptor')
-    min = properties.Optional(properties.Integer, 'min')
-    max = properties.Optional(properties.Integer, 'max')
+    formulation_descriptor = properties.Object(FormulationDescriptor, 'formulation_descriptor')
+    min = properties.Integer('min')
+    max = properties.Integer('max')
+    label = properties.Optional(properties.String, 'label')
     typ = properties.String('type', default='IngredientCountConstraint')
 
     def __init__(self,
-                 descriptor: FormulationDescriptor,
+                 formulation_descriptor: FormulationDescriptor,
                  min: float,
                  max: float,
+                 label: Optional[str] = None,
                  session: Optional[Session] = None):
-        self.descriptor = descriptor
-        self.min = min
-        self.max = max
+        self.formulation_descriptor: FormulationDescriptor = formulation_descriptor
+        self.min: float = min
+        self.max: float = max
+        self.label: Optional[str] = label
         self.session: Optional[Session] = session
 
     def __str__(self):
-        return '<IngredientCountConstraint {!r}>'.format(self.descriptor.key)
+        return '<IngredientCountConstraint {!r}>'.format(self.formulation_descriptor.key)

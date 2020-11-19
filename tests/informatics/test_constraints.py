@@ -31,11 +31,11 @@ def categorical_constraint() -> CategoricalConstraint:
 def ingredient_fraction_constraint() -> IngredientFractionConstraint:
     """Build an IngredientFractionConstraint."""
     return IngredientFractionConstraint(
-        descriptor=formulation_descriptor,
+        formulation_descriptor=formulation_descriptor,
         ingredient='foo',
         min=0.0,
         max=1.0,
-        required=False
+        is_required=False
     )
 
 
@@ -43,9 +43,10 @@ def ingredient_fraction_constraint() -> IngredientFractionConstraint:
 def ingredient_count_constraint() -> IngredientCountConstraint:
     """Build an IngredientCountConstraint."""
     return IngredientCountConstraint(
-        descriptor=formulation_descriptor,
+        formulation_descriptor=formulation_descriptor,
         min=0,
-        max=1
+        max=1,
+        label='bar'
     )
 
 
@@ -53,22 +54,11 @@ def ingredient_count_constraint() -> IngredientCountConstraint:
 def label_fraction_constraint() -> LabelFractionConstraint:
     """Build a LabelFractionConstraint."""
     return LabelFractionConstraint(
-        descriptor=formulation_descriptor,
+        formulation_descriptor=formulation_descriptor,
         label='bar',
         min=0.0,
         max=1.0,
-        required=False
-    )
-
-
-@pytest.fixture
-def label_count_constraint() -> LabelCountConstraint:
-    """Build an LabelCountConstraint."""
-    return LabelCountConstraint(
-        descriptor=formulation_descriptor,
-        label='bar',
-        min=0,
-        max=1
+        is_required=False
     )
 
 
@@ -90,36 +80,28 @@ def test_categorical_initialization(categorical_constraint):
 
 def test_ingredient_fraction_initialization(ingredient_fraction_constraint):
     """Make sure the correct fields go to the correct places."""
-    assert ingredient_fraction_constraint.descriptor == formulation_descriptor
+    assert ingredient_fraction_constraint.formulation_descriptor == formulation_descriptor
     assert ingredient_fraction_constraint.ingredient == 'foo'
     assert ingredient_fraction_constraint.min == 0.0
     assert ingredient_fraction_constraint.max == 1.0
-    assert not ingredient_fraction_constraint.required
-    assert scalar_range_constraint.session is None
+    assert not ingredient_fraction_constraint.is_required
+    assert ingredient_fraction_constraint.session is None
 
 
 def test_ingredient_count_initialization(ingredient_count_constraint):
     """Make sure the correct fields go to the correct places."""
-    assert ingredient_count_constraint.descriptor == formulation_descriptor
+    assert ingredient_count_constraint.formulation_descriptor == formulation_descriptor
     assert ingredient_count_constraint.min == 0
     assert ingredient_count_constraint.max == 1
+    assert ingredient_count_constraint.label == 'bar'
     assert ingredient_count_constraint.session is None
 
 
 def test_label_fraction_initialization(label_fraction_constraint):
     """Make sure the correct fields go to the correct places."""
-    assert label_fraction_constraint.descriptor == formulation_descriptor
+    assert label_fraction_constraint.formulation_descriptor == formulation_descriptor
     assert label_fraction_constraint.label == 'bar'
     assert label_fraction_constraint.min == 0.0
     assert label_fraction_constraint.max == 1.0
-    assert not label_fraction_constraint.required
-    assert scalar_range_constraint.session is None
-
-
-def test_label_count_initialization(label_count_constraint):
-    """Make sure the correct fields go to the correct places."""
-    assert label_count_constraint.descriptor == formulation_descriptor
-    assert label_count_constraint.label == 'bar'
-    assert label_count_constraint.min == 0
-    assert label_count_constraint.max == 1
-    assert label_count_constraint.session is None
+    assert not label_fraction_constraint.is_required
+    assert label_fraction_constraint.session is None

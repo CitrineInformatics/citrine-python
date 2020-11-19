@@ -14,7 +14,7 @@ class LabelFractionConstraint(Serializable['LabelFractionConstraint'], Constrain
 
     Parameters
     ----------
-    descriptor: FormulationDescriptor
+    formulation_descriptor: FormulationDescriptor
         descriptor to constrain
     label: str
         ingredient label to constrain
@@ -22,7 +22,7 @@ class LabelFractionConstraint(Serializable['LabelFractionConstraint'], Constrain
         minimum value
     max: float
         maximum value
-    required: bool, optional
+    is_required: bool, optional
         whether this ingredient is required.
         If ``True`` the label must be present and its value must be within the
         specified range. if ``False`` the label must be within the specified range
@@ -30,26 +30,26 @@ class LabelFractionConstraint(Serializable['LabelFractionConstraint'], Constrain
 
     """
 
-    descriptor = properties.Object(FormulationDescriptor, 'descriptor')
+    formulation_descriptor = properties.Object(FormulationDescriptor, 'formulation_descriptor')
     label = properties.String('label')
     min = properties.Optional(properties.Float, 'min')
     max = properties.Optional(properties.Float, 'max')
-    required = properties.Boolean('required')
+    is_required = properties.Boolean('is_required')
     typ = properties.String('type', default='LabelFractionConstraint')
 
     def __init__(self,
-                 descriptor: FormulationDescriptor,
+                 formulation_descriptor: FormulationDescriptor,
                  label: str,
                  min: float,
                  max: float,
-                 required: bool = True,
+                 is_required: bool = True,
                  session: Optional[Session] = None):
-        self.descriptor = descriptor
-        self.label = label
-        self.min = min
-        self.max = max
-        self.required = required
+        self.formulation_descriptor: FormulationDescriptor = formulation_descriptor
+        self.label: float = label
+        self.min: float = min
+        self.max: float = max
+        self.is_required: bool = is_required
         self.session: Optional[Session] = session
 
     def __str__(self):
-        return '<LabelFractionConstraint {!r}::{!r}>'.format(self.descriptor.key, self.label)
+        return '<LabelFractionConstraint {!r}::{!r}>'.format(self.formulation_descriptor.key, self.label)
