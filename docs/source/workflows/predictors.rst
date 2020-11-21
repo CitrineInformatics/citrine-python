@@ -75,6 +75,8 @@ The following demonstrates how to create an :class:`~citrine.informatics.predict
 .. code:: python
 
     from citrine import Citrine
+    from citrine.seeding.find_or_create import (find_or_create_project,
+                                               )
     from citrine.informatics.predictors import SimpleMLPredictor
     from citrine.informatics.data_sources import GemTableDataSource
     from citrine.informatics.predictors import IngredientFractionsPredictor
@@ -83,8 +85,10 @@ The following demonstrates how to create an :class:`~citrine.informatics.predict
     # create a session with citrine using your API key
     session = Citrine(api_key = API_KEY)
 
-    # create a project
-    project = session.projects.register('Example project')
+    # find project by name 'Example project' or create it if not found
+    project = find_or_create_project(project_collection=session.projects,
+                                     project_name='Example project'
+                                    )
 
     # create a descriptor to store simple mixtures
     formulation_descriptor = FormulationDescriptor('simple mixture')
@@ -129,6 +133,7 @@ The following example demonstrates how to use the python SDK to create a :class:
 .. code:: python
 
    from citrine.informatics.predictors import GraphPredictor
+   from citrine.seeding.create_or_update
 
    # the other predictors have already been created and validated
    graph_predictor = GraphPredictor(
@@ -138,8 +143,10 @@ The following example demonstrates how to use the python SDK to create a :class:
        training_data = [GemTableDataSource(training_data_table_uid, 1)] # training data shared by all sub-predictors
    )
 
-   # register predictor
-   predictor = project.predictors.register(graph_predictor)
+   # register or update predictor by name
+   predictor = create_or_update(collection=project.predictors,
+                                module=graph_predictor
+                               )
 
 For a more complete example of graph predictor usage, see :ref:`AI Engine Code Examples <graph_predictor_example>`.
 
@@ -192,8 +199,10 @@ The following example demonstrates how to create an :class:`~citrine.informatics
        }
    )
 
-   # register predictor
-   predictor = project.predictors.register(shear_modulus_predictor)
+   # register or update predictor by name
+   predictor = create_or_update(collection=project.predictors,
+                                module=shear_modulus_predictor
+                               )
 
 For an example of expression predictors used in a graph predictor, see :ref:`AI Engine Code Examples <graph_predictor_example>`.
 
