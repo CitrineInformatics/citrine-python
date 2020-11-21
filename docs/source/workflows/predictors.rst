@@ -26,7 +26,6 @@ The following example demonstrates how to use the python SDK to create a :class:
 
 .. code:: python
 
-   from time import sleep
    from citrine import Citrine
    from citrine.seeding.find_or_create import (find_or_create_project,
                                                create_or_update 
@@ -75,8 +74,7 @@ The following demonstrates how to create an :class:`~citrine.informatics.predict
 .. code:: python
 
     from citrine import Citrine
-    from citrine.seeding.find_or_create import (find_or_create_project,
-                                               )
+    from citrine.seeding.find_or_create import find_or_create_project
     from citrine.informatics.predictors import SimpleMLPredictor
     from citrine.informatics.data_sources import GemTableDataSource
     from citrine.informatics.predictors import IngredientFractionsPredictor
