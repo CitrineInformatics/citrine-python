@@ -52,4 +52,7 @@ class LabelFractionConstraint(Serializable['LabelFractionConstraint'], Constrain
         self.session: Optional[Session] = session
 
     def __str__(self):
-        return '<LabelFractionConstraint {!r}::{!r}>'.format(self.formulation_descriptor.key, self.label)
+        return '<LabelFractionConstraint {!r}::{!r}>'.format(
+            self.formulation_descriptor.key,
+            self.label
+        )

@@ -23,12 +23,15 @@ class FormulationDesignSpace(Resource['FormulationDesignSpace'], DesignSpace):
     formulation_descriptor: FormulationDescriptor
         descriptor used to store formulations sampled from the design space
     ingredients: Set[str]
-        set of ingredients that can be used in a formulation
+        set of ingredient names that can be used in a formulation
     labels: Mapping[str, Set[str]]
-        Map from a label to each ingredient that should given that label
+        map from a label to each ingredient that should given that label
         when it's included in a formulation, e.g., ``{'solvent': {'water', 'alcohol'}}``
     constraints: Set[IngredientConstraint]
-        Set of constraints that restricts formulations sampled from the space
+        set of constraints that restricts formulations sampled from the space.
+        This must include an
+        :class:`~io.citrine.informatics.constraints.ingredient_count_constraint.IngredientCountConstraint`
+        with maximum count of 100 or fewer.
     resolution: float, optional
         Minimum increment used to specify ingredient quantities.
         Default is 0.01.
@@ -40,12 +43,23 @@ class FormulationDesignSpace(Resource['FormulationDesignSpace'], DesignSpace):
     uid = properties.Optional(properties.UUID, 'id', serializable=False)
     name = properties.String('config.name')
     description = properties.Optional(properties.String(), 'config.description')
-    formulation_descriptor = properties.Object(FormulationDescriptor, 'config.formulation_descriptor')
+    formulation_descriptor = properties.Object(
+        FormulationDescriptor,
+        'config.formulation_descriptor'
+    )
     ingredients = properties.Set(properties.String, 'config.ingredients')
-    labels = properties.Mapping(properties.String, properties.Set(properties.String), 'config.labels')
+    labels = properties.Mapping(
+        properties.String,
+        properties.Set(properties.String),
+        'config.labels'
+    )
     constraints = properties.Set(properties.Object(Constraint), 'config.constraints')
     resolution = properties.Float('config.resolution')
-    typ = properties.String('config.type', default='FormulationDesignSpace', deserializable=False)
+    typ = properties.String(
+        'config.type',
+        default='FormulationDesignSpace',
+        deserializable=False
+    )
     status = properties.String('status', serializable=False)
     status_info = properties.Optional(
         properties.List(properties.String()),

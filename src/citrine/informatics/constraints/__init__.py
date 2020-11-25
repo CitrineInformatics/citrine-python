@@ -1,3 +1,4 @@
+# flake8: noqa
 from .categorical_constraint import *
 from .constraint import *
 from .ingredient_count_constraint import *

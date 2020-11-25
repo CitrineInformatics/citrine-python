@@ -52,4 +52,7 @@ class IngredientFractionConstraint(Serializable['IngredientFractionConstraint'],
         self.session: Optional[Session] = session
 
     def __str__(self):
-        return '<IngredientFractionConstraint {!r}::{!r}>'.format(self.formulation_descriptor.key, self.ingredient)
+        return '<IngredientFractionConstraint {!r}::{!r}>'.format(
+            self.formulation_descriptor.key,
+            self.ingredient
+        )
