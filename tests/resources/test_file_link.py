@@ -4,7 +4,8 @@ from uuid import uuid4
 import pytest
 import requests_mock
 from botocore.exceptions import ClientError
-from citrine.resources.file_link import FileCollection, FileLink, _Uploader
+from citrine.resources.file_link import FileCollection, FileLink, _Uploader, \
+    FileProcessingType
 from mock import patch, Mock, call
 
 from tests.utils.factories import FileLinkDataFactory, _UploaderFactory
@@ -377,3 +378,55 @@ def test_file_download(mock_write_file_locally, collection, session):
         assert expected_call == session.last_call
         assert mock_write_file_locally.call_count == 1
         assert mock_write_file_locally.call_args == call(b'0101001', local_path + file.filename)
+
+
+def test_process_file(collection, session):
+    """Test processing an existing file."""
+
+    file_id, version_id = str(uuid4()), str(uuid4())
+    full_url = 'www.citrine.io/develop/files/{}/versions/{}'.format(file_id, version_id)
+    file_link = collection.build(FileLinkDataFactory(url=full_url))
+
+    job_id_resp = {
+        'job_id': str(uuid4())
+    }
+    job_execution_resp = {
+        'status': 'Success',
+        'job_type': 'something',
+        'tasks': []
+    }
+    file_processing_result_resp = {
+        'results': [
+            {
+                'processing_type': 'VALIDATE_CSV_PRE_INGEST',
+                'data': {
+                    'column_names': ['a', 'b'],
+                    'record_count': 123
+                }
+            }
+        ]
+    }
+
+    # First does a PUT on the /processed endpoint
+    # then does a GET on the job executions endpoint
+    # then gets the file processing result
+    session.set_responses(job_id_resp, job_execution_resp, file_processing_result_resp)
+    collection.process(file_link, FileProcessingType.VALIDATE_CSV_PRE_INGEST)
+
+def test_process_file_no_waiting(collection, session):
+    """Test processing an existing file without waiting on the result."""
+
+    file_id, version_id = str(uuid4()), str(uuid4())
+    full_url = 'www.citrine.io/develop/files/{}/versions/{}'.format(file_id, version_id)
+    file_link = collection.build(FileLinkDataFactory(url=full_url))
+
+    job_id_resp = {
+        'job_id': str(uuid4())
+    }
+
+    # First does a PUT on the /processed endpoint
+    # then does a GET on the job executions endpoint
+    session.set_response(job_id_resp)
+    resp = collection.process(file_link, FileProcessingType.VALIDATE_CSV_PRE_INGEST,
+                              wait_for_response=False)
+    assert str(resp.job_id) == job_id_resp['job_id']
