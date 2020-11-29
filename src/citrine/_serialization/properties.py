@@ -33,6 +33,8 @@ class Property(typing.Generic[DeserializedType, SerializedType]):
         self.serializable: bool = serializable
         self.deserializable: bool = deserializable
         self.default: typing.Optional[DeserializedType] = default
+        # Distinguish between no default being provided and the default being None
+        self.optional = False
         self.override = override
 
     @property
@@ -85,11 +87,15 @@ class Property(typing.Generic[DeserializedType, SerializedType]):
         for field in fields:
             next_value = value.get(field)
             if next_value is None:
+                if self.default is None and not self.optional:
+                    msg = "Unable to deserialize {} into {}: missing a required field {}".format(
+                        data, self.underlying_types, field)
+                    raise RuntimeError(msg)
                 # This occurs if a `field` is unexpectedly not present in the data dictionary
                 # or if its value is null.
                 # Use the default value and stop traversing, even if we have not yet reached
                 # the last field in the serialization path.
-                value = self.default
+                value = self.serialize(self.default)
                 break
             else:
                 value = next_value
@@ -482,8 +488,9 @@ class Union(Property[typing.Any, typing.Any]):
                 return prop.deserialize(value)
             except ValueError:
                 pass
-        raise RuntimeError("An unexpected error occurred while trying to deserialize {} to one "
-                           "of the following types: {}.".format(value, self.underlying_types))
+        msg = "An unexpected error occurred while trying to deserialize {} to one of the " \
+              "following types: {}.".format(value, self.underlying_types)  # pragma: no cover
+        raise RuntimeError(msg)  # pragma: no cover
 
 
 class SpecifiedMixedList(Property[list, list]):
@@ -721,6 +728,7 @@ class Optional(Property[typing.Optional[typing.Any], typing.Optional[typing.Any]
                          default,
                          override)
         self.prop = prop if isinstance(prop, Property) else prop()
+        self.optional = True
 
     @property
     def underlying_types(self):
