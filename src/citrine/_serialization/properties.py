@@ -488,6 +488,7 @@ class Union(Property[typing.Any, typing.Any]):
                 return prop.deserialize(value)
             except ValueError:
                 pass
+        # this is a failsafe that shouldn't actually ever get hit, hence no cover
         msg = "An unexpected error occurred while trying to deserialize {} to one of the " \
               "following types: {}.".format(value, self.underlying_types)  # pragma: no cover
         raise RuntimeError(msg)  # pragma: no cover
