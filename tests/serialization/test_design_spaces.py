@@ -1,4 +1,7 @@
 """Tests for citrine.informatics.design_spaces serialization."""
+from copy import copy
+from uuid import UUID
+
 from citrine.informatics.descriptors import CategoricalDescriptor, RealDescriptor, ChemicalFormulaDescriptor
 from citrine.informatics.design_spaces import DesignSpace, ProductDesignSpace, EnumeratedDesignSpace
 from citrine.informatics.dimensions import ContinuousDimension, EnumeratedDimension
@@ -76,3 +79,11 @@ def test_enumerated_serialization(valid_enumerated_design_space_data):
     serialized = design_space.dump()
     serialized['id'] = valid_enumerated_design_space_data['id']
     assert serialized == valid_serialization_output(valid_enumerated_design_space_data)
+
+
+def test_missing_schema_id(valid_product_design_space_data):
+    """Ensure that default schema_ids are applied when missing from json."""
+    missing_schema = copy(valid_product_design_space_data)
+    del missing_schema["schema_id"]
+    design_space: ProductDesignSpace = ProductDesignSpace.build(missing_schema)
+    assert design_space.schema_id == UUID('6c16d694-d015-42a7-b462-8ef299473c9a')
