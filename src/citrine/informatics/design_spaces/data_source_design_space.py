@@ -54,11 +54,12 @@ class DataSourceDesignSpace(Resource['DataSourceDesignSpace'], DesignSpace):
     def __init__(self,
                  name: str,
                  description: str,
-                 data_source: DataSource):
+                 data_source: DataSource,
+                 session: Optional[Session] = None):
         self.name: str = name
         self.description: str = description
         self.data_source: DataSource = data_source
-        self.session: Optional[Session] = None
+        self.session: Optional[Session] = session
 
     def _post_dump(self, data: dict) -> dict:
         data['display_name'] = data['config']['name']
