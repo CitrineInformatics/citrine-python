@@ -103,14 +103,15 @@ def valid_formulation_design_space_data():
         status_info=None,
         archived=True,
         display_name='formulation design space',
+        schema_id='f3907a58-aa46-462c-8837-a5aa9605e79e',
         id=str(uuid.uuid4()),
         config=dict(
             type='FormulationDesignSpace',
             name='formulation design space',
             description='formulates some things',
             formulation_descriptor=descriptor.dump(),
-            ingredients={'foo'},
-            labels=dict(bar={'foo'}),
+            ingredients=['foo'],
+            labels=dict(bar=['foo']),
             constraints=[constraint.dump()],
             resolution=0.1
         )
