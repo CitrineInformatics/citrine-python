@@ -280,12 +280,10 @@ class FileCollection(Collection[FileLink]):
         try:
 
             uploader.region_name = upload_request['s3_region']
-            uploader.aws_access_key_id = upload_request['temporary_credentials'][
-                'access_key_id']
+            uploader.aws_access_key_id = upload_request['temporary_credentials']['access_key_id']
             uploader.aws_secret_access_key = \
                 upload_request['temporary_credentials']['secret_access_key']
-            uploader.aws_session_token = upload_request['temporary_credentials'][
-                'session_token']
+            uploader.aws_session_token = upload_request['temporary_credentials']['session_token']
             uploader.bucket = upload_request['s3_bucket']
             uploader.object_key = upload_request['uploads'][0]['s3_key']
             uploader.upload_id = upload_request['uploads'][0]['upload_id']
@@ -372,8 +370,7 @@ class FileCollection(Collection[FileLink]):
         """
         path = self._get_path() + "/uploads/{}/complete".format(uploader.upload_id)
         complete_response = self.session.put_resource(path=path,
-                                                      json={
-                                                          's3_version': uploader.s3_version})
+                                                      json={'s3_version': uploader.s3_version})
 
         try:
             file_id = complete_response['file_info']['file_id']
