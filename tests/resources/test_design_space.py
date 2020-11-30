@@ -44,7 +44,7 @@ def test_design_space_build():
     # Then
     assert design_space.uid == design_space_id
     assert design_space.name == 'My Design Space'
-    assert design_space.dimensions[0].formulation_descriptor.key == 'foo'
+    assert design_space.dimensions[0].descriptor.key == 'foo'
 
 
 def test_formulation_build(valid_formulation_design_space_data):
