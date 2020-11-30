@@ -291,14 +291,10 @@ def test_list_projects_filters_non_projects(collection, session):
     projects_data.append({'foo': 'not a project'})
     session.set_response({'projects': projects_data})
 
-    # When
-    projects = list(collection.list())
-
     # Then
-    assert 1 == session.num_calls
-    expected_call = FakeCall(method='GET', path='/projects', params={'per_page': 1000})
-    assert expected_call == session.last_call
-    assert 5 == len(projects)   # The non-project data is filtered out
+    with pytest.raises(RuntimeError):
+        # When
+        projects = list(collection.list())
 
 
 def test_list_projects_with_page_params(collection, session):
