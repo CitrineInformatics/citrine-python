@@ -51,7 +51,8 @@ class FormulationDesignSpace(Resource['FormulationDesignSpace'], DesignSpace):
     labels = properties.Mapping(
         properties.String,
         properties.Set(properties.String),
-        'config.labels'
+        'config.labels',
+        ser_as_list_of_pairs=True
     )
     constraints = properties.Set(properties.Object(Constraint), 'config.constraints')
     resolution = properties.Float('config.resolution')
