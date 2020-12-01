@@ -18,7 +18,7 @@ informatics_string_data = [
     (CategoricalConstraint('x', []), "<CategoricalConstraint 'x'>"),
     (ProductDesignSpace('my design space', 'does some things', []), "<ProductDesignSpace 'my design space'>"),
     (EnumeratedDesignSpace('enumerated', 'desc', [], []), "<EnumeratedDesignSpace 'enumerated'>"),
-    (FormulationDesignSpace('formulation', 'desc', FormulationDescriptor('x'), {'y'}, {}, set()),
+    (FormulationDesignSpace('formulation', 'desc', FormulationDescriptor('x'), {'y'}, set(), {}),
      "<FormulationDesignSpace 'formulation'>"),
     (ScalarMaxObjective('z', 1.0, 10.0), "<ScalarMaxObjective 'z'>"),
     (ScalarMinObjective('z', 1.0, 10.0), "<ScalarMinObjective 'z'>"),
