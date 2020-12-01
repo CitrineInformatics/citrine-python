@@ -1,4 +1,4 @@
-from typing import Mapping, Set
+from typing import Mapping, Optional, Set
 from uuid import UUID
 
 from citrine._rest.resource import Resource
@@ -24,14 +24,14 @@ class FormulationDesignSpace(Resource['FormulationDesignSpace'], DesignSpace):
         descriptor used to store formulations sampled from the design space
     ingredients: Set[str]
         set of ingredient names that can be used in a formulation
-    labels: Mapping[str, Set[str]]
-        map from a label to each ingredient that should given that label
-        when it's included in a formulation, e.g., ``{'solvent': {'water', 'alcohol'}}``
     constraints: Set[IngredientConstraint]
         set of constraints that restricts formulations sampled from the space.
         This must include an
         :class:`~io.citrine.informatics.constraints.ingredient_count_constraint.IngredientCountConstraint`
         with maximum count of 100 or fewer.
+    labels: Optional[Mapping[str, Set[str]]]
+        map from a label to each ingredient that should given that label
+        when it's included in a formulation, e.g., ``{'solvent': {'water', 'alcohol'}}``
     resolution: float, optional
         Minimum increment used to specify ingredient quantities.
         Default is 0.01.
@@ -48,12 +48,11 @@ class FormulationDesignSpace(Resource['FormulationDesignSpace'], DesignSpace):
         'config.formulation_descriptor'
     )
     ingredients = properties.Set(properties.String, 'config.ingredients')
-    labels = properties.Mapping(
+    labels = properties.Optional(properties.Mapping(
         properties.String,
         properties.Set(properties.String),
-        'config.labels',
         ser_as_list_of_pairs=True
-    )
+    ), 'config.labels')
     constraints = properties.Set(properties.Object(Constraint), 'config.constraints')
     resolution = properties.Float('config.resolution')
     typ = properties.String(
@@ -83,16 +82,16 @@ class FormulationDesignSpace(Resource['FormulationDesignSpace'], DesignSpace):
                  description: str,
                  formulation_descriptor: FormulationDescriptor,
                  ingredients: Set[str],
-                 labels: Mapping[str, Set[str]],
                  constraints: Set[Constraint],
+                 labels: Optional[Mapping[str, Set[str]]] = None,
                  resolution: float = 0.01,
                  session: Session = Session()):
         self.name: str = name
         self.description: str = description
         self.formulation_descriptor: FormulationDescriptor = formulation_descriptor
         self.ingredients: Set[str] = ingredients
-        self.labels: Mapping[str, Set[str]] = labels
         self.constraints: Set[Constraint] = constraints
+        self.labels: Optional[Mapping[str, Set[str]]] = labels
         self.resolution: float = resolution
         self.session: Session = session
 
