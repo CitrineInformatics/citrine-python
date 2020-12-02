@@ -1,10 +1,8 @@
 """Tests for citrine.informatics.design_spaces."""
 import pytest
 
-from citrine.informatics.constraints import IngredientCountConstraint, IngredientFractionConstraint, \
-    LabelFractionConstraint
 from citrine.informatics.data_sources import DataSource, CSVDataSource
-from citrine.informatics.descriptors import RealDescriptor, CategoricalDescriptor, FormulationDescriptor
+from citrine.informatics.descriptors import RealDescriptor, CategoricalDescriptor
 from citrine.informatics.design_spaces import *
 from citrine.informatics.dimensions import ContinuousDimension, EnumeratedDimension
 from citrine.resources.file_link import FileLink
