@@ -47,6 +47,19 @@ def test_design_space_build():
     assert design_space.dimensions[0].descriptor.key == 'foo'
 
 
+def test_formulation_build(valid_formulation_design_space_data):
+    pc = DesignSpaceCollection(uuid.uuid4(), None)
+    design_space = pc.build(valid_formulation_design_space_data)
+    assert design_space.archived
+    assert design_space.name == 'formulation design space'
+    assert design_space.description == 'formulates some things'
+    assert design_space.formulation_descriptor.key == 'formulation'
+    assert design_space.ingredients == {'foo'}
+    assert design_space.labels == {'bar': {'foo'}}
+    assert len(design_space.constraints) == 1
+    assert design_space.resolution == 0.1
+
+
 def test_design_space_limits():
     """Test that the validation logic is triggered before post/put-ing enumerated design spaces."""
     # Given
