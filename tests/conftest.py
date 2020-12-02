@@ -111,7 +111,7 @@ def valid_formulation_design_space_data():
             description='formulates some things',
             formulation_descriptor=descriptor.dump(),
             ingredients=['foo'],
-            labels=[('bar', ['foo'])],
+            labels={'bar': ['foo']},
             constraints=[constraint.dump()],
             resolution=0.1
         )
