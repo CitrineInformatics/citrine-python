@@ -90,7 +90,11 @@ def test_formulation_deserialization(valid_formulation_design_space_data):
     and polymorphically (using DesignSpace)
     """
     expected_descriptor = FormulationDescriptor('formulation')
-    expected_constraint = IngredientCountConstraint(expected_descriptor, 0, 1)
+    expected_constraint = IngredientCountConstraint(
+        formulation_descriptor=expected_descriptor,
+        min=0,
+        max=1
+    )
     for designSpaceClass in [DesignSpace, FormulationDesignSpace]:
         design_space: FormulationDesignSpace = designSpaceClass.build(valid_formulation_design_space_data)
         assert design_space.name == 'formulation design space'

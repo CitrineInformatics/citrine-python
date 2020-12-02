@@ -37,7 +37,7 @@ class IngredientFractionConstraint(Serializable['IngredientFractionConstraint'],
     is_required = properties.Boolean('is_required')
     typ = properties.String('type', default='IngredientFractionConstraint')
 
-    def __init__(self,
+    def __init__(self, *,
                  formulation_descriptor: FormulationDescriptor,
                  ingredient: str,
                  min: float,

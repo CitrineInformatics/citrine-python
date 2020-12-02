@@ -33,31 +33,6 @@ def enumerated_design_space() -> EnumeratedDesignSpace:
     return EnumeratedDesignSpace('enumerated', 'desc', descriptors=[x, color], data=data)
 
 
-formulation_descriptor = FormulationDescriptor('formulation')
-ingredient_count_constraint = IngredientCountConstraint(formulation_descriptor, 0, 1)
-ingredient_fraction_constraint = IngredientFractionConstraint(formulation_descriptor, 'foo', 0, 1)
-label_fraction_constraint = LabelFractionConstraint(formulation_descriptor, 'bar', 0, 1)
-formulation_constraints = {
-    ingredient_count_constraint,
-    ingredient_fraction_constraint,
-    label_fraction_constraint
-}
-
-
-@pytest.fixture
-def formulation_design_space() -> FormulationDesignSpace:
-    """Build a FormulationDesignSpace for testing."""
-    return FormulationDesignSpace(
-        name='formulation',
-        description='desc',
-        formulation_descriptor=formulation_descriptor,
-        ingredients={'foo'},
-        labels={'bar': {'foo'}},
-        constraints=formulation_constraints,
-        resolution=0.1
-    )
-
-
 def test_product_initialization(product_design_space):
     """Make sure the correct fields go to the correct places."""
     assert product_design_space.name == 'my design space'
@@ -76,17 +51,6 @@ def test_enumerated_initialization(enumerated_design_space):
     assert enumerated_design_space.descriptors[0].key == 'x'
     assert enumerated_design_space.descriptors[1].key == 'color'
     assert enumerated_design_space.data == [{'x': 0.0, 'color': 'r'}, {'x': 1.0, 'color': 'b'}]
-
-
-def test_formulation_initialization(formulation_design_space):
-    """Make sure the correct fields go to the correct places."""
-    assert formulation_design_space.name == 'formulation'
-    assert formulation_design_space.description == 'desc'
-    assert formulation_design_space.formulation_descriptor == formulation_descriptor
-    assert formulation_design_space.ingredients == {'foo'}
-    assert formulation_design_space.labels == {'bar': {'foo'}}
-    assert formulation_design_space.constraints == formulation_constraints
-    assert formulation_design_space.resolution == 0.1
 
 
 def test_data_source_build(valid_data_source_design_space_dict):

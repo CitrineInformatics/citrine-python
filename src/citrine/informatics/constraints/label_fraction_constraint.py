@@ -37,7 +37,7 @@ class LabelFractionConstraint(Serializable['LabelFractionConstraint'], Constrain
     is_required = properties.Boolean('is_required')
     typ = properties.String('type', default='LabelFractionConstraint')
 
-    def __init__(self,
+    def __init__(self, *,
                  formulation_descriptor: FormulationDescriptor,
                  label: str,
                  min: float,
@@ -45,7 +45,7 @@ class LabelFractionConstraint(Serializable['LabelFractionConstraint'], Constrain
                  is_required: bool = True,
                  session: Optional[Session] = None):
         self.formulation_descriptor: FormulationDescriptor = formulation_descriptor
-        self.label: float = label
+        self.label: str = label
         self.min: float = min
         self.max: float = max
         self.is_required: bool = is_required

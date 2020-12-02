@@ -96,7 +96,7 @@ def valid_formulation_design_space_data():
     from citrine.informatics.constraints import IngredientCountConstraint
     from citrine.informatics.descriptors import FormulationDescriptor
     descriptor = FormulationDescriptor('formulation')
-    constraint = IngredientCountConstraint(descriptor, 0, 1)
+    constraint = IngredientCountConstraint(formulation_descriptor=descriptor, min=0, max=1)
     return dict(
         module_type='DESIGN_SPACE',
         status='VALIDATING',

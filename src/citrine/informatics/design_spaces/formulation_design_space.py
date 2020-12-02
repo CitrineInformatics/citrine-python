@@ -77,7 +77,7 @@ class FormulationDesignSpace(Resource['FormulationDesignSpace'], DesignSpace):
     schema_id = properties.UUID('schema_id', default=UUID('f3907a58-aa46-462c-8837-a5aa9605e79e'),
                                 deserializable=False)
 
-    def __init__(self,
+    def __init__(self, *,
                  name: str,
                  description: str,
                  formulation_descriptor: FormulationDescriptor,

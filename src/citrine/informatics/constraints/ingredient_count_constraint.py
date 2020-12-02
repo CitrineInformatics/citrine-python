@@ -33,7 +33,7 @@ class IngredientCountConstraint(Serializable['IngredientCountConstraint'], Const
     label = properties.Optional(properties.String, 'label')
     typ = properties.String('type', default='IngredientCountConstraint')
 
-    def __init__(self,
+    def __init__(self, *,
                  formulation_descriptor: FormulationDescriptor,
                  min: float,
                  max: float,
