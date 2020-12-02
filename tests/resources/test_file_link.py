@@ -398,7 +398,7 @@ def test_process_file(collection, session):
     file_processing_result_resp = {
         'results': [
             {
-                'processing_type': 'VALIDATE_CSV_PRE_INGEST',
+                'processing_type': 'VALIDATE_CSV',
                 'data': {
                     'column_names': ['a', 'b'],
                     'record_count': 123
@@ -411,7 +411,7 @@ def test_process_file(collection, session):
     # then does a GET on the job executions endpoint
     # then gets the file processing result
     session.set_responses(job_id_resp, job_execution_resp, file_processing_result_resp)
-    collection.process(file_link, FileProcessingType.VALIDATE_CSV_PRE_INGEST)
+    collection.process(file_link, FileProcessingType.VALIDATE_CSV)
 
 def test_process_file_no_waiting(collection, session):
     """Test processing an existing file without waiting on the result."""
@@ -427,6 +427,6 @@ def test_process_file_no_waiting(collection, session):
     # First does a PUT on the /processed endpoint
     # then does a GET on the job executions endpoint
     session.set_response(job_id_resp)
-    resp = collection.process(file_link, FileProcessingType.VALIDATE_CSV_PRE_INGEST,
+    resp = collection.process(file_link, FileProcessingType.VALIDATE_CSV,
                               wait_for_response=False)
     assert str(resp.job_id) == job_id_resp['job_id']

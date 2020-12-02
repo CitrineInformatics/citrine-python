@@ -43,7 +43,7 @@ class _Uploader:
 class FileProcessingType(Enum):
     """The supported File Processing Types."""
 
-    VALIDATE_CSV_PRE_INGEST = "VALIDATE_CSV_PRE_INGEST"
+    VALIDATE_CSV = "VALIDATE_CSV"
 
 
 class FileProcessingData:
@@ -500,7 +500,7 @@ class FileCollection(Collection[FileLink]):
             processing_type = FileProcessingType[result_json['processing_type']]
             data = result_json['data']
 
-            if processing_type == FileProcessingType.VALIDATE_CSV_PRE_INGEST:
+            if processing_type == FileProcessingType.VALIDATE_CSV:
                 data = CsvIngestProcessingData.from_dict(data)
 
             result = FileProcessingResult(processing_type, data)
