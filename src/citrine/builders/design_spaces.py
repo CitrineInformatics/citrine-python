@@ -1,3 +1,12 @@
+import csv
+from uuid import UUID
+
+from citrine.informatics.data_sources import CSVDataSource
+from citrine.resources.dataset import Dataset
+from citrine.resources.project import Project
+from citrine.seeding import find_or_create
+from citrine.seeding.find_or_create import find_or_create_dataset
+
 try:
     import pandas as pd
 except ImportError:  # pragma: no cover
@@ -7,9 +16,9 @@ try:
 except ImportError:  # pragma: no cover
     raise ImportError('numpy is a requirement for the builders module')
 from itertools import product
-from typing import Mapping, Sequence, List
+from typing import Mapping, Sequence, List, Optional, Union
 from warnings import warn
-from citrine.informatics.design_spaces import EnumeratedDesignSpace
+from citrine.informatics.design_spaces import EnumeratedDesignSpace, DataSourceDesignSpace
 from citrine.informatics.descriptors import Descriptor, RealDescriptor
 
 
@@ -235,3 +244,93 @@ def cartesian_join_design_spaces(
                                          descriptors=descriptors,
                                          data=data)
     return design_space
+
+
+def enumerated_to_data_source(*,
+                              enumerated_ds: EnumeratedDesignSpace,
+                              dataset: Dataset,
+                              filename: Optional[str] = None
+                              ) -> DataSourceDesignSpace:
+    """[ALPHA] Convert an EnumeratedDesignSpace into a DataSourceDesignSpace.
+
+    Converts an EnumeratedDesignSpace into a DataSourceDesignSpace by writing
+    the data to a csv file, uploading it to the given dataset, and wrapping it
+    in a CSVDataSource.
+
+    Parameters
+    ----------
+    enumerated_ds: EnumeratedDesignSpace
+        data source to convert
+    dataset: Dataset
+        dataset into which to upload the data file
+    filename: Optional[str]
+        filename to use for the data file (default: design space name + "source data")
+
+    """
+
+    descriptors = {d.key: d for d in enumerated_ds.descriptors}
+    headers = [d.key for d in enumerated_ds.descriptors]
+
+    csv_filename = filename or "{} source data".format(enumerated_ds.name)
+    with open(csv_filename, "w", newline="") as csvfile:
+        writer = csv.writer(csvfile)
+        writer.writerow(headers)
+        for datum in enumerated_ds.data:
+            writer.writerow([datum.get(k, '') for k in headers])
+
+    file_link = dataset.files.upload(csv_filename)
+    data_source = CSVDataSource(file_link, descriptors)
+    data_source_ds = DataSourceDesignSpace(
+        name=enumerated_ds.name, description=enumerated_ds.description, data_source=data_source)
+    return data_source_ds
+
+
+def migrate_enumerated_design_space(*,
+                                    project: Project,
+                                    uid: UUID,
+                                    dataset: Union[str, Dataset],
+                                    filename: Optional[str],
+                                    cleanup: bool = True
+) -> DataSourceDesignSpace:
+    """
+    Migrate an EnumeratedDesignSpace on the Citrine Platform to a DataSourceDesignSpace
+    Parameters
+    ----------
+    project: Project
+        Project to use when accessing the Citrine Platform
+    uid: UUID
+        Unique identifier of the EnumeratedDesignSpace to migrate
+    dataset: Union[str, Dataset]
+        Dataset or name of dataset into which to write the data as a CSV.
+        If given as a string, will find_or_create using that name.
+    filename: Optional[str]
+        Optional string name to specify for the data CSV file.
+        Defaults to the design space name + "source data"
+    cleanup: bool
+        Whether or not to archive the migrated dataset if the migration is successful
+        Default: true
+
+    Returns
+    -------
+    DataSourceDesignSpace
+        The resulting dataset, which should have functional parity with the source design space.
+
+    """
+    enumerated_ds = project.design_spaces.get(uid)
+    if not isinstance(enumerated_ds, EnumeratedDesignSpace):
+        msg = "Trying to migrate an enumerated design space but this is a {}".format(type(enumerated_ds))
+        raise ValueError(msg)
+
+    if isinstance(dataset, str):
+        dataset = find_or_create_dataset(project.datasets, dataset)
+
+    # create the new data source design space
+    data_source_ds = enumerated_to_data_source(enumerated_ds, dataset, filename)
+    data_source_ds = project.design_spaces.register(data_source_ds)
+
+    if cleanup:
+        # archive the old enumerated design space
+        data_source_ds.archived = True
+        project.design_spaces.update(data_source_ds)
+
+    return data_source_ds
