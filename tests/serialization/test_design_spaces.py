@@ -2,8 +2,11 @@
 from copy import copy
 from uuid import UUID
 
-from citrine.informatics.descriptors import CategoricalDescriptor, RealDescriptor, ChemicalFormulaDescriptor
-from citrine.informatics.design_spaces import DesignSpace, ProductDesignSpace, EnumeratedDesignSpace
+from citrine.informatics.constraints import IngredientCountConstraint
+from citrine.informatics.descriptors import CategoricalDescriptor, RealDescriptor, ChemicalFormulaDescriptor,\
+    FormulationDescriptor
+from citrine.informatics.design_spaces import DesignSpace, ProductDesignSpace, EnumeratedDesignSpace,\
+    FormulationDesignSpace
 from citrine.informatics.dimensions import ContinuousDimension, EnumeratedDimension
 
 
@@ -79,6 +82,40 @@ def test_enumerated_serialization(valid_enumerated_design_space_data):
     serialized = design_space.dump()
     serialized['id'] = valid_enumerated_design_space_data['id']
     assert serialized == valid_serialization_output(valid_enumerated_design_space_data)
+
+
+def test_formulation_deserialization(valid_formulation_design_space_data):
+    """Ensure that a deserialized FormulationDesignSpace looks sane.
+    Deserialization is done both directly (using FormulationDesignSpace)
+    and polymorphically (using DesignSpace)
+    """
+    expected_descriptor = FormulationDescriptor('formulation')
+    expected_constraint = IngredientCountConstraint(
+        formulation_descriptor=expected_descriptor,
+        min=0,
+        max=1
+    )
+    for designSpaceClass in [DesignSpace, FormulationDesignSpace]:
+        design_space: FormulationDesignSpace = designSpaceClass.build(valid_formulation_design_space_data)
+        assert design_space.name == 'formulation design space'
+        assert design_space.description == 'formulates some things'
+        assert design_space.formulation_descriptor.key == expected_descriptor.key
+        assert design_space.ingredients == {'foo'}
+        assert design_space.labels == {'bar': {'foo'}}
+        assert len(design_space.constraints) == 1
+        actual_constraint: IngredientCountConstraint = next(iter(design_space.constraints))
+        assert actual_constraint.formulation_descriptor == expected_descriptor
+        assert actual_constraint.min == expected_constraint.min
+        assert actual_constraint.max == expected_constraint.max
+        assert design_space.resolution == 0.1
+
+
+def test_formulation_serialization(valid_formulation_design_space_data):
+    """Ensure that a serialized FormulationDesignSpace looks sane."""
+    design_space = FormulationDesignSpace.build(valid_formulation_design_space_data)
+    serialized = design_space.dump()
+    serialized['id'] = valid_formulation_design_space_data['id']
+    assert serialized == valid_serialization_output(valid_formulation_design_space_data)
 
 
 def test_missing_schema_id(valid_product_design_space_data):
