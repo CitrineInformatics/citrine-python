@@ -35,13 +35,13 @@ class IngredientCountConstraint(Serializable['IngredientCountConstraint'], Const
 
     def __init__(self, *,
                  formulation_descriptor: FormulationDescriptor,
-                 min: float,
-                 max: float,
+                 min: int,
+                 max: int,
                  label: Optional[str] = None,
                  session: Optional[Session] = None):
         self.formulation_descriptor: FormulationDescriptor = formulation_descriptor
-        self.min: float = min
-        self.max: float = max
+        self.min: int = min
+        self.max: int = max
         self.label: Optional[str] = label
         self.session: Optional[Session] = session
 
