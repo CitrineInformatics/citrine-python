@@ -4,7 +4,6 @@ from uuid import UUID
 from citrine.informatics.data_sources import CSVDataSource
 from citrine.resources.dataset import Dataset
 from citrine.resources.project import Project
-from citrine.seeding.find_or_create import find_or_create_dataset
 
 try:
     import pandas as pd
@@ -299,9 +298,8 @@ def migrate_enumerated_design_space(*,
         Project to use when accessing the Citrine Platform
     uid: UUID
         Unique identifier of the EnumeratedDesignSpace to migrate
-    dataset: Union[str, Dataset]
-        Dataset or name of dataset into which to write the data as a CSV.
-        If given as a string, will find_or_create using that name.
+    dataset: Dataset
+        Dataset into which to write the data as a CSV.
     filename: Optional[str]
         Optional string name to specify for the data CSV file.
         Defaults to the design space name + "source data"
@@ -321,9 +319,6 @@ def migrate_enumerated_design_space(*,
         msg = "Trying to migrate an enumerated design space but this is a {}".format(
             type(enumerated_ds))
         raise ValueError(msg)
-
-    if isinstance(dataset, str):
-        dataset = find_or_create_dataset(project.datasets, dataset)
 
     # create the new data source design space
     data_source_ds = enumerated_to_data_source(
