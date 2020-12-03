@@ -307,13 +307,13 @@ def migrate_enumerated_design_space(*,
         Optional string name to specify for the data CSV file.
         Defaults to the design space name + "source data"
     cleanup: bool
-        Whether or not to archive the migrated dataset if the migration is successful
+        Whether or not to archive the migrated design space if the migration is successful
         Default: true
 
     Returns
     -------
     DataSourceDesignSpace
-        The resulting dataset, which should have functional parity with the source design space.
+        The resulting design space, which should have functional parity with the source design space.
 
     """
     enumerated_ds = project.design_spaces.get(uid)
