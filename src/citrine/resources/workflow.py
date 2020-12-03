@@ -3,11 +3,13 @@ from uuid import UUID
 from typing import TypeVar
 
 from citrine.informatics.workflows import Workflow
+from typing import Iterable
 
 from citrine._rest.collection import Collection
 from citrine._session import Session
 
 CreationType = TypeVar('CreationType', bound=Workflow)
+ResourceType = TypeVar('ResourceType', bound='Resource')
 
 
 class WorkflowCollection(Collection[Workflow]):
@@ -27,6 +29,13 @@ class WorkflowCollection(Collection[Workflow]):
     def __init__(self, project_id: UUID, session: Session):
         self.project_id = project_id
         self.session: Session = session
+
+    def _build_collection_elements(self,
+                                   collection: Iterable[dict]) -> Iterable[ResourceType]:
+        for element in collection:
+            if (element['module_type'] == 'DESIGN_WORKFLOW' or
+                    element['module_type'] == 'PERFORMANCE_WORKFLOW'):
+                yield self.build(element)
 
     def build(self, data: dict) -> Workflow:
         """Build an individual Workflow."""
