@@ -4,7 +4,6 @@ from uuid import UUID
 from citrine.informatics.data_sources import CSVDataSource
 from citrine.resources.dataset import Dataset
 from citrine.resources.project import Project
-from citrine.seeding import find_or_create
 from citrine.seeding.find_or_create import find_or_create_dataset
 
 try:
@@ -267,7 +266,6 @@ def enumerated_to_data_source(*,
         filename to use for the data file (default: design space name + "source data")
 
     """
-
     descriptors = {d.key: d for d in enumerated_ds.descriptors}
     headers = [d.key for d in enumerated_ds.descriptors]
 
@@ -291,9 +289,10 @@ def migrate_enumerated_design_space(*,
                                     dataset: Union[str, Dataset],
                                     filename: Optional[str],
                                     cleanup: bool = True
-) -> DataSourceDesignSpace:
+                                    ) -> DataSourceDesignSpace:
     """
-    Migrate an EnumeratedDesignSpace on the Citrine Platform to a DataSourceDesignSpace
+    Migrate an EnumeratedDesignSpace on the Citrine Platform to a DataSourceDesignSpace.
+
     Parameters
     ----------
     project: Project
@@ -313,24 +312,27 @@ def migrate_enumerated_design_space(*,
     Returns
     -------
     DataSourceDesignSpace
-        The resulting design space, which should have functional parity with the source design space.
+        The resulting design space, which should have functional parity with
+        the original design space.
 
     """
     enumerated_ds = project.design_spaces.get(uid)
     if not isinstance(enumerated_ds, EnumeratedDesignSpace):
-        msg = "Trying to migrate an enumerated design space but this is a {}".format(type(enumerated_ds))
+        msg = "Trying to migrate an enumerated design space but this is a {}".format(
+            type(enumerated_ds))
         raise ValueError(msg)
 
     if isinstance(dataset, str):
         dataset = find_or_create_dataset(project.datasets, dataset)
 
     # create the new data source design space
-    data_source_ds = enumerated_to_data_source(enumerated_ds, dataset, filename)
+    data_source_ds = enumerated_to_data_source(
+        enumerated_ds=enumerated_ds, dataset=dataset, filename=filename)
     data_source_ds = project.design_spaces.register(data_source_ds)
 
     if cleanup:
         # archive the old enumerated design space
-        data_source_ds.archived = True
-        project.design_spaces.update(data_source_ds)
+        enumerated_ds.archived = True
+        project.design_spaces.update(enumerated_ds)
 
     return data_source_ds
