@@ -52,7 +52,7 @@ class FileProcessingData:
     pass
 
 
-class CsvIngestProcessingData(FileProcessingData):
+class CsvValidationData(FileProcessingData):
     """The resulting data from the processed CSV file."""
 
     def __init__(self, column_names: List[str], record_count: int):
@@ -61,8 +61,8 @@ class CsvIngestProcessingData(FileProcessingData):
 
     @classmethod
     def from_dict(cls, d):
-        """Convert from the JSON to a CsvIngestProcessingData instance."""
-        return CsvIngestProcessingData(d['column_names'], d['record_count'])
+        """Convert from the JSON to a CsvValidationData instance."""
+        return CsvValidationData(d['column_names'], d['record_count'])
 
 
 class FileProcessingResult:
@@ -501,7 +501,7 @@ class FileCollection(Collection[FileLink]):
             data = result_json['data']
 
             if processing_type == FileProcessingType.VALIDATE_CSV:
-                data = CsvIngestProcessingData.from_dict(data)
+                data = CsvValidationData.from_dict(data)
 
             result = FileProcessingResult(processing_type, data)
             results[processing_type] = result
