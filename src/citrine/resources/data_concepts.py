@@ -458,6 +458,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
             # That worked, nothing returned in this case
             return None
         else:
+            # TODO: use JobSubmissionResponse here instead
             return job_id
 
     def poll_async_update_job(self, job_id: UUID, *, timeout: float = 2 * 60,
