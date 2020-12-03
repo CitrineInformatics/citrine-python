@@ -1,0 +1,7 @@
+citrine.informatics.design\_spaces.enumerated\_design\_space module
+===================================================================
+
+.. automodule:: citrine.informatics.design_spaces.enumerated_design_space
+   :members:
+   :undoc-members:
+   :show-inheritance:

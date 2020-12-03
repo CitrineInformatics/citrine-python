@@ -36,7 +36,7 @@
 <span id="citrine-builders-design-spaces-module"></span><h1>citrine.builders.design_spaces module<a class="headerlink" href="#module-citrine.builders.design_spaces" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="citrine.builders.design_spaces.cartesian_join_design_spaces">
-<code class="sig-prename descclassname">citrine.builders.design_spaces.</code><code class="sig-name descname">cartesian_join_design_spaces</code><span class="sig-paren">(</span><em class="sig-param">*, subspaces: List[citrine.informatics.design_spaces.EnumeratedDesignSpace], name: str, description: str = ''</em><span class="sig-paren">)</span> &#x2192; citrine.informatics.design_spaces.EnumeratedDesignSpace<a class="headerlink" href="#citrine.builders.design_spaces.cartesian_join_design_spaces" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">citrine.builders.design_spaces.</code><code class="sig-name descname">cartesian_join_design_spaces</code><span class="sig-paren">(</span><em class="sig-param">*, subspaces: List[citrine.informatics.design_spaces.enumerated_design_space.EnumeratedDesignSpace], name: str, description: str = ''</em><span class="sig-paren">)</span> &#x2192; citrine.informatics.design_spaces.enumerated_design_space.EnumeratedDesignSpace<a class="headerlink" href="#citrine.builders.design_spaces.cartesian_join_design_spaces" title="Permalink to this definition">¶</a></dt>
 <dd><p>[ALPHA] Cartesian join of multiple enumerated design spaces.</p>
 <p>Given a list of multiple input EnumeratedDesignSpaces, create a new
 EnumeratedDesignSpace that is the Cartesian product of candidates from each
@@ -46,7 +46,7 @@ individual design space</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>subspaces</strong> (<em>List</em><em>[</em><a class="reference internal" href="citrine.informatics.design_spaces.html#citrine.informatics.design_spaces.EnumeratedDesignSpace" title="citrine.informatics.design_spaces.EnumeratedDesignSpace"><em>EnumeratedDesignSpace</em></a><em>]</em>) – A list of EnumeratedDesignSpaces</p></li>
+<li><p><strong>subspaces</strong> (<em>List</em><em>[</em><a class="reference internal" href="citrine.informatics.design_spaces.enumerated_design_space.html#citrine.informatics.design_spaces.enumerated_design_space.EnumeratedDesignSpace" title="citrine.informatics.design_spaces.enumerated_design_space.EnumeratedDesignSpace"><em>EnumeratedDesignSpace</em></a><em>]</em>) – A list of EnumeratedDesignSpaces</p></li>
 <li><p><strong>name</strong> (<em>str</em>) – name for the output EnumeratedDesignSpace</p></li>
 <li><p><strong>description</strong> (<em>str</em>) – description for the output EnumeratedDesignSpace</p></li>
 </ul>
@@ -56,7 +56,7 @@ individual design space</p>
 
 <dl class="function">
 <dt id="citrine.builders.design_spaces.enumerate_cartesian_product">
-<code class="sig-prename descclassname">citrine.builders.design_spaces.</code><code class="sig-name descname">enumerate_cartesian_product</code><span class="sig-paren">(</span><em class="sig-param">*, design_grid: Mapping[str, Sequence], descriptors: List[citrine.informatics.descriptors.Descriptor], name: str, description: str = ''</em><span class="sig-paren">)</span> &#x2192; citrine.informatics.design_spaces.EnumeratedDesignSpace<a class="headerlink" href="#citrine.builders.design_spaces.enumerate_cartesian_product" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">citrine.builders.design_spaces.</code><code class="sig-name descname">enumerate_cartesian_product</code><span class="sig-paren">(</span><em class="sig-param">*, design_grid: Mapping[str, Sequence], descriptors: List[citrine.informatics.descriptors.Descriptor], name: str, description: str = ''</em><span class="sig-paren">)</span> &#x2192; citrine.informatics.design_spaces.enumerated_design_space.EnumeratedDesignSpace<a class="headerlink" href="#citrine.builders.design_spaces.enumerate_cartesian_product" title="Permalink to this definition">¶</a></dt>
 <dd><p>[ALPHA] Enumerate a Cartesian product from 1-D grids.</p>
 <p>Given a dict of lists or tuples of values for each design descriptor,
 create the list of candidates representing the Cartesian product of all
@@ -78,7 +78,7 @@ of design_grid.</p></li>
 
 <dl class="function">
 <dt id="citrine.builders.design_spaces.enumerate_formulation_grid">
-<code class="sig-prename descclassname">citrine.builders.design_spaces.</code><code class="sig-name descname">enumerate_formulation_grid</code><span class="sig-paren">(</span><em class="sig-param">*, formulation_grid: Mapping[str, Sequence[float]], balance_ingredient: str, descriptors: List[citrine.informatics.descriptors.Descriptor] = None, name: str, description: str = ''</em><span class="sig-paren">)</span> &#x2192; citrine.informatics.design_spaces.EnumeratedDesignSpace<a class="headerlink" href="#citrine.builders.design_spaces.enumerate_formulation_grid" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">citrine.builders.design_spaces.</code><code class="sig-name descname">enumerate_formulation_grid</code><span class="sig-paren">(</span><em class="sig-param">*, formulation_grid: Mapping[str, Sequence[float]], balance_ingredient: str, descriptors: List[citrine.informatics.descriptors.Descriptor] = None, name: str, description: str = ''</em><span class="sig-paren">)</span> &#x2192; citrine.informatics.design_spaces.enumerated_design_space.EnumeratedDesignSpace<a class="headerlink" href="#citrine.builders.design_spaces.enumerate_formulation_grid" title="Permalink to this definition">¶</a></dt>
 <dd><p>[ALPHA] Enumerate a Cartesian product following formulation constraints.</p>
 <p>Given a dict of grids (lists) of ingredient amounts (fractions, between
 0-1), create candidates that are the Cartesian product of all possible

@@ -1,5 +1,20 @@
-citrine.informatics.constraints module
-======================================
+citrine.informatics.constraints package
+=======================================
+
+Submodules
+----------
+
+.. toctree::
+
+   citrine.informatics.constraints.categorical_constraint
+   citrine.informatics.constraints.constraint
+   citrine.informatics.constraints.ingredient_count_constraint
+   citrine.informatics.constraints.ingredient_fraction_constraint
+   citrine.informatics.constraints.label_fraction_constraint
+   citrine.informatics.constraints.scalar_range_constraint
+
+Module contents
+---------------
 
 .. automodule:: citrine.informatics.constraints
    :members:

@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>citrine.informatics.dimensions module &#8212; Citrine Python 0.0.1 documentation</title>
+    <title>citrine.informatics.design_spaces.enumerated_design_space module &#8212; Citrine Python 0.0.1 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -32,97 +32,89 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="module-citrine.informatics.dimensions">
-<span id="citrine-informatics-dimensions-module"></span><h1>citrine.informatics.dimensions module<a class="headerlink" href="#module-citrine.informatics.dimensions" title="Permalink to this headline">¶</a></h1>
-<p>Tools for working with Dimensions.</p>
+  <div class="section" id="module-citrine.informatics.design_spaces.enumerated_design_space">
+<span id="citrine-informatics-design-spaces-enumerated-design-space-module"></span><h1>citrine.informatics.design_spaces.enumerated_design_space module<a class="headerlink" href="#module-citrine.informatics.design_spaces.enumerated_design_space" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
-<dt id="citrine.informatics.dimensions.Dimension">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.dimensions.</code><code class="sig-name descname">Dimension</code><a class="headerlink" href="#citrine.informatics.dimensions.Dimension" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.polymorphic_serializable.PolymorphicSerializable</span></code></p>
-<p>[ALPHA] A Citrine Dimension describes the range of values that some quantity can take.</p>
-<p>Abstract type that returns the proper type given a serialized dict.</p>
-<dl class="method">
-<dt id="citrine.informatics.dimensions.Dimension.get_type">
-<em class="property">classmethod </em><code class="sig-name descname">get_type</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span> &#x2192; Type[citrine._serialization.serializable.Serializable]<a class="headerlink" href="#citrine.informatics.dimensions.Dimension.get_type" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the subtype.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="citrine.informatics.dimensions.ContinuousDimension">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.dimensions.</code><code class="sig-name descname">ContinuousDimension</code><span class="sig-paren">(</span><em class="sig-param">descriptor: citrine.informatics.descriptors.RealDescriptor</em>, <em class="sig-param">lower_bound: Optional[float] = None</em>, <em class="sig-param">upper_bound: Optional[float] = None</em>, <em class="sig-param">template_id: Optional[uuid.UUID] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.dimensions.ContinuousDimension" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.informatics.dimensions.Dimension" title="citrine.informatics.dimensions.Dimension"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.dimensions.Dimension</span></code></a></p>
-<p>[ALPHA] A continuous, real-valued dimension.</p>
+<dt id="citrine.informatics.design_spaces.enumerated_design_space.EnumeratedDesignSpace">
+<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.design_spaces.enumerated_design_space.</code><code class="sig-name descname">EnumeratedDesignSpace</code><span class="sig-paren">(</span><em class="sig-param">name: str, description: str, descriptors: List[citrine.informatics.descriptors.Descriptor], data: List[Mapping[str, Any]], session: citrine._session.Session = &lt;citrine._session.Session object&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.design_spaces.enumerated_design_space.EnumeratedDesignSpace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.resource.Resource</span></code>, <a class="reference internal" href="citrine.informatics.design_spaces.design_space.html#citrine.informatics.design_spaces.design_space.DesignSpace" title="citrine.informatics.design_spaces.design_space.DesignSpace"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.design_spaces.design_space.DesignSpace</span></code></a></p>
+<p>[ALPHA] An explicit enumeration of candidate materials to score.</p>
+<p>Note that every candidate must have exactly the descriptors in the list populated
+(no more, no less) in order to be included.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>descriptor</strong> (<a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.RealDescriptor" title="citrine.informatics.descriptors.RealDescriptor"><em>RealDescriptor</em></a>) – a descriptor of the single dimension</p></li>
-<li><p><strong>lower_bound</strong> (<em>float</em>) – inclusive lower bound</p></li>
-<li><p><strong>upper_bound</strong> (<em>float</em>) – inclusive upper bound</p></li>
-<li><p><strong>template_id</strong> (<em>UUID</em>) – UUID that corresponds to the template in DC</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – the name of the design space</p></li>
+<li><p><strong>description</strong> (<em>str</em>) – the description of the design space</p></li>
+<li><p><strong>descriptors</strong> (<em>list</em><em>[</em><a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.Descriptor" title="citrine.informatics.descriptors.Descriptor"><em>Descriptor</em></a><em>]</em>) – the list of descriptors included in the candidates of the design space</p></li>
+<li><p><strong>data</strong> (<em>list</em><em>[</em><em>dict</em><em>]</em>) – list of dicts of the shape <cite>{&lt;descriptor_key&gt;: &lt;descriptor_value&gt;}</cite>
+where each dict corresponds to a candidate in the design space</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="attribute">
-<dt id="citrine.informatics.dimensions.ContinuousDimension.descriptor">
-<code class="sig-name descname">descriptor</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.dimensions.ContinuousDimension.descriptor" title="Permalink to this definition">¶</a></dt>
+<dt id="citrine.informatics.design_spaces.enumerated_design_space.EnumeratedDesignSpace.archived">
+<code class="sig-name descname">archived</code><em class="property"> = False</em><a class="headerlink" href="#citrine.informatics.design_spaces.enumerated_design_space.EnumeratedDesignSpace.archived" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
-<dt id="citrine.informatics.dimensions.ContinuousDimension.lower_bound">
-<code class="sig-name descname">lower_bound</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.dimensions.ContinuousDimension.lower_bound" title="Permalink to this definition">¶</a></dt>
+<dt id="citrine.informatics.design_spaces.enumerated_design_space.EnumeratedDesignSpace.data">
+<code class="sig-name descname">data</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.design_spaces.enumerated_design_space.EnumeratedDesignSpace.data" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
-<dt id="citrine.informatics.dimensions.ContinuousDimension.template_id">
-<code class="sig-name descname">template_id</code><em class="property"> = UUID('4ec5efd3-8457-4ab2-ba06-feaab477b604')</em><a class="headerlink" href="#citrine.informatics.dimensions.ContinuousDimension.template_id" title="Permalink to this definition">¶</a></dt>
+<dt id="citrine.informatics.design_spaces.enumerated_design_space.EnumeratedDesignSpace.description">
+<code class="sig-name descname">description</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.design_spaces.enumerated_design_space.EnumeratedDesignSpace.description" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
-<dt id="citrine.informatics.dimensions.ContinuousDimension.typ">
-<code class="sig-name descname">typ</code><em class="property"> = 'ContinuousDimension'</em><a class="headerlink" href="#citrine.informatics.dimensions.ContinuousDimension.typ" title="Permalink to this definition">¶</a></dt>
+<dt id="citrine.informatics.design_spaces.enumerated_design_space.EnumeratedDesignSpace.descriptors">
+<code class="sig-name descname">descriptors</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.design_spaces.enumerated_design_space.EnumeratedDesignSpace.descriptors" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
-<dt id="citrine.informatics.dimensions.ContinuousDimension.upper_bound">
-<code class="sig-name descname">upper_bound</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.dimensions.ContinuousDimension.upper_bound" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="citrine.informatics.dimensions.EnumeratedDimension">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.dimensions.</code><code class="sig-name descname">EnumeratedDimension</code><span class="sig-paren">(</span><em class="sig-param">descriptor: citrine.informatics.descriptors.Descriptor, values: List[str], template_id: Optional[uuid.UUID] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.dimensions.EnumeratedDimension" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.informatics.dimensions.Dimension" title="citrine.informatics.dimensions.Dimension"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.dimensions.Dimension</span></code></a></p>
-<p>[ALPHA] A finite, enumerated dimension.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>descriptor</strong> (<a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.Descriptor" title="citrine.informatics.descriptors.Descriptor"><em>Descriptor</em></a>) – a descriptor of the single dimension</p></li>
-<li><p><strong>template_id</strong> (<em>UUID</em>) – UUID that corresponds to the template in DC</p></li>
-<li><p><strong>values</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – list of values that can be parsed by the descriptor</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="attribute">
-<dt id="citrine.informatics.dimensions.EnumeratedDimension.descriptor">
-<code class="sig-name descname">descriptor</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.dimensions.EnumeratedDimension.descriptor" title="Permalink to this definition">¶</a></dt>
+<dt id="citrine.informatics.design_spaces.enumerated_design_space.EnumeratedDesignSpace.experimental">
+<code class="sig-name descname">experimental</code><em class="property"> = True</em><a class="headerlink" href="#citrine.informatics.design_spaces.enumerated_design_space.EnumeratedDesignSpace.experimental" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
-<dt id="citrine.informatics.dimensions.EnumeratedDimension.template_id">
-<code class="sig-name descname">template_id</code><em class="property"> = UUID('f99ccf6c-7341-4875-b220-53da93b2c7b4')</em><a class="headerlink" href="#citrine.informatics.dimensions.EnumeratedDimension.template_id" title="Permalink to this definition">¶</a></dt>
+<dt id="citrine.informatics.design_spaces.enumerated_design_space.EnumeratedDesignSpace.experimental_reasons">
+<code class="sig-name descname">experimental_reasons</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.design_spaces.enumerated_design_space.EnumeratedDesignSpace.experimental_reasons" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
-<dt id="citrine.informatics.dimensions.EnumeratedDimension.typ">
-<code class="sig-name descname">typ</code><em class="property"> = 'EnumeratedDimension'</em><a class="headerlink" href="#citrine.informatics.dimensions.EnumeratedDimension.typ" title="Permalink to this definition">¶</a></dt>
+<dt id="citrine.informatics.design_spaces.enumerated_design_space.EnumeratedDesignSpace.module_type">
+<code class="sig-name descname">module_type</code><em class="property"> = 'DESIGN_SPACE'</em><a class="headerlink" href="#citrine.informatics.design_spaces.enumerated_design_space.EnumeratedDesignSpace.module_type" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
-<dt id="citrine.informatics.dimensions.EnumeratedDimension.values">
-<code class="sig-name descname">values</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.dimensions.EnumeratedDimension.values" title="Permalink to this definition">¶</a></dt>
+<dt id="citrine.informatics.design_spaces.enumerated_design_space.EnumeratedDesignSpace.name">
+<code class="sig-name descname">name</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.design_spaces.enumerated_design_space.EnumeratedDesignSpace.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.design_spaces.enumerated_design_space.EnumeratedDesignSpace.schema_id">
+<code class="sig-name descname">schema_id</code><em class="property"> = UUID('f3907a58-aa46-462c-8837-a5aa9605e79e')</em><a class="headerlink" href="#citrine.informatics.design_spaces.enumerated_design_space.EnumeratedDesignSpace.schema_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.design_spaces.enumerated_design_space.EnumeratedDesignSpace.status">
+<code class="sig-name descname">status</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.design_spaces.enumerated_design_space.EnumeratedDesignSpace.status" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.design_spaces.enumerated_design_space.EnumeratedDesignSpace.status_info">
+<code class="sig-name descname">status_info</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.design_spaces.enumerated_design_space.EnumeratedDesignSpace.status_info" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.design_spaces.enumerated_design_space.EnumeratedDesignSpace.typ">
+<code class="sig-name descname">typ</code><em class="property"> = 'EnumeratedDesignSpace'</em><a class="headerlink" href="#citrine.informatics.design_spaces.enumerated_design_space.EnumeratedDesignSpace.typ" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.design_spaces.enumerated_design_space.EnumeratedDesignSpace.uid">
+<code class="sig-name descname">uid</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.design_spaces.enumerated_design_space.EnumeratedDesignSpace.uid" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -248,7 +240,7 @@
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
-      <a href="../_sources/reference/citrine.informatics.dimensions.rst.txt"
+      <a href="../_sources/reference/citrine.informatics.design_spaces.enumerated_design_space.rst.txt"
           rel="nofollow">Page source</a>
     </div>
 

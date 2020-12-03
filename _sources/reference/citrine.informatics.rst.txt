@@ -6,6 +6,8 @@ Subpackages
 
 .. toctree::
 
+   citrine.informatics.constraints
+   citrine.informatics.design_spaces
    citrine.informatics.workflows
 
 Submodules
@@ -14,10 +16,8 @@ Submodules
 .. toctree::
 
    citrine.informatics.analysis_configuration
-   citrine.informatics.constraints
    citrine.informatics.data_sources
    citrine.informatics.descriptors
-   citrine.informatics.design_spaces
    citrine.informatics.dimensions
    citrine.informatics.modules
    citrine.informatics.objectives

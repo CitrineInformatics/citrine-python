@@ -1,0 +1,7 @@
+citrine.informatics.design\_spaces.formulation\_design\_space module
+====================================================================
+
+.. automodule:: citrine.informatics.design_spaces.formulation_design_space
+   :members:
+   :undoc-members:
+   :show-inheritance:

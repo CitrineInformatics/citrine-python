@@ -51,7 +51,7 @@
 
 <dl class="class">
 <dt id="citrine.informatics.scores.LIScore">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.scores.</code><code class="sig-name descname">LIScore</code><span class="sig-paren">(</span><em class="sig-param">name: str, description: str, objectives: List[citrine.informatics.objectives.Objective], baselines: List[float], constraints: Optional[List[citrine.informatics.constraints.Constraint]] = None, session: Optional[citrine._session.Session] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.scores.LIScore" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.scores.</code><code class="sig-name descname">LIScore</code><span class="sig-paren">(</span><em class="sig-param">name: str, description: str, objectives: List[citrine.informatics.objectives.Objective], baselines: List[float], constraints: Optional[List[citrine.informatics.constraints.constraint.Constraint]] = None, session: Optional[citrine._session.Session] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.scores.LIScore" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.informatics.scores.Score" title="citrine.informatics.scores.Score"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.scores.Score</span></code></a></p>
 <p>[ALPHA] Evaluates the likelihood of scoring better than some baselines for given objectives.</p>
 <dl class="field-list simple">
@@ -61,7 +61,7 @@
 <li><p><strong>description</strong> (<em>str</em>) – the description of the score</p></li>
 <li><p><strong>objectives</strong> (<em>list</em><em>[</em><a class="reference internal" href="citrine.informatics.objectives.html#citrine.informatics.objectives.Objective" title="citrine.informatics.objectives.Objective"><em>Objective</em></a><em>]</em>) – objectives (e.g., maximize, minimize, tune, etc.)</p></li>
 <li><p><strong>baselines</strong> (<em>list</em><em>[</em><em>float</em><em>]</em>) – best-so-far values for the various objectives (there must be one for each objective)</p></li>
-<li><p><strong>constraints</strong> (<em>list</em><em>[</em><a class="reference internal" href="citrine.informatics.constraints.html#citrine.informatics.constraints.Constraint" title="citrine.informatics.constraints.Constraint"><em>Constraint</em></a><em>]</em>) – constraints limiting the allowed values that material instances can have</p></li>
+<li><p><strong>constraints</strong> (<em>list</em><em>[</em><a class="reference internal" href="citrine.informatics.constraints.constraint.html#citrine.informatics.constraints.constraint.Constraint" title="citrine.informatics.constraints.constraint.Constraint"><em>Constraint</em></a><em>]</em>) – constraints limiting the allowed values that material instances can have</p></li>
 </ul>
 </dd>
 </dl>
@@ -99,7 +99,7 @@
 
 <dl class="class">
 <dt id="citrine.informatics.scores.EIScore">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.scores.</code><code class="sig-name descname">EIScore</code><span class="sig-paren">(</span><em class="sig-param">name: str, description: str, objectives: List[citrine.informatics.objectives.Objective], baselines: List[float], constraints: Optional[List[citrine.informatics.constraints.Constraint]] = None, session: Optional[citrine._session.Session] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.scores.EIScore" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.scores.</code><code class="sig-name descname">EIScore</code><span class="sig-paren">(</span><em class="sig-param">name: str, description: str, objectives: List[citrine.informatics.objectives.Objective], baselines: List[float], constraints: Optional[List[citrine.informatics.constraints.constraint.Constraint]] = None, session: Optional[citrine._session.Session] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.scores.EIScore" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.informatics.scores.Score" title="citrine.informatics.scores.Score"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.scores.Score</span></code></a></p>
 <p>[ALPHA] Evaluates the expected magnitude of improvement beyond baselines for given objectives.</p>
 <dl class="field-list simple">
@@ -109,7 +109,7 @@
 <li><p><strong>description</strong> (<em>str</em>) – the description of the score</p></li>
 <li><p><strong>objectives</strong> (<em>list</em><em>[</em><a class="reference internal" href="citrine.informatics.objectives.html#citrine.informatics.objectives.Objective" title="citrine.informatics.objectives.Objective"><em>Objective</em></a><em>]</em>) – objectives (e.g., maximize, minimize, tune, etc.)</p></li>
 <li><p><strong>baselines</strong> (<em>list</em><em>[</em><em>float</em><em>]</em>) – best-so-far values for the various objectives (there must be one for each objective)</p></li>
-<li><p><strong>constraints</strong> (<em>list</em><em>[</em><a class="reference internal" href="citrine.informatics.constraints.html#citrine.informatics.constraints.Constraint" title="citrine.informatics.constraints.Constraint"><em>Constraint</em></a><em>]</em>) – constraints limiting the allowed values that material instances can have</p></li>
+<li><p><strong>constraints</strong> (<em>list</em><em>[</em><a class="reference internal" href="citrine.informatics.constraints.constraint.html#citrine.informatics.constraints.constraint.Constraint" title="citrine.informatics.constraints.constraint.Constraint"><em>Constraint</em></a><em>]</em>) – constraints limiting the allowed values that material instances can have</p></li>
 </ul>
 </dd>
 </dl>
@@ -147,7 +147,7 @@
 
 <dl class="class">
 <dt id="citrine.informatics.scores.EVScore">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.scores.</code><code class="sig-name descname">EVScore</code><span class="sig-paren">(</span><em class="sig-param">name: str, description: str, objectives: List[citrine.informatics.objectives.Objective], constraints: Optional[List[citrine.informatics.constraints.Constraint]] = None, session: Optional[citrine._session.Session] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.scores.EVScore" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.scores.</code><code class="sig-name descname">EVScore</code><span class="sig-paren">(</span><em class="sig-param">name: str, description: str, objectives: List[citrine.informatics.objectives.Objective], constraints: Optional[List[citrine.informatics.constraints.constraint.Constraint]] = None, session: Optional[citrine._session.Session] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.scores.EVScore" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.informatics.scores.Score" title="citrine.informatics.scores.Score"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.scores.Score</span></code></a></p>
 <p>[ALPHA] Evaluates the expected value for given objectives.</p>
 <dl class="field-list simple">
@@ -156,7 +156,7 @@
 <li><p><strong>name</strong> (<em>str</em>) – the name of the score</p></li>
 <li><p><strong>description</strong> (<em>str</em>) – the description of the score</p></li>
 <li><p><strong>objectives</strong> (<em>list</em><em>[</em><a class="reference internal" href="citrine.informatics.objectives.html#citrine.informatics.objectives.Objective" title="citrine.informatics.objectives.Objective"><em>Objective</em></a><em>]</em>) – objectives (e.g., maximize, minimize, tune, etc.)</p></li>
-<li><p><strong>constraints</strong> (<em>list</em><em>[</em><a class="reference internal" href="citrine.informatics.constraints.html#citrine.informatics.constraints.Constraint" title="citrine.informatics.constraints.Constraint"><em>Constraint</em></a><em>]</em>) – constraints limiting the allowed values that material instances can have</p></li>
+<li><p><strong>constraints</strong> (<em>list</em><em>[</em><a class="reference internal" href="citrine.informatics.constraints.constraint.html#citrine.informatics.constraints.constraint.Constraint" title="citrine.informatics.constraints.constraint.Constraint"><em>Constraint</em></a><em>]</em>) – constraints limiting the allowed values that material instances can have</p></li>
 </ul>
 </dd>
 </dl>

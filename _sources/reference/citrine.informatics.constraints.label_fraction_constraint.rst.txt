@@ -1,0 +1,7 @@
+citrine.informatics.constraints.label\_fraction\_constraint module
+==================================================================
+
+.. automodule:: citrine.informatics.constraints.label_fraction_constraint
+   :members:
+   :undoc-members:
+   :show-inheritance:

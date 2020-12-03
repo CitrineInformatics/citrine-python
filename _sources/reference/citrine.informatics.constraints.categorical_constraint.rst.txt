@@ -1,0 +1,7 @@
+citrine.informatics.constraints.categorical\_constraint module
+==============================================================
+
+.. automodule:: citrine.informatics.constraints.categorical_constraint
+   :members:
+   :undoc-members:
+   :show-inheritance:

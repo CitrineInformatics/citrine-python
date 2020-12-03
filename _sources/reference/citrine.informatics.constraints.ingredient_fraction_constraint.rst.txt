@@ -1,0 +1,7 @@
+citrine.informatics.constraints.ingredient\_fraction\_constraint module
+=======================================================================
+
+.. automodule:: citrine.informatics.constraints.ingredient_fraction_constraint
+   :members:
+   :undoc-members:
+   :show-inheritance:

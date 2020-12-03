@@ -47,25 +47,25 @@
 </dl>
 <dl class="method">
 <dt id="citrine.resources.design_space.DesignSpaceCollection.build">
-<code class="sig-name descname">build</code><span class="sig-paren">(</span><em class="sig-param">data: dict</em><span class="sig-paren">)</span> &#x2192; citrine.informatics.design_spaces.DesignSpace<a class="headerlink" href="#citrine.resources.design_space.DesignSpaceCollection.build" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">build</code><span class="sig-paren">(</span><em class="sig-param">data: dict</em><span class="sig-paren">)</span> &#x2192; citrine.informatics.design_spaces.design_space.DesignSpace<a class="headerlink" href="#citrine.resources.design_space.DesignSpaceCollection.build" title="Permalink to this definition">¶</a></dt>
 <dd><p>Build an individual design space.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="citrine.resources.design_space.DesignSpaceCollection.register">
-<code class="sig-name descname">register</code><span class="sig-paren">(</span><em class="sig-param">model: citrine.informatics.design_spaces.DesignSpace</em><span class="sig-paren">)</span> &#x2192; citrine.informatics.design_spaces.DesignSpace<a class="headerlink" href="#citrine.resources.design_space.DesignSpaceCollection.register" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">register</code><span class="sig-paren">(</span><em class="sig-param">model: citrine.informatics.design_spaces.design_space.DesignSpace</em><span class="sig-paren">)</span> &#x2192; citrine.informatics.design_spaces.design_space.DesignSpace<a class="headerlink" href="#citrine.resources.design_space.DesignSpaceCollection.register" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a new design space.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="citrine.resources.design_space.DesignSpaceCollection.update">
-<code class="sig-name descname">update</code><span class="sig-paren">(</span><em class="sig-param">model: citrine.informatics.design_spaces.DesignSpace</em><span class="sig-paren">)</span> &#x2192; citrine.informatics.design_spaces.DesignSpace<a class="headerlink" href="#citrine.resources.design_space.DesignSpaceCollection.update" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">update</code><span class="sig-paren">(</span><em class="sig-param">model: citrine.informatics.design_spaces.design_space.DesignSpace</em><span class="sig-paren">)</span> &#x2192; citrine.informatics.design_spaces.design_space.DesignSpace<a class="headerlink" href="#citrine.resources.design_space.DesignSpaceCollection.update" title="Permalink to this definition">¶</a></dt>
 <dd><p>Update an existing design space by uid.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="citrine.resources.design_space.DesignSpaceCollection.validate_write_request">
-<code class="sig-name descname">validate_write_request</code><span class="sig-paren">(</span><em class="sig-param">design_space: citrine.informatics.design_spaces.DesignSpace</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.design_space.DesignSpaceCollection.validate_write_request" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">validate_write_request</code><span class="sig-paren">(</span><em class="sig-param">design_space: citrine.informatics.design_spaces.design_space.DesignSpace</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.design_space.DesignSpaceCollection.validate_write_request" title="Permalink to this definition">¶</a></dt>
 <dd><p>Perform write-time validations of the design space registration or update.</p>
 <p>EnumeratedDesignSpaces can be pretty big, so we want to return a helpful error message
 rather than let the POST or PUT call fail because the request body is too big.  This

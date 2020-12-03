@@ -1,5 +1,19 @@
-citrine.informatics.design\_spaces module
-=========================================
+citrine.informatics.design\_spaces package
+==========================================
+
+Submodules
+----------
+
+.. toctree::
+
+   citrine.informatics.design_spaces.data_source_design_space
+   citrine.informatics.design_spaces.design_space
+   citrine.informatics.design_spaces.enumerated_design_space
+   citrine.informatics.design_spaces.formulation_design_space
+   citrine.informatics.design_spaces.product_design_space
+
+Module contents
+---------------
 
 .. automodule:: citrine.informatics.design_spaces
    :members:

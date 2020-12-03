@@ -1,0 +1,7 @@
+citrine.informatics.design\_spaces.data\_source\_design\_space module
+=====================================================================
+
+.. automodule:: citrine.informatics.design_spaces.data_source_design_space
+   :members:
+   :undoc-members:
+   :show-inheritance:
