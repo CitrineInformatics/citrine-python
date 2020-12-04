@@ -400,7 +400,16 @@ def test_process_file(collection, session):
             {
                 'processing_type': 'VALIDATE_CSV',
                 'data': {
-                    'column_names': ['a', 'b'],
+                    'columns': [
+                        {
+                            'name': 'a',
+                            'bounds': {
+                                'type': 'integer_bounds',
+                                'lower_bound': 0,
+                                'upper_bound': 10
+                            }
+                        }
+                    ],
                     'record_count': 123
                 }
             }
