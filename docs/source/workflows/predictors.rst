@@ -26,16 +26,21 @@ The following example demonstrates how to use the python SDK to create a :class:
 
 .. code:: python
 
-   from time import sleep
    from citrine import Citrine
+   from citrine.seeding.find_or_create import (find_or_create_project,
+                                               create_or_update 
+                                              )
+   from citrine.jobs.waiting import wait_while_validating 
    from citrine.informatics.predictors import SimpleMLPredictor
    from citrine.informatics.data_sources import GemTableDataSource
 
    # create a session with citrine using your API key
    session = Citrine(api_key = API_KEY)
 
-   # create project
-   project = session.projects.register('Example project')
+   # find project by name 'Example project' or create it if not found
+   project = find_or_create_project(project_collection=session.projects,
+                                    project_name='Example project'
+                                   )
 
    # create SimpleMLPredictor (assumes descriptors for
    # inputs/outputs/latent variables have already been created)
@@ -48,20 +53,18 @@ The following example demonstrates how to use the python SDK to create a :class:
        training_data = [GemTableDataSource(training_data_table_uid, 1)]
    )
 
-   # register predictor
-   predictor = project.predictors.register(simple_ml_predictor)
+   # register predictor or update predictor of same name if it already
+   # exists in the project.
+   predictor = create_or_update(collection=project.predictors,
+                                resource=simple_ml_predictor           
+                               )
 
-   # wait until the predictor is no longer validating
-   # we must get the predictor every time we wish to fetch the latest status
-   while project.predictors.get(predictor.uid).status == "VALIDATING":
-       sleep(10)
-
-   # print final validation status
-   validated_predictor = project.predictors.get(predictor.uid)
-   print(validated_predictor.status)
-
-   # status info will contain relevant validation information
-   print(validated_predictor.status_info)
+   # wait while the predictor is validating and print status information
+   # while waiting.
+   predictor = wait_while_validating(collection=project.predictors,
+                                     module=predictor,
+                                     print_status_info=True  
+                                    )
 
 Often, a :class:`~citrine.informatics.predictors.SimpleMLPredictor` will include outputs from other predictors as inputs to its model.
 Instead of entering these manually, outputs from a predictor can be retrieved programmatically using ``outputs = project.descriptors.from_predictor_responses(predictor, inputs)``, where ``outputs`` is the list of descriptors returned by the ``predictor`` given a list of descriptors as ``inputs``.
@@ -71,6 +74,7 @@ The following demonstrates how to create an :class:`~citrine.informatics.predict
 .. code:: python
 
     from citrine import Citrine
+    from citrine.seeding.find_or_create import find_or_create_project
     from citrine.informatics.predictors import SimpleMLPredictor
     from citrine.informatics.data_sources import GemTableDataSource
     from citrine.informatics.predictors import IngredientFractionsPredictor
@@ -79,8 +83,10 @@ The following demonstrates how to create an :class:`~citrine.informatics.predict
     # create a session with citrine using your API key
     session = Citrine(api_key = API_KEY)
 
-    # create a project
-    project = session.projects.register('Example project')
+    # find project by name 'Example project' or create it if not found
+    project = find_or_create_project(project_collection=session.projects,
+                                     project_name='Example project'
+                                    )
 
     # create a descriptor to store simple mixtures
     formulation_descriptor = FormulationDescriptor('simple mixture')
@@ -125,6 +131,7 @@ The following example demonstrates how to use the python SDK to create a :class:
 .. code:: python
 
    from citrine.informatics.predictors import GraphPredictor
+   from citrine.seeding.create_or_update
 
    # the other predictors have already been created and validated
    graph_predictor = GraphPredictor(
@@ -134,8 +141,10 @@ The following example demonstrates how to use the python SDK to create a :class:
        training_data = [GemTableDataSource(training_data_table_uid, 1)] # training data shared by all sub-predictors
    )
 
-   # register predictor
-   predictor = project.predictors.register(graph_predictor)
+   # register or update predictor by name
+   predictor = create_or_update(collection=project.predictors,
+                                module=graph_predictor
+                               )
 
 For a more complete example of graph predictor usage, see :ref:`AI Engine Code Examples <graph_predictor_example>`.
 
@@ -188,8 +197,10 @@ The following example demonstrates how to create an :class:`~citrine.informatics
        }
    )
 
-   # register predictor
-   predictor = project.predictors.register(shear_modulus_predictor)
+   # register or update predictor by name
+   predictor = create_or_update(collection=project.predictors,
+                                module=shear_modulus_predictor
+                               )
 
 For an example of expression predictors used in a graph predictor, see :ref:`AI Engine Code Examples <graph_predictor_example>`.
 
