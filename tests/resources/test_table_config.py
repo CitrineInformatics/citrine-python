@@ -297,7 +297,8 @@ def test_add_all_ingredients(session, project):
     )
     # WHEN we add all ingredients to the same Table Config as absolute quantities
     def2 = def1.add_all_ingredients(process_template=process_link, project=project,
-                                    quantity_dimension=IngredientQuantityDimension.ABSOLUTE)
+                                    quantity_dimension=IngredientQuantityDimension.ABSOLUTE,
+                                    unit='kg')
     # THEN there should be 1 new variable for each name, corresponding to the quantity
     #   There is already a variable for id
     #   There should be 2 new columns for each name, one for the quantity and one for the units

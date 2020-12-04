@@ -60,6 +60,42 @@ def test_quantity_dimension_serializes_to_string():
     variable_data = variable.dump()
     assert variable_data["quantity_dimension"] == "number"
 
+
 def test_renamed_classes_are_the_same():
     # Mostly make code coverage happy
     assert oldvariables.IngredientQuantityDimension == IngredientQuantityDimension
+
+
+def test_absolute_units():
+    IngredientQuantityByProcessAndName(
+        name="This should be fine",
+        headers=["quantity"],
+        process_template=LinkByUID(scope="template", id="process"),
+        ingredient_name="ingredient",
+        quantity_dimension=IngredientQuantityDimension.NUMBER
+    )
+    IngredientQuantityByProcessAndName(
+        name="This should be fine, too",
+        headers=["quantity"],
+        process_template=LinkByUID(scope="template", id="process"),
+        ingredient_name="ingredient",
+        quantity_dimension=IngredientQuantityDimension.ABSOLUTE,
+        unit='kg'
+    )
+    with pytest.raises(ValueError):
+        IngredientQuantityByProcessAndName(
+            name="This needs units",
+            headers=["quantity"],
+            process_template=LinkByUID(scope="template", id="process"),
+            ingredient_name="ingredient",
+            quantity_dimension=IngredientQuantityDimension.ABSOLUTE
+        )
+    with pytest.raises(ValueError):
+        IngredientQuantityByProcessAndName(
+            name="This shouldn't have units",
+            headers=["quantity"],
+            process_template=LinkByUID(scope="template", id="process"),
+            ingredient_name="ingredient",
+            quantity_dimension=IngredientQuantityDimension.NUMBER,
+            unit='kg'
+        )

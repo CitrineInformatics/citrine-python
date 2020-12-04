@@ -164,7 +164,9 @@ class TableConfig(Resource["TableConfig"]):
                             process_template: LinkByUID,
                             project,
                             quantity_dimension: IngredientQuantityDimension,
-                            scope: str = CITRINE_SCOPE):
+                            scope: str = CITRINE_SCOPE,
+                            unit: Optional[str] = None
+                            ):
         """[ALPHA] Add variables and columns for all of the possible ingredients in a process.
 
         For each allowed ingredient name in the process template there is a column for the if of
@@ -181,6 +183,8 @@ class TableConfig(Resource["TableConfig"]):
             the dimension in which to report ingredient quantities
         scope: Optional[str]
             the scope for which to get ingredient ids (default is Citrine scope, 'id')
+        unit: Optional[str]
+            the units for the quantity, if selecting Absolute Quantity
 
         """
         dimension_display = {
@@ -212,7 +216,8 @@ class TableConfig(Resource["TableConfig"]):
                 headers=[process.name, name, dimension_display[quantity_dimension]],
                 process_template=process_template,
                 ingredient_name=name,
-                quantity_dimension=quantity_dimension
+                quantity_dimension=quantity_dimension,
+                unit=unit
             )
 
             if identifier_variable.name not in [var.name for var in self.variables]:
