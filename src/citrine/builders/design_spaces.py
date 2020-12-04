@@ -290,7 +290,7 @@ def migrate_enumerated_design_space(*,
                                     cleanup: bool = True
                                     ) -> DataSourceDesignSpace:
     """
-    Migrate an EnumeratedDesignSpace on the Citrine Platform to a DataSourceDesignSpace.
+    [ALPHA] Migrate an EnumeratedDesignSpace on the Citrine Platform to a DataSourceDesignSpace.
 
     Parameters
     ----------
