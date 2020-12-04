@@ -19,6 +19,8 @@ class Descriptor(PolymorphicSerializable['Descriptor']):
     Abstract type that returns the proper type given a serialized dict.
     """
 
+    key = properties.String('descriptor_key')
+
     @classmethod
     def get_type(cls, data) -> Type[Serializable]:
         """Return the subtype."""
@@ -51,7 +53,6 @@ class RealDescriptor(Serializable['RealDescriptor'], Descriptor):
 
     """
 
-    key = properties.String('descriptor_key')
     lower_bound = properties.Float('lower_bound')
     upper_bound = properties.Float('upper_bound')
     units = properties.Optional(properties.String, 'units', default='')
@@ -94,7 +95,6 @@ class ChemicalFormulaDescriptor(Serializable['ChemicalFormulaDescriptor'], Descr
 
     """
 
-    key = properties.String('descriptor_key')
     # `threshold` exists in the backend but is not configurable through this client. It is fixed
     # to 1.0 which means that chemical formula string parsing is strict with regards to typos.
     threshold = properties.Float('threshold', deserializable=False, default=1.0)
@@ -132,7 +132,6 @@ class MolecularStructureDescriptor(Serializable['MolecularStructureDescriptor'],
 
     """
 
-    key = properties.String('descriptor_key')
     typ = properties.String('type', default='Organic', deserializable=False)
 
     def __eq__(self, other):
@@ -168,7 +167,6 @@ class CategoricalDescriptor(Serializable['CategoricalDescriptor'], Descriptor):
 
     """
 
-    key = properties.String('descriptor_key')
     typ = properties.String('type', default='Categorical', deserializable=False)
     categories = properties.Set(properties.String, 'descriptor_values')
 
@@ -205,7 +203,6 @@ class FormulationDescriptor(Serializable['FormulationDescriptor'], Descriptor):
 
     """
 
-    key = properties.String('descriptor_key')
     typ = properties.String('type', default='Formulation', deserializable=False)
 
     def __eq__(self, other):
