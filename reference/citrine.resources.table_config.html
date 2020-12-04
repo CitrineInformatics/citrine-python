@@ -53,7 +53,7 @@
 </dl>
 <dl class="method">
 <dt id="citrine.resources.table_config.TableConfig.add_all_ingredients">
-<code class="sig-name descname">add_all_ingredients</code><span class="sig-paren">(</span><em class="sig-param">*</em>, <em class="sig-param">process_template: gemd.entity.link_by_uid.LinkByUID</em>, <em class="sig-param">project</em>, <em class="sig-param">quantity_dimension: citrine.gemtables.variables.IngredientQuantityDimension</em>, <em class="sig-param">scope: str = 'id'</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.table_config.TableConfig.add_all_ingredients" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">add_all_ingredients</code><span class="sig-paren">(</span><em class="sig-param">*</em>, <em class="sig-param">process_template: gemd.entity.link_by_uid.LinkByUID</em>, <em class="sig-param">project</em>, <em class="sig-param">quantity_dimension: citrine.gemtables.variables.IngredientQuantityDimension</em>, <em class="sig-param">scope: str = 'id'</em>, <em class="sig-param">unit: Optional[str] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.table_config.TableConfig.add_all_ingredients" title="Permalink to this definition">¶</a></dt>
 <dd><p>[ALPHA] Add variables and columns for all of the possible ingredients in a process.</p>
 <p>For each allowed ingredient name in the process template there is a column for the if of
 the ingredient and a column for the quantity of the ingredient. If the quantities are
@@ -65,6 +65,7 @@ given in absolute amounts then there is also a column for units.</p>
 <li><p><strong>project</strong> (<a class="reference internal" href="citrine.resources.project.html#citrine.resources.project.Project" title="citrine.resources.project.Project"><em>Project</em></a>) – a project that has access to the process template</p></li>
 <li><p><strong>quantity_dimension</strong> (<a class="reference internal" href="citrine.gemtables.variables.html#citrine.gemtables.variables.IngredientQuantityDimension" title="citrine.gemtables.variables.IngredientQuantityDimension"><em>IngredientQuantityDimension</em></a>) – the dimension in which to report ingredient quantities</p></li>
 <li><p><strong>scope</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – the scope for which to get ingredient ids (default is Citrine scope, ‘id’)</p></li>
+<li><p><strong>unit</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – the units for the quantity, if selecting Absolute Quantity</p></li>
 </ul>
 </dd>
 </dl>

@@ -209,6 +209,8 @@
       <li><a href="reference/citrine.resources.condition_template.html#citrine.resources.condition_template.ConditionTemplate.bounds">bounds (citrine.resources.condition_template.ConditionTemplate attribute)</a>
 
       <ul>
+        <li><a href="reference/citrine.resources.file_link.html#citrine.resources.file_link.CsvColumnInfo.bounds">(citrine.resources.file_link.CsvColumnInfo attribute)</a>
+</li>
         <li><a href="reference/citrine.resources.parameter_template.html#citrine.resources.parameter_template.ParameterTemplate.bounds">(citrine.resources.parameter_template.ParameterTemplate attribute)</a>
 </li>
         <li><a href="reference/citrine.resources.property_template.html#citrine.resources.property_template.PropertyTemplate.bounds">(citrine.resources.property_template.PropertyTemplate attribute)</a>
@@ -414,10 +416,10 @@
 </li>
       <li><a href="reference/citrine.resources.material_template.html#module-citrine.resources.material_template">citrine.resources.material_template (module)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference/citrine.resources.measurement_run.html#module-citrine.resources.measurement_run">citrine.resources.measurement_run (module)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference/citrine.resources.measurement_spec.html#module-citrine.resources.measurement_spec">citrine.resources.measurement_spec (module)</a>
 </li>
       <li><a href="reference/citrine.resources.measurement_template.html#module-citrine.resources.measurement_template">citrine.resources.measurement_template (module)</a>
@@ -488,8 +490,12 @@
 </li>
       <li><a href="reference/citrine.informatics.data_sources.html#citrine.informatics.data_sources.CSVDataSource.column_definitions">column_definitions (citrine.informatics.data_sources.CSVDataSource attribute)</a>
 </li>
-      <li><a href="reference/citrine.resources.table_config.html#citrine.resources.table_config.TableConfig.columns">columns (citrine.resources.table_config.TableConfig attribute)</a>
+      <li><a href="reference/citrine.resources.file_link.html#citrine.resources.file_link.CsvValidationData.columns">columns (citrine.resources.file_link.CsvValidationData attribute)</a>
+
+      <ul>
+        <li><a href="reference/citrine.resources.table_config.html#citrine.resources.table_config.TableConfig.columns">(citrine.resources.table_config.TableConfig attribute)</a>
 </li>
+      </ul></li>
       <li><a href="reference/citrine.gemtables.columns.html#citrine.gemtables.columns.ComponentQuantityColumn.component_name">component_name (citrine.gemtables.columns.ComponentQuantityColumn attribute)</a>
 </li>
       <li><a href="reference/citrine.gemtables.columns.html#citrine.gemtables.columns.ComponentQuantityColumn">ComponentQuantityColumn (class in citrine.gemtables.columns)</a>
@@ -576,9 +582,11 @@
 </li>
       <li><a href="reference/citrine.informatics.predictor_evaluation_result.html#citrine.informatics.predictor_evaluation_result.CrossValidationResult">CrossValidationResult (class in citrine.informatics.predictor_evaluation_result)</a>
 </li>
+      <li><a href="reference/citrine.resources.file_link.html#citrine.resources.file_link.CsvColumnInfo">CsvColumnInfo (class in citrine.resources.file_link)</a>
+</li>
       <li><a href="reference/citrine.informatics.data_sources.html#citrine.informatics.data_sources.CSVDataSource">CSVDataSource (class in citrine.informatics.data_sources)</a>
 </li>
-      <li><a href="reference/citrine.resources.file_link.html#citrine.resources.file_link.CsvIngestProcessingData">CsvIngestProcessingData (class in citrine.resources.file_link)</a>
+      <li><a href="reference/citrine.resources.file_link.html#citrine.resources.file_link.CsvValidationData">CsvValidationData (class in citrine.resources.file_link)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -784,6 +792,8 @@
 </li>
       <li><a href="reference/citrine.builders.design_spaces.html#citrine.builders.design_spaces.enumerate_formulation_grid">enumerate_formulation_grid() (in module citrine.builders.design_spaces)</a>
 </li>
+      <li><a href="reference/citrine.builders.design_spaces.html#citrine.builders.design_spaces.enumerated_to_data_source">enumerated_to_data_source() (in module citrine.builders.design_spaces)</a>
+</li>
       <li><a href="reference/citrine.informatics.design_spaces.enumerated_design_space.html#citrine.informatics.design_spaces.enumerated_design_space.EnumeratedDesignSpace">EnumeratedDesignSpace (class in citrine.informatics.design_spaces.enumerated_design_space)</a>
 </li>
       <li><a href="reference/citrine.informatics.dimensions.html#citrine.informatics.dimensions.EnumeratedDimension">EnumeratedDimension (class in citrine.informatics.dimensions)</a>
@@ -982,8 +992,6 @@
 
       <ul>
         <li><a href="reference/citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConcepts.from_dict">(citrine.resources.data_concepts.DataConcepts class method)</a>
-</li>
-        <li><a href="reference/citrine.resources.file_link.html#citrine.resources.file_link.CsvIngestProcessingData.from_dict">(citrine.resources.file_link.CsvIngestProcessingData class method)</a>
 </li>
       </ul></li>
       <li><a href="reference/citrine.resources.descriptors.html#citrine.resources.descriptors.DescriptorMethods.from_predictor_responses">from_predictor_responses() (citrine.resources.descriptors.DescriptorMethods method)</a>
@@ -1300,18 +1308,8 @@
 <h2 id="K">K</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.CategoricalDescriptor.key">key (citrine.informatics.descriptors.CategoricalDescriptor attribute)</a>
-
-      <ul>
-        <li><a href="reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.ChemicalFormulaDescriptor.key">(citrine.informatics.descriptors.ChemicalFormulaDescriptor attribute)</a>
+      <li><a href="reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.Descriptor.key">key (citrine.informatics.descriptors.Descriptor attribute)</a>
 </li>
-        <li><a href="reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.FormulationDescriptor.key">(citrine.informatics.descriptors.FormulationDescriptor attribute)</a>
-</li>
-        <li><a href="reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.MolecularStructureDescriptor.key">(citrine.informatics.descriptors.MolecularStructureDescriptor attribute)</a>
-</li>
-        <li><a href="reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.RealDescriptor.key">(citrine.informatics.descriptors.RealDescriptor attribute)</a>
-</li>
-      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -1530,10 +1528,10 @@
 </li>
       <li><a href="reference/citrine.resources.measurement_template.html#citrine.resources.measurement_template.MeasurementTemplateCollection">MeasurementTemplateCollection (class in citrine.resources.measurement_template)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference/citrine.informatics.predictor_evaluation_result.html#citrine.informatics.predictor_evaluation_result.ResponseMetrics.metrics">metrics (citrine.informatics.predictor_evaluation_result.ResponseMetrics attribute)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference/citrine.informatics.predictor_evaluation_result.html#citrine.informatics.predictor_evaluation_result.CrossValidationResult.metrics">metrics() (citrine.informatics.predictor_evaluation_result.CrossValidationResult property)</a>
 
       <ul>
@@ -1545,6 +1543,8 @@
 </li>
       </ul></li>
       <li><a href="reference/citrine.informatics.predictor_evaluation_result.html#citrine.informatics.predictor_evaluation_result.MetricValue">MetricValue (class in citrine.informatics.predictor_evaluation_result)</a>
+</li>
+      <li><a href="reference/citrine.builders.design_spaces.html#citrine.builders.design_spaces.migrate_enumerated_design_space">migrate_enumerated_design_space() (in module citrine.builders.design_spaces)</a>
 </li>
       <li><a href="reference/citrine.informatics.constraints.ingredient_count_constraint.html#citrine.informatics.constraints.ingredient_count_constraint.IngredientCountConstraint.min">min (citrine.informatics.constraints.ingredient_count_constraint.IngredientCountConstraint attribute)</a>
 
@@ -1714,6 +1714,8 @@
         <li><a href="reference/citrine.resources.condition_template.html#citrine.resources.condition_template.ConditionTemplate.name">(citrine.resources.condition_template.ConditionTemplate attribute)</a>
 </li>
         <li><a href="reference/citrine.resources.dataset.html#citrine.resources.dataset.Dataset.name">(citrine.resources.dataset.Dataset attribute)</a>
+</li>
+        <li><a href="reference/citrine.resources.file_link.html#citrine.resources.file_link.CsvColumnInfo.name">(citrine.resources.file_link.CsvColumnInfo attribute)</a>
 </li>
         <li><a href="reference/citrine.resources.ingredient_run.html#citrine.resources.ingredient_run.IngredientRun.name">(citrine.resources.ingredient_run.IngredientRun attribute)</a>
 </li>
@@ -2109,6 +2111,8 @@
       <li><a href="reference/citrine.informatics.predictor_evaluation_result.html#citrine.informatics.predictor_evaluation_result.RealMetricValue">RealMetricValue (class in citrine.informatics.predictor_evaluation_result)</a>
 </li>
       <li><a href="reference/citrine.informatics.predictor_evaluation_result.html#citrine.informatics.predictor_evaluation_result.RealPredictedVsActual">RealPredictedVsActual (class in citrine.informatics.predictor_evaluation_result)</a>
+</li>
+      <li><a href="reference/citrine.resources.file_link.html#citrine.resources.file_link.CsvValidationData.record_count">record_count (citrine.resources.file_link.CsvValidationData attribute)</a>
 </li>
       <li><a href="reference/citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConceptsCollection.register">register() (citrine.resources.data_concepts.DataConceptsCollection method)</a>
 

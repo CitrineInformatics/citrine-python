@@ -52,16 +52,21 @@ One model is trained from inputs to latent variables, and another is trained fro
 Thus, all inputs and latent variables are used to predict outputs.</p>
 <p>Models are trained using data provided by a <a class="reference internal" href="../reference/citrine.informatics.data_sources.html#citrine.informatics.data_sources.DataSource" title="citrine.informatics.data_sources.DataSource"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataSource</span></code></a> specified when creating a predictor.</p>
 <p>The following example demonstrates how to use the python SDK to create a <a class="reference internal" href="../reference/citrine.informatics.predictors.html#citrine.informatics.predictors.SimpleMLPredictor" title="citrine.informatics.predictors.SimpleMLPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleMLPredictor</span></code></a>, register the predictor to a project and wait for validation:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">sleep</span>
-<span class="kn">from</span> <span class="nn">citrine</span> <span class="kn">import</span> <span class="n">Citrine</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine</span> <span class="kn">import</span> <span class="n">Citrine</span>
+<span class="kn">from</span> <span class="nn">citrine.seeding.find_or_create</span> <span class="kn">import</span> <span class="p">(</span><span class="n">find_or_create_project</span><span class="p">,</span>
+                                            <span class="n">create_or_update</span>
+                                           <span class="p">)</span>
+<span class="kn">from</span> <span class="nn">citrine.jobs.waiting</span> <span class="kn">import</span> <span class="n">wait_while_validating</span>
 <span class="kn">from</span> <span class="nn">citrine.informatics.predictors</span> <span class="kn">import</span> <span class="n">SimpleMLPredictor</span>
 <span class="kn">from</span> <span class="nn">citrine.informatics.data_sources</span> <span class="kn">import</span> <span class="n">GemTableDataSource</span>
 
 <span class="c1"># create a session with citrine using your API key</span>
 <span class="n">session</span> <span class="o">=</span> <span class="n">Citrine</span><span class="p">(</span><span class="n">api_key</span> <span class="o">=</span> <span class="n">API_KEY</span><span class="p">)</span>
 
-<span class="c1"># create project</span>
-<span class="n">project</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">projects</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s1">&#39;Example project&#39;</span><span class="p">)</span>
+<span class="c1"># find project by name &#39;Example project&#39; or create it if not found</span>
+<span class="n">project</span> <span class="o">=</span> <span class="n">find_or_create_project</span><span class="p">(</span><span class="n">project_collection</span><span class="o">=</span><span class="n">session</span><span class="o">.</span><span class="n">projects</span><span class="p">,</span>
+                                 <span class="n">project_name</span><span class="o">=</span><span class="s1">&#39;Example project&#39;</span>
+                                <span class="p">)</span>
 
 <span class="c1"># create SimpleMLPredictor (assumes descriptors for</span>
 <span class="c1"># inputs/outputs/latent variables have already been created)</span>
@@ -74,26 +79,25 @@ Thus, all inputs and latent variables are used to predict outputs.</p>
     <span class="n">training_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">GemTableDataSource</span><span class="p">(</span><span class="n">training_data_table_uid</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]</span>
 <span class="p">)</span>
 
-<span class="c1"># register predictor</span>
-<span class="n">predictor</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">predictors</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">simple_ml_predictor</span><span class="p">)</span>
+<span class="c1"># register predictor or update predictor of same name if it already</span>
+<span class="c1"># exists in the project.</span>
+<span class="n">predictor</span> <span class="o">=</span> <span class="n">create_or_update</span><span class="p">(</span><span class="n">collection</span><span class="o">=</span><span class="n">project</span><span class="o">.</span><span class="n">predictors</span><span class="p">,</span>
+                             <span class="n">resource</span><span class="o">=</span><span class="n">simple_ml_predictor</span>
+                            <span class="p">)</span>
 
-<span class="c1"># wait until the predictor is no longer validating</span>
-<span class="c1"># we must get the predictor every time we wish to fetch the latest status</span>
-<span class="k">while</span> <span class="n">project</span><span class="o">.</span><span class="n">predictors</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">predictor</span><span class="o">.</span><span class="n">uid</span><span class="p">)</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="s2">&quot;VALIDATING&quot;</span><span class="p">:</span>
-    <span class="n">sleep</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
-
-<span class="c1"># print final validation status</span>
-<span class="n">validated_predictor</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">predictors</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">predictor</span><span class="o">.</span><span class="n">uid</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">validated_predictor</span><span class="o">.</span><span class="n">status</span><span class="p">)</span>
-
-<span class="c1"># status info will contain relevant validation information</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">validated_predictor</span><span class="o">.</span><span class="n">status_info</span><span class="p">)</span>
+<span class="c1"># wait while the predictor is validating and print status information</span>
+<span class="c1"># while waiting.</span>
+<span class="n">predictor</span> <span class="o">=</span> <span class="n">wait_while_validating</span><span class="p">(</span><span class="n">collection</span><span class="o">=</span><span class="n">project</span><span class="o">.</span><span class="n">predictors</span><span class="p">,</span>
+                                  <span class="n">module</span><span class="o">=</span><span class="n">predictor</span><span class="p">,</span>
+                                  <span class="n">print_status_info</span><span class="o">=</span><span class="kc">True</span>
+                                 <span class="p">)</span>
 </pre></div>
 </div>
 <p>Often, a <a class="reference internal" href="../reference/citrine.informatics.predictors.html#citrine.informatics.predictors.SimpleMLPredictor" title="citrine.informatics.predictors.SimpleMLPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleMLPredictor</span></code></a> will include outputs from other predictors as inputs to its model.
 Instead of entering these manually, outputs from a predictor can be retrieved programmatically using <code class="docutils literal notranslate"><span class="pre">outputs</span> <span class="pre">=</span> <span class="pre">project.descriptors.from_predictor_responses(predictor,</span> <span class="pre">inputs)</span></code>, where <code class="docutils literal notranslate"><span class="pre">outputs</span></code> is the list of descriptors returned by the <code class="docutils literal notranslate"><span class="pre">predictor</span></code> given a list of descriptors as <code class="docutils literal notranslate"><span class="pre">inputs</span></code>.</p>
 <p>The following demonstrates how to create an <a class="reference internal" href="../reference/citrine.informatics.predictors.html#citrine.informatics.predictors.IngredientFractionsPredictor" title="citrine.informatics.predictors.IngredientFractionsPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientFractionsPredictor</span></code></a> and use its outputs as inputs to a <a class="reference internal" href="../reference/citrine.informatics.predictors.html#citrine.informatics.predictors.SimpleMLPredictor" title="citrine.informatics.predictors.SimpleMLPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleMLPredictor</span></code></a>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine</span> <span class="kn">import</span> <span class="n">Citrine</span>
+<span class="kn">from</span> <span class="nn">citrine.seeding.find_or_create</span> <span class="kn">import</span> <span class="n">find_or_create_project</span>
 <span class="kn">from</span> <span class="nn">citrine.informatics.predictors</span> <span class="kn">import</span> <span class="n">SimpleMLPredictor</span>
 <span class="kn">from</span> <span class="nn">citrine.informatics.data_sources</span> <span class="kn">import</span> <span class="n">GemTableDataSource</span>
 <span class="kn">from</span> <span class="nn">citrine.informatics.predictors</span> <span class="kn">import</span> <span class="n">IngredientFractionsPredictor</span>
@@ -102,8 +106,10 @@ Instead of entering these manually, outputs from a predictor can be retrieved pr
 <span class="c1"># create a session with citrine using your API key</span>
 <span class="n">session</span> <span class="o">=</span> <span class="n">Citrine</span><span class="p">(</span><span class="n">api_key</span> <span class="o">=</span> <span class="n">API_KEY</span><span class="p">)</span>
 
-<span class="c1"># create a project</span>
-<span class="n">project</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">projects</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s1">&#39;Example project&#39;</span><span class="p">)</span>
+<span class="c1"># find project by name &#39;Example project&#39; or create it if not found</span>
+<span class="n">project</span> <span class="o">=</span> <span class="n">find_or_create_project</span><span class="p">(</span><span class="n">project_collection</span><span class="o">=</span><span class="n">session</span><span class="o">.</span><span class="n">projects</span><span class="p">,</span>
+                                 <span class="n">project_name</span><span class="o">=</span><span class="s1">&#39;Example project&#39;</span>
+                                <span class="p">)</span>
 
 <span class="c1"># create a descriptor to store simple mixtures</span>
 <span class="n">formulation_descriptor</span> <span class="o">=</span> <span class="n">FormulationDescriptor</span><span class="p">(</span><span class="s1">&#39;simple mixture&#39;</span><span class="p">)</span>
@@ -143,6 +149,7 @@ one output descriptor.</p>
 - it must NOT be another GraphPredictor</p>
 <p>The following example demonstrates how to use the python SDK to create a <a class="reference internal" href="../reference/citrine.informatics.predictors.html#citrine.informatics.predictors.GraphPredictor" title="citrine.informatics.predictors.GraphPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">GraphPredictor</span></code></a>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.informatics.predictors</span> <span class="kn">import</span> <span class="n">GraphPredictor</span>
+<span class="kn">from</span> <span class="nn">citrine.seeding.create_or_update</span>
 
 <span class="c1"># the other predictors have already been created and validated</span>
 <span class="n">graph_predictor</span> <span class="o">=</span> <span class="n">GraphPredictor</span><span class="p">(</span>
@@ -152,8 +159,10 @@ one output descriptor.</p>
     <span class="n">training_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">GemTableDataSource</span><span class="p">(</span><span class="n">training_data_table_uid</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]</span> <span class="c1"># training data shared by all sub-predictors</span>
 <span class="p">)</span>
 
-<span class="c1"># register predictor</span>
-<span class="n">predictor</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">predictors</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">graph_predictor</span><span class="p">)</span>
+<span class="c1"># register or update predictor by name</span>
+<span class="n">predictor</span> <span class="o">=</span> <span class="n">create_or_update</span><span class="p">(</span><span class="n">collection</span><span class="o">=</span><span class="n">project</span><span class="o">.</span><span class="n">predictors</span><span class="p">,</span>
+                             <span class="n">module</span><span class="o">=</span><span class="n">graph_predictor</span>
+                            <span class="p">)</span>
 </pre></div>
 </div>
 <p>For a more complete example of graph predictor usage, see <a class="reference internal" href="code_examples.html#graph-predictor-example"><span class="std std-ref">AI Engine Code Examples</span></a>.</p>
@@ -201,8 +210,10 @@ Citrine-python currently supports the following operators and functions:</p>
     <span class="p">}</span>
 <span class="p">)</span>
 
-<span class="c1"># register predictor</span>
-<span class="n">predictor</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">predictors</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">shear_modulus_predictor</span><span class="p">)</span>
+<span class="c1"># register or update predictor by name</span>
+<span class="n">predictor</span> <span class="o">=</span> <span class="n">create_or_update</span><span class="p">(</span><span class="n">collection</span><span class="o">=</span><span class="n">project</span><span class="o">.</span><span class="n">predictors</span><span class="p">,</span>
+                             <span class="n">module</span><span class="o">=</span><span class="n">shear_modulus_predictor</span>
+                            <span class="p">)</span>
 </pre></div>
 </div>
 <p>For an example of expression predictors used in a graph predictor, see <a class="reference internal" href="code_examples.html#graph-predictor-example"><span class="std std-ref">AI Engine Code Examples</span></a>.</p>

@@ -117,6 +117,50 @@ of formulation_grid.</p></li>
 </dl>
 </dd></dl>
 
+<dl class="function">
+<dt id="citrine.builders.design_spaces.enumerated_to_data_source">
+<code class="sig-prename descclassname">citrine.builders.design_spaces.</code><code class="sig-name descname">enumerated_to_data_source</code><span class="sig-paren">(</span><em class="sig-param">*</em>, <em class="sig-param">enumerated_ds: citrine.informatics.design_spaces.enumerated_design_space.EnumeratedDesignSpace</em>, <em class="sig-param">dataset: citrine.resources.dataset.Dataset</em>, <em class="sig-param">filename: Optional[str] = None</em><span class="sig-paren">)</span> &#x2192; citrine.informatics.design_spaces.data_source_design_space.DataSourceDesignSpace<a class="headerlink" href="#citrine.builders.design_spaces.enumerated_to_data_source" title="Permalink to this definition">¶</a></dt>
+<dd><p>[ALPHA] Convert an EnumeratedDesignSpace into a DataSourceDesignSpace.</p>
+<p>Converts an EnumeratedDesignSpace into a DataSourceDesignSpace by writing
+the data to a csv file, uploading it to the given dataset, and wrapping it
+in a CSVDataSource.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>enumerated_ds</strong> (<a class="reference internal" href="citrine.informatics.design_spaces.enumerated_design_space.html#citrine.informatics.design_spaces.enumerated_design_space.EnumeratedDesignSpace" title="citrine.informatics.design_spaces.enumerated_design_space.EnumeratedDesignSpace"><em>EnumeratedDesignSpace</em></a>) – data source to convert</p></li>
+<li><p><strong>dataset</strong> (<a class="reference internal" href="citrine.resources.dataset.html#citrine.resources.dataset.Dataset" title="citrine.resources.dataset.Dataset"><em>Dataset</em></a>) – dataset into which to upload the data file</p></li>
+<li><p><strong>filename</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – filename to use for the data file (default: design space name + “source data”)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="citrine.builders.design_spaces.migrate_enumerated_design_space">
+<code class="sig-prename descclassname">citrine.builders.design_spaces.</code><code class="sig-name descname">migrate_enumerated_design_space</code><span class="sig-paren">(</span><em class="sig-param">*, project: citrine.resources.project.Project, uid: uuid.UUID, dataset: citrine.resources.dataset.Dataset, filename: Optional[str], cleanup: bool = True</em><span class="sig-paren">)</span> &#x2192; citrine.informatics.design_spaces.data_source_design_space.DataSourceDesignSpace<a class="headerlink" href="#citrine.builders.design_spaces.migrate_enumerated_design_space" title="Permalink to this definition">¶</a></dt>
+<dd><p>[ALPHA] Migrate an EnumeratedDesignSpace on the Citrine Platform to a DataSourceDesignSpace.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>project</strong> (<a class="reference internal" href="citrine.resources.project.html#citrine.resources.project.Project" title="citrine.resources.project.Project"><em>Project</em></a>) – Project to use when accessing the Citrine Platform</p></li>
+<li><p><strong>uid</strong> (<em>UUID</em>) – Unique identifier of the EnumeratedDesignSpace to migrate</p></li>
+<li><p><strong>dataset</strong> (<a class="reference internal" href="citrine.resources.dataset.html#citrine.resources.dataset.Dataset" title="citrine.resources.dataset.Dataset"><em>Dataset</em></a>) – Dataset into which to write the data as a CSV.</p></li>
+<li><p><strong>filename</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Optional string name to specify for the data CSV file.
+Defaults to the design space name + “source data”</p></li>
+<li><p><strong>cleanup</strong> (<em>bool</em>) – Whether or not to archive the migrated design space if the migration is successful
+Default: true</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The resulting design space, which should have functional parity with
+the original design space.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="citrine.informatics.design_spaces.data_source_design_space.html#citrine.informatics.design_spaces.data_source_design_space.DataSourceDesignSpace" title="citrine.informatics.design_spaces.data_source_design_space.DataSourceDesignSpace">DataSourceDesignSpace</a></p>
+</dd>
+</dl>
+</dd></dl>
+
 </div>
 
 
