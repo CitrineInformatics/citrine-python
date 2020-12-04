@@ -1,20 +1,26 @@
 """A collection of FileLink objects."""
-from uuid import UUID
-import os
 import mimetypes
-from typing import Iterable, Optional, Tuple
+import os
+from enum import Enum
+from logging import getLogger
+from typing import Iterable, Optional, Tuple, Union, List, Dict
+from uuid import UUID
+
+import requests
 from boto3 import client as boto3_client
 from boto3.session import Config
-import requests
 from botocore.exceptions import ClientError
-
 from gemd.entity.file_link import FileLink as GEMDFileLink
-from citrine._serialization.properties import String
+
 from citrine._rest.collection import Collection
 from citrine._rest.resource import Resource
+from citrine._serialization.properties import String
 from citrine._session import Session
 from citrine._utils.functions import write_file_locally
+from citrine.resources.job import JobSubmissionResponse
 from citrine.resources.response import Response
+
+logger = getLogger(__name__)
 
 
 class _Uploader:
@@ -32,6 +38,44 @@ class _Uploader:
         self.s3_endpoint_url = None
         self.s3_use_ssl = True
         self.s3_addressing_style = 'auto'
+
+
+class FileProcessingType(Enum):
+    """The supported File Processing Types."""
+
+    VALIDATE_CSV = "VALIDATE_CSV"
+
+
+class FileProcessingData:
+    """The base class of all File Processing related data implementations."""
+
+    pass
+
+
+class CsvIngestProcessingData(FileProcessingData):
+    """The resulting data from the processed CSV file."""
+
+    def __init__(self, column_names: List[str], record_count: int):
+        self.column_names = column_names
+        self.record_count = record_count
+
+    @classmethod
+    def from_dict(cls, d):
+        """Convert from the JSON to a CsvIngestProcessingData instance."""
+        return CsvIngestProcessingData(d['column_names'], d['record_count'])
+
+
+class FileProcessingResult:
+    """
+    The results of a successful file processing operation.
+
+    The type of the actual data depends on the specific processing type.
+    """
+
+    def __init__(self, processing_type: FileProcessingType, data: Union[Dict,
+                                                                        FileProcessingData]):
+        self.processing_type = processing_type
+        self.data = data
 
 
 class FileLink(Resource['FileLink'], GEMDFileLink):
@@ -362,6 +406,107 @@ class FileCollection(Collection[FileLink]):
         pre_signed_url = content_link_response['pre_signed_read_link']
         download_response = requests.get(pre_signed_url)
         write_file_locally(download_response.content, local_path)
+
+    def process(self, file_link: FileLink,
+                processing_type: FileProcessingType,
+                wait_for_response: bool = True,
+                timeout: float = 2 * 60,
+                polling_delay: float = 1.0) -> Union[JobSubmissionResponse,
+                                                     Dict[FileProcessingType,
+                                                          FileProcessingResult]]:
+        """
+        Start a File Processing async job, returning a pollable job response.
+
+        :param file_link: The file to process.
+        :param processing_type:  The type of file processing to invoke.
+        :return: A JobSubmissionResponse which can be used to poll for the result.
+        """
+        params = {"processing_type": processing_type.value}
+        response = self.session.put_resource(file_link.url + "/processed", json={},
+                                             params=params)
+        job = JobSubmissionResponse.build(response)
+        logger.info('Build job submitted with job ID {}.'.format(job.job_id))
+
+        if wait_for_response:
+            return self.poll_file_procesing_job(file_link, processing_type, job.job_id,
+                                                timeout=timeout,
+                                                polling_delay=polling_delay)
+        else:
+            return job
+
+    def poll_file_procesing_job(self, file_link: FileLink,
+                                processing_type: FileProcessingType,
+                                job_id: UUID,
+                                *,
+                                timeout: float = 2 * 60,
+                                polling_delay: float = 1.0) -> Dict[FileProcessingType,
+                                                                    FileProcessingResult]:
+        """
+        [ALPHA] Poll for the result of the file processing task.
+
+        Parameters
+        ----------
+        job_id: UUID
+           The background job ID to poll for.
+        timeout:
+            How long to poll for the result before giving up. This is expressed in
+            (fractional) seconds.
+        polling_delay:
+            How long to delay between each polling retry attempt.
+
+        Returns
+        -------
+        None
+           This method will raise an appropriate exception if the job failed, else
+           it will return None to indicate the job was successful.
+
+        """
+        # Poll for job completion - this will raise an error if the job failed
+        self._poll_for_job_completion(self.project_id, job_id, timeout=timeout,
+                                      polling_delay=polling_delay)
+
+        return self.file_processing_result(file_link, [processing_type])
+
+    def file_processing_result(self,
+                               file_link: FileLink,
+                               processing_types: List[FileProcessingType]) -> \
+            Dict[FileProcessingType, FileProcessingResult]:
+        """
+        Return the file processing result for the given file link and processing type.
+
+        Parameters
+        ----------
+        file_link: FileLink
+            The file to process
+        processing_types: FileProcessingType
+            A list of the particular file processing types to retrieve
+
+        Returns
+        -------
+        Map[FileProcessingType, FileProcessingResult]
+            The file processing results, mapped by processing type.
+
+        """
+        processed_results_path = file_link.url + '/processed'
+
+        params = []
+        for proc_type in processing_types:
+            params.append(('processing_type', proc_type.value))
+
+        response = self.session.get_resource(processed_results_path, params=params)
+        results_json = response['results']
+        results = {}
+        for result_json in results_json:
+            processing_type = FileProcessingType[result_json['processing_type']]
+            data = result_json['data']
+
+            if processing_type == FileProcessingType.VALIDATE_CSV:
+                data = CsvIngestProcessingData.from_dict(data)
+
+            result = FileProcessingResult(processing_type, data)
+            results[processing_type] = result
+
+        return results
 
     def delete(self, file_link: FileLink):
         """

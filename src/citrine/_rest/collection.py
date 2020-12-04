@@ -205,7 +205,7 @@ class Collection(Generic[ResourceType]):
                 # TODO:  Right now this is a hack.  Clean this up soon.
                 # Module collections are not filtering on module type
                 # properly, so we are filtering client-side.
-                pass
+                pass  # pragma: no cover
 
     def _page_params(self,
                      page: Optional[int],
