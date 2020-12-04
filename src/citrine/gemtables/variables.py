@@ -434,6 +434,12 @@ class IngredientQuantityByProcessAndName(
         self.ingredient_name = ingredient_name
         self.quantity_dimension = quantity_dimension
         self.type_selector = type_selector
+        if quantity_dimension == IngredientQuantityDimension.ABSOLUTE:
+            if unit is None:
+                raise ValueError("Absolute Quantity variables require that 'unit' is set")
+        else:
+            if unit is not None and unit != "":
+                raise ValueError("Fractional variables cannot take a 'unit'")
         self.unit = unit
 
 
