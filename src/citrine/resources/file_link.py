@@ -10,15 +10,18 @@ import requests
 from boto3 import client as boto3_client
 from boto3.session import Config
 from botocore.exceptions import ClientError
-from gemd.entity.file_link import FileLink as GEMDFileLink
-
 from citrine._rest.collection import Collection
 from citrine._rest.resource import Resource
-from citrine._serialization.properties import String
+from citrine._serialization.properties import List as PropertyList
+from citrine._serialization.properties import Optional as PropertyOptional
+from citrine._serialization.properties import String, Object, Integer
+from citrine._serialization.serializable import Serializable
 from citrine._session import Session
 from citrine._utils.functions import write_file_locally
 from citrine.resources.job import JobSubmissionResponse
 from citrine.resources.response import Response
+from gemd.entity.bounds.base_bounds import BaseBounds
+from gemd.entity.file_link import FileLink as GEMDFileLink
 
 logger = getLogger(__name__)
 
@@ -52,17 +55,28 @@ class FileProcessingData:
     pass
 
 
-class CsvIngestProcessingData(FileProcessingData):
+class CsvColumnInfo(Serializable):
+    """The info for a CSV Column, contains the name and recommended bounds."""
+
+    name = String('name')
+    bounds = Object(BaseBounds, 'bounds')
+
+    def __init__(self, name: String, bounds: BaseBounds):  # pragma: no cover
+        self.name = name
+        self.bounds = bounds
+
+
+class CsvValidationData(FileProcessingData, Serializable):
     """The resulting data from the processed CSV file."""
 
-    def __init__(self, column_names: List[str], record_count: int):
-        self.column_names = column_names
-        self.record_count = record_count
+    columns = PropertyOptional(PropertyList(Object(CsvColumnInfo)), 'columns',
+                               override=True)
+    record_count = Integer('record_count')
 
-    @classmethod
-    def from_dict(cls, d):
-        """Convert from the JSON to a CsvIngestProcessingData instance."""
-        return CsvIngestProcessingData(d['column_names'], d['record_count'])
+    def __init__(self, columns: List[CsvColumnInfo],
+                 record_count: int):  # pragma: no cover
+        self.columns = columns
+        self.record_count = record_count
 
 
 class FileProcessingResult:
@@ -501,7 +515,7 @@ class FileCollection(Collection[FileLink]):
             data = result_json['data']
 
             if processing_type == FileProcessingType.VALIDATE_CSV:
-                data = CsvIngestProcessingData.from_dict(data)
+                data = CsvValidationData.build(data)
 
             result = FileProcessingResult(processing_type, data)
             results[processing_type] = result
