@@ -1,12 +1,32 @@
 """Tests for citrine.builders.design_spaces."""
+from typing import Union
+from uuid import UUID, uuid4
+
 import pytest
 import warnings
 import numpy as np
 
 from citrine.informatics.descriptors import RealDescriptor, CategoricalDescriptor
-from citrine.informatics.design_spaces import EnumeratedDesignSpace
+from citrine.informatics.design_spaces import EnumeratedDesignSpace, DesignSpace
 from citrine.builders.design_spaces import enumerate_cartesian_product, \
-    enumerate_formulation_grid, cartesian_join_design_spaces
+    enumerate_formulation_grid, cartesian_join_design_spaces, enumerated_to_data_source, migrate_enumerated_design_space
+from citrine.resources.dataset import Dataset
+from citrine.resources.design_space import DesignSpaceCollection
+from citrine.resources.file_link import FileCollection, FileLink
+from citrine.resources.project import Project
+
+
+@pytest.fixture(scope="module")
+def to_clean():
+    """Clean up files, even if a test fails"""
+    import os
+    files_to_clean = []
+    yield files_to_clean
+    for f in files_to_clean:
+        try:
+            os.remove(f)
+        except FileNotFoundError:
+            pass
 
 
 @pytest.fixture
@@ -285,3 +305,94 @@ def test_joined_oversize_warnings(large_joint_design_space):
                 name='too big join space',
                 description=''
             )
+
+
+# todo: collect fake collections in testing utils package
+class FakeFileCollection(FileCollection):
+
+    def __init__(self):
+        self.files = []
+
+    def upload(self, file_path: str, dest_name: str = None) -> FileLink:
+        self.files.append(file_path)
+        return FileLink(url=file_path, filename=file_path)
+
+
+# todo: collect fake collections in testing utils package
+class FakeDataset(Dataset):
+
+    def __init__(self):
+        pass
+
+    @property
+    def files(self) -> FileCollection:
+        return FakeFileCollection()
+
+
+# todo: collect fake collections in testing utils package
+class FakeDesignSpaces(DesignSpaceCollection):
+    def __init__(self):
+        self.data = {}
+
+    def register(self, model: DesignSpace) -> DesignSpace:
+        model.uid = uuid4()
+        self.data[model.uid] = model
+        return model
+
+    def update(self, model: DesignSpace) -> DesignSpace:
+        self.data[model.uid] = model
+        return model
+
+    def get(self, uid: Union[UUID, str]) -> DesignSpace:
+        return self.data[uid]
+
+
+# todo: collect fake collections in testing utils package
+class FakeProject(Project):
+    def __init__(self):
+        self.design_space_collection = FakeDesignSpaces()
+
+    @property
+    def design_spaces(self) -> DesignSpaceCollection:
+        return self.design_space_collection
+
+
+def test_enumerated_to_data_source(basic_cartesian_space, to_clean):
+    """Test enumerated_to_data_source conversion"""
+    expected_fname = basic_cartesian_space.name.replace(" ", "_") + "_source_data.csv"
+    to_clean.append(expected_fname)
+
+    dataset = FakeDataset()
+    result = enumerated_to_data_source(
+        enumerated_ds=basic_cartesian_space, dataset=dataset)
+
+    assert result.name == basic_cartesian_space.name
+    assert result.description == basic_cartesian_space.description
+    assert result.data_source.file_link.url == expected_fname
+    expected_keys = {x.key for x in basic_cartesian_space.descriptors}
+    assert {x for x in result.data_source.column_definitions.keys()} == expected_keys
+
+
+def test_migrate_enumerated(basic_cartesian_space, to_clean):
+    """Test migrate_enumerated_design_space with fakes."""
+    fname = "foo.csv"  # not to conflict with the above test
+    to_clean.append(fname)
+
+    project = FakeProject()
+    dataset = FakeDataset()
+    old = project.design_spaces.register(basic_cartesian_space)
+
+    # first test that it works when it should
+    new = migrate_enumerated_design_space(
+        project=project, uid=old.uid, dataset=dataset, filename=fname)
+    assert new.name == old.name
+    # the other equality logic is tested in test_enumerated_to_data_source
+    assert project.design_spaces.get(old.uid).archived
+
+    # test that it doesn't work when it shouldn't
+    with pytest.raises(ValueError):
+        migrate_enumerated_design_space(
+            project=project, uid=new.uid, dataset=dataset, filename=fname)
+
+    # it failed, so it shouldn't have archived the old one
+    assert not project.design_spaces.get(new.uid).archived
