@@ -14,7 +14,7 @@ try:
 except ImportError:  # pragma: no cover
     raise ImportError('numpy is a requirement for the builders module')
 from itertools import product
-from typing import Mapping, Sequence, List, Optional, Union
+from typing import Mapping, Sequence, List, Optional
 from warnings import warn
 from citrine.informatics.design_spaces import EnumeratedDesignSpace, DataSourceDesignSpace
 from citrine.informatics.descriptors import Descriptor, RealDescriptor
@@ -268,7 +268,7 @@ def enumerated_to_data_source(*,
     descriptors = {d.key: d for d in enumerated_ds.descriptors}
     headers = [d.key for d in enumerated_ds.descriptors]
 
-    csv_filename = filename or "{} source data".format(enumerated_ds.name)
+    csv_filename = filename or "{} source data.csv".format(enumerated_ds.name).replace(" ", "_")
     with open(csv_filename, "w", newline="") as csvfile:
         writer = csv.writer(csvfile)
         writer.writerow(headers)
@@ -285,7 +285,7 @@ def enumerated_to_data_source(*,
 def migrate_enumerated_design_space(*,
                                     project: Project,
                                     uid: UUID,
-                                    dataset: Union[str, Dataset],
+                                    dataset: Dataset,
                                     filename: Optional[str],
                                     cleanup: bool = True
                                     ) -> DataSourceDesignSpace:
