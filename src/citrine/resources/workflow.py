@@ -33,7 +33,7 @@ class WorkflowCollection(Collection[Workflow]):
 
     def list(self,
              page: Optional[int] = None,
-             per_page: int = 100) -> Iterable[ResourceType]:
+             per_page: int = 100) -> Iterable[Workflow]:
         """
         Paginate over the Design Workflows and Performance Workflows.
 
