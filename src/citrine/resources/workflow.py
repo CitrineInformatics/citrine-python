@@ -90,10 +90,7 @@ class WorkflowCollection(Collection[Workflow]):
                            additional_params: Optional[dict] = None
                            ) -> Tuple[Iterable[dict], str]:
 
-        if additional_params is None:
-            additional_params = {"module_type": "DESIGN_WORKFLOW"}
-        else:
-            additional_params.update({"module_type": "DESIGN_WORKFLOW"})
+        additional_params = {"module_type": "DESIGN_WORKFLOW"}
         return self._fetch_page(path, fetch_func, page, per_page, json_body, additional_params)
 
     def _fetch_performance_page(self,
@@ -105,8 +102,5 @@ class WorkflowCollection(Collection[Workflow]):
                                 additional_params: Optional[dict] = None,
                                 ) -> Tuple[Iterable[dict], str]:
 
-        if additional_params is None:
-            additional_params = {"module_type": "PERFORMANCE_WORKFLOW"}
-        else:
-            additional_params.update({"module_type": "PERFORMANCE_WORKFLOW"})
+        additional_params = {"module_type": "PERFORMANCE_WORKFLOW"}
         return self._fetch_page(path, fetch_func, page, per_page, json_body, additional_params)
