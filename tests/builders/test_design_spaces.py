@@ -6,6 +6,7 @@ import pytest
 import warnings
 import numpy as np
 
+from citrine.exceptions import BadRequest
 from citrine.informatics.descriptors import RealDescriptor, CategoricalDescriptor
 from citrine.informatics.design_spaces import EnumeratedDesignSpace, DesignSpace
 from citrine.builders.design_spaces import enumerate_cartesian_product, \
@@ -333,13 +334,17 @@ class FakeDataset(Dataset):
 class FakeDesignSpaces(DesignSpaceCollection):
     def __init__(self):
         self.data = {}
+        self.in_use = {}
 
     def register(self, model: DesignSpace) -> DesignSpace:
         model.uid = uuid4()
         self.data[model.uid] = model
+        self.in_use[model.uid] = False
         return model
 
     def update(self, model: DesignSpace) -> DesignSpace:
+        if self.in_use[model.uid]:
+            raise BadRequest("design_spaces/{}".format(model.uid))
         self.data[model.uid] = model
         return model
 
@@ -396,3 +401,9 @@ def test_migrate_enumerated(basic_cartesian_space, to_clean):
 
     # it failed, so it shouldn't have archived the old one
     assert not project.design_spaces.get(new.uid).archived
+
+    # test that it works for a design space that cannot be archived because it is in use
+    old_in_use = project.design_spaces.register(basic_cartesian_space)
+    project.design_spaces.in_use[old_in_use.uid] = True
+    migrate_enumerated_design_space(
+        project=project, uid=old_in_use.uid, dataset=dataset, filename=fname)
