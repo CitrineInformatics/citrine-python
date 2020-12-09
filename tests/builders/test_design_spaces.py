@@ -407,6 +407,3 @@ def test_migrate_enumerated(basic_cartesian_space, to_clean):
     project.design_spaces.in_use[old_in_use.uid] = True
     migrate_enumerated_design_space(
         project=project, uid=old_in_use.uid, dataset=dataset, filename=fname)
-
-    # the old design space is still in use and so should not be archived
-    assert not project.design_spaces.get(old_in_use.uid).archived
