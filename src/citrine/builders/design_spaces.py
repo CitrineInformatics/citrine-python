@@ -1,6 +1,7 @@
 import csv
 from uuid import UUID
 
+from citrine.exceptions import BadRequest
 from citrine.informatics.data_sources import CSVDataSource
 from citrine.resources.dataset import Dataset
 from citrine.resources.project import Project
@@ -304,7 +305,7 @@ def migrate_enumerated_design_space(*,
         Optional string name to specify for the data CSV file.
         Defaults to the design space name + "source data"
     cleanup: bool
-        Whether or not to archive the migrated design space if the migration is successful
+        Whether or not to try and archive the migrated design space if the migration is successful
         Default: true
 
     Returns
@@ -328,6 +329,10 @@ def migrate_enumerated_design_space(*,
     if cleanup:
         # archive the old enumerated design space
         enumerated_ds.archived = True
-        project.design_spaces.update(enumerated_ds)
+        try:
+            project.design_spaces.update(enumerated_ds)
+        except BadRequest as err:
+            warn("Unable to archive design space with uid {}, received the following response: {}"
+                 .format(uid, err.response_text))
 
     return data_source_ds
