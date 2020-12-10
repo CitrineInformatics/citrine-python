@@ -638,3 +638,17 @@ def predictor_evaluation_workflow_dict(generic_entity, example_evaluator_dict):
         "evaluators": [example_evaluator_dict]
     })
     return ret
+
+@pytest.fixture
+def design_workflow_dict(generic_entity):
+    ret = generic_entity.copy()
+    ret.update({ # TODO, this isn't how Designworkflows work in the new version
+        "display_name": "Example Design Workflow",
+        "description": "Example Design Workflow for testing",
+        "config": {
+            "processor_id": str(uuid.uuid4()),
+            "design_space_id": str(uuid.uuid4()),
+            "predictor_id": str(uuid.uuid4()),
+            }
+    })
+    return ret
