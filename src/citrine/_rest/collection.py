@@ -9,6 +9,7 @@ from time import time, sleep
 from citrine._rest.paginator import Paginator
 from citrine.exceptions import ModuleRegistrationFailedException, NonRetryableException, \
     PollingTimeoutError, JobFailureError
+from citrine.informatics.modules import ModuleRef
 from citrine.resources.job import JobSubmissionResponse, JobStatusResponse
 from citrine.resources.response import Response
 
@@ -31,6 +32,11 @@ class Collection(Generic[ResourceType]):
     _resource: ResourceType = NotImplemented
     _collection_key: str = 'entries'
     _paginator: Paginator = Paginator()
+
+    def _put_module_ref(self, subpath: str, workflow_id: UUID):
+        url = self._get_path(subpath)
+        ref = ModuleRef(str(workflow_id))
+        return self.session.put_resource(url, ref.dump())
 
     def _get_path(self, uid: Optional[Union[UUID, str]] = None,
                   ignore_dataset: Optional[bool] = False) -> str:

@@ -151,11 +151,6 @@ class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExec
         """
         self._put_module_ref('restore', execution_id)
 
-    def _put_module_ref(self, subpath: str, execution_id: UUID):
-        url = self._get_path(subpath)
-        ref = ModuleRef(str(execution_id))
-        self.session.put_resource(url, ref.dump())
-
     def list(self,
              page: Optional[int] = None,
              per_page: int = 100,
