@@ -57,7 +57,9 @@ class PredictorCollection(Collection[Predictor]):
         data = self.session.get_resource(path)
         if data["updatable"]:
             enveloped = GraphPredictor.stuff_predictor_into_envelope(data["update"])
-            return Predictor.build(enveloped)
+            built: Predictor = Predictor.build(enveloped)
+            built.uid = predictor_id
+            return built
         else:
             return None
 
