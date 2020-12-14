@@ -4,7 +4,7 @@ from typing import TypeVar, Optional, Mapping, List, Any
 
 from citrine._rest.collection import Collection
 from citrine._session import Session
-from citrine.informatics.predictors import Predictor
+from citrine.informatics.predictors import Predictor, GraphPredictor
 
 CreationType = TypeVar('CreationType', bound=Predictor)
 
@@ -56,7 +56,8 @@ class PredictorCollection(Collection[Predictor]):
         path = "/projects/{}/predictors/{}/check-for-update".format(self.project_id, predictor_id)
         data = self.session.get_resource(path)
         if data["updatable"]:
-            return Predictor.build(data["update"])
+            enveloped = GraphPredictor.stuff_predictor_into_envelope(data["update"])
+            return Predictor.build(enveloped)
         else:
             return None
 
