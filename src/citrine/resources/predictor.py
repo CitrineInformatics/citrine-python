@@ -1,6 +1,6 @@
 """Resources that represent collections of predictors."""
 from uuid import UUID
-from typing import TypeVar, Optional
+from typing import TypeVar, Optional, Mapping, List, Any
 
 from citrine._rest.collection import Collection
 from citrine._session import Session
@@ -59,3 +59,9 @@ class PredictorCollection(Collection[Predictor]):
             return Predictor.build(data["update"])
         else:
             return None
+
+    def get_training_data(self, predictor_id: UUID, labels: List[str]
+                          ) -> List[Mapping[str, Any]]:
+        path = "/projects/{}/predictors/{}/training-data".format(self.project_id, predictor_id)
+        data = self.session.post_resource(path, {"labels": labels}, params={"page": 1, "per_page": 1})
+        return data["data"]
