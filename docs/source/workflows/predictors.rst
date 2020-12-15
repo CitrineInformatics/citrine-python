@@ -253,7 +253,7 @@ These labels are specified via:
 
 .. code:: python
 
-    labels = {'solvent': {'water'}, 'solute': {'salt'}}
+    labels = {"solvent": {"water'}, "solute": {"salt"}}
 
 The following example illustrates how an :class:`~citrine.informatics.predictors.IngredientsToSimpleMixturePredictor` is constructed for the saline example.
 
@@ -295,8 +295,8 @@ The following example illustrates how an :class:`~citrine.informatics.predictors
         },
         # label water as a solvent and salt a solute
         labels={
-            'solvent': {'water'},
-            'solute': {'salt'}
+            "solvent": {"water"},
+            "solute": {"salt"}
         },
         training_data=[data_source]
     )

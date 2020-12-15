@@ -159,48 +159,50 @@ The example code below creates a registers a design space based on this Gem Tabl
 Formulation Design Space
 ------------------------
 
-A formulation design space defines the set of formulations that can be produced from a given set of ingredient names, labels and constraints.
-Ingredient names are specified as a set of strings, where each string is a unique ingredient name, e.g., ``{'water', 'salt'}`` to a design space with two ingredients.
-Labels are specified as a mapping from each label to a set of ingredient names that should be given that label is present in a formulation, e.g., ``{'solute': {'salt'}}``.
+A formulation design space defines the set of formulations that can be produced from a given set of ingredient names, labels, and constraints.
+Ingredient names are specified as a set of strings, each mapping to a unique ingredient in a design space.
+For example, ``{"water","salt"}`` may be the set of names for a design space with two ingredients.
+Labels provide a way to map a string to a set of ingredient names.
+For example, salt can be labelled as a solute by specifying the mapping ``{"solute": {"salt"}}``.
 An ingredient may be given multiple labels, and these labels are static.
 An ingredient will always be given all applicable labels when present in a formulation.
 
 Constraints restrict the total number or fractional amount of ingredients in formulations sampled from the design space.
-There are three constraints that can be specified as part of a formulation design space:
+There are three types of constraint that can be specified as part of a formulation design space:
 
 - :class:`~citrine.informatics.constraints.ingredient_count_constraint.IngredientCountConstraint` constrains the total number of ingredients in a formulation.
-  At least one ingredient count constraint that constrains the total number of ingredients in formulations emitted from the space is required.
+  At least one constraint on the total number of ingredients is required.
   Formulation design spaces without this constraint will fail validation.
   Additional ingredient count constraints may specify a label.
   If specified, only ingredients with the given label count towards the constraint total.
-  This could be used, for example, to constrain the total number of solutes in a formulation.
+  This could be used, for example, to constrain the total number of solutes in a formulation without constraining the number of solvents.
 - :class:`~citrine.informatics.constraints.ingredient_fraction_constraint.IngredientFractionConstraint` restricts the fractional amount of a single formulation ingredient between minimum and maximum bounds.
-- :class:`~citrine.informatics.constraints.label_fraction_constraint.LabelFractionConstraint` restricts the total fraction of ingredients with a given label in a formulation between minimum and maximum bounds.
+- :class:`~citrine.informatics.constraints.label_fraction_constraint.LabelFractionConstraint` places minimum and maximum bounds on the sum of fractional amounts of ingredients that have a specified label.
   This could be used, for example, to ensure the total fraction of ingredients labeled as solute is within a given range.
 
 All minimum and maximum bounds for these three formulation constraints are inclusive.
 Additionally, fractional constraints have an ``is_required`` flag.
-By default ``is_required == True``, and ingredient and label fractions must be within the minimum and maximum bound defined by the constraint.
-If set to ``False``, the fractional amount must be within the specified bounds *only* when the constrained ingredient (for ingredient fraction constraints) or any ingredient with the given label (for label fraction constraints) present in a formulation.
+By default ``is_required == True``, indicating that ingredient and label fractions unconditionally must be within the minimum and maximum bound defined by the constraint.
+If set to ``False``, the fractional amount may be either zero or within the specified bounds.
+In other words, the fractional amount is restricted to the specified bounds *only* when the formulations contains the constrained ingredient (for ingredient fraction constraints) or any ingredient with the given label (for label fraction constraints).
 Setting ``is_required`` to ``False`` effectively adds 0 as a valid value.
 
 Formulation design spaces define an inherent ``resolution`` for formulations sampled from the domain.
 This resolution defines the minimum step size between consecutive formulations sampled from the space.
 Resolution does not impose a grid over fractional ingredient amounts.
-Instead, it provides a manner to specify the characteristic length scale for the problem.
-Set resolution to the minimum changed to a fractional ingredient amount that your problem is sensitive to.
-The default resolution is 0.01, which means consecutive samples from the domain will displace a fractional amount 0.01 or greater between two ingredients.
+Instead, it provides a way to specify the characteristic length scale for the problem.
+The resolution should be set to the minimum change in fractional ingredient amount that can be expected to make a difference in your problem.
+The default resolution is 0.01, which means that at least one ingredient fraction will differ by at least 0.01 between consecutive candidates sampled from the formulation design space.
 
 Formulations sampled from the design space will be stored using the :class:`~citrine.informatics.descriptors.FormulationDescriptor` defined when the design space is configured.
-Each formulation contains two pieces of information: a recipe and information about ingredient labels.
+Each formulation contains two pieces of information: a recipe and a collection of ingredient labels.
 Each recipe can be thought of as a map from ingredient name to its fractional amount, e.g., ``{'water': 0.99, 'salt': 0.01}``.
 Ingredient fractions in recipes sampled from a formulation design space will always sum to 1.
-Label information define which labels applied to each ingredient in the recipe.
+Label information defines which labels are applied to each ingredient in the recipe.
 These labels will always be a subset of all labels from the design space.
 
-The following demonstrates how to create a formulation design space of saline solutions.
-There are three ingredients: water, salt and boric acid (a common antiseptic).
-We will require that formulations contain 2 ingredients, no more than 1 solute is present and the total fraction of water is between 0.95 and 0.99.
+The following demonstrates how to create a formulation design space of saline solutions containing three ingredients: water, salt, and boric acid (a common antiseptic).
+We will require that formulations contain 2 ingredients, that no more than 1 solute is present, and that the total fraction of water is between 0.95 and 0.99.
 
 .. code:: python
 
@@ -216,20 +218,20 @@ We will require that formulations contain 2 ingredients, no more than 1 solute i
 
   # labels for each ingredient
   labels = {
-    'solute': {'water'},
-    'solvent': {'salt', 'boric acid'}
+    "solute": {"water"},
+    "solvent": {"salt", "boric acid"}
   }
 
   # constraints on formulations emitted from the design space
   constraints = {
     IngredientCountConstraint(descriptor, min=2, max=2),
-    IngredientCountConstraint(descriptor, label='solute' min=1, max=1),
-    IngredientFractionConstraint(descriptor, ingredient='water', min=0.95, max=0.99)
+    IngredientCountConstraint(descriptor, label="solute", min=1, max=1),
+    IngredientFractionConstraint(descriptor, ingredient="water", min=0.95, max=0.99)
   }
 
   design_space = FormulationDesignSpace(
-    name = 'Saline solution design space',
-    description = 'Composes formulations from water, salt and boric acid',
+    name = "Saline solution design space",
+    description = "Composes formulations from water, salt, and boric acid",
     ingredients = ingredients,
     labels = labels,
     constraints = constraints
