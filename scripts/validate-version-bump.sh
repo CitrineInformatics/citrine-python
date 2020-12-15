@@ -3,7 +3,7 @@
 set -eu
 
 extract_version() {
-  sed -En "s/.*version='([0-9]+\.[0-9]+\.[0-9]+).*/\1/p" <<< "$@"
+  sed -En "s/.*version.*=*['\"]([0-9]+\.[0-9]+\.[0-9]+).*/\1/p" <<< "$@"
 }
 
 extract_major() {
@@ -20,7 +20,7 @@ extract_patch() {
 
 trap "$(set +eu)" EXIT
 
-CURRENT="$(extract_version $(cat setup.py))"
+CURRENT="$(extract_version $(cat src/citrine/__version__.py))"
 MASTER="$(extract_version $(git show master:setup.py))"
 
 CURRENT_MAJOR="$(extract_major ${CURRENT})"
