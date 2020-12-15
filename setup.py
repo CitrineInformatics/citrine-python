@@ -61,7 +61,7 @@ class PreBuildCommand(build_py):
         build_py.run(self)
 
 about = {}
-with open(join(this_directory, 'src', 'citrine', '__version__.py'), 'r', 'utf-8') as f:
+with open(join(this_directory, 'src', 'citrine', '__version__.py'), 'r') as f:
     exec(f.read(), about)
 
 setup(name='citrine',
