@@ -8,11 +8,11 @@ Constraints represent a set of conditions on variables that should be satisfied.
 Constraints can used to restrict either a design space or descriptor values in design candidates.
 There are five constraint types:
 
-- :class:`~citrine.informatics.constraints.ScalarRangeConstraint` restricts a scalar value between lower and upper bounds.
-- :class:`~citrine.informatics.constraints.CategoricalConstraint` restricts a descriptor value to a set of acceptable values.
-- :class:`~citrine.informatics.constraints.IngredientCountConstraint` constrains the total number of ingredients in a formulation.
-- :class:`~citrine.informatics.constraints.IngredientFractionConstraint` restricts the fractional amount of a formulation ingredient between minimum and maximum bounds.
-- :class:`~citrine.informatics.constraints.LabelFractionConstraint` restricts the total fraction of ingredients with a given label in a formulation between minimum and maximum bounds.
+- :class:`~citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint` restricts a scalar value between lower and upper bounds.
+- :class:`~citrine.informatics.constraints.categorical_constraint.CategoricalConstraint` restricts a descriptor value to a set of acceptable values.
+- :class:`~citrine.informatics.constraints.ingredient_count_constraint.IngredientCountConstraint` constrains the total number of ingredients in a formulation.
+- :class:`~citrine.informatics.constraints.ingredient_fraction_constraint.IngredientFractionConstraint` restricts the fractional amount of a formulation ingredient between minimum and maximum bounds.
+- :class:`~citrine.informatics.constraints.label_fraction_constraint.LabelFractionConstraint` restricts the total fraction of ingredients with a given label in a formulation between minimum and maximum bounds.
 
 A candidate is scored based on the objective value and likelihood of satisfying the constraints.
 Higher scores represent “better” materials.

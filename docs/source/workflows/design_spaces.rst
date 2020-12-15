@@ -62,7 +62,7 @@ Note, the upper and lower bounds of the dimension do not need to match those of 
 The bounds of the descriptor define the minimum and maximum temperatures that could be considered valid, e.g. our furnace can only reach 1000K.
 The bounds of the dimension are the bounds we wish to search between, e.g. restrict the search between 300 and 400K (even though the furnace heat go to much higher temperatures).
 
-Multiple :class:`~citrine.informatics.dimensions.EnumeratedDimension` and :class:`~citrine.informatics.dimensions.ContinuousDimension` objects can be combined to form a :class:`~citrine.informatics.design_spaces.ProductDesignSpace`:
+Multiple :class:`~citrine.informatics.dimensions.EnumeratedDimension` and :class:`~citrine.informatics.dimensions.ContinuousDimension` objects can be combined to form a :class:`~citrine.informatics.design_spaces.product_design_space.ProductDesignSpace`:
 
 .. code:: python
 
@@ -161,21 +161,21 @@ Formulation Design Space
 
 A formulation design space defines the set of formulations that can be produced from a given set of ingredient names, labels and constraints.
 Ingredient names are specified as a set of strings, where each string is a unique ingredient name, e.g., ``{'water', 'salt'}`` to a design space with two ingredients.
-Labels are specified as a mapping from each label to a set of ingredient names that should be given that label is present in a formulation, e.g. ``{'solute': {'salt'}}``.
+Labels are specified as a mapping from each label to a set of ingredient names that should be given that label is present in a formulation, e.g., ``{'solute': {'salt'}}``.
 An ingredient may be given multiple labels, and these labels are static.
 An ingredient will always be given all applicable labels when present in a formulation.
 
 Constraints restrict the total number or fractional amount of ingredients in formulations sampled from the design space.
 There are three constraints that can be specified as part of a formulation design space:
 
-- :class:`~citrine.informatics.constraints.IngredientCountConstraint` constrains the total number of ingredients in a formulation.
+- :class:`~citrine.informatics.constraints.ingredient_count_constraint.IngredientCountConstraint` constrains the total number of ingredients in a formulation.
   At least one ingredient count constraint that constrains the total number of ingredients in formulations emitted from the space is required.
   Formulation design spaces without this constraint will fail validation.
   Additional ingredient count constraints may specify a label.
   If specified, only ingredients with the given label count towards the constraint total.
   This could be used, for example, to constrain the total number of solutes in a formulation.
-- :class:`~citrine.informatics.constraints.IngredientFractionConstraint` restricts the fractional amount of a single formulation ingredient between minimum and maximum bounds.
-- :class:`~citrine.informatics.constraints.LabelFractionConstraint` restricts the total fraction of ingredients with a given label in a formulation between minimum and maximum bounds.
+- :class:`~citrine.informatics.constraints.ingredient_fraction_constraint.IngredientFractionConstraint` restricts the fractional amount of a single formulation ingredient between minimum and maximum bounds.
+- :class:`~citrine.informatics.constraints.label_fraction_constraint.LabelFractionConstraint` restricts the total fraction of ingredients with a given label in a formulation between minimum and maximum bounds.
   This could be used, for example, to ensure the total fraction of ingredients labeled as solute is within a given range.
 
 All minimum and maximum bounds for these three formulation constraints are inclusive.
@@ -193,7 +193,7 @@ The default resolution is 0.01, which means consecutive samples from the domain 
 
 Formulations sampled from the design space will be stored using the :class:`~citrine.informatics.descriptors.FormulationDescriptor` defined when the design space is configured.
 Each formulation contains two pieces of information: a recipe and information about ingredient labels.
-Each recipe can be thought of as a map from ingredient name to its fractional amount, e.g. ``{'water': 0.99, 'salt': 0.01}``.
+Each recipe can be thought of as a map from ingredient name to its fractional amount, e.g., ``{'water': 0.99, 'salt': 0.01}``.
 Ingredient fractions in recipes sampled from a formulation design space will always sum to 1.
 Label information define which labels applied to each ingredient in the recipe.
 These labels will always be a subset of all labels from the design space.
