@@ -60,9 +60,13 @@ class PreBuildCommand(build_py):
         strip_all_hints(STRIP_DIRS)
         build_py.run(self)
 
+about = {}
+with open(join(this_directory, 'src', 'citrine', '__version__.py'), 'r', 'utf-8') as f:
+    exec(f.read(), about)
 
 setup(name='citrine',
-      version='0.85.2',
+      # Update this in src/citrine/__version__.py
+      version=about['__version__'],
       url='http://github.com/CitrineInformatics/citrine-python',
       description='Python library for the Citrine Platform',
       long_description=long_description,
