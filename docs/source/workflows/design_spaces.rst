@@ -164,8 +164,7 @@ Ingredient names are specified as a set of strings, each mapping to a unique ing
 For example, ``{"water","salt"}`` may be the set of names for a design space with two ingredients.
 Labels provide a way to map a string to a set of ingredient names.
 For example, salt can be labelled as a solute by specifying the mapping ``{"solute": {"salt"}}``.
-An ingredient may be given multiple labels, and these labels are static.
-An ingredient will always be given all applicable labels when present in a formulation.
+An ingredient may be given multiple labels, and an ingredient will always be given all applicable labels when present in a formulation.
 
 Constraints restrict the total number or fractional amount of ingredients in formulations sampled from the design space.
 There are three types of constraint that can be specified as part of a formulation design space:
@@ -181,7 +180,8 @@ There are three types of constraint that can be specified as part of a formulati
   This could be used, for example, to ensure the total fraction of ingredients labeled as solute is within a given range.
 
 All minimum and maximum bounds for these three formulation constraints are inclusive.
-Additionally, fractional constraints have an ``is_required`` flag.
+
+:class:`~citrine.informatics.constraints.ingredient_fraction_constraint.IngredientFractionConstraint` and :class:`~citrine.informatics.constraints.label_fraction_constraint.LabelFractionConstraint` also have an ``is_required`` flag.
 By default ``is_required == True``, indicating that ingredient and label fractions unconditionally must be within the minimum and maximum bound defined by the constraint.
 If set to ``False``, the fractional amount may be either zero or within the specified bounds.
 In other words, the fractional amount is restricted to the specified bounds *only* when the formulations contains the constrained ingredient (for ingredient fraction constraints) or any ingredient with the given label (for label fraction constraints).
@@ -194,7 +194,7 @@ Instead, it provides a way to specify the characteristic length scale for the pr
 The resolution should be set to the minimum change in fractional ingredient amount that can be expected to make a difference in your problem.
 The default resolution is 0.01, which means that at least one ingredient fraction will differ by at least 0.01 between consecutive candidates sampled from the formulation design space.
 
-Formulations sampled from the design space will be stored using the :class:`~citrine.informatics.descriptors.FormulationDescriptor` defined when the design space is configured.
+Formulations sampled from the design space are stored using the :class:`~citrine.informatics.descriptors.FormulationDescriptor` passed to the design space is configured.
 Each formulation contains two pieces of information: a recipe and a collection of ingredient labels.
 Each recipe can be thought of as a map from ingredient name to its fractional amount, e.g., ``{'water': 0.99, 'salt': 0.01}``.
 Ingredient fractions in recipes sampled from a formulation design space will always sum to 1.
