@@ -630,6 +630,18 @@ def predictor_evaluation_execution_dict(generic_entity):
 
 
 @pytest.fixture
+def design_workflow_execution_dict(generic_entity):
+    ret = generic_entity.copy()
+    # SOMETHING ELSE
+    ret.update({
+        "workflow_id": str(uuid.uuid4()),
+        "predictor_id": str(uuid.uuid4()),
+        "evaluator_names": ["Example evaluator"]
+    })
+    return ret
+
+
+@pytest.fixture
 def predictor_evaluation_workflow_dict(generic_entity, example_evaluator_dict):
     ret = generic_entity.copy()
     ret.update({
