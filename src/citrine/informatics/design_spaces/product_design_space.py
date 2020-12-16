@@ -1,4 +1,4 @@
-from typing import List, Union
+from typing import List, Union, Optional
 from uuid import UUID
 
 from citrine._rest.resource import Resource
@@ -29,10 +29,10 @@ class ProductDesignSpace(Resource['ProductDesignSpace'], DesignSpace):
     uid = properties.Optional(properties.UUID, 'id', serializable=False)
     name = properties.String('config.name')
     description = properties.Optional(properties.String(), 'config.description')
-    subspaces = properties.Optional(properties.List(properties.Union(
+    subspaces = properties.List(properties.Union(
         [properties.UUID, properties.Object(DesignSpace)]
-    )), 'config.subspaces')
-    dimensions = properties.List(properties.Object(Dimension), 'config.dimensions')
+    ), 'config.subspaces', default=[])
+    dimensions = properties.Optional(properties.List(properties.Object(Dimension)), 'config.dimensions')
     typ = properties.String('config.type', default='ProductDesignSpace', deserializable=False)
     status = properties.String('status', serializable=False)
     status_info = properties.Optional(
@@ -55,13 +55,13 @@ class ProductDesignSpace(Resource['ProductDesignSpace'], DesignSpace):
     def __init__(self, *,
                  name: str,
                  description: str,
-                 subspaces: List[Union[UUID, DesignSpace]],
-                 dimensions: List[Dimension],
+                 subspaces: Optional[List[Union[UUID, DesignSpace]]] = None,
+                 dimensions: Optional[List[Dimension]] = None,
                  session: Session = Session()):
         self.name: str = name
         self.description: str = description
-        self.subspaces = subspaces
-        self.dimensions: List[Dimension] = dimensions
+        self.subspaces: List[Union[UUID, DesignSpace]] = subspaces or []
+        self.dimensions: List[Dimension] = dimensions or []
         self.session: Session = session
 
     def _post_dump(self, data: dict) -> dict:
@@ -74,10 +74,11 @@ class ProductDesignSpace(Resource['ProductDesignSpace'], DesignSpace):
 
     @classmethod
     def _pre_build(cls, data: dict) -> dict:
-        for i, subspace in enumerate(data['config']['subspaces']):
+        subspaces = data['config'].get('subspaces', [])
+        for i, subspace in enumerate(subspaces):
             if isinstance(subspace, dict):
                 data['config']['subspaces'][i] = \
-                    ProductDesignSpace.stuff_design_space_into_envelope(space)
+                    ProductDesignSpace.stuff_design_space_into_envelope(subspace)
         return data
 
     @staticmethod

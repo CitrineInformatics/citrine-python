@@ -26,7 +26,7 @@ class DesignSpace(Module):
         from .product_design_space import ProductDesignSpace
         return {
             'Univariate': ProductDesignSpace,
-            'ProductDesignSpace': ProductDesignSpace
+            'ProductDesignSpace': ProductDesignSpace,
             'EnumeratedDesignSpace': EnumeratedDesignSpace,
             'FormulationDesignSpace': FormulationDesignSpace,
             'DataSourceDesignSpace': DataSourceDesignSpace
