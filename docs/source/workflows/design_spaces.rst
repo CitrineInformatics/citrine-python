@@ -1,5 +1,5 @@
-Design Spaces
-=============
+[ALPHA] Design Spaces
+=====================
 
 A design space defines a set of materials that should be searched over when performing a material design.
 Design Spaces must be registered to be used in a :doc:`design workflow <design_workflows>`.
