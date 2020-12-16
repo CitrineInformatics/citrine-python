@@ -21,7 +21,7 @@ extract_patch() {
 trap "$(set +eu)" EXIT
 
 CURRENT="$(extract_version $(cat src/citrine/__version__.py))"
-MASTER="$(extract_version $(git show master:setup.py))"
+MASTER="$(extract_version $(git show master:src/citrine/__version__.py))"
 
 CURRENT_MAJOR="$(extract_major ${CURRENT})"
 CURRENT_MINOR="$(extract_minor ${CURRENT})"
