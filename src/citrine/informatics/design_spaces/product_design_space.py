@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Union
 from uuid import UUID
 
 from citrine._rest.resource import Resource
@@ -29,8 +29,11 @@ class ProductDesignSpace(Resource['ProductDesignSpace'], DesignSpace):
     uid = properties.Optional(properties.UUID, 'id', serializable=False)
     name = properties.String('config.name')
     description = properties.Optional(properties.String(), 'config.description')
+    subspaces = properties.Optional(properties.List(properties.Union(
+        [properties.UUID, properties.Object(DesignSpace)]
+    )), 'config.subspaces')
     dimensions = properties.List(properties.Object(Dimension), 'config.dimensions')
-    typ = properties.String('config.type', default='Univariate', deserializable=False)
+    typ = properties.String('config.type', default='ProductDesignSpace', deserializable=False)
     status = properties.String('status', serializable=False)
     status_info = properties.Optional(
         properties.List(properties.String()),
@@ -49,19 +52,43 @@ class ProductDesignSpace(Resource['ProductDesignSpace'], DesignSpace):
     module_type = properties.String('module_type', default='DESIGN_SPACE')
     schema_id = properties.UUID('schema_id', default=UUID('6c16d694-d015-42a7-b462-8ef299473c9a'))
 
-    def __init__(self,
+    def __init__(self, *,
                  name: str,
                  description: str,
+                 subspaces: List[Union[UUID, DesignSpace]],
                  dimensions: List[Dimension],
                  session: Session = Session()):
         self.name: str = name
         self.description: str = description
+        self.subspaces = subspaces
         self.dimensions: List[Dimension] = dimensions
         self.session: Session = session
 
     def _post_dump(self, data: dict) -> dict:
         data['display_name'] = data['config']['name']
+        for i, subspace in enumerate(data['config']['subspaces']):
+            if isinstance(subspace, dict):
+                # embedded design spaces are not modules, so only serialize their config
+                data['config']['subspaces'][i] = subspace['config']
         return data
+
+    @classmethod
+    def _pre_build(cls, data: dict) -> dict:
+        for i, subspace in enumerate(data['config']['subspaces']):
+            if isinstance(subspace, dict):
+                data['config']['subspaces'][i] = \
+                    ProductDesignSpace.stuff_design_space_into_envelope(space)
+        return data
+
+    @staticmethod
+    def stuff_design_space_into_envelope(subspace: dict) -> dict:
+        """Insert a serialized embedded design space into a module envelope, to facilitate deser."""
+        return dict(
+            module_type='DESIGN_SPACE',
+            config=subspace,
+            archived=False,
+            schema_id=''
+        )
 
     def __str__(self):
         return '<ProductDesignSpace {!r}>'.format(self.name)
