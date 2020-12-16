@@ -196,7 +196,7 @@ The default resolution is 0.01, which means that at least one ingredient fractio
 
 Formulations sampled from the design space are stored using the :class:`~citrine.informatics.descriptors.FormulationDescriptor` passed to the design space when it is configured.
 Each formulation contains two pieces of information: a recipe and a collection of ingredient labels.
-Each recipe can be thought of as a map from ingredient name to its fractional amount, e.g., ``{'water': 0.99, 'salt': 0.01}``.
+Each recipe can be thought of as a map from ingredient name to its fractional amount, e.g., ``{"water": 0.99, "salt": 0.01}``.
 Ingredient fractions in recipes sampled from a formulation design space will always sum to 1.
 Label information defines which labels are applied to each ingredient in the recipe.
 These labels will always be a subset of all labels from the design space.
@@ -211,10 +211,10 @@ We will require that formulations contain 2 ingredients, that no more than 1 sol
   from citrine.informatics.constraints import IngredientCountConstraint, IngredientFractionConstraint
 
   # define a descriptor to store formulations
-  descriptor = FormulationDescriptor('saline solution')
+  descriptor = FormulationDescriptor("saline solution")
 
   # set of unique ingredient names
-  ingredients = {'water', 'salt', 'boric acid'}
+  ingredients = {"water", "salt", "boric acid"}
 
   # labels for each ingredient
   labels = {
