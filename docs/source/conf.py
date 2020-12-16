@@ -14,6 +14,8 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath('../../src'))
 
+import citrine
+
 
 # -- Project information -----------------------------------------------------
 
@@ -21,9 +23,10 @@ project = 'Citrine Python'
 copyright = '2019, Citrine Informatics'
 author = 'Citrine Informatics'
 
-# The full version, including alpha/beta/rc tags
-release = '0.0.1'
-
+# The short X.Y version.
+version = citrine.__version__
+# The full version, including alpha/beta/rc tags.
+release = citrine.__version__
 
 # -- General configuration ---------------------------------------------------
 
