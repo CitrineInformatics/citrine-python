@@ -194,7 +194,7 @@ Instead, it provides a way to specify the characteristic length scale for the pr
 The resolution should be set to the minimum change in fractional ingredient amount that can be expected to make a difference in your problem.
 The default resolution is 0.01, which means that at least one ingredient fraction will differ by at least 0.01 between consecutive candidates sampled from the formulation design space.
 
-Formulations sampled from the design space are stored using the :class:`~citrine.informatics.descriptors.FormulationDescriptor` passed to the design space is configured.
+Formulations sampled from the design space are stored using the :class:`~citrine.informatics.descriptors.FormulationDescriptor` passed to the design space when it is configured.
 Each formulation contains two pieces of information: a recipe and a collection of ingredient labels.
 Each recipe can be thought of as a map from ingredient name to its fractional amount, e.g., ``{'water': 0.99, 'salt': 0.01}``.
 Ingredient fractions in recipes sampled from a formulation design space will always sum to 1.
