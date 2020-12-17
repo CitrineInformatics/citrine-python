@@ -243,7 +243,7 @@ class GraphPredictor(Serializable['GraphPredictor'], Predictor):
         return dict(
             module_type='PREDICTOR',
             config=predictor,
-            archived=False
+            archived=False,
         )
 
     def __str__(self):

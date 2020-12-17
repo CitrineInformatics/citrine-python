@@ -1,13 +1,14 @@
-Design Spaces
-=============
+[ALPHA] Design Spaces
+=====================
 
 A design space defines a set of materials that should be searched over when performing a material design.
 Design Spaces must be registered to be used in a :doc:`design workflow <design_workflows>`.
-Currently, there are three design spaces:
+Currently, there are four design spaces:
 
 -  `ProductDesignSpace <#product-design-space>`__
 -  `EnumeratedDesignSpace <#enumerated-design-space>`__
 -  `DataSourceDesignSpace <#data-source-design-space>`__
+-  `FormulationDesignSpace <#formulation-design-space>`__
 
 Product design space
 --------------------
@@ -20,7 +21,7 @@ For example, given dimensions ``temperature = [300, 400]`` and ``time = [1, 5, 1
 
 .. _`Cartesian product`: https://en.wikipedia.org/wiki/Cartesian_product
 
-::
+.. code:: python
 
    candidates = [
      {"temperature": 300, "time": 1},
@@ -28,7 +29,7 @@ For example, given dimensions ``temperature = [300, 400]`` and ``time = [1, 5, 1
      {"temperature": 300, "time": 10},
      {"temperature": 400, "time": 1},
      {"temperature": 400, "time": 5},
-     {"temperature": 400, "time": 10},
+     {"temperature": 400, "time": 10}
    ]
 
 The defining method of a design space is the ability to draw samples from it.
@@ -61,7 +62,7 @@ Note, the upper and lower bounds of the dimension do not need to match those of 
 The bounds of the descriptor define the minimum and maximum temperatures that could be considered valid, e.g. our furnace can only reach 1000K.
 The bounds of the dimension are the bounds we wish to search between, e.g. restrict the search between 300 and 400K (even though the furnace heat go to much higher temperatures).
 
-Multiple :class:`~citrine.informatics.dimensions.EnumeratedDimension` and :class:`~citrine.informatics.dimensions.ContinuousDimension` objects can be combined to form a :class:`~citrine.informatics.design_spaces.ProductDesignSpace`:
+Multiple :class:`~citrine.informatics.dimensions.EnumeratedDimension` and :class:`~citrine.informatics.dimensions.ContinuousDimension` objects can be combined to form a :class:`~citrine.informatics.design_spaces.product_design_space.ProductDesignSpace`:
 
 .. code:: python
 
@@ -82,10 +83,6 @@ Multiple :class:`~citrine.informatics.dimensions.EnumeratedDimension` and :class
     )
 
     speed_and_temp_design_space = project.design_spaces.register(speed_and_temp)
-
-
-
-.. _enumerated-design-space:
 
 Enumerated design space
 -----------------------
@@ -158,3 +155,86 @@ The example code below creates a registers a design space based on this Gem Tabl
     )
 
     registered_design_space = project.design_spaces.register(design_space)
+
+Formulation Design Space
+------------------------
+
+A formulation design space defines the set of formulations that can be produced from a given set of ingredient names, labels, and constraints.
+Ingredient names are specified as a set of strings, each mapping to a unique ingredient in a design space.
+For example, ``{"water","salt"}`` may be the set of names for a design space with two ingredients.
+Labels provide a way to map a string to a set of ingredient names.
+For example, salt can be labelled as a solute by specifying the mapping ``{"solute": {"salt"}}``.
+An ingredient may be given multiple labels, and an ingredient will always be given all applicable labels when present in a formulation.
+
+Constraints restrict the total number or fractional amount of ingredients in formulations sampled from the design space.
+There are three types of constraint that can be specified as part of a formulation design space:
+
+- :class:`~citrine.informatics.constraints.ingredient_count_constraint.IngredientCountConstraint` constrains the total number of ingredients in a formulation.
+  At least one constraint on the total number of ingredients is required.
+  Formulation design spaces without this constraint will fail validation.
+  Additional ingredient count constraints may specify a label.
+  If specified, only ingredients with the given label count towards the constraint total.
+  This could be used, for example, to constrain the total number of solutes in a formulation without constraining the number of solvents.
+- :class:`~citrine.informatics.constraints.ingredient_fraction_constraint.IngredientFractionConstraint` restricts the fractional amount of a single formulation ingredient between minimum and maximum bounds.
+- :class:`~citrine.informatics.constraints.label_fraction_constraint.LabelFractionConstraint` places minimum and maximum bounds on the sum of fractional amounts of ingredients that have a specified label.
+  This could be used, for example, to ensure the total fraction of ingredients labeled as solute is within a given range.
+
+All minimum and maximum bounds for these three formulation constraints are inclusive.
+
+:class:`~citrine.informatics.constraints.ingredient_fraction_constraint.IngredientFractionConstraint` and :class:`~citrine.informatics.constraints.label_fraction_constraint.LabelFractionConstraint` also have an ``is_required`` flag.
+By default ``is_required == True``, indicating that ingredient and label fractions unconditionally must be within the minimum and maximum bound defined by the constraint.
+If set to ``False``, the fractional amount may be either zero or within the specified bounds.
+In other words, the fractional amount is restricted to the specified bounds *only* when the formulations contains the constrained ingredient (for ingredient fraction constraints) or any ingredient with the given label (for label fraction constraints).
+Setting ``is_required`` to ``False`` effectively adds 0 as a valid value.
+
+Formulation design spaces define an inherent ``resolution`` for formulations sampled from the domain.
+This resolution defines the minimum step size between consecutive formulations sampled from the space.
+Resolution does not impose a grid over fractional ingredient amounts.
+Instead, it provides a way to specify the characteristic length scale for the problem.
+The resolution should be set to the minimum change in fractional ingredient amount that can be expected to make a difference in your problem.
+The default resolution is 0.01, which means that at least one ingredient fraction will differ by at least 0.01 between consecutive candidates sampled from the formulation design space.
+
+Formulations sampled from the design space are stored using the :class:`~citrine.informatics.descriptors.FormulationDescriptor` passed to the design space when it is configured.
+Each formulation contains two pieces of information: a recipe and a collection of ingredient labels.
+Each recipe can be thought of as a map from ingredient name to its fractional amount, e.g., ``{"water": 0.99, "salt": 0.01}``.
+Ingredient fractions in recipes sampled from a formulation design space will always sum to 1.
+Label information defines which labels are applied to each ingredient in the recipe.
+These labels will always be a subset of all labels from the design space.
+
+The following demonstrates how to create a formulation design space of saline solutions containing three ingredients: water, salt, and boric acid (a common antiseptic).
+We will require that formulations contain 2 ingredients, that no more than 1 solute is present, and that the total fraction of water is between 0.95 and 0.99.
+
+.. code:: python
+
+  from citrine.informatics.descriptors import FormulationDescriptor
+  from citrine.informatics.design_spaces import FormulationDesignSpace
+  from citrine.informatics.constraints import IngredientCountConstraint, IngredientFractionConstraint
+
+  # define a descriptor to store formulations
+  descriptor = FormulationDescriptor("saline solution")
+
+  # set of unique ingredient names
+  ingredients = {"water", "salt", "boric acid"}
+
+  # labels for each ingredient
+  labels = {
+    "solute": {"water"},
+    "solvent": {"salt", "boric acid"}
+  }
+
+  # constraints on formulations emitted from the design space
+  constraints = {
+    IngredientCountConstraint(descriptor, min=2, max=2),
+    IngredientCountConstraint(descriptor, label="solute", min=1, max=1),
+    IngredientFractionConstraint(descriptor, ingredient="water", min=0.95, max=0.99)
+  }
+
+  design_space = FormulationDesignSpace(
+    name = "Saline solution design space",
+    description = "Composes formulations from water, salt, and boric acid",
+    ingredients = ingredients,
+    labels = labels,
+    constraints = constraints
+  )
+
+  registered_design_space = project.design_spaces.register(design_space)

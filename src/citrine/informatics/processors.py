@@ -1,6 +1,5 @@
 """Tools for working with Processors."""
 from typing import Optional, Mapping, Type, List
-from uuid import UUID
 
 from citrine._serialization import properties
 from citrine._serialization.serializable import Serializable
@@ -84,7 +83,6 @@ class GridProcessor(Serializable['GridProcessor'], Processor):
 
     # NOTE: These could go here or in _post_dump - it's unclear which is better right now
     module_type = properties.String('module_type', default='PROCESSOR')
-    schema_id = properties.UUID('schema_id', default=UUID('272791a5-5468-4344-ac9f-2811d9266a4d'))
 
     def _attrs(self) -> List[str]:
         return ["name", "description", "grid_sizes", "typ"]
@@ -144,7 +142,6 @@ class EnumeratedProcessor(Serializable['EnumeratedProcessor'], Processor):
 
     # NOTE: These could go here or in _post_dump - it's unclear which is better right now
     module_type = properties.String('module_type', default='PROCESSOR')
-    schema_id = properties.UUID('schema_id', default=UUID('307b88a2-fd50-4d27-ae91-b8d6282f68f7'))
 
     def _attrs(self) -> List[str]:
         return ["name", "description", "max_size", "typ"]
@@ -201,7 +198,6 @@ class MonteCarloProcessor(Serializable['GridProcessor'], Processor):
 
     # NOTE: These could go here or in _post_dump - it's unclear which is better right now
     module_type = properties.String('module_type', default='PROCESSOR')
-    schema_id = properties.UUID('schema_id', default=UUID('d8ddfe73-10f7-4456-9de9-9a1638bae403'))
 
     def _attrs(self) -> List[str]:
         return ["name", "description", "typ"]
