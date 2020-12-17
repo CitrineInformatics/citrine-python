@@ -39,9 +39,6 @@ class FormulationDesignSpace(Resource['FormulationDesignSpace'], DesignSpace):
 
     _response_key = None
 
-    uid = properties.Optional(properties.UUID, 'id', serializable=False)
-    name = properties.String('config.name')
-    description = properties.Optional(properties.String(), 'config.description')
     formulation_descriptor = properties.Object(
         FormulationDescriptor,
         'config.formulation_descriptor'
@@ -58,19 +55,7 @@ class FormulationDesignSpace(Resource['FormulationDesignSpace'], DesignSpace):
         default='FormulationDesignSpace',
         deserializable=False
     )
-    status = properties.String('status', serializable=False)
-    status_info = properties.Optional(
-        properties.List(properties.String()),
-        'status_info',
-        serializable=False
-    )
-    archived = properties.Boolean('archived', default=False)
-    experimental = properties.Boolean("experimental", serializable=False, default=True)
-    experimental_reasons = properties.Optional(
-        properties.List(properties.String()),
-        'experimental_reasons',
-        serializable=False
-    )
+
     module_type = properties.String('module_type', default='DESIGN_SPACE', deserializable=False)
 
     def __init__(self, *,

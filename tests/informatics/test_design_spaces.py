@@ -19,7 +19,7 @@ def product_design_space() -> ProductDesignSpace:
         ContinuousDimension(beta, 0, 10),
         EnumeratedDimension(gamma, ['a', 'c'])
     ]
-    return ProductDesignSpace('my design space', 'does some things', dimensions)
+    return ProductDesignSpace(name='my design space', description='does some things', dimensions=dimensions)
 
 
 @pytest.fixture

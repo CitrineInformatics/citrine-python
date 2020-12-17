@@ -4,15 +4,11 @@ from uuid import UUID
 
 import pytest
 
+from . import serialization_check, valid_serialization_output
 from citrine.informatics.descriptors import RealDescriptor
 from citrine.informatics.predictors import ExpressionPredictor, GeneralizedMeanPropertyPredictor, \
     GraphPredictor, Predictor, SimpleMLPredictor, IngredientsToSimpleMixturePredictor, \
     LabelFractionsPredictor, SimpleMixturePredictor, IngredientFractionsPredictor, DeprecatedExpressionPredictor
-
-
-def valid_serialization_output(data):
-    """Remove fields that are not preserved by serialization."""
-    return {x: y for x, y in data.items() if x not in {'status', 'status_info'}}
 
 
 def test_simple_legacy_deserialization(valid_simple_ml_predictor_data):
@@ -47,10 +43,7 @@ def test_polymorphic_legacy_deserialization(valid_simple_ml_predictor_data):
 
 def test_legacy_serialization(valid_simple_ml_predictor_data):
     """Ensure that a serialized SimplePredictor looks sane."""
-    predictor = SimpleMLPredictor.build(valid_simple_ml_predictor_data)
-    serialized = predictor.dump()
-    serialized['id'] = valid_simple_ml_predictor_data['id']
-    assert serialized == valid_serialization_output(valid_simple_ml_predictor_data)
+    serialization_check(valid_simple_ml_predictor_data, SimpleMLPredictor)
 
 
 def test_graph_serialization(valid_graph_predictor_data):
@@ -65,57 +58,36 @@ def test_graph_serialization(valid_graph_predictor_data):
 
 def test_deprecated_expression_serialization(valid_deprecated_expression_predictor_data):
     """Ensure that a serialized DeprecatedExpressionPredictor looks sane."""
-    predictor = DeprecatedExpressionPredictor.build(valid_deprecated_expression_predictor_data)
-    serialized = predictor.dump()
-    serialized['id'] = valid_deprecated_expression_predictor_data['id']
-    assert serialized == valid_serialization_output(valid_deprecated_expression_predictor_data)
+    serialization_check(valid_deprecated_expression_predictor_data, DeprecatedExpressionPredictor)
 
 
 def test_expression_serialization(valid_expression_predictor_data):
     """Ensure that a serialized ExpressionPredictor looks sane."""
-    predictor = ExpressionPredictor.build(valid_expression_predictor_data)
-    serialized = predictor.dump()
-    serialized['id'] = valid_expression_predictor_data['id']
-    assert serialized == valid_serialization_output(valid_expression_predictor_data)
+    serialization_check(valid_expression_predictor_data, ExpressionPredictor)
 
 
 def test_ing_to_simple_mixture_serialization(valid_ing_to_simple_mixture_predictor_data):
     """Ensure that a serialized IngredientsToSimpleMixturePredictor looks sane."""
-    predictor = IngredientsToSimpleMixturePredictor.build(valid_ing_to_simple_mixture_predictor_data)
-    serialized = predictor.dump()
-    serialized['id'] = valid_ing_to_simple_mixture_predictor_data['id']
-    assert serialized == valid_serialization_output(valid_ing_to_simple_mixture_predictor_data)
+    serialization_check(valid_ing_to_simple_mixture_predictor_data, IngredientsToSimpleMixturePredictor)
 
 
 def test_generalized_mean_property_serialization(valid_generalized_mean_property_predictor_data):
     """Ensure that a serialized GeneralizedMeanPropertyPredictor looks sane."""
-    predictor = GeneralizedMeanPropertyPredictor.build(valid_generalized_mean_property_predictor_data)
-    serialized = predictor.dump()
-    serialized['id'] = valid_generalized_mean_property_predictor_data['id']
-    assert serialized == valid_serialization_output(valid_generalized_mean_property_predictor_data)
+    serialization_check(valid_generalized_mean_property_predictor_data, GeneralizedMeanPropertyPredictor)
 
 
 def test_simple_mixture_predictor_serialization(valid_simple_mixture_predictor_data):
-    predictor = SimpleMixturePredictor.build(valid_simple_mixture_predictor_data)
-    serialized = predictor.dump()
-    serialized['id'] = valid_simple_mixture_predictor_data['id']
-    assert serialized == valid_serialization_output(valid_simple_mixture_predictor_data)
+    serialization_check(valid_simple_mixture_predictor_data, SimpleMixturePredictor)
 
 
 def test_label_fractions_serialization(valid_label_fractions_predictor_data):
     """Ensure that a serialized LabelFractionPredictor looks sane."""
-    predictor = LabelFractionsPredictor.build(valid_label_fractions_predictor_data)
-    serialized = predictor.dump()
-    serialized['id'] = valid_label_fractions_predictor_data['id']
-    assert serialized == valid_serialization_output(valid_label_fractions_predictor_data)
+    serialization_check(valid_label_fractions_predictor_data, LabelFractionsPredictor)
 
 
 def test_ingredient_fractions_serialization(valid_ingredient_fractions_predictor_data):
     """"Ensure that a serialized IngredientsFractionsPredictor looks sane."""
-    predictor = IngredientFractionsPredictor.build(valid_ingredient_fractions_predictor_data)
-    serialized = predictor.dump()
-    serialized["id"] = valid_ingredient_fractions_predictor_data['id']
-    assert serialized == valid_serialization_output(valid_ingredient_fractions_predictor_data)
+    serialization_check(valid_ingredient_fractions_predictor_data, IngredientFractionsPredictor)
 
 
 def test_invalid_predictor_type(invalid_predictor_data):
