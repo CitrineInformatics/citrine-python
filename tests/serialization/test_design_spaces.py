@@ -14,7 +14,7 @@ def valid_serialization_output(valid_data):
     return {x: y for x, y in valid_data.items() if x not in ['status', 'status_info']}
 
 
-def test_simple_product_deserialization(valid_product_design_space_data):
+def test_product_deserialization(valid_product_design_space_data):
     """Ensure that a deserialized ProductDesignSpace looks sane."""
     for designSpaceClass in [ProductDesignSpace, DesignSpace]:
         data = deepcopy(valid_product_design_space_data)
@@ -25,6 +25,15 @@ def test_simple_product_deserialization(valid_product_design_space_data):
         assert design_space.dimensions[0].lower_bound == 6.0
         assert type(design_space.dimensions[1]) == EnumeratedDimension
         assert design_space.dimensions[1].values == ['red']
+
+
+def test_product_serialization(valid_product_design_space_data):
+    original_data = deepcopy(valid_product_design_space_data)
+    design_space = ProductDesignSpace.build(valid_product_design_space_data)
+    serialized = design_space.dump()
+    serialized['id'] = valid_product_design_space_data['id']
+    assert serialized['config']['subspaces'] == original_data['config']['subspaces']
+    assert serialized == valid_serialization_output(original_data)
 
 
 def test_old_product_serialization(old_valid_product_design_space_data):
@@ -43,7 +52,7 @@ def test_old_product_serialization(old_valid_product_design_space_data):
     assert serialized == valid_serialization_output(old_valid_product_design_space_data)
 
 
-def test_simple_enumerated_deserialization(valid_enumerated_design_space_data):
+def test_enumerated_deserialization(valid_enumerated_design_space_data):
     """Ensure that a deserialized EnumeratedDesignSpace looks sane.
     Deserialization is done both directly (using EnumeratedDesignSpace)
     and polymorphically (using DesignSpace)
