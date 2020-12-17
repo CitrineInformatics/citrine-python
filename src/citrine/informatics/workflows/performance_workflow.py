@@ -44,7 +44,6 @@ class PerformanceWorkflow(Resource['PerformanceWorkflow'], Workflow):
     create_time = properties.Optional(properties.Datetime, 'create_time', serializable=False)
     analysis = properties.Object(CrossValidationAnalysisConfiguration, 'config.analysis')
     module_type = properties.String('module_type', default='PERFORMANCE_WORKFLOW')
-    schema_id = properties.UUID('schema_id', default=UUID('1d213f0a-d07c-4f70-a4d0-bda3aa951ee0'))
     typ = properties.String('config.type', default='PerformanceWorkflow', deserializable=False)
 
     def __init__(self,
