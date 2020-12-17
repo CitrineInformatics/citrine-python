@@ -5,84 +5,10 @@ A design space defines a set of materials that should be searched over when perf
 Design Spaces must be registered to be used in a :doc:`design workflow <design_workflows>`.
 Currently, there are four design spaces:
 
--  `ProductDesignSpace <#product-design-space>`__
 -  `EnumeratedDesignSpace <#enumerated-design-space>`__
+-  `ProductDesignSpace <#product-design-space>`__
 -  `DataSourceDesignSpace <#data-source-design-space>`__
 -  `FormulationDesignSpace <#formulation-design-space>`__
-
-Product design space
---------------------
-
-Materials from a product design space are composed from the `Cartesian product`_ of univariate dimensions.
-A dimension defines valid values of a single variable.
-Valid values can be discrete sets (i.e. enumerated using a list) or continuous ranges (i.e. defined by upper and lower bounds on real numbers).
-This design space samples materials by taking one element from each of the dimensions.
-For example, given dimensions ``temperature = [300, 400]`` and ``time = [1, 5, 10]`` the Cartesian product is:
-
-.. _`Cartesian product`: https://en.wikipedia.org/wiki/Cartesian_product
-
-.. code:: python
-
-   candidates = [
-     {"temperature": 300, "time": 1},
-     {"temperature": 300, "time": 5},
-     {"temperature": 300, "time": 10},
-     {"temperature": 400, "time": 1},
-     {"temperature": 400, "time": 5},
-     {"temperature": 400, "time": 10}
-   ]
-
-The defining method of a design space is the ability to draw samples from it.
-If a continuous range is included, a random sample is drawn for that variable, and finite variables are exhaustively enumerated.
-Once all combinations of finite variables have been sampled, the cycle repeats while continuing to sample new values from the infinite dimension.
-
-Finite sets of value are defined using an :class:`~citrine.informatics.dimensions.EnumeratedDimension`.
-Valid variable values are specified using a list of strings.
-An enumerated dimension of two temperatures, for example, can be specified using the python SDK via:
-
-.. code:: python
-
-   from citrine.informatics.descriptors import RealDescriptor
-   from citrine.informatics.dimensions import EnumeratedDimension
-
-   descriptor = RealDescriptor(key='Temperature', lower_bound=273, upper_bound=1000, units='K')
-   dimension = EnumeratedDimension(descriptor, values=['300', '400'])
-
-Continuous ranges of values are defined using a :class:`~citrine.informatics.dimensions.ContinuousDimension`.
-Upper and lower bounds define the range of values we wish to uniformly sample from.
-If, using the previous example, temperature can be any value between 300 and 400K the dimension would be created using:
-
-.. code:: python
-
-   from citrine.informatics.dimensions import ContinuousDimension
-
-   dimension = ContinuousDimension(descriptor, lower_bound=300, upper_bound=400)
-
-Note, the upper and lower bounds of the dimension do not need to match those of the descriptor.
-The bounds of the descriptor define the minimum and maximum temperatures that could be considered valid, e.g. our furnace can only reach 1000K.
-The bounds of the dimension are the bounds we wish to search between, e.g. restrict the search between 300 and 400K (even though the furnace heat go to much higher temperatures).
-
-Multiple :class:`~citrine.informatics.dimensions.EnumeratedDimension` and :class:`~citrine.informatics.dimensions.ContinuousDimension` objects can be combined to form a :class:`~citrine.informatics.design_spaces.product_design_space.ProductDesignSpace`:
-
-.. code:: python
-
-    from citrine.informatics.descriptors import RealDescriptor, CategoricalDescriptor
-    from citrine.informatics.dimensions import ContinuousDimension, EnumeratedDimension
-    from citrine.informatics.design_spaces import ProductDesignSpace
-
-    temp_descriptor = RealDescriptor(key='Temperature', lower_bound=273, upper_bound=1000, units='K')
-    temp_dimension = ContinuousDimension(temp_descriptor, lower_bound=300, upper_bound=400)
-
-    speed_descriptor = CategoricalDescriptor(key='Mixing Speed', categories=["Slow", "Medium", "Fast"])
-    speed_dimension = EnumeratedDimension(speed_descriptor, values=["Slow", "Fast"])
-
-    speed_and_temp = ProductDesignSpace(
-        name="Speed and temperature",
-        description="Temperatures between 300 and 400 K and either Slow or Fast",
-        dimensions=[temp_dimension, speed_dimension]
-    )
-
-    speed_and_temp_design_space = project.design_spaces.register(speed_and_temp)
 
 Enumerated design space
 -----------------------
@@ -126,6 +52,125 @@ As an example, an enumerated design space that represents points from a 2D Carte
    )
 
    registered_design_space = project.design_spaces.register(design_space)
+
+Product design space
+--------------------
+
+Materials from a product design space are composed of the `Cartesian product`_ of independent factors.
+Each factor can be a separate design space _or_ a univariate dimension.
+Any other type of design space can be a valid subspace.
+Subspaces can either be registered on the platform and referenced through their uid, or they can be defined anonymously and embedded in the product design space.
+
+A :class:`~citrine.informatics.dimensions.Dimension` defines valid values of a single variable.
+Valid values can be discrete sets (i.e., enumerated using a list) or continuous ranges (i.e., defined by upper and lower bounds on real numbers).
+The product design space samples materials by taking all combinations of one element from each dimension.
+For example, given dimensions ``temperature = [300, 400]`` and ``time = [1, 5, 10]`` the Cartesian product is:
+
+.. _`Cartesian product`: https://en.wikipedia.org/wiki/Cartesian_product
+
+.. code:: python
+
+   candidates = [
+     {"temperature": 300, "time": 1},
+     {"temperature": 300, "time": 5},
+     {"temperature": 300, "time": 10},
+     {"temperature": 400, "time": 1},
+     {"temperature": 400, "time": 5},
+     {"temperature": 400, "time": 10}
+   ]
+
+The defining characteristic of a design space is the ability to draw samples from it.
+If a continuous range is included, a random sample is drawn for that variable, and finite variables are exhaustively enumerated.
+Once all combinations of finite variables have been sampled, the cycle repeats while continuing to sample new values from the infinite dimension.
+
+Finite sets of value are defined using an :class:`~citrine.informatics.dimensions.EnumeratedDimension`.
+Valid variable values are specified using a list of strings.
+An enumerated dimension of two temperatures, for example, can be specified using the python SDK via:
+
+.. code:: python
+
+   from citrine.informatics.descriptors import RealDescriptor
+   from citrine.informatics.dimensions import EnumeratedDimension
+
+   descriptor = RealDescriptor(key='Temperature', lower_bound=273, upper_bound=1000, units='K')
+   dimension = EnumeratedDimension(descriptor, values=['300', '400'])
+
+Continuous ranges of values are defined using a :class:`~citrine.informatics.dimensions.ContinuousDimension`.
+Upper and lower bounds define the range of values we wish to uniformly sample from.
+If, using the previous example, temperature can be any value between 300 and 400K the dimension would be created using:
+
+.. code:: python
+
+   from citrine.informatics.dimensions import ContinuousDimension
+
+   dimension = ContinuousDimension(descriptor, lower_bound=300, upper_bound=400)
+
+Note, the upper and lower bounds of the dimension do not need to match those of the descriptor.
+The bounds of the descriptor define the minimum and maximum temperatures that could be considered valid, e.g. our furnace can only reach 1000K.
+The bounds of the dimension are the bounds we wish to search between, e.g., restrict the search to between 300 and 400K (even though the furnace can go to much higher temperatures).
+
+A product design space combines subspaces in a similar manner, although subspaces are often multivariate.
+However the same principle holds for sampling: all combinations of finite factors are enumerated, while infinite factors are sampled continuously.
+Note, each factor must be **independent**.
+This means that the same descriptor may not appear more than once in a product design space.
+
+As an example, let's create a produt design space that defines the ways in which we might mix two pigments together and stir at some temperature.
+We are only interested in specific amounts of each pigment, so we create an enumerated design space that defines the amounts we wish to test.
+The mixing speed is discrete, so we describe it with an enumerated dimension.
+And temperature is described by a continuous dimension.
+
+.. code:: python
+
+    from citrine.informatics.descriptors import RealDescriptor, CategoricalDescriptor
+    from citrine.informatics.dimensions import ContinuousDimension, EnumeratedDimension
+    from citrine.informatics.design_spaces import ProductDesignSpace, EnumeratedDesignSpace
+
+    pigmentA_descriptor = RealDescriptor(key='Amount of Pigment A', lower_bound=0, upper_bound=100, units='g')
+    pigmentB_descriptor = RealDescriptor(key='Amount of Pigment B', lower_bound=0, upper_bound=100, units='g')
+    enumerated_space = EnumeratedDesignSpace(
+        name="amounts of pigments A and B",
+        description="total amount of pigment is 100 grams",
+        data=[
+            {'Amount of Pigment A': 10.0, 'Amount of Pigment B': 90.0},
+            {'Amount of Pigment A': 15.0, 'Amount of Pigment B': 85.0},
+            {'Amount of Pigment A': 20.0, 'Amount of Pigment B': 80.0}
+        ]
+    )
+    enumerated_space_registered = project.design_spaces.register(enumerated_space)
+    enumerated_space_uid = enumerated_space_registered.uid
+
+    temp_descriptor = RealDescriptor(key='Temperature', lower_bound=273, upper_bound=1000, units='K')
+    temp_dimension = ContinuousDimension(temp_descriptor, lower_bound=300, upper_bound=400)
+
+    speed_descriptor = CategoricalDescriptor(key='Mixing Speed', categories=["Slow", "Medium", "Fast"])
+    speed_dimension = EnumeratedDimension(speed_descriptor, values=["Slow", "Fast"])
+
+    product_space = ProductDesignSpace(
+        name="Mix 2 pigments at some speed and temperature",
+        description="Pigments A and B, temperatures between 300 and 400 K, and either Slow or Fast",
+        subspaces=[enumerated_space_uid],
+        dimensions=[temp_dimension, speed_dimension]
+    )
+
+    product_space = project.design_spaces.register(product_space)
+
+In the approach shown above, the enumerated design space is registered on-platform and can be used in other contexts.
+It would also be valid, however, to not register the enumerated design space and to include it in the product design space directly as opposed to through its uid: `subspaces=[enumerated_space]`.
+
+The enumerated design space defined in this way might product the following candidates:
+
+.. code:: python
+
+    candidates = [
+        {"Amount of Pigment A": 10.0, "Amount of Pigment B": 90.0, "Mixing Speed": "Slow", "Temperature": 329.1356},
+        {"Amount of Pigment A": 10.0, "Amount of Pigment B": 90.0, "Mixing Speed": "Fast", "Temperature": 391.5329},
+        {"Amount of Pigment A": 15.0, "Amount of Pigment B": 85.0, "Mixing Speed": "Slow", "Temperature": 388.2350},
+        {"Amount of Pigment A": 15.0, "Amount of Pigment B": 85.0, "Mixing Speed": "Fast", "Temperature": 347.9817},
+        {"Amount of Pigment A": 20.0, "Amount of Pigment B": 80.0, "Mixing Speed": "Slow", "Temperature": 381.8395},
+        {"Amount of Pigment A": 20.0, "Amount of Pigment B": 80.0, "Mixing Speed": "Fast", "Temperature": 305.8001},
+        {"Amount of Pigment A": 10.0, "Amount of Pigment B": 90.0, "Mixing Speed": "Slow", "Temperature": 338.1545},
+        ... # enumerated factors repeat while continuously sampling Temperature
+   ]
 
 Data Source Design Space
 ------------------------
