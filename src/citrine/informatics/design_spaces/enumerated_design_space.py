@@ -38,7 +38,8 @@ class EnumeratedDesignSpace(Resource['EnumeratedDesignSpace'], DesignSpace):
 
     # NOTE: These could go here or in _post_dump - it's unclear which is better right now
     module_type = properties.String('module_type', default='DESIGN_SPACE')
-    schema_id = properties.UUID('schema_id', default=UUID('f3907a58-aa46-462c-8837-a5aa9605e79e'))
+    schema_id = properties.UUID('schema_id', default=UUID('f3907a58-aa46-462c-8837-a5aa9605e79e'),
+                                deserializable=False)
 
     def __init__(self,
                  name: str,

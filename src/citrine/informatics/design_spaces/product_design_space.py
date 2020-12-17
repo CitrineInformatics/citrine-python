@@ -75,8 +75,7 @@ class ProductDesignSpace(Resource['ProductDesignSpace'], DesignSpace):
         return dict(
             module_type='DESIGN_SPACE',
             config=subspace,
-            archived=False,
-            schema_id=''
+            archived=False
         )
 
     def __str__(self):
