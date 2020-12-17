@@ -8,7 +8,7 @@ from citrine.informatics.workflows.workflow import Workflow
 from citrine.resources.workflow_executions import WorkflowExecutionCollection
 from citrine.resources.design_execution import DesignExecutionCollection
 
-__all__ = ['DesignWorkflow']
+__all__ = ['DesignWorkflow', 'NewDesignWorkflow']
 
 
 class DesignWorkflow(Resource['DesignWorkflow'], Workflow):
@@ -88,7 +88,7 @@ class DesignWorkflow(Resource['DesignWorkflow'], Workflow):
 
 
 
-class NewDesignWorkflow(Resource['DesignWorkflow'], Workflow):
+class NewDesignWorkflow(Resource['NewDesignWorkflow'], Workflow):
     """[ALPHA] Object that generates scored materials that may approach higher values of the score.
 
     Parameters
@@ -143,7 +143,7 @@ class NewDesignWorkflow(Resource['DesignWorkflow'], Workflow):
         self.session = session
 
     def __str__(self):
-        return '<DesignWorkflow {!r}>'.format(self.name)
+        return '<NewDesignWorkflow {!r}>'.format(self.name)
 
     @property
     def design_executions(self) -> DesignExecutionCollection:

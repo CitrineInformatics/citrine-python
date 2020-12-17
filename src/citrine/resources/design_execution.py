@@ -10,6 +10,8 @@ from citrine._session import Session
 from citrine.informatics.modules import ModuleRef
 from citrine.informatics.predictor_evaluation_result import PredictorEvaluationResult
 from citrine.resources.response import Response
+from citrine.informatics.scores import Score
+from citrine.exceptions import NonRetryableException, ModuleRegistrationFailedException
 
 
 class DesignExecution(Resource['DesignExecution']):
@@ -113,10 +115,10 @@ class DesignExecutionCollection(Collection["DesignExecution"]):
         execution.project_id = self.project_id
         return execution
 
-    def trigger(self):  # TODO this needs a score and what else?
+    def trigger(self, execution_input: Score):
         """Trigger a Design Workflow execution against a predictor, by id."""
-        path = self._path_template.format(project_id=self.project_id, workflow_id=self.workflow_id)
-        data = self.session.post_resource(path, {})
+        path = self._get_path()
+        data = self.session.post_resource(path, {'score':execution_input.dump()})
         self._check_experimental(data)
         return self.build(data)
 
