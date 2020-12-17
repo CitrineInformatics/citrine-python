@@ -1,5 +1,6 @@
 from typing import List, Union, Optional
 from uuid import UUID
+from copy import deepcopy
 
 from citrine._rest.resource import Resource
 from citrine._serialization import properties
@@ -51,6 +52,15 @@ class ProductDesignSpace(Resource['ProductDesignSpace'], DesignSpace):
         self.subspaces: List[Union[UUID, DesignSpace]] = subspaces or []
         self.dimensions: List[Dimension] = dimensions or []
         self.session: Session = session
+
+    def dump(self) -> dict:
+        """Override dump to replace on-platform subspaces with their uids."""
+        model_copy = deepcopy(self)
+        for i, subspace in enumerate(model_copy.subspaces):
+            if subspace.uid is not None:
+                model_copy.subspaces[i] = subspace.uid
+        serialized = properties.Object(ProductDesignSpace).serialize(model_copy)
+        return self._post_dump(serialized)
 
     def _post_dump(self, data: dict) -> dict:
         data['display_name'] = data['config']['name']
