@@ -36,7 +36,9 @@ Predictor evaluation metrics
 ----------------------------
 
 Predictor evaluation metrics are defined as part of a :class:`~citrine.informatics.predictor_evaluator.PredictorEvaluator`.
-Available metrics depend on response type.
+For all response types, the metric (:class:`~citrine.informatics.predictor_evaluation_metrics.PVA`) is available to compare predicted versus actual data.
+Other available metrics depend on whether the response's type is numeric or categorical.
+
 For numeric responses, the following metrics are available:
 
   - *Root-mean squared error* (:class:`~citrine.informatics.predictor_evaluation_metrics.RMSE`): square root of the average of the squared prediction error.
@@ -71,8 +73,6 @@ For categorical responses, performance metrics include either the area under the
 -  Support-weighted F1 score (:class:`~citrine.informatics.predictor_evaluation_metrics.F1`) is calculated from averaged precision and recall of the model, weighted by the in-class fraction of true positives according to the formula ``2.0 * precision * recall / (precision + recall) * fraction_true_positives`` summed over each class.
    Scores are bounded by 0 and 1.
    At a value of 1, the model has perfect precision and recall.
-
-In addition to the aforementioned metrics, predicted vs. actual data (:class:`~citrine.informatics.predictor_evaluation_metrics.PVA`) are also available for both real and categorical responses.
 
 
 .. _execution-and-results:
