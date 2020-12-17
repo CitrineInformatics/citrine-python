@@ -63,10 +63,9 @@ class ProductDesignSpace(Resource['ProductDesignSpace'], DesignSpace):
     @classmethod
     def _pre_build(cls, data: dict) -> dict:
         subspaces = data['config'].get('subspaces', [])
-        for i, subspace in enumerate(subspaces):
-            if isinstance(subspace, dict):
-                data['config']['subspaces'][i] = \
-                    ProductDesignSpace.stuff_design_space_into_envelope(subspace)
+        for i, _ in enumerate(subspaces):
+            data['config']['subspaces'][i]['config'] = \
+                data['config']['subspaces'][i].pop('instance')
         return data
 
     @staticmethod

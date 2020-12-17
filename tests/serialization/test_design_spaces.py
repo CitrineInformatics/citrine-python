@@ -22,9 +22,11 @@ def test_product_deserialization(valid_product_design_space_data):
         assert design_space.dimensions[0].lower_bound == 6.0
         assert type(design_space.dimensions[1]) == EnumeratedDimension
         assert design_space.dimensions[1].values == ['red']
-        assert type(design_space.subspaces[0]) == UUID
+        assert type(design_space.subspaces[0]) == FormulationDesignSpace
+        assert type(design_space.subspaces[0].uid) == UUID
         assert type(design_space.subspaces[1]) == FormulationDesignSpace
-        assert design_space.subspaces[1].ingredients == {'foo'}
+        assert design_space.subspaces[1].uid is None
+        assert design_space.subspaces[1].ingredients == {'baz'}
 
 
 def test_product_serialization(valid_product_design_space_data):
@@ -33,8 +35,8 @@ def test_product_serialization(valid_product_design_space_data):
     design_space = ProductDesignSpace.build(valid_product_design_space_data)
     serialized = design_space.dump()
     serialized['id'] = valid_product_design_space_data['id']
-    assert serialized['config']['subspaces'] == original_data['config']['subspaces']
-    assert serialized == valid_serialization_output(original_data)
+    for i in range(2):
+        assert serialized['config']['subspaces'][i] == original_data['config']['subspaces'][i]['instance']
 
 
 def test_old_product_serialization(old_valid_product_design_space_data):

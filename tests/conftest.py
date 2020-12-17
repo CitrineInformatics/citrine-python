@@ -21,16 +21,39 @@ def valid_product_design_space_data():
             name='my design space',
             description='does some things',
             subspaces=[
-                str(uuid.uuid4()),
                 dict(
-                    type='FormulationDesignSpace',
-                    name='formulation design space',
-                    description='formulates some things',
-                    formulation_descriptor=FormulationDescriptor('formulation').dump(),
-                    ingredients=['foo'],
-                    labels={'bar': ['foo']},
-                    constraints=[],
-                    resolution=0.1
+                    module_type='DESIGN_SPACE',
+                    status='READY',
+                    id=str(uuid.uuid4()),
+                    archived=False,
+                    name='first subspace',
+                    instance=dict(
+                        type='FormulationDesignSpace',
+                        name='first subspace',
+                        description='',
+                        formulation_descriptor=FormulationDescriptor('X').dump(),
+                        ingredients=['foo'],
+                        labels={'bar': ['foo']},
+                        constraints=[],
+                        resolution=0.1
+                    )
+                ),
+                dict(
+                    module_type='DESIGN_SPACE',
+                    status='CREATED',
+                    id=None,
+                    archived=False,
+                    name='second subspace',
+                    instance=dict(
+                        type='FormulationDesignSpace',
+                        name='second subspace',
+                        description='formulates some things',
+                        formulation_descriptor=FormulationDescriptor('Y').dump(),
+                        ingredients=['baz'],
+                        labels={},
+                        constraints=[],
+                        resolution=0.1
+                    )
                 )
             ],
             dimensions=[
