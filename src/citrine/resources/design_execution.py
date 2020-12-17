@@ -12,7 +12,7 @@ from citrine.informatics.predictor_evaluation_result import PredictorEvaluationR
 from citrine.resources.response import Response
 
 
-class DesignWorkflowExecution(Resource['DesignWorkflowExecution']):
+class DesignExecution(Resource['DesignExecution']):
     """The execution of a DesignWorkflow.
 
     Parameters
@@ -53,7 +53,7 @@ class DesignWorkflowExecution(Resource['DesignWorkflowExecution']):
         self.session: Optional[Session] = None  # pragma: no cover
 
     def __str__(self):
-        return '<DesignWorkflowExecution {!r}>'.format(str(self.uid))
+        return '<DesignExecution {!r}>'.format(str(self.uid))
 
     def _path(self):
         return '/projects/{project_id}/design-workflows/{workflow_id}/executions/{execution_id}' \
@@ -90,13 +90,13 @@ class DesignWorkflowExecution(Resource['DesignWorkflowExecution']):
         return iter(self.evaluator_names)
 
 
-class DesignWorkflowExecutionCollection(Collection["DesignWorkflowExecution"]):
-    """A collection of DesignWorkflowExecutions."""
+class DesignExecutionCollection(Collection["DesignExecution"]):
+    """A collection of DesignExecutions."""
 
     _path_template = '/projects/{project_id}/design-workflows/{workflow_id}/executions'  # noqa
     _individual_key = None
     _collection_key = 'response'
-    _resource = DesignWorkflowExecution
+    _resource = DesignExecution
 
     def __init__(self, *,
                  project_id: UUID,
@@ -106,9 +106,9 @@ class DesignWorkflowExecutionCollection(Collection["DesignWorkflowExecution"]):
         self.session: Session = session
         self.workflow_id: UUID = workflow_id
 
-    def build(self, data: dict) -> DesignWorkflowExecution:
+    def build(self, data: dict) -> DesignExecution:
         """Build an individual DesignWorkflowExecution."""
-        execution = DesignWorkflowExecution.build(data)
+        execution = DesignExecution.build(data)
         execution.session = self.session
         execution.project_id = self.project_id
         return execution
@@ -120,13 +120,13 @@ class DesignWorkflowExecutionCollection(Collection["DesignWorkflowExecution"]):
         self._check_experimental(data)
         return self.build(data)
 
-    def register(self, model: DesignWorkflowExecution) -> DesignWorkflowExecution:
+    def register(self, model: DesignExecution) -> DesignExecution:
         """Cannot register an execution."""
-        raise NotImplementedError("Cannot register a DesignWorkflowExecution.")
+        raise NotImplementedError("Cannot register a DesignExecution.")
 
-    def update(self, model: DesignWorkflowExecution) -> DesignWorkflowExecution:
+    def update(self, model: DesignExecution) -> DesignExecution:
         """Cannot update an execution."""
-        raise NotImplementedError("Cannot update a DesignWorkflowExecution.")
+        raise NotImplementedError("Cannot update a DesignExecution.")
 
     def archive(self, execution_id: UUID):
         """Archive a Design Workflow execution.
@@ -155,7 +155,7 @@ class DesignWorkflowExecutionCollection(Collection["DesignWorkflowExecution"]):
     def list(self,
              page: Optional[int] = None,
              per_page: int = 100,
-             ) -> Iterable[DesignWorkflowExecution]:
+             ) -> Iterable[DesignExecution]:
         """
         Paginate over the elements of the collection.
 
@@ -190,4 +190,4 @@ class DesignWorkflowExecutionCollection(Collection["DesignWorkflowExecution"]):
     def delete(self, uid: Union[UUID, str]) -> Response:
         """Design Workflow Executions cannot be deleted; they can be archived instead."""
         raise NotImplementedError(
-            "Design Workflow Executions cannot be deleted; they can be archived instead.")
+            "Design Executions cannot be deleted; they can be archived instead.")
