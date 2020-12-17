@@ -35,7 +35,6 @@ def test_design_space_build():
             }],
         },
         'status': '',
-        'schema_id': '6c16d694-d015-42a7-b462-8ef299473c9a',
     }
 
     # When
