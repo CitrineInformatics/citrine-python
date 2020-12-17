@@ -1,5 +1,6 @@
 """Tools for working with Predictors."""
 # flake8: noqa
+# TODO: Remove noqa. Break this into sub-files for each predictor. Might be necessary for MolecularStructureFeaturizer.
 from typing import List, Optional, Type, Union, Mapping
 from uuid import UUID
 from warnings import warn

@@ -26,9 +26,6 @@ class ProductDesignSpace(Resource['ProductDesignSpace'], DesignSpace):
 
     _response_key = None
 
-    uid = properties.Optional(properties.UUID, 'id', serializable=False)
-    name = properties.String('config.name')
-    description = properties.Optional(properties.String(), 'config.description')
     subspaces = properties.List(properties.Union(
         [properties.UUID, properties.Object(DesignSpace)]
     ), 'config.subspaces', default=[])
@@ -36,19 +33,8 @@ class ProductDesignSpace(Resource['ProductDesignSpace'], DesignSpace):
         properties.List(properties.Object(Dimension)), 'config.dimensions'
     )
     typ = properties.String('config.type', default='ProductDesignSpace', deserializable=False)
+    # Product design spaces may not be embedded in other subspaces, hence status is required
     status = properties.String('status', serializable=False)
-    status_info = properties.Optional(
-        properties.List(properties.String()),
-        'status_info',
-        serializable=False
-    )
-    archived = properties.Boolean('archived', default=False)
-    experimental = properties.Boolean("experimental", serializable=False, default=True)
-    experimental_reasons = properties.Optional(
-        properties.List(properties.String()),
-        'experimental_reasons',
-        serializable=False
-    )
 
     # NOTE: These could go here or in _post_dump - it's unclear which is better right now
     module_type = properties.String('module_type', default='DESIGN_SPACE')
