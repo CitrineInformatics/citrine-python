@@ -39,7 +39,7 @@ class ProductDesignSpace(Resource['ProductDesignSpace'], DesignSpace):
         properties.List(properties.Object(Dimension)), 'config.dimensions'
     )
     typ = properties.String('config.type', default='ProductDesignSpace', deserializable=False)
-    # Product design spaces may not be embedded in other subspaces, hence status is required
+    # Product design spaces should not be embedded in other subspaces, hence status is required
     status = properties.String('status', serializable=False)
 
     # NOTE: These could go here or in _post_dump - it's unclear which is better right now
@@ -77,6 +77,7 @@ class ProductDesignSpace(Resource['ProductDesignSpace'], DesignSpace):
     @classmethod
     def _pre_build(cls, data: dict) -> dict:
         subspaces = data['config'].get('subspaces', [])
+        # For each subspace, rename the `instance` key to `config`.
         for i, _ in enumerate(subspaces):
             data['config']['subspaces'][i]['config'] = \
                 data['config']['subspaces'][i].pop('instance')
