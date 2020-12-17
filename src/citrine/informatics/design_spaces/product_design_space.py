@@ -12,7 +12,8 @@ __all__ = ['ProductDesignSpace']
 
 
 class ProductDesignSpace(Resource['ProductDesignSpace'], DesignSpace):
-    """[ALPHA] An outer product of univariate dimensions, either continuous or enumerated.
+    """[ALPHA] An outer product of design spaces.
+    Factors can be other design spaces and/or univariate dimensions.
 
     Parameters
     ----------
@@ -20,6 +21,9 @@ class ProductDesignSpace(Resource['ProductDesignSpace'], DesignSpace):
         the name of the design space
     description:str
         the description of the design space
+    subspaces: List[Union[UUID, DesignSpace]]
+        the list of subspaces to combine, either design spaces defined in-line
+        or UUIDs that reference design spaces on the platform
     dimensions: list[Dimension]
         univariate dimensions that are factors of the design space; can be enumerated or continuous
 
