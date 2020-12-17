@@ -7,9 +7,9 @@ from citrine.informatics.predictors import SimpleMLPredictor
 from citrine.informatics.processors import GridProcessor
 
 
-def test_polymorphic_design_space_deserialization(valid_product_design_space_data):
+def test_polymorphic_design_space_deserialization(old_valid_product_design_space_data):
     """Ensure that a deserialized ProductDesignSpace looks sane."""
-    module: Module = Module.build(valid_product_design_space_data)
+    module: Module = Module.build(old_valid_product_design_space_data)
     assert type(module) == ProductDesignSpace
 
 

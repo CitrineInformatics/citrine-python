@@ -1,4 +1,5 @@
 import uuid
+from copy import deepcopy
 
 import pytest
 
@@ -6,6 +7,7 @@ import pytest
 @pytest.fixture
 def valid_product_design_space_data():
     """Produce valid product design space data."""
+    from citrine.informatics.descriptors import FormulationDescriptor
     return dict(
         module_type='DESIGN_SPACE',
         status='VALIDATING',
@@ -14,9 +16,45 @@ def valid_product_design_space_data():
         display_name='my design space',
         id=str(uuid.uuid4()),
         config=dict(
-            type='Univariate',
+            type='ProductDesignSpace',
             name='my design space',
             description='does some things',
+            subspaces=[
+                dict(
+                    module_type='DESIGN_SPACE',
+                    status='READY',
+                    id=str(uuid.uuid4()),
+                    archived=False,
+                    name='first subspace',
+                    instance=dict(
+                        type='FormulationDesignSpace',
+                        name='first subspace',
+                        description='',
+                        formulation_descriptor=FormulationDescriptor('X').dump(),
+                        ingredients=['foo'],
+                        labels={'bar': ['foo']},
+                        constraints=[],
+                        resolution=0.1
+                    )
+                ),
+                dict(
+                    module_type='DESIGN_SPACE',
+                    status='CREATED',
+                    id=None,
+                    archived=False,
+                    name='second subspace',
+                    instance=dict(
+                        type='FormulationDesignSpace',
+                        name='second subspace',
+                        description='formulates some things',
+                        formulation_descriptor=FormulationDescriptor('Y').dump(),
+                        ingredients=['baz'],
+                        labels={},
+                        constraints=[],
+                        resolution=0.1
+                    )
+                )
+            ],
             dimensions=[
                 dict(
                     type='ContinuousDimension',
@@ -44,6 +82,15 @@ def valid_product_design_space_data():
             ]
         )
     )
+
+
+@pytest.fixture
+def old_valid_product_design_space_data(valid_product_design_space_data):
+    """Produce old valid product design space data (no subspaces, different type hint)."""
+    ret = deepcopy(valid_product_design_space_data)
+    del ret['config']['subspaces']
+    ret['config']['type'] = 'Univariate'
+    return ret
 
 
 @pytest.fixture
@@ -606,7 +653,7 @@ def generic_entity():
 
 @pytest.fixture
 def predictor_evaluation_execution_dict(generic_entity):
-    ret = generic_entity.copy()
+    ret = deepcopy(generic_entity)
     ret.update({
         "workflow_id": str(uuid.uuid4()),
         "predictor_id": str(uuid.uuid4()),
@@ -617,7 +664,7 @@ def predictor_evaluation_execution_dict(generic_entity):
 
 @pytest.fixture
 def predictor_evaluation_workflow_dict(generic_entity, example_evaluator_dict):
-    ret = generic_entity.copy()
+    ret = deepcopy(generic_entity)
     ret.update({
         "name": "Example PEW",
         "description": "Example PEW for testing",

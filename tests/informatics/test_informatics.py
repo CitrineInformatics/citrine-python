@@ -28,7 +28,8 @@ informatics_string_data = [
     ), "<LabelFractionConstraint 'x'::'y'>"),
     (ScalarRangeConstraint('z'), "<ScalarRangeConstraint 'z'>"),
     (CategoricalConstraint('x', []), "<CategoricalConstraint 'x'>"),
-    (ProductDesignSpace('my design space', 'does some things', []), "<ProductDesignSpace 'my design space'>"),
+    (ProductDesignSpace(name='my design space', description='does some things'),
+     "<ProductDesignSpace 'my design space'>"),
     (EnumeratedDesignSpace('enumerated', 'desc', [], []), "<EnumeratedDesignSpace 'enumerated'>"),
     (FormulationDesignSpace(
         name='formulation',

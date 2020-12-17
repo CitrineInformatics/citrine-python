@@ -1,5 +1,6 @@
 """Tools for working with Predictors."""
 # flake8: noqa
+# TODO: Remove noqa. Break this into sub-files for each predictor. Might be necessary for MolecularStructureFeaturizer.
 from typing import List, Optional, Type, Union, Mapping
 from uuid import UUID
 from warnings import warn
@@ -243,7 +244,7 @@ class GraphPredictor(Serializable['GraphPredictor'], Predictor):
         return dict(
             module_type='PREDICTOR',
             config=predictor,
-            archived=False,
+            archived=False
         )
 
     def __str__(self):
