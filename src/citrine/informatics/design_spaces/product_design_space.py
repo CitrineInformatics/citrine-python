@@ -32,7 +32,9 @@ class ProductDesignSpace(Resource['ProductDesignSpace'], DesignSpace):
     subspaces = properties.List(properties.Union(
         [properties.UUID, properties.Object(DesignSpace)]
     ), 'config.subspaces', default=[])
-    dimensions = properties.Optional(properties.List(properties.Object(Dimension)), 'config.dimensions')
+    dimensions = properties.Optional(
+        properties.List(properties.Object(Dimension)), 'config.dimensions'
+    )
     typ = properties.String('config.type', default='ProductDesignSpace', deserializable=False)
     status = properties.String('status', serializable=False)
     status_info = properties.Optional(
