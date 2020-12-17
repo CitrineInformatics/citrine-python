@@ -78,14 +78,5 @@ class ProductDesignSpace(Resource['ProductDesignSpace'], DesignSpace):
                 data['config']['subspaces'][i].pop('instance')
         return data
 
-    @staticmethod
-    def stuff_design_space_into_envelope(subspace: dict) -> dict:
-        """Insert serialized embedded design space into a module envelope, to facilitate deser."""
-        return dict(
-            module_type='DESIGN_SPACE',
-            config=subspace,
-            archived=False
-        )
-
     def __str__(self):
         return '<ProductDesignSpace {!r}>'.format(self.name)
