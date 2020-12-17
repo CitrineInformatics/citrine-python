@@ -44,7 +44,6 @@ class ProductDesignSpace(Resource['ProductDesignSpace'], DesignSpace):
 
     # NOTE: These could go here or in _post_dump - it's unclear which is better right now
     module_type = properties.String('module_type', default='DESIGN_SPACE')
-    schema_id = properties.UUID('schema_id', default=UUID('6c16d694-d015-42a7-b462-8ef299473c9a'))
 
     def __init__(self, *,
                  name: str,

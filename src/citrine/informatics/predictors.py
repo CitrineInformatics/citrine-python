@@ -145,8 +145,6 @@ class SimpleMLPredictor(Serializable['SimplePredictor'], Predictor):
 
     # NOTE: These could go here or in _post_dump - it's unclear which is better right now
     module_type = _properties.String('module_type', default='PREDICTOR')
-    schema_id = _properties.UUID('schema_id', default=UUID('08d20e5f-e329-4de0-a90a-4b5e36b91703'),
-                                 deserializable=False)
 
     def __init__(self,
                  name: str,
@@ -207,7 +205,6 @@ class GraphPredictor(Serializable['GraphPredictor'], Predictor):
 
     # NOTE: These could go here or in _post_dump - it's unclear which is better right now
     module_type = _properties.String('module_type', default='PREDICTOR')
-    schema_id = _properties.UUID('schema_id', default=UUID('43c61ad4-7e33-45d0-a3de-504acb4e0737'))
 
     def __init__(self,
                  name: str,
@@ -335,8 +332,6 @@ class DeprecatedExpressionPredictor(Serializable['DeprecatedExpressionPredictor'
 
     # NOTE: These could go here or in _post_dump - it's unclear which is better right now
     module_type = _properties.String('module_type', default='PREDICTOR')
-    schema_id = _properties.UUID('schema_id', default=UUID('866e72a6-0a01-4c5f-8c35-146eb2540166'),
-                                 deserializable=False)
 
     def __init__(self,
                  name: str,
@@ -397,8 +392,6 @@ class ExpressionPredictor(Serializable['ExpressionPredictor'], Predictor):
 
     # NOTE: These could go here or in _post_dump - it's unclear which is better right now
     module_type = _properties.String('module_type', default='PREDICTOR')
-    schema_id = _properties.UUID('schema_id', default=UUID('f1601161-bb98-4fa9-bdd2-a2a673547532'),
-                                 deserializable=False)
 
     def __init__(self,
                  name: str,
@@ -496,8 +489,6 @@ class MolecularStructureFeaturizer(Serializable['MolecularStructureFeaturizer'],
 
     # NOTE: These could go here or in _post_dump - it's unclear which is better right now
     module_type = _properties.String('module_type', default='PREDICTOR')
-    schema_id = _properties.UUID('schema_id', default=UUID('24183b2f-848c-46fa-8640-21b7743e38a3'),
-                                 deserializable=False)
 
     def __init__(self,
                  name: str,
@@ -556,8 +547,6 @@ class IngredientsToSimpleMixturePredictor(
 
     # NOTE: These could go here or in _post_dump - it's unclear which is better right now
     module_type = _properties.String('module_type', default='PREDICTOR')
-    schema_id = _properties.UUID('schema_id', default=UUID('873e4541-da8a-4698-a981-732c0c729c3d'),
-                                 deserializable=False)
 
     def __init__(self,
                  name: str,
@@ -640,8 +629,6 @@ class GeneralizedMeanPropertyPredictor(
 
     # NOTE: These could go here or in _post_dump - it's unclear which is better right now
     module_type = _properties.String('module_type', default='PREDICTOR')
-    schema_id = _properties.UUID('schema_id', default=UUID('29e53222-3217-4f81-b3b8-4197a8211ade'),
-                                 deserializable=False)
 
     def __init__(self,
                  name: str,
@@ -709,8 +696,6 @@ class SimpleMixturePredictor(Serializable['SimpleMixturePredictor'], Predictor):
 
     # NOTE: These could go here or in _post_dump - it's unclear which is better right now
     module_type = _properties.String('module_type', default='PREDICTOR')
-    schema_id = _properties.UUID('schema_id', default=UUID('e82a993c-e6ab-46a2-b636-c71d0ba224d1'),
-                                 deserializable=False)
 
     def __init__(self,
                  name: str,
@@ -761,8 +746,6 @@ class LabelFractionsPredictor(Serializable['LabelFractionsPredictor'], Predictor
 
     # NOTE: These could go here or in _post_dump - it's unclear which is better right now
     module_type = _properties.String('module_type', default='PREDICTOR')
-    schema_id = _properties.UUID('schema_id', default=UUID('997a7e11-2c16-4e30-b531-9e657a863019'),
-                                 deserializable=False)
 
     def __init__(self,
                  name: str,
@@ -809,7 +792,6 @@ class IngredientFractionsPredictor(Serializable["IngredientFractionsPredictor"],
 
     # NOTE: These could go here or in _post_dump - it's unclear which is better right now
     module_type = _properties.String('module_type', default='PREDICTOR')
-    schema_id = _properties.UUID('schema_id', default=UUID('eb02a095-8cdc-45d8-bc82-1013b6e8e700'))
     typ = _properties.String('config.type', default='IngredientFractions',
                              deserializable=False)
 
