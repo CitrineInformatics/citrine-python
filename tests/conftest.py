@@ -1,4 +1,5 @@
 import uuid
+from copy import deepcopy
 
 import pytest
 
@@ -6,6 +7,7 @@ import pytest
 @pytest.fixture
 def valid_product_design_space_data():
     """Produce valid product design space data."""
+    from citrine.informatics.descriptors import FormulationDescriptor
     return dict(
         module_type='DESIGN_SPACE',
         status='VALIDATING',
@@ -15,9 +17,22 @@ def valid_product_design_space_data():
         schema_id='6c16d694-d015-42a7-b462-8ef299473c9a',
         id=str(uuid.uuid4()),
         config=dict(
-            type='Univariate',
+            type='ProductDesignSpace',
             name='my design space',
             description='does some things',
+            subspaces=[
+                str(uuid.uuid4()),
+                dict(
+                    type='FormulationDesignSpace',
+                    name='formulation design space',
+                    description='formulates some things',
+                    formulation_descriptor=FormulationDescriptor('formulation').dump(),
+                    ingredients=['foo'],
+                    labels={'bar': ['foo']},
+                    constraints=[],
+                    resolution=0.1
+                )
+            ],
             dimensions=[
                 dict(
                     type='ContinuousDimension',
@@ -45,6 +60,15 @@ def valid_product_design_space_data():
             ]
         )
     )
+
+
+@pytest.fixture
+def old_valid_product_design_space_data(valid_product_design_space_data):
+    """Produce old valid product design space data (no subspaces, different type hint)."""
+    ret = deepcopy(valid_product_design_space_data)
+    del ret['config']['subspaces']
+    ret['config']['type'] = 'Univariate'
+    return ret
 
 
 @pytest.fixture

@@ -39,7 +39,7 @@ class EnumeratedDesignSpace(Resource['EnumeratedDesignSpace'], DesignSpace):
     data = properties.List(properties.Mapping(properties.String, properties.Raw), 'config.data')
 
     typ = properties.String('config.type', default='EnumeratedDesignSpace', deserializable=False)
-    status = properties.String('status', serializable=False)
+    status = properties.Optional(properties.String(), 'status', serializable=False)
     status_info = properties.Optional(
         properties.List(properties.String()),
         'status_info',

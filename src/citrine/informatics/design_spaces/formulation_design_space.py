@@ -59,7 +59,7 @@ class FormulationDesignSpace(Resource['FormulationDesignSpace'], DesignSpace):
         default='FormulationDesignSpace',
         deserializable=False
     )
-    status = properties.String('status', serializable=False)
+    status = properties.Optional(properties.String(), 'status', serializable=False)
     status_info = properties.Optional(
         properties.List(properties.String()),
         'status_info',

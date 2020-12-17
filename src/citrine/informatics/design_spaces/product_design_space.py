@@ -83,7 +83,7 @@ class ProductDesignSpace(Resource['ProductDesignSpace'], DesignSpace):
 
     @staticmethod
     def stuff_design_space_into_envelope(subspace: dict) -> dict:
-        """Insert a serialized embedded design space into a module envelope, to facilitate deser."""
+        """Insert serialized embedded design space into a module envelope, to facilitate deser."""
         return dict(
             module_type='DESIGN_SPACE',
             config=subspace,
