@@ -5,7 +5,8 @@ import uuid
 from copy import deepcopy
 
 from citrine.exceptions import ModuleRegistrationFailedException, NotFound
-from citrine.informatics.predictors import GraphPredictor, SimpleMLPredictor
+from citrine.informatics.descriptors import RealDescriptor
+from citrine.informatics.predictors import GraphPredictor, SimpleMLPredictor, ExpressionPredictor
 from citrine.resources.predictor import PredictorCollection
 from tests.utils.session import FakeSession, FakeCall
 
@@ -142,3 +143,46 @@ def test_get_none():
         pc.get(uid=None)
 
     assert "uid=None" in str(excinfo.value)
+
+
+def test_check_update_none():
+    """Test that check-for-updates makes the expected calls, parses output for no update."""
+    # Given
+    session = FakeSession()
+    session.set_response({"updatable": False})
+    pc = PredictorCollection(uuid.uuid4(), session)
+    predictor_id = uuid.uuid4()
+
+    # when
+    update_check = pc.check_for_update(predictor_id)
+
+    # then
+    assert update_check is None
+    expected_call = FakeCall(method='GET', path='/projects/{}/predictors/{}/check-for-update'.format(pc.project_id, predictor_id))
+    assert session.calls[0] == expected_call
+
+
+def test_check_update_some():
+    """Test the update check correctly builds a module."""
+    # given
+    session = FakeSession()
+    desc = RealDescriptor("spam", 0, 1, "kg")
+    response = {
+        "type": "AnalyticExpression",
+        "name": "foo",
+        "description": "bar",
+        "expression": "2 * x",
+        "output": RealDescriptor("spam", 0, 1, "kg").dump(),
+        "aliases": {}
+    }
+    session.set_response({"updatable": True, "update": response})
+    pc = PredictorCollection(uuid.uuid4(), session)
+    predictor_id = uuid.uuid4()
+
+    # when
+    update_check = pc.check_for_update(predictor_id)
+
+    # then
+    expected = ExpressionPredictor("foo", "bar", "2 * x", desc, {})
+    assert update_check.dump() == expected.dump()
+    assert update_check.uid == predictor_id
