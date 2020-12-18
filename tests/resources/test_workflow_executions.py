@@ -81,6 +81,21 @@ def test_workflow_execution_results(workflow_execution, session):
     )
     assert session.last_call == FakeCall(method='GET', path=expected_path)
 
+def test_workflow_execution_candidates(workflow_execution, example_candidates, session):
+    # Given
+    session.set_response(example_candidates)
+
+    # When
+    results = list(workflow_execution.candidates(page=2, per_page=4))
+
+    # Then
+    expected_path = '/projects/{}/design-workflows/{}/executions/{}/candidates'.format(
+        workflow_execution.project_id,
+        workflow_execution.workflow_id,
+        workflow_execution.uid,
+    )
+    assert session.last_call == FakeCall(method='GET', path=expected_path, params={"page": 2, "per_page": 4})
+
 
 def test_trigger_workflow_execution(collection: WorkflowExecutionCollection, workflow_execution, session):
     # Given

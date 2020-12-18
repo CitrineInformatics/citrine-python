@@ -91,14 +91,12 @@ def test_workflow_execution_results(workflow_execution: DesignExecution, session
     results = list(workflow_execution.candidates(page=2, per_page=4))
 
     # Then
-    # assert results == list(DesignExecution._build_candidates(example_candidates['response']))
     expected_path = '/projects/{}/design-workflows/{}/executions/{}/candidates'.format(
         workflow_execution.project_id,
         workflow_execution.workflow_id,
         workflow_execution.uid,
     )
     assert session.last_call == FakeCall(method='GET', path=expected_path, params={"page": 2, "per_page": 4})
-
 
 
 def test_list(collection: DesignExecutionCollection, session):
