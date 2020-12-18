@@ -4,25 +4,25 @@ from uuid import UUID
 
 from citrine._rest.collection import Collection
 from citrine._session import Session
-from citrine.informatics.workflows import NewDesignWorkflow
+from citrine.informatics.workflows import DesignWorkflow
 from citrine.resources.response import Response
 
 
-class DesignWorkflowCollection(Collection[NewDesignWorkflow]):
+class DesignWorkflowCollection(Collection[DesignWorkflow]):
     """A collection of DesignWorkflows."""
 
     _path_template = '/projects/{project_id}/design-workflows'
     _individual_key = None
     _collection_key = 'response'
-    _resource = NewDesignWorkflow
+    _resource = DesignWorkflow
 
     def __init__(self, project_id: UUID, session: Session):
         self.project_id: UUID = project_id
         self.session: Session = session
 
-    def build(self, data: dict) -> NewDesignWorkflow:
+    def build(self, data: dict) -> DesignWorkflow:
         """Build an individual DesignExecution."""
-        workflow = NewDesignWorkflow.build(data)
+        workflow = DesignWorkflow.build(data)
         workflow.session = self.session
         workflow.project_id = self.project_id
         return workflow
