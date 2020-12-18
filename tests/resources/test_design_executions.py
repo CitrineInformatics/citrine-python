@@ -3,10 +3,10 @@ import uuid
 import pytest
 
 from citrine.informatics.modules import ModuleRef
-from citrine.informatics.predictor_evaluation_result import PredictorEvaluationResult
-from citrine.resources.design_workflow_execution import DesignWorkflowExecutionCollection, \
-    DesignWorkflowExecution
+from citrine.informatics.design_candidate import DesignCandidate
+from citrine.resources.design_execution import DesignExecutionCollection, DesignExecution
 from tests.utils.session import FakeSession, FakeCall
+from tests.utils.factories import MLIScoreFactory
 
 
 @pytest.fixture
@@ -15,8 +15,8 @@ def session() -> FakeSession:
 
 
 @pytest.fixture
-def collection(session) -> DesignWorkflowExecutionCollection:
-    return DesignWorkflowExecutionCollection(
+def collection(session) -> DesignExecutionCollection:
+    return DesignExecutionCollection(
         project_id=uuid.uuid4(),
         workflow_id=uuid.uuid4(),
         session=session,
@@ -24,17 +24,12 @@ def collection(session) -> DesignWorkflowExecutionCollection:
 
 
 @pytest.fixture
-def workflow_execution(collection: DesignWorkflowExecutionCollection, design_workflow_execution_dict) -> DesignWorkflowExecution:
-    return collection.build(design_workflow_execution_dict)
+def workflow_execution(collection: DesignExecutionCollection, design_execution_dict) -> DesignExecution:
+    return collection.build(design_execution_dict)
 
 
 def test_basic_methods(workflow_execution, collection):
-    assert "DesignWorkflowExecution" in str(workflow_execution)
-
-    with pytest.raises(TypeError):
-        workflow_execution[12]
-
-    assert "Example evaluator" in list(iter(workflow_execution))
+    assert "DesignExecution" in str(workflow_execution)
 
     with pytest.raises(NotImplementedError):
         collection.register(workflow_execution)
@@ -43,10 +38,10 @@ def test_basic_methods(workflow_execution, collection):
         collection.update(workflow_execution)
 
 
-def test_build_new_execution(collection, design_workflow_execution_dict):
+def test_build_new_execution(collection, design_execution_dict):
     # Given
     workflow_execution_id = uuid.uuid4()
-    build_data = design_workflow_execution_dict.copy()
+    build_data = design_execution_dict.copy()
     build_data["id"] = str(workflow_execution_id)
     build_data["workflow_id"] = str(collection.workflow_id)
 
@@ -60,33 +55,17 @@ def test_build_new_execution(collection, design_workflow_execution_dict):
     assert execution.session == collection.session
 
 
-def test_workflow_execution_results(workflow_execution: DesignWorkflowExecution, session, example_result_dict):
-    # Given
-    session.set_response(example_result_dict)
-
-    # When
-    results = workflow_execution["Example Evaluator"]
-
-    # Then
-    assert results.evaluator == PredictorEvaluationResult.build(example_result_dict).evaluator
-    expected_path = '/projects/{}/design-workflows/{}/executions/{}/results'.format(
-        workflow_execution.project_id,
-        workflow_execution.workflow_id,
-        workflow_execution.uid
-    )
-    assert session.last_call == FakeCall(method='GET', path=expected_path, params={"evaluator_name": "Example Evaluator"})
-
-
-def test_trigger_workflow_execution(collection: DesignWorkflowExecutionCollection, design_workflow_execution_dict, session):
+def test_trigger_workflow_execution(collection: DesignExecutionCollection, design_execution_dict, session):
     # Given
     predictor_id = uuid.uuid4()
-    session.set_response(design_workflow_execution_dict)
+    session.set_response(design_execution_dict)
+    score = MLIScoreFactory()
 
     # When
-    actual_execution = collection.trigger()
+    actual_execution = collection.trigger(score)
 
     # Then
-    assert str(actual_execution.uid) == design_workflow_execution_dict["id"]
+    assert str(actual_execution.uid) == design_execution_dict["id"]
     expected_path = '/projects/{}/design-workflows/{}/executions'.format(
         collection.project_id,
         collection.workflow_id,
@@ -94,11 +73,11 @@ def test_trigger_workflow_execution(collection: DesignWorkflowExecutionCollectio
     assert session.last_call == FakeCall(
         method='POST',
         path=expected_path,
-        json={}
+        json={'score': score.dump()}
     )
 
 
-def test_list(collection: DesignWorkflowExecutionCollection, session):
+def test_list(collection: DesignExecutionCollection, session):
     session.set_response({"page": 2, "per_page": 4, "next": "foo", "response": []})
     lst = list(collection.list(2, 4))
     assert len(lst) == 0

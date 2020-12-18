@@ -31,11 +31,7 @@ class DesignExecution(Resource['DesignExecution']):
     _response_key = None
 
     uid: UUID = properties.UUID('id', serializable=False)
-    """UUID of the execution."""
-
-    evaluator_names = properties.List(properties.String, "evaluator_names", serializable=False)
     workflow_id = properties.UUID('workflow_id', serializable=False)
-    predictor_id = properties.UUID('predictor_id', serializable=False)
     status = properties.Optional(properties.String(), 'status', serializable=False)
     status_info = properties.Optional(
         properties.List(properties.String()),
@@ -64,23 +60,18 @@ class DesignExecution(Resource['DesignExecution']):
                     execution_id=self.uid)
 
     @lru_cache()
-    def results(self, evaluator_name: str) -> DesignCandidate:
-        """
-        Get a specific evaluation result by the name of the evaluator that produced it.
+    def results(self,
+                page: Optional[int] = None,
+                per_page: int = 100,
+                ) -> Iterable[DesignCandidate]:
+        path = self._path() + '/candidates'
+        
+        fetcher = partial(self._fetch_page, path=path)
 
-        Parameters
-        ----------
-        evaluator_name: str
-            Name of the evaluator for which to get the results
-
-        Returns
-        -------
-        The evaluation result from the evaluator with the given name
-
-        """
-        params = {"evaluator_name": evaluator_name}
-        resource = self.session.get_resource(self._path() + "/results", params=params)
-        return DesignCandidate.build(resource)
+        return self._paginator.paginate(page_fetcher=fetcher,
+                                        collection_builder=self._build_candidates,
+                                        page=page,
+                                        per_page=per_page)
 
     def __getitem__(self, item):
         if isinstance(item, str):
