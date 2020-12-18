@@ -9,7 +9,7 @@ __all__ = [
     'DesignMaterial',
     'DesignVariable',
     'MeanAndStd',
-    'CategoriesAndProbabilities',
+    'TopCategories',
     'Mixture',
     'ChemicalFormula',
     'MolecularStructure',
@@ -17,7 +17,11 @@ __all__ = [
 
 
 class DesignVariable(PolymorphicSerializable["DesignVariable"]):
-    """docstring for DesignVariable"""
+    """Classes containing data corresponding to individual descriptors.
+
+    If you think of materials as being represented as a set of (descriptor, value) pairs,
+    these are simplified representations of the values.
+    """
 
     def __init__(self, arg):
         pass  # pragma: no cover
@@ -27,7 +31,7 @@ class DesignVariable(PolymorphicSerializable["DesignVariable"]):
         """Return the subtype."""
         return {
             "R": MeanAndStd,
-            "C": CategoriesAndProbabilities,
+            "C": TopCategories,
             "M": Mixture,
             "F": ChemicalFormula,
             "S": MolecularStructure
@@ -35,7 +39,10 @@ class DesignVariable(PolymorphicSerializable["DesignVariable"]):
 
 
 class MeanAndStd(Serializable["MeanAndStd"], DesignVariable):
-    """docstring for MeanAndStd"""
+    """The mean and standard deviation of a continuous distribution.
+
+    This does not imply that the distribution is Normal.
+    """
 
     mean = properties.Float('m')
     std = properties.Float('s')
@@ -44,26 +51,34 @@ class MeanAndStd(Serializable["MeanAndStd"], DesignVariable):
         pass  # pragma: no cover
 
 
-class CategoriesAndProbabilities(Serializable["CategoriesAndProbabilities"], DesignVariable):
-    """docstring for MeanAndStd"""
+class TopCategories(Serializable["CategoriesAndProbabilities"], DesignVariable):
+    """The category names and probabilities for the most probable categories.
 
-    category_probability = properties.Mapping(properties.String, properties.Float, 'cp')
+    This list is truncated: these are the most probable categories but other categories
+    may have non-zero probabilities.
+    """
+
+    probabilities = properties.Mapping(properties.String, properties.Float, 'cp')
 
     def __init__(self):
         pass  # pragma: no cover
 
 
 class Mixture(Serializable["Mixture"], DesignVariable):
-    """docstring for MeanAndStd"""
+    """Most likely quantity values for all of the components in a mixture.
 
-    category_probability = properties.Mapping(properties.String, properties.Float, 'q')
+    This is a complete list of components with non-zero quantities; there is no
+    truncation (but there may be rounding).
+    """
+
+    quantities = properties.Mapping(properties.String, properties.Float, 'q')
 
     def __init__(self):
         pass  # pragma: no cover
 
 
 class ChemicalFormula(Serializable["ChemicalFormula"], DesignVariable):
-    """docstring for MeanAndStd"""
+    """Chemical formula as a string."""
 
     formula = properties.String('f')
 
@@ -72,18 +87,18 @@ class ChemicalFormula(Serializable["ChemicalFormula"], DesignVariable):
 
 
 class MolecularStructure(Serializable["MolecularStructure"], DesignVariable):
-    """docstring for MeanAndStd"""
+    """SMILES string representation of a molecular structure."""
 
-    structure = properties.String('s')
+    smiles = properties.String('s')
 
     def __init__(self):
         pass  # pragma: no cover
 
 
 class DesignMaterial(Serializable["DesignMaterial"]):
-    """docstring for Material"""
+    """Description of the material that was designed, as a set of DesignVariables."""
 
-    vars = properties.Mapping(properties.String, properties.Object(DesignVariable), 'vars')
+    values = properties.Mapping(properties.String, properties.Object(DesignVariable), 'vars')
 
     def __init__(self):
         pass  # pragma: no cover
