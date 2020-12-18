@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>citrine.informatics.design_spaces.product_design_space module &#8212; Citrine Python 0.0.1 documentation</title>
+    <title>citrine.informatics.design_spaces.product_design_space module &#8212; Citrine Python 0.87.1 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -36,56 +36,35 @@
 <span id="citrine-informatics-design-spaces-product-design-space-module"></span><h1>citrine.informatics.design_spaces.product_design_space module<a class="headerlink" href="#module-citrine.informatics.design_spaces.product_design_space" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="citrine.informatics.design_spaces.product_design_space.ProductDesignSpace">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.design_spaces.product_design_space.</code><code class="sig-name descname">ProductDesignSpace</code><span class="sig-paren">(</span><em class="sig-param">name: str, description: str, dimensions: List[citrine.informatics.dimensions.Dimension], session: citrine._session.Session = &lt;citrine._session.Session object&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.design_spaces.product_design_space.ProductDesignSpace" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.design_spaces.product_design_space.</code><code class="sig-name descname">ProductDesignSpace</code><span class="sig-paren">(</span><em class="sig-param">*</em>, <em class="sig-param">name: str</em>, <em class="sig-param">description: str</em>, <em class="sig-param">subspaces: Optional[List[Union[uuid.UUID</em>, <em class="sig-param">citrine.informatics.design_spaces.design_space.DesignSpace]]] = None</em>, <em class="sig-param">dimensions: Optional[List[citrine.informatics.dimensions.Dimension]] = None</em>, <em class="sig-param">session: citrine._session.Session = &lt;citrine._session.Session object&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.design_spaces.product_design_space.ProductDesignSpace" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.resource.Resource</span></code>, <a class="reference internal" href="citrine.informatics.design_spaces.design_space.html#citrine.informatics.design_spaces.design_space.DesignSpace" title="citrine.informatics.design_spaces.design_space.DesignSpace"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.design_spaces.design_space.DesignSpace</span></code></a></p>
-<p>[ALPHA] An outer product of univariate dimensions, either continuous or enumerated.</p>
+<p>[ALPHA] An outer product of design spaces.</p>
+<p>Factors can be other design spaces and/or univariate dimensions.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>name</strong> (<em>str</em>) – the name of the design space</p></li>
 <li><p><strong>description</strong> (<em>str</em>) – the description of the design space</p></li>
+<li><p><strong>subspaces</strong> (<em>List</em><em>[</em><em>Union</em><em>[</em><em>UUID</em><em>, </em><a class="reference internal" href="citrine.informatics.design_spaces.design_space.html#citrine.informatics.design_spaces.design_space.DesignSpace" title="citrine.informatics.design_spaces.design_space.DesignSpace"><em>DesignSpace</em></a><em>]</em><em>]</em>) – the list of subspaces to combine, either design spaces defined in-line
+or UUIDs that reference design spaces on the platform</p></li>
 <li><p><strong>dimensions</strong> (<em>list</em><em>[</em><a class="reference internal" href="citrine.informatics.dimensions.html#citrine.informatics.dimensions.Dimension" title="citrine.informatics.dimensions.Dimension"><em>Dimension</em></a><em>]</em>) – univariate dimensions that are factors of the design space; can be enumerated or continuous</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="attribute">
-<dt id="citrine.informatics.design_spaces.product_design_space.ProductDesignSpace.archived">
-<code class="sig-name descname">archived</code><em class="property"> = False</em><a class="headerlink" href="#citrine.informatics.design_spaces.product_design_space.ProductDesignSpace.archived" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="citrine.informatics.design_spaces.product_design_space.ProductDesignSpace.description">
-<code class="sig-name descname">description</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.design_spaces.product_design_space.ProductDesignSpace.description" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
 <dt id="citrine.informatics.design_spaces.product_design_space.ProductDesignSpace.dimensions">
 <code class="sig-name descname">dimensions</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.design_spaces.product_design_space.ProductDesignSpace.dimensions" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="citrine.informatics.design_spaces.product_design_space.ProductDesignSpace.experimental">
-<code class="sig-name descname">experimental</code><em class="property"> = True</em><a class="headerlink" href="#citrine.informatics.design_spaces.product_design_space.ProductDesignSpace.experimental" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="citrine.informatics.design_spaces.product_design_space.ProductDesignSpace.experimental_reasons">
-<code class="sig-name descname">experimental_reasons</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.design_spaces.product_design_space.ProductDesignSpace.experimental_reasons" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dl class="method">
+<dt id="citrine.informatics.design_spaces.product_design_space.ProductDesignSpace.dump">
+<code class="sig-name descname">dump</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; dict<a class="headerlink" href="#citrine.informatics.design_spaces.product_design_space.ProductDesignSpace.dump" title="Permalink to this definition">¶</a></dt>
+<dd><p>Override dump to replace on-platform subspaces with their uids.</p>
+</dd></dl>
 
 <dl class="attribute">
 <dt id="citrine.informatics.design_spaces.product_design_space.ProductDesignSpace.module_type">
 <code class="sig-name descname">module_type</code><em class="property"> = 'DESIGN_SPACE'</em><a class="headerlink" href="#citrine.informatics.design_spaces.product_design_space.ProductDesignSpace.module_type" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="citrine.informatics.design_spaces.product_design_space.ProductDesignSpace.name">
-<code class="sig-name descname">name</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.design_spaces.product_design_space.ProductDesignSpace.name" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="citrine.informatics.design_spaces.product_design_space.ProductDesignSpace.schema_id">
-<code class="sig-name descname">schema_id</code><em class="property"> = UUID('6c16d694-d015-42a7-b462-8ef299473c9a')</em><a class="headerlink" href="#citrine.informatics.design_spaces.product_design_space.ProductDesignSpace.schema_id" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
@@ -94,18 +73,13 @@
 <dd></dd></dl>
 
 <dl class="attribute">
-<dt id="citrine.informatics.design_spaces.product_design_space.ProductDesignSpace.status_info">
-<code class="sig-name descname">status_info</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.design_spaces.product_design_space.ProductDesignSpace.status_info" title="Permalink to this definition">¶</a></dt>
+<dt id="citrine.informatics.design_spaces.product_design_space.ProductDesignSpace.subspaces">
+<code class="sig-name descname">subspaces</code><em class="property"> = []</em><a class="headerlink" href="#citrine.informatics.design_spaces.product_design_space.ProductDesignSpace.subspaces" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
 <dt id="citrine.informatics.design_spaces.product_design_space.ProductDesignSpace.typ">
-<code class="sig-name descname">typ</code><em class="property"> = 'Univariate'</em><a class="headerlink" href="#citrine.informatics.design_spaces.product_design_space.ProductDesignSpace.typ" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="citrine.informatics.design_spaces.product_design_space.ProductDesignSpace.uid">
-<code class="sig-name descname">uid</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.design_spaces.product_design_space.ProductDesignSpace.uid" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">typ</code><em class="property"> = 'ProductDesignSpace'</em><a class="headerlink" href="#citrine.informatics.design_spaces.product_design_space.ProductDesignSpace.typ" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -177,9 +151,9 @@
 <li class="toctree-l2"><a class="reference internal" href="../workflows/descriptors.html">4.2. Descriptors</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/descriptors.html#platform-vocabularies">4.3. Platform Vocabularies</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/predictors.html">4.4. Predictors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/design_spaces.html">4.5. Design Spaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/design_spaces.html">4.5. [ALPHA] Design Spaces</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/processors.html">4.6. Processors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/design_workflows.html">4.7. Design Workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/design_workflows.html">4.7. [ALPHA] Design Workflows</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/scores.html">4.8. Scores</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/data_sources.html">4.9. Data Sources</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/predictor_reports.html">4.10. Predictor Reports</a></li>

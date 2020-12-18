@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>citrine.resources.predictor module &#8212; Citrine Python 0.0.1 documentation</title>
+    <title>citrine.resources.predictor module &#8212; Citrine Python 0.87.1 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -49,6 +49,25 @@
 <dt id="citrine.resources.predictor.PredictorCollection.build">
 <code class="sig-name descname">build</code><span class="sig-paren">(</span><em class="sig-param">data: dict</em><span class="sig-paren">)</span> &#x2192; citrine.informatics.predictors.Predictor<a class="headerlink" href="#citrine.resources.predictor.PredictorCollection.build" title="Permalink to this definition">¶</a></dt>
 <dd><p>Build an individual Predictor.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="citrine.resources.predictor.PredictorCollection.check_for_update">
+<code class="sig-name descname">check_for_update</code><span class="sig-paren">(</span><em class="sig-param">predictor_id: uuid.UUID</em><span class="sig-paren">)</span> &#x2192; Optional[citrine.informatics.predictors.Predictor]<a class="headerlink" href="#citrine.resources.predictor.PredictorCollection.check_for_update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if there are updates available for a predictor.</p>
+<p>This check does not update the predictor; it just returns the update that is available.
+To perform the update, the response should then be used to call PredictorCollection.update</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>predictor_id</strong> (<em>UUID</em>) – Unique identifier of the predictor to check</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The update, if an update is available; None otherwise.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Optional[<a class="reference internal" href="citrine.informatics.predictors.html#citrine.informatics.predictors.Predictor" title="citrine.informatics.predictors.Predictor">Predictor</a>]</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -120,9 +139,9 @@
 <li class="toctree-l2"><a class="reference internal" href="../workflows/descriptors.html">4.2. Descriptors</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/descriptors.html#platform-vocabularies">4.3. Platform Vocabularies</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/predictors.html">4.4. Predictors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/design_spaces.html">4.5. Design Spaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/design_spaces.html">4.5. [ALPHA] Design Spaces</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/processors.html">4.6. Processors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/design_workflows.html">4.7. Design Workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/design_workflows.html">4.7. [ALPHA] Design Workflows</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/scores.html">4.8. Scores</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/data_sources.html">4.9. Data Sources</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/predictor_reports.html">4.10. Predictor Reports</a></li>

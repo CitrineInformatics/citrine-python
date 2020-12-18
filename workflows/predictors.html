@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>4.4. Predictors &#8212; Citrine Python 0.0.1 documentation</title>
+    <title>4.4. Predictors &#8212; Citrine Python 0.87.1 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="../_static/favicon.png"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="4.5. Design Spaces" href="design_spaces.html" />
+    <link rel="next" title="4.5. [ALPHA] Design Spaces" href="design_spaces.html" />
     <link rel="prev" title="4.2. Descriptors" href="descriptors.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -283,7 +283,7 @@ Labels are specified using a map from each label to a list of all ingredients th
 Anytime a recipe contains a non-zero amount of labeled ingredient, the ingredient is assigned the label.
 For example, we may wish to label <code class="docutils literal notranslate"><span class="pre">water</span></code> as a solute and <code class="docutils literal notranslate"><span class="pre">salt</span></code> as a solvent.
 These labels are specified via:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">labels</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;solvent&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;water&#39;</span><span class="p">],</span> <span class="s1">&#39;solute&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;salt&#39;</span><span class="p">]}</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">labels</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;solvent&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;water&#39;}, &quot;</span><span class="n">solute</span><span class="s2">&quot;: {&quot;</span><span class="n">salt</span><span class="s2">&quot;}}</span>
 </pre></div>
 </div>
 <p>The following example illustrates how an <a class="reference internal" href="../reference/citrine.informatics.predictors.html#citrine.informatics.predictors.IngredientsToSimpleMixturePredictor" title="citrine.informatics.predictors.IngredientsToSimpleMixturePredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientsToSimpleMixturePredictor</span></code></a> is constructed for the saline example.</p>
@@ -323,8 +323,8 @@ These labels are specified via:</p>
     <span class="p">},</span>
     <span class="c1"># label water as a solvent and salt a solute</span>
     <span class="n">labels</span><span class="o">=</span><span class="p">{</span>
-        <span class="s1">&#39;solvent&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;water&#39;</span><span class="p">],</span>
-        <span class="s1">&#39;solute&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;salt&#39;</span><span class="p">]</span>
+        <span class="s2">&quot;solvent&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;water&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;solute&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;salt&quot;</span><span class="p">}</span>
     <span class="p">},</span>
     <span class="n">training_data</span><span class="o">=</span><span class="p">[</span><span class="n">data_source</span><span class="p">]</span>
 <span class="p">)</span>
@@ -603,9 +603,9 @@ and this descriptor must match the input formulation descriptor of the sub-predi
 <li class="toctree-l2"><a class="reference internal" href="descriptors.html">4.2. Descriptors</a></li>
 <li class="toctree-l2"><a class="reference internal" href="descriptors.html#platform-vocabularies">4.3. Platform Vocabularies</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">4.4. Predictors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="design_spaces.html">4.5. Design Spaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="design_spaces.html">4.5. [ALPHA] Design Spaces</a></li>
 <li class="toctree-l2"><a class="reference internal" href="processors.html">4.6. Processors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="design_workflows.html">4.7. Design Workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="design_workflows.html">4.7. [ALPHA] Design Workflows</a></li>
 <li class="toctree-l2"><a class="reference internal" href="scores.html">4.8. Scores</a></li>
 <li class="toctree-l2"><a class="reference internal" href="data_sources.html">4.9. Data Sources</a></li>
 <li class="toctree-l2"><a class="reference internal" href="predictor_reports.html">4.10. Predictor Reports</a></li>
@@ -626,7 +626,7 @@ and this descriptor must match the input formulation descriptor of the sub-predi
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="index.html">4. [ALPHA] AI Engine</a><ul>
       <li>Previous: <a href="descriptors.html" title="previous chapter">4.2. Descriptors</a></li>
-      <li>Next: <a href="design_spaces.html" title="next chapter">4.5. Design Spaces</a></li>
+      <li>Next: <a href="design_spaces.html" title="next chapter">4.5. [ALPHA] Design Spaces</a></li>
   </ul></li>
   </ul></li>
 </ul>

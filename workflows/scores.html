@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>4.8. Scores &#8212; Citrine Python 0.0.1 documentation</title>
+    <title>4.8. Scores &#8212; Citrine Python 0.87.1 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -17,7 +17,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="4.9. Data Sources" href="data_sources.html" />
-    <link rel="prev" title="4.7. Design Workflows" href="design_workflows.html" />
+    <link rel="prev" title="4.7. [ALPHA] Design Workflows" href="design_workflows.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -41,9 +41,14 @@ An objective defines the goal for a scalar value associated with a particular de
 The goal can be to either maximize or minimize a value by using <a class="reference internal" href="../reference/citrine.informatics.objectives.html#citrine.informatics.objectives.ScalarMaxObjective" title="citrine.informatics.objectives.ScalarMaxObjective"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScalarMaxObjective</span></code></a> or <a class="reference internal" href="../reference/citrine.informatics.objectives.html#citrine.informatics.objectives.ScalarMinObjective" title="citrine.informatics.objectives.ScalarMinObjective"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScalarMinObjective</span></code></a>, respectively.
 Constraints represent a set of conditions on variables that should be satisfied.
 Constraints can used to restrict either a design space or descriptor values in design candidates.
-There are two constraint types:
-<code class="xref py py-class docutils literal notranslate"><span class="pre">ScalarRangeConstraint</span></code> restricts a scalar value between lower and upper bounds.
-<code class="xref py py-class docutils literal notranslate"><span class="pre">CategoricalConstraint</span></code> restricts a descriptor value to a set of acceptable values.</p>
+There are five constraint types:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="../reference/citrine.informatics.constraints.scalar_range_constraint.html#citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint" title="citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScalarRangeConstraint</span></code></a> restricts a scalar value between lower and upper bounds.</p></li>
+<li><p><a class="reference internal" href="../reference/citrine.informatics.constraints.categorical_constraint.html#citrine.informatics.constraints.categorical_constraint.CategoricalConstraint" title="citrine.informatics.constraints.categorical_constraint.CategoricalConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">CategoricalConstraint</span></code></a> restricts a descriptor value to a set of acceptable values.</p></li>
+<li><p><a class="reference internal" href="../reference/citrine.informatics.constraints.ingredient_count_constraint.html#citrine.informatics.constraints.ingredient_count_constraint.IngredientCountConstraint" title="citrine.informatics.constraints.ingredient_count_constraint.IngredientCountConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientCountConstraint</span></code></a> constrains the total number of ingredients in a formulation, or the total number of ingredients within a labeled class of ingredients.</p></li>
+<li><p><a class="reference internal" href="../reference/citrine.informatics.constraints.ingredient_fraction_constraint.html#citrine.informatics.constraints.ingredient_fraction_constraint.IngredientFractionConstraint" title="citrine.informatics.constraints.ingredient_fraction_constraint.IngredientFractionConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientFractionConstraint</span></code></a> restricts the fractional amount of a formulation ingredient between minimum and maximum bounds.</p></li>
+<li><p><a class="reference internal" href="../reference/citrine.informatics.constraints.label_fraction_constraint.html#citrine.informatics.constraints.label_fraction_constraint.LabelFractionConstraint" title="citrine.informatics.constraints.label_fraction_constraint.LabelFractionConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">LabelFractionConstraint</span></code></a> restricts the total fraction of ingredients with a given label in a formulation between minimum and maximum bounds.</p></li>
+</ul>
 <p>A candidate is scored based on the objective value and likelihood of satisfying the constraints.
 Higher scores represent “better” materials.</p>
 <p>Currently, there are three scores:</p>
@@ -170,9 +175,9 @@ EV is unique among the currently available scores in that it ignores the predict
 <li class="toctree-l2"><a class="reference internal" href="descriptors.html">4.2. Descriptors</a></li>
 <li class="toctree-l2"><a class="reference internal" href="descriptors.html#platform-vocabularies">4.3. Platform Vocabularies</a></li>
 <li class="toctree-l2"><a class="reference internal" href="predictors.html">4.4. Predictors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="design_spaces.html">4.5. Design Spaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="design_spaces.html">4.5. [ALPHA] Design Spaces</a></li>
 <li class="toctree-l2"><a class="reference internal" href="processors.html">4.6. Processors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="design_workflows.html">4.7. Design Workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="design_workflows.html">4.7. [ALPHA] Design Workflows</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">4.8. Scores</a></li>
 <li class="toctree-l2"><a class="reference internal" href="data_sources.html">4.9. Data Sources</a></li>
 <li class="toctree-l2"><a class="reference internal" href="predictor_reports.html">4.10. Predictor Reports</a></li>
@@ -192,7 +197,7 @@ EV is unique among the currently available scores in that it ignores the predict
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="index.html">4. [ALPHA] AI Engine</a><ul>
-      <li>Previous: <a href="design_workflows.html" title="previous chapter">4.7. Design Workflows</a></li>
+      <li>Previous: <a href="design_workflows.html" title="previous chapter">4.7. [ALPHA] Design Workflows</a></li>
       <li>Next: <a href="data_sources.html" title="next chapter">4.9. Data Sources</a></li>
   </ul></li>
   </ul></li>

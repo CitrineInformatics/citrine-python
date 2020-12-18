@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>4.5. Design Spaces &#8212; Citrine Python 0.0.1 documentation</title>
+    <title>4.5. [ALPHA] Design Spaces &#8212; Citrine Python 0.87.1 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -34,80 +34,19 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="design-spaces">
-<h1>4.5. Design Spaces<a class="headerlink" href="#design-spaces" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="alpha-design-spaces">
+<h1>4.5. [ALPHA] Design Spaces<a class="headerlink" href="#alpha-design-spaces" title="Permalink to this headline">¶</a></h1>
 <p>A design space defines a set of materials that should be searched over when performing a material design.
 Design Spaces must be registered to be used in a <a class="reference internal" href="design_workflows.html"><span class="doc">design workflow</span></a>.
-Currently, there are three design spaces:</p>
+Currently, there are four design spaces:</p>
 <ul class="simple">
-<li><p><a class="reference external" href="#product-design-space">ProductDesignSpace</a></p></li>
 <li><p><a class="reference external" href="#enumerated-design-space">EnumeratedDesignSpace</a></p></li>
+<li><p><a class="reference external" href="#product-design-space">ProductDesignSpace</a></p></li>
 <li><p><a class="reference external" href="#data-source-design-space">DataSourceDesignSpace</a></p></li>
+<li><p><a class="reference external" href="#formulation-design-space">FormulationDesignSpace</a></p></li>
 </ul>
-<div class="section" id="product-design-space">
-<h2>4.5.1. Product design space<a class="headerlink" href="#product-design-space" title="Permalink to this headline">¶</a></h2>
-<p>Materials from a product design space are composed from the <a class="reference external" href="https://en.wikipedia.org/wiki/Cartesian_product">Cartesian product</a> of univariate dimensions.
-A dimension defines valid values of a single variable.
-Valid values can be discrete sets (i.e. enumerated using a list) or continuous ranges (i.e. defined by upper and lower bounds on real numbers).
-This design space samples materials by taking one element from each of the dimensions.
-For example, given dimensions <code class="docutils literal notranslate"><span class="pre">temperature</span> <span class="pre">=</span> <span class="pre">[300,</span> <span class="pre">400]</span></code> and <code class="docutils literal notranslate"><span class="pre">time</span> <span class="pre">=</span> <span class="pre">[1,</span> <span class="pre">5,</span> <span class="pre">10]</span></code> the Cartesian product is:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">candidates</span> <span class="o">=</span> <span class="p">[</span>
-  <span class="p">{</span><span class="s2">&quot;temperature&quot;</span><span class="p">:</span> <span class="mi">300</span><span class="p">,</span> <span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
-  <span class="p">{</span><span class="s2">&quot;temperature&quot;</span><span class="p">:</span> <span class="mi">300</span><span class="p">,</span> <span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">},</span>
-  <span class="p">{</span><span class="s2">&quot;temperature&quot;</span><span class="p">:</span> <span class="mi">300</span><span class="p">,</span> <span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">},</span>
-  <span class="p">{</span><span class="s2">&quot;temperature&quot;</span><span class="p">:</span> <span class="mi">400</span><span class="p">,</span> <span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
-  <span class="p">{</span><span class="s2">&quot;temperature&quot;</span><span class="p">:</span> <span class="mi">400</span><span class="p">,</span> <span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">},</span>
-  <span class="p">{</span><span class="s2">&quot;temperature&quot;</span><span class="p">:</span> <span class="mi">400</span><span class="p">,</span> <span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">},</span>
-<span class="p">]</span>
-</pre></div>
-</div>
-<p>The defining method of a design space is the ability to draw samples from it.
-If a continuous range is included, a random sample is drawn for that variable, and finite variables are exhaustively enumerated.
-Once all combinations of finite variables have been sampled, the cycle repeats while continuing to sample new values from the infinite dimension.</p>
-<p>Finite sets of value are defined using an <a class="reference internal" href="../reference/citrine.informatics.dimensions.html#citrine.informatics.dimensions.EnumeratedDimension" title="citrine.informatics.dimensions.EnumeratedDimension"><code class="xref py py-class docutils literal notranslate"><span class="pre">EnumeratedDimension</span></code></a>.
-Valid variable values are specified using a list of strings.
-An enumerated dimension of two temperatures, for example, can be specified using the python SDK via:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.informatics.descriptors</span> <span class="kn">import</span> <span class="n">RealDescriptor</span>
-<span class="kn">from</span> <span class="nn">citrine.informatics.dimensions</span> <span class="kn">import</span> <span class="n">EnumeratedDimension</span>
-
-<span class="n">descriptor</span> <span class="o">=</span> <span class="n">RealDescriptor</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;Temperature&#39;</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=</span><span class="mi">273</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;K&#39;</span><span class="p">)</span>
-<span class="n">dimension</span> <span class="o">=</span> <span class="n">EnumeratedDimension</span><span class="p">(</span><span class="n">descriptor</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;300&#39;</span><span class="p">,</span> <span class="s1">&#39;400&#39;</span><span class="p">])</span>
-</pre></div>
-</div>
-<p>Continuous ranges of values are defined using a <a class="reference internal" href="../reference/citrine.informatics.dimensions.html#citrine.informatics.dimensions.ContinuousDimension" title="citrine.informatics.dimensions.ContinuousDimension"><code class="xref py py-class docutils literal notranslate"><span class="pre">ContinuousDimension</span></code></a>.
-Upper and lower bounds define the range of values we wish to uniformly sample from.
-If, using the previous example, temperature can be any value between 300 and 400K the dimension would be created using:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.informatics.dimensions</span> <span class="kn">import</span> <span class="n">ContinuousDimension</span>
-
-<span class="n">dimension</span> <span class="o">=</span> <span class="n">ContinuousDimension</span><span class="p">(</span><span class="n">descriptor</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mi">400</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>Note, the upper and lower bounds of the dimension do not need to match those of the descriptor.
-The bounds of the descriptor define the minimum and maximum temperatures that could be considered valid, e.g. our furnace can only reach 1000K.
-The bounds of the dimension are the bounds we wish to search between, e.g. restrict the search between 300 and 400K (even though the furnace heat go to much higher temperatures).</p>
-<p>Multiple <a class="reference internal" href="../reference/citrine.informatics.dimensions.html#citrine.informatics.dimensions.EnumeratedDimension" title="citrine.informatics.dimensions.EnumeratedDimension"><code class="xref py py-class docutils literal notranslate"><span class="pre">EnumeratedDimension</span></code></a> and <a class="reference internal" href="../reference/citrine.informatics.dimensions.html#citrine.informatics.dimensions.ContinuousDimension" title="citrine.informatics.dimensions.ContinuousDimension"><code class="xref py py-class docutils literal notranslate"><span class="pre">ContinuousDimension</span></code></a> objects can be combined to form a <code class="xref py py-class docutils literal notranslate"><span class="pre">ProductDesignSpace</span></code>:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.informatics.descriptors</span> <span class="kn">import</span> <span class="n">RealDescriptor</span><span class="p">,</span> <span class="n">CategoricalDescriptor</span>
-<span class="kn">from</span> <span class="nn">citrine.informatics.dimensions</span> <span class="kn">import</span> <span class="n">ContinuousDimension</span><span class="p">,</span> <span class="n">EnumeratedDimension</span>
-<span class="kn">from</span> <span class="nn">citrine.informatics.design_spaces</span> <span class="kn">import</span> <span class="n">ProductDesignSpace</span>
-
-<span class="n">temp_descriptor</span> <span class="o">=</span> <span class="n">RealDescriptor</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;Temperature&#39;</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=</span><span class="mi">273</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;K&#39;</span><span class="p">)</span>
-<span class="n">temp_dimension</span> <span class="o">=</span> <span class="n">ContinuousDimension</span><span class="p">(</span><span class="n">temp_descriptor</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mi">400</span><span class="p">)</span>
-
-<span class="n">speed_descriptor</span> <span class="o">=</span> <span class="n">CategoricalDescriptor</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;Mixing Speed&#39;</span><span class="p">,</span> <span class="n">categories</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Slow&quot;</span><span class="p">,</span> <span class="s2">&quot;Medium&quot;</span><span class="p">,</span> <span class="s2">&quot;Fast&quot;</span><span class="p">])</span>
-<span class="n">speed_dimension</span> <span class="o">=</span> <span class="n">EnumeratedDimension</span><span class="p">(</span><span class="n">speed_descriptor</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Slow&quot;</span><span class="p">,</span> <span class="s2">&quot;Fast&quot;</span><span class="p">])</span>
-
-<span class="n">speed_and_temp</span> <span class="o">=</span> <span class="n">ProductDesignSpace</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Speed and temperature&quot;</span><span class="p">,</span>
-    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Temperatures between 300 and 400 K and either Slow or Fast&quot;</span><span class="p">,</span>
-    <span class="n">dimensions</span><span class="o">=</span><span class="p">[</span><span class="n">temp_dimension</span><span class="p">,</span> <span class="n">speed_dimension</span><span class="p">]</span>
-<span class="p">)</span>
-
-<span class="n">speed_and_temp_design_space</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">design_spaces</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">speed_and_temp</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
 <div class="section" id="enumerated-design-space">
-<span id="id1"></span><h2>4.5.2. Enumerated design space<a class="headerlink" href="#enumerated-design-space" title="Permalink to this headline">¶</a></h2>
+<h2>4.5.1. Enumerated design space<a class="headerlink" href="#enumerated-design-space" title="Permalink to this headline">¶</a></h2>
 <p>An enumerated design space is composed of an explicit list of candidates.
 Each candidate is specified using a dictionary keyed on the key of a corresponding <a class="reference internal" href="../reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.Descriptor" title="citrine.informatics.descriptors.Descriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">Descriptor</span></code></a>.
 A list of descriptors defines what key-value pairs must be present in each candidate.
@@ -146,6 +85,108 @@ If a candidate is missing a descriptor key-value pair, contains extra key-value 
 </pre></div>
 </div>
 </div>
+<div class="section" id="product-design-space">
+<h2>4.5.2. Product design space<a class="headerlink" href="#product-design-space" title="Permalink to this headline">¶</a></h2>
+<p>Materials from a product design space are composed of the <a class="reference external" href="https://en.wikipedia.org/wiki/Cartesian_product">Cartesian product</a> of independent factors.
+Each factor can be a separate design space _or_ a univariate dimension.
+Any other type of design space can be a valid subspace.
+Subspaces can either be registered on the platform and referenced through their uid, or they can be defined anonymously and embedded in the product design space.</p>
+<p>A <a class="reference internal" href="../reference/citrine.informatics.dimensions.html#citrine.informatics.dimensions.Dimension" title="citrine.informatics.dimensions.Dimension"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dimension</span></code></a> defines valid values of a single variable.
+Valid values can be discrete sets (i.e., enumerated using a list) or continuous ranges (i.e., defined by upper and lower bounds on real numbers).
+The product design space samples materials by taking all combinations of one element from each dimension.
+For example, given dimensions <code class="docutils literal notranslate"><span class="pre">temperature</span> <span class="pre">=</span> <span class="pre">[300,</span> <span class="pre">400]</span></code> and <code class="docutils literal notranslate"><span class="pre">time</span> <span class="pre">=</span> <span class="pre">[1,</span> <span class="pre">5,</span> <span class="pre">10]</span></code> the Cartesian product is:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">candidates</span> <span class="o">=</span> <span class="p">[</span>
+  <span class="p">{</span><span class="s2">&quot;temperature&quot;</span><span class="p">:</span> <span class="mi">300</span><span class="p">,</span> <span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
+  <span class="p">{</span><span class="s2">&quot;temperature&quot;</span><span class="p">:</span> <span class="mi">300</span><span class="p">,</span> <span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">},</span>
+  <span class="p">{</span><span class="s2">&quot;temperature&quot;</span><span class="p">:</span> <span class="mi">300</span><span class="p">,</span> <span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">},</span>
+  <span class="p">{</span><span class="s2">&quot;temperature&quot;</span><span class="p">:</span> <span class="mi">400</span><span class="p">,</span> <span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
+  <span class="p">{</span><span class="s2">&quot;temperature&quot;</span><span class="p">:</span> <span class="mi">400</span><span class="p">,</span> <span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">},</span>
+  <span class="p">{</span><span class="s2">&quot;temperature&quot;</span><span class="p">:</span> <span class="mi">400</span><span class="p">,</span> <span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="mi">10</span><span class="p">}</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>The defining characteristic of a design space is the ability to draw samples from it.
+If a continuous range is included, a random sample is drawn for that variable, and finite variables are exhaustively enumerated.
+Once all combinations of finite variables have been sampled, the cycle repeats while continuing to sample new values from the infinite dimension.</p>
+<p>Finite sets of value are defined using an <a class="reference internal" href="../reference/citrine.informatics.dimensions.html#citrine.informatics.dimensions.EnumeratedDimension" title="citrine.informatics.dimensions.EnumeratedDimension"><code class="xref py py-class docutils literal notranslate"><span class="pre">EnumeratedDimension</span></code></a>.
+Valid variable values are specified using a list of strings.
+An enumerated dimension of two temperatures, for example, can be specified using the python SDK via:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.informatics.descriptors</span> <span class="kn">import</span> <span class="n">RealDescriptor</span>
+<span class="kn">from</span> <span class="nn">citrine.informatics.dimensions</span> <span class="kn">import</span> <span class="n">EnumeratedDimension</span>
+
+<span class="n">descriptor</span> <span class="o">=</span> <span class="n">RealDescriptor</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;Temperature&#39;</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=</span><span class="mi">273</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;K&#39;</span><span class="p">)</span>
+<span class="n">dimension</span> <span class="o">=</span> <span class="n">EnumeratedDimension</span><span class="p">(</span><span class="n">descriptor</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;300&#39;</span><span class="p">,</span> <span class="s1">&#39;400&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>Continuous ranges of values are defined using a <a class="reference internal" href="../reference/citrine.informatics.dimensions.html#citrine.informatics.dimensions.ContinuousDimension" title="citrine.informatics.dimensions.ContinuousDimension"><code class="xref py py-class docutils literal notranslate"><span class="pre">ContinuousDimension</span></code></a>.
+Upper and lower bounds define the range of values we wish to uniformly sample from.
+If, using the previous example, temperature can be any value between 300 and 400K the dimension would be created using:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.informatics.dimensions</span> <span class="kn">import</span> <span class="n">ContinuousDimension</span>
+
+<span class="n">dimension</span> <span class="o">=</span> <span class="n">ContinuousDimension</span><span class="p">(</span><span class="n">descriptor</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mi">400</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Note, the upper and lower bounds of the dimension do not need to match those of the descriptor.
+The bounds of the descriptor define the minimum and maximum temperatures that could be considered valid, e.g. our furnace can only reach 1000K.
+The bounds of the dimension are the bounds we wish to search between, e.g., restrict the search to between 300 and 400K (even though the furnace can go to much higher temperatures).</p>
+<p>A product design space combines subspaces in a similar manner, although subspaces are often multivariate.
+However the same principle holds for sampling: all combinations of finite factors are enumerated, while infinite factors are sampled continuously.
+Note, each factor must be <strong>independent</strong>.
+This means that the same descriptor may not appear more than once in a product design space.</p>
+<p>As an example, let’s create a produt design space that defines the ways in which we might mix two pigments together and stir at some temperature.
+We are only interested in specific amounts of each pigment, so we create an enumerated design space that defines the amounts we wish to test.
+The mixing speed is discrete, so we describe it with an enumerated dimension.
+And temperature is described by a continuous dimension.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.informatics.descriptors</span> <span class="kn">import</span> <span class="n">RealDescriptor</span><span class="p">,</span> <span class="n">CategoricalDescriptor</span>
+<span class="kn">from</span> <span class="nn">citrine.informatics.dimensions</span> <span class="kn">import</span> <span class="n">ContinuousDimension</span><span class="p">,</span> <span class="n">EnumeratedDimension</span>
+<span class="kn">from</span> <span class="nn">citrine.informatics.design_spaces</span> <span class="kn">import</span> <span class="n">ProductDesignSpace</span><span class="p">,</span> <span class="n">EnumeratedDesignSpace</span>
+
+<span class="n">pigmentA_descriptor</span> <span class="o">=</span> <span class="n">RealDescriptor</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;Amount of Pigment A&#39;</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;g&#39;</span><span class="p">)</span>
+<span class="n">pigmentB_descriptor</span> <span class="o">=</span> <span class="n">RealDescriptor</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;Amount of Pigment B&#39;</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;g&#39;</span><span class="p">)</span>
+<span class="n">enumerated_space</span> <span class="o">=</span> <span class="n">EnumeratedDesignSpace</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;amounts of pigments A and B&quot;</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;total amount of pigment is 100 grams&quot;</span><span class="p">,</span>
+    <span class="n">data</span><span class="o">=</span><span class="p">[</span>
+        <span class="p">{</span><span class="s1">&#39;Amount of Pigment A&#39;</span><span class="p">:</span> <span class="mf">10.0</span><span class="p">,</span> <span class="s1">&#39;Amount of Pigment B&#39;</span><span class="p">:</span> <span class="mf">90.0</span><span class="p">},</span>
+        <span class="p">{</span><span class="s1">&#39;Amount of Pigment A&#39;</span><span class="p">:</span> <span class="mf">15.0</span><span class="p">,</span> <span class="s1">&#39;Amount of Pigment B&#39;</span><span class="p">:</span> <span class="mf">85.0</span><span class="p">},</span>
+        <span class="p">{</span><span class="s1">&#39;Amount of Pigment A&#39;</span><span class="p">:</span> <span class="mf">20.0</span><span class="p">,</span> <span class="s1">&#39;Amount of Pigment B&#39;</span><span class="p">:</span> <span class="mf">80.0</span><span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">)</span>
+<span class="n">enumerated_space_registered</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">design_spaces</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">enumerated_space</span><span class="p">)</span>
+<span class="n">enumerated_space_uid</span> <span class="o">=</span> <span class="n">enumerated_space_registered</span><span class="o">.</span><span class="n">uid</span>
+
+<span class="n">temp_descriptor</span> <span class="o">=</span> <span class="n">RealDescriptor</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;Temperature&#39;</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=</span><span class="mi">273</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;K&#39;</span><span class="p">)</span>
+<span class="n">temp_dimension</span> <span class="o">=</span> <span class="n">ContinuousDimension</span><span class="p">(</span><span class="n">temp_descriptor</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mi">400</span><span class="p">)</span>
+
+<span class="n">speed_descriptor</span> <span class="o">=</span> <span class="n">CategoricalDescriptor</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;Mixing Speed&#39;</span><span class="p">,</span> <span class="n">categories</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Slow&quot;</span><span class="p">,</span> <span class="s2">&quot;Medium&quot;</span><span class="p">,</span> <span class="s2">&quot;Fast&quot;</span><span class="p">])</span>
+<span class="n">speed_dimension</span> <span class="o">=</span> <span class="n">EnumeratedDimension</span><span class="p">(</span><span class="n">speed_descriptor</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Slow&quot;</span><span class="p">,</span> <span class="s2">&quot;Fast&quot;</span><span class="p">])</span>
+
+<span class="n">product_space</span> <span class="o">=</span> <span class="n">ProductDesignSpace</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Mix 2 pigments at some speed and temperature&quot;</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Pigments A and B, temperatures between 300 and 400 K, and either Slow or Fast&quot;</span><span class="p">,</span>
+    <span class="n">subspaces</span><span class="o">=</span><span class="p">[</span><span class="n">enumerated_space_uid</span><span class="p">],</span>
+    <span class="n">dimensions</span><span class="o">=</span><span class="p">[</span><span class="n">temp_dimension</span><span class="p">,</span> <span class="n">speed_dimension</span><span class="p">]</span>
+<span class="p">)</span>
+
+<span class="n">product_space</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">design_spaces</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">product_space</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In the approach shown above, the enumerated design space is registered on-platform and can be used in other contexts.
+It would also be valid, however, to not register the enumerated design space and to include it in the product design space directly as opposed to through its uid: <cite>subspaces=[enumerated_space]</cite>.</p>
+<p>The enumerated design space defined in this way might product the following candidates:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span> <span class="n">candidates</span> <span class="o">=</span> <span class="p">[</span>
+     <span class="p">{</span><span class="s2">&quot;Amount of Pigment A&quot;</span><span class="p">:</span> <span class="mf">10.0</span><span class="p">,</span> <span class="s2">&quot;Amount of Pigment B&quot;</span><span class="p">:</span> <span class="mf">90.0</span><span class="p">,</span> <span class="s2">&quot;Mixing Speed&quot;</span><span class="p">:</span> <span class="s2">&quot;Slow&quot;</span><span class="p">,</span> <span class="s2">&quot;Temperature&quot;</span><span class="p">:</span> <span class="mf">329.1356</span><span class="p">},</span>
+     <span class="p">{</span><span class="s2">&quot;Amount of Pigment A&quot;</span><span class="p">:</span> <span class="mf">10.0</span><span class="p">,</span> <span class="s2">&quot;Amount of Pigment B&quot;</span><span class="p">:</span> <span class="mf">90.0</span><span class="p">,</span> <span class="s2">&quot;Mixing Speed&quot;</span><span class="p">:</span> <span class="s2">&quot;Fast&quot;</span><span class="p">,</span> <span class="s2">&quot;Temperature&quot;</span><span class="p">:</span> <span class="mf">391.5329</span><span class="p">},</span>
+     <span class="p">{</span><span class="s2">&quot;Amount of Pigment A&quot;</span><span class="p">:</span> <span class="mf">15.0</span><span class="p">,</span> <span class="s2">&quot;Amount of Pigment B&quot;</span><span class="p">:</span> <span class="mf">85.0</span><span class="p">,</span> <span class="s2">&quot;Mixing Speed&quot;</span><span class="p">:</span> <span class="s2">&quot;Slow&quot;</span><span class="p">,</span> <span class="s2">&quot;Temperature&quot;</span><span class="p">:</span> <span class="mf">388.2350</span><span class="p">},</span>
+     <span class="p">{</span><span class="s2">&quot;Amount of Pigment A&quot;</span><span class="p">:</span> <span class="mf">15.0</span><span class="p">,</span> <span class="s2">&quot;Amount of Pigment B&quot;</span><span class="p">:</span> <span class="mf">85.0</span><span class="p">,</span> <span class="s2">&quot;Mixing Speed&quot;</span><span class="p">:</span> <span class="s2">&quot;Fast&quot;</span><span class="p">,</span> <span class="s2">&quot;Temperature&quot;</span><span class="p">:</span> <span class="mf">347.9817</span><span class="p">},</span>
+     <span class="p">{</span><span class="s2">&quot;Amount of Pigment A&quot;</span><span class="p">:</span> <span class="mf">20.0</span><span class="p">,</span> <span class="s2">&quot;Amount of Pigment B&quot;</span><span class="p">:</span> <span class="mf">80.0</span><span class="p">,</span> <span class="s2">&quot;Mixing Speed&quot;</span><span class="p">:</span> <span class="s2">&quot;Slow&quot;</span><span class="p">,</span> <span class="s2">&quot;Temperature&quot;</span><span class="p">:</span> <span class="mf">381.8395</span><span class="p">},</span>
+     <span class="p">{</span><span class="s2">&quot;Amount of Pigment A&quot;</span><span class="p">:</span> <span class="mf">20.0</span><span class="p">,</span> <span class="s2">&quot;Amount of Pigment B&quot;</span><span class="p">:</span> <span class="mf">80.0</span><span class="p">,</span> <span class="s2">&quot;Mixing Speed&quot;</span><span class="p">:</span> <span class="s2">&quot;Fast&quot;</span><span class="p">,</span> <span class="s2">&quot;Temperature&quot;</span><span class="p">:</span> <span class="mf">305.8001</span><span class="p">},</span>
+     <span class="p">{</span><span class="s2">&quot;Amount of Pigment A&quot;</span><span class="p">:</span> <span class="mf">10.0</span><span class="p">,</span> <span class="s2">&quot;Amount of Pigment B&quot;</span><span class="p">:</span> <span class="mf">90.0</span><span class="p">,</span> <span class="s2">&quot;Mixing Speed&quot;</span><span class="p">:</span> <span class="s2">&quot;Slow&quot;</span><span class="p">,</span> <span class="s2">&quot;Temperature&quot;</span><span class="p">:</span> <span class="mf">338.1545</span><span class="p">},</span>
+     <span class="o">...</span> <span class="c1"># enumerated factors repeat while continuously sampling Temperature</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+</div>
 <div class="section" id="data-source-design-space">
 <h2>4.5.3. Data Source Design Space<a class="headerlink" href="#data-source-design-space" title="Permalink to this headline">¶</a></h2>
 <p>A data source design space is similar in spirit to an enumerated design space, but the candidates are drawn from an existing data source instead of being specified through a list of dictionaries.
@@ -166,6 +207,82 @@ The example code below creates a registers a design space based on this Gem Tabl
     <span class="n">name</span><span class="o">=</span><span class="s2">&quot;my candidates&quot;</span><span class="p">,</span>
     <span class="n">description</span><span class="o">=</span><span class="s2">&quot;450 potential formulations&quot;</span><span class="p">,</span>
     <span class="n">data_source</span><span class="o">=</span><span class="n">data_source</span>
+<span class="p">)</span>
+
+<span class="n">registered_design_space</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">design_spaces</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">design_space</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="formulation-design-space">
+<h2>4.5.4. Formulation Design Space<a class="headerlink" href="#formulation-design-space" title="Permalink to this headline">¶</a></h2>
+<p>A formulation design space defines the set of formulations that can be produced from a given set of ingredient names, labels, and constraints.
+Ingredient names are specified as a set of strings, each mapping to a unique ingredient in a design space.
+For example, <code class="docutils literal notranslate"><span class="pre">{&quot;water&quot;,&quot;salt&quot;}</span></code> may be the set of names for a design space with two ingredients.
+Labels provide a way to map a string to a set of ingredient names.
+For example, salt can be labelled as a solute by specifying the mapping <code class="docutils literal notranslate"><span class="pre">{&quot;solute&quot;:</span> <span class="pre">{&quot;salt&quot;}}</span></code>.
+An ingredient may be given multiple labels, and an ingredient will always be given all applicable labels when present in a formulation.</p>
+<p>Constraints restrict the total number or fractional amount of ingredients in formulations sampled from the design space.
+There are three types of constraint that can be specified as part of a formulation design space:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="../reference/citrine.informatics.constraints.ingredient_count_constraint.html#citrine.informatics.constraints.ingredient_count_constraint.IngredientCountConstraint" title="citrine.informatics.constraints.ingredient_count_constraint.IngredientCountConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientCountConstraint</span></code></a> constrains the total number of ingredients in a formulation.
+At least one constraint on the total number of ingredients is required.
+Formulation design spaces without this constraint will fail validation.
+Additional ingredient count constraints may specify a label.
+If specified, only ingredients with the given label count towards the constraint total.
+This could be used, for example, to constrain the total number of solutes in a formulation without constraining the number of solvents.</p></li>
+<li><p><a class="reference internal" href="../reference/citrine.informatics.constraints.ingredient_fraction_constraint.html#citrine.informatics.constraints.ingredient_fraction_constraint.IngredientFractionConstraint" title="citrine.informatics.constraints.ingredient_fraction_constraint.IngredientFractionConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientFractionConstraint</span></code></a> restricts the fractional amount of a single formulation ingredient between minimum and maximum bounds.</p></li>
+<li><p><a class="reference internal" href="../reference/citrine.informatics.constraints.label_fraction_constraint.html#citrine.informatics.constraints.label_fraction_constraint.LabelFractionConstraint" title="citrine.informatics.constraints.label_fraction_constraint.LabelFractionConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">LabelFractionConstraint</span></code></a> places minimum and maximum bounds on the sum of fractional amounts of ingredients that have a specified label.
+This could be used, for example, to ensure the total fraction of ingredients labeled as solute is within a given range.</p></li>
+</ul>
+<p>All minimum and maximum bounds for these three formulation constraints are inclusive.</p>
+<p><a class="reference internal" href="../reference/citrine.informatics.constraints.ingredient_fraction_constraint.html#citrine.informatics.constraints.ingredient_fraction_constraint.IngredientFractionConstraint" title="citrine.informatics.constraints.ingredient_fraction_constraint.IngredientFractionConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientFractionConstraint</span></code></a> and <a class="reference internal" href="../reference/citrine.informatics.constraints.label_fraction_constraint.html#citrine.informatics.constraints.label_fraction_constraint.LabelFractionConstraint" title="citrine.informatics.constraints.label_fraction_constraint.LabelFractionConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">LabelFractionConstraint</span></code></a> also have an <code class="docutils literal notranslate"><span class="pre">is_required</span></code> flag.
+By default <code class="docutils literal notranslate"><span class="pre">is_required</span> <span class="pre">==</span> <span class="pre">True</span></code>, indicating that ingredient and label fractions unconditionally must be within the minimum and maximum bound defined by the constraint.
+If set to <code class="docutils literal notranslate"><span class="pre">False</span></code>, the fractional amount may be either zero or within the specified bounds.
+In other words, the fractional amount is restricted to the specified bounds <em>only</em> when the formulations contains the constrained ingredient (for ingredient fraction constraints) or any ingredient with the given label (for label fraction constraints).
+Setting <code class="docutils literal notranslate"><span class="pre">is_required</span></code> to <code class="docutils literal notranslate"><span class="pre">False</span></code> effectively adds 0 as a valid value.</p>
+<p>Formulation design spaces define an inherent <code class="docutils literal notranslate"><span class="pre">resolution</span></code> for formulations sampled from the domain.
+This resolution defines the minimum step size between consecutive formulations sampled from the space.
+Resolution does not impose a grid over fractional ingredient amounts.
+Instead, it provides a way to specify the characteristic length scale for the problem.
+The resolution should be set to the minimum change in fractional ingredient amount that can be expected to make a difference in your problem.
+The default resolution is 0.01, which means that at least one ingredient fraction will differ by at least 0.01 between consecutive candidates sampled from the formulation design space.</p>
+<p>Formulations sampled from the design space are stored using the <a class="reference internal" href="../reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.FormulationDescriptor" title="citrine.informatics.descriptors.FormulationDescriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">FormulationDescriptor</span></code></a> passed to the design space when it is configured.
+Each formulation contains two pieces of information: a recipe and a collection of ingredient labels.
+Each recipe can be thought of as a map from ingredient name to its fractional amount, e.g., <code class="docutils literal notranslate"><span class="pre">{&quot;water&quot;:</span> <span class="pre">0.99,</span> <span class="pre">&quot;salt&quot;:</span> <span class="pre">0.01}</span></code>.
+Ingredient fractions in recipes sampled from a formulation design space will always sum to 1.
+Label information defines which labels are applied to each ingredient in the recipe.
+These labels will always be a subset of all labels from the design space.</p>
+<p>The following demonstrates how to create a formulation design space of saline solutions containing three ingredients: water, salt, and boric acid (a common antiseptic).
+We will require that formulations contain 2 ingredients, that no more than 1 solute is present, and that the total fraction of water is between 0.95 and 0.99.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.informatics.descriptors</span> <span class="kn">import</span> <span class="n">FormulationDescriptor</span>
+<span class="kn">from</span> <span class="nn">citrine.informatics.design_spaces</span> <span class="kn">import</span> <span class="n">FormulationDesignSpace</span>
+<span class="kn">from</span> <span class="nn">citrine.informatics.constraints</span> <span class="kn">import</span> <span class="n">IngredientCountConstraint</span><span class="p">,</span> <span class="n">IngredientFractionConstraint</span>
+
+<span class="c1"># define a descriptor to store formulations</span>
+<span class="n">descriptor</span> <span class="o">=</span> <span class="n">FormulationDescriptor</span><span class="p">(</span><span class="s2">&quot;saline solution&quot;</span><span class="p">)</span>
+
+<span class="c1"># set of unique ingredient names</span>
+<span class="n">ingredients</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;water&quot;</span><span class="p">,</span> <span class="s2">&quot;salt&quot;</span><span class="p">,</span> <span class="s2">&quot;boric acid&quot;</span><span class="p">}</span>
+
+<span class="c1"># labels for each ingredient</span>
+<span class="n">labels</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="s2">&quot;solute&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;water&quot;</span><span class="p">},</span>
+  <span class="s2">&quot;solvent&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;salt&quot;</span><span class="p">,</span> <span class="s2">&quot;boric acid&quot;</span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1"># constraints on formulations emitted from the design space</span>
+<span class="n">constraints</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="n">IngredientCountConstraint</span><span class="p">(</span><span class="n">descriptor</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span>
+  <span class="n">IngredientCountConstraint</span><span class="p">(</span><span class="n">descriptor</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;solute&quot;</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+  <span class="n">IngredientFractionConstraint</span><span class="p">(</span><span class="n">descriptor</span><span class="p">,</span> <span class="n">ingredient</span><span class="o">=</span><span class="s2">&quot;water&quot;</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mf">0.95</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mf">0.99</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="n">design_space</span> <span class="o">=</span> <span class="n">FormulationDesignSpace</span><span class="p">(</span>
+  <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Saline solution design space&quot;</span><span class="p">,</span>
+  <span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;Composes formulations from water, salt, and boric acid&quot;</span><span class="p">,</span>
+  <span class="n">ingredients</span> <span class="o">=</span> <span class="n">ingredients</span><span class="p">,</span>
+  <span class="n">labels</span> <span class="o">=</span> <span class="n">labels</span><span class="p">,</span>
+  <span class="n">constraints</span> <span class="o">=</span> <span class="n">constraints</span>
 <span class="p">)</span>
 
 <span class="n">registered_design_space</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">design_spaces</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">design_space</span><span class="p">)</span>
@@ -239,9 +356,9 @@ The example code below creates a registers a design space based on this Gem Tabl
 <li class="toctree-l2"><a class="reference internal" href="descriptors.html">4.2. Descriptors</a></li>
 <li class="toctree-l2"><a class="reference internal" href="descriptors.html#platform-vocabularies">4.3. Platform Vocabularies</a></li>
 <li class="toctree-l2"><a class="reference internal" href="predictors.html">4.4. Predictors</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">4.5. Design Spaces</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">4.5. [ALPHA] Design Spaces</a></li>
 <li class="toctree-l2"><a class="reference internal" href="processors.html">4.6. Processors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="design_workflows.html">4.7. Design Workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="design_workflows.html">4.7. [ALPHA] Design Workflows</a></li>
 <li class="toctree-l2"><a class="reference internal" href="scores.html">4.8. Scores</a></li>
 <li class="toctree-l2"><a class="reference internal" href="data_sources.html">4.9. Data Sources</a></li>
 <li class="toctree-l2"><a class="reference internal" href="predictor_reports.html">4.10. Predictor Reports</a></li>
