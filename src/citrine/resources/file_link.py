@@ -56,7 +56,7 @@ class FileProcessingData:
 
 
 class CsvColumnInfo(Serializable):
-    """The info for a CSV Column, contains the name, recommended and exact bounds.."""
+    """The info for a CSV Column, contains the name, recommended and exact bounds."""
 
     name = String('name')
     bounds = Object(BaseBounds, 'bounds')
