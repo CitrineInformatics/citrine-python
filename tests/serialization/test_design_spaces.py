@@ -38,6 +38,12 @@ def test_product_serialization(valid_product_design_space_data):
     assert serialized['config']['subspaces'][0] == original_data['config']['subspaces'][0]['id']
     assert serialized['config']['subspaces'][1] == original_data['config']['subspaces'][1]['instance']
 
+    # Replace one of the subspaces with its uid, and check that the serialized result is the same.
+    design_space.subspaces[0] = design_space.subspaces[0].uid
+    serialized_with_uid = design_space.dump()
+    serialized_with_uid['id'] = valid_product_design_space_data['id']
+    assert serialized_with_uid == serialized
+
 
 def test_old_product_serialization(old_valid_product_design_space_data):
     """Ensure that the old version of the product design space can be (de)serialized.
