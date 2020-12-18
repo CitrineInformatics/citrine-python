@@ -38,7 +38,7 @@ class DesignWorkflowCollection(Collection[NewDesignWorkflow]):
         """
         url = self._path_template.format(project_id=self.project_id) \
             + "/{}/archive".format(workflow_id)
-        return self.session.put_resource(url, {})
+        self.session.put_resource(url, {})
 
     def restore(self, workflow_id: UUID):
         """Restore a predictor evaluation workflow.
@@ -51,7 +51,7 @@ class DesignWorkflowCollection(Collection[NewDesignWorkflow]):
         """
         url = self._path_template.format(project_id=self.project_id) \
             + "/{}/restore".format(workflow_id)
-        return self.session.put_resource(url, {})
+        self.session.put_resource(url, {})
 
     def delete(self, uid: Union[UUID, str]) -> Response:
         """Predictor Evaluation Workflows cannot be deleted; they can be archived instead."""

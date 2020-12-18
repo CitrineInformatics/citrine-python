@@ -72,15 +72,6 @@ class DesignExecution(Resource['DesignExecution']):
                                         page=page,
                                         per_page=per_page)
 
-    def __getitem__(self, item):
-        if isinstance(item, str):
-            return self.results(item)
-        else:
-            raise TypeError("Results are accessed by string names")
-
-    def __iter__(self):
-        return iter(self.evaluator_names)
-
 
 class DesignExecutionCollection(Collection["DesignExecution"]):
     """A collection of DesignExecutions."""
@@ -93,7 +84,7 @@ class DesignExecutionCollection(Collection["DesignExecution"]):
     def __init__(self, *,
                  project_id: UUID,
                  session: Session,
-                 workflow_id: UUID):
+                 workflow_id: Optional[UUID] = None):
         self.project_id: UUID = project_id
         self.session: Session = session
         self.workflow_id: UUID = workflow_id
@@ -106,7 +97,7 @@ class DesignExecutionCollection(Collection["DesignExecution"]):
         return execution
 
     def trigger(self, execution_input: Score):
-        """Trigger a Design Workflow execution against a predictor, by id."""
+        """Trigger a Design Workflow execution given a score."""
         path = self._get_path()
         data = self.session.post_resource(path, {'score': execution_input.dump()})
         self._check_experimental(data)
@@ -121,7 +112,6 @@ class DesignExecutionCollection(Collection["DesignExecution"]):
                    page: Optional[int] = None,
                    per_page: int = 100,
                    ) -> Iterable[DesignCandidate]:
-        """Trigger a Design Workflow execution against a predictor, by id."""
         path = self._get_path() + "/{}/candidates".format(execution_id)
         fetcher = partial(self._fetch_page, path=path)
 

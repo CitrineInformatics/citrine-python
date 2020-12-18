@@ -3,6 +3,7 @@ from pprint import pprint
 from citrine._rest.collection import Collection
 from citrine.informatics.modules import Module
 from citrine.resources.predictor_evaluation_execution import PredictorEvaluationExecution
+from citrine.resources.design_execution import DesignExecution
 from citrine.resources.workflow_executions import (
     WorkflowExecution,
     WorkflowExecutionStatus,
@@ -136,7 +137,7 @@ def wait_while_executing(
     start = time.time()
 
     def execution_is_finished():
-        if isinstance(execution, PredictorEvaluationExecution):
+        if isinstance(execution, PredictorEvaluationExecution) or isinstance(execution, DesignExecution):
             if collection is None:
                 raise ValueError("Must provide collection")
             status = collection.get(execution.uid).status

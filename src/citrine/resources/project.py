@@ -139,7 +139,7 @@ class Project(Resource['Project']):
     @property
     def design_executions(self) -> DesignExecutionCollection:
         """[ALPHA] Return a collection representing all visible predictor evaluation executions."""
-        return DesignExecutionCollection(self.uid, self.session)
+        return DesignExecutionCollection(project_id=self.uid, session=self.session)
 
     @property
     def datasets(self) -> DatasetCollection:
