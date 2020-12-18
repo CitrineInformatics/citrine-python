@@ -35,6 +35,8 @@ class DesignExecution(Resource['DesignExecution'], Pageable):
     uid: UUID = properties.UUID('id', serializable=False)
     workflow_id = properties.UUID('workflow_id', serializable=False)
     status = properties.Optional(properties.String(), 'status', serializable=False)
+    status_description = properties.Optional(
+        properties.String(), 'status_description', serializable=False)
     status_info = properties.Optional(
         properties.List(properties.String()),
         'status_info',
