@@ -1,16 +1,20 @@
 """Resources that represent both individual and collections of workflow executions."""
-from typing import Optional
+from functools import lru_cache, partial
+from typing import Optional, Iterable
 from uuid import UUID
 
 from citrine._rest.collection import Collection
+from citrine._rest.paginator import Paginator
+from citrine._rest.pageable import Pageable
 from citrine._rest.resource import Resource
 from citrine._serialization import properties
 from citrine._session import Session
+from citrine.informatics.design_candidate import DesignCandidate
 from citrine.informatics.modules import ModuleRef
 from citrine.informatics.scores import Score
 
 
-class WorkflowExecution(Resource['WorkflowExecution']):
+class WorkflowExecution(Resource['WorkflowExecution'], Pageable):
     """[ALPHA] A Citrine Workflow Execution.
 
     Parameters
@@ -28,6 +32,7 @@ class WorkflowExecution(Resource['WorkflowExecution']):
     """
 
     _response_key = 'WorkflowExecutions'
+    _paginator: Paginator = Paginator()
 
     uid = properties.UUID('id')
     project_id = properties.UUID('project_id', deserializable=False)
@@ -67,6 +72,29 @@ class WorkflowExecution(Resource['WorkflowExecution']):
     def results(self):
         """Get the results of this execution."""
         return self.session.get_resource(self._path() + "/results")
+
+    @classmethod
+    def _build_candidates(cls, subset_collection: Iterable[dict]) -> Iterable[DesignCandidate]:
+        for candidate in subset_collection:
+            yield DesignCandidate.build(candidate)
+
+    @lru_cache()
+    def candidates(self,
+                page: Optional[int] = None,
+                per_page: int = 100,
+                ) -> Iterable[DesignCandidate]:
+        """Fetch the Design Candidates for the particular execution, paginated."""
+        path = '/projects/{project_id}/design-workflows/{workflow_id}/executions/{execution_id}/candidates' \
+            .format(project_id=self.project_id,
+                    workflow_id=self.workflow_id,
+                    execution_id=self.uid)
+
+        fetcher = partial(self._fetch_page, path=path)
+
+        return self._paginator.paginate(page_fetcher=fetcher,
+                                        collection_builder=self._build_candidates,
+                                        page=page,
+                                        per_page=per_page)
 
 
 class WorkflowExecutionCollection(Collection[WorkflowExecution]):

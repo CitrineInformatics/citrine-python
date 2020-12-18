@@ -67,7 +67,7 @@ class DesignExecution(Resource['DesignExecution'], Pageable):
             yield DesignCandidate.build(candidate)
 
     @lru_cache()
-    def results(self,
+    def candidates(self,
                 page: Optional[int] = None,
                 per_page: int = 100,
                 ) -> Iterable[DesignCandidate]:
@@ -111,23 +111,6 @@ class DesignExecutionCollection(Collection["DesignExecution"]):
         data = self.session.post_resource(path, {'score': execution_input.dump()})
         self._check_experimental(data)
         return self.build(data)
-
-    def _build_candidates(self, subset_collection: Iterable[dict]) -> Iterable[DesignCandidate]:
-        for candidate in subset_collection:
-            yield DesignCandidate.build(candidate)
-
-    def candidates(self,
-                   execution_id: UUID,
-                   page: Optional[int] = None,
-                   per_page: int = 100,
-                   ) -> Iterable[DesignCandidate]:
-        path = self._get_path() + "/{}/candidates".format(execution_id)
-        fetcher = partial(self._fetch_page, path=path)
-
-        return self._paginator.paginate(page_fetcher=fetcher,
-                                        collection_builder=self._build_candidates,
-                                        page=page,
-                                        per_page=per_page)
 
     def register(self, model: DesignExecution) -> DesignExecution:
         """Cannot register an execution."""

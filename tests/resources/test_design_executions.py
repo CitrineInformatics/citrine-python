@@ -88,7 +88,7 @@ def test_workflow_execution_results(workflow_execution: DesignExecution, session
     session.set_response(example_candidates)
 
     # When
-    results = list(workflow_execution.results(page=2, per_page=4))
+    results = list(workflow_execution.candidates(page=2, per_page=4))
 
     # Then
     # assert results == list(DesignExecution._build_candidates(example_candidates['response']))
