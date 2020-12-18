@@ -7,11 +7,9 @@ from citrine._rest.collection import Collection
 from citrine._rest.resource import Resource
 from citrine._serialization import properties
 from citrine._session import Session
-from citrine.informatics.modules import ModuleRef
 from citrine.informatics.design_candidate import DesignCandidate
 from citrine.resources.response import Response
 from citrine.informatics.scores import Score
-from citrine.exceptions import NonRetryableException, ModuleRegistrationFailedException
 
 
 class DesignExecution(Resource['DesignExecution']):
@@ -64,8 +62,9 @@ class DesignExecution(Resource['DesignExecution']):
                 page: Optional[int] = None,
                 per_page: int = 100,
                 ) -> Iterable[DesignCandidate]:
+        """Fetch the Design Candidates for the particular execution, paginated."""
         path = self._path() + '/candidates'
-        
+
         fetcher = partial(self._fetch_page, path=path)
 
         return self._paginator.paginate(page_fetcher=fetcher,
@@ -109,7 +108,7 @@ class DesignExecutionCollection(Collection["DesignExecution"]):
     def trigger(self, execution_input: Score):
         """Trigger a Design Workflow execution against a predictor, by id."""
         path = self._get_path()
-        data = self.session.post_resource(path, {'score':execution_input.dump()})
+        data = self.session.post_resource(path, {'score': execution_input.dump()})
         self._check_experimental(data)
         return self.build(data)
 
@@ -131,7 +130,6 @@ class DesignExecutionCollection(Collection["DesignExecution"]):
                                         page=page,
                                         per_page=per_page)
 
-
     def register(self, model: DesignExecution) -> DesignExecution:
         """Cannot register an execution."""
         raise NotImplementedError("Cannot register a DesignExecution.")
@@ -149,8 +147,8 @@ class DesignExecutionCollection(Collection["DesignExecution"]):
             Unique identifier of the execution to archive
 
         """
-        url = self._path_template.format(project_id=self.project_id, workflow_id=self.workflow_id) + "/{}/archive".format(execution_id)
-        data = self.session.put_resource(url, {})
+        raise NotImplementedError(
+            "Design Executions cannot be archived")
 
     def restore(self, execution_id: UUID):
         """Restore a Design Workflow execution.
@@ -161,8 +159,8 @@ class DesignExecutionCollection(Collection["DesignExecution"]):
             Unique identifier of the execution to restore
 
         """
-        url = self._path_template.format(project_id=self.project_id, workflow_id=self.workflow_id) + "/{}/restore".format(execution_id)
-        data = self.session.put_resource(url, {})
+        raise NotImplementedError(
+            "Design Executions cannot be restored")
 
     def list(self,
              page: Optional[int] = None,
@@ -200,4 +198,4 @@ class DesignExecutionCollection(Collection["DesignExecution"]):
     def delete(self, uid: Union[UUID, str]) -> Response:
         """Design Workflow Executions cannot be deleted; they can be archived instead."""
         raise NotImplementedError(
-            "Design Executions cannot be deleted; they can be archived instead.")
+            "Design Executions cannot be deleted")

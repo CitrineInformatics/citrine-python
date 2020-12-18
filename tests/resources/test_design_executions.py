@@ -37,6 +37,12 @@ def test_basic_methods(workflow_execution, collection):
     with pytest.raises(NotImplementedError):
         collection.update(workflow_execution)
 
+    with pytest.raises(NotImplementedError):
+        collection.archive(workflow_execution)
+
+    with pytest.raises(NotImplementedError):
+        collection.restore(workflow_execution)
+
 
 def test_build_new_execution(collection, design_execution_dict):
     # Given
@@ -88,18 +94,6 @@ def test_list(collection: DesignExecutionCollection, session):
         path=expected_path,
         params={"page": 2, "per_page": 4}
     )
-
-
-def test_archive(workflow_execution, collection):
-    collection.archive(workflow_execution.uid)
-    expected_path = '/projects/{}/design-workflows/{}/executions/{}/archive'.format(collection.project_id, collection.workflow_id, workflow_execution.uid)
-    assert collection.session.last_call == FakeCall(method='PUT', path=expected_path, json={})
-
-
-def test_restore(workflow_execution, collection):
-    collection.restore(workflow_execution.uid)
-    expected_path = '/projects/{}/design-workflows/{}/executions/{}/restore'.format(collection.project_id, collection.workflow_id, workflow_execution.uid)
-    assert collection.session.last_call == FakeCall(method='PUT', path=expected_path, json={})
 
 
 def test_delete(collection):

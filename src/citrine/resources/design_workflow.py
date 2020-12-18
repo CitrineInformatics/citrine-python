@@ -4,7 +4,6 @@ from uuid import UUID
 
 from citrine._rest.collection import Collection
 from citrine._session import Session
-from citrine.informatics.modules import ModuleRef
 from citrine.informatics.workflows import NewDesignWorkflow
 from citrine.resources.response import Response
 
@@ -37,7 +36,8 @@ class DesignWorkflowCollection(Collection[NewDesignWorkflow]):
             Unique identifier of the workflow to archive
 
         """
-        url = self._path_template.format(project_id=self.project_id) + "/{}/archive".format(workflow_id)
+        url = self._path_template.format(project_id=self.project_id) \
+            + "/{}/archive".format(workflow_id)
         return self.session.put_resource(url, {})
 
     def restore(self, workflow_id: UUID):
@@ -49,7 +49,8 @@ class DesignWorkflowCollection(Collection[NewDesignWorkflow]):
             Unique identifier of the workflow to restore
 
         """
-        url = self._path_template.format(project_id=self.project_id) + "/{}/restore".format(workflow_id)
+        url = self._path_template.format(project_id=self.project_id) \
+            + "/{}/restore".format(workflow_id)
         return self.session.put_resource(url, {})
 
     def delete(self, uid: Union[UUID, str]) -> Response:

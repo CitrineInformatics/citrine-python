@@ -86,7 +86,6 @@ class DesignWorkflow(Resource['DesignWorkflow'], Workflow):
             project_id=self.project_id, session=self.session, workflow_id=self.uid)
 
 
-
 class NewDesignWorkflow(Resource['NewDesignWorkflow'], Workflow):
     """[ALPHA] Object that generates scored materials that may approach higher values of the score.
 
