@@ -2,7 +2,7 @@ import uuid
 
 import pytest
 
-from citrine.informatics.workflows import NewDesignWorkflow
+from citrine.informatics.workflows import DesignWorkflow
 from citrine.resources.design_workflow import DesignWorkflowCollection
 from tests.utils.session import FakeSession, FakeCall
 
@@ -21,12 +21,12 @@ def collection(session) -> DesignWorkflowCollection:
 
 
 @pytest.fixture
-def workflow(collection: DesignWorkflowCollection, design_workflow_dict) -> NewDesignWorkflow:
+def workflow(collection: DesignWorkflowCollection, design_workflow_dict) -> DesignWorkflow:
     return collection.build(design_workflow_dict)
 
 
 def test_basic_methods(workflow, collection):
-    assert "NewDesignWorkflow" in str(workflow)
+    assert "DesignWorkflow" in str(workflow)
     # assert workflow.evaluators[0].name == "Example evaluator"
 
 
