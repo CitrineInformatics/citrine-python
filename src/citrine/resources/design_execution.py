@@ -180,6 +180,6 @@ class DesignExecutionCollection(Collection["DesignExecution"]):
                                         per_page=per_page)
 
     def delete(self, uid: Union[UUID, str]) -> Response:
-        """Design Workflow Executions cannot be deleted; they can be archived instead."""
+        """Design Workflow Executions cannot be deleted or archived."""
         raise NotImplementedError(
             "Design Executions cannot be deleted")
