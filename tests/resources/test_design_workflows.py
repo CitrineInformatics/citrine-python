@@ -27,6 +27,7 @@ def workflow(collection: DesignWorkflowCollection, design_workflow_dict) -> Desi
 
 def test_basic_methods(workflow, collection):
     assert "DesignWorkflow" in str(workflow)
+    assert workflow.design_executions.project_id == workflow.project_id
     # assert workflow.evaluators[0].name == "Example evaluator"
 
 
@@ -45,3 +46,18 @@ def test_restore(workflow, collection):
 def test_delete(collection):
     with pytest.raises(NotImplementedError):
         collection.delete(uuid.uuid4())
+
+
+def test_missing_project(design_workflow_dict):
+    """Make sure we get an attribute error if there is no project id."""
+
+    workflow = DesignWorkflow(
+        name=design_workflow_dict["name"],
+        processor_id=design_workflow_dict["processor_id"],
+        predictor_id=design_workflow_dict["predictor_id"],
+        design_space_id=design_workflow_dict["design_space_id"]
+    )
+    assert workflow.project_id is None
+
+    with pytest.raises(AttributeError):
+        workflow.design_executions
