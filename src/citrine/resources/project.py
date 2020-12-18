@@ -4,6 +4,8 @@ from uuid import UUID
 
 from citrine.resources.predictor_evaluation_execution import PredictorEvaluationExecutionCollection
 from citrine.resources.predictor_evaluation_workflow import PredictorEvaluationWorkflowCollection
+from citrine.resources.design_execution import DesignExecutionCollection
+from citrine.resources.design_workflow import DesignWorkflowCollection
 from deprecation import deprecated
 
 from citrine._session import Session
@@ -128,6 +130,16 @@ class Project(Resource['Project']):
     def predictor_evaluation_executions(self) -> PredictorEvaluationExecutionCollection:
         """[ALPHA] Return a collection representing all visible predictor evaluation executions."""
         return PredictorEvaluationExecutionCollection(project_id=self.uid, session=self.session)
+
+    @property
+    def design_workflows(self) -> DesignWorkflowCollection:
+        """[ALPHA] Return a collection representing all visible design workflows."""
+        return DesignWorkflowCollection(self.uid, self.session)
+
+    @property
+    def design_executions(self) -> DesignExecutionCollection:
+        """[ALPHA] Return a collection representing all visible predictor evaluation executions."""
+        return DesignExecutionCollection(project_id=self.uid, session=self.session)
 
     @property
     def datasets(self) -> DatasetCollection:

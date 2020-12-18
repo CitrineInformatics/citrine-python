@@ -634,6 +634,30 @@ def example_result_dict(example_evaluator_dict, example_rmse_metrics, example_ca
     }
 
 
+@pytest.fixture()
+def example_candidates():
+    return {
+        "page": 2,
+        "per_page": 4,
+        "response": [{
+            "material_id": str(uuid.uuid4()),
+            "identifiers": [],
+            "primary_score": 0,
+            "material": {
+                'vars': {
+                    'Temperature': {'type': 'R', 'm': 475.8, 's': 0},
+                    'Flour': {'type': 'C', 'cp': {'flour': 100.0}},
+                    'Water': {'type': 'M', 'q': {'water': 72.5}},
+                    'Salt': {'type': 'F', 'f': 'NaCl'},
+                    'Yeast': {'type': 'S', 's': 'O1C=2C=C(C=3SC=C4C=CNC43)CC2C=5C=CC=6C=CNC6C15'}
+                }
+            }
+        }]
+    }
+
+
+
+
 @pytest.fixture
 def generic_entity():
     user = str(uuid.uuid4())
@@ -663,11 +687,34 @@ def predictor_evaluation_execution_dict(generic_entity):
 
 
 @pytest.fixture
+def design_execution_dict(generic_entity):
+    ret = generic_entity.copy()
+    # SOMETHING ELSE
+    ret.update({
+        "workflow_id": str(uuid.uuid4()),
+        "predictor_id": str(uuid.uuid4())
+    })
+    return ret
+
+
+@pytest.fixture
 def predictor_evaluation_workflow_dict(generic_entity, example_evaluator_dict):
     ret = deepcopy(generic_entity)
     ret.update({
         "name": "Example PEW",
         "description": "Example PEW for testing",
         "evaluators": [example_evaluator_dict]
+    })
+    return ret
+
+@pytest.fixture
+def design_workflow_dict(generic_entity):
+    ret = generic_entity.copy()
+    ret.update({ # TODO, this isn't how Designworkflows work in the new version
+        "name": "Example Design Workflow",
+        "description": "Example Design Workflow for testing",
+        "processor_id": str(uuid.uuid4()),
+        "design_space_id": str(uuid.uuid4()),
+        "predictor_id": str(uuid.uuid4()),
     })
     return ret

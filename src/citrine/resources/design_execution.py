@@ -4,16 +4,18 @@ from typing import Optional, Iterable, Union
 from uuid import UUID
 
 from citrine._rest.collection import Collection
+from citrine._rest.paginator import Paginator
+from citrine._rest.pageable import Pageable
 from citrine._rest.resource import Resource
 from citrine._serialization import properties
 from citrine._session import Session
-from citrine.informatics.modules import ModuleRef
-from citrine.informatics.predictor_evaluation_result import PredictorEvaluationResult
+from citrine.informatics.design_candidate import DesignCandidate
 from citrine.resources.response import Response
+from citrine.informatics.scores import Score
 
 
-class PredictorEvaluationExecution(Resource['PredictorEvaluationExecution']):
-    """The execution of a PredictorEvaluationWorkflow.
+class DesignExecution(Resource['DesignExecution'], Pageable):
+    """The execution of a DesignWorkflow.
 
     Parameters
     ----------
@@ -27,14 +29,14 @@ class PredictorEvaluationExecution(Resource['PredictorEvaluationExecution']):
     """
 
     _response_key = None
+    _paginator: Paginator = Paginator()
+    _collection_key = 'response'
 
     uid: UUID = properties.UUID('id', serializable=False)
-    """UUID of the execution."""
-
-    evaluator_names = properties.List(properties.String, "evaluator_names", serializable=False)
     workflow_id = properties.UUID('workflow_id', serializable=False)
-    predictor_id = properties.UUID('predictor_id', serializable=False)
     status = properties.Optional(properties.String(), 'status', serializable=False)
+    status_description = properties.Optional(
+        properties.String(), 'status_description', serializable=False)
     status_info = properties.Optional(
         properties.List(properties.String()),
         'status_info',
@@ -53,50 +55,42 @@ class PredictorEvaluationExecution(Resource['PredictorEvaluationExecution']):
         self.session: Optional[Session] = None  # pragma: no cover
 
     def __str__(self):
-        return '<PredictorEvaluationExecution {!r}>'.format(str(self.uid))
+        return '<DesignExecution {!r}>'.format(str(self.uid))
 
     def _path(self):
-        return '/projects/{project_id}/predictor-evaluation-executions/{execution_id}' \
+        return '/projects/{project_id}/design-workflows/{workflow_id}/executions/{execution_id}' \
             .format(project_id=self.project_id,
                     workflow_id=self.workflow_id,
                     execution_id=self.uid)
 
+    @classmethod
+    def _build_candidates(cls, subset_collection: Iterable[dict]) -> Iterable[DesignCandidate]:
+        for candidate in subset_collection:
+            yield DesignCandidate.build(candidate)
+
     @lru_cache()
-    def results(self, evaluator_name: str) -> PredictorEvaluationResult:
-        """
-        Get a specific evaluation result by the name of the evaluator that produced it.
+    def candidates(self,
+                   page: Optional[int] = None,
+                   per_page: int = 100,
+                   ) -> Iterable[DesignCandidate]:
+        """Fetch the Design Candidates for the particular execution, paginated."""
+        path = self._path() + '/candidates'
 
-        Parameters
-        ----------
-        evaluator_name: str
-            Name of the evaluator for which to get the results
+        fetcher = partial(self._fetch_page, path=path)
 
-        Returns
-        -------
-        The evaluation result from the evaluator with the given name
-
-        """
-        params = {"evaluator_name": evaluator_name}
-        resource = self.session.get_resource(self._path() + "/results", params=params)
-        return PredictorEvaluationResult.build(resource)
-
-    def __getitem__(self, item):
-        if isinstance(item, str):
-            return self.results(item)
-        else:
-            raise TypeError("Results are accessed by string names")
-
-    def __iter__(self):
-        return iter(self.evaluator_names)
+        return self._paginator.paginate(page_fetcher=fetcher,
+                                        collection_builder=self._build_candidates,
+                                        page=page,
+                                        per_page=per_page)
 
 
-class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExecution"]):
-    """A collection of PredictorEvaluationExecutions."""
+class DesignExecutionCollection(Collection["DesignExecution"]):
+    """A collection of DesignExecutions."""
 
-    _path_template = '/projects/{project_id}/predictor-evaluation-executions'  # noqa
+    _path_template = '/projects/{project_id}/design-workflows/{workflow_id}/executions'  # noqa
     _individual_key = None
     _collection_key = 'response'
-    _resource = PredictorEvaluationExecution
+    _resource = DesignExecution
 
     def __init__(self, *,
                  project_id: UUID,
@@ -104,33 +98,32 @@ class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExec
                  workflow_id: Optional[UUID] = None):
         self.project_id: UUID = project_id
         self.session: Session = session
-        self.workflow_id: Optional[UUID] = workflow_id
+        self.workflow_id: UUID = workflow_id
 
-    def build(self, data: dict) -> PredictorEvaluationExecution:
-        """Build an individual PredictorEvaluationExecution."""
-        execution = PredictorEvaluationExecution.build(data)
+    def build(self, data: dict) -> DesignExecution:
+        """Build an individual DesignWorkflowExecution."""
+        execution = DesignExecution.build(data)
         execution.session = self.session
         execution.project_id = self.project_id
         return execution
 
-    def trigger(self, predictor_id: UUID):
-        """Trigger a predictor evaluation execution against a predictor, by id."""
-        path = '/projects/{project_id}/predictor-evaluation-workflows/{workflow_id}/executions' \
-            .format(project_id=self.project_id, workflow_id=self.workflow_id)
-        data = self.session.post_resource(path, ModuleRef(str(predictor_id)).dump())
+    def trigger(self, execution_input: Score):
+        """Trigger a Design Workflow execution given a score."""
+        path = self._get_path()
+        data = self.session.post_resource(path, {'score': execution_input.dump()})
         self._check_experimental(data)
         return self.build(data)
 
-    def register(self, model: PredictorEvaluationExecution) -> PredictorEvaluationExecution:
+    def register(self, model: DesignExecution) -> DesignExecution:
         """Cannot register an execution."""
-        raise NotImplementedError("Cannot register a PredictorEvaluationExecution.")
+        raise NotImplementedError("Cannot register a DesignExecution.")
 
-    def update(self, model: PredictorEvaluationExecution) -> PredictorEvaluationExecution:
+    def update(self, model: DesignExecution) -> DesignExecution:
         """Cannot update an execution."""
-        raise NotImplementedError("Cannot update a PredictorEvaluationExecution.")
+        raise NotImplementedError("Cannot update a DesignExecution.")
 
     def archive(self, execution_id: UUID):
-        """Archive a predictor evaluation execution.
+        """Archive a Design Workflow execution.
 
         Parameters
         ----------
@@ -138,10 +131,11 @@ class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExec
             Unique identifier of the execution to archive
 
         """
-        self._put_module_ref('archive', execution_id)
+        raise NotImplementedError(
+            "Design Executions cannot be archived")
 
     def restore(self, execution_id: UUID):
-        """Restore a predictor evaluation execution.
+        """Restore a Design Workflow execution.
 
         Parameters
         ----------
@@ -149,13 +143,13 @@ class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExec
             Unique identifier of the execution to restore
 
         """
-        self._put_module_ref('restore', execution_id)
+        raise NotImplementedError(
+            "Design Executions cannot be restored")
 
     def list(self,
              page: Optional[int] = None,
              per_page: int = 100,
-             predictor_id: Optional[UUID] = None
-             ) -> Iterable[PredictorEvaluationExecution]:
+             ) -> Iterable[DesignExecution]:
         """
         Paginate over the elements of the collection.
 
@@ -180,19 +174,12 @@ class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExec
             Resources in this collection.
 
         """
-        params = {}
-        if predictor_id is not None:
-            params["predictor_id"] = str(predictor_id)
-        if self.workflow_id is not None:
-            params["workflow_id"] = str(self.workflow_id)
-
-        fetcher = partial(self._fetch_page, additional_params=params)
-        return self._paginator.paginate(page_fetcher=fetcher,
+        return self._paginator.paginate(page_fetcher=self._fetch_page,
                                         collection_builder=self._build_collection_elements,
                                         page=page,
                                         per_page=per_page)
 
     def delete(self, uid: Union[UUID, str]) -> Response:
-        """Predictor Evaluation Executions cannot be deleted; they can be archived instead."""
+        """Design Workflow Executions cannot be deleted or archived."""
         raise NotImplementedError(
-            "Predictor Evaluation Executions cannot be deleted; they can be archived instead.")
+            "Design Executions cannot be deleted")
