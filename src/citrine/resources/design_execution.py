@@ -61,7 +61,8 @@ class DesignExecution(Resource['DesignExecution'], Pageable):
                     workflow_id=self.workflow_id,
                     execution_id=self.uid)
 
-    def _build_candidates(self, subset_collection: Iterable[dict]) -> Iterable[DesignCandidate]:
+    @classmethod
+    def _build_candidates(cls, subset_collection: Iterable[dict]) -> Iterable[DesignCandidate]:
         for candidate in subset_collection:
             yield DesignCandidate.build(candidate)
 
