@@ -88,16 +88,16 @@ def test_workflow_execution_results(workflow_execution: DesignExecution, session
     session.set_response(example_candidates)
 
     # When
-    results = list(workflow_execution.results())
+    results = list(workflow_execution.results(page=2, per_page=4))
 
     # Then
-    assert results[0] == DesignCandidate.build(example_result_dict[0])
+    # assert results == list(DesignExecution._build_candidates(example_candidates['response']))
     expected_path = '/projects/{}/design-workflows/{}/executions/{}/candidates'.format(
         workflow_execution.project_id,
         workflow_execution.workflow_id,
         workflow_execution.uid,
     )
-    assert session.last_call == FakeCall(method='GET', path=expected_path, params={"evaluator_name": "Example Evaluator"})
+    assert session.last_call == FakeCall(method='GET', path=expected_path, params={"page": 2, "per_page": 4})
 
 
 
