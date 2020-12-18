@@ -57,6 +57,10 @@ class DesignExecution(Resource['DesignExecution']):
                     workflow_id=self.workflow_id,
                     execution_id=self.uid)
 
+    def _build_candidates(self, subset_collection: Iterable[dict]) -> Iterable[DesignCandidate]:
+        for candidate in subset_collection:
+            yield DesignCandidate.build(candidate)
+
     @lru_cache()
     def results(self,
                 page: Optional[int] = None,

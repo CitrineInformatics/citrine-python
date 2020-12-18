@@ -56,7 +56,7 @@ class CategoriesAndProbabilities(Serializable["CategoriesAndProbabilities"], Des
 class Mixture(Serializable["Mixture"], DesignVariable):
     """docstring for MeanAndStd"""
 
-    category_probability = properties.Mapping(properties.String, properties.Float, 'cp')
+    category_probability = properties.Mapping(properties.String, properties.Float, 'q')
 
     def __init__(self):
         pass  # pragma: no cover

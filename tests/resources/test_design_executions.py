@@ -83,6 +83,24 @@ def test_trigger_workflow_execution(collection: DesignExecutionCollection, desig
     )
 
 
+def test_workflow_execution_results(workflow_execution: DesignExecution, session, example_candidates):
+    # Given
+    session.set_response(example_candidates)
+
+    # When
+    results = list(workflow_execution.results())
+
+    # Then
+    assert results[0] == DesignCandidate.build(example_result_dict[0])
+    expected_path = '/projects/{}/design-workflows/{}/executions/{}/candidates'.format(
+        workflow_execution.project_id,
+        workflow_execution.workflow_id,
+        workflow_execution.uid,
+    )
+    assert session.last_call == FakeCall(method='GET', path=expected_path, params={"evaluator_name": "Example Evaluator"})
+
+
+
 def test_list(collection: DesignExecutionCollection, session):
     session.set_response({"page": 2, "per_page": 4, "next": "foo", "response": []})
     lst = list(collection.list(2, 4))

@@ -635,8 +635,21 @@ def example_result_dict(example_evaluator_dict, example_rmse_metrics, example_ca
 
 
 @pytest.fixture()
-def example_candidates_dict():
-    return {}
+def example_candidates():
+    return [{
+            "material_id": "string",
+            "identifiers": [],
+            "primary_score": 0,
+            "material": {
+                'vars': {
+                    'Temperature': {'type': 'R', 'm': 475.8, 's': 0},
+                    'Flour': {'type': 'C', 'cp': {'flour', 100.0}},
+                    'Water': {'type': 'M', 'q': {'water': 72.5}},
+                    'Salt': {'type': 'F', 'f': 'NaCl'},
+                    'Yeast': {'type': 'S', 's': 'O1C=2C=C(C=3SC=C4C=CNC43)CC2C=5C=CC=6C=CNC6C15'}
+                }
+            }
+        }]
 
 
 @pytest.fixture
