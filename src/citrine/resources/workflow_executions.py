@@ -33,6 +33,7 @@ class WorkflowExecution(Resource['WorkflowExecution'], Pageable):
 
     _response_key = 'WorkflowExecutions'
     _paginator: Paginator = Paginator()
+    _collection_key = 'response'
 
     uid = properties.UUID('id')
     project_id = properties.UUID('project_id', deserializable=False)
