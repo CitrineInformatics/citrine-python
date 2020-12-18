@@ -57,13 +57,12 @@ class WorkflowExecution(Resource['WorkflowExecution'], Pageable):
         return '<WorkflowExecution {!r}>'.format(str(self.uid))
 
     def _path(self):
-        return '/projects/{project_id}/workflows/{workflow_id}/executions/{execution_id}'.format(
-            **{
+        return '/projects/{project_id}/workflows/{workflow_id}/executions/{execution_id}' \
+            .format(**{
                 "project_id": self.project_id,
                 "workflow_id": self.workflow_id,
                 "execution_id": self.uid
-            }
-        )
+            })
 
     def status(self):
         """Get the current status of this execution."""
@@ -81,14 +80,14 @@ class WorkflowExecution(Resource['WorkflowExecution'], Pageable):
 
     @lru_cache()
     def candidates(self,
-                page: Optional[int] = None,
-                per_page: int = 100,
-                ) -> Iterable[DesignCandidate]:
+                   page: Optional[int] = None,
+                   per_page: int = 100,
+                   ) -> Iterable[DesignCandidate]:
         """Fetch the Design Candidates for the particular execution, paginated."""
-        path = '/projects/{project_id}/design-workflows/{workflow_id}/executions/{execution_id}/candidates' \
-            .format(project_id=self.project_id,
-                    workflow_id=self.workflow_id,
-                    execution_id=self.uid)
+        path = '/projects/{p_id}/design-workflows/{w_id}/executions/{e_id}/candidates' \
+            .format(p_id=self.project_id,
+                    w_id=self.workflow_id,
+                    e_id=self.uid)
 
         fetcher = partial(self._fetch_page, path=path)
 

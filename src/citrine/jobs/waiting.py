@@ -137,7 +137,7 @@ def wait_while_executing(
     start = time.time()
 
     def execution_is_finished():
-        if isinstance(execution, PredictorEvaluationExecution) or isinstance(execution, DesignExecution):
+        if isinstance(execution, (PredictorEvaluationExecution, DesignExecution)):
             if collection is None:
                 raise ValueError("Must provide collection")
             status = collection.get(execution.uid).status

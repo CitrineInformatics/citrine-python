@@ -68,9 +68,9 @@ class DesignExecution(Resource['DesignExecution'], Pageable):
 
     @lru_cache()
     def candidates(self,
-                page: Optional[int] = None,
-                per_page: int = 100,
-                ) -> Iterable[DesignCandidate]:
+                   page: Optional[int] = None,
+                   per_page: int = 100,
+                   ) -> Iterable[DesignCandidate]:
         """Fetch the Design Candidates for the particular execution, paginated."""
         path = self._path() + '/candidates'
 

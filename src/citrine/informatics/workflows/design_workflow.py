@@ -92,7 +92,7 @@ class DesignWorkflow(Resource['DesignWorkflow'], Workflow):
         config = {
             'predictor_id': data['predictor_id'],
             'design_space_id': data['design_space_id'],
-            'type': 'DesignWorkflow' # needs to be added here
+            'type': 'DesignWorkflow'  # needs to be added here so it doesn't get overwritten
         }
         if 'processor_id' in data:
             config['processor_id'] = data['processor_id']
