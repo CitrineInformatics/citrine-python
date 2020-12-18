@@ -61,7 +61,7 @@ class ProductDesignSpace(Resource['ProductDesignSpace'], DesignSpace):
         """Override dump to replace on-platform subspaces with their uids."""
         model_copy = deepcopy(self)
         for i, subspace in enumerate(model_copy.subspaces):
-            if subspace.uid is not None:
+            if isinstance(subspace, DesignSpace) and subspace.uid is not None:
                 model_copy.subspaces[i] = subspace.uid
         serialized = properties.Object(ProductDesignSpace).serialize(model_copy)
         return self._post_dump(serialized)
