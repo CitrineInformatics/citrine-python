@@ -636,7 +636,10 @@ def example_result_dict(example_evaluator_dict, example_rmse_metrics, example_ca
 
 @pytest.fixture()
 def example_candidates():
-    return [{
+    return {
+        "page": 0,
+        "per_page": 0,
+        "response": [{
             "material_id": "string",
             "identifiers": [],
             "primary_score": 0,
@@ -650,6 +653,9 @@ def example_candidates():
                 }
             }
         }]
+    }
+
+
 
 
 @pytest.fixture

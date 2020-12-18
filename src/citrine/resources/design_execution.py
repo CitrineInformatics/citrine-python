@@ -4,6 +4,8 @@ from typing import Optional, Iterable, Union
 from uuid import UUID
 
 from citrine._rest.collection import Collection
+from citrine._rest.paginator import Paginator
+from citrine._rest.pageable import Pageable
 from citrine._rest.resource import Resource
 from citrine._serialization import properties
 from citrine._session import Session
@@ -12,7 +14,7 @@ from citrine.resources.response import Response
 from citrine.informatics.scores import Score
 
 
-class DesignExecution(Resource['DesignExecution']):
+class DesignExecution(Resource['DesignExecution'], Pageable):
     """The execution of a DesignWorkflow.
 
     Parameters
@@ -27,6 +29,8 @@ class DesignExecution(Resource['DesignExecution']):
     """
 
     _response_key = None
+    _paginator: Paginator = Paginator()
+    _collection_key = 'response'
 
     uid: UUID = properties.UUID('id', serializable=False)
     workflow_id = properties.UUID('workflow_id', serializable=False)
