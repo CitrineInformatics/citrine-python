@@ -49,7 +49,9 @@ def test_roundtrip_without_processor(valid_data, valid_serialization_output):
     serialized = workflow.dump()
     serialized['id'] = valid_data['id']
     valid_serialization_output['config']['processor_id'] = None
-    assert serialized == valid_serialization_output
+    # we can have extra fields to support forward/backward compatibility
+    for k in valid_serialization_output:
+        assert serialized[k] == valid_serialization_output[k]
 
 
 def test_deserialization_missing_created_by(valid_data):
@@ -83,4 +85,7 @@ def test_serialization(valid_data, valid_serialization_output):
     workflow: DesignWorkflow = Workflow.build(valid_data)
     serialized = workflow.dump()
     serialized['id'] = valid_data['id']
-    assert serialized == valid_serialization_output
+    # we can have extra fields in the output of `dump`
+    # these support forwards and backwards compatibility
+    for k in valid_serialization_output:
+        assert serialized[k] == valid_serialization_output[k]
