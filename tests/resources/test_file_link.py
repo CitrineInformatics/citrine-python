@@ -407,6 +407,11 @@ def test_process_file(collection, session):
                                 'type': 'integer_bounds',
                                 'lower_bound': 0,
                                 'upper_bound': 10
+                            },
+                            'exact_range_bounds': {
+                                'type': 'integer_bounds',
+                                'lower_bound': 0,
+                                'upper_bound': 10
                             }
                         }
                     ],

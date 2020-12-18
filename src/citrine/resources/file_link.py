@@ -56,14 +56,17 @@ class FileProcessingData:
 
 
 class CsvColumnInfo(Serializable):
-    """The info for a CSV Column, contains the name and recommended bounds."""
+    """The info for a CSV Column, contains the name, recommended and exact bounds."""
 
     name = String('name')
     bounds = Object(BaseBounds, 'bounds')
+    exact_range_bounds = Object(BaseBounds, 'exact_range_bounds')
 
-    def __init__(self, name: String, bounds: BaseBounds):  # pragma: no cover
+    def __init__(self, name: String, bounds: BaseBounds,
+                 exact_range_bounds: BaseBounds):  # pragma: no cover
         self.name = name
         self.bounds = bounds
+        self.exact_range_bounds = exact_range_bounds
 
 
 class CsvValidationData(FileProcessingData, Serializable):
