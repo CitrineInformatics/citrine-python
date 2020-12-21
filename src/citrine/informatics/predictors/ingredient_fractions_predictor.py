@@ -25,7 +25,9 @@ class IngredientFractionsPredictor(Serializable["IngredientFractionsPredictor"],
         list of ingredients to featurize.
         This list should contain all possible ingredients.
         If an unknown ingredient is encountered, an error will be thrown.
+
     """
+
     input_descriptor = _properties.Object(FormulationDescriptor, 'config.input')
     ingredients = _properties.List(_properties.String, 'config.ingredients')
 

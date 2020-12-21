@@ -25,10 +25,11 @@ class GraphPredictor(Serializable['GraphPredictor'], Predictor):
     training_data: Optional[List[DataSource]]
         Optional sources of training data shared by all predictors in the graph.
         Training data provided by this graph predictor does not need to be specified as part of the
-        configuration of sub-predictors. Shared training data and any training data specified by a sub-predictor
-        will be combined into a flattened list and deduplicated by uid and identifiers. Deduplication is performed
-        if a uid or identifier is shared between two or more rows. The content of a deduplicated row will contain
-        the union of data across all rows that share the same uid or at least 1 identifier.
+        configuration of sub-predictors. Shared training data and any training data specified
+        by a sub-predictor will be combined into a flattened list and deduplicated
+        by uid and identifiers. Deduplication is performed if a uid or identifier is shared between
+        two or more rows. The content of a deduplicated row will contain the union of data
+        across all rows that share the same uid or at least 1 identifier.
 
     """
 

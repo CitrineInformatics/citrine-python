@@ -26,12 +26,12 @@ class SimpleMixturePredictor(Serializable['SimpleMixturePredictor'], Predictor):
     output_descriptor: FormulationDescriptor
         output descriptor for the flat (mixed) formulation
     training_data: Optional[List[DataSource]]
-        Sources of training data. Each can be either a CSV or an GEM Table.
-        Candidates from multiple data sources will be combined into a flattened list and deduplicated by uid
-        and identifiers. Deduplication is performed if a uid or identifier is shared between two or more rows.
-        The content of a deduplicated row will contain the union of data across all rows that share the same uid
-        or at least 1 identifier. Training data is optional if the predictor is part of a graph that includes
-        all training data required by this predictor.
+        Sources of training data. Each can be either a CSV or an GEM Table. Candidates from
+        multiple data sources will be combined into a flattened list and deduplicated by uid and
+        identifiers. Deduplication is performed if a uid or identifier is shared between two or
+        more rows. The content of a deduplicated row will contain the union of data across all rows
+        that share the same uid or at least 1 identifier. Training data is unnecessary if the
+        predictor is part of a graph that includes all training data required by this predictor.
 
     """
 

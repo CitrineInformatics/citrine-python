@@ -16,8 +16,8 @@ class ExpressionPredictor(Serializable['ExpressionPredictor'], Predictor):
 
     .. seealso::
        If you are using the deprecated predictor please see
-       :class:`~citrine.informatics.predictors.DeprecatedExpressionPredictor` for an example that shows how to migrate
-       to the new format.
+       :class:`~citrine.informatics.predictors.DeprecatedExpressionPredictor` for an example that
+       shows how to migrate to the new format.
 
     Parameters
     ----------
@@ -37,7 +37,8 @@ class ExpressionPredictor(Serializable['ExpressionPredictor'], Predictor):
 
     expression = _properties.String('config.expression')
     output = _properties.Object(RealDescriptor, 'config.output')
-    aliases = _properties.Mapping(_properties.String, _properties.Object(RealDescriptor), 'config.aliases')
+    aliases = _properties.Mapping(_properties.String, _properties.Object(RealDescriptor),
+                                  'config.aliases')
     typ = _properties.String('config.type', default='AnalyticExpression', deserializable=False)
 
     # NOTE: These could go here or in _post_dump - it's unclear which is better right now
@@ -72,23 +73,31 @@ class ExpressionPredictor(Serializable['ExpressionPredictor'], Predictor):
 class DeprecatedExpressionPredictor(Serializable['DeprecatedExpressionPredictor'], Predictor):
     """[DEPRECATED] A predictor that computes an output from an analytic expression.
 
-    This predictor is deprecated. Please use the :class:`~citrine.informatics.predictors.ExpressionPredictor` instead.
+    This predictor is deprecated. Please use the
+    :class:`~citrine.informatics.predictors.ExpressionPredictor` instead.
     To migrate to the new predictor:
 
     1. add an alias for all unknown expression arguments and
     2. replace descriptor keys in ``aliases`` with the associated descriptor
 
-    These changes allow the expression to respect descriptor bounds when computing the output and avoid potential
-    descriptor mismatches if a descriptor with an identical key and different bounds is present in the graph.
+    These changes allow the expression to respect descriptor bounds when computing the output and
+    avoid potential descriptor mismatches if a descriptor with an identical key and different
+    bounds is present in the graph.
 
     The following example shows how to migrate a deprecated expression predictor to the new format.
-    In the deprecated format, an expression that computes shear modulus from Young's modulus and Poisson's ratio is given by:
+    In the deprecated format, an expression that computes shear modulus from Young's modulus and
+    Poisson's ratio is given by:
 
     .. code-block:: python
 
        from citrine.informatics.predictors import DeprecatedExpressionPredictor
 
-       shear_modulus = RealDescriptor('Property~Shear modulus', lower_bound=0, upper_bound=100, units='GPa')
+       shear_modulus = RealDescriptor(
+           'Property~Shear modulus',
+           lower_bound=0,
+           upper_bound=100,
+           units='GPa'
+        )
 
        shear_modulus_predictor = DeprecatedExpressionPredictor(
            name = 'Shear modulus predictor',
@@ -101,17 +110,21 @@ class DeprecatedExpressionPredictor(Serializable['DeprecatedExpressionPredictor'
            }
        )
 
-    To create a predictor using the format, we need to create descriptors for the expression inputs: Young's modulus and Poisson's ratio.
-    We also need to replace references to the descriptor keys in ``aliases`` with the new descriptors:
+    To create a predictor using the format, we need to create descriptors for the expression
+    inputs: Young's modulus and Poisson's ratio. We also need to replace references to the
+    descriptor keys in ``aliases`` with the new descriptors:
 
     .. code-block:: python
 
        from citrine.informatics.predictors import ExpressionPredictor
 
        # create a descriptor for each input in addition to the output
-       youngs_modulus = RealDescriptor('Property~Young\'s modulus', lower_bound=0, upper_bound=100, units='GPa')
-       poissons_ratio = RealDescriptor('Property~Poisson\'s ratio', lower_bound=-1, upper_bound=0.5, units='')
-       shear_modulus = RealDescriptor('Property~Shear modulus', lower_bound=0, upper_bound=100, units='GPa')
+       youngs_modulus = RealDescriptor('Property~Young\'s modulus', lower_bound=0,
+                                       upper_bound=100, units='GPa')
+       poissons_ratio = RealDescriptor('Property~Poisson\'s ratio', lower_bound=-1,
+                                       upper_bound=0.5, units='')
+       shear_modulus = RealDescriptor('Property~Shear modulus', lower_bound=0,
+                                      upper_bound=100, units='GPa')
 
        shear_modulus_predictor = ExpressionPredictor(
            name = 'Shear modulus predictor',
@@ -138,14 +151,16 @@ class DeprecatedExpressionPredictor(Serializable['DeprecatedExpressionPredictor'
     output: RealDescriptor
         descriptor that represents the output of the expression
     aliases: Optional[Mapping[str, str]]
-        a mapping from each each argument as it appears in the ``expression`` to its descriptor key.
-        If an unknown argument is not aliased, the argument and descriptor key are assumed to be identical.
+        a mapping from each each argument as it appears in the ``expression`` to its descriptor
+        key. If an unknown argument is not aliased, the argument and descriptor key are assumed
+        to be identical.
 
     """
 
     expression = _properties.String('config.expression')
     output = _properties.Object(RealDescriptor, 'config.output')
-    aliases = _properties.Optional(_properties.Mapping(_properties.String, _properties.String), 'config.aliases')
+    aliases = _properties.Optional(_properties.Mapping(_properties.String, _properties.String),
+                                   'config.aliases')
     typ = _properties.String('config.type', default='Expression', deserializable=False)
 
     # NOTE: These could go here or in _post_dump - it's unclear which is better right now

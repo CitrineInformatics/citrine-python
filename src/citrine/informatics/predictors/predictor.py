@@ -76,18 +76,21 @@ class Predictor(Module):
                 'Must be in {}.'.format(data['config']['type'], type_dict.keys())
             )
 
-    def _wrap_training_data(self, training_data: Optional[Union[DataSource, List[DataSource]]]) -> List[DataSource]:
-        """
-        Converts ``None`` to an empty list and wraps a single data source in a list that contains a single element.
+    def _wrap_training_data(self,
+                            training_data: Optional[Union[DataSource, List[DataSource]]]
+                            ) -> List[DataSource]:
+        """Wraps a single training data source in a list.
 
         Parameters
         ----------
         training_data: Optional[Union[DataSource, List[DataSource]]]
             Either a single data source, list of data sources or ``None``
+
         Returns
         -------
         List[DataSource]
             A list of data sources
+
         """
         if training_data is None:
             return []
