@@ -4,7 +4,7 @@ from warnings import warn
 from citrine._serialization import properties as _properties
 from citrine._serialization.serializable import Serializable
 from citrine._session import Session
-from citrine.informatics.descriptors import Descriptor, RealDescriptor
+from citrine.informatics.descriptors import RealDescriptor
 from citrine.informatics.reports import Report
 from citrine.informatics.predictors import Predictor
 
@@ -56,7 +56,7 @@ class ExpressionPredictor(Serializable['ExpressionPredictor'], Predictor):
         self.name: str = name
         self.description: str = description
         self.expression: str = expression
-        self.output: Descriptor = output
+        self.output: RealDescriptor = output
         self.aliases: Mapping[str, RealDescriptor] = aliases
         self.session: Optional[Session] = session
         self.report: Optional[Report] = report
