@@ -54,7 +54,7 @@ class Pageable():
             {'json':
                 {'search_params': {'name': {'value': 'Project', 'search_method': 'SUBSTRING'}}}
             }
-        additional+params: dict, optional
+        additional_params: dict, optional
             A dict that allows extra parameters to be added to the request parameters
 
         Returns
