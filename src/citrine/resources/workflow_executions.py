@@ -86,7 +86,8 @@ class WorkflowExecution(Resource['WorkflowExecution'], Pageable):
                    ) -> Iterable[DesignCandidate]:
         """Fetch the Design Candidates for the particular execution, paginated.
 
-        This is for backwards compatibility
+        Gets candidates from the new candidates API for a workflow executed by the old api.
+        New candidates are paginated and have structured types.
         """
         path = '/projects/{p_id}/design-workflows/{w_id}/executions/{e_id}/candidates'.format(
             p_id=self.project_id,

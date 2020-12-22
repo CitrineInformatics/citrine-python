@@ -72,7 +72,6 @@ class DesignExecution(Resource['DesignExecution'], Pageable):
 
     @classmethod
     def _build_candidates(cls, subset_collection: Iterable[dict]) -> Iterable[DesignCandidate]:
-        """Some comment here."""
         for candidate in subset_collection:
             yield DesignCandidate.build(candidate)
 
