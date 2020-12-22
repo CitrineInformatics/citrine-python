@@ -48,7 +48,7 @@ class DesignExecution(Resource['DesignExecution'], Pageable):
         'experimental_reasons',
         serializable=False
     )
-    archived = properties.Boolean('archived', default=False)
+    archived = properties.Boolean('archived')
     created_by = properties.Optional(properties.UUID, 'created_by', serializable=False)
     updated_by = properties.Optional(properties.UUID, 'updated_by', serializable=False)
     archived_by = properties.Optional(properties.UUID, 'archived_by', serializable=False)
