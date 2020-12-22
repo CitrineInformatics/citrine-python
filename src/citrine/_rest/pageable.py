@@ -14,7 +14,7 @@ class Pageable():
     def _get_path(self, uid: Optional[Union[UUID, str]] = None,
                   ignore_dataset: Optional[bool] = False) -> str:
         """Construct a url from __base_path__ and, optionally, id."""
-        raise NotImplementedError
+        raise NotImplementedError  # pragma: no cover
 
     def _fetch_page(self,
                     path: Optional[str] = None,
