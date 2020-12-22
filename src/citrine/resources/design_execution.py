@@ -48,6 +48,13 @@ class DesignExecution(Resource['DesignExecution'], Pageable):
         'experimental_reasons',
         serializable=False
     )
+    archived = properties.Boolean('archived', default=False)
+    created_by = properties.Optional(properties.UUID, 'created_by', serializable=False)
+    updated_by = properties.Optional(properties.UUID, 'updated_by', serializable=False)
+    archived_by = properties.Optional(properties.UUID, 'archived_by', serializable=False)
+    create_time = properties.Optional(properties.Datetime, 'create_time', serializable=False)
+    update_time = properties.Optional(properties.Datetime, 'update_time', serializable=False)
+    archive_time = properties.Optional(properties.Datetime, 'archive_time', serializable=False)
 
     def __init__(self):
         """This shouldn't be called, but it defines members that are set elsewhere."""
