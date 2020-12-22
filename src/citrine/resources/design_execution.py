@@ -1,5 +1,5 @@
 """Resources that represent both individual and collections of workflow executions."""
-from functools import lru_cache, partial
+from functools import partial
 from typing import Optional, Iterable, Union
 from uuid import UUID
 
@@ -65,10 +65,10 @@ class DesignExecution(Resource['DesignExecution'], Pageable):
 
     @classmethod
     def _build_candidates(cls, subset_collection: Iterable[dict]) -> Iterable[DesignCandidate]:
+        """Some comment here."""
         for candidate in subset_collection:
             yield DesignCandidate.build(candidate)
 
-    @lru_cache()
     def candidates(self,
                    page: Optional[int] = None,
                    per_page: int = 100,

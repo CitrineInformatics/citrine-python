@@ -1,4 +1,3 @@
-"""Resources that represent both individual and collections of workflow executions."""
 from typing import Union
 from uuid import UUID
 

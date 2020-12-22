@@ -1,12 +1,20 @@
 from logging import getLogger
-from typing import Optional, Iterable, Dict, Tuple, Callable
+from typing import Optional, Iterable, Dict, Tuple, Callable, Union
+from uuid import UUID
 
 
 logger = getLogger(__name__)
 
 
 class Pageable():
-    """Abstract class for representing collections of REST resources."""
+    """Class that allows paging."""
+
+    _collection_key: str = NotImplemented
+
+    def _get_path(self, uid: Optional[Union[UUID, str]] = None,
+                  ignore_dataset: Optional[bool] = False) -> str:
+        """Construct a url from __base_path__ and, optionally, id."""
+        raise NotImplementedError
 
     def _fetch_page(self,
                     path: Optional[str] = None,
@@ -17,7 +25,7 @@ class Pageable():
                     additional_params: Optional[dict] = None,
                     ) -> Tuple[Iterable[dict], str]:
         """
-        Fetch visible elements in the collection.  This does not handle pagination.
+        Fetch visible elements.  This does not handle pagination.
 
         Method can be used with any function that fetches a list of resources.
 
@@ -46,6 +54,8 @@ class Pageable():
             {'json':
                 {'search_params': {'name': {'value': 'Project', 'search_method': 'SUBSTRING'}}}
             }
+        additional+params: dict, optional
+            A dict that allows extra parameters to be added to the request parameters
 
         Returns
         -------

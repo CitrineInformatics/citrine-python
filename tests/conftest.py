@@ -689,7 +689,6 @@ def predictor_evaluation_execution_dict(generic_entity):
 @pytest.fixture
 def design_execution_dict(generic_entity):
     ret = generic_entity.copy()
-    # SOMETHING ELSE
     ret.update({
         "workflow_id": str(uuid.uuid4()),
         "predictor_id": str(uuid.uuid4())
@@ -710,7 +709,7 @@ def predictor_evaluation_workflow_dict(generic_entity, example_evaluator_dict):
 @pytest.fixture
 def design_workflow_dict(generic_entity):
     ret = generic_entity.copy()
-    ret.update({ # TODO, this isn't how Designworkflows work in the new version
+    ret.update({
         "name": "Example Design Workflow",
         "description": "Example Design Workflow for testing",
         "processor_id": str(uuid.uuid4()),
