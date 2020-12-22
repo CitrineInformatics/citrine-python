@@ -10,7 +10,7 @@ Predictors must be registered to a project to be used in a :doc:`design workflow
 Simple ML predictor
 -------------------
 
-The :class:`~citrine.informatics.predictors.SimpleMLPredictor` predicts material properties using a machine-learned model.
+The :class:`~citrine.informatics.predictors.simple_ml_predictor.SimpleMLPredictor` predicts material properties using a machine-learned model.
 Each predictor is defined by a set of inputs, outputs and latent variables.
 Inputs are used as input features to the machine learning model.
 Outputs are the properties that you would like the model to predict.
@@ -22,7 +22,7 @@ Thus, all inputs and latent variables are used to predict outputs.
 
 Models are trained using data provided by a :class:`~citrine.informatics.data_sources.DataSource` specified when creating a predictor.
 
-The following example demonstrates how to use the python SDK to create a :class:`~citrine.informatics.predictors.SimpleMLPredictor`, register the predictor to a project and wait for validation:
+The following example demonstrates how to use the python SDK to create a :class:`~citrine.informatics.predictors.simple_ml_predictor.SimpleMLPredictor`, register the predictor to a project and wait for validation:
 
 .. code:: python
 
@@ -66,10 +66,10 @@ The following example demonstrates how to use the python SDK to create a :class:
                                      print_status_info=True  
                                     )
 
-Often, a :class:`~citrine.informatics.predictors.SimpleMLPredictor` will include outputs from other predictors as inputs to its model.
+Often, a :class:`~citrine.informatics.predictors.simple_ml_predictor.SimpleMLPredictor` will include outputs from other predictors as inputs to its model.
 Instead of entering these manually, outputs from a predictor can be retrieved programmatically using ``outputs = project.descriptors.from_predictor_responses(predictor, inputs)``, where ``outputs`` is the list of descriptors returned by the ``predictor`` given a list of descriptors as ``inputs``.
 
-The following demonstrates how to create an :class:`~citrine.informatics.predictors.IngredientFractionsPredictor` and use its outputs as inputs to a :class:`~citrine.informatics.predictors.SimpleMLPredictor`.
+The following demonstrates how to create an :class:`~citrine.informatics.predictors.ingredient_fractions_predictor.IngredientFractionsPredictor` and use its outputs as inputs to a :class:`~citrine.informatics.predictors.simple_ml_predictor.SimpleMLPredictor`.
 
 .. code:: python
 
@@ -116,7 +116,7 @@ The following demonstrates how to create an :class:`~citrine.informatics.predict
 Graph predictor
 ---------------
 
-The :class:`~citrine.informatics.predictors.GraphPredictor` stitches together multiple other predictors into a
+The :class:`~citrine.informatics.predictors.graph_predictor.GraphPredictor` stitches together multiple other predictors into a
 directed bipartite graph, where every model node is connected to an arbitrary number of input descriptors and exactly
 one output descriptor.
 
@@ -126,7 +126,7 @@ There are restrictions for a predictor to be used in a GraphPredictor:
 - it must be registered and validated
 - it must NOT be another GraphPredictor
 
-The following example demonstrates how to use the python SDK to create a :class:`~citrine.informatics.predictors.GraphPredictor`.
+The following example demonstrates how to use the python SDK to create a :class:`~citrine.informatics.predictors.graph_predictor.GraphPredictor`.
 
 .. code:: python
 
@@ -151,8 +151,8 @@ For a more complete example of graph predictor usage, see :ref:`AI Engine Code E
 Expression predictor
 --------------------
 
-The :class:`~citrine.informatics.predictors.ExpressionPredictor` defines an analytic (lossless) model that computes one real-valued output descriptor from one or more input descriptors.
-An :class:`~citrine.informatics.predictors.ExpressionPredictor` should be used when the relationship between inputs and outputs is known.
+The :class:`~citrine.informatics.predictors.expression_predictor.ExpressionPredictor` defines an analytic (lossless) model that computes one real-valued output descriptor from one or more input descriptors.
+An :class:`~citrine.informatics.predictors.expression_predictor.ExpressionPredictor` should be used when the relationship between inputs and outputs is known.
 
 A string is used to define the expression, and the corresponding output is defined by a :class:`~citrine.informatics.descriptors.RealDescriptor`.
 An alias is required for each expression argument.
@@ -176,7 +176,7 @@ Citrine-python currently supports the following operators and functions:
 
 ExpressionPredictors do not support complex numbers.
 
-The following example demonstrates how to create an :class:`~citrine.informatics.predictors.ExpressionPredictor`.
+The following example demonstrates how to create an :class:`~citrine.informatics.predictors.expression_predictor.ExpressionPredictor`.
 
 .. code:: python
 
@@ -207,10 +207,10 @@ For an example of expression predictors used in a graph predictor, see :ref:`AI 
 Ingredients to simple mixture predictor (ALPHA)
 --------------------------------------------------
 
-The :class:`~citrine.informatics.predictors.IngredientsToSimpleMixturePredictor` constructs a simple mixture from a list of ingredients.
+The :class:`~citrine.informatics.predictors.ingredients_to_simple_mixture_predictor.IngredientsToSimpleMixturePredictor` constructs a simple mixture from a list of ingredients.
 This predictor is only required to construct simple mixtures from CSV data sources.
 Formulations are constructed automatically by GEM Tables when a ``formulation_descriptor`` is specified by the data source, so
-an :class:`~citrine.informatics.predictors.IngredientsToSimpleMixturePredictor` in not required in those cases.
+an :class:`~citrine.informatics.predictors.ingredients_to_simple_mixture_predictor.IngredientsToSimpleMixturePredictor` in not required in those cases.
 
 Ingredients are specified by a map from ingredient id to the descriptor that contains the ingredient's quantity.
 For example, ``{'water': RealDescriptor('water quantity', 0, 1}`` defines an ingredient ``water`` with quantity held by the descriptor ``water quantity``.
@@ -255,7 +255,7 @@ These labels are specified via:
 
     labels = {"solvent": {"water'}, "solute": {"salt"}}
 
-The following example illustrates how an :class:`~citrine.informatics.predictors.IngredientsToSimpleMixturePredictor` is constructed for the saline example.
+The following example illustrates how an :class:`~citrine.informatics.predictors.ingredients_to_simple_mixture_predictor.IngredientsToSimpleMixturePredictor` is constructed for the saline example.
 
 .. code:: python
 
@@ -307,13 +307,13 @@ Simple mixture predictor (ALPHA)
 Simple mixtures may contain ingredients that are blends of other simple mixtures.
 Along the lines of the example above, hypertonic saline can be mixed with water to form isotonic saline.
 Often, the properties of a hierarchical mixture are strongly associated with its leaf ingredients.
-The :class:`~citrine.informatics.predictors.SimpleMixturePredictor` flattens a hierarchical recipe into a recipe that contains only those leaf ingredients.
+The :class:`~citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor` flattens a hierarchical recipe into a recipe that contains only those leaf ingredients.
 
 The formulation to be flattened is specified by an ``input_descriptor`` formulation descriptor; the associated material history of the input formulation is traversed to determine the leaf ingredients.
 These leaf ingredients are then summed across all leaves of the mixing processes, with the resulting candidates described by an ``output_descriptor`` formulation descriptor.
 The ``training_data`` parameter is used as a source of formulation recipes to be used in flattening hierarchical simple mixtures.
 
-The following example illustrates how a :class:`~citrine.informatics.predictors.SimpleMixturePredictor` can be used to flatten the ingredients used in aqueous dilutions of hypertonic saline, yielding just the quantities of the leaf constituents salt and water.
+The following example illustrates how a :class:`~citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor` can be used to flatten the ingredients used in aqueous dilutions of hypertonic saline, yielding just the quantities of the leaf constituents salt and water.
 
 .. code:: python
 
@@ -347,7 +347,7 @@ For example, the density of a saline solution can be computed from the densities
 where :math:`d` is density and :math:`f` is relative ingredient fraction.
 If the densities of water and salt are known, we can compute the expected density of a candidate mixture using this predictor.
 
-The :class:`~citrine.informatics.predictors.GeneralizedMeanPropertyPredictor` computes mean properties of simple mixture ingredients.
+The :class:`~citrine.informatics.predictors.generalized_mean_property_predictor.GeneralizedMeanPropertyPredictor` computes mean properties of simple mixture ingredients.
 To configure a mean property predictor, we must specify:
 
 - an input descriptor that holds the mixture's recipe and ingredient labels
@@ -429,7 +429,7 @@ If ``p`` is given a value other than ``1.0``, that value will be included in the
 Ingredient fractions predictor (ALPHA)
 -----------------------------------------
 
-The :class:`~citrine.informatics.predictors.IngredientFractionsPredictor` featurizes ingredient fractions in a simple mixture.
+The :class:`~citrine.informatics.predictors.ingredient_fractions_predictor.IngredientFractionsPredictor` featurizes ingredient fractions in a simple mixture.
 The predictor is configured by specifying a descriptor that contains simple mixture data and a list of known ingredients to featurize.
 The list of ingredients should be the list of all possible ingredients for the input mixture.
 If the mixture contains an ingredient that wasn't specified when the predictor was created, an error will be thrown.
@@ -471,7 +471,7 @@ This will return a real descriptor for each featurized ingredient with bounds ``
 Label fractions predictor (ALPHA)
 ----------------------------------
 
-The :class:`~citrine.informatics.predictors.LabelFractionsPredictor` computes total fraction of ingredients with a given label.
+The :class:`~citrine.informatics.predictors.label_fractions_predictor.LabelFractionsPredictor` computes total fraction of ingredients with a given label.
 The predictor is configured by specifying a formulation descriptor that holds simple mixture data (i.e. recipes and ingredient labels) and a list of labels to featurize.
 A separate response is computed for each featurized label by summing all quantities in the recipe associated with ingredients given the label.
 
@@ -517,10 +517,10 @@ Deduplication is additive.
 Given three rows with identifiers ``[a]``, ``[b]`` and ``[a, b]``, deduplication will result in a single row with three identifiers (``[a, b, c]``) and the union of all data from these rows.
 Care must be taken to ensure uids and identifiers aren't shared across multiple data sources to avoid unwanted deduplication.
 
-When using a :class:`~citrine.informatics.predictors.GraphPredictor`, training data provided by the graph predictor and all subpredictors are combined into a single deduplicated list.
+When using a :class:`~citrine.informatics.predictors.graph_predictor.GraphPredictor`, training data provided by the graph predictor and all subpredictors are combined into a single deduplicated list.
 Each predictor is trained on the subset of the combined data that is valid for the model.
 Note, data may come from sources defined by other subpredictors in the graph.
 Because training data are shared by all predictors in the graph, a data source does not need to be redefined by all subpredictors that require it.
 If all data sources required train a predictor are specified elsewhere in the graph, the ``training_data`` parameter may be omitted.
-If the graph contains a predictor that requires formulations data, e.g. a :class:`~citrine.informatics.predictors.SimpleMixturePredictor` or :class:`~citrine.informatics.predictors.GeneralizedMeanPropertyPredictor`, any GEM Tables specified by the graph predictor that contain formulation data must provide a formulation descriptor,
+If the graph contains a predictor that requires formulations data, e.g. a :class:`~citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor` or :class:`~citrine.informatics.predictors.generalized_mean_property_predictor.GeneralizedMeanPropertyPredictor`, any GEM Tables specified by the graph predictor that contain formulation data must provide a formulation descriptor,
 and this descriptor must match the input formulation descriptor of the sub-predictors that require these data.

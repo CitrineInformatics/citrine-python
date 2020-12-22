@@ -131,7 +131,7 @@ Each data point defines properties ``uuid``, ``identifiers``, ``trial``, ``fold`
 Example
 -------
 
-The following demonstrates how to create a :class:`~citrine.informatics.predictor_evaluator.CrossValidationEvaluator`, add it to a :class:`~citrine.informatics.workflows.predictor_evaluation_workflow.PredictorEvaluationWorkflow` and use it to evaluate a :class:`~citrine.informatics.predictors.Predictor`.
+The following demonstrates how to create a :class:`~citrine.informatics.predictor_evaluator.CrossValidationEvaluator`, add it to a :class:`~citrine.informatics.workflows.predictor_evaluation_workflow.PredictorEvaluationWorkflow` and use it to evaluate a :class:`~citrine.informatics.predictors.predictor.Predictor`.
 
 The predictor we'll evaluate is defined below:
 

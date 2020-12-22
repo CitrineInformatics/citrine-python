@@ -6,7 +6,7 @@ AI Engine Code Examples
 Example: preprocessing and postprocessing in a GraphPredictor
 -------------------------------------------------------------
 
-Within a :class:`~citrine.informatics.predictors.GraphPredictor`, one can use :class:`~citrine.informatics.predictors.ExpressionPredictor` modules to preprocess data before performing machine learning with a :class:`~citrine.informatics.predictors.SimpleMLPredictor`, and to post-process the SimpleMLPredictor's output.
+Within a :class:`~citrine.informatics.predictors.graph_predictor.GraphPredictor`, one can use :class:`~citrine.informatics.predictors.expression_predictor.ExpressionPredictor` modules to preprocess data before performing machine learning with a :class:`~citrine.informatics.predictors.simple_ml_predictor.SimpleMLPredictor`, and to post-process the SimpleMLPredictor's output.
 This is a very common and powerful use case for graphical modeling.
 Here we show an example of how to combine these modules to accomplish those many suitable tasks.
 
