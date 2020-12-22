@@ -8,5 +8,5 @@ from .ingredient_fractions_predictor import *
 from .ingredients_to_simple_mixture_predictor import *
 from .label_fractions_predictor import *
 from .molecular_structure_featurizer import *
-from .simple_mixture_predictor import SimpleMixturePredictor
-from .simple_ml_predictor import SimpleMLPredictor
+from .simple_mixture_predictor import *
+from .simple_ml_predictor import *
