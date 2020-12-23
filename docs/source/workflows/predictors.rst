@@ -264,9 +264,9 @@ The following example illustrates how an :class:`~citrine.informatics.predictors
 
     file_link = dataset.files.upload("./saline_solutions.csv", "saline_solutions.csv")
 
-    # create descriptors for each ingredient quantity
-    water_quantity = RealDescriptor('water quantity', 0, 1)
-    salt_quantity = RealDescriptor('salt quantity', 0, 1)
+    # create descriptors for each ingredient quantity (volume fraction)
+    water_quantity = RealDescriptor('water quantity', 0, 1, units='')
+    salt_quantity = RealDescriptor('salt quantity', 0, 1, units='')
 
     # create a descriptor to hold density data
     density = RealDescriptor('density', lower_bound=0, upper_bound=1000, units='g/cc')

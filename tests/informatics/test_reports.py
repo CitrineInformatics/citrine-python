@@ -13,9 +13,9 @@ def test_report_init():
 
 def test_model_summary_init():
     """Tests that a ModelSummary object can be constructed."""
-    x = RealDescriptor('x', 0, 1)
-    y = RealDescriptor('y', 0, 1)
-    z = RealDescriptor('z', 0, 1)
+    x = RealDescriptor('x', 0, 1, "")
+    y = RealDescriptor('y', 0, 1, "")
+    z = RealDescriptor('z', 0, 1, "")
     feat_importance = FeatureImportanceReport(output_key='z', importances={'x': 0.8, 'y': 0.2})
     ModelSummary(name='General model',
                  type_="ML Model",

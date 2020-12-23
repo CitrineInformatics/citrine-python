@@ -33,8 +33,8 @@ def to_clean():
 @pytest.fixture
 def basic_cartesian_space() -> EnumeratedDesignSpace:
     """Build basic cartesian space for testing."""
-    alpha = RealDescriptor('alpha', 0, 100)
-    beta = RealDescriptor('beta', 0, 100)
+    alpha = RealDescriptor('alpha', 0, 100, "")
+    beta = RealDescriptor('beta', 0, 100, "")
     gamma = CategoricalDescriptor('gamma', ['a', 'b', 'c'])
     design_grid = {
         'alpha': [0, 50, 100],
@@ -244,9 +244,9 @@ def test_enumerated_oversize_warnings():
         # Fail on warning (so code stops running)
         with warnings.catch_warnings():
             warnings.simplefilter('error')
-            delta = RealDescriptor('delta', 0, 100)
-            epsilon = RealDescriptor('epsilon', 0, 100)
-            zeta = RealDescriptor('zeta', 0, 100)
+            delta = RealDescriptor('delta', 0, 100, "")
+            epsilon = RealDescriptor('epsilon', 0, 100, "")
+            zeta = RealDescriptor('zeta', 0, 100, "")
             too_big_enumerated_grid = {
                 'delta': np.linspace(0, 100, 600),
                 'epsilon': np.linspace(0, 100, 600),
@@ -267,8 +267,8 @@ def test_joined_oversize_warnings(large_joint_design_space):
         with warnings.catch_warnings():
             warnings.simplefilter('error')
 
-            delta = RealDescriptor('delta', 0, 100)
-            epsilon = RealDescriptor('epsilon', 0, 100)
+            delta = RealDescriptor('delta', 0, 100, "")
+            epsilon = RealDescriptor('epsilon', 0, 100, "")
             zeta = CategoricalDescriptor('zeta', ['a', 'b', 'c'])
             design_grid = {
                 'delta': [0, 50, 100],
@@ -282,8 +282,8 @@ def test_joined_oversize_warnings(large_joint_design_space):
                 description=''
             )
 
-            eta = RealDescriptor('eta', 0, 100)
-            theta = RealDescriptor('theta', 0, 100)
+            eta = RealDescriptor('eta', 0, 100, "")
+            theta = RealDescriptor('theta', 0, 100, "")
             iota = CategoricalDescriptor('iota', ['a', 'b', 'c'])
             design_grid = {
                 'eta': [0, 50, 100],

@@ -7,7 +7,7 @@ from citrine.informatics.descriptors import *
 
 
 @pytest.fixture(params=[
-    RealDescriptor('alpha', 0, 100),
+    RealDescriptor('alpha', 0, 100, ""),
     ChemicalFormulaDescriptor('formula'),
     MolecularStructureDescriptor("organic"),
     CategoricalDescriptor("my categorical", ["a", "b"]),
@@ -64,3 +64,8 @@ def test_to_json(descriptor):
     desc = Descriptor.build(json.loads(json_str))
     assert desc == descriptor
 
+
+def test_units_default_deprecation():
+    """Make sure that a deprecation warning is raised when no units are given."""
+    with pytest.warns(DeprecationWarning, match="Default of dimensionless is deprecated"):
+        RealDescriptor("foo", 0, 100)
