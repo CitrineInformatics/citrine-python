@@ -11,8 +11,8 @@ from citrine.resources.file_link import FileLink
 @pytest.fixture
 def product_design_space() -> ProductDesignSpace:
     """Build a ProductDesignSpace for testing."""
-    alpha = RealDescriptor('alpha', 0, 100)
-    beta = RealDescriptor('beta', 0, 100)
+    alpha = RealDescriptor('alpha', 0, 100, "")
+    beta = RealDescriptor('beta', 0, 100, "")
     gamma = CategoricalDescriptor('gamma', ['a', 'b', 'c'])
     dimensions = [
         ContinuousDimension(alpha, 0, 10),
@@ -25,7 +25,7 @@ def product_design_space() -> ProductDesignSpace:
 @pytest.fixture
 def enumerated_design_space() -> EnumeratedDesignSpace:
     """Build an EnumeratedDesignSpace for testing."""
-    x = RealDescriptor('x', lower_bound=0.0, upper_bound=1.0)
+    x = RealDescriptor('x', lower_bound=0.0, upper_bound=1.0, units='')
     color = CategoricalDescriptor('color', ['r', 'g', 'b'])
     data = [dict(x=0, color='r'), dict(x=1.0, color='b')]
     return EnumeratedDesignSpace('enumerated', 'desc', descriptors=[x, color], data=data)

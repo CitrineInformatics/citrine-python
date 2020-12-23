@@ -43,6 +43,7 @@ def test_from_predictor_responses():
             key=r['descriptor_key'],
             lower_bound=r['lower_bound'],
             upper_bound=r['upper_bound'],
+            units=r['units']
         ) for r in response_json['responses']
     ]
     assert session.last_call.path == '/projects/{}/material-descriptors/predictor-responses'\
@@ -81,6 +82,7 @@ def test_descriptors_from_data_source():
             key=r['descriptor_key'],
             lower_bound=r['lower_bound'],
             upper_bound=r['upper_bound'],
+            units=r['units']
         ) for r in response_json['descriptors']
     ]
     assert session.last_call.path == '/projects/{}/material-descriptors/from-data-source'\

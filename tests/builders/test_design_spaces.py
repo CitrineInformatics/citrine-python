@@ -33,8 +33,8 @@ def to_clean():
 @pytest.fixture
 def basic_cartesian_space() -> EnumeratedDesignSpace:
     """Build basic cartesian space for testing."""
-    alpha = RealDescriptor('alpha', 0, 100)
-    beta = RealDescriptor('beta', 0, 100)
+    alpha = RealDescriptor('alpha', 0, 100, "")
+    beta = RealDescriptor('beta', 0, 100, "")
     gamma = CategoricalDescriptor('gamma', ['a', 'b', 'c'])
     design_grid = {
         'alpha': [0, 50, 100],

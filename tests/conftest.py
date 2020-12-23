@@ -369,8 +369,8 @@ def valid_ing_to_simple_mixture_predictor_data():
             description='Constructs mixtures from ingredients',
             output=FormulationDescriptor('simple mixture').dump(),
             id_to_quantity={
-                'water': RealDescriptor('water quantity', 0, 1).dump(),
-                'salt': RealDescriptor('salt quantity', 0, 1).dump()
+                'water': RealDescriptor('water quantity', 0, 1, "").dump(),
+                'salt': RealDescriptor('salt quantity', 0, 1, "").dump()
             },
             labels={
                 'solvent': ['water'],
