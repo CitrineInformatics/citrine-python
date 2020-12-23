@@ -33,18 +33,18 @@ class UserDataFactory(factory.DictFactory):
     is_admin = factory.Faker('boolean')
 
 
-class TableDataFactory(factory.DictFactory):
+class GemTableDataFactory(factory.DictFactory):
     id = factory.Faker('uuid4')
     version = randrange(10)
     signed_download_url = factory.Faker('uri')
 
 
-class ListTableVersionsDataFactory(factory.DictFactory):
-    tables = [TableDataFactory()]
+class ListGemTableVersionsDataFactory(factory.DictFactory):
+    tables = [GemTableDataFactory()]
 
 
-class AraDefinitionJSONDataFactory(factory.DictFactory):
-    """ This is simply the JSON Blob stored in an Ara Definition Version"""
+class TableConfigJSONDataFactory(factory.DictFactory):
+    """ This is simply the JSON Blob stored in an Table Config Version"""
     name = factory.Faker("company")
     description = factory.Faker('bs')
     rows = []
@@ -52,19 +52,22 @@ class AraDefinitionJSONDataFactory(factory.DictFactory):
     variables = []
     datasets = []
 
-class AraDefinitionVersionJSONDataFactory(factory.DictFactory):
-    ara_definition = factory.SubFactory(AraDefinitionJSONDataFactory)
+class TableConfigVersionJSONDataFactory(factory.DictFactory):
+    ara_definition = factory.SubFactory(TableConfigJSONDataFactory)
     id = factory.Faker('uuid4')
     version_number = randrange(10)
 
 class WithIdDataFactory(factory.DictFactory):
     id = factory.Faker('uuid4')
 
-class AraDefinitionResponseDataFactory(factory.DictFactory):
-    """This is the AraDefinition object that encapsulates both version and definition info from the server"""
+class JobSubmissionResponseFactory(factory.DictFactory):
+    job_id = factory.Faker('uuid4')
+
+class TableConfigResponseDataFactory(factory.DictFactory):
+    """This is the TableConfig object that encapsulates both version and definition info from the server"""
 
     definition = factory.SubFactory(WithIdDataFactory)
-    version = factory.SubFactory(AraDefinitionVersionJSONDataFactory)
+    version = factory.SubFactory(TableConfigVersionJSONDataFactory)
 
 class DatasetDataFactory(factory.DictFactory):
     id = factory.Faker('uuid4')

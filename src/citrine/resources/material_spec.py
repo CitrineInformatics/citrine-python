@@ -9,14 +9,13 @@ from citrine._rest.resource import Resource
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Optional as PropertyOptional
 from citrine._serialization.properties import String, LinkOrElse, Mapping, Object
-from citrine.resources.data_concepts import DataConcepts
+from citrine.resources.data_concepts import DataConcepts, CITRINE_SCOPE
 from citrine.resources.object_specs import ObjectSpec, ObjectSpecCollection
 from gemd.entity.attribute.property_and_conditions import PropertyAndConditions
 from gemd.entity.file_link import FileLink
 from gemd.entity.object.material_spec import MaterialSpec as GEMDMaterialSpec
 from gemd.entity.object.process_spec import ProcessSpec as GEMDProcessSpec
 from gemd.entity.template.material_template import MaterialTemplate as GEMDMaterialTemplate
-
 
 logger = getLogger(__name__)
 
@@ -53,18 +52,20 @@ class MaterialSpec(ObjectSpec, Resource['MaterialSpec'], GEMDMaterialSpec):
 
     _response_key = GEMDMaterialSpec.typ  # 'material_spec'
 
-    name = String('name')
-    uids = Mapping(String('scope'), String('id'), 'uids')
-    tags = PropertyOptional(PropertyList(String()), 'tags')
-    notes = PropertyOptional(String(), 'notes')
-    process = PropertyOptional(LinkOrElse(), 'process')
-    properties = PropertyOptional(PropertyList(Object(PropertyAndConditions)), 'properties')
-    template = PropertyOptional(LinkOrElse(), 'template')
-    file_links = PropertyOptional(PropertyList(Object(FileLink)), 'file_links')
+    name = String('name', override=True)
+    uids = Mapping(String('scope'), String('id'), 'uids', override=True)
+    tags = PropertyOptional(PropertyList(String()), 'tags', override=True)
+    notes = PropertyOptional(String(), 'notes', override=True)
+    process = PropertyOptional(LinkOrElse(), 'process', override=True)
+    properties = PropertyOptional(
+        PropertyList(Object(PropertyAndConditions)), 'properties', override=True)
+    template = PropertyOptional(LinkOrElse(), 'template', override=True)
+    file_links = PropertyOptional(PropertyList(Object(FileLink)), 'file_links', override=True)
     typ = String('type')
 
     def __init__(self,
                  name: str,
+                 *,
                  uids: Optional[Dict[str, str]] = None,
                  tags: Optional[List[str]] = None,
                  notes: Optional[str] = None,
@@ -100,7 +101,7 @@ class MaterialSpecCollection(ObjectSpecCollection[MaterialSpec]):
     @deprecation.deprecated(details='Use list_by_template instead.')
     def filter_by_template(self,
                            template_id: str,
-                           template_scope: str = 'id',
+                           template_scope: str = CITRINE_SCOPE,
                            per_page: int = None) -> Iterator[MaterialSpec]:
         """
         [ALPHA] Get all material specs associated with a material template.
@@ -118,7 +119,9 @@ class MaterialSpecCollection(ObjectSpecCollection[MaterialSpec]):
             logger.warning('The per_page parameter will be ignored. Please remove it.')
         return self.list_by_template(uid=template_id, scope=template_scope)
 
-    def list_by_template(self, uid: Union[UUID, str], scope: str = 'id') -> Iterator[MaterialSpec]:
+    def list_by_template(self,
+                         uid: Union[UUID, str],
+                         scope: str = CITRINE_SCOPE) -> Iterator[MaterialSpec]:
         """
         [ALPHA] Get the material specs using the specified material template.
 
@@ -136,7 +139,9 @@ class MaterialSpecCollection(ObjectSpecCollection[MaterialSpec]):
         """
         return self._get_relation('material-templates', uid=uid, scope=scope)
 
-    def get_by_process(self, uid: Union[UUID, str], scope: str = 'id') -> Optional[MaterialSpec]:
+    def get_by_process(self,
+                       uid: Union[UUID, str],
+                       scope: str = CITRINE_SCOPE) -> Optional[MaterialSpec]:
         """
         [ALPHA] Get output material of a process.
 

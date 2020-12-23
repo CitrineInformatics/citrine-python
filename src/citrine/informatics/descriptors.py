@@ -1,6 +1,6 @@
 """Tools for working with Descriptors."""
 import warnings
-from typing import Type, Optional, List  # noqa: F401
+from typing import Type, Optional, List, Iterable, Set  # noqa: F401
 
 from citrine._serialization.serializable import Serializable
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
@@ -15,10 +15,12 @@ __all__ = ['Descriptor',
 
 
 class Descriptor(PolymorphicSerializable['Descriptor']):
-    """[ALPHA] A Citrine Descriptor describes the range of values that a quantity can take on.
+    """A Citrine Descriptor describes the range of values that a quantity can take on.
 
     Abstract type that returns the proper type given a serialized dict.
     """
+
+    key = properties.String('descriptor_key')
 
     @classmethod
     def get_type(cls, data) -> Type[Serializable]:
@@ -39,7 +41,7 @@ class Descriptor(PolymorphicSerializable['Descriptor']):
 
 
 class RealDescriptor(Serializable['RealDescriptor'], Descriptor):
-    """[ALPHA] A descriptor to hold real-valued numbers.
+    """A descriptor to hold real-valued numbers.
 
     Parameters
     ----------
@@ -52,7 +54,6 @@ class RealDescriptor(Serializable['RealDescriptor'], Descriptor):
 
     """
 
-    key = properties.String('descriptor_key')
     lower_bound = properties.Float('lower_bound')
     upper_bound = properties.Float('upper_bound')
     units = properties.Optional(properties.String, 'units', default='')
@@ -87,9 +88,13 @@ class RealDescriptor(Serializable['RealDescriptor'], Descriptor):
     def __str__(self):
         return "<RealDescriptor {!r}>".format(self.key)
 
+    def __repr__(self):
+        return "RealDescriptor({}, {}, {}, {})".format(
+            self.key, self.lower_bound, self.upper_bound, self.units)
+
 
 class ChemicalFormulaDescriptor(Serializable['ChemicalFormulaDescriptor'], Descriptor):
-    """[ALPHA] Captures domain-specific context about a stoichiometric chemical formula.
+    """Captures domain-specific context about a stoichiometric chemical formula.
 
     Parameters
     ----------
@@ -98,7 +103,6 @@ class ChemicalFormulaDescriptor(Serializable['ChemicalFormulaDescriptor'], Descr
 
     """
 
-    key = properties.String('descriptor_key')
     typ = properties.String('type', default='Inorganic', deserializable=False)
 
     def __eq__(self, other):
@@ -116,10 +120,13 @@ class ChemicalFormulaDescriptor(Serializable['ChemicalFormulaDescriptor'], Descr
     def __str__(self):
         return "<ChemicalFormulaDescriptor {!r}>".format(self.key)
 
+    def __repr__(self):
+        return "ChemicalFormulaDescriptor(key={})".format(self.key)
+
 
 class MolecularStructureDescriptor(Serializable['MolecularStructureDescriptor'], Descriptor):
     """
-    [ALPHA] Material descriptor for an organic molecule.
+    Material descriptor for an organic molecule.
 
     Accepts SMILES, IUPAC, and InChI String values.
 
@@ -130,7 +137,6 @@ class MolecularStructureDescriptor(Serializable['MolecularStructureDescriptor'],
 
     """
 
-    key = properties.String('descriptor_key')
     typ = properties.String('type', default='Organic', deserializable=False)
 
     def __eq__(self, other):
@@ -148,9 +154,12 @@ class MolecularStructureDescriptor(Serializable['MolecularStructureDescriptor'],
     def __str__(self):
         return "<MolecularStructureDescriptor {!r}>".format(self.key)
 
+    def __repr__(self):
+        return "MolecularStructureDescriptor(key={})".format(self.key)
+
 
 class CategoricalDescriptor(Serializable['CategoricalDescriptor'], Descriptor):
-    """[ALPHA] A descriptor to hold categorical variables.
+    """A descriptor to hold categorical variables.
 
     An exhaustive list of categorical values may be supplied.
 
@@ -163,28 +172,30 @@ class CategoricalDescriptor(Serializable['CategoricalDescriptor'], Descriptor):
 
     """
 
-    key = properties.String('descriptor_key')
     typ = properties.String('type', default='Categorical', deserializable=False)
-    categories = properties.List(properties.String, 'descriptor_values')
+    categories = properties.Set(properties.String, 'descriptor_values')
 
     def __eq__(self, other):
         try:
             attrs = ["key", "categories", "typ"]
             return all([
                 self.__getattribute__(key) == other.__getattribute__(key) for key in attrs
-            ]) and set(self.categories) == set(self.categories + other.categories)
+            ])
         except AttributeError:
             return False
 
-    def __init__(self, key: str, categories: List[str]):
+    def __init__(self, key: str, categories: Iterable[str]):
         self.key: str = key
         for category in categories:
             if not isinstance(category, str):
                 raise TypeError("All categories must be strings")
-        self.categories: List[str] = categories
+        self.categories: Set[str] = set(categories)
 
     def __str__(self):
         return "<CategoricalDescriptor {!r}>".format(self.key)
+
+    def __repr__(self):
+        return "CategoricalDescriptor(key={}, categories={})".format(self.key, self.categories)
 
 
 class FormulationDescriptor(Serializable['FormulationDescriptor'], Descriptor):
@@ -197,7 +208,6 @@ class FormulationDescriptor(Serializable['FormulationDescriptor'], Descriptor):
 
     """
 
-    key = properties.String('descriptor_key')
     typ = properties.String('type', default='Formulation', deserializable=False)
 
     def __eq__(self, other):
@@ -214,3 +224,6 @@ class FormulationDescriptor(Serializable['FormulationDescriptor'], Descriptor):
 
     def __str__(self):
         return "<FormulationDescriptor {!r}>".format(self.key)
+
+    def __repr__(self):
+        return "FormulationDescriptor(key={})".format(self.key)

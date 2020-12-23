@@ -1,9 +1,11 @@
 """Tests for citrine.informatics.processors."""
+import uuid
+import warnings
+
 import mock
 import pytest
-import uuid
 
-from citrine.informatics.data_sources import AraTableDataSource
+from citrine.informatics.data_sources import GemTableDataSource
 from citrine.informatics.descriptors import RealDescriptor, MolecularStructureDescriptor, FormulationDescriptor
 from citrine.informatics.predictors import ExpressionPredictor, GraphPredictor, SimpleMLPredictor, \
     MolecularStructureFeaturizer, GeneralizedMeanPropertyPredictor, IngredientsToSimpleMixturePredictor, \
@@ -19,7 +21,8 @@ formulation = FormulationDescriptor('formulation')
 formulation_output = FormulationDescriptor('output formulation')
 water_quantity = RealDescriptor('water quantity', 0, 1)
 salt_quantity = RealDescriptor('salt quantity', 0, 1)
-data_source = AraTableDataSource(uuid.UUID('e5c51369-8e71-4ec6-b027-1f92bdc14762'), 0)
+data_source = GemTableDataSource(uuid.UUID('e5c51369-8e71-4ec6-b027-1f92bdc14762'), 0)
+formulation_data_source = GemTableDataSource(uuid.UUID('6894a181-81d2-4304-9dfa-a6c5b114d8bc'), 0, formulation)
 
 
 @pytest.fixture
@@ -30,7 +33,7 @@ def simple_predictor() -> SimpleMLPredictor:
                              inputs=[x],
                              outputs=[z],
                              latent_variables=[y],
-                             training_data=data_source)
+                             training_data=[data_source])
 
 
 @pytest.fixture
@@ -47,7 +50,12 @@ def molecule_featurizer() -> MolecularStructureFeaturizer:
 @pytest.fixture
 def graph_predictor() -> GraphPredictor:
     """Build a GraphPredictor for testing."""
-    return GraphPredictor(name='Graph predictor', description='description', predictors=[uuid.uuid4(), uuid.uuid4()])
+    return GraphPredictor(
+        name='Graph predictor',
+        description='description',
+        predictors=[uuid.uuid4(), uuid.uuid4()],
+        training_data=[data_source]
+    )
 
 
 @pytest.fixture
@@ -105,7 +113,7 @@ def generalized_mean_property_predictor() -> GeneralizedMeanPropertyPredictor:
         input_descriptor=formulation,
         properties=['density'],
         p=2,
-        training_data=data_source,
+        training_data=[formulation_data_source],
         impute_properties=True,
         default_properties={'density': 1.0},
         label='solvent'
@@ -120,7 +128,7 @@ def simple_mixture_predictor() -> SimpleMixturePredictor:
         description='Computes mean ingredient properties',
         input_descriptor=formulation,
         output_descriptor=formulation_output,
-        training_data=data_source
+        training_data=[formulation_data_source]
     )
 
 
@@ -156,7 +164,7 @@ def test_simple_initialization(simple_predictor):
     assert simple_predictor.outputs[0] == z
     assert len(simple_predictor.latent_variables) == 1
     assert simple_predictor.latent_variables[0] == y
-    assert simple_predictor.training_data.table_id == uuid.UUID('e5c51369-8e71-4ec6-b027-1f92bdc14762')
+    assert simple_predictor.training_data[0].table_id == uuid.UUID('e5c51369-8e71-4ec6-b027-1f92bdc14762')
     assert str(simple_predictor) == '<SimplePredictor \'ML predictor\'>'
     assert hasattr(simple_predictor, 'report')
 
@@ -178,6 +186,7 @@ def test_graph_initialization(graph_predictor):
     assert graph_predictor.name == 'Graph predictor'
     assert graph_predictor.description == 'description'
     assert len(graph_predictor.predictors) == 2
+    assert graph_predictor.training_data == [data_source]
     assert str(graph_predictor) == '<GraphPredictor \'Graph predictor\'>'
 
 
@@ -251,9 +260,8 @@ def test_molecule_featurizer(molecule_featurizer):
             'features': ['all'], 'excludes': ['standard'],
             'type': 'MoleculeFeaturizer'
         },
-        'active': True,
+        'archived': False,
         'module_type': 'PREDICTOR',
-        'schema_id': '24183b2f-848c-46fa-8640-21b7743e38a3',
         'display_name': 'Molecule featurizer'
     }
 
@@ -301,7 +309,7 @@ def test_generalized_mean_property_initialization(generalized_mean_property_pred
     assert generalized_mean_property_predictor.properties == ['density']
     assert generalized_mean_property_predictor.p == 2
     assert generalized_mean_property_predictor.impute_properties == True
-    assert generalized_mean_property_predictor.training_data == data_source
+    assert generalized_mean_property_predictor.training_data == [formulation_data_source]
     assert generalized_mean_property_predictor.default_properties == {'density': 1.0}
     assert generalized_mean_property_predictor.label == 'solvent'
     expected_str = '<GeneralizedMeanPropertyPredictor \'Mean property predictor\'>'
@@ -346,7 +354,7 @@ def test_simple_mixture_predictor_initialization(simple_mixture_predictor):
     assert simple_mixture_predictor.name == 'Simple mixture predictor'
     assert simple_mixture_predictor.input_descriptor.key == 'formulation'
     assert simple_mixture_predictor.output_descriptor.key == 'output formulation'
-    assert simple_mixture_predictor.training_data == data_source
+    assert simple_mixture_predictor.training_data == [formulation_data_source]
     expected_str = '<SimpleMixturePredictor \'Simple mixture predictor\'>'
     assert str(simple_mixture_predictor) == expected_str
 
@@ -382,3 +390,38 @@ def test_ingredient_fractions_property_post_build(ingredient_fractions_predictor
     assert session.get_resource.call_count == 1
     assert ingredient_fractions_predictor.report is not None
     assert ingredient_fractions_predictor.report.status == 'OK'
+
+
+def test_wrap_training_data():
+    """Test training data is converted to a list if ``None`` or a single source."""
+    predictor_without_data = GraphPredictor(
+        name="",
+        description="",
+        predictors=[],
+        training_data=None
+    )
+    assert predictor_without_data.training_data == []
+
+    with warnings.catch_warnings(record=True) as w:
+        warnings.simplefilter("always")
+        predictor_single_data_source = GraphPredictor(
+            name="",
+            description="",
+            predictors=[],
+            training_data=data_source
+        )
+        assert predictor_single_data_source.training_data == [data_source]
+        assert len(w) == 1
+        recorded_warning = w[0]
+        assert issubclass(recorded_warning.category, DeprecationWarning)
+        assert str(recorded_warning.message).startswith(
+            "Specifying training data as a single data source is deprecated."
+        )
+
+    predictor_multiple_data_sources = GraphPredictor(
+        name="",
+        description="",
+        predictors=[],
+        training_data=[data_source, formulation_data_source]
+    )
+    assert predictor_multiple_data_sources.training_data == [data_source, formulation_data_source]

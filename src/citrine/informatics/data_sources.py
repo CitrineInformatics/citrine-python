@@ -3,15 +3,19 @@ from abc import abstractmethod
 from typing import Type, List, Mapping, Optional, Union  # noqa: F401
 from uuid import UUID
 
-from citrine._serialization.serializable import Serializable
-from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
 from citrine._serialization import properties
-from citrine.informatics.descriptors import Descriptor
+from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
+from citrine._serialization.serializable import Serializable
+from citrine.informatics.descriptors import Descriptor, FormulationDescriptor
 from citrine.resources.file_link import FileLink
+
+__all__ = ['DataSource',
+           'CSVDataSource',
+           'GemTableDataSource']
 
 
 class DataSource(PolymorphicSerializable['DataSource']):
-    """[ALPHA] A source of data for the AI engine.
+    """A source of data for the AI engine.
 
     Data source provides a polymorphic interface for specifying different kinds of data as the
     training data for predictors and the input data for some design spaces.
@@ -36,7 +40,7 @@ class DataSource(PolymorphicSerializable['DataSource']):
         if "type" not in data:
             raise ValueError("Can only get types from dicts with a 'type' key")
         types: List[Type[Serializable]] = [
-            CSVDataSource, AraTableDataSource
+            CSVDataSource, GemTableDataSource
         ]
         res = next((x for x in types if x.typ == data["type"]), None)
         if res is None:
@@ -45,7 +49,7 @@ class DataSource(PolymorphicSerializable['DataSource']):
 
 
 class CSVDataSource(Serializable['CSVDataSource'], DataSource):
-    """[ALPHA] A data source based on a CSV file stored on the data platform.
+    """A data source based on a CSV file stored on the data platform.
 
     Parameters
     ----------
@@ -79,29 +83,36 @@ class CSVDataSource(Serializable['CSVDataSource'], DataSource):
         self.identifiers = identifiers
 
 
-class AraTableDataSource(Serializable['AraTableDataSource'], DataSource):
-    """[ALPHA] A data source based on an Ara table hosted on the data platform.
-
-    TODO: replace "Ara" with whatever non-codename we pick for that component of the platform
+class GemTableDataSource(Serializable['GemTableDataSource'], DataSource):
+    """[ALPHA] A data source based on a GEM Table hosted on the data platform.
 
     Parameters
     ----------
     table_id: UUID
-        Unique identifier for the table
+        Unique identifier for the GEM Table
     table_version: Union[str,int]
-        Version number for the table, which starts at 1 rather than 0.  Strings are cast to ints
+        Version number for the GEM Table, which starts at 1 rather than 0.
+        Strings are cast to ints.
+    formulation_descriptor: Optional[FormulationDescriptor]
+        Optional descriptor used to store formulations emitted by the data source.
 
     """
 
     typ = properties.String('type', default='hosted_table_data_source', deserializable=False)
     table_id = properties.UUID("table_id")
     table_version = properties.Integer("table_version")
+    formulation_descriptor = properties.Optional(
+        properties.Object(FormulationDescriptor),
+        "formulation_descriptor"
+    )
 
     def _attrs(self) -> List[str]:
         return ["table_id", "table_version", "typ"]
 
     def __init__(self,
                  table_id: UUID,
-                 table_version: Union[int, str]):
-        self.table_id = table_id
-        self.table_version = table_version
+                 table_version: Union[int, str],
+                 formulation_descriptor: Optional[FormulationDescriptor] = None):
+        self.table_id: UUID = table_id
+        self.table_version: Union[int, str] = table_version
+        self.formulation_descriptor: Optional[FormulationDescriptor] = formulation_descriptor

@@ -2,8 +2,14 @@
 from typing import Optional, Dict, List, Union, Iterable, Tuple
 from uuid import UUID
 
+from citrine.resources.predictor_evaluation_execution import PredictorEvaluationExecutionCollection
+from citrine.resources.predictor_evaluation_workflow import PredictorEvaluationWorkflowCollection
+from citrine.resources.design_execution import DesignExecutionCollection
+from citrine.resources.design_workflow import DesignWorkflowCollection
+from deprecation import deprecated
+
 from citrine._session import Session
-from citrine.resources.ara_definition import AraDefinitionCollection
+from citrine.resources.table_config import TableConfigCollection
 from citrine.resources.descriptors import DescriptorMethods
 from citrine.resources.module import ModuleCollection
 from citrine.resources.design_space import DesignSpaceCollection
@@ -32,7 +38,7 @@ from citrine.resources.ingredient_spec import IngredientSpecCollection
 from citrine._rest.collection import Collection
 from citrine._rest.resource import Resource
 from citrine._serialization import properties
-from citrine.resources.table import TableCollection
+from citrine.resources.gemtables import GemTableCollection
 from citrine.resources.user import User
 
 
@@ -116,14 +122,34 @@ class Project(Resource['Project']):
         return WorkflowCollection(self.uid, self.session)
 
     @property
+    def predictor_evaluation_workflows(self) -> PredictorEvaluationWorkflowCollection:
+        """[ALPHA] Return a collection representing all visible predictor evaluation workflows."""
+        return PredictorEvaluationWorkflowCollection(self.uid, self.session)
+
+    @property
+    def predictor_evaluation_executions(self) -> PredictorEvaluationExecutionCollection:
+        """[ALPHA] Return a collection representing all visible predictor evaluation executions."""
+        return PredictorEvaluationExecutionCollection(project_id=self.uid, session=self.session)
+
+    @property
+    def design_workflows(self) -> DesignWorkflowCollection:
+        """[ALPHA] Return a collection representing all visible design workflows."""
+        return DesignWorkflowCollection(self.uid, self.session)
+
+    @property
+    def design_executions(self) -> DesignExecutionCollection:
+        """[ALPHA] Return a collection representing all visible predictor evaluation executions."""
+        return DesignExecutionCollection(project_id=self.uid, session=self.session)
+
+    @property
     def datasets(self) -> DatasetCollection:
         """Return a resource representing all visible datasets."""
         return DatasetCollection(self.uid, self.session)
 
     @property
-    def tables(self) -> TableCollection:
+    def tables(self) -> GemTableCollection:
         """Return a resource representing all visible Tables."""
-        return TableCollection(self.uid, self.session)
+        return GemTableCollection(self.uid, self.session)
 
     @property
     def property_templates(self) -> PropertyTemplateCollection:
@@ -196,9 +222,18 @@ class Project(Resource['Project']):
         return IngredientSpecCollection(self.uid, None, self.session)
 
     @property
-    def ara_definitions(self) -> AraDefinitionCollection:
-        """Return a resource representing all ara definitions in the project."""
-        return AraDefinitionCollection(self.uid, self.session)
+    def table_configs(self) -> TableConfigCollection:
+        """Return a resource representing all Table Configs in the project."""
+        return TableConfigCollection(self.uid, self.session)
+
+    @property
+    @deprecated(deprecated_in="0.52.2", details="Use table_configs instead")
+    def ara_definitions(self) -> TableConfigCollection:  # pragma: no cover
+        """[DEPRECATED] Use table_configs instead."""
+        from warnings import warn
+        warn("ara_definitions is deprecated and will soon be removed. "
+             "Please call table_configs instead.", DeprecationWarning)
+        return self.table_configs
 
     def share(self,
               project_id: str,
@@ -209,6 +244,34 @@ class Project(Resource['Project']):
             "project_id": project_id,
             "resource": {"type": resource_type, "id": resource_id}
         })
+
+    def transfer_resource(self, resource: Resource,
+                          receiving_project_uid: Union[str, UUID]) -> bool:
+        """
+        Transfer ownership of a resource.
+
+        The new owner of the the supplied resource becomes the project
+        with ``uid == receiving_project_uid``.
+
+        Parameters
+        ----------
+        resource: Resource
+            The resource owned by this project, which will get transferred to
+            the project with ``uid == receiving_project_uid``.
+        receiving_project_uid: Union[string, UUID]
+            The uid of the project to which the resource will be transferred.
+
+        Returns
+        -------
+        bool
+            Returns ``True`` upon successful resource transfer.
+
+        """
+        self.session.checked_post(self._path() + "/transfer-resource", {
+            "to_project_id": str(receiving_project_uid),
+            "resource": resource.as_entity_dict()})
+
+        return True
 
     def make_public(self,
                     resource: Resource) -> bool:
@@ -223,7 +286,7 @@ class Project(Resource['Project']):
         Returns
         -------
         bool
-            True if the action was performed successfully
+            ``True`` if the action was performed successfully
 
         """
         self.session.checked_post(self._path() + "/make-public", {
@@ -244,7 +307,7 @@ class Project(Resource['Project']):
         Returns
         -------
         bool
-            True if the action was performed successfully
+            ``True`` if the action was performed successfully
 
         """
         self.session.checked_post(self._path() + "/make-private", {
@@ -269,14 +332,14 @@ class Project(Resource['Project']):
         """
         Update a User's role and action permissions in the Project.
 
-        Valid roles are MEMBER or LEAD.
+        Valid roles are ``MEMBER`` or ``LEAD``.
 
-        WRITE is the only action available for specification.
+        ``WRITE`` is the only action available for specification.
 
         Returns
         -------
         bool
-            Returns True if user role successfully updated
+            Returns ``True`` if user role successfully updated
 
         """
         self.session.checked_post(self._path() + "/users/{}".format(user_uid),
@@ -287,13 +350,13 @@ class Project(Resource['Project']):
         """
         Add a User to a Project.
 
-        Adds User with MEMBER role to the Project.
-        Use the update_user_rule method to change a User's role.
+        Adds User with ``MEMBER`` role to the Project.
+        Use the ``update_user_rule`` method to change a User's role.
 
         Returns
         -------
         bool
-            Returns True if user successfully added
+            Returns ``True`` if user successfully added
 
         """
         self.session.checked_post(self._path() + "/users/{}".format(user_uid),
@@ -307,7 +370,7 @@ class Project(Resource['Project']):
         Returns
         -------
         bool
-            Returns True if user successfully removed
+            Returns ``True`` if user successfully removed
 
         """
         self.session.checked_delete(
@@ -368,8 +431,35 @@ class ProjectCollection(Collection[Project]):
         """
         return super().register(Project(name, description))
 
+    def list(self,
+             page: Optional[int] = None,
+             per_page: int = 1000) -> Iterable[Project]:
+        """
+        List projects using pagination.
+
+        Leaving page and per_page as default values will yield all elements in the
+        collection, paginating over all available pages.
+
+        Parameters
+        ---------
+        page: int, optional
+            The "page" of results to list. Default is to read all pages and yield
+            all results.  This option is deprecated.
+        per_page: int, optional
+            Max number of results to return per page. Default is 1000.  This parameter
+            is used when making requests to the backend service.  If the page parameter
+            is specified it limits the maximum number of elements in the response.
+
+        Returns
+        -------
+        Iterable[Project]
+            Projects in this collection.
+
+        """
+        return super().list(page, per_page)
+
     def search(self, search_params: Optional[dict] = None,
-               per_page: int = 100) -> Iterable[Project]:
+               per_page: int = 1000) -> Iterable[Project]:
         """
         Search for projects matching the desired name or description.
 
@@ -377,36 +467,40 @@ class ProjectCollection(Collection[Project]):
         or substring match, as specified by the search_params argument. Defaults to no search
         criteria.
 
-        Like list, this method allows for pagination. This differs from the list function, because
-        it makes a POST request to resourceType/search with search fields in a post body.
+        Like ``list``, this method allows for pagination. This differs from the list function,
+        because it makes a POST request to resourceType/search with search fields in a post body.
 
         Leaving page and per_page as default values will yield all elements in the collection,
         paginating over all available pages.
 
-        Leaving search_params as its default value will return mimic the behavior of a full list
-        with no search parameters.
+        Leaving ``search_params`` as its default value will return mimic the behavior of
+        a full list with no search parameters.
 
         Parameters
-        ---------
+        ----------
         search_params: dict, optional
-            A dict representing the body of the post request that will be sent to the search
-            endpoint to filter the results ie.
-            {
-                "name": {
-                    "value": "Polymer Project",
-                    "search_method": "EXACT"
-                },
-                "description": {
-                    "value": "polymer chain length",
-                    "search_method": "SUBSTRING"
-                },
-            }
-            The dict can constain any combination of (one or all) search specifications for the
+            A ``dict`` representing the body of the post request that will be sent to the search
+            endpoint to filter the results i.e.
+
+            .. code:: python
+
+                {
+                    "name": {
+                        "value": "Polymer Project",
+                        "search_method": "EXACT"
+                    },
+                    "description": {
+                        "value": "polymer chain length",
+                        "search_method": "SUBSTRING"
+                    },
+                }
+
+            The ``dict`` can contain any combination of (one or all) search specifications for the
             name, description, and status fields of a project. For each parameter specified, the
-            "value" to match, as well as the "search_method" must be provided. The available
-            search_methods are "SUBSTRING" and "EXACT". The example above demonstrates the input
-            necessary to list projects with the exact name "Polymer Project," and descriptions
-            including the phrase "polymer chain length,"
+            ``"value"`` to match, as well as the ``"search_method"`` must be provided.
+            The available ``search_methods`` are ``"SUBSTRING"`` and ``"EXACT"``. The example above
+            demonstrates the input necessary to list projects with the exact name
+            ``"Polymer Project"`` and descriptions including the phrase ``"polymer chain length"``.
 
         per_page: int, optional
             Max number of results to return per page. Default is 100.  This parameter is used when
@@ -437,8 +531,8 @@ class ProjectCollection(Collection[Project]):
         """
         Fetch resources that match the supplied search parameters.
 
-        Fetches resources that match the supplied search_params, by calling _fetch_page with
-        checked_post, the path to the POST resource-type/search endpoint, any pagination
+        Fetches resources that match the supplied ``search_params``, by calling ``_fetch_page``
+        with ``checked_post``, the path to the POST resource-type/search endpoint, any pagination
         parameters, and the request body to the search endpoint.
 
         Parameters
@@ -448,11 +542,10 @@ class ProjectCollection(Collection[Project]):
         per_page: int, optional
             Max number of results to return. Default is 20.
         search_params: dict, optional
-            A dict representing a request body that could be sent to a POST request. The "json"
-            field should be passed as the key for the outermost dict, with its value the request
-            body, so that we can easily unpack the keyword argument when it gets passed to
-            fetch_func.
-            ie. {'name': {'value': 'Project', 'search_method': 'SUBSTRING'} }
+            A ``dict`` representing a request body that could be sent to a POST request. The "json"
+            field should be passed as the key for the outermost ``dict``, with its value the
+            request body, so that we can easily unpack the keyword argument when it gets passed to
+            ``fetch_func``, i.e. ``{'name': {'value': 'Project', 'search_method': 'SUBSTRING'} }``
 
         Returns
         -------

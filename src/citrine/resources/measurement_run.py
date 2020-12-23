@@ -6,7 +6,7 @@ from citrine._rest.resource import Resource
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Optional as PropertyOptional
 from citrine._serialization.properties import String, Object, Mapping, LinkOrElse
-from citrine.resources.data_concepts import DataConcepts
+from citrine.resources.data_concepts import DataConcepts, CITRINE_SCOPE
 from citrine.resources.object_runs import ObjectRun, ObjectRunCollection
 from gemd.entity.attribute.condition import Condition
 from gemd.entity.attribute.parameter import Parameter
@@ -57,21 +57,22 @@ class MeasurementRun(ObjectRun, Resource['MeasurementRun'], GEMDMeasurementRun):
 
     _response_key = GEMDMeasurementRun.typ  # 'measurement_run'
 
-    name = String('name')
-    uids = Mapping(String('scope'), String('id'), 'uids')
-    tags = PropertyOptional(PropertyList(String()), 'tags')
-    notes = PropertyOptional(String(), 'notes')
-    conditions = PropertyOptional(PropertyList(Object(Condition)), 'conditions')
-    parameters = PropertyOptional(PropertyList(Object(Parameter)), 'parameters')
-    properties = PropertyOptional(PropertyList(Object(Property)), 'properties')
-    spec = PropertyOptional(LinkOrElse(), 'spec')
-    material = PropertyOptional(LinkOrElse(), "material")
-    file_links = PropertyOptional(PropertyList(Object(FileLink)), 'file_links')
-    source = PropertyOptional(Object(PerformedSource), "source")
+    name = String('name', override=True)
+    uids = Mapping(String('scope'), String('id'), 'uids', override=True)
+    tags = PropertyOptional(PropertyList(String()), 'tags', override=True)
+    notes = PropertyOptional(String(), 'notes', override=True)
+    conditions = PropertyOptional(PropertyList(Object(Condition)), 'conditions', override=True)
+    parameters = PropertyOptional(PropertyList(Object(Parameter)), 'parameters', override=True)
+    properties = PropertyOptional(PropertyList(Object(Property)), 'properties', override=True)
+    spec = PropertyOptional(LinkOrElse(), 'spec', override=True)
+    material = PropertyOptional(LinkOrElse(), "material", override=True)
+    file_links = PropertyOptional(PropertyList(Object(FileLink)), 'file_links', override=True)
+    source = PropertyOptional(Object(PerformedSource), "source", override=True)
     typ = String('type')
 
     def __init__(self,
                  name: str,
+                 *,
                  uids: Optional[Dict[str, str]] = None,
                  tags: Optional[List[str]] = None,
                  notes: Optional[str] = None,
@@ -109,7 +110,9 @@ class MeasurementRunCollection(ObjectRunCollection[MeasurementRun]):
         """Return the resource type in the collection."""
         return MeasurementRun
 
-    def list_by_spec(self, uid: Union[UUID, str], scope: str = 'id') -> Iterator[MeasurementRun]:
+    def list_by_spec(self,
+                     uid: Union[UUID, str],
+                     scope: str = CITRINE_SCOPE) -> Iterator[MeasurementRun]:
         """
         [ALPHA] Get the measurement runs using the specified measurement spec.
 
@@ -127,8 +130,9 @@ class MeasurementRunCollection(ObjectRunCollection[MeasurementRun]):
         """
         return self._get_relation('measurement-specs', uid=uid, scope=scope)
 
-    def list_by_material(self, uid: Union[UUID, str],
-                         scope: str = 'id') -> Iterator[MeasurementRun]:
+    def list_by_material(self,
+                         uid: Union[UUID, str],
+                         scope: str = CITRINE_SCOPE) -> Iterator[MeasurementRun]:
         """
         [ALPHA] Get measurements of the specified material.
 

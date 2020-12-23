@@ -1,10 +1,9 @@
-import pytest
-import arrow
 import uuid
+
+import arrow
+import pytest
 from gemd.enumeration.base_enumeration import BaseEnumeration
 
-
-from citrine.resources.dataset import Dataset
 from citrine._serialization.properties import (
     Datetime,
     Enumeration,
@@ -12,6 +11,7 @@ from citrine._serialization.properties import (
     Integer,
     LinkByUID,
     LinkOrElse,
+    Set,
     SpecifiedMixedList,
     Object,
     Optional,
@@ -19,6 +19,8 @@ from citrine._serialization.properties import (
     Union,
     UUID,
 )
+from citrine.informatics.predictor_evaluation_metrics import PredictorEvaluationMetric, RMSE, CoverageProbability
+from citrine.resources.dataset import Dataset
 from ._data import (
     VALID_SERIALIZATIONS,
     VALID_STRINGS,
@@ -251,3 +253,25 @@ def test_linkorelse_deserialize():
 def test_optional_repr():
     opt = Optional(String)
     assert '<Optional[<String None>] None>' == str(opt)
+
+
+def test_set_serialize_sortable():
+    data = {3, 2, 1}
+    serialized = Set(Integer).serialize(data)
+    # if items in the set are sortable, the list should be returned in sorted order
+    assert serialized == [1, 2, 3]
+
+
+def test_set_serialize_unsortable():
+    """
+    Serializing a set of predictor evaluation metrics results
+    in a list of dictionaries, which cannot be sorted.
+    Attempting to serialize the data should work, but the order
+    cannot be guaranteed, hence why we assert each metric is in
+    the serialized value individually.
+
+    """
+    data = {RMSE(), CoverageProbability()}
+    serialized = Set(Object(PredictorEvaluationMetric)).serialize(data)
+    for metric in data:
+        assert metric.dump() in serialized

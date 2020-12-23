@@ -6,7 +6,7 @@ from citrine._rest.resource import Resource
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Optional as PropertyOptional
 from citrine._serialization.properties import String, Mapping, Object, LinkOrElse
-from citrine.resources.data_concepts import DataConcepts
+from citrine.resources.data_concepts import DataConcepts, CITRINE_SCOPE
 from citrine.resources.object_specs import ObjectSpec, ObjectSpecCollection
 from gemd.entity.attribute.condition import Condition
 from gemd.entity.attribute.parameter import Parameter
@@ -58,18 +58,19 @@ class ProcessSpec(ObjectSpec, Resource['ProcessSpec'], GEMDProcessSpec):
 
     _response_key = GEMDProcessSpec.typ  # 'process_spec'
 
-    name = String('name')
-    uids = Mapping(String('scope'), String('id'), 'uids')
-    tags = PropertyOptional(PropertyList(String()), 'tags')
-    notes = PropertyOptional(String(), 'notes')
-    conditions = PropertyOptional(PropertyList(Object(Condition)), 'conditions')
-    parameters = PropertyOptional(PropertyList(Object(Parameter)), 'parameters')
-    template = PropertyOptional(LinkOrElse(), 'template')
-    file_links = PropertyOptional(PropertyList(Object(FileLink)), 'file_links')
+    name = String('name', override=True)
+    uids = Mapping(String('scope'), String('id'), 'uids', override=True)
+    tags = PropertyOptional(PropertyList(String()), 'tags', override=True)
+    notes = PropertyOptional(String(), 'notes', override=True)
+    conditions = PropertyOptional(PropertyList(Object(Condition)), 'conditions', override=True)
+    parameters = PropertyOptional(PropertyList(Object(Parameter)), 'parameters', override=True)
+    template = PropertyOptional(LinkOrElse(), 'template', override=True)
+    file_links = PropertyOptional(PropertyList(Object(FileLink)), 'file_links', override=True)
     typ = String('type')
 
     def __init__(self,
                  name: str,
+                 *,
                  uids: Optional[Dict[str, str]] = None,
                  tags: Optional[List[str]] = None,
                  notes: Optional[str] = None,
@@ -103,7 +104,8 @@ class ProcessSpecCollection(ObjectSpecCollection[ProcessSpec]):
         """Return the resource type in the collection."""
         return ProcessSpec
 
-    def list_by_template(self, uid: Union[UUID, str], scope: str = 'id') -> Iterator[ProcessSpec]:
+    def list_by_template(self, uid: Union[UUID, str],
+                         scope: str = CITRINE_SCOPE) -> Iterator[ProcessSpec]:
         """
         [ALPHA] Get the process specs using the specified process template.
 

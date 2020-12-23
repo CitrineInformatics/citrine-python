@@ -6,9 +6,12 @@ from citrine._rest.collection import Collection
 from citrine.exceptions import NotFound
 from citrine.resources.dataset import Dataset, DatasetCollection
 from citrine.resources.process_spec import ProcessSpecCollection, ProcessSpec
+from citrine.resources.predictor import PredictorCollection
+from citrine.informatics.predictors import SimpleMLPredictor
 from citrine.resources.project import ProjectCollection, Project
 from citrine.seeding.find_or_create import (find_collection, get_by_name_or_create, get_by_name_or_raise_error,
-                                            find_or_create_project, find_or_create_dataset)
+                                            find_or_create_project, find_or_create_dataset,
+                                            create_or_update)
 
 from tests.utils.session import FakeSession
 
@@ -126,6 +129,46 @@ def dataset_collection() -> DatasetCollection:
     for i in range(0, 2):
         datasets.register(Dataset(duplicate_name, "dup", "duplicate"))
     return datasets
+
+@pytest.fixture
+def predictor_collection() -> PredictorCollection:
+    class SeedingTestPredictorCollection(PredictorCollection):
+        predictors = []
+
+        def register(self, model: SimpleMLPredictor) -> SimpleMLPredictor:
+            self.predictors.append(model)
+            return model
+        
+        def update(self, model):
+            self.predictors = [r for r in self.predictors if r.uid != model.uid]
+            return self.register(model)
+
+        def list(self, page: Optional[int] = None, per_page: int = 100):
+            if page is None:
+                return self.predictors
+            else:
+                return self.predictors[(page - 1)*per_page:page*per_page]
+
+    predictors = SeedingTestPredictorCollection(UUID('6b608f78-e341-422c-8076-35adc8828545'),
+                                session)
+
+    #Adding a few predictors in the collection to have something to update
+    for i in range(0, 5):
+        predictors.register(SimpleMLPredictor(name = "resource " + str(i),
+                                            description = '',
+                                            inputs = [],
+                                            outputs = [],
+                                            latent_variables =[]))
+
+    #Adding a few predictors with the same name ("resource {0,1}" were made above)
+    # this is used to test behavior if there are duplicates
+    for i in range(0, 2):
+        predictors.register(SimpleMLPredictor(name = "resource " + str(i),
+                                            description = '',
+                                            inputs = [],
+                                            outputs = [],
+                                            latent_variables =[]))
+    return predictors
 
 
 def test_find_collection_no_exist(session, fake_collection):
@@ -280,3 +323,45 @@ def test_find_or_create_dataset_raise_error_exist_multiple(dataset_collection):
     # test when dataset exists multiple times and raise_error flag is on
     with pytest.raises(ValueError):
         find_or_create_dataset(dataset_collection, duplicate_name, raise_error=True)
+
+def test_create_or_update_none_found(predictor_collection):
+    # test when resource doesn't exist with listed name and check if new one is created
+    assert not [r for r in list(predictor_collection.list()) if r.name == absent_name]
+    pred = SimpleMLPredictor(name=absent_name,
+                            description = '',
+                            inputs = [],
+                            outputs = [],
+                            latent_variables = [])
+    #verify that the returned object is updated
+    returned_pred = create_or_update(predictor_collection, pred)
+    assert returned_pred.uid == pred.uid
+    assert returned_pred.name == pred.name
+    assert returned_pred.description == pred.description
+    #verify that the collection is also updated
+    assert any([r for r in list(predictor_collection.list()) if r.name == absent_name])
+
+def test_create_or_update_unique_found(predictor_collection):
+    # test when there is a single unique resource that exists with the listed name and update
+    pred = SimpleMLPredictor(name="resource 4", #this is a unique name in the collection
+                            description = 'I am updated!',
+                            inputs = [],
+                            outputs = [],
+                            latent_variables = [])
+    #verify that the returned object is updated
+    returned_pred = create_or_update(predictor_collection, pred)
+    assert returned_pred.uid == pred.uid
+    assert returned_pred.name == pred.name
+    assert returned_pred.description == pred.description
+    #verify that the collection is also updated
+    updated_pred = [r for r in list(predictor_collection.list()) if r.name == "resource 4"][0]
+    assert updated_pred.description == "I am updated!"
+
+def test_create_or_update_raise_error_multiple_found(predictor_collection):
+    # test when there are multiple resources that exists with the same listed name and raise error
+    pred = SimpleMLPredictor(name="resource 1", #Not unique: two "resource 1" exists in collection
+                            description = 'I am updated!',
+                            inputs = [],
+                            outputs = [],
+                            latent_variables = [])
+    with pytest.raises(ValueError):
+        create_or_update(predictor_collection, pred)

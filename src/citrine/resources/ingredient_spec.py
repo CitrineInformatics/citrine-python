@@ -6,7 +6,7 @@ from citrine._rest.resource import Resource
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Mapping, String, LinkOrElse, Object
 from citrine._serialization.properties import Optional as PropertyOptional
-from citrine.resources.data_concepts import DataConcepts
+from citrine.resources.data_concepts import DataConcepts, CITRINE_SCOPE
 from citrine.resources.object_specs import ObjectSpec, ObjectSpecCollection
 from gemd.entity.file_link import FileLink
 from gemd.entity.object.ingredient_spec import IngredientSpec as GEMDIngredientSpec
@@ -60,23 +60,24 @@ class IngredientSpec(ObjectSpec, Resource['IngredientSpec'], GEMDIngredientSpec)
 
     _response_key = GEMDIngredientSpec.typ  # 'ingredient_spec'
 
-    uids = Mapping(String('scope'), String('id'), 'uids')
-    tags = PropertyOptional(PropertyList(String()), 'tags')
-    notes = PropertyOptional(String(), 'notes')
-    material = PropertyOptional(LinkOrElse(), 'material')
-    process = PropertyOptional(LinkOrElse(), 'process')
-    mass_fraction = PropertyOptional(Object(ContinuousValue), 'mass_fraction')
-    volume_fraction = PropertyOptional(Object(ContinuousValue), 'volume_fraction')
-    number_fraction = PropertyOptional(Object(ContinuousValue), 'number_fraction')
+    uids = Mapping(String('scope'), String('id'), 'uids', override=True)
+    tags = PropertyOptional(PropertyList(String()), 'tags', override=True)
+    notes = PropertyOptional(String(), 'notes', override=True)
+    material = PropertyOptional(LinkOrElse(), 'material', override=True)
+    process = PropertyOptional(LinkOrElse(), 'process', override=True)
+    mass_fraction = PropertyOptional(Object(ContinuousValue), 'mass_fraction', override=True)
+    volume_fraction = PropertyOptional(Object(ContinuousValue), 'volume_fraction', override=True)
+    number_fraction = PropertyOptional(Object(ContinuousValue), 'number_fraction', override=True)
     absolute_quantity = PropertyOptional(
-        Object(ContinuousValue), 'absolute_quantity')
-    name = String('name')
-    labels = PropertyOptional(PropertyList(String()), 'labels')
-    file_links = PropertyOptional(PropertyList(Object(FileLink)), 'file_links')
+        Object(ContinuousValue), 'absolute_quantity', override=True)
+    name = String('name', override=True)
+    labels = PropertyOptional(PropertyList(String()), 'labels', override=True)
+    file_links = PropertyOptional(PropertyList(Object(FileLink)), 'file_links', override=True)
     typ = String('type')
 
     def __init__(self,
                  name: str,
+                 *,
                  uids: Optional[Dict[str, str]] = None,
                  tags: Optional[List[str]] = None,
                  notes: Optional[str] = None,
@@ -117,8 +118,9 @@ class IngredientSpecCollection(ObjectSpecCollection[IngredientSpec]):
         """Return the resource type in the collection."""
         return IngredientSpec
 
-    def list_by_process(self, uid: Union[UUID, str],
-                        scope: str = 'id') -> Iterator[IngredientSpec]:
+    def list_by_process(self,
+                        uid: Union[UUID, str],
+                        scope: str = CITRINE_SCOPE) -> Iterator[IngredientSpec]:
         """
         [ALPHA] Get ingredients to a process.
 
@@ -136,8 +138,9 @@ class IngredientSpecCollection(ObjectSpecCollection[IngredientSpec]):
         """
         return self._get_relation(relation='process-specs', uid=uid, scope=scope)
 
-    def list_by_material(self, uid: Union[UUID, str],
-                         scope: str = 'id') -> Iterator[IngredientSpec]:
+    def list_by_material(self,
+                         uid: Union[UUID, str],
+                         scope: str = CITRINE_SCOPE) -> Iterator[IngredientSpec]:
         """
         [ALPHA] Get ingredients using the specified material.
 

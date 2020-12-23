@@ -1,7 +1,8 @@
 """Top-level class for all data concepts objects and collections thereof."""
 from abc import abstractmethod, ABC
-from typing import TypeVar, Type, List, Union, Optional, Iterator, Iterable
-from uuid import UUID
+from typing import TypeVar, Type, List, Union, Optional, Iterator
+from uuid import UUID, uuid4
+import deprecation
 
 from citrine._rest.collection import Collection
 from citrine._serialization import properties
@@ -15,6 +16,7 @@ from citrine.resources.response import Response
 from gemd.entity.dict_serializable import DictSerializable
 from gemd.entity.link_by_uid import LinkByUID
 from gemd.json import GEMDJson
+from gemd.util import recursive_foreach
 
 CITRINE_SCOPE = 'id'
 
@@ -258,61 +260,25 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         data_concepts_object = self.get_type().build(data)
         return data_concepts_object
 
-    def _fetch_page(self, page: Optional[int] = None, per_page: Optional[int] = None):
-        """
-        List all visible elements of the collection.  Does not handle pagination.
-
-        Parameters
-        ----------
-        page: Optional[int]
-            The page of results to list, 1-indexed (i.e. the first page is page=1)
-        per_page: Optional[int]
-            The number of results to list per page
-
-        Returns
-        -------
-        List[ResourceType]
-            Every object in this collection.
-
-        """
-        return self.filter_by_tags([], page, per_page), ""
-
-    def _build_collection_elements(self,
-                                   collection: Iterable[dict]) -> Iterable[ResourceType]:
-        """
-        For each element in the collection, build the appropriate resource type.
-
-        Parameters
-        ---------
-        collection: Iterable[dict]
-            collection containing the elements to be built
-
-        Returns
-        -------
-        Iterable[ResourceType]
-            Resources in this collection.
-
-        """
-        return collection
-
     def list(self,
              page: Optional[int] = None,
              per_page: Optional[int] = 100) -> List[ResourceType]:
         """
         List all visible elements of the collection.
 
-        Leaving page and per_page as default values will return a list of all elements
-        in the collection, paginating over all available pages.
+        page and per_page parameters of this method are deprecated and ignored.
+        This method will will return a list of all elements in the collection.
 
         Parameters
         ---------
         page: int, optional
-            The "page" of results to list. Default is to read all pages and return
-            all results.  This option is deprecated.
+            [DEPRECATED][IGNORED] This parameter is ignored. To load individual
+            pages lazily, use the list_all method.
         per_page: int, optional
-            Max number of results to return per page.  This parameter is used when
-            making requests to the backend service.  If the page parameter is
-            specified it limits the maximum number of elements in the response.
+            Max number of results to return per page. It is very unlikely that
+            setting this parameter to something other than the default is useful.
+            It exists for rare situations where the client is bandwidth constrained
+            or experiencing latency from large payload sizes.
 
         Returns
         -------
@@ -321,7 +287,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
 
         """
         # Convert the iterator to a list to avoid breaking existing client relying on lists
-        return list(super().list(page=page, per_page=per_page))
+        return [x for x in self.list_all(per_page=per_page)]
 
     def register(self, model: ResourceType, dry_run=False):
         """
@@ -366,8 +332,12 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         # nested gemd objects, and then the final dumps() converts that to a json-ready string
         # in which all of the object references have been replaced with link-by-uids.
 
-        GEMDJson(scope=CITRINE_SCOPE).dumps(model)  # This apparent no-op populates uids
+        temp_scope = str(uuid4())
+        scope = temp_scope if dry_run else CITRINE_SCOPE
+        GEMDJson(scope=scope).dumps(model)  # This apparent no-op populates uids
         dumped_data = replace_objects_with_links(scrub_none(model.dump()))
+        recursive_foreach(model, lambda x: x.uids.pop(temp_scope, None))  # Strip temp uids
+
         data = self.session.post_resource(path, dumped_data, params=params)
         full_model = self.build(data)
         return full_model
@@ -402,16 +372,131 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         path = self._get_path()
         params = {'dry_run': dry_run}
 
-        json = GEMDJson(scope=CITRINE_SCOPE)
+        temp_scope = str(uuid4())
+        scope = temp_scope if dry_run else CITRINE_SCOPE
+        json = GEMDJson(scope=scope)
         [json.dumps(x) for x in models]  # This apparent no-op populates uids
 
         objects = [replace_objects_with_links(scrub_none(model.dump())) for model in models]
+
+        recursive_foreach(models, lambda x: x.uids.pop(temp_scope, None))  # Strip temp uids
+
         response_data = self.session.put_resource(
             path + '/batch',
             json={'objects': objects},
             params=params
         )
         return [self.build(obj) for obj in response_data['objects']]
+
+    def async_update(self, model: ResourceType, *,
+                     dry_run: bool = False,
+                     wait_for_response: bool = True,
+                     timeout: float = 2 * 60,
+                     polling_delay: float = 1.0) -> Optional[UUID]:
+        """
+        [ALPHA] Update a particular element of the collection with data validation.
+
+        Update a particular element of the collection, doing a deeper check to ensure that
+        the dependent data objects are still with the (potentially) changed constraints
+        of this change. This will allow you to make bounds and allowed named/labels changes
+        to templates.
+
+        Parameters
+        ----------
+        model: ResourceType
+            The DataConcepts object.
+        dry_run: bool
+            Whether to actually update the item or run a dry run of the update operation.
+            Dry run is intended to be used for validation. Default: false
+        wait_for_response:
+            Whether to poll for the eventual response. This changes the return type (see
+            below).
+        timeout:
+            How long to poll for the result before giving up. This is expressed in
+            (fractional) seconds.
+        polling_delay:
+            How long to delay between each polling retry attempt.
+
+        Returns
+        -------
+        Optional[UUID]
+            If wait_for_response if True, then this call will poll the backend, waiting
+            for the eventual job result. In the case of successful validation/update,
+            a return value of None is provided which indicates success. In the case of
+            a failure validating or processing the update, an exception (JobFailureError)
+            is raised and an error message is logged with the underlying reason of the
+            failure.
+
+            If wait_for_response if False, A job ID (of type UUID) is returned that one
+            can use to poll for the job completion and result with the
+            :func:`~citrine.resources.DataConceptsCollection.poll_async_update_job`
+            method.
+
+        """
+        temp_scope = str(uuid4())
+        GEMDJson(scope=temp_scope).dumps(model)  # This apparent no-op populates uids
+        dumped_data = replace_objects_with_links(scrub_none(model.dump()))
+        recursive_foreach(model, lambda x: x.uids.pop(temp_scope, None))  # Strip temp uids
+
+        scope = CITRINE_SCOPE
+        id = dumped_data['uids']['id']
+        if self.dataset_id is None:
+            raise RuntimeError("Must specify a dataset in order to update "
+                               "a data model object with data validation.")
+
+        url = self._get_path() + \
+            "/" + scope + "/" + id + "/async"
+
+        response_json = self.session.put_resource(url, dumped_data, params={'dry_run': dry_run})
+
+        job_id = response_json["job_id"]
+
+        if wait_for_response:
+            self.poll_async_update_job(job_id, timeout=timeout,
+                                       polling_delay=polling_delay)
+
+            # That worked, nothing returned in this case
+            return None
+        else:
+            # TODO: use JobSubmissionResponse here instead
+            return job_id
+
+    def poll_async_update_job(self, job_id: UUID, *, timeout: float = 2 * 60,
+                              polling_delay: float = 1.0) -> None:
+        """
+        [ALPHA] Poll for the result of the async_update call.
+
+        This call will poll the backend given the Job ID that came from a call to
+        :func:`~citrine.resources.DataConceptsCollection.async_update`,
+        waiting for the eventual job result. In the case of successful validation/update,
+        a return value of None is provided which indicates success. In the case of
+        a failure validating or processing the update, an exception (JobFailureError)
+        is raised and an error message is logged with the underlying reason of the
+        failure.
+
+        Parameters
+        ----------
+        job_id: UUID
+           The job ID for the asynchronous update job we wish to poll.
+        timeout:
+            How long to poll for the result before giving up. This is expressed in
+            (fractional) seconds.
+        polling_delay:
+            How long to delay between each polling retry attempt.
+
+        Returns
+        -------
+        None
+           This method will raise an appropriate exception if the job failed, else
+           it will return None to indicate the job was successful.
+
+        """
+        # Poll for job completion - this will raise an error if the job failed
+        self._poll_for_job_completion(self.project_id, job_id, timeout=timeout,
+                                      polling_delay=polling_delay)
+
+        # That worked, nothing returned in this case
+        return None
 
     def get(self, uid: Union[UUID, str], scope: str = CITRINE_SCOPE) -> ResourceType:
         """
@@ -434,6 +519,8 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         data = self.session.get_resource(path)
         return self.build(data)
 
+    @deprecation.deprecated(details="filter_by_tags is deprecated due to poor "
+                                    "performance. Please use list_by_tag instead.")
     def filter_by_tags(self, tags: List[str],
                        page: Optional[int] = None, per_page: Optional[int] = None):
         """
@@ -473,6 +560,8 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
             params=params)
         return [self.build(content) for content in response["contents"]]
 
+    @deprecation.deprecated(details="filter_by_name is deprecated due to poor "
+                                    "performance. Please use list_by_name instead.")
     def filter_by_name(self, name: str, exact: bool = False,
                        page: Optional[int] = None, per_page: Optional[int] = None):
         """

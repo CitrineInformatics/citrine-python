@@ -5,7 +5,8 @@ import uuid
 from copy import deepcopy
 
 from citrine.exceptions import ModuleRegistrationFailedException, NotFound
-from citrine.informatics.predictors import GraphPredictor, SimpleMLPredictor
+from citrine.informatics.descriptors import RealDescriptor
+from citrine.informatics.predictors import GraphPredictor, SimpleMLPredictor, ExpressionPredictor
 from citrine.resources.predictor import PredictorCollection
 from tests.utils.session import FakeSession, FakeCall
 
@@ -36,6 +37,7 @@ def test_graph_build(valid_graph_predictor_data, basic_predictor_report_data):
     assert predictor.name == 'Graph predictor'
     assert predictor.description == 'description'
     assert len(predictor.predictors) == 2
+    assert len(predictor.training_data) == 1
 
 
 def test_register(valid_simple_ml_predictor_data, basic_predictor_report_data):
@@ -94,7 +96,7 @@ def test_mark_predictor_invalid(valid_simple_ml_predictor_data, valid_predictor_
     session.set_responses(valid_simple_ml_predictor_data, valid_predictor_report_data)
 
     # When
-    predictor.active = False
+    predictor.archived = False
     collection.update(predictor)
 
     # Then
@@ -103,7 +105,7 @@ def test_mark_predictor_invalid(valid_simple_ml_predictor_data, valid_predictor_
     first_call = session.calls[0]  # First call is the update
     assert first_call.method == 'PUT'
     assert first_call.path == '/projects/{}/modules/{}'.format(collection.project_id, predictor.uid)
-    assert not first_call.json['active']
+    assert not first_call.json['archived']
 
 
 def test_list_predictors(valid_simple_ml_predictor_data, valid_expression_predictor_data,
@@ -129,3 +131,58 @@ def test_list_predictors(valid_simple_ml_predictor_data, valid_expression_predic
     assert 3 == session.num_calls, session.calls  # This is a little strange, the report is fetched eagerly
     assert expected_call == session.calls[0]
     assert len(predictors) == 2
+
+
+def test_get_none():
+    """Test that trying to get a predictor with uid=None results in an informative error."""
+    session = mock.Mock()
+    session.get_resource.return_value = basic_predictor_report_data
+    pc = PredictorCollection(uuid.uuid4(), session)
+
+    with pytest.raises(ValueError) as excinfo:
+        pc.get(uid=None)
+
+    assert "uid=None" in str(excinfo.value)
+
+
+def test_check_update_none():
+    """Test that check-for-updates makes the expected calls, parses output for no update."""
+    # Given
+    session = FakeSession()
+    session.set_response({"updatable": False})
+    pc = PredictorCollection(uuid.uuid4(), session)
+    predictor_id = uuid.uuid4()
+
+    # when
+    update_check = pc.check_for_update(predictor_id)
+
+    # then
+    assert update_check is None
+    expected_call = FakeCall(method='GET', path='/projects/{}/predictors/{}/check-for-update'.format(pc.project_id, predictor_id))
+    assert session.calls[0] == expected_call
+
+
+def test_check_update_some():
+    """Test the update check correctly builds a module."""
+    # given
+    session = FakeSession()
+    desc = RealDescriptor("spam", 0, 1, "kg")
+    response = {
+        "type": "AnalyticExpression",
+        "name": "foo",
+        "description": "bar",
+        "expression": "2 * x",
+        "output": RealDescriptor("spam", 0, 1, "kg").dump(),
+        "aliases": {}
+    }
+    session.set_response({"updatable": True, "update": response})
+    pc = PredictorCollection(uuid.uuid4(), session)
+    predictor_id = uuid.uuid4()
+
+    # when
+    update_check = pc.check_for_update(predictor_id)
+
+    # then
+    expected = ExpressionPredictor("foo", "bar", "2 * x", desc, {})
+    assert update_check.dump() == expected.dump()
+    assert update_check.uid == predictor_id

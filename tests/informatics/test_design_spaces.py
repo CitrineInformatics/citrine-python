@@ -1,9 +1,11 @@
 """Tests for citrine.informatics.design_spaces."""
 import pytest
 
+from citrine.informatics.data_sources import DataSource, CSVDataSource
 from citrine.informatics.descriptors import RealDescriptor, CategoricalDescriptor
-from citrine.informatics.design_spaces import ProductDesignSpace, EnumeratedDesignSpace
+from citrine.informatics.design_spaces import *
 from citrine.informatics.dimensions import ContinuousDimension, EnumeratedDimension
+from citrine.resources.file_link import FileLink
 
 
 @pytest.fixture
@@ -17,7 +19,7 @@ def product_design_space() -> ProductDesignSpace:
         ContinuousDimension(beta, 0, 10),
         EnumeratedDimension(gamma, ['a', 'c'])
     ]
-    return ProductDesignSpace('my design space', 'does some things', dimensions)
+    return ProductDesignSpace(name='my design space', description='does some things', dimensions=dimensions)
 
 
 @pytest.fixture
@@ -47,3 +49,27 @@ def test_enumerated_initialization(enumerated_design_space):
     assert enumerated_design_space.descriptors[0].key == 'x'
     assert enumerated_design_space.descriptors[1].key == 'color'
     assert enumerated_design_space.data == [{'x': 0.0, 'color': 'r'}, {'x': 1.0, 'color': 'b'}]
+
+
+def test_data_source_build(valid_data_source_design_space_dict):
+    ds = DesignSpace.build(valid_data_source_design_space_dict)
+    assert ds.name == valid_data_source_design_space_dict["config"]["name"]
+    assert ds.data_source == DataSource.build(valid_data_source_design_space_dict["config"]["data_source"])
+
+
+def test_data_source_create():
+    ds = DataSourceDesignSpace(
+        name="Test",
+        description="ing",
+        data_source=CSVDataSource(
+            file_link=FileLink(filename="foo.csv", url="http://example.com/bar.csv"),
+            column_definitions={
+                "foo": RealDescriptor(key="bar", lower_bound=0, upper_bound=100, units="kg")
+            }
+        )
+    )
+    round_robin = DesignSpace.build(ds.dump())
+    assert ds.name == round_robin.name
+    assert ds.description == round_robin.description
+    assert ds.data_source == round_robin.data_source
+    assert "DataSource" in str(ds)

@@ -15,7 +15,7 @@ def continuous_dimension() -> ContinuousDimension:
 @pytest.fixture
 def enumerated_dimension() -> EnumeratedDimension:
     """Build an EnumeratedDimension."""
-    color = CategoricalDescriptor('color', categories=['red', 'green', 'blue'])
+    color = CategoricalDescriptor('color', categories={'red', 'green', 'blue'})
     return EnumeratedDimension(color, values=['red', 'red', 'blue'])
 
 
@@ -41,5 +41,5 @@ def test_continuous_bounds():
 def test_enumerated_initialization(enumerated_dimension):
     """Make sure the correct fields go to the correct places."""
     assert enumerated_dimension.descriptor.key == 'color'
-    assert enumerated_dimension.descriptor.categories == ['red', 'green', 'blue']
+    assert enumerated_dimension.descriptor.categories == {'red', 'green', 'blue'}
     assert enumerated_dimension.values == ['red', 'red', 'blue']

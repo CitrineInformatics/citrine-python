@@ -1,25 +1,21 @@
+import inspect
+import os
 from typing import Any
 from urllib.parse import urlparse
-import os
 
 from gemd.entity.link_by_uid import LinkByUID
-
-CITRINE_SCOPE = 'id'
 
 
 def get_object_id(object_or_id):
     """Extract the citrine id from a data concepts object or LinkByUID."""
     from gemd.entity.attribute.base_attribute import BaseAttribute
-    from citrine.resources.data_concepts import DataConcepts
+    from citrine.resources.data_concepts import DataConcepts, CITRINE_SCOPE
 
     if isinstance(object_or_id, BaseAttribute):
         raise ValueError("Attributes do not have ids.")
     if isinstance(object_or_id, DataConcepts):
         citrine_id = object_or_id.uids.get(CITRINE_SCOPE)
-        if citrine_id is not None:
-            return citrine_id
-        raise ValueError("Data concepts object {!r} must have a citrine uuid with "
-                         "scope".format(object_or_id, CITRINE_SCOPE))
+        return citrine_id
     if isinstance(object_or_id, LinkByUID):
         if object_or_id.scope == CITRINE_SCOPE:
             return object_or_id.id
@@ -81,14 +77,15 @@ def object_to_link(obj: Any) -> Any:
 
 def object_to_link_by_uid(json: dict) -> dict:
     """Convert an object dictionary into a LinkByUID dictionary, if possible."""
+    from citrine.resources.data_concepts import CITRINE_SCOPE
     if 'uids' in json:
         uids = json['uids']
         if not isinstance(uids, dict) or not uids:
             return json
-        if 'id' in uids:
-            scope = 'id'
+        if CITRINE_SCOPE in uids:
+            scope = CITRINE_SCOPE
         else:
-            scope = list(uids.keys())[0]
+            scope = next(iter(uids))
         this_id = uids[scope]
         return LinkByUID(scope, this_id).as_dict()
     else:
@@ -131,3 +128,10 @@ def write_file_locally(content, local_path: str):
         os.makedirs(directory)
     with open(local_path, 'wb') as output_file:
         output_file.write(content)
+
+
+def shadow_classes_in_module(source_module, target_module):
+    """Shadow classes from a source to a target module, for backwards compatibility purposes."""
+    for c in [cls for _, cls in inspect.getmembers(source_module, inspect.isclass) if
+              cls.__module__ == source_module.__name__]:
+        setattr(target_module, c.__qualname__, c)

@@ -1,10 +1,23 @@
+import csv
+from uuid import UUID
+
+from citrine.exceptions import BadRequest
+from citrine.informatics.data_sources import CSVDataSource
+from citrine.resources.dataset import Dataset
+from citrine.resources.project import Project
+
 try:
     import pandas as pd
 except ImportError:  # pragma: no cover
     raise ImportError('pandas>=0.25 is a requirement for the builders module')
+try:
+    import numpy as np
+except ImportError:  # pragma: no cover
+    raise ImportError('numpy is a requirement for the builders module')
 from itertools import product
-from typing import Mapping, Sequence, List
-from citrine.informatics.design_spaces import EnumeratedDesignSpace
+from typing import Mapping, Sequence, List, Optional
+from warnings import warn
+from citrine.informatics.design_spaces import EnumeratedDesignSpace, DataSourceDesignSpace
 from citrine.informatics.descriptors import Descriptor, RealDescriptor
 
 
@@ -36,6 +49,16 @@ def enumerate_cartesian_product(
         description for the EnumeratedDesignSpace
 
     """
+    # Check that the grid size is small enough to not cause memory issues
+    grid_size = np.prod(
+        [len(grid_points) for grid_points in design_grid.values()]
+    ) * len(design_grid)
+    if grid_size > 2E8:
+        warn(
+            "Product design grid contains {n} grid points. This may cause memory issues "
+            "downstream.".format(n=grid_size)
+        )
+
     design_space_tuples = list(product(*design_grid.values()))
     design_space_cols = list(design_grid.keys())
     df_ds = pd.DataFrame(data=design_space_tuples, columns=design_space_cols)
@@ -186,6 +209,15 @@ def cartesian_join_design_spaces(
     if len(all_keys) != len(set(all_keys)):
         raise ValueError('Duplicate keys are not allowed across design spaces')
 
+    # Check that the grid size is small enough to not cause memory issues
+    grid_size = np.prod([len(ds.data) for ds in subspaces]) \
+        * np.sum([len(ds.data[0]) for ds in subspaces])
+    if grid_size > 2E8:
+        warn(
+            "Product design grid contains {n} grid points. This may cause memory issues "
+            "downstream.".format(n=grid_size)
+        )
+
     # Convert data fields of EDS into DataFrames to prep for join
     ds_list = [pd.DataFrame(ds.data) for ds in subspaces]
 
@@ -211,3 +243,96 @@ def cartesian_join_design_spaces(
                                          descriptors=descriptors,
                                          data=data)
     return design_space
+
+
+def enumerated_to_data_source(*,
+                              enumerated_ds: EnumeratedDesignSpace,
+                              dataset: Dataset,
+                              filename: Optional[str] = None
+                              ) -> DataSourceDesignSpace:
+    """[ALPHA] Convert an EnumeratedDesignSpace into a DataSourceDesignSpace.
+
+    Converts an EnumeratedDesignSpace into a DataSourceDesignSpace by writing
+    the data to a csv file, uploading it to the given dataset, and wrapping it
+    in a CSVDataSource.
+
+    Parameters
+    ----------
+    enumerated_ds: EnumeratedDesignSpace
+        data source to convert
+    dataset: Dataset
+        dataset into which to upload the data file
+    filename: Optional[str]
+        filename to use for the data file (default: design space name + "source data")
+
+    """
+    descriptors = {d.key: d for d in enumerated_ds.descriptors}
+    headers = [d.key for d in enumerated_ds.descriptors]
+
+    csv_filename = filename or "{} source data.csv".format(enumerated_ds.name).replace(" ", "_")
+    with open(csv_filename, "w", newline="") as csvfile:
+        writer = csv.writer(csvfile)
+        writer.writerow(headers)
+        for datum in enumerated_ds.data:
+            writer.writerow([datum.get(k, '') for k in headers])
+
+    file_link = dataset.files.upload(csv_filename)
+    data_source = CSVDataSource(file_link, descriptors)
+    data_source_ds = DataSourceDesignSpace(
+        name=enumerated_ds.name, description=enumerated_ds.description, data_source=data_source)
+    return data_source_ds
+
+
+def migrate_enumerated_design_space(*,
+                                    project: Project,
+                                    uid: UUID,
+                                    dataset: Dataset,
+                                    filename: Optional[str],
+                                    cleanup: bool = True
+                                    ) -> DataSourceDesignSpace:
+    """
+    [ALPHA] Migrate an EnumeratedDesignSpace on the Citrine Platform to a DataSourceDesignSpace.
+
+    Parameters
+    ----------
+    project: Project
+        Project to use when accessing the Citrine Platform
+    uid: UUID
+        Unique identifier of the EnumeratedDesignSpace to migrate
+    dataset: Dataset
+        Dataset into which to write the data as a CSV.
+    filename: Optional[str]
+        Optional string name to specify for the data CSV file.
+        Defaults to the design space name + "source data"
+    cleanup: bool
+        Whether or not to try and archive the migrated design space if the migration is successful
+        Default: true
+
+    Returns
+    -------
+    DataSourceDesignSpace
+        The resulting design space, which should have functional parity with
+        the original design space.
+
+    """
+    enumerated_ds = project.design_spaces.get(uid)
+    if not isinstance(enumerated_ds, EnumeratedDesignSpace):
+        msg = "Trying to migrate an enumerated design space but this is a {}".format(
+            type(enumerated_ds))
+        raise ValueError(msg)
+
+    # create the new data source design space
+    data_source_ds = enumerated_to_data_source(
+        enumerated_ds=enumerated_ds, dataset=dataset, filename=filename)
+    data_source_ds = project.design_spaces.register(data_source_ds)
+
+    if cleanup:
+        # archive the old enumerated design space
+        enumerated_ds.archived = True
+        try:
+            project.design_spaces.update(enumerated_ds)
+        except BadRequest as err:
+            warn("Unable to archive design space with uid {}, received the following response: {}"
+                 .format(uid, err.response_text))
+
+    return data_source_ds

@@ -52,20 +52,21 @@ class ProcessTemplate(ObjectTemplate, Resource['ProcessTemplate'], GEMDProcessTe
 
     _response_key = GEMDProcessTemplate.typ  # 'process_template'
 
-    name = String('name')
-    description = PropertyOptional(String(), 'description')
-    uids = Mapping(String('scope'), String('id'), 'uids')
-    tags = PropertyOptional(PropertyList(String()), 'tags')
-    conditions = PropertyOptional(PropertyList(
-        SpecifiedMixedList([LinkOrElse, PropertyOptional(Object(BaseBounds))])), 'conditions')
-    parameters = PropertyOptional(PropertyList(
-        SpecifiedMixedList([LinkOrElse, PropertyOptional(Object(BaseBounds))])), 'parameters')
-    allowed_labels = PropertyOptional(PropertyList(String()), 'allowed_labels')
-    allowed_names = PropertyOptional(PropertyList(String()), 'allowed_names')
+    name = String('name', override=True)
+    description = PropertyOptional(String(), 'description', override=True)
+    uids = Mapping(String('scope'), String('id'), 'uids', override=True)
+    tags = PropertyOptional(PropertyList(String()), 'tags', override=True)
+    conditions = PropertyOptional(PropertyList(SpecifiedMixedList(
+        [LinkOrElse, PropertyOptional(Object(BaseBounds))])), 'conditions', override=True)
+    parameters = PropertyOptional(PropertyList(SpecifiedMixedList(
+        [LinkOrElse, PropertyOptional(Object(BaseBounds))])), 'parameters', override=True)
+    allowed_labels = PropertyOptional(PropertyList(String()), 'allowed_labels', override=True)
+    allowed_names = PropertyOptional(PropertyList(String()), 'allowed_names', override=True)
     typ = String('type')
 
     def __init__(self,
                  name: str,
+                 *,
                  uids: Optional[Dict[str, str]] = None,
                  conditions: Optional[Sequence[Union[ConditionTemplate,
                                                      LinkByUID,

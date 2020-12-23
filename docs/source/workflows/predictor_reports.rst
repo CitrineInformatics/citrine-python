@@ -1,10 +1,10 @@
-Predictor reports
+Predictor Reports
 =================
 
 Training a predictor generally produces a set of inter-connected models.
 A predictor report describes those models, for example their settings and what features are important to the model.
-It does not include performance metrics.
-To learn more about performance metrics, please see :doc:`PerformanceWorkflows <performance_workflows>`.
+It does not include predictor evaluation metrics.
+To learn more about predictor evaluation metrics, please see :doc:`PredictorEvaluationMetrics <predictor_evaluation_workflows>`.
 The report can be accessed via ``predictor.report``.
 
 A task to generate a predictor report is scheduled when a predictor is registered.
@@ -49,7 +49,7 @@ An example is shown below:
 
 For simple models, such as those that featurize inputs, the ``model_settings`` and ``feature_importances`` fields might be empty.
 
-As an example, consider a :class:`~citrine.informatics.predictors.SimpleMLPredictor` with numeric inputs ``x`` and ``y`` and numeric output ``z``.
+As an example, consider a :class:`~citrine.informatics.predictors.simple_ml_predictor.SimpleMLPredictor` with numeric inputs ``x`` and ``y`` and numeric output ``z``.
 This predictor will produce a single model to predict ``z`` from ``x`` and ``y``.
 In cases involving latent variables and/or input featurization, more models will be produced.
 The code below shows how to create the predictor, register it, and view the report.
@@ -61,7 +61,7 @@ Assume that there is a training data table with known id and version.
 
     from citrine.informatics.predictors import SimpleMLPredictor
     from citrine.informatics.descriptors import RealDescriptor
-    from citrine.informatics.data_sources import AraTableDataSource
+    from citrine.informatics.data_sources import GemTableDataSource
 
     # create input descriptors
     x = RealDescriptor('x', lower_bound=0, upper_bound=10)
@@ -76,10 +76,10 @@ Assume that there is a training data table with known id and version.
            inputs=[x, y],
            latent_variables=[],
            outputs=[z],
-           training_data=AraTableDataSource(
+           training_data=[GemTableDataSource(
             table_id = training_table_id,
             table_version = training_table_version
-           )
+           )]
        )
     )
 

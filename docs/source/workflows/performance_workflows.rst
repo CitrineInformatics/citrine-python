@@ -1,7 +1,12 @@
-Performance workflows
-=====================
+[DEPRECATED] Performance Workflows
+==================================
 
-A :class:`performance workflow <citrine.informatics.workflows.PerformanceWorkflow>` performs analysis on a module.
+.. warning::
+
+    :class:`PerformanceWorkflows <citrine.informatics.workflows.performance_workflow.PerformanceWorkflow>` are deprecated.
+    Please use :doc:`PredictorEvaluationWorkflow <predictor_evaluation_workflows>` instead.
+
+A :class:`~citrine.informatics.workflows.performance_workflow.PerformanceWorkflow` performs analysis on a module.
 Running a performance workflow produces a report (currently in JSON format) that describes the results of the analysis.
 Each analysis computes one or more performance metrics, e.g. accuracy of an ML predictor.
 An analysis is codified by a configuration object that stores all relevant settings and parameters required to run the workflow.
@@ -12,8 +17,13 @@ For example, we might reuse an analysis to compute a specific metric across a ra
 Cross-validation analysis
 -------------------------
 
-A :class:`~citrine.informatics.analysis_configuration.CrossValidationAnalysisConfiguration` performs cross-validation on a predictor.
+A :class:`~citrine.informatics.analysis_configuration.CrossValidationAnalysisConfiguration` performs k-fold cross-validation on a predictor.
 This analysis configuration defines cross-validation parameters such as the number of folds, group-by keys (descriptor keys used to group and deduplicate candidates across folds) and others.
+
+Cross-validation can only be performed on predictors that define training data.
+During cross-validation, the predictor's training data is partitioned into k equally sized folds.
+Each fold acts as the test set once, and the remaining k-1 folds are used as training data.
+When the number of folds equals the number of training data points, the analysis is equivalent to leave-one-out cross-validation.
 
 The following example demonstrates how to use the Python SDK to register a performance workflow, wait for validation to complete and check the final status:
 
@@ -50,13 +60,6 @@ The following example demonstrates how to use the Python SDK to register a perfo
    # (i.e. why the workflow is valid/invalid)
    print(validated_workflow.status_info)
 
-Cross-validation can be performed on most predictors but will not produce results in the following scenarios:
-
-- Training data contain simple mixtures from an :class:`~citrine.informatics.data_sources.AraTableDataSource` *and* an :class:`~citrine.informatics.predictors.IngredientsToSimpleMixturePredictor` is included in the graph.
-- The graph includes a :class:`~citrine.informatics.predictors.SimpleMixturePredictor` or :class:`~citrine.informatics.predictors.GeneralizedMeanPropertyPredictor`.
-
-Both are known issues in experimental functionality and will be resolved in a future release.
-
 Execution and results
 ---------------------
 
@@ -75,7 +78,7 @@ For numeric responses, the available performance metrics are as follows:
     NDME is a useful non-dimensional model quality metric.
     A value of NDME = 0 is a perfect model.
     If NDME = 1, then the model is uninformative.
-    An acceptable NDE depends on how the model is used.
+    An acceptable NDME depends on how the model is used.
     Generally, NDME > 0.9 indicates a model with low accuracy.
     If 0.9 > NDME > 0.6, this model is typically a good candidate for a design workflow.
     Lower values of NDE indicate increasingly accurate models.
@@ -200,4 +203,3 @@ If there was a second categorical response ``~~y`` with 2 categories, the respon
            }
        }
    }
-

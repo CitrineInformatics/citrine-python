@@ -1,6 +1,5 @@
 """Tools for working with Processors."""
-from typing import Optional, Mapping, Type
-from uuid import UUID
+from typing import Optional, Mapping, Type, List
 
 from citrine._serialization import properties
 from citrine._serialization.serializable import Serializable
@@ -8,7 +7,7 @@ from citrine._session import Session
 from citrine.informatics.modules import Module
 
 
-__all__ = ['Processor', 'GridProcessor', 'EnumeratedProcessor']
+__all__ = ['Processor', 'GridProcessor', 'EnumeratedProcessor', 'MonteCarloProcessor']
 
 
 class Processor(Module):
@@ -25,8 +24,20 @@ class Processor(Module):
         """Return the sole currently implemented subtype."""
         return {
             'Grid': GridProcessor,
-            'Enumerated': EnumeratedProcessor
+            'Enumerated': EnumeratedProcessor,
+            'ContinuousSearch': MonteCarloProcessor
         }[data['config']['type']]
+
+    def _attrs(self) -> List[str]:
+        return ["name", "description", "id"]  # pragma: no cover
+
+    def __eq__(self, other):
+        try:
+            return all([
+                self.__getattribute__(key) == other.__getattribute__(key) for key in self._attrs()
+            ])
+        except AttributeError:
+            return False
 
 
 class GridProcessor(Serializable['GridProcessor'], Processor):
@@ -62,7 +73,7 @@ class GridProcessor(Serializable['GridProcessor'], Processor):
         'status_info',
         serializable=False
     )
-    active = properties.Boolean('active', default=True)
+    archived = properties.Boolean('archived', default=False)
     experimental = properties.Boolean("experimental", serializable=False, default=True)
     experimental_reasons = properties.Optional(
         properties.List(properties.String()),
@@ -72,7 +83,9 @@ class GridProcessor(Serializable['GridProcessor'], Processor):
 
     # NOTE: These could go here or in _post_dump - it's unclear which is better right now
     module_type = properties.String('module_type', default='PROCESSOR')
-    schema_id = properties.UUID('schema_id', default=UUID('272791a5-5468-4344-ac9f-2811d9266a4d'))
+
+    def _attrs(self) -> List[str]:
+        return ["name", "description", "grid_sizes", "typ"]
 
     def __init__(self,
                  name: str,
@@ -119,7 +132,7 @@ class EnumeratedProcessor(Serializable['EnumeratedProcessor'], Processor):
         'status_info',
         serializable=False
     )
-    active = properties.Boolean('active', default=True)
+    archived = properties.Boolean('archived', default=False)
     experimental = properties.Boolean("experimental", serializable=False, default=True)
     experimental_reasons = properties.Optional(
         properties.List(properties.String()),
@@ -129,7 +142,9 @@ class EnumeratedProcessor(Serializable['EnumeratedProcessor'], Processor):
 
     # NOTE: These could go here or in _post_dump - it's unclear which is better right now
     module_type = properties.String('module_type', default='PROCESSOR')
-    schema_id = properties.UUID('schema_id', default=UUID('307b88a2-fd50-4d27-ae91-b8d6282f68f7'))
+
+    def _attrs(self) -> List[str]:
+        return ["name", "description", "max_size", "typ"]
 
     def __init__(self,
                  name: str,
@@ -147,3 +162,57 @@ class EnumeratedProcessor(Serializable['EnumeratedProcessor'], Processor):
 
     def __str__(self):
         return '<EnumeratedProcessor {!r}>'.format(self.name)
+
+
+class MonteCarloProcessor(Serializable['GridProcessor'], Processor):
+    """[ALPHA] Using a Monte Carlo optimizer to search for the best candidate.
+
+    The moves that the MonteCarlo optimizer makes are inferred from the descriptors in the
+    design space.
+
+    Parameters
+    ----------
+    name: str
+        name of the processor
+    description: str
+        description of the processor
+
+    """
+
+    uid = properties.Optional(properties.UUID, 'id', serializable=False)
+    name = properties.String('config.name')
+    description = properties.Optional(properties.String(), 'config.description')
+    typ = properties.String('config.type', default='ContinuousSearch', deserializable=False)
+    status = properties.String('status', serializable=False)
+    status_info = properties.Optional(
+        properties.List(properties.String()),
+        'status_info',
+        serializable=False
+    )
+    experimental = properties.Boolean("experimental", serializable=False, default=True)
+    experimental_reasons = properties.Optional(
+        properties.List(properties.String()),
+        'experimental_reasons',
+        serializable=False
+    )
+
+    # NOTE: These could go here or in _post_dump - it's unclear which is better right now
+    module_type = properties.String('module_type', default='PROCESSOR')
+
+    def _attrs(self) -> List[str]:
+        return ["name", "description", "typ"]
+
+    def __init__(self,
+                 name: str,
+                 description: str,
+                 session: Optional[Session] = None):
+        self.name: str = name
+        self.description: str = description
+        self.session: Optional[Session] = session
+
+    def _post_dump(self, data: dict) -> dict:
+        data['display_name'] = data['config']['name']
+        return data
+
+    def __str__(self):
+        return '<MonteCarloProcessor {!r}>'.format(self.name)

@@ -128,6 +128,10 @@ class Session(requests.Session):
             if response.status_code == 401 and response.json().get("reason") == "invalid-token":
                 self._refresh_access_token()
                 response = self._request_with_retry(method, uri, **kwargs)
+        except AttributeError:
+            # Catch AttributeErrors and log response
+            # The 401 status will be handled further down
+            logger.error("Failed to decode json from response: {}".format(response.text))
         except ValueError:
             # Ignore ValueErrors thrown by attempting to decode json bodies. This
             # might occur if we get a 401 response without a JSON body
@@ -147,6 +151,9 @@ class Session(requests.Session):
                 logger.error(response.text)
                 raise BadRequest(path, response)
             elif response.status_code == 401:
+                logger.error('%s %s %s', response.status_code, method, path)
+                raise Unauthorized(path, response)
+            elif response.status_code == 403:
                 logger.error('%s %s %s', response.status_code, method, path)
                 raise Unauthorized(path, response)
             elif response.status_code == 404:

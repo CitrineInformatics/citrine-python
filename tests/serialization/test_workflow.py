@@ -13,14 +13,14 @@ def valid_data():
         display_name='A rad new workflow',
         status='READY',
         status_info=['Things are looking good'],
-        active=True,
+        archived=False,
         config=dict(
             design_space_id=str(uuid4()),
             processor_id=str(uuid4()),
             predictor_id=str(uuid4()),
+            type="DesignWorkflow",
         ),
         module_type='DESIGN_WORKFLOW',
-        schema_id='8af8b007-3e81-4185-82b2-6f62f4a2e6f1',
         created_by=str(uuid4()),
         create_time=datetime(2020, 1, 1, 1, 1, 1, 1).isoformat("T")
     )
@@ -49,7 +49,9 @@ def test_roundtrip_without_processor(valid_data, valid_serialization_output):
     serialized = workflow.dump()
     serialized['id'] = valid_data['id']
     valid_serialization_output['config']['processor_id'] = None
-    assert serialized == valid_serialization_output
+    # we can have extra fields to support forward/backward compatibility
+    for k in valid_serialization_output:
+        assert serialized[k] == valid_serialization_output[k]
 
 
 def test_deserialization_missing_created_by(valid_data):
@@ -83,4 +85,7 @@ def test_serialization(valid_data, valid_serialization_output):
     workflow: DesignWorkflow = Workflow.build(valid_data)
     serialized = workflow.dump()
     serialized['id'] = valid_data['id']
-    assert serialized == valid_serialization_output
+    # we can have extra fields in the output of `dump`
+    # these support forwards and backwards compatibility
+    for k in valid_serialization_output:
+        assert serialized[k] == valid_serialization_output[k]

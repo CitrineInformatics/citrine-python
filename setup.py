@@ -4,9 +4,14 @@ from setuptools.command.develop import develop
 from setuptools.command.build_py import build_py
 import sys
 from os.path import join
-from os import walk
+from os import walk, path
 
 STRIP_DIRS = ["src", "tests"]
+
+# read the contents of your README file
+this_directory = path.abspath(path.dirname(__file__))
+with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
+    long_description = f.read()
 
 
 def strip_file(file_path):
@@ -55,11 +60,17 @@ class PreBuildCommand(build_py):
         strip_all_hints(STRIP_DIRS)
         build_py.run(self)
 
+about = {}
+with open(join(this_directory, 'src', 'citrine', '__version__.py'), 'r') as f:
+    exec(f.read(), about)
 
 setup(name='citrine',
-      version='0.51.2',
+      # Update this in src/citrine/__version__.py
+      version=about['__version__'],
       url='http://github.com/CitrineInformatics/citrine-python',
       description='Python library for the Citrine Platform',
+      long_description=long_description,
+      long_description_content_type='text/markdown',
       author='Citrine Informatics',
       package_dir={'': 'src'},
       packages=find_packages(where='src'),
@@ -68,7 +79,7 @@ setup(name='citrine',
           "pyjwt>=1.7.1,<2",
           "arrow>=0.15.4,<0.16",
           "strip-hints>=0.1.8,<0.2",
-          "gemd>=0.11,<0.12",
+          "gemd>=0.16.1,<0.17",
           "boto3>=1.9.226,<2",
           "botocore>=1.12.226,<2",
           "deprecation>=2.0.7,<3",

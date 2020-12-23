@@ -1,3 +1,5 @@
+.. _data-sources:
+
 Data Sources
 ============
 
@@ -58,7 +60,7 @@ That file could be used as the training data for a predictor as:
         ],
         outputs = [data_source.column_definitions["Gap"]],
         latent_variables = [],
-        training_data = data_source
+        training_data = [data_source]
     )
 
 An optional list of identifiers can be specified.
@@ -70,12 +72,12 @@ If a column should be parsed as data and used as an identifier, identifier colum
 Identifiers are required in two circumstances.
 These circumstances are only relevant if CSV data source represents simple mixture data.
 
-1. Ingredient properties are featurized using a :class:`~citrine.informatics.predictors.GeneralizedMeanPropertyPredictor`.
+1. Ingredient properties are featurized using a :class:`~citrine.informatics.predictors.generalized_mean_property_predictor.GeneralizedMeanPropertyPredictor`.
    In this case, the link from identifier to row is used to compute mean ingredient property values.
-2. Simple mixtures that contain mixtures are simplified to recipes that contain only leaf ingredients using a :class:`~citrine.informatics.predictors.SimpleMixturePredictor`.
+2. Simple mixtures that contain mixtures are simplified to recipes that contain only leaf ingredients using a :class:`~citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor`.
    In this case, links from each mixture's ingredients to its row (which may also be a mixture) are used to recursively crawl hierarchical blends of blends and construct a recipe that contains only leaf ingredients.
 
-Note: to build a formulation from a CSV data source an :class:`~citrine.informatics.predictors.IngredientsToSimpleMixturePredictor` must be present in the workflow.
+Note: to build a formulation from a CSV data source an :class:`~citrine.informatics.predictors.ingredients_to_simple_mixture_predictor.IngredientsToSimpleMixturePredictor` must be present in the workflow.
 Additionally, each ingredient id used as a key in the predictor's map from ingredient id to its quantity must exist in an identifier column.
 
 As an example, consider the following saline solution data.
@@ -94,7 +96,7 @@ As an example, consider the following saline solution data.
 
 Hypertonic and isotonic saline are mixtures formed by mixing water and salt.
 Ingredient identifiers are given by the first column.
-A CSV data source and :class:`~citrine.informatics.predictors.IngredientsToSimpleMixturePredictor` can be configured to construct simple mixtures from this data via the following:
+A CSV data source and :class:`~citrine.informatics.predictors.ingredients_to_simple_mixture_predictor.IngredientsToSimpleMixturePredictor` can be configured to construct simple mixtures from this data via the following:
 
 .. code:: python
 
@@ -140,21 +142,23 @@ A CSV data source and :class:`~citrine.informatics.predictors.IngredientsToSimpl
         }
     )
 
-Ara Table Data Source
+GEM Table Data Source
 ---------------------
 
-An :class:`~citrine.informatics.data_sources.AraTableDataSource` references an Ara table.
-As explained more in the :doc:`documentation <../data_extraction>`, Ara tables provide a structured version of on-platform data.
-Ara tables are specified by the display table uuid and version number.
-The example below assumes that the uuid and the version of the desired Ara table are known.
+An :class:`~citrine.informatics.data_sources.GemTableDataSource` references a GEM Table.
+As explained more in the :doc:`documentation <../data_extraction>`, GEM Tables provide a structured version of on-platform data.
+GEM Tables are specified by the display table uuid, version number and optional formulation descriptor.
+A formulation descriptor must be specified if formulations should be built from the data source.
+If specified, any formulations emitted by the data source are stored using the provided descriptor.
+The example below assumes that the uuid and the version of the desired GEM Table are known.
 
 .. code:: python
 
-    from citrine.informatics.data_sources import AraTableDataSource
+    from citrine.informatics.data_sources import GemTableDataSource
     from citrine.informatics.predictors import SimpleMLPredictor
     from citrine.informatics.descriptors import RealDescriptor, CategoricalDescriptor, ChemicalFormulaDescriptor
 
-    data_source = AraTableDataSource(
+    data_source = GemTableDataSource(
         table_id = "842434fd-11fe-4324-815c-7db93c7ed81e",
         table_version = "2"
     )
@@ -169,9 +173,9 @@ The example below assumes that the uuid and the version of the desired Ara table
         ],
         outputs = [RealDescriptor("root~band gap", lower_bound=0, upper_bound=20, units="eV")],
         latent_variables = [],
-        training_data = data_source
+        training_data = [data_source]
     )
 
-  Note that the descriptor keys above are the headers of the *variable* not the column in the table.
-  The last term in the column header is a suffix associated with the specific column definition rather than the variable.
-  It should be omitted from the descriptor key.
+Note that the descriptor keys above are the headers of the *variable* not the column in the table.
+The last term in the column header is a suffix associated with the specific column definition rather than the variable.
+It should be omitted from the descriptor key.

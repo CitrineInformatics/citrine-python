@@ -1,6 +1,6 @@
 """Resources that represent both individual and collections of datasets."""
 from collections import defaultdict
-from typing import TypeVar, List
+from typing import TypeVar, List, Optional, Iterable
 from uuid import UUID
 
 from citrine._rest.collection import Collection
@@ -349,3 +349,30 @@ class DatasetCollection(Collection[Dataset]):
         full_model = self.build(data)
         full_model.project_id = self.project_id
         return full_model
+
+    def list(self,
+             page: Optional[int] = None,
+             per_page: int = 1000) -> Iterable[Dataset]:
+        """
+        List datasets using pagination.
+
+        Leaving page and per_page as default values will yield all elements in the
+        collection, paginating over all available pages.
+
+        Parameters
+        ---------
+        page: int, optional
+            The "page" of results to list. Default is to read all pages and yield
+            all results.  This option is deprecated.
+        per_page: int, optional
+            Max number of results to return per page. Default is 1000.  This parameter
+            is used when making requests to the backend service.  If the page parameter
+            is specified it limits the maximum number of elements in the response.
+
+        Returns
+        -------
+        Iterable[Dataset]
+            Datasets in this collection.
+
+        """
+        return super().list(page, per_page)

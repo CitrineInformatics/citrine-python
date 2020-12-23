@@ -46,16 +46,17 @@ class MaterialTemplate(ObjectTemplate, Resource['MaterialTemplate'], GEMDMateria
 
     _response_key = GEMDMaterialTemplate.typ  # 'material_template'
 
-    name = String('name')
-    description = PropertyOptional(String(), 'description')
-    uids = Mapping(String('scope'), String('id'), 'uids')
-    tags = PropertyOptional(PropertyList(String()), 'tags')
-    properties = PropertyOptional(PropertyList(
-        SpecifiedMixedList([LinkOrElse, PropertyOptional(Object(BaseBounds))])), 'properties')
+    name = String('name', override=True)
+    description = PropertyOptional(String(), 'description', override=True)
+    uids = Mapping(String('scope'), String('id'), 'uids', override=True)
+    tags = PropertyOptional(PropertyList(String()), 'tags', override=True)
+    properties = PropertyOptional(PropertyList(SpecifiedMixedList(
+        [LinkOrElse, PropertyOptional(Object(BaseBounds))])), 'properties', override=True)
     typ = String('type')
 
     def __init__(self,
                  name: str,
+                 *,
                  uids: Optional[Dict[str, str]] = None,
                  properties: Optional[Sequence[Union[PropertyTemplate,
                                                      LinkByUID,

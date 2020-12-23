@@ -6,7 +6,7 @@ from citrine._rest.resource import Resource
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Optional as PropertyOptional
 from citrine._serialization.properties import String, Object, Mapping, LinkOrElse
-from citrine.resources.data_concepts import DataConcepts
+from citrine.resources.data_concepts import DataConcepts, CITRINE_SCOPE
 from citrine.resources.object_specs import ObjectSpec, ObjectSpecCollection
 from gemd.entity.attribute.condition import Condition
 from gemd.entity.attribute.parameter import Parameter
@@ -48,18 +48,19 @@ class MeasurementSpec(ObjectSpec, Resource['MeasurementSpec'], GEMDMeasurementSp
 
     _response_key = GEMDMeasurementSpec.typ  # 'measurement_spec'
 
-    name = String('name')
-    uids = Mapping(String('scope'), String('id'), 'uids')
-    tags = PropertyOptional(PropertyList(String()), 'tags')
-    notes = PropertyOptional(String(), 'notes')
-    conditions = PropertyOptional(PropertyList(Object(Condition)), 'conditions')
-    parameters = PropertyOptional(PropertyList(Object(Parameter)), 'parameters')
-    template = PropertyOptional(LinkOrElse(), 'template')
-    file_links = PropertyOptional(PropertyList(Object(FileLink)), 'file_links')
+    name = String('name', override=True)
+    uids = Mapping(String('scope'), String('id'), 'uids', override=True)
+    tags = PropertyOptional(PropertyList(String()), 'tags', override=True)
+    notes = PropertyOptional(String(), 'notes', override=True)
+    conditions = PropertyOptional(PropertyList(Object(Condition)), 'conditions', override=True)
+    parameters = PropertyOptional(PropertyList(Object(Parameter)), 'parameters', override=True)
+    template = PropertyOptional(LinkOrElse(), 'template', override=True)
+    file_links = PropertyOptional(PropertyList(Object(FileLink)), 'file_links', override=True)
     typ = String('type')
 
     def __init__(self,
                  name: str,
+                 *,
                  uids: Optional[Dict[str, str]] = None,
                  tags: Optional[List[str]] = None,
                  notes: Optional[str] = None,
@@ -93,7 +94,7 @@ class MeasurementSpecCollection(ObjectSpecCollection[MeasurementSpec]):
         return MeasurementSpec
 
     def list_by_template(self, uid: Union[UUID, str],
-                         scope: str = 'id') -> Iterator[MeasurementSpec]:
+                         scope: str = CITRINE_SCOPE) -> Iterator[MeasurementSpec]:
         """
         [ALPHA] Get the measurement specs using the specified measurement template.
 

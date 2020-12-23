@@ -10,13 +10,13 @@ from tests.utils.session import FakeSession
 
 def task_node_1() -> dict:
     tn1 = {'id': 'dave_id1', 'task_type': 'dave_type', 'status': 'dave_status',
-                   'dependencies': {'dep1', 'dep2'}}
+                   'dependencies': ['dep1', 'dep2']}
     return tn1
 
 
 def task_node_2() -> dict:
     tn2 = {'id': 'dave_id2', 'task_type': 'dave_type', 'status': 'dave_status', 'failure_reason': 'because I failed',
-                   'dependencies': {'dep3', 'dep4'}}
+                   'dependencies': ['dep3', 'dep4']}
     return tn2
 
 
@@ -48,17 +48,17 @@ def collection(session) -> AraDefinitionCollection:
 
 
 @pytest.fixture
-def ara_def() -> AraDefinition:
-    ara_def: AraDefinition = AraDefinition(name="name", description="description", datasets=[], rows=[], variables=[], columns=[])
-    ara_def.version_number = 1
-    ara_def.definition_uid = UUID('12345678-1234-1234-1234-123456789bbb')
-    return ara_def
+def table_config() -> AraDefinition:
+    table_config: AraDefinition = AraDefinition(name="name", description="description", datasets=[], rows=[], variables=[], columns=[])
+    table_config.version_number = 1
+    table_config.config_uid = UUID('12345678-1234-1234-1234-123456789bbb')
+    return table_config
 
 
 @pytest.fixture
 def project(session: FakeSession) -> Project:
     project = Project(
-        name="Test Ara project",
+        name="Test GEM Tables project",
         session=session
     )
     project.uid = UUID('6b608f78-e341-422c-8076-35adc8828545')
@@ -106,9 +106,9 @@ def test_js_serde_with_output():
     assert js.dump() == expected_js.dump()
 
 
-def test_build_job(collection: AraDefinitionCollection, ara_def: AraDefinition):
+def test_build_job(collection: AraDefinitionCollection, table_config: AraDefinition):
     collection.session.set_response({"job_id": '12345678-1234-1234-1234-123456789ccc'})
-    resp = collection.build_ara_table(ara_def)
+    resp = collection.build_ara_table(table_config)
     assert resp.dump() == JobSubmissionResponse(UUID('12345678-1234-1234-1234-123456789ccc')).dump()
 
 

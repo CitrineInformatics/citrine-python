@@ -29,13 +29,14 @@ def workflow_execution(session) -> WorkflowExecution:
         project_id=str(uuid.uuid4()),
         workflow_id=str(uuid.uuid4()),
         session=session,
+        version_number=1
     )
 
 
 def test_build_new_execution(collection):
     # Given
     workflow_execution_id = uuid.uuid4()
-    build_data = {'id': str(workflow_execution_id)}
+    build_data = {'id': str(workflow_execution_id), 'version_number': 1}
 
     # When
     execution = collection.build(build_data)
@@ -80,6 +81,21 @@ def test_workflow_execution_results(workflow_execution, session):
     )
     assert session.last_call == FakeCall(method='GET', path=expected_path)
 
+def test_workflow_execution_candidates(workflow_execution, example_candidates, session):
+    # Given
+    session.set_response(example_candidates)
+
+    # When
+    results = list(workflow_execution.candidates(page=2, per_page=4))
+
+    # Then
+    expected_path = '/projects/{}/design-workflows/{}/executions/{}/candidates'.format(
+        workflow_execution.project_id,
+        workflow_execution.workflow_id,
+        workflow_execution.uid,
+    )
+    assert session.last_call == FakeCall(method='GET', path=expected_path, params={"page": 2, "per_page": 4})
+
 
 def test_trigger_workflow_execution(collection: WorkflowExecutionCollection, workflow_execution, session):
     # Given
@@ -108,12 +124,14 @@ def test_workflow_success_status():
     assert status.succeeded
     assert not status.in_progress
     assert not status.failed
+    assert not status.timed_out
 
 
 def test_workflow_in_progress_status():
     status = WorkflowExecutionStatus('InProgress', None)
 
     assert not status.succeeded
+    assert not status.timed_out
     assert status.in_progress
     assert not status.failed
 
@@ -123,4 +141,14 @@ def test_workflow_failed_status():
 
     assert not status.succeeded
     assert not status.in_progress
+    assert not status.timed_out
     assert status.failed
+
+
+def test_workflow_timedout_status():
+    status = WorkflowExecutionStatus('TimedOut', None)
+
+    assert not status.succeeded
+    assert not status.in_progress
+    assert not status.failed
+    assert status.timed_out
