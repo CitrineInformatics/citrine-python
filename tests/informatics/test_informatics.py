@@ -39,8 +39,8 @@ informatics_string_data = [
         constraints=set(),
         labels={}
     ), "<FormulationDesignSpace 'formulation'>"),
-    (ScalarMaxObjective('z', 1.0, 10.0), "<ScalarMaxObjective 'z'>"),
-    (ScalarMinObjective('z', 1.0, 10.0), "<ScalarMinObjective 'z'>"),
+    (ScalarMaxObjective('z'), "<ScalarMaxObjective 'z'>"),
+    (ScalarMinObjective('z'), "<ScalarMinObjective 'z'>"),
     (GridProcessor('my thing', 'does a thing', dict(x=1)), "<GridProcessor 'my thing'>"),
     (EnumeratedProcessor('my enumerated thing', 'enumerates', 10), "<EnumeratedProcessor 'my enumerated thing'>"),
     (LIScore("LI(z)", "score for z", [], []), "<LIScore 'LI(z)'>"),
