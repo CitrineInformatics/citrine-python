@@ -141,8 +141,8 @@ The predictor we'll evaluate is defined below:
     from citrine.informatics.descriptors import RealDescriptor
     from citrine.informatics.predictors import SimpleMLPredictor
 
-    x = RealDescriptor('x', lower_bound=0.0, upper_bound=1.0)
-    y = RealDescriptor('y', lower_bound=0.0, upper_bound=1.0)
+    x = RealDescriptor('x', lower_bound=0.0, upper_bound=1.0, units='')
+    y = RealDescriptor('y', lower_bound=0.0, upper_bound=1.0, units='')
 
     data_source = CSVDataSource(
         filename, # path to CSV that contains training data for x and y

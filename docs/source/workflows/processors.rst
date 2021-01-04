@@ -78,8 +78,8 @@ a 2D design space of enumerated x values and continuous y values:
    from citrine.informatics.processors import GridProcessor
 
    # create descriptors for x and y
-   x = RealDescriptor(key='x', lower_bound=0, upper_bound=10)
-   y = RealDescriptor(key='y', lower_bound=0, upper_bound=100)
+   x = RealDescriptor(key='x', lower_bound=0, upper_bound=10, units='')
+   y = RealDescriptor(key='y', lower_bound=0, upper_bound=100, units='')
 
    # enumerate x and create a continuous dimension for y
    # note the upper bound on y is lower than that of the descriptor to restrict the search domain

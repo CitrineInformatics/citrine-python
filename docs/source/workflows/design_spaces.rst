@@ -25,8 +25,8 @@ As an example, an enumerated design space that represents points from a 2D Carte
    from citrine.informatics.descriptors import RealDescriptor
    from citrine.informatics.design_spaces import EnumeratedDesignSpace
 
-   x = RealDescriptor(key='x', lower_bound=0, upper_bound=10)
-   y = RealDescriptor(key='y', lower_bound=0, upper_bound=10)
+   x = RealDescriptor(key='x', lower_bound=0, upper_bound=10, units="")
+   y = RealDescriptor(key='y', lower_bound=0, upper_bound=10, units="")
    descriptors = [x, y]
 
    # create a list of candidates

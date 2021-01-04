@@ -112,7 +112,7 @@ For example:
 
    table_configs = project.table_configs
    preview = table_configs.preview(
-         defn = table_config,
+         table_config = table_config,
          preview_roots = [
                LinkByUID(scope="products", id="best cookie ever"),
                LinkByUID(scope="products", id="worst cookie ever")])

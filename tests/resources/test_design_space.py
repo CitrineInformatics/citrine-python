@@ -29,6 +29,7 @@ def test_design_space_build():
                     'descriptor_key': 'foo',
                     'lower_bound': 0.0,
                     'upper_bound': 1.0,
+                    'units': ""
                 },
                 'lower_bound': 0.0,
                 'upper_bound': 1.0,
@@ -68,14 +69,14 @@ def test_design_space_limits():
     too_big = EnumeratedDesignSpace(
         "foo",
         "bar",
-        descriptors=[RealDescriptor("R-{}".format(i), 0, 1) for i in range(128)],
+        descriptors=[RealDescriptor("R-{}".format(i), 0, 1, "") for i in range(128)],
         data=[{"R-{}".format(i): random() for i in range(128)} for _ in range(2001)]
     )
 
     just_right = EnumeratedDesignSpace(
         "foo",
         "bar",
-        descriptors=[RealDescriptor("R-{}".format(i), 0, 1) for i in range(128)],
+        descriptors=[RealDescriptor("R-{}".format(i), 0, 1, "") for i in range(128)],
         data=[{"R-{}".format(i): random() for i in range(128)} for _ in range(2000)]
     )
 
