@@ -7,7 +7,8 @@ Overview
 
 The Citrine python client is built on our NextGen data model, GEMD.
 GEMD is a format that links together materials, the processes that produced them, and the measurements that characterize them.
-Complete documentation can be found in the `data model docs <https://citrineinformatics.github.io/gemd-docs/>`_.
+Complete documentation of GEMD can be found in the `data model docs <https://citrineinformatics.github.io/gemd-docs/>`_,
+and a more thorough discussion of working with data objects in this client can be found in the :doc:`data entry docs <../data_entry>`.
 This page presents a broad overview.
 
 The Basic Objects: Processes, Materials, Measurements

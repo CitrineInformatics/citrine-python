@@ -90,6 +90,6 @@ AI modules cannot be deleted, but they can be :ref:`archived <archiving_label>`.
 Data Model Object Specific Methods
 -----------------------------------
 
-The client supports additional methods on certain data model object resources.
+The client supports additional methods on certain data model object resources, such as more powerful ways to get resources.
 These are detailed in the documentation of :doc:`GEMD data objects <../data_entry>`
 

@@ -5,12 +5,13 @@ Projects
 A Project is the basic unit of collaboration and access on the Citrine platform.
 They are containers for other resources, such as Datasets and modules.
 Access rights on resources inside a Project are managed, granted, and revoked at the Project level.
+
 Users are individuals using the Citrine Platform, and they are given access to projects.
 A user with access to a Project has access to all of the Dtasets and AI Modules that the project has access to.
 
 Every interaction with every other type of resource is scoped to a specific single Project.
 This means that the same user can have different permissions on a resource depending on which Project they are using to access it.
-For example, imagine that a Dataset is owned by Project A and shared with Project B, but Project B only has read, not write permissions.
+For example, imagine that a Dataset is owned by Project A and shared with Project B, but Project B only has read, not write, permissions.
 Then a user who has access to both Projects would be able to add new data if accessing it from Project A, but not if accessing it from Project B.
 
 Basic Project Use
@@ -24,7 +25,7 @@ To list all of the projects on the platform, use the `list` command.
 
     citrine.projects.list()
 
-To enter a project that you are a member of, either find the project in the list:
+To retrieve a project that you are a member of, either find the project in the list:
 
 .. code-block:: python
 
@@ -44,9 +45,10 @@ Managing Users
 
 There are two types of roles users can have, MEMBER and ADMIN.
 There are two types of access permissions: READ and WRITE.
-Users with the ADMIN role automatically can perform read and write actions, and also add or remove other users and change their roles and permissions.
 READ allows a user to view resources in a project.
 WRITE allows them to modify those resources.
+Users with the ADMIN role have both READ and WRITE access, and can also add or remove other users and change their roles and permissions.
+
 
 There are several methods for managing Projects, Users, and user membership in Projects.
 

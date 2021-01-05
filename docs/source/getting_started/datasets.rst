@@ -24,6 +24,7 @@ Datasets can be listed and gotten from projects just as projects are from the cl
     a_dataset = project.datasets.get("6ed8bf3b-876b-40f0-9d50-982e686e5cd3")
 
 Datasets can only be deleted if they are empty.
+If you need to delete a non-empty dataset, see this discussion on :ref:`deleting data objects <deleting_data_objects_label>`.
 
 Dataset Access and Sharing
 --------------------------
@@ -100,8 +101,7 @@ Deleting Files
 ^^^^^^^^^^^^^^
 
 If you have WRITE permission on a dataset then you may delete any file in the dataset.
-Use this ability carefully, as there are no checks as to whether or no the file is referenced by
-existing data objects.
+Use this ability carefully, as there are no checks as to whether or not the file is referenced by existing data objects.
 Deleting a file can therefore produce broken links.
 
 .. code-block:: python

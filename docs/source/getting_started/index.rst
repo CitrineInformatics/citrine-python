@@ -13,4 +13,5 @@ Getting Started
     projects
     datasets
     data_model
+    ai_modules
     code_examples
