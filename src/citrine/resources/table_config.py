@@ -383,7 +383,7 @@ class TableConfigCollection(Collection[TableConfig]):
         table_config: TableConfig
             Table Config to preview
         preview_roots: List[LinkByUID]
-            List of links to the material runs to use in the preview
+            List of links to the material runs to use as terminal materials in the preview
 
         """
         path = self._get_path() + "/preview"
