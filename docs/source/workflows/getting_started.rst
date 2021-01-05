@@ -47,7 +47,7 @@ There are 3 types of modules on the platform:
 
 -  :doc:`Design Spaces <design_spaces>` define the domain of controllable experimental parameters, their allowable values and relevant bounds.
 -  :doc:`Predictors <predictors>` define relations between variables in a table of experimental data.
-    A predictor can be composed of machine-learned models and (coming soon) analytical relations.
+    A predictor can be composed of machine-learned models, featurizers, and analytical relations.
 -  :doc:`Processors <processors>` define the method used to search the design space.
    The processor and design space are coupled: depending on the design space used, only a subset of processors are applicable.
 
