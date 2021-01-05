@@ -51,6 +51,8 @@ There are 3 types of modules on the platform:
 -  :doc:`Processors <processors>` define the method used to search the design space.
    The processor and design space are coupled: depending on the design space used, only a subset of processors are applicable.
 
+.. _archiving_label:
+
 Archiving
 *********
 
