@@ -123,7 +123,7 @@ These links are created with the :class:`~gemd.entity.link_by_uid.LinkByUID` cla
 Material History
 ----------------
 
-Starting with a specific root :class:`MaterialRun <citrine.resources.material_run.MaterialRun>`,
+Starting with a specific root :class:`~citrine.resources.material_run.MaterialRun`,
 you can retrieve the complete material history--every process, ingredient and material that went
 into the root material, as well as the measurements that were performed on all of those materials.
 The method is :func:`~citrine.resources.material_run.MaterialRunCollection.get_history`,

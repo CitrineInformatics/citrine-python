@@ -6,7 +6,7 @@ The Citrine python client can create, read, update, and delete resources.
 This document describes those mechanics in general terms, without assuming a knowledge of what the resources are.
 
 In general, for every resource type there is a corresponding collection.
-For example, a :class:`Project Collection <citrine.resources.project.ProjectCollection>` contains :class:`Projects <citrine.resources.project.Project>`.
+For example, a :class:`~citrine.resources.project.ProjectCollection` contains :class:`Projects <citrine.resources.project.Project>`.
 Generally, the collection is used to perform create/read/update/delete actions on the resources.
 This pattern is illustrated in the examples below.
 
@@ -14,7 +14,7 @@ This pattern is illustrated in the examples below.
 Creating
 --------
 
-To locally create a resource, initialize it as you would any other python object. For example,
+To create a local resource, initialize it as you would any other python object. For example,
 
 .. code-block:: python
 
@@ -92,4 +92,3 @@ Data Model Object Specific Methods
 
 The client supports additional methods on certain data model object resources, such as more powerful ways to get resources.
 These are detailed in the documentation of :doc:`GEMD data objects <../data_entry>`
-
