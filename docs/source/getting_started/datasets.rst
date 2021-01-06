@@ -3,16 +3,16 @@ Datasets
 ========
 
 A dataset is a collection of data objects and files.
-It is a basic unit of access control, similar to projects: a user with read/write access on a dataset can read/write **all** of the resources in that dataset.
+It is a basic unit of access control: a user with read/write access on a dataset can read/write **all** of the resources in that dataset.
 A dataset is owned by a specific project, but it may be shared with other projects as well.
-Objects in a dataset may reference objects in a *different* dataset, hence a single user might not be able to view all of the relevant information about a material.
+Objects in a dataset may reference objects in a *different* dataset; hence, a single user might not be able to view all of the relevant information about a material.
 
 How to best organize your data into datasets is up to you, but please keep the following in mind:
 
 * Everything contained within a dataset has the same level of access control.
   If you want to share different objects with different projects, then they should be in different datasets.
 * The more datasets you have, the harder some tasks will be.
-  This includes humain maintenance tasks like auditing access control settings, describing the contents of the dataset, and keeping metadata up to date.
+  This includes human maintenance tasks like auditing access control settings, describing the contents of the dataset, and keeping metadata up to date.
   It also includes requests of the platform: some API calls will be slower if there are more datasets.
 
 Datasets can be listed and gotten from projects just as projects are from the client itself:
@@ -30,8 +30,7 @@ Dataset Access and Sharing
 --------------------------
 
 When a dataset is created on the Citrine platform, only members of the project in which it was created can see it and interact with it.
-If a dataset is made public it can be retrieved by any user using any project.
-Once retrieved, its data objects are also available to view.
+If a dataset is made public, it (and its entire contents) can be retrieved by any user using any project.
 Datasets that are public may only be written to by the project from which they originated.
 
 Toggling Public Access
@@ -71,24 +70,24 @@ Files
 -----
 
 In addition to data objects, a dataset can also contain files.
-These could be images output by a microscope in a proprietary format, a picture of how several samples are arranged on a hot plate, or anything else you would like to save.
-The association of a file with a resource is done using a :class:`FileLink <citrine.resources.file_link.FileLink>`, which is created when you upload a file.
+These could be images output by a microscope in a proprietary format, a sketch of how several samples are arranged on a hot plate, the report describing a set of experiments, or anything else you would like to save.
+The association of a file with a resource is done using a :class:`~citrine.resources.file_link.FileLink`, which is created when you upload a file.
 The `FileLink` can be associated with runs, specs, attributes and templates, all of which have a `file_links` field, and it can be used to download the file.
 
 Uniqueness and Versioning
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-All FileLink objects are associated with a specific dataset, and they are given a `filename`
-when uploaded. The `filename` **must be unique** within the dataset. If you upload another file
-with the same `filename` it will be considered a new version of the same file. The old version
-is not deleted, but at the moment you can only download the latest version of a given FileLink.
+All ``FileLink`` objects are associated with a specific dataset, and they are given a ``filename``
+when uploaded. The ``filename`` **must be unique** within the dataset. If you upload another file
+with the same ``filename`` it will be considered a new version of the same file. The old version
+is not deleted, but at the moment you can only download the latest version of a given ``FileLink``.
 
 Uploading and Downloading Files
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Assume you have a dataset named `dataset` and a file at the location `/Users/me/status_20190913.csv`
-on your computer. The code below uploads the file and gives it the filename `microscope_status_20190913.csv`.
-It then downloads the file back to your computer at `/Users/me/Downloads/settings.csv`.
+Assume you have a dataset named ``dataset`` and a file at the location ``/Users/me/status_20190913.csv``
+on your computer. The code below uploads the file and gives it the filename ``microscope_status_20190913.csv``.
+It then downloads the file back to your computer at ``/Users/me/Downloads/settings.csv``.
 
 .. code-block:: python
 

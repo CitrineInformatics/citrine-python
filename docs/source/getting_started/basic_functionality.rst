@@ -32,7 +32,7 @@ The process spec collection has a `register` command, which registers the proces
 
     battery_dataset_1.process_specs.register(buy_electrolyte_spec)
 
-If you tried to register the process spec to the dataset's material run collection, using ``battery_dataset_1.material_runs.register(buy_electrolyte_spec)``, then an error would result.
+If you tried to register the process spec to the dataset's material run collection, using ``battery_dataset_1.material_runs.register(buy_electrolyte_spec)``, then an error would result (since the types don't match).
 
 The ``register`` command returns a copy of the resource as it now exists in the database.
 The database may decorate the object with additional information, such as a unique identifier string that you can use to retrieve it in the future.
