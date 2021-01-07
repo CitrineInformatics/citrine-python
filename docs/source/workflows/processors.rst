@@ -2,10 +2,11 @@ Processors
 ==========
 
 A processor defines how a :doc:`design space <design_spaces>` is searched.
-There are two processors:
+There are three processors:
 
 -  `EnumeratedProcessor <#enumerated-processor>`__ enumerates up to a fixed number of materials from a finite, enumerable space.
 -  `GridProcessor <#grid-processor>`__ creates finite, enumerable space from a (semi)-continuous one by discretizing the continuous variables and enumerating the finite variables.
+-  `MonteCarloProcessor <#monte-carlo-processor>`__ uses Monte Carlo methods to explore a space, taking a semi-directed random walk to find high-performing points.
 
 Enumerated processor
 --------------------
@@ -100,3 +101,14 @@ a 2D design space of enumerated x values and continuous y values:
        description='Creates a grid over y',
        grid_sizes={'y': 11}
    )
+
+Monte Carlo processor
+---------------------
+
+A :class:`Monte Carlo processor <citrine.informatics.processors.MonteCarloProcessor>` uses Monte Carlo methods to explore the Design Space.
+A Monte Carlo method involves a random walk in which steps that improve the score are always accepted, and steps that make the score worse are accepted probabilistically.
+This balances exploitation, the desire to find the best nearby candidate, with exploration, the desire to investigate different regions of the Design Space.
+Monte Carlo methods are flexible and broadly applicable, and especially useful for non-convex problems.
+The Monte Carlo processor can be applied to any Design Space, although it is most useful for high-dimensional spaces that cannot easily be enumerated.
+
+There are no parameters to configure when creating a Monte Carlo processor.
