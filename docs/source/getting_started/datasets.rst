@@ -72,7 +72,7 @@ Files
 In addition to data objects, a dataset can also contain files.
 These could be images output by a microscope in a proprietary format, a sketch of how several samples are arranged on a hot plate, the report describing a set of experiments, or anything else you would like to save.
 The association of a file with a resource is done using a :class:`~citrine.resources.file_link.FileLink`, which is created when you upload a file.
-The `FileLink` can be associated with runs, specs, attributes and templates, all of which have a `file_links` field, and it can be used to download the file.
+The ``FileLink`` can be associated with multiple runs, specs, attributes and templates, all of which have a ``file_links`` field, and it can be used to download the file.
 
 Uniqueness and Versioning
 ^^^^^^^^^^^^^^^^^^^^^^^^^

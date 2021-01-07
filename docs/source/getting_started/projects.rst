@@ -6,20 +6,20 @@ A Project is the basic unit of collaboration and access on the Citrine platform.
 They are containers for other resources, such as Datasets and modules.
 Access rights on resources inside a Project are managed, granted, and revoked at the Project level.
 
-Users are individuals using the Citrine Platform, and they are given access to projects.
-A user with access to a Project has access to all of the Datasets and AI Modules that the project has access to.
+Users are individuals using the Citrine Platform, and they are made members of projects.
+A user who is a member of a Project has access to all of the Datasets and AI Modules that the project has access to.
 
 Every interaction with every other type of resource is scoped to a single Project.
 This means that the same user can have different permissions on a resource depending on which Project they are using to access it.
 For example, imagine that a Dataset is owned by Project A and shared with Project B, but Project B only has read, not write, permissions.
-Then a user who has access to both Projects would be able to add new data if accessing it from Project A, but not if accessing it from Project B.
+Then a user who is a member of both Projects would be able to add new data if accessing it through Project A, but not if accessing it through Project B.
 
 Basic Project Use
 -----------------
 
 Most commonly, the first thing you will want to do after connecting to the Citrine Platform is to find a certain project.
 Assume that you have created a :class:`~citrine.citrine.Citrine` client object named ``citrine``.
-To list all of the projects on the platform, use the `list` command.
+To list all of the projects that you are a member of, use the ``list`` command.
 
 .. code-block:: python
 

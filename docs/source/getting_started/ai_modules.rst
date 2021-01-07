@@ -6,7 +6,7 @@ Overview
 --------
 
 The Citrine Platform uses artificial intelligence (AI) to accelerate your materials research and development.
-The platform exposes several types of Modules, re-usable assets that codify domain knowledge, research capabilities, or experimental objectives.
+The platform exposes several types of Modules -- re-usable assets that codify domain knowledge, research capabilities, or experimental objectives.
 Modules are combined into Workflows that provide actionable information to help direct research and development.
 
 The Citrine python client allows you to create and manipulate Modules and Workflows.
@@ -26,7 +26,7 @@ Several Predictors can be combined into a graphical model that expresses your do
 Design Spaces
 ^^^^^^^^^^^^^
 
-:doc:`Design Spaces <../workflows/design_spaces>` define the set of materials that can be created.
+:doc:`Design Spaces <../workflows/design_spaces>` define the set of materials of interest.
 
 Processors
 ^^^^^^^^^^
