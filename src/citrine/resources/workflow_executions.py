@@ -1,5 +1,5 @@
 """Resources that represent both individual and collections of workflow executions."""
-from functools import lru_cache, partial
+from functools import partial
 from typing import Optional, Iterable
 from uuid import UUID
 
