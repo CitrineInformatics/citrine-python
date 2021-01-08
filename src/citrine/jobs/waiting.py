@@ -100,19 +100,19 @@ def wait_while_validating(
 
 
 def wait_while_executing(
-    execution: Union[WorkflowExecution, PredictorEvaluationExecution],
+    execution: Union[WorkflowExecution, PredictorEvaluationExecution, DesignExecution],
     print_status_info: bool = False,
     timeout: float = 1800.0,
     interval: float = 3.0,
     collection: Collection[Module] = None,
-) -> Union[WorkflowExecution, PredictorEvaluationExecution]:
+) -> Union[WorkflowExecution, PredictorEvaluationExecution, DesignExecution]:
     """
     [ALPHA] Wait until execution is finished.
 
     Parameters
     ----------
-    execution : WorkflowExecution or PredictorEvaluationExecution
-        WorklflowExecution or PredictorEvaluationExecution to monitor
+    execution : WorkflowExecution, PredictorEvaluationExecution or DesignExecution
+        an execution to monitor
     print_status_info : bool, optional
         Whether to print status info, by default False
     timeout : float, optional
@@ -124,8 +124,8 @@ def wait_while_executing(
 
     Returns
     -------
-    WorkflowExecution or PredictorEvaluationExecution
-        WorkflowExecution or PredictorEvaluationExecution after execution
+    WorkflowExecution, PredictorEvaluationExecution or DesignExecution
+        the updated execution after it has finished executing
 
 
     Raises
