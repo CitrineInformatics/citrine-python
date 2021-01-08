@@ -79,7 +79,6 @@ class WorkflowExecution(Resource['WorkflowExecution'], Pageable):
         for candidate in subset_collection:
             yield DesignCandidate.build(candidate)
 
-    @lru_cache()
     def candidates(self,
                    page: Optional[int] = None,
                    per_page: int = 100,
