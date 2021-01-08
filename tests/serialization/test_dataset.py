@@ -11,6 +11,7 @@ def valid_data():
     return dict(
         id=str(uuid4()),
         name='Dataset 1',
+        unique_name=None,
         summary='The first dataset',
         description='A dummy dataset for performing unit tests',
         deleted=True,
