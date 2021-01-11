@@ -388,6 +388,10 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         )
         return [self.build(obj) for obj in response_data['objects']]
 
+    def update(self, model: ResourceType) -> ResourceType:
+        """Update a data object model."""
+        return self.register(model, dry_run=False)
+
     def async_update(self, model: ResourceType, *,
                      dry_run: bool = False,
                      wait_for_response: bool = True,
