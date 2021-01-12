@@ -1,0 +1,7 @@
+citrine.informatics.predictors.simple\_mixture\_predictor module
+================================================================
+
+.. automodule:: citrine.informatics.predictors.simple_mixture_predictor
+   :members:
+   :undoc-members:
+   :show-inheritance:

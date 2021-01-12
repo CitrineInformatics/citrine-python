@@ -1,5 +1,24 @@
-citrine.informatics.predictors module
-=====================================
+citrine.informatics.predictors package
+======================================
+
+Submodules
+----------
+
+.. toctree::
+
+   citrine.informatics.predictors.expression_predictor
+   citrine.informatics.predictors.generalized_mean_property_predictor
+   citrine.informatics.predictors.graph_predictor
+   citrine.informatics.predictors.ingredient_fractions_predictor
+   citrine.informatics.predictors.ingredients_to_simple_mixture_predictor
+   citrine.informatics.predictors.label_fractions_predictor
+   citrine.informatics.predictors.molecular_structure_featurizer
+   citrine.informatics.predictors.predictor
+   citrine.informatics.predictors.simple_mixture_predictor
+   citrine.informatics.predictors.simple_ml_predictor
+
+Module contents
+---------------
 
 .. automodule:: citrine.informatics.predictors
    :members:

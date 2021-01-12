@@ -1,0 +1,326 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>citrine.informatics.predictors.expression_predictor module &#8212; Citrine Python 0.90.3 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="../_static/favicon.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="module-citrine.informatics.predictors.expression_predictor">
+<span id="citrine-informatics-predictors-expression-predictor-module"></span><h1>citrine.informatics.predictors.expression_predictor module<a class="headerlink" href="#module-citrine.informatics.predictors.expression_predictor" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="citrine.informatics.predictors.expression_predictor.ExpressionPredictor">
+<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.predictors.expression_predictor.</code><code class="sig-name descname">ExpressionPredictor</code><span class="sig-paren">(</span><em class="sig-param">name: str, description: str, expression: str, output: citrine.informatics.descriptors.RealDescriptor, aliases: Mapping[str, citrine.informatics.descriptors.RealDescriptor], session: Optional[citrine._session.Session] = None, report: Optional[citrine.informatics.reports.Report] = None, archived: bool = False</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.predictors.expression_predictor.ExpressionPredictor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="citrine.informatics.predictors.predictor.html#citrine.informatics.predictors.predictor.Predictor" title="citrine.informatics.predictors.predictor.Predictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.predictors.predictor.Predictor</span></code></a></p>
+<p>A predictor that computes an output from an expression and set of bounded inputs.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>If you are using the deprecated predictor please see
+<code class="xref py py-class docutils literal notranslate"><span class="pre">DeprecatedExpressionPredictor</span></code> for an example that
+shows how to migrate to the new format.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – name of the configuration</p></li>
+<li><p><strong>description</strong> (<em>str</em>) – the description of the predictor</p></li>
+<li><p><strong>expression</strong> (<em>str</em>) – expression that computes an output from aliased inputs</p></li>
+<li><p><strong>output</strong> (<a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.RealDescriptor" title="citrine.informatics.descriptors.RealDescriptor"><em>RealDescriptor</em></a>) – descriptor that represents the output relation</p></li>
+<li><p><strong>aliases</strong> (<em>Mapping</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.RealDescriptor" title="citrine.informatics.descriptors.RealDescriptor"><em>RealDescriptor</em></a><em>]</em>) – a mapping from each unknown argument to its descriptor.
+All unknown arguments must have an associated descriptor.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.expression_predictor.ExpressionPredictor.aliases">
+<code class="sig-name descname">aliases</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.expression_predictor.ExpressionPredictor.aliases" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.expression_predictor.ExpressionPredictor.expression">
+<code class="sig-name descname">expression</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.expression_predictor.ExpressionPredictor.expression" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.expression_predictor.ExpressionPredictor.module_type">
+<code class="sig-name descname">module_type</code><em class="property"> = 'PREDICTOR'</em><a class="headerlink" href="#citrine.informatics.predictors.expression_predictor.ExpressionPredictor.module_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.expression_predictor.ExpressionPredictor.output">
+<code class="sig-name descname">output</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.expression_predictor.ExpressionPredictor.output" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.expression_predictor.ExpressionPredictor.typ">
+<code class="sig-name descname">typ</code><em class="property"> = 'AnalyticExpression'</em><a class="headerlink" href="#citrine.informatics.predictors.expression_predictor.ExpressionPredictor.typ" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="citrine.informatics.predictors.expression_predictor.DeprecatedExpressionPredictor">
+<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.predictors.expression_predictor.</code><code class="sig-name descname">DeprecatedExpressionPredictor</code><span class="sig-paren">(</span><em class="sig-param">name: str</em>, <em class="sig-param">description: str</em>, <em class="sig-param">expression: str</em>, <em class="sig-param">output: citrine.informatics.descriptors.RealDescriptor</em>, <em class="sig-param">aliases: Optional[Mapping[str</em>, <em class="sig-param">str]] = None</em>, <em class="sig-param">session: Optional[citrine._session.Session] = None</em>, <em class="sig-param">report: Optional[citrine.informatics.reports.Report] = None</em>, <em class="sig-param">archived: bool = False</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.predictors.expression_predictor.DeprecatedExpressionPredictor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="citrine.informatics.predictors.predictor.html#citrine.informatics.predictors.predictor.Predictor" title="citrine.informatics.predictors.predictor.Predictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.predictors.predictor.Predictor</span></code></a></p>
+<p>[DEPRECATED] A predictor that computes an output from an analytic expression.</p>
+<p>This predictor is deprecated. Please use the
+<code class="xref py py-class docutils literal notranslate"><span class="pre">ExpressionPredictor</span></code> instead.
+To migrate to the new predictor:</p>
+<ol class="arabic simple">
+<li><p>add an alias for all unknown expression arguments and</p></li>
+<li><p>replace descriptor keys in <code class="docutils literal notranslate"><span class="pre">aliases</span></code> with the associated descriptor</p></li>
+</ol>
+<p>These changes allow the expression to respect descriptor bounds when computing the output and
+avoid potential descriptor mismatches if a descriptor with an identical key and different
+bounds is present in the graph.</p>
+<p>The following example shows how to migrate a deprecated expression predictor to the new format.
+In the deprecated format, an expression that computes shear modulus from Young’s modulus and
+Poisson’s ratio is given by:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.informatics.predictors</span> <span class="kn">import</span> <span class="n">DeprecatedExpressionPredictor</span>
+
+<span class="n">shear_modulus</span> <span class="o">=</span> <span class="n">RealDescriptor</span><span class="p">(</span>
+    <span class="s1">&#39;Property~Shear modulus&#39;</span><span class="p">,</span>
+    <span class="n">lower_bound</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">upper_bound</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="n">units</span><span class="o">=</span><span class="s1">&#39;GPa&#39;</span>
+ <span class="p">)</span>
+
+<span class="n">shear_modulus_predictor</span> <span class="o">=</span> <span class="n">DeprecatedExpressionPredictor</span><span class="p">(</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Shear modulus predictor&#39;</span><span class="p">,</span>
+    <span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;Computes shear modulus from Young&#39;s modulus and Poisson&#39;s ratio.&quot;</span><span class="p">,</span>
+    <span class="n">expression</span> <span class="o">=</span> <span class="s1">&#39;Y / (2 * (1 + v))&#39;</span><span class="p">,</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">shear_modulus</span><span class="p">,</span>
+    <span class="n">aliases</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;Y&#39;</span><span class="p">:</span> <span class="s2">&quot;Young&#39;s modulus&quot;</span><span class="p">,</span>
+        <span class="s1">&#39;v&#39;</span><span class="p">:</span> <span class="s2">&quot;Poisson&#39;s ratio&quot;</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>To create a predictor using the format, we need to create descriptors for the expression
+inputs: Young’s modulus and Poisson’s ratio. We also need to replace references to the
+descriptor keys in <code class="docutils literal notranslate"><span class="pre">aliases</span></code> with the new descriptors:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.informatics.predictors</span> <span class="kn">import</span> <span class="n">ExpressionPredictor</span>
+
+<span class="c1"># create a descriptor for each input in addition to the output</span>
+<span class="n">youngs_modulus</span> <span class="o">=</span> <span class="n">RealDescriptor</span><span class="p">(</span><span class="s1">&#39;Property~Young&#39;</span><span class="n">s</span> <span class="n">modulus</span><span class="s1">&#39;, lower_bound=0,</span>
+                                <span class="n">upper_bound</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;GPa&#39;</span><span class="p">)</span>
+<span class="n">poissons_ratio</span> <span class="o">=</span> <span class="n">RealDescriptor</span><span class="p">(</span><span class="s1">&#39;Property~Poisson&#39;</span><span class="n">s</span> <span class="n">ratio</span><span class="s1">&#39;, lower_bound=-1,</span>
+                                <span class="n">upper_bound</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+<span class="n">shear_modulus</span> <span class="o">=</span> <span class="n">RealDescriptor</span><span class="p">(</span><span class="s1">&#39;Property~Shear modulus&#39;</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                               <span class="n">upper_bound</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;GPa&#39;</span><span class="p">)</span>
+
+<span class="n">shear_modulus_predictor</span> <span class="o">=</span> <span class="n">ExpressionPredictor</span><span class="p">(</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Shear modulus predictor&#39;</span><span class="p">,</span>
+    <span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;Computes shear modulus from Young&#39;s modulus and Poisson&#39;s ratio.&quot;</span><span class="p">,</span>
+    <span class="n">expression</span> <span class="o">=</span> <span class="s1">&#39;Y / (2 * (1 + v))&#39;</span><span class="p">,</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">shear_modulus</span><span class="p">,</span>
+    <span class="c1"># note, arguments map to descriptors not descriptor keys</span>
+    <span class="n">aliases</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;Y&#39;</span><span class="p">:</span> <span class="n">youngs_modulus</span><span class="p">,</span>
+        <span class="s1">&#39;v&#39;</span><span class="p">:</span> <span class="n">poissons_ratio</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><code class="xref py py-class docutils literal notranslate"><span class="pre">ExpressionPredictor</span></code></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – name of the configuration</p></li>
+<li><p><strong>description</strong> (<em>str</em>) – the description of the predictor</p></li>
+<li><p><strong>expression</strong> (<em>str</em>) – expression that computes an output from a set of inputs</p></li>
+<li><p><strong>output</strong> (<a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.RealDescriptor" title="citrine.informatics.descriptors.RealDescriptor"><em>RealDescriptor</em></a>) – descriptor that represents the output of the expression</p></li>
+<li><p><strong>aliases</strong> (<em>Optional</em><em>[</em><em>Mapping</em><em>[</em><em>str</em><em>, </em><em>str</em><em>]</em><em>]</em>) – a mapping from each each argument as it appears in the <code class="docutils literal notranslate"><span class="pre">expression</span></code> to its descriptor
+key. If an unknown argument is not aliased, the argument and descriptor key are assumed
+to be identical.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.expression_predictor.DeprecatedExpressionPredictor.aliases">
+<code class="sig-name descname">aliases</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.expression_predictor.DeprecatedExpressionPredictor.aliases" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.expression_predictor.DeprecatedExpressionPredictor.expression">
+<code class="sig-name descname">expression</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.expression_predictor.DeprecatedExpressionPredictor.expression" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.expression_predictor.DeprecatedExpressionPredictor.module_type">
+<code class="sig-name descname">module_type</code><em class="property"> = 'PREDICTOR'</em><a class="headerlink" href="#citrine.informatics.predictors.expression_predictor.DeprecatedExpressionPredictor.module_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.expression_predictor.DeprecatedExpressionPredictor.output">
+<code class="sig-name descname">output</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.expression_predictor.DeprecatedExpressionPredictor.output" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.expression_predictor.DeprecatedExpressionPredictor.typ">
+<code class="sig-name descname">typ</code><em class="property"> = 'Expression'</em><a class="headerlink" href="#citrine.informatics.predictors.expression_predictor.DeprecatedExpressionPredictor.typ" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../index.html">
+    <img class="logo" src="../_static/logo.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=CitrineInformatics&repo=citrine-python&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/index.html">1. Getting Started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/overview.html">1.1. Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/connecting.html">1.2. Connecting to the Citrine Platform</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/basic_functionality.html">1.3. Managing Resources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/projects.html">1.4. Projects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/datasets.html">1.5. Datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/data_model.html">1.6. Data Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/ai_modules.html">1.7. AI Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/code_examples.html">1.8. Code Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../data_entry.html">2. Data Entry</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#creating-data-model-objects">2.1. Creating Data Model Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#identifying-data-model-objects">2.2. Identifying Data Model Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#registering-data-model-objects">2.3. Registering Data Model Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#finding-data-model-objects">2.4. Finding Data Model Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#referencing-data-model-objects">2.5. Referencing Data Model Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#material-history">2.6. Material History</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#validating-data-model-objects">2.7. Validating Data Model Objects</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../data_extraction.html">3. [ALPHA] Data Extraction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#defining-row-and-columns">3.1. Defining row and columns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#defining-tables">3.2. Defining tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#previewing-tables">3.3. Previewing tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#building-and-downloading-tables">3.4. Building and downloading tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-row-definitions">3.5. Available Row Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-variable-definitions">3.6. Available Variable Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-column-definitions">3.7. Available Column Definitions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">4. [ALPHA] AI Engine</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/getting_started.html">4.1. Getting Started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/descriptors.html">4.2. Descriptors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/descriptors.html#platform-vocabularies">4.3. Platform Vocabularies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/predictors.html">4.4. Predictors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/design_spaces.html">4.5. [ALPHA] Design Spaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/processors.html">4.6. Processors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/design_workflows.html">4.7. [ALPHA] Design Workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/scores.html">4.8. Scores</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/data_sources.html">4.9. Data Sources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/predictor_reports.html">4.10. Predictor Reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/predictor_evaluation_workflows.html">4.11. Predictor Evaluation Workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/performance_workflows.html">4.12. [DEPRECATED] Performance Workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/code_examples.html">4.13. AI Engine Code Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">5. FAQ</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../FAQ/prohibited_data_patterns.html">5.1. Prohibited Data Patterns</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Citrine Informatics.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/reference/citrine.informatics.predictors.expression_predictor.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

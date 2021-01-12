@@ -1,0 +1,7 @@
+citrine.informatics.design\_candidate module
+============================================
+
+.. automodule:: citrine.informatics.design_candidate
+   :members:
+   :undoc-members:
+   :show-inheritance:

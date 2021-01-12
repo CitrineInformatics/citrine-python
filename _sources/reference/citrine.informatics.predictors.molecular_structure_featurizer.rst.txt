@@ -1,0 +1,7 @@
+citrine.informatics.predictors.molecular\_structure\_featurizer module
+======================================================================
+
+.. automodule:: citrine.informatics.predictors.molecular_structure_featurizer
+   :members:
+   :undoc-members:
+   :show-inheritance:

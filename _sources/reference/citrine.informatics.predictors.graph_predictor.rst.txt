@@ -1,0 +1,7 @@
+citrine.informatics.predictors.graph\_predictor module
+======================================================
+
+.. automodule:: citrine.informatics.predictors.graph_predictor
+   :members:
+   :undoc-members:
+   :show-inheritance:

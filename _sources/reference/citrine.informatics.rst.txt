@@ -8,6 +8,7 @@ Subpackages
 
    citrine.informatics.constraints
    citrine.informatics.design_spaces
+   citrine.informatics.predictors
    citrine.informatics.workflows
 
 Submodules
@@ -18,13 +19,13 @@ Submodules
    citrine.informatics.analysis_configuration
    citrine.informatics.data_sources
    citrine.informatics.descriptors
+   citrine.informatics.design_candidate
    citrine.informatics.dimensions
    citrine.informatics.modules
    citrine.informatics.objectives
    citrine.informatics.predictor_evaluation_metrics
    citrine.informatics.predictor_evaluation_result
    citrine.informatics.predictor_evaluator
-   citrine.informatics.predictors
    citrine.informatics.processors
    citrine.informatics.reports
    citrine.informatics.scores

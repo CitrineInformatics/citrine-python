@@ -1,0 +1,7 @@
+citrine.informatics.predictors.generalized\_mean\_property\_predictor module
+============================================================================
+
+.. automodule:: citrine.informatics.predictors.generalized_mean_property_predictor
+   :members:
+   :undoc-members:
+   :show-inheritance:

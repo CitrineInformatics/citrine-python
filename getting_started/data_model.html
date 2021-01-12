@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>1.4. Data Model &#8212; Citrine Python 0.87.1 documentation</title>
+    <title>1.6. Data Model &#8212; Citrine Python 0.90.3 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -16,8 +16,8 @@
     <link rel="shortcut icon" href="../_static/favicon.png"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="1.5. Dataset Access Control" href="public_access.html" />
-    <link rel="prev" title="1.3. Using the Citrine Python Client" href="basic_functionality.html" />
+    <link rel="next" title="1.7. AI Modules" href="ai_modules.html" />
+    <link rel="prev" title="1.5. Datasets" href="datasets.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -35,16 +35,17 @@
           <div class="body" role="main">
             
   <div class="section" id="data-model">
-<h1>1.4. Data Model<a class="headerlink" href="#data-model" title="Permalink to this headline">¶</a></h1>
+<h1>1.6. Data Model<a class="headerlink" href="#data-model" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="overview">
-<h2>1.4.1. Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
+<h2>1.6.1. Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
 <p>The Citrine python client is built on our NextGen data model, GEMD.
 GEMD is a format that links together materials, the processes that produced them, and the measurements that characterize them.
-Complete documentation can be found in the <a class="reference external" href="https://citrineinformatics.github.io/gemd-docs/">data model docs</a>.
+Complete documentation of GEMD can be found in the <a class="reference external" href="https://citrineinformatics.github.io/gemd-docs/">data model docs</a>,
+and a more thorough discussion of working with data objects in this client can be found in the <a class="reference internal" href="../data_entry.html"><span class="doc">data entry docs</span></a>.
 This page presents a broad overview.</p>
 </div>
 <div class="section" id="the-basic-objects-processes-materials-measurements">
-<h2>1.4.2. The Basic Objects: Processes, Materials, Measurements<a class="headerlink" href="#the-basic-objects-processes-materials-measurements" title="Permalink to this headline">¶</a></h2>
+<h2>1.6.2. The Basic Objects: Processes, Materials, Measurements<a class="headerlink" href="#the-basic-objects-processes-materials-measurements" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><p>A process is an action that creates a material, possibly using some input ingredients.</p></li>
 <li><p>A material represents a sample, either physical or virtual.</p></li>
@@ -72,7 +73,7 @@ Materials science is messy and reality does not always align with our intent.
 That’s why we’ve made our data model flexible.</p>
 </div>
 <div class="section" id="attributes">
-<h2>1.4.3. Attributes<a class="headerlink" href="#attributes" title="Permalink to this headline">¶</a></h2>
+<h2>1.6.3. Attributes<a class="headerlink" href="#attributes" title="Permalink to this headline">¶</a></h2>
 <p>Properties are characteristics of a material that could be measured, e.g. chemical composition, density, yield strength.
 Conditions are the environmental variables (typically measured) that may affect a process or measurement: e.g. Temperature, Pressure.
 Parameters are the non-environmental variables (typically specified and controlled) that may affect a process or measurement: e.g. oven dial temperature position for a kiln firing, magnification for a measurement taken with a SEM.</p>
@@ -81,7 +82,7 @@ For example, process specs have optional conditions and parameters but not prope
 For more information, please see the documentation related to each data object.</p>
 </div>
 <div class="section" id="templates-and-validation">
-<h2>1.4.4. Templates and Validation<a class="headerlink" href="#templates-and-validation" title="Permalink to this headline">¶</a></h2>
+<h2>1.6.4. Templates and Validation<a class="headerlink" href="#templates-and-validation" title="Permalink to this headline">¶</a></h2>
 <p>Templates provide a controlled vocabulary that establishes what attributes you expect objects to have and what the bounds on those attributes are.
 Attribute templates constrain a property, parameter, or condition to be within certain bounds.
 Object templates contain a list of attribute templates that a process, material, or measurement may not violate.
@@ -97,10 +98,31 @@ For example, “Temperature is between 20 and 24 degC” is a bad template: temp
 “Room temperature during drying is between 0 and 100 degC” is better because it is more specific and contains all reasonable values of room temperature.</p>
 </div>
 <div class="section" id="linkbyuid">
-<h2>1.4.5. LinkByUID<a class="headerlink" href="#linkbyuid" title="Permalink to this headline">¶</a></h2>
+<h2>1.6.5. LinkByUID<a class="headerlink" href="#linkbyuid" title="Permalink to this headline">¶</a></h2>
 <p>The <a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.link_by_uid.html#gemd.entity.link_by_uid.LinkByUID" title="(in GEMD-python)"><code class="xref py py-class docutils literal notranslate"><span class="pre">LinkByUID</span></code></a> class allows you to reference another data model object by a unique identifier without downloading it first.
 This is a common pattern within the data model objects, since many objects contain links to other objects that may have already been registered to the platform.
 <a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.link_by_uid.html#gemd.entity.link_by_uid.LinkByUID" title="(in GEMD-python)"><code class="xref py py-class docutils literal notranslate"><span class="pre">LinkByUID</span></code></a> objects can use either the platform’s unique identifier or an <a class="reference external" href="https://citrineinformatics.github.io/gemd-docs/specification/unique-identifiers/#alternative-ids">alternative identifier</a>.</p>
+</div>
+<div class="section" id="deleting-data-objects">
+<span id="deleting-data-objects-label"></span><h2>1.6.6. Deleting Data Objects<a class="headerlink" href="#deleting-data-objects" title="Permalink to this headline">¶</a></h2>
+<p>Because data objects are so intertwined with each other, deletion must be done carefully.
+In order for a delete to be successful, the following circumstances must be true:</p>
+<ol class="arabic simple">
+<li><p>The user has write access to the containing dataset</p></li>
+<li><p>Deleting the object won’t invalidate or orphan other objects</p></li>
+</ol>
+<p>In the case that a delete fails, an error message will be returned indicating the point of failure.</p>
+<p>For example, any attempt to delete a <code class="docutils literal notranslate"><span class="pre">MaterialSpec</span></code> object that is referenced by a <code class="docutils literal notranslate"><span class="pre">MaterialRun</span></code> object will be unsuccessful because the <code class="docutils literal notranslate"><span class="pre">MaterialRun</span></code> would no longer have an associated <code class="docutils literal notranslate"><span class="pre">MaterialSpec</span></code>.</p>
+<p>In this case, an error message will be returned with both the <code class="docutils literal notranslate"><span class="pre">id</span></code> of the referencing <code class="docutils literal notranslate"><span class="pre">MaterialRun</span></code> object <em>and</em> the <code class="docutils literal notranslate"><span class="pre">id</span></code> of its containing dataset.
+Should that <code class="docutils literal notranslate"><span class="pre">MaterialRun</span></code> itself be deleted, or associated with a different <code class="docutils literal notranslate"><span class="pre">MaterialSpec</span></code> object, the targeted <code class="docutils literal notranslate"><span class="pre">MaterialSpec</span></code> can then be deleted.</p>
+<p>Deleting uses this generalized approach:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dataset</span><span class="o">.</span><span class="n">object_type</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>For example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">tungsten_dataset</span><span class="o">.</span><span class="n">material_specs</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+</pre></div>
+</div>
 </div>
 </div>
 
@@ -135,13 +157,13 @@ This is a common pattern within the data model objects, since many objects conta
 <h3>Navigation</h3>
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">1. Getting Started</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="connecting.html">1.1. Connecting to the Citrine Platform</a></li>
-<li class="toctree-l2"><a class="reference internal" href="basic_structure.html">1.2. Structure of the Citrine Python Client</a></li>
-<li class="toctree-l2"><a class="reference internal" href="basic_functionality.html">1.3. Using the Citrine Python Client</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">1.4. Data Model</a></li>
-<li class="toctree-l2"><a class="reference internal" href="public_access.html">1.5. Dataset Access Control</a></li>
-<li class="toctree-l2"><a class="reference internal" href="working_with_files.html">1.6. Working With Files</a></li>
-<li class="toctree-l2"><a class="reference internal" href="projects_and_users.html">1.7. Projects and Users</a></li>
+<li class="toctree-l2"><a class="reference internal" href="overview.html">1.1. Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="connecting.html">1.2. Connecting to the Citrine Platform</a></li>
+<li class="toctree-l2"><a class="reference internal" href="basic_functionality.html">1.3. Managing Resources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="projects.html">1.4. Projects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="datasets.html">1.5. Datasets</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">1.6. Data Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ai_modules.html">1.7. AI Modules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="code_examples.html">1.8. Code Examples</a></li>
 </ul>
 </li>
@@ -151,7 +173,8 @@ This is a common pattern within the data model objects, since many objects conta
 <li class="toctree-l2"><a class="reference internal" href="../data_entry.html#registering-data-model-objects">2.3. Registering Data Model Objects</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../data_entry.html#finding-data-model-objects">2.4. Finding Data Model Objects</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../data_entry.html#referencing-data-model-objects">2.5. Referencing Data Model Objects</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#validating-data-model-objects">2.6. Validating Data Model Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#material-history">2.6. Material History</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#validating-data-model-objects">2.7. Validating Data Model Objects</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../data_extraction.html">3. [ALPHA] Data Extraction</a><ul>
@@ -191,8 +214,8 @@ This is a common pattern within the data model objects, since many objects conta
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="index.html">1. Getting Started</a><ul>
-      <li>Previous: <a href="basic_functionality.html" title="previous chapter">1.3. Using the Citrine Python Client</a></li>
-      <li>Next: <a href="public_access.html" title="next chapter">1.5. Dataset Access Control</a></li>
+      <li>Previous: <a href="datasets.html" title="previous chapter">1.5. Datasets</a></li>
+      <li>Next: <a href="ai_modules.html" title="next chapter">1.7. AI Modules</a></li>
   </ul></li>
   </ul></li>
 </ul>

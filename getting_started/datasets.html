@@ -1,0 +1,261 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>1.5. Datasets &#8212; Citrine Python 0.90.3 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="../_static/favicon.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="1.6. Data Model" href="data_model.html" />
+    <link rel="prev" title="1.4. Projects" href="projects.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="datasets">
+<h1>1.5. Datasets<a class="headerlink" href="#datasets" title="Permalink to this headline">¶</a></h1>
+<p>A dataset is a collection of data objects and files.
+It is a basic unit of access control: a user with read/write access on a dataset can read/write <strong>all</strong> of the resources in that dataset.
+A dataset is owned by a specific project, but it may be shared with other projects as well.
+Objects in a dataset may reference objects in a <em>different</em> dataset; hence, a single user might not be able to view all of the relevant information about a material.</p>
+<p>How to best organize your data into datasets is up to you, but please keep the following in mind:</p>
+<ul class="simple">
+<li><p>Everything contained within a dataset has the same level of access control.
+If you want to share different objects with different projects, then they should be in different datasets.</p></li>
+<li><p>The more datasets you have, the harder some tasks will be.
+This includes human maintenance tasks like auditing access control settings, describing the contents of the dataset, and keeping metadata up to date.
+It also includes requests of the platform: some API calls will be slower if there are more datasets.</p></li>
+</ul>
+<p>Datasets can be listed and gotten from projects just as projects are from the client itself:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">project</span> <span class="o">=</span> <span class="n">citrine</span><span class="o">.</span><span class="n">projects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;baaa467e-1758-43a8-97c7-76e569d0dcab&quot;</span><span class="p">)</span>
+<span class="n">datasets_in_project</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
+<span class="n">a_dataset</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;6ed8bf3b-876b-40f0-9d50-982e686e5cd3&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Datasets can only be deleted if they are empty.
+If you need to delete a non-empty dataset, see this discussion on <a class="reference internal" href="data_model.html#deleting-data-objects-label"><span class="std std-ref">deleting data objects</span></a>.</p>
+<div class="section" id="dataset-access-and-sharing">
+<h2>1.5.1. Dataset Access and Sharing<a class="headerlink" href="#dataset-access-and-sharing" title="Permalink to this headline">¶</a></h2>
+<p>When a dataset is created on the Citrine platform, only members of the project in which it was created can see it and interact with it.
+If a dataset is made public, it (and its entire contents) can be retrieved by any user using any project.
+Datasets that are public may only be written to by the project from which they originated.</p>
+<div class="section" id="toggling-public-access">
+<h3>1.5.1.1. Toggling Public Access<a class="headerlink" href="#toggling-public-access" title="Permalink to this headline">¶</a></h3>
+<p>A dataset can be made public (or made private again) using the project from which it originates
+using the <a class="reference internal" href="../reference/citrine.resources.project.html#citrine.resources.project.Project.make_public" title="citrine.resources.project.Project.make_public"><code class="xref py py-func docutils literal notranslate"><span class="pre">make_public()</span></code></a> and <a class="reference internal" href="../reference/citrine.resources.project.html#citrine.resources.project.Project.make_private" title="citrine.resources.project.Project.make_private"><code class="xref py py-func docutils literal notranslate"><span class="pre">make_private()</span></code></a> methods on the project.</p>
+</div>
+<div class="section" id="example">
+<h3>1.5.1.2. Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h3>
+<p>Assume you have a “band gaps project” with known ID, <cite>band_gaps_project_id</cite>, and an associated dataset with known ID, <cite>strehlow_cook_dataset_id</cite>.</p>
+<p>Making a dataset public:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">band_gaps_project</span> <span class="o">=</span> <span class="n">citrine</span><span class="o">.</span><span class="n">projects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">band_gaps_project_id</span><span class="p">)</span>
+<span class="n">strehlow_cook_dataset</span> <span class="o">=</span> <span class="n">band_gaps_project</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">strehlow_cook_dataset_id</span><span class="p">)</span>
+
+<span class="c1"># Make the Strehlow and Cook dataset publicly accessible so that it can be retrieved</span>
+<span class="c1"># from any project</span>
+<span class="n">band_gaps_project</span><span class="o">.</span><span class="n">make_public</span><span class="p">(</span><span class="n">strehlow_cook_dataset</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Making a dataset private:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">band_gaps_project</span> <span class="o">=</span> <span class="n">citrine</span><span class="o">.</span><span class="n">projects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">band_gaps_project_id</span><span class="p">)</span>
+<span class="n">strehlow_cook_dataset</span> <span class="o">=</span> <span class="n">band_gaps_project</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">strehlow_cook_dataset_id</span><span class="p">)</span>
+
+<span class="c1"># If the Strehlow and Cook dataset was previously publicly available, revoke that</span>
+<span class="c1"># access so that it can only be retrieved and from the band_gaps_project.</span>
+<span class="n">band_gaps_project</span><span class="o">.</span><span class="n">make_private</span><span class="p">(</span><span class="n">strehlow_cook_dataset</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="files">
+<h2>1.5.2. Files<a class="headerlink" href="#files" title="Permalink to this headline">¶</a></h2>
+<p>In addition to data objects, a dataset can also contain files.
+These could be images output by a microscope in a proprietary format, a sketch of how several samples are arranged on a hot plate, the report describing a set of experiments, or anything else you would like to save.
+The association of a file with a resource is done using a <a class="reference internal" href="../reference/citrine.resources.file_link.html#citrine.resources.file_link.FileLink" title="citrine.resources.file_link.FileLink"><code class="xref py py-class docutils literal notranslate"><span class="pre">FileLink</span></code></a>, which is created when you upload a file.
+The <code class="docutils literal notranslate"><span class="pre">FileLink</span></code> can be associated with multiple runs, specs, attributes and templates, all of which have a <code class="docutils literal notranslate"><span class="pre">file_links</span></code> field, and it can be used to download the file.</p>
+<div class="section" id="uniqueness-and-versioning">
+<h3>1.5.2.1. Uniqueness and Versioning<a class="headerlink" href="#uniqueness-and-versioning" title="Permalink to this headline">¶</a></h3>
+<p>All <code class="docutils literal notranslate"><span class="pre">FileLink</span></code> objects are associated with a specific dataset, and they are given a <code class="docutils literal notranslate"><span class="pre">filename</span></code>
+when uploaded. The <code class="docutils literal notranslate"><span class="pre">filename</span></code> <strong>must be unique</strong> within the dataset. If you upload another file
+with the same <code class="docutils literal notranslate"><span class="pre">filename</span></code> it will be considered a new version of the same file. The old version
+is not deleted, but at the moment you can only download the latest version of a given <code class="docutils literal notranslate"><span class="pre">FileLink</span></code>.</p>
+</div>
+<div class="section" id="uploading-and-downloading-files">
+<h3>1.5.2.2. Uploading and Downloading Files<a class="headerlink" href="#uploading-and-downloading-files" title="Permalink to this headline">¶</a></h3>
+<p>Assume you have a dataset named <code class="docutils literal notranslate"><span class="pre">dataset</span></code> and a file at the location <code class="docutils literal notranslate"><span class="pre">/Users/me/status_20190913.csv</span></code>
+on your computer. The code below uploads the file and gives it the filename <code class="docutils literal notranslate"><span class="pre">microscope_status_20190913.csv</span></code>.
+It then downloads the file back to your computer at <code class="docutils literal notranslate"><span class="pre">/Users/me/Downloads/settings.csv</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">file_link</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">upload</span><span class="p">(</span>
+    <span class="s2">&quot;/Users/me/status_20190913.csv&quot;</span><span class="p">,</span> <span class="s2">&quot;microscope_status_20190913.csv&quot;</span><span class="p">)</span>
+<span class="n">dataset</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">download</span><span class="p">(</span><span class="n">file_link</span><span class="p">,</span>
+    <span class="s2">&quot;/Users/me/Downloads/settings.csv&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="deleting-files">
+<h3>1.5.2.3. Deleting Files<a class="headerlink" href="#deleting-files" title="Permalink to this headline">¶</a></h3>
+<p>If you have WRITE permission on a dataset then you may delete any file in the dataset.
+Use this ability carefully, as there are no checks as to whether or not the file is referenced by existing data objects.
+Deleting a file can therefore produce broken links.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dataset</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">file_link</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="../index.html">
+    <img class="logo" src="../_static/logo.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=CitrineInformatics&repo=citrine-python&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">1. Getting Started</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="overview.html">1.1. Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="connecting.html">1.2. Connecting to the Citrine Platform</a></li>
+<li class="toctree-l2"><a class="reference internal" href="basic_functionality.html">1.3. Managing Resources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="projects.html">1.4. Projects</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">1.5. Datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_model.html">1.6. Data Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ai_modules.html">1.7. AI Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="code_examples.html">1.8. Code Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../data_entry.html">2. Data Entry</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#creating-data-model-objects">2.1. Creating Data Model Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#identifying-data-model-objects">2.2. Identifying Data Model Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#registering-data-model-objects">2.3. Registering Data Model Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#finding-data-model-objects">2.4. Finding Data Model Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#referencing-data-model-objects">2.5. Referencing Data Model Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#material-history">2.6. Material History</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#validating-data-model-objects">2.7. Validating Data Model Objects</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../data_extraction.html">3. [ALPHA] Data Extraction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#defining-row-and-columns">3.1. Defining row and columns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#defining-tables">3.2. Defining tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#previewing-tables">3.3. Previewing tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#building-and-downloading-tables">3.4. Building and downloading tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-row-definitions">3.5. Available Row Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-variable-definitions">3.6. Available Variable Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-column-definitions">3.7. Available Column Definitions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">4. [ALPHA] AI Engine</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/getting_started.html">4.1. Getting Started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/descriptors.html">4.2. Descriptors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/descriptors.html#platform-vocabularies">4.3. Platform Vocabularies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/predictors.html">4.4. Predictors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/design_spaces.html">4.5. [ALPHA] Design Spaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/processors.html">4.6. Processors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/design_workflows.html">4.7. [ALPHA] Design Workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/scores.html">4.8. Scores</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/data_sources.html">4.9. Data Sources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/predictor_reports.html">4.10. Predictor Reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/predictor_evaluation_workflows.html">4.11. Predictor Evaluation Workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/performance_workflows.html">4.12. [DEPRECATED] Performance Workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/code_examples.html">4.13. AI Engine Code Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">5. FAQ</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../FAQ/prohibited_data_patterns.html">5.1. Prohibited Data Patterns</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">1. Getting Started</a><ul>
+      <li>Previous: <a href="projects.html" title="previous chapter">1.4. Projects</a></li>
+      <li>Next: <a href="data_model.html" title="next chapter">1.6. Data Model</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Citrine Informatics.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/getting_started/datasets.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

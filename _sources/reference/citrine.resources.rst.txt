@@ -16,7 +16,9 @@ Submodules
    citrine.resources.data_objects
    citrine.resources.dataset
    citrine.resources.descriptors
+   citrine.resources.design_execution
    citrine.resources.design_space
+   citrine.resources.design_workflow
    citrine.resources.file_link
    citrine.resources.gemtables
    citrine.resources.ingredient_run
