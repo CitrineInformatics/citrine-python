@@ -23,5 +23,5 @@ class TemplateCollection(DataConceptsCollection[TemplateResourceType], ABC):
     def update(self, model: TemplateResourceType) -> TemplateResourceType:
         """Update a template object."""
         warn("Some updates to templates require a longer-running check. Please see async_update "
-             "and use that method if it is applicable.")
-        super().update(model)
+             "and use that method if it is applicable.", UserWarning)
+        return super().update(model)

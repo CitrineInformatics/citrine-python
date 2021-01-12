@@ -274,6 +274,10 @@ class Dataset(Resource['Dataset']):
                     resources.extend(registered)
         return resources
 
+    def update(self, model: ResourceType) -> ResourceType:
+        """Update a data concepts resource using the appropriate collection."""
+        return self._collection_for(model).update(model)
+
     def delete(self, data_concepts_resource: ResourceType, dry_run=False) -> ResourceType:
         """Delete a data concepts resource to the appropriate collection."""
         uid = next(iter(data_concepts_resource.uids.items()), None)
