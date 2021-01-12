@@ -308,6 +308,17 @@ def test_register_data_concepts(dataset):
             assert pair[1] == registered.uids[pair[0]]
 
 
+def test_update(dataset):
+    """Check that updating a template calls the same path as register, but a warning is thrown."""
+    template = MaterialTemplate("to be updated")
+    template = dataset.register(template)
+    template.description = "updated description"
+    with pytest.warns(UserWarning):
+        template_updated = dataset.update(template)
+    assert template_updated == template
+    assert dataset.session.calls[0].path == dataset.session.calls[1].path
+
+
 def test_register_data_concepts_no_mutate(dataset):
     """Check that register routes to the correct collections"""
     expected = {
