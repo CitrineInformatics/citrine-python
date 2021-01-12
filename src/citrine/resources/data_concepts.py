@@ -322,15 +322,6 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
             raise RuntimeError("Must specify a dataset in order to register a data model object.")
         path = self._get_path()
         params = {'dry_run': dry_run}
-        # How do we prepare a citrine-python object to be the json in a POST request?
-        # Right now, that method scrubs out None values and replaces top-level objects with links.
-        # Eventually, we want to replace it with the following:
-        #   dumped_data = dumps(loads(dumps(model.dump())))
-        # This dumps the object to a dictionary (model.dump()), and then to a string (dumps()).
-        # But this string is still nested--because it's a dictionary, GEMDJson.dumps() does not
-        # know how to replace the objects with link-by-uids. loads() converts this string into
-        # nested gemd objects, and then the final dumps() converts that to a json-ready string
-        # in which all of the object references have been replaced with link-by-uids.
 
         temp_scope = str(uuid4())
         scope = temp_scope if dry_run else CITRINE_SCOPE

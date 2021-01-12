@@ -100,6 +100,13 @@ or :meth:`citrine.resources.ingredient_spec.IngredientSpecCollection.list_by_mat
 The measurements of a material can be located with
 :meth:`citrine.resources.measurement_run.MeasurementRunCollection.list_by_material`.
 
+Updating Data Model Objects
+---------------------------
+Runs and specs can be modified in-place and persisted with ``upload``, but templates may require more care.
+In particular, changing the bounds or allowed names/labels of a template may invalidate existing data objects.
+To attempt such a template update, use :meth:`citrine.resources.data_concepts.DataConceptsCollection.async_update`.
+If the update is invalid, then the reasons for failure are logged.
+
 Referencing Data Model Objects
 ------------------------------
 
