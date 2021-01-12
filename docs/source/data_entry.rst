@@ -102,8 +102,8 @@ The measurements of a material can be located with
 
 Updating Data Model Objects
 ---------------------------
-Runs and specs can be modified in-place and persisted with ``upload``, but templates may require more care.
-In particular, changing the bounds or allowed names/labels of a template may invalidate existing data objects.
+Runs and specs can be quickly modified in-place and persisted with ``upload``, but templates require more care.
+In particular, changing the bounds or allowed names/labels of a template could invalidate existing data objects; thus every object on platform must be compared against the desired change.
 To attempt such a template update, use :meth:`citrine.resources.data_concepts.DataConceptsCollection.async_update`.
 If the update is invalid, then the reasons for failure are logged.
 
