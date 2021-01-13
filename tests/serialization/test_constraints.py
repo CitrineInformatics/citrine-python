@@ -44,7 +44,7 @@ def test_get_scalar_range_type(scalar_range_constraint):
 def test_categorical_dumps(categorical_constraint):
     """Ensure values are persisted through deser."""
     result = categorical_constraint.dump()
-    assert result['type'] == 'Categorical'
+    assert result['type'] == 'AcceptableCategoriesConstraint'
     assert result['descriptor_key'] == 'x'
     assert result['acceptable_classes'] == ['y', 'z']
 
