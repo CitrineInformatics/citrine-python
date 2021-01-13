@@ -25,6 +25,9 @@ class DesignExecution(Resource['DesignExecution'], Pageable):
         Unique identifier of the project that contains the workflow execution
     workflow_id: str
         Unique identifier of the workflow that was executed
+    version_number: int
+        Integer identifier that increases each time the workflow is executed.  The first execution
+        has version_number = 1.
 
     """
 
@@ -34,6 +37,8 @@ class DesignExecution(Resource['DesignExecution'], Pageable):
 
     uid: UUID = properties.UUID('id', serializable=False)
     workflow_id = properties.UUID('workflow_id', serializable=False)
+    version_number = properties.Integer("version_number", serializable=False)
+
     status = properties.Optional(properties.String(), 'status', serializable=False)
     status_description = properties.Optional(
         properties.String(), 'status_description', serializable=False)

@@ -690,7 +690,8 @@ def design_execution_dict(generic_entity):
     ret = generic_entity.copy()
     ret.update({
         "workflow_id": str(uuid.uuid4()),
-        "archived": False
+        "archived": False,
+        "version_number": 2
     })
     return ret
 
