@@ -100,8 +100,15 @@ or :meth:`citrine.resources.ingredient_spec.IngredientSpecCollection.list_by_mat
 The measurements of a material can be located with
 :meth:`citrine.resources.measurement_run.MeasurementRunCollection.list_by_material`.
 
+Updating Data Model Objects
+---------------------------
+Runs and specs can be quickly modified in-place and persisted with ``upload``, but templates require more care.
+In particular, changing the bounds or allowed names/labels of a template could invalidate existing data objects; thus every object on platform must be compared against the desired change.
+To attempt such a template update, use :meth:`citrine.resources.data_concepts.DataConceptsCollection.async_update`.
+If the update is invalid, then the reasons for failure are logged.
+
 Referencing Data Model Objects
----------------------------------
+------------------------------
 
 Many data model objects contain links to other data model objects.
 For example, a :class:`~citrine.resources.material_spec.MaterialSpec` references the :class:`~citrine.resources.process_spec.ProcessSpec` that produced it.
@@ -120,11 +127,20 @@ These links are created with the :class:`~gemd.entity.link_by_uid.LinkByUID` cla
 .. _gemd-python: https://github.com/CitrineInformatics/gemd-python
 .. _UUID4: https://en.wikipedia.org/wiki/Universally_unique_identifier#Version_4_(random)
 
+Material History
+----------------
+
+Starting with a specific root :class:`~citrine.resources.material_run.MaterialRun`,
+you can retrieve the complete material history--every process, ingredient and material that contributed to
+the target material, as well as the measurements that were performed on all of those materials.
+The method is :func:`~citrine.resources.material_run.MaterialRunCollection.get_history`,
+and it requires you to know a unique identifier (scope/id pair) for the material.
+
 Validating Data Model Objects
----------------------------------
+-----------------------------
 
 Dry-Run Validation
-^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^
 
 If you try to ``register`` or ``delete`` an invalid data model object, the operation fails with an error message that
 specifies in what way(s) the data model object was invalid. For example:

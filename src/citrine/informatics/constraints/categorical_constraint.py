@@ -23,7 +23,7 @@ class CategoricalConstraint(Serializable['CategoricalConstraint'], Constraint):
 
     descriptor_key = properties.String('descriptor_key')
     acceptable_categories = properties.List(properties.String(), 'acceptable_classes')
-    typ = properties.String('type', default='Categorical')
+    typ = properties.String('type', default='AcceptableCategoriesConstraint')
 
     def __init__(self,
                  descriptor_key: str,

@@ -48,6 +48,10 @@ class Session(requests.Session):
         self.s3_use_ssl = True
         self.s3_addressing_style = 'auto'
 
+        # Feature flag for enabling the use of Dataset idempotent PUT. Will be removed
+        # in a future release.
+        self.use_idempotent_dataset_put = False
+
         # Custom adapter so we can use custom retry parameters. The default HTTP status
         # codes for retries are [503, 413, 429]. We're using status_force list to add
         # additional codes to retry on, focusing on specific CloudFlare 5XX errors.

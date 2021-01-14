@@ -7,11 +7,11 @@ Getting Started
 .. toctree::
     :maxdepth: 2
 
+    overview
     connecting
-    basic_structure
     basic_functionality
+    projects
+    datasets
     data_model
-    public_access
-    working_with_files
-    projects_and_users
+    ai_modules
     code_examples

@@ -78,6 +78,7 @@ class DatasetDataFactory(factory.DictFactory):
     created_by = factory.Faker('uuid4')
     updated_by = factory.Faker('uuid4')
     deleted_by = factory.Faker('uuid4')
+    unique_name = None
     create_time = None
     update_time = None
     delete_time = None
@@ -141,6 +142,7 @@ class DatasetFactory(factory.Factory):
     name = factory.Faker('company')
     summary = factory.Faker('catch_phrase')
     description = factory.Faker('bs')
+    unique_name = None
 
 
 class _UploaderFactory(factory.Factory):

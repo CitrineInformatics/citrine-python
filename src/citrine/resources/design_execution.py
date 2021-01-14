@@ -1,5 +1,5 @@
 """Resources that represent both individual and collections of workflow executions."""
-from functools import lru_cache, partial
+from functools import partial
 from typing import Optional, Iterable, Union
 from uuid import UUID
 
@@ -25,6 +25,9 @@ class DesignExecution(Resource['DesignExecution'], Pageable):
         Unique identifier of the project that contains the workflow execution
     workflow_id: str
         Unique identifier of the workflow that was executed
+    version_number: int
+        Integer identifier that increases each time the workflow is executed.  The first execution
+        has version_number = 1.
 
     """
 
@@ -34,6 +37,8 @@ class DesignExecution(Resource['DesignExecution'], Pageable):
 
     uid: UUID = properties.UUID('id', serializable=False)
     workflow_id = properties.UUID('workflow_id', serializable=False)
+    version_number = properties.Integer("version_number", serializable=False)
+
     status = properties.Optional(properties.String(), 'status', serializable=False)
     status_description = properties.Optional(
         properties.String(), 'status_description', serializable=False)
@@ -48,6 +53,13 @@ class DesignExecution(Resource['DesignExecution'], Pageable):
         'experimental_reasons',
         serializable=False
     )
+    archived = properties.Boolean('archived')
+    created_by = properties.Optional(properties.UUID, 'created_by', serializable=False)
+    updated_by = properties.Optional(properties.UUID, 'updated_by', serializable=False)
+    archived_by = properties.Optional(properties.UUID, 'archived_by', serializable=False)
+    create_time = properties.Optional(properties.Datetime, 'create_time', serializable=False)
+    update_time = properties.Optional(properties.Datetime, 'update_time', serializable=False)
+    archive_time = properties.Optional(properties.Datetime, 'archive_time', serializable=False)
 
     def __init__(self):
         """This shouldn't be called, but it defines members that are set elsewhere."""
@@ -68,7 +80,6 @@ class DesignExecution(Resource['DesignExecution'], Pageable):
         for candidate in subset_collection:
             yield DesignCandidate.build(candidate)
 
-    @lru_cache()
     def candidates(self,
                    page: Optional[int] = None,
                    per_page: int = 100,

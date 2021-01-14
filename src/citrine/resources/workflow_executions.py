@@ -1,5 +1,5 @@
 """Resources that represent both individual and collections of workflow executions."""
-from functools import lru_cache, partial
+from functools import partial
 from typing import Optional, Iterable
 from uuid import UUID
 
@@ -57,12 +57,13 @@ class WorkflowExecution(Resource['WorkflowExecution'], Pageable):
         return '<WorkflowExecution {!r}>'.format(str(self.uid))
 
     def _path(self):
-        return '/projects/{project_id}/workflows/{workflow_id}/executions/{execution_id}' \
-            .format(**{
+        return '/projects/{project_id}/workflows/{workflow_id}/executions/{execution_id}'.format(
+            **{
                 "project_id": self.project_id,
                 "workflow_id": self.workflow_id,
                 "execution_id": self.uid
-            })
+            }
+        )
 
     def status(self):
         """Get the current status of this execution."""
@@ -78,16 +79,20 @@ class WorkflowExecution(Resource['WorkflowExecution'], Pageable):
         for candidate in subset_collection:
             yield DesignCandidate.build(candidate)
 
-    @lru_cache()
     def candidates(self,
                    page: Optional[int] = None,
                    per_page: int = 100,
                    ) -> Iterable[DesignCandidate]:
-        """Fetch the Design Candidates for the particular execution, paginated."""
-        path = '/projects/{p_id}/design-workflows/{w_id}/executions/{e_id}/candidates' \
-            .format(p_id=self.project_id,
-                    w_id=self.workflow_id,
-                    e_id=self.uid)
+        """Fetch the Design Candidates for the particular execution, paginated.
+
+        Gets candidates from the new candidates API for a workflow executed by the old api.
+        New candidates are paginated and have structured types.
+        """
+        path = '/projects/{p_id}/design-workflows/{w_id}/executions/{e_id}/candidates'.format(
+            p_id=self.project_id,
+            w_id=self.workflow_id,
+            e_id=self.uid
+        )
 
         fetcher = partial(self._fetch_page, path=path)
 
