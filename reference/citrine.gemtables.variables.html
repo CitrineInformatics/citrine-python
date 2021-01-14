@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>citrine.gemtables.variables module &#8212; Citrine Python 0.90.3 documentation</title>
+    <title>citrine.gemtables.variables module &#8212; Citrine Python 0.92.1 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -46,7 +46,7 @@
 <li><p><strong>name</strong> (<em>str</em>) – a short human-readable name to use when referencing the variable</p></li>
 <li><p><strong>headers</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – sequence of column headers</p></li>
 <li><p><strong>template</strong> (<em>LinkByUID</em>) – attribute template that identifies the attribute to assign to the variable</p></li>
-<li><p><strong>attribute_constraints</strong> (<em>list</em><em>[</em><em>(</em><em>LinkByUID</em><em>, </em><em>Bounds</em><em>)</em><em>]</em>) – constraints on object attributes in the target object that must be satisfied. Constraints
+<li><p><strong>attribute_constraints</strong> (<em>list</em><em>[</em><em>list</em><em>[</em><em>LinkByUID</em><em>, </em><em>Bounds</em><em>]</em><em>]</em>) – constraints on object attributes in the target object that must be satisfied. Constraints
 are expressed as Bounds.  Attributes are expressed with links. The attribute that the
 variable is being set to may be the target of a constraint as well.</p></li>
 <li><p><strong>type_selector</strong> (<a class="reference internal" href="#citrine.gemtables.variables.DataObjectTypeSelector" title="citrine.gemtables.variables.DataObjectTypeSelector"><em>DataObjectTypeSelector</em></a>) – strategy for selecting data object types to consider when matching, defaults to PREFER_RUN</p></li>
@@ -97,7 +97,7 @@ variable is being set to may be the target of a constraint as well.</p></li>
 <li><p><strong>headers</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – sequence of column headers</p></li>
 <li><p><strong>attribute_template</strong> (<em>LinkByUID</em>) – attribute template that identifies the attribute to assign to the variable</p></li>
 <li><p><strong>process_template</strong> (<em>LinkByUID</em>) – process template that identifies the originating process</p></li>
-<li><p><strong>attribute_constraints</strong> (<em>list</em><em>[</em><em>(</em><em>LinkByUID</em><em>, </em><em>Bounds</em><em>)</em><em>]</em>) – constraints on object attributes in the target object that must be satisfied. Constraints
+<li><p><strong>attribute_constraints</strong> (<em>list</em><em>[</em><em>list</em><em>[</em><em>LinkByUID</em><em>, </em><em>Bounds</em><em>]</em><em>]</em>) – constraints on object attributes in the target object that must be satisfied. Constraints
 are expressed as Bounds.  Attributes are expressed with links. The attribute that the
 variable is being set to may be the target of a constraint as well.</p></li>
 <li><p><strong>type_selector</strong> (<a class="reference internal" href="#citrine.gemtables.variables.DataObjectTypeSelector" title="citrine.gemtables.variables.DataObjectTypeSelector"><em>DataObjectTypeSelector</em></a>) – strategy for selecting data object types to consider when matching, defaults to PREFER_RUN</p></li>
@@ -157,7 +157,7 @@ measure that otherwise ambiguous property.</p>
 <li><p><strong>headers</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – sequence of column headers</p></li>
 <li><p><strong>attribute_template</strong> (<em>LinkByUID</em>) – attribute template that identifies the attribute to assign to the variable</p></li>
 <li><p><strong>object_template</strong> (<em>LinkByUID</em>) – template that identifies the associated object</p></li>
-<li><p><strong>attribute_constraints</strong> (<em>list</em><em>[</em><em>(</em><em>LinkByUID</em><em>, </em><em>Bounds</em><em>)</em><em>]</em>) – constraints on object attributes in the target object that must be satisfied. Constraints
+<li><p><strong>attribute_constraints</strong> (<em>list</em><em>[</em><em>list</em><em>[</em><em>LinkByUID</em><em>, </em><em>Bounds</em><em>]</em><em>]</em>) – constraints on object attributes in the target object that must be satisfied. Constraints
 are expressed as Bounds.  Attributes are expressed with links. The attribute that the
 variable is being set to may be the target of a constraint as well.</p></li>
 <li><p><strong>type_selector</strong> (<a class="reference internal" href="#citrine.gemtables.variables.DataObjectTypeSelector" title="citrine.gemtables.variables.DataObjectTypeSelector"><em>DataObjectTypeSelector</em></a>) – strategy for selecting data object types to consider when matching, defaults to PREFER_RUN</p></li>
@@ -230,7 +230,7 @@ table.</p>
 <li><p><strong>attribute_template</strong> (<em>LinkByUID</em>) – attribute template that identifies the attribute to assign to the variable</p></li>
 <li><p><strong>process_templates</strong> (<em>list</em><em>[</em><em>LinkByUID</em><em>]</em>) – process templates that should not be traversed through when searching for a matching
 attribute.  The attribute may be present in these processes but not their ingredients.</p></li>
-<li><p><strong>attribute_constraints</strong> (<em>Optional</em><em>[</em><em>list</em><em>[</em><em>(</em><em>LinkByUID</em><em>, </em><em>Bounds</em><em>)</em><em>]</em><em>]</em>) – constraints on object attributes in the target object that must be satisfied. Constraints
+<li><p><strong>attribute_constraints</strong> (<em>Optional</em><em>[</em><em>list</em><em>[</em><em>list</em><em>[</em><em>LinkByUID</em><em>, </em><em>Bounds</em><em>]</em><em>]</em><em>]</em>) – constraints on object attributes in the target object that must be satisfied. Constraints
 are expressed as Bounds.  Attributes are expressed with links. The attribute that the
 variable is being set to may be the target of a constraint as well.</p></li>
 <li><p><strong>type_selector</strong> (<a class="reference internal" href="#citrine.gemtables.variables.DataObjectTypeSelector" title="citrine.gemtables.variables.DataObjectTypeSelector"><em>DataObjectTypeSelector</em></a>) – strategy for selecting data object types to consider when matching, defaults to PREFER_RUN</p></li>
@@ -869,9 +869,10 @@ required at all is simply a limitation of the current API.</p>
 <li class="toctree-l2"><a class="reference internal" href="../data_entry.html#identifying-data-model-objects">2.2. Identifying Data Model Objects</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../data_entry.html#registering-data-model-objects">2.3. Registering Data Model Objects</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../data_entry.html#finding-data-model-objects">2.4. Finding Data Model Objects</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#referencing-data-model-objects">2.5. Referencing Data Model Objects</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#material-history">2.6. Material History</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#validating-data-model-objects">2.7. Validating Data Model Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#updating-data-model-objects">2.5. Updating Data Model Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#referencing-data-model-objects">2.6. Referencing Data Model Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#material-history">2.7. Material History</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#validating-data-model-objects">2.8. Validating Data Model Objects</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../data_extraction.html">3. [ALPHA] Data Extraction</a><ul>

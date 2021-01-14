@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>2. Data Entry &#8212; Citrine Python 0.90.3 documentation</title>
+    <title>2. Data Entry &#8212; Citrine Python 0.92.1 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -108,8 +108,15 @@ or <a class="reference internal" href="reference/citrine.resources.ingredient_sp
 <p>The measurements of a material can be located with
 <a class="reference internal" href="reference/citrine.resources.measurement_run.html#citrine.resources.measurement_run.MeasurementRunCollection.list_by_material" title="citrine.resources.measurement_run.MeasurementRunCollection.list_by_material"><code class="xref py py-meth docutils literal notranslate"><span class="pre">citrine.resources.measurement_run.MeasurementRunCollection.list_by_material()</span></code></a>.</p>
 </div>
+<div class="section" id="updating-data-model-objects">
+<h2>2.5. Updating Data Model Objects<a class="headerlink" href="#updating-data-model-objects" title="Permalink to this headline">¶</a></h2>
+<p>Runs and specs can be quickly modified in-place and persisted with <code class="docutils literal notranslate"><span class="pre">upload</span></code>, but templates require more care.
+In particular, changing the bounds or allowed names/labels of a template could invalidate existing data objects; thus every object on platform must be compared against the desired change.
+To attempt such a template update, use <a class="reference internal" href="reference/citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConceptsCollection.async_update" title="citrine.resources.data_concepts.DataConceptsCollection.async_update"><code class="xref py py-meth docutils literal notranslate"><span class="pre">citrine.resources.data_concepts.DataConceptsCollection.async_update()</span></code></a>.
+If the update is invalid, then the reasons for failure are logged.</p>
+</div>
 <div class="section" id="referencing-data-model-objects">
-<h2>2.5. Referencing Data Model Objects<a class="headerlink" href="#referencing-data-model-objects" title="Permalink to this headline">¶</a></h2>
+<h2>2.6. Referencing Data Model Objects<a class="headerlink" href="#referencing-data-model-objects" title="Permalink to this headline">¶</a></h2>
 <p>Many data model objects contain links to other data model objects.
 For example, a <a class="reference internal" href="reference/citrine.resources.material_spec.html#citrine.resources.material_spec.MaterialSpec" title="citrine.resources.material_spec.MaterialSpec"><code class="xref py py-class docutils literal notranslate"><span class="pre">MaterialSpec</span></code></a> references the <a class="reference internal" href="reference/citrine.resources.process_spec.html#citrine.resources.process_spec.ProcessSpec" title="citrine.resources.process_spec.ProcessSpec"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProcessSpec</span></code></a> that produced it.
 These links are created with the <a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.link_by_uid.html#gemd.entity.link_by_uid.LinkByUID" title="(in GEMD-python)"><code class="xref py py-class docutils literal notranslate"><span class="pre">LinkByUID</span></code></a> class, e.g.:</p>
@@ -122,7 +129,7 @@ These links are created with the <a class="reference external" href="https://cit
 </div>
 </div>
 <div class="section" id="material-history">
-<h2>2.6. Material History<a class="headerlink" href="#material-history" title="Permalink to this headline">¶</a></h2>
+<h2>2.7. Material History<a class="headerlink" href="#material-history" title="Permalink to this headline">¶</a></h2>
 <p>Starting with a specific root <a class="reference internal" href="reference/citrine.resources.material_run.html#citrine.resources.material_run.MaterialRun" title="citrine.resources.material_run.MaterialRun"><code class="xref py py-class docutils literal notranslate"><span class="pre">MaterialRun</span></code></a>,
 you can retrieve the complete material history–every process, ingredient and material that contributed to
 the target material, as well as the measurements that were performed on all of those materials.
@@ -130,9 +137,9 @@ The method is <a class="reference internal" href="reference/citrine.resources.ma
 and it requires you to know a unique identifier (scope/id pair) for the material.</p>
 </div>
 <div class="section" id="validating-data-model-objects">
-<h2>2.7. Validating Data Model Objects<a class="headerlink" href="#validating-data-model-objects" title="Permalink to this headline">¶</a></h2>
+<h2>2.8. Validating Data Model Objects<a class="headerlink" href="#validating-data-model-objects" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="dry-run-validation">
-<h3>2.7.1. Dry-Run Validation<a class="headerlink" href="#dry-run-validation" title="Permalink to this headline">¶</a></h3>
+<h3>2.8.1. Dry-Run Validation<a class="headerlink" href="#dry-run-validation" title="Permalink to this headline">¶</a></h3>
 <p>If you try to <code class="docutils literal notranslate"><span class="pre">register</span></code> or <code class="docutils literal notranslate"><span class="pre">delete</span></code> an invalid data model object, the operation fails with an error message that
 specifies in what way(s) the data model object was invalid. For example:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">spec</span> <span class="o">=</span> <span class="n">ProcessSpec</span><span class="p">(</span><span class="s2">&quot;foo&quot;</span><span class="p">)</span>
@@ -162,7 +169,7 @@ object will not be registered or deleted.</p>
 <p>Setting <code class="docutils literal notranslate"><span class="pre">dry_run=False</span></code> is equivalent to not specifying <code class="docutils literal notranslate"><span class="pre">dry_run</span></code> at all and will have no effect.</p>
 </div>
 <div class="section" id="template-and-simple-validations">
-<h3>2.7.2. Template and Simple Validations<a class="headerlink" href="#template-and-simple-validations" title="Permalink to this headline">¶</a></h3>
+<h3>2.8.2. Template and Simple Validations<a class="headerlink" href="#template-and-simple-validations" title="Permalink to this headline">¶</a></h3>
 <p>Sometimes, it is convenient to validate a group of runs and/or specs against their attribute and object
 templates before any of the data objects are stored.
 The <code class="docutils literal notranslate"><span class="pre">.validate_templates()</span></code> methods, available for all runs and specs, validate the provided object against all of the
@@ -270,9 +277,10 @@ value provided to the <code class="docutils literal notranslate"><span class="pr
 <li class="toctree-l2"><a class="reference internal" href="#identifying-data-model-objects">2.2. Identifying Data Model Objects</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#registering-data-model-objects">2.3. Registering Data Model Objects</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#finding-data-model-objects">2.4. Finding Data Model Objects</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#referencing-data-model-objects">2.5. Referencing Data Model Objects</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#material-history">2.6. Material History</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#validating-data-model-objects">2.7. Validating Data Model Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#updating-data-model-objects">2.5. Updating Data Model Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#referencing-data-model-objects">2.6. Referencing Data Model Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#material-history">2.7. Material History</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#validating-data-model-objects">2.8. Validating Data Model Objects</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="data_extraction.html">3. [ALPHA] Data Extraction</a><ul>

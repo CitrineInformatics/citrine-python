@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>citrine.informatics.objectives module &#8212; Citrine Python 0.90.3 documentation</title>
+    <title>citrine.informatics.objectives module &#8212; Citrine Python 0.92.1 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -51,16 +51,12 @@
 
 <dl class="class">
 <dt id="citrine.informatics.objectives.ScalarMaxObjective">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.objectives.</code><code class="sig-name descname">ScalarMaxObjective</code><span class="sig-paren">(</span><em class="sig-param">descriptor_key: str</em>, <em class="sig-param">lower_bound: Optional[float] = None</em>, <em class="sig-param">upper_bound: Optional[float] = None</em>, <em class="sig-param">session: Optional[citrine._session.Session] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.objectives.ScalarMaxObjective" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.objectives.</code><code class="sig-name descname">ScalarMaxObjective</code><span class="sig-paren">(</span><em class="sig-param">descriptor_key: str</em>, <em class="sig-param">session: Optional[citrine._session.Session] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.objectives.ScalarMaxObjective" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.informatics.objectives.Objective" title="citrine.informatics.objectives.Objective"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.objectives.Objective</span></code></a></p>
 <p>[ALPHA] Simple single-response maximization objective with optional bounds.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>descriptor_key</strong> (<em>str</em>) – the key from which to pull the values</p></li>
-<li><p><strong>lower_bound</strong> (<em>float</em>) – the lower bound on the space, e.g. 0 for a non-negative property</p></li>
-<li><p><strong>upper_bound</strong> (<em>float</em>) – the upper bound on the space, e.g. 0 for a non-positive property</p></li>
-</ul>
+<dd class="field-odd"><p><strong>descriptor_key</strong> (<em>str</em>) – the key from which to pull the values</p>
 </dd>
 </dl>
 <dl class="attribute">
@@ -69,34 +65,20 @@
 <dd></dd></dl>
 
 <dl class="attribute">
-<dt id="citrine.informatics.objectives.ScalarMaxObjective.lower_bound">
-<code class="sig-name descname">lower_bound</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.objectives.ScalarMaxObjective.lower_bound" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
 <dt id="citrine.informatics.objectives.ScalarMaxObjective.typ">
 <code class="sig-name descname">typ</code><em class="property"> = 'ScalarMax'</em><a class="headerlink" href="#citrine.informatics.objectives.ScalarMaxObjective.typ" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="citrine.informatics.objectives.ScalarMaxObjective.upper_bound">
-<code class="sig-name descname">upper_bound</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.objectives.ScalarMaxObjective.upper_bound" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="class">
 <dt id="citrine.informatics.objectives.ScalarMinObjective">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.objectives.</code><code class="sig-name descname">ScalarMinObjective</code><span class="sig-paren">(</span><em class="sig-param">descriptor_key: str</em>, <em class="sig-param">lower_bound: Optional[float] = None</em>, <em class="sig-param">upper_bound: Optional[float] = None</em>, <em class="sig-param">session: Optional[citrine._session.Session] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.objectives.ScalarMinObjective" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.objectives.</code><code class="sig-name descname">ScalarMinObjective</code><span class="sig-paren">(</span><em class="sig-param">descriptor_key: str</em>, <em class="sig-param">session: Optional[citrine._session.Session] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.objectives.ScalarMinObjective" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.informatics.objectives.Objective" title="citrine.informatics.objectives.Objective"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.objectives.Objective</span></code></a></p>
 <p>[ALPHA] Simple single-response minimization objective with optional bounds.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>descriptor_key</strong> (<em>str</em>) – the key from which to pull the values</p></li>
-<li><p><strong>lower_bound</strong> (<em>float</em>) – the lower bound on the space, e.g. 0 for a non-negative property</p></li>
-<li><p><strong>upper_bound</strong> (<em>float</em>) – the upper bound on the space, e.g. 0 for a non-positive property</p></li>
-</ul>
+<dd class="field-odd"><p><strong>descriptor_key</strong> (<em>str</em>) – the key from which to pull the values</p>
 </dd>
 </dl>
 <dl class="attribute">
@@ -105,18 +87,8 @@
 <dd></dd></dl>
 
 <dl class="attribute">
-<dt id="citrine.informatics.objectives.ScalarMinObjective.lower_bound">
-<code class="sig-name descname">lower_bound</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.objectives.ScalarMinObjective.lower_bound" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
 <dt id="citrine.informatics.objectives.ScalarMinObjective.typ">
 <code class="sig-name descname">typ</code><em class="property"> = 'ScalarMin'</em><a class="headerlink" href="#citrine.informatics.objectives.ScalarMinObjective.typ" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="citrine.informatics.objectives.ScalarMinObjective.upper_bound">
-<code class="sig-name descname">upper_bound</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.objectives.ScalarMinObjective.upper_bound" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -169,9 +141,10 @@
 <li class="toctree-l2"><a class="reference internal" href="../data_entry.html#identifying-data-model-objects">2.2. Identifying Data Model Objects</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../data_entry.html#registering-data-model-objects">2.3. Registering Data Model Objects</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../data_entry.html#finding-data-model-objects">2.4. Finding Data Model Objects</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#referencing-data-model-objects">2.5. Referencing Data Model Objects</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#material-history">2.6. Material History</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#validating-data-model-objects">2.7. Validating Data Model Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#updating-data-model-objects">2.5. Updating Data Model Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#referencing-data-model-objects">2.6. Referencing Data Model Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#material-history">2.7. Material History</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#validating-data-model-objects">2.8. Validating Data Model Objects</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../data_extraction.html">3. [ALPHA] Data Extraction</a><ul>
