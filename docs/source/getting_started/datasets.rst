@@ -136,7 +136,7 @@ Sharing a dataset:
 Transfering a Dataset to Another Project
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-A dataset can be transfered to another project using the project from which is originates using the :func:`~citrine.resources.project.Project.transfer_resource` method on the project.
+A dataset can be transferred to another project using the :func:`~citrine.resources.project.Project.transfer_resource` method on the original project.
 
 Example
 ^^^^^^^
