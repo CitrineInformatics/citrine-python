@@ -116,7 +116,7 @@ Making a dataset private:
 Sharing With a Specific Project
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-A dataset can be shared with another project using the project from which is originates using the :func:`~citrine.resources.project.Project.share` method on the project.
+A dataset can be shared with another project using the :func:`~citrine.resources.project.Project.share` method on the original project.
 
 Example
 ^^^^^^^
