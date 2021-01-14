@@ -133,7 +133,7 @@ Sharing a dataset:
     #this shares the dataset with the ID strehlow_cook_dataset_id with the project with the ID semiconductors_id
     band_gaps_project.share(project_id=semiconductors_id, resource_type="DATASET", resource_id=strehlow_cook_dataset_id)
 
-Transfering a Dataset to Another Project
+Transferring a Dataset to Another Project
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 A dataset can be transferred to another project using the :func:`~citrine.resources.project.Project.transfer_resource` method on the original project.
