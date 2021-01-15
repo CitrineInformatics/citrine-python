@@ -43,9 +43,11 @@ class NonRetryableHttpException(NonRetryableException):
             if response.request is not None:
                 method = response.request.method
 
-            self.detailed_error_info = ["{} (code: {}) returned from {} request to "
-                                        "path: '{}'".format(response.reason, self.code,
-                                                            method, path)]
+            self.detailed_error_info.append(
+                "{} (code: {}) returned from {} request to path: '{}'".format(
+                    response.reason, self.code, method, path
+                )
+            )
             try:
                 resp_json = response.json()
                 if isinstance(resp_json, dict):
