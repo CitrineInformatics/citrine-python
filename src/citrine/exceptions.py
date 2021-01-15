@@ -33,26 +33,45 @@ class NonRetryableHttpException(NonRetryableException):
     """An exception originating from an HTTP error from a Citrine API."""
 
     def __init__(self, path: str, response: Optional[Response] = None):
-        super().__init__(path)
         self.url = path
+        self.http_err = ""
+        self.detailed_error_info = ""
         if response is not None:
             self.response_text = response.text
             self.code = response.status_code
+
+            method = "unknown"
+            if response.request is not None:
+                method = response.request.method
+
+            self.http_err = "{} (code: {}) returned from {} request to path: '{}'".format(
+                response.reason, self.code, method, path)
             try:
                 resp_json = response.json()
                 if isinstance(resp_json, dict):
                     from citrine.resources.api_error import ApiError
                     self.api_error = ApiError.from_dict(resp_json)
+
+                    validation_error_msgs = [f.failure_message for f in
+                                             self.api_error.validation_errors]
+                    self.detailed_error_info = "\t{}\n{}".format(self.api_error.message,
+                                                                 "\n\t".join(
+                                                                     validation_error_msgs))
                 else:
                     self.api_error = None
+                    self.detailed_error_info = "\n\t{}".format(response.text)
             # TODO: throw specific exception in DictSerializable when deserialization
             #  fails due to from JSON keys
             except (TypeError, ValueError):
                 self.api_error = None
+                self.detailed_error_info = "\n\t{}".format(response.text)
         else:
+            self.http_err = path
             self.response_text = None
             self.code = None
             self.api_error = None
+
+        super().__init__("{}\n{}".format(self.http_err, self.detailed_error_info))
 
 
 class NotFound(NonRetryableHttpException):
