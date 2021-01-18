@@ -133,6 +133,7 @@ class SessionTests(unittest.TestCase):
     def test_status_code_401(self, mock_request, _):
         resp = mock.Mock()
         resp.status_code = 401
+        resp.text = 'Some response text'
         mock_request.return_value = resp
         with pytest.raises(NonRetryableException):
             Session().checked_request('method', 'path')
@@ -144,6 +145,7 @@ class SessionTests(unittest.TestCase):
     def test_status_code_404(self, mock_request, _):
         resp = mock.Mock()
         resp.status_code = 404
+        resp.text = 'Some response text'
         mock_request.return_value = resp
         with pytest.raises(NonRetryableException):
             Session().checked_request('method', 'path')
