@@ -4,6 +4,7 @@ from uuid import UUID
 
 from citrine._rest.collection import Collection
 from citrine._session import Session
+from citrine.informatics.modules import PredictorRef
 from citrine.informatics.workflows import PredictorEvaluationWorkflow
 from citrine.resources.response import Response
 
@@ -53,3 +54,23 @@ class PredictorEvaluationWorkflowCollection(Collection[PredictorEvaluationWorkfl
         """Predictor Evaluation Workflows cannot be deleted; they can be archived instead."""
         raise NotImplementedError(
             "Predictor Evaluation Workflows cannot be deleted; they can be archived instead.")
+
+    def create_default(self, predictor_id: UUID) -> PredictorEvaluationWorkflow:
+        """Create a default predictor evaluation workflow for a predictor.
+
+        Parameters
+        ----------
+        predictor_id: UUID
+            Unique identifier of the predictor used to create a default workflow
+
+        Returns
+        -------
+        PredictorEvaluationWorkflow
+            Default workflow
+
+        """
+        url = self._get_path('default')
+        ref = PredictorRef(str(predictor_id))
+        data = self.session.post_resource(url, ref.dump())
+        self._check_experimental(data)
+        return self.build(data)
