@@ -56,7 +56,7 @@ class PredictorEvaluationWorkflowCollection(Collection[PredictorEvaluationWorkfl
             "Predictor Evaluation Workflows cannot be deleted; they can be archived instead.")
 
     def create_default(self, predictor_id: UUID) -> PredictorEvaluationWorkflow:
-        """Create a default predictor evaluation workflow for a predictor.
+        """[ALPHA] Create a default predictor evaluation workflow for a predictor and execute it.
 
         Parameters
         ----------
