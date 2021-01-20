@@ -7,7 +7,7 @@ from citrine.gemtables.columns import MeanColumn, OriginalUnitsColumn, StdDevCol
 from citrine.gemtables.rows import MaterialRunByTemplate
 from citrine.gemtables.variables import AttributeByTemplate, RootInfo, IngredientQuantityDimension, \
     IngredientQuantityByProcessAndName, IngredientIdentifierByProcessTemplateAndName, RootIdentifier
-from citrine.resources.table_config import TableConfig, TableConfigCollection
+from citrine.resources.table_config import TableConfig, TableConfigCollection, TableBuildAlgorithm
 from citrine.resources.material_run import MaterialRun
 from citrine.resources.project import Project
 from citrine.resources.process_template import ProcessTemplate
@@ -224,6 +224,27 @@ def test_default_for_material(collection: TableConfigCollection, session):
         params={
             'id': 'id',
             'scope': 'scope',
+            'name': 'my_name',
+            'description': 'my_description'
+        }
+    )
+    session.calls.clear()
+    session.responses.append(dummy_resp)
+    collection.default_for_material(
+        material=MaterialRun('foo', uids={'scope': 'id'}),
+        scope='ignored',
+        algorithm=TableBuildAlgorithm.FORMULATIONS,
+        name='my_name',
+        description='my_description',
+    )
+    assert 1 == session.num_calls
+    assert session.last_call == FakeCall(
+        method="GET",
+        path="projects/{}/table-configs/default".format(project_id),
+        params={
+            'id': 'id',
+            'scope': 'scope',
+            'algorithm': TableBuildAlgorithm.FORMULATIONS,
             'name': 'my_name',
             'description': 'my_description'
         }
