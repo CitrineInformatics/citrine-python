@@ -4,7 +4,6 @@ from uuid import UUID
 
 from citrine._rest.collection import Collection
 from citrine._session import Session
-from citrine.informatics.modules import PredictorRef
 from citrine.informatics.workflows import PredictorEvaluationWorkflow
 from citrine.resources.response import Response
 
@@ -83,7 +82,7 @@ class PredictorEvaluationWorkflowCollection(Collection[PredictorEvaluationWorkfl
 
         """  # noqa: E501
         url = self._get_path('default')
-        ref = PredictorRef(str(predictor_id))
-        data = self.session.post_resource(url, ref.dump())
+        payload = {'predictor_id': str(predictor_id)}
+        data = self.session.post_resource(url, payload)
         self._check_experimental(data)
         return self.build(data)

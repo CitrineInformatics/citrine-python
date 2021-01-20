@@ -5,7 +5,7 @@ from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
 from citrine._serialization.serializable import Serializable
 
-__all__ = ['Module', 'ModuleRef', 'PredictorRef']
+__all__ = ['Module', 'ModuleRef']
 
 
 class Module(PolymorphicSerializable['Module']):
@@ -38,12 +38,3 @@ class ModuleRef(Serializable['ModuleRef']):
 
     def __init__(self, module_uid: str):
         self.module_uid = module_uid
-
-
-class PredictorRef(Serializable['PredictorRef']):
-    """[ALPHA] A reference to a Predictor by UID."""
-
-    predictor_id = properties.UUID('predictor_id')
-
-    def __init__(self, predictor_id: str):
-        self.predictor_id = predictor_id
