@@ -75,7 +75,10 @@ class DesignWorkflow(Resource['DesignWorkflow'], Workflow):
 
     @classmethod
     def _pre_build(cls, data: dict) -> dict:
-        """Run data modification before building."""
+        """Makes Design Workflows backwards compatible.
+
+        module route used to return info in the `config`
+        """
         if 'config' in data:
             # pull config info out of old style workflow
             data['name'] = data['display_name']
@@ -87,7 +90,10 @@ class DesignWorkflow(Resource['DesignWorkflow'], Workflow):
         return data
 
     def _post_dump(self, data: dict) -> dict:
-        """Add config for backwards compatibility with old workflows."""
+        """Makes Design Workflows backwards compatible.
+
+        the old module route expects `config` and `display_name`
+        """
         data['display_name'] = data['name']
         config = {
             'predictor_id': data['predictor_id'],

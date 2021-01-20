@@ -7,11 +7,10 @@ from citrine.gemtables.columns import MeanColumn, OriginalUnitsColumn, StdDevCol
 from citrine.gemtables.rows import MaterialRunByTemplate
 from citrine.gemtables.variables import AttributeByTemplate, RootInfo, IngredientQuantityDimension, \
     IngredientQuantityByProcessAndName, IngredientIdentifierByProcessTemplateAndName, RootIdentifier
-from citrine.resources.ara_definition import AraDefinitionCollection, AraDefinition
+from citrine.resources.table_config import TableConfig, TableConfigCollection, TableBuildAlgorithm
 from citrine.resources.material_run import MaterialRun
 from citrine.resources.project import Project
 from citrine.resources.process_template import ProcessTemplate
-from citrine.resources.table_config import TableConfig
 from tests.utils.factories import TableConfigResponseDataFactory
 from tests.utils.session import FakeSession, FakeCall
 
@@ -31,21 +30,21 @@ def project(session) -> Project:
 
 
 @pytest.fixture
-def collection(session) -> AraDefinitionCollection:
-    return AraDefinitionCollection(
+def collection(session) -> TableConfigCollection:
+    return TableConfigCollection(
         project_id=UUID('6b608f78-e341-422c-8076-35adc8828545'),
         session=session
     )
 
 
 @pytest.fixture
-def table_config() -> AraDefinition:
+def table_config() -> TableConfig:
     def _table_config():
-        return AraDefinition.build(TableConfigResponseDataFactory())
+        return TableConfig.build(TableConfigResponseDataFactory())
     return _table_config
 
 
-def empty_defn() -> AraDefinition:
+def empty_defn() -> TableConfig:
     return TableConfig(name="empty", description="empty", datasets=[], rows=[], variables=[],
                        columns=[], config_uid=UUID("6b608f78-e341-422c-8076-35adc8828545"))
 
@@ -61,7 +60,7 @@ def test_get_table_config_metadata(collection, session):
     ver_number = table_config_response["version"]["version_number"]
 
     # When
-    retrieved_table_config: AraDefinition = collection.get_with_version(defn_id, ver_number)
+    retrieved_table_config: TableConfig = collection.get_with_version(defn_id, ver_number)
 
     # Then
     assert 1 == session.num_calls
@@ -171,7 +170,7 @@ def test_preview(collection, session):
     assert session.last_call == expect_call
 
 
-def test_default_for_material(collection: AraDefinitionCollection, session):
+def test_default_for_material(collection: TableConfigCollection, session):
     """Test that default for material hits the right route"""
     # Given
     project_id = '6b608f78-e341-422c-8076-35adc8828545'
@@ -229,9 +228,30 @@ def test_default_for_material(collection: AraDefinitionCollection, session):
             'description': 'my_description'
         }
     )
+    session.calls.clear()
+    session.responses.append(dummy_resp)
+    collection.default_for_material(
+        material=MaterialRun('foo', uids={'scope': 'id'}),
+        scope='ignored',
+        algorithm=TableBuildAlgorithm.FORMULATIONS,
+        name='my_name',
+        description='my_description',
+    )
+    assert 1 == session.num_calls
+    assert session.last_call == FakeCall(
+        method="GET",
+        path="projects/{}/table-configs/default".format(project_id),
+        params={
+            'id': 'id',
+            'scope': 'scope',
+            'algorithm': TableBuildAlgorithm.FORMULATIONS,
+            'name': 'my_name',
+            'description': 'my_description'
+        }
+    )
 
 
-def test_default_for_material_failure(collection: AraDefinitionCollection):
+def test_default_for_material_failure(collection: TableConfigCollection):
     with pytest.raises(ValueError):
         collection.default_for_material(
             material=MaterialRun('foo'),
