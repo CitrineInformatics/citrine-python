@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>citrine.resources.predictor_evaluation_workflow module &#8212; Citrine Python 0.92.1 documentation</title>
+    <title>citrine.resources.predictor_evaluation_workflow module &#8212; Citrine Python 0.94.0 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -55,6 +55,35 @@
 <dt id="citrine.resources.predictor_evaluation_workflow.PredictorEvaluationWorkflowCollection.build">
 <code class="sig-name descname">build</code><span class="sig-paren">(</span><em class="sig-param">data: dict</em><span class="sig-paren">)</span> &#x2192; citrine.informatics.workflows.predictor_evaluation_workflow.PredictorEvaluationWorkflow<a class="headerlink" href="#citrine.resources.predictor_evaluation_workflow.PredictorEvaluationWorkflowCollection.build" title="Permalink to this definition">¶</a></dt>
 <dd><p>Build an individual PredictorEvaluationExecution.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="citrine.resources.predictor_evaluation_workflow.PredictorEvaluationWorkflowCollection.create_default">
+<code class="sig-name descname">create_default</code><span class="sig-paren">(</span><em class="sig-param">predictor_id: uuid.UUID</em><span class="sig-paren">)</span> &#x2192; citrine.informatics.workflows.predictor_evaluation_workflow.PredictorEvaluationWorkflow<a class="headerlink" href="#citrine.resources.predictor_evaluation_workflow.PredictorEvaluationWorkflowCollection.create_default" title="Permalink to this definition">¶</a></dt>
+<dd><p>[ALPHA] Create a default predictor evaluation workflow for a predictor and execute it.</p>
+<p>The current default predictor evaluation workflow performs 5-fold, 1-trial cross-validation
+on all valid predictor responses. Valid responses are those that are <strong>not</strong> produced by the
+following predictors:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="citrine.informatics.predictors.generalized_mean_property_predictor.html#citrine.informatics.predictors.generalized_mean_property_predictor.GeneralizedMeanPropertyPredictor" title="citrine.informatics.predictors.generalized_mean_property_predictor.GeneralizedMeanPropertyPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">GeneralizedMeanPropertyPredictor</span></code></a></p></li>
+<li><p><a class="reference internal" href="citrine.informatics.predictors.ingredient_fractions_predictor.html#citrine.informatics.predictors.ingredient_fractions_predictor.IngredientFractionsPredictor" title="citrine.informatics.predictors.ingredient_fractions_predictor.IngredientFractionsPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientFractionsPredictor</span></code></a></p></li>
+<li><p><a class="reference internal" href="citrine.informatics.predictors.ingredients_to_simple_mixture_predictor.html#citrine.informatics.predictors.ingredients_to_simple_mixture_predictor.IngredientsToSimpleMixturePredictor" title="citrine.informatics.predictors.ingredients_to_simple_mixture_predictor.IngredientsToSimpleMixturePredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientsToSimpleMixturePredictor</span></code></a></p></li>
+<li><p><a class="reference internal" href="citrine.informatics.predictors.label_fractions_predictor.html#citrine.informatics.predictors.label_fractions_predictor.LabelFractionsPredictor" title="citrine.informatics.predictors.label_fractions_predictor.LabelFractionsPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">LabelFractionsPredictor</span></code></a></p></li>
+<li><p><a class="reference internal" href="citrine.informatics.predictors.molecular_structure_featurizer.html#citrine.informatics.predictors.molecular_structure_featurizer.MolecularStructureFeaturizer" title="citrine.informatics.predictors.molecular_structure_featurizer.MolecularStructureFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">MolecularStructureFeaturizer</span></code></a></p></li>
+<li><p><a class="reference internal" href="citrine.informatics.predictors.simple_mixture_predictor.html#citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor" title="citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleMixturePredictor</span></code></a></p></li>
+</ul>
+<p>If there are no valid responses, a default workflow is not created.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>predictor_id</strong> (<em>UUID</em>) – Unique identifier of the predictor used to create a default workflow</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Default workflow</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="citrine.informatics.workflows.predictor_evaluation_workflow.html#citrine.informatics.workflows.predictor_evaluation_workflow.PredictorEvaluationWorkflow" title="citrine.informatics.workflows.predictor_evaluation_workflow.PredictorEvaluationWorkflow">PredictorEvaluationWorkflow</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">

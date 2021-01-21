@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>citrine.resources.table_config module &#8212; Citrine Python 0.92.1 documentation</title>
+    <title>citrine.resources.table_config module &#8212; Citrine Python 0.94.0 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -34,6 +34,28 @@
             
   <div class="section" id="module-citrine.resources.table_config">
 <span id="citrine-resources-table-config-module"></span><h1>citrine.resources.table_config module<a class="headerlink" href="#module-citrine.resources.table_config" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="citrine.resources.table_config.TableBuildAlgorithm">
+<em class="property">class </em><code class="sig-prename descclassname">citrine.resources.table_config.</code><code class="sig-name descname">TableBuildAlgorithm</code><span class="sig-paren">(</span><em class="sig-param">*args</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.table_config.TableBuildAlgorithm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.enumeration.base_enumeration.html#gemd.enumeration.base_enumeration.BaseEnumeration" title="(in GEMD-python)"><code class="xref py py-class docutils literal notranslate"><span class="pre">gemd.enumeration.base_enumeration.BaseEnumeration</span></code></a></p>
+<p>[ALPHA] The algorithm to use in automatically building a Table Configuration.</p>
+<ul class="simple">
+<li><p>SINGLE_ROW corresponds one row per material history</p></li>
+<li><p>FORMULATIONS corresponds to one row per ingredient, intermediate, or terminal
+material, splitting the graph at branches.</p></li>
+</ul>
+<dl class="attribute">
+<dt id="citrine.resources.table_config.TableBuildAlgorithm.FORMULATIONS">
+<code class="sig-name descname">FORMULATIONS</code><em class="property"> = 'formulations'</em><a class="headerlink" href="#citrine.resources.table_config.TableBuildAlgorithm.FORMULATIONS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.resources.table_config.TableBuildAlgorithm.SINGLE_ROW">
+<code class="sig-name descname">SINGLE_ROW</code><em class="property"> = 'single_row'</em><a class="headerlink" href="#citrine.resources.table_config.TableBuildAlgorithm.SINGLE_ROW" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 <dl class="class">
 <dt id="citrine.resources.table_config.TableConfig">
 <em class="property">class </em><code class="sig-prename descclassname">citrine.resources.table_config.</code><code class="sig-name descname">TableConfig</code><span class="sig-paren">(</span><em class="sig-param">*, name: str, description: str, datasets: List[uuid.UUID], variables: List[citrine.gemtables.variables.Variable], rows: List[citrine.gemtables.rows.Row], columns: List[citrine.gemtables.columns.Column], version_uid: Optional[uuid.UUID] = None, version_number: Optional[int] = None, definition_uid: Optional[uuid.UUID] = None, config_uid: Optional[uuid.UUID] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.table_config.TableConfig" title="Permalink to this definition">¶</a></dt>
@@ -172,7 +194,7 @@ the respective table for a given Table Config.</p>
 
 <dl class="method">
 <dt id="citrine.resources.table_config.TableConfigCollection.default_for_material">
-<code class="sig-name descname">default_for_material</code><span class="sig-paren">(</span><em class="sig-param">*, material: Union[gemd.entity.object.material_run.MaterialRun, str, uuid.UUID], name: str, description: str = None, scope: str = None</em><span class="sig-paren">)</span> &#x2192; Tuple[citrine.resources.table_config.TableConfig, List[Tuple[citrine.gemtables.variables.Variable, citrine.gemtables.columns.Column]]]<a class="headerlink" href="#citrine.resources.table_config.TableConfigCollection.default_for_material" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">default_for_material</code><span class="sig-paren">(</span><em class="sig-param">*, material: Union[gemd.entity.object.material_run.MaterialRun, str, uuid.UUID], name: str, description: str = None, scope: str = None, algorithm: Optional[citrine.resources.table_config.TableBuildAlgorithm] = None</em><span class="sig-paren">)</span> &#x2192; Tuple[citrine.resources.table_config.TableConfig, List[Tuple[citrine.gemtables.variables.Variable, citrine.gemtables.columns.Column]]]<a class="headerlink" href="#citrine.resources.table_config.TableConfigCollection.default_for_material" title="Permalink to this definition">¶</a></dt>
 <dd><p>[ALPHA] Build best-guess default table config for provided terminal material’s history.</p>
 <p>Currently generates variables for each templated attribute in the material history in
 either AttributeByTemplate, or if possible AttributeByTemplateAndObjectTemplate.
@@ -189,9 +211,13 @@ excluded from the generated config and included in the second part of the return
 <li><p><strong>description</strong> (<em>str</em><em>, </em><em>optional</em>) – The description of the table config. Defaults to autogenerated message.</p></li>
 <li><p><strong>scope</strong> (<em>str</em><em>, </em><em>optional</em>) – The scope of the material id. Need not be specified if the material is an actual
 persisted instance of material run, or if it is a Citrine ID.</p></li>
-<li><p><strong>A table config as well as addition variables/columns which would result in</strong> (<em>Returns</em>) – ambiguous matches if included in the config.</p></li>
-<li><p><strong>-------</strong> – </p></li>
+<li><p><strong>algorithm</strong> (<a class="reference internal" href="#citrine.resources.table_config.TableBuildAlgorithm" title="citrine.resources.table_config.TableBuildAlgorithm"><em>TableBuildAlgorithm</em></a><em>, </em><em>optional</em>) – The algorithm to use in generating a Table Configuration from the sample material
+history.  If unspecified, uses the webservice’s default.</p></li>
 </ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Returns A table config as well as addition variables/columns which would result in</dt><dd><p>ambiguous matches if included in the config.</p>
 </dd>
 </dl>
 </dd></dl>
