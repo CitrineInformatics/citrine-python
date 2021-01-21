@@ -5,6 +5,8 @@ from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
 from citrine._serialization.serializable import Serializable
 
+__all__ = ['Module', 'ModuleRef']
+
 
 class Module(PolymorphicSerializable['Module']):
     """A Citrine Module is a reusable computational tool used to construct a workflow.
