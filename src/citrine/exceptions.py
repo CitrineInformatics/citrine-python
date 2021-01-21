@@ -57,6 +57,9 @@ class NonRetryableHttpException(NonRetryableException):
                     validation_error_msgs = [
                         "{} ({})".format(f.failure_message, f.failure_id)
                         for f in self.api_error.validation_errors]
+
+                    if self.api_error.message is not None:
+                        self.detailed_error_info.append(self.api_error.message)
                     self.detailed_error_info.extend(validation_error_msgs)
                 else:
                     self.api_error = None
