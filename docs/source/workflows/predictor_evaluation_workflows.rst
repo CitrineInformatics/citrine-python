@@ -44,6 +44,12 @@ For numeric responses, the following metrics are available:
     RMSE is optimized by least-squares regression.
     It has the same units as the predicted quantity and corresponds to the standard deviation of the residuals not explained by the predictor.
     Lower RMSE means the model is more accurate.
+  - *R^2* (:class:`~citrine.informatics.predictor_evaluation_metrics.RSquared`): 1 - (mean squared error / variance of data).
+    More precisely known as the "fraction of variance explained," this metric is equal to the coefficient of determination calculated with respect to the line ``predicted = actual``.
+    Hence it is commonly referred to as "R^2," but unlike R^2 in the context of linear regression, this metric can be negative.
+    Positive values mean that the model captures some of the variation across the training data, and it can be used to drive sequential learning.
+    A value of 1.0 indicates a perfect model.
+    R^2 is evaluated over all cross-validation folds, hence no uncertainty is calculated for the metric, though the value will vary slightly if cross validation is re-run.
   - *Non-dimensional error* (:class:`~citrine.informatics.predictor_evaluation_metrics.NDME`): RMSE divided by the standard deviation of the observed values in the test set.
     (If training and test set are drawn from the same distribution, the standard deviation of the test set observed values is equivalent to the RMSE of a model that always predicts the mean of the observed values).
     NDME is a useful non-dimensional model quality metric.
