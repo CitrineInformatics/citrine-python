@@ -96,7 +96,7 @@ class RSquared(Serializable["RSquared"], PredictorEvaluationMetric):
     typ = properties.String("type", default="RSquared", deserializable=False)
 
     def __repr__(self):
-        return "r_squared"
+        return "R^2"
 
     def __str__(self):
         return "R^2"
