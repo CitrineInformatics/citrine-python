@@ -28,7 +28,7 @@ If you need to delete a non-empty dataset, see this discussion on :ref:`deleting
 
 Dataset Creation and Deletion
 -----------------------------
-A dataset can be created (or deleted) using the project from which it should or currently originates using the :func:`~citrine.resources.dataset.DatasetCollection.register` and :func:`~citrine.resources.project.ProjectCollection.delete` methods. Note that the creation of a dataset requires the creation of a `Dataset` object.
+A dataset can be created (or deleted) from its project using the register and delete methods. Note that the creation of a dataset requires the creation of a `Dataset` object.
 
 Creating a Dataset
 ^^^^^^^^^^^^^^^^^^
