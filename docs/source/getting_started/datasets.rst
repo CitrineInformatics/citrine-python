@@ -141,7 +141,7 @@ A dataset can be transferred to another project using the :func:`~citrine.resour
 Example
 ^^^^^^^
 
-Assume you have a "band gaps project" with known ID, `band_gaps_project_id`, and an associated dataset with known ID, `strehlow_cook_dataset_id`. You would like to transfer ownership of the "strehlow cook dataset" to another project, "semiconductors project" with a known ID `semiconductors_id`.
+Assume you have a "band gaps project" with known ID, ``band_gaps_project_id``, and an associated dataset with known ID, ``strehlow_cook_dataset_id``. You would like to transfer ownership of the "strehlow cook dataset" to another project, "semiconductors project" with a known ID ``semiconductors_id``.
 
 Transfering a dataset:
 
