@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>citrine.informatics.processors module &#8212; Citrine Python 0.94.0 documentation</title>
+    <title>citrine.informatics.processors module &#8212; Citrine Python 0.96.0 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -125,7 +125,7 @@ The number of points along each dimension is specified by <cite>grid_sizes</cite
 
 <dl class="class">
 <dt id="citrine.informatics.processors.EnumeratedProcessor">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.processors.</code><code class="sig-name descname">EnumeratedProcessor</code><span class="sig-paren">(</span><em class="sig-param">name: str</em>, <em class="sig-param">description: str</em>, <em class="sig-param">max_size: Optional[int] = None</em>, <em class="sig-param">session: Optional[citrine._session.Session] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.processors.EnumeratedProcessor" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.processors.</code><code class="sig-name descname">EnumeratedProcessor</code><span class="sig-paren">(</span><em class="sig-param">name: str</em>, <em class="sig-param">description: str</em>, <em class="sig-param">max_candidates: Optional[int] = None</em>, <em class="sig-param">max_size: Optional[int] = None</em>, <em class="sig-param">session: Optional[citrine._session.Session] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.processors.EnumeratedProcessor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.informatics.processors.Processor" title="citrine.informatics.processors.Processor"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.processors.Processor</span></code></a></p>
 <p>[ALPHA] Process a design space by enumerating up to a fixed number of samples from the domain.</p>
 <p>Each sample is processed independently.</p>
@@ -134,7 +134,7 @@ The number of points along each dimension is specified by <cite>grid_sizes</cite
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>name</strong> (<em>str</em>) – name of the processor</p></li>
 <li><p><strong>description</strong> (<em>str</em>) – description of the processor</p></li>
-<li><p><strong>max_size</strong> (<em>int</em>) – maximum number of samples that can be enumerated over</p></li>
+<li><p><strong>max_candidates</strong> (<em>int</em>) – maximum number of samples that can be enumerated over (default: 1000)</p></li>
 </ul>
 </dd>
 </dl>
@@ -159,9 +159,15 @@ The number of points along each dimension is specified by <cite>grid_sizes</cite
 <dd></dd></dl>
 
 <dl class="attribute">
-<dt id="citrine.informatics.processors.EnumeratedProcessor.max_size">
-<code class="sig-name descname">max_size</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.processors.EnumeratedProcessor.max_size" title="Permalink to this definition">¶</a></dt>
+<dt id="citrine.informatics.processors.EnumeratedProcessor.max_candidates">
+<code class="sig-name descname">max_candidates</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.processors.EnumeratedProcessor.max_candidates" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="method">
+<dt id="citrine.informatics.processors.EnumeratedProcessor.max_size">
+<em class="property">property </em><code class="sig-name descname">max_size</code><a class="headerlink" href="#citrine.informatics.processors.EnumeratedProcessor.max_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>[DEPRECATED] Alias for max_candidates.</p>
+</dd></dl>
 
 <dl class="attribute">
 <dt id="citrine.informatics.processors.EnumeratedProcessor.module_type">

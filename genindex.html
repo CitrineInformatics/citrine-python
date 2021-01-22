@@ -5,7 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>Index &#8212; Citrine Python 0.94.0 documentation</title>
+    <title>Index &#8212; Citrine Python 0.96.0 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -74,7 +74,13 @@
         <li><a href="reference/citrine.resources.ingredient_spec.html#citrine.resources.ingredient_spec.IngredientSpec.absolute_quantity">(citrine.resources.ingredient_spec.IngredientSpec attribute)</a>
 </li>
       </ul></li>
-      <li><a href="reference/citrine.informatics.constraints.categorical_constraint.html#citrine.informatics.constraints.categorical_constraint.CategoricalConstraint.acceptable_categories">acceptable_categories (citrine.informatics.constraints.categorical_constraint.CategoricalConstraint attribute)</a>
+      <li><a href="reference/citrine.informatics.constraints.categorical_constraint.html#citrine.informatics.constraints.categorical_constraint.AcceptableCategoriesConstraint.acceptable_categories">acceptable_categories (citrine.informatics.constraints.categorical_constraint.AcceptableCategoriesConstraint attribute)</a>
+
+      <ul>
+        <li><a href="reference/citrine.informatics.constraints.categorical_constraint.html#citrine.informatics.constraints.categorical_constraint.CategoricalConstraint.acceptable_categories">(citrine.informatics.constraints.categorical_constraint.CategoricalConstraint attribute)</a>
+</li>
+      </ul></li>
+      <li><a href="reference/citrine.informatics.constraints.categorical_constraint.html#citrine.informatics.constraints.categorical_constraint.AcceptableCategoriesConstraint">AcceptableCategoriesConstraint (class in citrine.informatics.constraints.categorical_constraint)</a>
 </li>
       <li><a href="reference/citrine.informatics.predictor_evaluation_result.html#citrine.informatics.predictor_evaluation_result.PredictedVsActualCategoricalPoint.actual">actual (citrine.informatics.predictor_evaluation_result.PredictedVsActualCategoricalPoint attribute)</a>
 
@@ -790,9 +796,11 @@
       </ul></li>
       <li><a href="reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.Descriptor">Descriptor (class in citrine.informatics.descriptors)</a>
 </li>
-      <li><a href="reference/citrine.informatics.constraints.categorical_constraint.html#citrine.informatics.constraints.categorical_constraint.CategoricalConstraint.descriptor_key">descriptor_key (citrine.informatics.constraints.categorical_constraint.CategoricalConstraint attribute)</a>
+      <li><a href="reference/citrine.informatics.constraints.categorical_constraint.html#citrine.informatics.constraints.categorical_constraint.AcceptableCategoriesConstraint.descriptor_key">descriptor_key (citrine.informatics.constraints.categorical_constraint.AcceptableCategoriesConstraint attribute)</a>
 
       <ul>
+        <li><a href="reference/citrine.informatics.constraints.categorical_constraint.html#citrine.informatics.constraints.categorical_constraint.CategoricalConstraint.descriptor_key">(citrine.informatics.constraints.categorical_constraint.CategoricalConstraint attribute)</a>
+</li>
         <li><a href="reference/citrine.informatics.constraints.scalar_range_constraint.html#citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint.descriptor_key">(citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint attribute)</a>
 </li>
         <li><a href="reference/citrine.informatics.objectives.html#citrine.informatics.objectives.ScalarMaxObjective.descriptor_key">(citrine.informatics.objectives.ScalarMaxObjective attribute)</a>
@@ -1440,10 +1448,10 @@
       </ul></li>
       <li><a href="reference/citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConceptsCollection.list_all">list_all() (citrine.resources.data_concepts.DataConceptsCollection method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference/citrine.resources.data_objects.html#citrine.resources.data_objects.DataObjectCollection.list_by_attribute_bounds">list_by_attribute_bounds() (citrine.resources.data_objects.DataObjectCollection method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference/citrine.resources.gemtables.html#citrine.resources.gemtables.GemTableCollection.list_by_config">list_by_config() (citrine.resources.gemtables.GemTableCollection method)</a>
 </li>
       <li><a href="reference/citrine.resources.ingredient_run.html#citrine.resources.ingredient_run.IngredientRunCollection.list_by_material">list_by_material() (citrine.resources.ingredient_run.IngredientRunCollection method)</a>
@@ -1488,12 +1496,16 @@
 </li>
       <li><a href="reference/citrine.resources.gemtables.html#citrine.resources.gemtables.GemTableCollection.list_versions">list_versions() (citrine.resources.gemtables.GemTableCollection method)</a>
 </li>
-      <li><a href="reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.RealDescriptor.lower_bound">lower_bound (citrine.informatics.descriptors.RealDescriptor attribute)</a>
+      <li><a href="reference/citrine.informatics.constraints.scalar_range_constraint.html#citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint.lower_bound">lower_bound (citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint attribute)</a>
 
       <ul>
+        <li><a href="reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.RealDescriptor.lower_bound">(citrine.informatics.descriptors.RealDescriptor attribute)</a>
+</li>
         <li><a href="reference/citrine.informatics.dimensions.html#citrine.informatics.dimensions.ContinuousDimension.lower_bound">(citrine.informatics.dimensions.ContinuousDimension attribute)</a>
 </li>
       </ul></li>
+      <li><a href="reference/citrine.informatics.constraints.scalar_range_constraint.html#citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint.lower_inclusive">lower_inclusive (citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint attribute)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -1563,14 +1575,16 @@
 </li>
         <li><a href="reference/citrine.informatics.constraints.label_fraction_constraint.html#citrine.informatics.constraints.label_fraction_constraint.LabelFractionConstraint.max">(citrine.informatics.constraints.label_fraction_constraint.LabelFractionConstraint attribute)</a>
 </li>
-        <li><a href="reference/citrine.informatics.constraints.scalar_range_constraint.html#citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint.max">(citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint attribute)</a>
-</li>
       </ul></li>
-      <li><a href="reference/citrine.informatics.constraints.scalar_range_constraint.html#citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint.max_inclusive">max_inclusive (citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint attribute)</a>
+      <li><a href="reference/citrine.informatics.constraints.scalar_range_constraint.html#citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint.max">max() (citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint property)</a>
+</li>
+      <li><a href="reference/citrine.informatics.processors.html#citrine.informatics.processors.EnumeratedProcessor.max_candidates">max_candidates (citrine.informatics.processors.EnumeratedProcessor attribute)</a>
+</li>
+      <li><a href="reference/citrine.informatics.constraints.scalar_range_constraint.html#citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint.max_inclusive">max_inclusive() (citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint property)</a>
 </li>
       <li><a href="reference/citrine.informatics.analysis_configuration.html#citrine.informatics.analysis_configuration.CrossValidationAnalysisConfiguration.max_rows">max_rows (citrine.informatics.analysis_configuration.CrossValidationAnalysisConfiguration attribute)</a>
 </li>
-      <li><a href="reference/citrine.informatics.processors.html#citrine.informatics.processors.EnumeratedProcessor.max_size">max_size (citrine.informatics.processors.EnumeratedProcessor attribute)</a>
+      <li><a href="reference/citrine.informatics.processors.html#citrine.informatics.processors.EnumeratedProcessor.max_size">max_size() (citrine.informatics.processors.EnumeratedProcessor property)</a>
 </li>
       <li><a href="reference/citrine.resources.user.html#citrine.resources.user.UserCollection.me">me() (citrine.resources.user.UserCollection method)</a>
 </li>
@@ -1614,10 +1628,10 @@
 </li>
       <li><a href="reference/citrine.resources.measurement_template.html#citrine.resources.measurement_template.MeasurementTemplate">MeasurementTemplate (class in citrine.resources.measurement_template)</a>
 </li>
-      <li><a href="reference/citrine.resources.measurement_template.html#citrine.resources.measurement_template.MeasurementTemplateCollection">MeasurementTemplateCollection (class in citrine.resources.measurement_template)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/citrine.resources.measurement_template.html#citrine.resources.measurement_template.MeasurementTemplateCollection">MeasurementTemplateCollection (class in citrine.resources.measurement_template)</a>
+</li>
       <li><a href="reference/citrine.informatics.predictor_evaluation_result.html#citrine.informatics.predictor_evaluation_result.ResponseMetrics.metrics">metrics (citrine.informatics.predictor_evaluation_result.ResponseMetrics attribute)</a>
 </li>
       <li><a href="reference/citrine.informatics.predictor_evaluation_result.html#citrine.informatics.predictor_evaluation_result.CrossValidationResult.metrics">metrics() (citrine.informatics.predictor_evaluation_result.CrossValidationResult property)</a>
@@ -1641,10 +1655,10 @@
 </li>
         <li><a href="reference/citrine.informatics.constraints.label_fraction_constraint.html#citrine.informatics.constraints.label_fraction_constraint.LabelFractionConstraint.min">(citrine.informatics.constraints.label_fraction_constraint.LabelFractionConstraint attribute)</a>
 </li>
-        <li><a href="reference/citrine.informatics.constraints.scalar_range_constraint.html#citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint.min">(citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint attribute)</a>
-</li>
       </ul></li>
-      <li><a href="reference/citrine.informatics.constraints.scalar_range_constraint.html#citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint.min_inclusive">min_inclusive (citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint attribute)</a>
+      <li><a href="reference/citrine.informatics.constraints.scalar_range_constraint.html#citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint.min">min() (citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint property)</a>
+</li>
+      <li><a href="reference/citrine.informatics.constraints.scalar_range_constraint.html#citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint.min_inclusive">min_inclusive() (citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint property)</a>
 </li>
       <li><a href="reference/citrine.informatics.design_candidate.html#citrine.informatics.design_candidate.Mixture">Mixture (class in citrine.informatics.design_candidate)</a>
 </li>
@@ -2240,10 +2254,10 @@
 </li>
       <li><a href="reference/citrine.resources.report.html#citrine.resources.report.ReportResource">ReportResource (class in citrine.resources.report)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference/citrine.informatics.design_spaces.formulation_design_space.html#citrine.informatics.design_spaces.formulation_design_space.FormulationDesignSpace.resolution">resolution (citrine.informatics.design_spaces.formulation_design_space.FormulationDesignSpace attribute)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference/citrine.resources.gemtables.html#citrine.resources.gemtables.GemTable.resource_type">resource_type() (citrine.resources.gemtables.GemTable method)</a>
 </li>
       <li><a href="reference/citrine.resources.response.html#citrine.resources.response.Response">Response (class in citrine.resources.response)</a>
@@ -2287,6 +2301,8 @@
       <li><a href="reference/citrine.gemtables.rows.html#citrine.gemtables.rows.Row">Row (class in citrine.gemtables.rows)</a>
 </li>
       <li><a href="reference/citrine.resources.table_config.html#citrine.resources.table_config.TableConfig.rows">rows (citrine.resources.table_config.TableConfig attribute)</a>
+</li>
+      <li><a href="reference/citrine.informatics.predictor_evaluation_metrics.html#citrine.informatics.predictor_evaluation_metrics.RSquared">RSquared (class in citrine.informatics.predictor_evaluation_metrics)</a>
 </li>
       <li><a href="reference/citrine.gemtables.variables.html#citrine.gemtables.variables.DataObjectTypeSelector.RUN_ONLY">RUN_ONLY (citrine.gemtables.variables.DataObjectTypeSelector attribute)</a>
 </li>
@@ -2615,6 +2631,8 @@
 </li>
         <li><a href="reference/citrine.informatics.analysis_configuration.html#citrine.informatics.analysis_configuration.CrossValidationAnalysisConfiguration.typ">(citrine.informatics.analysis_configuration.CrossValidationAnalysisConfiguration attribute)</a>
 </li>
+        <li><a href="reference/citrine.informatics.constraints.categorical_constraint.html#citrine.informatics.constraints.categorical_constraint.AcceptableCategoriesConstraint.typ">(citrine.informatics.constraints.categorical_constraint.AcceptableCategoriesConstraint attribute)</a>
+</li>
         <li><a href="reference/citrine.informatics.constraints.categorical_constraint.html#citrine.informatics.constraints.categorical_constraint.CategoricalConstraint.typ">(citrine.informatics.constraints.categorical_constraint.CategoricalConstraint attribute)</a>
 </li>
         <li><a href="reference/citrine.informatics.constraints.ingredient_count_constraint.html#citrine.informatics.constraints.ingredient_count_constraint.IngredientCountConstraint.typ">(citrine.informatics.constraints.ingredient_count_constraint.IngredientCountConstraint attribute)</a>
@@ -2666,6 +2684,8 @@
         <li><a href="reference/citrine.informatics.predictor_evaluation_metrics.html#citrine.informatics.predictor_evaluation_metrics.PVA.typ">(citrine.informatics.predictor_evaluation_metrics.PVA attribute)</a>
 </li>
         <li><a href="reference/citrine.informatics.predictor_evaluation_metrics.html#citrine.informatics.predictor_evaluation_metrics.RMSE.typ">(citrine.informatics.predictor_evaluation_metrics.RMSE attribute)</a>
+</li>
+        <li><a href="reference/citrine.informatics.predictor_evaluation_metrics.html#citrine.informatics.predictor_evaluation_metrics.RSquared.typ">(citrine.informatics.predictor_evaluation_metrics.RSquared attribute)</a>
 </li>
         <li><a href="reference/citrine.informatics.predictor_evaluation_metrics.html#citrine.informatics.predictor_evaluation_metrics.StandardRMSE.typ">(citrine.informatics.predictor_evaluation_metrics.StandardRMSE attribute)</a>
 </li>
@@ -2842,10 +2862,10 @@
         <li><a href="reference/citrine.resources.property_template.html#citrine.resources.property_template.PropertyTemplate.uids">(citrine.resources.property_template.PropertyTemplate attribute)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference/citrine.exceptions.html#citrine.exceptions.Unauthorized">Unauthorized</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference/citrine.exceptions.html#citrine.exceptions.UnauthorizedRefreshToken">UnauthorizedRefreshToken</a>
 </li>
       <li><a href="reference/citrine.resources.dataset.html#citrine.resources.dataset.Dataset.unique_name">unique_name (citrine.resources.dataset.Dataset attribute)</a>
@@ -2894,12 +2914,16 @@
       </ul></li>
       <li><a href="reference/citrine.resources.file_link.html#citrine.resources.file_link.FileCollection.upload">upload() (citrine.resources.file_link.FileCollection method)</a>
 </li>
-      <li><a href="reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.RealDescriptor.upper_bound">upper_bound (citrine.informatics.descriptors.RealDescriptor attribute)</a>
+      <li><a href="reference/citrine.informatics.constraints.scalar_range_constraint.html#citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint.upper_bound">upper_bound (citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint attribute)</a>
 
       <ul>
+        <li><a href="reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.RealDescriptor.upper_bound">(citrine.informatics.descriptors.RealDescriptor attribute)</a>
+</li>
         <li><a href="reference/citrine.informatics.dimensions.html#citrine.informatics.dimensions.ContinuousDimension.upper_bound">(citrine.informatics.dimensions.ContinuousDimension attribute)</a>
 </li>
       </ul></li>
+      <li><a href="reference/citrine.informatics.constraints.scalar_range_constraint.html#citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint.upper_inclusive">upper_inclusive (citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint attribute)</a>
+</li>
       <li><a href="reference/citrine.resources.file_link.html#citrine.resources.file_link.FileLink.url">url (citrine.resources.file_link.FileLink attribute)</a>
 </li>
       <li><a href="reference/citrine.resources.user.html#citrine.resources.user.User">User (class in citrine.resources.user)</a>

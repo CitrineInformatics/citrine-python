@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>citrine.informatics.constraints.scalar_range_constraint module &#8212; Citrine Python 0.94.0 documentation</title>
+    <title>citrine.informatics.constraints.scalar_range_constraint module &#8212; Citrine Python 0.96.0 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -36,17 +36,17 @@
 <span id="citrine-informatics-constraints-scalar-range-constraint-module"></span><h1>citrine.informatics.constraints.scalar_range_constraint module<a class="headerlink" href="#module-citrine.informatics.constraints.scalar_range_constraint" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.constraints.scalar_range_constraint.</code><code class="sig-name descname">ScalarRangeConstraint</code><span class="sig-paren">(</span><em class="sig-param">descriptor_key: str</em>, <em class="sig-param">max: Optional[float] = None</em>, <em class="sig-param">min: Optional[float] = None</em>, <em class="sig-param">min_inclusive: Optional[bool] = True</em>, <em class="sig-param">max_inclusive: Optional[bool] = True</em>, <em class="sig-param">session: Optional[citrine._session.Session] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.constraints.scalar_range_constraint.</code><code class="sig-name descname">ScalarRangeConstraint</code><span class="sig-paren">(</span><em class="sig-param">descriptor_key: str</em>, <em class="sig-param">lower_bound: Optional[float] = None</em>, <em class="sig-param">upper_bound: Optional[float] = None</em>, <em class="sig-param">lower_inclusive: Optional[bool] = None</em>, <em class="sig-param">upper_inclusive: Optional[bool] = None</em>, <em class="sig-param">min: Optional[float] = None</em>, <em class="sig-param">max: Optional[float] = None</em>, <em class="sig-param">min_inclusive: Optional[bool] = None</em>, <em class="sig-param">max_inclusive: Optional[bool] = None</em>, <em class="sig-param">session: Optional[citrine._session.Session] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="citrine.informatics.constraints.constraint.html#citrine.informatics.constraints.constraint.Constraint" title="citrine.informatics.constraints.constraint.Constraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.constraints.constraint.Constraint</span></code></a></p>
 <p>[ALPHA] Represents an inequality constraint on a scalar-valued material attribute.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>descriptor_key</strong> (<em>str</em>) – the key corresponding to a descriptor</p></li>
-<li><p><strong>min</strong> (<em>float</em>) – the minimum value in the range</p></li>
-<li><p><strong>max</strong> (<em>float</em>) – the maximum value in the range</p></li>
-<li><p><strong>min_inclusive</strong> (<em>bool</em>) – if True, will include the min value in the range</p></li>
-<li><p><strong>max_inclusive</strong> (<em>bool</em>) – if True, will include the max value in the range</p></li>
+<li><p><strong>lower_bound</strong> (<em>float</em>) – the minimum value in the range</p></li>
+<li><p><strong>upper_bound</strong> (<em>float</em>) – the maximum value in the range</p></li>
+<li><p><strong>lower_inclusive</strong> (<em>bool</em>) – if True, will include the lower bound value in the range (default: true)</p></li>
+<li><p><strong>upper_inclusive</strong> (<em>bool</em>) – if True, will include the max value in the range (default: true)</p></li>
 </ul>
 </dd>
 </dl>
@@ -56,28 +56,52 @@
 <dd></dd></dl>
 
 <dl class="attribute">
+<dt id="citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint.lower_bound">
+<code class="sig-name descname">lower_bound</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint.lower_bound" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint.lower_inclusive">
+<code class="sig-name descname">lower_inclusive</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint.lower_inclusive" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
 <dt id="citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint.max">
-<code class="sig-name descname">max</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint.max" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<em class="property">property </em><code class="sig-name descname">max</code><a class="headerlink" href="#citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint.max" title="Permalink to this definition">¶</a></dt>
+<dd><p>[DEPRECATED] Alias for upper_bound.</p>
+</dd></dl>
 
-<dl class="attribute">
+<dl class="method">
 <dt id="citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint.max_inclusive">
-<code class="sig-name descname">max_inclusive</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint.max_inclusive" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<em class="property">property </em><code class="sig-name descname">max_inclusive</code><a class="headerlink" href="#citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint.max_inclusive" title="Permalink to this definition">¶</a></dt>
+<dd><p>[DEPRECATED] Alias for upper_inclusive.</p>
+</dd></dl>
 
-<dl class="attribute">
+<dl class="method">
 <dt id="citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint.min">
-<code class="sig-name descname">min</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint.min" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<em class="property">property </em><code class="sig-name descname">min</code><a class="headerlink" href="#citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint.min" title="Permalink to this definition">¶</a></dt>
+<dd><p>[DEPRECATED] Alias for lower_bound.</p>
+</dd></dl>
 
-<dl class="attribute">
+<dl class="method">
 <dt id="citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint.min_inclusive">
-<code class="sig-name descname">min_inclusive</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint.min_inclusive" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<em class="property">property </em><code class="sig-name descname">min_inclusive</code><a class="headerlink" href="#citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint.min_inclusive" title="Permalink to this definition">¶</a></dt>
+<dd><p>[DEPRECATED] Alias for lower_inclusive.</p>
+</dd></dl>
 
 <dl class="attribute">
 <dt id="citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint.typ">
 <code class="sig-name descname">typ</code><em class="property"> = 'ScalarRange'</em><a class="headerlink" href="#citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint.typ" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint.upper_bound">
+<code class="sig-name descname">upper_bound</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint.upper_bound" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint.upper_inclusive">
+<code class="sig-name descname">upper_inclusive</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint.upper_inclusive" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>

@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>1.5. Datasets &#8212; Citrine Python 0.94.0 documentation</title>
+    <title>1.5. Datasets &#8212; Citrine Python 0.96.0 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -56,19 +56,59 @@ It also includes requests of the platform: some API calls will be slower if ther
 </div>
 <p>Datasets can only be deleted if they are empty.
 If you need to delete a non-empty dataset, see this discussion on <a class="reference internal" href="data_model.html#deleting-data-objects-label"><span class="std std-ref">deleting data objects</span></a>.</p>
-<div class="section" id="dataset-access-and-sharing">
-<h2>1.5.1. Dataset Access and Sharing<a class="headerlink" href="#dataset-access-and-sharing" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="dataset-creation-and-deletion">
+<h2>1.5.1. Dataset Creation and Deletion<a class="headerlink" href="#dataset-creation-and-deletion" title="Permalink to this headline">¶</a></h2>
+<p>A dataset can be created (or deleted) from its project using the register and delete methods. Note that the creation of a dataset requires the creation of a <code class="docutils literal notranslate"><span class="pre">Dataset</span></code> object.</p>
+<div class="section" id="creating-a-dataset">
+<h3>1.5.1.1. Creating a Dataset<a class="headerlink" href="#creating-a-dataset" title="Permalink to this headline">¶</a></h3>
+<p>To create a dataset, the <code class="docutils literal notranslate"><span class="pre">Dataset</span></code> object must first be instantiated, and then passed to the registration endpoint.</p>
+</div>
+<div class="section" id="example">
+<h3>1.5.1.2. Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h3>
+<p>Assume you have a “band gaps project” with known ID, <code class="docutils literal notranslate"><span class="pre">band_gaps_project_id</span></code>, and are trying to make a dataset within that project.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.resources.dataset</span> <span class="kn">import</span> <span class="n">Dataset</span>
+
+<span class="c1"># get the project the dataset will belong to</span>
+<span class="n">band_gaps_project</span> <span class="o">=</span> <span class="n">citrine</span><span class="o">.</span><span class="n">projects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">band_gaps_project_id</span><span class="p">)</span>
+
+<span class="c1"># create the Dataset object</span>
+<span class="n">Strehlow_Cook_description</span> <span class="o">=</span> <span class="s2">&quot;Band gaps for elemental and binary semiconductors with phase and temperature of measurement. DOI 10.1063/1.3253115&quot;</span>
+<span class="n">Strehlow_Cook_dataset</span> <span class="o">=</span> <span class="n">Dataset</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Strehlow and Cook&quot;</span><span class="p">,</span> <span class="n">summary</span><span class="o">=</span><span class="s2">&quot;Strehlow and Cook band gaps&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="n">Strehlow_Cook_description</span><span class="p">)</span>
+
+<span class="c1"># pass the Dataset object to the registration endpoint</span>
+<span class="n">Strehlow_Cook_dataset</span> <span class="o">=</span> <span class="n">band_gaps_project</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Strehlow_Cook_dataset</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="deleting-a-dataset">
+<h3>1.5.1.3. Deleting a Dataset<a class="headerlink" href="#deleting-a-dataset" title="Permalink to this headline">¶</a></h3>
+<p>A dataset can be deleted using the project from which it originates. Note that the dataset must be empty before deleting it.</p>
+</div>
+<div class="section" id="id1">
+<h3>1.5.1.4. Example<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<p>Assume you have a “band gaps project” with known ID, <code class="docutils literal notranslate"><span class="pre">band_gaps_project_id</span></code>, and are trying to delete a dataset within that project with known ID, <cite>strehlow_cook_dataset_id</cite>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># get the project the dataset is in</span>
+<span class="n">band_gaps_project</span> <span class="o">=</span> <span class="n">citrine</span><span class="o">.</span><span class="n">projects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">band_gaps_project_id</span><span class="p">)</span>
+
+<span class="c1"># delete the dataset</span>
+<span class="n">band_gaps_project</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">strehlow_cook_dataset_id</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="dataset-access-sharing-and-transfer">
+<h2>1.5.2. Dataset Access, Sharing and Transfer<a class="headerlink" href="#dataset-access-sharing-and-transfer" title="Permalink to this headline">¶</a></h2>
 <p>When a dataset is created on the Citrine platform, only members of the project in which it was created can see it and interact with it.
 If a dataset is made public, it (and its entire contents) can be retrieved by any user using any project.
 Datasets that are public may only be written to by the project from which they originated.</p>
 <div class="section" id="toggling-public-access">
-<h3>1.5.1.1. Toggling Public Access<a class="headerlink" href="#toggling-public-access" title="Permalink to this headline">¶</a></h3>
+<h3>1.5.2.1. Toggling Public Access<a class="headerlink" href="#toggling-public-access" title="Permalink to this headline">¶</a></h3>
 <p>A dataset can be made public (or made private again) using the project from which it originates
 using the <a class="reference internal" href="../reference/citrine.resources.project.html#citrine.resources.project.Project.make_public" title="citrine.resources.project.Project.make_public"><code class="xref py py-func docutils literal notranslate"><span class="pre">make_public()</span></code></a> and <a class="reference internal" href="../reference/citrine.resources.project.html#citrine.resources.project.Project.make_private" title="citrine.resources.project.Project.make_private"><code class="xref py py-func docutils literal notranslate"><span class="pre">make_private()</span></code></a> methods on the project.</p>
 </div>
-<div class="section" id="example">
-<h3>1.5.1.2. Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h3>
-<p>Assume you have a “band gaps project” with known ID, <cite>band_gaps_project_id</cite>, and an associated dataset with known ID, <cite>strehlow_cook_dataset_id</cite>.</p>
+<div class="section" id="id2">
+<h3>1.5.2.2. Example<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<p>Assume you have a “band gaps project” with known ID, <code class="docutils literal notranslate"><span class="pre">band_gaps_project_id</span></code>, and an associated dataset with known ID, <code class="docutils literal notranslate"><span class="pre">strehlow_cook_dataset_id</span></code>.</p>
 <p>Making a dataset public:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">band_gaps_project</span> <span class="o">=</span> <span class="n">citrine</span><span class="o">.</span><span class="n">projects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">band_gaps_project_id</span><span class="p">)</span>
 <span class="n">strehlow_cook_dataset</span> <span class="o">=</span> <span class="n">band_gaps_project</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">strehlow_cook_dataset_id</span><span class="p">)</span>
@@ -88,22 +128,57 @@ using the <a class="reference internal" href="../reference/citrine.resources.pro
 </pre></div>
 </div>
 </div>
+<div class="section" id="sharing-with-a-specific-project">
+<h3>1.5.2.3. Sharing With a Specific Project<a class="headerlink" href="#sharing-with-a-specific-project" title="Permalink to this headline">¶</a></h3>
+<p>A dataset can be shared with another project using the <a class="reference internal" href="../reference/citrine.resources.project.html#citrine.resources.project.Project.share" title="citrine.resources.project.Project.share"><code class="xref py py-func docutils literal notranslate"><span class="pre">share()</span></code></a> method on the original project.</p>
+</div>
+<div class="section" id="id3">
+<h3>1.5.2.4. Example<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<p>Assume you have a “band gaps project” with known ID, <code class="docutils literal notranslate"><span class="pre">band_gaps_project_id</span></code>, and an associated dataset with known ID, <code class="docutils literal notranslate"><span class="pre">strehlow_cook_dataset_id</span></code>. You would like to share the “strehlow cook dataset” with another project, “semiconductors project” with a known ID <code class="docutils literal notranslate"><span class="pre">semiconductors_id</span></code>.</p>
+<p>Sharing a dataset:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1">#get the project that owns the dataset</span>
+<span class="n">band_gaps_project</span> <span class="o">=</span> <span class="n">citrine</span><span class="o">.</span><span class="n">projects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">band_gaps_project_id</span><span class="p">)</span>
+
+<span class="c1">#this shares the dataset with the ID strehlow_cook_dataset_id with the project with the ID semiconductors_id</span>
+<span class="n">band_gaps_project</span><span class="o">.</span><span class="n">share</span><span class="p">(</span><span class="n">project_id</span><span class="o">=</span><span class="n">semiconductors_id</span><span class="p">,</span> <span class="n">resource_type</span><span class="o">=</span><span class="s2">&quot;DATASET&quot;</span><span class="p">,</span> <span class="n">resource_id</span><span class="o">=</span><span class="n">strehlow_cook_dataset_id</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="transferring-a-dataset-to-another-project">
+<h3>1.5.2.5. Transferring a Dataset to Another Project<a class="headerlink" href="#transferring-a-dataset-to-another-project" title="Permalink to this headline">¶</a></h3>
+<p>A dataset can be transferred to another project using the <a class="reference internal" href="../reference/citrine.resources.project.html#citrine.resources.project.Project.transfer_resource" title="citrine.resources.project.Project.transfer_resource"><code class="xref py py-func docutils literal notranslate"><span class="pre">transfer_resource()</span></code></a> method on the original project.</p>
+</div>
+<div class="section" id="id4">
+<h3>1.5.2.6. Example<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<p>Assume you have a “band gaps project” with known ID, <code class="docutils literal notranslate"><span class="pre">band_gaps_project_id</span></code>, and an associated dataset with known ID, <code class="docutils literal notranslate"><span class="pre">strehlow_cook_dataset_id</span></code>. You would like to transfer ownership of the “strehlow cook dataset” to another project, “semiconductors project” with a known ID <code class="docutils literal notranslate"><span class="pre">semiconductors_id</span></code>.</p>
+<p>Transfering a dataset:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># get the project that owns the dataset</span>
+<span class="n">band_gaps_project</span> <span class="o">=</span> <span class="n">citrine</span><span class="o">.</span><span class="n">projects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">band_gaps_project_id</span><span class="p">)</span>
+
+<span class="c1"># get the dataset you would like to tranfer</span>
+<span class="n">strehlow_cook_dataset</span> <span class="o">=</span> <span class="n">band_gaps_project</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">strehlow_cook_dataset_id</span><span class="p">)</span>
+
+<span class="c1"># transfer ownership of the strehlow_cook_dataset to another project with a known ID semiconductors_id</span>
+<span class="n">band_gaps_project</span><span class="o">.</span><span class="n">transfer_resource</span><span class="p">(</span><span class="n">resource</span> <span class="o">=</span> <span class="n">strehlow_cook_dataset</span><span class="p">,</span> <span class="n">receiving_project_uid</span> <span class="o">=</span> <span class="n">semiconductors_id</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
 </div>
 <div class="section" id="files">
-<h2>1.5.2. Files<a class="headerlink" href="#files" title="Permalink to this headline">¶</a></h2>
+<h2>1.5.3. Files<a class="headerlink" href="#files" title="Permalink to this headline">¶</a></h2>
 <p>In addition to data objects, a dataset can also contain files.
 These could be images output by a microscope in a proprietary format, a sketch of how several samples are arranged on a hot plate, the report describing a set of experiments, or anything else you would like to save.
 The association of a file with a resource is done using a <a class="reference internal" href="../reference/citrine.resources.file_link.html#citrine.resources.file_link.FileLink" title="citrine.resources.file_link.FileLink"><code class="xref py py-class docutils literal notranslate"><span class="pre">FileLink</span></code></a>, which is created when you upload a file.
 The <code class="docutils literal notranslate"><span class="pre">FileLink</span></code> can be associated with multiple runs, specs, attributes and templates, all of which have a <code class="docutils literal notranslate"><span class="pre">file_links</span></code> field, and it can be used to download the file.</p>
 <div class="section" id="uniqueness-and-versioning">
-<h3>1.5.2.1. Uniqueness and Versioning<a class="headerlink" href="#uniqueness-and-versioning" title="Permalink to this headline">¶</a></h3>
+<h3>1.5.3.1. Uniqueness and Versioning<a class="headerlink" href="#uniqueness-and-versioning" title="Permalink to this headline">¶</a></h3>
 <p>All <code class="docutils literal notranslate"><span class="pre">FileLink</span></code> objects are associated with a specific dataset, and they are given a <code class="docutils literal notranslate"><span class="pre">filename</span></code>
 when uploaded. The <code class="docutils literal notranslate"><span class="pre">filename</span></code> <strong>must be unique</strong> within the dataset. If you upload another file
 with the same <code class="docutils literal notranslate"><span class="pre">filename</span></code> it will be considered a new version of the same file. The old version
 is not deleted, but at the moment you can only download the latest version of a given <code class="docutils literal notranslate"><span class="pre">FileLink</span></code>.</p>
 </div>
 <div class="section" id="uploading-and-downloading-files">
-<h3>1.5.2.2. Uploading and Downloading Files<a class="headerlink" href="#uploading-and-downloading-files" title="Permalink to this headline">¶</a></h3>
+<h3>1.5.3.2. Uploading and Downloading Files<a class="headerlink" href="#uploading-and-downloading-files" title="Permalink to this headline">¶</a></h3>
 <p>Assume you have a dataset named <code class="docutils literal notranslate"><span class="pre">dataset</span></code> and a file at the location <code class="docutils literal notranslate"><span class="pre">/Users/me/status_20190913.csv</span></code>
 on your computer. The code below uploads the file and gives it the filename <code class="docutils literal notranslate"><span class="pre">microscope_status_20190913.csv</span></code>.
 It then downloads the file back to your computer at <code class="docutils literal notranslate"><span class="pre">/Users/me/Downloads/settings.csv</span></code>.</p>
@@ -115,7 +190,7 @@ It then downloads the file back to your computer at <code class="docutils litera
 </div>
 </div>
 <div class="section" id="deleting-files">
-<h3>1.5.2.3. Deleting Files<a class="headerlink" href="#deleting-files" title="Permalink to this headline">¶</a></h3>
+<h3>1.5.3.3. Deleting Files<a class="headerlink" href="#deleting-files" title="Permalink to this headline">¶</a></h3>
 <p>If you have WRITE permission on a dataset then you may delete any file in the dataset.
 Use this ability carefully, as there are no checks as to whether or not the file is referenced by existing data objects.
 Deleting a file can therefore produce broken links.</p>
