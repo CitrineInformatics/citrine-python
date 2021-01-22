@@ -26,8 +26,55 @@ Datasets can be listed and gotten from projects just as projects are from the cl
 Datasets can only be deleted if they are empty.
 If you need to delete a non-empty dataset, see this discussion on :ref:`deleting data objects <deleting_data_objects_label>`.
 
-Dataset Access and Sharing
---------------------------
+Dataset Creation and Deletion
+-----------------------------
+A dataset can be created (or deleted) from its project using the register and delete methods. Note that the creation of a dataset requires the creation of a ``Dataset`` object.
+
+Creating a Dataset
+^^^^^^^^^^^^^^^^^^
+
+To create a dataset, the ``Dataset`` object must first be instantiated, and then passed to the registration endpoint.
+
+Example
+^^^^^^^
+Assume you have a "band gaps project" with known ID, ``band_gaps_project_id``, and are trying to make a dataset within that project.
+
+.. code-block:: python
+
+    from citrine.resources.dataset import Dataset
+
+    # get the project the dataset will belong to
+    band_gaps_project = citrine.projects.get(band_gaps_project_id)
+
+    # create the Dataset object
+    Strehlow_Cook_description = "Band gaps for elemental and binary semiconductors with phase and temperature of measurement. DOI 10.1063/1.3253115"
+    Strehlow_Cook_dataset = Dataset(name="Strehlow and Cook", summary="Strehlow and Cook band gaps", description=Strehlow_Cook_description)
+
+    # pass the Dataset object to the registration endpoint
+    Strehlow_Cook_dataset = band_gaps_project.datasets.register(Strehlow_Cook_dataset)
+
+
+Deleting a Dataset
+^^^^^^^^^^^^^^^^^^
+
+A dataset can be deleted using the project from which it originates. Note that the dataset must be empty before deleting it. 
+
+Example
+^^^^^^^
+
+Assume you have a "band gaps project" with known ID, ``band_gaps_project_id``, and are trying to delete a dataset within that project with known ID, `strehlow_cook_dataset_id`.
+
+.. code-block:: python
+
+    # get the project the dataset is in
+    band_gaps_project = citrine.projects.get(band_gaps_project_id)
+
+    # delete the dataset
+    band_gaps_project.datasets.delete(strehlow_cook_dataset_id)
+   
+
+Dataset Access, Sharing and Transfer
+------------------------------------
 
 When a dataset is created on the Citrine platform, only members of the project in which it was created can see it and interact with it.
 If a dataset is made public, it (and its entire contents) can be retrieved by any user using any project.
@@ -42,7 +89,7 @@ using the :func:`~citrine.resources.project.Project.make_public` and :func:`~cit
 Example
 ^^^^^^^
 
-Assume you have a "band gaps project" with known ID, `band_gaps_project_id`, and an associated dataset with known ID, `strehlow_cook_dataset_id`.
+Assume you have a "band gaps project" with known ID, ``band_gaps_project_id``, and an associated dataset with known ID, ``strehlow_cook_dataset_id``.
 
 Making a dataset public:
 
@@ -65,6 +112,49 @@ Making a dataset private:
     # If the Strehlow and Cook dataset was previously publicly available, revoke that
     # access so that it can only be retrieved and from the band_gaps_project.
     band_gaps_project.make_private(strehlow_cook_dataset)
+
+Sharing With a Specific Project
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+A dataset can be shared with another project using the :func:`~citrine.resources.project.Project.share` method on the original project.
+
+Example
+^^^^^^^
+
+Assume you have a "band gaps project" with known ID, ``band_gaps_project_id``, and an associated dataset with known ID, ``strehlow_cook_dataset_id``. You would like to share the "strehlow cook dataset" with another project, "semiconductors project" with a known ID ``semiconductors_id``.
+
+Sharing a dataset:
+
+.. code-block:: python
+    
+    #get the project that owns the dataset
+    band_gaps_project = citrine.projects.get(band_gaps_project_id)
+    
+    #this shares the dataset with the ID strehlow_cook_dataset_id with the project with the ID semiconductors_id
+    band_gaps_project.share(project_id=semiconductors_id, resource_type="DATASET", resource_id=strehlow_cook_dataset_id)
+
+Transferring a Dataset to Another Project
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+A dataset can be transferred to another project using the :func:`~citrine.resources.project.Project.transfer_resource` method on the original project.
+
+Example
+^^^^^^^
+
+Assume you have a "band gaps project" with known ID, ``band_gaps_project_id``, and an associated dataset with known ID, ``strehlow_cook_dataset_id``. You would like to transfer ownership of the "strehlow cook dataset" to another project, "semiconductors project" with a known ID ``semiconductors_id``.
+
+Transfering a dataset:
+
+.. code-block:: python
+    
+    # get the project that owns the dataset
+    band_gaps_project = citrine.projects.get(band_gaps_project_id)
+
+    # get the dataset you would like to tranfer
+    strehlow_cook_dataset = band_gaps_project.datasets.get(strehlow_cook_dataset_id)
+    
+    # transfer ownership of the strehlow_cook_dataset to another project with a known ID semiconductors_id
+    band_gaps_project.transfer_resource(resource = strehlow_cook_dataset, receiving_project_uid = semiconductors_id)
 
 Files
 -----
