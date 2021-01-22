@@ -28,16 +28,16 @@ If you need to delete a non-empty dataset, see this discussion on :ref:`deleting
 
 Dataset Creation and Deletion
 -----------------------------
-A dataset can be created (or deleted) from its project using the register and delete methods. Note that the creation of a dataset requires the creation of a `Dataset` object.
+A dataset can be created (or deleted) from its project using the register and delete methods. Note that the creation of a dataset requires the creation of a ``Dataset`` object.
 
 Creating a Dataset
 ^^^^^^^^^^^^^^^^^^
 
-To create a dataset, the `Dataset` object must first be instantiated, and then passed to the registration endpoint.
+To create a dataset, the ``Dataset`` object must first be instantiated, and then passed to the registration endpoint.
 
 Example
 ^^^^^^^
-Assume you have a "band gaps project" with known ID, `band_gaps_project_id`, and are trying to make a dataset within that project.
+Assume you have a "band gaps project" with known ID, ``band_gaps_project_id``, and are trying to make a dataset within that project.
 
 .. code-block:: python
 
@@ -62,7 +62,7 @@ A dataset can be deleted using the project from which it originates. Note that t
 Example
 ^^^^^^^
 
-Assume you have a "band gaps project" with known ID, `band_gaps_project_id`, and are trying to delete a dataset within that project with known ID, `strehlow_cook_dataset_id`.
+Assume you have a "band gaps project" with known ID, ``band_gaps_project_id``, and are trying to delete a dataset within that project with known ID, `strehlow_cook_dataset_id`.
 
 .. code-block:: python
 
@@ -89,7 +89,7 @@ using the :func:`~citrine.resources.project.Project.make_public` and :func:`~cit
 Example
 ^^^^^^^
 
-Assume you have a "band gaps project" with known ID, `band_gaps_project_id`, and an associated dataset with known ID, `strehlow_cook_dataset_id`.
+Assume you have a "band gaps project" with known ID, ``band_gaps_project_id``, and an associated dataset with known ID, ``strehlow_cook_dataset_id``.
 
 Making a dataset public:
 
@@ -121,7 +121,7 @@ A dataset can be shared with another project using the :func:`~citrine.resources
 Example
 ^^^^^^^
 
-Assume you have a "band gaps project" with known ID, `band_gaps_project_id`, and an associated dataset with known ID, `strehlow_cook_dataset_id`. You would like to share the "strehlow cook dataset" with another project, "semiconductors project" with a known ID `semiconductors_id`.
+Assume you have a "band gaps project" with known ID, ``band_gaps_project_id``, and an associated dataset with known ID, ``strehlow_cook_dataset_id``. You would like to share the "strehlow cook dataset" with another project, "semiconductors project" with a known ID ``semiconductors_id``.
 
 Sharing a dataset:
 
