@@ -1,5 +1,6 @@
 """Tools for working with Processors."""
 from typing import Optional, Mapping, Type, List
+from warnings import warn
 
 from citrine._serialization import properties
 from citrine._serialization.serializable import Serializable
@@ -116,15 +117,15 @@ class EnumeratedProcessor(Serializable['EnumeratedProcessor'], Processor):
         name of the processor
     description: str
         description of the processor
-    max_size: int
-        maximum number of samples that can be enumerated over
+    max_candidates: int
+        maximum number of samples that can be enumerated over (default: 1000)
 
     """
 
     uid = properties.Optional(properties.UUID, 'id', serializable=False)
     name = properties.String('config.name')
     description = properties.Optional(properties.String(), 'config.description')
-    max_size = properties.Integer('config.max_size')
+    max_candidates = properties.Integer('config.max_size')
     typ = properties.String('config.type', default='Enumerated', deserializable=False)
     status = properties.String('status', serializable=False)
     status_info = properties.Optional(
@@ -149,11 +150,18 @@ class EnumeratedProcessor(Serializable['EnumeratedProcessor'], Processor):
     def __init__(self,
                  name: str,
                  description: str,
+                 max_candidates: Optional[int] = None,
                  max_size: Optional[int] = None,
                  session: Optional[Session] = None):
+        if max_candidates is not None and max_size is not None:
+            raise ValueError("Both max_candidates and max_size were specified.  "
+                             "Please only specify max_candidates.")
+        if max_size is not None:
+            warn("The max_size argument is deprecated.  Please use max_candidates instead.",
+                 DeprecationWarning)
         self.name: str = name
         self.description: str = description
-        self.max_size: int = max_size or 2 ** 31 - 1  # = 2147483647 (max 32-bit integer)
+        self.max_candidates: int = max_candidates or max_size or 1000
         self.session: Optional[Session] = session
 
     def _post_dump(self, data: dict) -> dict:
@@ -162,6 +170,13 @@ class EnumeratedProcessor(Serializable['EnumeratedProcessor'], Processor):
 
     def __str__(self):
         return '<EnumeratedProcessor {!r}>'.format(self.name)
+
+    @property
+    def max_size(self):
+        """[DEPRECATED] Alias for max_candidates."""
+        warn("EnumeratedProcessor.max_size is deprecated.  Please use max_candidates instead",
+             DeprecationWarning)
+        return self.max_candidates
 
 
 class MonteCarloProcessor(Serializable['GridProcessor'], Processor):

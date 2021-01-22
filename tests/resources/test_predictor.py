@@ -9,6 +9,7 @@ from citrine.informatics.descriptors import RealDescriptor
 from citrine.informatics.predictors import GraphPredictor, SimpleMLPredictor, ExpressionPredictor
 from citrine.resources.predictor import PredictorCollection
 from tests.utils.session import FakeSession, FakeCall
+from tests.utils.session import FakeRequestResponse
 
 
 @pytest.fixture(scope='module')
@@ -80,12 +81,14 @@ def test_graph_register(valid_graph_predictor_data, basic_predictor_report_data)
 
 def test_failed_register(valid_simple_ml_predictor_data):
     session = mock.Mock()
-    session.post_resource.side_effect = NotFound("/projects/uuid/not_found")
+    session.post_resource.side_effect = NotFound("/projects/uuid/not_found",
+                                                 FakeRequestResponse(400))
     pc = PredictorCollection(uuid.uuid4(), session)
     predictor = SimpleMLPredictor.build(valid_simple_ml_predictor_data)
     with pytest.raises(ModuleRegistrationFailedException) as e:
         pc.register(predictor)
-    assert 'The "SimpleMLPredictor" failed to register. NotFound: /projects/uuid/not_found' in str(e.value)
+    assert 'The "SimpleMLPredictor" failed to register.' in str(e.value)
+    assert '/projects/uuid/not_found' in str(e.value)
 
 
 def test_mark_predictor_invalid(valid_simple_ml_predictor_data, valid_predictor_report_data):
