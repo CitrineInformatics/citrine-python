@@ -545,19 +545,3 @@ def test_owned_table_config_ids(project, session):
     assert expect_call == session.last_call
     assert all(x in id_set for x in ids)
     assert len(ids) == len(id_set)
-
-
-def test_owned_module_ids(project, session):
-    # Given
-    id_set = {uuid.uuid4() for _ in range(5)}
-    session.set_response({'module_ids': list(id_set)})
-
-    # When
-    ids = project.owned_module_ids()
-
-    # Then
-    assert 1 == session.num_calls
-    expect_call = FakeCall(method='GET', path='/projects/{}/module_ids'.format(project.uid))
-    assert expect_call == session.last_call
-    assert all(x in id_set for x in ids)
-    assert len(ids) == len(id_set)

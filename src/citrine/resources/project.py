@@ -367,19 +367,6 @@ class Project(Resource['Project']):
         result = self.session.get_resource(self._path() + "/table_definition_ids")
         return result["table_definition_ids"]
 
-    def owned_module_ids(self) -> List[str]:
-        """
-        List all the ids of the modules owned by the current project.
-
-        Returns
-        -------
-        List[str]
-            The ids of the modules owned by current project
-
-        """
-        module_ids = self.session.get_resource(self._path() + "/module_ids")["module_ids"]
-        return module_ids
-
     def list_members(self) -> List[ProjectMember]:
         """
         List all of the members in the current project.
