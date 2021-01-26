@@ -315,6 +315,71 @@ class Project(Resource['Project']):
         })
         return True
 
+    def creator(self) -> str:
+        """
+        Return the creator of this project.
+
+        Returns
+        -------
+        str
+            The email of the creator of this resource.
+
+        """
+        email = self.session.get_resource(self._path() + "/creator")["email"]
+        return email
+
+    def owned_dataset_ids(self) -> List[str]:
+        """
+        List all the ids of the datasets owned by the current project.
+
+        Returns
+        -------
+        List[str]
+            The ids of the modules owned by current project
+
+        """
+        dataset_ids = self.session.get_resource(self._path() + "/dataset_ids")["dataset_ids"]
+        return dataset_ids
+
+    def owned_table_ids(self) -> List[str]:
+        """
+        List all the ids of the tables owned by the current project.
+
+        Returns
+        -------
+        List[str]
+            The ids of the tables owned by current project
+
+        """
+        table_ids = self.session.get_resource(self._path() + "/table_ids")["table_ids"]
+        return table_ids
+
+    def owned_table_config_ids(self) -> List[str]:
+        """
+        List all the ids of the table configs owned by the current project.
+
+        Returns
+        -------
+        List[str]
+            The ids of the table configs owned by current project
+
+        """
+        result = self.session.get_resource(self._path() + "/table_definition_ids")
+        return result["table_definition_ids"]
+
+    def owned_module_ids(self) -> List[str]:
+        """
+        List all the ids of the modules owned by the current project.
+
+        Returns
+        -------
+        List[str]
+            The ids of the modules owned by current project
+
+        """
+        module_ids = self.session.get_resource(self._path() + "/module_ids")["module_ids"]
+        return module_ids
+
     def list_members(self) -> List[ProjectMember]:
         """
         List all of the members in the current project.
