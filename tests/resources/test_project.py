@@ -13,13 +13,16 @@ from tests.utils.session import FakeSession, FakeCall, FakePaginatedSession
 from logging import getLogger
 logger = getLogger(__name__)
 
+
 @pytest.fixture
 def session() -> FakeSession:
     return FakeSession()
 
+
 @pytest.fixture
 def paginated_session() -> FakePaginatedSession:
     return FakePaginatedSession()
+
 
 @pytest.fixture
 def paginated_collection(paginated_session) -> ProjectCollection:
@@ -103,6 +106,7 @@ def test_make_resource_private_post_content(project, session):
     )
     assert expected_call == session.last_call
 
+
 def test_transfer_resource_post_content(project, session):
 
     dataset_id = str(uuid.uuid4())
@@ -122,6 +126,7 @@ def test_transfer_resource_post_content(project, session):
         }
     )
     assert expected_call == session.last_call
+
 
 def test_datasets_get_project_id(project):
     assert project.uid == project.datasets.project_id
@@ -478,3 +483,65 @@ def test_remove_user(project, session):
 def test_project_tables(project):
     assert isinstance(project.tables, GemTableCollection)
 
+
+def test_creator(project, session):
+    # Given
+    email = 'CaTiO3@perovskite.com'
+    session.set_response({'email': email})
+
+    # When
+    creator = project.creator()
+
+    # Then
+    assert 1 == session.num_calls
+    expect_call = FakeCall(method='GET', path='/projects/{}/creator'.format(project.uid))
+    assert expect_call == session.last_call
+    assert creator == email
+
+
+def test_owned_dataset_ids(project, session):
+    # Given
+    id_set = {uuid.uuid4() for _ in range(5)}
+    session.set_response({'dataset_ids': list(id_set)})
+
+    # When
+    ids = project.owned_dataset_ids()
+
+    # Then
+    assert 1 == session.num_calls
+    expect_call = FakeCall(method='GET', path='/projects/{}/dataset_ids'.format(project.uid))
+    assert expect_call == session.last_call
+    assert all(x in id_set for x in ids)
+    assert len(ids) == len(id_set)
+
+
+def test_owned_table_ids(project, session):
+    # Given
+    id_set = {uuid.uuid4() for _ in range(5)}
+    session.set_response({'table_ids': list(id_set)})
+
+    # When
+    ids = project.owned_table_ids()
+
+    # Then
+    assert 1 == session.num_calls
+    expect_call = FakeCall(method='GET', path='/projects/{}/table_ids'.format(project.uid))
+    assert expect_call == session.last_call
+    assert all(x in id_set for x in ids)
+    assert len(ids) == len(id_set)
+
+
+def test_owned_table_config_ids(project, session):
+    # Given
+    id_set = {uuid.uuid4() for _ in range(5)}
+    session.set_response({'table_definition_ids': list(id_set)})
+
+    # When
+    ids = project.owned_table_config_ids()
+
+    # Then
+    assert 1 == session.num_calls
+    expect_call = FakeCall(method='GET', path='/projects/{}/table_definition_ids'.format(project.uid))
+    assert expect_call == session.last_call
+    assert all(x in id_set for x in ids)
+    assert len(ids) == len(id_set)
