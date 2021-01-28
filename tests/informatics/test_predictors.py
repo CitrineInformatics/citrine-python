@@ -19,8 +19,8 @@ youngs_modulus = RealDescriptor('Property~Young\'s modulus', lower_bound=0, uppe
 poissons_ratio = RealDescriptor('Property~Poisson\'s ratio', lower_bound=-1, upper_bound=0.5, units='')
 formulation = FormulationDescriptor('formulation')
 formulation_output = FormulationDescriptor('output formulation')
-water_quantity = RealDescriptor('water quantity', 0, 1)
-salt_quantity = RealDescriptor('salt quantity', 0, 1)
+water_quantity = RealDescriptor('water quantity', 0, 1, "")
+salt_quantity = RealDescriptor('salt quantity', 0, 1, "")
 data_source = GemTableDataSource(uuid.UUID('e5c51369-8e71-4ec6-b027-1f92bdc14762'), 0)
 formulation_data_source = GemTableDataSource(uuid.UUID('6894a181-81d2-4304-9dfa-a6c5b114d8bc'), 0, formulation)
 

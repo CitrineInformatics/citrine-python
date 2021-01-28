@@ -1,7 +1,8 @@
 """Tests for citrine.informatics.design_spaces serialization."""
-from copy import copy
+from copy import copy, deepcopy
 from uuid import UUID
 
+from . import serialization_check, valid_serialization_output
 from citrine.informatics.constraints import IngredientCountConstraint
 from citrine.informatics.descriptors import CategoricalDescriptor, RealDescriptor, ChemicalFormulaDescriptor,\
     FormulationDescriptor
@@ -10,41 +11,57 @@ from citrine.informatics.design_spaces import DesignSpace, ProductDesignSpace, E
 from citrine.informatics.dimensions import ContinuousDimension, EnumeratedDimension
 
 
-def valid_serialization_output(valid_data):
-    return {x: y for x, y in valid_data.items() if x not in ['status', 'status_info']}
-
-
-def test_simple_product_deserialization(valid_product_design_space_data):
+def test_product_deserialization(valid_product_design_space_data):
     """Ensure that a deserialized ProductDesignSpace looks sane."""
-    design_space: ProductDesignSpace = ProductDesignSpace.build(valid_product_design_space_data)
-    assert design_space.name == 'my design space'
-    assert design_space.description == 'does some things'
-    assert type(design_space.dimensions[0]) == ContinuousDimension
-    assert design_space.dimensions[0].lower_bound == 6.0
-    assert type(design_space.dimensions[1]) == EnumeratedDimension
-    assert design_space.dimensions[1].values == ['red']
-
-
-def test_polymorphic_product_deserialization(valid_product_design_space_data):
-    """Ensure that a polymorphically deserialized ProductDesignSpace looks sane."""
-    design_space: ProductDesignSpace = DesignSpace.build(valid_product_design_space_data)
-    assert design_space.name == 'my design space'
-    assert design_space.description == 'does some things'
-    assert type(design_space.dimensions[0]) == ContinuousDimension
-    assert design_space.dimensions[0].lower_bound == 6.0
-    assert type(design_space.dimensions[1]) == EnumeratedDimension
-    assert design_space.dimensions[1].values == ['red']
+    for designSpaceClass in [ProductDesignSpace, DesignSpace]:
+        data = deepcopy(valid_product_design_space_data)
+        design_space: ProductDesignSpace = designSpaceClass.build(data)
+        assert design_space.name == 'my design space'
+        assert design_space.description == 'does some things'
+        assert type(design_space.dimensions[0]) == ContinuousDimension
+        assert design_space.dimensions[0].lower_bound == 6.0
+        assert type(design_space.dimensions[1]) == EnumeratedDimension
+        assert design_space.dimensions[1].values == ['red']
+        assert type(design_space.subspaces[0]) == FormulationDesignSpace
+        assert type(design_space.subspaces[0].uid) == UUID
+        assert type(design_space.subspaces[1]) == FormulationDesignSpace
+        assert design_space.subspaces[1].uid is None
+        assert design_space.subspaces[1].ingredients == {'baz'}
 
 
 def test_product_serialization(valid_product_design_space_data):
     """Ensure that a serialized ProductDesignSpace looks sane."""
+    original_data = deepcopy(valid_product_design_space_data)
     design_space = ProductDesignSpace.build(valid_product_design_space_data)
     serialized = design_space.dump()
     serialized['id'] = valid_product_design_space_data['id']
-    assert serialized == valid_serialization_output(valid_product_design_space_data)
+    assert serialized['config']['subspaces'][0] == original_data['config']['subspaces'][0]['id']
+    assert serialized['config']['subspaces'][1] == original_data['config']['subspaces'][1]['instance']
+
+    # Replace one of the subspaces with its uid, and check that the serialized result is the same.
+    design_space.subspaces[0] = design_space.subspaces[0].uid
+    serialized_with_uid = design_space.dump()
+    serialized_with_uid['id'] = valid_product_design_space_data['id']
+    assert serialized_with_uid == serialized
 
 
-def test_simple_enumerated_deserialization(valid_enumerated_design_space_data):
+def test_old_product_serialization(old_valid_product_design_space_data):
+    """Ensure that the old version of the product design space can be (de)serialized.
+    The previous version had no `subspaces` field and had type `Univariate`.
+    Some on-platform assets are saved this way, and should be converted seamlessly
+    into ProductDesignSpaces.
+    """
+    design_space = ProductDesignSpace.build(old_valid_product_design_space_data)
+    assert design_space.subspaces == []
+    assert design_space.typ == 'ProductDesignSpace'
+    serialized = design_space.dump()
+    serialized['id'] = old_valid_product_design_space_data['id']
+    serialized['config']['type'] = 'Univariate'
+    del serialized['config']['subspaces']
+    assert serialized == valid_serialization_output(old_valid_product_design_space_data)
+
+
+def test_enumerated_deserialization(valid_enumerated_design_space_data):
     """Ensure that a deserialized EnumeratedDesignSpace looks sane.
     Deserialization is done both directly (using EnumeratedDesignSpace)
     and polymorphically (using DesignSpace)
@@ -78,10 +95,7 @@ def test_simple_enumerated_deserialization(valid_enumerated_design_space_data):
 
 def test_enumerated_serialization(valid_enumerated_design_space_data):
     """Ensure that a serialized EnumeratedDesignSpace looks sane."""
-    design_space = EnumeratedDesignSpace.build(valid_enumerated_design_space_data)
-    serialized = design_space.dump()
-    serialized['id'] = valid_enumerated_design_space_data['id']
-    assert serialized == valid_serialization_output(valid_enumerated_design_space_data)
+    serialization_check(valid_enumerated_design_space_data, EnumeratedDesignSpace)
 
 
 def test_formulation_deserialization(valid_formulation_design_space_data):
@@ -112,7 +126,4 @@ def test_formulation_deserialization(valid_formulation_design_space_data):
 
 def test_formulation_serialization(valid_formulation_design_space_data):
     """Ensure that a serialized FormulationDesignSpace looks sane."""
-    design_space = FormulationDesignSpace.build(valid_formulation_design_space_data)
-    serialized = design_space.dump()
-    serialized['id'] = valid_formulation_design_space_data['id']
-    assert serialized == valid_serialization_output(valid_formulation_design_space_data)
+    serialization_check(valid_formulation_design_space_data, FormulationDesignSpace)

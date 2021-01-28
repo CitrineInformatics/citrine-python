@@ -8,6 +8,7 @@ from gemd.entity.object import MaterialRun
 
 from citrine.resources.job import JobSubmissionResponse, JobStatusResponse
 from gemd.entity.link_by_uid import LinkByUID
+from gemd.enumeration.base_enumeration import BaseEnumeration
 
 from citrine._rest.collection import Collection
 from citrine._rest.resource import Resource
@@ -21,6 +22,18 @@ from citrine.gemtables.variables import Variable, IngredientIdentifierByProcessT
     IngredientQuantityByProcessAndName, IngredientQuantityDimension
 
 logger = getLogger(__name__)
+
+
+class TableBuildAlgorithm(BaseEnumeration):
+    """[ALPHA] The algorithm to use in automatically building a Table Configuration.
+
+    * SINGLE_ROW corresponds one row per material history
+    * FORMULATIONS corresponds to one row per ingredient, intermediate, or terminal
+      material, splitting the graph at branches.
+    """
+
+    SINGLE_ROW = "single_row"
+    FORMULATIONS = "formulations"
 
 
 class TableConfig(Resource["TableConfig"]):
@@ -169,7 +182,7 @@ class TableConfig(Resource["TableConfig"]):
                             ):
         """[ALPHA] Add variables and columns for all of the possible ingredients in a process.
 
-        For each allowed ingredient name in the process template there is a column for the if of
+        For each allowed ingredient name in the process template there is a column for the id of
         the ingredient and a column for the quantity of the ingredient. If the quantities are
         given in absolute amounts then there is also a column for units.
 
@@ -275,8 +288,12 @@ class TableConfigCollection(Collection[TableConfig]):
         return table_config
 
     def default_for_material(
-            self, *, material: Union[MaterialRun, str, UUID],
-            name: str, description: str = None, scope: str = None
+            self, *,
+            material: Union[MaterialRun, str, UUID],
+            name: str,
+            description: str = None,
+            scope: str = None,
+            algorithm: Optional[TableBuildAlgorithm] = None
     ) -> Tuple[TableConfig, List[Tuple[Variable, Column]]]:
         """
         [ALPHA] Build best-guess default table config for provided terminal material's history.
@@ -301,6 +318,10 @@ class TableConfigCollection(Collection[TableConfig]):
         scope: str, optional
             The scope of the material id. Need not be specified if the material is an actual
             persisted instance of material run, or if it is a Citrine ID.
+        algorithm: TableBuildAlgorithm, optional
+            The algorithm to use in generating a Table Configuration from the sample material
+            history.  If unspecified, uses the webservice's default.
+
 
         Returns A table config as well as addition variables/columns which would result in
             ambiguous matches if included in the config.
@@ -329,6 +350,8 @@ class TableConfigCollection(Collection[TableConfig]):
         }
         if description is not None:
             params['description'] = description
+        if algorithm is not None:
+            params['algorithm'] = algorithm
         data = self.session.get_resource(
             'projects/{}/table-configs/default'.format(self.project_id),
             params=params,
@@ -383,7 +406,7 @@ class TableConfigCollection(Collection[TableConfig]):
         table_config: TableConfig
             Table Config to preview
         preview_roots: List[LinkByUID]
-            List of links to the material history roots to use in the preview
+            List of links to the material runs to use as terminal materials in the preview
 
         """
         path = self._get_path() + "/preview"

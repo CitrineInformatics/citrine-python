@@ -126,7 +126,7 @@ class AttributeByTemplate(Serializable['AttributeByTemplate'], Variable):
         sequence of column headers
     template: LinkByUID
         attribute template that identifies the attribute to assign to the variable
-    attribute_constraints: list[(LinkByUID, Bounds)]
+    attribute_constraints: list[list[LinkByUID, Bounds]]
         constraints on object attributes in the target object that must be satisfied. Constraints
         are expressed as Bounds.  Attributes are expressed with links. The attribute that the
         variable is being set to may be the target of a constraint as well.
@@ -177,7 +177,7 @@ class AttributeByTemplateAfterProcessTemplate(
         attribute template that identifies the attribute to assign to the variable
     process_template: LinkByUID
         process template that identifies the originating process
-    attribute_constraints: list[(LinkByUID, Bounds)]
+    attribute_constraints: list[list[LinkByUID, Bounds]]
         constraints on object attributes in the target object that must be satisfied. Constraints
         are expressed as Bounds.  Attributes are expressed with links. The attribute that the
         variable is being set to may be the target of a constraint as well.
@@ -237,7 +237,7 @@ class AttributeByTemplateAndObjectTemplate(
         attribute template that identifies the attribute to assign to the variable
     object_template: LinkByUID
         template that identifies the associated object
-    attribute_constraints: list[(LinkByUID, Bounds)]
+    attribute_constraints: list[list[LinkByUID, Bounds]]
         constraints on object attributes in the target object that must be satisfied. Constraints
         are expressed as Bounds.  Attributes are expressed with links. The attribute that the
         variable is being set to may be the target of a constraint as well.
@@ -507,7 +507,7 @@ class AttributeInOutput(Serializable['AttributeInOutput'], Variable):
     process_templates: list[LinkByUID]
         process templates that should not be traversed through when searching for a matching
         attribute.  The attribute may be present in these processes but not their ingredients.
-    attribute_constraints: Optional[list[(LinkByUID, Bounds)]]
+    attribute_constraints: Optional[list[list[LinkByUID, Bounds]]]
         constraints on object attributes in the target object that must be satisfied. Constraints
         are expressed as Bounds.  Attributes are expressed with links. The attribute that the
         variable is being set to may be the target of a constraint as well.

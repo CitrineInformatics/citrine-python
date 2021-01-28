@@ -38,26 +38,16 @@ class ScalarMaxObjective(Serializable['ScalarMaxObjective'], Objective):
     ----------
     descriptor_key: str
         the key from which to pull the values
-    lower_bound: float
-        the lower bound on the space, e.g. 0 for a non-negative property
-    upper_bound: float
-        the upper bound on the space, e.g. 0 for a non-positive property
 
     """
 
     descriptor_key = properties.String('descriptor_key')
-    lower_bound = properties.Optional(properties.Float, 'lower_bound')
-    upper_bound = properties.Optional(properties.Float, 'upper_bound')
     typ = properties.String('type', default='ScalarMax')
 
     def __init__(self,
                  descriptor_key: str,
-                 lower_bound: Optional[float] = None,
-                 upper_bound: Optional[float] = None,
                  session: Optional[Session] = None):
         self.descriptor_key = descriptor_key
-        self.lower_bound = lower_bound
-        self.upper_bound = upper_bound
         self.session: Optional[Session] = session
 
     def __str__(self):
@@ -72,26 +62,16 @@ class ScalarMinObjective(Serializable['ScalarMinObjective'], Objective):
     ----------
     descriptor_key: str
         the key from which to pull the values
-    lower_bound: float
-        the lower bound on the space, e.g. 0 for a non-negative property
-    upper_bound: float
-        the upper bound on the space, e.g. 0 for a non-positive property
 
     """
 
     descriptor_key = properties.String('descriptor_key')
-    lower_bound = properties.Optional(properties.Float, 'lower_bound')
-    upper_bound = properties.Optional(properties.Float, 'upper_bound')
     typ = properties.String('type', default='ScalarMin')
 
     def __init__(self,
                  descriptor_key: str,
-                 lower_bound: Optional[float] = None,
-                 upper_bound: Optional[float] = None,
                  session: Optional[Session] = None):
         self.descriptor_key = descriptor_key
-        self.lower_bound = lower_bound
-        self.upper_bound = upper_bound
         self.session: Optional[Session] = session
 
     def __str__(self):

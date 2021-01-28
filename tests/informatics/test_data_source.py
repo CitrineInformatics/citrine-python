@@ -9,7 +9,7 @@ from citrine.resources.file_link import FileLink
 
 
 @pytest.fixture(params=[
-    CSVDataSource(FileLink("foo.spam", "http://example.com"), {"spam": RealDescriptor("eggs", lower_bound=0, upper_bound=1.0)}, ["identifier"]),
+    CSVDataSource(FileLink("foo.spam", "http://example.com"), {"spam": RealDescriptor("eggs", lower_bound=0, upper_bound=1.0, units="")}, ["identifier"]),
     GemTableDataSource(uuid.uuid4(), 1),
     GemTableDataSource(uuid.uuid4(), "2"),
     GemTableDataSource(uuid.uuid4(), "2", FormulationDescriptor("formulation")),

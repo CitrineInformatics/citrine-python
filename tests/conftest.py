@@ -1,4 +1,5 @@
 import uuid
+from copy import deepcopy
 
 import pytest
 
@@ -6,6 +7,7 @@ import pytest
 @pytest.fixture
 def valid_product_design_space_data():
     """Produce valid product design space data."""
+    from citrine.informatics.descriptors import FormulationDescriptor
     return dict(
         module_type='DESIGN_SPACE',
         status='VALIDATING',
@@ -14,9 +16,45 @@ def valid_product_design_space_data():
         display_name='my design space',
         id=str(uuid.uuid4()),
         config=dict(
-            type='Univariate',
+            type='ProductDesignSpace',
             name='my design space',
             description='does some things',
+            subspaces=[
+                dict(
+                    module_type='DESIGN_SPACE',
+                    status='READY',
+                    id=str(uuid.uuid4()),
+                    archived=False,
+                    name='first subspace',
+                    instance=dict(
+                        type='FormulationDesignSpace',
+                        name='first subspace',
+                        description='',
+                        formulation_descriptor=FormulationDescriptor('X').dump(),
+                        ingredients=['foo'],
+                        labels={'bar': ['foo']},
+                        constraints=[],
+                        resolution=0.1
+                    )
+                ),
+                dict(
+                    module_type='DESIGN_SPACE',
+                    status='CREATED',
+                    id=None,
+                    archived=False,
+                    name='second subspace',
+                    instance=dict(
+                        type='FormulationDesignSpace',
+                        name='second subspace',
+                        description='formulates some things',
+                        formulation_descriptor=FormulationDescriptor('Y').dump(),
+                        ingredients=['baz'],
+                        labels={},
+                        constraints=[],
+                        resolution=0.1
+                    )
+                )
+            ],
             dimensions=[
                 dict(
                     type='ContinuousDimension',
@@ -44,6 +82,15 @@ def valid_product_design_space_data():
             ]
         )
     )
+
+
+@pytest.fixture
+def old_valid_product_design_space_data(valid_product_design_space_data):
+    """Produce old valid product design space data (no subspaces, different type hint)."""
+    ret = deepcopy(valid_product_design_space_data)
+    del ret['config']['subspaces']
+    ret['config']['type'] = 'Univariate'
+    return ret
 
 
 @pytest.fixture
@@ -75,8 +122,7 @@ def valid_enumerated_design_space_data():
                 ),
                 dict(
                     type='Inorganic',
-                    descriptor_key='formula',
-                    threshold=1.0
+                    descriptor_key='formula'
                 )
             ],
             data=[
@@ -323,8 +369,8 @@ def valid_ing_to_simple_mixture_predictor_data():
             description='Constructs mixtures from ingredients',
             output=FormulationDescriptor('simple mixture').dump(),
             id_to_quantity={
-                'water': RealDescriptor('water quantity', 0, 1).dump(),
-                'salt': RealDescriptor('salt quantity', 0, 1).dump()
+                'water': RealDescriptor('water quantity', 0, 1, "").dump(),
+                'salt': RealDescriptor('salt quantity', 0, 1, "").dump()
             },
             labels={
                 'solvent': ['water'],
@@ -587,6 +633,30 @@ def example_result_dict(example_evaluator_dict, example_rmse_metrics, example_ca
     }
 
 
+@pytest.fixture()
+def example_candidates():
+    return {
+        "page": 2,
+        "per_page": 4,
+        "response": [{
+            "material_id": str(uuid.uuid4()),
+            "identifiers": [],
+            "primary_score": 0,
+            "material": {
+                'vars': {
+                    'Temperature': {'type': 'R', 'm': 475.8, 's': 0},
+                    'Flour': {'type': 'C', 'cp': {'flour': 100.0}},
+                    'Water': {'type': 'M', 'q': {'water': 72.5}},
+                    'Salt': {'type': 'F', 'f': 'NaCl'},
+                    'Yeast': {'type': 'S', 's': 'O1C=2C=C(C=3SC=C4C=CNC43)CC2C=5C=CC=6C=CNC6C15'}
+                }
+            }
+        }]
+    }
+
+
+
+
 @pytest.fixture
 def generic_entity():
     user = str(uuid.uuid4())
@@ -606,7 +676,7 @@ def generic_entity():
 
 @pytest.fixture
 def predictor_evaluation_execution_dict(generic_entity):
-    ret = generic_entity.copy()
+    ret = deepcopy(generic_entity)
     ret.update({
         "workflow_id": str(uuid.uuid4()),
         "predictor_id": str(uuid.uuid4()),
@@ -616,11 +686,34 @@ def predictor_evaluation_execution_dict(generic_entity):
 
 
 @pytest.fixture
-def predictor_evaluation_workflow_dict(generic_entity, example_evaluator_dict):
+def design_execution_dict(generic_entity):
     ret = generic_entity.copy()
+    ret.update({
+        "workflow_id": str(uuid.uuid4()),
+        "archived": False,
+        "version_number": 2
+    })
+    return ret
+
+
+@pytest.fixture
+def predictor_evaluation_workflow_dict(generic_entity, example_evaluator_dict):
+    ret = deepcopy(generic_entity)
     ret.update({
         "name": "Example PEW",
         "description": "Example PEW for testing",
         "evaluators": [example_evaluator_dict]
+    })
+    return ret
+
+@pytest.fixture
+def design_workflow_dict(generic_entity):
+    ret = generic_entity.copy()
+    ret.update({
+        "name": "Example Design Workflow",
+        "description": "Example Design Workflow for testing",
+        "processor_id": str(uuid.uuid4()),
+        "design_space_id": str(uuid.uuid4()),
+        "predictor_id": str(uuid.uuid4()),
     })
     return ret

@@ -4,6 +4,8 @@ from uuid import UUID
 
 from citrine.resources.predictor_evaluation_execution import PredictorEvaluationExecutionCollection
 from citrine.resources.predictor_evaluation_workflow import PredictorEvaluationWorkflowCollection
+from citrine.resources.design_execution import DesignExecutionCollection
+from citrine.resources.design_workflow import DesignWorkflowCollection
 from deprecation import deprecated
 
 from citrine._session import Session
@@ -128,6 +130,16 @@ class Project(Resource['Project']):
     def predictor_evaluation_executions(self) -> PredictorEvaluationExecutionCollection:
         """[ALPHA] Return a collection representing all visible predictor evaluation executions."""
         return PredictorEvaluationExecutionCollection(project_id=self.uid, session=self.session)
+
+    @property
+    def design_workflows(self) -> DesignWorkflowCollection:
+        """[ALPHA] Return a collection representing all visible design workflows."""
+        return DesignWorkflowCollection(self.uid, self.session)
+
+    @property
+    def design_executions(self) -> DesignExecutionCollection:
+        """[ALPHA] Return a collection representing all visible predictor evaluation executions."""
+        return DesignExecutionCollection(project_id=self.uid, session=self.session)
 
     @property
     def datasets(self) -> DatasetCollection:
@@ -302,6 +314,58 @@ class Project(Resource['Project']):
             "resource": resource.as_entity_dict()
         })
         return True
+
+    def creator(self) -> str:
+        """
+        Return the creator of this project.
+
+        Returns
+        -------
+        str
+            The email of the creator of this resource.
+
+        """
+        email = self.session.get_resource(self._path() + "/creator")["email"]
+        return email
+
+    def owned_dataset_ids(self) -> List[str]:
+        """
+        List all the ids of the datasets owned by the current project.
+
+        Returns
+        -------
+        List[str]
+            The ids of the modules owned by current project
+
+        """
+        dataset_ids = self.session.get_resource(self._path() + "/dataset_ids")["dataset_ids"]
+        return dataset_ids
+
+    def owned_table_ids(self) -> List[str]:
+        """
+        List all the ids of the tables owned by the current project.
+
+        Returns
+        -------
+        List[str]
+            The ids of the tables owned by current project
+
+        """
+        table_ids = self.session.get_resource(self._path() + "/table_ids")["table_ids"]
+        return table_ids
+
+    def owned_table_config_ids(self) -> List[str]:
+        """
+        List all the ids of the table configs owned by the current project.
+
+        Returns
+        -------
+        List[str]
+            The ids of the table configs owned by current project
+
+        """
+        result = self.session.get_resource(self._path() + "/table_definition_ids")
+        return result["table_definition_ids"]
 
     def list_members(self) -> List[ProjectMember]:
         """

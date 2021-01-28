@@ -72,12 +72,12 @@ If a column should be parsed as data and used as an identifier, identifier colum
 Identifiers are required in two circumstances.
 These circumstances are only relevant if CSV data source represents simple mixture data.
 
-1. Ingredient properties are featurized using a :class:`~citrine.informatics.predictors.GeneralizedMeanPropertyPredictor`.
+1. Ingredient properties are featurized using a :class:`~citrine.informatics.predictors.generalized_mean_property_predictor.GeneralizedMeanPropertyPredictor`.
    In this case, the link from identifier to row is used to compute mean ingredient property values.
-2. Simple mixtures that contain mixtures are simplified to recipes that contain only leaf ingredients using a :class:`~citrine.informatics.predictors.SimpleMixturePredictor`.
+2. Simple mixtures that contain mixtures are simplified to recipes that contain only leaf ingredients using a :class:`~citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor`.
    In this case, links from each mixture's ingredients to its row (which may also be a mixture) are used to recursively crawl hierarchical blends of blends and construct a recipe that contains only leaf ingredients.
 
-Note: to build a formulation from a CSV data source an :class:`~citrine.informatics.predictors.IngredientsToSimpleMixturePredictor` must be present in the workflow.
+Note: to build a formulation from a CSV data source an :class:`~citrine.informatics.predictors.ingredients_to_simple_mixture_predictor.IngredientsToSimpleMixturePredictor` must be present in the workflow.
 Additionally, each ingredient id used as a key in the predictor's map from ingredient id to its quantity must exist in an identifier column.
 
 As an example, consider the following saline solution data.
@@ -96,7 +96,7 @@ As an example, consider the following saline solution data.
 
 Hypertonic and isotonic saline are mixtures formed by mixing water and salt.
 Ingredient identifiers are given by the first column.
-A CSV data source and :class:`~citrine.informatics.predictors.IngredientsToSimpleMixturePredictor` can be configured to construct simple mixtures from this data via the following:
+A CSV data source and :class:`~citrine.informatics.predictors.ingredients_to_simple_mixture_predictor.IngredientsToSimpleMixturePredictor` can be configured to construct simple mixtures from this data via the following:
 
 .. code:: python
 
@@ -106,9 +106,9 @@ A CSV data source and :class:`~citrine.informatics.predictors.IngredientsToSimpl
 
     file_link = dataset.files.upload("./saline_solutions.csv", "saline_solutions.csv")
 
-    # create descriptors for each ingredient quantity
-    water_quantity = RealDescriptor('water quantity', 0, 1)
-    salt_quantity = RealDescriptor('salt quantity', 0, 1)
+    # create descriptors for each ingredient quantity (volume fraction)
+    water_quantity = RealDescriptor('water quantity', 0, 1, units="")
+    salt_quantity = RealDescriptor('salt quantity', 0, 1, units="")
 
     # create a descriptor to hold density data
     density = RealDescriptor('density', lower_bound=0, upper_bound=1000, units='g/cc')

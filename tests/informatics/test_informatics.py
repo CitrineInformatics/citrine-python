@@ -28,7 +28,8 @@ informatics_string_data = [
     ), "<LabelFractionConstraint 'x'::'y'>"),
     (ScalarRangeConstraint('z'), "<ScalarRangeConstraint 'z'>"),
     (CategoricalConstraint('x', []), "<CategoricalConstraint 'x'>"),
-    (ProductDesignSpace('my design space', 'does some things', []), "<ProductDesignSpace 'my design space'>"),
+    (ProductDesignSpace(name='my design space', description='does some things'),
+     "<ProductDesignSpace 'my design space'>"),
     (EnumeratedDesignSpace('enumerated', 'desc', [], []), "<EnumeratedDesignSpace 'enumerated'>"),
     (FormulationDesignSpace(
         name='formulation',
@@ -38,8 +39,8 @@ informatics_string_data = [
         constraints=set(),
         labels={}
     ), "<FormulationDesignSpace 'formulation'>"),
-    (ScalarMaxObjective('z', 1.0, 10.0), "<ScalarMaxObjective 'z'>"),
-    (ScalarMinObjective('z', 1.0, 10.0), "<ScalarMinObjective 'z'>"),
+    (ScalarMaxObjective('z'), "<ScalarMaxObjective 'z'>"),
+    (ScalarMinObjective('z'), "<ScalarMinObjective 'z'>"),
     (GridProcessor('my thing', 'does a thing', dict(x=1)), "<GridProcessor 'my thing'>"),
     (EnumeratedProcessor('my enumerated thing', 'enumerates', 10), "<EnumeratedProcessor 'my enumerated thing'>"),
     (LIScore("LI(z)", "score for z", [], []), "<LIScore 'LI(z)'>"),

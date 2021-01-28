@@ -4,7 +4,6 @@ from uuid import UUID
 
 from citrine._rest.collection import Collection
 from citrine._session import Session
-from citrine.informatics.modules import ModuleRef
 from citrine.informatics.workflows import PredictorEvaluationWorkflow
 from citrine.resources.response import Response
 
@@ -50,12 +49,40 @@ class PredictorEvaluationWorkflowCollection(Collection[PredictorEvaluationWorkfl
         """
         return self._put_module_ref('restore', workflow_id)
 
-    def _put_module_ref(self, subpath: str, workflow_id: UUID):
-        url = self._get_path(subpath)
-        ref = ModuleRef(str(workflow_id))
-        return self.session.put_resource(url, ref.dump())
-
     def delete(self, uid: Union[UUID, str]) -> Response:
         """Predictor Evaluation Workflows cannot be deleted; they can be archived instead."""
         raise NotImplementedError(
             "Predictor Evaluation Workflows cannot be deleted; they can be archived instead.")
+
+    def create_default(self, predictor_id: UUID) -> PredictorEvaluationWorkflow:
+        """[ALPHA] Create a default predictor evaluation workflow for a predictor and execute it.
+
+        The current default predictor evaluation workflow performs 5-fold, 1-trial cross-validation
+        on all valid predictor responses. Valid responses are those that are **not** produced by the
+        following predictors:
+
+        * :class:`~citrine.informatics.predictors.generalized_mean_property_predictor.GeneralizedMeanPropertyPredictor`
+        * :class:`~citrine.informatics.predictors.ingredient_fractions_predictor.IngredientFractionsPredictor`
+        * :class:`~citrine.informatics.predictors.ingredients_to_simple_mixture_predictor.IngredientsToSimpleMixturePredictor`
+        * :class:`~citrine.informatics.predictors.label_fractions_predictor.LabelFractionsPredictor`
+        * :class:`~citrine.informatics.predictors.molecular_structure_featurizer.MolecularStructureFeaturizer`
+        * :class:`~citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor`
+
+        If there are no valid responses, a default workflow is not created.
+
+        Parameters
+        ----------
+        predictor_id: UUID
+            Unique identifier of the predictor used to create a default workflow
+
+        Returns
+        -------
+        PredictorEvaluationWorkflow
+            Default workflow
+
+        """  # noqa: E501
+        url = self._get_path('default')
+        payload = {'predictor_id': str(predictor_id)}
+        data = self.session.post_resource(url, payload)
+        self._check_experimental(data)
+        return self.build(data)

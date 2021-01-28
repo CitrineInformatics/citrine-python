@@ -49,7 +49,7 @@ An example is shown below:
 
 For simple models, such as those that featurize inputs, the ``model_settings`` and ``feature_importances`` fields might be empty.
 
-As an example, consider a :class:`~citrine.informatics.predictors.SimpleMLPredictor` with numeric inputs ``x`` and ``y`` and numeric output ``z``.
+As an example, consider a :class:`~citrine.informatics.predictors.simple_ml_predictor.SimpleMLPredictor` with numeric inputs ``x`` and ``y`` and numeric output ``z``.
 This predictor will produce a single model to predict ``z`` from ``x`` and ``y``.
 In cases involving latent variables and/or input featurization, more models will be produced.
 The code below shows how to create the predictor, register it, and view the report.
@@ -64,9 +64,9 @@ Assume that there is a training data table with known id and version.
     from citrine.informatics.data_sources import GemTableDataSource
 
     # create input descriptors
-    x = RealDescriptor('x', lower_bound=0, upper_bound=10)
-    y = RealDescriptor('y', lower_bound=0, upper_bound=10)
-    z = RealDescriptor('z', lower_bound=0, upper_bound=10)
+    x = RealDescriptor('x', lower_bound=0, upper_bound=10, units='')
+    y = RealDescriptor('y', lower_bound=0, upper_bound=10, units='')
+    z = RealDescriptor('z', lower_bound=0, upper_bound=10, units='')
 
     # register a predictor with a project
     predictor = project.predictors.register(
