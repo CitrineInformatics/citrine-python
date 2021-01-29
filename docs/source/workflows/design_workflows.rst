@@ -184,13 +184,50 @@ In the updated design execution workflow, results are paginated and returned as 
     print(best_score)
 
     # Alternatively, you can iterate over the candidates generator, looking at each candidate
-    for candidate in valid_execution.candidates():
+    for candidate in execution.candidates():
         print(candidate.primary_score)
 
     # To save all candidates in memory in one list:
-    all_candidates = list(valid_execution.candidates())
+    all_candidates = list(execution.candidates())
 
     # we can confirm the best candidate is at the head of the list using
     # this candidate will be the same as best_candidate above
     candidate_with_max_shear_modulus = max(all_candidates, key=lambda candidate: candidate.material.values['Shear modulus'].mean)
     print(candidate_with_max_shear_modulus)
+
+Design Candidates
+-----------------
+
+A :class:`~citrine.informatics.design_candidate.DesignCandidate` represents the result of the Design Execution. They contain the `primary score` of the candidate and the :class:`~citrine.informatics.design_candidate.DesignMaterial` for that candidate. DesignMaterials are simpler approximations ("projections") of the materials information about a particular design candidate.
+
+DesignMaterials approximate the distribution of values the variable might take. They may be one of:
+    * :class:`~citrine.informatics.design_candidate.MeanAndStd`
+    * :class:`~citrine.informatics.design_candidate.TopCategories`
+    * :class:`~citrine.informatics.design_candidate.Mixture`
+    * :class:`~citrine.informatics.design_candidate.ChemicalFormula`
+    * :class:`~citrine.informatics.design_candidate.MolecularStructure`.
+
+For example:
+
+.. code:: python
+
+    candidate = execution.candidates().send(None)
+
+    # to get the score of a particular candidate
+    score = candidate.primary_score
+
+    # A MeanAndStd material will have mean and std
+    candidate.material.values['mean_and_std_material'].mean
+    candidate.material.values['mean_and_std_material'].std
+
+    # A TopCategories material will have the probability map for the most probable categories
+    candidate.material.values['top_categories_material'].probabilities
+
+    # A Mixture material will have the most likely quantity values for all of the components in a mixture
+    candidate.material.values['mixture_material'].quantities
+
+    # A ChemicalFormula material will have the chemical formula as a string
+    candidate.material.values['chemical_formula_material'].formula
+
+    # A MolecularStructure material will have the molecular structure represented by the SMILE string
+    candidate.material.values['molecular_material'].smiles
