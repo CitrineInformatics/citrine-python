@@ -147,7 +147,7 @@ The following demonstrates how to trigger workflow execution, wait for the desig
     print(candidate_with_max_shear_modulus)
 
 
-In the updated design execution workflow, results are paginated and returned as `DesignCandidate` objects.
+In the updated design execution workflow, results are paginated and returned as :class:`~citrine.informatics.design_candidate.DesignCandidate` objects.
 
 .. code:: python
 
