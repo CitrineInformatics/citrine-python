@@ -19,9 +19,9 @@ def scalar_range_constraint() -> ScalarRangeConstraint:
 
 
 @pytest.fixture
-def categorical_constraint() -> CategoricalConstraint:
+def categorical_constraint() -> AcceptableCategoriesConstraint:
     """Build a CategoricalConstraint."""
-    return CategoricalConstraint(
+    return AcceptableCategoriesConstraint(
         descriptor_key='x',
         acceptable_categories=['y', 'z']
     )
@@ -76,6 +76,7 @@ def test_categorical_initialization(categorical_constraint):
     """Make sure the correct fields go to the correct places."""
     assert categorical_constraint.descriptor_key == 'x'
     assert categorical_constraint.acceptable_categories == ['y', 'z']
+    assert "Acceptable" in str(categorical_constraint)
 
 
 def test_ingredient_fraction_initialization(ingredient_fraction_constraint):
@@ -105,3 +106,26 @@ def test_label_fraction_initialization(label_fraction_constraint):
     assert label_fraction_constraint.max == 1.0
     assert not label_fraction_constraint.is_required
     assert label_fraction_constraint.session is None
+
+
+def test_range_defaults():
+    """Check that deprecated and default values work as expected."""
+    assert ScalarRangeConstraint("x").lower_bound is None
+    assert ScalarRangeConstraint("x").upper_bound is None
+    assert ScalarRangeConstraint("x").lower_inclusive is True
+    assert ScalarRangeConstraint("x").upper_inclusive is True
+
+    assert ScalarRangeConstraint("x", min=1.0).lower_bound == 1.0
+    assert ScalarRangeConstraint("x", upper_inclusive=False).upper_inclusive is False
+    assert ScalarRangeConstraint("x", max_inclusive=False).upper_inclusive is False
+    assert ScalarRangeConstraint("x", lower_inclusive=False).lower_inclusive is False
+    assert ScalarRangeConstraint("x", min_inclusive=False).lower_inclusive is False
+
+    with pytest.raises(ValueError):
+        ScalarRangeConstraint("x", min=1.0, lower_bound=1.0)
+    with pytest.raises(ValueError):
+        ScalarRangeConstraint("x", max=1.0, upper_bound=1.0)
+    with pytest.raises(ValueError):
+        ScalarRangeConstraint("x", lower_inclusive=False, min_inclusive=False)
+    with pytest.raises(ValueError):
+        ScalarRangeConstraint("x", upper_inclusive=False, max_inclusive=False)

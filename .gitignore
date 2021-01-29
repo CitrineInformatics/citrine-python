@@ -110,3 +110,6 @@ citrine-python.iml
 
 # VSCode
 .vscode
+
+# DS_store
+.DS_Store

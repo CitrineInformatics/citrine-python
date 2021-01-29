@@ -9,6 +9,7 @@ from citrine._serialization.serializable import Serializable
 __all__ = ['PredictorEvaluationMetric',
            'RMSE',
            'NDME',
+           'RSquared',
            'StandardRMSE',
            'PVA',
            'F1',
@@ -45,6 +46,7 @@ class PredictorEvaluationMetric(PolymorphicSerializable["PredictorEvaluationMetr
         t = data["type"]
         return {
             "RMSE": RMSE,
+            "RSquared": RSquared,
             "NDME": NDME,
             "StandardRMSE": StandardRMSE,
             "PVA": PVA,
@@ -80,6 +82,24 @@ class NDME(Serializable["NDME"], PredictorEvaluationMetric):
 
     def __str__(self):
         return "NDME"
+
+
+class RSquared(Serializable["RSquared"], PredictorEvaluationMetric):
+    """Fraction of variance explained, commonly known as R^2.
+
+    This dimensionless metric is equal to 1 - (mean squared error / variance of data).
+    It is equal to the coefficient of determination calculated with respect to the line
+    `predicted = actual`, hence it is commonly referred to as R^2. But unlike R^2 from
+    ordinary linear regression, this metric can be negative.
+    """
+
+    typ = properties.String("type", default="RSquared", deserializable=False)
+
+    def __repr__(self):
+        return "R^2"
+
+    def __str__(self):
+        return "R^2"
 
 
 class StandardRMSE(Serializable["StandardRMSE"], PredictorEvaluationMetric):

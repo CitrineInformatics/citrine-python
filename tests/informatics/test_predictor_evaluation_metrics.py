@@ -6,6 +6,7 @@ from citrine.informatics.predictor_evaluation_metrics import *
 
 @pytest.fixture(params=[
     (RMSE(), "rmse", "RMSE"),
+    (RSquared(), "R^2", "R^2"),
     (NDME(), "ndme", "NDME"),
     (StandardRMSE(), "standardized_rmse", "Standardized RMSE"),
     (PVA(), "predicted_vs_actual", "Predicted vs Actual"),

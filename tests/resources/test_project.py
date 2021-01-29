@@ -1,25 +1,30 @@
 import uuid
+from logging import getLogger
+
 import pytest
 from dateutil.parser import parse
+from gemd.entity.link_by_uid import LinkByUID
 
-from citrine.resources.project import Project, ProjectCollection
+from citrine.resources.api_error import ApiError, ValidationError
 from citrine.resources.gemtables import GemTableCollection
+from citrine.resources.project import Project, ProjectCollection
 from citrine.resources.project_member import ProjectMember
 from citrine.resources.project_roles import MEMBER, LEAD, WRITE
 from tests.utils.factories import ProjectDataFactory, UserDataFactory
 from tests.utils.session import FakeSession, FakeCall, FakePaginatedSession
 
-
-from logging import getLogger
 logger = getLogger(__name__)
+
 
 @pytest.fixture
 def session() -> FakeSession:
     return FakeSession()
 
+
 @pytest.fixture
 def paginated_session() -> FakePaginatedSession:
     return FakePaginatedSession()
+
 
 @pytest.fixture
 def paginated_collection(paginated_session) -> ProjectCollection:
@@ -103,6 +108,7 @@ def test_make_resource_private_post_content(project, session):
     )
     assert expected_call == session.last_call
 
+
 def test_transfer_resource_post_content(project, session):
 
     dataset_id = str(uuid.uuid4())
@@ -122,6 +128,7 @@ def test_transfer_resource_post_content(project, session):
         }
     )
     assert expected_call == session.last_call
+
 
 def test_datasets_get_project_id(project):
     assert project.uid == project.datasets.project_id
@@ -475,6 +482,124 @@ def test_remove_user(project, session):
     assert remove_user_response is True
 
 
+def test_batch_delete(project, session):
+    failure_resp = {'failures': [
+        {
+            'scope': 'somescope',
+            'id': 'abcd-1234',
+            'cause': {
+                "code": 400,
+                "message": "",
+                "validation_errors": [
+                    {
+                        "failure_message": "fail msg",
+                        "failure_id": "identifier.coreid.missing"
+                    }
+                ]
+            }
+        }
+    ]}
+    session.set_responses(failure_resp, failure_resp)
+
+    # When
+    del_resp = project.gemd_batch_delete([uuid.UUID(
+        '16fd2706-8baf-433b-82eb-8c7fada847da')])
+
+    # Then
+    assert 1 == session.num_calls
+    expect_call = FakeCall(
+        method="POST",
+        path="/projects/{}/gemd/batch-delete".format(project.uid)
+    )
+    assert expect_call.method == session.last_call.method
+    assert expect_call.path == session.last_call.path
+
+    assert len(del_resp) == 1
+    first_failure = del_resp[0]
+
+    expected_api_error = ApiError(400, "",
+                                  validation_errors=[ValidationError(
+                                      failure_message="fail msg",
+                                      failure_id="identifier.coreid.missing")])
+
+
+    assert first_failure == (LinkByUID('somescope', 'abcd-1234'), expected_api_error)
+
+    # And again with tuples of (scope, id)
+    del_resp = project.gemd_batch_delete([LinkByUID('id',
+                                            '16fd2706-8baf-433b-82eb-8c7fada847da')])
+    assert len(del_resp) == 1
+    first_failure = del_resp[0]
+
+    assert first_failure == (LinkByUID('somescope', 'abcd-1234'), expected_api_error)
+
+
+def test_batch_delete_bad_input(project, session):
+    with pytest.raises(TypeError):
+        project.gemd_batch_delete(['hiya!'])
+
 def test_project_tables(project):
     assert isinstance(project.tables, GemTableCollection)
 
+
+def test_creator(project, session):
+    # Given
+    email = 'CaTiO3@perovskite.com'
+    session.set_response({'email': email})
+
+    # When
+    creator = project.creator()
+
+    # Then
+    assert 1 == session.num_calls
+    expect_call = FakeCall(method='GET', path='/projects/{}/creator'.format(project.uid))
+    assert expect_call == session.last_call
+    assert creator == email
+
+
+def test_owned_dataset_ids(project, session):
+    # Given
+    id_set = {uuid.uuid4() for _ in range(5)}
+    session.set_response({'dataset_ids': list(id_set)})
+
+    # When
+    ids = project.owned_dataset_ids()
+
+    # Then
+    assert 1 == session.num_calls
+    expect_call = FakeCall(method='GET', path='/projects/{}/dataset_ids'.format(project.uid))
+    assert expect_call == session.last_call
+    assert all(x in id_set for x in ids)
+    assert len(ids) == len(id_set)
+
+
+def test_owned_table_ids(project, session):
+    # Given
+    id_set = {uuid.uuid4() for _ in range(5)}
+    session.set_response({'table_ids': list(id_set)})
+
+    # When
+    ids = project.owned_table_ids()
+
+    # Then
+    assert 1 == session.num_calls
+    expect_call = FakeCall(method='GET', path='/projects/{}/table_ids'.format(project.uid))
+    assert expect_call == session.last_call
+    assert all(x in id_set for x in ids)
+    assert len(ids) == len(id_set)
+
+
+def test_owned_table_config_ids(project, session):
+    # Given
+    id_set = {uuid.uuid4() for _ in range(5)}
+    session.set_response({'table_definition_ids': list(id_set)})
+
+    # When
+    ids = project.owned_table_config_ids()
+
+    # Then
+    assert 1 == session.num_calls
+    expect_call = FakeCall(method='GET', path='/projects/{}/table_definition_ids'.format(project.uid))
+    assert expect_call == session.last_call
+    assert all(x in id_set for x in ids)
+    assert len(ids) == len(id_set)
