@@ -38,6 +38,7 @@ The following example demonstrates how to use the python SDK to register a workf
     print(validated_workflow.status_info)
 
 Using the new flow, the process is very similar, but uses the `design_workflow` resource:
+
 .. code:: python
 
     from citrine.informatics.workflows import DesignWorkflow
