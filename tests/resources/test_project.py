@@ -3,6 +3,7 @@ from logging import getLogger
 
 import pytest
 from dateutil.parser import parse
+from gemd.entity.link_by_uid import LinkByUID
 
 from citrine.resources.api_error import ApiError, ValidationError
 from citrine.resources.gemtables import GemTableCollection
@@ -522,14 +523,15 @@ def test_batch_delete(project, session):
                                       failure_id="identifier.coreid.missing")])
 
 
-    assert first_failure == ('somescope', 'abcd-1234', expected_api_error)
+    assert first_failure == (LinkByUID('somescope', 'abcd-1234'), expected_api_error)
 
     # And again with tuples of (scope, id)
-    del_resp = project.gemd_batch_delete([('id', '16fd2706-8baf-433b-82eb-8c7fada847da')])
+    del_resp = project.gemd_batch_delete([LinkByUID('id',
+                                            '16fd2706-8baf-433b-82eb-8c7fada847da')])
     assert len(del_resp) == 1
     first_failure = del_resp[0]
 
-    assert first_failure == ('somescope', 'abcd-1234', expected_api_error)
+    assert first_failure == (LinkByUID('somescope', 'abcd-1234'), expected_api_error)
 
 
 def test_batch_delete_bad_input(project, session):

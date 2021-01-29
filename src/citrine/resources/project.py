@@ -3,6 +3,7 @@ from typing import Optional, Dict, List, Union, Iterable, Tuple
 from uuid import UUID
 
 from deprecation import deprecated
+from gemd.entity.link_by_uid import LinkByUID
 
 from citrine._rest.collection import Collection
 from citrine._rest.resource import Resource
@@ -432,8 +433,8 @@ class Project(Resource['Project']):
         )
         return True
 
-    def gemd_batch_delete(self, id_list: Union[List[Tuple[str, str]], List[UUID]]) -> \
-            List[Tuple[str, str, ApiError]]:
+    def gemd_batch_delete(self, id_list: List[Union[LinkByUID, UUID]]) -> \
+            List[Tuple[LinkByUID, ApiError]]:
         """
         Remove a set of GEMD objects.
 
@@ -449,33 +450,34 @@ class Project(Resource['Project']):
 
         Parameters
         ----------
-        id_list: Union[List[Tuple[str, str]], List[UUID]]
+        id_list: List[Union[LinkByUID, UUID]]
             A list of the IDs of data objects to be removed. They can be passed either
-            as an (scope, id) tuple, or as a UUID. The latter is assumed to be a Citrine
-            ID.
+            as a LinkByUID tuple, or as a UUID. The latter is assumed to be a Citrine
+            ID, whereas the former can also be used to provide an external ID.
 
         Returns
         -------
-        List[Tuple[str, str, ApiError]]
-            A list of (scope, id, api_error) for each failure to delete an object.
+        List[Tuple[LinkByUID, ApiError]]
+            A list of (LinkByUID, api_error) for each failure to delete an object.
+            Note that this method doesn't raise an exception if an object fails to be
+            deleted.
 
         """
         scoped_uids = []
         for id in id_list:
-            if isinstance(id, tuple):
-                scoped_uids.append({'scope': id[0], 'id': id[1]})
+            if isinstance(id, LinkByUID):
+                scoped_uids.append({'scope': id.scope, 'id': id.id})
             elif isinstance(id, UUID):
                 scoped_uids = {'scope': 'id', 'id': id}
             else:
                 raise TypeError(
-                    "id_list must be provided as a list of key,value with a Tuple[str,str], "
-                    "or a list of Citrine IDs provided as UUIDs")
+                    "id_list must contain only LinkByUID or UUIDs entries")
 
         body = {"ids": scoped_uids}
 
         response = self.session.post_resource(self._path() + "/gemd/batch-delete", body)
 
-        return [(f['scope'], f['id'], ApiError.from_dict(f['cause'])) for f in
+        return [(LinkByUID(f['scope'], f['id']), ApiError.from_dict(f['cause'])) for f in
                 response['failures']]
 
 
