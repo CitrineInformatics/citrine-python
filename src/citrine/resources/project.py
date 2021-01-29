@@ -477,7 +477,8 @@ class Project(Resource['Project']):
 
         response = self.session.post_resource(self._path() + "/gemd/batch-delete", body)
 
-        return [(LinkByUID(f['scope'], f['id']), ApiError.from_dict(f['cause'])) for f in
+        return [(LinkByUID(f['id']['scope'], f['id']['id']),
+                 ApiError.from_dict(f['cause'])) for f in
                 response['failures']]
 
 
