@@ -447,6 +447,13 @@ class Project(Resource['Project']):
 
         Also note that Attribute Templates cannot be deleted at present.
 
+        Parameters
+        ----------
+        id_list: Union[List[Tuple[str, str]], List[UUID]]
+            A list of the IDs of data objects to be removed. They can be passed either
+            as an (scope, id) tuple, or as a UUID. The latter is assumed to be a Citrine
+            ID.
+
         Returns
         -------
         List[Tuple[str, str, ApiError]]
