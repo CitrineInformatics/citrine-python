@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>4.11. Predictor Evaluation Workflows &#8212; Citrine Python 0.96.0 documentation</title>
+    <title>4.11. Predictor Evaluation Workflows &#8212; Citrine Python 0.98.2 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -66,8 +66,9 @@ That way, two recipes that differ only in their oven temperature will always end
 <div class="section" id="predictor-evaluation-metrics">
 <h2>4.11.2. Predictor evaluation metrics<a class="headerlink" href="#predictor-evaluation-metrics" title="Permalink to this headline">¶</a></h2>
 <p>Predictor evaluation metrics are defined as part of a <a class="reference internal" href="../reference/citrine.informatics.predictor_evaluator.html#citrine.informatics.predictor_evaluator.PredictorEvaluator" title="citrine.informatics.predictor_evaluator.PredictorEvaluator"><code class="xref py py-class docutils literal notranslate"><span class="pre">PredictorEvaluator</span></code></a>.
-Available metrics depend on response type.
-For numeric responses, the following metrics are available:</p>
+For all response types, the metric (<a class="reference internal" href="../reference/citrine.informatics.predictor_evaluation_metrics.html#citrine.informatics.predictor_evaluation_metrics.PVA" title="citrine.informatics.predictor_evaluation_metrics.PVA"><code class="xref py py-class docutils literal notranslate"><span class="pre">PVA</span></code></a>) is available to compare predicted versus actual data.
+Other available metrics depend on whether the response’s type is numeric or categorical.</p>
+<p>For numeric responses, the following metrics are available:</p>
 <blockquote>
 <div><ul class="simple">
 <li><p><em>Root-mean squared error</em> (<a class="reference internal" href="../reference/citrine.informatics.predictor_evaluation_metrics.html#citrine.informatics.predictor_evaluation_metrics.RMSE" title="citrine.informatics.predictor_evaluation_metrics.RMSE"><code class="xref py py-class docutils literal notranslate"><span class="pre">RMSE</span></code></a>): square root of the average of the squared prediction error.
@@ -110,7 +111,6 @@ If AUC == 0.0, all samples are classified incorrectly.</p></li>
 Scores are bounded by 0 and 1.
 At a value of 1, the model has perfect precision and recall.</p></li>
 </ul>
-<p>In addition to the aforementioned metrics, predicted vs. actual data (<a class="reference internal" href="../reference/citrine.informatics.predictor_evaluation_metrics.html#citrine.informatics.predictor_evaluation_metrics.PVA" title="citrine.informatics.predictor_evaluation_metrics.PVA"><code class="xref py py-class docutils literal notranslate"><span class="pre">PVA</span></code></a>) are also available for both real and categorical responses.</p>
 </div>
 <div class="section" id="execution-and-results">
 <span id="id1"></span><h2>4.11.3. Execution and results<a class="headerlink" href="#execution-and-results" title="Permalink to this headline">¶</a></h2>

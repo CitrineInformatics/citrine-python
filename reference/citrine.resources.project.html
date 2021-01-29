@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>citrine.resources.project module &#8212; Citrine Python 0.96.0 documentation</title>
+    <title>citrine.resources.project module &#8212; Citrine Python 0.98.2 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -121,6 +121,20 @@ Use the <code class="docutils literal notranslate"><span class="pre">update_user
 <dd></dd></dl>
 
 <dl class="method">
+<dt id="citrine.resources.project.Project.creator">
+<code class="sig-name descname">creator</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#citrine.resources.project.Project.creator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the creator of this project.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The email of the creator of this resource.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
 <dt id="citrine.resources.project.Project.datasets">
 <em class="property">property </em><code class="sig-name descname">datasets</code><a class="headerlink" href="#citrine.resources.project.Project.datasets" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a resource representing all visible datasets.</p>
@@ -153,6 +167,33 @@ Use the <code class="docutils literal notranslate"><span class="pre">update_user
 <dt id="citrine.resources.project.Project.design_workflows">
 <em class="property">property </em><code class="sig-name descname">design_workflows</code><a class="headerlink" href="#citrine.resources.project.Project.design_workflows" title="Permalink to this definition">¶</a></dt>
 <dd><p>[ALPHA] Return a collection representing all visible design workflows.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="citrine.resources.project.Project.gemd_batch_delete">
+<code class="sig-name descname">gemd_batch_delete</code><span class="sig-paren">(</span><em class="sig-param">id_list: List[Union[gemd.entity.link_by_uid.LinkByUID, uuid.UUID]]</em><span class="sig-paren">)</span> &#x2192; List[Tuple[gemd.entity.link_by_uid.LinkByUID, citrine.resources.api_error.ApiError]]<a class="headerlink" href="#citrine.resources.project.Project.gemd_batch_delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove a set of GEMD objects.</p>
+<p>You may provide GEMD objects that reference each other, and the objects
+will be removed in the appripriate order.</p>
+<p>A failure will be returned if the object cannot be deleted due to an external
+reference.</p>
+<p>You must have Write access on the assoociated datasets for each object.</p>
+<p>Also note that Attribute Templates cannot be deleted at present.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>id_list</strong> (<em>List</em><em>[</em><em>Union</em><em>[</em><em>LinkByUID</em><em>, </em><em>UUID</em><em>]</em><em>]</em>) – A list of the IDs of data objects to be removed. They can be passed either
+as a LinkByUID tuple, or as a UUID. The latter is assumed to be a Citrine
+ID, whereas the former can also be used to provide an external ID.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A list of (LinkByUID, api_error) for each failure to delete an object.
+Note that this method doesn’t raise an exception if an object fails to be
+deleted.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>List[Tuple[LinkByUID, <a class="reference internal" href="citrine.resources.api_error.html#citrine.resources.api_error.ApiError" title="citrine.resources.api_error.ApiError">ApiError</a>]]</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -261,6 +302,48 @@ Use the <code class="docutils literal notranslate"><span class="pre">update_user
 <dt id="citrine.resources.project.Project.name">
 <code class="sig-name descname">name</code><em class="property"> = None</em><a class="headerlink" href="#citrine.resources.project.Project.name" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="method">
+<dt id="citrine.resources.project.Project.owned_dataset_ids">
+<code class="sig-name descname">owned_dataset_ids</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; List[str]<a class="headerlink" href="#citrine.resources.project.Project.owned_dataset_ids" title="Permalink to this definition">¶</a></dt>
+<dd><p>List all the ids of the datasets owned by the current project.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The ids of the modules owned by current project</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>List[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="citrine.resources.project.Project.owned_table_config_ids">
+<code class="sig-name descname">owned_table_config_ids</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; List[str]<a class="headerlink" href="#citrine.resources.project.Project.owned_table_config_ids" title="Permalink to this definition">¶</a></dt>
+<dd><p>List all the ids of the table configs owned by the current project.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The ids of the table configs owned by current project</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>List[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="citrine.resources.project.Project.owned_table_ids">
+<code class="sig-name descname">owned_table_ids</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; List[str]<a class="headerlink" href="#citrine.resources.project.Project.owned_table_ids" title="Permalink to this definition">¶</a></dt>
+<dd><p>List all the ids of the tables owned by the current project.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The ids of the tables owned by current project</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>List[str]</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="method">
 <dt id="citrine.resources.project.Project.parameter_templates">

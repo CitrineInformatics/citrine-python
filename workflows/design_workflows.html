@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>4.7. [ALPHA] Design Workflows &#8212; Citrine Python 0.96.0 documentation</title>
+    <title>4.7. [ALPHA] Design Workflows &#8212; Citrine Python 0.98.2 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -70,6 +70,31 @@ This workflow is comprised of three modules:</p>
 <span class="nb">print</span><span class="p">(</span><span class="n">validated_workflow</span><span class="o">.</span><span class="n">status_info</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>Using the new flow, the process is very similar, but uses the <cite>design_workflow</cite> resource:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.informatics.workflows</span> <span class="kn">import</span> <span class="n">DesignWorkflow</span>
+<span class="kn">from</span> <span class="nn">citrine.jobs.waiting</span> <span class="kn">import</span> <span class="n">wait_while_validating</span>
+
+<span class="c1"># create a workflow using existing modules and register it with the project</span>
+<span class="n">workflow</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">design_workflows</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
+    <span class="n">DesignWorkflow</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Example workflow&#39;</span><span class="p">,</span>
+        <span class="n">predictor_id</span><span class="o">=</span><span class="n">predictor</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span>
+        <span class="n">processor_id</span><span class="o">=</span><span class="n">processor</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span>
+        <span class="n">design_space_id</span><span class="o">=</span><span class="n">design_space</span><span class="o">.</span><span class="n">uid</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+
+<span class="c1"># wait until the workflow is no longer validating</span>
+<span class="n">wait_while_validating</span><span class="p">(</span><span class="n">project</span><span class="o">.</span><span class="n">design_workflows</span><span class="p">,</span> <span class="n">workflow</span><span class="p">,</span> <span class="n">print_status_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># print final validation status</span>
+<span class="n">validated_workflow</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">design_workflows</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">workflow</span><span class="o">.</span><span class="n">uid</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">validated_workflow</span><span class="o">.</span><span class="n">status</span><span class="p">)</span>
+<span class="c1"># status info will contain relevant validation information</span>
+<span class="c1"># (i.e. why the workflow is valid/invalid)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">validated_workflow</span><span class="o">.</span><span class="n">status_info</span><span class="p">)</span>
+</pre></div>
+</div>
 <div class="section" id="execution-and-results">
 <h2>4.7.1. Execution and results<a class="headerlink" href="#execution-and-results" title="Permalink to this headline">¶</a></h2>
 <p>When a design workflow is executed, the processor will search the design space for optimal materials using additional information provided by the predictor.
@@ -83,8 +108,8 @@ The <code class="docutils literal notranslate"><span class="pre">results</span><
 The <code class="docutils literal notranslate"><span class="pre">i</span></code> th candidate corresponds to the <code class="docutils literal notranslate"><span class="pre">i</span></code> th score.</p>
 <p>Each candidate and score is a dictionary.
 The former contains descriptor key-value pairs and uncertainty in descriptor values.
-The latter contains a key-value pair for each score.
-For example, if input materials contain an input <code class="docutils literal notranslate"><span class="pre">x</span></code> and are scored by using LI for predicted output <code class="docutils literal notranslate"><span class="pre">z</span></code> the execution results would have the form:</p>
+The latter contains a key-value pair for each score.</p>
+<p>For example, if input materials contain an input <code class="docutils literal notranslate"><span class="pre">x</span></code> and are scored by using LI for predicted output <code class="docutils literal notranslate"><span class="pre">z</span></code> the execution results would have the form:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="s2">&quot;results&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="s2">&quot;candidates&quot;</span><span class="p">:</span> <span class="p">[</span>
@@ -107,6 +132,7 @@ If the design space contains more than 200 possible materials, only the top 200 
 <span class="kn">from</span> <span class="nn">citrine.informatics.objectives</span> <span class="kn">import</span> <span class="n">ScalarMaxObjective</span>
 <span class="kn">from</span> <span class="nn">citrine.informatics.scores</span> <span class="kn">import</span> <span class="n">LIScore</span>
 
+
 <span class="c1"># create a score with the desired objectives and baselines</span>
 <span class="n">score</span> <span class="o">=</span> <span class="n">LIScore</span><span class="p">(</span>
     <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Example score&#39;</span><span class="p">,</span>
@@ -121,8 +147,7 @@ If the design space contains more than 200 possible materials, only the top 200 
 <span class="n">execution</span> <span class="o">=</span> <span class="n">workflow</span><span class="o">.</span><span class="n">executions</span><span class="o">.</span><span class="n">trigger</span><span class="p">(</span><span class="n">score</span><span class="p">)</span>
 
 <span class="c1"># wait for execution to complete</span>
-<span class="k">while</span> <span class="n">execution</span><span class="o">.</span><span class="n">status</span><span class="p">()</span><span class="o">.</span><span class="n">in_progress</span><span class="p">:</span>
-    <span class="n">sleep</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">wait_while_executing</span><span class="p">(</span><span class="n">execution</span><span class="p">,</span> <span class="n">print_status_info</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">collection</span><span class="o">=</span><span class="n">workflow</span><span class="o">.</span><span class="n">design_executions</span><span class="p">)</span>
 
 <span class="c1"># retrieve the results</span>
 <span class="n">execution_results</span> <span class="o">=</span> <span class="n">execution</span><span class="o">.</span><span class="n">results</span><span class="p">()</span>
@@ -141,6 +166,89 @@ If the design space contains more than 200 possible materials, only the top 200 
 <span class="c1"># this candidate will be the same as best_candidate above</span>
 <span class="n">candidate_with_max_shear_modulus</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">candidates</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">candidate</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">candidate</span><span class="p">[</span><span class="s1">&#39;Shear modulus&#39;</span><span class="p">]))</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">candidate_with_max_shear_modulus</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In the updated design execution workflow, results are paginated and returned as <a class="reference internal" href="../reference/citrine.informatics.design_candidate.html#citrine.informatics.design_candidate.DesignCandidate" title="citrine.informatics.design_candidate.DesignCandidate"><code class="xref py py-class docutils literal notranslate"><span class="pre">DesignCandidate</span></code></a> objects.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.informatics.objectives</span> <span class="kn">import</span> <span class="n">ScalarMaxObjective</span>
+<span class="kn">from</span> <span class="nn">citrine.informatics.scores</span> <span class="kn">import</span> <span class="n">LIScore</span>
+<span class="kn">from</span> <span class="nn">citrine.jobs.waiting</span> <span class="kn">import</span> <span class="n">wait_while_executing</span>
+
+
+<span class="c1"># create a score with the desired objectives and baselines</span>
+<span class="n">score</span> <span class="o">=</span> <span class="n">LIScore</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Example score&#39;</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Used to rank materials&#39;</span><span class="p">,</span>
+    <span class="c1"># create an objective to maximize shear modulus</span>
+    <span class="c1"># the descriptor key must match a descriptor in materials produced from teh design space</span>
+    <span class="n">objectives</span><span class="o">=</span><span class="p">[</span><span class="n">ScalarMaxObjective</span><span class="p">(</span><span class="n">descriptor_key</span><span class="o">=</span><span class="s1">&#39;Shear modulus&#39;</span><span class="p">)],</span>
+    <span class="n">baselines</span><span class="o">=</span><span class="p">[</span><span class="mf">150.0</span><span class="p">]</span> <span class="c1"># one for each objective</span>
+<span class="p">)</span>
+
+<span class="c1"># trigger a design run using a previously registered and validated workflow</span>
+<span class="n">execution</span> <span class="o">=</span> <span class="n">workflow</span><span class="o">.</span><span class="n">design_executions</span><span class="o">.</span><span class="n">trigger</span><span class="p">(</span><span class="n">score</span><span class="p">)</span>
+
+<span class="c1"># wait for execution to complete</span>
+<span class="n">wait_while_executing</span><span class="p">(</span><span class="n">execution</span><span class="p">,</span> <span class="n">print_status_info</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">collection</span><span class="o">=</span><span class="n">workflow</span><span class="o">.</span><span class="n">design_executions</span><span class="p">)</span>
+
+<span class="c1"># get the candidate generator</span>
+<span class="n">execution_results</span> <span class="o">=</span> <span class="n">execution</span><span class="o">.</span><span class="n">candidates</span><span class="p">()</span>
+
+<span class="c1"># pull out the candidate with the highest shear modulus and its score</span>
+<span class="c1"># (this should be the candidate at the head of the list since we used shear modulus to score and rank materials)</span>
+<span class="c1"># Note that because execution_results is a generator, calling this multiple times will iterate through the generator, getting the next best candidate</span>
+<span class="n">best_candidate</span> <span class="o">=</span> <span class="n">execution_results</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">best_candidate</span><span class="p">)</span>
+<span class="n">best_score</span> <span class="o">=</span> <span class="n">best_candidate</span><span class="o">.</span><span class="n">primary_score</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">best_score</span><span class="p">)</span>
+
+<span class="c1"># Alternatively, you can iterate over the candidates generator, looking at each candidate</span>
+<span class="k">for</span> <span class="n">candidate</span> <span class="ow">in</span> <span class="n">execution</span><span class="o">.</span><span class="n">candidates</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">candidate</span><span class="o">.</span><span class="n">primary_score</span><span class="p">)</span>
+
+<span class="c1"># To save all candidates in memory in one list:</span>
+<span class="n">all_candidates</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">execution</span><span class="o">.</span><span class="n">candidates</span><span class="p">())</span>
+
+<span class="c1"># we can confirm the best candidate is at the head of the list using</span>
+<span class="c1"># this candidate will be the same as best_candidate above</span>
+<span class="n">candidate_with_max_shear_modulus</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">all_candidates</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">candidate</span><span class="p">:</span> <span class="n">candidate</span><span class="o">.</span><span class="n">material</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="s1">&#39;Shear modulus&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">candidate_with_max_shear_modulus</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="design-candidates">
+<h2>4.7.2. Design Candidates<a class="headerlink" href="#design-candidates" title="Permalink to this headline">¶</a></h2>
+<p>A <a class="reference internal" href="../reference/citrine.informatics.design_candidate.html#citrine.informatics.design_candidate.DesignCandidate" title="citrine.informatics.design_candidate.DesignCandidate"><code class="xref py py-class docutils literal notranslate"><span class="pre">DesignCandidate</span></code></a> represents the result of the Design Execution. They contain the <cite>primary score</cite> of the candidate and the <a class="reference internal" href="../reference/citrine.informatics.design_candidate.html#citrine.informatics.design_candidate.DesignMaterial" title="citrine.informatics.design_candidate.DesignMaterial"><code class="xref py py-class docutils literal notranslate"><span class="pre">DesignMaterial</span></code></a> for that candidate. DesignMaterials are simpler approximations (“projections”) of the materials information about a particular design candidate.</p>
+<dl class="simple">
+<dt>DesignMaterials approximate the distribution of values the variable might take. They may be one of:</dt><dd><ul class="simple">
+<li><p><a class="reference internal" href="../reference/citrine.informatics.design_candidate.html#citrine.informatics.design_candidate.MeanAndStd" title="citrine.informatics.design_candidate.MeanAndStd"><code class="xref py py-class docutils literal notranslate"><span class="pre">MeanAndStd</span></code></a></p></li>
+<li><p><a class="reference internal" href="../reference/citrine.informatics.design_candidate.html#citrine.informatics.design_candidate.TopCategories" title="citrine.informatics.design_candidate.TopCategories"><code class="xref py py-class docutils literal notranslate"><span class="pre">TopCategories</span></code></a></p></li>
+<li><p><a class="reference internal" href="../reference/citrine.informatics.design_candidate.html#citrine.informatics.design_candidate.Mixture" title="citrine.informatics.design_candidate.Mixture"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mixture</span></code></a></p></li>
+<li><p><a class="reference internal" href="../reference/citrine.informatics.design_candidate.html#citrine.informatics.design_candidate.ChemicalFormula" title="citrine.informatics.design_candidate.ChemicalFormula"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChemicalFormula</span></code></a></p></li>
+<li><p><a class="reference internal" href="../reference/citrine.informatics.design_candidate.html#citrine.informatics.design_candidate.MolecularStructure" title="citrine.informatics.design_candidate.MolecularStructure"><code class="xref py py-class docutils literal notranslate"><span class="pre">MolecularStructure</span></code></a>.</p></li>
+</ul>
+</dd>
+</dl>
+<p>For example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">candidate</span> <span class="o">=</span> <span class="n">execution</span><span class="o">.</span><span class="n">candidates</span><span class="p">()</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+
+<span class="c1"># to get the score of a particular candidate</span>
+<span class="n">score</span> <span class="o">=</span> <span class="n">candidate</span><span class="o">.</span><span class="n">primary_score</span>
+
+<span class="c1"># A MeanAndStd material will have mean and std</span>
+<span class="n">candidate</span><span class="o">.</span><span class="n">material</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="s1">&#39;mean_and_std_material&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span>
+<span class="n">candidate</span><span class="o">.</span><span class="n">material</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="s1">&#39;mean_and_std_material&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">std</span>
+
+<span class="c1"># A TopCategories material will have the probability map for the most probable categories</span>
+<span class="n">candidate</span><span class="o">.</span><span class="n">material</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="s1">&#39;top_categories_material&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">probabilities</span>
+
+<span class="c1"># A Mixture material will have the most likely quantity values for all of the components in a mixture</span>
+<span class="n">candidate</span><span class="o">.</span><span class="n">material</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="s1">&#39;mixture_material&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">quantities</span>
+
+<span class="c1"># A ChemicalFormula material will have the chemical formula as a string</span>
+<span class="n">candidate</span><span class="o">.</span><span class="n">material</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="s1">&#39;chemical_formula_material&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">formula</span>
+
+<span class="c1"># A MolecularStructure material will have the molecular structure represented by the SMILE string</span>
+<span class="n">candidate</span><span class="o">.</span><span class="n">material</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="s1">&#39;molecular_material&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">smiles</span>
 </pre></div>
 </div>
 </div>

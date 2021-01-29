@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>4.8. Scores &#8212; Citrine Python 0.96.0 documentation</title>
+    <title>4.8. Scores &#8212; Citrine Python 0.98.2 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -44,7 +44,7 @@ Constraints can used to restrict either a design space or descriptor values in d
 There are five constraint types:</p>
 <ul class="simple">
 <li><p><a class="reference internal" href="../reference/citrine.informatics.constraints.scalar_range_constraint.html#citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint" title="citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScalarRangeConstraint</span></code></a> restricts a scalar value between lower and upper bounds.</p></li>
-<li><p><a class="reference internal" href="../reference/citrine.informatics.constraints.categorical_constraint.html#citrine.informatics.constraints.categorical_constraint.CategoricalConstraint" title="citrine.informatics.constraints.categorical_constraint.CategoricalConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">CategoricalConstraint</span></code></a> restricts a descriptor value to a set of acceptable values.</p></li>
+<li><p><a class="reference internal" href="../reference/citrine.informatics.constraints.categorical_constraint.html#citrine.informatics.constraints.categorical_constraint.AcceptableCategoriesConstraint" title="citrine.informatics.constraints.categorical_constraint.AcceptableCategoriesConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">AcceptableCategoriesConstraint</span></code></a> restricts a descriptor value to a set of acceptable values.</p></li>
 <li><p><a class="reference internal" href="../reference/citrine.informatics.constraints.ingredient_count_constraint.html#citrine.informatics.constraints.ingredient_count_constraint.IngredientCountConstraint" title="citrine.informatics.constraints.ingredient_count_constraint.IngredientCountConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientCountConstraint</span></code></a> constrains the total number of ingredients in a formulation, or the total number of ingredients within a labeled class of ingredients.</p></li>
 <li><p><a class="reference internal" href="../reference/citrine.informatics.constraints.ingredient_fraction_constraint.html#citrine.informatics.constraints.ingredient_fraction_constraint.IngredientFractionConstraint" title="citrine.informatics.constraints.ingredient_fraction_constraint.IngredientFractionConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientFractionConstraint</span></code></a> restricts the fractional amount of a formulation ingredient between minimum and maximum bounds.</p></li>
 <li><p><a class="reference internal" href="../reference/citrine.informatics.constraints.label_fraction_constraint.html#citrine.informatics.constraints.label_fraction_constraint.LabelFractionConstraint" title="citrine.informatics.constraints.label_fraction_constraint.LabelFractionConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">LabelFractionConstraint</span></code></a> restricts the total fraction of ingredients with a given label in a formulation between minimum and maximum bounds.</p></li>
@@ -95,6 +95,9 @@ LI scores are bounded by 0 and 1.</p>
 
 <span class="c1"># assuming you have a validated workflow, the score can be used a design run via:</span>
 <span class="n">execution</span> <span class="o">=</span> <span class="n">workflow</span><span class="o">.</span><span class="n">executions</span><span class="o">.</span><span class="n">trigger</span><span class="p">(</span><span class="n">score</span><span class="p">)</span>
+
+<span class="c1"># in the new workflow api, the same score can be used to trigger a design execution via:</span>
+<span class="n">execution</span> <span class="o">=</span> <span class="n">workflow</span><span class="o">.</span><span class="n">design_executions</span><span class="o">.</span><span class="n">trigger</span><span class="p">(</span><span class="n">score</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>

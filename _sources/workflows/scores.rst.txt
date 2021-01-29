@@ -9,7 +9,7 @@ Constraints can used to restrict either a design space or descriptor values in d
 There are five constraint types:
 
 - :class:`~citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint` restricts a scalar value between lower and upper bounds.
-- :class:`~citrine.informatics.constraints.categorical_constraint.CategoricalConstraint` restricts a descriptor value to a set of acceptable values.
+- :class:`~citrine.informatics.constraints.categorical_constraint.AcceptableCategoriesConstraint` restricts a descriptor value to a set of acceptable values.
 - :class:`~citrine.informatics.constraints.ingredient_count_constraint.IngredientCountConstraint` constrains the total number of ingredients in a formulation, or the total number of ingredients within a labeled class of ingredients.
 - :class:`~citrine.informatics.constraints.ingredient_fraction_constraint.IngredientFractionConstraint` restricts the fractional amount of a formulation ingredient between minimum and maximum bounds.
 - :class:`~citrine.informatics.constraints.label_fraction_constraint.LabelFractionConstraint` restricts the total fraction of ingredients with a given label in a formulation between minimum and maximum bounds.
@@ -68,6 +68,10 @@ The following demonstrates how to create an LI score and use it when triggering 
 
    # assuming you have a validated workflow, the score can be used a design run via:
    execution = workflow.executions.trigger(score)
+
+   # in the new workflow api, the same score can be used to trigger a design execution via:
+   execution = workflow.design_executions.trigger(score)
+
 
 Expected value
 ---------------------
