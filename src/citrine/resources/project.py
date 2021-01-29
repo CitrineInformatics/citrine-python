@@ -2,44 +2,47 @@
 from typing import Optional, Dict, List, Union, Iterable, Tuple
 from uuid import UUID
 
-from citrine.resources.predictor_evaluation_execution import PredictorEvaluationExecutionCollection
-from citrine.resources.predictor_evaluation_workflow import PredictorEvaluationWorkflowCollection
-from citrine.resources.design_execution import DesignExecutionCollection
-from citrine.resources.design_workflow import DesignWorkflowCollection
 from deprecation import deprecated
-
-from citrine._session import Session
-from citrine.resources.table_config import TableConfigCollection
-from citrine.resources.descriptors import DescriptorMethods
-from citrine.resources.module import ModuleCollection
-from citrine.resources.design_space import DesignSpaceCollection
-from citrine.resources.processor import ProcessorCollection
-from citrine.resources.predictor import PredictorCollection
-from citrine.resources.response import Response
-from citrine.resources.workflow import WorkflowCollection
-from citrine.resources.dataset import DatasetCollection
-from citrine.resources.condition_template import ConditionTemplateCollection
-from citrine.resources.parameter_template import ParameterTemplateCollection
-from citrine.resources.project_member import ProjectMember
-from citrine.resources.project_roles import MEMBER, ROLES, ACTIONS
-from citrine.resources.property_template import PropertyTemplateCollection
-from citrine.resources.material_template import MaterialTemplateCollection
-from citrine.resources.measurement_template import MeasurementTemplateCollection
-from citrine.resources.process_template import ProcessTemplateCollection
-from citrine.resources.process_run import ProcessRunCollection
-from citrine.resources.process_spec import ProcessSpecCollection
-from citrine.resources.measurement_run import MeasurementRunCollection
-from citrine.resources.measurement_spec import MeasurementSpecCollection
-from citrine.resources.material_run import MaterialRunCollection
-from citrine.resources.material_spec import MaterialSpecCollection
-from citrine.resources.ingredient_run import IngredientRunCollection
-from citrine.resources.ingredient_spec import IngredientSpecCollection
+from gemd.entity.link_by_uid import LinkByUID
 
 from citrine._rest.collection import Collection
 from citrine._rest.resource import Resource
 from citrine._serialization import properties
+from citrine._session import Session
+from citrine.resources.api_error import ApiError
+from citrine.resources.condition_template import ConditionTemplateCollection
+from citrine.resources.dataset import DatasetCollection
+from citrine.resources.descriptors import DescriptorMethods
+from citrine.resources.design_execution import DesignExecutionCollection
+from citrine.resources.design_space import DesignSpaceCollection
+from citrine.resources.design_workflow import DesignWorkflowCollection
 from citrine.resources.gemtables import GemTableCollection
+from citrine.resources.ingredient_run import IngredientRunCollection
+from citrine.resources.ingredient_spec import IngredientSpecCollection
+from citrine.resources.material_run import MaterialRunCollection
+from citrine.resources.material_spec import MaterialSpecCollection
+from citrine.resources.material_template import MaterialTemplateCollection
+from citrine.resources.measurement_run import MeasurementRunCollection
+from citrine.resources.measurement_spec import MeasurementSpecCollection
+from citrine.resources.measurement_template import MeasurementTemplateCollection
+from citrine.resources.module import ModuleCollection
+from citrine.resources.parameter_template import ParameterTemplateCollection
+from citrine.resources.predictor import PredictorCollection
+from citrine.resources.predictor_evaluation_execution import \
+    PredictorEvaluationExecutionCollection
+from citrine.resources.predictor_evaluation_workflow import \
+    PredictorEvaluationWorkflowCollection
+from citrine.resources.process_run import ProcessRunCollection
+from citrine.resources.process_spec import ProcessSpecCollection
+from citrine.resources.process_template import ProcessTemplateCollection
+from citrine.resources.processor import ProcessorCollection
+from citrine.resources.project_member import ProjectMember
+from citrine.resources.project_roles import MEMBER, ROLES, ACTIONS
+from citrine.resources.property_template import PropertyTemplateCollection
+from citrine.resources.response import Response
+from citrine.resources.table_config import TableConfigCollection
 from citrine.resources.user import User
+from citrine.resources.workflow import WorkflowCollection
 
 
 class Project(Resource['Project']):
@@ -429,6 +432,53 @@ class Project(Resource['Project']):
             self._path() + "/users/{}".format(user_uid)
         )
         return True
+
+    def gemd_batch_delete(self, id_list: List[Union[LinkByUID, UUID]]) -> \
+            List[Tuple[LinkByUID, ApiError]]:
+        """
+        Remove a set of GEMD objects.
+
+        You may provide GEMD objects that reference each other, and the objects
+        will be removed in the appripriate order.
+
+        A failure will be returned if the object cannot be deleted due to an external
+        reference.
+
+        You must have Write access on the assoociated datasets for each object.
+
+        Also note that Attribute Templates cannot be deleted at present.
+
+        Parameters
+        ----------
+        id_list: List[Union[LinkByUID, UUID]]
+            A list of the IDs of data objects to be removed. They can be passed either
+            as a LinkByUID tuple, or as a UUID. The latter is assumed to be a Citrine
+            ID, whereas the former can also be used to provide an external ID.
+
+        Returns
+        -------
+        List[Tuple[LinkByUID, ApiError]]
+            A list of (LinkByUID, api_error) for each failure to delete an object.
+            Note that this method doesn't raise an exception if an object fails to be
+            deleted.
+
+        """
+        scoped_uids = []
+        for id in id_list:
+            if isinstance(id, LinkByUID):
+                scoped_uids.append({'scope': id.scope, 'id': id.id})
+            elif isinstance(id, UUID):
+                scoped_uids = {'scope': 'id', 'id': id}
+            else:
+                raise TypeError(
+                    "id_list must contain only LinkByUID or UUIDs entries")
+
+        body = {"ids": scoped_uids}
+
+        response = self.session.post_resource(self._path() + "/gemd/batch-delete", body)
+
+        return [(LinkByUID(f['scope'], f['id']), ApiError.from_dict(f['cause'])) for f in
+                response['failures']]
 
 
 class ProjectCollection(Collection[Project]):
