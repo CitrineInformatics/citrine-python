@@ -69,6 +69,10 @@ The following demonstrates how to create an LI score and use it when triggering 
    # assuming you have a validated workflow, the score can be used a design run via:
    execution = workflow.executions.trigger(score)
 
+   # in the new workflow api, the same score can be used to trigger a design execution via:
+   execution = workflow.design_executions.trigger(score)
+
+
 Expected value
 ---------------------
 
