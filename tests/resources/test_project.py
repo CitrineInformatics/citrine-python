@@ -485,8 +485,10 @@ def test_remove_user(project, session):
 def test_batch_delete(project, session):
     failure_resp = {'failures': [
         {
-            'scope': 'somescope',
-            'id': 'abcd-1234',
+            "id":{
+                'scope': 'somescope',
+                'id': 'abcd-1234'
+            },
             'cause': {
                 "code": 400,
                 "message": "",
