@@ -35,6 +35,8 @@ class GraphPredictor(Serializable['GraphPredictor'], Predictor):
 
     predictors = _properties.List(_properties.Union(
         [_properties.UUID, _properties.Object(Predictor)]), 'config.predictors')
+    # the default seems to be defined in instances, not the class itself
+    # this is tested in test_graph_default_training_data
     training_data = _properties.List(
         _properties.Object(DataSource), 'config.training_data', default=[])
     typ = _properties.String('config.type', default='Graph', deserializable=False)
