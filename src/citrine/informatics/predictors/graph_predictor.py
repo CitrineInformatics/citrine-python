@@ -35,11 +35,11 @@ class GraphPredictor(Serializable['GraphPredictor'], Predictor):
 
     predictors = _properties.List(_properties.Union(
         [_properties.UUID, _properties.Object(Predictor)]), 'config.predictors')
-    training_data = _properties.List(_properties.Object(DataSource), 'config.training_data')
+    # the default seems to be defined in instances, not the class itself
+    # this is tested in test_graph_default_training_data
+    training_data = _properties.List(
+        _properties.Object(DataSource), 'config.training_data', default=[])
     typ = _properties.String('config.type', default='Graph', deserializable=False)
-    # Graph predictors may not be embedded in other predictors, hence while status is optional
-    # for deserializing most predictors, it is required for deserializing a graph
-    status = _properties.String('status', serializable=False)
 
     # NOTE: These could go here or in _post_dump - it's unclear which is better right now
     module_type = _properties.String('module_type', default='PREDICTOR')
