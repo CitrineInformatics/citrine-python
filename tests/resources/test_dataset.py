@@ -106,6 +106,32 @@ def test_register_dataset_with_idempotent_put(collection, session):
     assert name == dataset.name
 
 
+def test_register_dataset_with_existing_id(collection, session):
+    # Given
+    name = 'Test Dataset'
+    summary = 'testing summary'
+    description = 'testing description'
+    session.set_response(DatasetDataFactory(name=name, summary=summary, description=description))
+
+    # When
+    dataset = DatasetFactory(name=name, summary=summary,
+                   description=description)
+
+    ds_uid = UUID('cafebeef-e341-422c-8076-35adc8828545')
+    dataset.uid = ds_uid
+    dataset = collection.register(dataset)
+
+    expected_call = FakeCall(
+        method='PUT',
+        path='projects/{}/datasets/{}'.format(collection.project_id, ds_uid),
+        json={'name': name, 'summary': summary, 'description': description,
+              'id': str(ds_uid)}
+    )
+    assert session.num_calls == 1
+    assert expected_call == session.last_call
+    assert name == dataset.name
+
+
 def test_get_by_unique_name_with_single_result(collection, session):
     # Given
     name = 'Test Dataset'

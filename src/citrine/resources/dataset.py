@@ -359,9 +359,15 @@ class DatasetCollection(Collection[Dataset]):
             # Leverage the create-or-update endpoint if we've got a unique name
             data = self.session.put_resource(path, scrub_none(dumped_dataset))
         else:
-            # Otherwise fall back to using the POST approach (which may fail if the
-            # resource already exists)
-            data = self.session.post_resource(path, scrub_none(dumped_dataset))
+
+            if model.uid is None:
+                # POST to create a new one if a UID is not assigned
+                data = self.session.post_resource(path, scrub_none(dumped_dataset))
+
+            else:
+                # Otherwise PUT to update it
+                data = self.session.put_resource(
+                    self._get_path(model.uid), scrub_none(dumped_dataset))
 
         full_model = self.build(data)
         full_model.project_id = self.project_id
