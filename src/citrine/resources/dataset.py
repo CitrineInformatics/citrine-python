@@ -331,7 +331,10 @@ class DatasetCollection(Collection[Dataset]):
 
     def register(self, model: Dataset) -> Dataset:
         """
-        Create a new element of the collection by registering an existing resource.
+        Create a new dataset in the collection, or update an existing one.
+
+        If the Dataset has an ID present, then we update the existing resource,
+        else we create a new one.
 
         This differs from super().register() in that None fields are scrubbed, and the json
         response is not assumed to come in a dictionary with a single entry 'dataset'.
