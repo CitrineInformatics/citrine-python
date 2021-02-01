@@ -35,7 +35,8 @@ class GraphPredictor(Serializable['GraphPredictor'], Predictor):
 
     predictors = _properties.List(_properties.Union(
         [_properties.UUID, _properties.Object(Predictor)]), 'config.predictors')
-    training_data = _properties.List(_properties.Object(DataSource), 'config.training_data')
+    training_data = _properties.List(
+        _properties.Object(DataSource), 'config.training_data', default=[])
     typ = _properties.String('config.type', default='Graph', deserializable=False)
 
     # NOTE: These could go here or in _post_dump - it's unclear which is better right now
