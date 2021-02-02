@@ -1,7 +1,9 @@
 """Resources that represent both individual and collections of datasets."""
 from collections import defaultdict
-from typing import TypeVar, List, Optional, Iterable
+from typing import TypeVar, List, Optional, Iterable, Union, Tuple
 from uuid import UUID
+
+from gemd.entity.link_by_uid import LinkByUID
 
 from citrine._rest.collection import Collection
 from citrine._rest.resource import Resource
@@ -9,6 +11,7 @@ from citrine._serialization import properties
 from citrine._session import Session
 from citrine._utils.functions import scrub_none
 from citrine.exceptions import NotFound
+from citrine.resources.api_error import ApiError
 from citrine.resources.condition_template import ConditionTemplateCollection
 from citrine.resources.file_link import FileCollection
 from citrine.resources.ingredient_run import IngredientRunCollection
@@ -286,6 +289,40 @@ class Dataset(Resource['Dataset']):
         return self._collection_for(data_concepts_resource) \
             .delete(uid[1], scope=uid[0], dry_run=dry_run)
 
+    def gemd_batch_delete(self, id_list: List[Union[LinkByUID, UUID]]) -> \
+            List[Tuple[LinkByUID, ApiError]]:
+        """
+        Remove a set of GEMD objects.
+
+        You may provide GEMD objects that reference each other, and the objects
+        will be removed in the appripriate order.
+
+        A failure will be returned if the object cannot be deleted due to an external
+        reference.
+
+        All data objects must be associated with this dataset resource. You must also
+        have write access on this dataset.
+
+        Also note that Attribute Templates cannot be deleted at present.
+
+        Parameters
+        ----------
+        id_list: List[Union[LinkByUID, UUID]]
+            A list of the IDs of data objects to be removed. They can be passed either
+            as a LinkByUID tuple, or as a UUID. The latter is assumed to be a Citrine
+            ID, whereas the former can also be used to provide an external ID.
+
+        Returns
+        -------
+        List[Tuple[LinkByUID, ApiError]]
+            A list of (LinkByUID, api_error) for each failure to delete an object.
+            Note that this method doesn't raise an exception if an object fails to be
+            deleted.
+
+        """
+        from citrine.resources.delete import _gemd_batch_delete
+        return _gemd_batch_delete(id_list, self.project_id, self.session, self.uid)
+
 
 class DatasetCollection(Collection[Dataset]):
     """
@@ -331,7 +368,10 @@ class DatasetCollection(Collection[Dataset]):
 
     def register(self, model: Dataset) -> Dataset:
         """
-        Create a new element of the collection by registering an existing resource.
+        Create a new dataset in the collection, or update an existing one.
+
+        If the Dataset has an ID present, then we update the existing resource,
+        else we create a new one.
 
         This differs from super().register() in that None fields are scrubbed, and the json
         response is not assumed to come in a dictionary with a single entry 'dataset'.
@@ -359,9 +399,15 @@ class DatasetCollection(Collection[Dataset]):
             # Leverage the create-or-update endpoint if we've got a unique name
             data = self.session.put_resource(path, scrub_none(dumped_dataset))
         else:
-            # Otherwise fall back to using the POST approach (which may fail if the
-            # resource already exists)
-            data = self.session.post_resource(path, scrub_none(dumped_dataset))
+
+            if model.uid is None:
+                # POST to create a new one if a UID is not assigned
+                data = self.session.post_resource(path, scrub_none(dumped_dataset))
+
+            else:
+                # Otherwise PUT to update it
+                data = self.session.put_resource(
+                    self._get_path(model.uid), scrub_none(dumped_dataset))
 
         full_model = self.build(data)
         full_model.project_id = self.project_id
