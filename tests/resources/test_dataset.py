@@ -1,12 +1,15 @@
+import uuid
 from os.path import basename
 from uuid import UUID, uuid4
 
 import pytest
 from gemd.entity.bounds.integer_bounds import IntegerBounds
+from gemd.entity.link_by_uid import LinkByUID
 from gemd.entity.object.material_spec import MaterialSpec as GemdMaterialSpec
 from gemd.entity.object.process_spec import ProcessSpec as GemdProcessSpec
 
 from citrine.exceptions import PollingTimeoutError, JobFailureError, NotFound
+from citrine.resources.api_error import ApiError, ValidationError
 from citrine.resources.condition_template import ConditionTemplateCollection, ConditionTemplate
 from citrine.resources.dataset import DatasetCollection
 from citrine.resources.ingredient_run import IngredientRun, IngredientRunCollection
@@ -563,3 +566,63 @@ def test_delete_missing_uid(dataset):
     obj = MaterialTemplate("foo")
     with pytest.raises(ValueError):
         dataset.delete(obj)
+
+def test_batch_delete(dataset):
+    failure_resp = {'failures': [
+        {
+            "id":{
+                'scope': 'somescope',
+                'id': 'abcd-1234'
+            },
+            'cause': {
+                "code": 400,
+                "message": "",
+                "validation_errors": [
+                    {
+                        "failure_message": "fail msg",
+                        "failure_id": "identifier.coreid.missing"
+                    }
+                ]
+            }
+        }
+    ]}
+
+    session = dataset.session
+    session.set_responses(failure_resp, failure_resp)
+
+    # When
+    del_resp = dataset.gemd_batch_delete([uuid.UUID(
+        '16fd2706-8baf-433b-82eb-8c7fada847da')])
+
+    # Then
+    assert 1 == session.num_calls
+    expect_call = FakeCall(
+        method="POST",
+        path="/projects/{}/gemd/batch-delete".format(dataset.project_id)
+    )
+    assert expect_call.method == session.last_call.method
+    assert expect_call.path == session.last_call.path
+
+    assert len(del_resp) == 1
+    first_failure = del_resp[0]
+
+    expected_api_error = ApiError(400, "",
+                                  validation_errors=[ValidationError(
+                                      failure_message="fail msg",
+                                      failure_id="identifier.coreid.missing")])
+
+
+    assert first_failure == (LinkByUID('somescope', 'abcd-1234'), expected_api_error)
+
+    # And again with tuples of (scope, id)
+    del_resp = dataset.gemd_batch_delete([LinkByUID('id',
+                                                    '16fd2706-8baf-433b-82eb-8c7fada847da')])
+    assert len(del_resp) == 1
+    first_failure = del_resp[0]
+
+    assert first_failure == (LinkByUID('somescope', 'abcd-1234'), expected_api_error)
+
+
+def test_batch_delete_bad_input(dataset):
+    with pytest.raises(TypeError):
+        dataset.gemd_batch_delete(['hiya!'])
