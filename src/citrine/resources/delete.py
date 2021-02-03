@@ -66,6 +66,5 @@ def _gemd_batch_delete(
     path = '/projects/{project_id}/gemd/batch-delete'.format(**{"project_id": project_id})
     response = session.post_resource(path, body)
 
-    return [(LinkByUID(f['id']['scope'], f['id']['id']),
-             ApiError.from_dict(f['cause'])) for f in
-            response['failures']]
+    return [(LinkByUID(f['id']['scope'], f['id']['id']), ApiError.from_dict(f['cause']))
+            for f in response['failures']]
