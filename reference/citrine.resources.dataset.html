@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>citrine.resources.dataset module &#8212; Citrine Python 0.98.2 documentation</title>
+    <title>citrine.resources.dataset module &#8212; Citrine Python 0.99.0 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -197,6 +197,34 @@ and delete objects in the dataset.</p>
 <dt id="citrine.resources.dataset.Dataset.files">
 <em class="property">property </em><code class="sig-name descname">files</code><a class="headerlink" href="#citrine.resources.dataset.Dataset.files" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a resource representing all files in the dataset.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="citrine.resources.dataset.Dataset.gemd_batch_delete">
+<code class="sig-name descname">gemd_batch_delete</code><span class="sig-paren">(</span><em class="sig-param">id_list: List[Union[gemd.entity.link_by_uid.LinkByUID, uuid.UUID]]</em><span class="sig-paren">)</span> &#x2192; List[Tuple[gemd.entity.link_by_uid.LinkByUID, citrine.resources.api_error.ApiError]]<a class="headerlink" href="#citrine.resources.dataset.Dataset.gemd_batch_delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove a set of GEMD objects.</p>
+<p>You may provide GEMD objects that reference each other, and the objects
+will be removed in the appripriate order.</p>
+<p>A failure will be returned if the object cannot be deleted due to an external
+reference.</p>
+<p>All data objects must be associated with this dataset resource. You must also
+have write access on this dataset.</p>
+<p>Also note that Attribute Templates cannot be deleted at present.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>id_list</strong> (<em>List</em><em>[</em><em>Union</em><em>[</em><em>LinkByUID</em><em>, </em><em>UUID</em><em>]</em><em>]</em>) – A list of the IDs of data objects to be removed. They can be passed either
+as a LinkByUID tuple, or as a UUID. The latter is assumed to be a Citrine
+ID, whereas the former can also be used to provide an external ID.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A list of (LinkByUID, api_error) for each failure to delete an object.
+Note that this method doesn’t raise an exception if an object fails to be
+deleted.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>List[Tuple[LinkByUID, <a class="reference internal" href="citrine.resources.api_error.html#citrine.resources.api_error.ApiError" title="citrine.resources.api_error.ApiError">ApiError</a>]]</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -415,7 +443,9 @@ is specified it limits the maximum number of elements in the response.</p></li>
 <dl class="method">
 <dt id="citrine.resources.dataset.DatasetCollection.register">
 <code class="sig-name descname">register</code><span class="sig-paren">(</span><em class="sig-param">model: citrine.resources.dataset.Dataset</em><span class="sig-paren">)</span> &#x2192; citrine.resources.dataset.Dataset<a class="headerlink" href="#citrine.resources.dataset.DatasetCollection.register" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create a new element of the collection by registering an existing resource.</p>
+<dd><p>Create a new dataset in the collection, or update an existing one.</p>
+<p>If the Dataset has an ID present, then we update the existing resource,
+else we create a new one.</p>
 <p>This differs from super().register() in that None fields are scrubbed, and the json
 response is not assumed to come in a dictionary with a single entry ‘dataset’.
 Both of these behaviors are in contrast to the behavior of projects. Eventually they

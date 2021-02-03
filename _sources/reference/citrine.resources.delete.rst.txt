@@ -1,0 +1,7 @@
+citrine.resources.delete module
+===============================
+
+.. automodule:: citrine.resources.delete
+   :members:
+   :undoc-members:
+   :show-inheritance:
