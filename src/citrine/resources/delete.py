@@ -17,7 +17,7 @@ def _gemd_batch_delete(
     Shared implementation of GEMD Batch deletion.
 
     You may provide GEMD objects that reference each other, and the objects
-    will be removed in the appripriate order.
+    will be removed in the appropriate order.
 
     A failure will be returned if the object cannot be deleted due to an external
     reference.
