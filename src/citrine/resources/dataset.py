@@ -321,7 +321,7 @@ class Dataset(Resource['Dataset']):
 
         """
         from citrine.resources.delete import _gemd_batch_delete
-        return _gemd_batch_delete(id_list, self.project_id, self.session, str(self.uid))
+        return _gemd_batch_delete(id_list, self.project_id, self.session, self.uid)
 
 
 class DatasetCollection(Collection[Dataset]):
