@@ -167,7 +167,7 @@ Citrine-python currently supports the following operators and functions:
 - basic operators: addition `+`, subtraction `-`, multiplication `*`, division `/`, exponentiation `^`
 - built-in math functions:
 
-  - trigonometric: `sin`, `cos`, `tan`, `asin`, `acos`, `atan`
+  - trigonometric (input in radians): `sin`, `cos`, `tan`, `asin`, `acos`, `atan`
   - hyperbolic: `sinh`, `cosh`, `tanh`
   - logarithm: `log10`, `ln`
   - exponential: `exp`
