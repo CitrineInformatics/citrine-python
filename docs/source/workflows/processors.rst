@@ -34,7 +34,7 @@ The following demonstrates how to create an enumerated processor that takes up t
    from citrine.informatics.processors import EnumeratedProcessor
 
    # create a session with citrine using API variables
-   session = Citrine(API_KEY, API_SCHEME, API_HOST, API_PORT)
+   session = Citrine(api_key=API_KEY)
 
    project = session.projects.register('Example project')
 
@@ -84,8 +84,8 @@ a 2D design space of enumerated x values and continuous y values:
 
    # enumerate x and create a continuous dimension for y
    # note the upper bound on y is lower than that of the descriptor to restrict the search domain
-   x_dim = EnumeratedDimension(x, ['0', '5', '10'])
-   y_dim = ContinuousDimension(y, lower_bound=0, upper_bound=10)
+   x_dim = EnumeratedDimension(descriptor=x, values=['0', '5', '10'])
+   y_dim = ContinuousDimension(descriptor=y, lower_bound=0, upper_bound=10)
 
    # create a design space from x and y dimensions
    design_space = ProductDesignSpace(

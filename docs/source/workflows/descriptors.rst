@@ -99,7 +99,7 @@ The descriptors can then be associated with the names from that namespace.
    ))
 
    # create a PlatformVocabulary from the templates
-   pv = PlatformVocabulary.from_templates(project, "my_templates")
+   pv = PlatformVocabulary.from_templates(project=project, scope="my_templates")
 
    # see the terms in the platform vocabulary
    print(list(pv))

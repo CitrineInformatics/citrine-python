@@ -93,7 +93,7 @@ An enumerated dimension of two temperatures, for example, can be specified using
    from citrine.informatics.dimensions import EnumeratedDimension
 
    descriptor = RealDescriptor(key='Temperature', lower_bound=273, upper_bound=1000, units='K')
-   dimension = EnumeratedDimension(descriptor, values=['300', '400'])
+   dimension = EnumeratedDimension(descriptor=descriptor, values=['300', '400'])
 
 Continuous ranges of values are defined using a :class:`~citrine.informatics.dimensions.ContinuousDimension`.
 Upper and lower bounds define the range of values we wish to uniformly sample from.
@@ -140,10 +140,10 @@ And temperature is described by a continuous dimension.
     enumerated_space_uid = enumerated_space_registered.uid
 
     temp_descriptor = RealDescriptor(key='Temperature', lower_bound=273, upper_bound=1000, units='K')
-    temp_dimension = ContinuousDimension(temp_descriptor, lower_bound=300, upper_bound=400)
+    temp_dimension = ContinuousDimension(descriptor=temp_descriptor, lower_bound=300, upper_bound=400)
 
     speed_descriptor = CategoricalDescriptor(key='Mixing Speed', categories=["Slow", "Medium", "Fast"])
-    speed_dimension = EnumeratedDimension(speed_descriptor, values=["Slow", "Fast"])
+    speed_dimension = EnumeratedDimension(descriptor=speed_descriptor, values=["Slow", "Fast"])
 
     product_space = ProductDesignSpace(
         name="Mix 2 pigments at some speed and temperature",
@@ -256,7 +256,7 @@ We will require that formulations contain 2 ingredients, that no more than 1 sol
   from citrine.informatics.constraints import IngredientCountConstraint, IngredientFractionConstraint
 
   # define a descriptor to store formulations
-  descriptor = FormulationDescriptor("saline solution")
+  descriptor = FormulationDescriptor(key="saline solution")
 
   # set of unique ingredient names
   ingredients = {"water", "salt", "boric acid"}
