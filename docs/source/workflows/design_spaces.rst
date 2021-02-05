@@ -269,9 +269,9 @@ We will require that formulations contain 2 ingredients, that no more than 1 sol
 
   # constraints on formulations emitted from the design space
   constraints = {
-    IngredientCountConstraint(descriptor, min=2, max=2),
-    IngredientCountConstraint(descriptor, label="solute", min=1, max=1),
-    IngredientFractionConstraint(descriptor, ingredient="water", min=0.95, max=0.99)
+    IngredientCountConstraint(formulation_descriptor=descriptor, min=2, max=2),
+    IngredientCountConstraint(formulation_descriptor=descriptor, label="solute", min=1, max=1),
+    IngredientFractionConstraint(formulation_descriptor=descriptor, ingredient="water", min=0.95, max=0.99)
   }
 
   design_space = FormulationDesignSpace(
