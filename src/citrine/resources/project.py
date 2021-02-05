@@ -13,7 +13,6 @@ from citrine.resources.api_error import ApiError
 from citrine.resources.condition_template import ConditionTemplateCollection
 from citrine.resources.dataset import DatasetCollection
 from citrine.resources.descriptors import DescriptorMethods
-from citrine.resources.design_execution import DesignExecutionCollection
 from citrine.resources.design_space import DesignSpaceCollection
 from citrine.resources.design_workflow import DesignWorkflowCollection
 from citrine.resources.gemtables import GemTableCollection
@@ -138,11 +137,6 @@ class Project(Resource['Project']):
     def design_workflows(self) -> DesignWorkflowCollection:
         """[ALPHA] Return a collection representing all visible design workflows."""
         return DesignWorkflowCollection(self.uid, self.session)
-
-    @property
-    def design_executions(self) -> DesignExecutionCollection:
-        """[ALPHA] Return a collection representing all visible predictor evaluation executions."""
-        return DesignExecutionCollection(project_id=self.uid, session=self.session)
 
     @property
     def datasets(self) -> DatasetCollection:
