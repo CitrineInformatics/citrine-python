@@ -42,9 +42,9 @@ That file could be used as the training data for a predictor as:
         # `column_definitions` maps a column header to a descriptor
         # the column header and the descriptor key do not need to be identical
         column_definitions = {
-            "Chemical Formula": ChemicalFormulaDescriptor("formula"),
-            "Gap": RealDescriptor("Band gap", lower_bound=0, upper_bound=20, units="eV"),
-            "Crystallinity": CategoricalDescriptor("Crystallinity", categories=[
+            "Chemical Formula": ChemicalFormulaDescriptor(key="formula"),
+            "Gap": RealDescriptor(key="Band gap", lower_bound=0, upper_bound=20, units="eV"),
+            "Crystallinity": CategoricalDescriptor(key="Crystallinity", categories=[
                 "Single crystalline", "Amorphous", "Polycrystalline"])
         }
     )
@@ -107,11 +107,11 @@ A CSV data source and :class:`~citrine.informatics.predictors.ingredients_to_sim
     file_link = dataset.files.upload("./saline_solutions.csv", "saline_solutions.csv")
 
     # create descriptors for each ingredient quantity (volume fraction)
-    water_quantity = RealDescriptor('water quantity', 0, 1, units="")
-    salt_quantity = RealDescriptor('salt quantity', 0, 1, units="")
+    water_quantity = RealDescriptor(key='water quantity', lower_bound=0, upper_bound=1, units="")
+    salt_quantity = RealDescriptor(key='salt quantity', lower_bound=0, upper_bound=1, units="")
 
     # create a descriptor to hold density data
-    density = RealDescriptor('density', lower_bound=0, upper_bound=1000, units='g/cc')
+    density = RealDescriptor(key='density', lower_bound=0, upper_bound=1000, units='g/cc')
 
     data_source = CSVDataSource(
         file_link = file_link,
@@ -124,7 +124,7 @@ A CSV data source and :class:`~citrine.informatics.predictors.ingredients_to_sim
     )
 
     # create a descriptor to hold simple mixtures
-    formulation = FormulationDescriptor('simple mixture')
+    formulation = FormulationDescriptor(key='simple mixture')
 
     IngredientsToSimpleMixturePredictor(
         name='Ingredients to simple mixture predictor',

@@ -64,9 +64,9 @@ Assume that there is a training data table with known id and version.
     from citrine.informatics.data_sources import GemTableDataSource
 
     # create input descriptors
-    x = RealDescriptor('x', lower_bound=0, upper_bound=10, units='')
-    y = RealDescriptor('y', lower_bound=0, upper_bound=10, units='')
-    z = RealDescriptor('z', lower_bound=0, upper_bound=10, units='')
+    x = RealDescriptor(key='x', lower_bound=0, upper_bound=10, units='')
+    y = RealDescriptor(key='y', lower_bound=0, upper_bound=10, units='')
+    z = RealDescriptor(key='z', lower_bound=0, upper_bound=10, units='')
 
     # register a predictor with a project
     predictor = project.predictors.register(

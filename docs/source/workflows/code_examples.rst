@@ -50,9 +50,9 @@ This pattern is also extremely useful for performing optimization over complex o
     #    descriptors=[...descriptors above...])
 
     dough_hydration = RealDescriptor(
-        'dough hydration', lower_bound=0, upper_bound=1, units="")
+        key='dough hydration', lower_bound=0, upper_bound=1, units="")
     shelf_life = RealDescriptor(
-        'approximate shelf life', lower_bound=0, upper_bound=72, units="day")
+        key='approximate shelf life', lower_bound=0, upper_bound=72, units="day")
 
     dough_hydration_calculator = ExpressionPredictor(
         name = 'dough hydration calculator',
