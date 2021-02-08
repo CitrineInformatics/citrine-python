@@ -463,23 +463,8 @@ class Project(Resource['Project']):
             deleted.
 
         """
-        scoped_uids = []
-        for id in id_list:
-            if isinstance(id, LinkByUID):
-                scoped_uids.append({'scope': id.scope, 'id': id.id})
-            elif isinstance(id, UUID):
-                scoped_uids = {'scope': 'id', 'id': id}
-            else:
-                raise TypeError(
-                    "id_list must contain only LinkByUID or UUIDs entries")
-
-        body = {"ids": scoped_uids}
-
-        response = self.session.post_resource(self._path() + "/gemd/batch-delete", body)
-
-        return [(LinkByUID(f['id']['scope'], f['id']['id']),
-                 ApiError.from_dict(f['cause'])) for f in
-                response['failures']]
+        from citrine.resources.delete import _gemd_batch_delete
+        return _gemd_batch_delete(id_list, self.uid, self.session, None)
 
 
 class ProjectCollection(Collection[Project]):

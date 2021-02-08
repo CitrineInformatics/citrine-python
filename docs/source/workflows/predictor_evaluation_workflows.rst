@@ -147,11 +147,11 @@ The predictor we'll evaluate is defined below:
     from citrine.informatics.descriptors import RealDescriptor
     from citrine.informatics.predictors import SimpleMLPredictor
 
-    x = RealDescriptor('x', lower_bound=0.0, upper_bound=1.0, units='')
-    y = RealDescriptor('y', lower_bound=0.0, upper_bound=1.0, units='')
+    x = RealDescriptor(key='x', lower_bound=0.0, upper_bound=1.0, units='')
+    y = RealDescriptor(key='y', lower_bound=0.0, upper_bound=1.0, units='')
 
     data_source = CSVDataSource(
-        filename, # path to CSV that contains training data for x and y
+        file_link=file, # path to CSV that contains training data for x and y
         column_definitions={'x': x, 'y': y}
     )
 
@@ -175,12 +175,11 @@ Next, create a project and register the predictor:
     from citrine.jobs.waiting import wait_while_validating
     from citrine.seeding.find_or_create import find_or_create_project
 
-    api_key = os.environ.get('CITRINE_API_KEY')
-    client = Citrine(api_key)
-    project = find_or_create_project(client.projects, 'example project')
+    client = Citrine(api_key=os.environ.get('CITRINE_API_KEY'))
+    project = find_or_create_project(project_collection=client.projects, project_name='example project')
 
     predictor = project.predictors.register(predictor)
-    wait_while_validating(project.predictors, predictor)
+    wait_while_validating(collection=project.predictors, module=predictor)
 
 In this example we'll create a cross-validation evaluator for the response ``y`` with 8 folds and 3 trials and request metrics for root-mean square error (:class:`~citrine.informatics.predictor_evaluation_metrics.RMSE`) and predicted vs. actual data (:class:`~citrine.informatics.predictor_evaluation_metrics.PVA`).
 
@@ -212,7 +211,7 @@ Then add the evaluator to a :class:`~citrine.informatics.workflows.predictor_eva
     )
 
     workflow = project.predictor_evaluation_workflows.register(workflow)
-    wait_while_validating(project.predictor_evaluation_workflows, workflow)
+    wait_while_validating(collection=project.predictor_evaluation_workflows, module=workflow)
 
 Trigger the workflow against a predictor to start an execution.
 Then wait for the results to be ready:
