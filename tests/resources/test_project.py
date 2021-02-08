@@ -226,10 +226,6 @@ def test_design_workflows_get_project_id(project):
     assert project.uid == project.design_workflows.project_id
 
 
-def test_design_executions_get_project_id(project):
-    assert project.uid == project.design_executions.project_id
-
-
 def test_ara_definitions_get_project_id(project):
     assert project.uid == project.table_configs.project_id
 
