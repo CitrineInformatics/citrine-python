@@ -6,7 +6,7 @@ from citrine.informatics.constraints import ScalarRangeConstraint, CategoricalCo
 from citrine.informatics.design_spaces import ProductDesignSpace, EnumeratedDesignSpace, FormulationDesignSpace
 from citrine.informatics.objectives import ScalarMaxObjective, ScalarMinObjective
 from citrine.informatics.processors import GridProcessor, EnumeratedProcessor
-from citrine.informatics.scores import LIScore, EIScore
+from citrine.informatics.scores import LIScore, EIScore, EVScore
 from citrine.informatics.reports import ModelSummary, FeatureImportanceReport
 
 informatics_string_data = [
@@ -43,8 +43,9 @@ informatics_string_data = [
     (ScalarMinObjective('z'), "<ScalarMinObjective 'z'>"),
     (GridProcessor('my thing', 'does a thing', dict(x=1)), "<GridProcessor 'my thing'>"),
     (EnumeratedProcessor('my enumerated thing', 'enumerates', 10), "<EnumeratedProcessor 'my enumerated thing'>"),
-    (LIScore("LI(z)", "score for z", [], []), "<LIScore 'LI(z)'>"),
-    (EIScore("EI(x)", "score for x", [], [], []), "<EIScore 'EI(x)'>"),
+    (LIScore(objectives=[], baselines=[]), "<LIScore>"),
+    (EIScore(objectives=[], baselines=[], constraints=[]), "<EIScore>"),
+    (EVScore(objectives=[], constraints=[]), "<EVScore>"),
     (FeatureImportanceReport("reflectivity", {}), "<FeatureImportanceReport 'reflectivity'>"),
     (ModelSummary("my model", "ML Model", [], [], {}, [], "predictor name"), "<ModelSummary 'my model'>"),
 ]
