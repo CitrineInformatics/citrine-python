@@ -1,4 +1,5 @@
 """Tools for working with Scores."""
+import warnings
 from typing import List, Optional
 
 from citrine._serialization import properties
@@ -16,8 +17,10 @@ class Score(PolymorphicSerializable['Score']):
 
     Abstract type that returns the proper type given a serialized dict.
 
-
     """
+
+    _name = properties.String('name')
+    _description = properties.String('description')
 
     @classmethod
     def get_type(cls, data):
@@ -28,16 +31,26 @@ class Score(PolymorphicSerializable['Score']):
             'MEV': EVScore
         }[data['type']]
 
+    @property
+    def name(self):
+        """Getter for the score's name."""
+        msg = "Getting the Score's name is deprecated."
+        warnings.warn(msg, category=DeprecationWarning)
+        return self._name
+
+    @property
+    def description(self):
+        """Getter for the score's description."""
+        msg = "Getting the Score's description is deprecated."
+        warnings.warn(msg, category=DeprecationWarning)
+        return self._description
+
 
 class LIScore(Serializable['LIScore'], Score):
     """[ALPHA] Evaluates the likelihood of scoring better than some baselines for given objectives.
 
     Parameters
     ----------
-    name: str
-        the name of the score
-    description: str
-        the description of the score
     objectives: list[Objective]
         objectives (e.g., maximize, minimize, tune, etc.)
     baselines: list[float]
@@ -47,29 +60,39 @@ class LIScore(Serializable['LIScore'], Score):
 
     """
 
-    name = properties.String('name')
-    description = properties.String('description')
     baselines = properties.List(properties.Float, 'baselines')
     objectives = properties.List(properties.Object(Objective), 'objectives')
     constraints = properties.List(properties.Object(Constraint), 'constraints')
     typ = properties.String('type', default='MLI')
 
-    def __init__(self,
-                 name: str,
-                 description: str,
+    def __init__(self, *,
+                 name: Optional[str] = None,
+                 description: Optional[str] = None,
                  objectives: List[Objective],
                  baselines: List[float],
                  constraints: Optional[List[Constraint]] = None,
                  session: Optional[Session] = None):
-        self.name: str = name
-        self.description: str = description
         self.objectives: List[Objective] = objectives
         self.baselines: List[float] = baselines
         self.constraints: List[Constraint] = constraints or []
         self.session: Optional[Session] = session
 
+        if name is not None:
+            msg = "Naming of Scores is deprecated.  Please do not define the name."
+            warnings.warn(msg, category=DeprecationWarning)
+            self._name = name
+        else:
+            self._name = "Likelihood of Improvement"
+
+        if description is not None:
+            msg = "Describing Scores is deprecated.  Please do not define the description."
+            warnings.warn(msg, category=DeprecationWarning)
+            self._description: str = description
+        else:
+            self._description = ""
+
     def __str__(self):
-        return '<LIScore {!r}>'.format(self.name)
+        return '<LIScore>'
 
 
 class EIScore(Serializable['EIScore'], Score):
@@ -78,10 +101,6 @@ class EIScore(Serializable['EIScore'], Score):
 
     Parameters
     ----------
-    name: str
-        the name of the score
-    description: str
-        the description of the score
     objectives: list[Objective]
         objectives (e.g., maximize, minimize, tune, etc.)
     baselines: list[float]
@@ -91,29 +110,39 @@ class EIScore(Serializable['EIScore'], Score):
 
     """
 
-    name = properties.String('name')
-    description = properties.String('description')
     baselines = properties.List(properties.Float, 'baselines')
     objectives = properties.List(properties.Object(Objective), 'objectives')
     constraints = properties.List(properties.Object(Constraint), 'constraints')
     typ = properties.String('type', default='MEI')
 
-    def __init__(self,
-                 name: str,
-                 description: str,
+    def __init__(self, *,
+                 name: Optional[str] = None,
+                 description: Optional[str] = None,
                  objectives: List[Objective],
                  baselines: List[float],
                  constraints: Optional[List[Constraint]] = None,
                  session: Optional[Session] = None):
-        self.name: str = name
-        self.description: str = description
         self.objectives: List[Objective] = objectives
         self.baselines: List[float] = baselines
         self.constraints: List[Constraint] = constraints or []
         self.session: Optional[Session] = session
 
+        if name is not None:
+            msg = "Naming of Scores is deprecated.  Please do not define the name."
+            warnings.warn(msg, category=DeprecationWarning)
+            self._name = name
+        else:
+            self._name = "Expected Improvement"
+
+        if description is not None:
+            msg = "Describing Scores is deprecated.  Please do not define the description."
+            warnings.warn(msg, category=DeprecationWarning)
+            self._description: str = description
+        else:
+            self._description = ""
+
     def __str__(self):
-        return '<EIScore {!r}>'.format(self.name)
+        return '<EIScore>'
 
 
 class EVScore(Serializable['EVScore'], Score):
@@ -122,10 +151,6 @@ class EVScore(Serializable['EVScore'], Score):
 
     Parameters
     ----------
-    name: str
-        the name of the score
-    description: str
-        the description of the score
     objectives: list[Objective]
         objectives (e.g., maximize, minimize, tune, etc.)
     constraints: list[Constraint]
@@ -133,23 +158,33 @@ class EVScore(Serializable['EVScore'], Score):
 
     """
 
-    name = properties.String('name')
-    description = properties.String('description')
     objectives = properties.List(properties.Object(Objective), 'objectives')
     constraints = properties.List(properties.Object(Constraint), 'constraints')
     typ = properties.String('type', default='MEV')
 
-    def __init__(self,
-                 name: str,
-                 description: str,
+    def __init__(self, *,
+                 name: Optional[str] = None,
+                 description: Optional[str] = None,
                  objectives: List[Objective],
                  constraints: Optional[List[Constraint]] = None,
                  session: Optional[Session] = None):
-        self.name: str = name
-        self.description: str = description
         self.objectives: List[Objective] = objectives
         self.constraints: List[Constraint] = constraints or []
         self.session: Optional[Session] = session
 
+        if name is not None:
+            msg = "Naming of Scores is deprecated.  Please do not define the name."
+            warnings.warn(msg, category=DeprecationWarning)
+            self._name = name
+        else:
+            self._name = "Expected Value"
+
+        if description is not None:
+            msg = "Describing Scores is deprecated.  Please do not define the description."
+            warnings.warn(msg, category=DeprecationWarning)
+            self._description: str = description
+        else:
+            self._description = ""
+
     def __str__(self):
-        return '<EVScore {!r}>'.format(self.name)
+        return '<EVScore>'

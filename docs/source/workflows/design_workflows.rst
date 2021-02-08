@@ -114,8 +114,6 @@ The following demonstrates how to trigger workflow execution, wait for the desig
 
     # create a score with the desired objectives and baselines
     score = LIScore(
-        name='Example score',
-        description='Used to rank materials',
         # create an objective to maximize shear modulus
         # the descriptor key must match a descriptor in materials produced from teh design space
         objectives=[ScalarMaxObjective(descriptor_key='Shear modulus')],
@@ -158,8 +156,6 @@ In the updated design execution workflow, results are paginated and returned as 
 
     # create a score with the desired objectives and baselines
     score = LIScore(
-        name='Example score',
-        description='Used to rank materials',
         # create an objective to maximize shear modulus
         # the descriptor key must match a descriptor in materials produced from teh design space
         objectives=[ScalarMaxObjective(descriptor_key='Shear modulus')],

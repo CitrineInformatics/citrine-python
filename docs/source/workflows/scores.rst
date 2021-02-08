@@ -60,8 +60,6 @@ The following demonstrates how to create an LI score and use it when triggering 
 
    # Create an LI score from the objective and baseline
    score = LIScore(
-       name='LI(Shear modulus)',
-       description='Experimental design score for shear modulus',
        objectives=[objective],
        baselines=[150.0]
    )
