@@ -351,7 +351,10 @@ class TableConfigCollection(Collection[TableConfig]):
         if description is not None:
             params['description'] = description
         if algorithm is not None:
-            params['algorithm'] = algorithm
+            if isinstance(algorithm, TableBuildAlgorithm):
+                params['algorithm'] = algorithm.value
+            else:  # Not per spec, but be forgiving
+                params['algorithm'] = str(algorithm)
         data = self.session.get_resource(
             'projects/{}/table-configs/default'.format(self.project_id),
             params=params,
