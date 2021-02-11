@@ -28,6 +28,8 @@ class WorkflowCollection(Collection[Workflow]):
     _resource = Workflow
 
     def __init__(self, project_id: UUID, session: Session):
+        warn("{this_class} is deprecated. Please use {dw_replacement} instead for Design Workflows and {pew_replacement} for Predictor Evaludation Workflows".format(
+            this_class=self.__class__.name, dw_replacement=DesignWorkflowCollection.__name__, pew_replacement=Predictor_Evaluation_Workflow.__name__))
         self.project_id = project_id
         self.session: Session = session
 

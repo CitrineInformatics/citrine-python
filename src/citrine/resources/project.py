@@ -119,6 +119,7 @@ class Project(Resource['Project']):
         return DescriptorMethods(self.uid, self.session)
 
     @property
+    @deprecated(deprecated_in="0.101.0", details="Use design_workflows or predictor_evaluation_workflows instead")
     def workflows(self) -> WorkflowCollection:
         """Return a resource representing all visible workflows."""
         return WorkflowCollection(self.uid, self.session)

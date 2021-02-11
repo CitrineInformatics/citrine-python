@@ -12,6 +12,8 @@ from citrine._session import Session
 from citrine.informatics.design_candidate import DesignCandidate
 from citrine.informatics.modules import ModuleRef
 from citrine.informatics.scores import Score
+from citrine.resources.design_execution import DesignExecutionCollection
+from citrine.resources.design_execution import DesignExecution
 
 
 class WorkflowExecution(Resource['WorkflowExecution'], Pageable):
@@ -47,6 +49,8 @@ class WorkflowExecution(Resource['WorkflowExecution'], Pageable):
                  session: Optional[Session] = None,
                  version_number: Optional[int] = None,
                  ):
+        warn("{this_class} is deprecated. Please use {replacement} instead".format(
+            this_class=self.__class__.name, replacement=DesignExecution.__name__))
         self.uid: str = uid
         self.project_id: str = project_id
         self.workflow_id: str = workflow_id
@@ -112,6 +116,9 @@ class WorkflowExecutionCollection(Collection[WorkflowExecution]):
 
     def __init__(self, project_id: UUID, workflow_id: Optional[UUID],
                  session: Optional[Session] = None):
+        warn("{this_class} is deprecated. Please use {replacement} instead".format(
+            this_class=self.__class__.name, replacement=DesignExecutionCollection.__name__))
+        self.project_id = project_id
         self.project_id: UUID = project_id
         self.workflow_id: Optional[UUID] = workflow_id
         self.session: Optional[Session] = session

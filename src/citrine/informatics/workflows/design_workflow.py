@@ -108,6 +108,8 @@ class DesignWorkflow(Resource['DesignWorkflow'], Workflow):
     @property
     def executions(self) -> WorkflowExecutionCollection:
         """Return a resource representing all visible executions of this workflow."""
+        msg = "Using executions is deprecated, use design_executions instead."
+        warnings.warn(msg, category=DeprecationWarning)
         if getattr(self, 'project_id', None) is None:
             raise AttributeError('Cannot initialize execution without project reference!')
         return WorkflowExecutionCollection(self.project_id, self.uid, self.session)
