@@ -2,8 +2,11 @@
 from itertools import chain
 from uuid import UUID
 from typing import TypeVar, Optional, Callable, Tuple
+from warnings import warn
 
 from citrine.informatics.workflows import Workflow
+from citrine.resources.design_workflow import DesignWorkflowCollection
+from citrine.resources.predictor_evaluation_workflow import PredictorEvaluationWorkflowCollection
 from typing import Iterable
 
 from citrine._rest.collection import Collection
@@ -28,8 +31,12 @@ class WorkflowCollection(Collection[Workflow]):
     _resource = Workflow
 
     def __init__(self, project_id: UUID, session: Session):
-        warn("{this_class} is deprecated. Please use {dw_replacement} instead for Design Workflows and {pew_replacement} for Predictor Evaludation Workflows".format(
-            this_class=self.__class__.name, dw_replacement=DesignWorkflowCollection.__name__, pew_replacement=Predictor_Evaluation_Workflow.__name__))
+        msg = "{this_class} is deprecated. Please use {dw_replacement} instead for " \
+            "Design Workflows and {pew_replacement} for Predictor Evaludation Workflows".format(
+                this_class=self.__class__.__name__,
+                dw_replacement=DesignWorkflowCollection.__name__,
+                pew_replacement=PredictorEvaluationWorkflowCollection.__name__)
+        warn(msg)
         self.project_id = project_id
         self.session: Session = session
 
