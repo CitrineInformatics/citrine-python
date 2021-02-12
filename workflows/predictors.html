@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>4.4. Predictors &#8212; Citrine Python 0.99.0 documentation</title>
+    <title>4.4. Predictors &#8212; Citrine Python 0.101.0 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -112,7 +112,7 @@ Instead of entering these manually, outputs from a predictor can be retrieved pr
                                 <span class="p">)</span>
 
 <span class="c1"># create a descriptor to store simple mixtures</span>
-<span class="n">formulation_descriptor</span> <span class="o">=</span> <span class="n">FormulationDescriptor</span><span class="p">(</span><span class="s1">&#39;simple mixture&#39;</span><span class="p">)</span>
+<span class="n">formulation_descriptor</span> <span class="o">=</span> <span class="n">FormulationDescriptor</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;simple mixture&#39;</span><span class="p">)</span>
 
 <span class="c1"># create a predictor that computes ingredient fractions</span>
 <span class="n">ingredient_fractions</span> <span class="o">=</span> <span class="n">IngredientFractionsPredictor</span><span class="p">(</span>
@@ -124,7 +124,9 @@ Instead of entering these manually, outputs from a predictor can be retrieved pr
 
 <span class="c1"># get the descriptors the ingredient fractions predictor returns given the formulation descriptor</span>
 <span class="n">ingredient_fraction_descriptors</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">descriptors</span><span class="o">.</span><span class="n">from_predictor_responses</span><span class="p">(</span>
-    <span class="n">ingredient_fractions</span><span class="p">,</span> <span class="p">[</span><span class="n">formulation_descriptor</span><span class="p">])</span>
+    <span class="n">predictor</span><span class="o">=</span><span class="n">ingredient_fractions</span><span class="p">,</span>
+    <span class="n">inputs</span><span class="o">=</span><span class="p">[</span><span class="n">formulation_descriptor</span><span class="p">]</span>
+<span class="p">)</span>
 <span class="c1"># ^^ in this case, ingredient_fraction_descriptors will contain 3 real descriptors: one for each featurized ingredient</span>
 
 <span class="n">simple_ml_predictor</span> <span class="o">=</span> <span class="n">SimpleMLPredictor</span><span class="p">(</span>
@@ -183,7 +185,7 @@ Citrine-python currently supports the following operators and functions:</p>
 <li><p>basic operators: addition <cite>+</cite>, subtraction <cite>-</cite>, multiplication <cite>*</cite>, division <cite>/</cite>, exponentiation <cite>^</cite></p></li>
 <li><p>built-in math functions:</p>
 <ul>
-<li><p>trigonometric: <cite>sin</cite>, <cite>cos</cite>, <cite>tan</cite>, <cite>asin</cite>, <cite>acos</cite>, <cite>atan</cite></p></li>
+<li><p>trigonometric (input in radians): <cite>sin</cite>, <cite>cos</cite>, <cite>tan</cite>, <cite>asin</cite>, <cite>acos</cite>, <cite>atan</cite></p></li>
 <li><p>hyperbolic: <cite>sinh</cite>, <cite>cosh</cite>, <cite>tanh</cite></p></li>
 <li><p>logarithm: <cite>log10</cite>, <cite>ln</cite></p></li>
 <li><p>exponential: <cite>exp</cite></p></li>
@@ -195,9 +197,9 @@ Citrine-python currently supports the following operators and functions:</p>
 <p>The following example demonstrates how to create an <a class="reference internal" href="../reference/citrine.informatics.predictors.expression_predictor.html#citrine.informatics.predictors.expression_predictor.ExpressionPredictor" title="citrine.informatics.predictors.expression_predictor.ExpressionPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExpressionPredictor</span></code></a>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.informatics.predictors</span> <span class="kn">import</span> <span class="n">ExpressionPredictor</span>
 
-<span class="n">youngs_modulus</span> <span class="o">=</span> <span class="n">RealDescriptor</span><span class="p">(</span><span class="s1">&#39;Property~Young</span><span class="se">\&#39;</span><span class="s1">s modulus&#39;</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;GPa&#39;</span><span class="p">)</span>
-<span class="n">poissons_ratio</span> <span class="o">=</span> <span class="n">RealDescriptor</span><span class="p">(</span><span class="s1">&#39;Property~Poisson</span><span class="se">\&#39;</span><span class="s1">s ratio&#39;</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
-<span class="n">shear_modulus</span> <span class="o">=</span> <span class="n">RealDescriptor</span><span class="p">(</span><span class="s1">&#39;Property~Shear modulus&#39;</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;GPa&#39;</span><span class="p">)</span>
+<span class="n">youngs_modulus</span> <span class="o">=</span> <span class="n">RealDescriptor</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;Property~Young</span><span class="se">\&#39;</span><span class="s1">s modulus&#39;</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;GPa&#39;</span><span class="p">)</span>
+<span class="n">poissons_ratio</span> <span class="o">=</span> <span class="n">RealDescriptor</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;Property~Poisson</span><span class="se">\&#39;</span><span class="s1">s ratio&#39;</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+<span class="n">shear_modulus</span> <span class="o">=</span> <span class="n">RealDescriptor</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;Property~Shear modulus&#39;</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;GPa&#39;</span><span class="p">)</span>
 
 <span class="n">shear_modulus_predictor</span> <span class="o">=</span> <span class="n">ExpressionPredictor</span><span class="p">(</span>
     <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Shear modulus predictor&#39;</span><span class="p">,</span>
@@ -293,11 +295,11 @@ These labels are specified via:</p>
 <span class="n">file_link</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">upload</span><span class="p">(</span><span class="s2">&quot;./saline_solutions.csv&quot;</span><span class="p">,</span> <span class="s2">&quot;saline_solutions.csv&quot;</span><span class="p">)</span>
 
 <span class="c1"># create descriptors for each ingredient quantity (volume fraction)</span>
-<span class="n">water_quantity</span> <span class="o">=</span> <span class="n">RealDescriptor</span><span class="p">(</span><span class="s1">&#39;water quantity&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
-<span class="n">salt_quantity</span> <span class="o">=</span> <span class="n">RealDescriptor</span><span class="p">(</span><span class="s1">&#39;salt quantity&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+<span class="n">water_quantity</span> <span class="o">=</span> <span class="n">RealDescriptor</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;water quantity&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+<span class="n">salt_quantity</span> <span class="o">=</span> <span class="n">RealDescriptor</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;salt quantity&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
 
 <span class="c1"># create a descriptor to hold density data</span>
-<span class="n">density</span> <span class="o">=</span> <span class="n">RealDescriptor</span><span class="p">(</span><span class="s1">&#39;density&#39;</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;g/cc&#39;</span><span class="p">)</span>
+<span class="n">density</span> <span class="o">=</span> <span class="n">RealDescriptor</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;density&#39;</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;g/cc&#39;</span><span class="p">)</span>
 
 <span class="n">data_source</span> <span class="o">=</span> <span class="n">CSVDataSource</span><span class="p">(</span>
     <span class="n">file_link</span> <span class="o">=</span> <span class="n">file_link</span><span class="p">,</span>
@@ -310,7 +312,7 @@ These labels are specified via:</p>
 <span class="p">)</span>
 
 <span class="c1"># create a descriptor to hold simple mixtures</span>
-<span class="n">formulation</span> <span class="o">=</span> <span class="n">FormulationDescriptor</span><span class="p">(</span><span class="s1">&#39;simple mixture&#39;</span><span class="p">)</span>
+<span class="n">formulation</span> <span class="o">=</span> <span class="n">FormulationDescriptor</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;simple mixture&#39;</span><span class="p">)</span>
 
 <span class="n">IngredientsToSimpleMixturePredictor</span><span class="p">(</span>
     <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Ingredients to simple mixture predictor&#39;</span><span class="p">,</span>
@@ -344,11 +346,11 @@ The <code class="docutils literal notranslate"><span class="pre">training_data</
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.informatics.descriptors</span> <span class="kn">import</span> <span class="n">FormulationDescriptor</span>
 <span class="kn">from</span> <span class="nn">citrine.informatics.predictors</span> <span class="kn">import</span> <span class="n">SimpleMixturePredictor</span>
 
-<span class="n">input_formulation</span> <span class="o">=</span> <span class="n">FormulationDescriptor</span><span class="p">(</span><span class="s1">&#39;diluted saline&#39;</span><span class="p">)</span>
-<span class="n">output_formulation</span> <span class="o">=</span> <span class="n">FormulationDescriptor</span><span class="p">(</span><span class="s1">&#39;diluted saline (flattened)&#39;</span><span class="p">)</span>
+<span class="n">input_formulation</span> <span class="o">=</span> <span class="n">FormulationDescriptor</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;diluted saline&#39;</span><span class="p">)</span>
+<span class="n">output_formulation</span> <span class="o">=</span> <span class="n">FormulationDescriptor</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;diluted saline (flattened)&#39;</span><span class="p">)</span>
 
 <span class="c1"># table with simple mixtures and their ingredients</span>
-<span class="n">data_source</span> <span class="o">=</span> <span class="n">GemTableDataSource</span><span class="p">(</span><span class="n">table_uid</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">input_descriptor</span><span class="p">)</span>
+<span class="n">data_source</span> <span class="o">=</span> <span class="n">GemTableDataSource</span><span class="p">(</span><span class="n">table_id</span><span class="o">=</span><span class="n">table_uid</span><span class="p">,</span> <span class="n">table_version</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">formulation_descriptor</span><span class="o">=</span><span class="n">input_descriptor</span><span class="p">)</span>
 
 <span class="n">SimpleMixturePredictor</span><span class="p">(</span>
     <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Simple mixture predictor&#39;</span><span class="p">,</span>
@@ -422,10 +424,10 @@ If a value other than 1.58 should be used, e.g. 2.0, this can be specified by se
 <span class="kn">from</span> <span class="nn">citrine.informatics.predictors</span> <span class="kn">import</span> <span class="n">GeneralizedMeanPropertyPredictor</span>
 
 <span class="c1"># descriptor that holds simple mixture data</span>
-<span class="n">formulation</span> <span class="o">=</span> <span class="n">FormulationDescriptor</span><span class="p">(</span><span class="s1">&#39;simple mixture&#39;</span><span class="p">)</span>
+<span class="n">formulation</span> <span class="o">=</span> <span class="n">FormulationDescriptor</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;simple mixture&#39;</span><span class="p">)</span>
 
 <span class="c1"># table with simple mixtures and their ingredients</span>
-<span class="n">data_source</span> <span class="o">=</span> <span class="n">GemTableDataSource</span><span class="p">(</span><span class="n">table_uid</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">formulation</span><span class="p">)</span>
+<span class="n">data_source</span> <span class="o">=</span> <span class="n">GemTableDataSource</span><span class="p">(</span><span class="n">table_id</span><span class="o">=</span><span class="n">table_uid</span><span class="p">,</span> <span class="n">table_version</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">formulation_descriptor</span><span class="o">=</span><span class="n">formulation</span><span class="p">)</span>
 
 <span class="n">mean_property_predictor</span> <span class="o">=</span> <span class="n">GeneralizedMeanPropertyPredictor</span><span class="p">(</span>
     <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Mean property predictor&#39;</span><span class="p">,</span>
@@ -447,7 +449,9 @@ If a value other than 1.58 should be used, e.g. 2.0, this can be specified by se
 </div>
 <p>This predictor will compute a real descriptor with a key <code class="docutils literal notranslate"><span class="pre">mean</span> <span class="pre">of</span> <span class="pre">property</span> <span class="pre">density</span> <span class="pre">with</span> <span class="pre">label</span> <span class="pre">solute</span> <span class="pre">in</span> <span class="pre">simple</span> <span class="pre">mixture</span></code> which can be retrieved using:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">mean_property_descriptors</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">descriptors</span><span class="o">.</span><span class="n">from_predictor_responses</span><span class="p">(</span>
-    <span class="n">mean_property_predictor</span><span class="p">,</span> <span class="p">[</span><span class="n">formulation_descriptor</span><span class="p">])</span>
+    <span class="n">predictor</span><span class="o">=</span><span class="n">mean_property_predictor</span><span class="p">,</span>
+    <span class="n">inputs</span><span class="o">=</span><span class="p">[</span><span class="n">formulation_descriptor</span><span class="p">]</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 <p>If <code class="docutils literal notranslate"><span class="pre">p</span></code> is given a value other than <code class="docutils literal notranslate"><span class="pre">1.0</span></code>, that value will be included in the key for the feature, e.g. <code class="docutils literal notranslate"><span class="pre">2.0-mean</span> <span class="pre">of</span> <span class="pre">property</span> <span class="pre">viscosity</span></code>.</p>
@@ -471,7 +475,7 @@ this predictor would compute outputs:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.informatics.predictors</span> <span class="kn">import</span> <span class="n">IngredientFractionsPredictor</span>
 <span class="kn">from</span> <span class="nn">citrine.informatics.descriptors</span> <span class="kn">import</span> <span class="n">FormulationDescriptor</span>
 
-<span class="n">formulation_descriptor</span> <span class="o">=</span> <span class="n">FormulationDescriptor</span><span class="p">(</span><span class="s1">&#39;simple mixture&#39;</span><span class="p">)</span>
+<span class="n">formulation_descriptor</span> <span class="o">=</span> <span class="n">FormulationDescriptor</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;simple mixture&#39;</span><span class="p">)</span>
 
 <span class="n">ingredient_fractions</span> <span class="o">=</span> <span class="n">IngredientFractionsPredictor</span><span class="p">(</span>
     <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Ingredient Fractions Predictor&#39;</span><span class="p">,</span>
@@ -483,7 +487,9 @@ this predictor would compute outputs:</p>
 </div>
 <p>The response descriptors can be retrieved using:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ingredient_fraction_descriptors</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">descriptors</span><span class="o">.</span><span class="n">from_predictor_responses</span><span class="p">(</span>
-    <span class="n">ingredient_fractions</span><span class="p">,</span> <span class="p">[</span><span class="n">formulation_descriptor</span><span class="p">])</span>
+    <span class="n">predictor</span><span class="o">=</span><span class="n">ingredient_fractions</span><span class="p">,</span>
+    <span class="n">inputs</span><span class="o">=</span><span class="p">[</span><span class="n">formulation_descriptor</span><span class="p">]</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 <p>This will return a real descriptor for each featurized ingredient with bounds <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1]</span></code> and key in the form <code class="docutils literal notranslate"><span class="pre">'{ingredient}</span> <span class="pre">share</span> <span class="pre">in</span> <span class="pre">simple</span> <span class="pre">mixture'</span></code> where <code class="docutils literal notranslate"><span class="pre">{ingredient}</span></code> is either <code class="docutils literal notranslate"><span class="pre">water</span></code>, <code class="docutils literal notranslate"><span class="pre">salt</span></code> or <code class="docutils literal notranslate"><span class="pre">boric</span> <span class="pre">acid</span></code>.</p>
@@ -496,7 +502,7 @@ A separate response is computed for each featurized label by summing all quantit
 <p>The following example demonstrates how to create a predictor that computes the total fractions of solute and solvent in a simple mixture.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.informatics.descriptors</span> <span class="kn">import</span> <span class="n">FormulationDescriptor</span>
 <span class="c1"># descriptor that holds simple mixture data</span>
-<span class="n">formulation_descriptor</span> <span class="o">=</span> <span class="n">FormulationDescriptor</span><span class="p">(</span><span class="s1">&#39;simple mixture&#39;</span><span class="p">)</span>
+<span class="n">formulation_descriptor</span> <span class="o">=</span> <span class="n">FormulationDescriptor</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;simple mixture&#39;</span><span class="p">)</span>
 
 <span class="n">label_fractions</span> <span class="o">=</span> <span class="n">LabelFractionsPredictor</span><span class="p">(</span>
     <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Saline solution label fractions&#39;</span><span class="p">,</span>
@@ -508,7 +514,9 @@ A separate response is computed for each featurized label by summing all quantit
 </div>
 <p>This predictor will compute 2 responses, <code class="docutils literal notranslate"><span class="pre">solute</span> <span class="pre">share</span> <span class="pre">in</span> <span class="pre">simple</span> <span class="pre">mixture</span></code> and <code class="docutils literal notranslate"><span class="pre">solvent</span> <span class="pre">share</span> <span class="pre">in</span> <span class="pre">simple</span> <span class="pre">mixture</span></code>, which can be retrieved using:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">label_fractions_descriptors</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">descriptors</span><span class="o">.</span><span class="n">from_predictor_responses</span><span class="p">(</span>
-    <span class="n">label_fractions</span><span class="p">,</span> <span class="p">[</span><span class="n">formulation_descriptor</span><span class="p">])</span>
+    <span class="n">predictor</span><span class="o">=</span><span class="n">label_fractions</span><span class="p">,</span>
+    <span class="n">inputs</span><span class="o">=</span><span class="p">[</span><span class="n">formulation_descriptor</span><span class="p">]</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 </div>

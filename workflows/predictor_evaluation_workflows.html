@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>4.11. Predictor Evaluation Workflows &#8212; Citrine Python 0.99.0 documentation</title>
+    <title>4.11. Predictor Evaluation Workflows &#8212; Citrine Python 0.101.0 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -162,11 +162,11 @@ For categorical responses, class probabilities are returned as a mapping from ea
 <span class="kn">from</span> <span class="nn">citrine.informatics.descriptors</span> <span class="kn">import</span> <span class="n">RealDescriptor</span>
 <span class="kn">from</span> <span class="nn">citrine.informatics.predictors</span> <span class="kn">import</span> <span class="n">SimpleMLPredictor</span>
 
-<span class="n">x</span> <span class="o">=</span> <span class="n">RealDescriptor</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
-<span class="n">y</span> <span class="o">=</span> <span class="n">RealDescriptor</span><span class="p">(</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">RealDescriptor</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">RealDescriptor</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
 
 <span class="n">data_source</span> <span class="o">=</span> <span class="n">CSVDataSource</span><span class="p">(</span>
-    <span class="n">filename</span><span class="p">,</span> <span class="c1"># path to CSV that contains training data for x and y</span>
+    <span class="n">file_link</span><span class="o">=</span><span class="n">file</span><span class="p">,</span> <span class="c1"># path to CSV that contains training data for x and y</span>
     <span class="n">column_definitions</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="n">x</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="n">y</span><span class="p">}</span>
 <span class="p">)</span>
 
@@ -187,12 +187,11 @@ Training data is provided by a <a class="reference internal" href="../reference/
 <span class="kn">from</span> <span class="nn">citrine.jobs.waiting</span> <span class="kn">import</span> <span class="n">wait_while_validating</span>
 <span class="kn">from</span> <span class="nn">citrine.seeding.find_or_create</span> <span class="kn">import</span> <span class="n">find_or_create_project</span>
 
-<span class="n">api_key</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;CITRINE_API_KEY&#39;</span><span class="p">)</span>
-<span class="n">client</span> <span class="o">=</span> <span class="n">Citrine</span><span class="p">(</span><span class="n">api_key</span><span class="p">)</span>
-<span class="n">project</span> <span class="o">=</span> <span class="n">find_or_create_project</span><span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">projects</span><span class="p">,</span> <span class="s1">&#39;example project&#39;</span><span class="p">)</span>
+<span class="n">client</span> <span class="o">=</span> <span class="n">Citrine</span><span class="p">(</span><span class="n">api_key</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;CITRINE_API_KEY&#39;</span><span class="p">))</span>
+<span class="n">project</span> <span class="o">=</span> <span class="n">find_or_create_project</span><span class="p">(</span><span class="n">project_collection</span><span class="o">=</span><span class="n">client</span><span class="o">.</span><span class="n">projects</span><span class="p">,</span> <span class="n">project_name</span><span class="o">=</span><span class="s1">&#39;example project&#39;</span><span class="p">)</span>
 
 <span class="n">predictor</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">predictors</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">predictor</span><span class="p">)</span>
-<span class="n">wait_while_validating</span><span class="p">(</span><span class="n">project</span><span class="o">.</span><span class="n">predictors</span><span class="p">,</span> <span class="n">predictor</span><span class="p">)</span>
+<span class="n">wait_while_validating</span><span class="p">(</span><span class="n">collection</span><span class="o">=</span><span class="n">project</span><span class="o">.</span><span class="n">predictors</span><span class="p">,</span> <span class="n">module</span><span class="o">=</span><span class="n">predictor</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>In this example we’ll create a cross-validation evaluator for the response <code class="docutils literal notranslate"><span class="pre">y</span></code> with 8 folds and 3 trials and request metrics for root-mean square error (<a class="reference internal" href="../reference/citrine.informatics.predictor_evaluation_metrics.html#citrine.informatics.predictor_evaluation_metrics.RMSE" title="citrine.informatics.predictor_evaluation_metrics.RMSE"><code class="xref py py-class docutils literal notranslate"><span class="pre">RMSE</span></code></a>) and predicted vs. actual data (<a class="reference internal" href="../reference/citrine.informatics.predictor_evaluation_metrics.html#citrine.informatics.predictor_evaluation_metrics.PVA" title="citrine.informatics.predictor_evaluation_metrics.PVA"><code class="xref py py-class docutils literal notranslate"><span class="pre">PVA</span></code></a>).</p>
@@ -221,7 +220,7 @@ Training data is provided by a <a class="reference internal" href="../reference/
 <span class="p">)</span>
 
 <span class="n">workflow</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">predictor_evaluation_workflows</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">workflow</span><span class="p">)</span>
-<span class="n">wait_while_validating</span><span class="p">(</span><span class="n">project</span><span class="o">.</span><span class="n">predictor_evaluation_workflows</span><span class="p">,</span> <span class="n">workflow</span><span class="p">)</span>
+<span class="n">wait_while_validating</span><span class="p">(</span><span class="n">collection</span><span class="o">=</span><span class="n">project</span><span class="o">.</span><span class="n">predictor_evaluation_workflows</span><span class="p">,</span> <span class="n">module</span><span class="o">=</span><span class="n">workflow</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Trigger the workflow against a predictor to start an execution.

@@ -89,7 +89,7 @@ The following demonstrates how to create an :class:`~citrine.informatics.predict
                                     )
 
     # create a descriptor to store simple mixtures
-    formulation_descriptor = FormulationDescriptor('simple mixture')
+    formulation_descriptor = FormulationDescriptor(key='simple mixture')
 
     # create a predictor that computes ingredient fractions
     ingredient_fractions = IngredientFractionsPredictor(
@@ -101,7 +101,9 @@ The following demonstrates how to create an :class:`~citrine.informatics.predict
 
     # get the descriptors the ingredient fractions predictor returns given the formulation descriptor
     ingredient_fraction_descriptors = project.descriptors.from_predictor_responses(
-        ingredient_fractions, [formulation_descriptor])
+        predictor=ingredient_fractions, 
+        inputs=[formulation_descriptor]
+    )
     # ^^ in this case, ingredient_fraction_descriptors will contain 3 real descriptors: one for each featurized ingredient
 
     simple_ml_predictor = SimpleMLPredictor(
@@ -167,7 +169,7 @@ Citrine-python currently supports the following operators and functions:
 - basic operators: addition `+`, subtraction `-`, multiplication `*`, division `/`, exponentiation `^`
 - built-in math functions:
 
-  - trigonometric: `sin`, `cos`, `tan`, `asin`, `acos`, `atan`
+  - trigonometric (input in radians): `sin`, `cos`, `tan`, `asin`, `acos`, `atan`
   - hyperbolic: `sinh`, `cosh`, `tanh`
   - logarithm: `log10`, `ln`
   - exponential: `exp`
@@ -182,9 +184,9 @@ The following example demonstrates how to create an :class:`~citrine.informatics
 
    from citrine.informatics.predictors import ExpressionPredictor
 
-   youngs_modulus = RealDescriptor('Property~Young\'s modulus', lower_bound=0, upper_bound=100, units='GPa')
-   poissons_ratio = RealDescriptor('Property~Poisson\'s ratio', lower_bound=-1, upper_bound=0.5, units='')
-   shear_modulus = RealDescriptor('Property~Shear modulus', lower_bound=0, upper_bound=100, units='GPa')
+   youngs_modulus = RealDescriptor(key='Property~Young\'s modulus', lower_bound=0, upper_bound=100, units='GPa')
+   poissons_ratio = RealDescriptor(key='Property~Poisson\'s ratio', lower_bound=-1, upper_bound=0.5, units='')
+   shear_modulus = RealDescriptor(key='Property~Shear modulus', lower_bound=0, upper_bound=100, units='GPa')
 
    shear_modulus_predictor = ExpressionPredictor(
        name = 'Shear modulus predictor',
@@ -265,11 +267,11 @@ The following example illustrates how an :class:`~citrine.informatics.predictors
     file_link = dataset.files.upload("./saline_solutions.csv", "saline_solutions.csv")
 
     # create descriptors for each ingredient quantity (volume fraction)
-    water_quantity = RealDescriptor('water quantity', 0, 1, units='')
-    salt_quantity = RealDescriptor('salt quantity', 0, 1, units='')
+    water_quantity = RealDescriptor(key='water quantity', 0, 1, units='')
+    salt_quantity = RealDescriptor(key='salt quantity', 0, 1, units='')
 
     # create a descriptor to hold density data
-    density = RealDescriptor('density', lower_bound=0, upper_bound=1000, units='g/cc')
+    density = RealDescriptor(key='density', lower_bound=0, upper_bound=1000, units='g/cc')
 
     data_source = CSVDataSource(
         file_link = file_link,
@@ -282,7 +284,7 @@ The following example illustrates how an :class:`~citrine.informatics.predictors
     )
 
     # create a descriptor to hold simple mixtures
-    formulation = FormulationDescriptor('simple mixture')
+    formulation = FormulationDescriptor(key='simple mixture')
 
     IngredientsToSimpleMixturePredictor(
         name='Ingredients to simple mixture predictor',
@@ -320,11 +322,11 @@ The following example illustrates how a :class:`~citrine.informatics.predictors.
     from citrine.informatics.descriptors import FormulationDescriptor
     from citrine.informatics.predictors import SimpleMixturePredictor
 
-    input_formulation = FormulationDescriptor('diluted saline')
-    output_formulation = FormulationDescriptor('diluted saline (flattened)')
+    input_formulation = FormulationDescriptor(key='diluted saline')
+    output_formulation = FormulationDescriptor(key='diluted saline (flattened)')
 
     # table with simple mixtures and their ingredients
-    data_source = GemTableDataSource(table_uid, 1, input_descriptor)
+    data_source = GemTableDataSource(table_id=table_uid, table_version=1, formulation_descriptor=input_descriptor)
 
     SimpleMixturePredictor(
         name='Simple mixture predictor',
@@ -395,10 +397,10 @@ The example below show how to configure a mean property predictor to compute mea
     from citrine.informatics.predictors import GeneralizedMeanPropertyPredictor
 
     # descriptor that holds simple mixture data
-    formulation = FormulationDescriptor('simple mixture')
+    formulation = FormulationDescriptor(key='simple mixture')
 
     # table with simple mixtures and their ingredients
-    data_source = GemTableDataSource(table_uid, 1, formulation)
+    data_source = GemTableDataSource(table_id=table_uid, table_version=1, formulation_descriptor=formulation)
 
     mean_property_predictor = GeneralizedMeanPropertyPredictor(
         name='Mean property predictor',
@@ -422,7 +424,9 @@ This predictor will compute a real descriptor with a key ``mean of property dens
 .. code:: python
 
     mean_property_descriptors = project.descriptors.from_predictor_responses(
-        mean_property_predictor, [formulation_descriptor])
+        predictor=mean_property_predictor, 
+        inputs=[formulation_descriptor]
+    )
 
 If ``p`` is given a value other than ``1.0``, that value will be included in the key for the feature, e.g. ``2.0-mean of property viscosity``.
 
@@ -450,7 +454,7 @@ The example below shows how to configure an ``IngredientFractionsPredictor`` tha
     from citrine.informatics.predictors import IngredientFractionsPredictor
     from citrine.informatics.descriptors import FormulationDescriptor
 
-    formulation_descriptor = FormulationDescriptor('simple mixture')
+    formulation_descriptor = FormulationDescriptor(key='simple mixture')
 
     ingredient_fractions = IngredientFractionsPredictor(
         name='Ingredient Fractions Predictor',
@@ -464,7 +468,9 @@ The response descriptors can be retrieved using:
 .. code:: python
 
     ingredient_fraction_descriptors = project.descriptors.from_predictor_responses(
-        ingredient_fractions, [formulation_descriptor])
+        predictor=ingredient_fractions,
+        inputs=[formulation_descriptor]
+    )
 
 This will return a real descriptor for each featurized ingredient with bounds ``[0, 1]`` and key in the form ``'{ingredient} share in simple mixture'`` where ``{ingredient}`` is either ``water``, ``salt`` or ``boric acid``.
 
@@ -481,7 +487,7 @@ The following example demonstrates how to create a predictor that computes the t
 
     from citrine.informatics.descriptors import FormulationDescriptor
     # descriptor that holds simple mixture data
-    formulation_descriptor = FormulationDescriptor('simple mixture')
+    formulation_descriptor = FormulationDescriptor(key='simple mixture')
 
     label_fractions = LabelFractionsPredictor(
         name='Saline solution label fractions',
@@ -495,7 +501,9 @@ This predictor will compute 2 responses, ``solute share in simple mixture`` and 
 .. code:: python
 
     label_fractions_descriptors = project.descriptors.from_predictor_responses(
-        label_fractions, [formulation_descriptor])
+        predictor=label_fractions,
+        inputs=[formulation_descriptor]
+    )
 
 Predictor reports
 -----------------

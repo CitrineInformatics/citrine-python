@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>4.9. Data Sources &#8212; Citrine Python 0.99.0 documentation</title>
+    <title>4.9. Data Sources &#8212; Citrine Python 0.101.0 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -66,9 +66,9 @@ Columns in the CSV that are not mapped with a descriptor are ignored.</p>
     <span class="c1"># `column_definitions` maps a column header to a descriptor</span>
     <span class="c1"># the column header and the descriptor key do not need to be identical</span>
     <span class="n">column_definitions</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;Chemical Formula&quot;</span><span class="p">:</span> <span class="n">ChemicalFormulaDescriptor</span><span class="p">(</span><span class="s2">&quot;formula&quot;</span><span class="p">),</span>
-        <span class="s2">&quot;Gap&quot;</span><span class="p">:</span> <span class="n">RealDescriptor</span><span class="p">(</span><span class="s2">&quot;Band gap&quot;</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;eV&quot;</span><span class="p">),</span>
-        <span class="s2">&quot;Crystallinity&quot;</span><span class="p">:</span> <span class="n">CategoricalDescriptor</span><span class="p">(</span><span class="s2">&quot;Crystallinity&quot;</span><span class="p">,</span> <span class="n">categories</span><span class="o">=</span><span class="p">[</span>
+        <span class="s2">&quot;Chemical Formula&quot;</span><span class="p">:</span> <span class="n">ChemicalFormulaDescriptor</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s2">&quot;formula&quot;</span><span class="p">),</span>
+        <span class="s2">&quot;Gap&quot;</span><span class="p">:</span> <span class="n">RealDescriptor</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s2">&quot;Band gap&quot;</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;eV&quot;</span><span class="p">),</span>
+        <span class="s2">&quot;Crystallinity&quot;</span><span class="p">:</span> <span class="n">CategoricalDescriptor</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s2">&quot;Crystallinity&quot;</span><span class="p">,</span> <span class="n">categories</span><span class="o">=</span><span class="p">[</span>
             <span class="s2">&quot;Single crystalline&quot;</span><span class="p">,</span> <span class="s2">&quot;Amorphous&quot;</span><span class="p">,</span> <span class="s2">&quot;Polycrystalline&quot;</span><span class="p">])</span>
     <span class="p">}</span>
 <span class="p">)</span>
@@ -151,11 +151,11 @@ A CSV data source and <a class="reference internal" href="../reference/citrine.i
 <span class="n">file_link</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">upload</span><span class="p">(</span><span class="s2">&quot;./saline_solutions.csv&quot;</span><span class="p">,</span> <span class="s2">&quot;saline_solutions.csv&quot;</span><span class="p">)</span>
 
 <span class="c1"># create descriptors for each ingredient quantity (volume fraction)</span>
-<span class="n">water_quantity</span> <span class="o">=</span> <span class="n">RealDescriptor</span><span class="p">(</span><span class="s1">&#39;water quantity&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
-<span class="n">salt_quantity</span> <span class="o">=</span> <span class="n">RealDescriptor</span><span class="p">(</span><span class="s1">&#39;salt quantity&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+<span class="n">water_quantity</span> <span class="o">=</span> <span class="n">RealDescriptor</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;water quantity&#39;</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+<span class="n">salt_quantity</span> <span class="o">=</span> <span class="n">RealDescriptor</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;salt quantity&#39;</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
 
 <span class="c1"># create a descriptor to hold density data</span>
-<span class="n">density</span> <span class="o">=</span> <span class="n">RealDescriptor</span><span class="p">(</span><span class="s1">&#39;density&#39;</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;g/cc&#39;</span><span class="p">)</span>
+<span class="n">density</span> <span class="o">=</span> <span class="n">RealDescriptor</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;density&#39;</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;g/cc&#39;</span><span class="p">)</span>
 
 <span class="n">data_source</span> <span class="o">=</span> <span class="n">CSVDataSource</span><span class="p">(</span>
     <span class="n">file_link</span> <span class="o">=</span> <span class="n">file_link</span><span class="p">,</span>
@@ -168,7 +168,7 @@ A CSV data source and <a class="reference internal" href="../reference/citrine.i
 <span class="p">)</span>
 
 <span class="c1"># create a descriptor to hold simple mixtures</span>
-<span class="n">formulation</span> <span class="o">=</span> <span class="n">FormulationDescriptor</span><span class="p">(</span><span class="s1">&#39;simple mixture&#39;</span><span class="p">)</span>
+<span class="n">formulation</span> <span class="o">=</span> <span class="n">FormulationDescriptor</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;simple mixture&#39;</span><span class="p">)</span>
 
 <span class="n">IngredientsToSimpleMixturePredictor</span><span class="p">(</span>
     <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Ingredients to simple mixture predictor&#39;</span><span class="p">,</span>

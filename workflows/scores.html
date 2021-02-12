@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>4.8. Scores &#8212; Citrine Python 0.99.0 documentation</title>
+    <title>4.8. Scores &#8212; Citrine Python 0.101.0 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -87,17 +87,22 @@ LI scores are bounded by 0 and 1.</p>
 
 <span class="c1"># Create an LI score from the objective and baseline</span>
 <span class="n">score</span> <span class="o">=</span> <span class="n">LIScore</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;LI(Shear modulus)&#39;</span><span class="p">,</span>
-    <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Experimental design score for shear modulus&#39;</span><span class="p">,</span>
     <span class="n">objectives</span><span class="o">=</span><span class="p">[</span><span class="n">objective</span><span class="p">],</span>
     <span class="n">baselines</span><span class="o">=</span><span class="p">[</span><span class="mf">150.0</span><span class="p">]</span>
 <span class="p">)</span>
 
-<span class="c1"># assuming you have a validated workflow, the score can be used a design run via:</span>
-<span class="n">execution</span> <span class="o">=</span> <span class="n">workflow</span><span class="o">.</span><span class="n">executions</span><span class="o">.</span><span class="n">trigger</span><span class="p">(</span><span class="n">score</span><span class="p">)</span>
-
 <span class="c1"># in the new workflow api, the same score can be used to trigger a design execution via:</span>
 <span class="n">execution</span> <span class="o">=</span> <span class="n">workflow</span><span class="o">.</span><span class="n">design_executions</span><span class="o">.</span><span class="n">trigger</span><span class="p">(</span><span class="n">score</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This workflow is deprecated.
+<a class="reference internal" href="../reference/citrine.informatics.workflows.performance_workflow.html#citrine.informatics.workflows.performance_workflow.PerformanceWorkflow" title="citrine.informatics.workflows.performance_workflow.PerformanceWorkflow"><code class="xref py py-class docutils literal notranslate"><span class="pre">PerformanceWorkflows</span></code></a> are deprecated.
+Please use <a class="reference internal" href="predictor_evaluation_workflows.html"><span class="doc">PredictorEvaluationWorkflow</span></a> instead.</p>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># assuming you have a validated workflow, the score can be used a design run via:</span>
+<span class="n">execution</span> <span class="o">=</span> <span class="n">workflow</span><span class="o">.</span><span class="n">executions</span><span class="o">.</span><span class="n">trigger</span><span class="p">(</span><span class="n">score</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>

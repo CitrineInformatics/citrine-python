@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>4.13. AI Engine Code Examples &#8212; Citrine Python 0.99.0 documentation</title>
+    <title>4.13. AI Engine Code Examples &#8212; Citrine Python 0.101.0 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -77,9 +77,9 @@ This pattern is also extremely useful for performing optimization over complex o
 <span class="c1">#    descriptors=[...descriptors above...])</span>
 
 <span class="n">dough_hydration</span> <span class="o">=</span> <span class="n">RealDescriptor</span><span class="p">(</span>
-    <span class="s1">&#39;dough hydration&#39;</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="n">key</span><span class="o">=</span><span class="s1">&#39;dough hydration&#39;</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
 <span class="n">shelf_life</span> <span class="o">=</span> <span class="n">RealDescriptor</span><span class="p">(</span>
-    <span class="s1">&#39;approximate shelf life&#39;</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mi">72</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;day&quot;</span><span class="p">)</span>
+    <span class="n">key</span><span class="o">=</span><span class="s1">&#39;approximate shelf life&#39;</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mi">72</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;day&quot;</span><span class="p">)</span>
 
 <span class="n">dough_hydration_calculator</span> <span class="o">=</span> <span class="n">ExpressionPredictor</span><span class="p">(</span>
     <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;dough hydration calculator&#39;</span><span class="p">,</span>

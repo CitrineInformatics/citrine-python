@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>citrine.resources.project module &#8212; Citrine Python 0.99.0 documentation</title>
+    <title>citrine.resources.project module &#8212; Citrine Python 0.101.0 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -149,12 +149,6 @@ Use the <code class="docutils literal notranslate"><span class="pre">update_user
 <dt id="citrine.resources.project.Project.descriptors">
 <em class="property">property </em><code class="sig-name descname">descriptors</code><a class="headerlink" href="#citrine.resources.project.Project.descriptors" title="Permalink to this definition">¶</a></dt>
 <dd><p>[ALPHA] Return a resource containing a set of methods returning descriptors.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="citrine.resources.project.Project.design_executions">
-<em class="property">property </em><code class="sig-name descname">design_executions</code><a class="headerlink" href="#citrine.resources.project.Project.design_executions" title="Permalink to this definition">¶</a></dt>
-<dd><p>[ALPHA] Return a collection representing all visible predictor evaluation executions.</p>
 </dd></dl>
 
 <dl class="method">
@@ -484,6 +478,9 @@ the project with <code class="docutils literal notranslate"><span class="pre">ui
 <dt id="citrine.resources.project.Project.workflows">
 <em class="property">property </em><code class="sig-name descname">workflows</code><a class="headerlink" href="#citrine.resources.project.Project.workflows" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a resource representing all visible workflows.</p>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 0.101.0: </span>Use design_workflows or predictor_evaluation_workflows instead</p>
+</div>
 </dd></dl>
 
 </dd></dl>

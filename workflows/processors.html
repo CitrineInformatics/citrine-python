@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>4.6. Processors &#8212; Citrine Python 0.99.0 documentation</title>
+    <title>4.6. Processors &#8212; Citrine Python 0.101.0 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -62,7 +62,7 @@ Finite elements repeat once the outer product is exhausted.</p>
 <span class="kn">from</span> <span class="nn">citrine.informatics.processors</span> <span class="kn">import</span> <span class="n">EnumeratedProcessor</span>
 
 <span class="c1"># create a session with citrine using API variables</span>
-<span class="n">session</span> <span class="o">=</span> <span class="n">Citrine</span><span class="p">(</span><span class="n">API_KEY</span><span class="p">,</span> <span class="n">API_SCHEME</span><span class="p">,</span> <span class="n">API_HOST</span><span class="p">,</span> <span class="n">API_PORT</span><span class="p">)</span>
+<span class="n">session</span> <span class="o">=</span> <span class="n">Citrine</span><span class="p">(</span><span class="n">api_key</span><span class="o">=</span><span class="n">API_KEY</span><span class="p">)</span>
 
 <span class="n">project</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">projects</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s1">&#39;Example project&#39;</span><span class="p">)</span>
 
@@ -109,8 +109,8 @@ a 2D design space of enumerated x values and continuous y values:</p>
 
 <span class="c1"># enumerate x and create a continuous dimension for y</span>
 <span class="c1"># note the upper bound on y is lower than that of the descriptor to restrict the search domain</span>
-<span class="n">x_dim</span> <span class="o">=</span> <span class="n">EnumeratedDimension</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="s1">&#39;5&#39;</span><span class="p">,</span> <span class="s1">&#39;10&#39;</span><span class="p">])</span>
-<span class="n">y_dim</span> <span class="o">=</span> <span class="n">ContinuousDimension</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">x_dim</span> <span class="o">=</span> <span class="n">EnumeratedDimension</span><span class="p">(</span><span class="n">descriptor</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="s1">&#39;5&#39;</span><span class="p">,</span> <span class="s1">&#39;10&#39;</span><span class="p">])</span>
+<span class="n">y_dim</span> <span class="o">=</span> <span class="n">ContinuousDimension</span><span class="p">(</span><span class="n">descriptor</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
 
 <span class="c1"># create a design space from x and y dimensions</span>
 <span class="n">design_space</span> <span class="o">=</span> <span class="n">ProductDesignSpace</span><span class="p">(</span>
