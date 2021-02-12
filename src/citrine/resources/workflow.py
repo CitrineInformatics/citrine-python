@@ -36,7 +36,7 @@ class WorkflowCollection(Collection[Workflow]):
                 this_class=self.__class__.__name__,
                 dw_replacement=DesignWorkflowCollection.__name__,
                 pew_replacement=PredictorEvaluationWorkflowCollection.__name__)
-        warn(msg)
+        warn(msg, category=DeprecationWarning)
         self.project_id = project_id
         self.session: Session = session
 

@@ -59,7 +59,7 @@ class WorkflowExecution(Resource['WorkflowExecution'], Pageable):
                 this_class=self.__class__.__name__,
                 dw_replacement=DesignExecution.__name__,
                 pew_replacement=PredictorEvaluationExecution.__name__)
-        warn(msg)
+        warn(msg, category=DeprecationWarning)
         self.uid: str = uid
         self.project_id: str = project_id
         self.workflow_id: str = workflow_id
@@ -130,7 +130,7 @@ class WorkflowExecutionCollection(Collection[WorkflowExecution]):
                 this_class=self.__class__.__name__,
                 dw_replacement=DesignExecutionCollection.__name__,
                 pew_replacement=PredictorEvaluationExecutionCollection.__name__)
-        warn(msg)
+        warn(msg, category=DeprecationWarning)
         self.project_id = project_id
         self.project_id: UUID = project_id
         self.workflow_id: Optional[UUID] = workflow_id
