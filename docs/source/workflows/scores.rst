@@ -64,11 +64,23 @@ The following demonstrates how to create an LI score and use it when triggering 
        baselines=[150.0]
    )
 
+   # in the new workflow api, the same score can be used to trigger a design execution via:
+   execution = workflow.design_executions.trigger(score)
+
+
+
+.. warning::
+    
+    This workflow is deprecated.
+    :class:`PerformanceWorkflows <citrine.informatics.workflows.performance_workflow.PerformanceWorkflow>` are deprecated.
+    Please use :doc:`PredictorEvaluationWorkflow <predictor_evaluation_workflows>` instead.
+
+
+.. code:: python
+
    # assuming you have a validated workflow, the score can be used a design run via:
    execution = workflow.executions.trigger(score)
 
-   # in the new workflow api, the same score can be used to trigger a design execution via:
-   execution = workflow.design_executions.trigger(score)
 
 
 Expected value
