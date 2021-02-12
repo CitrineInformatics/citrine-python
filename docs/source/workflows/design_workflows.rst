@@ -107,7 +107,7 @@ Candidate results are paginated and returned as `DesignCandidate <#design-candid
     # pull out the candidate with the highest shear modulus and its score
     # (this should be the candidate at the head of the list since we used shear modulus to score and rank materials)
     # Note that because execution_results is a generator, calling this multiple times will iterate through the generator, getting the next best candidate
-    best_candidate = execution_results.send(None)
+    best_candidate = next(execution_results)
     print(best_candidate)
     best_score = best_candidate.primary_score
     print(best_score)
@@ -216,7 +216,7 @@ For example:
 
 .. code:: python
 
-    candidate = execution.candidates().send(None)
+    candidate = next(execution.candidates())
 
     # to get the score of a particular candidate
     score = candidate.primary_score
