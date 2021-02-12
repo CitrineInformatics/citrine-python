@@ -1,6 +1,7 @@
 from typing import Optional
 from uuid import UUID
 
+from deprecation import deprecated
 from citrine._rest.resource import Resource
 from citrine._serialization import properties
 from citrine._session import Session
@@ -106,6 +107,8 @@ class DesignWorkflow(Resource['DesignWorkflow'], Workflow):
         return data
 
     @property
+    @deprecated(deprecated_in="0.101.0",
+                details="Use design_executions instead")
     def executions(self) -> WorkflowExecutionCollection:
         """Return a resource representing all visible executions of this workflow."""
         if getattr(self, 'project_id', None) is None:

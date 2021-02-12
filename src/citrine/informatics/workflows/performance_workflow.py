@@ -52,7 +52,8 @@ class PerformanceWorkflow(Resource['PerformanceWorkflow'], Workflow):
                  project_id: Optional[UUID] = None,
                  session: Session = Session()):
         warn("{this_class} is deprecated. Please use {replacement} instead".format(
-            this_class=self.__class__.name, replacement=PredictorEvaluationWorkflow.__name__))
+            this_class=self.__class__.name, replacement=PredictorEvaluationWorkflow.__name__),
+            category=DeprecationWarning)
         self.name = name
         self.analysis = analysis
         self.project_id = project_id
