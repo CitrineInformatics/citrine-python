@@ -698,7 +698,8 @@ def design_execution_dict(generic_entity):
             "objectives": [],
             "name": "score",
             "description": ""
-        }
+        },
+        "descriptors": []
     })
     return ret
 
