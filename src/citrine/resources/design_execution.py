@@ -58,6 +58,8 @@ class DesignExecution(Resource['DesignExecution'], Pageable):
     create_time = properties.Optional(properties.Datetime, 'create_time', serializable=False)
     update_time = properties.Optional(properties.Datetime, 'update_time', serializable=False)
 
+    score = properties.Object(Score, 'score')
+
     def __init__(self):
         """This shouldn't be called, but it defines members that are set elsewhere."""
         self.project_id: Optional[UUID] = None  # pragma: no cover
