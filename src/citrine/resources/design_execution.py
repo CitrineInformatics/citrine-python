@@ -12,6 +12,7 @@ from citrine._session import Session
 from citrine.informatics.design_candidate import DesignCandidate
 from citrine.resources.response import Response
 from citrine.informatics.scores import Score
+from citrine.informatics.descriptors import Descriptor
 
 
 class DesignExecution(Resource['DesignExecution'], Pageable):
@@ -57,6 +58,9 @@ class DesignExecution(Resource['DesignExecution'], Pageable):
     updated_by = properties.Optional(properties.UUID, 'updated_by', serializable=False)
     create_time = properties.Optional(properties.Datetime, 'create_time', serializable=False)
     update_time = properties.Optional(properties.Datetime, 'update_time', serializable=False)
+
+    score = properties.Object(Score, 'score')
+    descriptors = properties.List(properties.Object(Descriptor), 'descriptors')
 
     def __init__(self):
         """This shouldn't be called, but it defines members that are set elsewhere."""

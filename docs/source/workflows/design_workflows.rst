@@ -125,6 +125,13 @@ Candidate results are paginated and returned as `DesignCandidate <#design-candid
     print(candidate_with_max_shear_modulus)
 
 
+You can to look up what :doc:`score <scores>` was used for a particular execution, as well as which :doc:`descriptors <descriptors>` where used:
+
+.. code:: python
+
+    score = execution.score
+    descriptors = execution.descriptors
+
 .. warning::
     
     Executing DesignWorkflows using `workflow.executions` is deprecated, please use `workflow.design_executions` as described above instead.
