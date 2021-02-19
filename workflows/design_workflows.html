@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>4.7. [ALPHA] Design Workflows &#8212; Citrine Python 0.101.0 documentation</title>
+    <title>4.7. Design Workflows &#8212; Citrine Python 0.102.0 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -34,8 +34,8 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="alpha-design-workflows">
-<h1>4.7. [ALPHA] Design Workflows<a class="headerlink" href="#alpha-design-workflows" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="design-workflows">
+<h1>4.7. Design Workflows<a class="headerlink" href="#design-workflows" title="Permalink to this headline">¶</a></h1>
 <p>A design workflow ranks materials according to a <a class="reference internal" href="scores.html"><span class="doc">score</span></a>.
 This workflow is comprised of three modules:</p>
 <ul class="simple">
@@ -148,6 +148,11 @@ A workflow execution has a status (in progress, succeeded, or failed) and result
 <span class="c1"># this candidate will be the same as best_candidate above</span>
 <span class="n">candidate_with_max_shear_modulus</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">all_candidates</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">candidate</span><span class="p">:</span> <span class="n">candidate</span><span class="o">.</span><span class="n">material</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="s1">&#39;Shear modulus&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">candidate_with_max_shear_modulus</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>You can to look up what <a class="reference internal" href="scores.html"><span class="doc">score</span></a> was used for a particular execution, as well as which <a class="reference internal" href="descriptors.html"><span class="doc">descriptors</span></a> where used:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">score</span> <span class="o">=</span> <span class="n">execution</span><span class="o">.</span><span class="n">score</span>
+<span class="n">descriptors</span> <span class="o">=</span> <span class="n">execution</span><span class="o">.</span><span class="n">descriptors</span>
 </pre></div>
 </div>
 <div class="admonition warning">
@@ -319,14 +324,14 @@ If the design space contains more than 200 possible materials, only the top 200 
 <li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-column-definitions">3.7. Available Column Definitions</a></li>
 </ul>
 </li>
-<li class="toctree-l1 current"><a class="reference internal" href="index.html">4. [ALPHA] AI Engine</a><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">4. AI Engine</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="getting_started.html">4.1. Getting Started</a></li>
 <li class="toctree-l2"><a class="reference internal" href="descriptors.html">4.2. Descriptors</a></li>
 <li class="toctree-l2"><a class="reference internal" href="descriptors.html#platform-vocabularies">4.3. Platform Vocabularies</a></li>
 <li class="toctree-l2"><a class="reference internal" href="predictors.html">4.4. Predictors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="design_spaces.html">4.5. [ALPHA] Design Spaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="design_spaces.html">4.5. Design Spaces</a></li>
 <li class="toctree-l2"><a class="reference internal" href="processors.html">4.6. Processors</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">4.7. [ALPHA] Design Workflows</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">4.7. Design Workflows</a></li>
 <li class="toctree-l2"><a class="reference internal" href="scores.html">4.8. Scores</a></li>
 <li class="toctree-l2"><a class="reference internal" href="data_sources.html">4.9. Data Sources</a></li>
 <li class="toctree-l2"><a class="reference internal" href="predictor_reports.html">4.10. Predictor Reports</a></li>
@@ -345,7 +350,7 @@ If the design space contains more than 200 possible materials, only the top 200 
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-  <li><a href="index.html">4. [ALPHA] AI Engine</a><ul>
+  <li><a href="index.html">4. AI Engine</a><ul>
       <li>Previous: <a href="processors.html" title="previous chapter">4.6. Processors</a></li>
       <li>Next: <a href="scores.html" title="next chapter">4.8. Scores</a></li>
   </ul></li>

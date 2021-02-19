@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>citrine.informatics.processors module &#8212; Citrine Python 0.101.0 documentation</title>
+    <title>citrine.informatics.processors module &#8212; Citrine Python 0.102.0 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -39,7 +39,7 @@
 <dt id="citrine.informatics.processors.Processor">
 <em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.processors.</code><code class="sig-name descname">Processor</code><a class="headerlink" href="#citrine.informatics.processors.Processor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="citrine.informatics.modules.html#citrine.informatics.modules.Module" title="citrine.informatics.modules.Module"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.modules.Module</span></code></a></p>
-<p>[ALPHA] A Citrine Processor describes how a design space is searched.</p>
+<p>A Citrine Processor describes how a design space is searched.</p>
 <p>Abstract type that returns the proper type given a serialized dict.</p>
 <dl class="method">
 <dt id="citrine.informatics.processors.Processor.get_type">
@@ -53,7 +53,7 @@
 <dt id="citrine.informatics.processors.GridProcessor">
 <em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.processors.</code><code class="sig-name descname">GridProcessor</code><span class="sig-paren">(</span><em class="sig-param">name: str, description: str, grid_sizes: Mapping[str, int], session: Optional[citrine._session.Session] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.processors.GridProcessor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.informatics.processors.Processor" title="citrine.informatics.processors.Processor"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.processors.Processor</span></code></a></p>
-<p>[ALPHA] Generates samples from the outer product of finite dimensions, then scans over them.</p>
+<p>Generates samples from the outer product of finite dimensions, then scans over them.</p>
 <p>To create a finite set of materials from continuous dimensions, a uniform grid is created
 between the lower and upper bounds of the descriptor.
 The number of points along each dimension is specified by <cite>grid_sizes</cite>.</p>
@@ -127,7 +127,7 @@ The number of points along each dimension is specified by <cite>grid_sizes</cite
 <dt id="citrine.informatics.processors.EnumeratedProcessor">
 <em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.processors.</code><code class="sig-name descname">EnumeratedProcessor</code><span class="sig-paren">(</span><em class="sig-param">name: str</em>, <em class="sig-param">description: str</em>, <em class="sig-param">max_candidates: Optional[int] = None</em>, <em class="sig-param">max_size: Optional[int] = None</em>, <em class="sig-param">session: Optional[citrine._session.Session] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.processors.EnumeratedProcessor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.informatics.processors.Processor" title="citrine.informatics.processors.Processor"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.processors.Processor</span></code></a></p>
-<p>[ALPHA] Process a design space by enumerating up to a fixed number of samples from the domain.</p>
+<p>Process a design space by enumerating up to a fixed number of samples from the domain.</p>
 <p>Each sample is processed independently.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -205,7 +205,7 @@ The number of points along each dimension is specified by <cite>grid_sizes</cite
 <dt id="citrine.informatics.processors.MonteCarloProcessor">
 <em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.processors.</code><code class="sig-name descname">MonteCarloProcessor</code><span class="sig-paren">(</span><em class="sig-param">name: str</em>, <em class="sig-param">description: str</em>, <em class="sig-param">session: Optional[citrine._session.Session] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.processors.MonteCarloProcessor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.informatics.processors.Processor" title="citrine.informatics.processors.Processor"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.processors.Processor</span></code></a></p>
-<p>[ALPHA] Using a Monte Carlo optimizer to search for the best candidate.</p>
+<p>Using a Monte Carlo optimizer to search for the best candidate.</p>
 <p>The moves that the MonteCarlo optimizer makes are inferred from the descriptors in the
 design space.</p>
 <dl class="field-list simple">
@@ -327,14 +327,14 @@ design space.</p>
 <li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-column-definitions">3.7. Available Column Definitions</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">4. [ALPHA] AI Engine</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">4. AI Engine</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/getting_started.html">4.1. Getting Started</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/descriptors.html">4.2. Descriptors</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/descriptors.html#platform-vocabularies">4.3. Platform Vocabularies</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/predictors.html">4.4. Predictors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/design_spaces.html">4.5. [ALPHA] Design Spaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/design_spaces.html">4.5. Design Spaces</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/processors.html">4.6. Processors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/design_workflows.html">4.7. [ALPHA] Design Workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/design_workflows.html">4.7. Design Workflows</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/scores.html">4.8. Scores</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/data_sources.html">4.9. Data Sources</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/predictor_reports.html">4.10. Predictor Reports</a></li>

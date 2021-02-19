@@ -1,4 +1,4 @@
-[ALPHA] Design Workflows
+Design Workflows
 ========================
 
 A design workflow ranks materials according to a :doc:`score <scores>`.
@@ -124,6 +124,13 @@ Candidate results are paginated and returned as `DesignCandidate <#design-candid
     candidate_with_max_shear_modulus = max(all_candidates, key=lambda candidate: candidate.material.values['Shear modulus'].mean)
     print(candidate_with_max_shear_modulus)
 
+
+You can to look up what :doc:`score <scores>` was used for a particular execution, as well as which :doc:`descriptors <descriptors>` where used:
+
+.. code:: python
+
+    score = execution.score
+    descriptors = execution.descriptors
 
 .. warning::
     

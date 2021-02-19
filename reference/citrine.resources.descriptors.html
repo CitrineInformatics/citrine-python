@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>citrine.resources.descriptors module &#8212; Citrine Python 0.101.0 documentation</title>
+    <title>citrine.resources.descriptors module &#8212; Citrine Python 0.102.0 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -38,11 +38,11 @@
 <dt id="citrine.resources.descriptors.DescriptorMethods">
 <em class="property">class </em><code class="sig-prename descclassname">citrine.resources.descriptors.</code><code class="sig-name descname">DescriptorMethods</code><span class="sig-paren">(</span><em class="sig-param">project_id: uuid.UUID</em>, <em class="sig-param">session: citrine._session.Session</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.descriptors.DescriptorMethods" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>[ALPHA] A set of methods returning descriptors which require connection to the backend.</p>
+<p>A set of methods returning descriptors which require connection to the backend.</p>
 <dl class="method">
 <dt id="citrine.resources.descriptors.DescriptorMethods.descriptors_from_data_source">
 <code class="sig-name descname">descriptors_from_data_source</code><span class="sig-paren">(</span><em class="sig-param">data_source: citrine.informatics.data_sources.DataSource</em><span class="sig-paren">)</span> &#x2192; List[citrine.informatics.descriptors.Descriptor]<a class="headerlink" href="#citrine.resources.descriptors.DescriptorMethods.descriptors_from_data_source" title="Permalink to this definition">¶</a></dt>
-<dd><p>[ALPHA] Get all descriptors associated with a data source.</p>
+<dd><p>Get all descriptors associated with a data source.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>data_source</strong> (<a class="reference internal" href="citrine.informatics.data_sources.html#citrine.informatics.data_sources.DataSource" title="citrine.informatics.data_sources.DataSource"><em>DataSource</em></a>) – A CSVDataSource or AraTableDataSource to get descriptors for.</p>
@@ -59,7 +59,7 @@
 <dl class="method">
 <dt id="citrine.resources.descriptors.DescriptorMethods.from_predictor_responses">
 <code class="sig-name descname">from_predictor_responses</code><span class="sig-paren">(</span><em class="sig-param">predictor: citrine.informatics.predictors.predictor.Predictor, inputs: List[citrine.informatics.descriptors.Descriptor]</em><span class="sig-paren">)</span> &#x2192; List[citrine.informatics.descriptors.Descriptor]<a class="headerlink" href="#citrine.resources.descriptors.DescriptorMethods.from_predictor_responses" title="Permalink to this definition">¶</a></dt>
-<dd><p>[ALPHA] Get responses for a predictor, given an input space.</p>
+<dd><p>Get responses for a predictor, given an input space.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -143,14 +143,14 @@ descriptors).</p>
 <li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-column-definitions">3.7. Available Column Definitions</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">4. [ALPHA] AI Engine</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">4. AI Engine</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/getting_started.html">4.1. Getting Started</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/descriptors.html">4.2. Descriptors</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/descriptors.html#platform-vocabularies">4.3. Platform Vocabularies</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/predictors.html">4.4. Predictors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/design_spaces.html">4.5. [ALPHA] Design Spaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/design_spaces.html">4.5. Design Spaces</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/processors.html">4.6. Processors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/design_workflows.html">4.7. [ALPHA] Design Workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/design_workflows.html">4.7. Design Workflows</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/scores.html">4.8. Scores</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/data_sources.html">4.9. Data Sources</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/predictor_reports.html">4.10. Predictor Reports</a></li>

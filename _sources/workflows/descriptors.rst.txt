@@ -48,7 +48,7 @@ Both `SMILES <https://en.wikipedia.org/wiki/Simplified_molecular-input_line-entr
 and `InChI <https://en.wikipedia.org/wiki/International_Chemical_Identifier>`__ are supported.
 The Molecular Structure Descriptor has no parameters other than a name.
 
-Formulation Descriptor (ALPHA)
+Formulation Descriptor
 ------------------------------
 
 :class:`~citrine.informatics.descriptors.FormulationDescriptor` is used to represent variables that contain information

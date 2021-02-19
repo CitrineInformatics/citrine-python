@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>citrine.informatics.dimensions module &#8212; Citrine Python 0.101.0 documentation</title>
+    <title>citrine.informatics.dimensions module &#8212; Citrine Python 0.102.0 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -39,7 +39,7 @@
 <dt id="citrine.informatics.dimensions.Dimension">
 <em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.dimensions.</code><code class="sig-name descname">Dimension</code><a class="headerlink" href="#citrine.informatics.dimensions.Dimension" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.polymorphic_serializable.PolymorphicSerializable</span></code></p>
-<p>[ALPHA] A Citrine Dimension describes the range of values that some quantity can take.</p>
+<p>A Citrine Dimension describes the range of values that some quantity can take.</p>
 <p>Abstract type that returns the proper type given a serialized dict.</p>
 <dl class="method">
 <dt id="citrine.informatics.dimensions.Dimension.get_type">
@@ -53,7 +53,7 @@
 <dt id="citrine.informatics.dimensions.ContinuousDimension">
 <em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.dimensions.</code><code class="sig-name descname">ContinuousDimension</code><span class="sig-paren">(</span><em class="sig-param">descriptor: citrine.informatics.descriptors.RealDescriptor</em>, <em class="sig-param">lower_bound: Optional[float] = None</em>, <em class="sig-param">upper_bound: Optional[float] = None</em>, <em class="sig-param">template_id: Optional[uuid.UUID] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.dimensions.ContinuousDimension" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.informatics.dimensions.Dimension" title="citrine.informatics.dimensions.Dimension"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.dimensions.Dimension</span></code></a></p>
-<p>[ALPHA] A continuous, real-valued dimension.</p>
+<p>A continuous, real-valued dimension.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -76,7 +76,7 @@
 
 <dl class="attribute">
 <dt id="citrine.informatics.dimensions.ContinuousDimension.template_id">
-<code class="sig-name descname">template_id</code><em class="property"> = UUID('5ed2ba30-f22e-4112-946c-1fbd32a5a8dd')</em><a class="headerlink" href="#citrine.informatics.dimensions.ContinuousDimension.template_id" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">template_id</code><em class="property"> = UUID('95ee2fd1-9105-441c-9a80-d071f174676f')</em><a class="headerlink" href="#citrine.informatics.dimensions.ContinuousDimension.template_id" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
@@ -95,7 +95,7 @@
 <dt id="citrine.informatics.dimensions.EnumeratedDimension">
 <em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.dimensions.</code><code class="sig-name descname">EnumeratedDimension</code><span class="sig-paren">(</span><em class="sig-param">descriptor: citrine.informatics.descriptors.Descriptor, values: List[str], template_id: Optional[uuid.UUID] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.dimensions.EnumeratedDimension" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.informatics.dimensions.Dimension" title="citrine.informatics.dimensions.Dimension"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.dimensions.Dimension</span></code></a></p>
-<p>[ALPHA] A finite, enumerated dimension.</p>
+<p>A finite, enumerated dimension.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -112,7 +112,7 @@
 
 <dl class="attribute">
 <dt id="citrine.informatics.dimensions.EnumeratedDimension.template_id">
-<code class="sig-name descname">template_id</code><em class="property"> = UUID('21fbf31b-e3a3-4516-a7d3-529c4d470a66')</em><a class="headerlink" href="#citrine.informatics.dimensions.EnumeratedDimension.template_id" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">template_id</code><em class="property"> = UUID('7db415c3-dc82-4f92-83e2-0b6e5efb24b4')</em><a class="headerlink" href="#citrine.informatics.dimensions.EnumeratedDimension.template_id" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
@@ -191,14 +191,14 @@
 <li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-column-definitions">3.7. Available Column Definitions</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">4. [ALPHA] AI Engine</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">4. AI Engine</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/getting_started.html">4.1. Getting Started</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/descriptors.html">4.2. Descriptors</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/descriptors.html#platform-vocabularies">4.3. Platform Vocabularies</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/predictors.html">4.4. Predictors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/design_spaces.html">4.5. [ALPHA] Design Spaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/design_spaces.html">4.5. Design Spaces</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/processors.html">4.6. Processors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/design_workflows.html">4.7. [ALPHA] Design Workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../workflows/design_workflows.html">4.7. Design Workflows</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/scores.html">4.8. Scores</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/data_sources.html">4.9. Data Sources</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../workflows/predictor_reports.html">4.10. Predictor Reports</a></li>

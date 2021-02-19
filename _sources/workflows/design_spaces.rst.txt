@@ -1,4 +1,4 @@
-[ALPHA] Design Spaces
+Design Spaces
 =====================
 
 A design space defines a set of materials that should be searched over when performing a material design.
