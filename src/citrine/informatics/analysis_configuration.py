@@ -8,7 +8,7 @@ from citrine.informatics.predictor_evaluator import CrossValidationEvaluator
 
 
 class CrossValidationAnalysisConfiguration(Serializable['CrossValidationAnalysisConfiguration']):
-    """[ALPHA] Configuration settings for running cross-validation in a performance workflow.
+    """[DEPRECATED] Configuration settings for running cross-validation in a performance workflow.
 
     Parameters
     ----------

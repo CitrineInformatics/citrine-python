@@ -10,10 +10,10 @@ __all__ = ['EnumeratedDesignSpace']
 
 
 class EnumeratedDesignSpace(Resource['EnumeratedDesignSpace'], DesignSpace):
-    """[ALPHA] An explicit enumeration of candidate materials to score.
+    """An explicit enumeration of candidate materials to score.
 
-    Note that every candidate must have exactly the descriptors in the list populated
-    (no more, no less) in order to be included.
+    Enumerated design spaces are intended to capture small spaces with less than
+    1000 values.  For larger spaces, use the DataSourceDesignSpace.
 
     Parameters
     ----------

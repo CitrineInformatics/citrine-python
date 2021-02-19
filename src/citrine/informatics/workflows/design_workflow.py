@@ -13,7 +13,7 @@ __all__ = ['DesignWorkflow']
 
 
 class DesignWorkflow(Resource['DesignWorkflow'], Workflow):
-    """[ALPHA] Object that generates scored materials that may approach higher values of the score.
+    """Object that generates scored materials that may approach higher values of the score.
 
     Parameters
     ----------

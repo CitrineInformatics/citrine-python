@@ -32,7 +32,7 @@ class Module(PolymorphicSerializable['Module']):
 
 
 class ModuleRef(Serializable['ModuleRef']):
-    """[ALPHA] A reference to a Module by UID."""
+    """A reference to a Module by UID."""
 
     module_uid = properties.UUID('module_uid')
 

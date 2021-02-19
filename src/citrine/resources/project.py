@@ -115,7 +115,7 @@ class Project(Resource['Project']):
 
     @property
     def descriptors(self) -> DescriptorMethods:
-        """[ALPHA] Return a resource containing a set of methods returning descriptors."""
+        """Return a resource containing a set of methods returning descriptors."""
         return DescriptorMethods(self.uid, self.session)
 
     @property
@@ -127,17 +127,17 @@ class Project(Resource['Project']):
 
     @property
     def predictor_evaluation_workflows(self) -> PredictorEvaluationWorkflowCollection:
-        """[ALPHA] Return a collection representing all visible predictor evaluation workflows."""
+        """Return a collection representing all visible predictor evaluation workflows."""
         return PredictorEvaluationWorkflowCollection(self.uid, self.session)
 
     @property
     def predictor_evaluation_executions(self) -> PredictorEvaluationExecutionCollection:
-        """[ALPHA] Return a collection representing all visible predictor evaluation executions."""
+        """Return a collection representing all visible predictor evaluation executions."""
         return PredictorEvaluationExecutionCollection(project_id=self.uid, session=self.session)
 
     @property
     def design_workflows(self) -> DesignWorkflowCollection:
-        """[ALPHA] Return a collection representing all visible design workflows."""
+        """Return a collection representing all visible design workflows."""
         return DesignWorkflowCollection(self.uid, self.session)
 
     @property

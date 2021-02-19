@@ -199,7 +199,7 @@ class CategoricalDescriptor(Serializable['CategoricalDescriptor'], Descriptor):
 
 
 class FormulationDescriptor(Serializable['FormulationDescriptor'], Descriptor):
-    """[ALPHA] A descriptor to hold formulations.
+    """A descriptor to hold formulations.
 
     Parameters
     ----------

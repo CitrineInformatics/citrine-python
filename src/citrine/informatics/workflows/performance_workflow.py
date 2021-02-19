@@ -14,7 +14,7 @@ __all__ = ['PerformanceWorkflow']
 
 
 class PerformanceWorkflow(Resource['PerformanceWorkflow'], Workflow):
-    """[ALPHA] Object that executes performance analysis on a given module.
+    """[DEPRECATED] Object that executes performance analysis on a given module.
 
     Parameters
     ----------

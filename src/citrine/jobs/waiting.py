@@ -107,7 +107,7 @@ def wait_while_executing(
     collection: Collection[Module] = None,
 ) -> Union[WorkflowExecution, PredictorEvaluationExecution, DesignExecution]:
     """
-    [ALPHA] Wait until execution is finished.
+    Wait until execution is finished.
 
     Parameters
     ----------

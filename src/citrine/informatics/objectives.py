@@ -12,7 +12,7 @@ __all__ = ['Objective', 'ScalarMaxObjective', 'ScalarMinObjective']
 
 class Objective(PolymorphicSerializable['Objective']):
     """
-    [ALPHA] A Citrine Objective describes a goal for a score associated with a single descriptor.
+    A Citrine Objective describes a goal for a score associated with a single descriptor.
 
     Abstract type that returns the proper type given a serialized dict.
 
@@ -32,7 +32,7 @@ class Objective(PolymorphicSerializable['Objective']):
 
 class ScalarMaxObjective(Serializable['ScalarMaxObjective'], Objective):
     """
-    [ALPHA] Simple single-response maximization objective with optional bounds.
+    Simple single-response maximization objective with optional bounds.
 
     Parameters
     ----------
@@ -56,7 +56,7 @@ class ScalarMaxObjective(Serializable['ScalarMaxObjective'], Objective):
 
 class ScalarMinObjective(Serializable['ScalarMinObjective'], Objective):
     """
-    [ALPHA] Simple single-response minimization objective with optional bounds.
+    Simple single-response minimization objective with optional bounds.
 
     Parameters
     ----------

@@ -1,7 +1,7 @@
 .. _workflows:
 
 =================
-[ALPHA] AI Engine
+AI Engine
 =================
 
 .. toctree::

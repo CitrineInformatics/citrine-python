@@ -11,7 +11,7 @@ __all__ = ['FormulationDesignSpace']
 
 
 class FormulationDesignSpace(Resource['FormulationDesignSpace'], DesignSpace):
-    """[ALPHA] Design space composed of mixtures of ingredients.
+    """Design space composed of mixtures of ingredients.
 
     Parameters
     ----------

@@ -84,7 +84,7 @@ class CSVDataSource(Serializable['CSVDataSource'], DataSource):
 
 
 class GemTableDataSource(Serializable['GemTableDataSource'], DataSource):
-    """[ALPHA] A data source based on a GEM Table hosted on the data platform.
+    """A data source based on a GEM Table hosted on the data platform.
 
     Parameters
     ----------

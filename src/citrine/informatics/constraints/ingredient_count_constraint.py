@@ -10,7 +10,7 @@ __all__ = ['IngredientCountConstraint']
 
 
 class IngredientCountConstraint(Serializable['IngredientCountConstraint'], Constraint):
-    """[ALPHA] Represents a constraint on the total number of ingredients in a formulation.
+    """Represents a constraint on the total number of ingredients in a formulation.
 
     Parameters
     ----------

@@ -10,7 +10,7 @@ __all__ = ['IngredientFractionConstraint']
 
 
 class IngredientFractionConstraint(Serializable['IngredientFractionConstraint'], Constraint):
-    """[ALPHA] Represents a constraint on an ingredient fraction in a formulation.
+    """Represents a constraint on an ingredient fraction in a formulation.
 
     Parameters
     ----------

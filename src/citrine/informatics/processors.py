@@ -12,7 +12,7 @@ __all__ = ['Processor', 'GridProcessor', 'EnumeratedProcessor', 'MonteCarloProce
 
 
 class Processor(Module):
-    """[ALPHA] A Citrine Processor describes how a design space is searched.
+    """A Citrine Processor describes how a design space is searched.
 
     Abstract type that returns the proper type given a serialized dict.
 
@@ -42,7 +42,7 @@ class Processor(Module):
 
 
 class GridProcessor(Serializable['GridProcessor'], Processor):
-    """[ALPHA] Generates samples from the outer product of finite dimensions, then scans over them.
+    """Generates samples from the outer product of finite dimensions, then scans over them.
 
     To create a finite set of materials from continuous dimensions, a uniform grid is created
     between the lower and upper bounds of the descriptor.
@@ -107,7 +107,7 @@ class GridProcessor(Serializable['GridProcessor'], Processor):
 
 
 class EnumeratedProcessor(Serializable['EnumeratedProcessor'], Processor):
-    """[ALPHA] Process a design space by enumerating up to a fixed number of samples from the domain.
+    """Process a design space by enumerating up to a fixed number of samples from the domain.
 
     Each sample is processed independently.
 
@@ -180,7 +180,7 @@ class EnumeratedProcessor(Serializable['EnumeratedProcessor'], Processor):
 
 
 class MonteCarloProcessor(Serializable['GridProcessor'], Processor):
-    """[ALPHA] Using a Monte Carlo optimizer to search for the best candidate.
+    """Using a Monte Carlo optimizer to search for the best candidate.
 
     The moves that the MonteCarlo optimizer makes are inferred from the descriptors in the
     design space.

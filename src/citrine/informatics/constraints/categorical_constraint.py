@@ -11,7 +11,7 @@ __all__ = ['AcceptableCategoriesConstraint', 'CategoricalConstraint']
 
 class AcceptableCategoriesConstraint(Serializable['AcceptableCategoriesConstraint'], Constraint):
     """
-    [ALPHA] A constraint on a categorical material attribute to be in a set of acceptable values.
+    A constraint on a categorical material attribute to be in a set of acceptable values.
 
     Parameters
     ----------

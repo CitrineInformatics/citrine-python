@@ -10,7 +10,7 @@ __all__ = ['DataSourceDesignSpace']
 
 
 class DataSourceDesignSpace(Resource['DataSourceDesignSpace'], DesignSpace):
-    """[ALPHA] An enumeration of candidates stored in a data source.
+    """An enumeration of candidates stored in a data source.
 
     Parameters
     ----------

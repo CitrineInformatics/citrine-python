@@ -10,7 +10,7 @@ CreationType = TypeVar('CreationType', bound=DesignSpace)
 
 
 class DesignSpaceCollection(Collection[DesignSpace]):
-    """[ALPHA] Represents the collection of design spaces as well as the resources belonging to it.
+    """Represents the collection of design spaces as well as the resources belonging to it.
 
     Parameters
     ----------
