@@ -26,7 +26,7 @@ setup(name='citrine',
           "requests>=2.22.0,<3",
           "pyjwt>=1.7.1,<2",
           "arrow>=0.15.4,<0.16",
-          "gemd>=0.16.1,<0.17",
+          "gemd>=0.17.0,<0.18",
           "boto3>=1.9.226,<2",
           "botocore>=1.12.226,<2",
           "deprecation>=2.0.7,<3",
@@ -34,7 +34,7 @@ setup(name='citrine',
       ],
       extras_require={
           "builders": [
-              "pandas>=0.25,<2"
+              "pandas>=1.0.3,<2"
           ]
       },
       classifiers=[
