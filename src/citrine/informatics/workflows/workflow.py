@@ -8,7 +8,7 @@ __all__ = ['Workflow']
 
 
 class Workflow(PolymorphicSerializable['Workflow']):
-    """[ALPHA] A Citrine Workflow is a collection of Modules that together accomplish some task.
+    """[DEPRECATED] A Citrine Workflow is a collection of Modules that together accomplish some task.
 
     Abstract type that returns the proper type given a serialized dict.
 

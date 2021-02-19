@@ -9,7 +9,7 @@ from citrine.informatics.predictors import Predictor
 
 # Not a full Collection since CRUD operations are not valid for Descriptors
 class DescriptorMethods:
-    """[ALPHA] A set of methods returning descriptors which require connection to the backend."""
+    """A set of methods returning descriptors which require connection to the backend."""
 
     def __init__(self, project_id: UUID, session: Session):
         self.project_id = project_id
@@ -18,7 +18,7 @@ class DescriptorMethods:
     def from_predictor_responses(self, predictor: Predictor,
                                  inputs: List[Descriptor]) -> List[Descriptor]:
         """
-        [ALPHA] Get responses for a predictor, given an input space.
+        Get responses for a predictor, given an input space.
 
         Parameters
         ----------
@@ -45,7 +45,7 @@ class DescriptorMethods:
 
     def descriptors_from_data_source(self, data_source: DataSource) -> List[Descriptor]:
         """
-        [ALPHA] Get all descriptors associated with a data source.
+        Get all descriptors associated with a data source.
 
         Parameters
         ----------

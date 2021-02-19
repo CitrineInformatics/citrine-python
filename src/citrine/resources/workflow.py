@@ -17,7 +17,7 @@ ResourceType = TypeVar('ResourceType', bound='Resource')
 
 
 class WorkflowCollection(Collection[Workflow]):
-    """[ALPHA] Represents the collection of all Workflows as well as the resources belonging to it.
+    """[DEPRECATED] Represents the collection of all legacy Workflows.
 
     Parameters
     ----------

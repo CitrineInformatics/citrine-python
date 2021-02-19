@@ -9,7 +9,7 @@ __all__ = ['DesignSpace']
 
 
 class DesignSpace(Module):
-    """[ALPHA] A Citrine Design Space describes the set of materials that can be made.
+    """A Citrine Design Space describes the set of materials that can be made.
 
     Abstract type that returns the proper type given a serialized dict.
 

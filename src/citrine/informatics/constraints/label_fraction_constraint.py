@@ -10,7 +10,7 @@ __all__ = ['LabelFractionConstraint']
 
 
 class LabelFractionConstraint(Serializable['LabelFractionConstraint'], Constraint):
-    """[ALPHA] Represents a constraint on the total amount of ingredients with a given label.
+    """Represents a constraint on the total amount of ingredients with a given label.
 
     Parameters
     ----------

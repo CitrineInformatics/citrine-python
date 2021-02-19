@@ -13,7 +13,7 @@ __all__ = ['Score', 'LIScore', 'EIScore', 'EVScore']
 
 
 class Score(PolymorphicSerializable['Score']):
-    """[ALPHA] A Citrine Score is used to rank materials according to objectives and constraints.
+    """A Citrine Score is used to rank materials according to objectives and constraints.
 
     Abstract type that returns the proper type given a serialized dict.
 
@@ -47,7 +47,7 @@ class Score(PolymorphicSerializable['Score']):
 
 
 class LIScore(Serializable['LIScore'], Score):
-    """[ALPHA] Evaluates the likelihood of scoring better than some baselines for given objectives.
+    """Evaluates the likelihood of scoring better than some baselines for given objectives.
 
     Parameters
     ----------
@@ -97,7 +97,7 @@ class LIScore(Serializable['LIScore'], Score):
 
 class EIScore(Serializable['EIScore'], Score):
     """
-    [ALPHA] Evaluates the expected magnitude of improvement beyond baselines for given objectives.
+    Evaluates the expected magnitude of improvement beyond baselines for given objectives.
 
     Parameters
     ----------
@@ -147,7 +147,7 @@ class EIScore(Serializable['EIScore'], Score):
 
 class EVScore(Serializable['EVScore'], Score):
     """
-    [ALPHA] Evaluates the expected value for given objectives.
+    Evaluates the expected value for given objectives.
 
     Parameters
     ----------

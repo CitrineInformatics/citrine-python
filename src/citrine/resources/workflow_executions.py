@@ -22,7 +22,7 @@ from citrine.resources.predictor_evaluation_execution import (
 
 
 class WorkflowExecution(Resource['WorkflowExecution'], Pageable):
-    """[ALPHA] A Citrine Workflow Execution.
+    """[DEPRECATED] A Citrine Workflow Execution.
 
     Parameters
     ----------
@@ -116,7 +116,7 @@ class WorkflowExecution(Resource['WorkflowExecution'], Pageable):
 
 
 class WorkflowExecutionCollection(Collection[WorkflowExecution]):
-    """[ALPHA] A collection of WorkflowExecutions."""
+    """[DEPRECATED] A collection of WorkflowExecutions."""
 
     _path_template = '/projects/{project_id}/workflows/{workflow_id}/executions'
     _individual_key = None
@@ -151,7 +151,7 @@ class WorkflowExecutionCollection(Collection[WorkflowExecution]):
 
 
 class WorkflowExecutionStatus(Resource['WorkflowExecutionStatus']):
-    """[ALPHA] The status for a specific workflow execution."""
+    """[DEPRECATED] The status for a specific workflow execution."""
 
     status = properties.String('status')
 

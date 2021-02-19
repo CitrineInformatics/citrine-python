@@ -6,7 +6,7 @@ __all__ = ['Constraint']
 
 
 class Constraint(PolymorphicSerializable['Constraint']):
-    """[ALPHA] A Citrine Constraint places restrictions on a design space.
+    """A Citrine Constraint places restrictions on a design space.
 
     Abstract type that returns the proper type given a serialized dict.
 
