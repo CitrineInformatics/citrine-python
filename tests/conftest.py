@@ -198,6 +198,31 @@ def valid_simple_ml_predictor_data(valid_gem_data_source_dict):
 
 
 @pytest.fixture
+def valid_auto_ml_predictor_data(valid_gem_data_source_dict):
+    """Produce valid data used for tests."""
+    from citrine.informatics.descriptors import RealDescriptor
+    x = RealDescriptor("x", 0, 100, "")
+    y = RealDescriptor("y", 0, 100, "")
+    z = RealDescriptor("z", 0, 100, "")
+    return dict(
+        module_type='PREDICTOR',
+        status='VALID',
+        status_info=[],
+        archived=False,
+        display_name='Auto ML predictor',
+        id=str(uuid.uuid4()),
+        config=dict(
+            type='AutoML',
+            name='AutoML predictor',
+            description='Predicts z from input x',
+            inputs=[x.dump()],
+            responses=[z.dump()],
+            training_data=[valid_gem_data_source_dict]
+        )
+    )
+
+
+@pytest.fixture
 def valid_graph_predictor_data():
     """Produce valid data used for tests."""
     from citrine.informatics.data_sources import GemTableDataSource

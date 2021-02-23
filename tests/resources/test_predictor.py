@@ -7,7 +7,13 @@ from copy import deepcopy
 from citrine.exceptions import ModuleRegistrationFailedException, NotFound
 from citrine.informatics.data_sources import GemTableDataSource
 from citrine.informatics.descriptors import RealDescriptor
-from citrine.informatics.predictors import GraphPredictor, SimpleMLPredictor, ExpressionPredictor, Predictor
+from citrine.informatics.predictors import (
+    GraphPredictor,
+    SimpleMLPredictor,
+    ExpressionPredictor,
+    Predictor,
+    AutoMLPredictor
+)
 from citrine.resources.predictor import PredictorCollection
 from tests.utils.session import FakeSession, FakeCall
 from tests.utils.session import FakeRequestResponse
@@ -31,6 +37,15 @@ def test_build(valid_simple_ml_predictor_data, basic_predictor_report_data):
     assert predictor.description == 'Predicts z from input x and latent variable y'
 
 
+def test_automl_build(valid_auto_ml_predictor_data, basic_predictor_report_data):
+    session = mock.Mock()
+    session.get_resource.return_value = basic_predictor_report_data
+    pc = PredictorCollection(uuid.uuid4(), session)
+    predictor = pc.build(valid_auto_ml_predictor_data)
+    assert predictor.name == 'AutoML predictor'
+    assert predictor.description == 'Predicts z from input x'
+
+
 def test_graph_build(valid_graph_predictor_data, basic_predictor_report_data):
     session = mock.Mock()
     session.get_resource.return_value = basic_predictor_report_data
@@ -50,6 +65,16 @@ def test_register(valid_simple_ml_predictor_data, basic_predictor_report_data):
     predictor = SimpleMLPredictor.build(valid_simple_ml_predictor_data)
     registered = pc.register(predictor)
     assert registered.name == 'ML predictor'
+
+
+def test_automl_register(valid_auto_ml_predictor_data, basic_predictor_report_data):
+    session = mock.Mock()
+    session.post_resource.return_value = valid_auto_ml_predictor_data
+    session.get_resource.return_value = basic_predictor_report_data
+    pc = PredictorCollection(uuid.uuid4(), session)
+    predictor = AutoMLPredictor.build(valid_auto_ml_predictor_data)
+    registered = pc.register(predictor)
+    assert registered.name == 'AutoML predictor'
 
 
 def test_register_experimental(valid_simple_ml_predictor_data, basic_predictor_report_data):
