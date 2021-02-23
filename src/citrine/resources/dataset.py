@@ -3,8 +3,6 @@ from collections import defaultdict
 from typing import TypeVar, List, Optional, Iterable, Union, Tuple
 from uuid import UUID
 
-from gemd.entity.link_by_uid import LinkByUID
-
 from citrine._rest.collection import Collection
 from citrine._rest.resource import Resource
 from citrine._serialization import properties
@@ -27,6 +25,7 @@ from citrine.resources.process_run import ProcessRunCollection
 from citrine.resources.process_spec import ProcessSpecCollection
 from citrine.resources.process_template import ProcessTemplateCollection
 from citrine.resources.property_template import PropertyTemplateCollection
+
 from gemd.entity.object import MeasurementSpec, MeasurementRun, MaterialSpec, MaterialRun, \
     ProcessSpec, ProcessRun, IngredientSpec, IngredientRun
 from gemd.entity.template.condition_template import ConditionTemplate
@@ -36,6 +35,7 @@ from gemd.entity.template.parameter_template import ParameterTemplate
 from gemd.entity.template.process_template import ProcessTemplate
 from gemd.entity.template.property_template import PropertyTemplate
 from gemd.entity.base_entity import BaseEntity
+from gemd.entity.link_by_uid import LinkByUID
 from gemd.util import writable_sort_order
 
 ResourceType = TypeVar('ResourceType', bound='DataConcepts')
@@ -289,13 +289,13 @@ class Dataset(Resource['Dataset']):
         return self._collection_for(data_concepts_resource) \
             .delete(uid[1], scope=uid[0], dry_run=dry_run)
 
-    def gemd_batch_delete(self, id_list: List[Union[LinkByUID, UUID]]) -> \
+    def gemd_batch_delete(self, id_list: List[Union[LinkByUID, UUID, str, BaseEntity]]) -> \
             List[Tuple[LinkByUID, ApiError]]:
         """
         Remove a set of GEMD objects.
 
         You may provide GEMD objects that reference each other, and the objects
-        will be removed in the appripriate order.
+        will be removed in the appropriate order.
 
         A failure will be returned if the object cannot be deleted due to an external
         reference.
@@ -303,14 +303,19 @@ class Dataset(Resource['Dataset']):
         All data objects must be associated with this dataset resource. You must also
         have write access on this dataset.
 
+        If you wish to delete more than 50 objects, queuing of deletes requires that
+        the types of objects be known, and thus you _must_ provide ids in the form
+        of BaseEntities.
+
         Also note that Attribute Templates cannot be deleted at present.
 
         Parameters
         ----------
-        id_list: List[Union[LinkByUID, UUID]]
-            A list of the IDs of data objects to be removed. They can be passed either
-            as a LinkByUID tuple, or as a UUID. The latter is assumed to be a Citrine
-            ID, whereas the former can also be used to provide an external ID.
+        id_list: List[Union[LinkByUID, UUID, str, BaseEntity]]
+            A list of the IDs of data objects to be removed. They can be passed
+            as a LinkByUID tuple, a UUID, a string, or the object itself. A UUID
+            or string is assumed to be a Citrine ID, whereas a LinkByUID or
+            BaseEntity can also be used to provide an external ID.
 
         Returns
         -------

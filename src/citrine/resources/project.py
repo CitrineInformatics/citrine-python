@@ -4,6 +4,7 @@ from uuid import UUID
 
 from deprecation import deprecated
 from gemd.entity.link_by_uid import LinkByUID
+from gemd.entity.base_entity import BaseEntity
 
 from citrine._rest.collection import Collection
 from citrine._rest.resource import Resource
@@ -429,27 +430,32 @@ class Project(Resource['Project']):
         )
         return True
 
-    def gemd_batch_delete(self, id_list: List[Union[LinkByUID, UUID]]) -> \
+    def gemd_batch_delete(self, id_list: List[Union[LinkByUID, UUID, str, BaseEntity]]) -> \
             List[Tuple[LinkByUID, ApiError]]:
         """
         Remove a set of GEMD objects.
 
         You may provide GEMD objects that reference each other, and the objects
-        will be removed in the appripriate order.
+        will be removed in the appropriate order.
 
         A failure will be returned if the object cannot be deleted due to an external
         reference.
 
         You must have Write access on the assoociated datasets for each object.
 
+        If you wish to delete more than 50 objects, queuing of deletes requires that
+        the types of objects be known, and thus you _must_ provide ids in the form
+        of BaseEntities.
+
         Also note that Attribute Templates cannot be deleted at present.
 
         Parameters
         ----------
-        id_list: List[Union[LinkByUID, UUID]]
-            A list of the IDs of data objects to be removed. They can be passed either
-            as a LinkByUID tuple, or as a UUID. The latter is assumed to be a Citrine
-            ID, whereas the former can also be used to provide an external ID.
+        id_list: List[Union[LinkByUID, UUID, str, BaseEntity]]
+            A list of the IDs of data objects to be removed. They can be passed
+            as a LinkByUID tuple, a UUID, a string, or the object itself. A UUID
+            or string is assumed to be a Citrine ID, whereas a LinkByUID or
+            BaseEntity can also be used to provide an external ID.
 
         Returns
         -------
