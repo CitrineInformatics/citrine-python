@@ -654,6 +654,9 @@ def test_batch_delete_bad_input(dataset):
     with pytest.raises(TypeError):
         dataset.gemd_batch_delete(['hiya!'])
 
+    with pytest.raises(TypeError):
+        dataset.gemd_batch_delete([False])
+
     success_resp = {'failures': []}
     session = dataset.session
     session.set_responses(success_resp)
