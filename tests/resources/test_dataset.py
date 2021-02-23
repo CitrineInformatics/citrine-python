@@ -568,6 +568,8 @@ def test_delete_missing_uid(dataset):
         dataset.delete(obj)
 
 def test_batch_delete(dataset):
+    from citrine.resources.delete import DELETE_SERVICE_MAX
+
     failure_resp = {'failures': [
         {
             "id":{
@@ -588,7 +590,7 @@ def test_batch_delete(dataset):
     ]}
 
     session = dataset.session
-    session.set_responses(failure_resp, failure_resp, failure_resp, failure_resp)
+    session.set_responses(failure_resp, failure_resp, failure_resp)
 
     # When
     del_resp = dataset.gemd_batch_delete([uuid.UUID(
@@ -629,14 +631,18 @@ def test_batch_delete(dataset):
     assert first_failure == (LinkByUID('somescope', 'abcd-1234'), expected_api_error)
 
     # And again with Base Entities
-    targets = [
-        ProcessSpec(name='PS', uids={"1": "2"}),
-        ProcessRun(name='PR', uids={"1": "3"}),
-        MaterialSpec(name='MS', uids={"1": "4"}),
-        MaterialRun(name='MR', uids={"1": "5"})
-    ]
+    responses = [failure_resp]*4
+    session.set_responses(*responses)
+    targets = []
+    for i in range(DELETE_SERVICE_MAX):
+        targets.extend([
+            ProcessSpec(name='PS', uids={str(i): "1"}),
+            ProcessRun(name='PR', uids={str(i): "2"}),
+            MaterialSpec(name='MS', uids={str(i): "3"}),
+            MaterialRun(name='MR', uids={str(i): "4"})
+        ])
     del_resp = dataset.gemd_batch_delete(targets)
-    assert len(del_resp) == 1
+    assert len(del_resp) == 4
     first_failure = del_resp[0]
 
     assert first_failure == (LinkByUID('somescope', 'abcd-1234'), expected_api_error)
