@@ -719,6 +719,7 @@ def design_workflow_dict(generic_entity):
     ret = generic_entity.copy()
     ret.update({
         "name": "Example Design Workflow",
+        "description": "A description! Of the Design Workflow! So you know what it's for!",
         "description": "Example Design Workflow for testing",
         "processor_id": str(uuid.uuid4()),
         "design_space_id": str(uuid.uuid4()),
