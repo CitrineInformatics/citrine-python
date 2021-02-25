@@ -209,7 +209,7 @@ def valid_auto_ml_predictor_data(valid_gem_data_source_dict):
         status='VALID',
         status_info=[],
         archived=False,
-        display_name='Auto ML predictor',
+        display_name='AutoML predictor',
         id=str(uuid.uuid4()),
         config=dict(
             type='AutoML',

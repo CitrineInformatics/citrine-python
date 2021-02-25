@@ -12,7 +12,7 @@ __all__ = ['AutoMLPredictor']
 
 
 class AutoMLPredictor(Serializable['AutoMLPredictor'], Predictor):
-    """A predictor interface that ???
+    """A predictor interface that builds a simgle model.
 
     The model connects the set of inputs through latent variables to the responses.
     Supported complex inputs (such as chemical formulas) are auto-featurized and machine learning
