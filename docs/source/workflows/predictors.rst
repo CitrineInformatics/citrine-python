@@ -56,14 +56,14 @@ The following example demonstrates how to use the python SDK to create a :class:
    # register predictor or update predictor of same name if it already
    # exists in the project.
    predictor = create_or_update(collection=project.predictors,
-                                resource=simple_ml_predictor           
+                                resource=simple_ml_predictor
                                )
 
    # wait while the predictor is validating and print status information
    # while waiting.
    predictor = wait_while_validating(collection=project.predictors,
                                      module=predictor,
-                                     print_status_info=True  
+                                     print_status_info=True
                                     )
 
 Often, a :class:`~citrine.informatics.predictors.simple_ml_predictor.SimpleMLPredictor` will include outputs from other predictors as inputs to its model.
@@ -114,6 +114,40 @@ The following demonstrates how to create an :class:`~citrine.informatics.predict
         latent_variables = [],
         training_data = GemTableDataSource(training_data_table_uid, 1, formulation_descriptor)
     )
+
+
+Auto ML predictor
+-------------------
+
+The :class:`~citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor` predicts material properties using a machine-learned model.
+Each predictor is defined by a set of inputs and responses.
+Inputs are used as input features to the machine learning model.
+Responses are the properties that you would like the model to predict. Currently, only one response at a time is supported.
+There must be at least one input and only one response.
+Unlike the SimplePredictor, only one model is trained from inputs to the response.
+
+Models are trained using data provided by a :class:`~citrine.informatics.data_sources.DataSource` specified when creating a predictor.
+
+The following example demonstrates how to use the python SDK to create an :class:`~citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor`, register the predictor to a project and wait for validation:
+
+.. code:: python
+
+   from citrine.informatics.predictors import AutoMLPredictor
+
+   # create AutoMLPredictor (assumes descriptors for
+   # inputs/responses variables have already been created)
+   auto_ml_predictor = AutoMLPredictor(
+       name = 'Predictor name',
+       description = 'Predictor description',
+       inputs = [input_descriptor_1, input_descriptor_2],
+       responses = [response_descriptor_1],
+       training_data = [GemTableDataSource(training_data_table_uid, 1)]
+   )
+
+   predictor = create_or_update(collection=project.predictors,
+                                resource=auto_ml_predictor
+                               )
+
 
 Graph predictor
 ---------------
