@@ -12,7 +12,7 @@ __all__ = ['AutoMLPredictor']
 
 
 class AutoMLPredictor(Serializable['AutoMLPredictor'], Predictor):
-    """A predictor interface that builds a simgle model.
+    """A predictor interface that builds a single ML model.
 
     The model uses the set of inputs to predict the responses.
     Only one value for responses is currently supported.
@@ -26,9 +26,9 @@ class AutoMLPredictor(Serializable['AutoMLPredictor'], Predictor):
     description: str
         the description of the predictor
     inputs: list[Descriptor]
-        Descriptors that represent inputs to relations
+        Descriptors that represent inputs to the model
     responses: list[Descriptor]
-        Descriptors that represent responses of relations
+        Descriptors that represent responses of the model
     training_data: Optional[List[DataSource]]
         Sources of training data. Each can be either a CSV or an GEM Table. Candidates from
         multiple data sources will be combined into a flattened list and deduplicated by uid and
