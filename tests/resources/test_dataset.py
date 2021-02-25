@@ -568,6 +568,8 @@ def test_delete_missing_uid(dataset):
         dataset.delete(obj)
 
 def test_batch_delete(dataset):
+    from citrine.resources.delete import DELETE_SERVICE_MAX
+
     failure_resp = {'failures': [
         {
             "id":{
@@ -588,7 +590,7 @@ def test_batch_delete(dataset):
     ]}
 
     session = dataset.session
-    session.set_responses(failure_resp, failure_resp)
+    session.set_responses(failure_resp, failure_resp, failure_resp)
 
     # When
     del_resp = dataset.gemd_batch_delete([uuid.UUID(
@@ -611,7 +613,6 @@ def test_batch_delete(dataset):
                                       failure_message="fail msg",
                                       failure_id="identifier.coreid.missing")])
 
-
     assert first_failure == (LinkByUID('somescope', 'abcd-1234'), expected_api_error)
 
     # And again with tuples of (scope, id)
@@ -622,7 +623,45 @@ def test_batch_delete(dataset):
 
     assert first_failure == (LinkByUID('somescope', 'abcd-1234'), expected_api_error)
 
+    # And again with UUID-like strings
+    del_resp = dataset.gemd_batch_delete(['16fd2706-8baf-433b-82eb-8c7fada847da'])
+    assert len(del_resp) == 1
+    first_failure = del_resp[0]
+
+    assert first_failure == (LinkByUID('somescope', 'abcd-1234'), expected_api_error)
+
+    # And again with Base Entities
+    responses = [failure_resp]*4
+    session.set_responses(*responses)
+    targets = []
+    for i in range(DELETE_SERVICE_MAX):
+        targets.extend([
+            ProcessSpec(name='PS', uids={str(i): "1"}),
+            ProcessRun(name='PR', uids={str(i): "2"}),
+            MaterialSpec(name='MS', uids={str(i): "3"}),
+            MaterialRun(name='MR', uids={str(i): "4"})
+        ])
+    del_resp = dataset.gemd_batch_delete(targets)
+    assert len(del_resp) == 4
+    first_failure = del_resp[0]
+
+    assert first_failure == (LinkByUID('somescope', 'abcd-1234'), expected_api_error)
+
 
 def test_batch_delete_bad_input(dataset):
+    from citrine.resources.delete import DELETE_SERVICE_MAX
+
     with pytest.raises(TypeError):
         dataset.gemd_batch_delete(['hiya!'])
+
+    with pytest.raises(TypeError):
+        dataset.gemd_batch_delete([False])
+
+    success_resp = {'failures': []}
+    session = dataset.session
+    session.set_responses(success_resp)
+    # Passes with a number of calls
+    dataset.gemd_batch_delete(['16fd2706-8baf-433b-82eb-8c7fada847da'] * DELETE_SERVICE_MAX)
+
+    with pytest.raises(TypeError):
+        dataset.gemd_batch_delete(['16fd2706-8baf-433b-82eb-8c7fada847da'] * (DELETE_SERVICE_MAX+1))
