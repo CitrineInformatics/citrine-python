@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>citrine.resources.dataset module &#8212; Citrine Python 0.102.0 documentation</title>
+    <title>citrine.resources.dataset module &#8212; Citrine Python 0.104.0 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -201,20 +201,24 @@ and delete objects in the dataset.</p>
 
 <dl class="method">
 <dt id="citrine.resources.dataset.Dataset.gemd_batch_delete">
-<code class="sig-name descname">gemd_batch_delete</code><span class="sig-paren">(</span><em class="sig-param">id_list: List[Union[gemd.entity.link_by_uid.LinkByUID, uuid.UUID]]</em><span class="sig-paren">)</span> &#x2192; List[Tuple[gemd.entity.link_by_uid.LinkByUID, citrine.resources.api_error.ApiError]]<a class="headerlink" href="#citrine.resources.dataset.Dataset.gemd_batch_delete" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">gemd_batch_delete</code><span class="sig-paren">(</span><em class="sig-param">id_list: List[Union[gemd.entity.link_by_uid.LinkByUID, uuid.UUID, str, gemd.entity.base_entity.BaseEntity]]</em><span class="sig-paren">)</span> &#x2192; List[Tuple[gemd.entity.link_by_uid.LinkByUID, citrine.resources.api_error.ApiError]]<a class="headerlink" href="#citrine.resources.dataset.Dataset.gemd_batch_delete" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove a set of GEMD objects.</p>
 <p>You may provide GEMD objects that reference each other, and the objects
-will be removed in the appripriate order.</p>
+will be removed in the appropriate order.</p>
 <p>A failure will be returned if the object cannot be deleted due to an external
 reference.</p>
 <p>All data objects must be associated with this dataset resource. You must also
 have write access on this dataset.</p>
+<p>If you wish to delete more than 50 objects, queuing of deletes requires that
+the types of objects be known, and thus you _must_ provide ids in the form
+of BaseEntities.</p>
 <p>Also note that Attribute Templates cannot be deleted at present.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>id_list</strong> (<em>List</em><em>[</em><em>Union</em><em>[</em><em>LinkByUID</em><em>, </em><em>UUID</em><em>]</em><em>]</em>) – A list of the IDs of data objects to be removed. They can be passed either
-as a LinkByUID tuple, or as a UUID. The latter is assumed to be a Citrine
-ID, whereas the former can also be used to provide an external ID.</p>
+<dd class="field-odd"><p><strong>id_list</strong> (<em>List</em><em>[</em><em>Union</em><em>[</em><em>LinkByUID</em><em>, </em><em>UUID</em><em>, </em><em>str</em><em>, </em><em>BaseEntity</em><em>]</em><em>]</em>) – A list of the IDs of data objects to be removed. They can be passed
+as a LinkByUID tuple, a UUID, a string, or the object itself. A UUID
+or string is assumed to be a Citrine ID, whereas a LinkByUID or
+BaseEntity can also be used to provide an external ID.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>A list of (LinkByUID, api_error) for each failure to delete an object.
