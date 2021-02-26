@@ -8,7 +8,8 @@ from . import serialization_check, valid_serialization_output
 from citrine.informatics.descriptors import RealDescriptor
 from citrine.informatics.predictors import ExpressionPredictor, GeneralizedMeanPropertyPredictor, \
     GraphPredictor, Predictor, SimpleMLPredictor, IngredientsToSimpleMixturePredictor, \
-    LabelFractionsPredictor, SimpleMixturePredictor, IngredientFractionsPredictor, DeprecatedExpressionPredictor
+    LabelFractionsPredictor, SimpleMixturePredictor, IngredientFractionsPredictor, \
+    DeprecatedExpressionPredictor, AutoMLPredictor
 
 
 def test_simple_legacy_deserialization(valid_simple_ml_predictor_data):
@@ -88,6 +89,11 @@ def test_label_fractions_serialization(valid_label_fractions_predictor_data):
 def test_ingredient_fractions_serialization(valid_ingredient_fractions_predictor_data):
     """"Ensure that a serialized IngredientsFractionsPredictor looks sane."""
     serialization_check(valid_ingredient_fractions_predictor_data, IngredientFractionsPredictor)
+
+
+def test_auto_ml_serialization(valid_auto_ml_predictor_data):
+    """"Ensure that a serialized AutoMLPredictor looks sane."""
+    serialization_check(valid_auto_ml_predictor_data, AutoMLPredictor)
 
 
 def test_invalid_predictor_type(invalid_predictor_data):
