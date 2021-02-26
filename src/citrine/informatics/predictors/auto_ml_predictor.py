@@ -16,7 +16,6 @@ class AutoMLPredictor(Serializable['AutoMLPredictor'], Predictor):
 
     The model uses the set of inputs to predict the responses.
     Only one value for responses is currently supported.
-    Supported complex inputs (such as chemical formulas) are auto-featurized.
     Only one machine learning model is built.
 
     Parameters
