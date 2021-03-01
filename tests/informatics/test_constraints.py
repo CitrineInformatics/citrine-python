@@ -121,6 +121,9 @@ def test_range_defaults():
     assert ScalarRangeConstraint("x", lower_inclusive=False).lower_inclusive is False
     assert ScalarRangeConstraint("x", min_inclusive=False).lower_inclusive is False
 
+    assert ScalarRangeConstraint("x", lower_bound=0).lower_bound == 0.0
+    assert ScalarRangeConstraint("x", upper_bound=0).upper_bound == 0.0
+
     with pytest.raises(ValueError):
         ScalarRangeConstraint("x", min=1.0, lower_bound=1.0)
     with pytest.raises(ValueError):
