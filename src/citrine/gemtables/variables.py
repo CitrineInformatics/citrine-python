@@ -671,6 +671,7 @@ class IngredientQuantityInOutput(Serializable['IngredientQuantityInOutput'], Var
         an optional unit: only ingredient quantities that are convertable to this unit will be
         matched. note that this parameter is mandatory when quantity_dimension is
         IngredientQuantityDimension.ABSOLUTE.
+
     """
 
     name = properties.String('name')
@@ -683,7 +684,13 @@ class IngredientQuantityInOutput(Serializable['IngredientQuantityInOutput'], Var
     typ = properties.String('type', default="ing_quantity_in_output", deserializable=False)
 
     def _attrs(self) -> List[str]:
-        return ["name", "headers", "ingredient_name", "process_templates", "type_selector", "unit", "typ"]
+        return ["name",
+                "headers",
+                "ingredient_name",
+                "process_templates",
+                "type_selector",
+                "unit",
+                "typ"]
 
     def __init__(self, *,
                  name: str,
