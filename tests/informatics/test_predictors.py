@@ -9,7 +9,8 @@ from citrine.informatics.data_sources import GemTableDataSource
 from citrine.informatics.descriptors import RealDescriptor, MolecularStructureDescriptor, FormulationDescriptor
 from citrine.informatics.predictors import ExpressionPredictor, GraphPredictor, SimpleMLPredictor, \
     MolecularStructureFeaturizer, GeneralizedMeanPropertyPredictor, IngredientsToSimpleMixturePredictor, \
-    SimpleMixturePredictor, LabelFractionsPredictor, IngredientFractionsPredictor, DeprecatedExpressionPredictor
+    SimpleMixturePredictor, LabelFractionsPredictor, IngredientFractionsPredictor, DeprecatedExpressionPredictor, \
+    AutoMLPredictor
 
 x = RealDescriptor("x", 0, 100, "")
 y = RealDescriptor("y", 0, 100, "")
@@ -44,6 +45,17 @@ def molecule_featurizer() -> MolecularStructureFeaturizer:
         descriptor=MolecularStructureDescriptor("SMILES"),
         features=["all"],
         excludes=["standard"]
+    )
+
+
+@pytest.fixture
+def auto_ml() -> AutoMLPredictor:
+    return AutoMLPredictor(
+        name='AutoML Predictor',
+        description='Predicts z from input x',
+        inputs=[x],
+        responses=[z],
+        training_data=[data_source]
     )
 
 
@@ -264,6 +276,17 @@ def test_molecule_featurizer(molecule_featurizer):
         'module_type': 'PREDICTOR',
         'display_name': 'Molecule featurizer'
     }
+
+
+def test_auto_ml(auto_ml):
+    assert auto_ml.name == "AutoML Predictor"
+    assert auto_ml.description == "Predicts z from input x"
+    assert auto_ml.inputs == [x]
+    assert auto_ml.responses == [z]
+    assert auto_ml.training_data == [data_source]
+
+    assert str(auto_ml) == "<AutoMLPredictor 'AutoML Predictor'>"
+
 
 
 def test_molecule_featurizer_post_build(molecule_featurizer):

@@ -667,6 +667,10 @@ class IngredientQuantityInOutput(Serializable['IngredientQuantityInOutput'], Var
         The ingredient may be present in these processes but not after.
     type_selector: DataObjectTypeSelector
         strategy for selecting data object types to consider when matching, defaults to PREFER_RUN
+    unit: str
+        an optional unit: only ingredient quantities that are convertable to this unit will be
+        matched. note that this parameter is mandatory when quantity_dimension is
+        IngredientQuantityDimension.ABSOLUTE.
 
     """
 
@@ -676,10 +680,17 @@ class IngredientQuantityInOutput(Serializable['IngredientQuantityInOutput'], Var
     quantity_dimension = properties.Enumeration(IngredientQuantityDimension, 'quantity_dimension')
     process_templates = properties.List(properties.Object(LinkByUID), 'process_templates')
     type_selector = properties.Enumeration(DataObjectTypeSelector, "type_selector")
+    unit = properties.Optional(properties.String, "unit")
     typ = properties.String('type', default="ing_quantity_in_output", deserializable=False)
 
     def _attrs(self) -> List[str]:
-        return ["name", "headers", "ingredient_name", "process_templates", "type_selector", "typ"]
+        return ["name",
+                "headers",
+                "ingredient_name",
+                "process_templates",
+                "type_selector",
+                "unit",
+                "typ"]
 
     def __init__(self, *,
                  name: str,
@@ -687,13 +698,21 @@ class IngredientQuantityInOutput(Serializable['IngredientQuantityInOutput'], Var
                  ingredient_name: str,
                  quantity_dimension: IngredientQuantityDimension,
                  process_templates: List[LinkByUID],
-                 type_selector: DataObjectTypeSelector = DataObjectTypeSelector.PREFER_RUN):
+                 type_selector: DataObjectTypeSelector = DataObjectTypeSelector.PREFER_RUN,
+                 unit: Optional[str] = None):
         self.name = name
         self.headers = headers
         self.ingredient_name = ingredient_name
         self.quantity_dimension = quantity_dimension
         self.process_templates = process_templates
         self.type_selector = type_selector
+        if quantity_dimension == IngredientQuantityDimension.ABSOLUTE:
+            if unit is None:
+                raise ValueError("Absolute Quantity variables require that 'unit' is set")
+        else:
+            if unit is not None and unit != "":
+                raise ValueError("Fractional variables cannot take a 'unit'")
+        self.unit = unit
 
 
 class XOR(Serializable['XOR'], Variable):

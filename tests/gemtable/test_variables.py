@@ -99,3 +99,37 @@ def test_absolute_units():
             quantity_dimension=IngredientQuantityDimension.NUMBER,
             unit='kg'
         )
+
+    # And again, for IngredientQuantityInOutput
+    IngredientQuantityInOutput(
+        name="This should be fine",
+        headers=["quantity"],
+        process_templates=[LinkByUID(scope="template", id="process")],
+        ingredient_name="ingredient",
+        quantity_dimension=IngredientQuantityDimension.NUMBER
+    )
+    IngredientQuantityInOutput(
+        name="This should be fine, too",
+        headers=["quantity"],
+        process_templates=[LinkByUID(scope="template", id="process")],
+        ingredient_name="ingredient",
+        quantity_dimension=IngredientQuantityDimension.ABSOLUTE,
+        unit='kg'
+    )
+    with pytest.raises(ValueError):
+        IngredientQuantityInOutput(
+            name="This needs units",
+            headers=["quantity"],
+            process_templates=[LinkByUID(scope="template", id="process")],
+            ingredient_name="ingredient",
+            quantity_dimension=IngredientQuantityDimension.ABSOLUTE
+        )
+    with pytest.raises(ValueError):
+        IngredientQuantityInOutput(
+            name="This shouldn't have units",
+            headers=["quantity"],
+            process_templates=[LinkByUID(scope="template", id="process")],
+            ingredient_name="ingredient",
+            quantity_dimension=IngredientQuantityDimension.NUMBER,
+            unit='kg'
+        )
