@@ -68,8 +68,15 @@ class ScalarRangeConstraint(Serializable['ScalarRangeConstraint'], Constraint):
             warn(msg, DeprecationWarning)
 
         self.descriptor_key = descriptor_key
-        self.lower_bound = lower_bound or min
-        self.upper_bound = upper_bound or max
+
+        if lower_bound is not None:
+            self.lower_bound = lower_bound
+        else:
+            self.lower_bound = min
+        if upper_bound is not None:
+            self.upper_bound = upper_bound
+        else:
+            self.upper_bound = max
 
         # we have to be careful with None and boolean values
         # None or False or True -> True, so that pattern doesn't work
