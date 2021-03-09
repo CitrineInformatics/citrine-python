@@ -16,7 +16,7 @@ def clear_dataset(dataset: Dataset, delete_templates: bool = False) -> \
     ----------
     dataset : Dataset
         The dataset to remove GEMD objects from
-    include_templates : bool, optional
+    delete_templates : bool, optional
         An option to also remove templates from the given dataset, by default False
 
     Returns
