@@ -1,12 +1,19 @@
+from copy import deepcopy
 import uuid
 from random import random
 
 import pytest
 
 from citrine.informatics.descriptors import RealDescriptor
-from citrine.informatics.design_spaces import EnumeratedDesignSpace
+from citrine.informatics.design_spaces import EnumeratedDesignSpace, DesignSpace, ProductDesignSpace
 from citrine.resources.design_space import DesignSpaceCollection
 from tests.utils.session import FakeSession
+
+
+@pytest.fixture
+def valid_product_design_space(valid_product_design_space_data) -> ProductDesignSpace:
+    data = deepcopy(valid_product_design_space_data)
+    return DesignSpace.build(data)
 
 
 def test_design_space_build():
@@ -98,3 +105,15 @@ def test_design_space_limits():
 
     # test update
     collection.update(just_right)
+
+
+def test_create_default(valid_product_design_space_data,
+                        valid_product_design_space):
+    session = FakeSession()
+    session.set_response(valid_product_design_space_data)
+    collection = DesignSpaceCollection(
+        project_id=uuid.uuid4(),
+        session=session
+    )
+    default_design_space = collection.create_default(uuid.uuid4())
+    assert default_design_space.dump() == valid_product_design_space.dump()

@@ -4,7 +4,7 @@ from typing import TypeVar
 
 from citrine._rest.collection import Collection
 from citrine._session import Session
-from citrine.informatics.design_spaces import DesignSpace, EnumeratedDesignSpace
+from citrine.informatics.design_spaces import DesignSpace, EnumeratedDesignSpace, ProductDesignSpace
 
 CreationType = TypeVar('CreationType', bound=DesignSpace)
 
@@ -62,3 +62,32 @@ class DesignSpaceCollection(Collection[DesignSpace]):
         """Update an existing design space by uid."""
         self.validate_write_request(model)
         return Collection.update(self, model)
+
+    def create_default(self, predictor_id: UUID) -> DesignSpace:
+        """[ALPHA] Create a default design space for a predictor.
+
+        This method will return an unregistered design space for all inputs
+        that are not responses of the predictor. The design space will contain
+        a :class:`~citrine.informatics.design_spaces.formulation_design_space.FormulationDesignSpace`
+        for each formulation input. Dimensions are constructed for all other inputs.
+        A :class:`~citrine.informatics.dimensions.ContinuousDimension` is constructed for each
+        input that corresponds to a :class:`~citrine.informatics.descriptors.RealDescriptor`.
+        An :class:`~citrine.informatics.dimensions.EnumeratedDimension` is constructed for all
+        other inputs. Enumerated values taken from the allowed ``categories`` of a
+        :class:`~citrine.informatics.descriptors.CategoricalDescriptor` or from the
+        unique values from the training data for all other descriptors.
+
+        Parameters
+        ----------
+        predictor_id: UUID
+            UUID of the predictor used to construct the design space
+
+        Returns
+        -------
+        DesignSpace
+            Default design space
+        """
+        path = f'projects/{self.project_id}/predictors/{predictor_id}/default-design-space'
+        data = self.session.get_resource(path)
+        return self.build(data)
+
