@@ -19,7 +19,7 @@ from citrine.resources.process_spec import ProcessSpecCollection, ProcessSpec
 from citrine.resources.material_spec import MaterialSpecCollection, MaterialSpec
 from citrine.resources.measurement_spec import MeasurementSpecCollection, MeasurementSpec
 from citrine.resources.ingredient_spec import IngredientSpecCollection, IngredientSpec
-from citrine.seeding.dataset_deletes import clear_dataset
+from citrine.seeding.dataset_deletes import wipe_dataset
 from tests.utils.session import FakeSession
 
 from gemd.demo.cake import make_cake, make_cake_templates, make_cake_spec, make_cake_templates
@@ -202,7 +202,7 @@ def fake_dataset():
     return FakeDataset()
 
 
-def test_clear_dataset(fake_dataset):
+def test_wipe_dataset(fake_dataset):
 
     failure_resp = {"failures": [
         {
@@ -245,11 +245,11 @@ def test_clear_dataset(fake_dataset):
     # Clear GEMD objects only (not templates)
     responses = (failure_resp, ) * math.ceil(num_objs / DELETE_SERVICE_MAX)
     fake_dataset.session.set_responses(*responses)
-    del_response = clear_dataset(fake_dataset)
+    del_response = wipe_dataset(fake_dataset)
     assert len(del_response) == len(responses)
 
     # Clear GEMD objects AND templates
     responses = (failure_resp, ) * math.ceil((num_objs + num_templates) / DELETE_SERVICE_MAX)
     fake_dataset.session.set_responses(*responses)
-    del_response = clear_dataset(fake_dataset, delete_templates=True)
+    del_response = wipe_dataset(fake_dataset, delete_templates=True)
     assert len(del_response) == len(responses)

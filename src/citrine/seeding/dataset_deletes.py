@@ -7,10 +7,10 @@ from citrine.resources.dataset import Dataset
 from gemd.entity.link_by_uid import LinkByUID
 
 
-def clear_dataset(dataset: Dataset, delete_templates: bool = False) -> \
+def wipe_dataset(dataset: Dataset, delete_templates: bool = False) -> \
         List[Tuple[LinkByUID, ApiError]]:
     """
-    Clears the GEMD objects out of a dataset.
+    Wipes the GEMD objects from a dataset.
 
     Parameters
     ----------
