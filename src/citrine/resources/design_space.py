@@ -4,7 +4,7 @@ from typing import TypeVar
 
 from citrine._rest.collection import Collection
 from citrine._session import Session
-from citrine.informatics.design_spaces import DesignSpace, EnumeratedDesignSpace, ProductDesignSpace
+from citrine.informatics.design_spaces import DesignSpace, EnumeratedDesignSpace
 
 CreationType = TypeVar('CreationType', bound=DesignSpace)
 
@@ -67,8 +67,8 @@ class DesignSpaceCollection(Collection[DesignSpace]):
         """[ALPHA] Create a default design space for a predictor.
 
         This method will return an unregistered design space for all inputs
-        that are not responses of the predictor. The design space will contain
-        a :class:`~citrine.informatics.design_spaces.formulation_design_space.FormulationDesignSpace`
+        that are not responses of the predictor. The design space will contain a
+        :class:`~citrine.informatics.design_spaces.formulation_design_space.FormulationDesignSpace`
         for each formulation input. Dimensions are constructed for all other inputs.
         A :class:`~citrine.informatics.dimensions.ContinuousDimension` is constructed for each
         input that corresponds to a :class:`~citrine.informatics.descriptors.RealDescriptor`.
@@ -90,4 +90,3 @@ class DesignSpaceCollection(Collection[DesignSpace]):
         path = f'projects/{self.project_id}/predictors/{predictor_id}/default-design-space'
         data = self.session.get_resource(path)
         return self.build(data)
-
