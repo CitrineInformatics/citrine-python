@@ -86,6 +86,7 @@ class DesignSpaceCollection(Collection[DesignSpace]):
         -------
         DesignSpace
             Default design space
+
         """
         path = f'projects/{self.project_id}/predictors/{predictor_id}/default-design-space'
         data = self.session.get_resource(path)
