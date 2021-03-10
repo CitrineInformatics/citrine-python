@@ -46,7 +46,7 @@ class ContinuousDimension(Serializable['ContinuousDimension'], Dimension):
     lower_bound = properties.Float('lower_bound')
     upper_bound = properties.Float('upper_bound')
     typ = properties.String('type', default='ContinuousDimension', deserializable=False)
-    template_id = properties.Optional(properties.UUID, 'template_id', default=uuid4(), deserializable=False)
+    template_id = properties.Optional(properties.UUID, 'template_id', default=uuid4())
 
     def __init__(self,
                  descriptor: RealDescriptor,
@@ -82,7 +82,7 @@ class EnumeratedDimension(Serializable['EnumeratedDimension'], Dimension):
     descriptor = properties.Object(Descriptor, 'descriptor')
     values = properties.List(properties.String(), 'list')
     typ = properties.String('type', default='EnumeratedDimension', deserializable=False)
-    template_id = properties.Optional(properties.UUID, 'template_id', default=uuid4(), deserializable=False)
+    template_id = properties.Optional(properties.UUID, 'template_id', default=uuid4())
 
     def __init__(self,
                  descriptor: Descriptor,
