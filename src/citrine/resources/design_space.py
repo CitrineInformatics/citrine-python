@@ -90,4 +90,6 @@ class DesignSpaceCollection(Collection[DesignSpace]):
         """
         path = f'projects/{self.project_id}/predictors/{predictor_id}/default-design-space'
         data = self.session.get_resource(path)
+        if 'instance' in data:
+            data['config'] = data.pop('instance')
         return self.build(data)

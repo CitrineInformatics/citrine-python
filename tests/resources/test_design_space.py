@@ -109,8 +109,13 @@ def test_design_space_limits():
 
 def test_create_default(valid_product_design_space_data,
                         valid_product_design_space):
+    # The instance field isn't renamed to config in objects returned from this route
+    # This renames the config key to instance to match the data we get from the API
+    data_with_instance = deepcopy(valid_product_design_space_data)
+    data_with_instance['instance'] = data_with_instance.pop('config')
+
     session = FakeSession()
-    session.set_response(valid_product_design_space_data)
+    session.set_response(data_with_instance)
     collection = DesignSpaceCollection(
         project_id=uuid.uuid4(),
         session=session
