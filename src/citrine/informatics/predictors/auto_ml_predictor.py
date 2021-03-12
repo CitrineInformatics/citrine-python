@@ -39,7 +39,7 @@ class AutoMLPredictor(Serializable['AutoMLPredictor'], Predictor):
     """
 
     inputs = _properties.List(_properties.Object(Descriptor), 'config.inputs')
-    output = _properties.Object(Descriptor, serializable=False, deserializable=False)
+    output = _properties.Object(Descriptor, 'output')
     training_data = _properties.List(_properties.Object(DataSource), 'config.training_data')
     typ = _properties.String('config.type', default='AutoML', deserializable=False)
 
@@ -66,11 +66,13 @@ class AutoMLPredictor(Serializable['AutoMLPredictor'], Predictor):
 
     def _post_dump(self, data: dict) -> dict:
         data['display_name'] = data['config']['name']
-        data['outputs'] = [data['output']]
+        data['config']['outputs'] = [data['output']]
         return data
 
+    @classmethod
     def _pre_build(cls, data: dict) -> dict:
-        data['output'] = data['output'][0]
+        data['output'] = data['config']['outputs'][0]
+        return data
 
     def __str__(self):
         return '<AutoMLPredictor {!r}>'.format(self.name)
