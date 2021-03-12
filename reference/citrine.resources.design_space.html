@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>citrine.resources.design_space module &#8212; Citrine Python 0.104.0 documentation</title>
+    <title>citrine.resources.design_space module &#8212; Citrine Python 0.106.0 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -49,6 +49,33 @@
 <dt id="citrine.resources.design_space.DesignSpaceCollection.build">
 <code class="sig-name descname">build</code><span class="sig-paren">(</span><em class="sig-param">data: dict</em><span class="sig-paren">)</span> &#x2192; citrine.informatics.design_spaces.design_space.DesignSpace<a class="headerlink" href="#citrine.resources.design_space.DesignSpaceCollection.build" title="Permalink to this definition">¶</a></dt>
 <dd><p>Build an individual design space.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="citrine.resources.design_space.DesignSpaceCollection.create_default">
+<code class="sig-name descname">create_default</code><span class="sig-paren">(</span><em class="sig-param">predictor_id: uuid.UUID</em><span class="sig-paren">)</span> &#x2192; citrine.informatics.design_spaces.design_space.DesignSpace<a class="headerlink" href="#citrine.resources.design_space.DesignSpaceCollection.create_default" title="Permalink to this definition">¶</a></dt>
+<dd><p>[ALPHA] Create a default design space for a predictor.</p>
+<p>This method will return an unregistered design space for all inputs
+that are not responses of the predictor. The design space will contain a
+<a class="reference internal" href="citrine.informatics.design_spaces.formulation_design_space.html#citrine.informatics.design_spaces.formulation_design_space.FormulationDesignSpace" title="citrine.informatics.design_spaces.formulation_design_space.FormulationDesignSpace"><code class="xref py py-class docutils literal notranslate"><span class="pre">FormulationDesignSpace</span></code></a>
+for each formulation input. Dimensions are constructed for all other inputs.
+A <a class="reference internal" href="citrine.informatics.dimensions.html#citrine.informatics.dimensions.ContinuousDimension" title="citrine.informatics.dimensions.ContinuousDimension"><code class="xref py py-class docutils literal notranslate"><span class="pre">ContinuousDimension</span></code></a> is constructed for each
+input that corresponds to a <a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.RealDescriptor" title="citrine.informatics.descriptors.RealDescriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">RealDescriptor</span></code></a>.
+An <a class="reference internal" href="citrine.informatics.dimensions.html#citrine.informatics.dimensions.EnumeratedDimension" title="citrine.informatics.dimensions.EnumeratedDimension"><code class="xref py py-class docutils literal notranslate"><span class="pre">EnumeratedDimension</span></code></a> is constructed for all
+other inputs. Enumerated values taken from the allowed <code class="docutils literal notranslate"><span class="pre">categories</span></code> of a
+<a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.CategoricalDescriptor" title="citrine.informatics.descriptors.CategoricalDescriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">CategoricalDescriptor</span></code></a> or from the
+unique values from the training data for all other descriptors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>predictor_id</strong> (<em>UUID</em>) – UUID of the predictor used to construct the design space</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Default design space</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="citrine.informatics.design_spaces.design_space.html#citrine.informatics.design_spaces.design_space.DesignSpace" title="citrine.informatics.design_spaces.design_space.DesignSpace">DesignSpace</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">

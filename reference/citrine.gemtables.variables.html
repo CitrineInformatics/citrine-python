@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>citrine.gemtables.variables module &#8212; Citrine Python 0.104.0 documentation</title>
+    <title>citrine.gemtables.variables module &#8212; Citrine Python 0.106.0 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -609,7 +609,7 @@ IngredientQuantityDimension.ABSOLUTE.</p></li>
 
 <dl class="class">
 <dt id="citrine.gemtables.variables.IngredientQuantityInOutput">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.gemtables.variables.</code><code class="sig-name descname">IngredientQuantityInOutput</code><span class="sig-paren">(</span><em class="sig-param">*, name: str, headers: List[str], ingredient_name: str, quantity_dimension: citrine.gemtables.variables.IngredientQuantityDimension, process_templates: List[gemd.entity.link_by_uid.LinkByUID], type_selector: citrine.gemtables.variables.DataObjectTypeSelector = &lt;DataObjectTypeSelector.PREFER_RUN: 'prefer_run'&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.gemtables.variables.IngredientQuantityInOutput" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">citrine.gemtables.variables.</code><code class="sig-name descname">IngredientQuantityInOutput</code><span class="sig-paren">(</span><em class="sig-param">*, name: str, headers: List[str], ingredient_name: str, quantity_dimension: citrine.gemtables.variables.IngredientQuantityDimension, process_templates: List[gemd.entity.link_by_uid.LinkByUID], type_selector: citrine.gemtables.variables.DataObjectTypeSelector = &lt;DataObjectTypeSelector.PREFER_RUN: 'prefer_run'&gt;, unit: Optional[str] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.gemtables.variables.IngredientQuantityInOutput" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.gemtables.variables.Variable" title="citrine.gemtables.variables.Variable"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.gemtables.variables.Variable</span></code></a></p>
 <p>[ALPHA] Ingredient identifier in the trunk of a material history tree.</p>
 <p>The search for an identifier starts at the terminal material and proceeds until any of the
@@ -647,6 +647,9 @@ valid options are defined by
 These process templates are inclusive.
 The ingredient may be present in these processes but not after.</p></li>
 <li><p><strong>type_selector</strong> (<a class="reference internal" href="#citrine.gemtables.variables.DataObjectTypeSelector" title="citrine.gemtables.variables.DataObjectTypeSelector"><em>DataObjectTypeSelector</em></a>) – strategy for selecting data object types to consider when matching, defaults to PREFER_RUN</p></li>
+<li><p><strong>unit</strong> (<em>str</em>) – an optional unit: only ingredient quantities that are convertable to this unit will be
+matched. note that this parameter is mandatory when quantity_dimension is
+IngredientQuantityDimension.ABSOLUTE.</p></li>
 </ul>
 </dd>
 </dl>
@@ -683,6 +686,11 @@ The ingredient may be present in these processes but not after.</p></li>
 <dl class="attribute">
 <dt id="citrine.gemtables.variables.IngredientQuantityInOutput.type_selector">
 <code class="sig-name descname">type_selector</code><em class="property"> = None</em><a class="headerlink" href="#citrine.gemtables.variables.IngredientQuantityInOutput.type_selector" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.gemtables.variables.IngredientQuantityInOutput.unit">
+<code class="sig-name descname">unit</code><em class="property"> = None</em><a class="headerlink" href="#citrine.gemtables.variables.IngredientQuantityInOutput.unit" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
