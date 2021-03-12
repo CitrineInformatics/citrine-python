@@ -9,7 +9,7 @@ from citrine.informatics.dimensions import ContinuousDimension, EnumeratedDimens
 def continuous_dimension() -> ContinuousDimension:
     """Build a ContinuousDimension."""
     alpha = RealDescriptor('alpha', 0, 100, "")
-    return ContinuousDimension(alpha, 3, 33, "")
+    return ContinuousDimension(alpha, 3, 33)
 
 
 @pytest.fixture
