@@ -12,7 +12,7 @@ __all__ = ['AutoMLPredictor']
 
 
 class AutoMLPredictor(Serializable['AutoMLPredictor'], Predictor):
-    """A predictor interface that builds a single ML model.
+    """[ALPHA] A predictor interface that builds a single ML model.
 
     The model uses the set of inputs to predict the output.
     Only one value for output is currently supported.
@@ -39,7 +39,6 @@ class AutoMLPredictor(Serializable['AutoMLPredictor'], Predictor):
     """
 
     inputs = _properties.List(_properties.Object(Descriptor), 'config.inputs')
-    outputs = _properties.List(_properties.Object(Descriptor), 'config.outputs')
     output = _properties.Object(Descriptor, serializable=False, deserializable=False)
     training_data = _properties.List(_properties.Object(DataSource), 'config.training_data')
     typ = _properties.String('config.type', default='AutoML', deserializable=False)
@@ -60,7 +59,6 @@ class AutoMLPredictor(Serializable['AutoMLPredictor'], Predictor):
         self.description: str = description
         self.inputs: List[Descriptor] = inputs
         self.output: Descriptor = output
-        self.outputs: List[Descriptor] = [output]
         self.training_data: List[DataSource] = self._wrap_training_data(training_data)
         self.session: Optional[Session] = session
         self.report: Optional[Report] = report
@@ -68,7 +66,11 @@ class AutoMLPredictor(Serializable['AutoMLPredictor'], Predictor):
 
     def _post_dump(self, data: dict) -> dict:
         data['display_name'] = data['config']['name']
+        data['outputs'] = [data['output']]
         return data
+
+    def _pre_build(cls, data: dict) -> dict:
+        data['output'] = data['output'][0]
 
     def __str__(self):
         return '<AutoMLPredictor {!r}>'.format(self.name)
