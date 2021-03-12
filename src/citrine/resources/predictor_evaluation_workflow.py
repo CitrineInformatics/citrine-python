@@ -80,7 +80,7 @@ class PredictorEvaluationWorkflowCollection(Collection[PredictorEvaluationWorkfl
         PredictorEvaluationWorkflow
             Default workflow
 
-        """  # noqa: E501,W505
+        """  # noqa: E501
         url = self._get_path('default')
         payload = {'predictor_id': str(predictor_id)}
         data = self.session.post_resource(url, payload)
