@@ -10,11 +10,10 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
+import citrine
 import os
 import sys
 sys.path.insert(0, os.path.abspath('../../src'))
-
-import citrine
 
 
 # -- Project information -----------------------------------------------------
@@ -73,7 +72,7 @@ html_theme = 'alabaster'
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
 
-autodoc_mock_imports = [] #autodoc_mock_imports allows Spyinx to ignore any external modules listed in the array
+autodoc_mock_imports = []  # autodoc_mock_imports allows Spyinx to ignore any external modules listed in the array
 
 html_favicon = '_static/favicon.png'
 html_theme_options = {
@@ -83,6 +82,6 @@ html_theme_options = {
     'sidebar_collapse': False,
     'head_font_family': ['Barlow', 'Helvetica', 'Arial', 'Sans-Serif'],
     'font_family': ['Lusitana', 'Times New Roman', 'serif'],
-    'page_width': '1024px', # default is 940 https://github.com/bitprophet/alabaster/blob/master/alabaster/theme.conf#L29
-    'sidebar_width': '250px' # default is 220 https://github.com/bitprophet/alabaster/blob/master/alabaster/theme.conf#L38
+    'page_width': '1440px',  # default is 940 https://github.com/bitprophet/alabaster/blob/master/alabaster/theme.conf#L29
+    'sidebar_width': '350px'  # default is 220 https://github.com/bitprophet/alabaster/blob/master/alabaster/theme.conf#L38
 }
