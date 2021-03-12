@@ -54,7 +54,7 @@ def auto_ml() -> AutoMLPredictor:
         name='AutoML Predictor',
         description='Predicts z from input x',
         inputs=[x],
-        responses=[z],
+        output=z,
         training_data=[data_source]
     )
 
@@ -282,8 +282,9 @@ def test_auto_ml(auto_ml):
     assert auto_ml.name == "AutoML Predictor"
     assert auto_ml.description == "Predicts z from input x"
     assert auto_ml.inputs == [x]
-    assert auto_ml.responses == [z]
+    assert auto_ml.output == z
     assert auto_ml.training_data == [data_source]
+    assert auto_ml.dump()['config']['outputs'] == [z.dump()]
 
     assert str(auto_ml) == "<AutoMLPredictor 'AutoML Predictor'>"
 

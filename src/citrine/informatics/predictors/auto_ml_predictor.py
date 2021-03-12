@@ -14,8 +14,8 @@ __all__ = ['AutoMLPredictor']
 class AutoMLPredictor(Serializable['AutoMLPredictor'], Predictor):
     """A predictor interface that builds a single ML model.
 
-    The model uses the set of inputs to predict the responses.
-    Only one value for responses is currently supported.
+    The model uses the set of inputs to predict the output.
+    Only one value for output is currently supported.
     Only one machine learning model is built.
 
     Parameters
@@ -26,8 +26,8 @@ class AutoMLPredictor(Serializable['AutoMLPredictor'], Predictor):
         the description of the predictor
     inputs: list[Descriptor]
         Descriptors that represent inputs to the model
-    responses: list[Descriptor]
-        Descriptors that represent responses of the model
+    output: Descriptor
+        A single Descriptor that represents the output of the model
     training_data: Optional[List[DataSource]]
         Sources of training data. Each can be either a CSV or an GEM Table. Candidates from
         multiple data sources will be combined into a flattened list and deduplicated by uid and
@@ -39,7 +39,8 @@ class AutoMLPredictor(Serializable['AutoMLPredictor'], Predictor):
     """
 
     inputs = _properties.List(_properties.Object(Descriptor), 'config.inputs')
-    responses = _properties.List(_properties.Object(Descriptor), 'config.responses')
+    outputs = _properties.List(_properties.Object(Descriptor), 'config.outputs')
+    output = _properties.Object(Descriptor, serializable=False, deserializable=False)
     training_data = _properties.List(_properties.Object(DataSource), 'config.training_data')
     typ = _properties.String('config.type', default='AutoML', deserializable=False)
 
@@ -49,7 +50,7 @@ class AutoMLPredictor(Serializable['AutoMLPredictor'], Predictor):
     def __init__(self,
                  name: str,
                  description: str,
-                 responses: List[Descriptor],
+                 output: Descriptor,
                  inputs: List[Descriptor],
                  training_data: Optional[List[DataSource]] = None,
                  session: Optional[Session] = None,
@@ -58,7 +59,8 @@ class AutoMLPredictor(Serializable['AutoMLPredictor'], Predictor):
         self.name: str = name
         self.description: str = description
         self.inputs: List[Descriptor] = inputs
-        self.responses: List[Descriptor] = responses
+        self.output: Descriptor = output
+        self.outputs: List[Descriptor] = [output]
         self.training_data: List[DataSource] = self._wrap_training_data(training_data)
         self.session: Optional[Session] = session
         self.report: Optional[Report] = report

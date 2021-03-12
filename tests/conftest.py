@@ -216,7 +216,7 @@ def valid_auto_ml_predictor_data(valid_gem_data_source_dict):
             name='AutoML predictor',
             description='Predicts z from input x',
             inputs=[x.dump()],
-            responses=[z.dump()],
+            outputs=[z.dump()],
             training_data=[valid_gem_data_source_dict]
         )
     )
