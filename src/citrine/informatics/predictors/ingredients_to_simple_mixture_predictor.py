@@ -1,4 +1,5 @@
-from typing import List, Optional, Mapping
+from typing import Set, Optional, Mapping
+from warnings import warn
 
 from citrine._serialization import properties as _properties
 from citrine._serialization.serializable import Serializable
@@ -25,16 +26,16 @@ class IngredientsToSimpleMixturePredictor(
     id_to_quantity: Mapping[str, RealDescriptor]
         Map from ingredient identifier to the descriptor that represents its quantity,
         e.g. ``{'water': RealDescriptor('water quantity', 0, 1, "")}``
-    labels: Mapping[str, List[str]]
+    labels: Dict[str, Set[str]]
         Map from each label to all ingredients assigned that label, when present in a mixture,
-        e.g. ``{'solvent': ['water']}``
+        e.g. ``{'solvent': {'water'}}``
 
     """
 
     output = _properties.Object(FormulationDescriptor, 'config.output')
     id_to_quantity = _properties.Mapping(_properties.String, _properties.Object(RealDescriptor),
                                          'config.id_to_quantity')
-    labels = _properties.Mapping(_properties.String, _properties.List(_properties.String),
+    labels = _properties.Mapping(_properties.String, _properties.Set(_properties.String),
                                  'config.labels')
     typ = _properties.String('config.type', default='IngredientsToSimpleMixture',
                              deserializable=False)
@@ -47,7 +48,7 @@ class IngredientsToSimpleMixturePredictor(
                  description: str,
                  output: FormulationDescriptor,
                  id_to_quantity: Mapping[str, RealDescriptor],
-                 labels: Mapping[str, List[str]],
+                 labels: Mapping[str, Set[str]],
                  session: Optional[Session] = None,
                  report: Optional[Report] = None,
                  archived: bool = False):
@@ -55,7 +56,16 @@ class IngredientsToSimpleMixturePredictor(
         self.description: str = description
         self.output: FormulationDescriptor = output
         self.id_to_quantity: Mapping[str, RealDescriptor] = id_to_quantity
-        self.labels: Mapping[str, List[str]] = labels
+        _labels = {}
+        for label, ingredients in labels.items():
+            if not isinstance(ingredients, set):
+                warn(f"Labels for predictor '{self.name}' must be specified as a mapping from "
+                     "each label to a set of ingredient names. Support for other collections "
+                     "is deprecated and will be removed in a future release.")
+                _labels[label] = set(ingredients)
+            else:
+                _labels[label] = ingredients
+        self.labels: Mapping[str, Set[str]] = _labels
         self.session: Optional[Session] = session
         self.report: Optional[Report] = report
         self.archived: bool = archived

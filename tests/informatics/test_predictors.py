@@ -110,8 +110,8 @@ def ing_to_simple_mixture_predictor() -> IngredientsToSimpleMixturePredictor:
             'salt': salt_quantity
         },
         labels={
-            'solvent': ['water'],
-            'solute': ['salt']
+            'solvent': {'water'},
+            'solute': {'salt'}
         }
     )
 
@@ -151,7 +151,7 @@ def label_fractions_predictor() -> LabelFractionsPredictor:
         name='Label fractions predictor',
         description='Compute relative proportions of labeled ingredients',
         input_descriptor=formulation,
-        labels=['solvent']
+        labels={'solvent'}
     )
 
 
@@ -308,7 +308,7 @@ def test_ing_to_simple_mixture_initialization(ing_to_simple_mixture_predictor):
     assert ing_to_simple_mixture_predictor.name == 'Ingredients to simple mixture predictor'
     assert ing_to_simple_mixture_predictor.output.key == 'formulation'
     assert ing_to_simple_mixture_predictor.id_to_quantity == {'water': water_quantity, 'salt': salt_quantity}
-    assert ing_to_simple_mixture_predictor.labels == {'solvent': ['water'], 'solute': ['salt']}
+    assert ing_to_simple_mixture_predictor.labels == {'solvent': {'water'}, 'solute': {'salt'}}
     expected_str = '<IngredientsToSimpleMixturePredictor \'Ingredients to simple mixture predictor\'>'
     assert str(ing_to_simple_mixture_predictor) == expected_str
 
@@ -355,7 +355,7 @@ def test_label_fractions_property_initialization(label_fractions_predictor):
     """Make sure the correct fields go to the correct places for a label fraction predictor."""
     assert label_fractions_predictor.name == 'Label fractions predictor'
     assert label_fractions_predictor.input_descriptor.key == 'formulation'
-    assert label_fractions_predictor.labels == ['solvent']
+    assert label_fractions_predictor.labels == {'solvent'}
     expected_str = '<LabelFractionsPredictor \'Label fractions predictor\'>'
     assert str(label_fractions_predictor) == expected_str
 
