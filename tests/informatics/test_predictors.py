@@ -326,7 +326,7 @@ def test_ing_to_simple_mixture_post_build(ing_to_simple_mixture_predictor):
 
 
 def test_deprecated_ing_to_simple_mixture():
-    """Make sure deprecated labels format is valid but a warning is issued"""
+    """Make sure a warning is issued for deprecated labels format"""
     with warnings.catch_warnings(record=True) as w:
         warnings.simplefilter("always")
         ing_to_simple_mixture_predictor = IngredientsToSimpleMixturePredictor(
@@ -392,7 +392,7 @@ def test_label_fractions_property_post_build(label_fractions_predictor):
 
 
 def test_deprecated_label_fractions():
-    """Make sure deprecated labels format is valid but a warning is issued"""
+    """Make sure a warning is issued for deprecated labels format"""
     with warnings.catch_warnings(record=True) as w:
         warnings.simplefilter("always")
         label_fractions_predictor = LabelFractionsPredictor(
