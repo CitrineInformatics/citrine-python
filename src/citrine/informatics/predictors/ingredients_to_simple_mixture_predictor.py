@@ -61,7 +61,8 @@ class IngredientsToSimpleMixturePredictor(
             if not isinstance(ingredients, set):
                 warn(f"Labels for predictor '{self.name}' must be specified as a mapping from "
                      "each label to a set of ingredient names. Support for other collections "
-                     "is deprecated and will be removed in a future release.")
+                     "is deprecated and will be removed in a future release.",
+                     DeprecationWarning)
                 _labels[label] = set(ingredients)
             else:
                 _labels[label] = ingredients
