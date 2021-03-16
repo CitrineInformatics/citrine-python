@@ -154,7 +154,7 @@ def valid_formulation_design_space_data():
             description='formulates some things',
             formulation_descriptor=descriptor.dump(),
             ingredients=['foo'],
-            labels={'bar': {'foo'}},
+            labels={'bar': ['foo']},
             constraints=[constraint.dump()],
             resolution=0.1
         )
@@ -398,8 +398,8 @@ def valid_ing_to_simple_mixture_predictor_data():
                 'salt': RealDescriptor('salt quantity', 0, 1, "").dump()
             },
             labels={
-                'solvent': {'water'},
-                'solute': {'salt'},
+                'solvent': ['water'],
+                'solute': ['salt'],
             }
         )
     )
@@ -449,7 +449,7 @@ def valid_label_fractions_predictor_data():
             name='Label fractions predictor',
             description='Computes relative proportions of labeled ingredients',
             input=FormulationDescriptor('simple mixture').dump(),
-            labels={'solvent'}
+            labels=['solvent']
         )
     )
 
