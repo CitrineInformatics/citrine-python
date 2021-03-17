@@ -1,4 +1,5 @@
 from typing import List, Optional, Mapping
+from warnings import warn
 
 from citrine._serialization import properties as _properties
 from citrine._serialization.serializable import Serializable
@@ -84,7 +85,14 @@ class GeneralizedMeanPropertyPredictor(
         self.description: str = description
         self.input_descriptor: FormulationDescriptor = input_descriptor
         self.properties: List[str] = properties
-        self.p: int = p
+        if isinstance(p, float):
+            warn(f"p must be an integer. Support for floating point values is deprecated "
+                 f"and will be removed in a future release.",
+                 DeprecationWarning)
+            _p = int(p)
+        else:
+            _p = p
+        self.p: int = _p
         self.training_data: List[DataSource] = self._wrap_training_data(training_data)
         self.impute_properties: bool = impute_properties
         self.default_properties: Optional[Mapping[str, float]] = default_properties

@@ -137,8 +137,8 @@ A CSV data source and :class:`~citrine.informatics.predictors.ingredients_to_sim
         },
         # label water as a solvent and salt a solute
         labels={
-            'solvent': ['water'],
-            'solute': ['salt']
+            'solvent': {'water'},
+            'solute': {'salt'}
         }
     )
 
