@@ -3,8 +3,8 @@ from typing import Optional, Dict, List, Union, Iterable, Tuple
 from uuid import UUID
 
 from deprecation import deprecated
-from gemd.entity.link_by_uid import LinkByUID
 from gemd.entity.base_entity import BaseEntity
+from gemd.entity.link_by_uid import LinkByUID
 
 from citrine._rest.collection import Collection
 from citrine._rest.resource import Resource
@@ -13,6 +13,7 @@ from citrine._session import Session
 from citrine.resources.api_error import ApiError
 from citrine.resources.condition_template import ConditionTemplateCollection
 from citrine.resources.dataset import DatasetCollection
+from citrine.resources.delete import _async_gemd_batch_delete
 from citrine.resources.descriptors import DescriptorMethods
 from citrine.resources.design_space import DesignSpaceCollection
 from citrine.resources.design_workflow import DesignWorkflowCollection
@@ -430,8 +431,13 @@ class Project(Resource['Project']):
         )
         return True
 
-    def gemd_batch_delete(self, id_list: List[Union[LinkByUID, UUID, str, BaseEntity]]) -> \
-            List[Tuple[LinkByUID, ApiError]]:
+    def gemd_batch_delete(
+            self,
+            id_list: List[Union[LinkByUID, UUID, str, BaseEntity]],
+            *,
+            timeout: float = 2 * 60,
+            polling_delay: float = 1.0
+    ) -> List[Tuple[LinkByUID, ApiError]]:
         """
         Remove a set of GEMD objects.
 
@@ -442,12 +448,6 @@ class Project(Resource['Project']):
         reference.
 
         You must have Write access on the assoociated datasets for each object.
-
-        If you wish to delete more than 50 objects, queuing of deletes requires that
-        the types of objects be known, and thus you _must_ provide ids in the form
-        of BaseEntities.
-
-        Also note that Attribute Templates cannot be deleted at present.
 
         Parameters
         ----------
@@ -465,8 +465,8 @@ class Project(Resource['Project']):
             deleted.
 
         """
-        from citrine.resources.delete import _gemd_batch_delete
-        return _gemd_batch_delete(id_list, self.uid, self.session, None)
+        return _async_gemd_batch_delete(id_list, self.uid, self.session, None,
+                                        timeout=timeout, polling_delay=polling_delay)
 
 
 class ProjectCollection(Collection[Project]):

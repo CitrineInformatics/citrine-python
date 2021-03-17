@@ -2,7 +2,12 @@
 from abc import abstractmethod, ABC
 from typing import TypeVar, Type, List, Union, Optional, Iterator
 from uuid import UUID, uuid4
+
 import deprecation
+from gemd.entity.dict_serializable import DictSerializable
+from gemd.entity.link_by_uid import LinkByUID
+from gemd.json import GEMDJson
+from gemd.util import recursive_foreach
 
 from citrine._rest.collection import Collection
 from citrine._serialization import properties
@@ -12,11 +17,8 @@ from citrine._serialization.serializable import Serializable
 from citrine._session import Session
 from citrine._utils.functions import scrub_none, replace_objects_with_links
 from citrine.resources.audit_info import AuditInfo
+from citrine.resources.job import _poll_for_job_completion
 from citrine.resources.response import Response
-from gemd.entity.dict_serializable import DictSerializable
-from gemd.entity.link_by_uid import LinkByUID
-from gemd.json import GEMDJson
-from gemd.util import recursive_foreach
 
 CITRINE_SCOPE = 'id'
 
@@ -487,8 +489,8 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
 
         """
         # Poll for job completion - this will raise an error if the job failed
-        self._poll_for_job_completion(self.project_id, job_id, timeout=timeout,
-                                      polling_delay=polling_delay)
+        _poll_for_job_completion(self.session, self.project_id, job_id, timeout=timeout,
+                                 polling_delay=polling_delay)
 
         # That worked, nothing returned in this case
         return None
