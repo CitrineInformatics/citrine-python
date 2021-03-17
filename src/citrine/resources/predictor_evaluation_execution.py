@@ -58,7 +58,6 @@ class PredictorEvaluationExecution(Resource['PredictorEvaluationExecution']):
     def _path(self):
         return '/projects/{project_id}/predictor-evaluation-executions/{execution_id}' \
             .format(project_id=self.project_id,
-                    workflow_id=self.workflow_id,
                     execution_id=self.uid)
 
     @lru_cache()
