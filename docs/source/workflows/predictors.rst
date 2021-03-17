@@ -386,12 +386,13 @@ If the densities of water and salt are known, we can compute the expected densit
 The :class:`~citrine.informatics.predictors.generalized_mean_property_predictor.GeneralizedMeanPropertyPredictor` computes mean properties of simple mixture ingredients.
 To configure a mean property predictor, we must specify:
 
-- an input descriptor that holds the mixture's recipe and ingredient labels
-- a list of properties to featurize
-- the power of the `generalized mean <https://en.wikipedia.org/wiki/Generalized_mean>`_
-  (a power of 1 is equivalent to the arithmetic mean, and a power 2 is equivalent to the root mean square.)
-- a data source that contains all ingredients and their properties
-- how to handle missing ingredient properties
+- An input descriptor that holds the mixture's recipe and ingredient labels
+- A list of properties to featurize
+- The power of the `generalized mean <https://en.wikipedia.org/wiki/Generalized_mean>`_
+  (A power of 1 is equivalent to the arithmetic mean, and a power 2 is equivalent to the root mean square.)
+  Only integer powers are supported.
+- A data source that contains all ingredients and their properties
+- How to handle missing ingredient properties
 
 An optional label may also be specified if the mean should only be computed over ingredients given a specific label.
 
@@ -462,7 +463,7 @@ This predictor will compute a real descriptor with a key ``mean of property dens
         inputs=[formulation_descriptor]
     )
 
-If ``p`` is given a value other than ``1.0``, that value will be included in the key for the feature, e.g. ``2.0-mean of property viscosity``.
+If ``p`` is given a value other than ``1``, that value will be included in the key for the feature, e.g. ``2.0-mean of property viscosity``.
 
 Ingredient fractions predictor (ALPHA)
 -----------------------------------------
@@ -512,7 +513,7 @@ Label fractions predictor (ALPHA)
 ----------------------------------
 
 The :class:`~citrine.informatics.predictors.label_fractions_predictor.LabelFractionsPredictor` computes total fraction of ingredients with a given label.
-The predictor is configured by specifying a formulation descriptor that holds simple mixture data (i.e. recipes and ingredient labels) and a list of labels to featurize.
+The predictor is configured by specifying a formulation descriptor that holds simple mixture data (i.e. recipes and ingredient labels) and a set of labels to featurize.
 A separate response is computed for each featurized label by summing all quantities in the recipe associated with ingredients given the label.
 
 The following example demonstrates how to create a predictor that computes the total fractions of solute and solvent in a simple mixture.
@@ -527,7 +528,7 @@ The following example demonstrates how to create a predictor that computes the t
         name='Saline solution label fractions',
         description='Computes total fraction of solute and solvent',
         input_descriptor=formulation_descriptor,
-        labels=['solute', 'solvent']
+        labels={'solute', 'solvent'}
     )
 
 This predictor will compute 2 responses, ``solute share in simple mixture`` and ``solvent share in simple mixture``, which can be retrieved using:
