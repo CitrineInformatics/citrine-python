@@ -432,8 +432,13 @@ class IngredientQuantityByProcessAndName(
         self.headers = headers
         self.process_template = process_template
         self.ingredient_name = ingredient_name
-        self.quantity_dimension = quantity_dimension
         self.type_selector = type_selector
+
+        # Cast to make sure the string is valid
+        if not isinstance(quantity_dimension, IngredientQuantityDimension):
+            quantity_dimension = IngredientQuantityDimension.get_enum(quantity_dimension)
+        self.quantity_dimension = quantity_dimension
+
         if quantity_dimension == IngredientQuantityDimension.ABSOLUTE:
             if unit is None:
                 raise ValueError("Absolute Quantity variables require that 'unit' is set")
@@ -703,9 +708,14 @@ class IngredientQuantityInOutput(Serializable['IngredientQuantityInOutput'], Var
         self.name = name
         self.headers = headers
         self.ingredient_name = ingredient_name
-        self.quantity_dimension = quantity_dimension
         self.process_templates = process_templates
         self.type_selector = type_selector
+
+        # Cast to make sure the string is valid
+        if not isinstance(quantity_dimension, IngredientQuantityDimension):
+            quantity_dimension = IngredientQuantityDimension.get_enum(quantity_dimension)
+        self.quantity_dimension = quantity_dimension
+
         if quantity_dimension == IngredientQuantityDimension.ABSOLUTE:
             if unit is None:
                 raise ValueError("Absolute Quantity variables require that 'unit' is set")
