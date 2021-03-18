@@ -67,11 +67,15 @@ class AutoMLPredictor(Serializable['AutoMLPredictor'], Predictor):
     def _post_dump(self, data: dict) -> dict:
         data['display_name'] = data['config']['name']
         data['config']['outputs'] = [data['output']]
+        data['config']['responses'] = [data['output']]
         return data
 
     @classmethod
     def _pre_build(cls, data: dict) -> dict:
-        data['output'] = data['config']['outputs'][0]
+        if 'outputs' in data['config']:
+            data['output'] = data['config']['outputs'][0]
+        elif 'responses' in data['config']:
+            data['output'] = data['config']['responses'][0]
         return data
 
     def __str__(self):
