@@ -414,8 +414,8 @@ def test_mean_property_post_build(mean_property_predictor):
 
 
 def test_deprecated_gmpp():
-    """Make sure a warning is issued if p entered as a float"""
-    with warnings.catch_warnings(record=True) as w:
+    """Make sure deprecation warnings are issued"""
+    with warnings.catch_warnings(record=True) as caught:
         warnings.simplefilter("always")
         gmpp = GeneralizedMeanPropertyPredictor(
             name='deprecated',
@@ -426,12 +426,12 @@ def test_deprecated_gmpp():
             impute_properties=False
         )
         assert gmpp.p == 2
-        assert len(w) == 1
-        recorded_warning = w[0]
-        assert issubclass(recorded_warning.category, DeprecationWarning)
-        assert str(recorded_warning.message).startswith(
-            'p must be an integer'
-        )
+        assert len(caught) == 2
+        for w in caught:
+            assert issubclass(w.category, DeprecationWarning)
+            msg = str(w.message)
+            assert msg.startswith('p must be an integer') or \
+                   msg.startswith('GeneralizedMeanPropertyPredictor is deprecated')
 
 
 def test_label_fractions_property_initialization(label_fractions_predictor):
