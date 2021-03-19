@@ -1,5 +1,4 @@
 from typing import List, Optional, Mapping
-from warnings import warn
 
 from citrine._serialization import properties as _properties
 from citrine._serialization.serializable import Serializable
@@ -13,7 +12,7 @@ __all__ = ['MeanPropertyPredictor']
 
 
 class MeanPropertyPredictor(
-    Serializable['MeanPropertyPredictor'], Predictor):
+        Serializable['MeanPropertyPredictor'], Predictor):
     """[ALPHA] A predictor interface that computes mean component properties.
 
     .. seealso::
