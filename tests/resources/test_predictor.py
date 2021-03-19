@@ -46,6 +46,15 @@ def test_automl_build(valid_auto_ml_predictor_data, basic_predictor_report_data)
     assert predictor.description == 'Predicts z from input x'
 
 
+def test_automl_build_old(old_auto_ml_predictor_data, basic_predictor_report_data):
+    session = mock.Mock()
+    session.get_resource.return_value = basic_predictor_report_data
+    pc = PredictorCollection(uuid.uuid4(), session)
+    predictor = pc.build(old_auto_ml_predictor_data)
+    assert predictor.name == 'AutoML predictor'
+    assert predictor.description == 'Predicts z from input x'
+
+
 def test_graph_build(valid_graph_predictor_data, basic_predictor_report_data):
     session = mock.Mock()
     session.get_resource.return_value = basic_predictor_report_data
@@ -73,6 +82,16 @@ def test_automl_register(valid_auto_ml_predictor_data, basic_predictor_report_da
     session.get_resource.return_value = basic_predictor_report_data
     pc = PredictorCollection(uuid.uuid4(), session)
     predictor = AutoMLPredictor.build(valid_auto_ml_predictor_data)
+    registered = pc.register(predictor)
+    assert registered.name == 'AutoML predictor'
+
+
+def test_automl_register_old(old_auto_ml_predictor_data, basic_predictor_report_data):
+    session = mock.Mock()
+    session.post_resource.return_value = old_auto_ml_predictor_data
+    session.get_resource.return_value = basic_predictor_report_data
+    pc = PredictorCollection(uuid.uuid4(), session)
+    predictor = AutoMLPredictor.build(old_auto_ml_predictor_data)
     registered = pc.register(predictor)
     assert registered.name == 'AutoML predictor'
 
