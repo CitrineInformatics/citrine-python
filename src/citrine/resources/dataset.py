@@ -7,12 +7,8 @@ from gemd.entity.base_entity import BaseEntity
 from gemd.entity.link_by_uid import LinkByUID
 from gemd.entity.object import MeasurementSpec, MeasurementRun, MaterialSpec, MaterialRun, \
     ProcessSpec, ProcessRun, IngredientSpec, IngredientRun
-from gemd.entity.template.condition_template import ConditionTemplate
-from gemd.entity.template.material_template import MaterialTemplate
-from gemd.entity.template.measurement_template import MeasurementTemplate
-from gemd.entity.template.parameter_template import ParameterTemplate
-from gemd.entity.template.process_template import ProcessTemplate
-from gemd.entity.template.property_template import PropertyTemplate
+from gemd.entity.template import PropertyTemplate, MaterialTemplate, MeasurementTemplate, \
+    ParameterTemplate, ProcessTemplate, ConditionTemplate
 from gemd.util import writable_sort_order
 
 from citrine._rest.collection import Collection

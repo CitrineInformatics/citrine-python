@@ -28,10 +28,11 @@ def _async_gemd_batch_delete(
 
     Parameters
     ----------
-    id_list: List[Union[LinkByUID, UUID]]
-        A list of the IDs of data objects to be removed. They can be passed either
-        as a LinkByUID tuple, or as a UUID. The latter is assumed to be a Citrine
-        ID, whereas the former can also be used to provide an external ID.
+    id_list: List[Union[LinkByUID, UUID, str, BaseEntity]]
+        A list of the IDs of data objects to be removed. They can be passed
+        as a LinkByUID tuple, a UUID, a string, or the object itself. A UUID
+        or string is assumed to be a Citrine ID, whereas a LinkByUID or
+        BaseEntity can also be used to provide an external ID.
 
     project_id: UUID
         The Project ID to use in the delete request.
