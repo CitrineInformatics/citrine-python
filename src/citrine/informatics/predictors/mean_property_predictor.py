@@ -5,17 +5,21 @@ from citrine._serialization import properties as _properties
 from citrine._serialization.serializable import Serializable
 from citrine._session import Session
 from citrine.informatics.data_sources import DataSource
-from citrine.informatics.descriptors import FormulationDescriptor
-from citrine.informatics.predictors.mean_property_predictor import MeanPropertyPredictor
+from citrine.informatics.descriptors import FormulationDescriptor, RealDescriptor
 from citrine.informatics.reports import Report
 from citrine.informatics.predictors import Predictor
 
-__all__ = ['GeneralizedMeanPropertyPredictor']
+__all__ = ['MeanPropertyPredictor']
 
 
-class GeneralizedMeanPropertyPredictor(
-        Serializable['GeneralizedMeanPropertyPredictor'], Predictor):
-    """[ALPHA] A predictor interface that computes generalized mean component properties.
+class MeanPropertyPredictor(
+    Serializable['MeanPropertyPredictor'], Predictor):
+    """[ALPHA] A predictor interface that computes mean component properties.
+
+    .. seealso::
+       If you are using a deprecated generalized mean property predictor please see
+       :class:`~citrine.informatics.predictors.GeneralizedMeanPropertyPredictor`
+       for details on how to migrate to the new format.
 
     Parameters
     ----------
@@ -25,8 +29,8 @@ class GeneralizedMeanPropertyPredictor(
         description of the predictor
     input_descriptor: FormulationDescriptor
         descriptor that represents the input formulation
-    properties: List[str]
-        List of component properties to featurize
+    properties: List[RealDescriptor]
+        List of descriptors to featurize
     p: int
         Power of the generalized mean. Only integer powers are supported.
     impute_properties: bool
@@ -56,15 +60,14 @@ class GeneralizedMeanPropertyPredictor(
     """
 
     input_descriptor = _properties.Object(FormulationDescriptor, 'config.input')
-    properties = _properties.List(_properties.String, 'config.properties')
+    properties = _properties.List(_properties.Object(RealDescriptor), 'config.properties')
     p = _properties.Integer('config.p')
     training_data = _properties.List(_properties.Object(DataSource), 'config.training_data')
     impute_properties = _properties.Boolean('config.impute_properties')
     default_properties = _properties.Optional(
         _properties.Mapping(_properties.String, _properties.Float), 'config.default_properties')
     label = _properties.Optional(_properties.String, 'config.label')
-    typ = _properties.String('config.type', default='GeneralizedMeanProperty',
-                             deserializable=False)
+    typ = _properties.String('config.type', default='MeanProperty', deserializable=False)
 
     # NOTE: These could go here or in _post_dump - it's unclear which is better right now
     module_type = _properties.String('module_type', default='PREDICTOR')
@@ -73,7 +76,7 @@ class GeneralizedMeanPropertyPredictor(
                  name: str,
                  description: str,
                  input_descriptor: FormulationDescriptor,
-                 properties: List[str],
+                 properties: List[RealDescriptor],
                  p: int,
                  impute_properties: bool,
                  default_properties: Optional[Mapping[str, float]] = None,
@@ -82,20 +85,11 @@ class GeneralizedMeanPropertyPredictor(
                  session: Optional[Session] = None,
                  report: Optional[Report] = None,
                  archived: bool = False):
-        warn("{this_class} is deprecated. Please use {replacement} instead"
-             .format(this_class=self.__class__.name, replacement=MeanPropertyPredictor.__name__))
         self.name: str = name
         self.description: str = description
         self.input_descriptor: FormulationDescriptor = input_descriptor
-        self.properties: List[str] = properties
-        if isinstance(p, float):
-            warn(f"p must be an integer. Support for floating point values is deprecated "
-                 f"and will be removed in a future release.",
-                 DeprecationWarning)
-            _p = int(p)
-        else:
-            _p = p
-        self.p: int = _p
+        self.properties: List[RealDescriptor] = properties
+        self.p: int = p
         self.training_data: List[DataSource] = self._wrap_training_data(training_data)
         self.impute_properties: bool = impute_properties
         self.default_properties: Optional[Mapping[str, float]] = default_properties
@@ -109,4 +103,4 @@ class GeneralizedMeanPropertyPredictor(
         return data
 
     def __str__(self):
-        return '<GeneralizedMeanPropertyPredictor {!r}>'.format(self.name)
+        return '<MeanPropertyPredictor {!r}>'.format(self.name)
