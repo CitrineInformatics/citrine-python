@@ -610,12 +610,6 @@ def test_batch_delete(dataset):
 
     # Then
     assert 2 == session.num_calls
-    expect_call = FakeCall(
-        method="POST",
-        path="/projects/{}/gemd/async-batch-delete".format(dataset.project_id)
-    )
-    # assert expect_call.method == session.last_call.method
-    # assert expect_call.path == session.last_call.path
 
     assert len(del_resp) == 1
     first_failure = del_resp[0]
