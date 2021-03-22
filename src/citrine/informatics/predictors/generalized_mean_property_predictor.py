@@ -1,4 +1,5 @@
 from typing import List, Optional, Mapping
+from warnings import warn
 
 from citrine._serialization import properties as _properties
 from citrine._serialization.serializable import Serializable
@@ -25,8 +26,8 @@ class GeneralizedMeanPropertyPredictor(
         descriptor that represents the input formulation
     properties: List[str]
         List of component properties to featurize
-    p: float
-        Power of the generalized mean
+    p: int
+        Power of the generalized mean. Only integer powers are supported.
     impute_properties: bool
         Whether to impute missing ingredient properties.
         If ``False`` an error is thrown when a missing ingredient property is encountered.
@@ -55,7 +56,7 @@ class GeneralizedMeanPropertyPredictor(
 
     input_descriptor = _properties.Object(FormulationDescriptor, 'config.input')
     properties = _properties.List(_properties.String, 'config.properties')
-    p = _properties.Float('config.p')
+    p = _properties.Integer('config.p')
     training_data = _properties.List(_properties.Object(DataSource), 'config.training_data')
     impute_properties = _properties.Boolean('config.impute_properties')
     default_properties = _properties.Optional(
@@ -72,7 +73,7 @@ class GeneralizedMeanPropertyPredictor(
                  description: str,
                  input_descriptor: FormulationDescriptor,
                  properties: List[str],
-                 p: float,
+                 p: int,
                  impute_properties: bool,
                  default_properties: Optional[Mapping[str, float]] = None,
                  label: Optional[str] = None,
@@ -84,7 +85,14 @@ class GeneralizedMeanPropertyPredictor(
         self.description: str = description
         self.input_descriptor: FormulationDescriptor = input_descriptor
         self.properties: List[str] = properties
-        self.p: float = p
+        if isinstance(p, float):
+            warn(f"p must be an integer. Support for floating point values is deprecated "
+                 f"and will be removed in a future release.",
+                 DeprecationWarning)
+            _p = int(p)
+        else:
+            _p = p
+        self.p: int = _p
         self.training_data: List[DataSource] = self._wrap_training_data(training_data)
         self.impute_properties: bool = impute_properties
         self.default_properties: Optional[Mapping[str, float]] = default_properties

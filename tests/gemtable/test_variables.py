@@ -84,6 +84,14 @@ def test_absolute_units():
     )
     with pytest.raises(ValueError):
         IngredientQuantityByProcessAndName(
+            name="Invalid quantity dimension as string",
+            headers=["quantity"],
+            process_template=LinkByUID(scope="template", id="process"),
+            ingredient_name="ingredient",
+            quantity_dimension="bunk"
+        )
+    with pytest.raises(ValueError):
+        IngredientQuantityByProcessAndName(
             name="This needs units",
             headers=["quantity"],
             process_template=LinkByUID(scope="template", id="process"),
@@ -116,6 +124,14 @@ def test_absolute_units():
         quantity_dimension=IngredientQuantityDimension.ABSOLUTE,
         unit='kg'
     )
+    with pytest.raises(ValueError):
+        IngredientQuantityInOutput(
+            name="Invalid quantity dimension as string",
+            headers=["quantity"],
+            process_templates=[LinkByUID(scope="template", id="process")],
+            ingredient_name="ingredient",
+            quantity_dimension="bunk"
+        )
     with pytest.raises(ValueError):
         IngredientQuantityInOutput(
             name="This needs units",
