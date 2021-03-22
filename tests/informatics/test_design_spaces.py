@@ -1,8 +1,9 @@
 """Tests for citrine.informatics.design_spaces."""
 import pytest
 
+from citrine.informatics.constraints import IngredientCountConstraint
 from citrine.informatics.data_sources import DataSource, CSVDataSource
-from citrine.informatics.descriptors import RealDescriptor, CategoricalDescriptor
+from citrine.informatics.descriptors import RealDescriptor, CategoricalDescriptor, FormulationDescriptor
 from citrine.informatics.design_spaces import *
 from citrine.informatics.dimensions import ContinuousDimension, EnumeratedDimension
 from citrine.resources.file_link import FileLink
@@ -49,6 +50,27 @@ def test_enumerated_initialization(enumerated_design_space):
     assert enumerated_design_space.descriptors[0].key == 'x'
     assert enumerated_design_space.descriptors[1].key == 'color'
     assert enumerated_design_space.data == [{'x': 0.0, 'color': 'r'}, {'x': 1.0, 'color': 'b'}]
+
+
+def test_formulation_ingredient_set():
+    """Make sure ingredients can be specified as a list and are converted to a set"""
+    descriptor = FormulationDescriptor('formulation')
+    constraint = IngredientCountConstraint(
+        formulation_descriptor=descriptor,
+        min=1,
+        max=1
+    )
+    design_space = FormulationDesignSpace(
+        name="Formulation design space",
+        description="",
+        formulation_descriptor=descriptor,
+        ingredients=['ingredient'],
+        constraints={constraint}
+    )
+    assert design_space.ingredients == {'ingredient'}
+
+    design_space.ingredients = ['ing 1', 'ing 2']
+    assert design_space.ingredients == {'ing 1', 'ing 2'}
 
 
 def test_data_source_build(valid_data_source_design_space_dict):

@@ -86,8 +86,8 @@ class GeneralizedMeanPropertyPredictor(
         self.input_descriptor: FormulationDescriptor = input_descriptor
         self.properties: List[str] = properties
         if isinstance(p, float):
-            warn(f"p must be an integer. Support for floating point values is deprecated "
-                 f"and will be removed in a future release.",
+            warn("p must be an integer. Support for floating point values is deprecated "
+                 "and will be removed in a future release.",
                  DeprecationWarning)
             _p = int(p)
         else:

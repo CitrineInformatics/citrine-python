@@ -70,6 +70,7 @@ class FormulationDesignSpace(Resource['FormulationDesignSpace'], DesignSpace):
         self.name: str = name
         self.description: str = description
         self.formulation_descriptor: FormulationDescriptor = formulation_descriptor
+        self._ingredients: Set[str] = set()
         self.ingredients: Set[str] = ingredients
         self.constraints: Set[Constraint] = constraints
         self.labels: Optional[Mapping[str, Set[str]]] = labels
@@ -82,3 +83,11 @@ class FormulationDesignSpace(Resource['FormulationDesignSpace'], DesignSpace):
 
     def __str__(self):
         return '<FormulationDesignSpace {!r}>'.format(self.name)
+
+    @property
+    def ingredients(self) -> Set[str]:
+        return self._ingredients
+
+    @ingredients.setter
+    def ingredients(self, ingredients):
+        self._ingredients = set(ingredients)
