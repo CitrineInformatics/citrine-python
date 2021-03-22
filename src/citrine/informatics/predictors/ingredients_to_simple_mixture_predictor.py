@@ -1,4 +1,4 @@
-from typing import Set, Optional, Mapping
+from typing import Set, Optional, Mapping, Dict
 from warnings import warn
 
 from citrine._serialization import properties as _properties
@@ -12,7 +12,7 @@ __all__ = ['IngredientsToSimpleMixturePredictor']
 
 
 class IngredientsToSimpleMixturePredictor(
-        Serializable['IngredientsToSimpleMixturePredictor'], Predictor):
+    Serializable['IngredientsToSimpleMixturePredictor'], Predictor):
     """[ALPHA] A predictor interface that constructs a simple mixture from ingredient quantities.
 
     Parameters
@@ -56,17 +56,8 @@ class IngredientsToSimpleMixturePredictor(
         self.description: str = description
         self.output: FormulationDescriptor = output
         self.id_to_quantity: Mapping[str, RealDescriptor] = id_to_quantity
-        _labels = {}
-        for label, ingredients in labels.items():
-            if not isinstance(ingredients, set):
-                warn(f"Labels for predictor '{self.name}' must be specified as a mapping from "
-                     "each label to a set of ingredient names. Support for other collections "
-                     "is deprecated and will be removed in a future release.",
-                     DeprecationWarning)
-                _labels[label] = set(ingredients)
-            else:
-                _labels[label] = ingredients
-        self.labels: Mapping[str, Set[str]] = _labels
+        self._labels: Dict[str, Set[str]] = {}
+        self.labels = labels
         self.session: Optional[Session] = session
         self.report: Optional[Report] = report
         self.archived: bool = archived
@@ -77,3 +68,11 @@ class IngredientsToSimpleMixturePredictor(
 
     def __str__(self):
         return '<IngredientsToSimpleMixturePredictor {!r}>'.format(self.name)
+
+    @property
+    def labels(self) -> Dict[str, Set[str]]:
+        return {label: set(ingredients) for label, ingredients in self._labels.items()}
+
+    @labels.setter
+    def labels(self, labels: Mapping[str, Set[str]]):
+        self._labels = {label: set(ingredients) for label, ingredients in labels.items()}
