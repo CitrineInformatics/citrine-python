@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>citrine.informatics.predictors.generalized_mean_property_predictor module &#8212; Citrine Python 0.106.2 documentation</title>
+    <title>citrine.informatics.predictors.generalized_mean_property_predictor module &#8212; Citrine Python 0.108.0 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -36,7 +36,7 @@
 <span id="citrine-informatics-predictors-generalized-mean-property-predictor-module"></span><h1>citrine.informatics.predictors.generalized_mean_property_predictor module<a class="headerlink" href="#module-citrine.informatics.predictors.generalized_mean_property_predictor" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="citrine.informatics.predictors.generalized_mean_property_predictor.GeneralizedMeanPropertyPredictor">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.predictors.generalized_mean_property_predictor.</code><code class="sig-name descname">GeneralizedMeanPropertyPredictor</code><span class="sig-paren">(</span><em class="sig-param">name: str, description: str, input_descriptor: citrine.informatics.descriptors.FormulationDescriptor, properties: List[str], p: float, impute_properties: bool, default_properties: Optional[Mapping[str, float]] = None, label: Optional[str] = None, training_data: Optional[List[citrine.informatics.data_sources.DataSource]] = None, session: Optional[citrine._session.Session] = None, report: Optional[citrine.informatics.reports.Report] = None, archived: bool = False</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.predictors.generalized_mean_property_predictor.GeneralizedMeanPropertyPredictor" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.predictors.generalized_mean_property_predictor.</code><code class="sig-name descname">GeneralizedMeanPropertyPredictor</code><span class="sig-paren">(</span><em class="sig-param">name: str, description: str, input_descriptor: citrine.informatics.descriptors.FormulationDescriptor, properties: List[str], p: int, impute_properties: bool, default_properties: Optional[Mapping[str, float]] = None, label: Optional[str] = None, training_data: Optional[List[citrine.informatics.data_sources.DataSource]] = None, session: Optional[citrine._session.Session] = None, report: Optional[citrine.informatics.reports.Report] = None, archived: bool = False</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.predictors.generalized_mean_property_predictor.GeneralizedMeanPropertyPredictor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="citrine.informatics.predictors.predictor.html#citrine.informatics.predictors.predictor.Predictor" title="citrine.informatics.predictors.predictor.Predictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.predictors.predictor.Predictor</span></code></a></p>
 <p>[ALPHA] A predictor interface that computes generalized mean component properties.</p>
 <dl class="field-list simple">
@@ -46,7 +46,7 @@
 <li><p><strong>description</strong> (<em>str</em>) – description of the predictor</p></li>
 <li><p><strong>input_descriptor</strong> (<a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.FormulationDescriptor" title="citrine.informatics.descriptors.FormulationDescriptor"><em>FormulationDescriptor</em></a>) – descriptor that represents the input formulation</p></li>
 <li><p><strong>properties</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – List of component properties to featurize</p></li>
-<li><p><strong>p</strong> (<em>float</em>) – Power of the generalized mean</p></li>
+<li><p><strong>p</strong> (<em>int</em>) – Power of the generalized mean. Only integer powers are supported.</p></li>
 <li><p><strong>impute_properties</strong> (<em>bool</em>) – Whether to impute missing ingredient properties.
 If <code class="docutils literal notranslate"><span class="pre">False</span></code> an error is thrown when a missing ingredient property is encountered.
 If <code class="docutils literal notranslate"><span class="pre">True</span></code> and no <code class="docutils literal notranslate"><span class="pre">default_properties</span></code> are specified, then the average over the

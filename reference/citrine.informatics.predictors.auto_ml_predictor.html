@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>citrine.informatics.predictors.auto_ml_predictor module &#8212; Citrine Python 0.106.2 documentation</title>
+    <title>citrine.informatics.predictors.auto_ml_predictor module &#8212; Citrine Python 0.108.0 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -36,11 +36,11 @@
 <span id="citrine-informatics-predictors-auto-ml-predictor-module"></span><h1>citrine.informatics.predictors.auto_ml_predictor module<a class="headerlink" href="#module-citrine.informatics.predictors.auto_ml_predictor" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.predictors.auto_ml_predictor.</code><code class="sig-name descname">AutoMLPredictor</code><span class="sig-paren">(</span><em class="sig-param">name: str, description: str, responses: List[citrine.informatics.descriptors.Descriptor], inputs: List[citrine.informatics.descriptors.Descriptor], training_data: Optional[List[citrine.informatics.data_sources.DataSource]] = None, session: Optional[citrine._session.Session] = None, report: Optional[citrine.informatics.reports.Report] = None, archived: bool = False</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.predictors.auto_ml_predictor.</code><code class="sig-name descname">AutoMLPredictor</code><span class="sig-paren">(</span><em class="sig-param">name: str, description: str, output: citrine.informatics.descriptors.Descriptor, inputs: List[citrine.informatics.descriptors.Descriptor], training_data: Optional[List[citrine.informatics.data_sources.DataSource]] = None, session: Optional[citrine._session.Session] = None, report: Optional[citrine.informatics.reports.Report] = None, archived: bool = False</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="citrine.informatics.predictors.predictor.html#citrine.informatics.predictors.predictor.Predictor" title="citrine.informatics.predictors.predictor.Predictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.predictors.predictor.Predictor</span></code></a></p>
-<p>A predictor interface that builds a single ML model.</p>
-<p>The model uses the set of inputs to predict the responses.
-Only one value for responses is currently supported.
+<p>[ALPHA] A predictor interface that builds a single ML model.</p>
+<p>The model uses the set of inputs to predict the output.
+Only one value for output is currently supported.
 Only one machine learning model is built.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -48,7 +48,7 @@ Only one machine learning model is built.</p>
 <li><p><strong>name</strong> (<em>str</em>) – name of the configuration</p></li>
 <li><p><strong>description</strong> (<em>str</em>) – the description of the predictor</p></li>
 <li><p><strong>inputs</strong> (<em>list</em><em>[</em><a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.Descriptor" title="citrine.informatics.descriptors.Descriptor"><em>Descriptor</em></a><em>]</em>) – Descriptors that represent inputs to the model</p></li>
-<li><p><strong>responses</strong> (<em>list</em><em>[</em><a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.Descriptor" title="citrine.informatics.descriptors.Descriptor"><em>Descriptor</em></a><em>]</em>) – Descriptors that represent responses of the model</p></li>
+<li><p><strong>output</strong> (<a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.Descriptor" title="citrine.informatics.descriptors.Descriptor"><em>Descriptor</em></a>) – A single Descriptor that represents the output of the model</p></li>
 <li><p><strong>training_data</strong> (<em>Optional</em><em>[</em><em>List</em><em>[</em><a class="reference internal" href="citrine.informatics.data_sources.html#citrine.informatics.data_sources.DataSource" title="citrine.informatics.data_sources.DataSource"><em>DataSource</em></a><em>]</em><em>]</em>) – Sources of training data. Each can be either a CSV or an GEM Table. Candidates from
 multiple data sources will be combined into a flattened list and deduplicated by uid and
 identifiers. Deduplication is performed if a uid or identifier is shared between two or
@@ -69,8 +69,8 @@ predictor is part of a graph that includes all training data required by this pr
 <dd></dd></dl>
 
 <dl class="attribute">
-<dt id="citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor.responses">
-<code class="sig-name descname">responses</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor.responses" title="Permalink to this definition">¶</a></dt>
+<dt id="citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor.output">
+<code class="sig-name descname">output</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor.output" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">

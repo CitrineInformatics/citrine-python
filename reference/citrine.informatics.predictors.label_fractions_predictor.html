@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>citrine.informatics.predictors.label_fractions_predictor module &#8212; Citrine Python 0.106.2 documentation</title>
+    <title>citrine.informatics.predictors.label_fractions_predictor module &#8212; Citrine Python 0.108.0 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -36,7 +36,7 @@
 <span id="citrine-informatics-predictors-label-fractions-predictor-module"></span><h1>citrine.informatics.predictors.label_fractions_predictor module<a class="headerlink" href="#module-citrine.informatics.predictors.label_fractions_predictor" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="citrine.informatics.predictors.label_fractions_predictor.LabelFractionsPredictor">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.predictors.label_fractions_predictor.</code><code class="sig-name descname">LabelFractionsPredictor</code><span class="sig-paren">(</span><em class="sig-param">name: str, description: str, input_descriptor: citrine.informatics.descriptors.FormulationDescriptor, labels: List[str], session: Optional[citrine._session.Session] = None, report: Optional[citrine.informatics.reports.Report] = None, archived: bool = False</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.predictors.label_fractions_predictor.LabelFractionsPredictor" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.predictors.label_fractions_predictor.</code><code class="sig-name descname">LabelFractionsPredictor</code><span class="sig-paren">(</span><em class="sig-param">name: str, description: str, input_descriptor: citrine.informatics.descriptors.FormulationDescriptor, labels: Set[str], session: Optional[citrine._session.Session] = None, report: Optional[citrine.informatics.reports.Report] = None, archived: bool = False</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.predictors.label_fractions_predictor.LabelFractionsPredictor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="citrine.informatics.predictors.predictor.html#citrine.informatics.predictors.predictor.Predictor" title="citrine.informatics.predictors.predictor.Predictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.predictors.predictor.Predictor</span></code></a></p>
 <p>[ALPHA] A predictor interface that computes the relative proportions of labeled ingredients.</p>
 <dl class="field-list simple">
@@ -45,7 +45,7 @@
 <li><p><strong>name</strong> (<em>str</em>) – name of the configuration</p></li>
 <li><p><strong>description</strong> (<em>str</em>) – description of the predictor</p></li>
 <li><p><strong>input_descriptor</strong> (<a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.FormulationDescriptor" title="citrine.informatics.descriptors.FormulationDescriptor"><em>FormulationDescriptor</em></a>) – descriptor that contains formulation data</p></li>
-<li><p><strong>labels</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – labels to compute the quantity fractions of</p></li>
+<li><p><strong>labels</strong> (<em>Set</em><em>[</em><em>str</em><em>]</em>) – labels to compute the quantity fractions of</p></li>
 </ul>
 </dd>
 </dl>

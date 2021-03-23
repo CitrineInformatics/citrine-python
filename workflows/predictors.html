@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>4.4. Predictors &#8212; Citrine Python 0.106.2 documentation</title>
+    <title>4.4. Predictors &#8212; Citrine Python 0.108.0 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -39,126 +39,26 @@
 <p>A predictor computes or predicts properties of materials.
 The type of predictor defines how a property prediction is made.
 Predictors must be registered to a project to be used in a <a class="reference internal" href="design_workflows.html"><span class="doc">design workflow</span></a>.</p>
-<div class="section" id="simple-ml-predictor">
-<h2>4.4.1. Simple ML predictor<a class="headerlink" href="#simple-ml-predictor" title="Permalink to this headline">¶</a></h2>
-<p>The <a class="reference internal" href="../reference/citrine.informatics.predictors.simple_ml_predictor.html#citrine.informatics.predictors.simple_ml_predictor.SimpleMLPredictor" title="citrine.informatics.predictors.simple_ml_predictor.SimpleMLPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleMLPredictor</span></code></a> predicts material properties using a machine-learned model.
-Each predictor is defined by a set of inputs, outputs and latent variables.
-Inputs are used as input features to the machine learning model.
-Outputs are the properties that you would like the model to predict.
-There must be at least one input and one output.
-Latent variables are properties that you would like the model to predict and you think could also be useful in predicting the outputs.
-If defined, latent variables are used to build hierarchical models.
-One model is trained from inputs to latent variables, and another is trained from inputs and latent variables to outputs.
-Thus, all inputs and latent variables are used to predict outputs.</p>
-<p>Models are trained using data provided by a <a class="reference internal" href="../reference/citrine.informatics.data_sources.html#citrine.informatics.data_sources.DataSource" title="citrine.informatics.data_sources.DataSource"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataSource</span></code></a> specified when creating a predictor.</p>
-<p>The following example demonstrates how to use the python SDK to create a <a class="reference internal" href="../reference/citrine.informatics.predictors.simple_ml_predictor.html#citrine.informatics.predictors.simple_ml_predictor.SimpleMLPredictor" title="citrine.informatics.predictors.simple_ml_predictor.SimpleMLPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleMLPredictor</span></code></a>, register the predictor to a project and wait for validation:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine</span> <span class="kn">import</span> <span class="n">Citrine</span>
-<span class="kn">from</span> <span class="nn">citrine.seeding.find_or_create</span> <span class="kn">import</span> <span class="p">(</span><span class="n">find_or_create_project</span><span class="p">,</span>
-                                            <span class="n">create_or_update</span>
-                                           <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">citrine.jobs.waiting</span> <span class="kn">import</span> <span class="n">wait_while_validating</span>
-<span class="kn">from</span> <span class="nn">citrine.informatics.predictors</span> <span class="kn">import</span> <span class="n">SimpleMLPredictor</span>
-<span class="kn">from</span> <span class="nn">citrine.informatics.data_sources</span> <span class="kn">import</span> <span class="n">GemTableDataSource</span>
-
-<span class="c1"># create a session with citrine using your API key</span>
-<span class="n">session</span> <span class="o">=</span> <span class="n">Citrine</span><span class="p">(</span><span class="n">api_key</span> <span class="o">=</span> <span class="n">API_KEY</span><span class="p">)</span>
-
-<span class="c1"># find project by name &#39;Example project&#39; or create it if not found</span>
-<span class="n">project</span> <span class="o">=</span> <span class="n">find_or_create_project</span><span class="p">(</span><span class="n">project_collection</span><span class="o">=</span><span class="n">session</span><span class="o">.</span><span class="n">projects</span><span class="p">,</span>
-                                 <span class="n">project_name</span><span class="o">=</span><span class="s1">&#39;Example project&#39;</span>
-                                <span class="p">)</span>
-
-<span class="c1"># create SimpleMLPredictor (assumes descriptors for</span>
-<span class="c1"># inputs/outputs/latent variables have already been created)</span>
-<span class="n">simple_ml_predictor</span> <span class="o">=</span> <span class="n">SimpleMLPredictor</span><span class="p">(</span>
-    <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Predictor name&#39;</span><span class="p">,</span>
-    <span class="n">description</span> <span class="o">=</span> <span class="s1">&#39;Predictor description&#39;</span><span class="p">,</span>
-    <span class="n">inputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">input_descriptor_1</span><span class="p">,</span> <span class="n">input_descriptor_2</span><span class="p">],</span>
-    <span class="n">outputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">output_descriptor_1</span><span class="p">,</span> <span class="n">output_descriptor_2</span><span class="p">],</span>
-    <span class="n">latent_variables</span> <span class="o">=</span> <span class="p">[</span><span class="n">latent_variable_descriptor_1</span><span class="p">],</span>
-    <span class="n">training_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">GemTableDataSource</span><span class="p">(</span><span class="n">training_data_table_uid</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]</span>
-<span class="p">)</span>
-
-<span class="c1"># register predictor or update predictor of same name if it already</span>
-<span class="c1"># exists in the project.</span>
-<span class="n">predictor</span> <span class="o">=</span> <span class="n">create_or_update</span><span class="p">(</span><span class="n">collection</span><span class="o">=</span><span class="n">project</span><span class="o">.</span><span class="n">predictors</span><span class="p">,</span>
-                             <span class="n">resource</span><span class="o">=</span><span class="n">simple_ml_predictor</span>
-                            <span class="p">)</span>
-
-<span class="c1"># wait while the predictor is validating and print status information</span>
-<span class="c1"># while waiting.</span>
-<span class="n">predictor</span> <span class="o">=</span> <span class="n">wait_while_validating</span><span class="p">(</span><span class="n">collection</span><span class="o">=</span><span class="n">project</span><span class="o">.</span><span class="n">predictors</span><span class="p">,</span>
-                                  <span class="n">module</span><span class="o">=</span><span class="n">predictor</span><span class="p">,</span>
-                                  <span class="n">print_status_info</span><span class="o">=</span><span class="kc">True</span>
-                                 <span class="p">)</span>
-</pre></div>
-</div>
-<p>Often, a <a class="reference internal" href="../reference/citrine.informatics.predictors.simple_ml_predictor.html#citrine.informatics.predictors.simple_ml_predictor.SimpleMLPredictor" title="citrine.informatics.predictors.simple_ml_predictor.SimpleMLPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleMLPredictor</span></code></a> will include outputs from other predictors as inputs to its model.
-Instead of entering these manually, outputs from a predictor can be retrieved programmatically using <code class="docutils literal notranslate"><span class="pre">outputs</span> <span class="pre">=</span> <span class="pre">project.descriptors.from_predictor_responses(predictor,</span> <span class="pre">inputs)</span></code>, where <code class="docutils literal notranslate"><span class="pre">outputs</span></code> is the list of descriptors returned by the <code class="docutils literal notranslate"><span class="pre">predictor</span></code> given a list of descriptors as <code class="docutils literal notranslate"><span class="pre">inputs</span></code>.</p>
-<p>The following demonstrates how to create an <a class="reference internal" href="../reference/citrine.informatics.predictors.ingredient_fractions_predictor.html#citrine.informatics.predictors.ingredient_fractions_predictor.IngredientFractionsPredictor" title="citrine.informatics.predictors.ingredient_fractions_predictor.IngredientFractionsPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientFractionsPredictor</span></code></a> and use its outputs as inputs to a <a class="reference internal" href="../reference/citrine.informatics.predictors.simple_ml_predictor.html#citrine.informatics.predictors.simple_ml_predictor.SimpleMLPredictor" title="citrine.informatics.predictors.simple_ml_predictor.SimpleMLPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleMLPredictor</span></code></a>.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine</span> <span class="kn">import</span> <span class="n">Citrine</span>
-<span class="kn">from</span> <span class="nn">citrine.seeding.find_or_create</span> <span class="kn">import</span> <span class="n">find_or_create_project</span>
-<span class="kn">from</span> <span class="nn">citrine.informatics.predictors</span> <span class="kn">import</span> <span class="n">SimpleMLPredictor</span>
-<span class="kn">from</span> <span class="nn">citrine.informatics.data_sources</span> <span class="kn">import</span> <span class="n">GemTableDataSource</span>
-<span class="kn">from</span> <span class="nn">citrine.informatics.predictors</span> <span class="kn">import</span> <span class="n">IngredientFractionsPredictor</span>
-<span class="kn">from</span> <span class="nn">citrine.informatics.descriptors</span> <span class="kn">import</span> <span class="n">FormulationDescriptor</span>
-
-<span class="c1"># create a session with citrine using your API key</span>
-<span class="n">session</span> <span class="o">=</span> <span class="n">Citrine</span><span class="p">(</span><span class="n">api_key</span> <span class="o">=</span> <span class="n">API_KEY</span><span class="p">)</span>
-
-<span class="c1"># find project by name &#39;Example project&#39; or create it if not found</span>
-<span class="n">project</span> <span class="o">=</span> <span class="n">find_or_create_project</span><span class="p">(</span><span class="n">project_collection</span><span class="o">=</span><span class="n">session</span><span class="o">.</span><span class="n">projects</span><span class="p">,</span>
-                                 <span class="n">project_name</span><span class="o">=</span><span class="s1">&#39;Example project&#39;</span>
-                                <span class="p">)</span>
-
-<span class="c1"># create a descriptor to store simple mixtures</span>
-<span class="n">formulation_descriptor</span> <span class="o">=</span> <span class="n">FormulationDescriptor</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;simple mixture&#39;</span><span class="p">)</span>
-
-<span class="c1"># create a predictor that computes ingredient fractions</span>
-<span class="n">ingredient_fractions</span> <span class="o">=</span> <span class="n">IngredientFractionsPredictor</span><span class="p">(</span>
-    <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Ingredient Fractions Predictor&#39;</span><span class="p">,</span>
-    <span class="n">description</span> <span class="o">=</span> <span class="s1">&#39;Computes fractions of provided ingredients&#39;</span><span class="p">,</span>
-    <span class="n">input_descriptor</span> <span class="o">=</span> <span class="n">formulation_descriptor</span><span class="p">,</span>
-    <span class="n">ingredients</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;water&#39;</span><span class="p">,</span> <span class="s1">&#39;salt&#39;</span><span class="p">,</span> <span class="s1">&#39;boric acid&#39;</span><span class="p">]</span>
-<span class="p">)</span>
-
-<span class="c1"># get the descriptors the ingredient fractions predictor returns given the formulation descriptor</span>
-<span class="n">ingredient_fraction_descriptors</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">descriptors</span><span class="o">.</span><span class="n">from_predictor_responses</span><span class="p">(</span>
-    <span class="n">predictor</span><span class="o">=</span><span class="n">ingredient_fractions</span><span class="p">,</span>
-    <span class="n">inputs</span><span class="o">=</span><span class="p">[</span><span class="n">formulation_descriptor</span><span class="p">]</span>
-<span class="p">)</span>
-<span class="c1"># ^^ in this case, ingredient_fraction_descriptors will contain 3 real descriptors: one for each featurized ingredient</span>
-
-<span class="n">simple_ml_predictor</span> <span class="o">=</span> <span class="n">SimpleMLPredictor</span><span class="p">(</span>
-    <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Predictor name&#39;</span><span class="p">,</span>
-    <span class="n">description</span> <span class="o">=</span> <span class="s1">&#39;Predictor description&#39;</span><span class="p">,</span>
-    <span class="n">inputs</span> <span class="o">=</span> <span class="n">ingredient_fraction_descriptors</span><span class="p">,</span>
-    <span class="n">outputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">output_descriptor</span><span class="p">],</span>
-    <span class="n">latent_variables</span> <span class="o">=</span> <span class="p">[],</span>
-    <span class="n">training_data</span> <span class="o">=</span> <span class="n">GemTableDataSource</span><span class="p">(</span><span class="n">training_data_table_uid</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">formulation_descriptor</span><span class="p">)</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="section" id="auto-ml-predictor">
-<h2>4.4.2. Auto ML predictor<a class="headerlink" href="#auto-ml-predictor" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="auto-ml-predictor-alpha">
+<h2>4.4.1. Auto ML predictor (ALPHA)<a class="headerlink" href="#auto-ml-predictor-alpha" title="Permalink to this headline">¶</a></h2>
 <p>The <a class="reference internal" href="../reference/citrine.informatics.predictors.auto_ml_predictor.html#citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor" title="citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">AutoMLPredictor</span></code></a> predicts material properties using a machine-learned model.
-Each predictor is defined by a set of inputs and responses.
+AutoMLPredictors allow you to use your domain knowledge to construct custom <a class="reference external" href="#graph-predictor">GraphPredictors</a> with fine grain control over the resulting graph.
+Each AutoMLpredictor is defined by a set of inputs and an output.
 Inputs are used as input features to the machine learning model.
-Responses are the properties that you would like the model to predict. Currently, only one response at a time is supported.
-There must be at least one input and only one response.
-Unlike the SimplePredictor, only one model is trained from inputs to the response.</p>
+The output is the property that you would like the model to predict.
+There must be at least one input and only one output.
+Unlike the <a class="reference external" href="#simple-ml-predictor">SimpleMLPredictor</a>, only one model is trained from inputs to the output.</p>
 <p>Models are trained using data provided by a <a class="reference internal" href="../reference/citrine.informatics.data_sources.html#citrine.informatics.data_sources.DataSource" title="citrine.informatics.data_sources.DataSource"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataSource</span></code></a> specified when creating a predictor.</p>
 <p>The following example demonstrates how to use the python SDK to create an <a class="reference internal" href="../reference/citrine.informatics.predictors.auto_ml_predictor.html#citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor" title="citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">AutoMLPredictor</span></code></a>, register the predictor to a project and wait for validation:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.informatics.predictors</span> <span class="kn">import</span> <span class="n">AutoMLPredictor</span>
 
 <span class="c1"># create AutoMLPredictor (assumes descriptors for</span>
-<span class="c1"># inputs/responses variables have already been created)</span>
+<span class="c1"># inputs/output variables have already been created)</span>
 <span class="n">auto_ml_predictor</span> <span class="o">=</span> <span class="n">AutoMLPredictor</span><span class="p">(</span>
     <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Predictor name&#39;</span><span class="p">,</span>
     <span class="n">description</span> <span class="o">=</span> <span class="s1">&#39;Predictor description&#39;</span><span class="p">,</span>
     <span class="n">inputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">input_descriptor_1</span><span class="p">,</span> <span class="n">input_descriptor_2</span><span class="p">],</span>
-    <span class="n">responses</span> <span class="o">=</span> <span class="p">[</span><span class="n">response_descriptor_1</span><span class="p">],</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">output_descriptor_1</span><span class="p">,</span>
     <span class="n">training_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">GemTableDataSource</span><span class="p">(</span><span class="n">training_data_table_uid</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]</span>
 <span class="p">)</span>
 
@@ -169,7 +69,7 @@ Unlike the SimplePredictor, only one model is trained from inputs to the respons
 </div>
 </div>
 <div class="section" id="graph-predictor">
-<h2>4.4.3. Graph predictor<a class="headerlink" href="#graph-predictor" title="Permalink to this headline">¶</a></h2>
+<h2>4.4.2. Graph predictor<a class="headerlink" href="#graph-predictor" title="Permalink to this headline">¶</a></h2>
 <p>The <a class="reference internal" href="../reference/citrine.informatics.predictors.graph_predictor.html#citrine.informatics.predictors.graph_predictor.GraphPredictor" title="citrine.informatics.predictors.graph_predictor.GraphPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">GraphPredictor</span></code></a> stitches together multiple other predictors into a
 directed bipartite graph, where every model node is connected to an arbitrary number of input descriptors and exactly
 one output descriptor.</p>
@@ -198,7 +98,7 @@ one output descriptor.</p>
 <p>For a more complete example of graph predictor usage, see <a class="reference internal" href="code_examples.html#graph-predictor-example"><span class="std std-ref">AI Engine Code Examples</span></a>.</p>
 </div>
 <div class="section" id="expression-predictor">
-<h2>4.4.4. Expression predictor<a class="headerlink" href="#expression-predictor" title="Permalink to this headline">¶</a></h2>
+<h2>4.4.3. Expression predictor<a class="headerlink" href="#expression-predictor" title="Permalink to this headline">¶</a></h2>
 <p>The <a class="reference internal" href="../reference/citrine.informatics.predictors.expression_predictor.html#citrine.informatics.predictors.expression_predictor.ExpressionPredictor" title="citrine.informatics.predictors.expression_predictor.ExpressionPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExpressionPredictor</span></code></a> defines an analytic (lossless) model that computes one real-valued output descriptor from one or more input descriptors.
 An <a class="reference internal" href="../reference/citrine.informatics.predictors.expression_predictor.html#citrine.informatics.predictors.expression_predictor.ExpressionPredictor" title="citrine.informatics.predictors.expression_predictor.ExpressionPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExpressionPredictor</span></code></a> should be used when the relationship between inputs and outputs is known.</p>
 <p>A string is used to define the expression, and the corresponding output is defined by a <a class="reference internal" href="../reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.RealDescriptor" title="citrine.informatics.descriptors.RealDescriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">RealDescriptor</span></code></a>.
@@ -249,7 +149,7 @@ Citrine-python currently supports the following operators and functions:</p>
 <p>For an example of expression predictors used in a graph predictor, see <a class="reference internal" href="code_examples.html#graph-predictor-example"><span class="std std-ref">AI Engine Code Examples</span></a>.</p>
 </div>
 <div class="section" id="ingredients-to-simple-mixture-predictor-alpha">
-<h2>4.4.5. Ingredients to simple mixture predictor (ALPHA)<a class="headerlink" href="#ingredients-to-simple-mixture-predictor-alpha" title="Permalink to this headline">¶</a></h2>
+<h2>4.4.4. Ingredients to simple mixture predictor (ALPHA)<a class="headerlink" href="#ingredients-to-simple-mixture-predictor-alpha" title="Permalink to this headline">¶</a></h2>
 <p>The <a class="reference internal" href="../reference/citrine.informatics.predictors.ingredients_to_simple_mixture_predictor.html#citrine.informatics.predictors.ingredients_to_simple_mixture_predictor.IngredientsToSimpleMixturePredictor" title="citrine.informatics.predictors.ingredients_to_simple_mixture_predictor.IngredientsToSimpleMixturePredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientsToSimpleMixturePredictor</span></code></a> constructs a simple mixture from a list of ingredients.
 This predictor is only required to construct simple mixtures from CSV data sources.
 Formulations are constructed automatically by GEM Tables when a <code class="docutils literal notranslate"><span class="pre">formulation_descriptor</span></code> is specified by the data source, so
@@ -362,7 +262,7 @@ These labels are specified via:</p>
 </div>
 </div>
 <div class="section" id="simple-mixture-predictor-alpha">
-<h2>4.4.6. Simple mixture predictor (ALPHA)<a class="headerlink" href="#simple-mixture-predictor-alpha" title="Permalink to this headline">¶</a></h2>
+<h2>4.4.5. Simple mixture predictor (ALPHA)<a class="headerlink" href="#simple-mixture-predictor-alpha" title="Permalink to this headline">¶</a></h2>
 <p>Simple mixtures may contain ingredients that are blends of other simple mixtures.
 Along the lines of the example above, hypertonic saline can be mixed with water to form isotonic saline.
 Often, the properties of a hierarchical mixture are strongly associated with its leaf ingredients.
@@ -391,7 +291,7 @@ The <code class="docutils literal notranslate"><span class="pre">training_data</
 </div>
 </div>
 <div class="section" id="generalized-mean-property-predictor-alpha">
-<h2>4.4.7. Generalized mean property predictor (ALPHA)<a class="headerlink" href="#generalized-mean-property-predictor-alpha" title="Permalink to this headline">¶</a></h2>
+<h2>4.4.6. Generalized mean property predictor (ALPHA)<a class="headerlink" href="#generalized-mean-property-predictor-alpha" title="Permalink to this headline">¶</a></h2>
 <p>Often, properties of a mixture are proportional to the properties of it’s ingredients.
 For example, the density of a saline solution can be computed from the densities of water and salt multiplied by their respective amounts:</p>
 <div class="math notranslate nohighlight">
@@ -401,12 +301,13 @@ If the densities of water and salt are known, we can compute the expected densit
 <p>The <a class="reference internal" href="../reference/citrine.informatics.predictors.generalized_mean_property_predictor.html#citrine.informatics.predictors.generalized_mean_property_predictor.GeneralizedMeanPropertyPredictor" title="citrine.informatics.predictors.generalized_mean_property_predictor.GeneralizedMeanPropertyPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">GeneralizedMeanPropertyPredictor</span></code></a> computes mean properties of simple mixture ingredients.
 To configure a mean property predictor, we must specify:</p>
 <ul class="simple">
-<li><p>an input descriptor that holds the mixture’s recipe and ingredient labels</p></li>
-<li><p>a list of properties to featurize</p></li>
-<li><p>the power of the <a class="reference external" href="https://en.wikipedia.org/wiki/Generalized_mean">generalized mean</a>
-(a power of 1 is equivalent to the arithmetic mean, and a power 2 is equivalent to the root mean square.)</p></li>
-<li><p>a data source that contains all ingredients and their properties</p></li>
-<li><p>how to handle missing ingredient properties</p></li>
+<li><p>An input descriptor that holds the mixture’s recipe and ingredient labels</p></li>
+<li><p>A list of properties to featurize</p></li>
+<li><p>The power of the <a class="reference external" href="https://en.wikipedia.org/wiki/Generalized_mean">generalized mean</a>
+(A power of 1 is equivalent to the arithmetic mean, and a power 2 is equivalent to the root mean square.)
+Only integer powers are supported.</p></li>
+<li><p>A data source that contains all ingredients and their properties</p></li>
+<li><p>How to handle missing ingredient properties</p></li>
 </ul>
 <p>An optional label may also be specified if the mean should only be computed over ingredients given a specific label.</p>
 <p>Missing ingredient properties can be handled one of three ways:</p>
@@ -482,10 +383,10 @@ If a value other than 1.58 should be used, e.g. 2.0, this can be specified by se
 <span class="p">)</span>
 </pre></div>
 </div>
-<p>If <code class="docutils literal notranslate"><span class="pre">p</span></code> is given a value other than <code class="docutils literal notranslate"><span class="pre">1.0</span></code>, that value will be included in the key for the feature, e.g. <code class="docutils literal notranslate"><span class="pre">2.0-mean</span> <span class="pre">of</span> <span class="pre">property</span> <span class="pre">viscosity</span></code>.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">p</span></code> is given a value other than <code class="docutils literal notranslate"><span class="pre">1</span></code>, that value will be included in the key for the feature, e.g. <code class="docutils literal notranslate"><span class="pre">2.0-mean</span> <span class="pre">of</span> <span class="pre">property</span> <span class="pre">viscosity</span></code>.</p>
 </div>
 <div class="section" id="ingredient-fractions-predictor-alpha">
-<h2>4.4.8. Ingredient fractions predictor (ALPHA)<a class="headerlink" href="#ingredient-fractions-predictor-alpha" title="Permalink to this headline">¶</a></h2>
+<h2>4.4.7. Ingredient fractions predictor (ALPHA)<a class="headerlink" href="#ingredient-fractions-predictor-alpha" title="Permalink to this headline">¶</a></h2>
 <p>The <a class="reference internal" href="../reference/citrine.informatics.predictors.ingredient_fractions_predictor.html#citrine.informatics.predictors.ingredient_fractions_predictor.IngredientFractionsPredictor" title="citrine.informatics.predictors.ingredient_fractions_predictor.IngredientFractionsPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientFractionsPredictor</span></code></a> featurizes ingredient fractions in a simple mixture.
 The predictor is configured by specifying a descriptor that contains simple mixture data and a list of known ingredients to featurize.
 The list of ingredients should be the list of all possible ingredients for the input mixture.
@@ -523,9 +424,9 @@ this predictor would compute outputs:</p>
 <p>This will return a real descriptor for each featurized ingredient with bounds <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1]</span></code> and key in the form <code class="docutils literal notranslate"><span class="pre">'{ingredient}</span> <span class="pre">share</span> <span class="pre">in</span> <span class="pre">simple</span> <span class="pre">mixture'</span></code> where <code class="docutils literal notranslate"><span class="pre">{ingredient}</span></code> is either <code class="docutils literal notranslate"><span class="pre">water</span></code>, <code class="docutils literal notranslate"><span class="pre">salt</span></code> or <code class="docutils literal notranslate"><span class="pre">boric</span> <span class="pre">acid</span></code>.</p>
 </div>
 <div class="section" id="label-fractions-predictor-alpha">
-<h2>4.4.9. Label fractions predictor (ALPHA)<a class="headerlink" href="#label-fractions-predictor-alpha" title="Permalink to this headline">¶</a></h2>
+<h2>4.4.8. Label fractions predictor (ALPHA)<a class="headerlink" href="#label-fractions-predictor-alpha" title="Permalink to this headline">¶</a></h2>
 <p>The <a class="reference internal" href="../reference/citrine.informatics.predictors.label_fractions_predictor.html#citrine.informatics.predictors.label_fractions_predictor.LabelFractionsPredictor" title="citrine.informatics.predictors.label_fractions_predictor.LabelFractionsPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">LabelFractionsPredictor</span></code></a> computes total fraction of ingredients with a given label.
-The predictor is configured by specifying a formulation descriptor that holds simple mixture data (i.e. recipes and ingredient labels) and a list of labels to featurize.
+The predictor is configured by specifying a formulation descriptor that holds simple mixture data (i.e. recipes and ingredient labels) and a set of labels to featurize.
 A separate response is computed for each featurized label by summing all quantities in the recipe associated with ingredients given the label.</p>
 <p>The following example demonstrates how to create a predictor that computes the total fractions of solute and solvent in a simple mixture.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.informatics.descriptors</span> <span class="kn">import</span> <span class="n">FormulationDescriptor</span>
@@ -536,7 +437,7 @@ A separate response is computed for each featurized label by summing all quantit
     <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Saline solution label fractions&#39;</span><span class="p">,</span>
     <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Computes total fraction of solute and solvent&#39;</span><span class="p">,</span>
     <span class="n">input_descriptor</span><span class="o">=</span><span class="n">formulation_descriptor</span><span class="p">,</span>
-    <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;solute&#39;</span><span class="p">,</span> <span class="s1">&#39;solvent&#39;</span><span class="p">]</span>
+    <span class="n">labels</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;solute&#39;</span><span class="p">,</span> <span class="s1">&#39;solvent&#39;</span><span class="p">}</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -544,6 +445,107 @@ A separate response is computed for each featurized label by summing all quantit
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">label_fractions_descriptors</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">descriptors</span><span class="o">.</span><span class="n">from_predictor_responses</span><span class="p">(</span>
     <span class="n">predictor</span><span class="o">=</span><span class="n">label_fractions</span><span class="p">,</span>
     <span class="n">inputs</span><span class="o">=</span><span class="p">[</span><span class="n">formulation_descriptor</span><span class="p">]</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="simple-ml-predictor">
+<h2>4.4.9. Simple ML predictor<a class="headerlink" href="#simple-ml-predictor" title="Permalink to this headline">¶</a></h2>
+<p>The <a class="reference internal" href="../reference/citrine.informatics.predictors.simple_ml_predictor.html#citrine.informatics.predictors.simple_ml_predictor.SimpleMLPredictor" title="citrine.informatics.predictors.simple_ml_predictor.SimpleMLPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleMLPredictor</span></code></a> predicts material properties using a machine-learned model.
+Each predictor is defined by a set of inputs, outputs and latent variables.
+Inputs are used as input features to the machine learning model.
+Outputs are the properties that you would like the model to predict.
+There must be at least one input and one output.
+Latent variables are properties that you would like the model to predict and you think could also be useful in predicting the outputs.
+If defined, latent variables are used to build hierarchical models.
+One model is trained from inputs to latent variables, and another is trained from inputs and latent variables to outputs.
+Thus, all inputs and latent variables are used to predict outputs.</p>
+<p>Models are trained using data provided by a <a class="reference internal" href="../reference/citrine.informatics.data_sources.html#citrine.informatics.data_sources.DataSource" title="citrine.informatics.data_sources.DataSource"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataSource</span></code></a> specified when creating a predictor.</p>
+<p>The following example demonstrates how to use the python SDK to create a <a class="reference internal" href="../reference/citrine.informatics.predictors.simple_ml_predictor.html#citrine.informatics.predictors.simple_ml_predictor.SimpleMLPredictor" title="citrine.informatics.predictors.simple_ml_predictor.SimpleMLPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleMLPredictor</span></code></a>, register the predictor to a project and wait for validation:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine</span> <span class="kn">import</span> <span class="n">Citrine</span>
+<span class="kn">from</span> <span class="nn">citrine.seeding.find_or_create</span> <span class="kn">import</span> <span class="p">(</span><span class="n">find_or_create_project</span><span class="p">,</span>
+                                            <span class="n">create_or_update</span>
+                                           <span class="p">)</span>
+<span class="kn">from</span> <span class="nn">citrine.jobs.waiting</span> <span class="kn">import</span> <span class="n">wait_while_validating</span>
+<span class="kn">from</span> <span class="nn">citrine.informatics.predictors</span> <span class="kn">import</span> <span class="n">SimpleMLPredictor</span>
+<span class="kn">from</span> <span class="nn">citrine.informatics.data_sources</span> <span class="kn">import</span> <span class="n">GemTableDataSource</span>
+
+<span class="c1"># create a session with citrine using your API key</span>
+<span class="n">session</span> <span class="o">=</span> <span class="n">Citrine</span><span class="p">(</span><span class="n">api_key</span> <span class="o">=</span> <span class="n">API_KEY</span><span class="p">)</span>
+
+<span class="c1"># find project by name &#39;Example project&#39; or create it if not found</span>
+<span class="n">project</span> <span class="o">=</span> <span class="n">find_or_create_project</span><span class="p">(</span><span class="n">project_collection</span><span class="o">=</span><span class="n">session</span><span class="o">.</span><span class="n">projects</span><span class="p">,</span>
+                                 <span class="n">project_name</span><span class="o">=</span><span class="s1">&#39;Example project&#39;</span>
+                                <span class="p">)</span>
+
+<span class="c1"># create SimpleMLPredictor (assumes descriptors for</span>
+<span class="c1"># inputs/outputs/latent variables have already been created)</span>
+<span class="n">simple_ml_predictor</span> <span class="o">=</span> <span class="n">SimpleMLPredictor</span><span class="p">(</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Predictor name&#39;</span><span class="p">,</span>
+    <span class="n">description</span> <span class="o">=</span> <span class="s1">&#39;Predictor description&#39;</span><span class="p">,</span>
+    <span class="n">inputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">input_descriptor_1</span><span class="p">,</span> <span class="n">input_descriptor_2</span><span class="p">],</span>
+    <span class="n">outputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">output_descriptor_1</span><span class="p">,</span> <span class="n">output_descriptor_2</span><span class="p">],</span>
+    <span class="n">latent_variables</span> <span class="o">=</span> <span class="p">[</span><span class="n">latent_variable_descriptor_1</span><span class="p">],</span>
+    <span class="n">training_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">GemTableDataSource</span><span class="p">(</span><span class="n">training_data_table_uid</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]</span>
+<span class="p">)</span>
+
+<span class="c1"># register predictor or update predictor of same name if it already</span>
+<span class="c1"># exists in the project.</span>
+<span class="n">predictor</span> <span class="o">=</span> <span class="n">create_or_update</span><span class="p">(</span><span class="n">collection</span><span class="o">=</span><span class="n">project</span><span class="o">.</span><span class="n">predictors</span><span class="p">,</span>
+                             <span class="n">resource</span><span class="o">=</span><span class="n">simple_ml_predictor</span>
+                            <span class="p">)</span>
+
+<span class="c1"># wait while the predictor is validating and print status information</span>
+<span class="c1"># while waiting.</span>
+<span class="n">predictor</span> <span class="o">=</span> <span class="n">wait_while_validating</span><span class="p">(</span><span class="n">collection</span><span class="o">=</span><span class="n">project</span><span class="o">.</span><span class="n">predictors</span><span class="p">,</span>
+                                  <span class="n">module</span><span class="o">=</span><span class="n">predictor</span><span class="p">,</span>
+                                  <span class="n">print_status_info</span><span class="o">=</span><span class="kc">True</span>
+                                 <span class="p">)</span>
+</pre></div>
+</div>
+<p>Often, a <a class="reference internal" href="../reference/citrine.informatics.predictors.simple_ml_predictor.html#citrine.informatics.predictors.simple_ml_predictor.SimpleMLPredictor" title="citrine.informatics.predictors.simple_ml_predictor.SimpleMLPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleMLPredictor</span></code></a> will include outputs from other predictors as inputs to its model.
+Instead of entering these manually, outputs from a predictor can be retrieved programmatically using <code class="docutils literal notranslate"><span class="pre">outputs</span> <span class="pre">=</span> <span class="pre">project.descriptors.from_predictor_responses(predictor,</span> <span class="pre">inputs)</span></code>, where <code class="docutils literal notranslate"><span class="pre">outputs</span></code> is the list of descriptors returned by the <code class="docutils literal notranslate"><span class="pre">predictor</span></code> given a list of descriptors as <code class="docutils literal notranslate"><span class="pre">inputs</span></code>.</p>
+<p>The following demonstrates how to create an <a class="reference internal" href="../reference/citrine.informatics.predictors.ingredient_fractions_predictor.html#citrine.informatics.predictors.ingredient_fractions_predictor.IngredientFractionsPredictor" title="citrine.informatics.predictors.ingredient_fractions_predictor.IngredientFractionsPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientFractionsPredictor</span></code></a> and use its outputs as inputs to a <a class="reference internal" href="../reference/citrine.informatics.predictors.simple_ml_predictor.html#citrine.informatics.predictors.simple_ml_predictor.SimpleMLPredictor" title="citrine.informatics.predictors.simple_ml_predictor.SimpleMLPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleMLPredictor</span></code></a>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine</span> <span class="kn">import</span> <span class="n">Citrine</span>
+<span class="kn">from</span> <span class="nn">citrine.seeding.find_or_create</span> <span class="kn">import</span> <span class="n">find_or_create_project</span>
+<span class="kn">from</span> <span class="nn">citrine.informatics.predictors</span> <span class="kn">import</span> <span class="n">SimpleMLPredictor</span>
+<span class="kn">from</span> <span class="nn">citrine.informatics.data_sources</span> <span class="kn">import</span> <span class="n">GemTableDataSource</span>
+<span class="kn">from</span> <span class="nn">citrine.informatics.predictors</span> <span class="kn">import</span> <span class="n">IngredientFractionsPredictor</span>
+<span class="kn">from</span> <span class="nn">citrine.informatics.descriptors</span> <span class="kn">import</span> <span class="n">FormulationDescriptor</span>
+
+<span class="c1"># create a session with citrine using your API key</span>
+<span class="n">session</span> <span class="o">=</span> <span class="n">Citrine</span><span class="p">(</span><span class="n">api_key</span> <span class="o">=</span> <span class="n">API_KEY</span><span class="p">)</span>
+
+<span class="c1"># find project by name &#39;Example project&#39; or create it if not found</span>
+<span class="n">project</span> <span class="o">=</span> <span class="n">find_or_create_project</span><span class="p">(</span><span class="n">project_collection</span><span class="o">=</span><span class="n">session</span><span class="o">.</span><span class="n">projects</span><span class="p">,</span>
+                                 <span class="n">project_name</span><span class="o">=</span><span class="s1">&#39;Example project&#39;</span>
+                                <span class="p">)</span>
+
+<span class="c1"># create a descriptor to store simple mixtures</span>
+<span class="n">formulation_descriptor</span> <span class="o">=</span> <span class="n">FormulationDescriptor</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;simple mixture&#39;</span><span class="p">)</span>
+
+<span class="c1"># create a predictor that computes ingredient fractions</span>
+<span class="n">ingredient_fractions</span> <span class="o">=</span> <span class="n">IngredientFractionsPredictor</span><span class="p">(</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Ingredient Fractions Predictor&#39;</span><span class="p">,</span>
+    <span class="n">description</span> <span class="o">=</span> <span class="s1">&#39;Computes fractions of provided ingredients&#39;</span><span class="p">,</span>
+    <span class="n">input_descriptor</span> <span class="o">=</span> <span class="n">formulation_descriptor</span><span class="p">,</span>
+    <span class="n">ingredients</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;water&#39;</span><span class="p">,</span> <span class="s1">&#39;salt&#39;</span><span class="p">,</span> <span class="s1">&#39;boric acid&#39;</span><span class="p">]</span>
+<span class="p">)</span>
+
+<span class="c1"># get the descriptors the ingredient fractions predictor returns given the formulation descriptor</span>
+<span class="n">ingredient_fraction_descriptors</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">descriptors</span><span class="o">.</span><span class="n">from_predictor_responses</span><span class="p">(</span>
+    <span class="n">predictor</span><span class="o">=</span><span class="n">ingredient_fractions</span><span class="p">,</span>
+    <span class="n">inputs</span><span class="o">=</span><span class="p">[</span><span class="n">formulation_descriptor</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="c1"># ^^ in this case, ingredient_fraction_descriptors will contain 3 real descriptors: one for each featurized ingredient</span>
+
+<span class="n">simple_ml_predictor</span> <span class="o">=</span> <span class="n">SimpleMLPredictor</span><span class="p">(</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Predictor name&#39;</span><span class="p">,</span>
+    <span class="n">description</span> <span class="o">=</span> <span class="s1">&#39;Predictor description&#39;</span><span class="p">,</span>
+    <span class="n">inputs</span> <span class="o">=</span> <span class="n">ingredient_fraction_descriptors</span><span class="p">,</span>
+    <span class="n">outputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">output_descriptor</span><span class="p">],</span>
+    <span class="n">latent_variables</span> <span class="o">=</span> <span class="p">[],</span>
+    <span class="n">training_data</span> <span class="o">=</span> <span class="n">GemTableDataSource</span><span class="p">(</span><span class="n">training_data_table_uid</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">formulation_descriptor</span><span class="p">)</span>
 <span class="p">)</span>
 </pre></div>
 </div>

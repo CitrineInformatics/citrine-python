@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>citrine.informatics.predictors.ingredients_to_simple_mixture_predictor module &#8212; Citrine Python 0.106.2 documentation</title>
+    <title>citrine.informatics.predictors.ingredients_to_simple_mixture_predictor module &#8212; Citrine Python 0.108.0 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -36,7 +36,7 @@
 <span id="citrine-informatics-predictors-ingredients-to-simple-mixture-predictor-module"></span><h1>citrine.informatics.predictors.ingredients_to_simple_mixture_predictor module<a class="headerlink" href="#module-citrine.informatics.predictors.ingredients_to_simple_mixture_predictor" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="citrine.informatics.predictors.ingredients_to_simple_mixture_predictor.IngredientsToSimpleMixturePredictor">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.predictors.ingredients_to_simple_mixture_predictor.</code><code class="sig-name descname">IngredientsToSimpleMixturePredictor</code><span class="sig-paren">(</span><em class="sig-param">name: str, description: str, output: citrine.informatics.descriptors.FormulationDescriptor, id_to_quantity: Mapping[str, citrine.informatics.descriptors.RealDescriptor], labels: Mapping[str, List[str]], session: Optional[citrine._session.Session] = None, report: Optional[citrine.informatics.reports.Report] = None, archived: bool = False</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.predictors.ingredients_to_simple_mixture_predictor.IngredientsToSimpleMixturePredictor" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.predictors.ingredients_to_simple_mixture_predictor.</code><code class="sig-name descname">IngredientsToSimpleMixturePredictor</code><span class="sig-paren">(</span><em class="sig-param">name: str, description: str, output: citrine.informatics.descriptors.FormulationDescriptor, id_to_quantity: Mapping[str, citrine.informatics.descriptors.RealDescriptor], labels: Mapping[str, Set[str]], session: Optional[citrine._session.Session] = None, report: Optional[citrine.informatics.reports.Report] = None, archived: bool = False</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.predictors.ingredients_to_simple_mixture_predictor.IngredientsToSimpleMixturePredictor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="citrine.informatics.predictors.predictor.html#citrine.informatics.predictors.predictor.Predictor" title="citrine.informatics.predictors.predictor.Predictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.predictors.predictor.Predictor</span></code></a></p>
 <p>[ALPHA] A predictor interface that constructs a simple mixture from ingredient quantities.</p>
 <dl class="field-list simple">
@@ -47,8 +47,8 @@
 <li><p><strong>output</strong> (<a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.FormulationDescriptor" title="citrine.informatics.descriptors.FormulationDescriptor"><em>FormulationDescriptor</em></a>) – descriptor that represents the output formulation</p></li>
 <li><p><strong>id_to_quantity</strong> (<em>Mapping</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.RealDescriptor" title="citrine.informatics.descriptors.RealDescriptor"><em>RealDescriptor</em></a><em>]</em>) – Map from ingredient identifier to the descriptor that represents its quantity,
 e.g. <code class="docutils literal notranslate"><span class="pre">{'water':</span> <span class="pre">RealDescriptor('water</span> <span class="pre">quantity',</span> <span class="pre">0,</span> <span class="pre">1,</span> <span class="pre">&quot;&quot;)}</span></code></p></li>
-<li><p><strong>labels</strong> (<em>Mapping</em><em>[</em><em>str</em><em>, </em><em>List</em><em>[</em><em>str</em><em>]</em><em>]</em>) – Map from each label to all ingredients assigned that label, when present in a mixture,
-e.g. <code class="docutils literal notranslate"><span class="pre">{'solvent':</span> <span class="pre">['water']}</span></code></p></li>
+<li><p><strong>labels</strong> (<em>Mapping</em><em>[</em><em>str</em><em>, </em><em>Set</em><em>[</em><em>str</em><em>]</em><em>]</em>) – Map from each label to all ingredients assigned that label, when present in a mixture,
+e.g. <code class="docutils literal notranslate"><span class="pre">{'solvent':</span> <span class="pre">{'water'}}</span></code></p></li>
 </ul>
 </dd>
 </dl>
