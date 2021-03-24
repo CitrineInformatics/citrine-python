@@ -62,6 +62,7 @@ class PredictorEvaluationWorkflowCollection(Collection[PredictorEvaluationWorkfl
         following predictors:
 
         * :class:`~citrine.informatics.predictors.generalized_mean_property_predictor.GeneralizedMeanPropertyPredictor`
+        * :class:`~citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor`
         * :class:`~citrine.informatics.predictors.ingredient_fractions_predictor.IngredientFractionsPredictor`
         * :class:`~citrine.informatics.predictors.ingredients_to_simple_mixture_predictor.IngredientsToSimpleMixturePredictor`
         * :class:`~citrine.informatics.predictors.label_fractions_predictor.LabelFractionsPredictor`
@@ -80,7 +81,7 @@ class PredictorEvaluationWorkflowCollection(Collection[PredictorEvaluationWorkfl
         PredictorEvaluationWorkflow
             Default workflow
 
-        """  # noqa: E501
+        """  # noqa: E501,W505
         url = self._get_path('default')
         payload = {'predictor_id': str(predictor_id)}
         data = self.session.post_resource(url, payload)

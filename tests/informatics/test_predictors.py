@@ -10,11 +10,12 @@ from citrine.informatics.descriptors import RealDescriptor, MolecularStructureDe
 from citrine.informatics.predictors import ExpressionPredictor, GraphPredictor, SimpleMLPredictor, \
     MolecularStructureFeaturizer, GeneralizedMeanPropertyPredictor, IngredientsToSimpleMixturePredictor, \
     SimpleMixturePredictor, LabelFractionsPredictor, IngredientFractionsPredictor, DeprecatedExpressionPredictor, \
-    AutoMLPredictor
+    AutoMLPredictor, MeanPropertyPredictor
 
 x = RealDescriptor("x", 0, 100, "")
 y = RealDescriptor("y", 0, 100, "")
 z = RealDescriptor("z", 0, 100, "")
+density = RealDescriptor('density', lower_bound=0, upper_bound=100, units='g/cm^3')
 shear_modulus = RealDescriptor('Property~Shear modulus', lower_bound=0, upper_bound=100, units='GPa')
 youngs_modulus = RealDescriptor('Property~Young\'s modulus', lower_bound=0, upper_bound=100, units='GPa')
 poissons_ratio = RealDescriptor('Property~Poisson\'s ratio', lower_bound=-1, upper_bound=0.5, units='')
@@ -54,7 +55,7 @@ def auto_ml() -> AutoMLPredictor:
         name='AutoML Predictor',
         description='Predicts z from input x',
         inputs=[x],
-        responses=[z],
+        output=z,
         training_data=[data_source]
     )
 
@@ -110,8 +111,8 @@ def ing_to_simple_mixture_predictor() -> IngredientsToSimpleMixturePredictor:
             'salt': salt_quantity
         },
         labels={
-            'solvent': ['water'],
-            'solute': ['salt']
+            'solvent': {'water'},
+            'solute': {'salt'}
         }
     )
 
@@ -124,6 +125,22 @@ def generalized_mean_property_predictor() -> GeneralizedMeanPropertyPredictor:
         description='Computes mean ingredient properties',
         input_descriptor=formulation,
         properties=['density'],
+        p=2,
+        training_data=[formulation_data_source],
+        impute_properties=True,
+        default_properties={'density': 1.0},
+        label='solvent'
+    )
+
+
+@pytest.fixture
+def mean_property_predictor() -> MeanPropertyPredictor:
+    """Build a mean property predictor for testing."""
+    return MeanPropertyPredictor(
+        name='Mean property predictor',
+        description='Computes mean ingredient properties',
+        input_descriptor=formulation,
+        properties=[density],
         p=2,
         training_data=[formulation_data_source],
         impute_properties=True,
@@ -151,7 +168,7 @@ def label_fractions_predictor() -> LabelFractionsPredictor:
         name='Label fractions predictor',
         description='Compute relative proportions of labeled ingredients',
         input_descriptor=formulation,
-        labels=['solvent']
+        labels={'solvent'}
     )
 
 
@@ -282,8 +299,9 @@ def test_auto_ml(auto_ml):
     assert auto_ml.name == "AutoML Predictor"
     assert auto_ml.description == "Predicts z from input x"
     assert auto_ml.inputs == [x]
-    assert auto_ml.responses == [z]
+    assert auto_ml.output == z
     assert auto_ml.training_data == [data_source]
+    assert auto_ml.dump()['config']['outputs'] == [z.dump()]
 
     assert str(auto_ml) == "<AutoMLPredictor 'AutoML Predictor'>"
 
@@ -308,7 +326,7 @@ def test_ing_to_simple_mixture_initialization(ing_to_simple_mixture_predictor):
     assert ing_to_simple_mixture_predictor.name == 'Ingredients to simple mixture predictor'
     assert ing_to_simple_mixture_predictor.output.key == 'formulation'
     assert ing_to_simple_mixture_predictor.id_to_quantity == {'water': water_quantity, 'salt': salt_quantity}
-    assert ing_to_simple_mixture_predictor.labels == {'solvent': ['water'], 'solute': ['salt']}
+    assert ing_to_simple_mixture_predictor.labels == {'solvent': {'water'}, 'solute': {'salt'}}
     expected_str = '<IngredientsToSimpleMixturePredictor \'Ingredients to simple mixture predictor\'>'
     assert str(ing_to_simple_mixture_predictor) == expected_str
 
@@ -324,6 +342,25 @@ def test_ing_to_simple_mixture_post_build(ing_to_simple_mixture_predictor):
     assert ing_to_simple_mixture_predictor.report is not None
     assert ing_to_simple_mixture_predictor.report.status == 'OK'
 
+
+def test_deprecated_ing_to_simple_mixture():
+    """Make sure a warning is issued for deprecated labels format"""
+    with warnings.catch_warnings(record=True) as w:
+        warnings.simplefilter("always")
+        ing_to_simple_mixture_predictor = IngredientsToSimpleMixturePredictor(
+            name='deprecated',
+            description='labels as List[str]',
+            output=FormulationDescriptor('formulation'),
+            id_to_quantity={'ingredient': RealDescriptor('ingredient quantity', 0, 1, '')},
+            labels={'label': ['ingredient']}
+        )
+        assert ing_to_simple_mixture_predictor.labels == {'label': {'ingredient'}}
+        assert len(w) == 1
+        recorded_warning = w[0]
+        assert issubclass(recorded_warning.category, DeprecationWarning)
+        assert str(recorded_warning.message).startswith(
+            'Labels for predictor'
+        )
 
 def test_generalized_mean_property_initialization(generalized_mean_property_predictor):
     """Make sure the correct fields go to the correct places for a mean property predictor."""
@@ -350,12 +387,58 @@ def test_generalized_mean_property_post_build(generalized_mean_property_predicto
     assert generalized_mean_property_predictor.report is not None
     assert generalized_mean_property_predictor.report.status == 'OK'
 
+def test_mean_property_initialization(mean_property_predictor):
+    """Make sure the correct fields go to the correct places for a mean property predictor."""
+    assert mean_property_predictor.name == 'Mean property predictor'
+    assert mean_property_predictor.input_descriptor.key == 'formulation'
+    assert mean_property_predictor.properties == [density]
+    assert mean_property_predictor.p == 2
+    assert mean_property_predictor.impute_properties == True
+    assert mean_property_predictor.training_data == [formulation_data_source]
+    assert mean_property_predictor.default_properties == {'density': 1.0}
+    assert mean_property_predictor.label == 'solvent'
+    expected_str = '<MeanPropertyPredictor \'Mean property predictor\'>'
+    assert str(mean_property_predictor) == expected_str
+
+
+def test_mean_property_post_build(mean_property_predictor):
+    """Ensures we get a report from a mean property predictor post_build call."""
+    assert mean_property_predictor.report is None
+    session = mock.Mock()
+    session.get_resource.return_value = dict(status='OK', report=dict(), uid=uuid.uuid4())
+    mean_property_predictor.session = session
+    mean_property_predictor.post_build(uuid.uuid4(), dict(id=uuid.uuid4()))
+    assert session.get_resource.call_count == 1
+    assert mean_property_predictor.report is not None
+    assert mean_property_predictor.report.status == 'OK'
+
+
+def test_deprecated_gmpp():
+    """Make sure deprecation warnings are issued"""
+    with warnings.catch_warnings(record=True) as caught:
+        warnings.simplefilter("always")
+        gmpp = GeneralizedMeanPropertyPredictor(
+            name='deprecated',
+            description='p as float',
+            input_descriptor=FormulationDescriptor('formulation'),
+            properties=['foo'],
+            p=2.0,
+            impute_properties=False
+        )
+        assert gmpp.p == 2
+        assert len(caught) == 2
+        for w in caught:
+            assert issubclass(w.category, DeprecationWarning)
+            msg = str(w.message)
+            assert msg.startswith('p must be an integer') or \
+                   msg.startswith('GeneralizedMeanPropertyPredictor is deprecated')
+
 
 def test_label_fractions_property_initialization(label_fractions_predictor):
     """Make sure the correct fields go to the correct places for a label fraction predictor."""
     assert label_fractions_predictor.name == 'Label fractions predictor'
     assert label_fractions_predictor.input_descriptor.key == 'formulation'
-    assert label_fractions_predictor.labels == ['solvent']
+    assert label_fractions_predictor.labels == {'solvent'}
     expected_str = '<LabelFractionsPredictor \'Label fractions predictor\'>'
     assert str(label_fractions_predictor) == expected_str
 
@@ -371,6 +454,24 @@ def test_label_fractions_property_post_build(label_fractions_predictor):
     assert label_fractions_predictor.report is not None
     assert label_fractions_predictor.report.status == 'OK'
 
+
+def test_deprecated_label_fractions():
+    """Make sure a warning is issued for deprecated labels format"""
+    with warnings.catch_warnings(record=True) as w:
+        warnings.simplefilter("always")
+        label_fractions_predictor = LabelFractionsPredictor(
+            name='deprecated',
+            description='labels as List[str]',
+            input_descriptor=FormulationDescriptor('formulation'),
+            labels=['label']
+        )
+        assert label_fractions_predictor.labels == {'label'}
+        assert len(w) == 1
+        recorded_warning = w[0]
+        assert issubclass(recorded_warning.category, DeprecationWarning)
+        assert str(recorded_warning.message).startswith(
+            'Labels for predictor'
+        )
 
 def test_simple_mixture_predictor_initialization(simple_mixture_predictor):
     """Make sure the correct fields go to the correct places for a simple mixture predictor."""

@@ -112,7 +112,7 @@ class DataConcepts(PolymorphicSerializable['DataConcepts'], DictSerializable, AB
                 deserialized = clazz(clazz).deserialize(value)
             else:
                 raise NotImplementedError("No deserialization strategy reported for client "
-                                          "field type {} for field.".format(clazz, field))
+                                          "field type {} for field {}.".format(clazz, field))
             setattr(obj, "_{}".format(field), deserialized)
         return obj
 

@@ -9,7 +9,7 @@ from citrine.informatics.descriptors import RealDescriptor
 from citrine.informatics.predictors import ExpressionPredictor, GeneralizedMeanPropertyPredictor, \
     GraphPredictor, Predictor, SimpleMLPredictor, IngredientsToSimpleMixturePredictor, \
     LabelFractionsPredictor, SimpleMixturePredictor, IngredientFractionsPredictor, \
-    DeprecatedExpressionPredictor, AutoMLPredictor
+    DeprecatedExpressionPredictor, AutoMLPredictor, MeanPropertyPredictor
 
 
 def test_simple_legacy_deserialization(valid_simple_ml_predictor_data):
@@ -77,6 +77,11 @@ def test_generalized_mean_property_serialization(valid_generalized_mean_property
     serialization_check(valid_generalized_mean_property_predictor_data, GeneralizedMeanPropertyPredictor)
 
 
+def test_mean_property_serialization(valid_mean_property_predictor_data):
+    """Ensure that a serialized MeanPropertyPredictor looks sane."""
+    serialization_check(valid_mean_property_predictor_data, MeanPropertyPredictor)
+
+
 def test_simple_mixture_predictor_serialization(valid_simple_mixture_predictor_data):
     serialization_check(valid_simple_mixture_predictor_data, SimpleMixturePredictor)
 
@@ -93,7 +98,9 @@ def test_ingredient_fractions_serialization(valid_ingredient_fractions_predictor
 
 def test_auto_ml_serialization(valid_auto_ml_predictor_data):
     """"Ensure that a serialized AutoMLPredictor looks sane."""
-    serialization_check(valid_auto_ml_predictor_data, AutoMLPredictor)
+    backwards_compatible_auto_ml_data = deepcopy(valid_auto_ml_predictor_data)
+    backwards_compatible_auto_ml_data['config']['responses'] = backwards_compatible_auto_ml_data['config']['outputs']
+    serialization_check(backwards_compatible_auto_ml_data, AutoMLPredictor)
 
 
 def test_invalid_predictor_type(invalid_predictor_data):

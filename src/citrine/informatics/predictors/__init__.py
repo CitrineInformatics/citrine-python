@@ -11,3 +11,4 @@ from .molecular_structure_featurizer import *
 from .simple_mixture_predictor import *
 from .simple_ml_predictor import *
 from .auto_ml_predictor import *
+from .mean_property_predictor import *

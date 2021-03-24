@@ -1,4 +1,5 @@
-from typing import List, Optional
+from typing import Set, Optional
+from warnings import warn
 
 from citrine._serialization import properties as _properties
 from citrine._serialization.serializable import Serializable
@@ -21,13 +22,13 @@ class LabelFractionsPredictor(Serializable['LabelFractionsPredictor'], Predictor
         description of the predictor
     input_descriptor: FormulationDescriptor
         descriptor that contains formulation data
-    labels: List[str]
+    labels: Set[str]
         labels to compute the quantity fractions of
 
     """
 
     input_descriptor = _properties.Object(FormulationDescriptor, 'config.input')
-    labels = _properties.List(_properties.String, 'config.labels')
+    labels = _properties.Set(_properties.String, 'config.labels')
     typ = _properties.String('config.type', default='LabelFractions',
                              deserializable=False)
 
@@ -38,14 +39,22 @@ class LabelFractionsPredictor(Serializable['LabelFractionsPredictor'], Predictor
                  name: str,
                  description: str,
                  input_descriptor: FormulationDescriptor,
-                 labels: List[str],
+                 labels: Set[str],
                  session: Optional[Session] = None,
                  report: Optional[Report] = None,
                  archived: bool = False):
         self.name: str = name
         self.description: str = description
         self.input_descriptor: FormulationDescriptor = input_descriptor
-        self.labels: List[str] = labels
+        if not isinstance(labels, set):
+            warn(f"Labels for predictor '{self.name}' must be specified as a set of strings."
+                 "Support for other collections is deprecated and will be removed in a "
+                 "future release.",
+                 DeprecationWarning)
+            _labels = set(labels)
+        else:
+            _labels = labels
+        self.labels: Set[str] = _labels
         self.session: Optional[Session] = session
         self.report: Optional[Report] = report
         self.archived: bool = archived

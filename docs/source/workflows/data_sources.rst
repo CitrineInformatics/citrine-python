@@ -72,7 +72,7 @@ If a column should be parsed as data and used as an identifier, identifier colum
 Identifiers are required in two circumstances.
 These circumstances are only relevant if CSV data source represents simple mixture data.
 
-1. Ingredient properties are featurized using a :class:`~citrine.informatics.predictors.generalized_mean_property_predictor.GeneralizedMeanPropertyPredictor`.
+1. Ingredient properties are featurized using a :class:`~citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor`.
    In this case, the link from identifier to row is used to compute mean ingredient property values.
 2. Simple mixtures that contain mixtures are simplified to recipes that contain only leaf ingredients using a :class:`~citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor`.
    In this case, links from each mixture's ingredients to its row (which may also be a mixture) are used to recursively crawl hierarchical blends of blends and construct a recipe that contains only leaf ingredients.
@@ -137,8 +137,8 @@ A CSV data source and :class:`~citrine.informatics.predictors.ingredients_to_sim
         },
         # label water as a solvent and salt a solute
         labels={
-            'solvent': ['water'],
-            'solute': ['salt']
+            'solvent': {'water'},
+            'solute': {'salt'}
         }
     )
 
