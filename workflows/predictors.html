@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>4.4. Predictors &#8212; Citrine Python 0.108.0 documentation</title>
+    <title>4.4. Predictors &#8212; Citrine Python 0.109.0 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -290,15 +290,15 @@ The <code class="docutils literal notranslate"><span class="pre">training_data</
 </pre></div>
 </div>
 </div>
-<div class="section" id="generalized-mean-property-predictor-alpha">
-<h2>4.4.6. Generalized mean property predictor (ALPHA)<a class="headerlink" href="#generalized-mean-property-predictor-alpha" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="mean-property-predictor-alpha">
+<h2>4.4.6. Mean property predictor (ALPHA)<a class="headerlink" href="#mean-property-predictor-alpha" title="Permalink to this headline">¶</a></h2>
 <p>Often, properties of a mixture are proportional to the properties of it’s ingredients.
 For example, the density of a saline solution can be computed from the densities of water and salt multiplied by their respective amounts:</p>
 <div class="math notranslate nohighlight">
 \[d_{saline} = d_{water} * f_{water} + d_{salt} * f_{salt}\]</div>
 <p>where <span class="math notranslate nohighlight">\(d\)</span> is density and <span class="math notranslate nohighlight">\(f\)</span> is relative ingredient fraction.
 If the densities of water and salt are known, we can compute the expected density of a candidate mixture using this predictor.</p>
-<p>The <a class="reference internal" href="../reference/citrine.informatics.predictors.generalized_mean_property_predictor.html#citrine.informatics.predictors.generalized_mean_property_predictor.GeneralizedMeanPropertyPredictor" title="citrine.informatics.predictors.generalized_mean_property_predictor.GeneralizedMeanPropertyPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">GeneralizedMeanPropertyPredictor</span></code></a> computes mean properties of simple mixture ingredients.
+<p>The <a class="reference internal" href="../reference/citrine.informatics.predictors.mean_property_predictor.html#citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor" title="citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">MeanPropertyPredictor</span></code></a> computes mean properties of simple mixture ingredients.
 To configure a mean property predictor, we must specify:</p>
 <ul class="simple">
 <li><p>An input descriptor that holds the mixture’s recipe and ingredient labels</p></li>
@@ -349,11 +349,14 @@ If <code class="docutils literal notranslate"><span class="pre">impute_propertie
 If a value other than 1.58 should be used, e.g. 2.0, this can be specified by setting <code class="docutils literal notranslate"><span class="pre">default_properties</span> <span class="pre">=</span> <span class="pre">{'density':</span> <span class="pre">2.0}</span></code>.</p>
 <p>The example below show how to configure a mean property predictor to compute mean solute density in simple mixtures.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.informatics.data_sources</span> <span class="kn">import</span> <span class="n">GemTableDataSource</span>
-<span class="kn">from</span> <span class="nn">citrine.informatics.descriptors</span> <span class="kn">import</span> <span class="n">FormulationDescriptor</span>
-<span class="kn">from</span> <span class="nn">citrine.informatics.predictors</span> <span class="kn">import</span> <span class="n">GeneralizedMeanPropertyPredictor</span>
+<span class="kn">from</span> <span class="nn">citrine.informatics.descriptors</span> <span class="kn">import</span> <span class="n">FormulationDescriptor</span><span class="p">,</span> <span class="n">RealDescriptor</span>
+<span class="kn">from</span> <span class="nn">citrine.informatics.predictors</span> <span class="kn">import</span> <span class="n">MeanPropertyPredictor</span>
 
 <span class="c1"># descriptor that holds simple mixture data</span>
 <span class="n">formulation</span> <span class="o">=</span> <span class="n">FormulationDescriptor</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;simple mixture&#39;</span><span class="p">)</span>
+
+<span class="c1"># property descriptor to featurize</span>
+<span class="n">density</span> <span class="o">=</span> <span class="n">RealDescriptor</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;density&#39;</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;g/cm^3&#39;</span><span class="p">)</span>
 
 <span class="c1"># table with simple mixtures and their ingredients</span>
 <span class="n">data_source</span> <span class="o">=</span> <span class="n">GemTableDataSource</span><span class="p">(</span><span class="n">table_id</span><span class="o">=</span><span class="n">table_uid</span><span class="p">,</span> <span class="n">table_version</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">formulation_descriptor</span><span class="o">=</span><span class="n">formulation</span><span class="p">)</span>
@@ -363,7 +366,7 @@ If a value other than 1.58 should be used, e.g. 2.0, this can be specified by se
     <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Computes 1-mean ingredient properties&#39;</span><span class="p">,</span>
     <span class="n">input_descriptor</span><span class="o">=</span><span class="n">formulation</span><span class="p">,</span>
     <span class="c1"># featurize ingredient density</span>
-    <span class="n">properties</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;density&#39;</span><span class="p">],</span>
+    <span class="n">properties</span><span class="o">=</span><span class="p">[</span><span class="n">density</span><span class="p">],</span>
     <span class="c1"># compute the arithmetic mean</span>
     <span class="n">p</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
     <span class="n">training_data</span><span class="o">=</span><span class="p">[</span><span class="n">data_source</span><span class="p">],</span>
@@ -571,7 +574,7 @@ Each predictor is trained on the subset of the combined data that is valid for t
 Note, data may come from sources defined by other subpredictors in the graph.
 Because training data are shared by all predictors in the graph, a data source does not need to be redefined by all subpredictors that require it.
 If all data sources required train a predictor are specified elsewhere in the graph, the <code class="docutils literal notranslate"><span class="pre">training_data</span></code> parameter may be omitted.
-If the graph contains a predictor that requires formulations data, e.g. a <a class="reference internal" href="../reference/citrine.informatics.predictors.simple_mixture_predictor.html#citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor" title="citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleMixturePredictor</span></code></a> or <a class="reference internal" href="../reference/citrine.informatics.predictors.generalized_mean_property_predictor.html#citrine.informatics.predictors.generalized_mean_property_predictor.GeneralizedMeanPropertyPredictor" title="citrine.informatics.predictors.generalized_mean_property_predictor.GeneralizedMeanPropertyPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">GeneralizedMeanPropertyPredictor</span></code></a>, any GEM Tables specified by the graph predictor that contain formulation data must provide a formulation descriptor,
+If the graph contains a predictor that requires formulations data, e.g. a <a class="reference internal" href="../reference/citrine.informatics.predictors.simple_mixture_predictor.html#citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor" title="citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleMixturePredictor</span></code></a> or <a class="reference internal" href="../reference/citrine.informatics.predictors.mean_property_predictor.html#citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor" title="citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">MeanPropertyPredictor</span></code></a>, any GEM Tables specified by the graph predictor that contain formulation data must provide a formulation descriptor,
 and this descriptor must match the input formulation descriptor of the sub-predictors that require these data.</p>
 </div>
 </div>

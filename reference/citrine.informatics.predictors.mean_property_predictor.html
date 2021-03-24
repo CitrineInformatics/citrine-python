@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>citrine.informatics.predictors.graph_predictor module &#8212; Citrine Python 0.109.0 documentation</title>
+    <title>citrine.informatics.predictors.mean_property_predictor module &#8212; Citrine Python 0.109.0 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -32,53 +32,92 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="module-citrine.informatics.predictors.graph_predictor">
-<span id="citrine-informatics-predictors-graph-predictor-module"></span><h1>citrine.informatics.predictors.graph_predictor module<a class="headerlink" href="#module-citrine.informatics.predictors.graph_predictor" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-citrine.informatics.predictors.mean_property_predictor">
+<span id="citrine-informatics-predictors-mean-property-predictor-module"></span><h1>citrine.informatics.predictors.mean_property_predictor module<a class="headerlink" href="#module-citrine.informatics.predictors.mean_property_predictor" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
-<dt id="citrine.informatics.predictors.graph_predictor.GraphPredictor">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.predictors.graph_predictor.</code><code class="sig-name descname">GraphPredictor</code><span class="sig-paren">(</span><em class="sig-param">name: str, description: str, predictors: List[Union[uuid.UUID, citrine.informatics.predictors.predictor.Predictor]], training_data: Optional[List[citrine.informatics.data_sources.DataSource]] = None, session: Optional[citrine._session.Session] = None, report: Optional[citrine.informatics.reports.Report] = None, archived: bool = False</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.predictors.graph_predictor.GraphPredictor" title="Permalink to this definition">¶</a></dt>
+<dt id="citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor">
+<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.predictors.mean_property_predictor.</code><code class="sig-name descname">MeanPropertyPredictor</code><span class="sig-paren">(</span><em class="sig-param">name: str, description: str, input_descriptor: citrine.informatics.descriptors.FormulationDescriptor, properties: List[citrine.informatics.descriptors.RealDescriptor], p: int, impute_properties: bool, default_properties: Optional[Mapping[str, float]] = None, label: Optional[str] = None, training_data: Optional[List[citrine.informatics.data_sources.DataSource]] = None, session: Optional[citrine._session.Session] = None, report: Optional[citrine.informatics.reports.Report] = None, archived: bool = False</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="citrine.informatics.predictors.predictor.html#citrine.informatics.predictors.predictor.Predictor" title="citrine.informatics.predictors.predictor.Predictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.predictors.predictor.Predictor</span></code></a></p>
-<p>A predictor interface that stitches other predictors together.</p>
+<p>[ALPHA] A predictor interface that computes mean component properties.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>If you are using a deprecated generalized mean property predictor please see
+<a class="reference internal" href="citrine.informatics.predictors.generalized_mean_property_predictor.html#citrine.informatics.predictors.generalized_mean_property_predictor.GeneralizedMeanPropertyPredictor" title="citrine.informatics.predictors.generalized_mean_property_predictor.GeneralizedMeanPropertyPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">GeneralizedMeanPropertyPredictor</span></code></a>
+for details on how to migrate to the new format.</p>
+</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>name</strong> (<em>str</em>) – name of the configuration</p></li>
-<li><p><strong>description</strong> (<em>str</em>) – the description of the predictor</p></li>
-<li><p><strong>predictors</strong> (<em>List</em><em>[</em><em>Union</em><em>[</em><em>UUID</em><em>, </em><a class="reference internal" href="citrine.informatics.predictors.predictor.html#citrine.informatics.predictors.predictor.Predictor" title="citrine.informatics.predictors.predictor.Predictor"><em>Predictor</em></a><em>]</em><em>]</em>) – the list of predictors to use in the grpah, either UUIDs or serialized predictors</p></li>
-<li><p><strong>training_data</strong> (<em>Optional</em><em>[</em><em>List</em><em>[</em><a class="reference internal" href="citrine.informatics.data_sources.html#citrine.informatics.data_sources.DataSource" title="citrine.informatics.data_sources.DataSource"><em>DataSource</em></a><em>]</em><em>]</em>) – Optional sources of training data shared by all predictors in the graph.
-Training data provided by this graph predictor does not need to be specified as part of the
-configuration of sub-predictors. Shared training data and any training data specified
-by a sub-predictor will be combined into a flattened list and deduplicated
-by uid and identifiers. Deduplication is performed if a uid or identifier is shared between
-two or more rows. The content of a deduplicated row will contain the union of data
-across all rows that share the same uid or at least 1 identifier.</p></li>
+<li><p><strong>description</strong> (<em>str</em>) – description of the predictor</p></li>
+<li><p><strong>input_descriptor</strong> (<a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.FormulationDescriptor" title="citrine.informatics.descriptors.FormulationDescriptor"><em>FormulationDescriptor</em></a>) – descriptor that represents the input formulation</p></li>
+<li><p><strong>properties</strong> (<em>List</em><em>[</em><a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.RealDescriptor" title="citrine.informatics.descriptors.RealDescriptor"><em>RealDescriptor</em></a><em>]</em>) – List of descriptors to featurize</p></li>
+<li><p><strong>p</strong> (<em>int</em>) – Power of the generalized mean. Only integer powers are supported.</p></li>
+<li><p><strong>impute_properties</strong> (<em>bool</em>) – Whether to impute missing ingredient properties.
+If <code class="docutils literal notranslate"><span class="pre">False</span></code> an error is thrown when a missing ingredient property is encountered.
+If <code class="docutils literal notranslate"><span class="pre">True</span></code> and no <code class="docutils literal notranslate"><span class="pre">default_properties</span></code> are specified, then the average over the
+entire dataset is used.
+If <code class="docutils literal notranslate"><span class="pre">True</span></code> and a default is specified in <code class="docutils literal notranslate"><span class="pre">default_properties</span></code>, then the specified
+default is used in place of missing values.</p></li>
+<li><p><strong>label</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Optional label</p></li>
+<li><p><strong>training_data</strong> (<em>Optional</em><em>[</em><em>List</em><em>[</em><a class="reference internal" href="citrine.informatics.data_sources.html#citrine.informatics.data_sources.DataSource" title="citrine.informatics.data_sources.DataSource"><em>DataSource</em></a><em>]</em><em>]</em>) – Sources of training data. Each can be either a CSV or an GEM Table. Candidates from
+multiple data sources will be combined into a flattened list and deduplicated by uid and
+identifiers. Deduplication is performed if a uid or identifier is shared between two or
+more rows. The content of a deduplicated row will contain the union of data across all rows
+that share the same uid or at least 1 identifier. Training data is unnecessary if the
+predictor is part of a graph that includes all training data required by this predictor.</p></li>
+<li><p><strong>default_properties</strong> (<em>Optional</em><em>[</em><em>Mapping</em><em>[</em><em>str</em><em>, </em><em>float</em><em>]</em><em>]</em>) – Default values to use for imputed properties.
+Defaults are specified as a map from descriptor key to its default value.
+If not specified and <code class="docutils literal notranslate"><span class="pre">impute_properties</span> <span class="pre">==</span> <span class="pre">True</span></code> the average over the entire dataset
+will be used to fill in missing values. Any specified defaults will be used in place of
+the average over the dataset. <code class="docutils literal notranslate"><span class="pre">impute_properties</span></code> must be <code class="docutils literal notranslate"><span class="pre">True</span></code> if
+<code class="docutils literal notranslate"><span class="pre">default_properties</span></code> are provided.</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="attribute">
-<dt id="citrine.informatics.predictors.graph_predictor.GraphPredictor.module_type">
-<code class="sig-name descname">module_type</code><em class="property"> = 'PREDICTOR'</em><a class="headerlink" href="#citrine.informatics.predictors.graph_predictor.GraphPredictor.module_type" title="Permalink to this definition">¶</a></dt>
+<dt id="citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor.default_properties">
+<code class="sig-name descname">default_properties</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor.default_properties" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
-<dt id="citrine.informatics.predictors.graph_predictor.GraphPredictor.predictors">
-<code class="sig-name descname">predictors</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.graph_predictor.GraphPredictor.predictors" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="citrine.informatics.predictors.graph_predictor.GraphPredictor.stuff_predictor_into_envelope">
-<em class="property">static </em><code class="sig-name descname">stuff_predictor_into_envelope</code><span class="sig-paren">(</span><em class="sig-param">predictor: dict</em><span class="sig-paren">)</span> &#x2192; dict<a class="headerlink" href="#citrine.informatics.predictors.graph_predictor.GraphPredictor.stuff_predictor_into_envelope" title="Permalink to this definition">¶</a></dt>
-<dd><p>Insert a serialized embedded predictor into a module envelope, to facilitate deser.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="citrine.informatics.predictors.graph_predictor.GraphPredictor.training_data">
-<code class="sig-name descname">training_data</code><em class="property"> = []</em><a class="headerlink" href="#citrine.informatics.predictors.graph_predictor.GraphPredictor.training_data" title="Permalink to this definition">¶</a></dt>
+<dt id="citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor.impute_properties">
+<code class="sig-name descname">impute_properties</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor.impute_properties" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
-<dt id="citrine.informatics.predictors.graph_predictor.GraphPredictor.typ">
-<code class="sig-name descname">typ</code><em class="property"> = 'Graph'</em><a class="headerlink" href="#citrine.informatics.predictors.graph_predictor.GraphPredictor.typ" title="Permalink to this definition">¶</a></dt>
+<dt id="citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor.input_descriptor">
+<code class="sig-name descname">input_descriptor</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor.input_descriptor" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor.label">
+<code class="sig-name descname">label</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor.label" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor.module_type">
+<code class="sig-name descname">module_type</code><em class="property"> = 'PREDICTOR'</em><a class="headerlink" href="#citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor.module_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor.p">
+<code class="sig-name descname">p</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor.p" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor.properties">
+<code class="sig-name descname">properties</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor.properties" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor.training_data">
+<code class="sig-name descname">training_data</code><em class="property"> = None</em><a class="headerlink" href="#citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor.training_data" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor.typ">
+<code class="sig-name descname">typ</code><em class="property"> = 'MeanProperty'</em><a class="headerlink" href="#citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor.typ" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -206,7 +245,7 @@ across all rows that share the same uid or at least 1 identifier.</p></li>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
-      <a href="../_sources/reference/citrine.informatics.predictors.graph_predictor.rst.txt"
+      <a href="../_sources/reference/citrine.informatics.predictors.mean_property_predictor.rst.txt"
           rel="nofollow">Page source</a>
     </div>
 

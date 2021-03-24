@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>citrine.informatics.predictors.generalized_mean_property_predictor module &#8212; Citrine Python 0.108.0 documentation</title>
+    <title>citrine.informatics.predictors.generalized_mean_property_predictor module &#8212; Citrine Python 0.109.0 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -38,7 +38,18 @@
 <dt id="citrine.informatics.predictors.generalized_mean_property_predictor.GeneralizedMeanPropertyPredictor">
 <em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.predictors.generalized_mean_property_predictor.</code><code class="sig-name descname">GeneralizedMeanPropertyPredictor</code><span class="sig-paren">(</span><em class="sig-param">name: str, description: str, input_descriptor: citrine.informatics.descriptors.FormulationDescriptor, properties: List[str], p: int, impute_properties: bool, default_properties: Optional[Mapping[str, float]] = None, label: Optional[str] = None, training_data: Optional[List[citrine.informatics.data_sources.DataSource]] = None, session: Optional[citrine._session.Session] = None, report: Optional[citrine.informatics.reports.Report] = None, archived: bool = False</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.predictors.generalized_mean_property_predictor.GeneralizedMeanPropertyPredictor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="citrine.informatics.predictors.predictor.html#citrine.informatics.predictors.predictor.Predictor" title="citrine.informatics.predictors.predictor.Predictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.predictors.predictor.Predictor</span></code></a></p>
-<p>[ALPHA] A predictor interface that computes generalized mean component properties.</p>
+<p>[DEPRECATED] A predictor interface that computes generalized mean component properties.</p>
+<p>This predictor is deprecated. Please use the
+<a class="reference internal" href="citrine.informatics.predictors.mean_property_predictor.html#citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor" title="citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">MeanPropertyPredictor</span></code></a>
+instead. The
+<a class="reference internal" href="citrine.informatics.predictors.mean_property_predictor.html#citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor" title="citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">MeanPropertyPredictor</span></code></a>
+requires that <code class="docutils literal notranslate"><span class="pre">properties</span></code> are specified as a list of descriptors instead of a list of
+descriptor keys. To migrate to the new predictor, replace the list of descriptor keys to
+featurize with their corresponding real descriptors.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="citrine.informatics.predictors.mean_property_predictor.html#citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor" title="citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">MeanPropertyPredictor</span></code></a></p>
+</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">

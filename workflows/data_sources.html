@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>4.9. Data Sources &#8212; Citrine Python 0.108.0 documentation</title>
+    <title>4.9. Data Sources &#8212; Citrine Python 0.109.0 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -96,7 +96,7 @@ If a column should be parsed as data and used as an identifier, identifier colum
 <p>Identifiers are required in two circumstances.
 These circumstances are only relevant if CSV data source represents simple mixture data.</p>
 <ol class="arabic simple">
-<li><p>Ingredient properties are featurized using a <a class="reference internal" href="../reference/citrine.informatics.predictors.generalized_mean_property_predictor.html#citrine.informatics.predictors.generalized_mean_property_predictor.GeneralizedMeanPropertyPredictor" title="citrine.informatics.predictors.generalized_mean_property_predictor.GeneralizedMeanPropertyPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">GeneralizedMeanPropertyPredictor</span></code></a>.
+<li><p>Ingredient properties are featurized using a <a class="reference internal" href="../reference/citrine.informatics.predictors.mean_property_predictor.html#citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor" title="citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">MeanPropertyPredictor</span></code></a>.
 In this case, the link from identifier to row is used to compute mean ingredient property values.</p></li>
 <li><p>Simple mixtures that contain mixtures are simplified to recipes that contain only leaf ingredients using a <a class="reference internal" href="../reference/citrine.informatics.predictors.simple_mixture_predictor.html#citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor" title="citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleMixturePredictor</span></code></a>.
 In this case, links from each mixture’s ingredients to its row (which may also be a mixture) are used to recursively crawl hierarchical blends of blends and construct a recipe that contains only leaf ingredients.</p></li>
