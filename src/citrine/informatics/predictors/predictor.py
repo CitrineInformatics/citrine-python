@@ -55,6 +55,7 @@ class Predictor(Module):
         from .simple_mixture_predictor import SimpleMixturePredictor
         from .ingredient_fractions_predictor import IngredientFractionsPredictor
         from .auto_ml_predictor import AutoMLPredictor
+        from .mean_property_predictor import MeanPropertyPredictor
         type_dict = {
             "Simple": SimpleMLPredictor,
             "Graph": GraphPredictor,
@@ -63,6 +64,7 @@ class Predictor(Module):
             "MoleculeFeaturizer": MolecularStructureFeaturizer,
             "IngredientsToSimpleMixture": IngredientsToSimpleMixturePredictor,
             "GeneralizedMeanProperty": GeneralizedMeanPropertyPredictor,
+            "MeanProperty": MeanPropertyPredictor,
             "LabelFractions": LabelFractionsPredictor,
             "SimpleMixture": SimpleMixturePredictor,
             "IngredientFractions": IngredientFractionsPredictor,

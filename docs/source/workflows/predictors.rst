@@ -263,8 +263,8 @@ The following example illustrates how a :class:`~citrine.informatics.predictors.
         training_data=[data_source]
     )
 
-Generalized mean property predictor (ALPHA)
----------------------------------------------
+Mean property predictor (ALPHA)
+-------------------------------
 
 Often, properties of a mixture are proportional to the properties of it's ingredients.
 For example, the density of a saline solution can be computed from the densities of water and salt multiplied by their respective amounts:
@@ -276,7 +276,7 @@ For example, the density of a saline solution can be computed from the densities
 where :math:`d` is density and :math:`f` is relative ingredient fraction.
 If the densities of water and salt are known, we can compute the expected density of a candidate mixture using this predictor.
 
-The :class:`~citrine.informatics.predictors.generalized_mean_property_predictor.GeneralizedMeanPropertyPredictor` computes mean properties of simple mixture ingredients.
+The :class:`~citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor` computes mean properties of simple mixture ingredients.
 To configure a mean property predictor, we must specify:
 
 - An input descriptor that holds the mixture's recipe and ingredient labels
@@ -321,11 +321,14 @@ The example below show how to configure a mean property predictor to compute mea
 .. code:: python
 
     from citrine.informatics.data_sources import GemTableDataSource
-    from citrine.informatics.descriptors import FormulationDescriptor
-    from citrine.informatics.predictors import GeneralizedMeanPropertyPredictor
+    from citrine.informatics.descriptors import FormulationDescriptor, RealDescriptor
+    from citrine.informatics.predictors import MeanPropertyPredictor
 
     # descriptor that holds simple mixture data
     formulation = FormulationDescriptor(key='simple mixture')
+
+    # property descriptor to featurize
+    density = RealDescriptor(key='density', lower_bound=0, upper_bound=100, units='g/cm^3')
 
     # table with simple mixtures and their ingredients
     data_source = GemTableDataSource(table_id=table_uid, table_version=1, formulation_descriptor=formulation)
@@ -335,7 +338,7 @@ The example below show how to configure a mean property predictor to compute mea
         description='Computes 1-mean ingredient properties',
         input_descriptor=formulation,
         # featurize ingredient density
-        properties=['density'],
+        properties=[density],
         # compute the arithmetic mean
         p=1,
         training_data=[data_source],
@@ -568,5 +571,5 @@ Each predictor is trained on the subset of the combined data that is valid for t
 Note, data may come from sources defined by other subpredictors in the graph.
 Because training data are shared by all predictors in the graph, a data source does not need to be redefined by all subpredictors that require it.
 If all data sources required train a predictor are specified elsewhere in the graph, the ``training_data`` parameter may be omitted.
-If the graph contains a predictor that requires formulations data, e.g. a :class:`~citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor` or :class:`~citrine.informatics.predictors.generalized_mean_property_predictor.GeneralizedMeanPropertyPredictor`, any GEM Tables specified by the graph predictor that contain formulation data must provide a formulation descriptor,
+If the graph contains a predictor that requires formulations data, e.g. a :class:`~citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor` or :class:`~citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor`, any GEM Tables specified by the graph predictor that contain formulation data must provide a formulation descriptor,
 and this descriptor must match the input formulation descriptor of the sub-predictors that require these data.

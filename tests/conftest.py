@@ -459,6 +459,35 @@ def valid_generalized_mean_property_predictor_data():
 
 
 @pytest.fixture
+def valid_mean_property_predictor_data():
+    """Produce valid data used for tests."""
+    from citrine.informatics.descriptors import FormulationDescriptor, RealDescriptor
+    from citrine.informatics.data_sources import GemTableDataSource
+    formulation_descriptor = FormulationDescriptor('simple mixture')
+    density = RealDescriptor(key='density', lower_bound=0, upper_bound=100, units='g/cm^3')
+    return dict(
+        module_type='PREDICTOR',
+        status='VALID',
+        status_info=[],
+        archived=False,
+        display_name='Mean property predictor',
+        id=str(uuid.uuid4()),
+        config=dict(
+            type='MeanProperty',
+            name='Mean property predictor',
+            description='Computes mean ingredient properties',
+            input=formulation_descriptor.dump(),
+            properties=[density.dump()],
+            p=2,
+            training_data=[GemTableDataSource(uuid.uuid4(), 0, formulation_descriptor).dump()],
+            impute_properties=True,
+            default_properties={'density': 1.0},
+            label='solvent'
+        )
+    )
+
+
+@pytest.fixture
 def valid_label_fractions_predictor_data():
     """Produce valid data used for tests."""
     from citrine.informatics.descriptors import FormulationDescriptor
