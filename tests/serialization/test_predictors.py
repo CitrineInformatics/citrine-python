@@ -9,7 +9,7 @@ from citrine.informatics.descriptors import RealDescriptor
 from citrine.informatics.predictors import ExpressionPredictor, GeneralizedMeanPropertyPredictor, \
     GraphPredictor, Predictor, SimpleMLPredictor, IngredientsToSimpleMixturePredictor, \
     LabelFractionsPredictor, SimpleMixturePredictor, IngredientFractionsPredictor, \
-    DeprecatedExpressionPredictor, AutoMLPredictor
+    DeprecatedExpressionPredictor, AutoMLPredictor, MeanPropertyPredictor
 
 
 def test_simple_legacy_deserialization(valid_simple_ml_predictor_data):
@@ -75,6 +75,11 @@ def test_ing_to_simple_mixture_serialization(valid_ing_to_simple_mixture_predict
 def test_generalized_mean_property_serialization(valid_generalized_mean_property_predictor_data):
     """Ensure that a serialized GeneralizedMeanPropertyPredictor looks sane."""
     serialization_check(valid_generalized_mean_property_predictor_data, GeneralizedMeanPropertyPredictor)
+
+
+def test_mean_property_serialization(valid_mean_property_predictor_data):
+    """Ensure that a serialized MeanPropertyPredictor looks sane."""
+    serialization_check(valid_mean_property_predictor_data, MeanPropertyPredictor)
 
 
 def test_simple_mixture_predictor_serialization(valid_simple_mixture_predictor_data):

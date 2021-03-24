@@ -10,11 +10,12 @@ from citrine.informatics.descriptors import RealDescriptor, MolecularStructureDe
 from citrine.informatics.predictors import ExpressionPredictor, GraphPredictor, SimpleMLPredictor, \
     MolecularStructureFeaturizer, GeneralizedMeanPropertyPredictor, IngredientsToSimpleMixturePredictor, \
     SimpleMixturePredictor, LabelFractionsPredictor, IngredientFractionsPredictor, DeprecatedExpressionPredictor, \
-    AutoMLPredictor
+    AutoMLPredictor, MeanPropertyPredictor
 
 x = RealDescriptor("x", 0, 100, "")
 y = RealDescriptor("y", 0, 100, "")
 z = RealDescriptor("z", 0, 100, "")
+density = RealDescriptor('density', lower_bound=0, upper_bound=100, units='g/cm^3')
 shear_modulus = RealDescriptor('Property~Shear modulus', lower_bound=0, upper_bound=100, units='GPa')
 youngs_modulus = RealDescriptor('Property~Young\'s modulus', lower_bound=0, upper_bound=100, units='GPa')
 poissons_ratio = RealDescriptor('Property~Poisson\'s ratio', lower_bound=-1, upper_bound=0.5, units='')
@@ -124,6 +125,22 @@ def generalized_mean_property_predictor() -> GeneralizedMeanPropertyPredictor:
         description='Computes mean ingredient properties',
         input_descriptor=formulation,
         properties=['density'],
+        p=2,
+        training_data=[formulation_data_source],
+        impute_properties=True,
+        default_properties={'density': 1.0},
+        label='solvent'
+    )
+
+
+@pytest.fixture
+def mean_property_predictor() -> MeanPropertyPredictor:
+    """Build a mean property predictor for testing."""
+    return MeanPropertyPredictor(
+        name='Mean property predictor',
+        description='Computes mean ingredient properties',
+        input_descriptor=formulation,
+        properties=[density],
         p=2,
         training_data=[formulation_data_source],
         impute_properties=True,
@@ -370,10 +387,35 @@ def test_generalized_mean_property_post_build(generalized_mean_property_predicto
     assert generalized_mean_property_predictor.report is not None
     assert generalized_mean_property_predictor.report.status == 'OK'
 
+def test_mean_property_initialization(mean_property_predictor):
+    """Make sure the correct fields go to the correct places for a mean property predictor."""
+    assert mean_property_predictor.name == 'Mean property predictor'
+    assert mean_property_predictor.input_descriptor.key == 'formulation'
+    assert mean_property_predictor.properties == [density]
+    assert mean_property_predictor.p == 2
+    assert mean_property_predictor.impute_properties == True
+    assert mean_property_predictor.training_data == [formulation_data_source]
+    assert mean_property_predictor.default_properties == {'density': 1.0}
+    assert mean_property_predictor.label == 'solvent'
+    expected_str = '<MeanPropertyPredictor \'Mean property predictor\'>'
+    assert str(mean_property_predictor) == expected_str
+
+
+def test_mean_property_post_build(mean_property_predictor):
+    """Ensures we get a report from a mean property predictor post_build call."""
+    assert mean_property_predictor.report is None
+    session = mock.Mock()
+    session.get_resource.return_value = dict(status='OK', report=dict(), uid=uuid.uuid4())
+    mean_property_predictor.session = session
+    mean_property_predictor.post_build(uuid.uuid4(), dict(id=uuid.uuid4()))
+    assert session.get_resource.call_count == 1
+    assert mean_property_predictor.report is not None
+    assert mean_property_predictor.report.status == 'OK'
+
 
 def test_deprecated_gmpp():
-    """Make sure a warning is issued if p entered as a float"""
-    with warnings.catch_warnings(record=True) as w:
+    """Make sure deprecation warnings are issued"""
+    with warnings.catch_warnings(record=True) as caught:
         warnings.simplefilter("always")
         gmpp = GeneralizedMeanPropertyPredictor(
             name='deprecated',
@@ -384,12 +426,12 @@ def test_deprecated_gmpp():
             impute_properties=False
         )
         assert gmpp.p == 2
-        assert len(w) == 1
-        recorded_warning = w[0]
-        assert issubclass(recorded_warning.category, DeprecationWarning)
-        assert str(recorded_warning.message).startswith(
-            'p must be an integer'
-        )
+        assert len(caught) == 2
+        for w in caught:
+            assert issubclass(w.category, DeprecationWarning)
+            msg = str(w.message)
+            assert msg.startswith('p must be an integer') or \
+                   msg.startswith('GeneralizedMeanPropertyPredictor is deprecated')
 
 
 def test_label_fractions_property_initialization(label_fractions_predictor):
