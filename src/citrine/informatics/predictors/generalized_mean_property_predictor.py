@@ -15,7 +15,19 @@ __all__ = ['GeneralizedMeanPropertyPredictor']
 
 class GeneralizedMeanPropertyPredictor(
         Serializable['GeneralizedMeanPropertyPredictor'], Predictor):
-    """[ALPHA] A predictor interface that computes generalized mean component properties.
+    """[DEPRECATED] A predictor interface that computes generalized mean component properties.
+
+    This predictor is deprecated. Please use the
+    :class:`~citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor`
+    instead. The
+    :class:`~citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor`
+    requires that ``properties`` are specified as a list of descriptors instead of a list of
+    descriptor keys. To migrate to the new predictor, replace the list of descriptor keys to
+    featurize with their corresponding real descriptors.
+
+    .. seealso::
+
+       :class:`~citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor`
 
     Parameters
     ----------

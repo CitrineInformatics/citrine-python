@@ -17,7 +17,7 @@ class MeanPropertyPredictor(
 
     .. seealso::
        If you are using a deprecated generalized mean property predictor please see
-       :class:`~citrine.informatics.predictors.GeneralizedMeanPropertyPredictor`
+       :class:`~citrine.informatics.predictors.generalized_mean_property_predictor.GeneralizedMeanPropertyPredictor`
        for details on how to migrate to the new format.
 
     Parameters
