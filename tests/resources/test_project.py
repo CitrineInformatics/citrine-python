@@ -478,6 +478,55 @@ def test_remove_user(project, session):
     assert remove_user_response is True
 
 
+def test_project_batch_delete_no_errors(project, session):
+    job_resp = {
+        'job_id': '1234'
+    }
+
+    import json
+    failures_escaped_json = json.dumps([
+        {
+            "id":{
+                'scope': 'somescope',
+                'id': 'abcd-1234'
+            },
+            'cause': {
+                "code": 400,
+                "message": "",
+                "validation_errors": [
+                    {
+                        "failure_message": "fail msg",
+                        "failure_id": "identifier.coreid.missing"
+                    }
+                ]
+            }
+        }
+    ])
+
+    # Actual response-like data - note there is no 'failures' array within 'output'
+    failed_job_resp = {
+        'job_type': 'batch_delete',
+        'status': 'Success',
+        'tasks': [
+            {
+                "id": "7b6bafd9-f32a-4567-b54c-7ce594edc018", "task_type": "batch_delete",
+                "status": "Success", "dependencies": []
+             }
+            ],
+        'output': {}
+    }
+
+    session.set_responses(job_resp, failed_job_resp, job_resp, failed_job_resp)
+
+    # When
+    del_resp = project.gemd_batch_delete([uuid.UUID(
+        '16fd2706-8baf-433b-82eb-8c7fada847da')])
+
+    # Then
+    assert 2 == session.num_calls
+    assert len(del_resp) == 0
+
+
 def test_project_batch_delete(project, session):
     job_resp = {
         'job_id': '1234'
