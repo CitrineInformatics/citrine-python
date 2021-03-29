@@ -4,6 +4,7 @@ from logging import getLogger
 import pytest
 from dateutil.parser import parse
 from gemd.entity.link_by_uid import LinkByUID
+from gemd.entity.object import ProcessSpec
 
 from citrine.resources.api_error import ApiError, ValidationError
 from citrine.resources.gemtables import GemTableCollection
@@ -483,26 +484,6 @@ def test_project_batch_delete_no_errors(project, session):
         'job_id': '1234'
     }
 
-    import json
-    failures_escaped_json = json.dumps([
-        {
-            "id":{
-                'scope': 'somescope',
-                'id': 'abcd-1234'
-            },
-            'cause': {
-                "code": 400,
-                "message": "",
-                "validation_errors": [
-                    {
-                        "failure_message": "fail msg",
-                        "failure_id": "identifier.coreid.missing"
-                    }
-                ]
-            }
-        }
-    ])
-
     # Actual response-like data - note there is no 'failures' array within 'output'
     failed_job_resp = {
         'job_type': 'batch_delete',
@@ -523,7 +504,13 @@ def test_project_batch_delete_no_errors(project, session):
         '16fd2706-8baf-433b-82eb-8c7fada847da')])
 
     # Then
-    assert 2 == session.num_calls
+    assert len(del_resp) == 0
+
+    # When trying with entities
+    entity = ProcessSpec(name="proc spec", uids={'id': '16fd2706-8baf-433b-82eb-8c7fada847da'})
+    del_resp = project.gemd_batch_delete([entity])
+
+    # Then
     assert len(del_resp) == 0
 
 
