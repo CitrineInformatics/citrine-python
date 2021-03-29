@@ -89,4 +89,4 @@ def _async_gemd_batch_delete(
                                         polling_delay=polling_delay)
 
     return [(LinkByUID(f['id']['scope'], f['id']['id']), ApiError.from_dict(f['cause']))
-            for f in json.loads(response.output['failures'])]
+            for f in json.loads(response.output.get('failures', '[]'))]
