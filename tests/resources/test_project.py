@@ -485,7 +485,7 @@ def test_project_batch_delete_no_errors(project, session):
     }
 
     # Actual response-like data - note there is no 'failures' array within 'output'
-    failed_job_resp = {
+    successful_job_resp = {
         'job_type': 'batch_delete',
         'status': 'Success',
         'tasks': [
@@ -497,7 +497,7 @@ def test_project_batch_delete_no_errors(project, session):
         'output': {}
     }
 
-    session.set_responses(job_resp, failed_job_resp, job_resp, failed_job_resp)
+    session.set_responses(job_resp, successful_job_resp)
 
     # When
     del_resp = project.gemd_batch_delete([uuid.UUID(
@@ -507,6 +507,7 @@ def test_project_batch_delete_no_errors(project, session):
     assert len(del_resp) == 0
 
     # When trying with entities
+    session.set_responses(job_resp, successful_job_resp)
     entity = ProcessSpec(name="proc spec", uids={'id': '16fd2706-8baf-433b-82eb-8c7fada847da'})
     del_resp = project.gemd_batch_delete([entity])
 
