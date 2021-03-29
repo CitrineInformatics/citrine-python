@@ -33,7 +33,7 @@ class FormulationDesignSpace(Resource['FormulationDesignSpace'], DesignSpace):
         when it's included in a formulation, e.g., ``{'solvent': {'water', 'alcohol'}}``
     resolution: float, optional
         Minimum increment used to specify ingredient quantities.
-        Default is 0.01.
+        Default is 0.0001.
 
     """
 
@@ -65,7 +65,7 @@ class FormulationDesignSpace(Resource['FormulationDesignSpace'], DesignSpace):
                  ingredients: Set[str],
                  constraints: Set[Constraint],
                  labels: Optional[Mapping[str, Set[str]]] = None,
-                 resolution: float = 0.01,
+                 resolution: float = 0.0001,
                  session: Session = Session()):
         self.name: str = name
         self.description: str = description
