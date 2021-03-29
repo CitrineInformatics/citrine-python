@@ -3,6 +3,14 @@ from collections import defaultdict
 from typing import TypeVar, List, Optional, Iterable, Union, Tuple
 from uuid import UUID
 
+from gemd.entity.base_entity import BaseEntity
+from gemd.entity.link_by_uid import LinkByUID
+from gemd.entity.object import MeasurementSpec, MeasurementRun, MaterialSpec, MaterialRun, \
+    ProcessSpec, ProcessRun, IngredientSpec, IngredientRun
+from gemd.entity.template import PropertyTemplate, MaterialTemplate, MeasurementTemplate, \
+    ParameterTemplate, ProcessTemplate, ConditionTemplate
+from gemd.util import writable_sort_order
+
 from citrine._rest.collection import Collection
 from citrine._rest.resource import Resource
 from citrine._serialization import properties
@@ -11,6 +19,7 @@ from citrine._utils.functions import scrub_none
 from citrine.exceptions import NotFound
 from citrine.resources.api_error import ApiError
 from citrine.resources.condition_template import ConditionTemplateCollection
+from citrine.resources.delete import _async_gemd_batch_delete
 from citrine.resources.file_link import FileCollection
 from citrine.resources.ingredient_run import IngredientRunCollection
 from citrine.resources.ingredient_spec import IngredientSpecCollection
@@ -25,18 +34,6 @@ from citrine.resources.process_run import ProcessRunCollection
 from citrine.resources.process_spec import ProcessSpecCollection
 from citrine.resources.process_template import ProcessTemplateCollection
 from citrine.resources.property_template import PropertyTemplateCollection
-
-from gemd.entity.object import MeasurementSpec, MeasurementRun, MaterialSpec, MaterialRun, \
-    ProcessSpec, ProcessRun, IngredientSpec, IngredientRun
-from gemd.entity.template.condition_template import ConditionTemplate
-from gemd.entity.template.material_template import MaterialTemplate
-from gemd.entity.template.measurement_template import MeasurementTemplate
-from gemd.entity.template.parameter_template import ParameterTemplate
-from gemd.entity.template.process_template import ProcessTemplate
-from gemd.entity.template.property_template import PropertyTemplate
-from gemd.entity.base_entity import BaseEntity
-from gemd.entity.link_by_uid import LinkByUID
-from gemd.util import writable_sort_order
 
 ResourceType = TypeVar('ResourceType', bound='DataConcepts')
 
@@ -289,8 +286,13 @@ class Dataset(Resource['Dataset']):
         return self._collection_for(data_concepts_resource) \
             .delete(uid[1], scope=uid[0], dry_run=dry_run)
 
-    def gemd_batch_delete(self, id_list: List[Union[LinkByUID, UUID, str, BaseEntity]]) -> \
-            List[Tuple[LinkByUID, ApiError]]:
+    def gemd_batch_delete(
+            self,
+            id_list: List[Union[LinkByUID, UUID, str, BaseEntity]],
+            *,
+            timeout: float = 2 * 60,
+            polling_delay: float = 1.0
+    ) -> List[Tuple[LinkByUID, ApiError]]:
         """
         Remove a set of GEMD objects.
 
@@ -325,8 +327,8 @@ class Dataset(Resource['Dataset']):
             deleted.
 
         """
-        from citrine.resources.delete import _gemd_batch_delete
-        return _gemd_batch_delete(id_list, self.project_id, self.session, self.uid)
+        return _async_gemd_batch_delete(id_list, self.project_id, self.session,
+                                        self.uid, timeout=timeout, polling_delay=polling_delay)
 
 
 class DatasetCollection(Collection[Dataset]):

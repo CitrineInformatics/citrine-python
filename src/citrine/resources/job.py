@@ -1,9 +1,16 @@
-from typing import List, Optional, Set, Dict
+from logging import getLogger
+from typing import List, Optional, Set, Dict, Union
 from uuid import UUID
+
+from time import time, sleep
 
 from citrine._serialization.properties import Set as PropertySet, String, Object
 from citrine._rest.resource import Resource
 from citrine._serialization import properties
+from citrine._session import Session
+from citrine.exceptions import PollingTimeoutError, JobFailureError
+
+logger = getLogger(__name__)
 
 
 class JobSubmissionResponse(Resource['AraJobStatus']):
@@ -101,3 +108,68 @@ class JobStatusResponse(Resource['JobStatusResponse']):
         self.status = status
         self.tasks = tasks
         self.output = output
+
+
+def _poll_for_job_completion(session: Session, project_id: Union[UUID, str],
+                             job: Union[JobSubmissionResponse, UUID, str], *,
+                             timeout: float = 2 * 60,
+                             polling_delay: float = 2.0) -> JobStatusResponse:
+    """
+    Polls for job completion given a timeout, failing with an exception on job failure.
+
+    This polls for job completion given the Job ID, failing appropriately if the job result
+    was not successful.
+
+    Parameters
+    ----------
+    job
+        The job submission object or job ID that was given from a job submission.
+    timeout
+        Amount of time to wait on the job (in seconds) before giving up. Defaults
+        to 2 minutes. Note that this number has no effect on the underlying job
+        itself, which can also time out server-side.
+    polling_delay:
+        How long to delay between each polling retry attempt.
+
+    Returns
+    -------
+    JobStatusResponse
+        The job response information that can be used to extract relevant
+        information from the completed job.
+
+    """
+    if isinstance(job, JobSubmissionResponse):
+        job_id = job.job_id
+    else:
+        job_id = job  # pragma: no cover
+    path = 'projects/{}/execution/job-status'.format(project_id)
+    params = {'job_id': job_id}
+    start_time = time()
+    while True:
+        response = session.get_resource(path=path, params=params)
+        status: JobStatusResponse = JobStatusResponse.build(response)
+        if status.status in ['Success', 'Failure']:
+            break
+        elif time() - start_time < timeout:
+            logger.info('Job still in progress, polling status again in {:.2f} seconds.'
+                        .format(polling_delay))
+
+            sleep(polling_delay)
+        else:
+            logger.error('Job exceeded user timeout of {} seconds.'.format(timeout))
+            logger.debug('Last status: {}'.format(status.dump()))
+            raise PollingTimeoutError('Job {} timed out.'.format(job_id))
+    if status.status == 'Failure':
+        logger.debug('Job terminated with Failure status: {}'.format(status.dump()))
+        failure_reasons = []
+        for task in status.tasks:
+            if task.status == 'Failure':
+                logger.error('Task {} failed with reason "{}"'.format(
+                    task.id, task.failure_reason))
+                failure_reasons.append(task.failure_reason)
+        raise JobFailureError(
+            message='Job {} terminated with Failure status. Failure reasons: {}'.format(
+                job_id, failure_reasons), job_id=job_id,
+            failure_reasons=failure_reasons)
+
+    return status
