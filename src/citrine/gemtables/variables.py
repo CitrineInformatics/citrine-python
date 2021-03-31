@@ -400,7 +400,7 @@ class IngredientQuantityByProcessAndName(
     type_selector: DataObjectTypeSelector
         strategy for selecting data object types to consider when matching, defaults to PREFER_RUN
     unit: str
-        an optional unit: only ingredient quantities that are convertable to this unit will be
+        an optional unit: only ingredient quantities that are convertible to this unit will be
         matched. note that this parameter is mandatory when quantity_dimension is
         IngredientQuantityDimension.ABSOLUTE.
 
@@ -673,7 +673,7 @@ class IngredientQuantityInOutput(Serializable['IngredientQuantityInOutput'], Var
     type_selector: DataObjectTypeSelector
         strategy for selecting data object types to consider when matching, defaults to PREFER_RUN
     unit: str
-        an optional unit: only ingredient quantities that are convertable to this unit will be
+        an optional unit: only ingredient quantities that are convertible to this unit will be
         matched. note that this parameter is mandatory when quantity_dimension is
         IngredientQuantityDimension.ABSOLUTE.
 

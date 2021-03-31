@@ -130,7 +130,7 @@ class DataConcepts(PolymorphicSerializable['DataConcepts'], DictSerializable, AB
         data: dict
             A representation of the object. It must be possible to put this dictionary through
             the loads/dumps cycle of the GMED
-            :py:mod:`JSON encoder <gemd.jsonr>`. The ensuing dictionary must
+            :py:mod:`JSON encoder <gemd.json>`. The ensuing dictionary must
             have a `type` field that corresponds to the response key of this class or of
             :py:class:`LinkByUID <gemd.entity.link_by_uid.LinkByUID>`.
 
@@ -669,7 +669,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         """
         Get all objects bearing a tag prefixed with `tag` in the collection.
 
-        The order of results is largely unmeaningul. Results from the same dataset will be
+        The order of results is largely not meaningful. Results from the same dataset will be
         grouped together but no other meaningful ordering can be relied upon. Duplication in
         the result set may (but needn't) occur when one object has multiple tags matching the
         search tag. For this reason, it is inadvisable to put 2 tags with the same prefix

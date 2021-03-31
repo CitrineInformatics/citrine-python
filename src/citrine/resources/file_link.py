@@ -276,7 +276,7 @@ class FileCollection(Collection[FileLink]):
 
         """
         path = self._get_path() + "/uploads"
-        # This string coersion is for supporting pathlib.Path objects in python 3.6
+        # This string coercion is for supporting pathlib.Path objects in python 3.6
         mime_type = self._mime_type(str(file_path))
         file_size = os.stat(file_path).st_size
         assert isinstance(file_size, int)

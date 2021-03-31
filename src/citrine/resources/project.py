@@ -447,7 +447,7 @@ class Project(Resource['Project']):
         A failure will be returned if the object cannot be deleted due to an external
         reference.
 
-        You must have Write access on the assoociated datasets for each object.
+        You must have Write access on the associated datasets for each object.
 
         Parameters
         ----------
