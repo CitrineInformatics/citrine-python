@@ -22,8 +22,8 @@ In these cases, the processor will systematically pull up to ``max_size`` sample
 An infinite design space is created when a :class:`~citrine.informatics.design_spaces.ProductDesignSpace` contains one or more continuous dimensions.
 When an enumerated processor is combined with an infinite design space, ``max_size`` samples are always pulled from the domain.
 If all dimensions of a design pace are continuous, samples are created by randomly sampling from each dimension.
-If there mixed continuous and enumerated dimensions in the design space, samples are created by combining the outer product of enumerated dimensions with random samples from continuous dimensions.
-Finite elements repeat once the outer product is exhausted.
+If there are mixed continuous and enumerated dimensions in the design space, samples are created by combining the Cartesian product of enumerated dimensions with random samples from continuous dimensions.
+Finite elements repeat once the Cartesian product is exhausted.
 
 The following demonstrates how to create an enumerated processor that takes up to 100 samples from a design space, register it with a project and view validation results:
 

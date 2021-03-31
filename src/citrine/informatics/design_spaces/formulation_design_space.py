@@ -27,7 +27,7 @@ class FormulationDesignSpace(Resource['FormulationDesignSpace'], DesignSpace):
         set of constraints that restricts formulations sampled from the space.
         This must include an
         :class:`~io.citrine.informatics.constraints.ingredient_count_constraint.IngredientCountConstraint`
-        with maximum count of 100 or fewer.
+        with maximum count of 32 or fewer.
     labels: Optional[Mapping[str, Set[str]]]
         map from a label to each ingredient that should given that label
         when it's included in a formulation, e.g., ``{'solvent': {'water', 'alcohol'}}``

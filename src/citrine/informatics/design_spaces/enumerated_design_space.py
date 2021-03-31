@@ -12,7 +12,7 @@ __all__ = ['EnumeratedDesignSpace']
 class EnumeratedDesignSpace(Resource['EnumeratedDesignSpace'], DesignSpace):
     """An explicit enumeration of candidate materials to score.
 
-    Enumerated design spaces are intended to capture small spaces with less than
+    Enumerated design spaces are intended to capture small spaces with fewer than
     1000 values.  For larger spaces, use the DataSourceDesignSpace.
 
     Parameters
