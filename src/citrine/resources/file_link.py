@@ -446,18 +446,18 @@ class FileCollection(Collection[FileLink]):
         logger.info('Build job submitted with job ID {}.'.format(job.job_id))
 
         if wait_for_response:
-            return self.poll_file_procesing_job(file_link, processing_type, job.job_id,
-                                                timeout=timeout,
-                                                polling_delay=polling_delay)
+            return self.poll_file_processing_job(file_link, processing_type, job.job_id,
+                                                 timeout=timeout,
+                                                 polling_delay=polling_delay)
         else:
             return job
 
-    def poll_file_procesing_job(self, file_link: FileLink,
-                                processing_type: FileProcessingType,
-                                job_id: UUID,
-                                *,
-                                timeout: float = 2 * 60,
-                                polling_delay: float = 1.0) -> Dict[FileProcessingType,
+    def poll_file_processing_job(self, file_link: FileLink,
+                                 processing_type: FileProcessingType,
+                                 job_id: UUID,
+                                 *,
+                                 timeout: float = 2 * 60,
+                                 polling_delay: float = 1.0) -> Dict[FileProcessingType,
                                                                     FileProcessingResult]:
         """
         [ALPHA] Poll for the result of the file processing task.
