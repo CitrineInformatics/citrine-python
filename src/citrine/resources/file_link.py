@@ -458,7 +458,7 @@ class FileCollection(Collection[FileLink]):
                                  *,
                                  timeout: float = 2 * 60,
                                  polling_delay: float = 1.0) -> Dict[FileProcessingType,
-                                                                    FileProcessingResult]:
+                                                                     FileProcessingResult]:
         """
         [ALPHA] Poll for the result of the file processing task.
 
