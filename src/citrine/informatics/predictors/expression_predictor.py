@@ -28,7 +28,7 @@ class ExpressionPredictor(Serializable['ExpressionPredictor'], Predictor):
     expression: str
         expression that computes an output from aliased inputs
     output: RealDescriptor
-        descriptor that represents the output relation
+        descriptor that represents the output of the expression
     aliases: Mapping[str, RealDescriptor]
         a mapping from each unknown argument to its descriptor.
         All unknown arguments must have an associated descriptor.
