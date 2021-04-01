@@ -288,6 +288,7 @@ class Dataset(Resource['Dataset']):
 
     def delete_contents(
         self,
+        *,
         timeout: float = 2 * 60,
         polling_delay: float = 1.0
     ):
