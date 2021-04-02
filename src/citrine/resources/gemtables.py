@@ -13,7 +13,7 @@ from citrine._serialization import properties
 from citrine._serialization.properties import UUID
 from citrine._session import Session
 from citrine._utils.functions import rewrite_s3_links_locally, write_file_locally
-from citrine.resources.job import JobSubmissionResponse
+from citrine.resources.job import JobSubmissionResponse, _poll_for_job_completion
 from citrine.resources.table_config import TableConfig
 
 logger = getLogger(__name__)
@@ -234,7 +234,7 @@ class GemTableCollection(Collection[GemTable]):
             The table built by the specified job.
 
         """
-        status = self._poll_for_job_completion(self.project_id, job, timeout=timeout)
+        status = _poll_for_job_completion(self.session, self.project_id, job, timeout=timeout)
 
         table_id = status.output['display_table_id']
         table_version = status.output['display_table_version']

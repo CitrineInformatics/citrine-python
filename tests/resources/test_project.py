@@ -4,6 +4,7 @@ from logging import getLogger
 import pytest
 from dateutil.parser import parse
 from gemd.entity.link_by_uid import LinkByUID
+from gemd.entity.object import ProcessSpec
 
 from citrine.resources.api_error import ApiError, ValidationError
 from citrine.resources.gemtables import GemTableCollection
@@ -478,8 +479,49 @@ def test_remove_user(project, session):
     assert remove_user_response is True
 
 
-def test_batch_delete(project, session):
-    failure_resp = {'failures': [
+def test_project_batch_delete_no_errors(project, session):
+    job_resp = {
+        'job_id': '1234'
+    }
+
+    # Actual response-like data - note there is no 'failures' array within 'output'
+    successful_job_resp = {
+        'job_type': 'batch_delete',
+        'status': 'Success',
+        'tasks': [
+            {
+                "id": "7b6bafd9-f32a-4567-b54c-7ce594edc018", "task_type": "batch_delete",
+                "status": "Success", "dependencies": []
+             }
+            ],
+        'output': {}
+    }
+
+    session.set_responses(job_resp, successful_job_resp)
+
+    # When
+    del_resp = project.gemd_batch_delete([uuid.UUID(
+        '16fd2706-8baf-433b-82eb-8c7fada847da')])
+
+    # Then
+    assert len(del_resp) == 0
+
+    # When trying with entities
+    session.set_responses(job_resp, successful_job_resp)
+    entity = ProcessSpec(name="proc spec", uids={'id': '16fd2706-8baf-433b-82eb-8c7fada847da'})
+    del_resp = project.gemd_batch_delete([entity])
+
+    # Then
+    assert len(del_resp) == 0
+
+
+def test_project_batch_delete(project, session):
+    job_resp = {
+        'job_id': '1234'
+    }
+
+    import json
+    failures_escaped_json = json.dumps([
         {
             "id":{
                 'scope': 'somescope',
@@ -496,21 +538,25 @@ def test_batch_delete(project, session):
                 ]
             }
         }
-    ]}
-    session.set_responses(failure_resp, failure_resp)
+    ])
+
+    failed_job_resp = {
+        'job_type': 'batch_delete',
+        'status': 'Success',
+        'tasks': [],
+        'output': {
+            'failures': failures_escaped_json
+        }
+    }
+
+    session.set_responses(job_resp, failed_job_resp, job_resp, failed_job_resp)
 
     # When
     del_resp = project.gemd_batch_delete([uuid.UUID(
         '16fd2706-8baf-433b-82eb-8c7fada847da')])
 
     # Then
-    assert 1 == session.num_calls
-    expect_call = FakeCall(
-        method="POST",
-        path="/projects/{}/gemd/batch-delete".format(project.uid)
-    )
-    assert expect_call.method == session.last_call.method
-    assert expect_call.path == session.last_call.path
+    assert 2 == session.num_calls
 
     assert len(del_resp) == 1
     first_failure = del_resp[0]
