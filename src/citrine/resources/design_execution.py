@@ -27,7 +27,7 @@ class DesignExecution(Resource['DesignExecution'], Pageable):
     workflow_id: str
         Unique identifier of the workflow that was executed
     version_number: int
-        Integer identifier that increases each time the workflow is executed.  The first execution
+        Integer identifier that increases each time the workflow is executed. The first execution
         has version_number = 1.
 
     """

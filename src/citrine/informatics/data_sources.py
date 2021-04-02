@@ -91,8 +91,8 @@ class GemTableDataSource(Serializable['GemTableDataSource'], DataSource):
     table_id: UUID
         Unique identifier for the GEM Table
     table_version: Union[str,int]
-        Version number for the GEM Table, which starts at 1 rather than 0.
-        Strings are cast to ints.
+        Version number for the GEM Table. The first GEM table built from a configuration
+        has version = 1. Strings are cast to ints.
     formulation_descriptor: Optional[FormulationDescriptor]
         Optional descriptor used to store formulations emitted by the data source.
 

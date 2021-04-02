@@ -32,7 +32,7 @@ class GemTable(Resource['Table']):
     uid: UUID
         Unique uuid4 identifier of this GEM Table.
     version: str
-        Version number of the GEM Table
+        Version number of the GEM Table. The first table built from a given config is version 1.
     download_url: int
         Url pointing to the location of the GEM Table's contents.
         This is an expiring download link and is not unique.
@@ -173,7 +173,7 @@ class GemTableCollection(Collection[GemTable]):
         config:
             The persisted table config from which to build a table (or its ID).
         version
-            The version of the table config, only necessary when config is a uid.
+            The version of the table config; only necessary when config is a uid.
 
         Returns
         -------
@@ -263,7 +263,7 @@ class GemTableCollection(Collection[GemTable]):
         config:
             The persisted table config from which to build a table (or its ID).
         version
-            The version of the table config, only necessary when config is a uid.
+            The version of the table config; only necessary when config is a uid.
         timeout
             Amount of time to wait on build job (in seconds) before giving up. Defaults
             to 15 minutes. Note that this number has no effect on the build job itself,
