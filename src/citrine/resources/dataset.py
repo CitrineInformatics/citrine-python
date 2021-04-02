@@ -19,7 +19,7 @@ from citrine._utils.functions import scrub_none
 from citrine.exceptions import NotFound
 from citrine.resources.api_error import ApiError
 from citrine.resources.condition_template import ConditionTemplateCollection
-from citrine.resources.delete import _async_gemd_batch_delete
+from citrine.resources.delete import _async_gemd_batch_delete, _poll_for_async_batch_delete_result
 from citrine.resources.file_link import FileCollection
 from citrine.resources.ingredient_run import IngredientRunCollection
 from citrine.resources.ingredient_spec import IngredientSpecCollection
@@ -285,6 +285,44 @@ class Dataset(Resource['Dataset']):
             raise ValueError("Only objects that contain identifiers can be deleted.")
         return self._collection_for(data_concepts_resource) \
             .delete(uid[1], scope=uid[0], dry_run=dry_run)
+
+    def delete_contents(
+        self,
+        *,
+        timeout: float = 2 * 60,
+        polling_delay: float = 1.0
+    ):
+        """
+        Delete all the GEMD objects from within a single Dataset.
+
+        Parameters
+        ----------
+        timeout: float
+            Amount of time to wait on the job (in seconds) before giving up.
+            Note that this number has no effect on the underlying job itself,
+            which can also time out server-side.
+
+        polling_delay: float
+            How long to delay between each polling retry attempt.
+
+        Returns
+        -------
+        List[Tuple[LinkByUID, ApiError]]
+            A list of (LinkByUID, api_error) for each failure to delete an object.
+            Note that this method doesn't raise an exception if an object fails to be
+            deleted.
+
+        """
+        path = 'projects/{project_id}/datasets/{dataset_uid}/contents'.format(
+            dataset_uid=self.uid,
+            project_id=self.project_id
+        )
+
+        response = self.session.delete_resource(path)
+        job_id = response["job_id"]
+
+        return _poll_for_async_batch_delete_result(self.project_id, self.session, job_id, timeout,
+                                                   polling_delay)
 
     def gemd_batch_delete(
             self,
