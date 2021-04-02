@@ -40,7 +40,7 @@ class DesignWorkflowCollection(Collection[DesignWorkflow]):
         self.session.put_resource(url, {})
 
     def restore(self, workflow_id: UUID):
-        """Restore a predictor evaluation workflow.
+        """Restore an archived predictor evaluation workflow.
 
         Parameters
         ----------

@@ -147,7 +147,7 @@ class DesignExecutionCollection(Collection["DesignExecution"]):
             "Design Executions cannot be archived")
 
     def restore(self, execution_id: UUID):
-        """Restore a Design Workflow execution.
+        """Restore an archived Design Workflow execution.
 
         Parameters
         ----------
