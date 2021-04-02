@@ -570,7 +570,7 @@ class IngredientIdentifierInOutput(Serializable['IngredientIdentifierInOutput'],
 
     In general, this variable should be preferred over an
     :class:`~citrine.gemtables.variables.IngredientQuantityByProcessTemplateAndName` when
-    mixtures are hierarchical (i.e. blends of blends).
+    mixtures are hierarchical (i.e., blends of blends).
     It allows an ingredient with a single name to be used in
     multiple processes without defining additional variables that manifest as additional columns
     in your GEM table, and must be used in place of the former if the same process template is
@@ -642,7 +642,7 @@ class IngredientQuantityInOutput(Serializable['IngredientQuantityInOutput'], Var
 
     In general, this variable should be preferred over an
     :class:`~citrine.gemtables.variables.IngredientIdentifierByProcessTemplateAndName`
-    when mixtures are hierarchical (i.e. blends of blends). It allows an ingredient with a
+    when mixtures are hierarchical (i.e., blends of blends). It allows an ingredient with a
     single name to be used in multiple processes without defining additional variables
     that manifest as additional columns in your table, and must be used in place of the
     former if the same process template is used to represent mixing at multiple levels

@@ -157,13 +157,13 @@ class AreaUnderROC(Serializable["AreaUnderROC"], PredictorEvaluationMetric):
 class CoverageProbability(Serializable["CoverageProbability"], PredictorEvaluationMetric):
     """Percentage of observations that fall within a given confidence interval.
 
-    The coverage level can be specified to 3 digits, e.g. 0.123 but not 0.1234.
+    The coverage level can be specified to 3 digits, e.g., 0.123, but not 0.1234.
 
     Parameters
     ----------
     coverage_level: Union[str, float]
         Confidence-interval coverage level.
-        The coverage level must both be between 0 and 1.0 (non-inclusive) will be rounded
+        The coverage level must be between 0 and 1.0 (non-inclusive) and will be rounded
         to 3 significant figures.  Default: 0.683 corresponds to one std. deviation
 
     """

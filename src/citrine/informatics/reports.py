@@ -140,7 +140,7 @@ class PredictorReport(Serializable['PredictorReport'], Report):
     Parameters
     ----------
     status: str
-        the status of the report (e.g. PENDING, ERROR, OK, etc)
+        the status of the report (e.g., PENDING, ERROR, OK, etc)
     descriptors: List[Descriptor]
         All descriptors that appear in the predictor
     model_summaries: List[ModelSummary]

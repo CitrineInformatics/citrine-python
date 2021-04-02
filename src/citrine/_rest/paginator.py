@@ -108,7 +108,7 @@ class Paginator(Generic[ResourceType]):
             if page is not None:
                 break
 
-            # Handle the case where we get an unexpected number of results (e.g. last page)
+            # Handle the case where we get an unexpected number of results (i.e., the last page)
             if next_uri == "" and count < per_page:
                 break
 

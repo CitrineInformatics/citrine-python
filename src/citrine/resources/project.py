@@ -282,7 +282,7 @@ class Project(Resource['Project']):
         Parameters
         ----------
         resource: Resource
-            An instance of a resource owned by this project (e.g. a dataset).
+            An instance of a resource owned by this project (e.g., a dataset).
 
         Returns
         -------
@@ -303,7 +303,7 @@ class Project(Resource['Project']):
         Parameters
         ----------
         resource: Resource
-            An instance of a resource owned by this project (e.g. a dataset).
+            An instance of a resource owned by this project (e.g., a dataset).
 
         Returns
         -------
@@ -570,7 +570,7 @@ class ProjectCollection(Collection[Project]):
         ----------
         search_params: dict, optional
             A ``dict`` representing the body of the post request that will be sent to the search
-            endpoint to filter the results i.e.
+            endpoint to filter the results, e.g.,
 
             .. code:: python
 
@@ -635,7 +635,7 @@ class ProjectCollection(Collection[Project]):
             A ``dict`` representing a request body that could be sent to a POST request. The "json"
             field should be passed as the key for the outermost ``dict``, with its value the
             request body, so that we can easily unpack the keyword argument when it gets passed to
-            ``fetch_func``, i.e. ``{'name': {'value': 'Project', 'search_method': 'SUBSTRING'} }``
+            ``fetch_func``, e.g., ``{'name': {'value': 'Project', 'search_method': 'SUBSTRING'} }``
 
         Returns
         -------
