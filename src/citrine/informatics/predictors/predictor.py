@@ -38,6 +38,10 @@ class Predictor(Module):
         serializable=False
     )
 
+    def post_build(self, project_id: UUID, data: dict):
+        """Executes after a .build() is called in [[PredictorCollection]]."""
+        pass
+
     @classmethod
     def get_type(cls, data) -> Type['Predictor']:
         """Return the subtype."""
