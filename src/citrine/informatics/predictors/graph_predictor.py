@@ -1,15 +1,15 @@
 from typing import List, Optional, Union
 from uuid import UUID
 
+from citrine._rest.resource import Resource
 from citrine._serialization import properties as _properties
-from citrine._serialization.serializable import Serializable
 from citrine.informatics.data_sources import DataSource
 from citrine.informatics.predictors import Predictor
 
 __all__ = ['GraphPredictor']
 
 
-class GraphPredictor(Serializable['GraphPredictor'], Predictor):
+class GraphPredictor(Resource['GraphPredictor'], Predictor):
     """A predictor interface that stitches other predictors together.
 
     Parameters
@@ -19,15 +19,15 @@ class GraphPredictor(Serializable['GraphPredictor'], Predictor):
     description: str
         the description of the predictor
     predictors: List[Union[UUID, Predictor]]
-        the list of predictors to use in the grpah, either UUIDs or serialized predictors
+        the list of predictors to use in the graph, either UUIDs or serialized predictors
     training_data: Optional[List[DataSource]]
         Optional sources of training data shared by all predictors in the graph.
         Training data provided by this graph predictor does not need to be specified as part of the
         configuration of sub-predictors. Shared training data and any training data specified
-        by a sub-predictor will be combined into a flattened list and deduplicated
-        by uid and identifiers. Deduplication is performed if a uid or identifier is shared between
-        two or more rows. The content of a deduplicated row will contain the union of data
-        across all rows that share the same uid or at least 1 identifier.
+        by a sub-predictor will be combined into a flattened list and de-duplicated
+        by uid and identifiers. De-duplication is performed if a uid or identifier is shared
+        between two or more rows. The content of a de-duplicated row will contain the union of
+        data across all rows that share the same uid or at least 1 identifier.
 
     """
 
@@ -72,7 +72,10 @@ class GraphPredictor(Serializable['GraphPredictor'], Predictor):
 
     @staticmethod
     def stuff_predictor_into_envelope(predictor: dict) -> dict:
-        """Insert a serialized embedded predictor into a module envelope, to facilitate deser."""
+        """Insert a serialized embedded predictor into a module envelope.
+
+        This facilitates deserialization.
+        """
         return dict(
             module_type='PREDICTOR',
             config=predictor,

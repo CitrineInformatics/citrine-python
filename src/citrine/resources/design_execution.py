@@ -27,7 +27,7 @@ class DesignExecution(Resource['DesignExecution'], Pageable):
     workflow_id: str
         Unique identifier of the workflow that was executed
     version_number: int
-        Integer identifier that increases each time the workflow is executed.  The first execution
+        Integer identifier that increases each time the workflow is executed. The first execution
         has version_number = 1.
 
     """
@@ -147,7 +147,7 @@ class DesignExecutionCollection(Collection["DesignExecution"]):
             "Design Executions cannot be archived")
 
     def restore(self, execution_id: UUID):
-        """Restore a Design Workflow execution.
+        """Restore an archived Design Workflow execution.
 
         Parameters
         ----------

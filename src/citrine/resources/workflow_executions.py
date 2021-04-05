@@ -55,7 +55,7 @@ class WorkflowExecution(Resource['WorkflowExecution'], Pageable):
                  version_number: Optional[int] = None,
                  ):
         msg = "{this_class} is deprecated. Please use {dw_replacement} instead for " \
-            "Design Workflows and {pew_replacement} for Predictor Evaludation Workflows".format(
+            "Design Workflows and {pew_replacement} for Predictor Evaluation Workflows".format(
                 this_class=self.__class__.__name__,
                 dw_replacement=DesignExecution.__name__,
                 pew_replacement=PredictorEvaluationExecution.__name__)
@@ -126,7 +126,7 @@ class WorkflowExecutionCollection(Collection[WorkflowExecution]):
     def __init__(self, project_id: UUID, workflow_id: Optional[UUID],
                  session: Optional[Session] = None):
         msg = "{this_class} is deprecated. Please use {dw_replacement} instead for " \
-            "Design Workflows and {pew_replacement} for Predictor Evaludation Workflows".format(
+            "Design Workflows and {pew_replacement} for Predictor Evaluation Workflows".format(
                 this_class=self.__class__.__name__,
                 dw_replacement=DesignExecutionCollection.__name__,
                 pew_replacement=PredictorEvaluationExecutionCollection.__name__)

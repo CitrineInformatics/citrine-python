@@ -39,7 +39,7 @@ class PredictorEvaluationWorkflowCollection(Collection[PredictorEvaluationWorkfl
         return self._put_module_ref('archive', workflow_id)
 
     def restore(self, workflow_id: UUID):
-        """Restore a predictor evaluation workflow.
+        """Restore an archived predictor evaluation workflow.
 
         Parameters
         ----------

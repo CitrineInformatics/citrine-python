@@ -15,7 +15,7 @@ __all__ = ['Descriptor',
 
 
 class Descriptor(PolymorphicSerializable['Descriptor']):
-    """A Citrine Descriptor describes the range of values that a quantity can take on.
+    """A Descriptor describes the range of values that a quantity can take on.
 
     Abstract type that returns the proper type given a serialized dict.
     """

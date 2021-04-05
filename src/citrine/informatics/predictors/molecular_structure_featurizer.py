@@ -3,15 +3,15 @@
 # the whole file than to pick out the offending lines.
 from typing import List, Optional
 
+from citrine._rest.resource import Resource
 from citrine._serialization import properties as _properties
-from citrine._serialization.serializable import Serializable
 from citrine.informatics.descriptors import Descriptor, MolecularStructureDescriptor
 from citrine.informatics.predictors import Predictor
 
 __all__ = ['MolecularStructureFeaturizer']
 
 
-class MolecularStructureFeaturizer(Serializable['MolecularStructureFeaturizer'], Predictor):
+class MolecularStructureFeaturizer(Resource['MolecularStructureFeaturizer'], Predictor):
     """
     [ALPHA] A "batteries-included" featurizer for organic molecules. Powered by CDK.
 

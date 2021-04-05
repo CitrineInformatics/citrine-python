@@ -22,7 +22,7 @@ class IngredientCountConstraint(Serializable['IngredientCountConstraint'], Const
         maximum ingredient count
     label: Optional[str]
         Optional label to constrain.
-        If specified only ingredients with the specified label will count towards the total.
+        If specified, then only ingredients with the specified label will count towards the total.
         Default is ``None``; all ingredients count towards the total
 
     """

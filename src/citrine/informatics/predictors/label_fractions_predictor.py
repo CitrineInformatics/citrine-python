@@ -1,15 +1,15 @@
 from typing import Set
 from warnings import warn
 
+from citrine._rest.resource import Resource
 from citrine._serialization import properties as _properties
-from citrine._serialization.serializable import Serializable
 from citrine.informatics.descriptors import FormulationDescriptor
 from citrine.informatics.predictors import Predictor
 
 __all__ = ['LabelFractionsPredictor']
 
 
-class LabelFractionsPredictor(Serializable['LabelFractionsPredictor'], Predictor):
+class LabelFractionsPredictor(Resource['LabelFractionsPredictor'], Predictor):
     """[ALPHA] A predictor interface that computes the relative proportions of labeled ingredients.
 
     Parameters

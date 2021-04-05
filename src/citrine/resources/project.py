@@ -282,7 +282,7 @@ class Project(Resource['Project']):
         Parameters
         ----------
         resource: Resource
-            An instance of a resource owned by this project (e.g. a dataset).
+            An instance of a resource owned by this project (e.g., a dataset).
 
         Returns
         -------
@@ -303,7 +303,7 @@ class Project(Resource['Project']):
         Parameters
         ----------
         resource: Resource
-            An instance of a resource owned by this project (e.g. a dataset).
+            An instance of a resource owned by this project (e.g., a dataset).
 
         Returns
         -------
@@ -447,7 +447,7 @@ class Project(Resource['Project']):
         A failure will be returned if the object cannot be deleted due to an external
         reference.
 
-        You must have Write access on the assoociated datasets for each object.
+        You must have Write access on the associated datasets for each object.
 
         Parameters
         ----------
@@ -570,7 +570,7 @@ class ProjectCollection(Collection[Project]):
         ----------
         search_params: dict, optional
             A ``dict`` representing the body of the post request that will be sent to the search
-            endpoint to filter the results i.e.
+            endpoint to filter the results, e.g.,
 
             .. code:: python
 
@@ -612,7 +612,13 @@ class ProjectCollection(Collection[Project]):
                                         search_params=search_params)
 
     def delete(self, uid: Union[UUID, str]) -> Response:
-        """[ALPHA] Delete a particular element of the collection."""
+        """
+        [ALPHA] Delete a particular project.
+
+        Only empty projects can be deleted.
+        If the project is not empty, then the Response will contain a list of all of the project's
+        resources. These must be deleted before the project can be deleted.
+        """
         return super().delete(uid)  # pragma: no cover
 
     def _fetch_page_search(self, page: Optional[int] = None,
@@ -635,7 +641,7 @@ class ProjectCollection(Collection[Project]):
             A ``dict`` representing a request body that could be sent to a POST request. The "json"
             field should be passed as the key for the outermost ``dict``, with its value the
             request body, so that we can easily unpack the keyword argument when it gets passed to
-            ``fetch_func``, i.e. ``{'name': {'value': 'Project', 'search_method': 'SUBSTRING'} }``
+            ``fetch_func``, e.g., ``{'name': {'value': 'Project', 'search_method': 'SUBSTRING'} }``
 
         Returns
         -------

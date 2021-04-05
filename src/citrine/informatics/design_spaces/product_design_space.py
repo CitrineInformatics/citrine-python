@@ -12,7 +12,7 @@ __all__ = ['ProductDesignSpace']
 
 
 class ProductDesignSpace(Resource['ProductDesignSpace'], DesignSpace):
-    """An outer product of design spaces.
+    """A Cartesian product of design spaces.
 
     Factors can be other design spaces and/or univariate dimensions.
 

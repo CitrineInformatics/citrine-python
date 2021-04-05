@@ -13,7 +13,7 @@ __all__ = ['Score', 'LIScore', 'EIScore', 'EVScore']
 
 
 class Score(PolymorphicSerializable['Score']):
-    """A Citrine Score is used to rank materials according to objectives and constraints.
+    """A Score is used to rank materials according to objectives and constraints.
 
     Abstract type that returns the proper type given a serialized dict.
 
