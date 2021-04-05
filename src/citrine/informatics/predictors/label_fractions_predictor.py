@@ -1,11 +1,9 @@
-from typing import Set, Optional
+from typing import Set
 from warnings import warn
 
 from citrine._serialization import properties as _properties
 from citrine._serialization.serializable import Serializable
-from citrine._session import Session
 from citrine.informatics.descriptors import FormulationDescriptor
-from citrine.informatics.reports import Report
 from citrine.informatics.predictors import Predictor
 
 __all__ = ['LabelFractionsPredictor']
@@ -40,8 +38,6 @@ class LabelFractionsPredictor(Serializable['LabelFractionsPredictor'], Predictor
                  description: str,
                  input_descriptor: FormulationDescriptor,
                  labels: Set[str],
-                 session: Optional[Session] = None,
-                 report: Optional[Report] = None,
                  archived: bool = False):
         self.name: str = name
         self.description: str = description
@@ -55,8 +51,6 @@ class LabelFractionsPredictor(Serializable['LabelFractionsPredictor'], Predictor
         else:
             _labels = labels
         self.labels: Set[str] = _labels
-        self.session: Optional[Session] = session
-        self.report: Optional[Report] = report
         self.archived: bool = archived
 
     def _post_dump(self, data: dict) -> dict:
