@@ -84,6 +84,9 @@ class PredictorCollection(Collection[Predictor]):
             Automatically configured predictor for the training data
 
         """
+        if pattern not in {"FORMULATION", "PLAIN"}:
+            msg = "Expected pattern: {}.  Expected 'FORMULATION' or 'PLAIN'.".format(pattern)
+            raise ValueError(msg)
         path = f'projects/{self.project_id}/predictors/default-predictor'
         body = {"data_source": training_data.dump(), "pattern": pattern}
         data = self.session.post_resource(path, json=body)
