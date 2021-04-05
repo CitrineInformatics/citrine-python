@@ -3,7 +3,6 @@ from warnings import warn
 
 from citrine._rest.resource import Resource
 from citrine._serialization import properties as _properties
-from citrine._serialization.serializable import Serializable
 from citrine._session import Session
 from citrine.informatics.descriptors import RealDescriptor
 from citrine.informatics.reports import Report

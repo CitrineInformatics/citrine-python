@@ -612,7 +612,13 @@ class ProjectCollection(Collection[Project]):
                                         search_params=search_params)
 
     def delete(self, uid: Union[UUID, str]) -> Response:
-        """[ALPHA] Delete a particular element of the collection."""
+        """
+        [ALPHA] Delete a particular project.
+
+        Only empty projects can be deleted.
+        If the project is not empty, then the Response will contain a list of all of the project's
+        resources. These must be deleted before the project can be deleted.
+        """
         return super().delete(uid)  # pragma: no cover
 
     def _fetch_page_search(self, page: Optional[int] = None,
