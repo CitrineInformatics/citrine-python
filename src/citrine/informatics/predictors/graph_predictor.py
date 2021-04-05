@@ -3,9 +3,7 @@ from uuid import UUID
 
 from citrine._rest.resource import Resource
 from citrine._serialization import properties as _properties
-from citrine._session import Session
 from citrine.informatics.data_sources import DataSource
-from citrine.informatics.reports import Report
 from citrine.informatics.predictors import Predictor
 
 __all__ = ['GraphPredictor']
@@ -49,15 +47,11 @@ class GraphPredictor(Resource['GraphPredictor'], Predictor):
                  description: str,
                  predictors: List[Union[UUID, Predictor]],
                  training_data: Optional[List[DataSource]] = None,
-                 session: Optional[Session] = None,
-                 report: Optional[Report] = None,
                  archived: bool = False):
         self.name: str = name
         self.description: str = description
         self.predictors: List[Union[UUID, Predictor]] = predictors
         self.training_data: List[DataSource] = self._wrap_training_data(training_data)
-        self.session: Optional[Session] = session
-        self.report: Optional[Report] = report
         self.archived: bool = archived
 
     def _post_dump(self, data: dict) -> dict:

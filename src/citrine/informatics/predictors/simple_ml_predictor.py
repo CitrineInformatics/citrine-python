@@ -2,10 +2,8 @@ from typing import List, Optional
 
 from citrine._rest.resource import Resource
 from citrine._serialization import properties as _properties
-from citrine._session import Session
 from citrine.informatics.data_sources import DataSource
 from citrine.informatics.descriptors import Descriptor
-from citrine.informatics.reports import Report
 from citrine.informatics.predictors import Predictor
 
 __all__ = ['SimpleMLPredictor']
@@ -56,8 +54,6 @@ class SimpleMLPredictor(Resource['SimplePredictor'], Predictor):
                  outputs: List[Descriptor],
                  latent_variables: List[Descriptor],
                  training_data: Optional[List[DataSource]] = None,
-                 session: Optional[Session] = None,
-                 report: Optional[Report] = None,
                  archived: bool = False):
         self.name: str = name
         self.description: str = description
@@ -65,8 +61,6 @@ class SimpleMLPredictor(Resource['SimplePredictor'], Predictor):
         self.outputs: List[Descriptor] = outputs
         self.latent_variables: List[Descriptor] = latent_variables
         self.training_data: List[DataSource] = self._wrap_training_data(training_data)
-        self.session: Optional[Session] = session
-        self.report: Optional[Report] = report
         self.archived: bool = archived
 
     def _post_dump(self, data: dict) -> dict:

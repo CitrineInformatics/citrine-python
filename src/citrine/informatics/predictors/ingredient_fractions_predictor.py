@@ -1,10 +1,8 @@
-from typing import List, Optional
+from typing import List
 
 from citrine._rest.resource import Resource
 from citrine._serialization import properties as _properties
-from citrine._session import Session
 from citrine.informatics.descriptors import FormulationDescriptor
-from citrine.informatics.reports import Report
 from citrine.informatics.predictors import Predictor
 
 __all__ = ['IngredientFractionsPredictor']
@@ -41,15 +39,11 @@ class IngredientFractionsPredictor(Resource["IngredientFractionsPredictor"], Pre
                  description: str,
                  input_descriptor: FormulationDescriptor,
                  ingredients: List[str],
-                 session: Optional[Session] = None,
-                 report: Optional[Report] = None,
                  archived: bool = False):
         self.name: str = name
         self.description: str = description
         self.input_descriptor: FormulationDescriptor = input_descriptor
         self.ingredients: List[str] = ingredients
-        self.session: Optional[Session] = session
-        self.report: Optional[Report] = report
         self.archived: bool = archived
 
     def _post_dump(self, data: dict) -> dict:

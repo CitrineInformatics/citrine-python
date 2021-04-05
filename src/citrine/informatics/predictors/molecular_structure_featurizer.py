@@ -5,9 +5,7 @@ from typing import List, Optional
 
 from citrine._rest.resource import Resource
 from citrine._serialization import properties as _properties
-from citrine._session import Session
 from citrine.informatics.descriptors import Descriptor, MolecularStructureDescriptor
-from citrine.informatics.reports import Report
 from citrine.informatics.predictors import Predictor
 
 __all__ = ['MolecularStructureFeaturizer']
@@ -90,16 +88,12 @@ class MolecularStructureFeaturizer(Resource['MolecularStructureFeaturizer'], Pre
                  descriptor: MolecularStructureDescriptor,
                  features: List[str] = None,
                  excludes: List[str] = None,
-                 session: Optional[Session] = None,
-                 report: Optional[Report] = None,
                  archived: bool = False):
         self.name: str = name
         self.description: str = description
         self.descriptor = descriptor
         self.features = features if features is not None else ["standard"]
         self.excludes = excludes if excludes is not None else []
-        self.session: Optional[Session] = session
-        self.report: Optional[Report] = report
         self.archived: bool = archived
 
     def _post_dump(self, data: dict) -> dict:

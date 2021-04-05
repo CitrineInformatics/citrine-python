@@ -148,7 +148,7 @@ def test_mark_predictor_invalid(valid_simple_ml_predictor_data, valid_predictor_
     collection.update(predictor)
 
     # Then
-    assert 2 == session.num_calls, session.calls  # This is a little strange, the report is fetched eagerly
+    assert 1 == session.num_calls, session.calls
 
     first_call = session.calls[0]  # First call is the update
     assert first_call.method == 'PUT'
@@ -176,7 +176,7 @@ def test_list_predictors(valid_simple_ml_predictor_data, valid_expression_predic
     # Then
     expected_call = FakeCall(method='GET', path='/projects/{}/modules'.format(collection.project_id),
                                    params={'per_page': 20, 'module_type': 'PREDICTOR'})
-    assert 3 == session.num_calls, session.calls  # This is a little strange, the report is fetched eagerly
+    assert 1 == session.num_calls, session.calls
     assert expected_call == session.calls[0]
     assert len(predictors) == 2
 
