@@ -3,6 +3,7 @@ from uuid import UUID
 from warnings import warn
 
 from citrine._serialization import properties as _properties
+from citrine._session import Session
 from citrine.informatics.data_sources import DataSource
 from citrine.informatics.modules import Module
 from citrine.resources.report import ReportResource
@@ -19,6 +20,8 @@ class Predictor(Module):
     """
 
     _response_key = None
+    _project_id: Optional[UUID] = None
+    _session: Optional[Session] = None
     uid = _properties.Optional(_properties.UUID, 'id', serializable=False)
     """UUID of the predictor, if it has been retrieved from the platform."""
 
@@ -38,9 +41,13 @@ class Predictor(Module):
         serializable=False
     )
 
-    def post_build(self, project_id: UUID, data: dict):
-        """Executes after a .build() is called in [[PredictorCollection]]."""
-        pass
+    @property
+    def report(self):
+        """Fetch the predictor report."""
+        if self.uid is None or self._session is None or self._project_id is None:
+            msg = "Cannot get the report for a predictor that wasn't read from the platform"
+            raise ValueError(msg)
+        return ReportResource(self._project_id, self._session).get(self.uid)
 
     @classmethod
     def get_type(cls, data) -> Type['Predictor']:

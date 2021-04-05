@@ -2,10 +2,8 @@ from typing import List, Optional, Mapping
 
 from citrine._serialization import properties as _properties
 from citrine._serialization.serializable import Serializable
-from citrine._session import Session
 from citrine.informatics.data_sources import DataSource
 from citrine.informatics.descriptors import FormulationDescriptor, RealDescriptor
-from citrine.informatics.reports import Report
 from citrine.informatics.predictors import Predictor
 
 __all__ = ['MeanPropertyPredictor']
@@ -81,8 +79,6 @@ class MeanPropertyPredictor(
                  default_properties: Optional[Mapping[str, float]] = None,
                  label: Optional[str] = None,
                  training_data: Optional[List[DataSource]] = None,
-                 session: Optional[Session] = None,
-                 report: Optional[Report] = None,
                  archived: bool = False):
         self.name: str = name
         self.description: str = description
@@ -93,8 +89,6 @@ class MeanPropertyPredictor(
         self.impute_properties: bool = impute_properties
         self.default_properties: Optional[Mapping[str, float]] = default_properties
         self.label: Optional[str] = label
-        self.session: Optional[Session] = session
-        self.report: Optional[Report] = report
         self.archived: bool = archived
 
     def _post_dump(self, data: dict) -> dict:
