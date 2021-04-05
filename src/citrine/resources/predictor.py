@@ -31,8 +31,8 @@ class PredictorCollection(Collection[Predictor]):
     def build(self, data: dict) -> Predictor:
         """Build an individual Predictor."""
         predictor: Predictor = Predictor.build(data)
-        predictor.session = self.session
-        predictor.post_build(self.project_id, data)
+        predictor._session = self.session
+        predictor._project_id = self.project_id
         return predictor
 
     def check_for_update(self, predictor_id: UUID) -> Optional[Predictor]:

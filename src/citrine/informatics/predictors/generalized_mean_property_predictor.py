@@ -3,11 +3,9 @@ from warnings import warn
 
 from citrine._serialization import properties as _properties
 from citrine._serialization.serializable import Serializable
-from citrine._session import Session
 from citrine.informatics.data_sources import DataSource
 from citrine.informatics.descriptors import FormulationDescriptor
 from citrine.informatics.predictors.mean_property_predictor import MeanPropertyPredictor
-from citrine.informatics.reports import Report
 from citrine.informatics.predictors import Predictor
 
 __all__ = ['GeneralizedMeanPropertyPredictor']
@@ -91,8 +89,6 @@ class GeneralizedMeanPropertyPredictor(
                  default_properties: Optional[Mapping[str, float]] = None,
                  label: Optional[str] = None,
                  training_data: Optional[List[DataSource]] = None,
-                 session: Optional[Session] = None,
-                 report: Optional[Report] = None,
                  archived: bool = False):
         warn("{this_class} is deprecated. Please use {replacement} instead"
              .format(this_class=self.__class__.__name__,
@@ -114,8 +110,6 @@ class GeneralizedMeanPropertyPredictor(
         self.impute_properties: bool = impute_properties
         self.default_properties: Optional[Mapping[str, float]] = default_properties
         self.label: Optional[str] = label
-        self.session: Optional[Session] = session
-        self.report: Optional[Report] = report
         self.archived: bool = archived
 
     def _post_dump(self, data: dict) -> dict:

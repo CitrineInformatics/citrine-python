@@ -1,11 +1,9 @@
-from typing import Set, Optional, Mapping
+from typing import Set, Mapping
 from warnings import warn
 
 from citrine._serialization import properties as _properties
 from citrine._serialization.serializable import Serializable
-from citrine._session import Session
 from citrine.informatics.descriptors import FormulationDescriptor, RealDescriptor
-from citrine.informatics.reports import Report
 from citrine.informatics.predictors import Predictor
 
 __all__ = ['IngredientsToSimpleMixturePredictor']
@@ -49,8 +47,6 @@ class IngredientsToSimpleMixturePredictor(
                  output: FormulationDescriptor,
                  id_to_quantity: Mapping[str, RealDescriptor],
                  labels: Mapping[str, Set[str]],
-                 session: Optional[Session] = None,
-                 report: Optional[Report] = None,
                  archived: bool = False):
         self.name: str = name
         self.description: str = description
@@ -67,8 +63,6 @@ class IngredientsToSimpleMixturePredictor(
             else:
                 _labels[label] = ingredients
         self.labels: Mapping[str, Set[str]] = _labels
-        self.session: Optional[Session] = session
-        self.report: Optional[Report] = report
         self.archived: bool = archived
 
     def _post_dump(self, data: dict) -> dict:
