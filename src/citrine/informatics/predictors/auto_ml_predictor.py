@@ -1,7 +1,7 @@
 from typing import List, Optional
 
+from citrine._rest.resource import Resource
 from citrine._serialization import properties as _properties
-from citrine._serialization.serializable import Serializable
 from citrine._session import Session
 from citrine.informatics.data_sources import DataSource
 from citrine.informatics.descriptors import Descriptor
@@ -11,7 +11,7 @@ from citrine.informatics.predictors import Predictor
 __all__ = ['AutoMLPredictor']
 
 
-class AutoMLPredictor(Serializable['AutoMLPredictor'], Predictor):
+class AutoMLPredictor(Resource['AutoMLPredictor'], Predictor):
     """[ALPHA] A predictor interface that builds a single ML model.
 
     The model uses the set of inputs to predict the output.

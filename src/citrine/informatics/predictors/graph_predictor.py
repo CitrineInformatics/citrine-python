@@ -1,8 +1,8 @@
 from typing import List, Optional, Union
 from uuid import UUID
 
+from citrine._rest.resource import Resource
 from citrine._serialization import properties as _properties
-from citrine._serialization.serializable import Serializable
 from citrine._session import Session
 from citrine.informatics.data_sources import DataSource
 from citrine.informatics.reports import Report
@@ -11,7 +11,7 @@ from citrine.informatics.predictors import Predictor
 __all__ = ['GraphPredictor']
 
 
-class GraphPredictor(Serializable['GraphPredictor'], Predictor):
+class GraphPredictor(Resource['GraphPredictor'], Predictor):
     """A predictor interface that stitches other predictors together.
 
     Parameters

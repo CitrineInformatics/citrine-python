@@ -1,8 +1,8 @@
 from typing import List, Optional, Mapping
 from warnings import warn
 
+from citrine._rest.resource import Resource
 from citrine._serialization import properties as _properties
-from citrine._serialization.serializable import Serializable
 from citrine._session import Session
 from citrine.informatics.data_sources import DataSource
 from citrine.informatics.descriptors import FormulationDescriptor
@@ -14,7 +14,7 @@ __all__ = ['GeneralizedMeanPropertyPredictor']
 
 
 class GeneralizedMeanPropertyPredictor(
-        Serializable['GeneralizedMeanPropertyPredictor'], Predictor):
+        Resource['GeneralizedMeanPropertyPredictor'], Predictor):
     """[DEPRECATED] A predictor interface that computes generalized mean component properties.
 
     This predictor is deprecated. Please use the

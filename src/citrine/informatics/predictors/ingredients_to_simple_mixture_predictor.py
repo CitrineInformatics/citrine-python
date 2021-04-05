@@ -1,8 +1,8 @@
 from typing import Set, Optional, Mapping
 from warnings import warn
 
+from citrine._rest.resource import Resource
 from citrine._serialization import properties as _properties
-from citrine._serialization.serializable import Serializable
 from citrine._session import Session
 from citrine.informatics.descriptors import FormulationDescriptor, RealDescriptor
 from citrine.informatics.reports import Report
@@ -12,7 +12,7 @@ __all__ = ['IngredientsToSimpleMixturePredictor']
 
 
 class IngredientsToSimpleMixturePredictor(
-        Serializable['IngredientsToSimpleMixturePredictor'], Predictor):
+        Resource['IngredientsToSimpleMixturePredictor'], Predictor):
     """[ALPHA] A predictor interface that constructs a simple mixture from ingredient quantities.
 
     Parameters
