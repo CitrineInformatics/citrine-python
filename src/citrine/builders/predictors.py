@@ -1,0 +1,123 @@
+from typing import Tuple, List, Union
+
+from citrine.resources.project import Project
+from citrine.informatics.predictors import (
+    Predictor,
+    MolecularStructureFeaturizer,
+    MeanPropertyPredictor
+)
+from citrine.informatics.descriptors import Descriptor, FormulationDescriptor, RealDescriptor
+
+def mean_feature_properties(
+        *,
+        project: Project,
+        featurizer: MolecularStructureFeaturizer,
+        formulation_descriptor: FormulationDescriptor,
+        p: int,
+        impute_properties: bool = True,
+        all_ingredients: bool = True,
+        labels: Optional[List[str]] = None
+) -> Tuple[List[MeanPropertyPredictor], List[Descriptor]]:
+    """[ALPHA] Combine a featurizer model with mean property models.
+
+    Given a featurizer, produce "mean property" models that calculate the mean of the
+    properties calculated by the featurizer. This is useful if you do not directly know
+    the numerical properties of ingredients in a formulation, but instead know, for example,
+    the molecular structure. This builder method determines the real-valued properties that the
+    featurizer calculates and builds mean property models that use them as input properties.
+
+    Parameters
+    ----------
+    project: Project
+        Project that contains the predictor
+    featurizer: MolecularStructureFeaturizer
+        Any model that should be used to featurize formulation ingredients.
+        TODO: add chemical formula featurizer once it is exposed
+    formulation_descriptor: FormulationDescriptor
+        Descriptor that represents the formulation being featurized.
+    p: int
+        Power of the generalized mean. Only integer powers are supported.
+    impute_properties: bool
+        Whether to impute missing ingredient properties by averaging over the entire dataset.
+        If ``False`` an error is thrown if any ingredient being featurized is missing a property.
+    all_ingredients: bool
+        Whether to create a MeanPropertyPredictor that predicts over all ingredients.
+    labels: Optional[List[str]]
+        Any labels to create a MeanPropertyPredictor for.
+
+    Returns
+    -------
+    Tuple[List[MeanPropertyPredictor], List[Descriptor]]
+        List of mean property predictors that should be incorporated into the graph predictor,
+        and a list of all the output descriptors produced by these models. There will be one
+        model for each label specified, and one model for all ingredients if ``all_ingredients``
+        is set to ``True``. In the common case, the output descriptors will all be used
+        as inputs to an ML model.
+
+    """
+    if isinstance(featurizer, MolecularStructureFeaturizer):
+        input_descriptor = featurizer.descriptor
+    else:
+        raise TypeError(f"Featurizer of type {type(featurizer)} is not supported.")
+
+    if labels is None:
+        labels = []
+    if all_ingredients:
+        labels = [None] + labels
+    if not isinstance(labels, list) or len(labels) == 0:
+        msg = "Ingredient properties must be calculated over all ingredients or specified labels."
+        raise ValueError(msg)
+
+    properties = project.descriptors.from_predictor_responses(featurizer, [input_descriptor])
+    real_properties = [desc for desc in properties if isinstance(desc, RealDescriptor)]
+    if len(real_properties) == 0:
+        raise RuntimeError("")
+
+    predictors = [
+        _build_mean_property_predictor(
+            ingredient_descriptor=input_descriptor,
+            formulation_descriptor=formulation_descriptor,
+            properties=real_properties,
+            p=p,
+            impute_properties=impute_properties,
+            label=label
+        )
+        for label in labels
+    ]
+
+    outputs = [
+        output
+        for output in project.descriptors.from_predictor_responses(
+            predictor,
+            [formulation_descriptor]
+        )
+        for predictor in predictors
+    ]
+
+    return predictors, output
+
+
+def _build_mean_property_predictor(
+        ingredient_descriptor: Descriptor,
+        formulation_descriptor: FormulationDescriptor,
+        properties: List[RealDescriptor],
+        p: int,
+        impute_properties: bool,
+        label: Optional[str]
+) -> MeanPropertyPredictor:
+    name = f"mean of {ingredient_descriptor.key} features"
+    if p != 1:
+        name = f"{p}-" + name
+    if label is not None:
+        name = name + f" for label {label}"
+    name = name + f" in {formulation_descriptor.key}"
+
+    return MeanPropertyPredictor(
+        name=name,
+        description="",
+        input_descriptor=formulation_descriptor,
+        properties=properties,
+        p=p,
+        impute_properties=impute_properties,
+        label=label
+    )
