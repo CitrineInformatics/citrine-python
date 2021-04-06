@@ -1,7 +1,7 @@
 from typing import List, Optional
 
+from citrine._rest.resource import Resource
 from citrine._serialization import properties as _properties
-from citrine._serialization.serializable import Serializable
 from citrine.informatics.data_sources import DataSource
 from citrine.informatics.descriptors import Descriptor
 from citrine.informatics.predictors import Predictor
@@ -9,7 +9,7 @@ from citrine.informatics.predictors import Predictor
 __all__ = ['SimpleMLPredictor']
 
 
-class SimpleMLPredictor(Serializable['SimplePredictor'], Predictor):
+class SimpleMLPredictor(Resource['SimplePredictor'], Predictor):
     """A predictor interface that builds a simple graphical model.
 
     The model connects the set of inputs through latent variables to the outputs.
@@ -30,10 +30,10 @@ class SimpleMLPredictor(Serializable['SimplePredictor'], Predictor):
         Descriptors that are predicted from inputs and used when predicting the outputs
     training_data: Optional[List[DataSource]]
         Sources of training data. Each can be either a CSV or an GEM Table. Candidates from
-        multiple data sources will be combined into a flattened list and deduplicated by uid and
-        identifiers. Deduplication is performed if a uid or identifier is shared between two or
-        more rows. The content of a deduplicated row will contain the union of data across all rows
-        that share the same uid or at least 1 identifier. Training data is unnecessary if the
+        multiple data sources will be combined into a flattened list and de-duplicated by uid and
+        identifiers. de-duplication is performed if a uid or identifier is shared between two or
+        more rows. The content of a de-duplicated row will contain the union of data across all
+        rows that share the same uid or at least 1 identifier. Training data is unnecessary if the
         predictor is part of a graph that includes all training data required by this predictor.
 
     """

@@ -598,7 +598,7 @@ class Object(Property[typing.Any, dict]):
                          override)
         self.klass = klass
         # We need to use __dict__ here because other access methods will invoke __get__
-        # Start with the fields from the parent classes, overwritting with any newer classes
+        # Start with the fields from the parent classes, overwriting with any newer classes
         self.fields = {k: v
                        for x in self.klass.__bases__
                        for k, v in x.__dict__.items() if isinstance(v, Property)}

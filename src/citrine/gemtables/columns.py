@@ -182,8 +182,7 @@ class OriginalUnitsColumn(Serializable["OriginalUnitsColumn"], Column):
     def _attrs(self) -> List[str]:
         return ["data_source", "typ"]
 
-    def __init__(self, *,
-                 data_source: str):
+    def __init__(self, *, data_source: str):
         self.data_source = data_source
 
 
@@ -203,8 +202,7 @@ class MostLikelyCategoryColumn(Serializable["MostLikelyCategoryColumn"], Column)
     def _attrs(self) -> List[str]:
         return ["data_source", "typ"]
 
-    def __init__(self, *,
-                 data_source: str):
+    def __init__(self, *, data_source: str):
         self.data_source = data_source
 
 
@@ -224,8 +222,7 @@ class MostLikelyProbabilityColumn(Serializable["MostLikelyProbabilityColumn"], C
     def _attrs(self) -> List[str]:
         return ["data_source", "typ"]
 
-    def __init__(self, *,
-                 data_source: str):
+    def __init__(self, *, data_source: str):
         self.data_source = data_source
 
 
@@ -295,7 +292,7 @@ class ComponentQuantityColumn(Serializable["ComponentQuantityColumn"], Column):
 class NthBiggestComponentNameColumn(Serializable["NthBiggestComponentNameColumn"], Column):
     """[ALPHA] Name of the Nth biggest component.
 
-    If there are not N components in the composition, then this column will be empty.
+    If there are fewer than N components in the composition, then this column will be empty.
 
     Parameters
     ----------
@@ -323,7 +320,7 @@ class NthBiggestComponentNameColumn(Serializable["NthBiggestComponentNameColumn"
 class NthBiggestComponentQuantityColumn(Serializable["NthBiggestComponentQuantityColumn"], Column):
     """[ALPHA] Quantity of the Nth biggest component.
 
-    If there are not N components in the composition, then this column will be empty.
+    If there are fewer than N components in the composition, then this column will be empty.
 
     Parameters
     ----------
@@ -370,8 +367,7 @@ class IdentityColumn(Serializable['IdentityColumn'], Column):
     def _attrs(self) -> List[str]:
         return ["data_source", "typ"]
 
-    def __init__(self, *,
-                 data_source: str):
+    def __init__(self, *, data_source: str):
         self.data_source = data_source
 
 

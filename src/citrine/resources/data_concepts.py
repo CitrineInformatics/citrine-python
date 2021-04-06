@@ -130,7 +130,7 @@ class DataConcepts(PolymorphicSerializable['DataConcepts'], DictSerializable, AB
         data: dict
             A representation of the object. It must be possible to put this dictionary through
             the loads/dumps cycle of the GMED
-            :py:mod:`JSON encoder <gemd.jsonr>`. The ensuing dictionary must
+            :py:mod:`JSON encoder <gemd.json>`. The ensuing dictionary must
             have a `type` field that corresponds to the response key of this class or of
             :py:class:`LinkByUID <gemd.entity.link_by_uid.LinkByUID>`.
 
@@ -529,7 +529,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
             A list of strings, each one a tag that an object can match. Currently
             limited to a length of 1 or 0 (empty list does not filter).
         page: Optional[int]
-            The page of results to list, 1-indexed (i.e. the first page is page=1)
+            The page of results to list, 1-indexed (i.e., the first page is page=1)
         per_page: Optional[int]
             The number of results to list per page
 
@@ -572,7 +572,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
             Set to True to change prefix search to exact search (but still case-insensitive).
             Default is False.
         page: Optional[int]
-            The page of results to list, 1-indexed (i.e. the first page is page=1)
+            The page of results to list, 1-indexed (i.e., the first page is page=1)
         per_page: Optional[int]
             The number of results to list per page
 
@@ -608,7 +608,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
             Set to True to change prefix search to exact search (but still case-insensitive).
             Default is False.
         forward: bool
-            Set to False to reverse the order of results (i.e. return in descending order).
+            Set to False to reverse the order of results (i.e., return in descending order).
         per_page: int
             Controls the number of results fetched with each http request to the backend.
             Typically, this is set to a sensible default and should not be modified. Consider
@@ -642,7 +642,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         Parameters
         ----------
         forward: bool
-            Set to False to reverse the order of results (i.e. return in descending order).
+            Set to False to reverse the order of results (i.e., return in descending order).
         per_page: int
             Controls the number of results fetched with each http request to the backend.
             Typically, this is set to a sensible default and should not be modified. Consider
@@ -669,11 +669,11 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         """
         Get all objects bearing a tag prefixed with `tag` in the collection.
 
-        The order of results is largely unmeaningul. Results from the same dataset will be
+        The order of results is largely not meaningful. Results from the same dataset will be
         grouped together but no other meaningful ordering can be relied upon. Duplication in
         the result set may (but needn't) occur when one object has multiple tags matching the
         search tag. For this reason, it is inadvisable to put 2 tags with the same prefix
-        (e.g. 'foo::bar' and 'foo::baz') the same object when it can be avoided.
+        (e.g., 'foo::bar' and 'foo::baz') in the same object when it can be avoided.
 
         Parameters
         ----------
@@ -729,10 +729,10 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         Parameters
         ----------
         relation
-            Reflects the type of the object with the provided uid and scope, e.g.
+            Reflects the type of the object with the provided uid and scope, e.g.,
             'process-templates' if searching for process specs by process template.
         uid
-            The unique ID of the object upon which this search is based, e.g. an
+            The unique ID of the object upon which this search is based, e.g., an
             External or Citrine ID of a process template whose process spec usages
             are being located.
         scope

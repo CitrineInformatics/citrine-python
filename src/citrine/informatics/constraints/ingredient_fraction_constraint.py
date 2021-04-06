@@ -24,9 +24,9 @@ class IngredientFractionConstraint(Serializable['IngredientFractionConstraint'],
         maximum ingredient value
     is_required: bool, optional
         whether this ingredient is required.
-        If ``True`` the ingredient must be present and its value must be within the
-        specified range. if ``False`` the ingredient must be within the specified range
-        if it's present in a formulation, i.e. the value can be 0 or on the range ``[min, max]``.
+        If ``True``, the ingredient must be present and its value must be within the
+        specified range. if ``False``, the ingredient must be within the specified range only if
+        it's present in the formulation, i.e., the value can be 0 or on the range ``[min, max]``.
 
     """
 

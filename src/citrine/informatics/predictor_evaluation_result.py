@@ -66,7 +66,7 @@ class PredictedVsActualRealPoint(Serializable["PredictedVsActualRealPoint"]):
     uuid: UUID
         Unique Citrine id given to the candidate
     identifiers: Set[str]
-        Set of globally unique identfiers given to the candidate
+        Set of globally unique identifiers given to the candidate
     trial: int
         1-based index of the trial this candidate belonged to
     fold: int
@@ -97,7 +97,7 @@ class PredictedVsActualCategoricalPoint(Serializable["PredictedVsActualCategoric
     uuid: UUID
         Unique Citrine id given to the candidate
     identifiers: Set[str]
-        Set of globally unique identfiers given to the candidate
+        Set of globally unique identifiers given to the candidate
     trial: int
         1-based index of the trial this candidate belonged to
     fold: int
