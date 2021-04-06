@@ -1,12 +1,12 @@
-from typing import Tuple, List, Union, Optional
+from typing import Tuple, List, Optional
 
 from citrine.resources.project import Project
 from citrine.informatics.predictors import (
-    Predictor,
     MolecularStructureFeaturizer,
     MeanPropertyPredictor
 )
 from citrine.informatics.descriptors import Descriptor, FormulationDescriptor, RealDescriptor
+
 
 def mean_feature_properties(
         *,
