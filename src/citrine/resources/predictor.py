@@ -85,7 +85,7 @@ class PredictorCollection(Collection[Predictor]):
 
         """
         if pattern not in {"FORMULATION", "PLAIN"}:
-            msg = "Expected pattern: {}.  Expected 'FORMULATION' or 'PLAIN'.".format(pattern)
+            msg = "Called with pattern: {}.  Expected 'FORMULATION' or 'PLAIN'.".format(pattern)
             raise ValueError(msg)
         path = f'projects/{self.project_id}/predictors/default-predictor'
         body = {"data_source": training_data.dump(), "pattern": pattern}
