@@ -1,4 +1,4 @@
-from typing import Tuple, List, Union
+from typing import Tuple, List, Union, Optional
 
 from citrine.resources.project import Project
 from citrine.informatics.predictors import (
@@ -85,16 +85,16 @@ def mean_feature_properties(
         for label in labels
     ]
 
-    outputs = [
+    all_outputs = [
         output
-        for output in project.descriptors.from_predictor_responses(
-            predictor,
-            [formulation_descriptor]
-        )
-        for predictor in predictors
+        for single_model_outputs in [
+            project.descriptors.from_predictor_responses(predictor, [formulation_descriptor])
+            for predictor in predictors
+        ]
+        for output in single_model_outputs
     ]
 
-    return predictors, output
+    return predictors, all_outputs
 
 
 def _build_mean_property_predictor(
