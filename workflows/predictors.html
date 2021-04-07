@@ -3,8 +3,9 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
-    <title>4.4. Predictors &#8212; Citrine Python 0.109.0 documentation</title>
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+    <title>4.4. Predictors &#8212; Citrine Python 0.115.0 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -34,12 +35,12 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="predictors">
+  <section id="predictors">
 <span id="id1"></span><h1>4.4. Predictors<a class="headerlink" href="#predictors" title="Permalink to this headline">¶</a></h1>
 <p>A predictor computes or predicts properties of materials.
 The type of predictor defines how a property prediction is made.
 Predictors must be registered to a project to be used in a <a class="reference internal" href="design_workflows.html"><span class="doc">design workflow</span></a>.</p>
-<div class="section" id="auto-ml-predictor-alpha">
+<section id="auto-ml-predictor-alpha">
 <h2>4.4.1. Auto ML predictor (ALPHA)<a class="headerlink" href="#auto-ml-predictor-alpha" title="Permalink to this headline">¶</a></h2>
 <p>The <a class="reference internal" href="../reference/citrine.informatics.predictors.auto_ml_predictor.html#citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor" title="citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">AutoMLPredictor</span></code></a> predicts material properties using a machine-learned model.
 AutoMLPredictors allow you to use your domain knowledge to construct custom <a class="reference external" href="#graph-predictor">GraphPredictors</a> with fine grain control over the resulting graph.
@@ -67,8 +68,8 @@ Unlike the <a class="reference external" href="#simple-ml-predictor">SimpleMLPre
                             <span class="p">)</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="graph-predictor">
+</section>
+<section id="graph-predictor">
 <h2>4.4.2. Graph predictor<a class="headerlink" href="#graph-predictor" title="Permalink to this headline">¶</a></h2>
 <p>The <a class="reference internal" href="../reference/citrine.informatics.predictors.graph_predictor.html#citrine.informatics.predictors.graph_predictor.GraphPredictor" title="citrine.informatics.predictors.graph_predictor.GraphPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">GraphPredictor</span></code></a> stitches together multiple other predictors into a
 directed bipartite graph, where every model node is connected to an arbitrary number of input descriptors and exactly
@@ -96,8 +97,8 @@ one output descriptor.</p>
 </pre></div>
 </div>
 <p>For a more complete example of graph predictor usage, see <a class="reference internal" href="code_examples.html#graph-predictor-example"><span class="std std-ref">AI Engine Code Examples</span></a>.</p>
-</div>
-<div class="section" id="expression-predictor">
+</section>
+<section id="expression-predictor">
 <h2>4.4.3. Expression predictor<a class="headerlink" href="#expression-predictor" title="Permalink to this headline">¶</a></h2>
 <p>The <a class="reference internal" href="../reference/citrine.informatics.predictors.expression_predictor.html#citrine.informatics.predictors.expression_predictor.ExpressionPredictor" title="citrine.informatics.predictors.expression_predictor.ExpressionPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExpressionPredictor</span></code></a> defines an analytic (lossless) model that computes one real-valued output descriptor from one or more input descriptors.
 An <a class="reference internal" href="../reference/citrine.informatics.predictors.expression_predictor.html#citrine.informatics.predictors.expression_predictor.ExpressionPredictor" title="citrine.informatics.predictors.expression_predictor.ExpressionPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExpressionPredictor</span></code></a> should be used when the relationship between inputs and outputs is known.</p>
@@ -147,8 +148,8 @@ Citrine-python currently supports the following operators and functions:</p>
 </pre></div>
 </div>
 <p>For an example of expression predictors used in a graph predictor, see <a class="reference internal" href="code_examples.html#graph-predictor-example"><span class="std std-ref">AI Engine Code Examples</span></a>.</p>
-</div>
-<div class="section" id="ingredients-to-simple-mixture-predictor-alpha">
+</section>
+<section id="ingredients-to-simple-mixture-predictor-alpha">
 <h2>4.4.4. Ingredients to simple mixture predictor (ALPHA)<a class="headerlink" href="#ingredients-to-simple-mixture-predictor-alpha" title="Permalink to this headline">¶</a></h2>
 <p>The <a class="reference internal" href="../reference/citrine.informatics.predictors.ingredients_to_simple_mixture_predictor.html#citrine.informatics.predictors.ingredients_to_simple_mixture_predictor.IngredientsToSimpleMixturePredictor" title="citrine.informatics.predictors.ingredients_to_simple_mixture_predictor.IngredientsToSimpleMixturePredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientsToSimpleMixturePredictor</span></code></a> constructs a simple mixture from a list of ingredients.
 This predictor is only required to construct simple mixtures from CSV data sources.
@@ -260,8 +261,8 @@ These labels are specified via:</p>
 <span class="p">)</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="simple-mixture-predictor-alpha">
+</section>
+<section id="simple-mixture-predictor-alpha">
 <h2>4.4.5. Simple mixture predictor (ALPHA)<a class="headerlink" href="#simple-mixture-predictor-alpha" title="Permalink to this headline">¶</a></h2>
 <p>Simple mixtures may contain ingredients that are blends of other simple mixtures.
 Along the lines of the example above, hypertonic saline can be mixed with water to form isotonic saline.
@@ -289,8 +290,8 @@ The <code class="docutils literal notranslate"><span class="pre">training_data</
 <span class="p">)</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="mean-property-predictor-alpha">
+</section>
+<section id="mean-property-predictor-alpha">
 <h2>4.4.6. Mean property predictor (ALPHA)<a class="headerlink" href="#mean-property-predictor-alpha" title="Permalink to this headline">¶</a></h2>
 <p>Often, properties of a mixture are proportional to the properties of it’s ingredients.
 For example, the density of a saline solution can be computed from the densities of water and salt multiplied by their respective amounts:</p>
@@ -387,8 +388,8 @@ If a value other than 1.58 should be used, e.g. 2.0, this can be specified by se
 </pre></div>
 </div>
 <p>If <code class="docutils literal notranslate"><span class="pre">p</span></code> is given a value other than <code class="docutils literal notranslate"><span class="pre">1</span></code>, that value will be included in the key for the feature, e.g. <code class="docutils literal notranslate"><span class="pre">2.0-mean</span> <span class="pre">of</span> <span class="pre">property</span> <span class="pre">viscosity</span></code>.</p>
-</div>
-<div class="section" id="ingredient-fractions-predictor-alpha">
+</section>
+<section id="ingredient-fractions-predictor-alpha">
 <h2>4.4.7. Ingredient fractions predictor (ALPHA)<a class="headerlink" href="#ingredient-fractions-predictor-alpha" title="Permalink to this headline">¶</a></h2>
 <p>The <a class="reference internal" href="../reference/citrine.informatics.predictors.ingredient_fractions_predictor.html#citrine.informatics.predictors.ingredient_fractions_predictor.IngredientFractionsPredictor" title="citrine.informatics.predictors.ingredient_fractions_predictor.IngredientFractionsPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientFractionsPredictor</span></code></a> featurizes ingredient fractions in a simple mixture.
 The predictor is configured by specifying a descriptor that contains simple mixture data and a list of known ingredients to featurize.
@@ -425,8 +426,8 @@ this predictor would compute outputs:</p>
 </pre></div>
 </div>
 <p>This will return a real descriptor for each featurized ingredient with bounds <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1]</span></code> and key in the form <code class="docutils literal notranslate"><span class="pre">'{ingredient}</span> <span class="pre">share</span> <span class="pre">in</span> <span class="pre">simple</span> <span class="pre">mixture'</span></code> where <code class="docutils literal notranslate"><span class="pre">{ingredient}</span></code> is either <code class="docutils literal notranslate"><span class="pre">water</span></code>, <code class="docutils literal notranslate"><span class="pre">salt</span></code> or <code class="docutils literal notranslate"><span class="pre">boric</span> <span class="pre">acid</span></code>.</p>
-</div>
-<div class="section" id="label-fractions-predictor-alpha">
+</section>
+<section id="label-fractions-predictor-alpha">
 <h2>4.4.8. Label fractions predictor (ALPHA)<a class="headerlink" href="#label-fractions-predictor-alpha" title="Permalink to this headline">¶</a></h2>
 <p>The <a class="reference internal" href="../reference/citrine.informatics.predictors.label_fractions_predictor.html#citrine.informatics.predictors.label_fractions_predictor.LabelFractionsPredictor" title="citrine.informatics.predictors.label_fractions_predictor.LabelFractionsPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">LabelFractionsPredictor</span></code></a> computes total fraction of ingredients with a given label.
 The predictor is configured by specifying a formulation descriptor that holds simple mixture data (i.e. recipes and ingredient labels) and a set of labels to featurize.
@@ -451,8 +452,8 @@ A separate response is computed for each featurized label by summing all quantit
 <span class="p">)</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="simple-ml-predictor">
+</section>
+<section id="simple-ml-predictor">
 <h2>4.4.9. Simple ML predictor<a class="headerlink" href="#simple-ml-predictor" title="Permalink to this headline">¶</a></h2>
 <p>The <a class="reference internal" href="../reference/citrine.informatics.predictors.simple_ml_predictor.html#citrine.informatics.predictors.simple_ml_predictor.SimpleMLPredictor" title="citrine.informatics.predictors.simple_ml_predictor.SimpleMLPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleMLPredictor</span></code></a> predicts material properties using a machine-learned model.
 Each predictor is defined by a set of inputs, outputs and latent variables.
@@ -552,14 +553,14 @@ Instead of entering these manually, outputs from a predictor can be retrieved pr
 <span class="p">)</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="predictor-reports">
+</section>
+<section id="predictor-reports">
 <h2>4.4.10. Predictor reports<a class="headerlink" href="#predictor-reports" title="Permalink to this headline">¶</a></h2>
 <p>A <a class="reference internal" href="predictor_reports.html"><span class="doc">predictor report</span></a> describes a machine-learned model, for example its settings and what features are important to the model.
 It does not include predictor evaluation metrics.
 To learn more about predictor evaluation metrics, please see <a class="reference internal" href="predictor_evaluation_workflows.html"><span class="doc">PredictorEvaluationWorkflow</span></a>.</p>
-</div>
-<div class="section" id="training-data">
+</section>
+<section id="training-data">
 <h2>4.4.11. Training data<a class="headerlink" href="#training-data" title="Permalink to this headline">¶</a></h2>
 <p>Training data are defined by a list of <a class="reference internal" href="data_sources.html"><span class="doc">data sources</span></a>.
 When multiple data sources are specified, data from all sources is combined into a flattened list and deduplicated prior to training a predictor.
@@ -576,8 +577,8 @@ Because training data are shared by all predictors in the graph, a data source d
 If all data sources required train a predictor are specified elsewhere in the graph, the <code class="docutils literal notranslate"><span class="pre">training_data</span></code> parameter may be omitted.
 If the graph contains a predictor that requires formulations data, e.g. a <a class="reference internal" href="../reference/citrine.informatics.predictors.simple_mixture_predictor.html#citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor" title="citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleMixturePredictor</span></code></a> or <a class="reference internal" href="../reference/citrine.informatics.predictors.mean_property_predictor.html#citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor" title="citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">MeanPropertyPredictor</span></code></a>, any GEM Tables specified by the graph predictor that contain formulation data must provide a formulation descriptor,
 and this descriptor must match the input formulation descriptor of the sub-predictors that require these data.</p>
-</div>
-</div>
+</section>
+</section>
 
 
           </div>

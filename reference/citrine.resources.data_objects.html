@@ -3,8 +3,9 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
-    <title>citrine.resources.data_objects module &#8212; Citrine Python 0.109.0 documentation</title>
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+    <title>citrine.resources.data_objects module &#8212; Citrine Python 0.115.0 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -32,9 +33,9 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="module-citrine.resources.data_objects">
+  <section id="module-citrine.resources.data_objects">
 <span id="citrine-resources-data-objects-module"></span><h1>citrine.resources.data_objects module<a class="headerlink" href="#module-citrine.resources.data_objects" title="Permalink to this headline">¶</a></h1>
-<p>Top-level class for all data object (i.e. spec and run) objects and collections thereof.</p>
+<p>Top-level class for all data object (i.e., spec and run) objects and collections thereof.</p>
 <dl class="class">
 <dt id="citrine.resources.data_objects.DataObject">
 <em class="property">class </em><code class="sig-prename descclassname">citrine.resources.data_objects.</code><code class="sig-name descname">DataObject</code><span class="sig-paren">(</span><em class="sig-param">typ: str</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.data_objects.DataObject" title="Permalink to this definition">¶</a></dt>
@@ -64,7 +65,7 @@ but in either case there must be a uid and it must correspond to an
 AttributeTemplate that exists in the database.
 Only the uid is passed, so if you would like to update an attribute template you
 must register that change to the database before you can use it to filter.</p></li>
-<li><p><strong>page</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>) – The page of results to list, 1-indexed (i.e. the first page is page=1)</p></li>
+<li><p><strong>page</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>) – The page of results to list, 1-indexed (i.e., the first page is page=1)</p></li>
 <li><p><strong>per_page</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>) – The number of results to list per page</p></li>
 </ul>
 </dd>
@@ -96,7 +97,7 @@ but in either case there must be a uid and it must correspond to an
 AttributeTemplate that exists in the database.
 Only the uid is passed, so if you would like to update an attribute template you
 must register that change to the database before you can use it to filter.</p></li>
-<li><p><strong>forward</strong> (<em>bool</em>) – Set to False to reverse the order of results (i.e. return in descending order).</p></li>
+<li><p><strong>forward</strong> (<em>bool</em>) – Set to False to reverse the order of results (i.e., return in descending order).</p></li>
 <li><p><strong>per_page</strong> (<em>int</em>) – Controls the number of results fetched with each http request to the backend.
 Typically, this is set to a sensible default and should not be modified. Consider
 modifying this value only if you find this method is unacceptably latent.</p></li>
@@ -134,7 +135,7 @@ against. Ignored unless data object is an IngredientSpec or IngredientRun.</p></
 
 </dd></dl>
 
-</div>
+</section>
 
 
           </div>

@@ -3,8 +3,9 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
-    <title>1.4. Projects &#8212; Citrine Python 0.109.0 documentation</title>
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+    <title>1.4. Projects &#8212; Citrine Python 0.115.0 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -34,7 +35,7 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="projects">
+  <section id="projects">
 <h1>1.4. Projects<a class="headerlink" href="#projects" title="Permalink to this headline">¶</a></h1>
 <p>A Project is the basic unit of collaboration and access on the Citrine platform.
 They are containers for other resources, such as Datasets and modules.
@@ -45,7 +46,7 @@ A user who is a member of a Project has access to all of the Datasets and AI Mod
 This means that the same user can have different permissions on a resource depending on which Project they are using to access it.
 For example, imagine that a Dataset is owned by Project A and shared with Project B, but Project B only has read, not write, permissions.
 Then a user who is a member of both Projects would be able to add new data if accessing it through Project A, but not if accessing it through Project B.</p>
-<div class="section" id="basic-project-use">
+<section id="basic-project-use">
 <h2>1.4.1. Basic Project Use<a class="headerlink" href="#basic-project-use" title="Permalink to this headline">¶</a></h2>
 <p>Most commonly, the first thing you will want to do after connecting to the Citrine Platform is to find a certain project.
 Assume that you have created a <a class="reference internal" href="../reference/citrine.citrine.html#citrine.citrine.Citrine" title="citrine.citrine.Citrine"><code class="xref py py-class docutils literal notranslate"><span class="pre">Citrine</span></code></a> client object named <code class="docutils literal notranslate"><span class="pre">citrine</span></code>.
@@ -64,8 +65,8 @@ To list all of the projects that you are a member of, use the <code class="docut
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">project</span> <span class="o">=</span> <span class="n">citrine</span><span class="o">.</span><span class="n">projects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;baaa467e-1758-43a8-97c7-76e569d0dcab&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="managing-users">
+</section>
+<section id="managing-users">
 <h2>1.4.2. Managing Users<a class="headerlink" href="#managing-users" title="Permalink to this headline">¶</a></h2>
 <p>There are two types of roles users can have, MEMBER and ADMIN.
 There are two types of access permissions: READ and WRITE.
@@ -73,7 +74,7 @@ READ allows a user to view resources in a project.
 WRITE allows them to modify those resources.
 Users with the ADMIN role have both READ and WRITE access, and can also add or remove other users and change their roles and permissions.</p>
 <p>There are several methods for managing Projects, Users, and user membership in Projects.</p>
-<div class="section" id="listing-users-in-a-project">
+<section id="listing-users-in-a-project">
 <h3>1.4.2.1. Listing Users in a Project<a class="headerlink" href="#listing-users-in-a-project" title="Permalink to this headline">¶</a></h3>
 <p>Users in a Project can be listed using the <a class="reference internal" href="../reference/citrine.resources.project.html#citrine.resources.project.Project.list_members" title="citrine.resources.project.Project.list_members"><code class="xref py py-func docutils literal notranslate"><span class="pre">list_members()</span></code></a> method.
 The <code class="docutils literal notranslate"><span class="pre">ProjectMember</span></code> array returned from this method has the user’s role in the project as well as a copy of the User and Project objects.</p>
@@ -86,8 +87,8 @@ The <code class="docutils literal notranslate"><span class="pre">ProjectMember</
 <span class="p">[(</span><span class="n">m</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">screen_name</span><span class="p">,</span> <span class="n">m</span><span class="o">.</span><span class="n">role</span><span class="p">)</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">project_members</span><span class="p">]</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="add-user-to-a-project">
+</section>
+<section id="add-user-to-a-project">
 <h3>1.4.2.2. Add User to a Project<a class="headerlink" href="#add-user-to-a-project" title="Permalink to this headline">¶</a></h3>
 <p>Users can be added to a Project. They will be granted READ access to resources in the Project and will be given the
 role MEMBER. This is accomplished with the <a class="reference internal" href="../reference/citrine.resources.project.html#citrine.resources.project.Project.add_user" title="citrine.resources.project.Project.add_user"><code class="xref py py-func docutils literal notranslate"><span class="pre">add_user()</span></code></a> method.</p>
@@ -99,8 +100,8 @@ role MEMBER. This is accomplished with the <a class="reference internal" href=".
 <span class="n">project</span><span class="o">.</span><span class="n">add_user</span><span class="p">(</span><span class="n">user_id</span><span class="p">)</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="remove-user-from-a-project">
+</section>
+<section id="remove-user-from-a-project">
 <h3>1.4.2.3. Remove User from a Project<a class="headerlink" href="#remove-user-from-a-project" title="Permalink to this headline">¶</a></h3>
 <p>Users can also be removed from a Project. This is achieved with the
 <a class="reference internal" href="../reference/citrine.resources.project.html#citrine.resources.project.Project.remove_user" title="citrine.resources.project.Project.remove_user"><code class="xref py py-func docutils literal notranslate"><span class="pre">remove_user()</span></code></a> method.</p>
@@ -112,8 +113,8 @@ role MEMBER. This is accomplished with the <a class="reference internal" href=".
 <span class="n">project</span><span class="o">.</span><span class="n">remove_user</span><span class="p">(</span><span class="n">user_id</span><span class="p">)</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="update-user-s-role-and-actions-in-a-project">
+</section>
+<section id="update-user-s-role-and-actions-in-a-project">
 <h3>1.4.2.4. Update User’s Role and Actions in a Project<a class="headerlink" href="#update-user-s-role-and-actions-in-a-project" title="Permalink to this headline">¶</a></h3>
 <p>A user’s role in a Project can be updated. The method
 <a class="reference internal" href="../reference/citrine.resources.project.html#citrine.resources.project.Project.update_user_role" title="citrine.resources.project.Project.update_user_role"><code class="xref py py-func docutils literal notranslate"><span class="pre">update_user_role()</span></code></a> facilitates changing a User’s role.</p>
@@ -133,9 +134,9 @@ role MEMBER. This is accomplished with the <a class="reference internal" href=".
 <span class="n">project</span><span class="o">.</span><span class="n">update_user_role</span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span> <span class="n">MEMBER</span><span class="p">,</span> <span class="p">[</span><span class="n">WRITE</span><span class="p">])</span>
 </pre></div>
 </div>
-</div>
-</div>
-</div>
+</section>
+</section>
+</section>
 
 
           </div>

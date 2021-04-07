@@ -3,8 +3,9 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
-    <title>1.8. Code Examples &#8212; Citrine Python 0.109.0 documentation</title>
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+    <title>1.8. Code Examples &#8212; Citrine Python 0.115.0 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -34,9 +35,9 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="code-examples">
+  <section id="code-examples">
 <h1>1.8. Code Examples<a class="headerlink" href="#code-examples" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="create-a-session">
+<section id="create-a-session">
 <h2>1.8.1. Create a Session<a class="headerlink" href="#create-a-session" title="Permalink to this headline">¶</a></h2>
 <p>All interaction with the Citrine API begins by creating a Citrine session.
 This session establishes a link to the Citrine platform with your API key.
@@ -51,8 +52,8 @@ Assuming that your Citrine deployment is <code class="docutils literal notransla
 <span class="n">citrine</span> <span class="o">=</span> <span class="n">Citrine</span><span class="p">(</span><span class="n">API_KEY</span><span class="p">,</span> <span class="n">API_SCHEME</span><span class="p">,</span> <span class="n">API_HOST</span><span class="p">,</span> <span class="n">API_PORT</span><span class="p">)</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="create-a-project-and-dataset">
+</section>
+<section id="create-a-project-and-dataset">
 <h2>1.8.2. Create a Project and Dataset<a class="headerlink" href="#create-a-project-and-dataset" title="Permalink to this headline">¶</a></h2>
 <p>One of your first actions might be to create a new project and a dataset, which you and your collaborators can populate.
 The code below creates a project and one dataset associated with it.
@@ -72,8 +73,8 @@ Note that all resources are given descriptive names and summaries.</p>
 <span class="n">Strehlow_Cook_dataset</span> <span class="o">=</span> <span class="n">band_gaps_project</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">Strehlow_Cook_dataset</span><span class="p">)</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="find-an-existing-project-and-dataset">
+</section>
+<section id="find-an-existing-project-and-dataset">
 <h2>1.8.3. Find an existing Project and Dataset<a class="headerlink" href="#find-an-existing-project-and-dataset" title="Permalink to this headline">¶</a></h2>
 <p>Often you will work with existing resources.
 The code below retrieves a project with the name “Copper oxides project” and a datset with a known unique id that is stored as <code class="docutils literal notranslate"><span class="pre">dataset_A_uid</span></code>.
@@ -86,8 +87,8 @@ For more information on retrieving resources, see <a class="reference internal" 
 <span class="n">dataset_A</span> <span class="o">=</span> <span class="n">copper_oxides_project</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="n">dataset_A_uid</span><span class="p">)</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="find-a-template">
+</section>
+<section id="find-a-template">
 <h2>1.8.4. Find a template<a class="headerlink" href="#find-a-template" title="Permalink to this headline">¶</a></h2>
 <p>Templates provide a controlled vocabulary for organizing your data, and should be established before uploading other data.
 Generally you will work with existing templates.
@@ -97,8 +98,8 @@ The example below searches for a process template with the tag “Oven_17” and
 <span class="n">firing_template_17</span> <span class="o">=</span> <span class="n">firing_templates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="create-a-linked-process-material-and-measurement">
+</section>
+<section id="create-a-linked-process-material-and-measurement">
 <h2>1.8.5. Create a linked process, material, and measurement<a class="headerlink" href="#create-a-linked-process-material-and-measurement" title="Permalink to this headline">¶</a></h2>
 <p>Imagine you purchase some toluene, measure its index of refraction, and then use it as an ingredient in a chemical reaction.
 The code below converts those actions into data model objects: the process of purchasing, the material of toluene,
@@ -146,8 +147,8 @@ a parameter template <code class="docutils literal notranslate"><span class="pre
     <span class="n">material</span><span class="o">=</span><span class="n">toluene</span><span class="p">,</span> <span class="n">process</span><span class="o">=</span><span class="n">reation_run</span><span class="p">,</span> <span class="n">absolute_quantity</span><span class="o">=</span><span class="n">NominalReal</span><span class="p">(</span><span class="mi">40</span><span class="p">,</span> <span class="s1">&#39;mL&#39;</span><span class="p">),</span> <span class="n">notes</span><span class="o">=</span><span class="s2">&quot;I poured too much!&quot;</span><span class="p">))</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="getting-a-material-history">
+</section>
+<section id="getting-a-material-history">
 <h2>1.8.6. Getting a material history<a class="headerlink" href="#getting-a-material-history" title="Permalink to this headline">¶</a></h2>
 <p>Continuing the above example, the following code would retrieve the material history for toluene by using its Citrine ID.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">scope</span> <span class="o">=</span> <span class="s1">&#39;id&#39;</span>
@@ -166,8 +167,8 @@ The following statements are true:</p>
 </div>
 <p>Note that the material history does <em>not</em> include a reference to the ingredients derived from
 the material. Traversal “forward in time” is not possible.</p>
-</div>
-</div>
+</section>
+</section>
 
 
           </div>

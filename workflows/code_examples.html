@@ -3,8 +3,9 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
-    <title>4.13. AI Engine Code Examples &#8212; Citrine Python 0.109.0 documentation</title>
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+    <title>4.13. AI Engine Code Examples &#8212; Citrine Python 0.115.0 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -34,9 +35,9 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="ai-engine-code-examples">
+  <section id="ai-engine-code-examples">
 <h1>4.13. AI Engine Code Examples<a class="headerlink" href="#ai-engine-code-examples" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="example-preprocessing-and-postprocessing-in-a-graphpredictor">
+<section id="example-preprocessing-and-postprocessing-in-a-graphpredictor">
 <span id="graph-predictor-example"></span><h2>4.13.1. Example: preprocessing and postprocessing in a GraphPredictor<a class="headerlink" href="#example-preprocessing-and-postprocessing-in-a-graphpredictor" title="Permalink to this headline">¶</a></h2>
 <p>Within a <a class="reference internal" href="../reference/citrine.informatics.predictors.graph_predictor.html#citrine.informatics.predictors.graph_predictor.GraphPredictor" title="citrine.informatics.predictors.graph_predictor.GraphPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">GraphPredictor</span></code></a>, one can use <a class="reference internal" href="../reference/citrine.informatics.predictors.expression_predictor.html#citrine.informatics.predictors.expression_predictor.ExpressionPredictor" title="citrine.informatics.predictors.expression_predictor.ExpressionPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExpressionPredictor</span></code></a> modules to preprocess data before performing machine learning with a <a class="reference internal" href="../reference/citrine.informatics.predictors.simple_ml_predictor.html#citrine.informatics.predictors.simple_ml_predictor.SimpleMLPredictor" title="citrine.informatics.predictors.simple_ml_predictor.SimpleMLPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleMLPredictor</span></code></a>, and to post-process the SimpleMLPredictor’s output.
 This is a very common and powerful use case for graphical modeling.
@@ -139,8 +140,8 @@ This pattern is also extremely useful for performing optimization over complex o
 Nodes with dashed outlines represent degrees of freedom in the recipe, and those with solid outlines represent predictors.
 Nodes with dotted outlines represent predicted quantities; note that only <code class="docutils literal notranslate"><span class="pre">final</span> <span class="pre">pH</span></code> and <code class="docutils literal notranslate"><span class="pre">final</span> <span class="pre">loaf</span> <span class="pre">hydration</span></code> are the only predicted quantities that exist in the training data.</p>
 <p><a class="reference internal" href="../_images/bread_predictor_graph_viz.jpg"><img alt="Visualization of graph predictor." src="../_images/bread_predictor_graph_viz.jpg" style="width: 800px;" /></a></p>
-</div>
-</div>
+</section>
+</section>
 
 
           </div>

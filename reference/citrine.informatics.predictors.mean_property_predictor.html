@@ -3,8 +3,9 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
-    <title>citrine.informatics.predictors.mean_property_predictor module &#8212; Citrine Python 0.109.0 documentation</title>
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+    <title>citrine.informatics.predictors.mean_property_predictor module &#8212; Citrine Python 0.115.0 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -32,12 +33,12 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="module-citrine.informatics.predictors.mean_property_predictor">
+  <section id="module-citrine.informatics.predictors.mean_property_predictor">
 <span id="citrine-informatics-predictors-mean-property-predictor-module"></span><h1>citrine.informatics.predictors.mean_property_predictor module<a class="headerlink" href="#module-citrine.informatics.predictors.mean_property_predictor" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.predictors.mean_property_predictor.</code><code class="sig-name descname">MeanPropertyPredictor</code><span class="sig-paren">(</span><em class="sig-param">name: str, description: str, input_descriptor: citrine.informatics.descriptors.FormulationDescriptor, properties: List[citrine.informatics.descriptors.RealDescriptor], p: int, impute_properties: bool, default_properties: Optional[Mapping[str, float]] = None, label: Optional[str] = None, training_data: Optional[List[citrine.informatics.data_sources.DataSource]] = None, session: Optional[citrine._session.Session] = None, report: Optional[citrine.informatics.reports.Report] = None, archived: bool = False</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="citrine.informatics.predictors.predictor.html#citrine.informatics.predictors.predictor.Predictor" title="citrine.informatics.predictors.predictor.Predictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.predictors.predictor.Predictor</span></code></a></p>
+<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.predictors.mean_property_predictor.</code><code class="sig-name descname">MeanPropertyPredictor</code><span class="sig-paren">(</span><em class="sig-param">name: str, description: str, input_descriptor: citrine.informatics.descriptors.FormulationDescriptor, properties: List[citrine.informatics.descriptors.RealDescriptor], p: int, impute_properties: bool, default_properties: Optional[Mapping[str, float]] = None, label: Optional[str] = None, training_data: Optional[List[citrine.informatics.data_sources.DataSource]] = None, archived: bool = False</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.resource.Resource</span></code>, <a class="reference internal" href="citrine.informatics.predictors.predictor.html#citrine.informatics.predictors.predictor.Predictor" title="citrine.informatics.predictors.predictor.Predictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.predictors.predictor.Predictor</span></code></a></p>
 <p>[ALPHA] A predictor interface that computes mean component properties.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
@@ -61,10 +62,10 @@ If <code class="docutils literal notranslate"><span class="pre">True</span></cod
 default is used in place of missing values.</p></li>
 <li><p><strong>label</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Optional label</p></li>
 <li><p><strong>training_data</strong> (<em>Optional</em><em>[</em><em>List</em><em>[</em><a class="reference internal" href="citrine.informatics.data_sources.html#citrine.informatics.data_sources.DataSource" title="citrine.informatics.data_sources.DataSource"><em>DataSource</em></a><em>]</em><em>]</em>) – Sources of training data. Each can be either a CSV or an GEM Table. Candidates from
-multiple data sources will be combined into a flattened list and deduplicated by uid and
-identifiers. Deduplication is performed if a uid or identifier is shared between two or
-more rows. The content of a deduplicated row will contain the union of data across all rows
-that share the same uid or at least 1 identifier. Training data is unnecessary if the
+multiple data sources will be combined into a flattened list and de-duplicated by uid and
+identifiers. De-duplication is performed if a uid or identifier is shared between two or
+more rows. The content of a de-duplicated row will contain the union of data across all
+rows that share the same uid or at least 1 identifier. Training data is unnecessary if the
 predictor is part of a graph that includes all training data required by this predictor.</p></li>
 <li><p><strong>default_properties</strong> (<em>Optional</em><em>[</em><em>Mapping</em><em>[</em><em>str</em><em>, </em><em>float</em><em>]</em><em>]</em>) – Default values to use for imputed properties.
 Defaults are specified as a map from descriptor key to its default value.
@@ -122,7 +123,7 @@ the average over the dataset. <code class="docutils literal notranslate"><span c
 
 </dd></dl>
 
-</div>
+</section>
 
 
           </div>

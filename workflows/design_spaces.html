@@ -3,8 +3,9 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
-    <title>4.5. Design Spaces &#8212; Citrine Python 0.109.0 documentation</title>
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+    <title>4.5. Design Spaces &#8212; Citrine Python 0.115.0 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -34,7 +35,7 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="design-spaces">
+  <section id="design-spaces">
 <h1>4.5. Design Spaces<a class="headerlink" href="#design-spaces" title="Permalink to this headline">¶</a></h1>
 <p>A design space defines a set of materials that should be searched over when performing a material design.
 Design Spaces must be registered to be used in a <a class="reference internal" href="design_workflows.html"><span class="doc">design workflow</span></a>.
@@ -45,7 +46,7 @@ Currently, there are four design spaces:</p>
 <li><p><a class="reference external" href="#data-source-design-space">DataSourceDesignSpace</a></p></li>
 <li><p><a class="reference external" href="#formulation-design-space">FormulationDesignSpace</a></p></li>
 </ul>
-<div class="section" id="enumerated-design-space">
+<section id="enumerated-design-space">
 <h2>4.5.1. Enumerated design space<a class="headerlink" href="#enumerated-design-space" title="Permalink to this headline">¶</a></h2>
 <p>An enumerated design space is composed of an explicit list of candidates.
 Each candidate is specified using a dictionary keyed on the key of a corresponding <a class="reference internal" href="../reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.Descriptor" title="citrine.informatics.descriptors.Descriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">Descriptor</span></code></a>.
@@ -84,8 +85,8 @@ If a candidate is missing a descriptor key-value pair, contains extra key-value 
 <span class="n">registered_design_space</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">design_spaces</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">design_space</span><span class="p">)</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="product-design-space">
+</section>
+<section id="product-design-space">
 <h2>4.5.2. Product design space<a class="headerlink" href="#product-design-space" title="Permalink to this headline">¶</a></h2>
 <p>Materials from a product design space are composed of the <a class="reference external" href="https://en.wikipedia.org/wiki/Cartesian_product">Cartesian product</a> of independent factors.
 Each factor can be a separate design space _or_ a univariate dimension.
@@ -186,8 +187,8 @@ It would also be valid, however, to not register the enumerated design space and
 <span class="p">]</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="data-source-design-space">
+</section>
+<section id="data-source-design-space">
 <h2>4.5.3. Data Source Design Space<a class="headerlink" href="#data-source-design-space" title="Permalink to this headline">¶</a></h2>
 <p>A data source design space is similar in spirit to an enumerated design space, but the candidates are drawn from an existing data source instead of being specified through a list of dictionaries.
 Any data source can be used and no additional information is needed.</p>
@@ -212,8 +213,8 @@ The example code below creates a registers a design space based on this Gem Tabl
 <span class="n">registered_design_space</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">design_spaces</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">design_space</span><span class="p">)</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="formulation-design-space">
+</section>
+<section id="formulation-design-space">
 <h2>4.5.4. Formulation Design Space<a class="headerlink" href="#formulation-design-space" title="Permalink to this headline">¶</a></h2>
 <p>A formulation design space defines the set of formulations that can be produced from a given set of ingredient names, labels, and constraints.
 Ingredient names are specified as a set of strings, each mapping to a unique ingredient in a design space.
@@ -245,7 +246,7 @@ This resolution defines the minimum step size between consecutive formulations s
 Resolution does not impose a grid over fractional ingredient amounts.
 Instead, it provides a way to specify the characteristic length scale for the problem.
 The resolution should be set to the minimum change in fractional ingredient amount that can be expected to make a difference in your problem.
-The default resolution is 0.01, which means that at least one ingredient fraction will differ by at least 0.01 between consecutive candidates sampled from the formulation design space.</p>
+The default resolution is 0.0001, which means that at least one ingredient fraction will differ by at least 0.0001 between consecutive candidates sampled from the formulation design space.</p>
 <p>Formulations sampled from the design space are stored using the <a class="reference internal" href="../reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.FormulationDescriptor" title="citrine.informatics.descriptors.FormulationDescriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">FormulationDescriptor</span></code></a> passed to the design space when it is configured.
 Each formulation contains two pieces of information: a recipe and a collection of ingredient labels.
 Each recipe can be thought of as a map from ingredient name to its fractional amount, e.g., <code class="docutils literal notranslate"><span class="pre">{&quot;water&quot;:</span> <span class="pre">0.99,</span> <span class="pre">&quot;salt&quot;:</span> <span class="pre">0.01}</span></code>.
@@ -288,8 +289,8 @@ We will require that formulations contain 2 ingredients, that no more than 1 sol
 <span class="n">registered_design_space</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">design_spaces</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">design_space</span><span class="p">)</span>
 </pre></div>
 </div>
-</div>
-</div>
+</section>
+</section>
 
 
           </div>

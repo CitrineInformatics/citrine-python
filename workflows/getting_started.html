@@ -3,8 +3,9 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
-    <title>4.1. Getting Started &#8212; Citrine Python 0.109.0 documentation</title>
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+    <title>4.1. Getting Started &#8212; Citrine Python 0.115.0 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -34,18 +35,18 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="getting-started">
+  <section id="getting-started">
 <span id="id1"></span><h1>4.1. Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
 <p>The Citrine Platform provides tools to make data-driven decisions for materials research and development using artificial intelligence (AI) workflows.
 AI Workflows are composed of modules, which provide the ability to programmatically codify domain knowledge, research capabilities and experimental objectives.
 Workflows leverage data and domain knowledge to help materials researchers make traceable, data-driven decisions in pursuit of their research and development goals.
 These capabilities include generating candidates for sequential learning, identifying outliers or imputing missing values.</p>
-<div class="section" id="workflows-overview">
+<section id="workflows-overview">
 <h2>4.1.1. Workflows Overview<a class="headerlink" href="#workflows-overview" title="Permalink to this headline">¶</a></h2>
 <p>Currently, there are two workflows on the AI Engine: the <a class="reference internal" href="design_workflows.html"><span class="doc">DesignWorkflow</span></a> and the <a class="reference internal" href="predictor_evaluation_workflows.html"><span class="doc">PredictorEvaluationWorkflow</span></a>.
 Workflows employ reusable modules in order to execute.
 There are three different types of modules, and these are discussed in greater detail below.</p>
-<div class="section" id="design-workflow">
+<section id="design-workflow">
 <h3>4.1.1.1. Design Workflow<a class="headerlink" href="#design-workflow" title="Permalink to this headline">¶</a></h3>
 <p>The <a class="reference internal" href="design_workflows.html"><span class="doc">DesignWorkflow</span></a> is the core AI workflow on the platform.
 This workflow generates scored candidates for sequential learning.
@@ -58,15 +59,15 @@ It requires one of each of the modules listed below and executes in the followin
 <p>After a given number of iterations, candidates are ranked according to their score and the best materials are returned.
 (Here, the best materials are those that are most likely to optimize an objective and satisfy a set of constraints.)</p>
 <p>Design workflows are further parameterized by <a class="reference internal" href="scores.html"><span class="doc">Scores</span></a>, which codify experimental objectives and constraints on desired candidates, and define the strategy for candidate acquisition.</p>
-</div>
-<div class="section" id="predictor-evaluation-workflow">
+</section>
+<section id="predictor-evaluation-workflow">
 <h3>4.1.1.2. Predictor Evaluation Workflow<a class="headerlink" href="#predictor-evaluation-workflow" title="Permalink to this headline">¶</a></h3>
 <p>The <a class="reference internal" href="predictor_evaluation_workflows.html"><span class="doc">PredictorEvaluationWorkflow</span></a> is used to analyze a <a class="reference internal" href="predictors.html"><span class="doc">Predictor</span></a>.
 This workflow helps users understand how well their predictor module works with their data: in essence, it describes the trustworthiness of their model.
 These outcomes are captured in a series of response metrics.</p>
-</div>
-</div>
-<div class="section" id="modules-overview">
+</section>
+</section>
+<section id="modules-overview">
 <h2>4.1.2. Modules Overview<a class="headerlink" href="#modules-overview" title="Permalink to this headline">¶</a></h2>
 <p>Modules are re-usable computational tools used to construct workflows.
 The modules dictate how the platform utilizes research data to generate computational results.
@@ -81,7 +82,7 @@ There are 3 types of modules on the platform:</p>
 <li><p><a class="reference internal" href="processors.html"><span class="doc">Processors</span></a> define the method used to search the design space.
 The processor and design space are coupled: depending on the design space used, only a subset of processors are applicable.</p></li>
 </ul>
-<div class="section" id="archiving">
+<section id="archiving">
 <span id="archiving-label"></span><h3>4.1.2.1. Archiving<a class="headerlink" href="#archiving" title="Permalink to this headline">¶</a></h3>
 <p>Modules come active by default when created. If you would like to <cite>archive</cite> a module so it cannot be used again consider this example:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">predictor</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">predictors</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">predictor_uuid</span><span class="p">)</span>
@@ -97,9 +98,9 @@ Modules can not currently be permanently deleted.</p>
 <span class="n">project</span><span class="o">.</span><span class="n">predictors</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">predictor</span><span class="p">)</span>
 </pre></div>
 </div>
-</div>
-</div>
-<div class="section" id="registration-and-validation">
+</section>
+</section>
+<section id="registration-and-validation">
 <h2>4.1.3. Registration and validation<a class="headerlink" href="#registration-and-validation" title="Permalink to this headline">¶</a></h2>
 <p>Both modules and workflows are registered with a project and validated before they are ready for use. Once registered, validation occurs automatically.
 Validation status can be one of the following states:</p>
@@ -111,7 +112,7 @@ Validation status can be one of the following states:</p>
 <li><p><strong>Error:</strong> Validation did not complete. An error was raised during the validation process that prevented an invalid or ready status to be determined.</p></li>
 </ul>
 <p>Validation of a workflow and all constituent modules must complete with ready status before the workflow can be executed.</p>
-<div class="section" id="experimental-functionality">
+<section id="experimental-functionality">
 <h3>4.1.3.1. Experimental functionality<a class="headerlink" href="#experimental-functionality" title="Permalink to this headline">¶</a></h3>
 <p>Both modules and workflows can be used to access experimental functionality on the platform.
 In some cases, the module or workflow type itself may be experimental.
@@ -124,9 +125,9 @@ of the validation process and then returned via two fields:</p>
 <li><p><cite>experimental</cite> is a boolean field that is true when the module or workflow is experimental</p></li>
 <li><p><cite>experimental_reasons</cite> is a list of strings that describe what about the module or workflow makes it experimental</p></li>
 </ul>
-</div>
-</div>
-</div>
+</section>
+</section>
+</section>
 
 
           </div>

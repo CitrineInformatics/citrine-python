@@ -3,8 +3,9 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
-    <title>4.9. Data Sources &#8212; Citrine Python 0.109.0 documentation</title>
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+    <title>4.9. Data Sources &#8212; Citrine Python 0.115.0 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -34,11 +35,11 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="data-sources">
+  <section id="data-sources">
 <span id="id1"></span><h1>4.9. Data Sources<a class="headerlink" href="#data-sources" title="Permalink to this headline">¶</a></h1>
 <p>Data sources are used by modules to pull data from outside of the AI engine.
 For example, a <a class="reference internal" href="predictors.html"><span class="doc">predictor</span></a> may need to define external training data.</p>
-<div class="section" id="csv-data-source">
+<section id="csv-data-source">
 <h2>4.9.1. CSV Data Source<a class="headerlink" href="#csv-data-source" title="Permalink to this headline">¶</a></h2>
 <p>The <a class="reference internal" href="../reference/citrine.informatics.data_sources.html#citrine.informatics.data_sources.CSVDataSource" title="citrine.informatics.data_sources.CSVDataSource"><code class="xref py py-class docutils literal notranslate"><span class="pre">CSVDataSource</span></code></a> draws data from a CSV file stored on the data platform and annotates it by mapping each column name to a <a class="reference internal" href="../reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.Descriptor" title="citrine.informatics.descriptors.Descriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">Descriptor</span></code></a>.
 The file is referenced via a <a class="reference internal" href="../reference/citrine.resources.file_link.html#citrine.resources.file_link.FileLink" title="citrine.resources.file_link.FileLink"><code class="xref py py-class docutils literal notranslate"><span class="pre">FileLink</span></code></a>.
@@ -187,8 +188,8 @@ A CSV data source and <a class="reference internal" href="../reference/citrine.i
 <span class="p">)</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="gem-table-data-source">
+</section>
+<section id="gem-table-data-source">
 <h2>4.9.2. GEM Table Data Source<a class="headerlink" href="#gem-table-data-source" title="Permalink to this headline">¶</a></h2>
 <p>An <a class="reference internal" href="../reference/citrine.informatics.data_sources.html#citrine.informatics.data_sources.GemTableDataSource" title="citrine.informatics.data_sources.GemTableDataSource"><code class="xref py py-class docutils literal notranslate"><span class="pre">GemTableDataSource</span></code></a> references a GEM Table.
 As explained more in the <a class="reference internal" href="../data_extraction.html"><span class="doc">documentation</span></a>, GEM Tables provide a structured version of on-platform data.
@@ -222,8 +223,8 @@ The example below assumes that the uuid and the version of the desired GEM Table
 <p>Note that the descriptor keys above are the headers of the <em>variable</em> not the column in the table.
 The last term in the column header is a suffix associated with the specific column definition rather than the variable.
 It should be omitted from the descriptor key.</p>
-</div>
-</div>
+</section>
+</section>
 
 
           </div>

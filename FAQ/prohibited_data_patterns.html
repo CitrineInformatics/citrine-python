@@ -3,8 +3,9 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
-    <title>5.1. Prohibited Data Patterns &#8212; Citrine Python 0.109.0 documentation</title>
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+    <title>5.1. Prohibited Data Patterns &#8212; Citrine Python 0.115.0 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -33,16 +34,16 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="prohibited-data-patterns">
+  <section id="prohibited-data-patterns">
 <h1>5.1. Prohibited Data Patterns<a class="headerlink" href="#prohibited-data-patterns" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="summary">
+<section id="summary">
 <h2>5.1.1. Summary<a class="headerlink" href="#summary" title="Permalink to this headline">¶</a></h2>
 <p>This is a disclaimer on our end to let you know that there are some invalid usage patterns that are not prevented by the API but may corrupt your data and eliminate
 some of the functionality the api and/or platform would otherwise provide.</p>
-</div>
-<div class="section" id="cyclic-data-patterns">
+</section>
+<section id="cyclic-data-patterns">
 <h2>5.1.2. Cyclic data patterns<a class="headerlink" href="#cyclic-data-patterns" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="description">
+<section id="description">
 <h3>5.1.2.1. Description<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h3>
 <p>Data objects should <strong>NOT</strong> be linked in a cyclic pattern. Consider the following example (where the citrine session is created and dataset already defined):</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">procsp</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">process_specs</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">ProcessSpec</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;test proc&#39;</span><span class="p">))</span>
@@ -61,15 +62,15 @@ some of the functionality the api and/or platform would otherwise provide.</p>
 In general, an object should not reference any other object in it’s history to make a cyclic pattern.
 It does not make sense for a material to be used as an ingredient in its own history.
 In other words, the data model does not support time traveling materials.</p>
-</div>
-<div class="section" id="implications">
+</section>
+<section id="implications">
 <h3>5.1.2.2. Implications<a class="headerlink" href="#implications" title="Permalink to this headline">¶</a></h3>
 <p>Currently, there are no validations in place to keep cyclic data from being persisted on the platform. It is up to the user to make sure that the
 objects created do not follow a cyclic pattern; otherwise, the data will be corrupted. If cyclic data is written to the platform, an error will
 not be thrown, but the user may lose core functionality (such as <code class="code docutils literal notranslate"><span class="pre">get_material_history()</span></code>) for the objects participating in the cycle.</p>
-</div>
-</div>
-</div>
+</section>
+</section>
+</section>
 
 
           </div>

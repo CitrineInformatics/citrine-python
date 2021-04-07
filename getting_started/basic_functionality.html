@@ -3,8 +3,9 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
-    <title>1.3. Managing Resources &#8212; Citrine Python 0.109.0 documentation</title>
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+    <title>1.3. Managing Resources &#8212; Citrine Python 0.115.0 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -34,7 +35,7 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="managing-resources">
+  <section id="managing-resources">
 <h1>1.3. Managing Resources<a class="headerlink" href="#managing-resources" title="Permalink to this headline">¶</a></h1>
 <p>The Citrine python client can create, read, update, and delete resources.
 This document describes those mechanics in general terms, without assuming a knowledge of what the resources are.</p>
@@ -42,7 +43,7 @@ This document describes those mechanics in general terms, without assuming a kno
 For example, a <a class="reference internal" href="../reference/citrine.resources.project.html#citrine.resources.project.ProjectCollection" title="citrine.resources.project.ProjectCollection"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProjectCollection</span></code></a> contains <a class="reference internal" href="../reference/citrine.resources.project.html#citrine.resources.project.Project" title="citrine.resources.project.Project"><code class="xref py py-class docutils literal notranslate"><span class="pre">Projects</span></code></a>.
 Generally, the collection is used to perform create/read/update/delete actions on the resources.
 This pattern is illustrated in the examples below.</p>
-<div class="section" id="creating">
+<section id="creating">
 <h2>1.3.1. Creating<a class="headerlink" href="#creating" title="Permalink to this headline">¶</a></h2>
 <p>To create a local resource, initialize it as you would any other python object. For example,</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.resources.process_spec</span> <span class="kn">import</span> <span class="n">ProcessSpec</span>
@@ -60,28 +61,28 @@ The process spec collection has a <cite>register</cite> command, which registers
 <p>If you tried to register the process spec to the dataset’s material run collection, using <code class="docutils literal notranslate"><span class="pre">battery_dataset_1.material_runs.register(buy_electrolyte_spec)</span></code>, then an error would result (since the types don’t match).</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">register</span></code> command returns a copy of the resource as it now exists in the database.
 The database may decorate the object with additional information, such as a unique identifier string that you can use to retrieve it in the future.</p>
-</div>
-<div class="section" id="reading">
+</section>
+<section id="reading">
 <span id="functionality-reading-label"></span><h2>1.3.2. Reading<a class="headerlink" href="#reading" title="Permalink to this headline">¶</a></h2>
 <p>There are several ways to retrieve a resource from the database.</p>
-<div class="section" id="get">
+<section id="get">
 <h3>1.3.2.1. Get<a class="headerlink" href="#get" title="Permalink to this headline">¶</a></h3>
 <p>Get retrieves a specific resource with a known unique identifier string.
 If the project <code class="docutils literal notranslate"><span class="pre">ceramic_resistors_project</span></code> has a dataset with an id that you have saved as <code class="docutils literal notranslate"><span class="pre">special_dataset_id</span></code>, then you could retrieve it with:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ceramic_resistors_project</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">special_dataset_id</span><span class="p">)</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="list">
+</section>
+<section id="list">
 <h3>1.3.2.2. List<a class="headerlink" href="#list" title="Permalink to this headline">¶</a></h3>
 <p>List returns an iterator of every resource in a collection.
 To list every design space in the project <code class="docutils literal notranslate"><span class="pre">uv_absorbing_glasses</span></code>, use the command:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">uv_absorbing_glasses</span><span class="o">.</span><span class="n">design_spaces</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
 </pre></div>
 </div>
-</div>
-</div>
-<div class="section" id="updating">
+</section>
+</section>
+<section id="updating">
 <h2>1.3.3. Updating<a class="headerlink" href="#updating" title="Permalink to this headline">¶</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">update</span></code> command updates an object. The following code creates and persists
 a process spec <code class="docutils literal notranslate"><span class="pre">sintering</span></code> to a dataset <code class="docutils literal notranslate"><span class="pre">tungsten_dataset</span></code>, then updates it locally
@@ -91,20 +92,20 @@ and persists that update.</p>
 <span class="n">tungsten_dataset</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">sintering</span><span class="p">)</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="deleting">
+</section>
+<section id="deleting">
 <h2>1.3.4. Deleting<a class="headerlink" href="#deleting" title="Permalink to this headline">¶</a></h2>
 <p>Resources can generally be deleted with the <code class="docutils literal notranslate"><span class="pre">delete</span></code> command.
 However, resources may link to other resources, and deleting these interconnected objects is tricky.
 For more information, see the section on <a class="reference internal" href="data_model.html#deleting-data-objects-label"><span class="std std-ref">deleting data objects</span></a>.</p>
 <p>AI modules cannot be deleted, but they can be <a class="reference internal" href="../workflows/getting_started.html#archiving-label"><span class="std std-ref">archived</span></a>.</p>
-</div>
-<div class="section" id="data-model-object-specific-methods">
+</section>
+<section id="data-model-object-specific-methods">
 <h2>1.3.5. Data Model Object Specific Methods<a class="headerlink" href="#data-model-object-specific-methods" title="Permalink to this headline">¶</a></h2>
 <p>The client supports additional methods on certain data model object resources, such as more powerful ways to get resources.
 These are detailed in the documentation of <a class="reference internal" href="../data_entry.html"><span class="doc">GEMD data objects</span></a></p>
-</div>
-</div>
+</section>
+</section>
 
 
           </div>

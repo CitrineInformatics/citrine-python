@@ -3,8 +3,9 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
-    <title>citrine.informatics.predictors.graph_predictor module &#8212; Citrine Python 0.109.0 documentation</title>
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+    <title>citrine.informatics.predictors.graph_predictor module &#8212; Citrine Python 0.115.0 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -32,26 +33,26 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="module-citrine.informatics.predictors.graph_predictor">
+  <section id="module-citrine.informatics.predictors.graph_predictor">
 <span id="citrine-informatics-predictors-graph-predictor-module"></span><h1>citrine.informatics.predictors.graph_predictor module<a class="headerlink" href="#module-citrine.informatics.predictors.graph_predictor" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="citrine.informatics.predictors.graph_predictor.GraphPredictor">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.predictors.graph_predictor.</code><code class="sig-name descname">GraphPredictor</code><span class="sig-paren">(</span><em class="sig-param">name: str, description: str, predictors: List[Union[uuid.UUID, citrine.informatics.predictors.predictor.Predictor]], training_data: Optional[List[citrine.informatics.data_sources.DataSource]] = None, session: Optional[citrine._session.Session] = None, report: Optional[citrine.informatics.reports.Report] = None, archived: bool = False</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.predictors.graph_predictor.GraphPredictor" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="citrine.informatics.predictors.predictor.html#citrine.informatics.predictors.predictor.Predictor" title="citrine.informatics.predictors.predictor.Predictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.predictors.predictor.Predictor</span></code></a></p>
+<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.predictors.graph_predictor.</code><code class="sig-name descname">GraphPredictor</code><span class="sig-paren">(</span><em class="sig-param">name: str, description: str, predictors: List[Union[uuid.UUID, citrine.informatics.predictors.predictor.Predictor]], training_data: Optional[List[citrine.informatics.data_sources.DataSource]] = None, archived: bool = False</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.predictors.graph_predictor.GraphPredictor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.resource.Resource</span></code>, <a class="reference internal" href="citrine.informatics.predictors.predictor.html#citrine.informatics.predictors.predictor.Predictor" title="citrine.informatics.predictors.predictor.Predictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.predictors.predictor.Predictor</span></code></a></p>
 <p>A predictor interface that stitches other predictors together.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>name</strong> (<em>str</em>) – name of the configuration</p></li>
 <li><p><strong>description</strong> (<em>str</em>) – the description of the predictor</p></li>
-<li><p><strong>predictors</strong> (<em>List</em><em>[</em><em>Union</em><em>[</em><em>UUID</em><em>, </em><a class="reference internal" href="citrine.informatics.predictors.predictor.html#citrine.informatics.predictors.predictor.Predictor" title="citrine.informatics.predictors.predictor.Predictor"><em>Predictor</em></a><em>]</em><em>]</em>) – the list of predictors to use in the grpah, either UUIDs or serialized predictors</p></li>
+<li><p><strong>predictors</strong> (<em>List</em><em>[</em><em>Union</em><em>[</em><em>UUID</em><em>, </em><a class="reference internal" href="citrine.informatics.predictors.predictor.html#citrine.informatics.predictors.predictor.Predictor" title="citrine.informatics.predictors.predictor.Predictor"><em>Predictor</em></a><em>]</em><em>]</em>) – the list of predictors to use in the graph, either UUIDs or serialized predictors</p></li>
 <li><p><strong>training_data</strong> (<em>Optional</em><em>[</em><em>List</em><em>[</em><a class="reference internal" href="citrine.informatics.data_sources.html#citrine.informatics.data_sources.DataSource" title="citrine.informatics.data_sources.DataSource"><em>DataSource</em></a><em>]</em><em>]</em>) – Optional sources of training data shared by all predictors in the graph.
 Training data provided by this graph predictor does not need to be specified as part of the
 configuration of sub-predictors. Shared training data and any training data specified
-by a sub-predictor will be combined into a flattened list and deduplicated
-by uid and identifiers. Deduplication is performed if a uid or identifier is shared between
-two or more rows. The content of a deduplicated row will contain the union of data
-across all rows that share the same uid or at least 1 identifier.</p></li>
+by a sub-predictor will be combined into a flattened list and de-duplicated
+by uid and identifiers. De-duplication is performed if a uid or identifier is shared
+between two or more rows. The content of a de-duplicated row will contain the union of
+data across all rows that share the same uid or at least 1 identifier.</p></li>
 </ul>
 </dd>
 </dl>
@@ -68,7 +69,8 @@ across all rows that share the same uid or at least 1 identifier.</p></li>
 <dl class="method">
 <dt id="citrine.informatics.predictors.graph_predictor.GraphPredictor.stuff_predictor_into_envelope">
 <em class="property">static </em><code class="sig-name descname">stuff_predictor_into_envelope</code><span class="sig-paren">(</span><em class="sig-param">predictor: dict</em><span class="sig-paren">)</span> &#x2192; dict<a class="headerlink" href="#citrine.informatics.predictors.graph_predictor.GraphPredictor.stuff_predictor_into_envelope" title="Permalink to this definition">¶</a></dt>
-<dd><p>Insert a serialized embedded predictor into a module envelope, to facilitate deser.</p>
+<dd><p>Insert a serialized embedded predictor into a module envelope.</p>
+<p>This facilitates deserialization.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -83,7 +85,7 @@ across all rows that share the same uid or at least 1 identifier.</p></li>
 
 </dd></dl>
 
-</div>
+</section>
 
 
           </div>

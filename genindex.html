@@ -5,7 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>Index &#8212; Citrine Python 0.109.0 documentation</title>
+    <title>Index &#8212; Citrine Python 0.115.0 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -195,6 +195,8 @@
       <li><a href="reference/citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConcepts.audit_info">audit_info() (citrine.resources.data_concepts.DataConcepts property)</a>
 </li>
       <li><a href="reference/citrine.resources.audit_info.html#citrine.resources.audit_info.AuditInfo">AuditInfo (class in citrine.resources.audit_info)</a>
+</li>
+      <li><a href="reference/citrine.resources.predictor.html#citrine.resources.predictor.PredictorCollection.auto_configure">auto_configure() (citrine.resources.predictor.PredictorCollection method)</a>
 </li>
       <li><a href="reference/citrine.informatics.predictors.auto_ml_predictor.html#citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor">AutoMLPredictor (class in citrine.informatics.predictors.auto_ml_predictor)</a>
 </li>
@@ -740,6 +742,8 @@
         <li><a href="reference/citrine.resources.project.html#citrine.resources.project.ProjectCollection.delete">(citrine.resources.project.ProjectCollection method)</a>
 </li>
       </ul></li>
+      <li><a href="reference/citrine.resources.dataset.html#citrine.resources.dataset.Dataset.delete_contents">delete_contents() (citrine.resources.dataset.Dataset method)</a>
+</li>
       <li><a href="reference/citrine.resources.dataset.html#citrine.resources.dataset.Dataset.delete_time">delete_time (citrine.resources.dataset.Dataset attribute)</a>, <a href="reference/citrine.resources.dataset.html#citrine.resources.dataset.Dataset.delete_time">[1]</a>
 </li>
       <li><a href="reference/citrine.resources.dataset.html#citrine.resources.dataset.Dataset.deleted">deleted (citrine.resources.dataset.Dataset attribute)</a>, <a href="reference/citrine.resources.dataset.html#citrine.resources.dataset.Dataset.deleted">[1]</a>
@@ -2032,17 +2036,15 @@
 </li>
       <li><a href="reference/citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConceptsCollection.poll_async_update_job">poll_async_update_job() (citrine.resources.data_concepts.DataConceptsCollection method)</a>
 </li>
-      <li><a href="reference/citrine.resources.file_link.html#citrine.resources.file_link.FileCollection.poll_file_procesing_job">poll_file_procesing_job() (citrine.resources.file_link.FileCollection method)</a>
+      <li><a href="reference/citrine.resources.file_link.html#citrine.resources.file_link.FileCollection.poll_file_processing_job">poll_file_processing_job() (citrine.resources.file_link.FileCollection method)</a>
 </li>
       <li><a href="reference/citrine.exceptions.html#citrine.exceptions.PollingTimeoutError">PollingTimeoutError</a>
 </li>
       <li><a href="reference/citrine.resources.user.html#citrine.resources.user.User.position">position (citrine.resources.user.User attribute)</a>
 </li>
-      <li><a href="reference/citrine.informatics.predictors.predictor.html#citrine.informatics.predictors.predictor.Predictor.post_build">post_build() (citrine.informatics.predictors.predictor.Predictor method)</a>
+      <li><a href="reference/citrine.informatics.reports.html#citrine.informatics.reports.PredictorReport.post_build">post_build() (citrine.informatics.reports.PredictorReport method)</a>
 
       <ul>
-        <li><a href="reference/citrine.informatics.reports.html#citrine.informatics.reports.PredictorReport.post_build">(citrine.informatics.reports.PredictorReport method)</a>
-</li>
         <li><a href="reference/citrine.informatics.reports.html#citrine.informatics.reports.Report.post_build">(citrine.informatics.reports.Report method)</a>
 </li>
       </ul></li>
@@ -2100,10 +2102,10 @@
 </li>
       <li><a href="reference/citrine.informatics.design_candidate.html#citrine.informatics.design_candidate.DesignCandidate.primary_score">primary_score (citrine.informatics.design_candidate.DesignCandidate attribute)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference/citrine.informatics.design_candidate.html#citrine.informatics.design_candidate.TopCategories.probabilities">probabilities (citrine.informatics.design_candidate.TopCategories attribute)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="reference/citrine.resources.ingredient_run.html#citrine.resources.ingredient_run.IngredientRun.process">process (citrine.resources.ingredient_run.IngredientRun attribute)</a>
 
       <ul>
@@ -2286,12 +2288,14 @@
 </li>
       <li><a href="reference/citrine.informatics.reports.html#citrine.informatics.reports.Report">Report (class in citrine.informatics.reports)</a>
 </li>
-      <li><a href="reference/citrine.resources.report.html#citrine.resources.report.ReportResource">ReportResource (class in citrine.resources.report)</a>
+      <li><a href="reference/citrine.informatics.predictors.predictor.html#citrine.informatics.predictors.predictor.Predictor.report">report() (citrine.informatics.predictors.predictor.Predictor property)</a>
 </li>
-      <li><a href="reference/citrine.informatics.design_spaces.formulation_design_space.html#citrine.informatics.design_spaces.formulation_design_space.FormulationDesignSpace.resolution">resolution (citrine.informatics.design_spaces.formulation_design_space.FormulationDesignSpace attribute)</a>
+      <li><a href="reference/citrine.resources.report.html#citrine.resources.report.ReportResource">ReportResource (class in citrine.resources.report)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/citrine.informatics.design_spaces.formulation_design_space.html#citrine.informatics.design_spaces.formulation_design_space.FormulationDesignSpace.resolution">resolution (citrine.informatics.design_spaces.formulation_design_space.FormulationDesignSpace attribute)</a>
+</li>
       <li><a href="reference/citrine.resources.gemtables.html#citrine.resources.gemtables.GemTable.resource_type">resource_type() (citrine.resources.gemtables.GemTable method)</a>
 </li>
       <li><a href="reference/citrine.resources.response.html#citrine.resources.response.Response">Response (class in citrine.resources.response)</a>

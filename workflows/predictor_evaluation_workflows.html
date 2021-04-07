@@ -3,8 +3,9 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
-    <title>4.11. Predictor Evaluation Workflows &#8212; Citrine Python 0.109.0 documentation</title>
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+    <title>4.11. Predictor Evaluation Workflows &#8212; Citrine Python 0.115.0 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -34,11 +35,11 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="predictor-evaluation-workflows">
+  <section id="predictor-evaluation-workflows">
 <h1>4.11. Predictor Evaluation Workflows<a class="headerlink" href="#predictor-evaluation-workflows" title="Permalink to this headline">¶</a></h1>
 <p>A <a class="reference internal" href="../reference/citrine.informatics.workflows.predictor_evaluation_workflow.html#citrine.informatics.workflows.predictor_evaluation_workflow.PredictorEvaluationWorkflow" title="citrine.informatics.workflows.predictor_evaluation_workflow.PredictorEvaluationWorkflow"><code class="xref py py-class docutils literal notranslate"><span class="pre">PredictorEvaluationWorkflow</span></code></a> evaluates the performance of a <a class="reference internal" href="predictors.html"><span class="doc">Predictor</span></a>.
 Each workflow is composed of one or more <a class="reference internal" href="../reference/citrine.informatics.predictor_evaluator.html#citrine.informatics.predictor_evaluator.PredictorEvaluator" title="citrine.informatics.predictor_evaluator.PredictorEvaluator"><code class="xref py py-class docutils literal notranslate"><span class="pre">PredictorEvaluators</span></code></a>.</p>
-<div class="section" id="predictor-evaluators">
+<section id="predictor-evaluators">
 <h2>4.11.1. Predictor evaluators<a class="headerlink" href="#predictor-evaluators" title="Permalink to this headline">¶</a></h2>
 <p>A predictor evaluator defines a method to evaluate a predictor and any relevant configuration, e.g., k-fold cross-validation evaluation that specifies 3 folds.
 Minimally, each predictor evaluator specifies a name, a set of predictor responses to evaluate and a set of metrics to compute for each response.
@@ -46,7 +47,7 @@ Evaluator names must be unique within a single workflow (more on that <a class="
 Responses are specified as a set of strings, where each string corresponds to a descriptor key of a predictor output.
 Metrics are specified as a set of <a class="reference internal" href="../reference/citrine.informatics.predictor_evaluation_metrics.html#citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric" title="citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">PredictorEvaluationMetrics</span></code></a>.
 The evaluator will only compute the subset of metrics valid for each response, so the top-level metrics defined by an evaluator should contain the union of all metrics computed across all responses.</p>
-<div class="section" id="cross-validation-evaluator">
+<section id="cross-validation-evaluator">
 <h3>4.11.1.1. Cross-validation evaluator<a class="headerlink" href="#cross-validation-evaluator" title="Permalink to this headline">¶</a></h3>
 <p>A <a class="reference internal" href="../reference/citrine.informatics.predictor_evaluator.html#citrine.informatics.predictor_evaluator.CrossValidationEvaluator" title="citrine.informatics.predictor_evaluator.CrossValidationEvaluator"><code class="xref py py-class docutils literal notranslate"><span class="pre">CrossValidationEvaluator</span></code></a> performs k-fold cross-validation on a predictor.
 Cross-validation can only be evaluated on predictors that define training data.
@@ -61,9 +62,9 @@ Candidates with different values for ignored keys and identical values for all o
 For example, if you are baking cakes with different ingredients and different oven temperatures and want to group together the data by the ingredients, then
 you can set <cite>ignore_when_grouping={“oven temperature”}</cite>.
 That way, two recipes that differ only in their oven temperature will always end up in the same fold.</p>
-</div>
-</div>
-<div class="section" id="predictor-evaluation-metrics">
+</section>
+</section>
+<section id="predictor-evaluation-metrics">
 <h2>4.11.2. Predictor evaluation metrics<a class="headerlink" href="#predictor-evaluation-metrics" title="Permalink to this headline">¶</a></h2>
 <p>Predictor evaluation metrics are defined as part of a <a class="reference internal" href="../reference/citrine.informatics.predictor_evaluator.html#citrine.informatics.predictor_evaluator.PredictorEvaluator" title="citrine.informatics.predictor_evaluator.PredictorEvaluator"><code class="xref py py-class docutils literal notranslate"><span class="pre">PredictorEvaluator</span></code></a>.
 For all response types, the metric (<a class="reference internal" href="../reference/citrine.informatics.predictor_evaluation_metrics.html#citrine.informatics.predictor_evaluation_metrics.PVA" title="citrine.informatics.predictor_evaluation_metrics.PVA"><code class="xref py py-class docutils literal notranslate"><span class="pre">PVA</span></code></a>) is available to compare predicted versus actual data.
@@ -111,8 +112,8 @@ If AUC == 0.0, all samples are classified incorrectly.</p></li>
 Scores are bounded by 0 and 1.
 At a value of 1, the model has perfect precision and recall.</p></li>
 </ul>
-</div>
-<div class="section" id="execution-and-results">
+</section>
+<section id="execution-and-results">
 <span id="id1"></span><h2>4.11.3. Execution and results<a class="headerlink" href="#execution-and-results" title="Permalink to this headline">¶</a></h2>
 <p>Triggering a Predictor Evaluation Workflow produces a <a class="reference internal" href="../reference/citrine.resources.predictor_evaluation_execution.html#citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecution" title="citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecution"><code class="xref py py-class docutils literal notranslate"><span class="pre">PredictorEvaluationExecution</span></code></a>.
 This execution allows you to track the progress using its <code class="docutils literal notranslate"><span class="pre">status</span></code> and <code class="docutils literal notranslate"><span class="pre">status_info</span></code> properties.
@@ -153,8 +154,8 @@ For numeric responses, <code class="docutils literal notranslate"><span class="p
 For categorical responses, class probabilities are returned as a mapping from each class name (as a string) to its relative frequency (as a float).</p></li>
 </ul>
 </div></blockquote>
-</div>
-<div class="section" id="example">
+</section>
+<section id="example">
 <h2>4.11.4. Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
 <p>The following demonstrates how to create a <a class="reference internal" href="../reference/citrine.informatics.predictor_evaluator.html#citrine.informatics.predictor_evaluator.CrossValidationEvaluator" title="citrine.informatics.predictor_evaluator.CrossValidationEvaluator"><code class="xref py py-class docutils literal notranslate"><span class="pre">CrossValidationEvaluator</span></code></a>, add it to a <a class="reference internal" href="../reference/citrine.informatics.workflows.predictor_evaluation_workflow.html#citrine.informatics.workflows.predictor_evaluation_workflow.PredictorEvaluationWorkflow" title="citrine.informatics.workflows.predictor_evaluation_workflow.PredictorEvaluationWorkflow"><code class="xref py py-class docutils literal notranslate"><span class="pre">PredictorEvaluationWorkflow</span></code></a> and use it to evaluate a <a class="reference internal" href="../reference/citrine.informatics.predictors.predictor.html#citrine.informatics.predictors.predictor.Predictor" title="citrine.informatics.predictors.predictor.Predictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">Predictor</span></code></a>.</p>
 <p>The predictor we’ll evaluate is defined below:</p>
@@ -267,8 +268,8 @@ Then wait for the results to be ready:</p>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;actual = </span><span class="si">{</span><span class="n">actual</span><span class="o">.</span><span class="n">mean</span><span class="si">}</span><span class="s1"> +/- </span><span class="si">{</span><span class="n">actual</span><span class="o">.</span><span class="n">standard_error</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="archive-and-restore">
+</section>
+<section id="archive-and-restore">
 <h2>4.11.5. Archive and restore<a class="headerlink" href="#archive-and-restore" title="Permalink to this headline">¶</a></h2>
 <p>Both <a class="reference internal" href="../reference/citrine.informatics.workflows.predictor_evaluation_workflow.html#citrine.informatics.workflows.predictor_evaluation_workflow.PredictorEvaluationWorkflow" title="citrine.informatics.workflows.predictor_evaluation_workflow.PredictorEvaluationWorkflow"><code class="xref py py-class docutils literal notranslate"><span class="pre">PredictorEvaluationWorkflows</span></code></a> and <a class="reference internal" href="../reference/citrine.resources.predictor_evaluation_execution.html#citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecution" title="citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecution"><code class="xref py py-class docutils literal notranslate"><span class="pre">PredictorEvaluationExecutions</span></code></a> can be archived and restored.
 To archive a workflow:</p>
@@ -281,8 +282,8 @@ To archive a workflow:</p>
 </pre></div>
 </div>
 <p>To restore a workflow or execution, simply replace <code class="docutils literal notranslate"><span class="pre">archive</span></code> with <code class="docutils literal notranslate"><span class="pre">restore</span></code> in the code above.</p>
-</div>
-</div>
+</section>
+</section>
 
 
           </div>

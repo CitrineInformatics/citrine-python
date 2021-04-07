@@ -3,8 +3,9 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
-    <title>4.8. Scores &#8212; Citrine Python 0.109.0 documentation</title>
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+    <title>4.8. Scores &#8212; Citrine Python 0.115.0 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -34,7 +35,7 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="scores">
+  <section id="scores">
 <h1>4.8. Scores<a class="headerlink" href="#scores" title="Permalink to this headline">¶</a></h1>
 <p>Scores rank materials according to a set of objectives and constraints.
 An objective defines the goal for a scalar value associated with a particular descriptor.
@@ -57,7 +58,7 @@ Higher scores represent “better” materials.</p>
 <li><p><a class="reference external" href="#likelihood-of-improvement">Likelihood of improvement</a></p></li>
 <li><p><a class="reference external" href="#expected-value">Expected value</a></p></li>
 </ul>
-<div class="section" id="expected-improvement">
+<section id="expected-improvement">
 <h2>4.8.1. Expected improvement<a class="headerlink" href="#expected-improvement" title="Permalink to this headline">¶</a></h2>
 <p>Expected improvement (EI) is the magnitude of the expected value of improvement calculated as the integral from the best training objective (i.e. baseline) to infinity of <code class="docutils literal notranslate"><span class="pre">p(x)(x-a)</span></code>, where <code class="docutils literal notranslate"><span class="pre">a</span></code> is the best objective value in the training set.
 <a class="reference internal" href="../reference/citrine.informatics.scores.html#citrine.informatics.scores.EIScore" title="citrine.informatics.scores.EIScore"><code class="xref py py-class docutils literal notranslate"><span class="pre">EIScore</span></code></a> supports 0 or 1 objective.
@@ -66,8 +67,8 @@ If no objective is provided, the score is the probability of satisfying all cons
 Higher scores result from a more optimal predicted value, higher uncertainty or both.
 Higher predicted values exploit information known about the current dataset, e.g. materials of a given type are known to perform well.
 Higher uncertainty leads to exploration of a design space, e.g. little is known about a certain class materials, but materials from this region of the design space could perform well.</p>
-</div>
-<div class="section" id="likelihood-of-improvement">
+</section>
+<section id="likelihood-of-improvement">
 <h2>4.8.2. Likelihood of improvement<a class="headerlink" href="#likelihood-of-improvement" title="Permalink to this headline">¶</a></h2>
 <p>Likelihood of improvement (LI) is the probability that a candidate satisfies a set of constraints and is an improvement over known objective values.
 <a class="reference internal" href="../reference/citrine.informatics.scores.html#citrine.informatics.scores.LIScore" title="citrine.informatics.scores.LIScore"><code class="xref py py-class docutils literal notranslate"><span class="pre">LIScore</span></code></a> supports 0 or more objectives.
@@ -105,8 +106,8 @@ Please use <a class="reference internal" href="predictor_evaluation_workflows.ht
 <span class="n">execution</span> <span class="o">=</span> <span class="n">workflow</span><span class="o">.</span><span class="n">executions</span><span class="o">.</span><span class="n">trigger</span><span class="p">(</span><span class="n">score</span><span class="p">)</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="expected-value">
+</section>
+<section id="expected-value">
 <h2>4.8.3. Expected value<a class="headerlink" href="#expected-value" title="Permalink to this headline">¶</a></h2>
 <p>Expected value (EV) is the expected value of the objective, penalized if the constraints are unlikely to be satisfied.
 <a class="reference internal" href="../reference/citrine.informatics.scores.html#citrine.informatics.scores.EVScore" title="citrine.informatics.scores.EVScore"><code class="xref py py-class docutils literal notranslate"><span class="pre">EVScore</span></code></a> supports 0 or 1 objective.
@@ -115,8 +116,8 @@ If no objective is provided, the score is the probability of satisfying all cons
 The candidate with the highest score will be the candidate that is expected to be the best at achieving the objectives
 and satisfying the constraints, neglecting any additional value for gaining information about materials being modeled.
 EV is unique among the currently available scores in that it ignores the predicted uncertainty in the objectives.</p>
-</div>
-</div>
+</section>
+</section>
 
 
           </div>

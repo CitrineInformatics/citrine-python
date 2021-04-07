@@ -3,8 +3,9 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
-    <title>4.2. Descriptors &#8212; Citrine Python 0.109.0 documentation</title>
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+    <title>4.2. Descriptors &#8212; Citrine Python 0.115.0 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -34,7 +35,7 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="descriptors">
+  <section id="descriptors">
 <h1>4.2. Descriptors<a class="headerlink" href="#descriptors" title="Permalink to this headline">¶</a></h1>
 <p>Descriptors allow users to define a controlled vocabulary with which to describe the physical context of an AI task.
 Each descriptor defines a term in that vocabulary, which is comprised of a name, a datatype, and bounds on that data type.
@@ -47,7 +48,7 @@ If you are familiar with the GEMD data model, descriptors are roughly equivalent
 <li><p><a class="reference external" href="#molecular-structure-descriptor">Molecular Structure Descriptor</a></p></li>
 <li><p><a class="reference external" href="#formulation-descriptor">Formulation Descriptor</a></p></li>
 </ul>
-<div class="section" id="real-descriptor">
+<section id="real-descriptor">
 <h2>4.2.1. Real Descriptor<a class="headerlink" href="#real-descriptor" title="Permalink to this headline">¶</a></h2>
 <p><a class="reference internal" href="../reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.RealDescriptor" title="citrine.informatics.descriptors.RealDescriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">RealDescriptor</span></code></a> is used to represent continuous variables.
 Each Real Descriptor must provide a lower and upper bound, which is used to both validate input data and as a prior when making predictions.
@@ -56,35 +57,35 @@ It is better to err on the side of broader bounds rather than narrower ones.</p>
 <p>Additionally, each Real Descriptor defines the units of every variable associated with that descriptor.
 Any <a class="reference external" href="https://citrineinformatics.github.io/gemd-python/depth/unit_parsing.html">GEMD-compatible</a> unit string may be used.
 If a variable is dimensionless, you can use an empty string.</p>
-</div>
-<div class="section" id="categorical-descriptor">
+</section>
+<section id="categorical-descriptor">
 <h2>4.2.2. Categorical Descriptor<a class="headerlink" href="#categorical-descriptor" title="Permalink to this headline">¶</a></h2>
 <p><a class="reference internal" href="../reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.CategoricalDescriptor" title="citrine.informatics.descriptors.CategoricalDescriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">CategoricalDescriptor</span></code></a> is used to represent variables that can take one of
 a set of values, i.e. categories.
 All of the possible categories must be known ahead of time and specified in the Categorical Descriptor.</p>
-</div>
-<div class="section" id="chemical-formula-descriptor">
+</section>
+<section id="chemical-formula-descriptor">
 <h2>4.2.3. Chemical Formula Descriptor<a class="headerlink" href="#chemical-formula-descriptor" title="Permalink to this headline">¶</a></h2>
 <p><a class="reference internal" href="../reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.ChemicalFormulaDescriptor" title="citrine.informatics.descriptors.ChemicalFormulaDescriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChemicalFormulaDescriptor</span></code></a> is used to represent variables that should be
 interpreted as chemical formulas.
 The Chemical Formula Descriptor has no parameters other than a name.</p>
-</div>
-<div class="section" id="molecular-structure-descriptor">
+</section>
+<section id="molecular-structure-descriptor">
 <h2>4.2.4. Molecular Structure Descriptor<a class="headerlink" href="#molecular-structure-descriptor" title="Permalink to this headline">¶</a></h2>
 <p><a class="reference internal" href="../reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.MolecularStructureDescriptor" title="citrine.informatics.descriptors.MolecularStructureDescriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">MolecularStructureDescriptor</span></code></a> is used to represent variables that should be
 interpreted as molecular structures.
 Both <a class="reference external" href="https://en.wikipedia.org/wiki/Simplified_molecular-input_line-entry_system">SMILES</a>
 and <a class="reference external" href="https://en.wikipedia.org/wiki/International_Chemical_Identifier">InChI</a> are supported.
 The Molecular Structure Descriptor has no parameters other than a name.</p>
-</div>
-<div class="section" id="formulation-descriptor">
+</section>
+<section id="formulation-descriptor">
 <h2>4.2.5. Formulation Descriptor<a class="headerlink" href="#formulation-descriptor" title="Permalink to this headline">¶</a></h2>
 <p><a class="reference internal" href="../reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.FormulationDescriptor" title="citrine.informatics.descriptors.FormulationDescriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">FormulationDescriptor</span></code></a> is used to represent variables that contain information
 about mixtures of other materials.
 The Formulation Descriptor has no parameters other than a name.</p>
-</div>
-</div>
-<div class="section" id="platform-vocabularies">
+</section>
+</section>
+<section id="platform-vocabularies">
 <h1>4.3. Platform Vocabularies<a class="headerlink" href="#platform-vocabularies" title="Permalink to this headline">¶</a></h1>
 <p>A set of descriptors defines a controlled vocabulary with which to describe AI tasks.
 The <a class="reference internal" href="../reference/citrine.builders.descriptors.html#citrine.builders.descriptors.PlatformVocabulary" title="citrine.builders.descriptors.PlatformVocabulary"><code class="xref py py-class docutils literal notranslate"><span class="pre">PlatformVocabulary</span></code></a> class is provided to collect a set of descriptors,
@@ -133,7 +134,7 @@ The descriptors can then be associated with the names from that namespace.</p>
 <span class="c1"># returns RealDescriptor(key=&quot;temperature&quot;, lower_bound=0, upper_bound=1000000, units=&quot;K&quot;)</span>
 </pre></div>
 </div>
-</div>
+</section>
 
 
           </div>

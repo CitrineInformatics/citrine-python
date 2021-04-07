@@ -3,8 +3,9 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
-    <title>citrine.informatics.design_spaces.formulation_design_space module &#8212; Citrine Python 0.109.0 documentation</title>
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+    <title>citrine.informatics.design_spaces.formulation_design_space module &#8212; Citrine Python 0.115.0 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -32,11 +33,11 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="module-citrine.informatics.design_spaces.formulation_design_space">
+  <section id="module-citrine.informatics.design_spaces.formulation_design_space">
 <span id="citrine-informatics-design-spaces-formulation-design-space-module"></span><h1>citrine.informatics.design_spaces.formulation_design_space module<a class="headerlink" href="#module-citrine.informatics.design_spaces.formulation_design_space" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="citrine.informatics.design_spaces.formulation_design_space.FormulationDesignSpace">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.design_spaces.formulation_design_space.</code><code class="sig-name descname">FormulationDesignSpace</code><span class="sig-paren">(</span><em class="sig-param">*, name: str, description: str, formulation_descriptor: citrine.informatics.descriptors.FormulationDescriptor, ingredients: Set[str], constraints: Set[citrine.informatics.constraints.constraint.Constraint], labels: Optional[Mapping[str, Set[str]]] = None, resolution: float = 0.01, session: citrine._session.Session = &lt;citrine._session.Session object&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.design_spaces.formulation_design_space.FormulationDesignSpace" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.design_spaces.formulation_design_space.</code><code class="sig-name descname">FormulationDesignSpace</code><span class="sig-paren">(</span><em class="sig-param">*, name: str, description: str, formulation_descriptor: citrine.informatics.descriptors.FormulationDescriptor, ingredients: Set[str], constraints: Set[citrine.informatics.constraints.constraint.Constraint], labels: Optional[Mapping[str, Set[str]]] = None, resolution: float = 0.0001, session: citrine._session.Session = &lt;citrine._session.Session object&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.design_spaces.formulation_design_space.FormulationDesignSpace" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.resource.Resource</span></code>, <a class="reference internal" href="citrine.informatics.design_spaces.design_space.html#citrine.informatics.design_spaces.design_space.DesignSpace" title="citrine.informatics.design_spaces.design_space.DesignSpace"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.design_spaces.design_space.DesignSpace</span></code></a></p>
 <p>Design space composed of mixtures of ingredients.</p>
 <dl class="field-list simple">
@@ -49,11 +50,11 @@
 <li><p><strong>constraints</strong> (<em>Set</em><em>[</em><em>IngredientConstraint</em><em>]</em>) – set of constraints that restricts formulations sampled from the space.
 This must include an
 <code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientCountConstraint</span></code>
-with maximum count of 100 or fewer.</p></li>
+with maximum count of 32 or fewer.</p></li>
 <li><p><strong>labels</strong> (<em>Optional</em><em>[</em><em>Mapping</em><em>[</em><em>str</em><em>, </em><em>Set</em><em>[</em><em>str</em><em>]</em><em>]</em><em>]</em>) – map from a label to each ingredient that should given that label
 when it’s included in a formulation, e.g., <code class="docutils literal notranslate"><span class="pre">{'solvent':</span> <span class="pre">{'water',</span> <span class="pre">'alcohol'}}</span></code></p></li>
 <li><p><strong>resolution</strong> (<em>float</em><em>, </em><em>optional</em>) – Minimum increment used to specify ingredient quantities.
-Default is 0.01.</p></li>
+Default is 0.0001.</p></li>
 </ul>
 </dd>
 </dl>
@@ -94,7 +95,7 @@ Default is 0.01.</p></li>
 
 </dd></dl>
 
-</div>
+</section>
 
 
           </div>

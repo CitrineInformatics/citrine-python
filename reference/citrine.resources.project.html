@@ -3,8 +3,9 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
-    <title>citrine.resources.project module &#8212; Citrine Python 0.109.0 documentation</title>
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
+    <title>citrine.resources.project module &#8212; Citrine Python 0.115.0 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -32,7 +33,7 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="module-citrine.resources.project">
+  <section id="module-citrine.resources.project">
 <span id="citrine-resources-project-module"></span><h1>citrine.resources.project module<a class="headerlink" href="#module-citrine.resources.project" title="Permalink to this headline">¶</a></h1>
 <p>Resources that represent both individual and collections of projects.</p>
 <dl class="class">
@@ -165,17 +166,13 @@ Use the <code class="docutils literal notranslate"><span class="pre">update_user
 
 <dl class="method">
 <dt id="citrine.resources.project.Project.gemd_batch_delete">
-<code class="sig-name descname">gemd_batch_delete</code><span class="sig-paren">(</span><em class="sig-param">id_list: List[Union[gemd.entity.link_by_uid.LinkByUID, uuid.UUID, str, gemd.entity.base_entity.BaseEntity]]</em><span class="sig-paren">)</span> &#x2192; List[Tuple[gemd.entity.link_by_uid.LinkByUID, citrine.resources.api_error.ApiError]]<a class="headerlink" href="#citrine.resources.project.Project.gemd_batch_delete" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">gemd_batch_delete</code><span class="sig-paren">(</span><em class="sig-param">id_list: List[Union[gemd.entity.link_by_uid.LinkByUID, uuid.UUID, str, gemd.entity.base_entity.BaseEntity]], *, timeout: float = 120, polling_delay: float = 1.0</em><span class="sig-paren">)</span> &#x2192; List[Tuple[gemd.entity.link_by_uid.LinkByUID, citrine.resources.api_error.ApiError]]<a class="headerlink" href="#citrine.resources.project.Project.gemd_batch_delete" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove a set of GEMD objects.</p>
 <p>You may provide GEMD objects that reference each other, and the objects
 will be removed in the appropriate order.</p>
 <p>A failure will be returned if the object cannot be deleted due to an external
 reference.</p>
-<p>You must have Write access on the assoociated datasets for each object.</p>
-<p>If you wish to delete more than 50 objects, queuing of deletes requires that
-the types of objects be known, and thus you _must_ provide ids in the form
-of BaseEntities.</p>
-<p>Also note that Attribute Templates cannot be deleted at present.</p>
+<p>You must have Write access on the associated datasets for each object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>id_list</strong> (<em>List</em><em>[</em><em>Union</em><em>[</em><em>LinkByUID</em><em>, </em><em>UUID</em><em>, </em><em>str</em><em>, </em><em>BaseEntity</em><em>]</em><em>]</em>) – A list of the IDs of data objects to be removed. They can be passed
@@ -226,7 +223,7 @@ deleted.</p>
 <dd><p>Remove public access for a resource owned by this project.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>resource</strong> (<em>Resource</em>) – An instance of a resource owned by this project (e.g. a dataset).</p>
+<dd class="field-odd"><p><strong>resource</strong> (<em>Resource</em>) – An instance of a resource owned by this project (e.g., a dataset).</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if the action was performed successfully</p>
@@ -243,7 +240,7 @@ deleted.</p>
 <dd><p>Grant public access to a resource owned by this project.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>resource</strong> (<em>Resource</em>) – An instance of a resource owned by this project (e.g. a dataset).</p>
+<dd class="field-odd"><p><strong>resource</strong> (<em>Resource</em>) – An instance of a resource owned by this project (e.g., a dataset).</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if the action was performed successfully</p>
@@ -519,7 +516,10 @@ the project with <code class="docutils literal notranslate"><span class="pre">ui
 <dl class="method">
 <dt id="citrine.resources.project.ProjectCollection.delete">
 <code class="sig-name descname">delete</code><span class="sig-paren">(</span><em class="sig-param">uid: Union[uuid.UUID, str]</em><span class="sig-paren">)</span> &#x2192; citrine.resources.response.Response<a class="headerlink" href="#citrine.resources.project.ProjectCollection.delete" title="Permalink to this definition">¶</a></dt>
-<dd><p>[ALPHA] Delete a particular element of the collection.</p>
+<dd><p>[ALPHA] Delete a particular project.</p>
+<p>Only empty projects can be deleted.
+If the project is not empty, then the Response will contain a list of all of the project’s
+resources. These must be deleted before the project can be deleted.</p>
 </dd></dl>
 
 <dl class="method">
@@ -578,7 +578,7 @@ a full list with no search parameters.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>search_params</strong> (<em>dict</em><em>, </em><em>optional</em>) – <p>A <code class="docutils literal notranslate"><span class="pre">dict</span></code> representing the body of the post request that will be sent to the search
-endpoint to filter the results i.e.</p>
+endpoint to filter the results, e.g.,</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;Polymer Project&quot;</span><span class="p">,</span>
@@ -614,7 +614,7 @@ the maximum number of elements in the response.</p></li>
 
 </dd></dl>
 
-</div>
+</section>
 
 
           </div>
