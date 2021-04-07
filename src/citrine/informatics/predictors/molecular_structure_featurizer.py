@@ -16,7 +16,7 @@ class MolecularStructureFeaturizer(Resource['MolecularStructureFeaturizer'], Pre
     A featurizer for molecular structures, powered by CDK.
 
     The MolecularStructureFeaturizer will compute a configurable set of features on molecular
-    structure data, e.g. SMILES or InChI strings.  The features are computed using the
+    structure data, e.g., SMILES or InChI strings.  The features are computed using the
     `Chemistry Development Kit (CDK) <https://cdk.github.io/>`_.  The features are configured
     using the ``features`` and ``excludes`` arguments, which accept either feature names or predefined
     aliases.  
@@ -35,6 +35,7 @@ class MolecularStructureFeaturizer(Resource['MolecularStructureFeaturizer'], Pre
     
     The ``extended`` alias includes more features that may improve model performance but are slower and may dilute the signal in the features.
     It includes the ``standard`` set and:
+
         - `ALOGP  <http://cdk.github.io/cdk/1.4/docs/api/org/openscience/cdk/qsar/descriptors/molecular/ALOGPDescriptor.html>`_
         - `AromaticAtomCount  <https://cdk.github.io/cdk/1.5/docs/api/org/openscience/cdk/qsar/descriptors/molecular/AromaticAtomsCountDescriptor.html>`_
         - `AromaticBondCount  <http://cdk.github.io/cdk/2.2/docs/api/org/openscience/cdk/aromaticity/Aromaticity.html>`_
@@ -60,7 +61,6 @@ class MolecularStructureFeaturizer(Resource['MolecularStructureFeaturizer'], Pre
         - `WienerNumbers  <https://cdk.github.io/cdk/1.5/docs/api/org/openscience/cdk/qsar/descriptors/molecular/WienerNumbersDescriptor.html>`_
         - `XLogP  <https://cdk.github.io/cdk/1.5/docs/api/org/openscience/cdk/qsar/descriptors/molecular/XLogPDescriptor.html>`_
         - `ZagrebIndex  <http://cdk.github.io/cdk/latest/docs/api/org/openscience/cdk/qsar/descriptors/molecular/ZagrebIndexDescriptor.html>`_
-
 
     Parameters
     ----------

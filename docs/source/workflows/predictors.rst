@@ -172,7 +172,7 @@ The following example demonstrates how to use a :class:`~citrine.informatics.pre
     # featurize the molecular structure
     featurizer = MolecularStructureFeaturizer(
         name='Molecular Featurizer',
-        description="Featurizer the Solvent's molecular structure using the default features.",
+        description="Featurize the Solvent's molecular structure using the default features.",
         descriptor=input_desc,
         features=['standard'],
     )
@@ -190,7 +190,7 @@ The following example demonstrates how to use a :class:`~citrine.informatics.pre
         description='Predict the density, given molecular features of the solvent',
         inputs = features,
         output = output_desc,
-        training_data = [GemTableDataSource(training_data_table_uid, 1)]
+        training_data = []
     )
  
     # use a graph predictor to wrap together the featurizer and the machine learning model
@@ -202,9 +202,10 @@ The following example demonstrates how to use a :class:`~citrine.informatics.pre
     )
  
     # register or update predictor by name
-    predictor = create_or_update(collection=project.predictors,
-                                 module=graph_predictor
-                                )
+    predictor = create_or_update(
+        collection=project.predictors,
+        module=graph_predictor
+    )
 
 
 Ingredients to simple mixture predictor (ALPHA)
