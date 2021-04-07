@@ -40,11 +40,11 @@ def mean_feature_properties(
         Power of the generalized mean. Only integer powers are supported.
     impute_properties: bool
         Whether to impute missing ingredient properties by averaging over the entire dataset.
-        If ``False`` an error is thrown if any ingredient being featurized is missing a property.
+        If ``False``, an error is thrown if any ingredient being featurized is missing a property.
     all_ingredients: bool
-        Whether to create a MeanPropertyPredictor that predicts over all ingredients.
+        Whether to create a MeanPropertyPredictor that calculates the mean over all ingredients.
     labels: Optional[List[str]]
-        Any labels to create a MeanPropertyPredictor for.
+        List of labels to create a MeanPropertyPredictor for.
 
     Returns
     -------
@@ -53,7 +53,7 @@ def mean_feature_properties(
         and a list of all the output descriptors produced by these models. There will be one
         model for each label specified, and one model for all ingredients if ``all_ingredients``
         is set to ``True``. In the common case, the output descriptors will all be used
-        as inputs to an ML model.
+        as inputs to one or more ML models.
 
     """
     if isinstance(featurizer, MolecularStructureFeaturizer):
