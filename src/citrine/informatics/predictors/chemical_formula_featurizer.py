@@ -1,7 +1,8 @@
 from typing import List, Optional
 
 from citrine._rest.resource import Resource
-from citrine.informatics.descriptors import ChemicalFormulaDescriptor
+from citrine._serialization import properties as _properties
+from citrine.informatics.descriptors import ChemicalFormulaDescriptor, Descriptor
 from citrine.informatics.predictors import Predictor
 
 __all__ = ['ChemicalFormulaFeaturizer']
@@ -37,12 +38,22 @@ class ChemicalFormulaFeaturizer(Resource['ChemicalFormulaFeaturizer'], Predictor
     - "Elemental work function"
     - "Elemental polarizability"
     - "Radius of d orbitals"
-    - 
+    -
 
     Parameters
     ----------
 
     """
+
+    input_descriptor = _properties.Object(Descriptor, 'config.input')
+    features = _properties.List(_properties.String, 'config.features')
+    excludes = _properties.List(_properties.String, 'config.excludes')
+    powers = _properties.List(_properties.Integer, 'config.powers')
+
+    typ = _properties.String('config.type', default='ChemicalFormulaFeaturizer', deserializable=False)
+
+    # NOTE: These could go here or in _post_dump - it's unclear which is better right now
+    module_type = _properties.String('module_type', default='PREDICTOR')
 
     def __init__(self,
                  name: str,

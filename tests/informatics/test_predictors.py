@@ -6,11 +6,12 @@ import mock
 import pytest
 
 from citrine.informatics.data_sources import GemTableDataSource
-from citrine.informatics.descriptors import RealDescriptor, MolecularStructureDescriptor, FormulationDescriptor
+from citrine.informatics.descriptors import RealDescriptor, MolecularStructureDescriptor, \
+    FormulationDescriptor, ChemicalFormulaDescriptor
 from citrine.informatics.predictors import ExpressionPredictor, GraphPredictor, SimpleMLPredictor, \
     MolecularStructureFeaturizer, GeneralizedMeanPropertyPredictor, IngredientsToSimpleMixturePredictor, \
     SimpleMixturePredictor, LabelFractionsPredictor, IngredientFractionsPredictor, DeprecatedExpressionPredictor, \
-    AutoMLPredictor, MeanPropertyPredictor
+    AutoMLPredictor, MeanPropertyPredictor, ChemicalFormulaFeaturizer
 
 x = RealDescriptor("x", 0, 100, "")
 y = RealDescriptor("y", 0, 100, "")
@@ -46,6 +47,17 @@ def molecule_featurizer() -> MolecularStructureFeaturizer:
         descriptor=MolecularStructureDescriptor("SMILES"),
         features=["all"],
         excludes=["standard"]
+    )
+
+@pytest.fixture
+def chemical_featurizer() -> ChemicalFormulaFeaturizer:
+    return ChemicalFormulaFeaturizer(
+        name="Chemical featurizer",
+        description="description",
+        input_descriptor=ChemicalFormulaDescriptor("formula"),
+        features=["standard"],
+        excludes=None,
+        powers=[1, 2]
     )
 
 
@@ -259,6 +271,32 @@ def test_molecule_featurizer(molecule_featurizer):
         'archived': False,
         'module_type': 'PREDICTOR',
         'display_name': 'Molecule featurizer'
+    }
+
+
+def test_chemical_featurizer(chemical_featurizer):
+    assert chemical_featurizer.name == "Chemical featurizer"
+    assert chemical_featurizer.description == "description"
+    assert chemical_featurizer.input_descriptor == ChemicalFormulaDescriptor("formula")
+    assert chemical_featurizer.features == ["standard"]
+    assert chemical_featurizer.excludes == []
+    assert chemical_featurizer.powers == [1, 2]
+
+    assert str(chemical_featurizer) == "<ChemicalFormulaFeaturizer 'Chemical featurizer'>"
+
+    assert chemical_featurizer.dump() == {
+        'config': {
+            'name': 'Chemical featurizer',
+            'description': 'description',
+            'input': ChemicalFormulaDescriptor("formula").dump(),
+            'features': ['standard'],
+            'excludes': [],
+            'powers': [1, 2],
+            'type': 'ChemicalFormulaFeaturizer'
+        },
+        'archived': False,
+        'module_type': 'PREDICTOR',
+        'display_name': 'Chemical featurizer'
     }
 
 
