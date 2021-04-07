@@ -110,6 +110,9 @@ class ModelSummary(Serializable['ModelSummary']):
     predictor_name = properties.String('predictor_configuration_name', default='')
     predictor_uid = properties.Optional(properties.UUID(), 'predictor_configuration_uid')
 
+    training_data_count = properties.Optional(properties.Integer, "training_data_count")
+    """Number of rows in the training data for the model, if applicable."""
+
     def __init__(self,
                  name: str,
                  type_: str,
