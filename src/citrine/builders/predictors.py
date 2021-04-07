@@ -65,8 +65,8 @@ def build_mean_feature_property_predictors(
 
     if labels is None:
         labels = []
-    if not isinstance(labels, (list, set, tuple)):
-        raise TypeError("labels must be specified as a list of strings.")
+    if not isinstance(labels, (list, set)):
+        raise TypeError("labels must be specified as a list or set of strings.")
     if make_all_ingredients_model:
         labels = [None] + labels
     if len(labels) == 0:
