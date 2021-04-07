@@ -31,7 +31,8 @@ def mean_feature_properties(
     project: Project
         Project that contains the predictor
     featurizer: MolecularStructureFeaturizer
-        Any model that should be used to featurize formulation ingredients.
+        Any model that should be used to featurize formulation ingredients. Currently only
+        accepts a molecular structure featurizer, but other models can be used in principle.
         TODO: add chemical formula featurizer once it is exposed
     formulation_descriptor: FormulationDescriptor
         Descriptor that represents the formulation being featurized.
