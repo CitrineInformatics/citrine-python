@@ -86,8 +86,8 @@ class MolecularStructureFeaturizer(Resource['MolecularStructureFeaturizer'], Pre
                  name: str,
                  description: str,
                  descriptor: MolecularStructureDescriptor,
-                 features: List[str] = None,
-                 excludes: List[str] = None,
+                 features: Optional[List[str]] = None,
+                 excludes: Optional[List[str]] = None,
                  archived: bool = False):
         self.name: str = name
         self.description: str = description
