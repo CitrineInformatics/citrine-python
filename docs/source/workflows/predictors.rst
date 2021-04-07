@@ -26,6 +26,7 @@ The following example demonstrates how to use the python SDK to create an :class
 .. code:: python
 
    from citrine.informatics.predictors import AutoMLPredictor
+   from citrine.seeding.find_or_create import create_or_update
 
    # create AutoMLPredictor (assumes descriptors for
    # inputs/output variables have already been created)
@@ -60,7 +61,7 @@ The following example demonstrates how to use the python SDK to create a :class:
 .. code:: python
 
    from citrine.informatics.predictors import GraphPredictor
-   from citrine.seeding.create_or_update
+   from citrine.seeding.find_or_create import create_or_update
 
    # the other predictors have already been created and validated
    graph_predictor = GraphPredictor(
@@ -132,6 +133,79 @@ The following example demonstrates how to create an :class:`~citrine.informatics
                                )
 
 For an example of expression predictors used in a graph predictor, see :ref:`AI Engine Code Examples <graph_predictor_example>`.
+
+MolecularStructureFeaturizer
+------------------------------------
+The :class:`~citrine.informatics.predictors.molecular_structure_featurizer.MolecularStructureFeaturizer` constructs a simple mixture from a list of ingredients.
+The MolecularStructureFeaturizer will compute a configurable set of features on molecular structure data,
+e.g. SMILES or InChI strings, using the `Chemistry Development Kit (CDK) <https://cdk.github.io/>`_.
+The features are configured using the ``features`` and ``excludes`` arguments, which accept either feature names or predefined aliases.
+The default is the `standard` alias, corresponding to eight features that are a good balance of cost and performance.
+
+The feature names and descriptors are automatically constructed from the name of the input and the feature names.
+The ``from_predictor_responses`` method will grab the descriptors for the features so that they can be fed into other predicors,
+e.g. the :class:`~citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor`, as inputs.
+
+
+The following example demonstrates how to use a :class:`~citrine.informatics.predictors.molecular_structure_featurizer.MolecularStructureFeaturizer` and
+:class:`~citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor` to model a property of a molecule:
+
+.. code:: python
+
+    from citrine.informatics.descriptors import MolecularStructureDescriptor, RealDescriptor
+    from citrine.informatics.predictors import MolecularStructureFeaturizer, AutoMLPredictor, GraphPredictor
+    from citrine.seeding.find_or_create import create_or_update
+    from citrine.informatics.data_sources import GemTableDataSource
+
+
+    # descriptor for the molecular structure input
+    input_desc = MolecularStructureDescriptor('Solvent SMILES')
+    # descriptor for the property to define a machine learning model to predict
+    output_desc = RealDescriptor(
+        key="density",
+        units="g/cm^3",
+        lower_bound=0.0,
+        upper_bound=100.0
+    )
+
+
+    # featurize the molecular structure
+    featurizer = MolecularStructureFeaturizer(
+        name='Molecular Featurizer',
+        description="Featurizer the Solvent's molecular structure using the default features.",
+        descriptor=input_desc,
+        features=['standard'],
+    )
+
+    # get the feature names
+    features = project.descriptors.from_predictor_responses(
+        predictor=featurizer,
+        inputs=[input_desc]
+    )
+ 
+    # create AutoMLPredictor, using the feature names as inputs
+    # note: the molecular structure, `input_desc`, should not be included in the inputs here
+    ml_predictor = AutoMLPredictor(
+        name='ML Model for Density',
+        description='Predict the density, given molecular features of the solvent',
+        inputs = features,
+        output = output_desc,
+        training_data = [GemTableDataSource(training_data_table_uid, 1)]
+    )
+ 
+    # use a graph predictor to wrap together the featurizer and the machine learning model
+    graph_predictor = GraphPredictor(
+        name='Density from solvent molecular structure',
+        description='Predict the density from the solvent molecular structure using molecular structure features.',
+        predictors = [featurizer, ml_predictor],
+        training_data = [GemTableDataSource(training_data_table_uid, 1)] # training data shared by all sub-predictors
+    )
+ 
+    # register or update predictor by name
+    predictor = create_or_update(collection=project.predictors,
+                                 module=graph_predictor
+                                )
+
 
 Ingredients to simple mixture predictor (ALPHA)
 --------------------------------------------------
