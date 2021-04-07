@@ -17,7 +17,7 @@ from citrine.informatics.predictors import (
     LabelFractionsPredictor,
     Predictor
 )
-from citrine.builders.predictors import mean_feature_properties
+from citrine.builders.predictors import build_mean_feature_property_predictors
 
 from tests.utils.session import FakeSession
 
@@ -64,13 +64,13 @@ def test_mean_feature_properties():
     featurizer = MolecularStructureFeaturizer(name="", description="", descriptor=smiles)
 
     # A standard case. Here we request one model for all ingredients and one for a label.
-    models, outputs = mean_feature_properties(
+    models, outputs = build_mean_feature_property_predictors(
         project=project,
         featurizer=featurizer,
         formulation_descriptor=formulation,
         p=7,
         impute_properties=False,
-        all_ingredients=True,
+        make_all_ingredients_model=True,
         labels=["some label"]
     )
 
@@ -91,7 +91,7 @@ def test_mean_feature_properties():
     # expect an error if the featurizer model is not of allowed type
     not_featurizer = LabelFractionsPredictor(name="", description="", input_descriptor=formulation, labels={"label"})
     with pytest.raises(TypeError):
-        mean_feature_properties(
+        build_mean_feature_property_predictors(
             project=project,
             featurizer=not_featurizer,
             formulation_descriptor=formulation,
@@ -100,19 +100,19 @@ def test_mean_feature_properties():
 
     # expect an error if there are no mean property models requested
     with pytest.raises(ValueError):
-        mean_feature_properties(
+        build_mean_feature_property_predictors(
             project=project,
             featurizer=featurizer,
             formulation_descriptor=formulation,
             p=1,
-            all_ingredients=False,
+            make_all_ingredients_model=False,
             labels=None
         )
 
     # expect an error if the featurizer model returns no real properties
     no_props_project = FakeProject(FakeDescriptorMethods(num_properties=0))
     with pytest.raises(RuntimeError):
-        mean_feature_properties(
+        build_mean_feature_property_predictors(
             project=no_props_project,
             featurizer=featurizer,
             formulation_descriptor=formulation,
@@ -121,7 +121,7 @@ def test_mean_feature_properties():
 
     # expect an error if labels is not specified as a list
     with pytest.raises(TypeError):
-        mean_feature_properties(
+        build_mean_feature_property_predictors(
             project=no_props_project,
             featurizer=featurizer,
             formulation_descriptor=formulation,

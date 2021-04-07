@@ -8,14 +8,14 @@ from citrine.informatics.predictors import (
 from citrine.informatics.descriptors import Descriptor, FormulationDescriptor, RealDescriptor
 
 
-def mean_feature_properties(
+def build_mean_feature_property_predictors(
         *,
         project: Project,
         featurizer: MolecularStructureFeaturizer,
         formulation_descriptor: FormulationDescriptor,
         p: int,
         impute_properties: bool = True,
-        all_ingredients: bool = True,
+        make_all_ingredients_model: bool = True,
         labels: Optional[List[str]] = None
 ) -> Tuple[List[MeanPropertyPredictor], List[Descriptor]]:
     """[ALPHA] Combine a featurizer model with mean property models.
@@ -41,10 +41,12 @@ def mean_feature_properties(
     impute_properties: bool
         Whether to impute missing ingredient properties by averaging over the entire dataset.
         If ``False``, an error is thrown if any ingredient being featurized is missing a property.
-    all_ingredients: bool
-        Whether to create a MeanPropertyPredictor that calculates the mean over all ingredients.
+    make_all_ingredients_model: bool
+        Whether to create a mean property predictor that calculates the mean over all ingredients.
+        If False, models are only constructed for specified labels. Must be True if no labels
+        are specified.
     labels: Optional[List[str]]
-        List of labels to create a MeanPropertyPredictor for.
+        List of labels for which a mean property predictor should be created.
 
     Returns
     -------
@@ -63,19 +65,20 @@ def mean_feature_properties(
 
     if labels is None:
         labels = []
-    if not isinstance(labels, list):
-        raise TypeError("labels must be specified as a list of strings")
-    if all_ingredients:
+    if not isinstance(labels, (list, set, tuple)):
+        raise TypeError("labels must be specified as a list of strings.")
+    if make_all_ingredients_model:
         labels = [None] + labels
     if len(labels) == 0:
         msg = "No mean property predictors requested. " \
-              "Set all_ingredients to True and/or specify labels."
+              "Set make_all_ingredients_model to True and/or specify labels."
         raise ValueError(msg)
 
     properties = project.descriptors.from_predictor_responses(featurizer, [input_descriptor])
     real_properties = [desc for desc in properties if isinstance(desc, RealDescriptor)]
     if len(real_properties) == 0:
-        raise RuntimeError("")
+        msg = "Featurizer did not return any real properties to calculate the means of."
+        raise RuntimeError(msg)
 
     predictors = [
         _build_mean_property_predictor(
@@ -115,7 +118,7 @@ def _build_mean_property_predictor(
         name = f"{p}-{name}"
     if label is not None:
         name += f" for label {label}"
-    name = name + f" in {formulation_descriptor.key}"
+    name += f" in {formulation_descriptor.key}"
 
     return MeanPropertyPredictor(
         name=name,
