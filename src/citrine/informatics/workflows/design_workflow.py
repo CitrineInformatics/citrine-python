@@ -46,12 +46,6 @@ class DesignWorkflow(Resource['DesignWorkflow'], Workflow):
         serializable=False
     )
     archived = properties.Boolean('archived', default=False)
-    created_by = properties.Optional(properties.UUID, 'created_by', serializable=False)
-    updated_by = properties.Optional(properties.UUID, 'updated_by', serializable=False)
-    archived_by = properties.Optional(properties.UUID, 'archived_by', serializable=False)
-    create_time = properties.Optional(properties.Datetime, 'create_time', serializable=False)
-    update_time = properties.Optional(properties.Datetime, 'update_time', serializable=False)
-    archive_time = properties.Optional(properties.Datetime, 'archive_time', serializable=False)
     module_type = properties.String('module_type', default='DESIGN_WORKFLOW')
     typ = properties.String('type', default='DesignWorkflow', deserializable=False)
 
@@ -68,13 +62,15 @@ class DesignWorkflow(Resource['DesignWorkflow'], Workflow):
                  processor_id: Optional[UUID],
                  predictor_id: UUID,
                  project_id: Optional[UUID] = None,
-                 session: Session = Session()):
+                 session: Session = Session(),
+                 description: Optional[str] = None):
         self.name = name
         self.design_space_id = design_space_id
         self.processor_id = processor_id
         self.predictor_id = predictor_id
         self.project_id = project_id
         self.session = session
+        self.description = description
 
     def __str__(self):
         return '<DesignWorkflow {!r}>'.format(self.name)

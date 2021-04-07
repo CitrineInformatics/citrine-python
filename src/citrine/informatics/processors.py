@@ -6,12 +6,13 @@ from citrine._serialization import properties
 from citrine._serialization.serializable import Serializable
 from citrine._session import Session
 from citrine.informatics.modules import Module
+from citrine._rest.mixin import Mixin
 
 
 __all__ = ['Processor', 'GridProcessor', 'EnumeratedProcessor', 'MonteCarloProcessor']
 
 
-class Processor(Module):
+class Processor(Module, Mixin):
     """A Citrine Processor describes how a design space is searched.
 
     Abstract type that returns the proper type given a serialized dict.

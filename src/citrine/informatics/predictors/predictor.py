@@ -7,11 +7,12 @@ from citrine._session import Session
 from citrine.informatics.data_sources import DataSource
 from citrine.informatics.modules import Module
 from citrine.resources.report import ReportResource
+from citrine._rest.mixin import Mixin
 
 __all__ = ['Predictor']
 
 
-class Predictor(Module):
+class Predictor(Module, Mixin):
     """Module that describes the ability to compute/predict properties of materials.
 
     Abstract type that returns the proper type given a serialized dict. subtype

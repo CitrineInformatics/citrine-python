@@ -4,11 +4,12 @@ from typing import Type
 from citrine._serialization import properties
 from citrine._serialization.serializable import Serializable
 from citrine.informatics.modules import Module
+from citrine._rest.mixin import Mixin
 
 __all__ = ['DesignSpace']
 
 
-class DesignSpace(Module):
+class DesignSpace(Module, Mixin):
     """A Citrine Design Space describes the set of materials that can be made.
 
     Abstract type that returns the proper type given a serialized dict.
