@@ -106,6 +106,7 @@ def _build_mean_property_predictor(
         impute_properties: bool,
         label: Optional[str]
 ) -> MeanPropertyPredictor:
+    """Build a MeanPropertyPredictor for given specifications."""
     name = f"mean of {ingredient_descriptor.key} features"
     if p != 1:
         name = f"{p}-" + name
