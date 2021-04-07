@@ -37,16 +37,19 @@ def _async_gemd_batch_delete(
     project_id: UUID
         The Project ID to use in the delete request.
 
+    session: Session
+        The Citrine session.
+
     dataset_id: Optional[UUID] = None
         An optional dataset ID, which if provided will mandate that all GEMD objects
         must be within the given dataset.
 
-    timeout
+    timeout: float
         Amount of time to wait on the job (in seconds) before giving up. Defaults
         to 2 minutes. Note that this number has no effect on the underlying job
         itself, which can also time out server-side.
 
-    polling_delay:
+    polling_delay: float
         How long to delay between each polling retry attempt.
 
     Returns
@@ -85,6 +88,46 @@ def _async_gemd_batch_delete(
 
     job_id = response["job_id"]
 
+    return _poll_for_async_batch_delete_result(project_id, session, job_id, timeout, polling_delay)
+
+
+def _poll_for_async_batch_delete_result(
+        project_id: UUID,
+        session: Session,
+        job_id: str,
+        timeout: float,
+        polling_delay: float
+) -> List[Tuple[LinkByUID, ApiError]]:
+    """
+    Poll for the result of an asynchronous batch delete (or a deletion of dataset contents).
+
+    Parameters
+    ----------
+    project_id: UUID
+        The Project ID to use in the delete request.
+
+    session: Session
+        The Citrine session.
+
+    job_id: str
+        The asynchronous Job ID.
+
+    timeout: float
+        Amount of time to wait on the job (in seconds) before giving up.
+        Note that this number has no effect on the underlying job itself,
+        which can also time out server-side.
+
+    polling_delay: float
+        How long to delay between each polling retry attempt.
+
+    Returns
+    -------
+    List[Tuple[LinkByUID, ApiError]]
+        A list of (LinkByUID, api_error) for each failure to delete an object.
+        Note that this method doesn't raise an exception if an object fails to be
+        deleted.
+
+    """
     response = _poll_for_job_completion(session, project_id, job_id, timeout=timeout,
                                         polling_delay=polling_delay)
 

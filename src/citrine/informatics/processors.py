@@ -42,7 +42,7 @@ class Processor(Module):
 
 
 class GridProcessor(Serializable['GridProcessor'], Processor):
-    """Generates samples from the outer product of finite dimensions, then scans over them.
+    """Generates samples from the Cartesian product of finite dimensions, then scans over them.
 
     To create a finite set of materials from continuous dimensions, a uniform grid is created
     between the lower and upper bounds of the descriptor.

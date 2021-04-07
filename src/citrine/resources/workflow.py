@@ -32,7 +32,7 @@ class WorkflowCollection(Collection[Workflow]):
 
     def __init__(self, project_id: UUID, session: Session):
         msg = "{this_class} is deprecated. Please use {dw_replacement} instead for " \
-            "Design Workflows and {pew_replacement} for Predictor Evaludation Workflows".format(
+            "Design Workflows and {pew_replacement} for Predictor Evaluation Workflows".format(
                 this_class=self.__class__.__name__,
                 dw_replacement=DesignWorkflowCollection.__name__,
                 pew_replacement=PredictorEvaluationWorkflowCollection.__name__)

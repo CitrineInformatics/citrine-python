@@ -12,7 +12,7 @@ from citrine.informatics.predictors import (
     SimpleMLPredictor,
     ExpressionPredictor,
     Predictor,
-    AutoMLPredictor
+    AutoMLPredictor, DeprecatedExpressionPredictor
 )
 from citrine.resources.predictor import PredictorCollection
 from tests.utils.session import FakeSession, FakeCall
@@ -148,7 +148,7 @@ def test_mark_predictor_invalid(valid_simple_ml_predictor_data, valid_predictor_
     collection.update(predictor)
 
     # Then
-    assert 2 == session.num_calls, session.calls  # This is a little strange, the report is fetched eagerly
+    assert 1 == session.num_calls, session.calls
 
     first_call = session.calls[0]  # First call is the update
     assert first_call.method == 'PUT'
@@ -176,7 +176,7 @@ def test_list_predictors(valid_simple_ml_predictor_data, valid_expression_predic
     # Then
     expected_call = FakeCall(method='GET', path='/projects/{}/modules'.format(collection.project_id),
                                    params={'per_page': 20, 'module_type': 'PREDICTOR'})
-    assert 3 == session.num_calls, session.calls  # This is a little strange, the report is fetched eagerly
+    assert 1 == session.num_calls, session.calls
     assert expected_call == session.calls[0]
     assert len(predictors) == 2
 
@@ -258,3 +258,39 @@ def test_graph_default_training_data():
     # check that the training data doesn't bleed into both
     assert len(gp1.training_data) == 1
     assert len(gp2.training_data) == 0
+
+
+def test_unexpected_pattern():
+    """Check that unexpected patterns result in a value error"""
+    # Given
+    session = FakeSession()
+    pc = PredictorCollection(uuid.uuid4(), session)
+
+    # Then
+    with pytest.raises(ValueError):
+        pc.auto_configure(GemTableDataSource(uuid.uuid4(), 0), "yogurt")
+
+
+def test_returned_predictor(valid_graph_predictor_data):
+    """Check that auto_configure works on the happy path."""
+    # Given
+    session = FakeSession()
+
+    # Setup a response that includes instance instead of config
+    response = deepcopy(valid_graph_predictor_data)
+    response["instance"] = response["config"]
+    del response["config"]
+
+    session.set_response(response)
+    pc = PredictorCollection(uuid.uuid4(), session)
+
+    # When
+    result = pc.auto_configure(GemTableDataSource(uuid.uuid4(), 0), "PLAIN")
+
+    # Then the response is parsed in a predictor
+    assert result.name == valid_graph_predictor_data["display_name"]
+    assert isinstance(result, GraphPredictor)
+    # including nested predictors
+    assert len(result.predictors) == 2
+    assert isinstance(result.predictors[0], uuid.UUID)
+    assert isinstance(result.predictors[1], DeprecatedExpressionPredictor)
