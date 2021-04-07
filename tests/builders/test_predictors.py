@@ -118,3 +118,13 @@ def test_mean_feature_properties():
             formulation_descriptor=formulation,
             p=1
         )
+
+    # expect an error if labels is not specified as a list
+    with pytest.raises(TypeError):
+        mean_feature_properties(
+            project=no_props_project,
+            featurizer=featurizer,
+            formulation_descriptor=formulation,
+            p=1,
+            labels="not inside a list!"
+        )

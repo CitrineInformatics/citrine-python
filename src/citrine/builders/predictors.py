@@ -63,10 +63,13 @@ def mean_feature_properties(
 
     if labels is None:
         labels = []
+    if not isinstance(labels, list):
+        raise TypeError(f"labels must be specified as a list of strings")
     if all_ingredients:
         labels = [None] + labels
-    if not isinstance(labels, list) or len(labels) == 0:
-        msg = "Ingredient properties must be calculated over all ingredients or specified labels."
+    if len(labels) == 0:
+        msg = "No mean property predictors requested. " \
+              "Set all_ingredients to True and/or specify labels."
         raise ValueError(msg)
 
     properties = project.descriptors.from_predictor_responses(featurizer, [input_descriptor])
