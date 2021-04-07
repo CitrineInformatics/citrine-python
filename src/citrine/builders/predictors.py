@@ -64,7 +64,7 @@ def mean_feature_properties(
     if labels is None:
         labels = []
     if not isinstance(labels, list):
-        raise TypeError(f"labels must be specified as a list of strings")
+        raise TypeError("labels must be specified as a list of strings")
     if all_ingredients:
         labels = [None] + labels
     if len(labels) == 0:
@@ -112,9 +112,9 @@ def _build_mean_property_predictor(
     """Build a MeanPropertyPredictor for given specifications."""
     name = f"mean of {ingredient_descriptor.key} features"
     if p != 1:
-        name = f"{p}-" + name
+        name = f"{p}-{name}"
     if label is not None:
-        name = name + f" for label {label}"
+        name += f" for label {label}"
     name = name + f" in {formulation_descriptor.key}"
 
     return MeanPropertyPredictor(
