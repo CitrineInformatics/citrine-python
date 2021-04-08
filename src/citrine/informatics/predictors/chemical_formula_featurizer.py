@@ -16,8 +16,8 @@ class ChemicalFormulaFeaturizer(Resource['ChemicalFormulaFeaturizer'], Predictor
     The features are functions of element-level properties, which are inspired by
     `Magpie <https://bitbucket.org/wolverton/magpie/src/master/>`_. The features are configured
     using the ``features`` and ``excludes`` arguments, which accept either feature names or
-    predefined aliases. Many features are element-wise weighted means of element-level properties.
-    How to compute the mean is configured using the ``powers`` argument.
+    predefined aliases. Many features are stoichiometrically weighted generalized means of
+    element-level properties. How to compute the mean is configured using the ``powers`` argument.
 
     The default is the "standard" alias, corresponding to features that are intuitive and
     often correlate with properties of interest. Other aliases are "physical," "electronic,"
@@ -25,94 +25,95 @@ class ChemicalFormulaFeaturizer(Resource['ChemicalFormulaFeaturizer'], Predictor
 
     The following features are weighted means of simple elemental properties.
 
-    - "Pauling electronegativity"
-    - "Number of d valence electrons"
-    - "Number of unfilled f valence electrons"
-    - "Number of f valence electrons"
-    - "Number of unfilled p valence electrons"
-    - "Number of p valence electrons"
-    - "Number of unfilled s valence electrons"
-    - "Number of s valence electrons"
-    - "Total number of unfilled valence electrons"
-    - "Total number of valence electrons"
-    - "Elemental work function"
-    - "Elemental polarizability"
-    - "Radius of d orbitals"
-    - "Radius of s orbitals"
-    - "Radius of p orbitals"
-    - "Elemental magnetic moment"
-    - "Elemental atomic volume"
-    - "Mendeleev number"
-    - "Row in periodic table"
-    - "Elemental bulk modulus"
-    - "Elemental density"
-    - "Elemental melting temperature"
-    - "Elemental crystal structure (space group)"
-    - "AtomicVolume"
-    - "Number"
-    - "CovalentRadius"
-    - "DipolePolarizability"
-    - "ElectronAffinity"
-    - "FirstIonizationEnergy"
-    - "GSbandgap"
-    - "GSenergy_pa"
-    - "GSestBCClatcnt"
-    - "GSvolume_pa"
-    - "MiracleRadius"
-    - "NdUnfilled"
-    - "ZungerPP-r_pi"
-    - "AtomicWeight"
-    - "Column in periodic table"
-    - "IsAlkali"
-    - "IsDBlock"
-    - "IsFBlock"
-    - "IsMetal"
-    - "IsNonmetal"
-    - "BoilingT"
-    - "FusionEnthalpy"
-    - "HeatCapacityMass"
-    - "HeatCapacityMolar"
-    - "HeatFusion"
-    - "ShearModulus"
-    - "ValenceZeff"
+    - "Pauling electronegativity": standard, electronic
+    - "Number of d valence electrons": standard, electronic
+    - "Number of unfilled f valence electrons": standard, electronic
+    - "Number of f valence electrons": standard, electronic
+    - "Number of unfilled p valence electrons": standard, electronic
+    - "Number of p valence electrons": standard, electronic
+    - "Number of unfilled s valence electrons": standard, electronic
+    - "Number of s valence electrons": standard, electronic
+    - "Total number of unfilled valence electrons": standard, electronic
+    - "Total number of valence electrons": standard, electronic
+    - "Elemental work function": standard, electronic
+    - "Elemental polarizability": standard, electronic
+    - "Radius of d orbitals": standard, electronic
+    - "Radius of s orbitals": standard, electronic
+    - "Radius of p orbitals": standard, electronic
+    - "Elemental magnetic moment": standard, electronic
+    - "Elemental atomic volume": standard, electronic, physical
+    - "Elemental electron density": standard, electronic
+    - "Mendeleev number": standard, periodicTable
+    - "Row in periodic table": standard, periodicTable
+    - "Elemental bulk modulus": standard, physical
+    - "Elemental density": standard, physical
+    - "Elemental melting temperature": standard, physical
+    - "Elemental crystal structure (space group)": standard, electronic, physical
+    - "AtomicVolume": electronic, physical
+    - "Number": periodicTable
+    - "CovalentRadius": electronic, physical
+    - "DipolePolarizability": electronic
+    - "ElectronAffinity": electronic
+    - "FirstIonizationEnergy": electronic
+    - "GSbandgap": electronic
+    - "GSenergy_pa": electronic
+    - "GSestBCClatcnt": electronic, physical
+    - "GSvolume_pa": electronic, physical
+    - "MiracleRadius": electronic, physical
+    - "NdUnfilled": electronic
+    - "ZungerPP-r_pi": electronic
+    - "AtomicWeight": physical, periodicTable
+    - "Column in periodic table": periodicTable
+    - "IsAlkali": periodicTable
+    - "IsDBlock": periodicTable
+    - "IsFBlock": periodicTable
+    - "IsMetal": periodicTable
+    - "IsNonmetal": periodicTable
+    - "BoilingT": physical
+    - "FusionEnthalpy": physical
+    - "HeatCapacityMass": physical
+    - "HeatCapacityMolar": physical
+    - "HeatFusion": physical
+    - "ShearModulus": physical
+    - "ValenceZeff": electronic, physical
 
     The following features are weighted means of more complex elemental properties.
 
-    - "Packing density"
-    - "Liquid range"
-    - "Non-dimensional liquid range"
-    - "Liquid ratio"
-    - "Elastic Poisson Ratio"
-    - "DFT energy density"
-    - "Interatomic distance"
-    - "Ionization Affinity Ratio"
-    - "Ratio of Electron Affinity to Electronegativity"
-    - "Trouton's Ratio"
-    - "Miracle Ratio"
-    - "DFT volume ratio"
-    - "Mulliken electronegativity"
-    - "Modulii sum"
-    - "Zunger Pseudopotential radius ratio"
-    - "BCC Efficiency"
-    - "Non-dimensional heat of fusion"
-    - "Non-dimensional band gap"
-    - "Conduction ionization energy"
-    - "Valence electron density"
-    - "Non-dimensional work function"
-    - "Shear Modulus Melting Temp Product"
+    - "Packing density": standard, physical
+    - "Liquid range": standard, physical
+    - "Non-dimensional liquid range": standard, physical
+    - "Liquid ratio": standard, physical
+    - "Elastic Poisson Ratio": standard, physical
+    - "DFT energy density": standard, electronic, physical
+    - "Interatomic distance": standard, physical
+    - "Ionization Affinity Ratio": standard, electronic
+    - "Ratio of Electron Affinity to Electronegativity": standard, electronic
+    - "Trouton's Ratio": standard, physical
+    - "Miracle Ratio": standard, electronic
+    - "DFT volume ratio": standard, physical
+    - "Mulliken electronegativity": standard, electronic
+    - "Modulii sum": standard, physical
+    - "Zunger Pseudopotential radius ratio": standard, electronic
+    - "BCC Efficiency": standard, physical
+    - "Non-dimensional heat of fusion": standard, physical
+    - "Non-dimensional band gap": standard, electronic
+    - "Conduction ionization energy": standard, electronic
+    - "Valence electron density": standard, electronic
+    - "Non-dimensional work function": standard, electronic
+    - "Shear Modulus Melting Temp Product": standard, physical
 
     The following features are not weighted means. Their values do not depend on ``powers``.
 
-    - "Maximum electronegativity difference"
-    - "Maximum radius difference"
-    - "Maximum radius ratio"
-    - "Min atomic radius plus max electronegativity difference"
+    - "Maximum electronegativity difference": standard, electronic
+    - "Maximum radius difference": standard, electronic, physical
+    - "Maximum radius ratio": standard, electronic, physical
+    - "Min atomic radius plus max electronegativity difference": standard, electronic, physical
     - "Number of elements"
     - "Minimum atomic fraction"
     - "Maximum atomic fraction"
-    - "Minimum weight fraction"
-    - "Maximum weight fraction"
-    - "Formula weight"
+    - "Minimum weight fraction": standard, periodicTable
+    - "Maximum weight fraction": standard, periodicTable
+    - "Formula weight": standard, physical
 
     Parameters
     ----------
@@ -152,7 +153,7 @@ class ChemicalFormulaFeaturizer(Resource['ChemicalFormulaFeaturizer'], Predictor
         self.input_descriptor = input_descriptor
         self.features = features if features is not None else ["standard"]
         self.excludes = excludes if excludes is not None else []
-        self.powers = powers if powers is not None else [2]
+        self.powers = powers if powers is not None else [1]
 
     def _post_dump(self, data: dict) -> dict:
         data['display_name'] = data['config']['name']
