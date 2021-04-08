@@ -9,10 +9,12 @@ from citrine.informatics.descriptors import (
     RealDescriptor,
     CategoricalDescriptor,
     MolecularStructureDescriptor,
+    ChemicalFormulaDescriptor,
     FormulationDescriptor
 )
 from citrine.informatics.predictors import (
     MolecularStructureFeaturizer,
+    ChemicalFormulaFeaturizer,
     MeanPropertyPredictor,
     LabelFractionsPredictor,
     Predictor
@@ -29,7 +31,7 @@ class FakeDescriptorMethods(DescriptorMethods):
         self.num_properties = num_properties
 
     def from_predictor_responses(self, predictor: Predictor, inputs: List[Descriptor]):
-        if isinstance(predictor, MolecularStructureFeaturizer):
+        if isinstance(predictor, (MolecularStructureFeaturizer, ChemicalFormulaFeaturizer)):
             return [
                 RealDescriptor(f"{predictor.descriptor.key} real property {i}", lower_bound=0, upper_bound=1, units="")
                        for i in range(self.num_properties)
@@ -60,8 +62,10 @@ def test_mean_feature_properties():
     num_properties = 3
     project = FakeProject(FakeDescriptorMethods(num_properties=num_properties))
     smiles = MolecularStructureDescriptor("smiles")
+    chem = ChemicalFormulaDescriptor("formula")
     formulation = FormulationDescriptor("formulation")
     featurizer = MolecularStructureFeaturizer(name="", description="", descriptor=smiles)
+    chem_featurizer = ChemicalFormulaFeaturizer(name="", description="", input_descriptor=chem)
 
     # A standard case. Here we request one model for all ingredients and one for a label.
     models, outputs = build_mean_feature_property_predictors(
@@ -102,7 +106,7 @@ def test_mean_feature_properties():
     with pytest.raises(ValueError):
         build_mean_feature_property_predictors(
             project=project,
-            featurizer=featurizer,
+            featurizer=chem_featurizer,
             formulation_descriptor=formulation,
             p=1,
             make_all_ingredients_model=False,
