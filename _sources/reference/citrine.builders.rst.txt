@@ -8,6 +8,7 @@ Submodules
 
    citrine.builders.descriptors
    citrine.builders.design_spaces
+   citrine.builders.predictors
 
 Module contents
 ---------------

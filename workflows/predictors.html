@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
 
-    <title>4.4. Predictors &#8212; Citrine Python 0.115.0 documentation</title>
+    <title>4.4. Predictors &#8212; Citrine Python 0.117.0 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -52,6 +52,7 @@ Unlike the <a class="reference external" href="#simple-ml-predictor">SimpleMLPre
 <p>Models are trained using data provided by a <a class="reference internal" href="../reference/citrine.informatics.data_sources.html#citrine.informatics.data_sources.DataSource" title="citrine.informatics.data_sources.DataSource"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataSource</span></code></a> specified when creating a predictor.</p>
 <p>The following example demonstrates how to use the python SDK to create an <a class="reference internal" href="../reference/citrine.informatics.predictors.auto_ml_predictor.html#citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor" title="citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">AutoMLPredictor</span></code></a>, register the predictor to a project and wait for validation:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.informatics.predictors</span> <span class="kn">import</span> <span class="n">AutoMLPredictor</span>
+<span class="kn">from</span> <span class="nn">citrine.seeding.find_or_create</span> <span class="kn">import</span> <span class="n">create_or_update</span>
 
 <span class="c1"># create AutoMLPredictor (assumes descriptors for</span>
 <span class="c1"># inputs/output variables have already been created)</span>
@@ -80,7 +81,7 @@ one output descriptor.</p>
 - it must NOT be another GraphPredictor</p>
 <p>The following example demonstrates how to use the python SDK to create a <a class="reference internal" href="../reference/citrine.informatics.predictors.graph_predictor.html#citrine.informatics.predictors.graph_predictor.GraphPredictor" title="citrine.informatics.predictors.graph_predictor.GraphPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">GraphPredictor</span></code></a>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.informatics.predictors</span> <span class="kn">import</span> <span class="n">GraphPredictor</span>
-<span class="kn">from</span> <span class="nn">citrine.seeding.create_or_update</span>
+<span class="kn">from</span> <span class="nn">citrine.seeding.find_or_create</span> <span class="kn">import</span> <span class="n">create_or_update</span>
 
 <span class="c1"># the other predictors have already been created and validated</span>
 <span class="n">graph_predictor</span> <span class="o">=</span> <span class="n">GraphPredictor</span><span class="p">(</span>
@@ -149,8 +150,151 @@ Citrine-python currently supports the following operators and functions:</p>
 </div>
 <p>For an example of expression predictors used in a graph predictor, see <a class="reference internal" href="code_examples.html#graph-predictor-example"><span class="std std-ref">AI Engine Code Examples</span></a>.</p>
 </section>
+<section id="molecular-structure-featurizer">
+<h2>4.4.4. Molecular Structure Featurizer<a class="headerlink" href="#molecular-structure-featurizer" title="Permalink to this headline">¶</a></h2>
+<p>The <a class="reference internal" href="../reference/citrine.informatics.predictors.molecular_structure_featurizer.html#citrine.informatics.predictors.molecular_structure_featurizer.MolecularStructureFeaturizer" title="citrine.informatics.predictors.molecular_structure_featurizer.MolecularStructureFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">MolecularStructureFeaturizer</span></code></a>
+computes a configurable set of features on molecular structure data, e.g. SMILES or InChI strings, using the <a class="reference external" href="https://cdk.github.io/">Chemistry Development Kit (CDK)</a>.
+The features are configured using the <code class="docutils literal notranslate"><span class="pre">features</span></code> and <code class="docutils literal notranslate"><span class="pre">excludes</span></code> arguments, which accept either feature names or predefined aliases.
+The default is the <cite>standard</cite> alias, corresponding to eight features that are a good balance of cost and performance.</p>
+<p>The feature names and descriptors are automatically constructed from the name of the input and the feature names.
+The <code class="docutils literal notranslate"><span class="pre">from_predictor_responses</span></code> method will grab the descriptors for the features so that they can be fed into other predicors,
+e.g., the <a class="reference internal" href="../reference/citrine.informatics.predictors.auto_ml_predictor.html#citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor" title="citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">AutoMLPredictor</span></code></a>, as inputs.</p>
+<p>The following example demonstrates how to use a <a class="reference internal" href="../reference/citrine.informatics.predictors.molecular_structure_featurizer.html#citrine.informatics.predictors.molecular_structure_featurizer.MolecularStructureFeaturizer" title="citrine.informatics.predictors.molecular_structure_featurizer.MolecularStructureFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">MolecularStructureFeaturizer</span></code></a> and
+<a class="reference internal" href="../reference/citrine.informatics.predictors.auto_ml_predictor.html#citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor" title="citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">AutoMLPredictor</span></code></a> to model a property of a molecule:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.informatics.descriptors</span> <span class="kn">import</span> <span class="n">MolecularStructureDescriptor</span><span class="p">,</span> <span class="n">RealDescriptor</span>
+<span class="kn">from</span> <span class="nn">citrine.informatics.predictors</span> <span class="kn">import</span> <span class="n">MolecularStructureFeaturizer</span><span class="p">,</span> <span class="n">AutoMLPredictor</span><span class="p">,</span> <span class="n">GraphPredictor</span>
+<span class="kn">from</span> <span class="nn">citrine.seeding.find_or_create</span> <span class="kn">import</span> <span class="n">create_or_update</span>
+<span class="kn">from</span> <span class="nn">citrine.informatics.data_sources</span> <span class="kn">import</span> <span class="n">GemTableDataSource</span>
+
+
+<span class="c1"># descriptor for the molecular structure input</span>
+<span class="n">input_desc</span> <span class="o">=</span> <span class="n">MolecularStructureDescriptor</span><span class="p">(</span><span class="s1">&#39;Solvent SMILES&#39;</span><span class="p">)</span>
+<span class="c1"># descriptor for the property to define a machine learning model to predict</span>
+<span class="n">output_desc</span> <span class="o">=</span> <span class="n">RealDescriptor</span><span class="p">(</span>
+    <span class="n">key</span><span class="o">=</span><span class="s2">&quot;density&quot;</span><span class="p">,</span>
+    <span class="n">units</span><span class="o">=</span><span class="s2">&quot;g/cm^3&quot;</span><span class="p">,</span>
+    <span class="n">lower_bound</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+    <span class="n">upper_bound</span><span class="o">=</span><span class="mf">100.0</span>
+<span class="p">)</span>
+
+
+<span class="c1"># featurize the molecular structure</span>
+<span class="n">featurizer</span> <span class="o">=</span> <span class="n">MolecularStructureFeaturizer</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Molecular Featurizer&#39;</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Featurize the Solvent&#39;s molecular structure using the default features.&quot;</span><span class="p">,</span>
+    <span class="n">descriptor</span><span class="o">=</span><span class="n">input_desc</span><span class="p">,</span>
+    <span class="n">features</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;standard&#39;</span><span class="p">],</span>
+<span class="p">)</span>
+
+<span class="c1"># get the feature names</span>
+<span class="n">features</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">descriptors</span><span class="o">.</span><span class="n">from_predictor_responses</span><span class="p">(</span>
+    <span class="n">predictor</span><span class="o">=</span><span class="n">featurizer</span><span class="p">,</span>
+    <span class="n">inputs</span><span class="o">=</span><span class="p">[</span><span class="n">input_desc</span><span class="p">]</span>
+<span class="p">)</span>
+
+<span class="c1"># create AutoMLPredictor, using the feature names as inputs</span>
+<span class="c1"># note: the molecular structure, `input_desc`, should not be included in the inputs here</span>
+<span class="n">ml_predictor</span> <span class="o">=</span> <span class="n">AutoMLPredictor</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;ML Model for Density&#39;</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Predict the density, given molecular features of the solvent&#39;</span><span class="p">,</span>
+    <span class="n">inputs</span> <span class="o">=</span> <span class="n">features</span><span class="p">,</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">output_desc</span><span class="p">,</span>
+    <span class="n">training_data</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="p">)</span>
+
+<span class="c1"># use a graph predictor to wrap together the featurizer and the machine learning model</span>
+<span class="n">graph_predictor</span> <span class="o">=</span> <span class="n">GraphPredictor</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Density from solvent molecular structure&#39;</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Predict the density from the solvent molecular structure using molecular structure features.&#39;</span><span class="p">,</span>
+    <span class="n">predictors</span> <span class="o">=</span> <span class="p">[</span><span class="n">featurizer</span><span class="p">,</span> <span class="n">ml_predictor</span><span class="p">],</span>
+    <span class="n">training_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">GemTableDataSource</span><span class="p">(</span><span class="n">training_data_table_uid</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]</span> <span class="c1"># training data shared by all sub-predictors</span>
+<span class="p">)</span>
+
+<span class="c1"># register or update predictor by name</span>
+<span class="n">predictor</span> <span class="o">=</span> <span class="n">create_or_update</span><span class="p">(</span>
+    <span class="n">collection</span><span class="o">=</span><span class="n">project</span><span class="o">.</span><span class="n">predictors</span><span class="p">,</span>
+    <span class="n">module</span><span class="o">=</span><span class="n">graph_predictor</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="chemical-formula-featurizer">
+<h2>4.4.5. Chemical Formula Featurizer<a class="headerlink" href="#chemical-formula-featurizer" title="Permalink to this headline">¶</a></h2>
+<p>The <a class="reference internal" href="../reference/citrine.informatics.predictors.chemical_formula_featurizer.html#citrine.informatics.predictors.chemical_formula_featurizer.ChemicalFormulaFeaturizer" title="citrine.informatics.predictors.chemical_formula_featurizer.ChemicalFormulaFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChemicalFormulaFeaturizer</span></code></a>
+computes a configurable set of features on chemical formula data by using the properties of the individual elements
+and their stoichiometric amounts.
+Many of the features are stoichiometrically weighted generalized means of element-level properties, though some are more complex functions of the chemical formula.
+The generalized means are configured with the <code class="docutils literal notranslate"><span class="pre">powers</span></code> argument, which is a list of means to calculate.
+For example, setting <code class="docutils literal notranslate"><span class="pre">powers=[1,</span> <span class="pre">3]</span></code> will calculate the mean and 3-mean of all applicable features.</p>
+<p>The feature to compute are configured using the <code class="docutils literal notranslate"><span class="pre">features</span></code> and <code class="docutils literal notranslate"><span class="pre">excludes</span></code> arguments, which accept either feature names or predefined aliases.
+The default is the <cite>standard</cite> alias, corresponding to a variety of features that are intuitive and often correlate with properties of interest.
+Other aliases are “physical,” “electronic,” and “periodicTable.”
+A complete list of features and which aliases they map to can be found in the class docstring.</p>
+<p>The feature names and descriptors are automatically constructed from the name of the input and the feature names.
+The <code class="docutils literal notranslate"><span class="pre">from_predictor_responses</span></code> method will grab the descriptors for the features so that they can be fed into other predicors,
+e.g., the <a class="reference internal" href="../reference/citrine.informatics.predictors.auto_ml_predictor.html#citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor" title="citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">AutoMLPredictor</span></code></a>, as inputs.</p>
+<p>The following example demonstrates how to use a <a class="reference internal" href="../reference/citrine.informatics.predictors.chemical_formula_featurizer.html#citrine.informatics.predictors.chemical_formula_featurizer.ChemicalFormulaFeaturizer" title="citrine.informatics.predictors.chemical_formula_featurizer.ChemicalFormulaFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChemicalFormulaFeaturizer</span></code></a> and
+<a class="reference internal" href="../reference/citrine.informatics.predictors.auto_ml_predictor.html#citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor" title="citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">AutoMLPredictor</span></code></a> to model a property of an alloy:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.informatics.descriptors</span> <span class="kn">import</span> <span class="n">ChemicalFormulaDescriptor</span><span class="p">,</span> <span class="n">RealDescriptor</span>
+<span class="kn">from</span> <span class="nn">citrine.informatics.predictors</span> <span class="kn">import</span> <span class="n">ChemicalFormulaFeaturizer</span><span class="p">,</span> <span class="n">AutoMLPredictor</span><span class="p">,</span> <span class="n">GraphPredictor</span>
+<span class="kn">from</span> <span class="nn">citrine.seeding.find_or_create</span> <span class="kn">import</span> <span class="n">create_or_update</span>
+<span class="kn">from</span> <span class="nn">citrine.informatics.data_sources</span> <span class="kn">import</span> <span class="n">GemTableDataSource</span>
+
+
+<span class="c1"># descriptor for the chemical formula input</span>
+<span class="n">input_desc</span> <span class="o">=</span> <span class="n">ChemicalFormulaDescriptor</span><span class="p">(</span><span class="s1">&#39;Alloy chemical formula&#39;</span><span class="p">)</span>
+<span class="c1"># descriptor for the property to define a machine learning model to predict</span>
+<span class="n">output_desc</span> <span class="o">=</span> <span class="n">RealDescriptor</span><span class="p">(</span>
+    <span class="n">key</span><span class="o">=</span><span class="s2">&quot;melting temperature&quot;</span><span class="p">,</span>
+    <span class="n">units</span><span class="o">=</span><span class="s2">&quot;Kelvin&quot;</span><span class="p">,</span>
+    <span class="n">lower_bound</span><span class="o">=</span><span class="mf">300.0</span><span class="p">,</span>
+    <span class="n">upper_bound</span><span class="o">=</span><span class="mf">5000.0</span>
+<span class="p">)</span>
+
+
+<span class="c1"># featurize the chemical formula</span>
+<span class="n">featurizer</span> <span class="o">=</span> <span class="n">ChemicalFormulaFeaturizer</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;ChemicalFeaturizer&#39;</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Featurize the Alloy&#39;s chemical formula using the default features and a 2-mean.&quot;</span><span class="p">,</span>
+    <span class="n">descriptor</span><span class="o">=</span><span class="n">input_desc</span><span class="p">,</span>
+    <span class="n">features</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;standard&#39;</span><span class="p">],</span>
+    <span class="n">powers</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+<span class="p">)</span>
+
+<span class="c1"># get the feature names</span>
+<span class="n">features</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">descriptors</span><span class="o">.</span><span class="n">from_predictor_responses</span><span class="p">(</span>
+    <span class="n">predictor</span><span class="o">=</span><span class="n">featurizer</span><span class="p">,</span>
+    <span class="n">inputs</span><span class="o">=</span><span class="p">[</span><span class="n">input_desc</span><span class="p">]</span>
+<span class="p">)</span>
+
+<span class="c1"># create AutoMLPredictor, using the feature names as inputs</span>
+<span class="c1"># note: the chemical formula, `input_desc`, should not be included in the inputs here</span>
+<span class="n">ml_predictor</span> <span class="o">=</span> <span class="n">AutoMLPredictor</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;ML Model for Melting Temperature&#39;</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Predict the melting temperature, given chemical features of the alloy&#39;</span><span class="p">,</span>
+    <span class="n">inputs</span> <span class="o">=</span> <span class="n">features</span><span class="p">,</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">output_desc</span><span class="p">,</span>
+    <span class="n">training_data</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="p">)</span>
+
+<span class="c1"># use a graph predictor to wrap together the featurizer and the machine learning model</span>
+<span class="n">graph_predictor</span> <span class="o">=</span> <span class="n">GraphPredictor</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Melting temperature from alloy chemical formula&#39;</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Predict the melting temperature from the alloy chemical formula using chemical formula features.&#39;</span><span class="p">,</span>
+    <span class="n">predictors</span> <span class="o">=</span> <span class="p">[</span><span class="n">featurizer</span><span class="p">,</span> <span class="n">ml_predictor</span><span class="p">],</span>
+    <span class="n">training_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">GemTableDataSource</span><span class="p">(</span><span class="n">training_data_table_uid</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]</span> <span class="c1"># training data shared by all sub-predictors</span>
+<span class="p">)</span>
+
+<span class="c1"># register or update predictor by name</span>
+<span class="n">predictor</span> <span class="o">=</span> <span class="n">create_or_update</span><span class="p">(</span>
+    <span class="n">collection</span><span class="o">=</span><span class="n">project</span><span class="o">.</span><span class="n">predictors</span><span class="p">,</span>
+    <span class="n">module</span><span class="o">=</span><span class="n">graph_predictor</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
 <section id="ingredients-to-simple-mixture-predictor-alpha">
-<h2>4.4.4. Ingredients to simple mixture predictor (ALPHA)<a class="headerlink" href="#ingredients-to-simple-mixture-predictor-alpha" title="Permalink to this headline">¶</a></h2>
+<h2>4.4.6. Ingredients to simple mixture predictor (ALPHA)<a class="headerlink" href="#ingredients-to-simple-mixture-predictor-alpha" title="Permalink to this headline">¶</a></h2>
 <p>The <a class="reference internal" href="../reference/citrine.informatics.predictors.ingredients_to_simple_mixture_predictor.html#citrine.informatics.predictors.ingredients_to_simple_mixture_predictor.IngredientsToSimpleMixturePredictor" title="citrine.informatics.predictors.ingredients_to_simple_mixture_predictor.IngredientsToSimpleMixturePredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientsToSimpleMixturePredictor</span></code></a> constructs a simple mixture from a list of ingredients.
 This predictor is only required to construct simple mixtures from CSV data sources.
 Formulations are constructed automatically by GEM Tables when a <code class="docutils literal notranslate"><span class="pre">formulation_descriptor</span></code> is specified by the data source, so
@@ -263,7 +407,7 @@ These labels are specified via:</p>
 </div>
 </section>
 <section id="simple-mixture-predictor-alpha">
-<h2>4.4.5. Simple mixture predictor (ALPHA)<a class="headerlink" href="#simple-mixture-predictor-alpha" title="Permalink to this headline">¶</a></h2>
+<h2>4.4.7. Simple mixture predictor (ALPHA)<a class="headerlink" href="#simple-mixture-predictor-alpha" title="Permalink to this headline">¶</a></h2>
 <p>Simple mixtures may contain ingredients that are blends of other simple mixtures.
 Along the lines of the example above, hypertonic saline can be mixed with water to form isotonic saline.
 Often, the properties of a hierarchical mixture are strongly associated with its leaf ingredients.
@@ -292,7 +436,7 @@ The <code class="docutils literal notranslate"><span class="pre">training_data</
 </div>
 </section>
 <section id="mean-property-predictor-alpha">
-<h2>4.4.6. Mean property predictor (ALPHA)<a class="headerlink" href="#mean-property-predictor-alpha" title="Permalink to this headline">¶</a></h2>
+<h2>4.4.8. Mean property predictor (ALPHA)<a class="headerlink" href="#mean-property-predictor-alpha" title="Permalink to this headline">¶</a></h2>
 <p>Often, properties of a mixture are proportional to the properties of it’s ingredients.
 For example, the density of a saline solution can be computed from the densities of water and salt multiplied by their respective amounts:</p>
 <div class="math notranslate nohighlight">
@@ -390,7 +534,7 @@ If a value other than 1.58 should be used, e.g. 2.0, this can be specified by se
 <p>If <code class="docutils literal notranslate"><span class="pre">p</span></code> is given a value other than <code class="docutils literal notranslate"><span class="pre">1</span></code>, that value will be included in the key for the feature, e.g. <code class="docutils literal notranslate"><span class="pre">2.0-mean</span> <span class="pre">of</span> <span class="pre">property</span> <span class="pre">viscosity</span></code>.</p>
 </section>
 <section id="ingredient-fractions-predictor-alpha">
-<h2>4.4.7. Ingredient fractions predictor (ALPHA)<a class="headerlink" href="#ingredient-fractions-predictor-alpha" title="Permalink to this headline">¶</a></h2>
+<h2>4.4.9. Ingredient fractions predictor (ALPHA)<a class="headerlink" href="#ingredient-fractions-predictor-alpha" title="Permalink to this headline">¶</a></h2>
 <p>The <a class="reference internal" href="../reference/citrine.informatics.predictors.ingredient_fractions_predictor.html#citrine.informatics.predictors.ingredient_fractions_predictor.IngredientFractionsPredictor" title="citrine.informatics.predictors.ingredient_fractions_predictor.IngredientFractionsPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientFractionsPredictor</span></code></a> featurizes ingredient fractions in a simple mixture.
 The predictor is configured by specifying a descriptor that contains simple mixture data and a list of known ingredients to featurize.
 The list of ingredients should be the list of all possible ingredients for the input mixture.
@@ -428,7 +572,7 @@ this predictor would compute outputs:</p>
 <p>This will return a real descriptor for each featurized ingredient with bounds <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1]</span></code> and key in the form <code class="docutils literal notranslate"><span class="pre">'{ingredient}</span> <span class="pre">share</span> <span class="pre">in</span> <span class="pre">simple</span> <span class="pre">mixture'</span></code> where <code class="docutils literal notranslate"><span class="pre">{ingredient}</span></code> is either <code class="docutils literal notranslate"><span class="pre">water</span></code>, <code class="docutils literal notranslate"><span class="pre">salt</span></code> or <code class="docutils literal notranslate"><span class="pre">boric</span> <span class="pre">acid</span></code>.</p>
 </section>
 <section id="label-fractions-predictor-alpha">
-<h2>4.4.8. Label fractions predictor (ALPHA)<a class="headerlink" href="#label-fractions-predictor-alpha" title="Permalink to this headline">¶</a></h2>
+<h2>4.4.10. Label fractions predictor (ALPHA)<a class="headerlink" href="#label-fractions-predictor-alpha" title="Permalink to this headline">¶</a></h2>
 <p>The <a class="reference internal" href="../reference/citrine.informatics.predictors.label_fractions_predictor.html#citrine.informatics.predictors.label_fractions_predictor.LabelFractionsPredictor" title="citrine.informatics.predictors.label_fractions_predictor.LabelFractionsPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">LabelFractionsPredictor</span></code></a> computes total fraction of ingredients with a given label.
 The predictor is configured by specifying a formulation descriptor that holds simple mixture data (i.e. recipes and ingredient labels) and a set of labels to featurize.
 A separate response is computed for each featurized label by summing all quantities in the recipe associated with ingredients given the label.</p>
@@ -454,7 +598,7 @@ A separate response is computed for each featurized label by summing all quantit
 </div>
 </section>
 <section id="simple-ml-predictor">
-<h2>4.4.9. Simple ML predictor<a class="headerlink" href="#simple-ml-predictor" title="Permalink to this headline">¶</a></h2>
+<h2>4.4.11. Simple ML predictor<a class="headerlink" href="#simple-ml-predictor" title="Permalink to this headline">¶</a></h2>
 <p>The <a class="reference internal" href="../reference/citrine.informatics.predictors.simple_ml_predictor.html#citrine.informatics.predictors.simple_ml_predictor.SimpleMLPredictor" title="citrine.informatics.predictors.simple_ml_predictor.SimpleMLPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleMLPredictor</span></code></a> predicts material properties using a machine-learned model.
 Each predictor is defined by a set of inputs, outputs and latent variables.
 Inputs are used as input features to the machine learning model.
@@ -555,13 +699,13 @@ Instead of entering these manually, outputs from a predictor can be retrieved pr
 </div>
 </section>
 <section id="predictor-reports">
-<h2>4.4.10. Predictor reports<a class="headerlink" href="#predictor-reports" title="Permalink to this headline">¶</a></h2>
+<h2>4.4.12. Predictor reports<a class="headerlink" href="#predictor-reports" title="Permalink to this headline">¶</a></h2>
 <p>A <a class="reference internal" href="predictor_reports.html"><span class="doc">predictor report</span></a> describes a machine-learned model, for example its settings and what features are important to the model.
 It does not include predictor evaluation metrics.
 To learn more about predictor evaluation metrics, please see <a class="reference internal" href="predictor_evaluation_workflows.html"><span class="doc">PredictorEvaluationWorkflow</span></a>.</p>
 </section>
 <section id="training-data">
-<h2>4.4.11. Training data<a class="headerlink" href="#training-data" title="Permalink to this headline">¶</a></h2>
+<h2>4.4.13. Training data<a class="headerlink" href="#training-data" title="Permalink to this headline">¶</a></h2>
 <p>Training data are defined by a list of <a class="reference internal" href="data_sources.html"><span class="doc">data sources</span></a>.
 When multiple data sources are specified, data from all sources is combined into a flattened list and deduplicated prior to training a predictor.
 Deduplication is performed if a uid or identifier is shared between two or more rows.
