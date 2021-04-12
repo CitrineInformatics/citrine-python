@@ -1,8 +1,9 @@
-from typing import Tuple, List, Optional
+from typing import Tuple, List, Optional, Union
 
 from citrine.resources.project import Project
 from citrine.informatics.predictors import (
     MolecularStructureFeaturizer,
+    ChemicalFormulaFeaturizer,
     MeanPropertyPredictor
 )
 from citrine.informatics.descriptors import Descriptor, FormulationDescriptor, RealDescriptor
@@ -11,7 +12,7 @@ from citrine.informatics.descriptors import Descriptor, FormulationDescriptor, R
 def build_mean_feature_property_predictors(
         *,
         project: Project,
-        featurizer: MolecularStructureFeaturizer,
+        featurizer: Union[MolecularStructureFeaturizer, ChemicalFormulaFeaturizer],
         formulation_descriptor: FormulationDescriptor,
         p: int,
         impute_properties: bool = True,
@@ -30,10 +31,9 @@ def build_mean_feature_property_predictors(
     ----------
     project: Project
         Project that contains the predictor
-    featurizer: MolecularStructureFeaturizer
+    featurizer: Union[MolecularStructureFeaturizer, ChemicalFormulaFeaturizer]
         A model that is being used to featurize formulation ingredients. Currently only
-        accepts a molecular structure featurizer, but other models can be used in principle.
-        TODO: add chemical formula featurizer once it is exposed
+        accepts a molecular structure featurizer or a chemical formula featurizer.
     formulation_descriptor: FormulationDescriptor
         Descriptor that represents the formulation being featurized.
     p: int
@@ -60,6 +60,8 @@ def build_mean_feature_property_predictors(
     """
     if isinstance(featurizer, MolecularStructureFeaturizer):
         input_descriptor = featurizer.descriptor
+    elif isinstance(featurizer, ChemicalFormulaFeaturizer):
+        input_descriptor = featurizer.input_descriptor
     else:
         raise TypeError(f"Featurizer of type {type(featurizer)} is not supported.")
 

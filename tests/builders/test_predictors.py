@@ -9,10 +9,12 @@ from citrine.informatics.descriptors import (
     RealDescriptor,
     CategoricalDescriptor,
     MolecularStructureDescriptor,
+    ChemicalFormulaDescriptor,
     FormulationDescriptor
 )
 from citrine.informatics.predictors import (
     MolecularStructureFeaturizer,
+    ChemicalFormulaFeaturizer,
     MeanPropertyPredictor,
     LabelFractionsPredictor,
     Predictor
@@ -29,11 +31,15 @@ class FakeDescriptorMethods(DescriptorMethods):
         self.num_properties = num_properties
 
     def from_predictor_responses(self, predictor: Predictor, inputs: List[Descriptor]):
-        if isinstance(predictor, MolecularStructureFeaturizer):
+        if isinstance(predictor, (MolecularStructureFeaturizer, ChemicalFormulaFeaturizer)):
+            if isinstance(predictor, MolecularStructureFeaturizer):
+                input_descriptor = predictor.descriptor
+            else:
+                input_descriptor = predictor.input_descriptor
             return [
-                RealDescriptor(f"{predictor.descriptor.key} real property {i}", lower_bound=0, upper_bound=1, units="")
+                RealDescriptor(f"{input_descriptor.key} real property {i}", lower_bound=0, upper_bound=1, units="")
                        for i in range(self.num_properties)
-            ] + [CategoricalDescriptor(f"{predictor.descriptor.key} categorical property", ["cat1", "cat2"])]
+            ] + [CategoricalDescriptor(f"{input_descriptor.key} categorical property", ["cat1", "cat2"])]
 
         elif isinstance(predictor, MeanPropertyPredictor):
             label_str = predictor.label or "all ingredients"
@@ -60,27 +66,30 @@ def test_mean_feature_properties():
     num_properties = 3
     project = FakeProject(FakeDescriptorMethods(num_properties=num_properties))
     smiles = MolecularStructureDescriptor("smiles")
+    chem = ChemicalFormulaDescriptor("formula")
     formulation = FormulationDescriptor("formulation")
-    featurizer = MolecularStructureFeaturizer(name="", description="", descriptor=smiles)
+    mol_featurizer = MolecularStructureFeaturizer(name="", description="", descriptor=smiles)
+    chem_featurizer = ChemicalFormulaFeaturizer(name="", description="", input_descriptor=chem)
 
-    # A standard case. Here we request one model for all ingredients and one for a label.
-    models, outputs = build_mean_feature_property_predictors(
-        project=project,
-        featurizer=featurizer,
-        formulation_descriptor=formulation,
-        p=7,
-        impute_properties=False,
-        make_all_ingredients_model=True,
-        labels=["some label"]
-    )
+    for featurizer in [mol_featurizer, chem_featurizer]:
+        # A standard case. Here we request one model for all ingredients and one for a label.
+        models, outputs = build_mean_feature_property_predictors(
+            project=project,
+            featurizer=featurizer,
+            formulation_descriptor=formulation,
+            p=7,
+            impute_properties=False,
+            make_all_ingredients_model=True,
+            labels=["some label"]
+        )
 
-    assert len(outputs) == num_properties * 2
-    assert len(models) == 2
-    for model in models:
-        assert model.p == 7
-        assert model.impute_properties == False
-        assert model.input_descriptor == formulation
-        assert len(model.properties) == num_properties
+        assert len(outputs) == num_properties * 2
+        assert len(models) == 2
+        for model in models:
+            assert model.p == 7
+            assert model.impute_properties == False
+            assert model.input_descriptor == formulation
+            assert len(model.properties) == num_properties
 
     # It's not necessary for the models to be returned in this order,
     # but this is how the logic is currently set up.
@@ -102,7 +111,7 @@ def test_mean_feature_properties():
     with pytest.raises(ValueError):
         build_mean_feature_property_predictors(
             project=project,
-            featurizer=featurizer,
+            featurizer=mol_featurizer,
             formulation_descriptor=formulation,
             p=1,
             make_all_ingredients_model=False,
@@ -114,7 +123,7 @@ def test_mean_feature_properties():
     with pytest.raises(RuntimeError):
         build_mean_feature_property_predictors(
             project=no_props_project,
-            featurizer=featurizer,
+            featurizer=mol_featurizer,
             formulation_descriptor=formulation,
             p=1
         )
@@ -123,7 +132,7 @@ def test_mean_feature_properties():
     with pytest.raises(TypeError):
         build_mean_feature_property_predictors(
             project=no_props_project,
-            featurizer=featurizer,
+            featurizer=mol_featurizer,
             formulation_descriptor=formulation,
             p=1,
             labels="not inside a list!"
