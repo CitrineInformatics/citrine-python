@@ -166,16 +166,12 @@ is an example of output from the logger in the previous example.
 Dependencies are tracked in multiple places:
 * requirements files (requirements.txt and test_requirements.txt)
 * setup.py
-* Pipfile
 
 The setup.py file only contains libraries that are necessary for users to run citrine-python.
 If you add a dependency that is necessary to run the repo, it is crucial that you add it to setup.py.
 
-The requirements files and the Pipfile *additionally* contain dependencies for testing/development.
-The two options are redundant, but we maintain both to give developers options (Pipfile is more powerful but more involved to use).
-Please keep both up to date whenever you add or change dependencies.
-If you change the Pipfile, run `pipfile lock` to generate a new version of Pipfile.lock.
-Other developers can use this file to recreate the precise environment.
+The requirements files *additionally* contain dependencies for testing/development.
+Please keep it up to date whenever you add or change dependencies.
 
 ## Coding Style<a name="codestyle"></a>
 The citrine-python library follows [PEP8](https://www.python.org/dev/peps/pep-0008/), with the following exceptions:
