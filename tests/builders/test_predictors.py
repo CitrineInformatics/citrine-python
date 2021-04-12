@@ -75,7 +75,7 @@ def test_mean_feature_properties():
         # A standard case. Here we request one model for all ingredients and one for a label.
         models, outputs = build_mean_feature_property_predictors(
             project=project,
-            featurizer=chem_featurizer,
+            featurizer=featurizer,
             formulation_descriptor=formulation,
             p=7,
             impute_properties=False,
