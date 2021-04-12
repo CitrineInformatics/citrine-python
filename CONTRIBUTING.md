@@ -59,23 +59,11 @@ See the [PyTest documentation](https://docs.pytest.org/en/latest/usage.html) for
 
 To run all tests and output a report of the coverage of the "src/" directory:
 ```bash
-run pytest tests/ --cov=src/
+pytest tests/ --cov=src/
 ```
 
 It is not uncommon to have path issues when running pytest from the command line.
 Ensure that your $PATH variable contains the directory with the citrine-python repo.
-If that does not work and you want to run tests from the command line (as opposed to from an editor such as PyCharm) it is more reliable to use `pipenv`.
-```bash
-pip install pipenv
-pipenv install --dev
-pipenv shell
-```
-
-You can now run commands by prefacing them with `pipenv run`.
-For example, `pipenv run pytest`.
-
-To exit the pipenv shell, run `exit`.
-To deactivate a conda environment, use `conda deactivate`.
 
 #### Docker
 
@@ -203,7 +191,7 @@ The documentation for this project is built using [Sphinx](http://www.sphinx-doc
 ### Building Documentation<a name="builddocs"></a>
 
 To build the documentation for this project, make sure you've installed all dependencies (core
-and development) using pipenv. Once done:
+and development). Once done:
 
 ```
 cd docs/
