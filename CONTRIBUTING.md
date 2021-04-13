@@ -59,23 +59,11 @@ See the [PyTest documentation](https://docs.pytest.org/en/latest/usage.html) for
 
 To run all tests and output a report of the coverage of the "src/" directory:
 ```bash
-run pytest tests/ --cov=src/
+pytest tests/ --cov=src/
 ```
 
 It is not uncommon to have path issues when running pytest from the command line.
 Ensure that your $PATH variable contains the directory with the citrine-python repo.
-If that does not work and you want to run tests from the command line (as opposed to from an editor such as PyCharm) it is more reliable to use `pipenv`.
-```bash
-pip install pipenv
-pipenv install --dev
-pipenv shell
-```
-
-You can now run commands by prefacing them with `pipenv run`.
-For example, `pipenv run pytest`.
-
-To exit the pipenv shell, run `exit`.
-To deactivate a conda environment, use `conda deactivate`.
 
 #### Docker
 
@@ -166,16 +154,12 @@ is an example of output from the logger in the previous example.
 Dependencies are tracked in multiple places:
 * requirements files (requirements.txt and test_requirements.txt)
 * setup.py
-* Pipfile
 
 The setup.py file only contains libraries that are necessary for users to run citrine-python.
 If you add a dependency that is necessary to run the repo, it is crucial that you add it to setup.py.
 
-The requirements files and the Pipfile *additionally* contain dependencies for testing/development.
-The two options are redundant, but we maintain both to give developers options (Pipfile is more powerful but more involved to use).
-Please keep both up to date whenever you add or change dependencies.
-If you change the Pipfile, run `pipfile lock` to generate a new version of Pipfile.lock.
-Other developers can use this file to recreate the precise environment.
+The requirements files *additionally* contain dependencies for testing/development.
+Please keep it up to date whenever you add or change dependencies.
 
 ## Coding Style<a name="codestyle"></a>
 The citrine-python library follows [PEP8](https://www.python.org/dev/peps/pep-0008/), with the following exceptions:
@@ -207,7 +191,7 @@ The documentation for this project is built using [Sphinx](http://www.sphinx-doc
 ### Building Documentation<a name="builddocs"></a>
 
 To build the documentation for this project, make sure you've installed all dependencies (core
-and development) using pipenv. Once done:
+and development). Once done:
 
 ```
 cd docs/

@@ -1,17 +1,15 @@
 from typing import Optional, Mapping
 from warnings import warn
 
+from citrine._rest.resource import Resource
 from citrine._serialization import properties as _properties
-from citrine._serialization.serializable import Serializable
-from citrine._session import Session
 from citrine.informatics.descriptors import RealDescriptor
-from citrine.informatics.reports import Report
 from citrine.informatics.predictors import Predictor
 
 __all__ = ['ExpressionPredictor', 'DeprecatedExpressionPredictor']
 
 
-class ExpressionPredictor(Serializable['ExpressionPredictor'], Predictor):
+class ExpressionPredictor(Resource['ExpressionPredictor'], Predictor):
     """A predictor that computes an output from an expression and set of bounded inputs.
 
     .. seealso::
@@ -28,7 +26,7 @@ class ExpressionPredictor(Serializable['ExpressionPredictor'], Predictor):
     expression: str
         expression that computes an output from aliased inputs
     output: RealDescriptor
-        descriptor that represents the output relation
+        descriptor that represents the output of the expression
     aliases: Mapping[str, RealDescriptor]
         a mapping from each unknown argument to its descriptor.
         All unknown arguments must have an associated descriptor.
@@ -50,16 +48,12 @@ class ExpressionPredictor(Serializable['ExpressionPredictor'], Predictor):
                  expression: str,
                  output: RealDescriptor,
                  aliases: Mapping[str, RealDescriptor],
-                 session: Optional[Session] = None,
-                 report: Optional[Report] = None,
                  archived: bool = False):
         self.name: str = name
         self.description: str = description
         self.expression: str = expression
         self.output: RealDescriptor = output
         self.aliases: Mapping[str, RealDescriptor] = aliases
-        self.session: Optional[Session] = session
-        self.report: Optional[Report] = report
         self.archived: bool = archived
 
     def _post_dump(self, data: dict) -> dict:
@@ -70,7 +64,7 @@ class ExpressionPredictor(Serializable['ExpressionPredictor'], Predictor):
         return '<ExpressionPredictor {!r}>'.format(self.name)
 
 
-class DeprecatedExpressionPredictor(Serializable['DeprecatedExpressionPredictor'], Predictor):
+class DeprecatedExpressionPredictor(Resource['DeprecatedExpressionPredictor'], Predictor):
     """[DEPRECATED] A predictor that computes an output from an analytic expression.
 
     This predictor is deprecated. Please use the
@@ -172,18 +166,14 @@ class DeprecatedExpressionPredictor(Serializable['DeprecatedExpressionPredictor'
                  expression: str,
                  output: RealDescriptor,
                  aliases: Optional[Mapping[str, str]] = None,
-                 session: Optional[Session] = None,
-                 report: Optional[Report] = None,
                  archived: bool = False):
         warn("{this_class} is deprecated. Please use {replacement} instead"
-             .format(this_class=self.__class__.name, replacement=ExpressionPredictor.__name__))
+             .format(this_class=self.__class__.__name__, replacement=ExpressionPredictor.__name__))
         self.name: str = name
         self.description: str = description
         self.expression: str = expression
         self.output: RealDescriptor = output
         self.aliases: Optional[Mapping[str, str]] = aliases
-        self.session: Optional[Session] = session
-        self.report: Optional[Report] = report
         self.archived: bool = archived
 
     def _post_dump(self, data: dict) -> dict:

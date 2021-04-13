@@ -6,15 +6,17 @@ import mock
 import pytest
 
 from citrine.informatics.data_sources import GemTableDataSource
-from citrine.informatics.descriptors import RealDescriptor, MolecularStructureDescriptor, FormulationDescriptor
+from citrine.informatics.descriptors import RealDescriptor, MolecularStructureDescriptor, \
+    FormulationDescriptor, ChemicalFormulaDescriptor
 from citrine.informatics.predictors import ExpressionPredictor, GraphPredictor, SimpleMLPredictor, \
     MolecularStructureFeaturizer, GeneralizedMeanPropertyPredictor, IngredientsToSimpleMixturePredictor, \
     SimpleMixturePredictor, LabelFractionsPredictor, IngredientFractionsPredictor, DeprecatedExpressionPredictor, \
-    AutoMLPredictor
+    AutoMLPredictor, MeanPropertyPredictor, ChemicalFormulaFeaturizer
 
 x = RealDescriptor("x", 0, 100, "")
 y = RealDescriptor("y", 0, 100, "")
 z = RealDescriptor("z", 0, 100, "")
+density = RealDescriptor('density', lower_bound=0, upper_bound=100, units='g/cm^3')
 shear_modulus = RealDescriptor('Property~Shear modulus', lower_bound=0, upper_bound=100, units='GPa')
 youngs_modulus = RealDescriptor('Property~Young\'s modulus', lower_bound=0, upper_bound=100, units='GPa')
 poissons_ratio = RealDescriptor('Property~Poisson\'s ratio', lower_bound=-1, upper_bound=0.5, units='')
@@ -45,6 +47,17 @@ def molecule_featurizer() -> MolecularStructureFeaturizer:
         descriptor=MolecularStructureDescriptor("SMILES"),
         features=["all"],
         excludes=["standard"]
+    )
+
+@pytest.fixture
+def chemical_featurizer() -> ChemicalFormulaFeaturizer:
+    return ChemicalFormulaFeaturizer(
+        name="Chemical featurizer",
+        description="description",
+        input_descriptor=ChemicalFormulaDescriptor("formula"),
+        features=["standard"],
+        excludes=None,
+        powers=[1, 2]
     )
 
 
@@ -133,6 +146,22 @@ def generalized_mean_property_predictor() -> GeneralizedMeanPropertyPredictor:
 
 
 @pytest.fixture
+def mean_property_predictor() -> MeanPropertyPredictor:
+    """Build a mean property predictor for testing."""
+    return MeanPropertyPredictor(
+        name='Mean property predictor',
+        description='Computes mean ingredient properties',
+        input_descriptor=formulation,
+        properties=[density],
+        p=2,
+        training_data=[formulation_data_source],
+        impute_properties=True,
+        default_properties={'density': 1.0},
+        label='solvent'
+    )
+
+
+@pytest.fixture
 def simple_mixture_predictor() -> SimpleMixturePredictor:
     """Build a simple mixture predictor for testing."""
     return SimpleMixturePredictor(
@@ -178,18 +207,20 @@ def test_simple_initialization(simple_predictor):
     assert simple_predictor.latent_variables[0] == y
     assert simple_predictor.training_data[0].table_id == uuid.UUID('e5c51369-8e71-4ec6-b027-1f92bdc14762')
     assert str(simple_predictor) == '<SimplePredictor \'ML predictor\'>'
-    assert hasattr(simple_predictor, 'report')
 
 
-def test_simple_post_build(simple_predictor):
+def test_simple_report(simple_predictor):
     """Ensures we get a report from a simple predictor post_build call"""
-    assert simple_predictor.report is None
+    with pytest.raises(ValueError):
+        # without a project or session, this should error
+        assert simple_predictor.report is None
     session = mock.Mock()
     session.get_resource.return_value = dict(status='OK', report=dict(descriptors=[], models=[]), uid=str(uuid.uuid4()))
-    simple_predictor.session = session
-    simple_predictor.post_build(uuid.uuid4(), dict(id=uuid.uuid4()))
-    assert session.get_resource.call_count == 1
+    simple_predictor._session = session
+    simple_predictor._project_id = uuid.uuid4()
+    simple_predictor.uid = uuid.uuid4()
     assert simple_predictor.report is not None
+    assert session.get_resource.call_count == 1
     assert simple_predictor.report.status == 'OK'
 
 
@@ -202,17 +233,6 @@ def test_graph_initialization(graph_predictor):
     assert str(graph_predictor) == '<GraphPredictor \'Graph predictor\'>'
 
 
-def test_graph_post_build(graph_predictor):
-    """Ensures we get a report from a graph predictor post_build call."""
-    assert graph_predictor.report is None
-    session = mock.Mock()
-    session.get_resource.return_value = dict(status='OK', report=dict(), uid=str(uuid.uuid4()))
-    graph_predictor.session = session
-    graph_predictor.post_build(uuid.uuid4(), dict(id=uuid.uuid4()))
-    assert session.get_resource.call_count == 1
-    assert graph_predictor.report is not None
-    assert graph_predictor.report.status == 'OK'
-
 
 def test_deprecated_expression_initialization(deprecated_expression_predictor):
     """Make sure the correct fields go to the correct places for a deprecated expression predictor."""
@@ -223,18 +243,6 @@ def test_deprecated_expression_initialization(deprecated_expression_predictor):
     assert str(deprecated_expression_predictor) == '<DeprecatedExpressionPredictor \'Expression predictor\'>'
 
 
-def test_deprecated_expression_post_build(deprecated_expression_predictor):
-    """Ensures we get a report from a deprecated expression predictor post_build call."""
-    assert deprecated_expression_predictor.report is None
-    session = mock.Mock()
-    session.get_resource.return_value = dict(status='OK', report=dict(descriptors=[], models=[]), uid=str(uuid.uuid4()))
-    deprecated_expression_predictor.session = session
-    deprecated_expression_predictor.post_build(uuid.uuid4(), dict(id=uuid.uuid4()))
-    assert session.get_resource.call_count == 1
-    assert deprecated_expression_predictor.report is not None
-    assert deprecated_expression_predictor.report.status == 'OK'
-
-
 def test_expression_initialization(expression_predictor):
     """Make sure the correct fields go to the correct places for an expression predictor."""
     assert expression_predictor.name == 'Expression predictor'
@@ -242,18 +250,6 @@ def test_expression_initialization(expression_predictor):
     assert expression_predictor.expression == 'Y / (2 * (1 + v))'
     assert expression_predictor.aliases == {'Y': youngs_modulus, 'v': poissons_ratio}
     assert str(expression_predictor) == '<ExpressionPredictor \'Expression predictor\'>'
-
-
-def test_expression_post_build(expression_predictor):
-    """Ensures we get a report from an expression predictor post_build call."""
-    assert expression_predictor.report is None
-    session = mock.Mock()
-    session.get_resource.return_value = dict(status='OK', report=dict(descriptors=[], models=[]), uid=str(uuid.uuid4()))
-    expression_predictor.session = session
-    expression_predictor.post_build(uuid.uuid4(), dict(id=uuid.uuid4()))
-    assert session.get_resource.call_count == 1
-    assert expression_predictor.report is not None
-    assert expression_predictor.report.status == 'OK'
 
 
 def test_molecule_featurizer(molecule_featurizer):
@@ -278,6 +274,32 @@ def test_molecule_featurizer(molecule_featurizer):
     }
 
 
+def test_chemical_featurizer(chemical_featurizer):
+    assert chemical_featurizer.name == "Chemical featurizer"
+    assert chemical_featurizer.description == "description"
+    assert chemical_featurizer.input_descriptor == ChemicalFormulaDescriptor("formula")
+    assert chemical_featurizer.features == ["standard"]
+    assert chemical_featurizer.excludes == []
+    assert chemical_featurizer.powers == [1, 2]
+
+    assert str(chemical_featurizer) == "<ChemicalFormulaFeaturizer 'Chemical featurizer'>"
+
+    assert chemical_featurizer.dump() == {
+        'config': {
+            'name': 'Chemical featurizer',
+            'description': 'description',
+            'input': ChemicalFormulaDescriptor("formula").dump(),
+            'features': ['standard'],
+            'excludes': [],
+            'powers': [1, 2],
+            'type': 'ChemicalFormulaFeaturizer'
+        },
+        'archived': False,
+        'module_type': 'PREDICTOR',
+        'display_name': 'Chemical featurizer'
+    }
+
+
 def test_auto_ml(auto_ml):
     assert auto_ml.name == "AutoML Predictor"
     assert auto_ml.description == "Predicts z from input x"
@@ -289,21 +311,6 @@ def test_auto_ml(auto_ml):
     assert str(auto_ml) == "<AutoMLPredictor 'AutoML Predictor'>"
 
 
-
-def test_molecule_featurizer_post_build(molecule_featurizer):
-    """Ensures we get a report from a molecule featurizer post_build call."""
-    predictor = molecule_featurizer
-
-    assert predictor.report is None
-    session = mock.Mock()
-    session.get_resource.return_value = dict(status='OK', report=dict(), uid=uuid.uuid4())
-    predictor.session = session
-    predictor.post_build(uuid.uuid4(), dict(id=uuid.uuid4()))
-    assert session.get_resource.call_count == 1
-    assert predictor.report is not None
-    assert predictor.report.status == 'OK'
-
-
 def test_ing_to_simple_mixture_initialization(ing_to_simple_mixture_predictor):
     """Make sure the correct fields go to the correct places for an ingredients to simple mixture predictor."""
     assert ing_to_simple_mixture_predictor.name == 'Ingredients to simple mixture predictor'
@@ -312,18 +319,6 @@ def test_ing_to_simple_mixture_initialization(ing_to_simple_mixture_predictor):
     assert ing_to_simple_mixture_predictor.labels == {'solvent': {'water'}, 'solute': {'salt'}}
     expected_str = '<IngredientsToSimpleMixturePredictor \'Ingredients to simple mixture predictor\'>'
     assert str(ing_to_simple_mixture_predictor) == expected_str
-
-
-def test_ing_to_simple_mixture_post_build(ing_to_simple_mixture_predictor):
-    """Ensures we get a report from an ingredients to simple mixture predictor post_build call."""
-    assert ing_to_simple_mixture_predictor.report is None
-    session = mock.Mock()
-    session.get_resource.return_value = dict(status='OK', report=dict(), uid=uuid.uuid4())
-    ing_to_simple_mixture_predictor.session = session
-    ing_to_simple_mixture_predictor.post_build(uuid.uuid4(), dict(id=uuid.uuid4()))
-    assert session.get_resource.call_count == 1
-    assert ing_to_simple_mixture_predictor.report is not None
-    assert ing_to_simple_mixture_predictor.report.status == 'OK'
 
 
 def test_deprecated_ing_to_simple_mixture():
@@ -359,21 +354,23 @@ def test_generalized_mean_property_initialization(generalized_mean_property_pred
     assert str(generalized_mean_property_predictor) == expected_str
 
 
-def test_generalized_mean_property_post_build(generalized_mean_property_predictor):
-    """Ensures we get a report from a mean property predictor post_build call."""
-    assert generalized_mean_property_predictor.report is None
-    session = mock.Mock()
-    session.get_resource.return_value = dict(status='OK', report=dict(), uid=uuid.uuid4())
-    generalized_mean_property_predictor.session = session
-    generalized_mean_property_predictor.post_build(uuid.uuid4(), dict(id=uuid.uuid4()))
-    assert session.get_resource.call_count == 1
-    assert generalized_mean_property_predictor.report is not None
-    assert generalized_mean_property_predictor.report.status == 'OK'
+def test_mean_property_initialization(mean_property_predictor):
+    """Make sure the correct fields go to the correct places for a mean property predictor."""
+    assert mean_property_predictor.name == 'Mean property predictor'
+    assert mean_property_predictor.input_descriptor.key == 'formulation'
+    assert mean_property_predictor.properties == [density]
+    assert mean_property_predictor.p == 2
+    assert mean_property_predictor.impute_properties == True
+    assert mean_property_predictor.training_data == [formulation_data_source]
+    assert mean_property_predictor.default_properties == {'density': 1.0}
+    assert mean_property_predictor.label == 'solvent'
+    expected_str = '<MeanPropertyPredictor \'Mean property predictor\'>'
+    assert str(mean_property_predictor) == expected_str
 
 
 def test_deprecated_gmpp():
-    """Make sure a warning is issued if p entered as a float"""
-    with warnings.catch_warnings(record=True) as w:
+    """Make sure deprecation warnings are issued"""
+    with warnings.catch_warnings(record=True) as caught:
         warnings.simplefilter("always")
         gmpp = GeneralizedMeanPropertyPredictor(
             name='deprecated',
@@ -384,12 +381,12 @@ def test_deprecated_gmpp():
             impute_properties=False
         )
         assert gmpp.p == 2
-        assert len(w) == 1
-        recorded_warning = w[0]
-        assert issubclass(recorded_warning.category, DeprecationWarning)
-        assert str(recorded_warning.message).startswith(
-            'p must be an integer'
-        )
+        assert len(caught) == 2
+        for w in caught:
+            assert issubclass(w.category, DeprecationWarning)
+            msg = str(w.message)
+            assert msg.startswith('p must be an integer') or \
+                   msg.startswith('GeneralizedMeanPropertyPredictor is deprecated')
 
 
 def test_label_fractions_property_initialization(label_fractions_predictor):
@@ -399,18 +396,6 @@ def test_label_fractions_property_initialization(label_fractions_predictor):
     assert label_fractions_predictor.labels == {'solvent'}
     expected_str = '<LabelFractionsPredictor \'Label fractions predictor\'>'
     assert str(label_fractions_predictor) == expected_str
-
-
-def test_label_fractions_property_post_build(label_fractions_predictor):
-    """Ensures we get a report from a label fraction predictor post_build call."""
-    assert label_fractions_predictor.report is None
-    session = mock.Mock()
-    session.get_resource.return_value = dict(status='OK', report=dict(), uid=uuid.uuid4())
-    label_fractions_predictor.session = session
-    label_fractions_predictor.post_build(uuid.uuid4(), dict(id=uuid.uuid4()))
-    assert session.get_resource.call_count == 1
-    assert label_fractions_predictor.report is not None
-    assert label_fractions_predictor.report.status == 'OK'
 
 
 def test_deprecated_label_fractions():
@@ -441,18 +426,6 @@ def test_simple_mixture_predictor_initialization(simple_mixture_predictor):
     assert str(simple_mixture_predictor) == expected_str
 
 
-def test_simple_mixture_relation_post_build(simple_mixture_predictor):
-    """Ensures we get a report from a simple mixture predictor post_build call."""
-    assert simple_mixture_predictor.report is None
-    session = mock.Mock()
-    session.get_resource.return_value = dict(status='OK', report=dict(), uid=uuid.uuid4())
-    simple_mixture_predictor.session = session
-    simple_mixture_predictor.post_build(uuid.uuid4(), dict(id=uuid.uuid4()))
-    assert session.get_resource.call_count == 1
-    assert simple_mixture_predictor.report is not None
-    assert simple_mixture_predictor.report.status == 'OK'
-
-
 def test_ingredient_fractions_property_initialization(ingredient_fractions_predictor):
     """Make sure the correct fields go to the correct places for an ingredient fractions predictor."""
     assert ingredient_fractions_predictor.name == 'Ingredient fractions predictor'
@@ -460,18 +433,6 @@ def test_ingredient_fractions_property_initialization(ingredient_fractions_predi
     assert ingredient_fractions_predictor.ingredients == ["Green Paste", "Blue Paste"]
     expected_str = '<IngredientFractionsPredictor \'Ingredient fractions predictor\'>'
     assert str(ingredient_fractions_predictor) == expected_str
-
-
-def test_ingredient_fractions_property_post_build(ingredient_fractions_predictor):
-    """Ensures we get a report from a ingredient fraction predictor post_build call."""
-    assert ingredient_fractions_predictor.report is None
-    session = mock.Mock()
-    session.get_resource.return_value = dict(status='OK', report=dict(), uid=uuid.uuid4())
-    ingredient_fractions_predictor.session = session
-    ingredient_fractions_predictor.post_build(uuid.uuid4(), dict(id=uuid.uuid4()))
-    assert session.get_resource.call_count == 1
-    assert ingredient_fractions_predictor.report is not None
-    assert ingredient_fractions_predictor.report.status == 'OK'
 
 
 def test_wrap_training_data():

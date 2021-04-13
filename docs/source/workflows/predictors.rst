@@ -26,6 +26,7 @@ The following example demonstrates how to use the python SDK to create an :class
 .. code:: python
 
    from citrine.informatics.predictors import AutoMLPredictor
+   from citrine.seeding.find_or_create import create_or_update
 
    # create AutoMLPredictor (assumes descriptors for
    # inputs/output variables have already been created)
@@ -60,7 +61,7 @@ The following example demonstrates how to use the python SDK to create a :class:
 .. code:: python
 
    from citrine.informatics.predictors import GraphPredictor
-   from citrine.seeding.create_or_update
+   from citrine.seeding.find_or_create import create_or_update
 
    # the other predictors have already been created and validated
    graph_predictor = GraphPredictor(
@@ -132,6 +133,159 @@ The following example demonstrates how to create an :class:`~citrine.informatics
                                )
 
 For an example of expression predictors used in a graph predictor, see :ref:`AI Engine Code Examples <graph_predictor_example>`.
+
+Molecular Structure Featurizer
+------------------------------------
+The :class:`~citrine.informatics.predictors.molecular_structure_featurizer.MolecularStructureFeaturizer`
+computes a configurable set of features on molecular structure data, e.g. SMILES or InChI strings, using the `Chemistry Development Kit (CDK) <https://cdk.github.io/>`_.
+The features are configured using the ``features`` and ``excludes`` arguments, which accept either feature names or predefined aliases.
+The default is the `standard` alias, corresponding to eight features that are a good balance of cost and performance.
+
+The feature names and descriptors are automatically constructed from the name of the input and the feature names.
+The ``from_predictor_responses`` method will grab the descriptors for the features so that they can be fed into other predicors,
+e.g., the :class:`~citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor`, as inputs.
+
+
+The following example demonstrates how to use a :class:`~citrine.informatics.predictors.molecular_structure_featurizer.MolecularStructureFeaturizer` and
+:class:`~citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor` to model a property of a molecule:
+
+.. code:: python
+
+    from citrine.informatics.descriptors import MolecularStructureDescriptor, RealDescriptor
+    from citrine.informatics.predictors import MolecularStructureFeaturizer, AutoMLPredictor, GraphPredictor
+    from citrine.seeding.find_or_create import create_or_update
+    from citrine.informatics.data_sources import GemTableDataSource
+
+
+    # descriptor for the molecular structure input
+    input_desc = MolecularStructureDescriptor('Solvent SMILES')
+    # descriptor for the property to define a machine learning model to predict
+    output_desc = RealDescriptor(
+        key="density",
+        units="g/cm^3",
+        lower_bound=0.0,
+        upper_bound=100.0
+    )
+
+
+    # featurize the molecular structure
+    featurizer = MolecularStructureFeaturizer(
+        name='Molecular Featurizer',
+        description="Featurize the Solvent's molecular structure using the default features.",
+        descriptor=input_desc,
+        features=['standard'],
+    )
+
+    # get the feature names
+    features = project.descriptors.from_predictor_responses(
+        predictor=featurizer,
+        inputs=[input_desc]
+    )
+ 
+    # create AutoMLPredictor, using the feature names as inputs
+    # note: the molecular structure, `input_desc`, should not be included in the inputs here
+    ml_predictor = AutoMLPredictor(
+        name='ML Model for Density',
+        description='Predict the density, given molecular features of the solvent',
+        inputs = features,
+        output = output_desc,
+        training_data = []
+    )
+ 
+    # use a graph predictor to wrap together the featurizer and the machine learning model
+    graph_predictor = GraphPredictor(
+        name='Density from solvent molecular structure',
+        description='Predict the density from the solvent molecular structure using molecular structure features.',
+        predictors = [featurizer, ml_predictor],
+        training_data = [GemTableDataSource(training_data_table_uid, 1)] # training data shared by all sub-predictors
+    )
+ 
+    # register or update predictor by name
+    predictor = create_or_update(
+        collection=project.predictors,
+        module=graph_predictor
+    )
+
+Chemical Formula Featurizer
+------------------------------------
+The :class:`~citrine.informatics.predictors.chemical_formula_featurizer.ChemicalFormulaFeaturizer`
+computes a configurable set of features on chemical formula data by using the properties of the individual elements
+and their stoichiometric amounts.
+Many of the features are stoichiometrically weighted generalized means of element-level properties, though some are more complex functions of the chemical formula.
+The generalized means are configured with the ``powers`` argument, which is a list of means to calculate.
+For example, setting ``powers=[1, 3]`` will calculate the mean and 3-mean of all applicable features.
+
+The feature to compute are configured using the ``features`` and ``excludes`` arguments, which accept either feature names or predefined aliases.
+The default is the `standard` alias, corresponding to a variety of features that are intuitive and often correlate with properties of interest.
+Other aliases are "physical," "electronic," and "periodicTable."
+A complete list of features and which aliases they map to can be found in the class docstring.
+
+The feature names and descriptors are automatically constructed from the name of the input and the feature names.
+The ``from_predictor_responses`` method will grab the descriptors for the features so that they can be fed into other predicors,
+e.g., the :class:`~citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor`, as inputs.
+
+
+The following example demonstrates how to use a :class:`~citrine.informatics.predictors.chemical_formula_featurizer.ChemicalFormulaFeaturizer` and
+:class:`~citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor` to model a property of an alloy:
+
+.. code:: python
+
+    from citrine.informatics.descriptors import ChemicalFormulaDescriptor, RealDescriptor
+    from citrine.informatics.predictors import ChemicalFormulaFeaturizer, AutoMLPredictor, GraphPredictor
+    from citrine.seeding.find_or_create import create_or_update
+    from citrine.informatics.data_sources import GemTableDataSource
+
+
+    # descriptor for the chemical formula input
+    input_desc = ChemicalFormulaDescriptor('Alloy chemical formula')
+    # descriptor for the property to define a machine learning model to predict
+    output_desc = RealDescriptor(
+        key="melting temperature",
+        units="Kelvin",
+        lower_bound=300.0,
+        upper_bound=5000.0
+    )
+
+
+    # featurize the chemical formula
+    featurizer = ChemicalFormulaFeaturizer(
+        name='ChemicalFeaturizer',
+        description="Featurize the Alloy's chemical formula using the default features and a 2-mean.",
+        descriptor=input_desc,
+        features=['standard'],
+        powers=[2]
+    )
+
+    # get the feature names
+    features = project.descriptors.from_predictor_responses(
+        predictor=featurizer,
+        inputs=[input_desc]
+    )
+
+    # create AutoMLPredictor, using the feature names as inputs
+    # note: the chemical formula, `input_desc`, should not be included in the inputs here
+    ml_predictor = AutoMLPredictor(
+        name='ML Model for Melting Temperature',
+        description='Predict the melting temperature, given chemical features of the alloy',
+        inputs = features,
+        output = output_desc,
+        training_data = []
+    )
+
+    # use a graph predictor to wrap together the featurizer and the machine learning model
+    graph_predictor = GraphPredictor(
+        name='Melting temperature from alloy chemical formula',
+        description='Predict the melting temperature from the alloy chemical formula using chemical formula features.',
+        predictors = [featurizer, ml_predictor],
+        training_data = [GemTableDataSource(training_data_table_uid, 1)] # training data shared by all sub-predictors
+    )
+
+    # register or update predictor by name
+    predictor = create_or_update(
+        collection=project.predictors,
+        module=graph_predictor
+    )
+
 
 Ingredients to simple mixture predictor (ALPHA)
 --------------------------------------------------
@@ -263,8 +417,8 @@ The following example illustrates how a :class:`~citrine.informatics.predictors.
         training_data=[data_source]
     )
 
-Generalized mean property predictor (ALPHA)
----------------------------------------------
+Mean property predictor (ALPHA)
+-------------------------------
 
 Often, properties of a mixture are proportional to the properties of it's ingredients.
 For example, the density of a saline solution can be computed from the densities of water and salt multiplied by their respective amounts:
@@ -276,7 +430,7 @@ For example, the density of a saline solution can be computed from the densities
 where :math:`d` is density and :math:`f` is relative ingredient fraction.
 If the densities of water and salt are known, we can compute the expected density of a candidate mixture using this predictor.
 
-The :class:`~citrine.informatics.predictors.generalized_mean_property_predictor.GeneralizedMeanPropertyPredictor` computes mean properties of simple mixture ingredients.
+The :class:`~citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor` computes mean properties of simple mixture ingredients.
 To configure a mean property predictor, we must specify:
 
 - An input descriptor that holds the mixture's recipe and ingredient labels
@@ -321,11 +475,14 @@ The example below show how to configure a mean property predictor to compute mea
 .. code:: python
 
     from citrine.informatics.data_sources import GemTableDataSource
-    from citrine.informatics.descriptors import FormulationDescriptor
-    from citrine.informatics.predictors import GeneralizedMeanPropertyPredictor
+    from citrine.informatics.descriptors import FormulationDescriptor, RealDescriptor
+    from citrine.informatics.predictors import MeanPropertyPredictor
 
     # descriptor that holds simple mixture data
     formulation = FormulationDescriptor(key='simple mixture')
+
+    # property descriptor to featurize
+    density = RealDescriptor(key='density', lower_bound=0, upper_bound=100, units='g/cm^3')
 
     # table with simple mixtures and their ingredients
     data_source = GemTableDataSource(table_id=table_uid, table_version=1, formulation_descriptor=formulation)
@@ -335,7 +492,7 @@ The example below show how to configure a mean property predictor to compute mea
         description='Computes 1-mean ingredient properties',
         input_descriptor=formulation,
         # featurize ingredient density
-        properties=['density'],
+        properties=[density],
         # compute the arithmetic mean
         p=1,
         training_data=[data_source],
@@ -568,5 +725,5 @@ Each predictor is trained on the subset of the combined data that is valid for t
 Note, data may come from sources defined by other subpredictors in the graph.
 Because training data are shared by all predictors in the graph, a data source does not need to be redefined by all subpredictors that require it.
 If all data sources required train a predictor are specified elsewhere in the graph, the ``training_data`` parameter may be omitted.
-If the graph contains a predictor that requires formulations data, e.g. a :class:`~citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor` or :class:`~citrine.informatics.predictors.generalized_mean_property_predictor.GeneralizedMeanPropertyPredictor`, any GEM Tables specified by the graph predictor that contain formulation data must provide a formulation descriptor,
+If the graph contains a predictor that requires formulations data, e.g. a :class:`~citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor` or :class:`~citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor`, any GEM Tables specified by the graph predictor that contain formulation data must provide a formulation descriptor,
 and this descriptor must match the input formulation descriptor of the sub-predictors that require these data.

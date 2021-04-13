@@ -12,10 +12,9 @@ __all__ = ['Objective', 'ScalarMaxObjective', 'ScalarMinObjective']
 
 class Objective(PolymorphicSerializable['Objective']):
     """
-    A Citrine Objective describes a goal for a score associated with a single descriptor.
+    An Objective describes a goal for a score associated with a single descriptor.
 
     Abstract type that returns the proper type given a serialized dict.
-
 
     """
 

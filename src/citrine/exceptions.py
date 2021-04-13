@@ -106,7 +106,7 @@ class WorkflowConflictException(NonRetryableException):
 
 
 class WorkflowNotReadyException(RetryableException):
-    """The workflow is not ready to be executed. i.e. still validating. (http status 425)."""
+    """The workflow is not ready to be executed. I.e., still validating. (http status 425)."""
 
     pass
 

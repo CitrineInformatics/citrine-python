@@ -210,9 +210,12 @@ The following demonstrates how to trigger workflow execution, wait for the desig
 Design Candidate
 -----------------
 
-A :class:`~citrine.informatics.design_candidate.DesignCandidate` represents the result of the Design Execution. They contain the `primary score` of the candidate and the :class:`~citrine.informatics.design_candidate.DesignMaterial` for that candidate. DesignMaterials are simpler approximations ("projections") of the materials information about a particular design candidate.
+A :class:`~citrine.informatics.design_candidate.DesignCandidate` represents the result of the Design Execution.
+They contain the `primary score` of the candidate and the :class:`~citrine.informatics.design_candidate.DesignMaterial` for that candidate.
+DesignMaterials are simpler approximations ("projections") of the materials information about a particular design candidate.
 
-DesignMaterials approximate the distribution of values the variable might take. They may be one of:
+DesignMaterials approximate the distribution of values that a variable might take.
+Each variable is represented as one of:
     * :class:`~citrine.informatics.design_candidate.MeanAndStd`
     * :class:`~citrine.informatics.design_candidate.TopCategories`
     * :class:`~citrine.informatics.design_candidate.Mixture`
@@ -228,18 +231,18 @@ For example:
     # to get the score of a particular candidate
     score = candidate.primary_score
 
-    # A MeanAndStd material will have mean and std
-    candidate.material.values['mean_and_std_material'].mean
-    candidate.material.values['mean_and_std_material'].std
+    # Assume a real descriptor, 'elastic limit', represented as a MeanAndStd variable
+    candidate.material.values['elastic limit'].mean
+    candidate.material.values['elastic limit'].std
 
-    # A TopCategories material will have the probability map for the most probable categories
-    candidate.material.values['top_categories_material'].probabilities
+    # Assume a categorical descriptor, 'color', represented as a TopCategories variable
+    candidate.material.values['color'].probabilities
 
-    # A Mixture material will have the most likely quantity values for all of the components in a mixture
-    candidate.material.values['mixture_material'].quantities
+    # Assume a formulation descriptor, 'final mixture', represented as a Mixture variable
+    candidate.material.values['final mixture'].quantities
 
-    # A ChemicalFormula material will have the chemical formula as a string
-    candidate.material.values['chemical_formula_material'].formula
+    # Assume a chemical formula descriptor, 'alloying material', represented as a ChemicalFormula variable
+    candidate.material.values['alloying material'].formula
 
-    # A MolecularStructure material will have the molecular structure represented by the SMILE string
-    candidate.material.values['molecular_material'].smiles
+    # Assume a molecular structure descriptor, 'solvent', represented as a MolecularStructure variable
+    candidate.material.values['solvent'].smiles

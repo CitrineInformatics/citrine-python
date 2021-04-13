@@ -3,8 +3,8 @@ from typing import Optional, Dict, List, Union, Iterable, Tuple
 from uuid import UUID
 
 from deprecation import deprecated
-from gemd.entity.link_by_uid import LinkByUID
 from gemd.entity.base_entity import BaseEntity
+from gemd.entity.link_by_uid import LinkByUID
 
 from citrine._rest.collection import Collection
 from citrine._rest.resource import Resource
@@ -13,6 +13,7 @@ from citrine._session import Session
 from citrine.resources.api_error import ApiError
 from citrine.resources.condition_template import ConditionTemplateCollection
 from citrine.resources.dataset import DatasetCollection
+from citrine.resources.delete import _async_gemd_batch_delete
 from citrine.resources.descriptors import DescriptorMethods
 from citrine.resources.design_space import DesignSpaceCollection
 from citrine.resources.design_workflow import DesignWorkflowCollection
@@ -281,7 +282,7 @@ class Project(Resource['Project']):
         Parameters
         ----------
         resource: Resource
-            An instance of a resource owned by this project (e.g. a dataset).
+            An instance of a resource owned by this project (e.g., a dataset).
 
         Returns
         -------
@@ -302,7 +303,7 @@ class Project(Resource['Project']):
         Parameters
         ----------
         resource: Resource
-            An instance of a resource owned by this project (e.g. a dataset).
+            An instance of a resource owned by this project (e.g., a dataset).
 
         Returns
         -------
@@ -430,8 +431,13 @@ class Project(Resource['Project']):
         )
         return True
 
-    def gemd_batch_delete(self, id_list: List[Union[LinkByUID, UUID, str, BaseEntity]]) -> \
-            List[Tuple[LinkByUID, ApiError]]:
+    def gemd_batch_delete(
+            self,
+            id_list: List[Union[LinkByUID, UUID, str, BaseEntity]],
+            *,
+            timeout: float = 2 * 60,
+            polling_delay: float = 1.0
+    ) -> List[Tuple[LinkByUID, ApiError]]:
         """
         Remove a set of GEMD objects.
 
@@ -441,13 +447,7 @@ class Project(Resource['Project']):
         A failure will be returned if the object cannot be deleted due to an external
         reference.
 
-        You must have Write access on the assoociated datasets for each object.
-
-        If you wish to delete more than 50 objects, queuing of deletes requires that
-        the types of objects be known, and thus you _must_ provide ids in the form
-        of BaseEntities.
-
-        Also note that Attribute Templates cannot be deleted at present.
+        You must have Write access on the associated datasets for each object.
 
         Parameters
         ----------
@@ -465,8 +465,8 @@ class Project(Resource['Project']):
             deleted.
 
         """
-        from citrine.resources.delete import _gemd_batch_delete
-        return _gemd_batch_delete(id_list, self.uid, self.session, None)
+        return _async_gemd_batch_delete(id_list, self.uid, self.session, None,
+                                        timeout=timeout, polling_delay=polling_delay)
 
 
 class ProjectCollection(Collection[Project]):
@@ -570,7 +570,7 @@ class ProjectCollection(Collection[Project]):
         ----------
         search_params: dict, optional
             A ``dict`` representing the body of the post request that will be sent to the search
-            endpoint to filter the results i.e.
+            endpoint to filter the results, e.g.,
 
             .. code:: python
 
@@ -612,7 +612,13 @@ class ProjectCollection(Collection[Project]):
                                         search_params=search_params)
 
     def delete(self, uid: Union[UUID, str]) -> Response:
-        """[ALPHA] Delete a particular element of the collection."""
+        """
+        [ALPHA] Delete a particular project.
+
+        Only empty projects can be deleted.
+        If the project is not empty, then the Response will contain a list of all of the project's
+        resources. These must be deleted before the project can be deleted.
+        """
         return super().delete(uid)  # pragma: no cover
 
     def _fetch_page_search(self, page: Optional[int] = None,
@@ -635,7 +641,7 @@ class ProjectCollection(Collection[Project]):
             A ``dict`` representing a request body that could be sent to a POST request. The "json"
             field should be passed as the key for the outermost ``dict``, with its value the
             request body, so that we can easily unpack the keyword argument when it gets passed to
-            ``fetch_func``, i.e. ``{'name': {'value': 'Project', 'search_method': 'SUBSTRING'} }``
+            ``fetch_func``, e.g., ``{'name': {'value': 'Project', 'search_method': 'SUBSTRING'} }``
 
         Returns
         -------

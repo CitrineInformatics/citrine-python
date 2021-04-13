@@ -140,7 +140,7 @@ class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExec
         self._put_module_ref('archive', execution_id)
 
     def restore(self, execution_id: UUID):
-        """Restore a predictor evaluation execution.
+        """Restore an archived predictor evaluation execution.
 
         Parameters
         ----------

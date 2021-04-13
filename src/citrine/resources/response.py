@@ -1,6 +1,6 @@
 class Response:
     """
-    Model for REST calls that return only responses (e.g. DELETE).
+    Model for REST calls that return only responses (e.g., DELETE).
 
     This assumes nothing other than that the response has an HTTP status code attached to it.
     """

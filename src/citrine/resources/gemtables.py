@@ -13,7 +13,7 @@ from citrine._serialization import properties
 from citrine._serialization.properties import UUID
 from citrine._session import Session
 from citrine._utils.functions import rewrite_s3_links_locally, write_file_locally
-from citrine.resources.job import JobSubmissionResponse
+from citrine.resources.job import JobSubmissionResponse, _poll_for_job_completion
 from citrine.resources.table_config import TableConfig
 
 logger = getLogger(__name__)
@@ -32,7 +32,7 @@ class GemTable(Resource['Table']):
     uid: UUID
         Unique uuid4 identifier of this GEM Table.
     version: str
-        Version number of the GEM Table
+        Version number of the GEM Table. The first table built from a given config is version 1.
     download_url: int
         Url pointing to the location of the GEM Table's contents.
         This is an expiring download link and is not unique.
@@ -173,7 +173,7 @@ class GemTableCollection(Collection[GemTable]):
         config:
             The persisted table config from which to build a table (or its ID).
         version
-            The version of the table config, only necessary when config is a uid.
+            The version of the table config; only necessary when config is a uid.
 
         Returns
         -------
@@ -234,7 +234,7 @@ class GemTableCollection(Collection[GemTable]):
             The table built by the specified job.
 
         """
-        status = self._poll_for_job_completion(self.project_id, job, timeout=timeout)
+        status = _poll_for_job_completion(self.session, self.project_id, job, timeout=timeout)
 
         table_id = status.output['display_table_id']
         table_version = status.output['display_table_version']
@@ -263,7 +263,7 @@ class GemTableCollection(Collection[GemTable]):
         config:
             The persisted table config from which to build a table (or its ID).
         version
-            The version of the table config, only necessary when config is a uid.
+            The version of the table config; only necessary when config is a uid.
         timeout
             Amount of time to wait on build job (in seconds) before giving up. Defaults
             to 15 minutes. Note that this number has no effect on the build job itself,
