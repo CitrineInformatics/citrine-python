@@ -236,10 +236,9 @@ def test_wipe_dataset(fake_dataset):
         *fake_dataset.material_templates.list_all(),
         *fake_dataset.measurement_templates.list_all(),
         *fake_dataset.process_templates.list_all(),
-        # TODO: uncomment these when attribute template delete is possible
-        # *fake_dataset.property_templates.list_all(),
-        # *fake_dataset.condition_templates.list_all(),
-        # *fake_dataset.parameter_templates.list_all(),
+        *fake_dataset.property_templates.list_all(),
+        *fake_dataset.condition_templates.list_all(),
+        *fake_dataset.parameter_templates.list_all(),
     ])
     
     # Clear GEMD objects only (not templates)
