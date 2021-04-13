@@ -43,10 +43,9 @@ def wipe_dataset(dataset: Dataset, *, delete_templates: bool = False) -> \
             *dataset.material_templates.list_all(),
             *dataset.measurement_templates.list_all(),
             *dataset.process_templates.list_all(),
-            # uncomment these when attribute template delete is possible
-            # *dataset.property_templates.list_all(),
-            # *dataset.condition_templates.list_all(),
-            # *dataset.parameter_templates.list_all(),
+            *dataset.property_templates.list_all(),
+            *dataset.condition_templates.list_all(),
+            *dataset.parameter_templates.list_all(),
         ]
     print("Deleting GEMDs...")
     del_response = dataset.gemd_batch_delete(gemds)
