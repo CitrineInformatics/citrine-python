@@ -191,7 +191,7 @@ def ingredient_fractions_predictor() -> IngredientFractionsPredictor:
         name='Ingredient fractions predictor',
         description='Computes total ingredient fractions',
         input_descriptor=formulation,
-        ingredients=["Green Paste", "Blue Paste"]
+        ingredients={"Green Paste", "Blue Paste"}
     )
 
 
@@ -430,7 +430,7 @@ def test_ingredient_fractions_property_initialization(ingredient_fractions_predi
     """Make sure the correct fields go to the correct places for an ingredient fractions predictor."""
     assert ingredient_fractions_predictor.name == 'Ingredient fractions predictor'
     assert ingredient_fractions_predictor.input_descriptor.key == 'formulation'
-    assert ingredient_fractions_predictor.ingredients == ["Green Paste", "Blue Paste"]
+    assert ingredient_fractions_predictor.ingredients == {"Green Paste", "Blue Paste"}
     expected_str = '<IngredientFractionsPredictor \'Ingredient fractions predictor\'>'
     assert str(ingredient_fractions_predictor) == expected_str
 
