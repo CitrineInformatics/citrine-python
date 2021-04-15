@@ -52,17 +52,7 @@ class IngredientsToSimpleMixturePredictor(
         self.description: str = description
         self.output: FormulationDescriptor = output
         self.id_to_quantity: Mapping[str, RealDescriptor] = id_to_quantity
-        _labels = {}
-        for label, ingredients in labels.items():
-            if not isinstance(ingredients, set):
-                warn(f"Labels for predictor '{self.name}' must be specified as a mapping from "
-                     "each label to a set of ingredient names. Support for other collections "
-                     "is deprecated and will be removed in a future release.",
-                     DeprecationWarning)
-                _labels[label] = set(ingredients)
-            else:
-                _labels[label] = ingredients
-        self.labels: Mapping[str, Set[str]] = _labels
+        self.labels: Mapping[str, Set[str]] = labels
         self.archived: bool = archived
 
     def _post_dump(self, data: dict) -> dict:

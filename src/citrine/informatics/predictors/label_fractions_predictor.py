@@ -42,15 +42,7 @@ class LabelFractionsPredictor(Resource['LabelFractionsPredictor'], Predictor):
         self.name: str = name
         self.description: str = description
         self.input_descriptor: FormulationDescriptor = input_descriptor
-        if not isinstance(labels, set):
-            warn(f"Labels for predictor '{self.name}' must be specified as a set of strings."
-                 "Support for other collections is deprecated and will be removed in a "
-                 "future release.",
-                 DeprecationWarning)
-            _labels = set(labels)
-        else:
-            _labels = labels
-        self.labels: Set[str] = _labels
+        self.labels: Set[str] = labels
         self.archived: bool = archived
 
     def _post_dump(self, data: dict) -> dict:
