@@ -437,6 +437,56 @@ class Set(PropertyCollection[set, typing.Iterable]):
         return elems
 
 
+class Collection(PropertyCollection[typing.Collection, list]):
+
+    def __init__(self,
+                 element_type: typing.Union[Property, typing.Type[Property]],
+                 serialization_path: typing.Optional[str] = None,
+                 serializable: bool = True,
+                 deserializable: bool = True,
+                 default: typing.Optional[DeserializedType] = None,
+                 override: bool = False):
+        super().__init__(serialization_path,
+                         serializable,
+                         deserializable,
+                         default,
+                         override)
+        self.element_type = element_type if isinstance(element_type, Property) else element_type()
+
+    @property
+    def underlying_types(self):
+        return list, set, tuple
+
+    @property
+    def serialized_types(self):
+        return list
+
+    def _deserialize(self, value: list) -> list:
+        deserialized = []
+        for element in value:
+            deserialized.append(self.element_type.deserialize(element))
+        return deserialized
+
+    def _serialize(self, value: typing.Collection) -> list:
+        serialized = []
+        for element in value:
+            serialized.append(self.element_type.serialize(element))
+        return serialized
+
+    def _set_elements(self, value):
+        elems = list()
+        for sub_val in value:
+            if issubclass(type(sub_val), self.element_type.underlying_types):
+                elems.append(sub_val)
+            else:
+                elems.append(self.element_type.deserialize(sub_val))
+        if isinstance(value, set):
+            elems = set(elems)
+        elif isinstance(value, tuple):
+            elems = tuple(elems)
+        return elems
+
+
 class Union(Property[typing.Any, typing.Any]):
     """
     One of several possible property types.

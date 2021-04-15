@@ -1,6 +1,6 @@
 """Tools for working with Descriptors."""
 import warnings
-from typing import Type, Optional, List, Iterable, Set  # noqa: F401
+from typing import Type, Optional, Set  # noqa: F401
 
 from citrine._serialization.serializable import Serializable
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
@@ -167,7 +167,7 @@ class CategoricalDescriptor(Serializable['CategoricalDescriptor'], Descriptor):
     ----------
     key: str
         the key corresponding to a descriptor
-    categories: list[str]
+    categories: Set[str]
         possible categories for this descriptor
 
     """
@@ -184,12 +184,12 @@ class CategoricalDescriptor(Serializable['CategoricalDescriptor'], Descriptor):
         except AttributeError:
             return False
 
-    def __init__(self, key: str, categories: Iterable[str]):
+    def __init__(self, key: str, categories: Set[str]):
         self.key: str = key
         for category in categories:
             if not isinstance(category, str):
                 raise TypeError("All categories must be strings")
-        self.categories: Set[str] = set(categories)
+        self.categories: Set[str] = categories
 
     def __str__(self):
         return "<CategoricalDescriptor {!r}>".format(self.key)
