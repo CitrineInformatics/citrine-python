@@ -11,7 +11,7 @@ __all__ = ['MeanPropertyPredictor']
 
 class MeanPropertyPredictor(
         Resource['MeanPropertyPredictor'], Predictor):
-    """[ALPHA] A predictor interface that computes mean component properties.
+    """A predictor interface that computes mean component properties.
 
     .. seealso::
        If you are using a deprecated generalized mean property predictor please see

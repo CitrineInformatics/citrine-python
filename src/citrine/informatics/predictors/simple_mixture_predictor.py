@@ -10,8 +10,7 @@ __all__ = ['SimpleMixturePredictor']
 
 
 class SimpleMixturePredictor(Resource['SimpleMixturePredictor'], Predictor):
-    """
-    [ALPHA] A predictor interface that builds a simple graphical model.
+    """A predictor interface that builds a simple graphical model.
 
     Parameters
     ----------

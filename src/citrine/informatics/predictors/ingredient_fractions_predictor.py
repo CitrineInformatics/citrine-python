@@ -9,7 +9,7 @@ __all__ = ['IngredientFractionsPredictor']
 
 
 class IngredientFractionsPredictor(Resource["IngredientFractionsPredictor"], Predictor):
-    """[ALPHA] A predictor interface that computes ingredient fractions.
+    """A predictor interface that computes ingredient fractions.
 
     Parameters
     ----------
