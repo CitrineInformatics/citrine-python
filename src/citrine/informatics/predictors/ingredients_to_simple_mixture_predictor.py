@@ -1,5 +1,4 @@
 from typing import Set, Mapping
-from warnings import warn
 
 from citrine._rest.resource import Resource
 from citrine._serialization import properties as _properties
