@@ -360,7 +360,7 @@ class List(PropertyCollection[list, list]):
 
     @property
     def underlying_types(self):
-        return list
+        return list, set, tuple
 
     @property
     def serialized_types(self):
@@ -382,9 +382,12 @@ class List(PropertyCollection[list, list]):
         elems = []
         for sub_val in value:
             if issubclass(type(sub_val), self.element_type.underlying_types):
-                elems.append(sub_val)
+                val_to_append = sub_val
+                if isinstance(self.element_type, PropertyCollection):
+                    val_to_append = self.element_type._set_elements(val_to_append)
             else:
-                elems.append(self.element_type.deserialize(sub_val))
+                val_to_append = self.element_type.deserialize(sub_val)
+            elems.append(val_to_append)
         return elems
 
 
@@ -406,7 +409,7 @@ class Set(PropertyCollection[set, typing.Iterable]):
 
     @property
     def underlying_types(self):
-        return set
+        return set, list, tuple
 
     @property
     def serialized_types(self):
@@ -431,9 +434,12 @@ class Set(PropertyCollection[set, typing.Iterable]):
         elems = set()
         for sub_val in value:
             if issubclass(type(sub_val), self.element_type.underlying_types):
-                elems.add(sub_val)
+                val_to_append = sub_val
+                if isinstance(self.element_type, PropertyCollection):
+                    val_to_append = self.element_type._set_elements(val_to_append)
             else:
-                elems.add(self.element_type.deserialize(sub_val))
+                val_to_append = self.element_type.deserialize(sub_val)
+            elems.add(val_to_append)
         return elems
 
 
@@ -477,9 +483,10 @@ class Collection(PropertyCollection[typing.Collection, list]):
         elems = list()
         for sub_val in value:
             if issubclass(type(sub_val), self.element_type.underlying_types):
-                elems.append(sub_val)
+                val_to_append = sub_val
             else:
-                elems.append(self.element_type.deserialize(sub_val))
+                val_to_append = self.element_type.deserialize(sub_val)
+            elems.append(val_to_append)
         if isinstance(value, set):
             elems = set(elems)
         elif isinstance(value, tuple):
@@ -885,11 +892,17 @@ class Mapping(PropertyCollection[dict, dict]):
         for key, val in value.items():
             if issubclass(type(val), self.values_type.underlying_types):
                 deserialized_value = val
+                if isinstance(self.values_type, PropertyCollection):
+                    deserialized_value = self.values_type._set_elements(deserialized_value)
             else:
                 deserialized_value = self.values_type.deserialize(val)
+
             if issubclass(type(key), self.keys_type.underlying_types):
                 deserialized_key = key
+                if isinstance(self.keys_type, PropertyCollection):
+                    deserialized_key = self.keys_type._set_elements(deserialized_key)
             else:
                 deserialized_key = self.keys_type.deserialize(key)
+
             elems[deserialized_key] = deserialized_value
         return elems
