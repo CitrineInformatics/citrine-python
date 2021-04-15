@@ -1,4 +1,4 @@
-from typing import Mapping, Optional, Set, List, Collection
+from typing import Mapping, Optional, Set, List
 
 from citrine._rest.resource import Resource
 from citrine._serialization import properties
@@ -43,12 +43,12 @@ class FormulationDesignSpace(Resource['FormulationDesignSpace'], DesignSpace):
         FormulationDescriptor,
         'config.formulation_descriptor'
     )
-    ingredients = properties.Collection(properties.String, 'config.ingredients')
+    ingredients = properties.Set(properties.String, 'config.ingredients')
     labels = properties.Optional(properties.Mapping(
         properties.String,
-        properties.Collection(properties.String)
+        properties.Set(properties.String)
     ), 'config.labels')
-    constraints = properties.Collection(properties.Object(Constraint), 'config.constraints')
+    constraints = properties.List(properties.Object(Constraint), 'config.constraints')
     resolution = properties.Float('config.resolution')
     typ = properties.String(
         'config.type',
@@ -62,17 +62,17 @@ class FormulationDesignSpace(Resource['FormulationDesignSpace'], DesignSpace):
                  name: str,
                  description: str,
                  formulation_descriptor: FormulationDescriptor,
-                 ingredients: Collection[str],
-                 constraints: Collection[Constraint],
-                 labels: Optional[Mapping[str, Collection[str]]] = None,
+                 ingredients: Set[str],
+                 constraints: List[Constraint],
+                 labels: Optional[Mapping[str, Set[str]]] = None,
                  resolution: float = 0.0001,
                  session: Session = Session()):
         self.name: str = name
         self.description: str = description
         self.formulation_descriptor: FormulationDescriptor = formulation_descriptor
-        self.ingredients: Collection[str] = ingredients
-        self.constraints: Collection[Constraint] = constraints
-        self.labels: Optional[Mapping[str, Collection[str]]] = labels
+        self.ingredients: Set[str] = ingredients
+        self.constraints: List[Constraint] = constraints
+        self.labels: Optional[Mapping[str, Set[str]]] = labels
         self.resolution: float = resolution
         self.session: Session = session
 
