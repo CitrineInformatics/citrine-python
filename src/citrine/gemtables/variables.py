@@ -720,7 +720,7 @@ class IngredientLabelsSetInOutput(Serializable['IngredientLabelsSetInOutput'], V
 
     name = properties.String('name')
     headers = properties.List(properties.String, 'headers')
-    process_templates = properties.Object(LinkByUID, 'process_template')
+    process_templates = properties.List(properties.Object(LinkByUID), 'process_templates')
     ingredient_name = properties.String('ingredient_name')
     typ = properties.String('type', default="ing_label_set_in_output", deserializable=False)
 
@@ -730,7 +730,7 @@ class IngredientLabelsSetInOutput(Serializable['IngredientLabelsSetInOutput'], V
     def __init__(self, *,
                  name: str,
                  headers: List[str],
-                 process_templates: LinkByUID,
+                 process_templates: List[LinkByUID],
                  ingredient_name: str):
         self.name = name
         self.headers = headers
