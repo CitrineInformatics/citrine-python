@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
 
-    <title>citrine.builders.predictors module &#8212; Citrine Python 0.117.1 documentation</title>
+    <title>citrine.builders.predictors module &#8212; Citrine Python 0.118.1 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -37,7 +37,7 @@
 <span id="citrine-builders-predictors-module"></span><h1>citrine.builders.predictors module<a class="headerlink" href="#module-citrine.builders.predictors" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="citrine.builders.predictors.build_mean_feature_property_predictors">
-<code class="sig-prename descclassname">citrine.builders.predictors.</code><code class="sig-name descname">build_mean_feature_property_predictors</code><span class="sig-paren">(</span><em class="sig-param">*</em>, <em class="sig-param">project: citrine.resources.project.Project</em>, <em class="sig-param">featurizer: citrine.informatics.predictors.molecular_structure_featurizer.MolecularStructureFeaturizer</em>, <em class="sig-param">formulation_descriptor: citrine.informatics.descriptors.FormulationDescriptor</em>, <em class="sig-param">p: int</em>, <em class="sig-param">impute_properties: bool = True</em>, <em class="sig-param">make_all_ingredients_model: bool = True</em>, <em class="sig-param">labels: Optional[List[str]] = None</em><span class="sig-paren">)</span> &#x2192; Tuple[List[citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor], List[citrine.informatics.descriptors.Descriptor]]<a class="headerlink" href="#citrine.builders.predictors.build_mean_feature_property_predictors" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">citrine.builders.predictors.</code><code class="sig-name descname">build_mean_feature_property_predictors</code><span class="sig-paren">(</span><em class="sig-param">*, project: citrine.resources.project.Project, featurizer: Union[citrine.informatics.predictors.molecular_structure_featurizer.MolecularStructureFeaturizer, citrine.informatics.predictors.chemical_formula_featurizer.ChemicalFormulaFeaturizer], formulation_descriptor: citrine.informatics.descriptors.FormulationDescriptor, p: int, impute_properties: bool = True, make_all_ingredients_model: bool = True, labels: Optional[List[str]] = None</em><span class="sig-paren">)</span> &#x2192; Tuple[List[citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor], List[citrine.informatics.descriptors.Descriptor]]<a class="headerlink" href="#citrine.builders.predictors.build_mean_feature_property_predictors" title="Permalink to this definition">¶</a></dt>
 <dd><p>[ALPHA] Combine a featurizer model with mean property models.</p>
 <p>Given a featurizer, produce “mean property” models that calculate the mean of the
 properties calculated by the featurizer. This is useful if you do not directly know
@@ -48,9 +48,8 @@ featurizer calculates and builds mean property models that use them as input pro
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>project</strong> (<a class="reference internal" href="citrine.resources.project.html#citrine.resources.project.Project" title="citrine.resources.project.Project"><em>Project</em></a>) – Project that contains the predictor</p></li>
-<li><p><strong>featurizer</strong> (<a class="reference internal" href="citrine.informatics.predictors.molecular_structure_featurizer.html#citrine.informatics.predictors.molecular_structure_featurizer.MolecularStructureFeaturizer" title="citrine.informatics.predictors.molecular_structure_featurizer.MolecularStructureFeaturizer"><em>MolecularStructureFeaturizer</em></a>) – A model that is being used to featurize formulation ingredients. Currently only
-accepts a molecular structure featurizer, but other models can be used in principle.
-TODO: add chemical formula featurizer once it is exposed</p></li>
+<li><p><strong>featurizer</strong> (<em>Union</em><em>[</em><a class="reference internal" href="citrine.informatics.predictors.molecular_structure_featurizer.html#citrine.informatics.predictors.molecular_structure_featurizer.MolecularStructureFeaturizer" title="citrine.informatics.predictors.molecular_structure_featurizer.MolecularStructureFeaturizer"><em>MolecularStructureFeaturizer</em></a><em>, </em><a class="reference internal" href="citrine.informatics.predictors.chemical_formula_featurizer.html#citrine.informatics.predictors.chemical_formula_featurizer.ChemicalFormulaFeaturizer" title="citrine.informatics.predictors.chemical_formula_featurizer.ChemicalFormulaFeaturizer"><em>ChemicalFormulaFeaturizer</em></a><em>]</em>) – A model that is being used to featurize formulation ingredients. Currently only
+accepts a molecular structure featurizer or a chemical formula featurizer.</p></li>
 <li><p><strong>formulation_descriptor</strong> (<a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.FormulationDescriptor" title="citrine.informatics.descriptors.FormulationDescriptor"><em>FormulationDescriptor</em></a>) – Descriptor that represents the formulation being featurized.</p></li>
 <li><p><strong>p</strong> (<em>int</em>) – Power of the generalized mean. Only integer powers are supported.</p></li>
 <li><p><strong>impute_properties</strong> (<em>bool</em>) – Whether to impute missing ingredient properties by averaging over the entire dataset.

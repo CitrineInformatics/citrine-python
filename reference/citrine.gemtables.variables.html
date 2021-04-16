@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
 
-    <title>citrine.gemtables.variables module &#8212; Citrine Python 0.117.1 documentation</title>
+    <title>citrine.gemtables.variables module &#8212; Citrine Python 0.118.1 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -507,6 +507,119 @@ average density of the solvents”.</p>
 <dl class="attribute">
 <dt id="citrine.gemtables.variables.IngredientLabelByProcessAndName.type_selector">
 <code class="sig-name descname">type_selector</code><em class="property"> = None</em><a class="headerlink" href="#citrine.gemtables.variables.IngredientLabelByProcessAndName.type_selector" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="citrine.gemtables.variables.IngredientLabelsSetByProcessAndName">
+<em class="property">class </em><code class="sig-prename descclassname">citrine.gemtables.variables.</code><code class="sig-name descname">IngredientLabelsSetByProcessAndName</code><span class="sig-paren">(</span><em class="sig-param">*, name: str, headers: List[str], process_template: gemd.entity.link_by_uid.LinkByUID, ingredient_name: str</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.gemtables.variables.IngredientLabelsSetByProcessAndName" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.gemtables.variables.Variable" title="citrine.gemtables.variables.Variable"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.gemtables.variables.Variable</span></code></a></p>
+<p>[ALPHA] Define a variable containing the set of labels on an ingredient.</p>
+<p>Matches by process template and ingredient name, and the label string to check.</p>
+<p>For example, an ingredient might be labeled “solvent”, “alcohol” and “VOC”.
+The column would then contain that set of strings.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – a short human-readable name to use when referencing the variable</p></li>
+<li><p><strong>headers</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – sequence of column headers</p></li>
+<li><p><strong>process_template</strong> (<em>LinkByUID</em>) – process template associated with this ingredient identifier</p></li>
+<li><p><strong>ingredient_name</strong> (<em>str</em>) – name of ingredient</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="citrine.gemtables.variables.IngredientLabelsSetByProcessAndName.headers">
+<code class="sig-name descname">headers</code><em class="property"> = None</em><a class="headerlink" href="#citrine.gemtables.variables.IngredientLabelsSetByProcessAndName.headers" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.gemtables.variables.IngredientLabelsSetByProcessAndName.ingredient_name">
+<code class="sig-name descname">ingredient_name</code><em class="property"> = None</em><a class="headerlink" href="#citrine.gemtables.variables.IngredientLabelsSetByProcessAndName.ingredient_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.gemtables.variables.IngredientLabelsSetByProcessAndName.name">
+<code class="sig-name descname">name</code><em class="property"> = None</em><a class="headerlink" href="#citrine.gemtables.variables.IngredientLabelsSetByProcessAndName.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.gemtables.variables.IngredientLabelsSetByProcessAndName.process_template">
+<code class="sig-name descname">process_template</code><em class="property"> = None</em><a class="headerlink" href="#citrine.gemtables.variables.IngredientLabelsSetByProcessAndName.process_template" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.gemtables.variables.IngredientLabelsSetByProcessAndName.typ">
+<code class="sig-name descname">typ</code><em class="property"> = 'ing_labels_set_by_process_and_name'</em><a class="headerlink" href="#citrine.gemtables.variables.IngredientLabelsSetByProcessAndName.typ" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="citrine.gemtables.variables.IngredientLabelsSetInOutput">
+<em class="property">class </em><code class="sig-prename descclassname">citrine.gemtables.variables.</code><code class="sig-name descname">IngredientLabelsSetInOutput</code><span class="sig-paren">(</span><em class="sig-param">*, name: str, headers: List[str], process_templates: List[gemd.entity.link_by_uid.LinkByUID], ingredient_name: str</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.gemtables.variables.IngredientLabelsSetInOutput" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>, <a class="reference internal" href="#citrine.gemtables.variables.Variable" title="citrine.gemtables.variables.Variable"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.gemtables.variables.Variable</span></code></a></p>
+<p>[ALPHA] Define a variable containing the set of labels on an ingredient.</p>
+<p>The search for an ingredient starts at the terminal material and proceeds until
+any of the given process templates are reached. Those templates block the search from
+continuing but are inclusive: a match is extracted if an ingredient with the specified
+ingredient name is found at or before a cutoff.</p>
+<p>This variable definition allows a set of labels to be extracted when an ingredient is used
+in multiple processes. As an example, consider a paint formed by mixing red and yellow
+pigments, where the red pigment is formed by mixing yellow and magenta. This variable could be
+used represent the quantity of yellow in both mixing processes (red and the final paint)
+in a single column provided the process templates that mixed red and the final paint
+are included as cutoffs.</p>
+<p>In general, this variable should be preferred over an
+<code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientLabelSetByProcessTemplateAndName</span></code> when
+mixtures are hierarchical (i.e., blends of blends).
+It allows an ingredient with a single name to be used in
+multiple processes without defining additional variables that manifest as additional columns
+in your GEM table, and must be used in place of the former if the same process template is
+used to represent mixing at multiple levels in the material history hierarchy. Going back
+to the previous example, this variable must be used in place of an
+<code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientLabelSetByProcessTemplateAndName</span></code> if the same
+process template was used to represent the process that mixed red and the final paint.
+Using <code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientLabelSetByProcessTemplateAndName</span></code>
+would result in an ambiguous match because yellow would be found twice in the
+material history, once when mixing red and again when mixing the final paint.</p>
+<p>For example, an ingredient might be labeled “solvent”, “alcohol” and “VOC”.
+The column would then contain that set of strings.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – a short human-readable name to use when referencing the variable</p></li>
+<li><p><strong>headers</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – sequence of column headers</p></li>
+<li><p><strong>process_templates</strong> (<em>list</em><em>[</em><em>LinkByUID</em><em>]</em>) – process templates that should not be traversed through when searching for a matching
+attribute.  The attribute may be present in these processes but not their ingredients.</p></li>
+<li><p><strong>ingredient_name</strong> (<em>str</em>) – name of ingredient</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="citrine.gemtables.variables.IngredientLabelsSetInOutput.headers">
+<code class="sig-name descname">headers</code><em class="property"> = None</em><a class="headerlink" href="#citrine.gemtables.variables.IngredientLabelsSetInOutput.headers" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.gemtables.variables.IngredientLabelsSetInOutput.ingredient_name">
+<code class="sig-name descname">ingredient_name</code><em class="property"> = None</em><a class="headerlink" href="#citrine.gemtables.variables.IngredientLabelsSetInOutput.ingredient_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.gemtables.variables.IngredientLabelsSetInOutput.name">
+<code class="sig-name descname">name</code><em class="property"> = None</em><a class="headerlink" href="#citrine.gemtables.variables.IngredientLabelsSetInOutput.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.gemtables.variables.IngredientLabelsSetInOutput.process_templates">
+<code class="sig-name descname">process_templates</code><em class="property"> = None</em><a class="headerlink" href="#citrine.gemtables.variables.IngredientLabelsSetInOutput.process_templates" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="citrine.gemtables.variables.IngredientLabelsSetInOutput.typ">
+<code class="sig-name descname">typ</code><em class="property"> = 'ing_label_set_in_output'</em><a class="headerlink" href="#citrine.gemtables.variables.IngredientLabelsSetInOutput.typ" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
