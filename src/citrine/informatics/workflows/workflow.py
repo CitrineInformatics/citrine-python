@@ -2,14 +2,12 @@
 from typing import Type
 
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
-from citrine._rest.mixin import Mixin
-
 
 
 __all__ = ['Workflow']
 
 
-class Workflow(PolymorphicSerializable['Workflow'], Mixin):
+class Workflow(PolymorphicSerializable['Workflow']):
     """[DEPRECATED] A Citrine Workflow is a collection of Modules that together accomplish some task.
 
     Abstract type that returns the proper type given a serialized dict.

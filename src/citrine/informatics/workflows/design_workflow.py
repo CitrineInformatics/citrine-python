@@ -8,11 +8,12 @@ from citrine._session import Session
 from citrine.informatics.workflows.workflow import Workflow
 from citrine.resources.workflow_executions import WorkflowExecutionCollection
 from citrine.resources.design_execution import DesignExecutionCollection
+from citrine._rest.resource_metadata import ResourceMetadata
 
 __all__ = ['DesignWorkflow']
 
 
-class DesignWorkflow(Resource['DesignWorkflow'], Workflow):
+class DesignWorkflow(Resource['DesignWorkflow'], Workflow, ResourceMetadata):
     """Object that generates scored materials that may approach higher values of the score.
 
     Parameters
@@ -33,26 +34,16 @@ class DesignWorkflow(Resource['DesignWorkflow'], Workflow):
 
     uid = properties.Optional(properties.UUID, 'id', serializable=False)
     name = properties.String('display_name')
-    status = properties.String('status', serializable=False)
-    status_info = properties.Optional(
-        properties.List(properties.String()),
-        'status_info',
-        serializable=False
-    )
-    experimental = properties.Boolean("experimental", serializable=False, default=True)
-    experimental_reasons = properties.Optional(
-        properties.List(properties.String()),
-        'experimental_reasons',
-        serializable=False
-    )
-    archived = properties.Boolean('archived', default=False)
+    name = properties.String('name')
+    description = properties.Optional(properties.String, 'description')
+
     module_type = properties.String('module_type', default='DESIGN_WORKFLOW')
     typ = properties.String('type', default='DesignWorkflow', deserializable=False)
 
     status_description = properties.String('status_description', serializable=False)
-    name = properties.String('name')
-    description = properties.Optional(properties.String, 'description')
+
     design_space_id = properties.UUID('design_space_id')
+
     processor_id = properties.Optional(properties.UUID, 'processor_id')
     predictor_id = properties.UUID('predictor_id')
 

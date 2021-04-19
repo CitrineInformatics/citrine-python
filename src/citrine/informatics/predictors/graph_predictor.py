@@ -5,11 +5,12 @@ from citrine._rest.resource import Resource
 from citrine._serialization import properties as _properties
 from citrine.informatics.data_sources import DataSource
 from citrine.informatics.predictors import Predictor
+from citrine._rest.resource_metadata import ResourceMetadata
 
 __all__ = ['GraphPredictor']
 
 
-class GraphPredictor(Resource['GraphPredictor'], Predictor):
+class GraphPredictor(Resource['GraphPredictor'], Predictor, ResourceMetadata):
     """A predictor interface that stitches other predictors together.
 
     Parameters

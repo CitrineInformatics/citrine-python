@@ -2,17 +2,17 @@ from typing import List, Optional, Type, Union
 from uuid import UUID
 from warnings import warn
 
-from citrine._serialization import properties as _properties
+from citrine._serialization import properties
 from citrine._session import Session
 from citrine.informatics.data_sources import DataSource
 from citrine.informatics.modules import Module
 from citrine.resources.report import ReportResource
-from citrine._rest.mixin import Mixin
+
 
 __all__ = ['Predictor']
 
 
-class Predictor(Module, Mixin):
+class Predictor(Module):
     """Module that describes the ability to compute/predict properties of materials.
 
     Abstract type that returns the proper type given a serialized dict. subtype
@@ -23,24 +23,11 @@ class Predictor(Module, Mixin):
     _response_key = None
     _project_id: Optional[UUID] = None
     _session: Optional[Session] = None
-    uid = _properties.Optional(_properties.UUID, 'id', serializable=False)
+    uid = properties.Optional(properties.UUID, 'id', serializable=False)
     """UUID of the predictor, if it has been retrieved from the platform."""
 
-    name = _properties.String('config.name')
-    description = _properties.Optional(_properties.String(), 'config.description')
-    status = _properties.Optional(_properties.String(), 'status', serializable=False)
-    status_info = _properties.Optional(
-        _properties.List(_properties.String()),
-        'status_info',
-        serializable=False
-    )
-    archived = _properties.Boolean('archived', default=False)
-    experimental = _properties.Boolean("experimental", serializable=False, default=True)
-    experimental_reasons = _properties.Optional(
-        _properties.List(_properties.String()),
-        'experimental_reasons',
-        serializable=False
-    )
+    name = properties.String('config.name')
+    description = properties.Optional(properties.String(), 'config.description')
 
     @property
     def report(self):

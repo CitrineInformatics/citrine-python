@@ -7,11 +7,12 @@ from citrine._rest.resource import Resource
 from citrine._serialization import properties as _properties
 from citrine.informatics.descriptors import Descriptor, MolecularStructureDescriptor
 from citrine.informatics.predictors import Predictor
+from citrine._rest.resource_metadata import ResourceMetadata
 
 __all__ = ['MolecularStructureFeaturizer']
 
 
-class MolecularStructureFeaturizer(Resource['MolecularStructureFeaturizer'], Predictor):
+class MolecularStructureFeaturizer(Resource['MolecularStructureFeaturizer'], Predictor, ResourceMetadata):
     """
     [ALPHA] A "batteries-included" featurizer for organic molecules. Powered by CDK.
 

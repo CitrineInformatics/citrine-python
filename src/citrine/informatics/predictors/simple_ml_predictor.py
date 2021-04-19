@@ -5,11 +5,12 @@ from citrine._serialization import properties as _properties
 from citrine.informatics.data_sources import DataSource
 from citrine.informatics.descriptors import Descriptor
 from citrine.informatics.predictors import Predictor
+from citrine._rest.resource_metadata import ResourceMetadata
 
 __all__ = ['SimpleMLPredictor']
 
 
-class SimpleMLPredictor(Resource['SimplePredictor'], Predictor):
+class SimpleMLPredictor(Resource['SimplePredictor'], Predictor, ResourceMetadata):
     """A predictor interface that builds a simple graphical model.
 
     The model connects the set of inputs through latent variables to the outputs.

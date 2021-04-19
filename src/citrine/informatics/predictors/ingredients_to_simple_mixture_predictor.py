@@ -5,12 +5,13 @@ from citrine._rest.resource import Resource
 from citrine._serialization import properties as _properties
 from citrine.informatics.descriptors import FormulationDescriptor, RealDescriptor
 from citrine.informatics.predictors import Predictor
+from citrine._rest.resource_metadata import ResourceMetadata
 
 __all__ = ['IngredientsToSimpleMixturePredictor']
 
 
 class IngredientsToSimpleMixturePredictor(
-        Resource['IngredientsToSimpleMixturePredictor'], Predictor):
+        Resource['IngredientsToSimpleMixturePredictor'], Predictor, ResourceMetadata):
     """[ALPHA] A predictor interface that constructs a simple mixture from ingredient quantities.
 
     Parameters
