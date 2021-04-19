@@ -41,7 +41,8 @@ class GeneralizedMeanPropertyPredictor(
         Power of the generalized mean. Only integer powers are supported.
     impute_properties: bool
         Whether to impute missing ingredient properties.
-        If ``False`` an error is thrown when a missing ingredient property is encountered.
+        If ``False`` all ingredients must define values for all featurized properties.
+        Otherwise, the row will not be featurized.
         If ``True`` and no ``default_properties`` are specified, then the average over the
         entire dataset is used.
         If ``True`` and a default is specified in ``default_properties``, then the specified

@@ -40,7 +40,8 @@ def build_mean_feature_property_predictors(
         Power of the generalized mean. Only integer powers are supported.
     impute_properties: bool
         Whether to impute missing ingredient properties by averaging over the entire dataset.
-        If ``False``, an error is thrown if any ingredient being featurized is missing a property.
+        If ``False`` all ingredients must define values for all featurized properties.
+        Otherwise, the row will not be featurized.
     make_all_ingredients_model: bool
         Whether to create a mean property predictor that calculates the mean over all ingredients.
         If False, models are only constructed for specified labels. Must be True if no labels
