@@ -402,6 +402,8 @@ class ConcatColumn(Serializable['ConcatColumn'], Column):
     ----------
     data_source: str
         name of the variable to use when populating the column
+    # Add description of subcolumn. It's weird in that only the type is used (name/data_source/etc. are ignored)
+    # Maybe an enum would be better
 
 
     """

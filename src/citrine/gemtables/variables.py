@@ -683,7 +683,7 @@ class IngredientLabelsSetInOutput(Serializable['IngredientLabelsSetInOutput'], V
     This variable definition allows a set of labels to be extracted when an ingredient is used
     in multiple processes. As an example, consider a paint formed by mixing red and yellow
     pigments, where the red pigment is formed by mixing yellow and magenta. This variable could be
-    used represent the quantity of yellow in both mixing processes (red and the final paint)
+    used to represent the quantity of yellow in both mixing processes (red and the final paint)
     in a single column provided the process templates that mixed red and the final paint
     are included as cutoffs.
 
@@ -720,7 +720,7 @@ class IngredientLabelsSetInOutput(Serializable['IngredientLabelsSetInOutput'], V
 
     name = properties.String('name')
     headers = properties.List(properties.String, 'headers')
-    process_templates = properties.Object(LinkByUID, 'process_template')
+    process_templates = properties.List(properties.Object(LinkByUID), 'process_templates')
     ingredient_name = properties.String('ingredient_name')
     typ = properties.String('type', default="ing_label_set_in_output", deserializable=False)
 
@@ -730,7 +730,7 @@ class IngredientLabelsSetInOutput(Serializable['IngredientLabelsSetInOutput'], V
     def __init__(self, *,
                  name: str,
                  headers: List[str],
-                 process_templates: LinkByUID,
+                 process_templates: List[LinkByUID],  # This should accept multiple process templates?
                  ingredient_name: str):
         self.name = name
         self.headers = headers
