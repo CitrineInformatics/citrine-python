@@ -5,12 +5,12 @@ from citrine._rest.resource import Resource
 from citrine._serialization import properties as _properties
 from citrine.informatics.descriptors import FormulationDescriptor
 from citrine.informatics.predictors import Predictor
-from citrine._rest.resource_metadata import ResourceMetadata
+from citrine._rest.ai_resource_metadata import AIResourceMetadata
 
 __all__ = ['LabelFractionsPredictor']
 
 
-class LabelFractionsPredictor(Resource['LabelFractionsPredictor'], Predictor, ResourceMetadata):
+class LabelFractionsPredictor(Resource['LabelFractionsPredictor'], Predictor, AIResourceMetadata):
     """[ALPHA] A predictor interface that computes the relative proportions of labeled ingredients.
 
     Parameters

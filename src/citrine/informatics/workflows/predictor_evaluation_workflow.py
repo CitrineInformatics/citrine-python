@@ -7,13 +7,13 @@ from citrine._session import Session  # noqa
 from citrine.informatics.predictor_evaluator import PredictorEvaluator
 from citrine.informatics.workflows.workflow import Workflow
 from citrine.resources.predictor_evaluation_execution import PredictorEvaluationExecutionCollection
-from citrine._rest.resource_metadata import ResourceMetadata
+from citrine._rest.ai_resource_metadata import AIResourceMetadata
 
 __all__ = ['PredictorEvaluationWorkflow']
 
 
 class PredictorEvaluationWorkflow(Resource['PredictorEvaluationWorkflow'],
-                                  Workflow, ResourceMetadata):
+                                  Workflow, AIResourceMetadata):
     """A workflow that evaluations a predictor.
 
     Parameters

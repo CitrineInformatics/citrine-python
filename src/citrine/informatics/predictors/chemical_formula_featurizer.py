@@ -4,11 +4,13 @@ from citrine._rest.resource import Resource
 from citrine._serialization import properties as _properties
 from citrine.informatics.descriptors import ChemicalFormulaDescriptor, Descriptor
 from citrine.informatics.predictors import Predictor
+from citrine._rest.ai_resource_metadata import AIResourceMetadata
 
 __all__ = ['ChemicalFormulaFeaturizer']
 
 
-class ChemicalFormulaFeaturizer(Resource['ChemicalFormulaFeaturizer'], Predictor):
+class ChemicalFormulaFeaturizer(Resource['ChemicalFormulaFeaturizer'],
+                                Predictor, AIResourceMetadata):
     """
     A featurizer for chemical formulae. Inspired by Magpie.
 

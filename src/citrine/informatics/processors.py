@@ -6,13 +6,13 @@ from citrine._serialization import properties
 from citrine._serialization.serializable import Serializable
 from citrine._session import Session
 from citrine.informatics.modules import Module
-from citrine._rest.resource_metadata import ResourceMetadata
+from citrine._rest.ai_resource_metadata import AIResourceMetadata
 
 
 __all__ = ['Processor', 'GridProcessor', 'EnumeratedProcessor', 'MonteCarloProcessor']
 
 
-class Processor(Module, ResourceMetadata):
+class Processor(Module):
     """A Citrine Processor describes how a design space is searched.
 
     Abstract type that returns the proper type given a serialized dict.
@@ -42,7 +42,7 @@ class Processor(Module, ResourceMetadata):
             return False
 
 
-class GridProcessor(Serializable['GridProcessor'], Processor):
+class GridProcessor(Serializable['GridProcessor'], Processor, AIResourceMetadata):
     """Generates samples from the Cartesian product of finite dimensions, then scans over them.
 
     To create a finite set of materials from continuous dimensions, a uniform grid is created
@@ -94,7 +94,7 @@ class GridProcessor(Serializable['GridProcessor'], Processor):
         return '<GridProcessor {!r}>'.format(self.name)
 
 
-class EnumeratedProcessor(Serializable['EnumeratedProcessor'], Processor):
+class EnumeratedProcessor(Serializable['EnumeratedProcessor'], Processor, AIResourceMetadata):
     """Process a design space by enumerating up to a fixed number of samples from the domain.
 
     Each sample is processed independently.
@@ -154,7 +154,7 @@ class EnumeratedProcessor(Serializable['EnumeratedProcessor'], Processor):
         return self.max_candidates
 
 
-class MonteCarloProcessor(Serializable['GridProcessor'], Processor):
+class MonteCarloProcessor(Serializable['GridProcessor'], Processor, AIResourceMetadata):
     """Using a Monte Carlo optimizer to search for the best candidate.
 
     The moves that the MonteCarlo optimizer makes are inferred from the descriptors in the

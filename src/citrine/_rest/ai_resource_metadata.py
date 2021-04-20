@@ -2,7 +2,7 @@ from typing import Optional  # noqa: F401
 from citrine._serialization import properties
 
 
-class ResourceMetadata():
+class AIResourceMetadata():
     """Abstract class for representing common metadata for Resources."""
 
     created_by = properties.Optional(properties.UUID, 'created_by', serializable=False)

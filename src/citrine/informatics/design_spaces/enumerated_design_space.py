@@ -5,12 +5,12 @@ from citrine._serialization import properties
 from citrine._session import Session
 from citrine.informatics.descriptors import Descriptor
 from citrine.informatics.design_spaces.design_space import DesignSpace
-from citrine._rest.resource_metadata import ResourceMetadata
+from citrine._rest.ai_resource_metadata import AIResourceMetadata
 
 __all__ = ['EnumeratedDesignSpace']
 
 
-class EnumeratedDesignSpace(Resource['EnumeratedDesignSpace'], DesignSpace, ResourceMetadata):
+class EnumeratedDesignSpace(Resource['EnumeratedDesignSpace'], DesignSpace, AIResourceMetadata):
     """An explicit enumeration of candidate materials to score.
 
     Enumerated design spaces are intended to capture small spaces with fewer than

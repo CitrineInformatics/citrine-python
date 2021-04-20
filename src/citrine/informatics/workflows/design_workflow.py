@@ -8,12 +8,12 @@ from citrine._session import Session
 from citrine.informatics.workflows.workflow import Workflow
 from citrine.resources.workflow_executions import WorkflowExecutionCollection
 from citrine.resources.design_execution import DesignExecutionCollection
-from citrine._rest.resource_metadata import ResourceMetadata
+from citrine._rest.ai_resource_metadata import AIResourceMetadata
 
 __all__ = ['DesignWorkflow']
 
 
-class DesignWorkflow(Resource['DesignWorkflow'], Workflow, ResourceMetadata):
+class DesignWorkflow(Resource['DesignWorkflow'], Workflow, AIResourceMetadata):
     """Object that generates scored materials that may approach higher values of the score.
 
     Parameters

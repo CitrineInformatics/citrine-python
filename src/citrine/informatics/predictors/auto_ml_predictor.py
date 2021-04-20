@@ -5,12 +5,12 @@ from citrine._serialization import properties as _properties
 from citrine.informatics.data_sources import DataSource
 from citrine.informatics.descriptors import Descriptor
 from citrine.informatics.predictors import Predictor
-from citrine._rest.resource_metadata import ResourceMetadata
+from citrine._rest.ai_resource_metadata import AIResourceMetadata
 
 __all__ = ['AutoMLPredictor']
 
 
-class AutoMLPredictor(Resource['AutoMLPredictor'], Predictor, ResourceMetadata):
+class AutoMLPredictor(Resource['AutoMLPredictor'], Predictor, AIResourceMetadata):
     """[ALPHA] A predictor interface that builds a single ML model.
 
     The model uses the set of inputs to predict the output.
