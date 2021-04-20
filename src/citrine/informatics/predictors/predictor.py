@@ -51,6 +51,7 @@ class Predictor(Module):
         from .ingredient_fractions_predictor import IngredientFractionsPredictor
         from .auto_ml_predictor import AutoMLPredictor
         from .mean_property_predictor import MeanPropertyPredictor
+        from .chemical_formula_featurizer import ChemicalFormulaFeaturizer
         type_dict = {
             "Simple": SimpleMLPredictor,
             "Graph": GraphPredictor,
@@ -63,6 +64,7 @@ class Predictor(Module):
             "LabelFractions": LabelFractionsPredictor,
             "SimpleMixture": SimpleMixturePredictor,
             "IngredientFractions": IngredientFractionsPredictor,
+            "ChemicalFormulaFeaturizer": ChemicalFormulaFeaturizer,
             "AutoML": AutoMLPredictor,
         }
         typ = type_dict.get(data['config']['type'])

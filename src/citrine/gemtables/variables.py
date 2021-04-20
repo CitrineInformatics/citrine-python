@@ -73,9 +73,10 @@ class Variable(PolymorphicSerializable['Variable']):
         types: List[Type[Serializable]] = [
             RootInfo, AttributeByTemplate, AttributeByTemplateAfterProcessTemplate,
             AttributeByTemplateAndObjectTemplate, IngredientIdentifierByProcessTemplateAndName,
-            IngredientLabelByProcessAndName, IngredientQuantityByProcessAndName,
+            IngredientLabelByProcessAndName, IngredientLabelsSetByProcessAndName,
+            IngredientQuantityByProcessAndName,
             RootIdentifier, AttributeInOutput, IngredientIdentifierInOutput,
-            IngredientQuantityInOutput, XOR
+            IngredientLabelsSetInOutput, IngredientQuantityInOutput, XOR
         ]
         res = next((x for x in types if x.typ == data["type"]), None)
         if res is None:
@@ -379,6 +380,51 @@ class IngredientLabelByProcessAndName(Serializable['IngredientLabelByProcessAndN
         self.type_selector = type_selector
 
 
+class IngredientLabelsSetByProcessAndName(
+        Serializable['IngredientLabelsSetByProcessAndName'],
+        Variable):
+    """[ALPHA] Define a variable containing the set of labels on an ingredient.
+
+    Matches by process template and ingredient name, and the label string to check.
+
+    For example, an ingredient might be labeled "solvent", "alcohol" and "VOC".
+    The column would then contain that set of strings.
+
+    Parameters
+    ---------
+    name: str
+        a short human-readable name to use when referencing the variable
+    headers: list[str]
+        sequence of column headers
+    process_template: LinkByUID
+        process template associated with this ingredient identifier
+    ingredient_name: str
+        name of ingredient
+
+    """
+
+    name = properties.String('name')
+    headers = properties.List(properties.String, 'headers')
+    process_template = properties.Object(LinkByUID, 'process_template')
+    ingredient_name = properties.String('ingredient_name')
+    typ = properties.String('type',
+                            default="ing_labels_set_by_process_and_name",
+                            deserializable=False)
+
+    def _attrs(self) -> List[str]:
+        return ["name", "headers", "process_template", "ingredient_name", "typ"]
+
+    def __init__(self, *,
+                 name: str,
+                 headers: List[str],
+                 process_template: LinkByUID,
+                 ingredient_name: str):
+        self.name = name
+        self.headers = headers
+        self.process_template = process_template
+        self.ingredient_name = ingredient_name
+
+
 class IngredientQuantityByProcessAndName(
         Serializable['IngredientQuantityByProcessAndName'], Variable):
     """[ALPHA] Get the quantity of an ingredient associated with a process template and a name.
@@ -624,6 +670,72 @@ class IngredientIdentifierInOutput(Serializable['IngredientIdentifierInOutput'],
         self.process_templates = process_templates
         self.scope = scope
         self.type_selector = type_selector
+
+
+class IngredientLabelsSetInOutput(Serializable['IngredientLabelsSetInOutput'], Variable):
+    """[ALPHA] Define a variable containing the set of labels on an ingredient.
+
+    The search for an ingredient starts at the terminal material and proceeds until
+    any of the given process templates are reached. Those templates block the search from
+    continuing but are inclusive: a match is extracted if an ingredient with the specified
+    ingredient name is found at or before a cutoff.
+
+    This variable definition allows a set of labels to be extracted when an ingredient is used
+    in multiple processes. As an example, consider a paint formed by mixing red and yellow
+    pigments, where the red pigment is formed by mixing yellow and magenta. This variable could be
+    used represent the quantity of yellow in both mixing processes (red and the final paint)
+    in a single column provided the process templates that mixed red and the final paint
+    are included as cutoffs.
+
+    In general, this variable should be preferred over an
+    :class:`~citrine.gemtables.variables.IngredientLabelSetByProcessTemplateAndName` when
+    mixtures are hierarchical (i.e., blends of blends).
+    It allows an ingredient with a single name to be used in
+    multiple processes without defining additional variables that manifest as additional columns
+    in your GEM table, and must be used in place of the former if the same process template is
+    used to represent mixing at multiple levels in the material history hierarchy. Going back
+    to the previous example, this variable must be used in place of an
+    :class:`~citrine.gemtables.variables.IngredientLabelSetByProcessTemplateAndName` if the same
+    process template was used to represent the process that mixed red and the final paint.
+    Using :class:`~citrine.gemtables.variables.IngredientLabelSetByProcessTemplateAndName`
+    would result in an ambiguous match because yellow would be found twice in the
+    material history, once when mixing red and again when mixing the final paint.
+
+    For example, an ingredient might be labeled "solvent", "alcohol" and "VOC".
+    The column would then contain that set of strings.
+
+    Parameters
+    ---------
+    name: str
+        a short human-readable name to use when referencing the variable
+    headers: list[str]
+        sequence of column headers
+    process_templates: list[LinkByUID]
+        process templates that should not be traversed through when searching for a matching
+        attribute.  The attribute may be present in these processes but not their ingredients.
+    ingredient_name: str
+        name of ingredient
+
+    """
+
+    name = properties.String('name')
+    headers = properties.List(properties.String, 'headers')
+    process_templates = properties.List(properties.Object(LinkByUID), 'process_templates')
+    ingredient_name = properties.String('ingredient_name')
+    typ = properties.String('type', default="ing_label_set_in_output", deserializable=False)
+
+    def _attrs(self) -> List[str]:
+        return ["name", "headers", "process_templates", "ingredient_name", "typ"]
+
+    def __init__(self, *,
+                 name: str,
+                 headers: List[str],
+                 process_templates: List[LinkByUID],
+                 ingredient_name: str):
+        self.name = name
+        self.headers = headers
+        self.process_templates = process_templates
+        self.ingredient_name = ingredient_name
 
 
 class IngredientQuantityInOutput(Serializable['IngredientQuantityInOutput'], Variable):
