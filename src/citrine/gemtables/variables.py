@@ -730,7 +730,7 @@ class IngredientLabelsSetInOutput(Serializable['IngredientLabelsSetInOutput'], V
     def __init__(self, *,
                  name: str,
                  headers: List[str],
-                 process_templates: List[LinkByUID],  # This should accept multiple process templates?
+                 process_templates: List[LinkByUID],
                  ingredient_name: str):
         self.name = name
         self.headers = headers
