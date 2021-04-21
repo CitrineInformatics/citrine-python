@@ -199,7 +199,7 @@ class MonteCarloProcessor(Serializable['GridProcessor'], Processor):
     name = properties.String('config.name')
     description = properties.Optional(properties.String(), 'config.description')
     typ = properties.String('config.type', default='ContinuousSearch', deserializable=False)
-    max_candidates = properties.Integer('config.max_candidates')
+    max_candidates = properties.Optional(properties.Integer, 'config.max_candidates')
     status = properties.String('status', serializable=False)
     status_info = properties.Optional(
         properties.List(properties.String()),
