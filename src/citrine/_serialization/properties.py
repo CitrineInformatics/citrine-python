@@ -614,14 +614,11 @@ class SpecifiedMixedList(PropertyCollection[list, list]):
                              "than expected for list {}".format(value, self.element_types))
         for element, element_type in zip(value, self.element_types):
             if isinstance(element_type, PropertyCollection):
-                    val_to_append = element_type._set_elements(element)
+                val_to_append = element_type._set_elements(element)
             elif issubclass(type(element), type(element_type)):
                 val_to_append = element
             else:
-                try:
-                    val_to_append = element_type.deserialize(element)
-                except:
-                    import pdb; pdb.set_trace()
+                val_to_append = element_type.deserialize(element)
             elems.append(val_to_append)
 
         # If there are more element types than elements, append serialized default values
