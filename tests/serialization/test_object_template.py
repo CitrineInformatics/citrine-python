@@ -20,20 +20,20 @@ def test_object_template_serde():
     color_template = PropertyTemplate("Color", bounds=CategoricalBounds(["red", "green", "blue"]))
     # Properties are a mixture of property templates and [template, bounds], pairs
     block_template = MaterialTemplate("Block", properties=[[length_template, sub_bounds],
-                                                           color_template])
+                                                           [color_template]])
     copy_template = MaterialTemplate.build(block_template.dump())
     assert copy_template == block_template
 
     # Tests below exercise similar code, but for measurement and process templates
     pressure_template = ConditionTemplate("pressure", bounds=RealBounds(0.1, 0.11, 'MPa'))
     index_template = ParameterTemplate("index", bounds=IntegerBounds(2, 10))
-    meas_template = MeasurementTemplate("A measurement of length", properties=[length_template],
-                                        conditions=[pressure_template], description="Description",
-                                        parameters=[index_template], tags=["foo"])
+    meas_template = MeasurementTemplate("A measurement of length", properties=[[length_template]],
+                                        conditions=[[pressure_template]], description="Description",
+                                        parameters=[[index_template]], tags=["foo"])
     assert MeasurementTemplate.build(meas_template.dump()) == meas_template
 
-    proc_template = ProcessTemplate("Make an object", parameters=[index_template],
-                                    conditions=[pressure_template], allowed_labels=["Label"],
+    proc_template = ProcessTemplate("Make an object", parameters=[[index_template]],
+                                    conditions=[[pressure_template]], allowed_labels=["Label"],
                                     allowed_names=["first sample", "second sample"])
     assert ProcessTemplate.build(proc_template.dump()) == proc_template
 
@@ -65,9 +65,9 @@ def test_bounds_optional():
         for name, attribute_type in attribute_args:
             kwargs[name] = [
                 [link(), IntegerBounds(0, 10)],
-                link(),
-                attribute_type('foo', bounds=IntegerBounds(0, 10)),
-                (link(), None)
+                [link()],
+                [attribute_type('foo', bounds=IntegerBounds(0, 10))],
+                [link(), None]
             ]
         template = template_type(name='foo', **kwargs)
         for name, _ in attribute_args:
