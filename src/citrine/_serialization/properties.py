@@ -443,57 +443,6 @@ class Set(PropertyCollection[set, typing.Iterable]):
         return elems
 
 
-class Collection(PropertyCollection[typing.Collection, list]):
-
-    def __init__(self,
-                 element_type: typing.Union[Property, typing.Type[Property]],
-                 serialization_path: typing.Optional[str] = None,
-                 serializable: bool = True,
-                 deserializable: bool = True,
-                 default: typing.Optional[DeserializedType] = None,
-                 override: bool = False):
-        super().__init__(serialization_path,
-                         serializable,
-                         deserializable,
-                         default,
-                         override)
-        self.element_type = element_type if isinstance(element_type, Property) else element_type()
-
-    @property
-    def underlying_types(self):
-        return list, set, tuple
-
-    @property
-    def serialized_types(self):
-        return list
-
-    def _deserialize(self, value: list) -> list:
-        deserialized = []
-        for element in value:
-            deserialized.append(self.element_type.deserialize(element))
-        return deserialized
-
-    def _serialize(self, value: typing.Collection) -> list:
-        serialized = []
-        for element in value:
-            serialized.append(self.element_type.serialize(element))
-        return serialized
-
-    def _set_elements(self, value):
-        elems = list()
-        for sub_val in value:
-            if issubclass(type(sub_val), self.element_type.underlying_types):
-                val_to_append = sub_val
-            else:
-                val_to_append = self.element_type.deserialize(sub_val)
-            elems.append(val_to_append)
-        if isinstance(value, set):
-            elems = set(elems)
-        elif isinstance(value, tuple):
-            elems = tuple(elems)
-        return elems
-
-
 class Union(Property[typing.Any, typing.Any]):
     """
     One of several possible property types.
@@ -615,7 +564,7 @@ class SpecifiedMixedList(PropertyCollection[list, list]):
         for element, element_type in zip(value, self.element_types):
             if isinstance(element_type, PropertyCollection):
                 val_to_append = element_type._set_elements(element)
-            elif issubclass(type(element), type(element_type)):
+            elif issubclass(type(element), element_type.underlying_types):
                 val_to_append = element
             else:
                 val_to_append = element_type.deserialize(element)
@@ -796,11 +745,7 @@ class LinkOrElse(PropertyCollection[typing.Union[Serializable, LinkByUID], dict]
                         "build() method that does not call deserialize().")
 
     def _set_elements(self, value):
-        if issubclass(type(value), self.underlying_types):
-            elem = value
-        else:
-            elem = self.deserialize(value)
-        return elem
+        return value
 
 
 class Optional(PropertyCollection[typing.Optional[typing.Any], typing.Optional[typing.Any]]):
@@ -851,10 +796,8 @@ class Optional(PropertyCollection[typing.Optional[typing.Any], typing.Optional[t
         if value is not None:
             if isinstance(self.prop, PropertyCollection):
                 elem = self.prop._set_elements(value)
-            elif issubclass(type(value), self.underlying_types):
-                elem = value
             else:
-                elem = self.underlying_types.deserialize(value)
+                elem = value
         return elem
 
 
@@ -884,6 +827,7 @@ class Mapping(PropertyCollection[dict, dict]):
                          deserializable,
                          default,
                          override)
+
         self.keys_type = keys_type if isinstance(keys_type, Property) else keys_type()
         self.values_type = values_type if isinstance(values_type, Property) else values_type()
         self.ser_as_list_of_pairs = ser_as_list_of_pairs
