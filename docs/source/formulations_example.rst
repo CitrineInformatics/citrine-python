@@ -26,7 +26,7 @@ We have also measured the sugar fraction for some of the ingredients, and we kno
     But to keep this example simple, we assume that a given ingredient always has all of the labels below whenever it is used.
 
 
-.. list-table:: Ingredients Data
+.. list-table:: Base Ingredients Data
    :widths: 25 25 25 25
    :header-rows: 1
 
@@ -36,7 +36,7 @@ We have also measured the sugar fraction for some of the ingredients, and we kno
      - Price ($/kg)
    * - Sugar
      - Sweetener
-     - 1.00
+     - 1.00 +/- 0.0
      - 2.30
    * - Water
      -
@@ -44,11 +44,11 @@ We have also measured the sugar fraction for some of the ingredients, and we kno
      - 0.05
    * - Lime Juice
      - Acid
-     - 0.03
+     - 0.03 +/- 0.01
      - 14.00
    * - Triple Sec
      - Sweetener, Alcohol
-     - 0.36
+     - 0.36 +/- 0.04
      - 18.99
    * - Tequila
      - Alcohol
@@ -64,16 +64,19 @@ The quantities are in units of mass fraction.
 
 
 .. list-table:: Simple Syrup Data
-   :widths: 25 25 25
+   :widths: 25 25 25 25
    :header-rows: 1
 
    * - Name
+     - Label(s)
      - Water Quantity
      - Sugar Quantity
    * - Simple Syrup A
+     - Simple Syrup, Sweetener
      - 0.50
      - 0.50
    * - Simple Syrup B
+     - Simple Syrup, Sweetener
      - 0.45
      - 0.55
 
@@ -98,7 +101,7 @@ The table below shows two examples.
      - Tequila Quantity
      - Ice Quantity
    * - Margarita A
-     - 6.3
+     - 6.3 +/- 0.1
      - 8.0
      - 0.20
      - 0.0
@@ -108,7 +111,7 @@ The table below shows two examples.
      - 0.25
      - 0.40
    * - Margarita B
-     - 5.4
+     - 5.4 +/- 0.1
      - 12.0
      - 0.0
      - 0.15
@@ -204,7 +207,7 @@ This material spec is then fed as the sole ingredient into a "blend margarita B"
 A measurement spec is attached to the material spec to measure "tastiness."
 Finally, run objects are created corresponding to each spec, to represent what actually happened.
 Whew!
-That's a lot, which is why we have created additional tooling, both in code and in the GUI, to automate this process.
+That's a lot, which is why this is best done with additional tooling, whether in code or in the GUI.
 
 A rendering of this example material history is shown below.
 
@@ -217,6 +220,158 @@ Repeating this process once for each margarita sample, we can build up a rich da
 
 Building a Table
 ----------------
+
+We now build a GEM Table to represent the margaritas' material histories in tabular format.
+This table will be used as training data when building a machine learning graphical model.
+For more detailed information on GEM Tables, see the section on :doc:`data extraction <data_extraction>`.
+
+In order to make a Gem Table, we start with a Table Configuration object.
+In this example we will build up the configuration in small steps.
+As we will see, templates are crucial to configuring the table.
+
+The code below defines the rows and defines one column that contains the identifier of each row.
+
+.. code-block:: python
+
+    material_templates_to_include = [
+        blended_margarita_template, simple_syrup_template, base_material_template
+    ]
+    scope = "margaritas-id"
+
+    config = TableConfig(
+        name="margarita formulations table",
+        description="",
+        datasets=[dataset.uid],
+        rows=[
+            MaterialRunByTemplate(
+                templates=[LinkByUID.from_entity(t) for t in material_templates_to_include]
+            )
+        ]
+        variables=[RootIdentifier(name="name", headers=["name"], scope=scope)],
+        columns=[IdentityColumn(data_source="name")]
+    )
+
+Let's step through the pieces of this code.
+We gave the configuration a name and description, for human-readability.
+We defined the datasets that contain the material histories; for the purposes of this example we assume everything is in the dataset ``dataset``.
+We then defined the rows as being based on all materials that link to one of a set of templates.
+For the purposes of this example, assume that we have defined separate material templates for the base materials, the simple syrups, the margaritas, and the blended margaritas.
+Notice that we do _not_ include the material template for the unblended margaritas.
+For the purposes of machine learning, we want to compress the mixing and blending into a single training row.
+
+We define a single variable/column that contains a unique identifier for each row.
+Every object on the Citrine Platform has a unique id with scope ``id``, but these are difficult for a human to read.
+In this example we assume that we have given the materials human-readable uniquely identifying names with scope "margaritas-id."
+These names will appear in the first column of the table.
+
+We now use the :func:`~citrine.resources.table_config.TableConfig.add_columns` method to expand the configuration.
+We first use the :class:`~citrine.gemtables.variables.AttributeByTemplate` variable to record the attributes.
+For those attributes that may have non-zero uncertainty, we include columns for both mean and standard deviation.
+
+.. code-block:: python
+
+    config = config.add_columns(
+        variable=AttributeByTemplate(
+            name="price",
+            headers=["price"],
+            template=LinkByUID.from_entity(price_template)
+        ),
+        columns=[MeanColumn(data_source="price")]
+    )
+    config = config.add_columns(
+        variable=AttributeByTemplate(
+            name="sucrose fraction",
+            headers=["sucrose fraction"],
+            template=LinkByUID.from_entity(sucrose_fraction_template)
+        ),
+        columns=[MeanColumn(data_source="sucrose fraction"), StdDevColumn(data_source="sucrose fraction")]
+    )
+    config = config.add_columns(
+        variable=AttributeByTemplate(
+            name="blend time",
+            headers=["margarita", "blend time"],
+            template=LinkByUID.from_entity(blend_time_template)
+        ),
+        columns=[MeanColumn(data_source="blend time")]
+    )
+    config = config.add_columns(
+        variable=AttributeByTemplate(
+            name="tastiness",
+            headers=["margarita", "tastiness"],
+            template=LinkByUID.from_entity(tastiness_template)
+        ),
+        columns=[MeanColumn(data_source="tastiness"), StdDevColumn(data_source="tastiness")]
+    )
+
+The ``name`` is only used to link a variable to columns.
+The ``headers`` are used to structure the table *and also create the names of the eventual descriptors*.
+The figure below shows how some of the columns may be rendered in a GEM Table.
+Because they both have the "margarita" heading, "blend time" and "tastiness" are grouped together.
+
+.. figure:: _static/GEM_Table_formulation_properties.png
+    :align: center
+
+    GEM Table "margarita properties" columns
+
+We now add a set of three variables for each mixing ingredient: one for the identifier, one for the quantity, and one for the labels.
+The code block below shows how we would add a set of columns for "simple syrup."
+This must be repeated once for each ingredient.
+
+.. code-block:: python
+
+    ing_name = "simple syrup"
+    mix_template_link = LinkByUID.from_entity(mix_template)
+    identity_var = IngredientIdentifierInOutput(
+        name=f"{ing_name} identifier",
+        headers=[ing_name, "Identifier"],
+        ingredient_name=ing_name,
+        process_templates=[mix_template_link],
+        scope=scope
+    )
+    quantity_var = IngredientQuantityInOutput(
+        name=f"{ing_name} mass",
+        headers=[ing_name, "Mass"],
+        process_templates=[mix_template_link],
+        ingredient_name=ing_name,
+        quantity_dimension=IngredientQuantityDimension.MASS,
+    )
+    labels_var = IngredientLabelsSetInOutput(
+        name=f"{ing_name} labels",
+        headers=[ing_name, "Labels"],
+        process_templates=[mix_template_link],
+        ingredient_name=ing_name
+    )
+    config = config.add_columns(
+        variable=identity_var, columns=[IdentityColumn(data_source=identity_var.name)]
+    )
+    config = config.add_columns(
+        variable=quantity_var, columns=[MeanColumn(data_source=quantity_var.name)],
+    )
+    config = config.add_columns(
+        variable=labels_var,
+        columns=[
+            ConcatColumn(
+                data_source=labels_var.name,
+                subcolumn=IdentityColumn(data_source=labels_var.name)
+            )
+        ]
+    )
+
+The figure below shows how these three columns may be rendered in a GEM Table.
+
+.. figure:: _static/GEM_Table_formulation_ingredient.png
+    :align: center
+
+    GEM Table "simple syrup ingredient" columns
+
+Lastly, we register the configuration and build the table.
+Note that this is a long-running process.
+To build the table asynchronously, use :func:`~citrine.resources.gemtables.GemTableCollection.initiate_build`.
+
+.. code-block:: python
+
+    config = project.table_configs.register(config)
+    table = project.tables.build_from_config(config)
 
 Training and Analyzing a Model
 ------------------------------

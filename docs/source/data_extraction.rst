@@ -230,6 +230,8 @@ There are several ways to define variables that take their values from Attribute
   * :class:`~citrine.gemtables.variables.IngredientIdentifierByProcessTemplateAndName`: for the id of the material being used in an ingredient, which can be used as a key for looking up that input material
   * :class:`~citrine.gemtables.variables.IngredientIdentifierInOutput`: for the id of a material used in an ingredient between the terminal material and a given set of processes (useful for ingredients used in multiple processes)
   * :class:`~citrine.gemtables.variables.IngredientLabelByProcessAndName`: for a boolean that indicates whether an ingredient is assigned a given label
+  * :class:`~citrine.gemtables.variables.IngredientLabelsSetByProcessAndName`: for the set of labels applied to an ingredient in a process
+  * :class:`~citrine.gemtables.variables.IngredientLabelsSetInOutput`: for the set of labels applied to an ingredient between the terminal material and a given set of processes (useful for ingredients used in multiple processes)
 
 * Compound Variables
 
@@ -266,3 +268,7 @@ There are several ways to define columns, depending on the type of the attribute
 * String and boolean valued fields, like identifiers and non-attribute fields
 
  * :class:`~citrine.gemtables.columns.IdentityColumn`: for simply casting the value to a string, which doesn't work on values from Attributes
+
+* Collections of values
+
+ * :class:`~citrine.gemtables.columns.ConcatColumn`: for concatenating multiple columns
