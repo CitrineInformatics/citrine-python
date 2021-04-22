@@ -61,7 +61,7 @@ class Column(PolymorphicSerializable['Column']):
             MostLikelyCategoryColumn, MostLikelyProbabilityColumn,
             FlatCompositionColumn, ComponentQuantityColumn,
             NthBiggestComponentNameColumn, NthBiggestComponentQuantityColumn,
-            MolecularStructureColumn
+            MolecularStructureColumn, ConcatColumn
         ]
         res = next((x for x in types if x.typ == data["type"]), None)
         if res is None:
@@ -393,3 +393,26 @@ class MolecularStructureColumn(Serializable['MolecularStructureColumn'], Column)
     def __init__(self, *, data_source: str, format: ChemicalDisplayFormat):
         self.data_source = data_source
         self.format = format
+
+
+class ConcatColumn(Serializable['ConcatColumn'], Column):
+    """[ALPHA] Column that concatenates .
+
+    Parameters
+    ----------
+    data_source: str
+        name of the variable to use when populating the column
+
+
+    """
+
+    data_source = properties.String('data_source')
+    subcolumn = properties.Object(Column, 'subcolumn')
+    typ = properties.String('type', default="concat_column", deserializable=False)
+
+    def _attrs(self) -> List[str]:
+        return ["data_source", "typ"]
+
+    def __init__(self, *, data_source: str, subcolumn: Column):
+        self.data_source = data_source
+        self.subcolumn = subcolumn
