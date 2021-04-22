@@ -373,8 +373,153 @@ To build the table asynchronously, use :func:`~citrine.resources.gemtables.GemTa
     config = project.table_configs.register(config)
     table = project.tables.build_from_config(config)
 
-Training and Analyzing a Model
-------------------------------
+Training a Predictor
+--------------------
+
+With the GEM Table in hand, we build and train a predictor to predict the tastiness of novel margarita recipes.
+The first step is to define a :class:`~citrine.informatics.data_sources.GemTableDataSource` based on the Gem Table, ``table``.
+We choose to define a :class:`~citrine.informatics.descriptors.FormulationDescriptor` to hold the formulation; if we do not specify it then a default descriptor will be generated.
+
+.. code-block:: python
+
+    formulation = FormulationDescriptor("mixed and blended margarita")
+    data_source = GemTableDataSource(table_id=table.uid, table_version=table.version, formulation_descriptor=formulation)
+
+The first component of the graphical model is a :class:`~citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor`, which flattens the input formulation--it repeatedly replaces components with their ingredients until only the basic ingredients remain.
+This flattening efficiently teaches the predictor about the relationship between ingredients.
+In this case, it learns exactly how "simple syrup A" and "simple syrup B" are similar to each other.
+Although the homogeneous representation is not entirely appropriate for all formulations problems, it is usually an excellent approximation,
+especially when coupled with flexible machine learning models that can learn subtle relationships within the data.
+
+.. code-block:: python
+
+    flat_formulation = FormulationDescriptor("homogenized margarita")
+    simple_mixture_predictor = SimpleMixturePredictor(
+        name="Simple margarita mixture",
+        description="Flatten a mixture of mixtures into leaf ingredients",
+        input_descriptor=formulation,
+        output_descriptor=flat_formulation
+    )
+
+Using the flattened formulation as an input, we create several featurizers to compute features that will be inputs to the machine learning model.
+The featurizer predictors are :class:`~citrine.informatics.predictors.ingredient_fractions_predictor.IngredientFractionsPredictor`,
+:class:`~citrine.informatics.predictors.label_fractions_predictor.LabelFractionsPredictor`, and :class:`~citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor`.
+We create one predictor each for ingredient and label fractions, and two mean property predictors--
+one that computes the mean price over all ingredients (this will be used to constraint the price of new margarita recipes) and one that computes the mean sucrose content of just the sweeteners.
+
+.. code-block:: python
+
+    label_fractions_predictor = LabelFractionsPredictor(
+        name="Label fractions",
+        description="Total quantity that is from one of the component types",
+        input_descriptor=flat_formulation,
+        labels={"acid", "alcohol", "sweetener"},
+    )
+
+    ingredient_fractions_predictor = IngredientFractionsPredictor(
+        name="Ingredient Fractions",
+        description="Compute the fraction of each ingredient",
+        input_descriptor=flat_formulation,
+        ingredients=atomic_ingredients,
+    )
+
+    # These descriptors must match up with the Variable in the GEM Table and the associated Attribute Template
+    price = RealDescriptor("price", lower_bound=0, upper_bound=100, units="1/kg")
+    sucrose_fraction = RealDescriptor("sucrose fraction", lower_bound=0, upper_bound=1, units="")
+    mean_price_predictor = MeanPropertyPredictor(
+        name="Mean price",
+        description="Compute weighted mean of price per kilogram",
+        input_descriptor=flat_formulation,
+        properties=[price],
+        impute_properties=False,
+        p=1
+    )
+    mean_sweetness_predictor = MeanPropertyPredictor(
+        name="Mean sucrose content of sweeteners",
+        description="Compute weighted mean of sucrose content for sweeteners",
+        input_descriptor=flat_formulation,
+        properties=[sucrose_fraction],
+        impute_properties=False,
+        label="sweetener",
+        p=1
+    )
+
+This provides an illustration of how we can use a graphical model to inject domain knowledge.
+We know that the balance of sweetness and acidity is crucial to taste.
+By computing the fraction of the margarita that is acidic, the fraction that is a sweetener, and the average sucrose content of those sweeteners,
+we provide the machine learning model with crucial variables that it can use to discover patterns *without* requiring large amounts of training data.
+Furthermore, we can introduce new acids and sweeteners into our pantry and the model will be able to make reasonable predictions even if it has not been trained on them.
+
+The final piece is an :class:`~citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor` for ``tastiness``.
+We use the :func:`~citrine.resources.descriptors.DescriptorMethods.from_predictor_responses` method to get the outputs of the featurizers.
+We also use ``blend time`` as an input.
+
+.. code-block:: python
+
+    label_fractions_descriptors = project.descriptors.from_predictor_responses(
+        predictor=label_fractions_predictor, inputs=[flat_formulation],
+    )
+    ingredient_fractions_descriptors = project.descriptors.from_predictor_responses(
+        predictor=ingredient_fractions_predictor, inputs=[flat_formulation],
+    )
+    price_descriptors = project.descriptors.from_predictor_responses(
+        predictor=mean_price_predictor, inputs=[flat_formulation],
+    )
+    sweetness_descriptors = project.descriptors.from_predictor_responses(
+        predictor=mean_sweetness_predictor, inputs=[flat_formulation]
+    )
+
+    blend_time = RealDescriptor("margarita~blend time", lower_bound=0, upper_bound=60, units="s")
+    tastiness = RealDescriptor("margarita~tastiness", lower_bound=0, upper_bound=10, units="")
+
+    ml_inputs = (
+        ingredient_fractions_descriptors
+        + label_fractions_descriptors
+        + price_descriptors
+        + sweetness_descriptors
+        + [blend_time]
+    )
+    ml_model = AutoMLPredictor(
+        name="ML model for tastiness",
+        description="",
+        output=tastiness,
+        inputs=ml_inputs
+    )
+
+Where did the descriptor keys ``margarita~blend time`` and ``margarita~tastiness`` come from?
+They came from concatenating the headers in the variables in the table, and the bounds and units came from the attribute templates.
+It's a lot to keep track of, we there is there :func:`~citrine.resources.descriptors.DescriptorMethods.descriptors_from_data_source` method.
+Calling ``project.descriptors.descriptors_from_data_source(data_source)`` returns a list of all of the descriptors emitted by the data source.
+Make sure that these are the descriptors you are using as inputs to your predictor.
+
+
+Lastly, we wrap everything in a :class:`~citrine.informatics.predictors.graph_predictor.GraphPredictor` and register it.
+
+.. code-block:: python
+
+    predictors_list = [
+        simple_mixture_predictor,
+        ingredient_fractions_predictor,
+        label_fractions_predictor,
+        mean_price_predictor,
+        mean_sweetness_predictor,
+        ml_model
+    ]
+
+    graph_predictor = GraphPredictor(
+        name="Graphical model for tastiness of blended margaritas",
+        description="",
+        predictors=predictors_list,
+        training_data=[data_source] # the data source we defined above
+    )
+    graph_predictor = project.predictors.register(graph_predictor)
+
+One representation of this graphical model is shown below.
+
+.. figure:: _static/formulations_graphical_model.png
+    :align: center
+
+    Graphical model to predict tastiness of a margarita
 
 Defining a Design Space
 -----------------------
