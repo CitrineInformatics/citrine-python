@@ -124,16 +124,24 @@ The table below shows two examples.
 Ingesting Data
 --------------
 
-Ingesting data to GEMD is best done with additional tooling to automate the process, and will not be demonstrated in detail here.
-But we will highlight several crucial data objects and their inter-connections.
+.. Warning:: Ingesting data to GEMD is best done with additional tooling to automate the process.
 
-The parameters of the blending process and the properties of the ingredients/formulations correspond to `attribute templates`.
+
+Although we will not describe every step of the data ingestion process, we will highlight several data objects and their inter-connections.
+Perhaps most crucial are the `attribute templates` that correspond to the parameters of the blending process and the properties of the ingredients/formulations.
 The name, bounds, and units on these templates will later be matched to descriptors in the AI Engine.
-Make sure to set the bounds wide enough to encompass all anticipated use cases of the template.
+Make sure to set the bounds wide enough to encompass all anticipated use cases of the templates.
+
+.. note:: In the code examples that follow, imports are assumed to be cumulative.
+    Once an import has been demonstrated, we do not include it in subsequent code blocks.
 
 .. code-block:: python
 
-    # Assume we have already created a dataset, named "dataset."
+    from citrine.resources.parameter_template import ParameterTemplate
+    from citrine.resources.property_template import PropertyTemplate
+    from gemd.entity.bounds import RealBounds
+
+    # Assume we have already created a project and dataset, named "project" and "dataset."
     # Though not demonstrated here, it is useful to give templates custom ids so that they can be easily retrieved.
     blend_time_template = dataset.parameter_templates.register(
         ParameterTemplate("blend time", bounds=RealBounds(0, 60.0, "s"))
@@ -158,6 +166,8 @@ The template includes a comprehensive list of all allowed names and labels.
 
 .. code-block:: python
 
+    from citrine.resources.process_template import ProcessTemplate
+
     mix_template = dataset.process_templates.register(
         ProcessTemplate(
             "mix"
@@ -175,6 +185,11 @@ To fill out the example, we illustrate some of the objects involved in specifyin
 This assumes that the material specs for the raw ingredients and the simple syrups have already been uploaded.
 
 .. code-block:: python
+
+    from citrine.resources.process_spec import ProcessSpec
+    from citrine.resources.ingredient_spec import IngredientSpec
+    from citrine.resources.material_spec import MaterialSpec
+    from gemd.entity.value import NominalReal
 
     mix_margarita_spec = dataset.process_specs.register(
         ProcessSpec(f"mix margarita B", template=mix_template)
@@ -233,6 +248,12 @@ The code below defines the rows and defines one column that contains the identif
 
 .. code-block:: python
 
+    from citrine.gemtables.rows import MaterialRunByTemplate
+    from citrine.gemtables.variables import RootIdentifier
+    from citrine.gemtables.columns import IdentityColumn
+    from gemd.entity.link_by_uid import LinkByUID
+
+
     material_templates_to_include = [
         blended_margarita_template, simple_syrup_template, base_material_template
     ]
@@ -269,6 +290,9 @@ We first use the :class:`~citrine.gemtables.variables.AttributeByTemplate` varia
 For those attributes that may have non-zero uncertainty, we include columns for both mean and standard deviation.
 
 .. code-block:: python
+
+    from citrine.gemtables.variables import AttributeByTemplate
+    from citrine.gemtables.columns import MeanColumn, StdDevColumn
 
     config = config.add_columns(
         variable=AttributeByTemplate(
@@ -318,6 +342,9 @@ The code block below shows how we would add a set of columns for "simple syrup."
 This must be repeated once for each ingredient.
 
 .. code-block:: python
+
+    from citrine.gemtables.variables import IngredientIdentifierInOutput, IngredientQuantityInOutput, IngredientLabelsSetInOutput
+    from citrine.gemtables.columns import ConcatColumn
 
     ing_name = "simple syrup"
     mix_template_link = LinkByUID.from_entity(mix_template)
@@ -383,6 +410,9 @@ if we do not specify it then a default descriptor will be generated, but given h
 
 .. code-block:: python
 
+    from citrine.informatics.descriptors import FormulationDescriptor
+    from citrine.informatics.data_sources import GemTableDataSource
+
     formulation = FormulationDescriptor("mixed and blended margarita")
     data_source = GemTableDataSource(table_id=table.uid, table_version=table.version, formulation_descriptor=formulation)
 
@@ -393,6 +423,8 @@ Although the homogeneous representation is not entirely appropriate for all form
 especially when coupled with flexible machine learning models that can learn subtle relationships within the data.
 
 .. code-block:: python
+
+    from citrine.informatics.predictors import SimpleMixturePredictor
 
     flat_formulation = FormulationDescriptor("homogenized margarita")
     simple_mixture_predictor = SimpleMixturePredictor(
@@ -409,6 +441,9 @@ We create one predictor each for ingredient and label fractions, and two mean pr
 one that computes the mean price over all ingredients (this will be used to constraint the price of new margarita recipes) and one that computes the mean sucrose content of just the sweeteners.
 
 .. code-block:: python
+
+    from citrine.informatics.descriptors import RealDescriptor
+    from citrine.informatics.predictors import LabelFractionsPredictor, IngredientFractionsPredictor, MeanPropertyDescriptor
 
     label_fractions_predictor = LabelFractionsPredictor(
         name="Label fractions",
@@ -457,6 +492,8 @@ We also use ``blend time`` as an input.
 
 .. code-block:: python
 
+    from citrine.informatics.predictors import AutoMLPredictor
+
     label_fractions_descriptors = project.descriptors.from_predictor_responses(
         predictor=label_fractions_predictor, inputs=[flat_formulation],
     )
@@ -498,6 +535,8 @@ Lastly, we wrap everything in a :class:`~citrine.informatics.predictors.graph_pr
 
 .. code-block:: python
 
+    from citrine.informatics.predictors import GraphPredictor
+
     predictors_list = [
         simple_mixture_predictor,
         ingredient_fractions_predictor,
@@ -536,6 +575,9 @@ The predictor takes care of flattening it.
 
 .. code-block:: python
 
+    from citrine.informatics.design_spaces import FormulationDesignSpace
+    from citrine.informatics.constraints import IngredientCountConstraint, IngredientFractionConstraint
+
     fds = FormulationDesignSpace(
         name="margaritas formulation,
         description="",
@@ -559,6 +601,8 @@ We do this by wrapping a :class:`~citrine.informatics.design_spaces.product_desi
 
 .. code-block:: python
 
+    from citrine.informatics.design_spaces import ProductDesignSpace
+
     design_space = ProductDesignSpace(
         name="margaritas design space",
         description="",
@@ -575,6 +619,11 @@ Our goal is to find the margarita that is most likely to have a tastiness score 
 We define an :class:`~citrine.informatics.scores.LIScore` with this objective and constraint, define a design workflow with the predictor and design space, and trigger the design workflow on the score.
 
 .. code-block:: python
+
+    from citrine.informatics.scores import LIScore
+    from citrine.informatics.objectives import ScalarMaxObjective
+    from citrine.informatics.constraints import ScalarRangeConstraint
+    from citrine.informatics.workflows.design_workflow import DesignWorkflow
 
     score = LIScore(
         objectives=[ScalarMaxObjective(descriptor_key=blend_time.key)],
