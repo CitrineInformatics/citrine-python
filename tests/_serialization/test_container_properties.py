@@ -70,7 +70,7 @@ class DummyDescriptor(object):
     dummy_set = properties.Set(type(properties.Float()))
     link_or_else = properties.LinkOrElse()
     map_collection_key = properties.Mapping(properties.Optional(properties.String), properties.Integer)
-    specified_mixed_list = properties.SpecifiedMixedList([properties.Integer])
+    specified_mixed_list = properties.SpecifiedMixedList([properties.Integer(default=100)])
 
 
 def test_collection_setters():
@@ -80,7 +80,11 @@ def test_collection_setters():
     dummy_descriptor.dummy_list = [1, 2]
     dummy_descriptor.map_collection_key = {'foo': 1, 'bar': 2}
     dummy_descriptor.link_or_else = {'type': LinkByUID.typ, "scope": "templates", "id": "density"}
+
     dummy_descriptor.specified_mixed_list = [1]
+    assert 1 in dummy_descriptor.specified_mixed_list
+    dummy_descriptor.specified_mixed_list = []
+    assert 100 in dummy_descriptor.specified_mixed_list
 
     with pytest.raises(ValueError):
         dummy_descriptor.specified_mixed_list = [["1"]]

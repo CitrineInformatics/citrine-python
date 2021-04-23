@@ -3,6 +3,7 @@ from typing import List, Dict, Optional, Union, Sequence, Type
 
 from citrine._rest.resource import Resource
 from citrine._serialization.properties import List as PropertyList
+from citrine._serialization.properties import Union as PropertyUnion
 from citrine._serialization.properties import Optional as PropertyOptional
 from citrine._serialization.properties import String, Mapping, Object, SpecifiedMixedList, \
     LinkOrElse
@@ -50,8 +51,8 @@ class MaterialTemplate(ObjectTemplate, Resource['MaterialTemplate'], GEMDMateria
     description = PropertyOptional(String(), 'description', override=True)
     uids = Mapping(String('scope'), String('id'), 'uids', override=True)
     tags = PropertyOptional(PropertyList(String()), 'tags', override=True)
-    properties = PropertyOptional(PropertyList(SpecifiedMixedList(
-        [LinkOrElse, PropertyOptional(Object(BaseBounds))])), 'properties', override=True)
+    properties = PropertyOptional(PropertyList(PropertyUnion([LinkOrElse, SpecifiedMixedList(
+        [LinkOrElse, PropertyOptional(Object(BaseBounds))])])), 'properties', override=True)
     typ = String('type')
 
     def __init__(self,
