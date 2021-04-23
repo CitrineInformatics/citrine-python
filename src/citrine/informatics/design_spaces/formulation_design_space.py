@@ -1,4 +1,4 @@
-from typing import Mapping, Optional, Set, List
+from typing import Mapping, Optional, Set
 
 from citrine._rest.resource import Resource
 from citrine._serialization import properties
@@ -63,7 +63,7 @@ class FormulationDesignSpace(Resource['FormulationDesignSpace'], DesignSpace):
                  description: str,
                  formulation_descriptor: FormulationDescriptor,
                  ingredients: Set[str],
-                 constraints: List[Constraint],
+                 constraints: Set[Constraint],
                  labels: Optional[Mapping[str, Set[str]]] = None,
                  resolution: float = 0.0001,
                  session: Session = Session()):
@@ -71,7 +71,7 @@ class FormulationDesignSpace(Resource['FormulationDesignSpace'], DesignSpace):
         self.description: str = description
         self.formulation_descriptor: FormulationDescriptor = formulation_descriptor
         self.ingredients: Set[str] = ingredients
-        self.constraints: List[Constraint] = constraints
+        self.constraints: Set[Constraint] = constraints
         self.labels: Optional[Mapping[str, Set[str]]] = labels
         self.resolution: float = resolution
         self.session: Session = session
