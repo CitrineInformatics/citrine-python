@@ -67,7 +67,7 @@ def test_bounds_optional():
                 [link(), IntegerBounds(0, 10)],
                 link(),
                 attribute_type('foo', bounds=IntegerBounds(0, 10)),
-                [link(), None]
+                (link(), None)
             ]
         template = template_type(name='foo', **kwargs)
         for name, _ in attribute_args:

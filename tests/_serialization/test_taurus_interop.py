@@ -15,7 +15,7 @@ def test_flatten():
     bounds = CategoricalBounds(categories=["foo", "bar"])
     template = ProcessTemplate(
         "spam",
-        conditions=[[ConditionTemplate(name="eggs", bounds=bounds), bounds]]
+        conditions=[(ConditionTemplate(name="eggs", bounds=bounds), bounds)]
     )
     spec = ProcessSpec(name="spec", template=template)
 

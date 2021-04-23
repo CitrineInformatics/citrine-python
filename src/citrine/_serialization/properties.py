@@ -522,7 +522,7 @@ class SpecifiedMixedList(PropertyCollection[list, list]):
 
     @property
     def underlying_types(self):
-        return list
+        return list, tuple
 
     @property
     def serialized_types(self):
