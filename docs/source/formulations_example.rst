@@ -378,7 +378,8 @@ Training a Predictor
 
 With the GEM Table in hand, we build and train a predictor to predict the tastiness of novel margarita recipes.
 The first step is to define a :class:`~citrine.informatics.data_sources.GemTableDataSource` based on the Gem Table, ``table``.
-We choose to define a :class:`~citrine.informatics.descriptors.FormulationDescriptor` to hold the formulation; if we do not specify it then a default descriptor will be generated.
+We choose to define a :class:`~citrine.informatics.descriptors.FormulationDescriptor` to hold the formulation;
+if we do not specify it then a default descriptor will be generated, but given how crucial this descriptor is it is best to specify it directly.
 
 .. code-block:: python
 
@@ -397,8 +398,8 @@ especially when coupled with flexible machine learning models that can learn sub
     simple_mixture_predictor = SimpleMixturePredictor(
         name="Simple margarita mixture",
         description="Flatten a mixture of mixtures into leaf ingredients",
-        input_descriptor=formulation,
-        output_descriptor=flat_formulation
+        input_descriptor=formulation,  # this is the formulation descriptor from the table
+        output_descriptor=flat_formulation  # this is a new descriptor to represent the flattened formulation
     )
 
 Using the flattened formulation as an input, we create several featurizers to compute features that will be inputs to the machine learning model.
@@ -524,5 +525,75 @@ One representation of this graphical model is shown below.
 Defining a Design Space
 -----------------------
 
+Now that we have a trained predictor, the next step to finding the *world's best margarita* is to define the search space.
+A :class:`~citrine.informatics.design_spaces.formulation_design_space.FormulationDesignSpace` defines the ingredients, the labels, and any constraints.
+In addition to the labels used in the predictor, we also create a label for "simple syrup A" and "simple syrup B."
+This allows us to specify that one and only one of the simple syrups should be used.
+
+Notice that the design space's formulation descriptor corresponds to the original, unflattened formulation.
+That's because we want to describe the margarita we are physically making in our kitchen.
+The predictor takes care of flattening it.
+
+.. code-block:: python
+
+    fds = FormulationDesignSpace(
+        name="margaritas formulation,
+        description="",
+        formulation_descriptor=formulation,
+        ingredients={"simple syrup A", "simple syrup B", "tequila", "ice", "triple sec", "lime juice"},
+        labels={
+            "acid": {"lime juice"},
+            "alcohol": {"tequila", "triple sec"},
+            "sweetener": {"triple sec"},
+            "simple syrup": {"simple syrup A", "simple syrup B"}
+        },
+        constraints={
+            IngredientCountConstraint(formulation_descriptor=formulation, min=3, max=5),
+            IngredientCountConstraint(formulation_descriptor=formulation, min=1, max=1, label="simple syrup"),
+            IngredientFractionConstraint(formulation_descriptor=formulation, ingredient="lime juice", min=0.15, max=0.30)
+        }
+    )
+
+But that's not all; we also have to define the ``blend time`` input.
+We do this by wrapping a :class:`~citrine.informatics.design_spaces.product_design_space.ProductDesignSpace` around the formulation design space and a ``blend time`` dimension.
+
+.. code-block:: python
+
+    design_space = ProductDesignSpace(
+        name="margaritas design space",
+        description="",
+        subspaces=[fds],
+        dimensions=[ContinuousDimension(descriptor=blend_time, lower_bound=5.0, upper_bound=20.0)]
+    )
+    design_space = project.design_spaces.register(design_space)
+
 Proposing New Formulation Candidates
 ------------------------------------
+
+With the pieces assembled, we define a :class:`~citrine.informatics.workflows.design_workflow.DesignWorkflow`.
+Our goal is to find the margarita that is most likely to have a tastiness score above 7.5, while keeping the cost per kg below $12.50.
+We define an :class:`~citrine.informatics.scores.LIScore` with this objective and constraint, define a design workflow with the predictor and design space, and trigger the design workflow on the score.
+
+.. code-block:: python
+
+    score = LIScore(
+        objectives=[ScalarMaxObjective(descriptor_key=blend_time.key)],
+        baselines=[7.5],
+        constraints=[ScalarRangeConstraint(
+            descriptor_key=price_descriptors[0].key, upper_bound=12.50, lower_bound=0.00
+        )]
+    )
+
+    design_workflow = DesignWorkflow(
+        name="best margarita below 12.50",
+        design_space_id=design_space.uid,
+        predictor_id=graph_predictor.uid,
+        processor=None  # we use the default continuous search processor
+    )
+    design_workflow = project.design_workflows.register(design_workflow)
+
+    execution = design_workflow.design_executions.trigger(score)
+
+Once the execution is complete, ``execution.candidates()`` returns a paginated list of results.
+How good is the margarita?
+Well, that depends on the training data.
