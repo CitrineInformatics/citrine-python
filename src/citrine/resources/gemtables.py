@@ -289,6 +289,17 @@ class GemTableCollection(Collection[GemTable]):
         """Tables cannot be created at this time."""
         raise RuntimeError('Creating Tables is not supported at this time.')
 
+    def update(self, model: GemTable) -> GemTable:
+        """Tables cannot be updated."""
+        raise RuntimeError(
+            "Tables cannot be updated. You may want to update a table configuration and/or "
+            "re-build the table, especially if new GEMD data are available."
+        )
+
+    def delete(self, uid: Union[UUID, str]):
+        """Tables cannot be deleted at this time."""
+        raise NotImplementedError("Tables cannot be deleted at this time.")
+
     def read(self, table: Union[GemTable, Tuple[str, int]], local_path: str):
         """
         Read the Table file from S3.

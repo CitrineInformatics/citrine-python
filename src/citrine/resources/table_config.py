@@ -470,3 +470,7 @@ class TableConfigCollection(Collection[TableConfig]):
                              " Table Config or retrieve the registered details before calling"
                              " update()")
         return self.register(table_config)
+
+    def delete(self, uid: Union[UUID, str]):
+        """Table configs cannot be deleted at this time."""
+        raise NotImplementedError("Table configs cannot be deleted at this time.")
