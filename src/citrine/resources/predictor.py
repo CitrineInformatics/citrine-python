@@ -1,9 +1,8 @@
 """Resources that represent collections of predictors."""
 from uuid import UUID
-from typing import TypeVar, Optional, Union
+from typing import TypeVar, Optional
 
 from citrine._session import Session
-from citrine.exceptions import CitrineException
 from citrine.resources.module import AbstractModuleCollection
 from citrine.informatics.data_sources import DataSource
 from citrine.informatics.predictors import Predictor, GraphPredictor
@@ -36,21 +35,6 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
         predictor._session = self.session
         predictor._project_id = self.project_id
         return predictor
-
-    def delete(self, uid: Union[UUID, str]):
-        """Modules cannot be deleted at this time."""
-        msg = "Predictors cannot be deleted at this time. Use 'archive' instead."
-        raise NotImplementedError(msg)
-
-    def archive(self, module_id: Union[UUID, str]) -> Predictor:
-        """Archiving a predictor removes it from view, but is not a hard delete."""
-        try:
-            module = self.get(module_id)
-        except CitrineException:
-            msg = f"Predictor with id {module_id} was not found, and hence cannot be archived."
-            raise RuntimeError(msg)
-        module.archived = True
-        return self.update(module)
 
     def check_for_update(self, predictor_id: UUID) -> Optional[Predictor]:
         """

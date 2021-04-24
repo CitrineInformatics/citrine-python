@@ -1,11 +1,9 @@
 from copy import deepcopy
 import uuid
-import mock
 from random import random
 
 import pytest
 
-from citrine.exceptions import NotFound
 from citrine.informatics.descriptors import RealDescriptor
 from citrine.informatics.design_spaces import EnumeratedDesignSpace, DesignSpace, ProductDesignSpace
 from citrine.resources.design_space import DesignSpaceCollection
@@ -67,29 +65,6 @@ def test_formulation_build(valid_formulation_design_space_data):
     assert design_space.labels == {'bar': {'foo'}}
     assert len(design_space.constraints) == 1
     assert design_space.resolution == 0.1
-
-
-def test_delete():
-    collection = DesignSpaceCollection(uuid.uuid4(), mock.Mock())
-    with pytest.raises(NotImplementedError):
-        collection.delete(uuid.uuid4())
-
-
-def test_archive(valid_enumerated_design_space_data):
-    session = mock.Mock()
-    collection = DesignSpaceCollection(uuid.uuid4(), session)
-    session.get_resource.return_value = valid_enumerated_design_space_data
-
-    def _mock_put_resource(url, data):
-        """Assume that update returns the serialized design space data."""
-        return data
-    session.put_resource.side_effect = _mock_put_resource
-    archived_ds = collection.archive(uuid.uuid4())
-    assert archived_ds.archived
-
-    session.get_resource.side_effect = NotFound("")
-    with pytest.raises(RuntimeError):
-        collection.archive(uuid.uuid4())
 
 
 def test_design_space_limits():
