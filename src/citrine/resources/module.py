@@ -47,7 +47,7 @@ class AbstractModuleCollection(Collection[ModuleType]):
         raise NotImplementedError(msg)
 
     def archive(self, module_id: Union[UUID, str]) -> ModuleType:
-        """Archiving amodule removes it from view, but is not a hard delete."""
+        """Archiving a module removes it from view, but is not a hard delete."""
         try:
             module = self.get(module_id)
         except CitrineException:
