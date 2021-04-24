@@ -2,15 +2,15 @@
 from uuid import UUID
 from typing import TypeVar, Union
 
-from citrine._rest.collection import Collection
 from citrine._session import Session
 from citrine.exceptions import CitrineException
+from citrine.resources.module import AbstractModuleCollection
 from citrine.informatics.processors import Processor
 
 CreationType = TypeVar('CreationType', bound=Processor)
 
 
-class ProcessorCollection(Collection[Processor]):
+class ProcessorCollection(AbstractModuleCollection[Processor]):
     """Represents the collection of all processors for a project.
 
     Parameters

@@ -1,5 +1,6 @@
 """Resources that represent collections of design spaces."""
 from uuid import UUID
+from typing import TypeVar
 
 from citrine._rest.collection import Collection
 from citrine._session import Session
@@ -29,3 +30,10 @@ class ModuleCollection(Collection[Module]):
         module = Module.build(data)
         module.session = self.session
         return module
+
+
+ModuleType = TypeVar('ModuleType', bound='Module')
+
+
+class AbstractModuleCollection(Collection[ModuleType]):
+    """Abstract class for representing collection of modules."""
