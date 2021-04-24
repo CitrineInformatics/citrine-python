@@ -1,9 +1,10 @@
 """Resources that represent collections of design spaces."""
 from uuid import UUID
-from typing import TypeVar
+from typing import TypeVar, Union
 
 from citrine._rest.collection import Collection
 from citrine._session import Session
+from citrine.exceptions import CitrineException
 from citrine.informatics.design_spaces import DesignSpace, EnumeratedDesignSpace
 
 CreationType = TypeVar('CreationType', bound=DesignSpace)
@@ -62,6 +63,21 @@ class DesignSpaceCollection(Collection[DesignSpace]):
         """Update an existing design space by uid."""
         self.validate_write_request(model)
         return Collection.update(self, model)
+
+    def delete(self, uid: Union[UUID, str]):
+        """Modules cannot be deleted at this time."""
+        msg = "Design spaces cannot be deleted at this time. Use 'archive' instead."
+        raise NotImplementedError(msg)
+
+    def archive(self, module_id: Union[UUID, str]) -> DesignSpace:
+        """Archiving a design space removes it from view, but is not a hard delete."""
+        try:
+            module = self.get(module_id)
+        except CitrineException:
+            msg = f"Design space with id {module_id} was not found, and hence cannot be archived."
+            raise RuntimeError(msg)
+        module.archived = True
+        return self.update(module)
 
     def create_default(self, predictor_id: UUID) -> DesignSpace:
         """[ALPHA] Create a default design space for a predictor.

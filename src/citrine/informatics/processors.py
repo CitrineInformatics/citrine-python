@@ -68,7 +68,7 @@ class GridProcessor(Serializable['GridProcessor'], Processor):
         properties.Integer,
         'config.grid_dimensions'
     )
-    status = properties.String('status', serializable=False)
+    status = properties.Optional(properties.String(), 'status', serializable=False)
     status_info = properties.Optional(
         properties.List(properties.String()),
         'status_info',
