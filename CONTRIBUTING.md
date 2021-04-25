@@ -16,6 +16,7 @@
 
 
 ## Installation and Development<a name="install"></a>
+
 Clone from github:
 ```bash
 git clone git@github.com:CitrineInformatics/citrine-python
@@ -151,6 +152,7 @@ is an example of output from the logger in the previous example.
 
 
 ## Dependencies<a name="dependencies"></a>
+
 Dependencies are tracked in multiple places:
 * requirements files (requirements.txt and test_requirements.txt)
 * setup.py
@@ -162,6 +164,7 @@ The requirements files *additionally* contain dependencies for testing/developme
 Please keep it up to date whenever you add or change dependencies.
 
 ## Coding Style<a name="codestyle"></a>
+
 The citrine-python library follows [PEP8](https://www.python.org/dev/peps/pep-0008/), with the following exceptions:
 * Maximum line length is 99 characters for code and 119 characters for docstrings
 * Several docstring rules are relaxed (see tox.ini for a list of the ignored rules)
@@ -176,6 +179,7 @@ Docstrings must follow [Numpy style](https://numpydoc.readthedocs.io/en/latest/f
 For additional (non-binding) inspiration, check out the [Google Python Style Guide](https://github.com/google/styleguide/blob/gh-pages/pyguide.md).
 
 ## PR Submission<a name="pr"></a>
+
 Features should be developed in a branch with a descriptive name and the pull request (PR) submitted into the `master` branch.
 Every PR to `master` should increment the version number following [semantic versioning](https://semver.org/). 
 In order to be merged, a PR must be approved by one authorized user and the build must pass.
@@ -212,8 +216,6 @@ the current state of the docstrings in the source code.
 One of the outstanding features of sphinx is its support for arbitrarily organized documentation
 materials such as tutorials, introductions, and other context providing content. These items should
 be stored in source control under the `docs/source` directory in properly formatted `.rst` files.
-
-
 
 ## Development Status<a name="status"></a>
 
