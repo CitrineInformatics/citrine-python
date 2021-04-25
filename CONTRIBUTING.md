@@ -214,7 +214,6 @@ materials such as tutorials, introductions, and other context providing content.
 be stored in source control under the `docs/source` directory in properly formatted `.rst` files.
 
 
-
 ## Development Status<a name="status"></a>
 
 Classes and methods may be marked as *alpha* by including `[ALPHA]` at the start of their docstrings.
