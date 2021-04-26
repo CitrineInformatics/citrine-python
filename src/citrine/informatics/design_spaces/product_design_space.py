@@ -7,11 +7,12 @@ from citrine._serialization import properties
 from citrine._session import Session
 from citrine.informatics.design_spaces.design_space import DesignSpace
 from citrine.informatics.dimensions import Dimension
+from citrine._rest.ai_resource_metadata import AIResourceMetadata
 
 __all__ = ['ProductDesignSpace']
 
 
-class ProductDesignSpace(Resource['ProductDesignSpace'], DesignSpace):
+class ProductDesignSpace(Resource['ProductDesignSpace'], DesignSpace, AIResourceMetadata):
     """A Cartesian product of design spaces.
 
     Factors can be other design spaces and/or univariate dimensions.

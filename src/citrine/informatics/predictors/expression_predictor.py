@@ -5,11 +5,12 @@ from citrine._rest.resource import Resource
 from citrine._serialization import properties as _properties
 from citrine.informatics.descriptors import RealDescriptor
 from citrine.informatics.predictors import Predictor
+from citrine._rest.ai_resource_metadata import AIResourceMetadata
 
 __all__ = ['ExpressionPredictor', 'DeprecatedExpressionPredictor']
 
 
-class ExpressionPredictor(Resource['ExpressionPredictor'], Predictor):
+class ExpressionPredictor(Resource['ExpressionPredictor'], Predictor, AIResourceMetadata):
     """A predictor that computes an output from an expression and set of bounded inputs.
 
     .. seealso::
@@ -64,7 +65,8 @@ class ExpressionPredictor(Resource['ExpressionPredictor'], Predictor):
         return '<ExpressionPredictor {!r}>'.format(self.name)
 
 
-class DeprecatedExpressionPredictor(Resource['DeprecatedExpressionPredictor'], Predictor):
+class DeprecatedExpressionPredictor(Resource['DeprecatedExpressionPredictor'],
+                                    Predictor, AIResourceMetadata):
     """[DEPRECATED] A predictor that computes an output from an analytic expression.
 
     This predictor is deprecated. Please use the

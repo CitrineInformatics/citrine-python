@@ -5,11 +5,12 @@ from citrine._serialization import properties
 from citrine._session import Session
 from citrine.informatics.data_sources import DataSource
 from citrine.informatics.design_spaces.design_space import DesignSpace
+from citrine._rest.ai_resource_metadata import AIResourceMetadata
 
 __all__ = ['DataSourceDesignSpace']
 
 
-class DataSourceDesignSpace(Resource['DataSourceDesignSpace'], DesignSpace):
+class DataSourceDesignSpace(Resource['DataSourceDesignSpace'], DesignSpace, AIResourceMetadata):
     """An enumeration of candidates stored in a data source.
 
     Parameters

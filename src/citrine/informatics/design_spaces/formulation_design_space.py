@@ -6,11 +6,12 @@ from citrine._session import Session
 from citrine.informatics.constraints import Constraint
 from citrine.informatics.descriptors import FormulationDescriptor
 from citrine.informatics.design_spaces.design_space import DesignSpace
+from citrine._rest.ai_resource_metadata import AIResourceMetadata
 
 __all__ = ['FormulationDesignSpace']
 
 
-class FormulationDesignSpace(Resource['FormulationDesignSpace'], DesignSpace):
+class FormulationDesignSpace(Resource['FormulationDesignSpace'], DesignSpace, AIResourceMetadata):
     """Design space composed of mixtures of ingredients.
 
     Parameters

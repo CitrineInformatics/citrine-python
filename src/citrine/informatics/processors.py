@@ -6,6 +6,7 @@ from citrine._serialization import properties
 from citrine._serialization.serializable import Serializable
 from citrine._session import Session
 from citrine.informatics.modules import Module
+from citrine._rest.ai_resource_metadata import AIResourceMetadata
 
 
 __all__ = ['Processor', 'GridProcessor', 'EnumeratedProcessor', 'MonteCarloProcessor']
@@ -41,7 +42,7 @@ class Processor(Module):
             return False
 
 
-class GridProcessor(Serializable['GridProcessor'], Processor):
+class GridProcessor(Serializable['GridProcessor'], Processor, AIResourceMetadata):
     """Generates samples from the Cartesian product of finite dimensions, then scans over them.
 
     To create a finite set of materials from continuous dimensions, a uniform grid is created
@@ -68,19 +69,6 @@ class GridProcessor(Serializable['GridProcessor'], Processor):
         properties.Integer,
         'config.grid_dimensions'
     )
-    status = properties.String('status', serializable=False)
-    status_info = properties.Optional(
-        properties.List(properties.String()),
-        'status_info',
-        serializable=False
-    )
-    archived = properties.Boolean('archived', default=False)
-    experimental = properties.Boolean("experimental", serializable=False, default=True)
-    experimental_reasons = properties.Optional(
-        properties.List(properties.String()),
-        'experimental_reasons',
-        serializable=False
-    )
 
     # NOTE: These could go here or in _post_dump - it's unclear which is better right now
     module_type = properties.String('module_type', default='PROCESSOR')
@@ -106,7 +94,7 @@ class GridProcessor(Serializable['GridProcessor'], Processor):
         return '<GridProcessor {!r}>'.format(self.name)
 
 
-class EnumeratedProcessor(Serializable['EnumeratedProcessor'], Processor):
+class EnumeratedProcessor(Serializable['EnumeratedProcessor'], Processor, AIResourceMetadata):
     """Process a design space by enumerating up to a fixed number of samples from the domain.
 
     Each sample is processed independently.
@@ -127,19 +115,6 @@ class EnumeratedProcessor(Serializable['EnumeratedProcessor'], Processor):
     description = properties.Optional(properties.String(), 'config.description')
     max_candidates = properties.Integer('config.max_size')
     typ = properties.String('config.type', default='Enumerated', deserializable=False)
-    status = properties.String('status', serializable=False)
-    status_info = properties.Optional(
-        properties.List(properties.String()),
-        'status_info',
-        serializable=False
-    )
-    archived = properties.Boolean('archived', default=False)
-    experimental = properties.Boolean("experimental", serializable=False, default=True)
-    experimental_reasons = properties.Optional(
-        properties.List(properties.String()),
-        'experimental_reasons',
-        serializable=False
-    )
 
     # NOTE: These could go here or in _post_dump - it's unclear which is better right now
     module_type = properties.String('module_type', default='PROCESSOR')
@@ -179,7 +154,7 @@ class EnumeratedProcessor(Serializable['EnumeratedProcessor'], Processor):
         return self.max_candidates
 
 
-class MonteCarloProcessor(Serializable['GridProcessor'], Processor):
+class MonteCarloProcessor(Serializable['GridProcessor'], Processor, AIResourceMetadata):
     """Using a Monte Carlo optimizer to search for the best candidate.
 
     The moves that the MonteCarlo optimizer makes are inferred from the descriptors in the
@@ -201,18 +176,6 @@ class MonteCarloProcessor(Serializable['GridProcessor'], Processor):
     description = properties.Optional(properties.String(), 'config.description')
     typ = properties.String('config.type', default='ContinuousSearch', deserializable=False)
     max_candidates = properties.Optional(properties.Integer, 'config.max_candidates')
-    status = properties.String('status', serializable=False)
-    status_info = properties.Optional(
-        properties.List(properties.String()),
-        'status_info',
-        serializable=False
-    )
-    experimental = properties.Boolean("experimental", serializable=False, default=True)
-    experimental_reasons = properties.Optional(
-        properties.List(properties.String()),
-        'experimental_reasons',
-        serializable=False
-    )
 
     # NOTE: These could go here or in _post_dump - it's unclear which is better right now
     module_type = properties.String('module_type', default='PROCESSOR')
