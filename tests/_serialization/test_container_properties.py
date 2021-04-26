@@ -5,6 +5,7 @@ from citrine._serialization import properties
 
 from ._data import VALID_SERIALIZATIONS
 from ._utils import make_class_with_property
+from gemd.entity.link_by_uid import LinkByUID
 
 
 @pytest.mark.parametrize('sub_prop,sub_value,sub_serialized', VALID_SERIALIZATIONS)
@@ -67,6 +68,9 @@ class DummyDescriptor(object):
     dummy_map = properties.Mapping(properties.Float(), properties.String)
     dummy_list = properties.List(properties.Float, properties.String)
     dummy_set = properties.Set(type(properties.Float()))
+    link_or_else = properties.LinkOrElse()
+    map_collection_key = properties.Mapping(properties.Optional(properties.String), properties.Integer)
+    specified_mixed_list = properties.SpecifiedMixedList([properties.Integer(default=100)])
 
 
 def test_collection_setters():
@@ -74,6 +78,20 @@ def test_collection_setters():
     dummy_descriptor.dummy_map = {1: "1"}
     dummy_descriptor.dummy_set = {1}
     dummy_descriptor.dummy_list = [1, 2]
+    dummy_descriptor.map_collection_key = {'foo': 1, 'bar': 2}
+    dummy_descriptor.link_or_else = {'type': LinkByUID.typ, "scope": "templates", "id": "density"}
+
+    dummy_descriptor.specified_mixed_list = [1]
+    assert 1 in dummy_descriptor.specified_mixed_list
+    dummy_descriptor.specified_mixed_list = []
+    assert 100 in dummy_descriptor.specified_mixed_list
+
+    with pytest.raises(ValueError):
+        dummy_descriptor.specified_mixed_list = [["1"]]
+    with pytest.raises(ValueError):
+        dummy_descriptor.specified_mixed_list = [1, 2]
+
     assert 1.0 in dummy_descriptor.dummy_map
+    assert 'foo' in dummy_descriptor.map_collection_key
     assert 1.0 in dummy_descriptor.dummy_set
     assert 1.0 in dummy_descriptor.dummy_list

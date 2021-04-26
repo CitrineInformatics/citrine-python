@@ -59,7 +59,7 @@ def test_object_validation():
 
 def test_list_validation():
     """Test that lists are validated by gemd."""
-    with pytest.raises(TypeError):
+    with pytest.raises(ValueError):
         # labels must be a list of string, but contains an int
         IngredientSpec(labels=["Label 1", 17], name="foo")
 
@@ -68,6 +68,6 @@ def test_list_validation():
         # cannot append an int to a list of strings
         ingredient.labels.append(17)
 
-    with pytest.raises(TypeError):
+    with pytest.raises(ValueError):
         # list of conditions cannot contain a property
         MeasurementRun("A measurement", conditions=[Property("not a condition")])

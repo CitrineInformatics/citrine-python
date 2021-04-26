@@ -1,4 +1,4 @@
-from typing import List
+from typing import Set
 
 from citrine._rest.resource import Resource
 from citrine._serialization import properties as _properties
@@ -21,15 +21,15 @@ class IngredientFractionsPredictor(Resource["IngredientFractionsPredictor"],
         the description of the predictor
     input_descriptor: FormulationDescriptor
         descriptor that represents the input formulation
-    ingredients: List[str]
-        list of ingredients to featurize.
-        This list should contain all possible ingredients.
+    ingredients: Set[str]
+        set of ingredients to featurize.
+        This set should contain all possible ingredients.
         If an unknown ingredient is encountered, an error will be thrown.
 
     """
 
     input_descriptor = _properties.Object(FormulationDescriptor, 'config.input')
-    ingredients = _properties.List(_properties.String, 'config.ingredients')
+    ingredients = _properties.Set(_properties.String, 'config.ingredients')
 
     # NOTE: These could go here or in _post_dump - it's unclear which is better right now
     module_type = _properties.String('module_type', default='PREDICTOR')
@@ -40,12 +40,12 @@ class IngredientFractionsPredictor(Resource["IngredientFractionsPredictor"],
                  name: str,
                  description: str,
                  input_descriptor: FormulationDescriptor,
-                 ingredients: List[str],
+                 ingredients: Set[str],
                  archived: bool = False):
         self.name: str = name
         self.description: str = description
         self.input_descriptor: FormulationDescriptor = input_descriptor
-        self.ingredients: List[str] = ingredients
+        self.ingredients: Set[str] = ingredients
         self.archived: bool = archived
 
     def _post_dump(self, data: dict) -> dict:
