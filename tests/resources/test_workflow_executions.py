@@ -103,19 +103,9 @@ def test_trigger_workflow_execution(collection: WorkflowExecutionCollection, wor
 
     # When
     score = MLIScoreFactory()
-    actual_execution = collection.trigger(score)
-
-    # Then
-    assert actual_execution.uid == workflow_execution.uid
-    expected_path = '/projects/{}/workflows/{}/executions'.format(
-        collection.project_id,
-        collection.workflow_id,
-    )
-    assert session.last_call == FakeCall(
-        method='POST',
-        path=expected_path,
-        json=score.dump()
-    )
+    # triggering legacy Workflows has been removed
+    with pytest.raises(NotImplementedError):
+        actual_execution = collection.trigger(score)
 
 
 def test_workflow_success_status():
