@@ -271,4 +271,4 @@ There are several ways to define columns, depending on the type of the attribute
 
 * Collections of values
 
- * :class:`~citrine.gemtables.columns.ConcatColumn`: for concatenating multiple columns
+ * :class:`~citrine.gemtables.columns.ConcatColumn`: for concatenating the results of a list- or set-valued result, such as is returned by :class:`~citrine.gemtables.variables.IngredientLabelsSetInOutput`

@@ -6,8 +6,8 @@ Formulations Example
 The Citrine Platform is a powerful tool to analyze formulations data.
 A formulation is, generally speaking, a mixture of mixtures.
 Individual ingredients are mixed together to form more complex ingredients, which may themselves be mixed with other ingredients and/or mixtures, and so on.
-Generally, the top-level formulation has some properties that we with to optimize.
-The ingredients themselves may also have known properties, which are useful for understanding the properties of the top-level formulation.
+Generally, the top-level formulation has some properties that we wish to optimize.
+The ingredients themselves may also have known properties that are useful for understanding the properties of the top-level formulation.
 In addition, each mixing process may be characterized by attributes such as the temperature of a reaction vessel or the speed of a mixing element.
 
 The GEMD data model provides a way to record all of the information relevant to a formulations problem,
@@ -124,11 +124,11 @@ The table below shows two examples.
 Ingesting Data
 --------------
 
-.. Warning:: Ingesting data to GEMD is best done with additional tooling to automate the process.
+.. Warning:: Ingesting data to GEMD is most easily done with additional tooling to automate the process.
 
 
 Although we will not describe every step of the data ingestion process, we will highlight several data objects and their inter-connections.
-Perhaps most crucial are the `attribute templates` that correspond to the parameters of the blending process and the properties of the ingredients/formulations.
+Perhaps most crucial are the `attribute templates`, which correspond to the parameters of the blending process and the properties of the ingredients/formulations.
 The name, bounds, and units on these templates will later be matched to descriptors in the AI Engine.
 Make sure to set the bounds wide enough to encompass all anticipated use cases of the templates.
 
@@ -240,7 +240,7 @@ We now build a GEM Table to represent the margaritas' material histories in tabu
 This table will be used as training data when building a machine learning graphical model.
 For more detailed information on GEM Tables, see the section on :doc:`data extraction <data_extraction>`.
 
-In order to make a Gem Table, we start with a Table Configuration object.
+In order to make a GEM Table, we start with a Table Configuration object.
 In this example we will build up the configuration in small steps.
 As we will see, templates are crucial to configuring the table.
 
@@ -273,9 +273,9 @@ The code below defines the rows and defines one column that contains the identif
     )
 
 Let's step through the pieces of this code.
-We gave the configuration a name and description, for human-readability.
+We gave the configuration a name and description for human-readability.
 We defined the datasets that contain the material histories; for the purposes of this example we assume everything is in the dataset ``dataset``.
-We then defined the rows as being based on all materials that link to one of a set of templates.
+We then defined the rows as being based on all materials that link to one of a set of Material Templates.
 For the purposes of this example, assume that we have defined separate material templates for the base materials, the simple syrups, the margaritas, and the blended margaritas.
 Notice that we do _not_ include the material template for the unblended margaritas.
 For the purposes of machine learning, we want to compress the mixing and blending into a single training row.
@@ -392,7 +392,7 @@ The figure below shows how these three columns may be rendered in a GEM Table.
     GEM Table "simple syrup ingredient" columns
 
 Lastly, we register the configuration and build the table.
-Note that this is a long-running process.
+Note that this can be a long-running process depending on how many cells are in the table.
 To build the table asynchronously, use :func:`~citrine.resources.gemtables.GemTableCollection.initiate_build`.
 
 .. code-block:: python
@@ -404,7 +404,7 @@ Training a Predictor
 --------------------
 
 With the GEM Table in hand, we build and train a predictor to predict the tastiness of novel margarita recipes.
-The first step is to define a :class:`~citrine.informatics.data_sources.GemTableDataSource` based on the Gem Table, ``table``.
+The first step is to define a :class:`~citrine.informatics.data_sources.GemTableDataSource` based on the GEM Table, ``table``.
 We choose to define a :class:`~citrine.informatics.descriptors.FormulationDescriptor` to hold the formulation;
 if we do not specify it then a default descriptor will be generated, but given how crucial this descriptor is it is best to specify it directly.
 
@@ -416,11 +416,11 @@ if we do not specify it then a default descriptor will be generated, but given h
     formulation = FormulationDescriptor("mixed and blended margarita")
     data_source = GemTableDataSource(table_id=table.uid, table_version=table.version, formulation_descriptor=formulation)
 
-The first component of the graphical model is a :class:`~citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor`, which flattens the input formulation--it repeatedly replaces components with their ingredients until only the basic ingredients remain.
+The first component of the graphical model is a :class:`~citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor`, which flattens the input formulation--it repeatedly replaces components with their ingredients until only the atomic ingredients remain.
 This flattening efficiently teaches the predictor about the relationship between ingredients.
-In this case, it learns exactly how "simple syrup A" and "simple syrup B" are similar to each other.
+In this case, it learns exactly how "simple syrup A" and "simple syrup B" are similar to each other because they both contain atomic ingredients sugar and water but in slightly different amounts.
 Although the homogeneous representation is not entirely appropriate for all formulations problems, it is usually an excellent approximation,
-especially when coupled with flexible machine learning models that can learn subtle relationships within the data.
+especially when coupled with flexible machine learning models that can emulate more complexsubtle relationships within the data.
 
 .. code-block:: python
 
@@ -434,7 +434,7 @@ especially when coupled with flexible machine learning models that can learn sub
         output_descriptor=flat_formulation  # this is a new descriptor to represent the flattened formulation
     )
 
-Using the flattened formulation as an input, we create several featurizers to compute features that will be inputs to the machine learning model.
+Using the flattened formulation as an input, we create several "featurizers" to compute features; these will be the inputs to the machine learning model(s).
 The featurizer predictors are :class:`~citrine.informatics.predictors.ingredient_fractions_predictor.IngredientFractionsPredictor`,
 :class:`~citrine.informatics.predictors.label_fractions_predictor.LabelFractionsPredictor`, and :class:`~citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor`.
 We create one predictor each for ingredient and label fractions, and two mean property predictors--
@@ -526,7 +526,7 @@ We also use ``blend time`` as an input.
 
 Where did the descriptor keys ``margarita~blend time`` and ``margarita~tastiness`` come from?
 They came from concatenating the headers in the variables in the table, and the bounds and units came from the attribute templates.
-It's a lot to keep track of, we there is there :func:`~citrine.resources.descriptors.DescriptorMethods.descriptors_from_data_source` method.
+It's a lot to keep track of, which is why there is the :func:`~citrine.resources.descriptors.DescriptorMethods.descriptors_from_data_source` method.
 Calling ``project.descriptors.descriptors_from_data_source(data_source)`` returns a list of all of the descriptors emitted by the data source.
 Make sure that these are the descriptors you are using as inputs to your predictor.
 
@@ -571,7 +571,7 @@ This allows us to specify that one and only one of the simple syrups should be u
 
 Notice that the design space's formulation descriptor corresponds to the original, unflattened formulation.
 That's because we want to describe the margarita we are physically making in our kitchen.
-The predictor takes care of flattening it.
+The predictor takes care of flattening it to its atomic ingredients.
 
 .. code-block:: python
 
@@ -634,7 +634,7 @@ We define an :class:`~citrine.informatics.scores.LIScore` with this objective an
     )
 
     design_workflow = DesignWorkflow(
-        name="best margarita below 12.50",
+        name="best margarita",
         design_space_id=design_space.uid,
         predictor_id=graph_predictor.uid,
         processor=None  # we use the default continuous search processor
