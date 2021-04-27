@@ -19,6 +19,7 @@ Example Raw Data
 
 To demonstrate the formulations machinery, we consider a toy problem -- margaritas!
 We scour our pantry and gather some ingredients, laid out in the table below.
+These are known as "atomic" ingredients because for our purposes they are not broken into more fundamental ingredients.
 Several ingredients have labels, which helps the Citrine Platform understand the relationships between ingredients.
 We have also measured the sugar fraction for some of the ingredients, and we know the price per kilogram of each ingredient.
 
@@ -26,7 +27,7 @@ We have also measured the sugar fraction for some of the ingredients, and we kno
     But to keep this example simple, we assume that a given ingredient always has all of the labels below whenever it is used.
 
 
-.. list-table:: Base Ingredients Data
+.. list-table:: Atomic Ingredients Data
    :widths: 25 25 25 25
    :header-rows: 1
 
@@ -81,7 +82,7 @@ The quantities are in units of mass fraction.
      - 0.55
 
 We now create margaritas by mixing together a subset of ingredients and blending for some time.
-The basic ingredients are labeled as described in the "Ingredients Data" table, and the simple syrups are given a "simple syrup" label.
+The atomic ingredients are labeled as described in the "Ingredients Data" table, and the simple syrups are given a "simple syrup" label.
 In addition to the ingredient mass fractions, we record the blending time, in seconds.
 The margaritas are judged on an ultra-rigorous "tastiness" scale, which ranges from 0.0 to 10.0
 The table below shows two examples.
