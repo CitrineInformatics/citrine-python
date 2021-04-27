@@ -2,15 +2,15 @@
 from uuid import UUID
 from typing import TypeVar, Optional
 
-from citrine._rest.collection import Collection
 from citrine._session import Session
+from citrine.resources.module import AbstractModuleCollection
 from citrine.informatics.data_sources import DataSource
 from citrine.informatics.predictors import Predictor, GraphPredictor
 
 CreationType = TypeVar('CreationType', bound=Predictor)
 
 
-class PredictorCollection(Collection[Predictor]):
+class PredictorCollection(AbstractModuleCollection[Predictor]):
     """Represents the collection of all predictors for a project.
 
     Parameters

@@ -360,7 +360,7 @@ class List(PropertyCollection[list, list]):
 
     @property
     def underlying_types(self):
-        return list
+        return list, set, tuple
 
     @property
     def serialized_types(self):
@@ -381,10 +381,13 @@ class List(PropertyCollection[list, list]):
     def _set_elements(self, value):
         elems = []
         for sub_val in value:
-            if issubclass(type(sub_val), self.element_type.underlying_types):
-                elems.append(sub_val)
+            if isinstance(self.element_type, PropertyCollection):
+                val_to_append = self.element_type._set_elements(sub_val)
+            elif issubclass(type(sub_val), self.element_type.underlying_types):
+                val_to_append = sub_val
             else:
-                elems.append(self.element_type.deserialize(sub_val))
+                val_to_append = self.element_type.deserialize(sub_val)
+            elems.append(val_to_append)
         return elems
 
 
@@ -406,7 +409,7 @@ class Set(PropertyCollection[set, typing.Iterable]):
 
     @property
     def underlying_types(self):
-        return set
+        return set, list, tuple
 
     @property
     def serialized_types(self):
@@ -430,10 +433,13 @@ class Set(PropertyCollection[set, typing.Iterable]):
     def _set_elements(self, value):
         elems = set()
         for sub_val in value:
-            if issubclass(type(sub_val), self.element_type.underlying_types):
-                elems.add(sub_val)
+            if isinstance(self.element_type, PropertyCollection):
+                val_to_append = self.element_type._set_elements(sub_val)
+            elif issubclass(type(sub_val), self.element_type.underlying_types):
+                val_to_append = sub_val
             else:
-                elems.add(self.element_type.deserialize(sub_val))
+                val_to_append = self.element_type.deserialize(sub_val)
+            elems.add(val_to_append)
         return elems
 
 
@@ -494,7 +500,7 @@ class Union(Property[typing.Any, typing.Any]):
         raise RuntimeError(msg)  # pragma: no cover
 
 
-class SpecifiedMixedList(Property[list, list]):
+class SpecifiedMixedList(PropertyCollection[list, list]):
     """A finite list in which the type of each entry is specified."""
 
     def __init__(self,
@@ -516,7 +522,7 @@ class SpecifiedMixedList(Property[list, list]):
 
     @property
     def underlying_types(self):
-        return list
+        return list, tuple
 
     @property
     def serialized_types(self):
@@ -550,6 +556,26 @@ class SpecifiedMixedList(Property[list, list]):
 
         return serialized
 
+    def _set_elements(self, value):
+        elems = []
+        if len(value) > len(self.element_types):
+            raise ValueError("Cannot serialize value {}, as it has more elements "
+                             "than expected for list {}".format(value, self.element_types))
+        for element, element_type in zip(value, self.element_types):
+            if isinstance(element_type, PropertyCollection):
+                val_to_append = element_type._set_elements(element)
+            elif issubclass(type(element), element_type.underlying_types):
+                val_to_append = element
+            else:
+                val_to_append = element_type.deserialize(element)
+            elems.append(val_to_append)
+
+        # If there are more element types than elements, append serialized default values
+        for element_type in self.element_types[len(value):]:
+            elems.append(element_type.default)
+
+        return elems
+
 
 class Enumeration(Property[BaseEnumeration, str]):
 
@@ -582,7 +608,7 @@ class Enumeration(Property[BaseEnumeration, str]):
         return self.klass.get_value(value)
 
 
-class Object(Property[typing.Any, dict]):
+class Object(PropertyCollection[typing.Any, dict]):
 
     def __init__(self,
                  klass: typing.Type[typing.Any],
@@ -659,8 +685,14 @@ class Object(Property[typing.Any, dict]):
     def __str__(self):
         return '<Object[{}] {!r}>'.format(self.klass.__name__, self.serialization_path)
 
+    def _set_elements(self, value):
+        if issubclass(type(value), self.klass):
+            return value
+        else:
+            return self.deserialize(value)
 
-class LinkOrElse(Property[typing.Union[Serializable, LinkByUID], dict]):
+
+class LinkOrElse(PropertyCollection[typing.Union[Serializable, LinkByUID], dict]):
     """
     A property that can either be a serializable object with IDs or a LinkByUID object.
 
@@ -712,8 +744,11 @@ class LinkOrElse(Property[typing.Union[Serializable, LinkByUID], dict]):
         raise Exception("Serializable object that is being pointed to must have a self-contained "
                         "build() method that does not call deserialize().")
 
+    def _set_elements(self, value):
+        return value
 
-class Optional(Property[typing.Optional[typing.Any], typing.Optional[typing.Any]]):
+
+class Optional(PropertyCollection[typing.Optional[typing.Any], typing.Optional[typing.Any]]):
 
     def __init__(self,
                  prop: typing.Union[Property, typing.Type[Property]],
@@ -756,6 +791,15 @@ class Optional(Property[typing.Optional[typing.Any], typing.Optional[typing.Any]
     def __str__(self):
         return '<Optional[{}] {!r}>'.format(self.prop, self.serialization_path)
 
+    def _set_elements(self, value):
+        elem = None
+        if value is not None:
+            if isinstance(self.prop, PropertyCollection):
+                elem = self.prop._set_elements(value)
+            else:
+                elem = value
+        return elem
+
 
 class Mapping(PropertyCollection[dict, dict]):
     """
@@ -783,6 +827,7 @@ class Mapping(PropertyCollection[dict, dict]):
                          deserializable,
                          default,
                          override)
+
         self.keys_type = keys_type if isinstance(keys_type, Property) else keys_type()
         self.values_type = values_type if isinstance(values_type, Property) else values_type()
         self.ser_as_list_of_pairs = ser_as_list_of_pairs
@@ -833,13 +878,19 @@ class Mapping(PropertyCollection[dict, dict]):
     def _set_elements(self, value):
         elems = dict()
         for key, val in value.items():
-            if issubclass(type(val), self.values_type.underlying_types):
+            if isinstance(self.values_type, PropertyCollection):
+                deserialized_value = self.values_type._set_elements(val)
+            elif issubclass(type(val), self.values_type.underlying_types):
                 deserialized_value = val
             else:
                 deserialized_value = self.values_type.deserialize(val)
-            if issubclass(type(key), self.keys_type.underlying_types):
+
+            if isinstance(self.keys_type, PropertyCollection):
+                deserialized_key = self.keys_type._set_elements(key)
+            elif issubclass(type(key), self.keys_type.underlying_types):
                 deserialized_key = key
             else:
                 deserialized_key = self.keys_type.deserialize(key)
+
             elems[deserialized_key] = deserialized_value
         return elems

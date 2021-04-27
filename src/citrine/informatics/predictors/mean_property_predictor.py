@@ -5,12 +5,13 @@ from citrine._serialization import properties as _properties
 from citrine.informatics.data_sources import DataSource
 from citrine.informatics.descriptors import FormulationDescriptor, RealDescriptor
 from citrine.informatics.predictors import Predictor
+from citrine._rest.ai_resource_metadata import AIResourceMetadata
 
 __all__ = ['MeanPropertyPredictor']
 
 
 class MeanPropertyPredictor(
-        Resource['MeanPropertyPredictor'], Predictor):
+        Resource['MeanPropertyPredictor'], Predictor, AIResourceMetadata):
     """A predictor interface that computes mean component properties.
 
     .. seealso::
@@ -32,7 +33,8 @@ class MeanPropertyPredictor(
         Power of the generalized mean. Only integer powers are supported.
     impute_properties: bool
         Whether to impute missing ingredient properties.
-        If ``False`` an error is thrown when a missing ingredient property is encountered.
+        If ``False`` all ingredients must define values for all featurized properties.
+        Otherwise, the row will not be featurized.
         If ``True`` and no ``default_properties`` are specified, then the average over the
         entire dataset is used.
         If ``True`` and a default is specified in ``default_properties``, then the specified

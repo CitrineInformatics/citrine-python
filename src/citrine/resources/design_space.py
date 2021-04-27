@@ -2,14 +2,14 @@
 from uuid import UUID
 from typing import TypeVar
 
-from citrine._rest.collection import Collection
 from citrine._session import Session
+from citrine.resources.module import AbstractModuleCollection
 from citrine.informatics.design_spaces import DesignSpace, EnumeratedDesignSpace
 
 CreationType = TypeVar('CreationType', bound=DesignSpace)
 
 
-class DesignSpaceCollection(Collection[DesignSpace]):
+class DesignSpaceCollection(AbstractModuleCollection[DesignSpace]):
     """Represents the collection of design spaces as well as the resources belonging to it.
 
     Parameters
@@ -56,12 +56,12 @@ class DesignSpaceCollection(Collection[DesignSpace]):
     def register(self, model: DesignSpace) -> DesignSpace:
         """Create a new design space."""
         self.validate_write_request(model)
-        return Collection.register(self, model)
+        return AbstractModuleCollection.register(self, model)
 
     def update(self, model: DesignSpace) -> DesignSpace:
         """Update an existing design space by uid."""
         self.validate_write_request(model)
-        return Collection.update(self, model)
+        return AbstractModuleCollection.update(self, model)
 
     def create_default(self, predictor_id: UUID) -> DesignSpace:
         """[ALPHA] Create a default design space for a predictor.

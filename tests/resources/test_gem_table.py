@@ -133,6 +133,16 @@ def test_register_table(collection):
         collection.register(GemTable.build(GemTableDataFactory()))
 
 
+def test_update_table(collection, table):
+    with pytest.raises(RuntimeError):
+        collection.update(GemTable.build(GemTableDataFactory()))
+
+
+def test_delete_table(collection, table):
+    with pytest.raises(NotImplementedError):
+        collection.delete(GemTable.build(GemTableDataFactory()).uid)
+
+
 def test_build_from_config(collection: GemTableCollection, session):
     config_uid = uuid4()
     config_version = 2

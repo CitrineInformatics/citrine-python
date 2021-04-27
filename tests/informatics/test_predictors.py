@@ -191,7 +191,7 @@ def ingredient_fractions_predictor() -> IngredientFractionsPredictor:
         name='Ingredient fractions predictor',
         description='Computes total ingredient fractions',
         input_descriptor=formulation,
-        ingredients=["Green Paste", "Blue Paste"]
+        ingredients={"Green Paste", "Blue Paste"}
     )
 
 
@@ -321,25 +321,6 @@ def test_ing_to_simple_mixture_initialization(ing_to_simple_mixture_predictor):
     assert str(ing_to_simple_mixture_predictor) == expected_str
 
 
-def test_deprecated_ing_to_simple_mixture():
-    """Make sure a warning is issued for deprecated labels format"""
-    with warnings.catch_warnings(record=True) as w:
-        warnings.simplefilter("always")
-        ing_to_simple_mixture_predictor = IngredientsToSimpleMixturePredictor(
-            name='deprecated',
-            description='labels as List[str]',
-            output=FormulationDescriptor('formulation'),
-            id_to_quantity={'ingredient': RealDescriptor('ingredient quantity', 0, 1, '')},
-            labels={'label': ['ingredient']}
-        )
-        assert ing_to_simple_mixture_predictor.labels == {'label': {'ingredient'}}
-        assert len(w) == 1
-        recorded_warning = w[0]
-        assert issubclass(recorded_warning.category, DeprecationWarning)
-        assert str(recorded_warning.message).startswith(
-            'Labels for predictor'
-        )
-
 def test_generalized_mean_property_initialization(generalized_mean_property_predictor):
     """Make sure the correct fields go to the correct places for a mean property predictor."""
     assert generalized_mean_property_predictor.name == 'Mean property predictor'
@@ -398,24 +379,6 @@ def test_label_fractions_property_initialization(label_fractions_predictor):
     assert str(label_fractions_predictor) == expected_str
 
 
-def test_deprecated_label_fractions():
-    """Make sure a warning is issued for deprecated labels format"""
-    with warnings.catch_warnings(record=True) as w:
-        warnings.simplefilter("always")
-        label_fractions_predictor = LabelFractionsPredictor(
-            name='deprecated',
-            description='labels as List[str]',
-            input_descriptor=FormulationDescriptor('formulation'),
-            labels=['label']
-        )
-        assert label_fractions_predictor.labels == {'label'}
-        assert len(w) == 1
-        recorded_warning = w[0]
-        assert issubclass(recorded_warning.category, DeprecationWarning)
-        assert str(recorded_warning.message).startswith(
-            'Labels for predictor'
-        )
-
 def test_simple_mixture_predictor_initialization(simple_mixture_predictor):
     """Make sure the correct fields go to the correct places for a simple mixture predictor."""
     assert simple_mixture_predictor.name == 'Simple mixture predictor'
@@ -430,7 +393,7 @@ def test_ingredient_fractions_property_initialization(ingredient_fractions_predi
     """Make sure the correct fields go to the correct places for an ingredient fractions predictor."""
     assert ingredient_fractions_predictor.name == 'Ingredient fractions predictor'
     assert ingredient_fractions_predictor.input_descriptor.key == 'formulation'
-    assert ingredient_fractions_predictor.ingredients == ["Green Paste", "Blue Paste"]
+    assert ingredient_fractions_predictor.ingredients == {"Green Paste", "Blue Paste"}
     expected_str = '<IngredientFractionsPredictor \'Ingredient fractions predictor\'>'
     assert str(ingredient_fractions_predictor) == expected_str
 

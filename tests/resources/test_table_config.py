@@ -460,3 +460,8 @@ def test_update_unregistered_fail(collection, session):
     # When
     with pytest.raises(ValueError, match="Cannot update Table Config without a config_uid."):
         collection.update(table_config)
+
+
+def test_delete(collection):
+    with pytest.raises(NotImplementedError):
+        collection.delete(empty_defn().config_uid)

@@ -5,12 +5,13 @@ from citrine._serialization import properties as _properties
 from citrine.informatics.data_sources import DataSource
 from citrine.informatics.descriptors import FormulationDescriptor
 from citrine.informatics.predictors import Predictor
+from citrine._rest.ai_resource_metadata import AIResourceMetadata
 
 __all__ = ['SimpleMixturePredictor']
 
 
-class SimpleMixturePredictor(Resource['SimpleMixturePredictor'], Predictor):
-    """A predictor interface that builds a simple graphical model.
+class SimpleMixturePredictor(Resource['SimpleMixturePredictor'], Predictor, AIResourceMetadata):
+    """A predictor interface that flattens a formulation into a simple mixture.
 
     Parameters
     ----------
