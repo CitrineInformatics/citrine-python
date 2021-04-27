@@ -317,11 +317,12 @@ For those attributes that may have non-zero uncertainty, we include columns for 
     from citrine.gemtables.variables import AttributeByTemplate
     from citrine.gemtables.columns import MeanColumn, StdDevColumn
 
+    scope = "margaritas-id"
     config = config.add_columns(
         variable=AttributeByTemplate(
             name="price",
             headers=["price"],
-            template=LinkByUID.from_entity(price_template)
+            template=LinkByUID(scope, "price template")
         ),
         columns=[MeanColumn(data_source="price")]
     )
@@ -329,7 +330,7 @@ For those attributes that may have non-zero uncertainty, we include columns for 
         variable=AttributeByTemplate(
             name="sucrose fraction",
             headers=["sucrose fraction"],
-            template=LinkByUID.from_entity(sucrose_fraction_template)
+            template=LinkByUID(scope, "sucrose fraction template")
         ),
         columns=[MeanColumn(data_source="sucrose fraction"), StdDevColumn(data_source="sucrose fraction")]
     )
@@ -337,7 +338,7 @@ For those attributes that may have non-zero uncertainty, we include columns for 
         variable=AttributeByTemplate(
             name="blend time",
             headers=["margarita", "blend time"],
-            template=LinkByUID.from_entity(blend_time_template)
+            template=LinkByUID(scope, "blend time template")
         ),
         columns=[MeanColumn(data_source="blend time")]
     )
@@ -345,7 +346,7 @@ For those attributes that may have non-zero uncertainty, we include columns for 
         variable=AttributeByTemplate(
             name="tastiness",
             headers=["margarita", "tastiness"],
-            template=LinkByUID.from_entity(tastiness_template)
+            template=LinkByUID(scope, "tastiness property template")
         ),
         columns=[MeanColumn(data_source="tastiness"), StdDevColumn(data_source="tastiness")]
     )
