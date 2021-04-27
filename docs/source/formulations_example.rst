@@ -18,16 +18,16 @@ Example Raw Data
 ----------------
 
 To demonstrate the formulations machinery, we consider a toy problem -- margaritas!
-We scour our pantry and gather some ingredients, laid out in the table below.
-These are known as "atomic" ingredients because for our purposes they are not broken into more fundamental ingredients.
-Several ingredients have labels, which helps the Citrine Platform understand the relationships between ingredients.
-We have also measured the sugar fraction for some of the ingredients, and we know the price per kilogram of each ingredient.
+We scour our pantry and gather some materials, laid out in the table below.
+These are known as "atomic" materials because for our purposes they are not broken into more fundamental materials.
+Several materials have labels, which helps the Citrine Platform understand the relationships between materials.
+We have also measured the sugar fraction for some of the materials, and we know the price per kilogram of each material.
 
-.. note:: An ingredient can have different labels when used in different mixtures.
+.. note:: An ingredient (a material used in a process) can have different labels when used in different mixtures.
     But to keep this example simple, we assume that a given ingredient always has all of the labels below whenever it is used.
 
 
-.. list-table:: Atomic Ingredients Data
+.. list-table:: Atomic Materials Data
    :widths: 25 25 25 25
    :header-rows: 1
 
@@ -43,7 +43,7 @@ We have also measured the sugar fraction for some of the ingredients, and we kno
      -
      - 0.00
      - 0.05
-   * - Lime Juice
+   * - Bottled Lime Juice
      - Acid
      - 0.03 +/- 0.01
      - 14.00
@@ -82,7 +82,7 @@ The quantities are in units of mass fraction.
      - 0.55
 
 We now create margaritas by mixing together a subset of ingredients and blending for some time.
-The atomic ingredients are labeled as described in the "Ingredients Data" table, and the simple syrups are given a "simple syrup" label.
+The atomic materials are labeled as described in the "Materials Data" table, and the simple syrups are given a "simple syrup" label.
 In addition to the ingredient mass fractions, we record the blending time, in seconds.
 The margaritas are judged on an ultra-rigorous "tastiness" scale, which ranges from 0.0 to 10.0
 The table below shows two examples.
@@ -97,7 +97,7 @@ The table below shows two examples.
      - Simple Syrup A Quantity
      - Simple Syrup B Quantity
      - Sugar Quantity
-     - Lime Juice Quantity
+     - Bottled Lime Juice Quantity
      - Triple Sec Quantity
      - Tequila Quantity
      - Ice Quantity
@@ -129,7 +129,7 @@ Ingesting Data
 
 
 Although we will not describe every step of the data ingestion process, we will highlight several data objects and their inter-connections.
-Perhaps most crucial are the `attribute templates`, which correspond to the parameters of the blending process and the properties of the ingredients/formulations.
+Perhaps most crucial are the `attribute templates`, which correspond to the parameters of the blending process and the properties of the materials/formulations.
 The name, bounds, and units on these templates will later be matched to descriptors in the AI Engine.
 Make sure to set the bounds wide enough to encompass all anticipated use cases of the templates.
 
@@ -189,18 +189,28 @@ The template includes a comprehensive list of all allowed names and labels.
         ProcessTemplate(
             "mix",
             uids={"margaritas-id": "mix template"},
-            allowed_names=["simple syrup", "sugar", "water", "lime juice", "triple sec", "tequila", "ice"],
+            allowed_names=["simple syrup", "sugar", "water", "lime juice", "orange liqueur", "tequila", "ice"],
             allowed_labels=["sweetener", "acid", "alcohol", "simple syrup"]
         )
     )
 
-Notice that "simple syrup" is an allowed ingredient name, but we do not distinguish between "simple syrup A" and "simple syrup B."
-This reflects the fact that we only ever use one simple syrup in a mixing process.
-The resulting table will have one column indicating which simple syrup was used and a second column indicating how much was used.
-Distinguishing in this way between the unique id of the material ("simple syrup A," "simple syrup B," etc.) and the generic name of the ingredient ("simple syrup") is especially useful when there are many materials to choose from.
+.. Hint:: Here we must distinguish between "name" and "identifier".
+    "Name" in this case is an abstract way of describing the types of things that go into a process.
+    "Identifier" is the unique way of referring to one particular material.
+    In this example the template allows the name "lime juice," but does not specify the specific material.
+    For simplicity, this example only includes one type of lime juice, "bottled lime juice," but we might also have "fresh-squeezed lime juice" or several batches of bottled lime juice, each with their own unique identifier.
+    In some cases, such as "ice," for which we know that only one material will be used, we have conflated the name and identifier.
+
+    Specifying ``allowed_names`` is not required for GEMD, but will make it easier to build the eventual table.
+    In this case, the table will have a super-column describing the use of lime juice in the margarita, with sub-columns for the identifier of the specific lime juice used, its quantity, and any labels to apply.
+
+    If a suitable set of names are not known, it is possible to be generic: "mixing input 1," "mixing input 2," etc.
 
 To fill out the example, we illustrate some of the objects involved in specifying the spec for a particular margarita recipe.
-This assumes that the material specs for the raw ingredients and the simple syrups have already been uploaded.
+This assumes that the material specs for the atomic materials and the simple syrups have already been uploaded.
+
+.. Attention:: It is important to assign human-readable uids to the Material Runs, as these will be the unique identifiers in the resulting table.
+
 
 .. code-block:: python
 
@@ -211,7 +221,7 @@ This assumes that the material specs for the raw ingredients and the simple syru
     from gemd.entity.link_by_uid import LinkByUID
 
     mix_margarita_spec = dataset.process_specs.register(
-        ProcessSpec(f"mix margarita B", template=LinkByUID("margaritas-id", "mix template"))
+        ProcessSpec("mix margarita B", template=LinkByUID("margaritas-id", "mix template"))
     )
     dataset.ingredient_specs.register(
         IngredientSpec(
@@ -274,7 +284,6 @@ The code below defines the rows and defines one column that contains the identif
     from citrine.gemtables.rows import MaterialRunByTemplate
     from citrine.gemtables.variables import RootIdentifier
     from citrine.gemtables.columns import IdentityColumn
-    from gemd.entity.link_by_uid import LinkByUID
 
 
     material_templates_to_include = [
@@ -441,8 +450,8 @@ if we do not specify it then a default descriptor will be generated, but given h
     data_source = GemTableDataSource(table_id=table.uid, table_version=table.version, formulation_descriptor=formulation)
 
 The first component of the graphical model is a :class:`~citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor`, which flattens the input formulation--it repeatedly replaces components with their ingredients until only the atomic ingredients remain.
-This flattening efficiently teaches the predictor about the relationship between ingredients.
-In this case, it learns exactly how "simple syrup A" and "simple syrup B" are similar to each other because they both contain atomic ingredients sugar and water but in slightly different amounts.
+This flattening efficiently teaches the predictor about the relationship between materials.
+In this case, it learns exactly how "simple syrup A" and "simple syrup B" are similar to each other because they both contain atomic materials sugar and water but in slightly different amounts.
 Although the homogeneous representation is not entirely appropriate for all formulations problems, it is usually an excellent approximation,
 especially when coupled with flexible machine learning models that can emulate more complexsubtle relationships within the data.
 
@@ -480,7 +489,9 @@ one that computes the mean price over all ingredients (this will be used to cons
         name="Ingredient Fractions",
         description="Compute the fraction of each ingredient",
         input_descriptor=flat_formulation,
-        ingredients=atomic_ingredients,
+        # Note that these are the identifiers of the atomic ingredients, not the names.
+        # (the specific material identifier "bottled lime juice" instead of the generic ingredient name "lime juice")
+        ingredients={"bottled lime juice", "water", "ice", "sugar", "tequila", "triple sec"},
     )
 
     # These descriptors must match up with the Variable in the GEM Table and the associated Attribute Template
@@ -606,9 +617,9 @@ The predictor takes care of flattening it to its atomic ingredients.
         name="margaritas formulation,
         description="",
         formulation_descriptor=formulation,
-        ingredients={"simple syrup A", "simple syrup B", "tequila", "ice", "triple sec", "lime juice"},
+        ingredients={"simple syrup A", "simple syrup B", "tequila", "ice", "triple sec", "bottled lime juice"},
         labels={
-            "acid": {"lime juice"},
+            "acid": {"bottled lime juice"},
             "alcohol": {"tequila", "triple sec"},
             "sweetener": {"triple sec"},
             "simple syrup": {"simple syrup A", "simple syrup B"}
@@ -616,7 +627,7 @@ The predictor takes care of flattening it to its atomic ingredients.
         constraints={
             IngredientCountConstraint(formulation_descriptor=formulation, min=3, max=5),
             IngredientCountConstraint(formulation_descriptor=formulation, min=1, max=1, label="simple syrup"),
-            IngredientFractionConstraint(formulation_descriptor=formulation, ingredient="lime juice", min=0.15, max=0.30)
+            IngredientFractionConstraint(formulation_descriptor=formulation, ingredient="bottled lime juice", min=0.15, max=0.30)
         }
     )
 
