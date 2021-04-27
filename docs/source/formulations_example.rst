@@ -143,18 +143,34 @@ Make sure to set the bounds wide enough to encompass all anticipated use cases o
     from gemd.entity.bounds import RealBounds
 
     # Assume we have already created a project and dataset, named "project" and "dataset."
-    # Though not demonstrated here, it is useful to give templates custom ids so that they can be easily retrieved.
+    # We give the templates ids with a custom scope so that they can be easily retrieved.
     blend_time_template = dataset.parameter_templates.register(
-        ParameterTemplate("blend time", bounds=RealBounds(0, 60.0, "s"))
+        ParameterTemplate(
+            "blend time",
+            bounds=RealBounds(0, 60.0, "s"),
+            uids={"margaritas-id": "blend time template"}
+        )
     )
     price_template = dataset.property_templates.register(
-        PropertyTemplate("price", bounds=RealBounds(0, 100, "1/kg"))
+        PropertyTemplate(
+            "price",
+            bounds=RealBounds(0, 100, "1/kg"),
+            uids={"margaritas-id": "price template"}
+        )
     )
     sucrose_fraction_template = dataset.property_templates.register(
-        PropertyTemplate("sucrose fraction", bounds=RealBounds(0, 1, ""))
+        PropertyTemplate(
+            "sucrose fraction",
+            bounds=RealBounds(0, 1, ""),
+            uids={"margaritas-id": "sucrose fraction template"}
+        )
     )
     tastiness_template = dataset.property_templates.register(
-        PropertyTemplate("tastiness", bounds=RealBounds(0, 10, ""))
+        PropertyTemplate(
+            "tastiness",
+            bounds=RealBounds(0, 10, ""),
+            uids={"margaritas-id": "tastiness property template"}
+        )
     )
 
 The attribute templates are attached to relevant object templates.
@@ -171,7 +187,8 @@ The template includes a comprehensive list of all allowed names and labels.
 
     mix_template = dataset.process_templates.register(
         ProcessTemplate(
-            "mix"
+            "mix",
+            uids={"margaritas-id": "mix template"},
             allowed_names=["simple syrup", "sugar", "water", "lime juice", "triple sec", "tequila", "ice"],
             allowed_labels=["sweetener", "acid", "alcohol", "simple syrup"]
         )
@@ -191,14 +208,15 @@ This assumes that the material specs for the raw ingredients and the simple syru
     from citrine.resources.ingredient_spec import IngredientSpec
     from citrine.resources.material_spec import MaterialSpec
     from gemd.entity.value import NominalReal
+    from gemd.entity.link_by_uid import LinkByUID
 
     mix_margarita_spec = dataset.process_specs.register(
-        ProcessSpec(f"mix margarita B", template=mix_template)
+        ProcessSpec(f"mix margarita B", template=LinkByUID("margaritas-id", "mix template"))
     )
     dataset.ingredient_specs.register(
         IngredientSpec(
             "simple syrup",
-            material=simple_syrup_B_spec,
+            material=simple_syrup_B_spec,  # assume that this and the other relevant specs exist in memory
             process=mix_margarita_spec,
             labels=["simple syrup"]
             mass_fraction=NominalReal(nominal=0.15, units="")
@@ -216,7 +234,11 @@ This assumes that the material specs for the raw ingredients and the simple syru
     # register remaining ingredient specs....
     # Then register the resulting material spec.
     margarita_spec = dataset.material_specs.register(
-        MaterialSpec(f"margarita B", process=mix_margarita_spec, template=margarita_template)
+        MaterialSpec(
+            "margarita B",
+            process=mix_margarita_spec,
+            template=LinkByUID("margaritas-id", "margarita template")
+        )
     )
 
 This material spec is then fed as the sole ingredient into a "blend margarita B" process spec, which produces a "blended margarita B" material spec.
