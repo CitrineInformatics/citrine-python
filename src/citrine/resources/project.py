@@ -621,6 +621,10 @@ class ProjectCollection(Collection[Project]):
         """
         return super().delete(uid)  # pragma: no cover
 
+    def update(self, model: Project) -> Project:
+        """Projects cannot be updated."""
+        raise NotImplementedError("Project update is not supported at this time.")
+
     def _fetch_page_search(self, page: Optional[int] = None,
                            per_page: Optional[int] = None,
                            search_params: Optional[dict] = None) -> Tuple[Iterable[dict], str]:
