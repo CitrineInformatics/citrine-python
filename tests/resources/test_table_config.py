@@ -11,7 +11,7 @@ from citrine.resources.table_config import TableConfig, TableConfigCollection, T
 from citrine.resources.material_run import MaterialRun
 from citrine.resources.project import Project
 from citrine.resources.process_template import ProcessTemplate
-from tests.utils.factories import TableConfigResponseDataFactory, TableConfigsResponseDataFactory
+from tests.utils.factories import TableConfigResponseDataFactory, ListTableConfigResponseDataFactory
 from tests.utils.session import FakeSession, FakeCall
 
 @pytest.fixture
@@ -73,7 +73,7 @@ def test_get_table_config(collection, session):
     assert retrieved_table_config.version_number == ver_number
 
     # Given
-    table_configs_response = TableConfigsResponseDataFactory()
+    table_configs_response = ListTableConfigResponseDataFactory()
     defn_id = table_configs_response["definition"]["id"]
     version_number = max([version_dict["version_number"] for version_dict in table_configs_response["versions"]])
     session.set_response(table_configs_response)

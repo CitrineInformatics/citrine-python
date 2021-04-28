@@ -96,12 +96,11 @@ class GemTableCollection(Collection[GemTable]):
         if version is not None:
             path = self._get_path(uid) + "/versions/{}".format(version)
             data = self.session.get_resource(path)
+            return self.build(data)
         else:
-            data = self.session.get_resource(self._get_path(uid))
-            version_numbers = [version_data['version'] for version_data in data['tables']]
-            index = np.argmax(version_numbers)
-            data = data['tables'][index]
-        return self.build(data)
+            tables = self.list_versions(uid)
+            newest_table = max(tables, key=lambda x: x.version or 0)
+            return newest_table
 
     def list_versions(self,
                       uid: UUID,
@@ -120,7 +119,7 @@ class GemTableCollection(Collection[GemTable]):
         """
         def fetch_versions(page: Optional[int],
                            per_page: int) -> Tuple[Iterable[dict], str]:
-            data = self.session.get_resource(self._get_path() + '/' + str(uid),
+            data = self.session.get_resource(self._get_path(uid),
                                              params=self._page_params(page, per_page))
             return (data[self._collection_key], data.get('next', ""))
 

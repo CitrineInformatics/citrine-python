@@ -40,7 +40,11 @@ class GemTableDataFactory(factory.DictFactory):
 
 
 class ListGemTableVersionsDataFactory(factory.DictFactory):
-    tables = [GemTableDataFactory()]
+    tables = [GemTableDataFactory(), GemTableDataFactory(), GemTableDataFactory()]
+    # Explicitly set version numbers so that they are distinct
+    tables[0]["version"] = 1
+    tables[1]["version"] = 4
+    tables[2]["version"] = 2
 
 
 class TableConfigJSONDataFactory(factory.DictFactory):
@@ -69,7 +73,7 @@ class TableConfigResponseDataFactory(factory.DictFactory):
     definition = factory.SubFactory(WithIdDataFactory)
     version = factory.SubFactory(TableConfigVersionJSONDataFactory)
 
-class TableConfigsResponseDataFactory(factory.DictFactory):
+class ListTableConfigResponseDataFactory(factory.DictFactory):
     """This encapsulates all of the versions of a table config object."""
     definition = factory.SubFactory(WithIdDataFactory)
     versions = [TableConfigVersionJSONDataFactory(), TableConfigVersionJSONDataFactory(), TableConfigVersionJSONDataFactory()]
