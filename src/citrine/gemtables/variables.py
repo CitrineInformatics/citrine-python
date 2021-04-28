@@ -329,13 +329,13 @@ class IngredientIdentifierByProcessTemplateAndName(
 
 
 class IngredientLabelByProcessAndName(Serializable['IngredientLabelByProcessAndName'], Variable):
-    """[ALPHA] Define a boolean variable indicating whether a given label is applied.
+    """[ALPHA] A boolean variable indicating whether a given label is applied.
 
     Matches by process template, ingredient name, and the label string to check.
 
-    For example, a label might be "solvent" for the variable "is the ethanol being used as a
-    solvent?".  Many such columns would then support the downstream analysis "get the volumetric
-    average density of the solvents".
+    For example, a column might indicate whether or not the ingredient "ethanol" is labeled as a
+    "solvent" in the "second mixing" process.  Many such columns would then support the
+    downstream analysis "get the volumetric average density of the solvents".
 
     Parameters
     ---------
@@ -384,11 +384,9 @@ class IngredientLabelByProcessAndName(Serializable['IngredientLabelByProcessAndN
 class IngredientLabelsSetByProcessAndName(
         Serializable['IngredientLabelsSetByProcessAndName'],
         Variable):
-    """[ALPHA] Define a variable containing the set of labels on an ingredient.
+    """[ALPHA] The set of labels on an ingredient when used in a process.
 
-    Matches by process template and ingredient name, and the label string to check.
-
-    For example, an ingredient might be labeled "solvent", "alcohol" and "VOC".
+    For example, the ingredient "ethanol" might be labeled "solvent", "alcohol" and "VOC".
     The column would then contain that set of strings.
 
     Parameters
@@ -428,7 +426,7 @@ class IngredientLabelsSetByProcessAndName(
 
 class IngredientQuantityByProcessAndName(
         Serializable['IngredientQuantityByProcessAndName'], Variable):
-    """[ALPHA] Get the quantity of an ingredient associated with a process template and a name.
+    """[ALPHA] The quantity of an ingredient associated with a process template and a name.
 
     Parameters
     ---------
@@ -441,14 +439,14 @@ class IngredientQuantityByProcessAndName(
     ingredient_name: str
         name of ingredient
     quantity_dimension: IngredientQuantityDimension
-        dimension of the ingredient quantity: absolute quantity, number, mass, or volume fraction.
-        valid options are defined by
+        Dimension of the ingredient quantity: absolute quantity, number, mass, or volume fraction.
+        Valid options are defined by
         :class:`~citrine.gemtables.variables.IngredientQuantityDimension`
     type_selector: DataObjectTypeSelector
         strategy for selecting data object types to consider when matching, defaults to PREFER_RUN
     unit: str
-        an optional unit: only ingredient quantities that are convertible to this unit will be
-        matched. note that this parameter is mandatory when quantity_dimension is
+        An optional unit: only ingredient quantities that are convertible to this unit will be
+        matched. Note that this parameter is mandatory when quantity_dimension is
         IngredientQuantityDimension.ABSOLUTE.
 
     """
@@ -496,7 +494,7 @@ class IngredientQuantityByProcessAndName(
 
 
 class RootIdentifier(Serializable['RootIdentifier'], Variable):
-    """[ALPHA] Get the identifier for the root of the material history, by scope.
+    """[ALPHA] A unique identifier of the root of the material history, by scope.
 
     Parameters
     ---------
@@ -520,7 +518,7 @@ class RootIdentifier(Serializable['RootIdentifier'], Variable):
     def __init__(self, *,
                  name: str,
                  headers: List[str],
-                 scope: str):
+                 scope: str = CITRINE_SCOPE):
         self.name = name
         self.headers = headers
         self.scope = scope
@@ -537,14 +535,14 @@ class AttributeInOutput(Serializable['AttributeInOutput'], Variable):
 
     For example, a material "paint" might be produced by mixing and then resting "pigments" and
     a "base".  The color of the pigments and base could be measured and recorded as attributes
-    in addition to the color of the resulting paint.  To define a variable as the color of the
+    in addition to the color of the resulting paint. To define a variable as the color of the
     resulting paint, AttributeInOutput can be used with the mixing process included in the list
-    of process templates.  Then, when the platform looks for colors, it won't traverse through
-    the mixing process and hit the colors of the pigments and base as well, which would result
-    in an ambiguous variable match.
+    of process templates. Then, when the platform looks for the color of a paint, it will find it
+    but *won't* traverse through the mixing process and also find the colors of the pigments and
+    base, which would result in an ambiguous variable match.
 
     Unlike "AttributeByTemplateAfterProcess", AttributeInOutput will also match on the color
-    attribute of the pigments in the rows that correspond to those pigments.  This way, all the
+    attribute of the pigments in the rows that correspond to those pigments. This way, all the
     colors can be assigned to the same variable and rendered into the same columns in the GEM
     table.
 
@@ -601,31 +599,31 @@ class AttributeInOutput(Serializable['AttributeInOutput'], Variable):
 
 
 class IngredientIdentifierInOutput(Serializable['IngredientIdentifierInOutput'], Variable):
-    """[ALPHA] Ingredient quantity in the trunk of a material history tree.
+    """[ALPHA] Ingredient identifier in the trunk of a material history tree.
 
-    The search for an ingredient quantity starts at the root material and proceeds until
-    any of the given process templates are reached. Those templates block the search from
-    continuing but are inclusive: a match is extracted if an ingredient with the specified
+    The search for an ingredient starts at the root of the material history tree and
+    proceeds until any of the given process templates are reached. Those templates block the search
+    from continuing but are inclusive: a match is extracted if an ingredient with the specified
     ingredient name is found at or before a cutoff.
 
-    This variable definition allows a quantity to be extracted when an ingredient is used
+    This variable definition allows an identifier to be extracted when an ingredient is used
     in multiple processes. As an example, consider a paint formed by mixing red and yellow
     pigments, where the red pigment is formed by mixing yellow and magenta. This variable could be
-    used represent the quantity of yellow in both mixing processes (red and the final paint)
+    used to represent the identifier of yellow in both mixing processes (red and the final paint)
     in a single column provided the process templates that mixed red and the final paint
     are included as cutoffs.
 
     In general, this variable should be preferred over an
-    :class:`~citrine.gemtables.variables.IngredientQuantityByProcessTemplateAndName` when
+    :class:`~citrine.gemtables.variables.IngredientIdentifierByProcessTemplateAndName` when
     mixtures are hierarchical (i.e., blends of blends).
     It allows an ingredient with a single name to be used in
     multiple processes without defining additional variables that manifest as additional columns
     in your GEM table, and must be used in place of the former if the same process template is
     used to represent mixing at multiple levels in the material history hierarchy. Going back
     to the previous example, this variable must be used in place of an
-    :class:`~citrine.gemtables.variables.IngredientQuantityByProcessTemplateAndName` if the same
+    :class:`~citrine.gemtables.variables.IngredientIdentifierByProcessTemplateAndName` if the same
     process template was used to represent the process that mixed red and the final paint.
-    Using :class:`~citrine.gemtables.variables.IngredientQuantityByProcessTemplateAndName`
+    Using :class:`~citrine.gemtables.variables.IngredientIdentifierByProcessTemplateAndName`
     would result in an ambiguous match because yellow would be found twice in the
     material history, once when mixing red and again when mixing the final paint.
 
@@ -640,7 +638,7 @@ class IngredientIdentifierInOutput(Serializable['IngredientIdentifierInOutput'],
     process_templates: list[LinkByUID]
         Process templates halt the search for a matching ingredient name.
         These process templates are inclusive.
-        The ingredient may be present in these processes but not after.
+        The ingredient may be present in these processes but not before.
     type_selector: DataObjectTypeSelector
         strategy for selecting data object types to consider when matching, defaults to PREFER_RUN
 
@@ -674,9 +672,9 @@ class IngredientIdentifierInOutput(Serializable['IngredientIdentifierInOutput'],
 
 
 class IngredientLabelsSetInOutput(Serializable['IngredientLabelsSetInOutput'], Variable):
-    """[ALPHA] Define a variable containing the set of labels on an ingredient.
+    """[ALPHA] The set of labels on an ingredient in the trunk of a material history tree.
 
-    The search for an ingredient starts at the root material and proceeds until
+    The search for an ingredient starts at the root of the material history tree and proceeds until
     any of the given process templates are reached. Those templates block the search from
     continuing but are inclusive: a match is extracted if an ingredient with the specified
     ingredient name is found at or before a cutoff.
@@ -684,8 +682,8 @@ class IngredientLabelsSetInOutput(Serializable['IngredientLabelsSetInOutput'], V
     This variable definition allows a set of labels to be extracted when an ingredient is used
     in multiple processes. As an example, consider a paint formed by mixing red and yellow
     pigments, where the red pigment is formed by mixing yellow and magenta. This variable could be
-    used represent the quantity of yellow in both mixing processes (red and the final paint)
-    in a single column provided the process templates that mixed red and the final paint
+    used to represent the labels applied to  yellow in both mixing processes (red and the final
+    paint) in a single column provided the process templates that mixed red and the final paint
     are included as cutoffs.
 
     In general, this variable should be preferred over an
@@ -701,9 +699,6 @@ class IngredientLabelsSetInOutput(Serializable['IngredientLabelsSetInOutput'], V
     Using :class:`~citrine.gemtables.variables.IngredientLabelSetByProcessTemplateAndName`
     would result in an ambiguous match because yellow would be found twice in the
     material history, once when mixing red and again when mixing the final paint.
-
-    For example, an ingredient might be labeled "solvent", "alcohol" and "VOC".
-    The column would then contain that set of strings.
 
     Parameters
     ---------
@@ -740,30 +735,31 @@ class IngredientLabelsSetInOutput(Serializable['IngredientLabelsSetInOutput'], V
 
 
 class IngredientQuantityInOutput(Serializable['IngredientQuantityInOutput'], Variable):
-    """[ALPHA] Ingredient identifier in the trunk of a material history tree.
+    """[ALPHA] Ingredient quantity in the trunk of a material history tree.
 
-    The search for an identifier starts at the root material and proceeds until any of the
-    given process templates are reached. Those templates block the search from continuing but
-    are inclusive: a match is extracted if an ingredient with the specified ingredient name
-    is found at or before a cutoff.
+    The search for an ingredient starts at the root of the material history tree and proceeds until
+    any of the given process templates are reached. Those templates block the search from
+    continuing but are inclusive: a match is extracted if an ingredient with the specified
+    ingredient name is found at or before a cutoff.
 
-    This variable definition allows an identifier to be extracted when an ingredient is used
-    in multiple processes. As an example, consider a paint formed by mixing red and yellow
-    pigments, where the red pigment is formed by mixing yellow and magenta. This variable could be
-    used represent yellow in both mixing processes (red and the final paint) in a single column
-    provided the process templates that mixed red and the final paint are included as cutoffs.
+    This variable definition allows a quantity to be extracted when an ingredient is used in
+    multiple processes. As an example, consider a paint formed by mixing red and yellow pigments,
+    where the red pigment is formed by mixing yellow and magenta. This variable could be used to
+    represent the quantity of yellow in both mixing processes (red and the final paint) in a
+    single column provided the process templates that mixed red and the final paint
+    are included as cutoffs.
 
     In general, this variable should be preferred over an
-    :class:`~citrine.gemtables.variables.IngredientIdentifierByProcessTemplateAndName`
+    :class:`~citrine.gemtables.variables.IngredientQuantityByProcessTemplateAndName`
     when mixtures are hierarchical (i.e., blends of blends). It allows an ingredient with a
     single name to be used in multiple processes without defining additional variables
     that manifest as additional columns in your table, and must be used in place of the
     former if the same process template is used to represent mixing at multiple levels
     in the material history hierarchy.
     Going back to the previous example, this variable must be used in place of an
-    :class:`~citrine.gemtables.variables.IngredientIdentifierByProcessTemplateAndName` if the same
+    :class:`~citrine.gemtables.variables.IngredientQuantityByProcessTemplateAndName` if the same
     process template was used to represent the process that mixed red and the final paint.
-    Using :class:`~citrine.gemtables.variables.IngredientIdentifierByProcessTemplateAndName`
+    Using :class:`~citrine.gemtables.variables.IngredientQuantityByProcessTemplateAndName`
     would result in an ambiguous match because yellow would be found twice in the material history,
     once when mixing red and again when mixing the final paint.
 
@@ -776,13 +772,13 @@ class IngredientQuantityInOutput(Serializable['IngredientQuantityInOutput'], Var
     ingredient_name: str
         Name of the ingredient to search for
     quantity_dimension: IngredientQuantityDimension
-        dimension of the ingredient quantity: absolute quantity, number, mass, or volume fraction.
-        valid options are defined by
+        Dimension of the ingredient quantity: absolute quantity, number, mass, or volume fraction.
+        Valid options are defined by
         :class:`~citrine.gemtables.variables.IngredientQuantityDimension`
     process_templates: list[LinkByUID]
         Process templates halt the search for a matching ingredient name.
         These process templates are inclusive.
-        The ingredient may be present in these processes but not after.
+        The ingredient may be present in these processes but not before.
     type_selector: DataObjectTypeSelector
         strategy for selecting data object types to consider when matching, defaults to PREFER_RUN
     unit: str
