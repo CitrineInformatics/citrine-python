@@ -1,16 +1,16 @@
 from typing import Set, Mapping
-from warnings import warn
 
 from citrine._rest.resource import Resource
 from citrine._serialization import properties as _properties
 from citrine.informatics.descriptors import FormulationDescriptor, RealDescriptor
 from citrine.informatics.predictors import Predictor
+from citrine._rest.ai_resource_metadata import AIResourceMetadata
 
 __all__ = ['IngredientsToSimpleMixturePredictor']
 
 
 class IngredientsToSimpleMixturePredictor(
-        Resource['IngredientsToSimpleMixturePredictor'], Predictor):
+        Resource['IngredientsToSimpleMixturePredictor'], Predictor, AIResourceMetadata):
     """[ALPHA] A predictor interface that constructs a simple mixture from ingredient quantities.
 
     Parameters
@@ -52,17 +52,7 @@ class IngredientsToSimpleMixturePredictor(
         self.description: str = description
         self.output: FormulationDescriptor = output
         self.id_to_quantity: Mapping[str, RealDescriptor] = id_to_quantity
-        _labels = {}
-        for label, ingredients in labels.items():
-            if not isinstance(ingredients, set):
-                warn(f"Labels for predictor '{self.name}' must be specified as a mapping from "
-                     "each label to a set of ingredient names. Support for other collections "
-                     "is deprecated and will be removed in a future release.",
-                     DeprecationWarning)
-                _labels[label] = set(ingredients)
-            else:
-                _labels[label] = ingredients
-        self.labels: Mapping[str, Set[str]] = _labels
+        self.labels: Mapping[str, Set[str]] = labels
         self.archived: bool = archived
 
     def _post_dump(self, data: dict) -> dict:

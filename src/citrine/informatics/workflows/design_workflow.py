@@ -8,11 +8,12 @@ from citrine._session import Session
 from citrine.informatics.workflows.workflow import Workflow
 from citrine.resources.workflow_executions import WorkflowExecutionCollection
 from citrine.resources.design_execution import DesignExecutionCollection
+from citrine._rest.ai_resource_metadata import AIResourceMetadata
 
 __all__ = ['DesignWorkflow']
 
 
-class DesignWorkflow(Resource['DesignWorkflow'], Workflow):
+class DesignWorkflow(Resource['DesignWorkflow'], Workflow, AIResourceMetadata):
     """Object that generates scored materials that may approach higher values of the score.
 
     Parameters
@@ -33,27 +34,16 @@ class DesignWorkflow(Resource['DesignWorkflow'], Workflow):
 
     uid = properties.Optional(properties.UUID, 'id', serializable=False)
     name = properties.String('display_name')
-    status = properties.String('status', serializable=False)
-    status_info = properties.Optional(
-        properties.List(properties.String()),
-        'status_info',
-        serializable=False
-    )
-    experimental = properties.Boolean("experimental", serializable=False, default=True)
-    experimental_reasons = properties.Optional(
-        properties.List(properties.String()),
-        'experimental_reasons',
-        serializable=False
-    )
-    archived = properties.Boolean('archived', default=False)
-    created_by = properties.Optional(properties.UUID, 'created_by', serializable=False)
-    create_time = properties.Optional(properties.Datetime, 'create_time', serializable=False)
+    name = properties.String('name')
+    description = properties.Optional(properties.String, 'description')
+
     module_type = properties.String('module_type', default='DESIGN_WORKFLOW')
     typ = properties.String('type', default='DesignWorkflow', deserializable=False)
 
     status_description = properties.String('status_description', serializable=False)
-    name = properties.String('name')
+
     design_space_id = properties.UUID('design_space_id')
+
     processor_id = properties.Optional(properties.UUID, 'processor_id')
     predictor_id = properties.UUID('predictor_id')
 
@@ -63,13 +53,15 @@ class DesignWorkflow(Resource['DesignWorkflow'], Workflow):
                  processor_id: Optional[UUID],
                  predictor_id: UUID,
                  project_id: Optional[UUID] = None,
-                 session: Session = Session()):
+                 session: Session = Session(),
+                 description: Optional[str] = None):
         self.name = name
         self.design_space_id = design_space_id
         self.processor_id = processor_id
         self.predictor_id = predictor_id
         self.project_id = project_id
         self.session = session
+        self.description = description
 
     def __str__(self):
         return '<DesignWorkflow {!r}>'.format(self.name)

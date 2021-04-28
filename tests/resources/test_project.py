@@ -397,6 +397,12 @@ def test_delete_project(collection, session):
     assert expected_call == session.last_call
 
 
+def test_update_project(collection, project):
+    project.name = "updated name"
+    with pytest.raises(NotImplementedError):
+        collection.update(project)
+
+
 def test_list_members(project, session):
     # Given
     user = UserDataFactory()
@@ -581,6 +587,7 @@ def test_project_batch_delete(project, session):
 def test_batch_delete_bad_input(project, session):
     with pytest.raises(TypeError):
         project.gemd_batch_delete(['hiya!'])
+
 
 def test_project_tables(project):
     assert isinstance(project.tables, GemTableCollection)
