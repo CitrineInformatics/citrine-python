@@ -5,7 +5,7 @@ Descriptors allow users to define a controlled vocabulary with which to describe
 Each descriptor defines a term in that vocabulary, which is comprised of a name, a datatype, and bounds on that data type.
 If you are familiar with the GEMD data model, descriptors are roughly equivalent to :class:`AttributeTemplates <citrine.resources.attribute_templates.AttributeTemplate>`.
 
-The AI Engine currently supports _ kinds of descriptors:
+The AI Engine currently supports 5 kinds of descriptors:
 
 -  `Real Descriptors <#real-descriptor>`__
 -  `Categorical Descriptor <#categorical-descriptor>`__
@@ -63,13 +63,11 @@ A set of descriptors defines a controlled vocabulary with which to describe AI t
 The :class:`~citrine.builders.descriptors.PlatformVocabulary` class is provided to collect a set of descriptors,
 associate them with short convenient names, and provide them via a familiar dictionary interface.
 
-While descriptors cannot be independently saved on the platform for reuse, AttributeTemplates can be.
-Therefore, common descriptors can be saved as AttributeTemplates to the data platform, effectively sharing them with
-other users.
-The `PlatformVocabulary.from_templates` method facilitates this pattern by automatically downloading AttributeTemplates
-and converting them into descriptors.
-AttributeTemplates must be associated with a namespace via Alternative Identifiers (the `uids` field).
-When calling `from_templates`, a scope is provided to select one of those namespaces.
+While descriptors cannot be independently saved on the platform for reuse, :class:`~citrine.resources.attribute_templates.AttributeTemplate`s can be.
+Therefore, common descriptors can be saved as attribute templates to the data platform, effectively sharing them with other users.
+:meth:`~citrine.builders.descriptors.PlatformVocabulary.from_templates` facilitates this pattern by automatically downloading attribute templates and converting them into descriptors.
+Attribute templates must be associated with a namespace via custom identifiers (the `uids` field).
+When calling ``from_templates``, a scope is provided to select one of those namespaces.
 The descriptors can then be associated with the names from that namespace.
 
 .. code:: python
