@@ -325,7 +325,7 @@ class TableConfigCollection(Collection[TableConfig]):
 
         Returns A table config as well as addition variables/columns which would result in
             ambiguous matches if included in the config.
-        -------
+
 
         """
         if isinstance(material, MaterialRun):

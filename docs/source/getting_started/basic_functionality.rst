@@ -85,7 +85,7 @@ Resources can generally be deleted with the ``delete`` command.
 However, resources may link to other resources, and deleting these interconnected objects is tricky.
 For more information, see the section on :ref:`deleting data objects <deleting_data_objects_label>`.
 
-AI modules cannot be deleted, but they can be :ref:`archived <archiving_label>`.
+AI modules cannot be deleted at this time, but they can be :ref:`archived <archiving_label>`.
 
 Data Model Object Specific Methods
 -----------------------------------
