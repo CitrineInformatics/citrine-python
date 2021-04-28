@@ -602,7 +602,7 @@ class AttributeInOutput(Serializable['AttributeInOutput'], Variable):
 class IngredientIdentifierInOutput(Serializable['IngredientIdentifierInOutput'], Variable):
     """[ALPHA] Ingredient quantity in the trunk of a material history tree.
 
-    The search for an ingredient quantity starts at the terminal material and proceeds until
+    The search for an ingredient quantity starts at the root material and proceeds until
     any of the given process templates are reached. Those templates block the search from
     continuing but are inclusive: a match is extracted if an ingredient with the specified
     ingredient name is found at or before a cutoff.
@@ -675,7 +675,7 @@ class IngredientIdentifierInOutput(Serializable['IngredientIdentifierInOutput'],
 class IngredientLabelsSetInOutput(Serializable['IngredientLabelsSetInOutput'], Variable):
     """[ALPHA] Define a variable containing the set of labels on an ingredient.
 
-    The search for an ingredient starts at the terminal material and proceeds until
+    The search for an ingredient starts at the root material and proceeds until
     any of the given process templates are reached. Those templates block the search from
     continuing but are inclusive: a match is extracted if an ingredient with the specified
     ingredient name is found at or before a cutoff.
@@ -741,7 +741,7 @@ class IngredientLabelsSetInOutput(Serializable['IngredientLabelsSetInOutput'], V
 class IngredientQuantityInOutput(Serializable['IngredientQuantityInOutput'], Variable):
     """[ALPHA] Ingredient identifier in the trunk of a material history tree.
 
-    The search for an identifier starts at the terminal material and proceeds until any of the
+    The search for an identifier starts at the root material and proceeds until any of the
     given process templates are reached. Those templates block the search from continuing but
     are inclusive: a match is extracted if an ingredient with the specified ingredient name
     is found at or before a cutoff.

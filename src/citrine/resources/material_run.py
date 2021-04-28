@@ -109,9 +109,9 @@ class MaterialRunCollection(ObjectRunCollection[MaterialRun]):
         """Return the resource type in the collection."""
         return MaterialRun
 
-    def get_history(self, scope, id) -> Type[MaterialRun]:
+    def get_history(self, scope: str, id: Union[str, UUID]) -> Type[MaterialRun]:
         """
-        Get the history associated with a material.
+        Get the history associated with a root material.
 
         The history contains every single every process, ingredient and material that went into
         the root material as well as the measurements that were performed on all of those
