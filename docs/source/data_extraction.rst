@@ -58,7 +58,7 @@ The data_source parameter is a reference to a :class:`~citrine.gemtables.variabl
 Defining tables
 ---------------
 
-The :class:`~citrine.resources.ara_definition.TableConfig` object defines how to build a GEM Table.
+The :class:`~citrine.resources.table_config.TableConfig` object defines how to build a GEM Table.
 It specifies a list of UUIDs for datasets to query in generating the table,
 a list of :class:`~citrine.gemtables.rows.Row` objects that define material histories to use as rows,
 a list of :class:`~citrine.gemtables.variables.Variable` objects that specify how to extract data from those material histories,
@@ -66,7 +66,7 @@ and a list of :class:`~citrine.gemtables.columns.Column` objects to transform th
 
 .. code-block:: python
 
-   from citrine.resources.ara_definition import TableConfig
+   from citrine.resources.table_config import TableConfig
    from uuid import UUID
    table_config = TableConfig(
          name = "cookies",
@@ -81,14 +81,14 @@ Note the inclusion of two datasets above.
 In general, you should have at least two datasets referenced because Objects and Templates are generally associated with different datasets.
 
 In addition to defining variables, rows, and columns individually, there are convenience methods that simultaneously add multiple elements to an existing Table Config.
-One such method is :func:`~citrine.resources.ara_definition.TableConfig.add_all_ingredients`, which creates variables and columns for every potential ingredient in a process.
-The user provides a link to a process template that has a non-empty set of `allowed_names` (the allowed names of the ingredient runs and specs in the process).
+One such method is :func:`~citrine.resources.table_config.TableConfig.add_all_ingredients`, which creates variables and columns for every potential ingredient in a process.
+The user provides a link to a process template that has a non-empty set of ``allowed_names`` (the allowed names of the ingredient runs and specs in the process).
 This creates an id variable/column and a quantity variable/column for each allowed name.
 The user specifies the dimension to report the quantity in: mass fraction, volume fraction, number fraction, or absolute quantity.
 If the quantities are reported in absolute amounts then there is also a column for the units.
 
-The code below takes the `table_config` object defined in the preceding code block and adds the ingredient amounts for a `batter mixing` process with known uid "3a308f78-e341-f39c-8076-35a2c88292ad".
-Assume that the process template is accessible from a known project, `project`.
+The code below takes the ``table_config`` object defined in the preceding code block and adds the ingredient amounts for a "batter mixing" process with known uid "3a308f78-e341-f39c-8076-35a2c88292ad".
+Assume that the process template is accessible from a known project, ``project``.
 
 .. code-block:: python
 
@@ -105,7 +105,7 @@ If the process template's allowed names includes, for example, "flour" then ther
 Previewing tables
 -----------------
 
-Calling :func:`~citrine.resources.project.Project.table_configs` on a project returns an :class:`~citrine.resources.ara_definition.TableConfigCollection` object, which facilitates access to the collection of all TableConfigs visible to a Project.
+Calling :func:`~citrine.resources.project.Project.table_configs` on a project returns an :class:`~citrine.resources.table_config.TableConfigCollection` object, which facilitates access to the collection of all TableConfigs visible to a Project.
 Via such an object, one can preview a draft TableConfig on an explicit set of Material Histories, defined by their root materials:
 
 For example:
@@ -182,10 +182,10 @@ For example:
 
 The return type of the ``initiate_build`` method is a :class:`~citrine.resources.job.JobSubmissionResponse` that contains a unique identifier for the submitted job.
 
-The table id and version can be used to get a :class:`~citrine.resources.table.Table` resource that provides access the table.
+The table id and version can be used to get a :class:`~citrine.resources.gemtables.GemTable` resource that provides access to the table.
 
 You can also use the :class:`~citrine.resources.job.JobStatusResponse` to return the :class:`~citrine.resources.gemtables.GemTable` resource directly with the ``get_by_build_job`` method.
-Just like the :class:`~citrine.resources.file_link.FileLink` resource, :class:`~citrine.resources.table.Table` does not literally contain the table but does expose a ``read`` method that will download it.
+Just like the :class:`~citrine.resources.file_link.FileLink` resource, :class:`~citrine.resources.gemtables.GemTable` does not literally contain the table but does expose a ``read`` method that will download it.
 
 For example, once the above ``initiate_build`` method has completed:
 
