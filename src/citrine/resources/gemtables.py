@@ -2,6 +2,7 @@ import json
 from logging import getLogger
 from typing import Union, Iterable, Optional, Any, Tuple
 from uuid import uuid4
+import numpy as np
 
 import deprecation
 import requests
@@ -90,10 +91,16 @@ class GemTableCollection(Collection[GemTable]):
         self.project_id = project_id
         self.session: Session = session
 
-    def get(self, uid: Union[UUID, str], version: int) -> GemTable:
-        """Get a Table's metadata."""
-        path = self._get_path(uid) + "/versions/{}".format(version)
-        data = self.session.get_resource(path)
+    def get(self, uid: Union[UUID, str], version: Optional[int] = None) -> GemTable:
+        """Get a Table's metadata. If no version is specified, get the most recent version."""
+        if version is not None:
+            path = self._get_path(uid) + "/versions/{}".format(version)
+            data = self.session.get_resource(path)
+        else:
+            data = self.session.get_resource(self._get_path(uid))
+            version_numbers = [version_data['version'] for version_data in data['tables']]
+            index = np.argmax(version_numbers)
+            data = data['tables'][index]
         return self.build(data)
 
     def list_versions(self,
