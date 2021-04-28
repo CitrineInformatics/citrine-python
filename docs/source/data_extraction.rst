@@ -28,7 +28,8 @@ A :class:`~citrine.gemtables.variables.Variable` is addressed locally (within a 
 A :class:`~citrine.gemtables.variables.Variable` is also labeled with ``headers``, which is a list of strings that can express a hierarchical relationship with other variables.
 The headers are listed in decreasing hierarchical order: the first string indicates the broadest classification, and each subsequent string indicates a refinement of those classifications preceding it.
 In the example below, a hardness measurement might also be performed on the object denoted by the ``Product`` header.
-One might assign ``headers = ["Product", "Hardness"]`` to this measurement in order to relate it with the ``Density`` measurement of the same physical object.
+One might assign ``headers = ["Product", "Hardness"]`` to that measurement in order to relate it with the ``Density`` measurement of the same physical object.
+Assuming they are next to each other, the ``Density`` and ``Hardness`` columns in the resulting table would be grouped under a larger ``Product`` column.
 
 .. code-block:: python
 
@@ -42,6 +43,7 @@ One might assign ``headers = ["Product", "Hardness"]`` to this measurement in or
 
 A :class:`~citrine.gemtables.columns.Column` object describes how to transform a :class:`~citrine.gemtables.variables.Variable` into a primitive value (e.g., a real number, an integer, or a string) that can be entered into a cell in a table.
 This is necessary because `GEMD Attributes`__ are more general than primitive values; they often convey uncertainty estimates, for example.
+All columns are linked to a variable through the ``data_source`` field, which must equal the ``name`` of some variable in the table configuration.
 
 __ https://citrineinformatics.github.io/gemd-docs/specification/attributes/
 
@@ -197,7 +199,7 @@ For example, once the above ``initiate_build`` method has completed:
 Available Row Definitions
 -------------------------
 
-Currently, GEM Tables only provide a single way to define Rows: by the :class:`~gemd.entity.template.material_template.MaterialTemplate` of the roots of the material histories that correspond to each row.
+Currently, GEM Tables provide a single way to define Rows: by the :class:`~gemd.entity.template.material_template.MaterialTemplate` of the roots of the material histories that correspond to each row.
 
 :class:`~citrine.gemtables.rows.MaterialRunByTemplate`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

@@ -95,7 +95,8 @@ class RootInfo(Serializable['RootInfo'], Variable):
     headers: list[str]
         sequence of column headers
     field: str
-        name of the field to assign the variable to
+        name of the field to assign the variable to, for example, "sample_type" would
+        assign the sample type of the root material run
 
     """
 
