@@ -11,7 +11,7 @@ from citrine.resources.table_config import TableConfig, TableConfigCollection, T
 from citrine.resources.material_run import MaterialRun
 from citrine.resources.project import Project
 from citrine.resources.process_template import ProcessTemplate
-from tests.utils.factories import TableConfigResponseDataFactory
+from tests.utils.factories import TableConfigResponseDataFactory, TableConfigsResponseDataFactory
 from tests.utils.session import FakeSession, FakeCall
 
 @pytest.fixture
@@ -49,8 +49,8 @@ def empty_defn() -> TableConfig:
                        columns=[], config_uid=UUID("6b608f78-e341-422c-8076-35adc8828545"))
 
 
-def test_get_table_config_metadata(collection, session):
-    """Get with version gets TBD"""
+def test_get_table_config(collection, session):
+    """Get table config, with or without version"""
 
     # Given
     project_id = '6b608f78-e341-422c-8076-35adc8828545'
@@ -60,7 +60,7 @@ def test_get_table_config_metadata(collection, session):
     ver_number = table_config_response["version"]["version_number"]
 
     # When
-    retrieved_table_config: TableConfig = collection.get_with_version(defn_id, ver_number)
+    retrieved_table_config: TableConfig = collection.get(defn_id, ver_number)
 
     # Then
     assert 1 == session.num_calls
@@ -71,6 +71,25 @@ def test_get_table_config_metadata(collection, session):
     assert session.last_call == expect_call
     assert str(retrieved_table_config.config_uid) == defn_id
     assert retrieved_table_config.version_number == ver_number
+
+    # Given
+    table_configs_response = TableConfigsResponseDataFactory()
+    defn_id = table_configs_response["definition"]["id"]
+    version_number = max([version_dict["version_number"] for version_dict in table_configs_response["versions"]])
+    session.set_response(table_configs_response)
+
+    # When
+    retrieved_table_config: TableConfig = collection.get(defn_id)
+
+    # Then
+    assert 2 == session.num_calls
+    expect_call = FakeCall(
+        method="GET",
+        path="projects/{}/ara-definitions/{}".format(project_id, defn_id)
+    )
+    assert session.last_call == expect_call
+    assert str(retrieved_table_config.config_uid) == defn_id
+    assert retrieved_table_config.version_number == version_number
 
 
 def test_init_table_config():

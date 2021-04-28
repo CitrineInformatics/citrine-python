@@ -291,7 +291,7 @@ class TableConfigCollection(Collection[TableConfig]):
     def get_with_version(self, table_config_uid: Union[UUID, str],
                          version_number: int) -> TableConfig:
         """[ALPHA] Get a Table Config at a specific version."""
-        return self.get(uid=table_config_uid, version=version_number)
+        return self.get(uid=table_config_uid, version=version_number)  # pragma: no cover
 
     def build(self, data: dict) -> TableConfig:
         """[ALPHA] Build an individual Table Config from a dictionary."""

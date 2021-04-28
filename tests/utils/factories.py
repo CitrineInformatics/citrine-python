@@ -69,6 +69,15 @@ class TableConfigResponseDataFactory(factory.DictFactory):
     definition = factory.SubFactory(WithIdDataFactory)
     version = factory.SubFactory(TableConfigVersionJSONDataFactory)
 
+class TableConfigsResponseDataFactory(factory.DictFactory):
+    """This encapsulates all of the versions of a table config object."""
+    definition = factory.SubFactory(WithIdDataFactory)
+    versions = [TableConfigVersionJSONDataFactory(), TableConfigVersionJSONDataFactory(), TableConfigVersionJSONDataFactory()]
+    # Explicitly set version numbers so that they are distinct
+    versions[0]['version_number'] = 1
+    versions[1]['version_number'] = 4
+    versions[2]['version_number'] = 2
+
 class DatasetDataFactory(factory.DictFactory):
     id = factory.Faker('uuid4')
     name = factory.Faker('company')
