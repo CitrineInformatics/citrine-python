@@ -53,6 +53,9 @@ class LIScore(Serializable['LIScore'], Score):
     ----------
     objectives: list[Objective]
         objectives (e.g., maximize, minimize, tune, etc.)
+        If multiple objectives are specified they are evaluated independently, and ranked by the
+        highest likelihood of exceeding a baseline. This should therefore *not* be used to
+        simultaneously optimize multiple objectives.
     baselines: list[float]
         best-so-far values for the various objectives (there must be one for each objective)
     constraints: list[Constraint]
@@ -97,12 +100,13 @@ class LIScore(Serializable['LIScore'], Score):
 
 class EIScore(Serializable['EIScore'], Score):
     """
-    Evaluates the expected magnitude of improvement beyond baselines for given objectives.
+    Evaluates the expected magnitude of improvement beyond baselines for a given objective.
 
     Parameters
     ----------
     objectives: list[Objective]
         objectives (e.g., maximize, minimize, tune, etc.)
+        EIScore does not support more than 1 objective at this time.
     baselines: list[float]
         best-so-far values for the various objectives (there must be one for each objective)
     constraints: list[Constraint]
@@ -153,6 +157,9 @@ class EVScore(Serializable['EVScore'], Score):
     ----------
     objectives: list[Objective]
         objectives (e.g., maximize, minimize, tune, etc.)
+        If multiple objectives are specified, their scores are summed together. This allows
+        for simultaneous optimization of multiple objectives, although the weighting of the
+        various objectives cannot be directly specified.
     constraints: list[Constraint]
         constraints limiting the allowed values that material instances can have
 
