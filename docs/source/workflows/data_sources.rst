@@ -167,11 +167,11 @@ The example below assumes that the uuid and the version of the desired GEM Table
         name = "Band gap predictor",
         description = "Predict the band gap from the chemical formula and crystallinity",
         inputs = [
-            ChemicalFormulaDescriptor("root~formula"),
-            CategoricalDescriptor("root~crystallinity", categories=[
+            ChemicalFormulaDescriptor("terminal~formula"),
+            CategoricalDescriptor("terminal~crystallinity", categories=[
                 "Single crystalline", "Amorphous", "Polycrystalline"])
         ],
-        outputs = [RealDescriptor("root~band gap", lower_bound=0, upper_bound=20, units="eV")],
+        outputs = [RealDescriptor("terminal~band gap", lower_bound=0, upper_bound=20, units="eV")],
         latent_variables = [],
         training_data = [data_source]
     )

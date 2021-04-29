@@ -106,7 +106,7 @@ Previewing tables
 -----------------
 
 Calling :func:`~citrine.resources.project.Project.table_configs` on a project returns an :class:`~citrine.resources.table_config.TableConfigCollection` object, which facilitates access to the collection of all TableConfigs visible to a Project.
-Via such an object, one can preview a draft TableConfig on an explicit set of Material Histories, defined by their root materials:
+Via such an object, one can preview a draft TableConfig on an explicit set of Material Histories, defined by their terminal materials:
 
 For example:
 
@@ -199,13 +199,13 @@ For example, once the above ``initiate_build`` method has completed:
 Available Row Definitions
 -------------------------
 
-Currently, GEM Tables provide a single way to define Rows: by the :class:`~gemd.entity.template.material_template.MaterialTemplate` of the roots of the material histories that correspond to each row.
+Currently, GEM Tables provide a single way to define Rows: by the :class:`~gemd.entity.template.material_template.MaterialTemplate` of the terminal materials of the material histories that correspond to each row.
 
 :class:`~citrine.gemtables.rows.MaterialRunByTemplate`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The :class:`~citrine.gemtables.rows.MaterialRunByTemplate` class defines Rows through a list of :class:`~gemd.entity.template.material_template.MaterialTemplate`.
-Every :class:`~gemd.entity.object.material_run.MaterialRun` that is assigned to any template in the list is used as the root of a  Material History to be mapped to a Row.
+Every :class:`~gemd.entity.object.material_run.MaterialRun` that is assigned to any template in the list is used as the terminal material of a Material History to be mapped to a Row.
 This is helpful when the rows correspond to classes of materials that are defined through their templates.
 For example, there could be a :class:`~gemd.entity.template.material_template.MaterialTemplate` called "Cake" that is used in all
 of the cakes and another called "Brownies" that is used in all of the brownies.
@@ -223,14 +223,14 @@ There are several ways to define variables that take their values from Attribute
   * :class:`~citrine.gemtables.variables.AttributeByTemplateAfterProcessTemplate`: for when measurements are distinguished by the process that precedes them
   * :class:`~citrine.gemtables.variables.AttributeInOutput`: for when attributes occur both in a process output and one or more of its inputs
   * :class:`~citrine.gemtables.variables.IngredientQuantityByProcessAndName`: for the specific case of the volume fraction, mass fraction, number fraction, or absolute quantity of an ingredient
-  * :class:`~citrine.gemtables.variables.IngredientQuantityInOutput`: for the quantity of an ingredient between the root material and a given set of processes (useful for ingredients used in multiple processes)
+  * :class:`~citrine.gemtables.variables.IngredientQuantityInOutput`: for the quantity of an ingredient between the terminal material and a given set of processes (useful for ingredients used in multiple processes)
 
 * Identifiers
 
-  * :class:`~citrine.gemtables.variables.RootInfo`: for fields defined on the material at the root of the Material History, like the name of the material
+  * :class:`~citrine.gemtables.variables.RootInfo`: for fields defined on the material at the terminal of the Material History, like the name of the material
   * :class:`~citrine.gemtables.variables.RootIdentifier`: for the id of the Material History, which can be used as a unique identifier for the rows
   * :class:`~citrine.gemtables.variables.IngredientIdentifierByProcessTemplateAndName`: for the id of the material being used in an ingredient, which can be used as a key for looking up that input material
-  * :class:`~citrine.gemtables.variables.IngredientIdentifierInOutput`: for the id of a material used in an ingredient between the root material and a given set of processes (useful for ingredients used in multiple processes)
+  * :class:`~citrine.gemtables.variables.IngredientIdentifierInOutput`: for the id of a material used in an ingredient between the terminal material and a given set of processes (useful for ingredients used in multiple processes)
   * :class:`~citrine.gemtables.variables.IngredientLabelByProcessAndName`: for a boolean that indicates whether an ingredient is assigned a given label
 
 * Compound Variables

@@ -86,7 +86,7 @@ class Variable(PolymorphicSerializable['Variable']):
 
 
 class RootInfo(Serializable['RootInfo'], Variable):
-    """[ALPHA] Metadata from the root of the material history.
+    """[ALPHA] Metadata from the terminal material of the material history.
 
     Parameters
     ----------
@@ -96,7 +96,7 @@ class RootInfo(Serializable['RootInfo'], Variable):
         sequence of column headers
     field: str
         name of the field to assign the variable to, for example, "sample_type" would
-        assign the sample type of the root material run
+        assign the sample type of the terminal material run
 
     """
 
@@ -494,7 +494,7 @@ class IngredientQuantityByProcessAndName(
 
 
 class RootIdentifier(Serializable['RootIdentifier'], Variable):
-    """[ALPHA] A unique identifier of the root of the material history, by scope.
+    """[ALPHA] A unique identifier of the terminal material of the material history, by scope.
 
     Parameters
     ---------
@@ -527,7 +527,7 @@ class RootIdentifier(Serializable['RootIdentifier'], Variable):
 class AttributeInOutput(Serializable['AttributeInOutput'], Variable):
     """[ALPHA] Attribute marked by an attribute template in the trunk of the history tree.
 
-    The search for an attribute that marks the given attribute template starts at the root
+    The search for an attribute that marks the given attribute template starts at the terminal
     of the material history tree and proceeds until any of the given process templates are reached.
     Those templates block the search from continuing into their ingredients but do not halt the
     search entirely. This variable definition allows attributes that are present both in output
@@ -601,7 +601,7 @@ class AttributeInOutput(Serializable['AttributeInOutput'], Variable):
 class IngredientIdentifierInOutput(Serializable['IngredientIdentifierInOutput'], Variable):
     """[ALPHA] Ingredient identifier in the trunk of a material history tree.
 
-    The search for an ingredient starts at the root of the material history tree and
+    The search for an ingredient starts at the terminal of the material history tree and
     proceeds until any of the given process templates are reached. Those templates block the search
     from continuing but are inclusive: a match is extracted if an ingredient with the specified
     ingredient name is found at or before a cutoff.
@@ -674,8 +674,8 @@ class IngredientIdentifierInOutput(Serializable['IngredientIdentifierInOutput'],
 class IngredientLabelsSetInOutput(Serializable['IngredientLabelsSetInOutput'], Variable):
     """[ALPHA] The set of labels on an ingredient in the trunk of a material history tree.
 
-    The search for an ingredient starts at the root of the material history tree and proceeds until
-    any of the given process templates are reached. Those templates block the search from
+    The search for an ingredient starts at the terminal of the material history tree and proceeds
+    until any of the given process templates are reached. Those templates block the search from
     continuing but are inclusive: a match is extracted if an ingredient with the specified
     ingredient name is found at or before a cutoff.
 
@@ -737,8 +737,8 @@ class IngredientLabelsSetInOutput(Serializable['IngredientLabelsSetInOutput'], V
 class IngredientQuantityInOutput(Serializable['IngredientQuantityInOutput'], Variable):
     """[ALPHA] Ingredient quantity in the trunk of a material history tree.
 
-    The search for an ingredient starts at the root of the material history tree and proceeds until
-    any of the given process templates are reached. Those templates block the search from
+    The search for an ingredient starts at the terminal of the material history tree and proceeds
+    until any of the given process templates are reached. Those templates block the search from
     continuing but are inclusive: a match is extracted if an ingredient with the specified
     ingredient name is found at or before a cutoff.
 

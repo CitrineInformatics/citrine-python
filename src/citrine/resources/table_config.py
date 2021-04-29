@@ -28,7 +28,7 @@ class TableBuildAlgorithm(BaseEnumeration):
     """[ALPHA] The algorithm to use in automatically building a Table Configuration.
 
     * SINGLE_ROW corresponds one row per material history
-    * FORMULATIONS corresponds to one row per ingredient, intermediate, or root
+    * FORMULATIONS corresponds to one row per ingredient, intermediate, or terminal
       material, splitting the graph at branches.
     """
 
@@ -296,7 +296,7 @@ class TableConfigCollection(Collection[TableConfig]):
             algorithm: Optional[TableBuildAlgorithm] = None
     ) -> Tuple[TableConfig, List[Tuple[Variable, Column]]]:
         """
-        [ALPHA] Build best-guess default table config for provided root material's history.
+        [ALPHA] Build best-guess default table config for provided terminal material's history.
 
         Currently generates variables for each templated attribute in the material history in
         either AttributeByTemplate, or if possible AttributeByTemplateAndObjectTemplate.
@@ -310,7 +310,7 @@ class TableConfigCollection(Collection[TableConfig]):
         Parameters
         ----------
         material: Union[MaterialRun, str, UUID]
-            The root material whose history is used to construct a table config.
+            The terminal material whose history is used to construct a table config.
         name: str
             The name for the table config.
         description: str, optional
@@ -405,14 +405,14 @@ class TableConfigCollection(Collection[TableConfig]):
         return JobStatusResponse.build(response)
 
     def preview(self, table_config: TableConfig, preview_roots: List[LinkByUID]) -> dict:
-        """[ALPHA] Preview a Table Config on an explicit set of roots.
+        """[ALPHA] Preview a Table Config on an explicit set of terminal materials.
 
         Parameters
         ----------
         table_config: TableConfig
             Table Config to preview
         preview_roots: List[LinkByUID]
-            List of links to the material runs to use as root materials in the preview
+            List of links to the material runs to use as terminal materials in the preview
 
         """
         path = self._get_path() + "/preview"
