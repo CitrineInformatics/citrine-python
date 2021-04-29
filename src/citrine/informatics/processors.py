@@ -176,22 +176,26 @@ class MonteCarloProcessor(Serializable['GridProcessor'], Processor, AIResourceMe
     description = properties.Optional(properties.String(), 'config.description')
     typ = properties.String('config.type', default='ContinuousSearch', deserializable=False)
     max_candidates = properties.Optional(properties.Integer, 'config.max_candidates')
+    mode = properties.Optional(properties.String(), 'config.mode')
 
     # NOTE: These could go here or in _post_dump - it's unclear which is better right now
     module_type = properties.String('module_type', default='PROCESSOR')
 
     def _attrs(self) -> List[str]:
-        return ["name", "description", "typ"]
+        return ["name", "description", "mode", "typ"]
 
     def __init__(self,
                  name: str,
                  description: str,
                  max_candidates: Optional[int] = None,
                  session: Optional[Session] = None):
+                 mode: Optional[str] = None,
+                 session: Optional[Session] = None):
         self.name: str = name
         self.description: str = description
         self.max_candidates: Optional[int] = max_candidates
         self.session: Optional[Session] = session
+        self.mode: Optional[str] = mode
 
     def _post_dump(self, data: dict) -> dict:
         data['display_name'] = data['config']['name']
