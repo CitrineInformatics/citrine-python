@@ -188,7 +188,6 @@ class MonteCarloProcessor(Serializable['GridProcessor'], Processor, AIResourceMe
                  name: str,
                  description: str,
                  max_candidates: Optional[int] = None,
-                 session: Optional[Session] = None):
                  mode: Optional[str] = None,
                  session: Optional[Session] = None):
         self.name: str = name
