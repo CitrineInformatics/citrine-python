@@ -63,7 +63,7 @@ A set of descriptors defines a controlled vocabulary with which to describe AI t
 The :class:`~citrine.builders.descriptors.PlatformVocabulary` class is provided to collect a set of descriptors,
 associate them with short convenient names, and provide them via a familiar dictionary interface.
 
-While descriptors cannot be independently saved on the platform for reuse, :class:`~citrine.resources.attribute_templates.AttributeTemplate`s can be.
+While descriptors cannot be independently saved on the platform for reuse, :class:`AttributeTemplates <citrine.resources.attribute_templates.AttributeTemplate>` can be.
 Therefore, common descriptors can be saved as attribute templates to the data platform, effectively sharing them with other users.
 :meth:`~citrine.builders.descriptors.PlatformVocabulary.from_templates` facilitates this pattern by automatically downloading attribute templates and converting them into descriptors.
 Attribute templates must be associated with a namespace via custom identifiers (the `uids` field).

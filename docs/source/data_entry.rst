@@ -81,9 +81,6 @@ Runs may be listed by spec with
 :meth:`MeasurementRunCollection.list_by_spec() <citrine.resources.measurement_run.MeasurementRunCollection.list_by_spec>`,
 and :meth:`ProcessRunCollection.list_by_spec() <citrine.resources.process_run.ProcessRunCollection.list_by_spec>`.
 
-Material Specs may also be listed by their template with
-:meth:`MaterialSpecCollection.list_by_template() <citrine.resources.material_spec.MaterialSpecCollection.list_by_template>`.
-
 Specs may be listed by template with
 :meth:`MaterialSpecCollection.list_by_template() <citrine.resources.material_spec.MaterialSpecCollection.list_by_template>`,
 :meth:`ProcessSpecCollection.list_by_template() <citrine.resources.process_spec.ProcessSpecCollection.list_by_template>`,
@@ -91,6 +88,7 @@ and :meth:`MeasurementSpecCollection.list_by_template() <citrine.resources.measu
 
 The output material for a process can be located with
 :meth:`MaterialRunCollection.get_by_process() <citrine.resources.material_run.MaterialRunCollection.get_by_process>`
+or :meth:`MaterialSpecCollection.get_by_process() <citrine.resources.material_spec.MaterialSpecCollection.get_by_process>`.
 
 The ingredients a material is used in can be located with
 :meth:`IngredientRunCollection.list_by_material() <citrine.resources.ingredient_run.IngredientRunCollection.list_by_material>`,
