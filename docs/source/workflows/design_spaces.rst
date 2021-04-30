@@ -277,6 +277,7 @@ We will require that formulations contain 2 ingredients, that no more than 1 sol
   design_space = FormulationDesignSpace(
     name = "Saline solution design space",
     description = "Composes formulations from water, salt, and boric acid",
+    formulation_descriptor = descriptor,
     ingredients = ingredients,
     labels = labels,
     constraints = constraints
