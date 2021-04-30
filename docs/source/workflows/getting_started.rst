@@ -56,24 +56,11 @@ There are 3 types of modules on the platform:
 Archiving
 *********
 
-Modules come active by default when created. If you would like to `archive` a module so it cannot be used again consider this example:
-
-.. code:: python
-
-   predictor = project.predictors.get(predictor_uuid)
-   predictor.archived = True
-   project.predictors.update(predictor)
-
-Modules that are `archived` cannot be used in workflows and will not show up when listing.
-Modules can not currently be permanently deleted.
-
-If you would like to un-archive a module and know the uid, you may do the following:
-
-.. code:: python
-
-   predictor = project.predictors.get(predictor_uuid)
-   predictor.archived = False
-   project.predictors.update(predictor)
+Modules and workflows come active by default when created.
+An archived resource will not show up when listing, and an archived module cannot be used in workflows.
+To archive a resource with a known ``uid``, use the ``.archive()`` method of the relevant collection
+(e.g., :meth:`DesignWorkflowCollection.archive() <citrine.resources.design_workflow.DesignWorkflowCollection.archive>`).
+Use ``.restore()`` to un-archive the resource.
 
 Registration and validation
 ---------------------------

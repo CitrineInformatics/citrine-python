@@ -8,8 +8,8 @@ from gemd.entity.link_by_uid import LinkByUID
 
 
 @pytest.fixture(params=[
-    RootInfo(name="root name", headers=["Root", "Name"], field="name"),
-    XOR(name="root name or sample_type", headers=["Root", "Info"], variables=[RootInfo(name="root name", headers=["Root", "Name"], field="name"), RootInfo(name="root name", headers=["Root", "Sample Type"], field="sample_type")]),
+    RootInfo(name="terminal name", headers=["Root", "Name"], field="name"),
+    XOR(name="terminal name or sample_type", headers=["Root", "Info"], variables=[RootInfo(name="terminal name", headers=["Root", "Name"], field="name"), RootInfo(name="terminal name", headers=["Root", "Sample Type"], field="sample_type")]),
     AttributeByTemplate(name="density", headers=["density"], template=LinkByUID(scope="templates", id="density"), attribute_constraints=[[LinkByUID(scope="templates", id="density"), RealBounds(0, 100, "g/cm**3")]]),
     AttributeByTemplateAfterProcessTemplate(name="density", headers=["density"], attribute_template=LinkByUID(scope="template", id="density"), process_template=LinkByUID(scope="template", id="process")),
     AttributeByTemplateAndObjectTemplate(name="density", headers=["density"], attribute_template=LinkByUID(scope="template", id="density"), object_template=LinkByUID(scope="template", id="object")),
@@ -21,7 +21,7 @@ from gemd.entity.link_by_uid import LinkByUID
     IngredientLabelsSetInOutput(name="ingredient label", headers=["label"], process_templates=[LinkByUID(scope="template", id="process")], ingredient_name="ingredient"),
     IngredientQuantityByProcessAndName(name="ingredient quantity dimension", headers=["quantity"], process_template=LinkByUID(scope="template", id="process"), ingredient_name="ingredient", quantity_dimension=IngredientQuantityDimension.ABSOLUTE, unit='kg'),
     IngredientQuantityInOutput(name="ingredient quantity", headers=["ingredient quantity"], ingredient_name="ingredient", quantity_dimension=IngredientQuantityDimension.MASS, process_templates=[LinkByUID(scope="template", id="object")]),
-    RootIdentifier(name="root id", headers=["id"], scope="scope")
+    RootIdentifier(name="terminal id", headers=["id"], scope="scope")
 ])
 def variable(request):
     return request.param

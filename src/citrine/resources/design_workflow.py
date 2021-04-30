@@ -27,7 +27,7 @@ class DesignWorkflowCollection(Collection[DesignWorkflow]):
         return workflow
 
     def archive(self, workflow_id: UUID):
-        """Archive a predictor evaluation workflow.
+        """Archive a design workflow.
 
         Parameters
         ----------
@@ -40,7 +40,7 @@ class DesignWorkflowCollection(Collection[DesignWorkflow]):
         self.session.put_resource(url, {})
 
     def restore(self, workflow_id: UUID):
-        """Restore an archived predictor evaluation workflow.
+        """Restore an archived design workflow.
 
         Parameters
         ----------
@@ -53,6 +53,6 @@ class DesignWorkflowCollection(Collection[DesignWorkflow]):
         self.session.put_resource(url, {})
 
     def delete(self, uid: Union[UUID, str]) -> Response:
-        """Predictor Evaluation Workflows cannot be deleted; they can be archived instead."""
+        """Design Workflows cannot be deleted; they can be archived instead."""
         raise NotImplementedError(
             "Design Workflows cannot be deleted; they can be archived instead.")
