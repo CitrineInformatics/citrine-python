@@ -54,6 +54,8 @@ class Dataset(Resource['Dataset']):
         A summary of this dataset.
     description: str
         Long-form description of the dataset.
+    unique_name: Optional[str]
+        An optional, globally unique name that can be used to retrieve the dataset.
 
     Attributes
     ----------
@@ -94,7 +96,8 @@ class Dataset(Resource['Dataset']):
     delete_time = properties.Optional(properties.Datetime(), 'delete_time')
     public = properties.Optional(properties.Boolean(), 'public')
 
-    def __init__(self, name: str, summary: str, description: str, unique_name: str = None):
+    def __init__(self, name: str, summary: str,
+                 description: str, unique_name: Optional[str] = None):
         self.name: str = name
         self.summary: str = summary
         self.description: str = description

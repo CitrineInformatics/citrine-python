@@ -1,7 +1,7 @@
 Design Workflows
 ========================
 
-A design workflow ranks materials according to a :doc:`score <scores>`.
+A :class:`~citrine.informatics.workflows.design_workflow.DesignWorkflow` ranks materials according to a :doc:`score <scores>`.
 This workflow is comprised of three modules:
 
 -  :doc:`Design space <design_spaces>` defines all possible materials that can be generated.

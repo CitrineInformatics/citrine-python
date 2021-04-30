@@ -28,7 +28,8 @@ A :class:`~citrine.gemtables.variables.Variable` is addressed locally (within a 
 A :class:`~citrine.gemtables.variables.Variable` is also labeled with ``headers``, which is a list of strings that can express a hierarchical relationship with other variables.
 The headers are listed in decreasing hierarchical order: the first string indicates the broadest classification, and each subsequent string indicates a refinement of those classifications preceding it.
 In the example below, a hardness measurement might also be performed on the object denoted by the ``Product`` header.
-One might assign ``headers = ["Product", "Hardness"]`` to this measurement in order to relate it with the ``Density`` measurement of the same physical object.
+One might assign ``headers = ["Product", "Hardness"]`` to that measurement in order to relate it with the ``Density`` measurement of the same physical object.
+Assuming they are next to each other, the ``Density`` and ``Hardness`` columns in the resulting table would be grouped under a larger ``Product`` column.
 
 .. code-block:: python
 
@@ -42,6 +43,7 @@ One might assign ``headers = ["Product", "Hardness"]`` to this measurement in or
 
 A :class:`~citrine.gemtables.columns.Column` object describes how to transform a :class:`~citrine.gemtables.variables.Variable` into a primitive value (e.g., a real number, an integer, or a string) that can be entered into a cell in a table.
 This is necessary because `GEMD Attributes`__ are more general than primitive values; they often convey uncertainty estimates, for example.
+All columns are linked to a variable through the ``data_source`` field, which must equal the ``name`` of some variable in the table configuration.
 
 __ https://citrineinformatics.github.io/gemd-docs/specification/attributes/
 
@@ -56,7 +58,7 @@ The data_source parameter is a reference to a :class:`~citrine.gemtables.variabl
 Defining tables
 ---------------
 
-The :class:`~citrine.resources.ara_definition.TableConfig` object defines how to build a GEM Table.
+The :class:`~citrine.resources.table_config.TableConfig` object defines how to build a GEM Table.
 It specifies a list of UUIDs for datasets to query in generating the table,
 a list of :class:`~citrine.gemtables.rows.Row` objects that define material histories to use as rows,
 a list of :class:`~citrine.gemtables.variables.Variable` objects that specify how to extract data from those material histories,
@@ -64,7 +66,7 @@ and a list of :class:`~citrine.gemtables.columns.Column` objects to transform th
 
 .. code-block:: python
 
-   from citrine.resources.ara_definition import TableConfig
+   from citrine.resources.table_config import TableConfig
    from uuid import UUID
    table_config = TableConfig(
          name = "cookies",
@@ -79,14 +81,14 @@ Note the inclusion of two datasets above.
 In general, you should have at least two datasets referenced because Objects and Templates are generally associated with different datasets.
 
 In addition to defining variables, rows, and columns individually, there are convenience methods that simultaneously add multiple elements to an existing Table Config.
-One such method is :func:`~citrine.resources.ara_definition.TableConfig.add_all_ingredients`, which creates variables and columns for every potential ingredient in a process.
-The user provides a link to a process template that has a non-empty set of `allowed_names` (the allowed names of the ingredient runs and specs in the process).
+One such method is :func:`~citrine.resources.table_config.TableConfig.add_all_ingredients`, which creates variables and columns for every potential ingredient in a process.
+The user provides a link to a process template that has a non-empty set of ``allowed_names`` (the allowed names of the ingredient runs and specs in the process).
 This creates an id variable/column and a quantity variable/column for each allowed name.
 The user specifies the dimension to report the quantity in: mass fraction, volume fraction, number fraction, or absolute quantity.
 If the quantities are reported in absolute amounts then there is also a column for the units.
 
-The code below takes the `table_config` object defined in the preceding code block and adds the ingredient amounts for a `batter mixing` process with known uid "3a308f78-e341-f39c-8076-35a2c88292ad".
-Assume that the process template is accessible from a known project, `project`.
+The code below takes the ``table_config`` object defined in the preceding code block and adds the ingredient amounts for a "batter mixing" process with known uid "3a308f78-e341-f39c-8076-35a2c88292ad".
+Assume that the process template is accessible from a known project, ``project``.
 
 .. code-block:: python
 
@@ -103,8 +105,8 @@ If the process template's allowed names includes, for example, "flour" then ther
 Previewing tables
 -----------------
 
-Calling :func:`~citrine.resources.project.Project.table_configs` on a project returns an :class:`~citrine.resources.ara_definition.TableConfigCollection` object, which facilitates access to the collection of all TableConfigs visible to a Project.
-Via such an object, one can preview a draft TableConfig on an explicit set of Material Histories, defined by their root materials:
+Calling :func:`~citrine.resources.project.Project.table_configs` on a project returns an :class:`~citrine.resources.table_config.TableConfigCollection` object, which facilitates access to the collection of all TableConfigs visible to a Project.
+Via such an object, one can preview a draft TableConfig on an explicit set of Material Histories, defined by their terminal materials:
 
 For example:
 
@@ -180,10 +182,10 @@ For example:
 
 The return type of the ``initiate_build`` method is a :class:`~citrine.resources.job.JobSubmissionResponse` that contains a unique identifier for the submitted job.
 
-The table id and version can be used to get a :class:`~citrine.resources.table.Table` resource that provides access the table.
+The table id and version can be used to get a :class:`~citrine.resources.gemtables.GemTable` resource that provides access to the table.
 
 You can also use the :class:`~citrine.resources.job.JobStatusResponse` to return the :class:`~citrine.resources.gemtables.GemTable` resource directly with the ``get_by_build_job`` method.
-Just like the :class:`~citrine.resources.file_link.FileLink` resource, :class:`~citrine.resources.table.Table` does not literally contain the table but does expose a ``read`` method that will download it.
+Just like the :class:`~citrine.resources.file_link.FileLink` resource, :class:`~citrine.resources.gemtables.GemTable` does not literally contain the table but does expose a ``read`` method that will download it.
 
 For example, once the above ``initiate_build`` method has completed:
 
@@ -197,13 +199,13 @@ For example, once the above ``initiate_build`` method has completed:
 Available Row Definitions
 -------------------------
 
-Currently, GEM Tables only provide a single way to define Rows: by the :class:`~gemd.entity.template.material_template.MaterialTemplate` of the roots of the material histories that correspond to each row.
+Currently, GEM Tables provide a single way to define Rows: by the :class:`~gemd.entity.template.material_template.MaterialTemplate` of the terminal materials of the material histories that correspond to each row.
 
 :class:`~citrine.gemtables.rows.MaterialRunByTemplate`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The :class:`~citrine.gemtables.rows.MaterialRunByTemplate` class defines Rows through a list of :class:`~gemd.entity.template.material_template.MaterialTemplate`.
-Every :class:`~gemd.entity.object.material_run.MaterialRun` that is assigned to any template in the list is used as the root of a  Material History to be mapped to a Row.
+Every :class:`~gemd.entity.object.material_run.MaterialRun` that is assigned to any template in the list is used as the terminal material of a Material History to be mapped to a Row.
 This is helpful when the rows correspond to classes of materials that are defined through their templates.
 For example, there could be a :class:`~gemd.entity.template.material_template.MaterialTemplate` called "Cake" that is used in all
 of the cakes and another called "Brownies" that is used in all of the brownies.
@@ -225,7 +227,7 @@ There are several ways to define variables that take their values from Attribute
 
 * Identifiers
 
-  * :class:`~citrine.gemtables.variables.RootInfo`: for fields defined on the material at the root of the Material History, like the name of the material
+  * :class:`~citrine.gemtables.variables.RootInfo`: for fields defined on the material at the terminal of the Material History, like the name of the material
   * :class:`~citrine.gemtables.variables.RootIdentifier`: for the id of the Material History, which can be used as a unique identifier for the rows
   * :class:`~citrine.gemtables.variables.IngredientIdentifierByProcessTemplateAndName`: for the id of the material being used in an ingredient, which can be used as a key for looking up that input material
   * :class:`~citrine.gemtables.variables.IngredientIdentifierInOutput`: for the id of a material used in an ingredient between the terminal material and a given set of processes (useful for ingredients used in multiple processes)

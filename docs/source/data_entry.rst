@@ -7,7 +7,7 @@ Creating Data Model Objects
 ---------------------------------
 
 Each data object and template in the GEMD_ data model has a corresponding resource in the Citrine Python Client.
-For example, the :class:`citrine.resources.process_spec.ProcessSpec` class implements the ProcessSpec_ object in GEMD_.
+For example, the :class:`~citrine.resources.process_spec.ProcessSpec` class implements the ProcessSpec_ object in GEMD_.
 The Citrine Python Client implementations are consistent with the GEMD_ model specification.
 
 The Citrine Python Client is built on top of and entirely interoperable with the gemd-python_ package.
@@ -42,7 +42,7 @@ For example:
 Note that registration must be performed within the scope of a dataset: the dataset into which the objects are being written.
 The data model object collections that are defined with the project scope (such as `project.process_specs`) are read-only and will throw an error if their register method is called.
 
-If you have GEMD_ objects, e.g. :class:`gemd.entity.object.process_spec.ProcessSpec`, you can register it just like the objects defined in the Citrine Python Client.
+If you have GEMD_ objects, e.g. :class:`~gemd.entity.object.process_spec.ProcessSpec`, you can register it just like the objects defined in the Citrine Python Client.
 
 
 Finding Data Model Objects
@@ -76,35 +76,32 @@ methods can help refine the listing to make the target object easier to find.
 There also exist methods for locating data objects by its reference to another object:
 
 Runs may be listed by spec with
-:meth:`citrine.resources.material_run.MaterialRunCollection.list_by_spec`,
-:meth:`citrine.resources.ingredient_run.IngredientRunCollection.list_by_spec`,
-:meth:`citrine.resources.measurement_run.MeasurementRunCollection.list_by_spec`,
-and :meth:`citrine.resources.process_run.ProcessRunCollection.list_by_spec`.
-
-Material Runs may also be listed by their template with
-:meth:`~citrine.resources.material_spec.MaterialSpecCollection.list_by_template`.
+:meth:`MaterialRunCollection.list_by_spec() <citrine.resources.material_run.MaterialRunCollection.list_by_spec>`,
+:meth:`IngredientRunCollection.list_by_spec() <citrine.resources.ingredient_run.IngredientRunCollection.list_by_spec>`,
+:meth:`MeasurementRunCollection.list_by_spec() <citrine.resources.measurement_run.MeasurementRunCollection.list_by_spec>`,
+and :meth:`ProcessRunCollection.list_by_spec() <citrine.resources.process_run.ProcessRunCollection.list_by_spec>`.
 
 Specs may be listed by template with
-:meth:`citrine.resources.material_spec.MaterialSpecCollection.list_by_template`,
-:meth:`citrine.resources.process_spec.ProcessSpecCollection.list_by_template`,
-and :meth:`citrine.resources.measurement_spec.MeasurementSpecCollection.list_by_template`.
+:meth:`MaterialSpecCollection.list_by_template() <citrine.resources.material_spec.MaterialSpecCollection.list_by_template>`,
+:meth:`ProcessSpecCollection.list_by_template() <citrine.resources.process_spec.ProcessSpecCollection.list_by_template>`,
+and :meth:`MeasurementSpecCollection.list_by_template() <citrine.resources.measurement_spec.MeasurementSpecCollection.list_by_template>`.
 
 The output material for a process can be located with
-:meth:`citrine.resources.material_run.MaterialRunCollection.get_by_process`,
-or :meth:`citrine.resources.material_run.MaterialRunCollection.get_by_process`.
+:meth:`MaterialRunCollection.get_by_process() <citrine.resources.material_run.MaterialRunCollection.get_by_process>`
+or :meth:`MaterialSpecCollection.get_by_process() <citrine.resources.material_spec.MaterialSpecCollection.get_by_process>`.
 
 The ingredients a material is used in can be located with
-:meth:`citrine.resources.ingredient_run.IngredientRunCollection.list_by_material`,
-or :meth:`citrine.resources.ingredient_spec.IngredientSpecCollection.list_by_material`.
+:meth:`IngredientRunCollection.list_by_material() <citrine.resources.ingredient_run.IngredientRunCollection.list_by_material>`,
+or :meth:`IngredientSpecCollection.list_by_material() <citrine.resources.ingredient_spec.IngredientSpecCollection.list_by_material>`.
 
 The measurements of a material can be located with
-:meth:`citrine.resources.measurement_run.MeasurementRunCollection.list_by_material`.
+:meth:`MeasurementRunCollection.list_by_material() <citrine.resources.measurement_run.MeasurementRunCollection.list_by_material>`.
 
 Updating Data Model Objects
 ---------------------------
 Runs and specs can be quickly modified in-place and persisted with ``upload``, but templates require more care.
 In particular, changing the bounds or allowed names/labels of a template could invalidate existing data objects; thus every object on platform must be compared against the desired change.
-To attempt such a template update, use :meth:`citrine.resources.data_concepts.DataConceptsCollection.async_update`.
+To attempt such a template update, use :meth:`~citrine.resources.data_concepts.DataConceptsCollection.async_update`.
 If the update is invalid, then the reasons for failure are logged.
 
 Referencing Data Model Objects
@@ -130,7 +127,7 @@ These links are created with the :class:`~gemd.entity.link_by_uid.LinkByUID` cla
 Material History
 ----------------
 
-Starting with a specific root :class:`~citrine.resources.material_run.MaterialRun`,
+Starting with a specific terminal :class:`~citrine.resources.material_run.MaterialRun`,
 you can retrieve the complete material history--every process, ingredient and material that contributed to
 the target material, as well as the measurements that were performed on all of those materials.
 The method is :func:`~citrine.resources.material_run.MaterialRunCollection.get_history`,
