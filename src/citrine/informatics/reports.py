@@ -8,13 +8,14 @@ from uuid import UUID
 from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
 from citrine._serialization.serializable import Serializable
+from citrine._rest.asynchronous_object import AsynchronousObject
 from citrine._session import Session
 from citrine.informatics.descriptors import Descriptor
 
 SelfType = TypeVar('SelfType', bound='Report')
 
 
-class Report(PolymorphicSerializable['Report']):
+class Report(PolymorphicSerializable['Report'], AsynchronousObject):
     """[ALPHA] A Citrine Report contains information related to a module.
 
     Abstract type that returns the proper type given a serialized dict.
@@ -143,7 +144,7 @@ class PredictorReport(Serializable['PredictorReport'], Report):
     Parameters
     ----------
     status: str
-        the status of the report (e.g., PENDING, ERROR, OK, etc)
+        The status of the report. Possible statuses are PENDING, ERROR, and OK.
     descriptors: List[Descriptor]
         All descriptors that appear in the predictor
     model_summaries: List[ModelSummary]
@@ -164,6 +165,15 @@ class PredictorReport(Serializable['PredictorReport'], Report):
         self.descriptors = descriptors or []
         self.model_summaries = model_summaries or []
         self.session: Optional[Session] = session
+
+    def in_progress(self) -> bool:
+        return self.status == "PENDING"
+
+    def succeeded(self) -> bool:
+        return self.status == "OK"
+
+    def failed(self) -> bool:
+        return self.status == "ERROR"
 
     def post_build(self):
         """Modify a PredictorReport object in-place after deserialization."""
