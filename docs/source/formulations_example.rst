@@ -133,6 +133,9 @@ Perhaps most crucial are the `attribute templates`, which correspond to the para
 The name, bounds, and units on these templates will later be matched to descriptors in the AI Engine.
 Make sure to set the bounds wide enough to encompass all anticipated use cases of the templates.
 
+.. Attention:: At this time, currency units are not supported by default because of issues around fluctuating conversion rates.
+    For the "price" template, we therefore use units of 1/kg instead of $/kg.
+
 .. note:: In the code examples that follow, imports are assumed to be cumulative.
     Once an import has been demonstrated, we do not include it in subsequent code blocks.
 
