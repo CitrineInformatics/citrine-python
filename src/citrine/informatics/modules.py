@@ -13,7 +13,6 @@ class Module(PolymorphicSerializable['Module']):
 
     Abstract type that returns the proper type given a serialized dict.
 
-
     """
 
     _response_key = None
