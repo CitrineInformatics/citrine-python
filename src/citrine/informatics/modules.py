@@ -34,12 +34,15 @@ class Module(PolymorphicSerializable['Module'], AsynchronousObject):
         }[data['module_type']].get_type(data)
 
     def in_progress(self) -> bool:
+        """Whether module validation is in progress."""
         return self.status == "VALIDATING" or self.status == "CREATED"
 
     def succeeded(self) -> bool:
+        """Whether module validation has completed successfully."""
         return self.status == "READY"
 
     def failed(self) -> bool:
+        """Whether module validation has completed unsuccessfully."""
         return self.status == "INVALID" or self.status == "ERROR"
 
 

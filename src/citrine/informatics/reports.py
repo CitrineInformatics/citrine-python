@@ -167,12 +167,15 @@ class PredictorReport(Serializable['PredictorReport'], Report):
         self.session: Optional[Session] = session
 
     def in_progress(self) -> bool:
+        """Whether report generation is in progress."""
         return self.status == "PENDING"
 
     def succeeded(self) -> bool:
+        """Whether report generation has completed successfully."""
         return self.status == "OK"
 
     def failed(self) -> bool:
+        """Whether report generation has completed unsuccessfully."""
         return self.status == "ERROR"
 
     def post_build(self):

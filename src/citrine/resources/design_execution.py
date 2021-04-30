@@ -92,7 +92,6 @@ class DesignExecution(Resource['DesignExecution'], Pageable, AsynchronousObject)
         """Whether design execution has completed unsuccessfully."""
         return self.status == "FAILED"
 
-
     @classmethod
     def _build_candidates(cls, subset_collection: Iterable[dict]) -> Iterable[DesignCandidate]:
         for candidate in subset_collection:
