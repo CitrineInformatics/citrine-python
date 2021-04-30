@@ -340,9 +340,12 @@ class TableConfigCollection(Collection[TableConfig]):
             history.  If unspecified, uses the webservice's default.
 
 
-        Returns A table config as well as addition variables/columns which would result in
-            ambiguous matches if included in the config.
+        Returns
         -------
+        List[Tuple[Variable, Column]]
+            A table config as well as addition variables/columns which would result in
+            ambiguous matches if included in the config.
+
 
         """
         if isinstance(material, MaterialRun):
@@ -419,7 +422,7 @@ class TableConfigCollection(Collection[TableConfig]):
         return JobStatusResponse.build(response)
 
     def preview(self, table_config: TableConfig, preview_roots: List[LinkByUID]) -> dict:
-        """[ALPHA] Preview a Table Config on an explicit set of roots.
+        """[ALPHA] Preview a Table Config on an explicit set of terminal materials.
 
         Parameters
         ----------
