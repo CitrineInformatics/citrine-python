@@ -286,7 +286,7 @@ class TableConfigCollection(Collection[TableConfig]):
             data['version'] = data['versions'][index]
         return self.build(data)
 
-    @deprecated(deprecated_in="0.123.0",
+    @deprecated(deprecated_in="0.124.0",
                 details="get_with_version() is deprecated in favor of get()")
     def get_with_version(self, table_config_uid: Union[UUID, str],
                          version_number: int) -> TableConfig:
