@@ -12,7 +12,8 @@ def basic_design_workflow_data():
     return {
         'id': str(uuid.uuid4()),
         'display_name': 'Test Workflow',
-        'status': 'READY',
+        'status': 'SUCCEEDED',
+        'status_description': 'READY',
         'config': {
             'design_space_id': str(uuid.uuid4()),
             'processor_id': str(uuid.uuid4()),
@@ -29,7 +30,8 @@ def basic_performance_workflow_data():
     return {
         'id': str(uuid.uuid4()),
         'display_name': 'Test Performance Workflow',
-        'status': 'READY',
+        'status': 'INPROGRESS',
+        'status_description': 'VALIDATING',
         'config': {
             'analysis': {
                 'name': "Some Analysis",
@@ -56,6 +58,8 @@ def test_build_workflow(basic_design_workflow_data):
     # Then
     assert workflow.project_id == workflow_collection.project_id
     assert workflow.session is None
+    assert workflow.succeeded() and not workflow.in_progress() and not workflow.failed()
+
 
 def test_list_workflows(basic_design_workflow_data, basic_performance_workflow_data):
     #Given

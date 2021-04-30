@@ -1,4 +1,4 @@
-"""Tools for working with design spaces."""
+"""Tools for working with module resources."""
 from typing import Type
 
 from citrine._serialization import properties

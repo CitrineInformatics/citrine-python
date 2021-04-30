@@ -1,4 +1,4 @@
-"""Resources that represent both individual and collections of workflow executions."""
+"""Resources that represent both individual and collections of design workflow executions."""
 from functools import partial
 from typing import Optional, Iterable, Union
 from uuid import UUID

@@ -1,4 +1,4 @@
-"""Tools for working with design workflows."""
+"""Tools for working with workflow resources."""
 from typing import Type
 
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
