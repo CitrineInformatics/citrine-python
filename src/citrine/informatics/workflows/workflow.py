@@ -15,6 +15,7 @@ class Workflow(PolymorphicSerializable['Workflow'], AsynchronousObject):
 
     All workflows must inherit AIResourceMetadata, and hence have a ``status`` field.
     Possible statuses are INPROGRESS, SUCCEEDED, and FAILED.
+    Workflows also have a ``status_description`` field with more information.
 
     """
 
@@ -42,10 +43,13 @@ class Workflow(PolymorphicSerializable['Workflow'], AsynchronousObject):
             )
 
     def in_progress(self) -> bool:
+        """Whether workflow validation is in progress."""
         return self.status == "INPROGRESS"
 
     def succeeded(self) -> bool:
+        """Whether workflow validation has completed successfully."""
         return self.status == "SUCCEEDED"
 
     def failed(self) -> bool:
+        """Whether workflow validation has completed unsuccessfully."""
         return self.status == "FAILED"
