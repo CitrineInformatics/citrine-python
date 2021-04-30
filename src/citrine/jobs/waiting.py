@@ -88,7 +88,7 @@ def wait_for_asynchronous_object(
         if isinstance(resource, WorkflowExecution):
             status = resource.status()
             if print_status_info:
-                _print_string_status(status.status, start)
+                _print_execution_status(status, start)
             return not status.in_progress
         else:
             if collection is None:
