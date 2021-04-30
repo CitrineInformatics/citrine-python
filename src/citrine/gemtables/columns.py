@@ -403,7 +403,6 @@ class ConcatColumn(Serializable['ConcatColumn'], Column):
     data_source: str
         name of the variable to use when populating the column
 
-
     """
 
     data_source = properties.String('data_source')

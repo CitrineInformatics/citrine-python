@@ -11,7 +11,7 @@ There are three processors:
 Enumerated processor
 --------------------
 
-An enumerated processor takes up to a maximum number of materials from a :doc:`design space <design_spaces>` and processes each independently.
+An :class:`~citrine.informatics.processors.EnumeratedProcessor` takes up to a maximum number of materials from a :doc:`design space <design_spaces>` and processes each independently.
 The maximum number of candidates sampled from the design space is defined by the optional ``max_size`` parameter when creating an :class:`~citrine.informatics.processors.EnumeratedProcessor` using the python SDK.
 To be valid, enumerated processors must have a maximum size of at least 1.
 
@@ -60,8 +60,8 @@ The following demonstrates how to create an enumerated processor that takes up t
 Grid processor
 --------------
 
-A grid processor generates samples from the outer product of finite dimensions.
-This processor can only be used with a :class:`~citrine.informatics.design_spaces.ProductDesignSpace`.
+A :class:`~citrine.informatics.processors.GridProcessor` generates samples from the outer product of finite dimensions.
+This processor can only be used with a :class:`~citrine.informatics.design_spaces.product_design_space.ProductDesignSpace`.
 To create a finite set of materials from continuous dimensions, a uniform grid is created between the bounds of the descriptor.
 The number of points is specified by ``grid_sizes``.
 ``grid_sizes`` is a map from descriptor key to the number of points to select between bounds of the dimension.

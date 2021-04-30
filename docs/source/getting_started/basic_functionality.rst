@@ -25,14 +25,14 @@ creates a process spec with the display name "Buy ammonium chloride" and no othe
 
 To persist a resource in the database, you must upload it using the ``register`` command of the relevant collection.
 Assume there is a dataset ``battery_dataset_1``.
-This dataset has an attribute `.process_specs`, representing the collection of all process specs.
-The process spec collection has a `register` command, which registers the process spec, like so:
+This dataset has an attribute ``.process_specs``, which produces a :class:`~citrine.resources.process_spec.ProcessSpecCollection`.
+The collection has a ``register`` command, which registers the :class:`~citrine.resources.process_spec.ProcessSpec`, like so:
 
 .. code-block:: python
 
     battery_dataset_1.process_specs.register(buy_electrolyte_spec)
 
-If you tried to register the process spec to the dataset's material run collection, using ``battery_dataset_1.material_runs.register(buy_electrolyte_spec)``, then an error would result (since the types don't match).
+If you tried to register the process spec to the dataset's material run collection, using ``battery_dataset_1.material_runs.register(buy_electrolyte_spec)``, then an error would result since the types don't match.
 
 The ``register`` command returns a copy of the resource as it now exists in the database.
 The database may decorate the object with additional information, such as a unique identifier string that you can use to retrieve it in the future.
@@ -85,7 +85,7 @@ Resources can generally be deleted with the ``delete`` command.
 However, resources may link to other resources, and deleting these interconnected objects is tricky.
 For more information, see the section on :ref:`deleting data objects <deleting_data_objects_label>`.
 
-AI modules cannot be deleted, but they can be :ref:`archived <archiving_label>`.
+AI modules cannot be deleted at this time, but they can be :ref:`archived <archiving_label>`.
 
 Data Model Object Specific Methods
 -----------------------------------
