@@ -2,15 +2,19 @@
 from typing import Type
 
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
+from citrine._rest.asynchronous_object import AsynchronousObject
 
 
 __all__ = ['Workflow']
 
 
-class Workflow(PolymorphicSerializable['Workflow']):
-    """[DEPRECATED] A Citrine Workflow is a collection of Modules that together accomplish some task.
+class Workflow(PolymorphicSerializable['Workflow'], AsynchronousObject):
+    """A Citrine Workflow is a collection of Modules that together accomplish some task.
 
     Abstract type that returns the proper type given a serialized dict.
+
+    All workflows must inherit AIResourceMetadata, and hence have a ``status`` field.
+    Possible statuses are INPROGRESS, SUCCEEDED, and FAILED.
 
     """
 
@@ -36,3 +40,12 @@ class Workflow(PolymorphicSerializable['Workflow']):
                 '{} is not a valid workflow type. '
                 'Must be in {}.'.format(data['module_type'], type_dict.keys())
             )
+
+    def in_progress(self) -> bool:
+        return self.status == "INPROGRESS"
+
+    def succeeded(self) -> bool:
+        return self.status == "SUCCEEDED"
+
+    def failed(self) -> bool:
+        return self.status == "FAILED"
