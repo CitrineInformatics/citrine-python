@@ -90,11 +90,16 @@ class GemTableCollection(Collection[GemTable]):
         self.project_id = project_id
         self.session: Session = session
 
-    def get(self, uid: Union[UUID, str], version: int) -> GemTable:
-        """Get a Table's metadata."""
-        path = self._get_path(uid) + "/versions/{}".format(version)
-        data = self.session.get_resource(path)
-        return self.build(data)
+    def get(self, uid: Union[UUID, str], version: Optional[int] = None) -> GemTable:
+        """Get a Table's metadata. If no version is specified, get the most recent version."""
+        if version is not None:
+            path = self._get_path(uid) + "/versions/{}".format(version)
+            data = self.session.get_resource(path)
+            return self.build(data)
+        else:
+            tables = self.list_versions(uid)
+            newest_table = max(tables, key=lambda x: x.version or 0)
+            return newest_table
 
     def list_versions(self,
                       uid: UUID,
@@ -113,7 +118,7 @@ class GemTableCollection(Collection[GemTable]):
         """
         def fetch_versions(page: Optional[int],
                            per_page: int) -> Tuple[Iterable[dict], str]:
-            data = self.session.get_resource(self._get_path() + '/' + str(uid),
+            data = self.session.get_resource(self._get_path(uid),
                                              params=self._page_params(page, per_page))
             return (data[self._collection_key], data.get('next', ""))
 
