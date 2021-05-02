@@ -2,6 +2,7 @@ from copy import copy
 from logging import getLogger
 from typing import List, Union, Optional, Tuple
 from uuid import UUID
+import numpy as np
 
 from deprecation import deprecated
 from gemd.entity.object import MaterialRun
@@ -268,13 +269,29 @@ class TableConfigCollection(Collection[TableConfig]):
         self.project_id = project_id
         self.session: Session = session
 
+    def get(self, uid: Union[UUID, str], version: Optional[int] = None):
+        """[ALPHA] Get a table config.
+
+        If no version is specified, then the most recent version is returned.
+
+        """
+        if version is not None:
+            path = self._get_path(uid) + "/versions/{}".format(version)
+            data = self.session.get_resource(path)
+        else:
+            path = self._get_path(uid)
+            data = self.session.get_resource(path)
+            version_numbers = [version_data['version_number'] for version_data in data['versions']]
+            index = np.argmax(version_numbers)
+            data['version'] = data['versions'][index]
+        return self.build(data)
+
+    @deprecated(deprecated_in="0.124.0",
+                details="get_with_version() is deprecated in favor of get()")
     def get_with_version(self, table_config_uid: Union[UUID, str],
                          version_number: int) -> TableConfig:
         """[ALPHA] Get a Table Config at a specific version."""
-        path = self._get_path(table_config_uid) + "/versions/{}".format(version_number)
-        data = self.session.get_resource(path)
-        data = data[self._individual_key] if self._individual_key else data
-        return self.build(data)
+        return self.get(uid=table_config_uid, version=version_number)  # pragma: no cover
 
     def build(self, data: dict) -> TableConfig:
         """[ALPHA] Build an individual Table Config from a dictionary."""
