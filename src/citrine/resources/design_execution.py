@@ -81,15 +81,15 @@ class DesignExecution(Resource['DesignExecution'], Pageable, AsynchronousObject)
                     execution_id=self.uid)
 
     def in_progress(self) -> bool:
-        """Whether design execution is in progress."""
+        """Whether design execution is in progress. Does not query state."""
         return self.status == "INPROGRESS"
 
     def succeeded(self) -> bool:
-        """Whether design execution has completed successfully."""
+        """Whether design execution has completed successfully. Does not query state."""
         return self.status == "SUCCEEDED"
 
     def failed(self) -> bool:
-        """Whether design execution has completed unsuccessfully."""
+        """Whether design execution has completed unsuccessfully. Does not query state."""
         return self.status == "FAILED"
 
     @classmethod

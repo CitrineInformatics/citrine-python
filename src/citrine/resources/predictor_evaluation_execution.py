@@ -65,15 +65,15 @@ class PredictorEvaluationExecution(Resource['PredictorEvaluationExecution'], Asy
                     execution_id=self.uid)
 
     def in_progress(self) -> bool:
-        """Whether predictor evaluation execution is in progress."""
+        """Whether predictor evaluation execution is in progress. Does not query state."""
         return self.status == "INPROGRESS"
 
     def succeeded(self) -> bool:
-        """Whether predictor evaluation execution has completed successfully."""
+        """Whether predictor evaluation execution has completed successfully. Does not query state."""
         return self.status == "SUCCEEDED"
 
     def failed(self) -> bool:
-        """Whether predictor evaluation execution has completed unsuccessfully."""
+        """Whether predictor evaluation execution has completed unsuccessfully. Does not query state."""
         return self.status == "FAILED"
 
     @lru_cache()

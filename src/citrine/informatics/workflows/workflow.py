@@ -43,13 +43,13 @@ class Workflow(PolymorphicSerializable['Workflow'], AsynchronousObject):
             )
 
     def in_progress(self) -> bool:
-        """Whether workflow validation is in progress."""
+        """Whether workflow validation is in progress. Does not query state."""
         return self.status == "INPROGRESS"
 
     def succeeded(self) -> bool:
-        """Whether workflow validation has completed successfully."""
+        """Whether workflow validation has completed successfully. Does not query state."""
         return self.status == "SUCCEEDED"
 
     def failed(self) -> bool:
-        """Whether workflow validation has completed unsuccessfully."""
+        """Whether workflow validation has completed unsuccessfully. Does not query state."""
         return self.status == "FAILED"
