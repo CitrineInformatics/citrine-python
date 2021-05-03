@@ -23,7 +23,8 @@ These are known as "atomic" materials because for our purposes they are not brok
 Several materials have labels, which helps the Citrine Platform understand the relationships between materials.
 We have also measured the sugar fraction for some of the materials, and we know the price per kilogram of each material.
 
-.. note:: An ingredient (a material used in a process) can have different labels when used in different mixtures.
+.. note:: An ingredient (a material used in a process) can have different labels when used in different contexts.
+    A label describes how a material is used or the role it plays, not the material itself.
     But to keep this example simple, we assume that a given ingredient always has all of the labels below whenever it is used.
 
 
@@ -125,7 +126,7 @@ The table below shows two examples.
 Ingesting Data
 --------------
 
-.. Warning:: Ingesting data to GEMD is most easily done with additional tooling to automate the process.
+.. Warning:: Ingesting data to GEMD is most easily done with additional tooling to reduce the amount of required programming.
 
 
 Although we will not describe every step of the data ingestion process, we will highlight several data objects and their inter-connections.
@@ -231,7 +232,7 @@ This assumes that the material specs for the atomic materials and the simple syr
             "simple syrup",
             material=simple_syrup_B_spec,  # assume that this and the other relevant specs exist in memory
             process=mix_margarita_spec,
-            labels=["simple syrup"]
+            labels=["simple syrup"],
             mass_fraction=NominalReal(nominal=0.15, units="")
         )
     )
@@ -302,7 +303,7 @@ The code below defines the rows and defines one column that contains the identif
             MaterialRunByTemplate(
                 templates=[LinkByUID.from_entity(t) for t in material_templates_to_include]
             )
-        ]
+        ],
         variables=[RootIdentifier(name="name", headers=["name"], scope=scope)],
         columns=[IdentityColumn(data_source="name")]
     )
@@ -479,7 +480,7 @@ one that computes the mean price over all ingredients (this will be used to cons
 .. code-block:: python
 
     from citrine.informatics.descriptors import RealDescriptor
-    from citrine.informatics.predictors import LabelFractionsPredictor, IngredientFractionsPredictor, MeanPropertyDescriptor
+    from citrine.informatics.predictors import LabelFractionsPredictor, IngredientFractionsPredictor, MeanPropertyPredictor
 
     label_fractions_predictor = LabelFractionsPredictor(
         name="Label fractions",
@@ -617,7 +618,7 @@ The predictor takes care of flattening it to its atomic ingredients.
     from citrine.informatics.constraints import IngredientCountConstraint, IngredientFractionConstraint
 
     fds = FormulationDesignSpace(
-        name="margaritas formulation,
+        name="margaritas formulation",
         description="",
         formulation_descriptor=formulation,
         ingredients={"simple syrup A", "simple syrup B", "tequila", "ice", "triple sec", "bottled lime juice"},
@@ -640,6 +641,7 @@ We do this by wrapping a :class:`~citrine.informatics.design_spaces.product_desi
 .. code-block:: python
 
     from citrine.informatics.design_spaces import ProductDesignSpace
+    from citrine.informatics.dimensions import ContinuousDimension
 
     design_space = ProductDesignSpace(
         name="margaritas design space",
@@ -675,7 +677,7 @@ We define an :class:`~citrine.informatics.scores.LIScore` with this objective an
         name="best margarita",
         design_space_id=design_space.uid,
         predictor_id=graph_predictor.uid,
-        processor=None  # we use the default continuous search processor
+        processor_id=None  # we use the default continuous search processor
     )
     design_workflow = project.design_workflows.register(design_workflow)
 
