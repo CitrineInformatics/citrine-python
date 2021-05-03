@@ -285,6 +285,7 @@ The code below defines the rows and defines one column that contains the identif
 
 .. code-block:: python
 
+    from citrine.resources.table_config import TableConfig
     from citrine.gemtables.rows import MaterialRunByTemplate
     from citrine.gemtables.variables import RootIdentifier
     from citrine.gemtables.columns import IdentityColumn
@@ -380,7 +381,12 @@ This must be repeated once for each ingredient.
 
 .. code-block:: python
 
-    from citrine.gemtables.variables import IngredientIdentifierInOutput, IngredientQuantityInOutput, IngredientLabelsSetInOutput
+    from citrine.gemtables.variables import (
+        IngredientIdentifierInOutput,
+        IngredientQuantityInOutput,
+        IngredientLabelsSetInOutput,
+        IngredientQuantityDimension
+    )
     from citrine.gemtables.columns import ConcatColumn
 
     ing_name = "simple syrup"
