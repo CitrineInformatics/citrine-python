@@ -1,5 +1,6 @@
 """Tools for working with Processors."""
 from typing import Optional, Mapping, Type, List
+from uuid import UUID
 from warnings import warn
 
 from citrine._serialization import properties
@@ -20,6 +21,8 @@ class Processor(Module):
     """
 
     _response_key = None
+    _project_id: Optional[UUID] = None
+    _session: Optional[Session] = None
 
     @classmethod
     def get_type(cls, data) -> Type['Processor']:
