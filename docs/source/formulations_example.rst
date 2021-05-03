@@ -205,7 +205,7 @@ The template includes a comprehensive list of all allowed names and labels.
     In some cases, such as "ice," for which we know that only one material will be used, we have conflated the name and identifier.
 
     Specifying ``allowed_names`` is not required for GEMD, but will make it easier to build the eventual table.
-    In this case, the table will have a super-column describing the use of lime juice in the margarita, with sub-columns for the identifier of the specific lime juice used, its quantity, and any labels to apply.
+    In this case, the table will have a super-column describing the use of lime juice in the margarita, with sub-columns for the identifier of the specific lime juice used, its quantity, and any labels belonging to the ingredient.
 
     If a suitable set of names are not known, it is possible to be generic: "mixing input 1," "mixing input 2," etc.
 
@@ -456,7 +456,7 @@ The first component of the graphical model is a :class:`~citrine.informatics.pre
 This flattening efficiently teaches the predictor about the relationship between materials.
 In this case, it learns exactly how "simple syrup A" and "simple syrup B" are similar to each other because they both contain atomic materials sugar and water but in slightly different amounts.
 Although the homogeneous representation is not entirely appropriate for all formulations problems, it is usually an excellent approximation,
-especially when coupled with flexible machine learning models that can emulate more complexsubtle relationships within the data.
+especially when coupled with flexible machine learning models that can emulate more complex relationships within the data.
 
 .. code-block:: python
 
