@@ -1,6 +1,6 @@
 from typing import Set
 
-from citrine._rest.resource import Resource
+from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties as _properties
 from citrine.informatics.descriptors import FormulationDescriptor
 from citrine.informatics.predictors import Predictor
@@ -51,6 +51,10 @@ class IngredientFractionsPredictor(Resource["IngredientFractionsPredictor"],
     def _post_dump(self, data: dict) -> dict:
         data['display_name'] = data['config']['name']
         return data
+
+    def resource_type(self) -> ResourceTypeEnum:
+        """The resource type is MODULE."""
+        return ResourceTypeEnum.MODULE
 
     def __str__(self):
         return '<IngredientFractionsPredictor {!r}>'.format(self.name)

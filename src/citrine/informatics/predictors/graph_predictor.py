@@ -1,7 +1,7 @@
 from typing import List, Optional, Union
 from uuid import UUID
 
-from citrine._rest.resource import Resource
+from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties as _properties
 from citrine.informatics.data_sources import DataSource
 from citrine.informatics.predictors import Predictor
@@ -62,6 +62,10 @@ class GraphPredictor(Resource['GraphPredictor'], Predictor, AIResourceMetadata):
                 # embedded predictors are not modules, so only serialize their config
                 data['config']['predictors'][i] = predictor['config']
         return data
+
+    def resource_type(self) -> ResourceTypeEnum:
+        """The resource type is MODULE."""
+        return ResourceTypeEnum.MODULE
 
     @classmethod
     def _pre_build(cls, data: dict) -> dict:

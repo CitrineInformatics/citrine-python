@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from citrine._rest.resource import Resource
+from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties as _properties
 from citrine.informatics.data_sources import DataSource
 from citrine.informatics.descriptors import Descriptor
@@ -64,6 +64,10 @@ class AutoMLPredictor(Resource['AutoMLPredictor'], Predictor, AIResourceMetadata
         data['config']['outputs'] = [data['output']]
         data['config']['responses'] = [data['output']]
         return data
+
+    def resource_type(self) -> ResourceTypeEnum:
+        """The resource type is MODULE."""
+        return ResourceTypeEnum.MODULE
 
     @classmethod
     def _pre_build(cls, data: dict) -> dict:

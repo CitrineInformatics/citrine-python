@@ -1,7 +1,7 @@
 from typing import List, Optional, Mapping
 from warnings import warn
 
-from citrine._rest.resource import Resource
+from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties as _properties
 from citrine.informatics.data_sources import DataSource
 from citrine.informatics.descriptors import FormulationDescriptor
@@ -117,6 +117,10 @@ class GeneralizedMeanPropertyPredictor(
     def _post_dump(self, data: dict) -> dict:
         data['display_name'] = data['config']['name']
         return data
+
+    def resource_type(self) -> ResourceTypeEnum:
+        """The resource type is MODULE."""
+        return ResourceTypeEnum.MODULE
 
     def __str__(self):
         return '<GeneralizedMeanPropertyPredictor {!r}>'.format(self.name)
