@@ -7,7 +7,7 @@ from gemd.entity.base_entity import BaseEntity
 from gemd.entity.link_by_uid import LinkByUID
 
 from citrine._rest.collection import Collection
-from citrine._rest.resource import Resource
+from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
 from citrine._session import Session
 from citrine.resources.api_error import ApiError
@@ -74,6 +74,7 @@ class Project(Resource['Project']):
     """
 
     _response_key = 'project'
+    _resource_type = ResourceTypeEnum.PROJECT
 
     name = properties.String('name')
     description = properties.Optional(properties.String(), 'description')
@@ -268,9 +269,13 @@ class Project(Resource['Project']):
             Returns ``True`` upon successful resource transfer.
 
         """
-        self.session.checked_post(self._path() + "/transfer-resource", {
-            "to_project_id": str(receiving_project_uid),
-            "resource": resource.as_entity_dict()})
+        try:
+            self.session.checked_post(self._path() + "/transfer-resource", {
+                "to_project_id": str(receiving_project_uid),
+                "resource": resource.as_entity_dict()})
+        except AttributeError:  # If _resource_type is not implemented
+            raise RuntimeError(f"Resource of type  {resource.__class__.__name__} "
+                               f"cannot be made transferred")
 
         return True
 
@@ -290,9 +295,13 @@ class Project(Resource['Project']):
             ``True`` if the action was performed successfully
 
         """
-        self.session.checked_post(self._path() + "/make-public", {
-            "resource": resource.as_entity_dict()
-        })
+        try:
+            self.session.checked_post(self._path() + "/make-public", {
+                "resource": resource.as_entity_dict()
+            })
+        except AttributeError:  # If _resource_type is not implemented
+            raise RuntimeError(f"Resource of type  {resource.__class__.__name__} "
+                               f"cannot be made public")
         return True
 
     def make_private(self,
@@ -311,9 +320,13 @@ class Project(Resource['Project']):
             ``True`` if the action was performed successfully
 
         """
-        self.session.checked_post(self._path() + "/make-private", {
-            "resource": resource.as_entity_dict()
-        })
+        try:
+            self.session.checked_post(self._path() + "/make-private", {
+                "resource": resource.as_entity_dict()
+            })
+        except AttributeError:  # If _resource_type is not implemented
+            raise RuntimeError(f"Resource of type  {resource.__class__.__name__} "
+                               f"cannot be made private")
         return True
 
     def creator(self) -> str:

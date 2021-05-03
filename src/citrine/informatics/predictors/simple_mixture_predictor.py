@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from citrine._rest.resource import Resource
+from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties as _properties
 from citrine.informatics.data_sources import DataSource
 from citrine.informatics.descriptors import FormulationDescriptor
@@ -33,6 +33,8 @@ class SimpleMixturePredictor(Resource['SimpleMixturePredictor'], Predictor, AIRe
         predictor is part of a graph that includes all training data required by this predictor.
 
     """
+
+    _resource_type = ResourceTypeEnum.MODULE
 
     input_descriptor = _properties.Object(FormulationDescriptor, 'config.input')
     output_descriptor = _properties.Object(FormulationDescriptor, 'config.output')

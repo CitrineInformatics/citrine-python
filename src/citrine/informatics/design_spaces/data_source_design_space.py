@@ -1,6 +1,6 @@
 from typing import Optional
 
-from citrine._rest.resource import Resource
+from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
 from citrine._session import Session
 from citrine.informatics.data_sources import DataSource
@@ -25,6 +25,7 @@ class DataSourceDesignSpace(Resource['DataSourceDesignSpace'], DesignSpace, AIRe
     """
 
     _response_key = None
+    _resource_type = ResourceTypeEnum.MODULE
 
     data_source = properties.Object(DataSource, 'config.data_source')
     typ = properties.String('config.type', default='DataSourceDesignSpace', deserializable=False)
