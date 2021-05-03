@@ -2,7 +2,7 @@
 from typing import Optional
 
 from citrine._rest.collection import Collection
-from citrine._rest.resource import Resource
+from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
 from citrine._session import Session
 
@@ -25,6 +25,8 @@ class User(Resource['User']):
         Citrine session used to connect to the database.
 
     """
+
+    _resource_type = ResourceTypeEnum.USER
 
     uid = properties.Optional(properties.UUID, 'id')
     screen_name = properties.String('screen_name')

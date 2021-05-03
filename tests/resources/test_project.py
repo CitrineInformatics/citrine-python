@@ -4,10 +4,10 @@ from logging import getLogger
 import pytest
 from dateutil.parser import parse
 from gemd.entity.link_by_uid import LinkByUID
-from gemd.entity.object import ProcessSpec
 
 from citrine.resources.api_error import ApiError, ValidationError
 from citrine.resources.gemtables import GemTableCollection
+from citrine.resources.process_spec import ProcessSpec
 from citrine.resources.project import Project, ProjectCollection
 from citrine.resources.project_member import ProjectMember
 from citrine.resources.project_roles import MEMBER, LEAD, WRITE
@@ -73,7 +73,7 @@ def test_share_post_content(project, session):
     assert expected_call == session.last_call
 
 
-def test_make_resource_public_post_content(project, session):
+def test_make_resource_public(project, session):
     dataset_id = str(uuid.uuid4())
     dataset = project.datasets.build(dict(
         id=dataset_id,
@@ -91,8 +91,11 @@ def test_make_resource_public_post_content(project, session):
     )
     assert expected_call == session.last_call
 
+    with pytest.raises(RuntimeError):
+        project.make_public(ProcessSpec("dummy process"))
 
-def test_make_resource_private_post_content(project, session):
+
+def test_make_resource_private(project, session):
     dataset_id = str(uuid.uuid4())
     dataset = project.datasets.build(dict(
         id=dataset_id,
@@ -109,8 +112,11 @@ def test_make_resource_private_post_content(project, session):
     )
     assert expected_call == session.last_call
 
+    with pytest.raises(RuntimeError):
+        project.make_private(ProcessSpec("dummy process"))
 
-def test_transfer_resource_post_content(project, session):
+
+def test_transfer_resource(project, session):
 
     dataset_id = str(uuid.uuid4())
     dataset = project.datasets.build(dict(
@@ -129,6 +135,9 @@ def test_transfer_resource_post_content(project, session):
         }
     )
     assert expected_call == session.last_call
+
+    with pytest.raises(RuntimeError):
+        project.transfer_resource(ProcessSpec("dummy process"), project.uid)
 
 
 def test_datasets_get_project_id(project):

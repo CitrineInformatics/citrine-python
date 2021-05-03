@@ -1,6 +1,6 @@
 from typing import Set
 
-from citrine._rest.resource import Resource
+from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties as _properties
 from citrine.informatics.descriptors import FormulationDescriptor
 from citrine.informatics.predictors import Predictor
@@ -27,6 +27,8 @@ class IngredientFractionsPredictor(Resource["IngredientFractionsPredictor"],
         If an unknown ingredient is encountered, an error will be thrown.
 
     """
+
+    _resource_type = ResourceTypeEnum.MODULE
 
     input_descriptor = _properties.Object(FormulationDescriptor, 'config.input')
     ingredients = _properties.Set(_properties.String, 'config.ingredients')

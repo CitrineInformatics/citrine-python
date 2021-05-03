@@ -8,7 +8,7 @@ import requests
 
 from citrine._rest.collection import Collection
 from citrine._rest.paginator import Paginator
-from citrine._rest.resource import Resource
+from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
 from citrine._serialization.properties import UUID
 from citrine._session import Session
@@ -40,6 +40,7 @@ class GemTable(Resource['Table']):
     """
 
     _response_key = 'table'
+    _resource_type = ResourceTypeEnum.TABLE
 
     uid = properties.Optional(properties.UUID(), 'id')
     version = properties.Optional(properties.Integer, 'version')
@@ -52,10 +53,6 @@ class GemTable(Resource['Table']):
 
     def __str__(self):
         return '<GEM Table {!r}, version {}>'.format(self.uid, self.version)
-
-    def resource_type(self) -> str:
-        """Get the access control resource type of this resource."""
-        return 'TABLE'
 
     @deprecation.deprecated(deprecated_in="0.16.0", details="Use TableCollection.read() instead")
     def read(self, local_path):

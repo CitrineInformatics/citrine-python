@@ -12,7 +12,7 @@ from gemd.entity.template import PropertyTemplate, MaterialTemplate, Measurement
 from gemd.util import writable_sort_order
 
 from citrine._rest.collection import Collection
-from citrine._rest.resource import Resource
+from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
 from citrine._session import Session
 from citrine._utils.functions import scrub_none
@@ -81,6 +81,7 @@ class Dataset(Resource['Dataset']):
     """
 
     _response_key = 'dataset'
+    _resource_type = ResourceTypeEnum.DATASET
 
     uid = properties.Optional(properties.UUID(), 'id')
     name = properties.String('name')
