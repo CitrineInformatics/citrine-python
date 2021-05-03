@@ -11,8 +11,7 @@ __all__ = ['SimpleMixturePredictor']
 
 
 class SimpleMixturePredictor(Resource['SimpleMixturePredictor'], Predictor, AIResourceMetadata):
-    """
-    [ALPHA] A predictor interface that builds a simple graphical model.
+    """A predictor interface that flattens a formulation into a simple mixture.
 
     Parameters
     ----------
