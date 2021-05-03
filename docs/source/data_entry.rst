@@ -1,12 +1,12 @@
 .. data_entry:
 
-Data Entry
+GEMD Data Model
 =========================
 
 Creating Data Model Objects
 ---------------------------------
 
-Each data object and template in the GEMD_ data model has a corresponding resource in the Citrine Python Client.
+Each data object and template in the GEMD_ (Graphical Expression of Materials Data) data model has a corresponding resource in the Citrine Python Client.
 For example, the :class:`~citrine.resources.process_spec.ProcessSpec` class implements the ProcessSpec_ object in GEMD_.
 The Citrine Python Client implementations are consistent with the GEMD_ model specification.
 

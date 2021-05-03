@@ -10,7 +10,7 @@ __all__ = ['LabelFractionsPredictor']
 
 
 class LabelFractionsPredictor(Resource['LabelFractionsPredictor'], Predictor, AIResourceMetadata):
-    """[ALPHA] A predictor interface that computes the relative proportions of labeled ingredients.
+    """A predictor interface that computes the relative proportions of labeled ingredients.
 
     Parameters
     ----------
