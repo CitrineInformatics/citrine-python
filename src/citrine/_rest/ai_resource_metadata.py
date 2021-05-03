@@ -1,9 +1,33 @@
-from typing import Optional  # noqa: F401
+from datetime import datetime  # noqa: F401
+from typing import Optional, List  # noqa: F401
 from citrine._serialization import properties
 
 
 class AIResourceMetadata():
-    """Abstract class for representing common metadata for Resources."""
+    """Abstract class for representing common metadata for Resources.
+
+    Attributes
+    ----------
+    created_by: Optional[UUID]
+        id of the user who created the resource
+    create_time: Optional[datetime]
+        date and time at which the resource was created
+    updated_by: Optional[UUID]
+        id of the user who most recently updated the resource, if it has been updated
+    update_time: Optional[datetime]
+        date and time at which the resource was most recently updated, if it has been updated
+    archived: bool
+        whether the resource is archived (hidden but not deleted)
+    archived_by: Optional[UUID]
+        id of the user who archived the resource, if it has been archived
+    archive_time: Optional[datetime]
+        date and time at which the resource was archived, if it has been archived
+    experimental: bool
+        whether the resource is experimental (newer, less well-tested functionality)
+    experimental_reasons: Optional[List[str]]
+        human-readable reasons why the resource is experimental
+
+    """
 
     created_by = properties.Optional(properties.UUID, 'created_by', serializable=False)
     create_time = properties.Optional(properties.Datetime, 'create_time', serializable=False)

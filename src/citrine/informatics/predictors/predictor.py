@@ -15,7 +15,7 @@ __all__ = ['Predictor']
 class Predictor(Module):
     """Module that describes the ability to compute/predict properties of materials.
 
-    Abstract type that returns the proper type given a serialized dict. subtype
+    Abstract type that returns the proper type given a serialized dict. Subtype
     based on the 'type' value of the passed in dict.
 
     """

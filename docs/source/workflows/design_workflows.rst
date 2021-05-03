@@ -216,11 +216,12 @@ DesignMaterials are simpler approximations ("projections") of the materials info
 
 DesignMaterials approximate the distribution of values that a variable might take.
 Each variable is represented as one of:
-    * :class:`~citrine.informatics.design_candidate.MeanAndStd`
-    * :class:`~citrine.informatics.design_candidate.TopCategories`
-    * :class:`~citrine.informatics.design_candidate.Mixture`
-    * :class:`~citrine.informatics.design_candidate.ChemicalFormula`
-    * :class:`~citrine.informatics.design_candidate.MolecularStructure`.
+
+* :class:`~citrine.informatics.design_candidate.MeanAndStd`
+* :class:`~citrine.informatics.design_candidate.TopCategories`
+* :class:`~citrine.informatics.design_candidate.Mixture`
+* :class:`~citrine.informatics.design_candidate.ChemicalFormula`
+* :class:`~citrine.informatics.design_candidate.MolecularStructure`.
 
 For example:
 
