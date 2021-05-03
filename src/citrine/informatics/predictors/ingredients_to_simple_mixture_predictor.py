@@ -30,6 +30,8 @@ class IngredientsToSimpleMixturePredictor(
 
     """
 
+    _resource_type = ResourceTypeEnum.MODULE
+
     output = _properties.Object(FormulationDescriptor, 'config.output')
     id_to_quantity = _properties.Mapping(_properties.String, _properties.Object(RealDescriptor),
                                          'config.id_to_quantity')
@@ -58,10 +60,6 @@ class IngredientsToSimpleMixturePredictor(
     def _post_dump(self, data: dict) -> dict:
         data['display_name'] = data['config']['name']
         return data
-
-    def resource_type(self) -> ResourceTypeEnum:
-        """The resource type is MODULE."""
-        return ResourceTypeEnum.MODULE
 
     def __str__(self):
         return '<IngredientsToSimpleMixturePredictor {!r}>'.format(self.name)

@@ -39,6 +39,8 @@ class SimpleMLPredictor(Resource['SimplePredictor'], Predictor, AIResourceMetada
 
     """
 
+    _resource_type = ResourceTypeEnum.MODULE
+
     inputs = _properties.List(_properties.Object(Descriptor), 'config.inputs')
     outputs = _properties.List(_properties.Object(Descriptor), 'config.outputs')
     latent_variables = _properties.List(_properties.Object(Descriptor), 'config.latent_variables')
@@ -67,10 +69,6 @@ class SimpleMLPredictor(Resource['SimplePredictor'], Predictor, AIResourceMetada
     def _post_dump(self, data: dict) -> dict:
         data['display_name'] = data['config']['name']
         return data
-
-    def resource_type(self) -> ResourceTypeEnum:
-        """The resource type is MODULE."""
-        return ResourceTypeEnum.MODULE
 
     def __str__(self):
         return '<SimplePredictor {!r}>'.format(self.name)

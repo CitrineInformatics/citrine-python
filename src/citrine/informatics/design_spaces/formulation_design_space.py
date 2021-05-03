@@ -39,6 +39,7 @@ class FormulationDesignSpace(Resource['FormulationDesignSpace'], DesignSpace, AI
     """
 
     _response_key = None
+    _resource_type = ResourceTypeEnum.MODULE
 
     formulation_descriptor = properties.Object(
         FormulationDescriptor,
@@ -80,10 +81,6 @@ class FormulationDesignSpace(Resource['FormulationDesignSpace'], DesignSpace, AI
     def _post_dump(self, data: dict) -> dict:
         data['display_name'] = data['config']['name']
         return data
-
-    def resource_type(self) -> ResourceTypeEnum:
-        """The resource type is MODULE."""
-        return ResourceTypeEnum.MODULE
 
     def __str__(self):
         return '<FormulationDesignSpace {!r}>'.format(self.name)

@@ -40,6 +40,7 @@ class GemTable(Resource['Table']):
     """
 
     _response_key = 'table'
+    _resource_type = ResourceTypeEnum.TABLE
 
     uid = properties.Optional(properties.UUID(), 'id')
     version = properties.Optional(properties.Integer, 'version')
@@ -52,10 +53,6 @@ class GemTable(Resource['Table']):
 
     def __str__(self):
         return '<GEM Table {!r}, version {}>'.format(self.uid, self.version)
-
-    def resource_type(self) -> ResourceTypeEnum:
-        """Get the access control resource type of this resource."""
-        return ResourceTypeEnum.TABLE
 
     @deprecation.deprecated(deprecated_in="0.16.0", details="Use TableCollection.read() instead")
     def read(self, local_path):

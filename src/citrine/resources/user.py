@@ -26,6 +26,8 @@ class User(Resource['User']):
 
     """
 
+    _resource_type = ResourceTypeEnum.USER
+
     uid = properties.Optional(properties.UUID, 'id')
     screen_name = properties.String('screen_name')
     position = properties.String('position')
@@ -46,10 +48,6 @@ class User(Resource['User']):
 
     def __str__(self):
         return '<User {!r}>'.format(self.screen_name)
-
-    def resource_type(self) -> ResourceTypeEnum:
-        """The resource type is USER."""
-        return ResourceTypeEnum.USER
 
     def get(self):
         """Retrieve a specific user from the database."""

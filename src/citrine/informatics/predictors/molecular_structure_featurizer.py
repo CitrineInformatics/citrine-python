@@ -79,6 +79,8 @@ class MolecularStructureFeaturizer(Resource['MolecularStructureFeaturizer'], Pre
 
     """
 
+    _resource_type = ResourceTypeEnum.MODULE
+
     descriptor = _properties.Object(Descriptor, 'config.descriptor')
     features = _properties.List(_properties.String, 'config.features')
     excludes = _properties.List(_properties.String, 'config.excludes')
@@ -104,10 +106,6 @@ class MolecularStructureFeaturizer(Resource['MolecularStructureFeaturizer'], Pre
     def _post_dump(self, data: dict) -> dict:
         data['display_name'] = data['config']['name']
         return data
-
-    def resource_type(self) -> ResourceTypeEnum:
-        """The resource type is MODULE."""
-        return ResourceTypeEnum.MODULE
 
     def __str__(self):
         return '<MolecularStructureFeaturizer {!r}>'.format(self.name)

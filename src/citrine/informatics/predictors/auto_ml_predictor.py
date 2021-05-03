@@ -37,6 +37,8 @@ class AutoMLPredictor(Resource['AutoMLPredictor'], Predictor, AIResourceMetadata
 
     """
 
+    _resource_type = ResourceTypeEnum.MODULE
+
     inputs = _properties.List(_properties.Object(Descriptor), 'config.inputs')
     output = _properties.Object(Descriptor, 'output')
     training_data = _properties.List(_properties.Object(DataSource), 'config.training_data')
@@ -64,10 +66,6 @@ class AutoMLPredictor(Resource['AutoMLPredictor'], Predictor, AIResourceMetadata
         data['config']['outputs'] = [data['output']]
         data['config']['responses'] = [data['output']]
         return data
-
-    def resource_type(self) -> ResourceTypeEnum:
-        """The resource type is MODULE."""
-        return ResourceTypeEnum.MODULE
 
     @classmethod
     def _pre_build(cls, data: dict) -> dict:

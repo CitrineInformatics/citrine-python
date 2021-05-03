@@ -31,6 +31,7 @@ class EnumeratedDesignSpace(Resource['EnumeratedDesignSpace'], DesignSpace, AIRe
     """
 
     _response_key = None
+    _resource_type = ResourceTypeEnum.MODULE
 
     descriptors = properties.List(properties.Object(Descriptor), 'config.descriptors')
     data = properties.List(properties.Mapping(properties.String, properties.Raw), 'config.data')
@@ -54,10 +55,6 @@ class EnumeratedDesignSpace(Resource['EnumeratedDesignSpace'], DesignSpace, AIRe
     def _post_dump(self, data: dict) -> dict:
         data['display_name'] = data['config']['name']
         return data
-
-    def resource_type(self) -> ResourceTypeEnum:
-        """The resource type is MODULE."""
-        return ResourceTypeEnum.MODULE
 
     def __str__(self):
         return '<EnumeratedDesignSpace {!r}>'.format(self.name)

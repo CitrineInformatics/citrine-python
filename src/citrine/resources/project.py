@@ -74,6 +74,7 @@ class Project(Resource['Project']):
     """
 
     _response_key = 'project'
+    _resource_type = ResourceTypeEnum.PROJECT
 
     name = properties.String('name')
     description = properties.Optional(properties.String(), 'description')
@@ -94,10 +95,6 @@ class Project(Resource['Project']):
 
     def _path(self):
         return '/projects/{project_id}'.format(**{"project_id": self.uid})
-
-    def resource_type(self) -> ResourceTypeEnum:
-        """The resource type is PROJECT."""
-        return ResourceTypeEnum.PROJECT
 
     @property
     def modules(self) -> ModuleCollection:

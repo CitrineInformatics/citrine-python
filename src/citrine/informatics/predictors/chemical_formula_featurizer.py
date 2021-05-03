@@ -132,6 +132,8 @@ class ChemicalFormulaFeaturizer(Resource['ChemicalFormulaFeaturizer'],
 
     """
 
+    _resource_type = ResourceTypeEnum.MODULE
+
     input_descriptor = _properties.Object(Descriptor, 'config.input')
     features = _properties.List(_properties.String, 'config.features')
     excludes = _properties.List(_properties.String, 'config.excludes')
@@ -160,10 +162,6 @@ class ChemicalFormulaFeaturizer(Resource['ChemicalFormulaFeaturizer'],
     def _post_dump(self, data: dict) -> dict:
         data['display_name'] = data['config']['name']
         return data
-
-    def resource_type(self) -> ResourceTypeEnum:
-        """The resource type is MODULE."""
-        return ResourceTypeEnum.MODULE
 
     def __str__(self):
         return '<ChemicalFormulaFeaturizer {!r}>'.format(self.name)

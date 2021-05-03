@@ -28,6 +28,8 @@ class IngredientFractionsPredictor(Resource["IngredientFractionsPredictor"],
 
     """
 
+    _resource_type = ResourceTypeEnum.MODULE
+
     input_descriptor = _properties.Object(FormulationDescriptor, 'config.input')
     ingredients = _properties.Set(_properties.String, 'config.ingredients')
 
@@ -51,10 +53,6 @@ class IngredientFractionsPredictor(Resource["IngredientFractionsPredictor"],
     def _post_dump(self, data: dict) -> dict:
         data['display_name'] = data['config']['name']
         return data
-
-    def resource_type(self) -> ResourceTypeEnum:
-        """The resource type is MODULE."""
-        return ResourceTypeEnum.MODULE
 
     def __str__(self):
         return '<IngredientFractionsPredictor {!r}>'.format(self.name)

@@ -32,6 +32,7 @@ class ProductDesignSpace(Resource['ProductDesignSpace'], DesignSpace, AIResource
     """
 
     _response_key = None
+    _resource_type = ResourceTypeEnum.MODULE
 
     subspaces = properties.List(properties.Union(
         [properties.UUID, properties.Object(DesignSpace)]
@@ -74,10 +75,6 @@ class ProductDesignSpace(Resource['ProductDesignSpace'], DesignSpace, AIResource
                 # embedded design spaces are not modules, so only serialize their config
                 data['config']['subspaces'][i] = subspace['config']
         return data
-
-    def resource_type(self) -> ResourceTypeEnum:
-        """The resource type is MODULE."""
-        return ResourceTypeEnum.MODULE
 
     @classmethod
     def _pre_build(cls, data: dict) -> dict:

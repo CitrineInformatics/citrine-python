@@ -67,6 +67,8 @@ class GeneralizedMeanPropertyPredictor(
 
     """
 
+    _resource_type = ResourceTypeEnum.MODULE
+
     input_descriptor = _properties.Object(FormulationDescriptor, 'config.input')
     properties = _properties.List(_properties.String, 'config.properties')
     p = _properties.Integer('config.p')
@@ -117,10 +119,6 @@ class GeneralizedMeanPropertyPredictor(
     def _post_dump(self, data: dict) -> dict:
         data['display_name'] = data['config']['name']
         return data
-
-    def resource_type(self) -> ResourceTypeEnum:
-        """The resource type is MODULE."""
-        return ResourceTypeEnum.MODULE
 
     def __str__(self):
         return '<GeneralizedMeanPropertyPredictor {!r}>'.format(self.name)

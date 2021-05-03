@@ -153,6 +153,8 @@ class DeprecatedExpressionPredictor(Resource['DeprecatedExpressionPredictor'],
 
     """
 
+    _resource_type = ResourceTypeEnum.MODULE
+
     expression = _properties.String('config.expression')
     output = _properties.Object(RealDescriptor, 'config.output')
     aliases = _properties.Optional(_properties.Mapping(_properties.String, _properties.String),
@@ -181,10 +183,6 @@ class DeprecatedExpressionPredictor(Resource['DeprecatedExpressionPredictor'],
     def _post_dump(self, data: dict) -> dict:
         data['display_name'] = data['config']['name']
         return data
-
-    def resource_type(self) -> ResourceTypeEnum:
-        """The resource type is MODULE."""
-        return ResourceTypeEnum.MODULE
 
     def __str__(self):
         return '<DeprecatedExpressionPredictor {!r}>'.format(self.name)

@@ -60,6 +60,7 @@ class TableConfig(Resource["TableConfig"]):
 
     # FIXME (DML): rename this (this is dependent on the server side)
     _response_key = "ara_definition"
+    _resource_type = ResourceTypeEnum.TABLE_DEFINITION
 
     @staticmethod
     def _get_dups(lst: List) -> List:
@@ -131,10 +132,6 @@ class TableConfig(Resource["TableConfig"]):
         if len(missing_variables) > 0:
             raise ValueError("The data_source of the columns must match one of the variable names,"
                              " but {} were missing".format(missing_variables))
-
-    def resource_type(self) -> ResourceTypeEnum:
-        """The resource type is TABLE_DEFINITION."""
-        return ResourceTypeEnum.TABLE_DEFINITION
 
     def add_columns(self, *,
                     variable: Variable,

@@ -25,6 +25,8 @@ class LabelFractionsPredictor(Resource['LabelFractionsPredictor'], Predictor, AI
 
     """
 
+    _resource_type = ResourceTypeEnum.MODULE
+
     input_descriptor = _properties.Object(FormulationDescriptor, 'config.input')
     labels = _properties.Set(_properties.String, 'config.labels')
     typ = _properties.String('config.type', default='LabelFractions',
@@ -48,10 +50,6 @@ class LabelFractionsPredictor(Resource['LabelFractionsPredictor'], Predictor, AI
     def _post_dump(self, data: dict) -> dict:
         data['display_name'] = data['config']['name']
         return data
-
-    def resource_type(self) -> ResourceTypeEnum:
-        """The resource type is MODULE."""
-        return ResourceTypeEnum.MODULE
 
     def __str__(self):
         return '<LabelFractionsPredictor {!r}>'.format(self.name)

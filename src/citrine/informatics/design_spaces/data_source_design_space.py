@@ -25,6 +25,7 @@ class DataSourceDesignSpace(Resource['DataSourceDesignSpace'], DesignSpace, AIRe
     """
 
     _response_key = None
+    _resource_type = ResourceTypeEnum.MODULE
 
     data_source = properties.Object(DataSource, 'config.data_source')
     typ = properties.String('config.type', default='DataSourceDesignSpace', deserializable=False)
@@ -45,10 +46,6 @@ class DataSourceDesignSpace(Resource['DataSourceDesignSpace'], DesignSpace, AIRe
     def _post_dump(self, data: dict) -> dict:
         data['display_name'] = data['config']['name']
         return data
-
-    def resource_type(self) -> ResourceTypeEnum:
-        """The resource type is MODULE."""
-        return ResourceTypeEnum.MODULE
 
     def __str__(self):
         return '<DataSourceDesignSpace {!r}>'.format(self.name)

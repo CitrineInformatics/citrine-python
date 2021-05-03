@@ -32,6 +32,8 @@ class GraphPredictor(Resource['GraphPredictor'], Predictor, AIResourceMetadata):
 
     """
 
+    _resource_type = ResourceTypeEnum.MODULE
+
     predictors = _properties.List(_properties.Union(
         [_properties.UUID, _properties.Object(Predictor)]), 'config.predictors')
     # the default seems to be defined in instances, not the class itself
@@ -62,10 +64,6 @@ class GraphPredictor(Resource['GraphPredictor'], Predictor, AIResourceMetadata):
                 # embedded predictors are not modules, so only serialize their config
                 data['config']['predictors'][i] = predictor['config']
         return data
-
-    def resource_type(self) -> ResourceTypeEnum:
-        """The resource type is MODULE."""
-        return ResourceTypeEnum.MODULE
 
     @classmethod
     def _pre_build(cls, data: dict) -> dict:

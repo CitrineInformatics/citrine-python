@@ -81,6 +81,7 @@ class Dataset(Resource['Dataset']):
     """
 
     _response_key = 'dataset'
+    _resource_type = ResourceTypeEnum.DATASET
 
     uid = properties.Optional(properties.UUID(), 'id')
     name = properties.String('name')
@@ -117,10 +118,6 @@ class Dataset(Resource['Dataset']):
 
     def __str__(self):
         return '<Dataset {!r}>'.format(self.name)
-
-    def resource_type(self) -> ResourceTypeEnum:
-        """The resource type is DATASET."""
-        return ResourceTypeEnum.DATASET
 
     @property
     def property_templates(self) -> PropertyTemplateCollection:

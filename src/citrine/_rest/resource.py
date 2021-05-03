@@ -31,14 +31,11 @@ class Resource(Serializable[Self]):
 
     _path_template: str = NotImplemented
     _response_key: Optional[str] = None
-
-    def resource_type(self) -> ResourceTypeEnum:
-        """Get the access control resource type of this resource."""
-        raise NotImplementedError
+    _resource_type: ResourceTypeEnum = NotImplemented
 
     def as_entity_dict(self) -> dict:
         """Return an access control entity representation of this resource."""
         return {
-            "type": self.resource_type().value,
+            "type": self._resource_type.value,
             "id": str(self.uid)
         }
