@@ -147,10 +147,6 @@ class EnumeratedProcessor(Resource['EnumeratedProcessor'], Processor, AIResource
         data['display_name'] = data['config']['name']
         return data
 
-    def resource_type(self) -> ResourceTypeEnum:
-        """The resource type is MODULE."""
-        return ResourceTypeEnum.MODULE
-
     def __str__(self):
         return '<EnumeratedProcessor {!r}>'.format(self.name)
 
@@ -206,10 +202,6 @@ class MonteCarloProcessor(Resource['GridProcessor'], Processor, AIResourceMetada
     def _post_dump(self, data: dict) -> dict:
         data['display_name'] = data['config']['name']
         return data
-
-    def resource_type(self) -> ResourceTypeEnum:
-        """The resource type is MODULE."""
-        return ResourceTypeEnum.MODULE
 
     def __str__(self):
         return '<MonteCarloProcessor {!r}>'.format(self.name)
