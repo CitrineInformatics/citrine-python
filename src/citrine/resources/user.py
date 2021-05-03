@@ -2,7 +2,7 @@
 from typing import Optional
 
 from citrine._rest.collection import Collection
-from citrine._rest.resource import Resource
+from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
 from citrine._session import Session
 
@@ -46,6 +46,10 @@ class User(Resource['User']):
 
     def __str__(self):
         return '<User {!r}>'.format(self.screen_name)
+
+    def resource_type(self) -> ResourceTypeEnum:
+        """The resource type is USER."""
+        return ResourceTypeEnum.USER
 
     def get(self):
         """Retrieve a specific user from the database."""

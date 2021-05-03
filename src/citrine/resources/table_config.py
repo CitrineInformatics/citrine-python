@@ -12,7 +12,7 @@ from gemd.entity.link_by_uid import LinkByUID
 from gemd.enumeration.base_enumeration import BaseEnumeration
 
 from citrine._rest.collection import Collection
-from citrine._rest.resource import Resource
+from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
 from citrine._session import Session
 from citrine.resources.data_concepts import CITRINE_SCOPE
@@ -131,6 +131,10 @@ class TableConfig(Resource["TableConfig"]):
         if len(missing_variables) > 0:
             raise ValueError("The data_source of the columns must match one of the variable names,"
                              " but {} were missing".format(missing_variables))
+
+    def resource_type(self) -> ResourceTypeEnum:
+        """The resource type is TABLE_DEFINITION."""
+        return ResourceTypeEnum.TABLE_DEFINITION
 
     def add_columns(self, *,
                     variable: Variable,

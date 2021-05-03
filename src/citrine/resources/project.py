@@ -7,7 +7,7 @@ from gemd.entity.base_entity import BaseEntity
 from gemd.entity.link_by_uid import LinkByUID
 
 from citrine._rest.collection import Collection
-from citrine._rest.resource import Resource
+from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
 from citrine._session import Session
 from citrine.resources.api_error import ApiError
@@ -94,6 +94,10 @@ class Project(Resource['Project']):
 
     def _path(self):
         return '/projects/{project_id}'.format(**{"project_id": self.uid})
+
+    def resource_type(self) -> ResourceTypeEnum:
+        """The resource type is PROJECT."""
+        return ResourceTypeEnum.PROJECT
 
     @property
     def modules(self) -> ModuleCollection:

@@ -12,7 +12,7 @@ from gemd.entity.template import PropertyTemplate, MaterialTemplate, Measurement
 from gemd.util import writable_sort_order
 
 from citrine._rest.collection import Collection
-from citrine._rest.resource import Resource
+from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
 from citrine._session import Session
 from citrine._utils.functions import scrub_none
@@ -117,6 +117,10 @@ class Dataset(Resource['Dataset']):
 
     def __str__(self):
         return '<Dataset {!r}>'.format(self.name)
+
+    def resource_type(self) -> ResourceTypeEnum:
+        """The resource type is DATASET."""
+        return ResourceTypeEnum.DATASET
 
     @property
     def property_templates(self) -> PropertyTemplateCollection:
