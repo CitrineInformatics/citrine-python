@@ -4,7 +4,7 @@ from gemd.enumeration.base_enumeration import BaseEnumeration
 
 
 class ResourceTypeEnum(BaseEnumeration):
-    """The type of the resource; used for modifying access permissions.
+    """The type of the resource; used for modifying access controls.
 
     * PROJECT is a Project
     * DATASET is a Dataset
