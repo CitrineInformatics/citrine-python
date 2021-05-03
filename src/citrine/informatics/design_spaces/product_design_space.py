@@ -2,7 +2,7 @@ from typing import List, Union, Optional
 from uuid import UUID
 from copy import deepcopy
 
-from citrine._rest.resource import Resource
+from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
 from citrine._session import Session
 from citrine.informatics.design_spaces.design_space import DesignSpace
@@ -74,6 +74,10 @@ class ProductDesignSpace(Resource['ProductDesignSpace'], DesignSpace, AIResource
                 # embedded design spaces are not modules, so only serialize their config
                 data['config']['subspaces'][i] = subspace['config']
         return data
+
+    def resource_type(self) -> ResourceTypeEnum:
+        """The resource type is MODULE."""
+        return ResourceTypeEnum.MODULE
 
     @classmethod
     def _pre_build(cls, data: dict) -> dict:

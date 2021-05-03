@@ -1,6 +1,6 @@
 from typing import List, Mapping, Any
 
-from citrine._rest.resource import Resource
+from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
 from citrine._session import Session
 from citrine.informatics.descriptors import Descriptor
@@ -54,6 +54,10 @@ class EnumeratedDesignSpace(Resource['EnumeratedDesignSpace'], DesignSpace, AIRe
     def _post_dump(self, data: dict) -> dict:
         data['display_name'] = data['config']['name']
         return data
+
+    def resource_type(self) -> ResourceTypeEnum:
+        """The resource type is MODULE."""
+        return ResourceTypeEnum.MODULE
 
     def __str__(self):
         return '<EnumeratedDesignSpace {!r}>'.format(self.name)

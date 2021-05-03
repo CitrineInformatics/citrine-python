@@ -1,6 +1,6 @@
 from typing import Mapping, Optional, Set
 
-from citrine._rest.resource import Resource
+from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
 from citrine._session import Session
 from citrine.informatics.constraints import Constraint
@@ -80,6 +80,10 @@ class FormulationDesignSpace(Resource['FormulationDesignSpace'], DesignSpace, AI
     def _post_dump(self, data: dict) -> dict:
         data['display_name'] = data['config']['name']
         return data
+
+    def resource_type(self) -> ResourceTypeEnum:
+        """The resource type is MODULE."""
+        return ResourceTypeEnum.MODULE
 
     def __str__(self):
         return '<FormulationDesignSpace {!r}>'.format(self.name)

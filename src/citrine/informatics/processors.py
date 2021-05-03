@@ -3,7 +3,7 @@ from typing import Optional, Mapping, Type, List
 from warnings import warn
 
 from citrine._serialization import properties
-from citrine._serialization.serializable import Serializable
+from citrine._rest.resource import ResourceTypeEnum, Resource
 from citrine._session import Session
 from citrine.informatics.modules import Module
 from citrine._rest.ai_resource_metadata import AIResourceMetadata
@@ -42,7 +42,7 @@ class Processor(Module):
             return False
 
 
-class GridProcessor(Serializable['GridProcessor'], Processor, AIResourceMetadata):
+class GridProcessor(Resource['GridProcessor'], Processor, AIResourceMetadata):
     """Generates samples from the Cartesian product of finite dimensions, then scans over them.
 
     To create a finite set of materials from continuous dimensions, a uniform grid is created
@@ -90,11 +90,15 @@ class GridProcessor(Serializable['GridProcessor'], Processor, AIResourceMetadata
         data['display_name'] = data['config']['name']
         return data
 
+    def resource_type(self) -> ResourceTypeEnum:
+        """The resource type is MODULE."""
+        return ResourceTypeEnum.MODULE
+
     def __str__(self):
         return '<GridProcessor {!r}>'.format(self.name)
 
 
-class EnumeratedProcessor(Serializable['EnumeratedProcessor'], Processor, AIResourceMetadata):
+class EnumeratedProcessor(Resource['EnumeratedProcessor'], Processor, AIResourceMetadata):
     """Process a design space by enumerating up to a fixed number of samples from the domain.
 
     Each sample is processed independently.
@@ -143,6 +147,10 @@ class EnumeratedProcessor(Serializable['EnumeratedProcessor'], Processor, AIReso
         data['display_name'] = data['config']['name']
         return data
 
+    def resource_type(self) -> ResourceTypeEnum:
+        """The resource type is MODULE."""
+        return ResourceTypeEnum.MODULE
+
     def __str__(self):
         return '<EnumeratedProcessor {!r}>'.format(self.name)
 
@@ -154,7 +162,7 @@ class EnumeratedProcessor(Serializable['EnumeratedProcessor'], Processor, AIReso
         return self.max_candidates
 
 
-class MonteCarloProcessor(Serializable['GridProcessor'], Processor, AIResourceMetadata):
+class MonteCarloProcessor(Resource['GridProcessor'], Processor, AIResourceMetadata):
     """Using a Monte Carlo optimizer to search for the best candidate.
 
     The moves that the MonteCarlo optimizer makes are inferred from the descriptors in the
@@ -196,6 +204,10 @@ class MonteCarloProcessor(Serializable['GridProcessor'], Processor, AIResourceMe
     def _post_dump(self, data: dict) -> dict:
         data['display_name'] = data['config']['name']
         return data
+
+    def resource_type(self) -> ResourceTypeEnum:
+        """The resource type is MODULE."""
+        return ResourceTypeEnum.MODULE
 
     def __str__(self):
         return '<MonteCarloProcessor {!r}>'.format(self.name)
