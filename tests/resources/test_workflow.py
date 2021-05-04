@@ -30,8 +30,7 @@ def basic_performance_workflow_data():
     return {
         'id': str(uuid.uuid4()),
         'display_name': 'Test Performance Workflow',
-        'status': 'INPROGRESS',
-        'status_description': 'VALIDATING',
+        'status': 'READY',
         'config': {
             'analysis': {
                 'name': "Some Analysis",
@@ -48,12 +47,25 @@ def basic_performance_workflow_data():
     }
 
 
-def test_build_workflow(basic_design_workflow_data):
+def test_build_design_workflow(basic_design_workflow_data):
     # Given
     workflow_collection = WorkflowCollection(project_id=uuid.uuid4(), session=None)
 
     # When
     workflow = workflow_collection.build(basic_design_workflow_data)
+
+    # Then
+    assert workflow.project_id == workflow_collection.project_id
+    assert workflow.session is None
+    assert workflow.succeeded() and not workflow.in_progress() and not workflow.failed()
+
+
+def test_build_performance_workflow(basic_performance_workflow_data):
+    # Given
+    workflow_collection = WorkflowCollection(project_id=uuid.uuid4(), session=None)
+
+    # When
+    workflow = workflow_collection.build(basic_performance_workflow_data)
 
     # Then
     assert workflow.project_id == workflow_collection.project_id

@@ -68,3 +68,15 @@ class PerformanceWorkflow(Resource['PerformanceWorkflow'], Workflow):
         if getattr(self, 'project_id', None) is None:
             raise AttributeError('Cannot initialize execution without project reference!')
         return WorkflowExecutionCollection(self.project_id, self.uid, self.session)
+
+    def in_progress(self) -> bool:
+        """Whether workflow validation is in progress. Does not query state."""
+        return self.status == "VALIDATING" or self.status == "CREATED"
+
+    def succeeded(self) -> bool:
+        """Whether workflow validation has completed successfully. Does not query state."""
+        return self.status == "READY"
+
+    def failed(self) -> bool:
+        """Whether workflow validation has completed unsuccessfully. Does not query state."""
+        return self.status == "INVALID" or self.status == "ERROR"
