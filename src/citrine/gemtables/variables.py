@@ -682,7 +682,7 @@ class IngredientLabelsSetInOutput(Serializable['IngredientLabelsSetInOutput'], V
     This variable definition allows a set of labels to be extracted when an ingredient is used
     in multiple processes. As an example, consider a paint formed by mixing red and yellow
     pigments, where the red pigment is formed by mixing yellow and magenta. This variable could be
-    used to represent the labels applied to  yellow in both mixing processes (red and the final
+    used to represent the labels applied to yellow in both mixing processes (red and the final
     paint) in a single column provided the process templates that mixed red and the final paint
     are included as cutoffs.
 
