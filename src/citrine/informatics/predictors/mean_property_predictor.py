@@ -1,6 +1,6 @@
 from typing import List, Optional, Mapping
 
-from citrine._rest.resource import Resource
+from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties as _properties
 from citrine.informatics.data_sources import DataSource
 from citrine.informatics.descriptors import FormulationDescriptor, RealDescriptor
@@ -12,7 +12,7 @@ __all__ = ['MeanPropertyPredictor']
 
 class MeanPropertyPredictor(
         Resource['MeanPropertyPredictor'], Predictor, AIResourceMetadata):
-    """[ALPHA] A predictor interface that computes mean component properties.
+    """A predictor interface that computes mean component properties.
 
     .. seealso::
        If you are using a deprecated generalized mean property predictor please see
@@ -57,6 +57,8 @@ class MeanPropertyPredictor(
         ``default_properties`` are provided.
 
     """
+
+    _resource_type = ResourceTypeEnum.MODULE
 
     input_descriptor = _properties.Object(FormulationDescriptor, 'config.input')
     properties = _properties.List(_properties.Object(RealDescriptor), 'config.properties')

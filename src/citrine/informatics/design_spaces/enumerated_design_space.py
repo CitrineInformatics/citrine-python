@@ -1,6 +1,6 @@
 from typing import List, Mapping, Any
 
-from citrine._rest.resource import Resource
+from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
 from citrine._session import Session
 from citrine.informatics.descriptors import Descriptor
@@ -31,6 +31,7 @@ class EnumeratedDesignSpace(Resource['EnumeratedDesignSpace'], DesignSpace, AIRe
     """
 
     _response_key = None
+    _resource_type = ResourceTypeEnum.MODULE
 
     descriptors = properties.List(properties.Object(Descriptor), 'config.descriptors')
     data = properties.List(properties.Mapping(properties.String, properties.Raw), 'config.data')

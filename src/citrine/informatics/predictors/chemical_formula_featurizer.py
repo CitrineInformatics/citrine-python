@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from citrine._rest.resource import Resource
+from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties as _properties
 from citrine.informatics.descriptors import ChemicalFormulaDescriptor, Descriptor
 from citrine.informatics.predictors import Predictor
@@ -131,6 +131,8 @@ class ChemicalFormulaFeaturizer(Resource['ChemicalFormulaFeaturizer'],
         p=1 corresponds to the ordinary mean, p=2 is the root mean square, etc.
 
     """
+
+    _resource_type = ResourceTypeEnum.MODULE
 
     input_descriptor = _properties.Object(Descriptor, 'config.input')
     features = _properties.List(_properties.String, 'config.features')

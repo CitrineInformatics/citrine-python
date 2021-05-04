@@ -1,6 +1,6 @@
 from typing import Set
 
-from citrine._rest.resource import Resource
+from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties as _properties
 from citrine.informatics.descriptors import FormulationDescriptor
 from citrine.informatics.predictors import Predictor
@@ -10,7 +10,7 @@ __all__ = ['LabelFractionsPredictor']
 
 
 class LabelFractionsPredictor(Resource['LabelFractionsPredictor'], Predictor, AIResourceMetadata):
-    """[ALPHA] A predictor interface that computes the relative proportions of labeled ingredients.
+    """A predictor interface that computes the relative proportions of labeled ingredients.
 
     Parameters
     ----------
@@ -24,6 +24,8 @@ class LabelFractionsPredictor(Resource['LabelFractionsPredictor'], Predictor, AI
         labels to compute the quantity fractions of
 
     """
+
+    _resource_type = ResourceTypeEnum.MODULE
 
     input_descriptor = _properties.Object(FormulationDescriptor, 'config.input')
     labels = _properties.Set(_properties.String, 'config.labels')
