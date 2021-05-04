@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>4.6. Processors &#8212; Citrine Python 0.119.0 documentation</title>
+    <title>4.6. Processors &#8212; Citrine Python 0.125.1 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -46,7 +46,7 @@ There are three processors:</p>
 </ul>
 <section id="enumerated-processor">
 <h2>4.6.1. Enumerated processor<a class="headerlink" href="#enumerated-processor" title="Permalink to this headline">¶</a></h2>
-<p>An enumerated processor takes up to a maximum number of materials from a <a class="reference internal" href="design_spaces.html"><span class="doc">design space</span></a> and processes each independently.
+<p>An <a class="reference internal" href="../reference/citrine.informatics.processors.html#citrine.informatics.processors.EnumeratedProcessor" title="citrine.informatics.processors.EnumeratedProcessor"><code class="xref py py-class docutils literal notranslate"><span class="pre">EnumeratedProcessor</span></code></a> takes up to a maximum number of materials from a <a class="reference internal" href="design_spaces.html"><span class="doc">design space</span></a> and processes each independently.
 The maximum number of candidates sampled from the design space is defined by the optional <code class="docutils literal notranslate"><span class="pre">max_size</span></code> parameter when creating an <a class="reference internal" href="../reference/citrine.informatics.processors.html#citrine.informatics.processors.EnumeratedProcessor" title="citrine.informatics.processors.EnumeratedProcessor"><code class="xref py py-class docutils literal notranslate"><span class="pre">EnumeratedProcessor</span></code></a> using the python SDK.
 To be valid, enumerated processors must have a maximum size of at least 1.</p>
 <p>An enumerated processor can be used with finite and infinite design spaces.
@@ -90,8 +90,8 @@ Finite elements repeat once the Cartesian product is exhausted.</p>
 </section>
 <section id="grid-processor">
 <h2>4.6.2. Grid processor<a class="headerlink" href="#grid-processor" title="Permalink to this headline">¶</a></h2>
-<p>A grid processor generates samples from the outer product of finite dimensions.
-This processor can only be used with a <code class="xref py py-class docutils literal notranslate"><span class="pre">ProductDesignSpace</span></code>.
+<p>A <a class="reference internal" href="../reference/citrine.informatics.processors.html#citrine.informatics.processors.GridProcessor" title="citrine.informatics.processors.GridProcessor"><code class="xref py py-class docutils literal notranslate"><span class="pre">GridProcessor</span></code></a> generates samples from the outer product of finite dimensions.
+This processor can only be used with a <a class="reference internal" href="../reference/citrine.informatics.design_spaces.product_design_space.html#citrine.informatics.design_spaces.product_design_space.ProductDesignSpace" title="citrine.informatics.design_spaces.product_design_space.ProductDesignSpace"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProductDesignSpace</span></code></a>.
 To create a finite set of materials from continuous dimensions, a uniform grid is created between the bounds of the descriptor.
 The number of points is specified by <code class="docutils literal notranslate"><span class="pre">grid_sizes</span></code>.
 <code class="docutils literal notranslate"><span class="pre">grid_sizes</span></code> is a map from descriptor key to the number of points to select between bounds of the dimension.
@@ -177,12 +177,12 @@ The Monte Carlo processor can be applied to any Design Space, although it is mos
 <li class="toctree-l2"><a class="reference internal" href="../getting_started/basic_functionality.html">1.3. Managing Resources</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../getting_started/projects.html">1.4. Projects</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../getting_started/datasets.html">1.5. Datasets</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../getting_started/data_model.html">1.6. Data Model</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../getting_started/ai_modules.html">1.7. AI Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/data_model.html">1.6. Data Model Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/ai_modules.html">1.7. AI Engine Overview</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../getting_started/code_examples.html">1.8. Code Examples</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../data_entry.html">2. Data Entry</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="../data_entry.html">2. GEMD Data Model</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../data_entry.html#creating-data-model-objects">2.1. Creating Data Model Objects</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../data_entry.html#identifying-data-model-objects">2.2. Identifying Data Model Objects</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../data_entry.html#registering-data-model-objects">2.3. Registering Data Model Objects</a></li>
@@ -219,8 +219,17 @@ The Monte Carlo processor can be applied to any Design Space, although it is mos
 <li class="toctree-l2"><a class="reference internal" href="code_examples.html">4.13. AI Engine Code Examples</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">5. FAQ</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../FAQ/prohibited_data_patterns.html">5.1. Prohibited Data Patterns</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../formulations_example.html">5. Formulations Example</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../formulations_example.html#example-raw-data">5.1. Example Raw Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../formulations_example.html#ingesting-data">5.2. Ingesting Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../formulations_example.html#building-a-table">5.3. Building a Table</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../formulations_example.html#training-a-predictor">5.4. Training a Predictor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../formulations_example.html#defining-a-design-space">5.5. Defining a Design Space</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../formulations_example.html#proposing-new-formulation-candidates">5.6. Proposing New Formulation Candidates</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">6. FAQ</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../FAQ/prohibited_data_patterns.html">6.1. Prohibited Data Patterns</a></li>
 </ul>
 </li>
 </ul>

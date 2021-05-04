@@ -1,0 +1,874 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>5. Formulations Example &#8212; Citrine Python 0.125.1 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="shortcut icon" href="_static/favicon.png"/>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="6. FAQ" href="FAQ/index.html" />
+    <link rel="prev" title="4.13. AI Engine Code Examples" href="workflows/code_examples.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="formulations-example">
+<h1>5. Formulations Example<a class="headerlink" href="#formulations-example" title="Permalink to this headline">¶</a></h1>
+<p>The Citrine Platform is a powerful tool to analyze formulations data.
+A formulation is, generally speaking, a mixture of mixtures.
+Individual ingredients are mixed together to form more complex ingredients, which may themselves be mixed with other ingredients and/or mixtures, and so on.
+Generally, the top-level formulation has some properties that we wish to optimize.
+The ingredients themselves may also have known properties that are useful for understanding the properties of the top-level formulation.
+In addition, each mixing process may be characterized by attributes such as the temperature of a reaction vessel or the speed of a mixing element.</p>
+<p>The GEMD data model provides a way to record all of the information relevant to a formulations problem,
+and Citrine’s AI Engine turns this information into trained models that can predict the properties of novel formulations.
+This section demonstrates how to express a complete formulations example in Citrine-python, from data ingestion to new candidate generation.</p>
+<section id="example-raw-data">
+<h2>5.1. Example Raw Data<a class="headerlink" href="#example-raw-data" title="Permalink to this headline">¶</a></h2>
+<p>To demonstrate the formulations machinery, we consider a toy problem – margaritas!
+We scour our pantry and gather some materials, laid out in the table below.
+These are known as “atomic” materials because for our purposes they are not broken into more fundamental materials.
+Several materials have labels, which helps the Citrine Platform understand the relationships between materials.
+We have also measured the sugar fraction for some of the materials, and we know the price per kilogram of each material.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>An ingredient (a material used in a process) can have different labels when used in different contexts.
+A label describes how a material is used or the role it plays, not the material itself.
+But to keep this example simple, we assume that a given ingredient always has all of the labels below whenever it is used.</p>
+</div>
+<table class="colwidths-given docutils align-default" id="id1">
+<caption><span class="caption-text">Atomic Materials Data</span><a class="headerlink" href="#id1" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Label(s)</p></th>
+<th class="head"><p>Sucrose Fraction</p></th>
+<th class="head"><p>Price ($/kg)</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Sugar</p></td>
+<td><p>Sweetener</p></td>
+<td><p>1.00 +/- 0.0</p></td>
+<td><p>2.30</p></td>
+</tr>
+<tr class="row-odd"><td><p>Water</p></td>
+<td></td>
+<td><p>0.00</p></td>
+<td><p>0.05</p></td>
+</tr>
+<tr class="row-even"><td><p>Bottled Lime Juice</p></td>
+<td><p>Acid</p></td>
+<td><p>0.03 +/- 0.01</p></td>
+<td><p>14.00</p></td>
+</tr>
+<tr class="row-odd"><td><p>Triple Sec</p></td>
+<td><p>Sweetener, Alcohol</p></td>
+<td><p>0.36 +/- 0.04</p></td>
+<td><p>18.99</p></td>
+</tr>
+<tr class="row-even"><td><p>Tequila</p></td>
+<td><p>Alcohol</p></td>
+<td></td>
+<td><p>29.00</p></td>
+</tr>
+<tr class="row-odd"><td><p>Ice</p></td>
+<td></td>
+<td></td>
+<td><p>2.75</p></td>
+</tr>
+</tbody>
+</table>
+<p>We begin by creating two types of simple syrup–a mixture of sugar and water.
+The quantities are in units of mass fraction.</p>
+<table class="colwidths-given docutils align-default" id="id2">
+<caption><span class="caption-text">Simple Syrup Data</span><a class="headerlink" href="#id2" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Label(s)</p></th>
+<th class="head"><p>Water Quantity</p></th>
+<th class="head"><p>Sugar Quantity</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Simple Syrup A</p></td>
+<td><p>Simple Syrup, Sweetener</p></td>
+<td><p>0.50</p></td>
+<td><p>0.50</p></td>
+</tr>
+<tr class="row-odd"><td><p>Simple Syrup B</p></td>
+<td><p>Simple Syrup, Sweetener</p></td>
+<td><p>0.45</p></td>
+<td><p>0.55</p></td>
+</tr>
+</tbody>
+</table>
+<p>We now create margaritas by mixing together a subset of ingredients and blending for some time.
+The atomic materials are labeled as described in the “Materials Data” table, and the simple syrups are given a “simple syrup” label.
+In addition to the ingredient mass fractions, we record the blending time, in seconds.
+The margaritas are judged on an ultra-rigorous “tastiness” scale, which ranges from 0.0 to 10.0
+The table below shows two examples.</p>
+<table class="colwidths-given docutils align-default" id="id3">
+<caption><span class="caption-text">Margarita Data</span><a class="headerlink" href="#id3" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col style="width: 11%" />
+<col style="width: 8%" />
+<col style="width: 13%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+<col style="width: 11%" />
+<col style="width: 8%" />
+<col style="width: 8%" />
+<col style="width: 8%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Name</p></th>
+<th class="head"><p>Tastiness</p></th>
+<th class="head"><p>Blend Time (s)</p></th>
+<th class="head"><p>Simple Syrup A Quantity</p></th>
+<th class="head"><p>Simple Syrup B Quantity</p></th>
+<th class="head"><p>Sugar Quantity</p></th>
+<th class="head"><p>Bottled Lime Juice Quantity</p></th>
+<th class="head"><p>Triple Sec Quantity</p></th>
+<th class="head"><p>Tequila Quantity</p></th>
+<th class="head"><p>Ice Quantity</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Margarita A</p></td>
+<td><p>6.3 +/- 0.1</p></td>
+<td><p>8.0</p></td>
+<td><p>0.20</p></td>
+<td><p>0.0</p></td>
+<td><p>0.0</p></td>
+<td><p>0.15</p></td>
+<td><p>0.0</p></td>
+<td><p>0.25</p></td>
+<td><p>0.40</p></td>
+</tr>
+<tr class="row-odd"><td><p>Margarita B</p></td>
+<td><p>5.4 +/- 0.1</p></td>
+<td><p>12.0</p></td>
+<td><p>0.0</p></td>
+<td><p>0.15</p></td>
+<td><p>0.0</p></td>
+<td><p>0.10</p></td>
+<td><p>0.10</p></td>
+<td><p>0.30</p></td>
+<td><p>0.35</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="ingesting-data">
+<h2>5.2. Ingesting Data<a class="headerlink" href="#ingesting-data" title="Permalink to this headline">¶</a></h2>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Ingesting data to GEMD is most easily done with additional tooling to reduce the amount of required programming.</p>
+</div>
+<p>Although we will not describe every step of the data ingestion process, we will highlight several data objects and their inter-connections.
+Perhaps most crucial are the <cite>attribute templates</cite>, which correspond to the parameters of the blending process and the properties of the materials/formulations.
+The name, bounds, and units on these templates will later be matched to descriptors in the AI Engine.
+Make sure to set the bounds wide enough to encompass all anticipated use cases of the templates.</p>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>At this time, currency units are not supported by default because of issues around fluctuating conversion rates.
+For the “price” template, we therefore use units of 1/kg instead of $/kg.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In the code examples that follow, imports are assumed to be cumulative.
+Once an import has been demonstrated, we do not include it in subsequent code blocks.</p>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.resources.parameter_template</span> <span class="kn">import</span> <span class="n">ParameterTemplate</span>
+<span class="kn">from</span> <span class="nn">citrine.resources.property_template</span> <span class="kn">import</span> <span class="n">PropertyTemplate</span>
+<span class="kn">from</span> <span class="nn">gemd.entity.bounds</span> <span class="kn">import</span> <span class="n">RealBounds</span>
+
+<span class="c1"># Assume we have already created a project and dataset, named &quot;project&quot; and &quot;dataset.&quot;</span>
+<span class="c1"># We give the templates ids with a custom scope so that they can be easily retrieved.</span>
+<span class="n">blend_time_template</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">parameter_templates</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
+    <span class="n">ParameterTemplate</span><span class="p">(</span>
+        <span class="s2">&quot;blend time&quot;</span><span class="p">,</span>
+        <span class="n">bounds</span><span class="o">=</span><span class="n">RealBounds</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">60.0</span><span class="p">,</span> <span class="s2">&quot;s&quot;</span><span class="p">),</span>
+        <span class="n">uids</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;margaritas-id&quot;</span><span class="p">:</span> <span class="s2">&quot;blend time template&quot;</span><span class="p">}</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+<span class="n">price_template</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">property_templates</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
+    <span class="n">PropertyTemplate</span><span class="p">(</span>
+        <span class="s2">&quot;price&quot;</span><span class="p">,</span>
+        <span class="n">bounds</span><span class="o">=</span><span class="n">RealBounds</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="s2">&quot;1/kg&quot;</span><span class="p">),</span>
+        <span class="n">uids</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;margaritas-id&quot;</span><span class="p">:</span> <span class="s2">&quot;price template&quot;</span><span class="p">}</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+<span class="n">sucrose_fraction_template</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">property_templates</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
+    <span class="n">PropertyTemplate</span><span class="p">(</span>
+        <span class="s2">&quot;sucrose fraction&quot;</span><span class="p">,</span>
+        <span class="n">bounds</span><span class="o">=</span><span class="n">RealBounds</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+        <span class="n">uids</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;margaritas-id&quot;</span><span class="p">:</span> <span class="s2">&quot;sucrose fraction template&quot;</span><span class="p">}</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+<span class="n">tastiness_template</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">property_templates</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
+    <span class="n">PropertyTemplate</span><span class="p">(</span>
+        <span class="s2">&quot;tastiness&quot;</span><span class="p">,</span>
+        <span class="n">bounds</span><span class="o">=</span><span class="n">RealBounds</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+        <span class="n">uids</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;margaritas-id&quot;</span><span class="p">:</span> <span class="s2">&quot;tastiness property template&quot;</span><span class="p">}</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>The attribute templates are attached to relevant object templates.
+For example, the process template to represent blending should include <code class="docutils literal notranslate"><span class="pre">blend_time_template</span></code> as a <code class="docutils literal notranslate"><span class="pre">parameter</span></code>.</p>
+<p>Although it contains no attributes, we should particular pay attention to the templates that represent the mixing processes.
+These will be used to convert GEMD data into formulations.
+It is possible to use different process templates to distinguish between different types of mixing, but here we use the one template to represesnt both types of mixing that occur (mixing the simple syrup and mixing the margarita ingredients).
+The template includes a comprehensive list of all allowed names and labels.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.resources.process_template</span> <span class="kn">import</span> <span class="n">ProcessTemplate</span>
+
+<span class="n">mix_template</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">process_templates</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
+    <span class="n">ProcessTemplate</span><span class="p">(</span>
+        <span class="s2">&quot;mix&quot;</span><span class="p">,</span>
+        <span class="n">uids</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;margaritas-id&quot;</span><span class="p">:</span> <span class="s2">&quot;mix template&quot;</span><span class="p">},</span>
+        <span class="n">allowed_names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;simple syrup&quot;</span><span class="p">,</span> <span class="s2">&quot;sugar&quot;</span><span class="p">,</span> <span class="s2">&quot;water&quot;</span><span class="p">,</span> <span class="s2">&quot;lime juice&quot;</span><span class="p">,</span> <span class="s2">&quot;orange liqueur&quot;</span><span class="p">,</span> <span class="s2">&quot;tequila&quot;</span><span class="p">,</span> <span class="s2">&quot;ice&quot;</span><span class="p">],</span>
+        <span class="n">allowed_labels</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;sweetener&quot;</span><span class="p">,</span> <span class="s2">&quot;acid&quot;</span><span class="p">,</span> <span class="s2">&quot;alcohol&quot;</span><span class="p">,</span> <span class="s2">&quot;simple syrup&quot;</span><span class="p">]</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>Here we must distinguish between “name” and “identifier”.
+“Name” in this case is an abstract way of describing the types of things that go into a process.
+“Identifier” is the unique way of referring to one particular material.
+In this example the template allows the name “lime juice,” but does not specify the specific material.
+For simplicity, this example only includes one type of lime juice, “bottled lime juice,” but we might also have “fresh-squeezed lime juice” or several batches of bottled lime juice, each with their own unique identifier.
+In some cases, such as “ice,” for which we know that only one material will be used, we have conflated the name and identifier.</p>
+<p>Specifying <code class="docutils literal notranslate"><span class="pre">allowed_names</span></code> is not required for GEMD, but will make it easier to build the eventual table.
+In this case, the table will have a super-column describing the use of lime juice in the margarita, with sub-columns for the identifier of the specific lime juice used, its quantity, and any labels belonging to the ingredient.</p>
+<p>If a suitable set of names are not known, it is possible to be generic: “mixing input 1,” “mixing input 2,” etc.</p>
+</div>
+<p>To fill out the example, we illustrate some of the objects involved in specifying the spec for a particular margarita recipe.
+This assumes that the material specs for the atomic materials and the simple syrups have already been uploaded.</p>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>It is important to assign human-readable uids to the Material Runs, as these will be the unique identifiers in the resulting table.</p>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.resources.process_spec</span> <span class="kn">import</span> <span class="n">ProcessSpec</span>
+<span class="kn">from</span> <span class="nn">citrine.resources.ingredient_spec</span> <span class="kn">import</span> <span class="n">IngredientSpec</span>
+<span class="kn">from</span> <span class="nn">citrine.resources.material_spec</span> <span class="kn">import</span> <span class="n">MaterialSpec</span>
+<span class="kn">from</span> <span class="nn">gemd.entity.value</span> <span class="kn">import</span> <span class="n">NominalReal</span>
+<span class="kn">from</span> <span class="nn">gemd.entity.link_by_uid</span> <span class="kn">import</span> <span class="n">LinkByUID</span>
+
+<span class="n">mix_margarita_spec</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">process_specs</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
+    <span class="n">ProcessSpec</span><span class="p">(</span><span class="s2">&quot;mix margarita B&quot;</span><span class="p">,</span> <span class="n">template</span><span class="o">=</span><span class="n">LinkByUID</span><span class="p">(</span><span class="s2">&quot;margaritas-id&quot;</span><span class="p">,</span> <span class="s2">&quot;mix template&quot;</span><span class="p">))</span>
+<span class="p">)</span>
+<span class="n">dataset</span><span class="o">.</span><span class="n">ingredient_specs</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
+    <span class="n">IngredientSpec</span><span class="p">(</span>
+        <span class="s2">&quot;simple syrup&quot;</span><span class="p">,</span>
+        <span class="n">material</span><span class="o">=</span><span class="n">simple_syrup_B_spec</span><span class="p">,</span>  <span class="c1"># assume that this and the other relevant specs exist in memory</span>
+        <span class="n">process</span><span class="o">=</span><span class="n">mix_margarita_spec</span><span class="p">,</span>
+        <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;simple syrup&quot;</span><span class="p">],</span>
+        <span class="n">mass_fraction</span><span class="o">=</span><span class="n">NominalReal</span><span class="p">(</span><span class="n">nominal</span><span class="o">=</span><span class="mf">0.15</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+<span class="n">dataset</span><span class="o">.</span><span class="n">ingredient_specs</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
+    <span class="n">IngredientSpec</span><span class="p">(</span>
+        <span class="s2">&quot;triple sec&quot;</span><span class="p">,</span>
+        <span class="n">material</span><span class="o">=</span><span class="n">triple_sec_spec</span><span class="p">,</span>
+        <span class="n">process</span><span class="o">=</span><span class="n">mix_margarita_spec</span><span class="p">,</span>
+        <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;alcohol&quot;</span><span class="p">,</span> <span class="s2">&quot;sweetener&quot;</span><span class="p">],</span>
+        <span class="n">mass_fraction</span><span class="o">=</span><span class="n">NominalReal</span><span class="p">(</span><span class="n">nominal</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+<span class="c1"># register remaining ingredient specs....</span>
+<span class="c1"># Then register the resulting material spec.</span>
+<span class="n">margarita_spec</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">material_specs</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
+    <span class="n">MaterialSpec</span><span class="p">(</span>
+        <span class="s2">&quot;margarita B&quot;</span><span class="p">,</span>
+        <span class="n">process</span><span class="o">=</span><span class="n">mix_margarita_spec</span><span class="p">,</span>
+        <span class="n">template</span><span class="o">=</span><span class="n">LinkByUID</span><span class="p">(</span><span class="s2">&quot;margaritas-id&quot;</span><span class="p">,</span> <span class="s2">&quot;margarita template&quot;</span><span class="p">)</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>This material spec is then fed as the sole ingredient into a “blend margarita B” process spec, which produces a “blended margarita B” material spec.
+A measurement spec is attached to the material spec to measure “tastiness.”
+Finally, run objects are created corresponding to each spec, to represent what actually happened.
+Whew!
+That’s a lot, which is why this is best done with additional tooling, whether in code or in the GUI.</p>
+<p>A rendering of this example material history is shown below.</p>
+<figure class="align-center" id="id4">
+<img alt="_images/GEMD_history_example.png" src="_images/GEMD_history_example.png" />
+<figcaption>
+<p><span class="caption-text">Material History for Blended Margarita B</span><a class="headerlink" href="#id4" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+<p>Repeating this process once for each margarita sample, we can build up a rich dataset for machine learning.</p>
+</section>
+<section id="building-a-table">
+<h2>5.3. Building a Table<a class="headerlink" href="#building-a-table" title="Permalink to this headline">¶</a></h2>
+<p>We now build a GEM Table to represent the margaritas’ material histories in tabular format.
+This table will be used as training data when building a machine learning graphical model.
+For more detailed information on GEM Tables, see the section on <a class="reference internal" href="data_extraction.html"><span class="doc">data extraction</span></a>.</p>
+<p>In order to make a GEM Table, we start with a Table Configuration object.
+In this example we will build up the configuration in small steps.
+As we will see, templates are crucial to configuring the table.</p>
+<p>The code below defines the rows and defines one column that contains the identifier of each row.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.resources.table_config</span> <span class="kn">import</span> <span class="n">TableConfig</span>
+<span class="kn">from</span> <span class="nn">citrine.gemtables.rows</span> <span class="kn">import</span> <span class="n">MaterialRunByTemplate</span>
+<span class="kn">from</span> <span class="nn">citrine.gemtables.variables</span> <span class="kn">import</span> <span class="n">RootIdentifier</span>
+<span class="kn">from</span> <span class="nn">citrine.gemtables.columns</span> <span class="kn">import</span> <span class="n">IdentityColumn</span>
+
+
+<span class="n">material_templates_to_include</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">blended_margarita_template</span><span class="p">,</span> <span class="n">simple_syrup_template</span><span class="p">,</span> <span class="n">base_material_template</span>
+<span class="p">]</span>
+<span class="n">scope</span> <span class="o">=</span> <span class="s2">&quot;margaritas-id&quot;</span>
+
+<span class="n">config</span> <span class="o">=</span> <span class="n">TableConfig</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;margarita formulations table&quot;</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">datasets</span><span class="o">=</span><span class="p">[</span><span class="n">dataset</span><span class="o">.</span><span class="n">uid</span><span class="p">],</span>
+    <span class="n">rows</span><span class="o">=</span><span class="p">[</span>
+        <span class="n">MaterialRunByTemplate</span><span class="p">(</span>
+            <span class="n">templates</span><span class="o">=</span><span class="p">[</span><span class="n">LinkByUID</span><span class="o">.</span><span class="n">from_entity</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">material_templates_to_include</span><span class="p">]</span>
+        <span class="p">)</span>
+    <span class="p">],</span>
+    <span class="n">variables</span><span class="o">=</span><span class="p">[</span><span class="n">RootIdentifier</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">],</span> <span class="n">scope</span><span class="o">=</span><span class="n">scope</span><span class="p">)],</span>
+    <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="n">IdentityColumn</span><span class="p">(</span><span class="n">data_source</span><span class="o">=</span><span class="s2">&quot;name&quot;</span><span class="p">)]</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Let’s step through the pieces of this code.
+We gave the configuration a name and description for human-readability.
+We defined the datasets that contain the material histories; for the purposes of this example we assume everything is in the dataset <code class="docutils literal notranslate"><span class="pre">dataset</span></code>.
+We then defined the rows as being based on all materials that link to one of a set of Material Templates.
+For the purposes of this example, assume that we have defined separate material templates for the base materials, the simple syrups, the margaritas, and the blended margaritas.
+Notice that we do _not_ include the material template for the unblended margaritas.
+For the purposes of machine learning, we want to compress the mixing and blending into a single training row.</p>
+<p>We define a single variable/column that contains a unique identifier for each row.
+Every object on the Citrine Platform has a unique id with scope <code class="docutils literal notranslate"><span class="pre">id</span></code>, but these are difficult for a human to read.
+In this example we assume that we have given the materials human-readable uniquely identifying names with scope “margaritas-id.”
+These names will appear in the first column of the table.</p>
+<p>We now use the <a class="reference internal" href="reference/citrine.resources.table_config.html#citrine.resources.table_config.TableConfig.add_columns" title="citrine.resources.table_config.TableConfig.add_columns"><code class="xref py py-func docutils literal notranslate"><span class="pre">add_columns()</span></code></a> method to expand the configuration.
+We first use the <a class="reference internal" href="reference/citrine.gemtables.variables.html#citrine.gemtables.variables.AttributeByTemplate" title="citrine.gemtables.variables.AttributeByTemplate"><code class="xref py py-class docutils literal notranslate"><span class="pre">AttributeByTemplate</span></code></a> variable to record the attributes.
+For those attributes that may have non-zero uncertainty, we include columns for both mean and standard deviation.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.gemtables.variables</span> <span class="kn">import</span> <span class="n">AttributeByTemplate</span>
+<span class="kn">from</span> <span class="nn">citrine.gemtables.columns</span> <span class="kn">import</span> <span class="n">MeanColumn</span><span class="p">,</span> <span class="n">StdDevColumn</span>
+
+<span class="n">scope</span> <span class="o">=</span> <span class="s2">&quot;margaritas-id&quot;</span>
+<span class="n">config</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">add_columns</span><span class="p">(</span>
+    <span class="n">variable</span><span class="o">=</span><span class="n">AttributeByTemplate</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;price&quot;</span><span class="p">,</span>
+        <span class="n">headers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;price&quot;</span><span class="p">],</span>
+        <span class="n">template</span><span class="o">=</span><span class="n">LinkByUID</span><span class="p">(</span><span class="n">scope</span><span class="p">,</span> <span class="s2">&quot;price template&quot;</span><span class="p">)</span>
+    <span class="p">),</span>
+    <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="n">MeanColumn</span><span class="p">(</span><span class="n">data_source</span><span class="o">=</span><span class="s2">&quot;price&quot;</span><span class="p">)]</span>
+<span class="p">)</span>
+<span class="n">config</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">add_columns</span><span class="p">(</span>
+    <span class="n">variable</span><span class="o">=</span><span class="n">AttributeByTemplate</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;sucrose fraction&quot;</span><span class="p">,</span>
+        <span class="n">headers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;sucrose fraction&quot;</span><span class="p">],</span>
+        <span class="n">template</span><span class="o">=</span><span class="n">LinkByUID</span><span class="p">(</span><span class="n">scope</span><span class="p">,</span> <span class="s2">&quot;sucrose fraction template&quot;</span><span class="p">)</span>
+    <span class="p">),</span>
+    <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="n">MeanColumn</span><span class="p">(</span><span class="n">data_source</span><span class="o">=</span><span class="s2">&quot;sucrose fraction&quot;</span><span class="p">),</span> <span class="n">StdDevColumn</span><span class="p">(</span><span class="n">data_source</span><span class="o">=</span><span class="s2">&quot;sucrose fraction&quot;</span><span class="p">)]</span>
+<span class="p">)</span>
+<span class="n">config</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">add_columns</span><span class="p">(</span>
+    <span class="n">variable</span><span class="o">=</span><span class="n">AttributeByTemplate</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;blend time&quot;</span><span class="p">,</span>
+        <span class="n">headers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;margarita&quot;</span><span class="p">,</span> <span class="s2">&quot;blend time&quot;</span><span class="p">],</span>
+        <span class="n">template</span><span class="o">=</span><span class="n">LinkByUID</span><span class="p">(</span><span class="n">scope</span><span class="p">,</span> <span class="s2">&quot;blend time template&quot;</span><span class="p">)</span>
+    <span class="p">),</span>
+    <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="n">MeanColumn</span><span class="p">(</span><span class="n">data_source</span><span class="o">=</span><span class="s2">&quot;blend time&quot;</span><span class="p">)]</span>
+<span class="p">)</span>
+<span class="n">config</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">add_columns</span><span class="p">(</span>
+    <span class="n">variable</span><span class="o">=</span><span class="n">AttributeByTemplate</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;tastiness&quot;</span><span class="p">,</span>
+        <span class="n">headers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;margarita&quot;</span><span class="p">,</span> <span class="s2">&quot;tastiness&quot;</span><span class="p">],</span>
+        <span class="n">template</span><span class="o">=</span><span class="n">LinkByUID</span><span class="p">(</span><span class="n">scope</span><span class="p">,</span> <span class="s2">&quot;tastiness property template&quot;</span><span class="p">)</span>
+    <span class="p">),</span>
+    <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="n">MeanColumn</span><span class="p">(</span><span class="n">data_source</span><span class="o">=</span><span class="s2">&quot;tastiness&quot;</span><span class="p">),</span> <span class="n">StdDevColumn</span><span class="p">(</span><span class="n">data_source</span><span class="o">=</span><span class="s2">&quot;tastiness&quot;</span><span class="p">)]</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">name</span></code> is only used to link a variable to columns.
+The <code class="docutils literal notranslate"><span class="pre">headers</span></code> are used to structure the table <em>and also create the names of the eventual descriptors</em>.
+The figure below shows how some of the columns may be rendered in a GEM Table.
+Because they both have the “margarita” heading, “blend time” and “tastiness” are grouped together.</p>
+<figure class="align-center" id="id5">
+<img alt="_images/GEM_Table_formulation_properties.png" src="_images/GEM_Table_formulation_properties.png" />
+<figcaption>
+<p><span class="caption-text">GEM Table “margarita properties” columns</span><a class="headerlink" href="#id5" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+<p>We now add a set of three variables for each mixing ingredient: one for the identifier, one for the quantity, and one for the labels.
+The code block below shows how we would add a set of columns for “simple syrup.”
+This must be repeated once for each ingredient.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.gemtables.variables</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">IngredientIdentifierInOutput</span><span class="p">,</span>
+    <span class="n">IngredientQuantityInOutput</span><span class="p">,</span>
+    <span class="n">IngredientLabelsSetInOutput</span><span class="p">,</span>
+    <span class="n">IngredientQuantityDimension</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">citrine.gemtables.columns</span> <span class="kn">import</span> <span class="n">ConcatColumn</span>
+
+<span class="n">ing_name</span> <span class="o">=</span> <span class="s2">&quot;simple syrup&quot;</span>
+<span class="n">mix_template_link</span> <span class="o">=</span> <span class="n">LinkByUID</span><span class="o">.</span><span class="n">from_entity</span><span class="p">(</span><span class="n">mix_template</span><span class="p">)</span>
+<span class="n">identity_var</span> <span class="o">=</span> <span class="n">IngredientIdentifierInOutput</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ing_name</span><span class="si">}</span><span class="s2"> identifier&quot;</span><span class="p">,</span>
+    <span class="n">headers</span><span class="o">=</span><span class="p">[</span><span class="n">ing_name</span><span class="p">,</span> <span class="s2">&quot;Identifier&quot;</span><span class="p">],</span>
+    <span class="n">ingredient_name</span><span class="o">=</span><span class="n">ing_name</span><span class="p">,</span>
+    <span class="n">process_templates</span><span class="o">=</span><span class="p">[</span><span class="n">mix_template_link</span><span class="p">],</span>
+    <span class="n">scope</span><span class="o">=</span><span class="n">scope</span>
+<span class="p">)</span>
+<span class="n">quantity_var</span> <span class="o">=</span> <span class="n">IngredientQuantityInOutput</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ing_name</span><span class="si">}</span><span class="s2"> mass&quot;</span><span class="p">,</span>
+    <span class="n">headers</span><span class="o">=</span><span class="p">[</span><span class="n">ing_name</span><span class="p">,</span> <span class="s2">&quot;Mass&quot;</span><span class="p">],</span>
+    <span class="n">process_templates</span><span class="o">=</span><span class="p">[</span><span class="n">mix_template_link</span><span class="p">],</span>
+    <span class="n">ingredient_name</span><span class="o">=</span><span class="n">ing_name</span><span class="p">,</span>
+    <span class="n">quantity_dimension</span><span class="o">=</span><span class="n">IngredientQuantityDimension</span><span class="o">.</span><span class="n">MASS</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">labels_var</span> <span class="o">=</span> <span class="n">IngredientLabelsSetInOutput</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ing_name</span><span class="si">}</span><span class="s2"> labels&quot;</span><span class="p">,</span>
+    <span class="n">headers</span><span class="o">=</span><span class="p">[</span><span class="n">ing_name</span><span class="p">,</span> <span class="s2">&quot;Labels&quot;</span><span class="p">],</span>
+    <span class="n">process_templates</span><span class="o">=</span><span class="p">[</span><span class="n">mix_template_link</span><span class="p">],</span>
+    <span class="n">ingredient_name</span><span class="o">=</span><span class="n">ing_name</span>
+<span class="p">)</span>
+<span class="n">config</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">add_columns</span><span class="p">(</span>
+    <span class="n">variable</span><span class="o">=</span><span class="n">identity_var</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="n">IdentityColumn</span><span class="p">(</span><span class="n">data_source</span><span class="o">=</span><span class="n">identity_var</span><span class="o">.</span><span class="n">name</span><span class="p">)]</span>
+<span class="p">)</span>
+<span class="n">config</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">add_columns</span><span class="p">(</span>
+    <span class="n">variable</span><span class="o">=</span><span class="n">quantity_var</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="n">MeanColumn</span><span class="p">(</span><span class="n">data_source</span><span class="o">=</span><span class="n">quantity_var</span><span class="o">.</span><span class="n">name</span><span class="p">)],</span>
+<span class="p">)</span>
+<span class="n">config</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">add_columns</span><span class="p">(</span>
+    <span class="n">variable</span><span class="o">=</span><span class="n">labels_var</span><span class="p">,</span>
+    <span class="n">columns</span><span class="o">=</span><span class="p">[</span>
+        <span class="n">ConcatColumn</span><span class="p">(</span>
+            <span class="n">data_source</span><span class="o">=</span><span class="n">labels_var</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">subcolumn</span><span class="o">=</span><span class="n">IdentityColumn</span><span class="p">(</span><span class="n">data_source</span><span class="o">=</span><span class="n">labels_var</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="p">)</span>
+    <span class="p">]</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>The figure below shows how these three columns may be rendered in a GEM Table.</p>
+<figure class="align-center" id="id6">
+<img alt="_images/GEM_Table_formulation_ingredient.png" src="_images/GEM_Table_formulation_ingredient.png" />
+<figcaption>
+<p><span class="caption-text">GEM Table “simple syrup ingredient” columns</span><a class="headerlink" href="#id6" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+<p>Lastly, we register the configuration and build the table.
+Note that this can be a long-running process depending on how many cells are in the table.
+To build the table asynchronously, use <a class="reference internal" href="reference/citrine.resources.gemtables.html#citrine.resources.gemtables.GemTableCollection.initiate_build" title="citrine.resources.gemtables.GemTableCollection.initiate_build"><code class="xref py py-func docutils literal notranslate"><span class="pre">initiate_build()</span></code></a>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">config</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">table_configs</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+<span class="n">table</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">tables</span><span class="o">.</span><span class="n">build_from_config</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="training-a-predictor">
+<h2>5.4. Training a Predictor<a class="headerlink" href="#training-a-predictor" title="Permalink to this headline">¶</a></h2>
+<p>With the GEM Table in hand, we build and train a predictor to predict the tastiness of novel margarita recipes.
+The first step is to define a <a class="reference internal" href="reference/citrine.informatics.data_sources.html#citrine.informatics.data_sources.GemTableDataSource" title="citrine.informatics.data_sources.GemTableDataSource"><code class="xref py py-class docutils literal notranslate"><span class="pre">GemTableDataSource</span></code></a> based on the GEM Table, <code class="docutils literal notranslate"><span class="pre">table</span></code>.
+We choose to define a <a class="reference internal" href="reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.FormulationDescriptor" title="citrine.informatics.descriptors.FormulationDescriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">FormulationDescriptor</span></code></a> to hold the formulation;
+if we do not specify it then a default descriptor will be generated, but given how crucial this descriptor is it is best to specify it directly.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.informatics.descriptors</span> <span class="kn">import</span> <span class="n">FormulationDescriptor</span>
+<span class="kn">from</span> <span class="nn">citrine.informatics.data_sources</span> <span class="kn">import</span> <span class="n">GemTableDataSource</span>
+
+<span class="n">formulation</span> <span class="o">=</span> <span class="n">FormulationDescriptor</span><span class="p">(</span><span class="s2">&quot;mixed and blended margarita&quot;</span><span class="p">)</span>
+<span class="n">data_source</span> <span class="o">=</span> <span class="n">GemTableDataSource</span><span class="p">(</span><span class="n">table_id</span><span class="o">=</span><span class="n">table</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span> <span class="n">table_version</span><span class="o">=</span><span class="n">table</span><span class="o">.</span><span class="n">version</span><span class="p">,</span> <span class="n">formulation_descriptor</span><span class="o">=</span><span class="n">formulation</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The first component of the graphical model is a <a class="reference internal" href="reference/citrine.informatics.predictors.simple_mixture_predictor.html#citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor" title="citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleMixturePredictor</span></code></a>, which flattens the input formulation–it repeatedly replaces components with their ingredients until only the atomic ingredients remain.
+This flattening efficiently teaches the predictor about the relationship between materials.
+In this case, it learns exactly how “simple syrup A” and “simple syrup B” are similar to each other because they both contain atomic materials sugar and water but in slightly different amounts.
+Although the homogeneous representation is not entirely appropriate for all formulations problems, it is usually an excellent approximation,
+especially when coupled with flexible machine learning models that can emulate more complex relationships within the data.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.informatics.predictors</span> <span class="kn">import</span> <span class="n">SimpleMixturePredictor</span>
+
+<span class="n">flat_formulation</span> <span class="o">=</span> <span class="n">FormulationDescriptor</span><span class="p">(</span><span class="s2">&quot;homogenized margarita&quot;</span><span class="p">)</span>
+<span class="n">simple_mixture_predictor</span> <span class="o">=</span> <span class="n">SimpleMixturePredictor</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Simple margarita mixture&quot;</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Flatten a mixture of mixtures into leaf ingredients&quot;</span><span class="p">,</span>
+    <span class="n">input_descriptor</span><span class="o">=</span><span class="n">formulation</span><span class="p">,</span>  <span class="c1"># this is the formulation descriptor from the table</span>
+    <span class="n">output_descriptor</span><span class="o">=</span><span class="n">flat_formulation</span>  <span class="c1"># this is a new descriptor to represent the flattened formulation</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Using the flattened formulation as an input, we create several “featurizers” to compute features; these will be the inputs to the machine learning model(s).
+The featurizer predictors are <a class="reference internal" href="reference/citrine.informatics.predictors.ingredient_fractions_predictor.html#citrine.informatics.predictors.ingredient_fractions_predictor.IngredientFractionsPredictor" title="citrine.informatics.predictors.ingredient_fractions_predictor.IngredientFractionsPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientFractionsPredictor</span></code></a>,
+<a class="reference internal" href="reference/citrine.informatics.predictors.label_fractions_predictor.html#citrine.informatics.predictors.label_fractions_predictor.LabelFractionsPredictor" title="citrine.informatics.predictors.label_fractions_predictor.LabelFractionsPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">LabelFractionsPredictor</span></code></a>, and <a class="reference internal" href="reference/citrine.informatics.predictors.mean_property_predictor.html#citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor" title="citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">MeanPropertyPredictor</span></code></a>.
+We create one predictor each for ingredient and label fractions, and two mean property predictors–
+one that computes the mean price over all ingredients (this will be used to constraint the price of new margarita recipes) and one that computes the mean sucrose content of just the sweeteners.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.informatics.descriptors</span> <span class="kn">import</span> <span class="n">RealDescriptor</span>
+<span class="kn">from</span> <span class="nn">citrine.informatics.predictors</span> <span class="kn">import</span> <span class="n">LabelFractionsPredictor</span><span class="p">,</span> <span class="n">IngredientFractionsPredictor</span><span class="p">,</span> <span class="n">MeanPropertyPredictor</span>
+
+<span class="n">label_fractions_predictor</span> <span class="o">=</span> <span class="n">LabelFractionsPredictor</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Label fractions&quot;</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Total quantity that is from one of the component types&quot;</span><span class="p">,</span>
+    <span class="n">input_descriptor</span><span class="o">=</span><span class="n">flat_formulation</span><span class="p">,</span>
+    <span class="n">labels</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;acid&quot;</span><span class="p">,</span> <span class="s2">&quot;alcohol&quot;</span><span class="p">,</span> <span class="s2">&quot;sweetener&quot;</span><span class="p">},</span>
+<span class="p">)</span>
+
+<span class="n">ingredient_fractions_predictor</span> <span class="o">=</span> <span class="n">IngredientFractionsPredictor</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Ingredient Fractions&quot;</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Compute the fraction of each ingredient&quot;</span><span class="p">,</span>
+    <span class="n">input_descriptor</span><span class="o">=</span><span class="n">flat_formulation</span><span class="p">,</span>
+    <span class="c1"># Note that these are the identifiers of the atomic ingredients, not the names.</span>
+    <span class="c1"># (the specific material identifier &quot;bottled lime juice&quot; instead of the generic ingredient name &quot;lime juice&quot;)</span>
+    <span class="n">ingredients</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;bottled lime juice&quot;</span><span class="p">,</span> <span class="s2">&quot;water&quot;</span><span class="p">,</span> <span class="s2">&quot;ice&quot;</span><span class="p">,</span> <span class="s2">&quot;sugar&quot;</span><span class="p">,</span> <span class="s2">&quot;tequila&quot;</span><span class="p">,</span> <span class="s2">&quot;triple sec&quot;</span><span class="p">},</span>
+<span class="p">)</span>
+
+<span class="c1"># These descriptors must match up with the Variable in the GEM Table and the associated Attribute Template</span>
+<span class="n">price</span> <span class="o">=</span> <span class="n">RealDescriptor</span><span class="p">(</span><span class="s2">&quot;price&quot;</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;1/kg&quot;</span><span class="p">)</span>
+<span class="n">sucrose_fraction</span> <span class="o">=</span> <span class="n">RealDescriptor</span><span class="p">(</span><span class="s2">&quot;sucrose fraction&quot;</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+<span class="n">mean_price_predictor</span> <span class="o">=</span> <span class="n">MeanPropertyPredictor</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Mean price&quot;</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Compute weighted mean of price per kilogram&quot;</span><span class="p">,</span>
+    <span class="n">input_descriptor</span><span class="o">=</span><span class="n">flat_formulation</span><span class="p">,</span>
+    <span class="n">properties</span><span class="o">=</span><span class="p">[</span><span class="n">price</span><span class="p">],</span>
+    <span class="n">impute_properties</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">p</span><span class="o">=</span><span class="mi">1</span>
+<span class="p">)</span>
+<span class="n">mean_sweetness_predictor</span> <span class="o">=</span> <span class="n">MeanPropertyPredictor</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Mean sucrose content of sweeteners&quot;</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Compute weighted mean of sucrose content for sweeteners&quot;</span><span class="p">,</span>
+    <span class="n">input_descriptor</span><span class="o">=</span><span class="n">flat_formulation</span><span class="p">,</span>
+    <span class="n">properties</span><span class="o">=</span><span class="p">[</span><span class="n">sucrose_fraction</span><span class="p">],</span>
+    <span class="n">impute_properties</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;sweetener&quot;</span><span class="p">,</span>
+    <span class="n">p</span><span class="o">=</span><span class="mi">1</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>This provides an illustration of how we can use a graphical model to inject domain knowledge.
+We know that the balance of sweetness and acidity is crucial to taste.
+By computing the fraction of the margarita that is acidic, the fraction that is a sweetener, and the average sucrose content of those sweeteners,
+we provide the machine learning model with crucial variables that it can use to discover patterns <em>without</em> requiring large amounts of training data.
+Furthermore, we can introduce new acids and sweeteners into our pantry and the model will be able to make reasonable predictions even if it has not been trained on them.</p>
+<p>The final piece is an <a class="reference internal" href="reference/citrine.informatics.predictors.auto_ml_predictor.html#citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor" title="citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">AutoMLPredictor</span></code></a> for <code class="docutils literal notranslate"><span class="pre">tastiness</span></code>.
+We use the <a class="reference internal" href="reference/citrine.resources.descriptors.html#citrine.resources.descriptors.DescriptorMethods.from_predictor_responses" title="citrine.resources.descriptors.DescriptorMethods.from_predictor_responses"><code class="xref py py-func docutils literal notranslate"><span class="pre">from_predictor_responses()</span></code></a> method to get the outputs of the featurizers.
+We also use <code class="docutils literal notranslate"><span class="pre">blend</span> <span class="pre">time</span></code> as an input.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.informatics.predictors</span> <span class="kn">import</span> <span class="n">AutoMLPredictor</span>
+
+<span class="n">label_fractions_descriptors</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">descriptors</span><span class="o">.</span><span class="n">from_predictor_responses</span><span class="p">(</span>
+    <span class="n">predictor</span><span class="o">=</span><span class="n">label_fractions_predictor</span><span class="p">,</span> <span class="n">inputs</span><span class="o">=</span><span class="p">[</span><span class="n">flat_formulation</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="n">ingredient_fractions_descriptors</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">descriptors</span><span class="o">.</span><span class="n">from_predictor_responses</span><span class="p">(</span>
+    <span class="n">predictor</span><span class="o">=</span><span class="n">ingredient_fractions_predictor</span><span class="p">,</span> <span class="n">inputs</span><span class="o">=</span><span class="p">[</span><span class="n">flat_formulation</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="n">price_descriptors</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">descriptors</span><span class="o">.</span><span class="n">from_predictor_responses</span><span class="p">(</span>
+    <span class="n">predictor</span><span class="o">=</span><span class="n">mean_price_predictor</span><span class="p">,</span> <span class="n">inputs</span><span class="o">=</span><span class="p">[</span><span class="n">flat_formulation</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="n">sweetness_descriptors</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">descriptors</span><span class="o">.</span><span class="n">from_predictor_responses</span><span class="p">(</span>
+    <span class="n">predictor</span><span class="o">=</span><span class="n">mean_sweetness_predictor</span><span class="p">,</span> <span class="n">inputs</span><span class="o">=</span><span class="p">[</span><span class="n">flat_formulation</span><span class="p">]</span>
+<span class="p">)</span>
+
+<span class="n">blend_time</span> <span class="o">=</span> <span class="n">RealDescriptor</span><span class="p">(</span><span class="s2">&quot;margarita~blend time&quot;</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;s&quot;</span><span class="p">)</span>
+<span class="n">tastiness</span> <span class="o">=</span> <span class="n">RealDescriptor</span><span class="p">(</span><span class="s2">&quot;margarita~tastiness&quot;</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+<span class="n">ml_inputs</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">ingredient_fractions_descriptors</span>
+    <span class="o">+</span> <span class="n">label_fractions_descriptors</span>
+    <span class="o">+</span> <span class="n">price_descriptors</span>
+    <span class="o">+</span> <span class="n">sweetness_descriptors</span>
+    <span class="o">+</span> <span class="p">[</span><span class="n">blend_time</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="n">ml_model</span> <span class="o">=</span> <span class="n">AutoMLPredictor</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;ML model for tastiness&quot;</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">output</span><span class="o">=</span><span class="n">tastiness</span><span class="p">,</span>
+    <span class="n">inputs</span><span class="o">=</span><span class="n">ml_inputs</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Where did the descriptor keys <code class="docutils literal notranslate"><span class="pre">margarita~blend</span> <span class="pre">time</span></code> and <code class="docutils literal notranslate"><span class="pre">margarita~tastiness</span></code> come from?
+They came from concatenating the headers in the variables in the table, and the bounds and units came from the attribute templates.
+It’s a lot to keep track of, which is why there is the <a class="reference internal" href="reference/citrine.resources.descriptors.html#citrine.resources.descriptors.DescriptorMethods.descriptors_from_data_source" title="citrine.resources.descriptors.DescriptorMethods.descriptors_from_data_source"><code class="xref py py-func docutils literal notranslate"><span class="pre">descriptors_from_data_source()</span></code></a> method.
+Calling <code class="docutils literal notranslate"><span class="pre">project.descriptors.descriptors_from_data_source(data_source)</span></code> returns a list of all of the descriptors emitted by the data source.
+Make sure that these are the descriptors you are using as inputs to your predictor.</p>
+<p>Lastly, we wrap everything in a <a class="reference internal" href="reference/citrine.informatics.predictors.graph_predictor.html#citrine.informatics.predictors.graph_predictor.GraphPredictor" title="citrine.informatics.predictors.graph_predictor.GraphPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">GraphPredictor</span></code></a> and register it.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.informatics.predictors</span> <span class="kn">import</span> <span class="n">GraphPredictor</span>
+
+<span class="n">predictors_list</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">simple_mixture_predictor</span><span class="p">,</span>
+    <span class="n">ingredient_fractions_predictor</span><span class="p">,</span>
+    <span class="n">label_fractions_predictor</span><span class="p">,</span>
+    <span class="n">mean_price_predictor</span><span class="p">,</span>
+    <span class="n">mean_sweetness_predictor</span><span class="p">,</span>
+    <span class="n">ml_model</span>
+<span class="p">]</span>
+
+<span class="n">graph_predictor</span> <span class="o">=</span> <span class="n">GraphPredictor</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Graphical model for tastiness of blended margaritas&quot;</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">predictors</span><span class="o">=</span><span class="n">predictors_list</span><span class="p">,</span>
+    <span class="n">training_data</span><span class="o">=</span><span class="p">[</span><span class="n">data_source</span><span class="p">]</span> <span class="c1"># the data source we defined above</span>
+<span class="p">)</span>
+<span class="n">graph_predictor</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">predictors</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">graph_predictor</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>One representation of this graphical model is shown below.</p>
+<figure class="align-center" id="id7">
+<img alt="_images/formulations_graphical_model.png" src="_images/formulations_graphical_model.png" />
+<figcaption>
+<p><span class="caption-text">Graphical model to predict tastiness of a margarita</span><a class="headerlink" href="#id7" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+</section>
+<section id="defining-a-design-space">
+<h2>5.5. Defining a Design Space<a class="headerlink" href="#defining-a-design-space" title="Permalink to this headline">¶</a></h2>
+<p>Now that we have a trained predictor, the next step to finding the <em>world’s best margarita</em> is to define the search space.
+A <a class="reference internal" href="reference/citrine.informatics.design_spaces.formulation_design_space.html#citrine.informatics.design_spaces.formulation_design_space.FormulationDesignSpace" title="citrine.informatics.design_spaces.formulation_design_space.FormulationDesignSpace"><code class="xref py py-class docutils literal notranslate"><span class="pre">FormulationDesignSpace</span></code></a> defines the ingredients, the labels, and any constraints.
+In addition to the labels used in the predictor, we also create a label for “simple syrup A” and “simple syrup B.”
+This allows us to specify that one and only one of the simple syrups should be used.</p>
+<p>Notice that the design space’s formulation descriptor corresponds to the original, unflattened formulation.
+That’s because we want to describe the margarita we are physically making in our kitchen.
+The predictor takes care of flattening it to its atomic ingredients.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.informatics.design_spaces</span> <span class="kn">import</span> <span class="n">FormulationDesignSpace</span>
+<span class="kn">from</span> <span class="nn">citrine.informatics.constraints</span> <span class="kn">import</span> <span class="n">IngredientCountConstraint</span><span class="p">,</span> <span class="n">IngredientFractionConstraint</span>
+
+<span class="n">fds</span> <span class="o">=</span> <span class="n">FormulationDesignSpace</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;margaritas formulation&quot;</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">formulation_descriptor</span><span class="o">=</span><span class="n">formulation</span><span class="p">,</span>
+    <span class="n">ingredients</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;simple syrup A&quot;</span><span class="p">,</span> <span class="s2">&quot;simple syrup B&quot;</span><span class="p">,</span> <span class="s2">&quot;tequila&quot;</span><span class="p">,</span> <span class="s2">&quot;ice&quot;</span><span class="p">,</span> <span class="s2">&quot;triple sec&quot;</span><span class="p">,</span> <span class="s2">&quot;bottled lime juice&quot;</span><span class="p">},</span>
+    <span class="n">labels</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;acid&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;bottled lime juice&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;alcohol&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;tequila&quot;</span><span class="p">,</span> <span class="s2">&quot;triple sec&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;sweetener&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;triple sec&quot;</span><span class="p">},</span>
+        <span class="s2">&quot;simple syrup&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;simple syrup A&quot;</span><span class="p">,</span> <span class="s2">&quot;simple syrup B&quot;</span><span class="p">}</span>
+    <span class="p">},</span>
+    <span class="n">constraints</span><span class="o">=</span><span class="p">{</span>
+        <span class="n">IngredientCountConstraint</span><span class="p">(</span><span class="n">formulation_descriptor</span><span class="o">=</span><span class="n">formulation</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">5</span><span class="p">),</span>
+        <span class="n">IngredientCountConstraint</span><span class="p">(</span><span class="n">formulation_descriptor</span><span class="o">=</span><span class="n">formulation</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;simple syrup&quot;</span><span class="p">),</span>
+        <span class="n">IngredientFractionConstraint</span><span class="p">(</span><span class="n">formulation_descriptor</span><span class="o">=</span><span class="n">formulation</span><span class="p">,</span> <span class="n">ingredient</span><span class="o">=</span><span class="s2">&quot;bottled lime juice&quot;</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mf">0.15</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mf">0.30</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>But that’s not all; we also have to define the <code class="docutils literal notranslate"><span class="pre">blend</span> <span class="pre">time</span></code> input.
+We do this by wrapping a <a class="reference internal" href="reference/citrine.informatics.design_spaces.product_design_space.html#citrine.informatics.design_spaces.product_design_space.ProductDesignSpace" title="citrine.informatics.design_spaces.product_design_space.ProductDesignSpace"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProductDesignSpace</span></code></a> around the formulation design space and a <code class="docutils literal notranslate"><span class="pre">blend</span> <span class="pre">time</span></code> dimension.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.informatics.design_spaces</span> <span class="kn">import</span> <span class="n">ProductDesignSpace</span>
+<span class="kn">from</span> <span class="nn">citrine.informatics.dimensions</span> <span class="kn">import</span> <span class="n">ContinuousDimension</span>
+
+<span class="n">design_space</span> <span class="o">=</span> <span class="n">ProductDesignSpace</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;margaritas design space&quot;</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">subspaces</span><span class="o">=</span><span class="p">[</span><span class="n">fds</span><span class="p">],</span>
+    <span class="n">dimensions</span><span class="o">=</span><span class="p">[</span><span class="n">ContinuousDimension</span><span class="p">(</span><span class="n">descriptor</span><span class="o">=</span><span class="n">blend_time</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mf">20.0</span><span class="p">)]</span>
+<span class="p">)</span>
+<span class="n">design_space</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">design_spaces</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">design_space</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="proposing-new-formulation-candidates">
+<h2>5.6. Proposing New Formulation Candidates<a class="headerlink" href="#proposing-new-formulation-candidates" title="Permalink to this headline">¶</a></h2>
+<p>With the pieces assembled, we define a <a class="reference internal" href="reference/citrine.informatics.workflows.design_workflow.html#citrine.informatics.workflows.design_workflow.DesignWorkflow" title="citrine.informatics.workflows.design_workflow.DesignWorkflow"><code class="xref py py-class docutils literal notranslate"><span class="pre">DesignWorkflow</span></code></a>.
+Our goal is to find the margarita that is most likely to have a tastiness score above 7.5, while keeping the cost per kg below $12.50.
+We define an <a class="reference internal" href="reference/citrine.informatics.scores.html#citrine.informatics.scores.LIScore" title="citrine.informatics.scores.LIScore"><code class="xref py py-class docutils literal notranslate"><span class="pre">LIScore</span></code></a> with this objective and constraint, define a design workflow with the predictor and design space, and trigger the design workflow on the score.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.informatics.scores</span> <span class="kn">import</span> <span class="n">LIScore</span>
+<span class="kn">from</span> <span class="nn">citrine.informatics.objectives</span> <span class="kn">import</span> <span class="n">ScalarMaxObjective</span>
+<span class="kn">from</span> <span class="nn">citrine.informatics.constraints</span> <span class="kn">import</span> <span class="n">ScalarRangeConstraint</span>
+<span class="kn">from</span> <span class="nn">citrine.informatics.workflows.design_workflow</span> <span class="kn">import</span> <span class="n">DesignWorkflow</span>
+
+<span class="n">score</span> <span class="o">=</span> <span class="n">LIScore</span><span class="p">(</span>
+    <span class="n">objectives</span><span class="o">=</span><span class="p">[</span><span class="n">ScalarMaxObjective</span><span class="p">(</span><span class="n">descriptor_key</span><span class="o">=</span><span class="n">blend_time</span><span class="o">.</span><span class="n">key</span><span class="p">)],</span>
+    <span class="n">baselines</span><span class="o">=</span><span class="p">[</span><span class="mf">7.5</span><span class="p">],</span>
+    <span class="n">constraints</span><span class="o">=</span><span class="p">[</span><span class="n">ScalarRangeConstraint</span><span class="p">(</span>
+        <span class="n">descriptor_key</span><span class="o">=</span><span class="n">price_descriptors</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">key</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mf">12.50</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=</span><span class="mf">0.00</span>
+    <span class="p">)]</span>
+<span class="p">)</span>
+
+<span class="n">design_workflow</span> <span class="o">=</span> <span class="n">DesignWorkflow</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;best margarita&quot;</span><span class="p">,</span>
+    <span class="n">design_space_id</span><span class="o">=</span><span class="n">design_space</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span>
+    <span class="n">predictor_id</span><span class="o">=</span><span class="n">graph_predictor</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span>
+    <span class="n">processor_id</span><span class="o">=</span><span class="kc">None</span>  <span class="c1"># we use the default continuous search processor</span>
+<span class="p">)</span>
+<span class="n">design_workflow</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">design_workflows</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">design_workflow</span><span class="p">)</span>
+
+<span class="n">execution</span> <span class="o">=</span> <span class="n">design_workflow</span><span class="o">.</span><span class="n">design_executions</span><span class="o">.</span><span class="n">trigger</span><span class="p">(</span><span class="n">score</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Once the execution is complete, <code class="docutils literal notranslate"><span class="pre">execution.candidates()</span></code> returns a paginated list of results.
+How good is the margarita?
+Well, that depends on the training data.</p>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<p class="logo">
+  <a href="index.html">
+    <img class="logo" src="_static/logo.png" alt="Logo"/>
+    
+  </a>
+</p>
+
+
+
+
+
+
+<p>
+<iframe src="https://ghbtns.com/github-btn.html?user=CitrineInformatics&repo=citrine-python&type=watch&count=true&size=large&v=2"
+  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
+</p>
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="getting_started/index.html">1. Getting Started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="getting_started/overview.html">1.1. Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started/connecting.html">1.2. Connecting to the Citrine Platform</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started/basic_functionality.html">1.3. Managing Resources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started/projects.html">1.4. Projects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started/datasets.html">1.5. Datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started/data_model.html">1.6. Data Model Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started/ai_modules.html">1.7. AI Engine Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started/code_examples.html">1.8. Code Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="data_entry.html">2. GEMD Data Model</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="data_entry.html#creating-data-model-objects">2.1. Creating Data Model Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_entry.html#identifying-data-model-objects">2.2. Identifying Data Model Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_entry.html#registering-data-model-objects">2.3. Registering Data Model Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_entry.html#finding-data-model-objects">2.4. Finding Data Model Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_entry.html#updating-data-model-objects">2.5. Updating Data Model Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_entry.html#referencing-data-model-objects">2.6. Referencing Data Model Objects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_entry.html#material-history">2.7. Material History</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_entry.html#validating-data-model-objects">2.8. Validating Data Model Objects</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="data_extraction.html">3. [ALPHA] Data Extraction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="data_extraction.html#defining-row-and-columns">3.1. Defining row and columns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_extraction.html#defining-tables">3.2. Defining tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_extraction.html#previewing-tables">3.3. Previewing tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_extraction.html#building-and-downloading-tables">3.4. Building and downloading tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_extraction.html#available-row-definitions">3.5. Available Row Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_extraction.html#available-variable-definitions">3.6. Available Variable Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_extraction.html#available-column-definitions">3.7. Available Column Definitions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="workflows/index.html">4. AI Engine</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="workflows/getting_started.html">4.1. Getting Started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="workflows/descriptors.html">4.2. Descriptors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="workflows/descriptors.html#platform-vocabularies">4.3. Platform Vocabularies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="workflows/predictors.html">4.4. Predictors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="workflows/design_spaces.html">4.5. Design Spaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="workflows/processors.html">4.6. Processors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="workflows/design_workflows.html">4.7. Design Workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="workflows/scores.html">4.8. Scores</a></li>
+<li class="toctree-l2"><a class="reference internal" href="workflows/data_sources.html">4.9. Data Sources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="workflows/predictor_reports.html">4.10. Predictor Reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="workflows/predictor_evaluation_workflows.html">4.11. Predictor Evaluation Workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="workflows/performance_workflows.html">4.12. [DEPRECATED] Performance Workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="workflows/code_examples.html">4.13. AI Engine Code Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">5. Formulations Example</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#example-raw-data">5.1. Example Raw Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#ingesting-data">5.2. Ingesting Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#building-a-table">5.3. Building a Table</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#training-a-predictor">5.4. Training a Predictor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#defining-a-design-space">5.5. Defining a Design Space</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#proposing-new-formulation-candidates">5.6. Proposing New Formulation Candidates</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="FAQ/index.html">6. FAQ</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="FAQ/prohibited_data_patterns.html">6.1. Prohibited Data Patterns</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="workflows/code_examples.html" title="previous chapter">4.13. AI Engine Code Examples</a></li>
+      <li>Next: <a href="FAQ/index.html" title="next chapter">6. FAQ</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Citrine Informatics.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/formulations_example.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

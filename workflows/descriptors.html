@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>4.2. Descriptors &#8212; Citrine Python 0.119.0 documentation</title>
+    <title>4.2. Descriptors &#8212; Citrine Python 0.125.1 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -40,7 +40,7 @@
 <p>Descriptors allow users to define a controlled vocabulary with which to describe the physical context of an AI task.
 Each descriptor defines a term in that vocabulary, which is comprised of a name, a datatype, and bounds on that data type.
 If you are familiar with the GEMD data model, descriptors are roughly equivalent to <a class="reference internal" href="../reference/citrine.resources.attribute_templates.html#citrine.resources.attribute_templates.AttributeTemplate" title="citrine.resources.attribute_templates.AttributeTemplate"><code class="xref py py-class docutils literal notranslate"><span class="pre">AttributeTemplates</span></code></a>.</p>
-<p>The AI Engine currently supports _ kinds of descriptors:</p>
+<p>The AI Engine currently supports 5 kinds of descriptors:</p>
 <ul class="simple">
 <li><p><a class="reference external" href="#real-descriptor">Real Descriptors</a></p></li>
 <li><p><a class="reference external" href="#categorical-descriptor">Categorical Descriptor</a></p></li>
@@ -90,13 +90,11 @@ The Formulation Descriptor has no parameters other than a name.</p>
 <p>A set of descriptors defines a controlled vocabulary with which to describe AI tasks.
 The <a class="reference internal" href="../reference/citrine.builders.descriptors.html#citrine.builders.descriptors.PlatformVocabulary" title="citrine.builders.descriptors.PlatformVocabulary"><code class="xref py py-class docutils literal notranslate"><span class="pre">PlatformVocabulary</span></code></a> class is provided to collect a set of descriptors,
 associate them with short convenient names, and provide them via a familiar dictionary interface.</p>
-<p>While descriptors cannot be independently saved on the platform for reuse, AttributeTemplates can be.
-Therefore, common descriptors can be saved as AttributeTemplates to the data platform, effectively sharing them with
-other users.
-The <cite>PlatformVocabulary.from_templates</cite> method facilitates this pattern by automatically downloading AttributeTemplates
-and converting them into descriptors.
-AttributeTemplates must be associated with a namespace via Alternative Identifiers (the <cite>uids</cite> field).
-When calling <cite>from_templates</cite>, a scope is provided to select one of those namespaces.
+<p>While descriptors cannot be independently saved on the platform for reuse, <a class="reference internal" href="../reference/citrine.resources.attribute_templates.html#citrine.resources.attribute_templates.AttributeTemplate" title="citrine.resources.attribute_templates.AttributeTemplate"><code class="xref py py-class docutils literal notranslate"><span class="pre">AttributeTemplates</span></code></a> can be.
+Therefore, common descriptors can be saved as attribute templates to the data platform, effectively sharing them with other users.
+<a class="reference internal" href="../reference/citrine.builders.descriptors.html#citrine.builders.descriptors.PlatformVocabulary.from_templates" title="citrine.builders.descriptors.PlatformVocabulary.from_templates"><code class="xref py py-meth docutils literal notranslate"><span class="pre">from_templates()</span></code></a> facilitates this pattern by automatically downloading attribute templates and converting them into descriptors.
+Attribute templates must be associated with a namespace via custom identifiers (the <cite>uids</cite> field).
+When calling <code class="docutils literal notranslate"><span class="pre">from_templates</span></code>, a scope is provided to select one of those namespaces.
 The descriptors can then be associated with the names from that namespace.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine</span> <span class="kn">import</span> <span class="n">Citrine</span>
 <span class="kn">from</span> <span class="nn">citrine.resources.property_template</span> <span class="kn">import</span> <span class="n">PropertyTemplate</span>
@@ -172,12 +170,12 @@ The descriptors can then be associated with the names from that namespace.</p>
 <li class="toctree-l2"><a class="reference internal" href="../getting_started/basic_functionality.html">1.3. Managing Resources</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../getting_started/projects.html">1.4. Projects</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../getting_started/datasets.html">1.5. Datasets</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../getting_started/data_model.html">1.6. Data Model</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../getting_started/ai_modules.html">1.7. AI Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/data_model.html">1.6. Data Model Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/ai_modules.html">1.7. AI Engine Overview</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../getting_started/code_examples.html">1.8. Code Examples</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../data_entry.html">2. Data Entry</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="../data_entry.html">2. GEMD Data Model</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../data_entry.html#creating-data-model-objects">2.1. Creating Data Model Objects</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../data_entry.html#identifying-data-model-objects">2.2. Identifying Data Model Objects</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../data_entry.html#registering-data-model-objects">2.3. Registering Data Model Objects</a></li>
@@ -214,8 +212,17 @@ The descriptors can then be associated with the names from that namespace.</p>
 <li class="toctree-l2"><a class="reference internal" href="code_examples.html">4.13. AI Engine Code Examples</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">5. FAQ</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../FAQ/prohibited_data_patterns.html">5.1. Prohibited Data Patterns</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../formulations_example.html">5. Formulations Example</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../formulations_example.html#example-raw-data">5.1. Example Raw Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../formulations_example.html#ingesting-data">5.2. Ingesting Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../formulations_example.html#building-a-table">5.3. Building a Table</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../formulations_example.html#training-a-predictor">5.4. Training a Predictor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../formulations_example.html#defining-a-design-space">5.5. Defining a Design Space</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../formulations_example.html#proposing-new-formulation-candidates">5.6. Proposing New Formulation Candidates</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">6. FAQ</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../FAQ/prohibited_data_patterns.html">6.1. Prohibited Data Patterns</a></li>
 </ul>
 </li>
 </ul>

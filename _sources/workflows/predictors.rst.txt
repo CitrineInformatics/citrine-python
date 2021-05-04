@@ -445,8 +445,9 @@ An optional label may also be specified if the mean should only be computed over
 
 Missing ingredient properties can be handled one of three ways:
 
-1. If ``impute_properties == False``, an error will be thrown if an ingredient is missing a featurized property.
-   Use this option if you expect ingredient properties to be dense (always present) and would like to be notified when properties are missing.
+1. If ``impute_properties == False``, all ingredients must define a value for all featurized properties.
+   Otherwise, the row will not be featurized.
+   Use this option if you expect ingredient properties to be dense (always present) and would like to exclude rows when properties are missing.
 2. If ``impute_properties == True`` and no ``default_properties`` are specified, missing properties will be filled in using the average value across the entire dataset.
    The average is computed from any row with data corresponding to the missing property, regardless of label or material type (i.e. the average is computed from all leaf ingredients and mixtures).
 3. If ``impute_properties == True`` and ``default_properties`` are specified, the specified property value will be used when an ingredient property is missing (instead of the average over the dataset).
@@ -466,7 +467,7 @@ Our leaf ingredient data might resemble:
 | boric acid    | N/A            |
 +---------------+----------------+
 
-If ``impute_properties == False``, an error will be thrown every time a mixture that includes boric acid is encountered.
+If ``impute_properties == False``, any mixture that includes boric acid will not be featurized.
 If ``impute_properties == True`` and no ``default_properties`` are specified, an density of :math:`\left( 1.0 + 2.16 \right) / 2 = 1.58` will be used.
 If a value other than 1.58 should be used, e.g. 2.0, this can be specified by setting ``default_properties = {'density': 2.0}``.
 

@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>5.1. Prohibited Data Patterns &#8212; Citrine Python 0.119.0 documentation</title>
+    <title>6.1. Prohibited Data Patterns &#8212; Citrine Python 0.125.1 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -17,7 +17,7 @@
     <link rel="shortcut icon" href="../_static/favicon.png"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="prev" title="5. FAQ" href="index.html" />
+    <link rel="prev" title="6. FAQ" href="index.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -35,16 +35,16 @@
           <div class="body" role="main">
             
   <section id="prohibited-data-patterns">
-<h1>5.1. Prohibited Data Patterns<a class="headerlink" href="#prohibited-data-patterns" title="Permalink to this headline">¶</a></h1>
+<h1>6.1. Prohibited Data Patterns<a class="headerlink" href="#prohibited-data-patterns" title="Permalink to this headline">¶</a></h1>
 <section id="summary">
-<h2>5.1.1. Summary<a class="headerlink" href="#summary" title="Permalink to this headline">¶</a></h2>
+<h2>6.1.1. Summary<a class="headerlink" href="#summary" title="Permalink to this headline">¶</a></h2>
 <p>This is a disclaimer on our end to let you know that there are some invalid usage patterns that are not prevented by the API but may corrupt your data and eliminate
 some of the functionality the api and/or platform would otherwise provide.</p>
 </section>
 <section id="cyclic-data-patterns">
-<h2>5.1.2. Cyclic data patterns<a class="headerlink" href="#cyclic-data-patterns" title="Permalink to this headline">¶</a></h2>
+<h2>6.1.2. Cyclic data patterns<a class="headerlink" href="#cyclic-data-patterns" title="Permalink to this headline">¶</a></h2>
 <section id="description">
-<h3>5.1.2.1. Description<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h3>
+<h3>6.1.2.1. Description<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h3>
 <p>Data objects should <strong>NOT</strong> be linked in a cyclic pattern. Consider the following example (where the citrine session is created and dataset already defined):</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">procsp</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">process_specs</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">ProcessSpec</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;test proc&#39;</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">matsp</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">material_specs</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">MaterialSpec</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;test mat&#39;</span><span class="p">,</span><span class="n">process</span><span class="o">=</span><span class="n">procsp</span><span class="p">))</span>
@@ -64,7 +64,7 @@ It does not make sense for a material to be used as an ingredient in its own his
 In other words, the data model does not support time traveling materials.</p>
 </section>
 <section id="implications">
-<h3>5.1.2.2. Implications<a class="headerlink" href="#implications" title="Permalink to this headline">¶</a></h3>
+<h3>6.1.2.2. Implications<a class="headerlink" href="#implications" title="Permalink to this headline">¶</a></h3>
 <p>Currently, there are no validations in place to keep cyclic data from being persisted on the platform. It is up to the user to make sure that the
 objects created do not follow a cyclic pattern; otherwise, the data will be corrupted. If cyclic data is written to the platform, an error will
 not be thrown, but the user may lose core functionality (such as <code class="code docutils literal notranslate"><span class="pre">get_material_history()</span></code>) for the objects participating in the cycle.</p>
@@ -108,12 +108,12 @@ not be thrown, but the user may lose core functionality (such as <code class="co
 <li class="toctree-l2"><a class="reference internal" href="../getting_started/basic_functionality.html">1.3. Managing Resources</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../getting_started/projects.html">1.4. Projects</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../getting_started/datasets.html">1.5. Datasets</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../getting_started/data_model.html">1.6. Data Model</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../getting_started/ai_modules.html">1.7. AI Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/data_model.html">1.6. Data Model Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../getting_started/ai_modules.html">1.7. AI Engine Overview</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../getting_started/code_examples.html">1.8. Code Examples</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../data_entry.html">2. Data Entry</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="../data_entry.html">2. GEMD Data Model</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../data_entry.html#creating-data-model-objects">2.1. Creating Data Model Objects</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../data_entry.html#identifying-data-model-objects">2.2. Identifying Data Model Objects</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../data_entry.html#registering-data-model-objects">2.3. Registering Data Model Objects</a></li>
@@ -150,8 +150,17 @@ not be thrown, but the user may lose core functionality (such as <code class="co
 <li class="toctree-l2"><a class="reference internal" href="../workflows/code_examples.html">4.13. AI Engine Code Examples</a></li>
 </ul>
 </li>
-<li class="toctree-l1 current"><a class="reference internal" href="index.html">5. FAQ</a><ul class="current">
-<li class="toctree-l2 current"><a class="current reference internal" href="#">5.1. Prohibited Data Patterns</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../formulations_example.html">5. Formulations Example</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../formulations_example.html#example-raw-data">5.1. Example Raw Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../formulations_example.html#ingesting-data">5.2. Ingesting Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../formulations_example.html#building-a-table">5.3. Building a Table</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../formulations_example.html#training-a-predictor">5.4. Training a Predictor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../formulations_example.html#defining-a-design-space">5.5. Defining a Design Space</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../formulations_example.html#proposing-new-formulation-candidates">5.6. Proposing New Formulation Candidates</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">6. FAQ</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">6.1. Prohibited Data Patterns</a></li>
 </ul>
 </li>
 </ul>
@@ -160,8 +169,8 @@ not be thrown, but the user may lose core functionality (such as <code class="co
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-  <li><a href="index.html">5. FAQ</a><ul>
-      <li>Previous: <a href="index.html" title="previous chapter">5. FAQ</a></li>
+  <li><a href="index.html">6. FAQ</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">6. FAQ</a></li>
   </ul></li>
   </ul></li>
 </ul>

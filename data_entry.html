@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>2. Data Entry &#8212; Citrine Python 0.119.0 documentation</title>
+    <title>2. GEMD Data Model &#8212; Citrine Python 0.125.1 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -35,12 +35,12 @@
 
           <div class="body" role="main">
             
-  <section id="data-entry">
-<h1>2. Data Entry<a class="headerlink" href="#data-entry" title="Permalink to this headline">¶</a></h1>
+  <section id="gemd-data-model">
+<h1>2. GEMD Data Model<a class="headerlink" href="#gemd-data-model" title="Permalink to this headline">¶</a></h1>
 <section id="creating-data-model-objects">
 <h2>2.1. Creating Data Model Objects<a class="headerlink" href="#creating-data-model-objects" title="Permalink to this headline">¶</a></h2>
-<p>Each data object and template in the <a class="reference external" href="https://citrineinformatics.github.io/gemd-docs/">GEMD</a> data model has a corresponding resource in the Citrine Python Client.
-For example, the <a class="reference internal" href="reference/citrine.resources.process_spec.html#citrine.resources.process_spec.ProcessSpec" title="citrine.resources.process_spec.ProcessSpec"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.resources.process_spec.ProcessSpec</span></code></a> class implements the <a class="reference external" href="https://citrineinformatics.github.io/gemd-docs/specification/objects/#process-spec">ProcessSpec</a> object in <a class="reference external" href="https://citrineinformatics.github.io/gemd-docs/">GEMD</a>.
+<p>Each data object and template in the <a class="reference external" href="https://citrineinformatics.github.io/gemd-docs/">GEMD</a> (Graphical Expression of Materials Data) data model has a corresponding resource in the Citrine Python Client.
+For example, the <a class="reference internal" href="reference/citrine.resources.process_spec.html#citrine.resources.process_spec.ProcessSpec" title="citrine.resources.process_spec.ProcessSpec"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProcessSpec</span></code></a> class implements the <a class="reference external" href="https://citrineinformatics.github.io/gemd-docs/specification/objects/#process-spec">ProcessSpec</a> object in <a class="reference external" href="https://citrineinformatics.github.io/gemd-docs/">GEMD</a>.
 The Citrine Python Client implementations are consistent with the <a class="reference external" href="https://citrineinformatics.github.io/gemd-docs/">GEMD</a> model specification.</p>
 <p>The Citrine Python Client is built on top of and entirely interoperable with the <a class="reference external" href="https://github.com/CitrineInformatics/gemd-python">gemd-python</a> package.
 Any method that accepts the Citrine Python Client’s implementations of data model objects should also accept those from GEMD.</p>
@@ -66,7 +66,7 @@ For example:</p>
 </div>
 <p>Note that registration must be performed within the scope of a dataset: the dataset into which the objects are being written.
 The data model object collections that are defined with the project scope (such as <cite>project.process_specs</cite>) are read-only and will throw an error if their register method is called.</p>
-<p>If you have <a class="reference external" href="https://citrineinformatics.github.io/gemd-docs/">GEMD</a> objects, e.g. <a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.object.process_spec.html#gemd.entity.object.process_spec.ProcessSpec" title="(in GEMD-python)"><code class="xref py py-class docutils literal notranslate"><span class="pre">gemd.entity.object.process_spec.ProcessSpec</span></code></a>, you can register it just like the objects defined in the Citrine Python Client.</p>
+<p>If you have <a class="reference external" href="https://citrineinformatics.github.io/gemd-docs/">GEMD</a> objects, e.g. <a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.object.process_spec.html#gemd.entity.object.process_spec.ProcessSpec" title="(in GEMD-python)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProcessSpec</span></code></a>, you can register it just like the objects defined in the Citrine Python Client.</p>
 </section>
 <section id="finding-data-model-objects">
 <h2>2.4. Finding Data Model Objects<a class="headerlink" href="#finding-data-model-objects" title="Permalink to this headline">¶</a></h2>
@@ -90,30 +90,28 @@ and <a class="reference internal" href="reference/citrine.resources.data_concept
 methods can help refine the listing to make the target object easier to find.</p>
 <p>There also exist methods for locating data objects by its reference to another object:</p>
 <p>Runs may be listed by spec with
-<a class="reference internal" href="reference/citrine.resources.material_run.html#citrine.resources.material_run.MaterialRunCollection.list_by_spec" title="citrine.resources.material_run.MaterialRunCollection.list_by_spec"><code class="xref py py-meth docutils literal notranslate"><span class="pre">citrine.resources.material_run.MaterialRunCollection.list_by_spec()</span></code></a>,
-<a class="reference internal" href="reference/citrine.resources.ingredient_run.html#citrine.resources.ingredient_run.IngredientRunCollection.list_by_spec" title="citrine.resources.ingredient_run.IngredientRunCollection.list_by_spec"><code class="xref py py-meth docutils literal notranslate"><span class="pre">citrine.resources.ingredient_run.IngredientRunCollection.list_by_spec()</span></code></a>,
-<a class="reference internal" href="reference/citrine.resources.measurement_run.html#citrine.resources.measurement_run.MeasurementRunCollection.list_by_spec" title="citrine.resources.measurement_run.MeasurementRunCollection.list_by_spec"><code class="xref py py-meth docutils literal notranslate"><span class="pre">citrine.resources.measurement_run.MeasurementRunCollection.list_by_spec()</span></code></a>,
-and <a class="reference internal" href="reference/citrine.resources.process_run.html#citrine.resources.process_run.ProcessRunCollection.list_by_spec" title="citrine.resources.process_run.ProcessRunCollection.list_by_spec"><code class="xref py py-meth docutils literal notranslate"><span class="pre">citrine.resources.process_run.ProcessRunCollection.list_by_spec()</span></code></a>.</p>
-<p>Material Runs may also be listed by their template with
-<a class="reference internal" href="reference/citrine.resources.material_spec.html#citrine.resources.material_spec.MaterialSpecCollection.list_by_template" title="citrine.resources.material_spec.MaterialSpecCollection.list_by_template"><code class="xref py py-meth docutils literal notranslate"><span class="pre">list_by_template()</span></code></a>.</p>
+<a class="reference internal" href="reference/citrine.resources.material_run.html#citrine.resources.material_run.MaterialRunCollection.list_by_spec" title="citrine.resources.material_run.MaterialRunCollection.list_by_spec"><code class="xref py py-meth docutils literal notranslate"><span class="pre">MaterialRunCollection.list_by_spec()</span></code></a>,
+<a class="reference internal" href="reference/citrine.resources.ingredient_run.html#citrine.resources.ingredient_run.IngredientRunCollection.list_by_spec" title="citrine.resources.ingredient_run.IngredientRunCollection.list_by_spec"><code class="xref py py-meth docutils literal notranslate"><span class="pre">IngredientRunCollection.list_by_spec()</span></code></a>,
+<a class="reference internal" href="reference/citrine.resources.measurement_run.html#citrine.resources.measurement_run.MeasurementRunCollection.list_by_spec" title="citrine.resources.measurement_run.MeasurementRunCollection.list_by_spec"><code class="xref py py-meth docutils literal notranslate"><span class="pre">MeasurementRunCollection.list_by_spec()</span></code></a>,
+and <a class="reference internal" href="reference/citrine.resources.process_run.html#citrine.resources.process_run.ProcessRunCollection.list_by_spec" title="citrine.resources.process_run.ProcessRunCollection.list_by_spec"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ProcessRunCollection.list_by_spec()</span></code></a>.</p>
 <p>Specs may be listed by template with
-<a class="reference internal" href="reference/citrine.resources.material_spec.html#citrine.resources.material_spec.MaterialSpecCollection.list_by_template" title="citrine.resources.material_spec.MaterialSpecCollection.list_by_template"><code class="xref py py-meth docutils literal notranslate"><span class="pre">citrine.resources.material_spec.MaterialSpecCollection.list_by_template()</span></code></a>,
-<a class="reference internal" href="reference/citrine.resources.process_spec.html#citrine.resources.process_spec.ProcessSpecCollection.list_by_template" title="citrine.resources.process_spec.ProcessSpecCollection.list_by_template"><code class="xref py py-meth docutils literal notranslate"><span class="pre">citrine.resources.process_spec.ProcessSpecCollection.list_by_template()</span></code></a>,
-and <a class="reference internal" href="reference/citrine.resources.measurement_spec.html#citrine.resources.measurement_spec.MeasurementSpecCollection.list_by_template" title="citrine.resources.measurement_spec.MeasurementSpecCollection.list_by_template"><code class="xref py py-meth docutils literal notranslate"><span class="pre">citrine.resources.measurement_spec.MeasurementSpecCollection.list_by_template()</span></code></a>.</p>
+<a class="reference internal" href="reference/citrine.resources.material_spec.html#citrine.resources.material_spec.MaterialSpecCollection.list_by_template" title="citrine.resources.material_spec.MaterialSpecCollection.list_by_template"><code class="xref py py-meth docutils literal notranslate"><span class="pre">MaterialSpecCollection.list_by_template()</span></code></a>,
+<a class="reference internal" href="reference/citrine.resources.process_spec.html#citrine.resources.process_spec.ProcessSpecCollection.list_by_template" title="citrine.resources.process_spec.ProcessSpecCollection.list_by_template"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ProcessSpecCollection.list_by_template()</span></code></a>,
+and <a class="reference internal" href="reference/citrine.resources.measurement_spec.html#citrine.resources.measurement_spec.MeasurementSpecCollection.list_by_template" title="citrine.resources.measurement_spec.MeasurementSpecCollection.list_by_template"><code class="xref py py-meth docutils literal notranslate"><span class="pre">MeasurementSpecCollection.list_by_template()</span></code></a>.</p>
 <p>The output material for a process can be located with
-<a class="reference internal" href="reference/citrine.resources.material_run.html#citrine.resources.material_run.MaterialRunCollection.get_by_process" title="citrine.resources.material_run.MaterialRunCollection.get_by_process"><code class="xref py py-meth docutils literal notranslate"><span class="pre">citrine.resources.material_run.MaterialRunCollection.get_by_process()</span></code></a>,
-or <a class="reference internal" href="reference/citrine.resources.material_run.html#citrine.resources.material_run.MaterialRunCollection.get_by_process" title="citrine.resources.material_run.MaterialRunCollection.get_by_process"><code class="xref py py-meth docutils literal notranslate"><span class="pre">citrine.resources.material_run.MaterialRunCollection.get_by_process()</span></code></a>.</p>
+<a class="reference internal" href="reference/citrine.resources.material_run.html#citrine.resources.material_run.MaterialRunCollection.get_by_process" title="citrine.resources.material_run.MaterialRunCollection.get_by_process"><code class="xref py py-meth docutils literal notranslate"><span class="pre">MaterialRunCollection.get_by_process()</span></code></a>
+or <a class="reference internal" href="reference/citrine.resources.material_spec.html#citrine.resources.material_spec.MaterialSpecCollection.get_by_process" title="citrine.resources.material_spec.MaterialSpecCollection.get_by_process"><code class="xref py py-meth docutils literal notranslate"><span class="pre">MaterialSpecCollection.get_by_process()</span></code></a>.</p>
 <p>The ingredients a material is used in can be located with
-<a class="reference internal" href="reference/citrine.resources.ingredient_run.html#citrine.resources.ingredient_run.IngredientRunCollection.list_by_material" title="citrine.resources.ingredient_run.IngredientRunCollection.list_by_material"><code class="xref py py-meth docutils literal notranslate"><span class="pre">citrine.resources.ingredient_run.IngredientRunCollection.list_by_material()</span></code></a>,
-or <a class="reference internal" href="reference/citrine.resources.ingredient_spec.html#citrine.resources.ingredient_spec.IngredientSpecCollection.list_by_material" title="citrine.resources.ingredient_spec.IngredientSpecCollection.list_by_material"><code class="xref py py-meth docutils literal notranslate"><span class="pre">citrine.resources.ingredient_spec.IngredientSpecCollection.list_by_material()</span></code></a>.</p>
+<a class="reference internal" href="reference/citrine.resources.ingredient_run.html#citrine.resources.ingredient_run.IngredientRunCollection.list_by_material" title="citrine.resources.ingredient_run.IngredientRunCollection.list_by_material"><code class="xref py py-meth docutils literal notranslate"><span class="pre">IngredientRunCollection.list_by_material()</span></code></a>,
+or <a class="reference internal" href="reference/citrine.resources.ingredient_spec.html#citrine.resources.ingredient_spec.IngredientSpecCollection.list_by_material" title="citrine.resources.ingredient_spec.IngredientSpecCollection.list_by_material"><code class="xref py py-meth docutils literal notranslate"><span class="pre">IngredientSpecCollection.list_by_material()</span></code></a>.</p>
 <p>The measurements of a material can be located with
-<a class="reference internal" href="reference/citrine.resources.measurement_run.html#citrine.resources.measurement_run.MeasurementRunCollection.list_by_material" title="citrine.resources.measurement_run.MeasurementRunCollection.list_by_material"><code class="xref py py-meth docutils literal notranslate"><span class="pre">citrine.resources.measurement_run.MeasurementRunCollection.list_by_material()</span></code></a>.</p>
+<a class="reference internal" href="reference/citrine.resources.measurement_run.html#citrine.resources.measurement_run.MeasurementRunCollection.list_by_material" title="citrine.resources.measurement_run.MeasurementRunCollection.list_by_material"><code class="xref py py-meth docutils literal notranslate"><span class="pre">MeasurementRunCollection.list_by_material()</span></code></a>.</p>
 </section>
 <section id="updating-data-model-objects">
 <h2>2.5. Updating Data Model Objects<a class="headerlink" href="#updating-data-model-objects" title="Permalink to this headline">¶</a></h2>
 <p>Runs and specs can be quickly modified in-place and persisted with <code class="docutils literal notranslate"><span class="pre">upload</span></code>, but templates require more care.
 In particular, changing the bounds or allowed names/labels of a template could invalidate existing data objects; thus every object on platform must be compared against the desired change.
-To attempt such a template update, use <a class="reference internal" href="reference/citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConceptsCollection.async_update" title="citrine.resources.data_concepts.DataConceptsCollection.async_update"><code class="xref py py-meth docutils literal notranslate"><span class="pre">citrine.resources.data_concepts.DataConceptsCollection.async_update()</span></code></a>.
+To attempt such a template update, use <a class="reference internal" href="reference/citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConceptsCollection.async_update" title="citrine.resources.data_concepts.DataConceptsCollection.async_update"><code class="xref py py-meth docutils literal notranslate"><span class="pre">async_update()</span></code></a>.
 If the update is invalid, then the reasons for failure are logged.</p>
 </section>
 <section id="referencing-data-model-objects">
@@ -131,7 +129,7 @@ These links are created with the <a class="reference external" href="https://cit
 </section>
 <section id="material-history">
 <h2>2.7. Material History<a class="headerlink" href="#material-history" title="Permalink to this headline">¶</a></h2>
-<p>Starting with a specific root <a class="reference internal" href="reference/citrine.resources.material_run.html#citrine.resources.material_run.MaterialRun" title="citrine.resources.material_run.MaterialRun"><code class="xref py py-class docutils literal notranslate"><span class="pre">MaterialRun</span></code></a>,
+<p>Starting with a specific terminal <a class="reference internal" href="reference/citrine.resources.material_run.html#citrine.resources.material_run.MaterialRun" title="citrine.resources.material_run.MaterialRun"><code class="xref py py-class docutils literal notranslate"><span class="pre">MaterialRun</span></code></a>,
 you can retrieve the complete material history–every process, ingredient and material that contributed to
 the target material, as well as the measurements that were performed on all of those materials.
 The method is <a class="reference internal" href="reference/citrine.resources.material_run.html#citrine.resources.material_run.MaterialRunCollection.get_history" title="citrine.resources.material_run.MaterialRunCollection.get_history"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_history()</span></code></a>,
@@ -268,12 +266,12 @@ value provided to the <code class="docutils literal notranslate"><span class="pr
 <li class="toctree-l2"><a class="reference internal" href="getting_started/basic_functionality.html">1.3. Managing Resources</a></li>
 <li class="toctree-l2"><a class="reference internal" href="getting_started/projects.html">1.4. Projects</a></li>
 <li class="toctree-l2"><a class="reference internal" href="getting_started/datasets.html">1.5. Datasets</a></li>
-<li class="toctree-l2"><a class="reference internal" href="getting_started/data_model.html">1.6. Data Model</a></li>
-<li class="toctree-l2"><a class="reference internal" href="getting_started/ai_modules.html">1.7. AI Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started/data_model.html">1.6. Data Model Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started/ai_modules.html">1.7. AI Engine Overview</a></li>
 <li class="toctree-l2"><a class="reference internal" href="getting_started/code_examples.html">1.8. Code Examples</a></li>
 </ul>
 </li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">2. Data Entry</a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">2. GEMD Data Model</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#creating-data-model-objects">2.1. Creating Data Model Objects</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#identifying-data-model-objects">2.2. Identifying Data Model Objects</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#registering-data-model-objects">2.3. Registering Data Model Objects</a></li>
@@ -310,8 +308,17 @@ value provided to the <code class="docutils literal notranslate"><span class="pr
 <li class="toctree-l2"><a class="reference internal" href="workflows/code_examples.html">4.13. AI Engine Code Examples</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="FAQ/index.html">5. FAQ</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="FAQ/prohibited_data_patterns.html">5.1. Prohibited Data Patterns</a></li>
+<li class="toctree-l1"><a class="reference internal" href="formulations_example.html">5. Formulations Example</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="formulations_example.html#example-raw-data">5.1. Example Raw Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="formulations_example.html#ingesting-data">5.2. Ingesting Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="formulations_example.html#building-a-table">5.3. Building a Table</a></li>
+<li class="toctree-l2"><a class="reference internal" href="formulations_example.html#training-a-predictor">5.4. Training a Predictor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="formulations_example.html#defining-a-design-space">5.5. Defining a Design Space</a></li>
+<li class="toctree-l2"><a class="reference internal" href="formulations_example.html#proposing-new-formulation-candidates">5.6. Proposing New Formulation Candidates</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="FAQ/index.html">6. FAQ</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="FAQ/prohibited_data_patterns.html">6.1. Prohibited Data Patterns</a></li>
 </ul>
 </li>
 </ul>
