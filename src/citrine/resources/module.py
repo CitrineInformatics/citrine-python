@@ -1,4 +1,4 @@
-"""Resources that represent collections of design spaces."""
+"""Resources that represent collections of modules."""
 from uuid import UUID
 from typing import TypeVar, Union
 
