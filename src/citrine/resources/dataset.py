@@ -12,7 +12,7 @@ from gemd.entity.template import PropertyTemplate, MaterialTemplate, Measurement
 from gemd.util import writable_sort_order
 
 from citrine._rest.collection import Collection
-from citrine._rest.resource import Resource
+from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
 from citrine._session import Session
 from citrine._utils.functions import scrub_none
@@ -54,6 +54,8 @@ class Dataset(Resource['Dataset']):
         A summary of this dataset.
     description: str
         Long-form description of the dataset.
+    unique_name: Optional[str]
+        An optional, globally unique name that can be used to retrieve the dataset.
 
     Attributes
     ----------
@@ -79,6 +81,7 @@ class Dataset(Resource['Dataset']):
     """
 
     _response_key = 'dataset'
+    _resource_type = ResourceTypeEnum.DATASET
 
     uid = properties.Optional(properties.UUID(), 'id')
     name = properties.String('name')
@@ -94,7 +97,8 @@ class Dataset(Resource['Dataset']):
     delete_time = properties.Optional(properties.Datetime(), 'delete_time')
     public = properties.Optional(properties.Boolean(), 'public')
 
-    def __init__(self, name: str, summary: str, description: str, unique_name: str = None):
+    def __init__(self, name: str, summary: str,
+                 description: str, unique_name: Optional[str] = None):
         self.name: str = name
         self.summary: str = summary
         self.description: str = description

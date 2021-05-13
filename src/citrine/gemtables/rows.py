@@ -42,7 +42,7 @@ class Row(PolymorphicSerializable['Row']):
 
 
 class MaterialRunByTemplate(Serializable['MaterialRunByTemplate'], Row):
-    """[ALPHA] Rows rooted in MaterialRuns, marked by their template.
+    """[ALPHA] Rows corresponding to MaterialRuns, marked by their template.
 
     Parameters
     ----------

@@ -1,7 +1,7 @@
 from typing import Optional, Mapping
 from warnings import warn
 
-from citrine._rest.resource import Resource
+from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties as _properties
 from citrine.informatics.descriptors import RealDescriptor
 from citrine.informatics.predictors import Predictor
@@ -152,6 +152,8 @@ class DeprecatedExpressionPredictor(Resource['DeprecatedExpressionPredictor'],
         to be identical.
 
     """
+
+    _resource_type = ResourceTypeEnum.MODULE
 
     expression = _properties.String('config.expression')
     output = _properties.Object(RealDescriptor, 'config.output')

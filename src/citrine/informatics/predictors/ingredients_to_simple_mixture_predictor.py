@@ -1,6 +1,6 @@
 from typing import Set, Mapping
 
-from citrine._rest.resource import Resource
+from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties as _properties
 from citrine.informatics.descriptors import FormulationDescriptor, RealDescriptor
 from citrine.informatics.predictors import Predictor
@@ -29,6 +29,8 @@ class IngredientsToSimpleMixturePredictor(
         e.g., ``{'solvent': {'water'}}``
 
     """
+
+    _resource_type = ResourceTypeEnum.MODULE
 
     output = _properties.Object(FormulationDescriptor, 'config.output')
     id_to_quantity = _properties.Mapping(_properties.String, _properties.Object(RealDescriptor),

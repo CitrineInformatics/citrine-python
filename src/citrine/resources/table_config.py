@@ -2,6 +2,7 @@ from copy import copy
 from logging import getLogger
 from typing import List, Union, Optional, Tuple
 from uuid import UUID
+import numpy as np
 
 from deprecation import deprecated
 from gemd.entity.object import MaterialRun
@@ -11,7 +12,7 @@ from gemd.entity.link_by_uid import LinkByUID
 from gemd.enumeration.base_enumeration import BaseEnumeration
 
 from citrine._rest.collection import Collection
-from citrine._rest.resource import Resource
+from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
 from citrine._session import Session
 from citrine.resources.data_concepts import CITRINE_SCOPE
@@ -59,6 +60,7 @@ class TableConfig(Resource["TableConfig"]):
 
     # FIXME (DML): rename this (this is dependent on the server side)
     _response_key = "ara_definition"
+    _resource_type = ResourceTypeEnum.TABLE_DEFINITION
 
     @staticmethod
     def _get_dups(lst: List) -> List:
@@ -268,13 +270,29 @@ class TableConfigCollection(Collection[TableConfig]):
         self.project_id = project_id
         self.session: Session = session
 
+    def get(self, uid: Union[UUID, str], version: Optional[int] = None):
+        """[ALPHA] Get a table config.
+
+        If no version is specified, then the most recent version is returned.
+
+        """
+        if version is not None:
+            path = self._get_path(uid) + "/versions/{}".format(version)
+            data = self.session.get_resource(path)
+        else:
+            path = self._get_path(uid)
+            data = self.session.get_resource(path)
+            version_numbers = [version_data['version_number'] for version_data in data['versions']]
+            index = np.argmax(version_numbers)
+            data['version'] = data['versions'][index]
+        return self.build(data)
+
+    @deprecated(deprecated_in="0.124.0",
+                details="get_with_version() is deprecated in favor of get()")
     def get_with_version(self, table_config_uid: Union[UUID, str],
                          version_number: int) -> TableConfig:
         """[ALPHA] Get a Table Config at a specific version."""
-        path = self._get_path(table_config_uid) + "/versions/{}".format(version_number)
-        data = self.session.get_resource(path)
-        data = data[self._individual_key] if self._individual_key else data
-        return self.build(data)
+        return self.get(uid=table_config_uid, version=version_number)  # pragma: no cover
 
     def build(self, data: dict) -> TableConfig:
         """[ALPHA] Build an individual Table Config from a dictionary."""
@@ -323,9 +341,12 @@ class TableConfigCollection(Collection[TableConfig]):
             history.  If unspecified, uses the webservice's default.
 
 
-        Returns A table config as well as addition variables/columns which would result in
-            ambiguous matches if included in the config.
+        Returns
         -------
+        List[Tuple[Variable, Column]]
+            A table config as well as addition variables/columns which would result in
+            ambiguous matches if included in the config.
+
 
         """
         if isinstance(material, MaterialRun):
@@ -402,7 +423,7 @@ class TableConfigCollection(Collection[TableConfig]):
         return JobStatusResponse.build(response)
 
     def preview(self, table_config: TableConfig, preview_roots: List[LinkByUID]) -> dict:
-        """[ALPHA] Preview a Table Config on an explicit set of roots.
+        """[ALPHA] Preview a Table Config on an explicit set of terminal materials.
 
         Parameters
         ----------
@@ -470,3 +491,7 @@ class TableConfigCollection(Collection[TableConfig]):
                              " Table Config or retrieve the registered details before calling"
                              " update()")
         return self.register(table_config)
+
+    def delete(self, uid: Union[UUID, str]):
+        """Table configs cannot be deleted at this time."""
+        raise NotImplementedError("Table configs cannot be deleted at this time.")

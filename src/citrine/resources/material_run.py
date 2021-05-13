@@ -109,12 +109,12 @@ class MaterialRunCollection(ObjectRunCollection[MaterialRun]):
         """Return the resource type in the collection."""
         return MaterialRun
 
-    def get_history(self, scope, id) -> Type[MaterialRun]:
+    def get_history(self, scope: str, id: Union[str, UUID]) -> Type[MaterialRun]:
         """
-        Get the history associated with a material.
+        Get the history associated with a terminal material.
 
         The history contains every single every process, ingredient and material that went into
-        the root material as well as the measurements that were performed on all of those
+        the terminal material as well as the measurements that were performed on all of those
         materials. The returned object is a material run with all of its fields fully populated.
 
         Parameters
@@ -143,9 +143,9 @@ class MaterialRunCollection(ObjectRunCollection[MaterialRun]):
             data['context'] + [data['root']],
             key=lambda x: writable_sort_order(x["type"])
         )
-        root_uid_scope, root_uid_id = next(iter(data['root']['uids'].items()))
+        terminal_scope, terminal_id = next(iter(data['root']['uids'].items()))
         # Add a link to the root as the "object"
-        blob["object"] = LinkByUID(scope=root_uid_scope, id=root_uid_id)
+        blob["object"] = LinkByUID(scope=terminal_scope, id=terminal_id)
 
         # Serialize using normal json (with the GEMDEncoder) and then deserialize with the
         # GEMDEncoder encoder in order to rebuild the material history

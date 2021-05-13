@@ -37,6 +37,37 @@ def test_build(valid_simple_ml_predictor_data, basic_predictor_report_data):
     assert predictor.description == 'Predicts z from input x and latent variable y'
 
 
+def test_delete():
+    pc = PredictorCollection(uuid.uuid4(), mock.Mock())
+    with pytest.raises(NotImplementedError):
+        pc.delete(uuid.uuid4())
+
+
+def test_archive_and_restore(valid_label_fractions_predictor_data):
+    session = mock.Mock()
+    pc = PredictorCollection(uuid.uuid4(), session)
+    session.get_resource.return_value = valid_label_fractions_predictor_data
+
+    def _mock_put_resource(url, data):
+        """Assume that update returns the serialized predictor data."""
+        return data
+    session.put_resource.side_effect = _mock_put_resource
+    archived_predictor = pc.archive(uuid.uuid4())
+    assert archived_predictor.archived
+
+    valid_label_fractions_predictor_data["archived"] = True
+    session.get_resource.return_value = valid_label_fractions_predictor_data
+    restored_predictor = pc.restore(uuid.uuid4())
+    assert not restored_predictor.archived
+
+    session.get_resource.side_effect = NotFound("")
+    with pytest.raises(RuntimeError):
+        pc.archive(uuid.uuid4())
+
+    with pytest.raises(RuntimeError):
+        pc.restore(uuid.uuid4())
+
+
 def test_automl_build(valid_auto_ml_predictor_data, basic_predictor_report_data):
     session = mock.Mock()
     session.get_resource.return_value = basic_predictor_report_data

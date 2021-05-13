@@ -396,13 +396,14 @@ class MolecularStructureColumn(Serializable['MolecularStructureColumn'], Column)
 
 
 class ConcatColumn(Serializable['ConcatColumn'], Column):
-    """[ALPHA] Column that concatenates .
+    """[ALPHA] Column that concatenates multiple values.
 
     Parameters
     ----------
     data_source: str
         name of the variable to use when populating the column
-
+    subcolumn: Column
+        a column of the type of the individual values to be concatenated
 
     """
 

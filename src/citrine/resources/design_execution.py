@@ -1,4 +1,4 @@
-"""Resources that represent both individual and collections of workflow executions."""
+"""Resources that represent both individual and collections of design workflow executions."""
 from functools import partial
 from typing import Optional, Iterable, Union
 from uuid import UUID
@@ -7,6 +7,7 @@ from citrine._rest.collection import Collection
 from citrine._rest.paginator import Paginator
 from citrine._rest.pageable import Pageable
 from citrine._rest.resource import Resource
+from citrine._rest.asynchronous_object import AsynchronousObject
 from citrine._serialization import properties
 from citrine._session import Session
 from citrine.informatics.design_candidate import DesignCandidate
@@ -15,8 +16,11 @@ from citrine.informatics.scores import Score
 from citrine.informatics.descriptors import Descriptor
 
 
-class DesignExecution(Resource['DesignExecution'], Pageable):
+class DesignExecution(Resource['DesignExecution'], Pageable, AsynchronousObject):
     """The execution of a DesignWorkflow.
+
+    Possible statuses are INPROGRESS, SUCCEEDED, and FAILED.
+    Design executions also have a ``status_description`` field with more information.
 
     Parameters
     ----------
@@ -75,6 +79,18 @@ class DesignExecution(Resource['DesignExecution'], Pageable):
             .format(project_id=self.project_id,
                     workflow_id=self.workflow_id,
                     execution_id=self.uid)
+
+    def in_progress(self) -> bool:
+        """Whether design execution is in progress. Does not query state."""
+        return self.status == "INPROGRESS"
+
+    def succeeded(self) -> bool:
+        """Whether design execution has completed successfully. Does not query state."""
+        return self.status == "SUCCEEDED"
+
+    def failed(self) -> bool:
+        """Whether design execution has completed unsuccessfully. Does not query state."""
+        return self.status == "FAILED"
 
     @classmethod
     def _build_candidates(cls, subset_collection: Iterable[dict]) -> Iterable[DesignCandidate]:

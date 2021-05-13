@@ -2,7 +2,7 @@ from typing import List, Union, Optional
 from uuid import UUID
 from copy import deepcopy
 
-from citrine._rest.resource import Resource
+from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
 from citrine._session import Session
 from citrine.informatics.design_spaces.design_space import DesignSpace
@@ -32,6 +32,7 @@ class ProductDesignSpace(Resource['ProductDesignSpace'], DesignSpace, AIResource
     """
 
     _response_key = None
+    _resource_type = ResourceTypeEnum.MODULE
 
     subspaces = properties.List(properties.Union(
         [properties.UUID, properties.Object(DesignSpace)]

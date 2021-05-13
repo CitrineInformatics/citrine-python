@@ -1,7 +1,7 @@
 from typing import List, Optional, Union
 from uuid import UUID
 
-from citrine._rest.resource import Resource
+from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties as _properties
 from citrine.informatics.data_sources import DataSource
 from citrine.informatics.predictors import Predictor
@@ -31,6 +31,8 @@ class GraphPredictor(Resource['GraphPredictor'], Predictor, AIResourceMetadata):
         data across all rows that share the same uid or at least 1 identifier.
 
     """
+
+    _resource_type = ResourceTypeEnum.MODULE
 
     predictors = _properties.List(_properties.Union(
         [_properties.UUID, _properties.Object(Predictor)]), 'config.predictors')

@@ -1,10 +1,11 @@
-"""Resources that represent both individual and collections of workflow executions."""
+"""Resources that represent both individual and collections of predictor evaluation executions."""
 from functools import lru_cache, partial
 from typing import Optional, Iterable, Union
 from uuid import UUID
 
 from citrine._rest.collection import Collection
 from citrine._rest.resource import Resource
+from citrine._rest.asynchronous_object import AsynchronousObject
 from citrine._serialization import properties
 from citrine._session import Session
 from citrine.informatics.modules import ModuleRef
@@ -12,8 +13,11 @@ from citrine.informatics.predictor_evaluation_result import PredictorEvaluationR
 from citrine.resources.response import Response
 
 
-class PredictorEvaluationExecution(Resource['PredictorEvaluationExecution']):
+class PredictorEvaluationExecution(Resource['PredictorEvaluationExecution'], AsynchronousObject):
     """The execution of a PredictorEvaluationWorkflow.
+
+    Possible statuses are INPROGRESS, SUCCEEDED, and FAILED.
+    Predictor evaluation executions also have a ``status_description`` field with more information.
 
     Parameters
     ----------
@@ -59,6 +63,18 @@ class PredictorEvaluationExecution(Resource['PredictorEvaluationExecution']):
         return '/projects/{project_id}/predictor-evaluation-executions/{execution_id}' \
             .format(project_id=self.project_id,
                     execution_id=self.uid)
+
+    def in_progress(self) -> bool:
+        """Whether predictor evaluation execution is in progress. Does not query state."""
+        return self.status == "INPROGRESS"
+
+    def succeeded(self) -> bool:
+        """Whether predictor evaluation execution has completed successfully. Does not query state."""  # noqa: E501
+        return self.status == "SUCCEEDED"
+
+    def failed(self) -> bool:
+        """Whether predictor evaluation execution has completed unsuccessfully. Does not query state."""  # noqa: E501
+        return self.status == "FAILED"
 
     @lru_cache()
     def results(self, evaluator_name: str) -> PredictorEvaluationResult:
