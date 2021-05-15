@@ -30,6 +30,7 @@ class ProcessorCollection(AbstractModuleCollection[Processor]):
 
     def build(self, data: dict) -> Processor:
         """Build an individual Processor."""
-        processor = Processor.build(data)
-        processor.session = self.session
+        processor: Processor = Processor.build(data)
+        processor._session = self.session
+        processor._project_id = self.project_id
         return processor

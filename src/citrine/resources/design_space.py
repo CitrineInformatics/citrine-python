@@ -31,8 +31,9 @@ class DesignSpaceCollection(AbstractModuleCollection[DesignSpace]):
 
     def build(self, data: dict) -> DesignSpace:
         """Build an individual design space."""
-        design_space = DesignSpace.build(data)
-        design_space.session = self.session
+        design_space: DesignSpace = DesignSpace.build(data)
+        design_space._session = self.session
+        design_space._project_id = self.project_id
         return design_space
 
     def validate_write_request(self, design_space: DesignSpace):

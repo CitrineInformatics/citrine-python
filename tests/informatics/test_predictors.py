@@ -431,3 +431,12 @@ def test_wrap_training_data():
         training_data=[data_source, formulation_data_source]
     )
     assert predictor_multiple_data_sources.training_data == [data_source, formulation_data_source]
+
+
+def test_status(valid_label_fractions_predictor_data, auto_ml):
+    """Ensure we can check the status of predictor validation."""
+    # A locally built predictor should be "False" for all status checks
+    assert not auto_ml.in_progress() and not auto_ml.failed() and not auto_ml.succeeded()
+    # A deserialized predictor should have the correct status
+    predictor = LabelFractionsPredictor.build(valid_label_fractions_predictor_data)
+    assert predictor.succeeded() and not predictor.in_progress() and not predictor.failed()
