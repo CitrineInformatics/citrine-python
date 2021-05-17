@@ -1,5 +1,4 @@
 from typing import Set, Mapping
-from warnings import warn
 
 from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties as _properties
@@ -7,20 +6,12 @@ from citrine.informatics.descriptors import FormulationDescriptor, RealDescripto
 from citrine.informatics.predictors import Predictor
 from citrine._rest.ai_resource_metadata import AIResourceMetadata
 
-__all__ = ['IngredientsToSimpleMixturePredictor']
+__all__ = ['IngredientsToFormulationPredictor']
 
 
-class IngredientsToSimpleMixturePredictor(
-        Resource['IngredientsToSimpleMixturePredictor'], Predictor, AIResourceMetadata):
-    """[DEPRECATED] [ALPHA] Constructs a simple mixture from ingredient quantities.
-
-    This predictor has been renamed. Please use
-    :class:`~citrine.informatics.predictors.ingredients_to_formulation_predictor.IngredientsToFormulationPredictor`
-    instead.
-
-    .. seealso::
-
-        :class:`~citrine.informatics.predictors.ingredients_to_formulation_predictor.IngredientsToFormulationPredictor`
+class IngredientsToFormulationPredictor(
+        Resource['IngredientsToFormulationPredictor'], Predictor, AIResourceMetadata):
+    """[ALPHA] A predictor interface that constructs a formulation from ingredient quantities.
 
     Parameters
     ----------
@@ -34,7 +25,7 @@ class IngredientsToSimpleMixturePredictor(
         Map from ingredient identifier to the descriptor that represents its quantity,
         e.g., ``{'water': RealDescriptor('water quantity', 0, 1, "")}``
     labels: Mapping[str, Set[str]]
-        Map from each label to all ingredients assigned that label, when present in a mixture
+        Map from each label to all ingredients assigned that label, when present in a mixture,
         e.g., ``{'solvent': {'water'}}``
 
     """
@@ -59,11 +50,6 @@ class IngredientsToSimpleMixturePredictor(
                  id_to_quantity: Mapping[str, RealDescriptor],
                  labels: Mapping[str, Set[str]],
                  archived: bool = False):
-        warn("{this_class} has been renamed. Please use {replacement} instead"
-             .format(this_class=self.__class__.__name__,
-                     replacement="Ingredients To Formulation Predictor"),
-             DeprecationWarning
-             )
         self.name: str = name
         self.description: str = description
         self.output: FormulationDescriptor = output
@@ -76,4 +62,4 @@ class IngredientsToSimpleMixturePredictor(
         return data
 
     def __str__(self):
-        return '<IngredientsToSimpleMixturePredictor {!r}>'.format(self.name)
+        return '<IngredientsToFormulationPredictor {!r}>'.format(self.name)
