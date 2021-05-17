@@ -72,8 +72,8 @@ class IngredientsToSimpleMixturePredictor(
         self.archived: bool = archived
 
     def _post_dump(self, data: dict) -> dict:
-        data['display_name'] = data['config']['name']
-        return data
+        data['display_name'] = data['config']['name']  # pragma: no cover
+        return data  # pragma: no cover
 
     def __str__(self):
-        return '<IngredientsToSimpleMixturePredictor {!r}>'.format(self.name)
+        return '<IngredientsToSimpleMixturePredictor {!r}>'.format(self.name)  # pragma: no cover
