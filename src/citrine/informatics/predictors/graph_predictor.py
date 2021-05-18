@@ -3,7 +3,6 @@ from uuid import UUID
 
 from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties as _properties
-from citrine._utils.docstring_meta import DocstringMeta
 from citrine.informatics.data_sources import DataSource
 from citrine.informatics.predictors import Predictor
 from citrine._rest.ai_resource_metadata import AIResourceMetadata
@@ -11,7 +10,7 @@ from citrine._rest.ai_resource_metadata import AIResourceMetadata
 __all__ = ['GraphPredictor']
 
 
-class GraphPredictor(Resource['GraphPredictor'], Predictor, AIResourceMetadata, metaclass=DocstringMeta):
+class GraphPredictor(Resource['GraphPredictor'], Predictor, AIResourceMetadata):
     """A predictor interface that stitches other predictors together.
 
     Parameters
