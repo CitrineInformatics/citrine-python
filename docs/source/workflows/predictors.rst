@@ -384,6 +384,7 @@ The following example illustrates how an :class:`~citrine.informatics.predictors
         training_data=[data_source]
     )
 
+
 Simple mixture predictor (ALPHA)
 --------------------------------------
 
@@ -488,7 +489,7 @@ The example below show how to configure a mean property predictor to compute mea
     # table with formulations and their ingredients
     data_source = GemTableDataSource(table_id=table_uid, table_version=1, formulation_descriptor=formulation)
 
-    mean_property_predictor = GeneralizedMeanPropertyPredictor(
+    mean_property_predictor = MeanPropertyPredictor(
         name='Mean property predictor',
         description='Computes 1-mean ingredient properties',
         input_descriptor=formulation,

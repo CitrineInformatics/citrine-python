@@ -77,7 +77,7 @@ These circumstances are only relevant if CSV data source represents formulation 
 2. Mixtures that contain mixtures are simplified to simple mixtures that contain only leaf ingredients using a :class:`~citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor`.
    In this case, links from each mixture's ingredients to its row (which may also be a mixture) are used to recursively crawl hierarchical blends of blends and construct a recipe that contains only leaf ingredients.
 
-Note: to build a formulation from a CSV data source an :class:`~citrine.informatics.predictors.ingredients_to_formulation_predictor.IngredientsToSimpleMixturePredictor` must be present in the workflow.
+Note: to build a formulation from a CSV data source an :class:`~citrine.informatics.predictors.ingredients_to_formulation_predictor.IngredientsToFormulationPredictor` must be present in the workflow.
 Additionally, each ingredient id used as a key in the predictor's map from ingredient id to its quantity must exist in an identifier column.
 
 As an example, consider the following saline solution data.
