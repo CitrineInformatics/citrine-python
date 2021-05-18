@@ -12,7 +12,7 @@ __all__ = ['IngredientsToSimpleMixturePredictor']
 
 class IngredientsToSimpleMixturePredictor(
         Resource['IngredientsToSimpleMixturePredictor'], Predictor, AIResourceMetadata):
-    """[DEPRECATED] [ALPHA] Constructs a simple mixture from ingredient quantities.
+    """[DEPRECATED] Constructs a simple mixture from ingredient quantities.
 
     This predictor has been renamed. Please use
     :class:`~citrine.informatics.predictors.ingredients_to_formulation_predictor.IngredientsToFormulationPredictor`
