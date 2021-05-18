@@ -72,6 +72,7 @@ html_theme = 'alabaster'
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
 
+autodoc_member_order = 'groupwise'
 autodoc_mock_imports = []  # autodoc_mock_imports allows Spyinx to ignore any external modules listed in the array
 
 html_favicon = '_static/favicon.png'
