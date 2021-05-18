@@ -7,6 +7,7 @@ SPHINXOPTS    ?=
 SPHINXBUILD   ?= sphinx-build
 SOURCEDIR     = source
 BUILDDIR      = _build
+SPHINX_APIDOC_OPTIONS = members,undoc-members,inherited-members,show-inheritance
 
 # Put it first so that "make" without argument is like "make help".
 help:
