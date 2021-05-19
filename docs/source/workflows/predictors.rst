@@ -4,8 +4,10 @@ Predictors
 ==========
 
 A predictor computes or predicts properties of materials.
-The type of predictor defines how a property prediction is made.
-Predictors must be registered to a project to be used in a :doc:`design workflow <design_workflows>`.
+All predictors take one or more :doc:`descriptors <descriptors>` as inputs and produce one or more output descriptors.
+Types of predictors include machine learning models, featurizers, and analytic expressions.
+
+A predictor must be registered to a project to be used in a :doc:`design workflow <design_workflows>`.
 
 
 Auto ML predictor (ALPHA)
@@ -13,7 +15,7 @@ Auto ML predictor (ALPHA)
 
 The :class:`~citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor` predicts material properties using a machine-learned model.
 AutoMLPredictors allow you to use your domain knowledge to construct custom `GraphPredictors <#graph-predictor>`__ with fine grain control over the resulting graph.
-Each AutoMLpredictor is defined by a set of inputs and an output.
+Each AutoMLPredictor is defined by a set of inputs and an output.
 Inputs are used as input features to the machine learning model.
 The output is the property that you would like the model to predict.
 There must be at least one input and only one output.
@@ -79,7 +81,6 @@ The following example demonstrates how to use the python SDK to create a :class:
 For a more complete example of graph predictor usage, see :ref:`AI Engine Code Examples <graph_predictor_example>`.
 
 .. _Expression Predictor:
-
 Expression predictor
 --------------------
 
