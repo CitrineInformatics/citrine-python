@@ -44,7 +44,7 @@ class Predictor(Module):
         from .graph_predictor import GraphPredictor
         from .expression_predictor import ExpressionPredictor, DeprecatedExpressionPredictor
         from .molecular_structure_featurizer import MolecularStructureFeaturizer
-        from .ingredients_to_simple_mixture_predictor import IngredientsToSimpleMixturePredictor
+        from .ingredients_to_formulation_predictor import IngredientsToFormulationPredictor
         from .generalized_mean_property_predictor import GeneralizedMeanPropertyPredictor
         from .label_fractions_predictor import LabelFractionsPredictor
         from .simple_mixture_predictor import SimpleMixturePredictor
@@ -58,7 +58,7 @@ class Predictor(Module):
             "Expression": DeprecatedExpressionPredictor,
             "AnalyticExpression": ExpressionPredictor,
             "MoleculeFeaturizer": MolecularStructureFeaturizer,
-            "IngredientsToSimpleMixture": IngredientsToSimpleMixturePredictor,
+            "IngredientsToSimpleMixture": IngredientsToFormulationPredictor,
             "GeneralizedMeanProperty": GeneralizedMeanPropertyPredictor,
             "MeanProperty": MeanPropertyPredictor,
             "LabelFractions": LabelFractionsPredictor,

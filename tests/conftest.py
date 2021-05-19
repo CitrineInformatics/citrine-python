@@ -403,7 +403,7 @@ def valid_predictor_report_data():
 
 
 @pytest.fixture
-def valid_ing_to_simple_mixture_predictor_data():
+def valid_ing_formulation_predictor_data():
     """Produce valid data used for tests."""
     from citrine.informatics.descriptors import FormulationDescriptor, RealDescriptor
     return dict(
@@ -411,11 +411,11 @@ def valid_ing_to_simple_mixture_predictor_data():
         status='READY',
         status_info=[],
         archived=False,
-        display_name='Ingredients to simple mixture predictor',
+        display_name='Ingredients to formulation predictor',
         id=str(uuid.uuid4()),
         config=dict(
             type='IngredientsToSimpleMixture',
-            name='Ingredients to simple mixture predictor',
+            name='Ingredients to formulation predictor',
             description='Constructs mixtures from ingredients',
             output=FormulationDescriptor('simple mixture').dump(),
             id_to_quantity={
