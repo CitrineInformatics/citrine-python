@@ -1,6 +1,4 @@
 from setuptools import setup, find_packages
-import sys
-from os.path import join
 from os import path
 
 # read the contents of your README file
@@ -9,7 +7,7 @@ with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 about = {}
-with open(join(this_directory, 'src', 'citrine', '__version__.py'), 'r') as f:
+with open(path.join(this_directory, 'src', 'citrine', '__version__.py'), 'r') as f:
     exec(f.read(), about)
 
 setup(name='citrine',
