@@ -20,7 +20,6 @@ class Predictor(Module):
 
     """
 
-    _response_key = None
     _project_id: Optional[UUID] = None
     _session: Optional[Session] = None
     uid = properties.Optional(properties.UUID, 'id', serializable=False)

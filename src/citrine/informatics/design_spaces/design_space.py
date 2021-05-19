@@ -18,7 +18,6 @@ class DesignSpace(Module):
 
     """
 
-    _response_key = None
     _project_id: Optional[UUID] = None
     _session: Optional[Session] = None
 

@@ -36,7 +36,6 @@ class DesignExecution(Resource['DesignExecution'], Pageable, AsynchronousObject)
 
     """
 
-    _response_key = None
     _paginator: Paginator = Paginator()
     _collection_key = 'response'
 

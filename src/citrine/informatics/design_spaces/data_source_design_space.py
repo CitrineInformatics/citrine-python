@@ -24,7 +24,6 @@ class DataSourceDesignSpace(Resource['DataSourceDesignSpace'], DesignSpace, AIRe
 
     """
 
-    _response_key = None
     _resource_type = ResourceTypeEnum.MODULE
 
     data_source = properties.Object(DataSource, 'config.data_source')

@@ -31,7 +31,6 @@ class ProductDesignSpace(Resource['ProductDesignSpace'], DesignSpace, AIResource
 
     """
 
-    _response_key = None
     _resource_type = ResourceTypeEnum.MODULE
 
     subspaces = properties.List(properties.Union(

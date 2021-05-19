@@ -30,11 +30,7 @@ class PredictorEvaluationExecution(Resource['PredictorEvaluationExecution'], Asy
 
     """
 
-    _response_key = None
-
     uid: UUID = properties.UUID('id', serializable=False)
-    """UUID of the execution."""
-
     evaluator_names = properties.List(properties.String, "evaluator_names", serializable=False)
     workflow_id = properties.UUID('workflow_id', serializable=False)
     predictor_id = properties.UUID('predictor_id', serializable=False)

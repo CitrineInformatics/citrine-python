@@ -38,7 +38,6 @@ class FormulationDesignSpace(Resource['FormulationDesignSpace'], DesignSpace, AI
 
     """
 
-    _response_key = None
     _resource_type = ResourceTypeEnum.MODULE
 
     formulation_descriptor = properties.Object(

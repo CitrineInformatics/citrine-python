@@ -30,7 +30,6 @@ class EnumeratedDesignSpace(Resource['EnumeratedDesignSpace'], DesignSpace, AIRe
 
     """
 
-    _response_key = None
     _resource_type = ResourceTypeEnum.MODULE
 
     descriptors = properties.List(properties.Object(Descriptor), 'config.descriptors')
