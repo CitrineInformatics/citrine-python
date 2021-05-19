@@ -8,10 +8,7 @@ import pytest
 from citrine.informatics.data_sources import GemTableDataSource
 from citrine.informatics.descriptors import RealDescriptor, MolecularStructureDescriptor, \
     FormulationDescriptor, ChemicalFormulaDescriptor
-from citrine.informatics.predictors import ExpressionPredictor, GraphPredictor, SimpleMLPredictor, \
-    MolecularStructureFeaturizer, GeneralizedMeanPropertyPredictor, IngredientsToSimpleMixturePredictor, \
-    SimpleMixturePredictor, LabelFractionsPredictor, IngredientFractionsPredictor, DeprecatedExpressionPredictor, \
-    AutoMLPredictor, MeanPropertyPredictor, ChemicalFormulaFeaturizer
+from citrine.informatics.predictors import *
 
 x = RealDescriptor("x", 0, 100, "")
 y = RealDescriptor("y", 0, 100, "")
@@ -112,10 +109,10 @@ def expression_predictor() -> ExpressionPredictor:
 
 
 @pytest.fixture
-def ing_to_simple_mixture_predictor() -> IngredientsToSimpleMixturePredictor:
-    """Build an IngredientsToSimpleMixturePredictor for testing."""
-    return IngredientsToSimpleMixturePredictor(
-        name='Ingredients to simple mixture predictor',
+def ing_to_formulation_predictor() -> IngredientsToFormulationPredictor:
+    """Build an IngredientsToFormulationPredictor for testing."""
+    return IngredientsToFormulationPredictor(
+        name='Ingredients to formulation predictor',
         description='Constructs a mixture from ingredient quantities',
         output=formulation,
         id_to_quantity={
@@ -311,14 +308,14 @@ def test_auto_ml(auto_ml):
     assert str(auto_ml) == "<AutoMLPredictor 'AutoML Predictor'>"
 
 
-def test_ing_to_simple_mixture_initialization(ing_to_simple_mixture_predictor):
-    """Make sure the correct fields go to the correct places for an ingredients to simple mixture predictor."""
-    assert ing_to_simple_mixture_predictor.name == 'Ingredients to simple mixture predictor'
-    assert ing_to_simple_mixture_predictor.output.key == 'formulation'
-    assert ing_to_simple_mixture_predictor.id_to_quantity == {'water': water_quantity, 'salt': salt_quantity}
-    assert ing_to_simple_mixture_predictor.labels == {'solvent': {'water'}, 'solute': {'salt'}}
-    expected_str = '<IngredientsToSimpleMixturePredictor \'Ingredients to simple mixture predictor\'>'
-    assert str(ing_to_simple_mixture_predictor) == expected_str
+def test_ing_to_formulation_initialization(ing_to_formulation_predictor):
+    """Make sure the correct fields go to the correct places for an ingredients to formulation predictor."""
+    assert ing_to_formulation_predictor.name == 'Ingredients to formulation predictor'
+    assert ing_to_formulation_predictor.output.key == 'formulation'
+    assert ing_to_formulation_predictor.id_to_quantity == {'water': water_quantity, 'salt': salt_quantity}
+    assert ing_to_formulation_predictor.labels == {'solvent': {'water'}, 'solute': {'salt'}}
+    expected_str = f'<IngredientsToFormulationPredictor \'{ing_to_formulation_predictor.name}\'>'
+    assert str(ing_to_formulation_predictor) == expected_str
 
 
 def test_generalized_mean_property_initialization(generalized_mean_property_predictor):
@@ -368,6 +365,24 @@ def test_deprecated_gmpp():
             msg = str(w.message)
             assert msg.startswith('p must be an integer') or \
                    msg.startswith('GeneralizedMeanPropertyPredictor is deprecated')
+
+
+def test_deprecated_ingredients_to_simple_mixture():
+    """make sure deprecation warnings are issued."""
+    with warnings.catch_warnings(record=True) as caught:
+        warnings.simplefilter("always")
+        i2sm = IngredientsToSimpleMixturePredictor(
+            name="deprecated",
+            description="",
+            output=FormulationDescriptor("formulation"),
+            id_to_quantity={"quantity 1": RealDescriptor("foo", lower_bound=0, upper_bound=1, units="")},
+            labels={"label": {"foo"}}
+        )
+        assert i2sm.name == "deprecated"
+        assert i2sm.labels == {"label": {"foo"}}
+        assert len(caught) == 1
+        w = caught[0]
+        assert issubclass(w.category, DeprecationWarning)
 
 
 def test_label_fractions_property_initialization(label_fractions_predictor):
