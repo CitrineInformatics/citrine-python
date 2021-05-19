@@ -131,8 +131,8 @@ class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExec
     def trigger(self, predictor_id: UUID):
         """Trigger a predictor evaluation execution against a predictor, by id."""
         if self.workflow_id is None:
-            msg = "Cannot trigger a predictor evaluation execution without knowing the predictor " \
-                  "evaluation workflow. Use workflow.executions.trigger instead of " \
+            msg = "Cannot trigger a predictor evaluation execution without knowing the " \
+                  "predictor evaluation workflow. Use workflow.executions.trigger instead of " \
                   "project.predictor_evaluation_executions.trigger"
             raise RuntimeError(msg)
         path = '/projects/{project_id}/predictor-evaluation-workflows/{workflow_id}/executions' \
