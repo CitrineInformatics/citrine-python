@@ -30,7 +30,8 @@ class MeanPropertyPredictor(
     properties: List[RealDescriptor]
         List of descriptors to featurize
     p: int
-        Power of the generalized mean. Only integer powers are supported.
+        Power of the `generalized mean <https://en.wikipedia.org/wiki/Generalized_mean>`_.
+        Only integer powers are supported.
     impute_properties: bool
         Whether to impute missing ingredient properties.
         If ``False`` all ingredients must define values for all featurized properties.

@@ -78,6 +78,8 @@ The following example demonstrates how to use the python SDK to create a :class:
 
 For a more complete example of graph predictor usage, see :ref:`AI Engine Code Examples <graph_predictor_example>`.
 
+.. _Expression Predictor:
+
 Expression predictor
 --------------------
 
@@ -94,15 +96,15 @@ Note, spaces are not supported in expression arguments, e.g. ``Y`` is a valid ar
 The syntax is described in the `mXparser documentation <http://mathparser.org/mxparser-math-collection>`_.
 Citrine-python currently supports the following operators and functions:
 
-- basic operators: addition `+`, subtraction `-`, multiplication `*`, division `/`, exponentiation `^`
+- basic operators: addition ``+``, subtraction ``-``, multiplication ``*``, division ``/``, exponentiation ``^``
 - built-in math functions:
 
-  - trigonometric (input in radians): `sin`, `cos`, `tan`, `asin`, `acos`, `atan`
-  - hyperbolic: `sinh`, `cosh`, `tanh`
-  - logarithm: `log10`, `ln`
-  - exponential: `exp`
+  - trigonometric (input in radians): ``sin``, ``cos``, ``tan``, ``asin``, ``acos``, ``atan``
+  - hyperbolic: ``sinh``, ``cosh``, ``tanh``
+  - logarithm: ``log10``, ``ln``
+  - exponential: ``exp``
 
-- constants: `pi`, `e`
+- constants: ``pi``, ``e``
 
 ExpressionPredictors do not support complex numbers.
 
@@ -436,9 +438,10 @@ To configure a mean property predictor, we must specify:
 
 - An input descriptor that holds the mixture's recipe and ingredient labels
 - A list of properties to featurize
-- The power of the `generalized mean <https://en.wikipedia.org/wiki/Generalized_mean>`_
-  (A power of 1 is equivalent to the arithmetic mean, and a power 2 is equivalent to the root mean square.)
-  Only integer powers are supported.
+- The power of the `generalized mean <https://en.wikipedia.org/wiki/Generalized_mean>`_.
+  Only integer powers are supported. ``p=1`` corresponds to the arithmetic mean, which weights
+  all values evenly. Higher powers, such as ``p=2`` (the root mean square) place more weight
+  on larger values of the property. Negative powers place more weight on smaller values.
 - A data source that contains all ingredients and their properties
 - How to handle missing ingredient properties
 

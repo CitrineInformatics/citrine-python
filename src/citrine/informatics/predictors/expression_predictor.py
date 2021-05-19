@@ -13,6 +13,9 @@ __all__ = ['ExpressionPredictor', 'DeprecatedExpressionPredictor']
 class ExpressionPredictor(Resource['ExpressionPredictor'], Predictor, AIResourceMetadata):
     """A predictor that computes an output from an expression and set of bounded inputs.
 
+    For a discussion of expression syntax and a list of allowed symbols,
+    please see the :ref:`documentation.<Expression Predictor>`
+
     .. seealso::
        If you are using the deprecated predictor please see
        :class:`~citrine.informatics.predictors.DeprecatedExpressionPredictor` for an example that
