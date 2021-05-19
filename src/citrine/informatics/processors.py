@@ -67,14 +67,13 @@ class GridProcessor(Resource['GridProcessor'], Processor, AIResourceMetadata):
     uid = properties.Optional(properties.UUID, 'id', serializable=False)
     name = properties.String('config.name')
     description = properties.Optional(properties.String(), 'config.description')
-    typ = properties.String('config.type', default='Grid', deserializable=False)
     grid_sizes = properties.Mapping(
         properties.String,
         properties.Integer,
         'config.grid_dimensions'
     )
 
-    # NOTE: These could go here or in _post_dump - it's unclear which is better right now
+    typ = properties.String('config.type', default='Grid', deserializable=False)
     module_type = properties.String('module_type', default='PROCESSOR')
 
     def _attrs(self) -> List[str]:
@@ -120,9 +119,8 @@ class EnumeratedProcessor(Resource['EnumeratedProcessor'], Processor, AIResource
     name = properties.String('config.name')
     description = properties.Optional(properties.String(), 'config.description')
     max_candidates = properties.Integer('config.max_size')
-    typ = properties.String('config.type', default='Enumerated', deserializable=False)
 
-    # NOTE: These could go here or in _post_dump - it's unclear which is better right now
+    typ = properties.String('config.type', default='Enumerated', deserializable=False)
     module_type = properties.String('module_type', default='PROCESSOR')
 
     def _attrs(self) -> List[str]:
@@ -182,10 +180,9 @@ class MonteCarloProcessor(Resource['GridProcessor'], Processor, AIResourceMetada
     uid = properties.Optional(properties.UUID, 'id', serializable=False)
     name = properties.String('config.name')
     description = properties.Optional(properties.String(), 'config.description')
-    typ = properties.String('config.type', default='ContinuousSearch', deserializable=False)
     max_candidates = properties.Optional(properties.Integer, 'config.max_candidates')
 
-    # NOTE: These could go here or in _post_dump - it's unclear which is better right now
+    typ = properties.String('config.type', default='ContinuousSearch', deserializable=False)
     module_type = properties.String('module_type', default='PROCESSOR')
 
     def _attrs(self) -> List[str]:

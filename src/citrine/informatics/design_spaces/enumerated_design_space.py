@@ -34,9 +34,8 @@ class EnumeratedDesignSpace(Resource['EnumeratedDesignSpace'], DesignSpace, AIRe
 
     descriptors = properties.List(properties.Object(Descriptor), 'config.descriptors')
     data = properties.List(properties.Mapping(properties.String, properties.Raw), 'config.data')
-    typ = properties.String('config.type', default='EnumeratedDesignSpace', deserializable=False)
 
-    # NOTE: These could go here or in _post_dump - it's unclear which is better right now
+    typ = properties.String('config.type', default='EnumeratedDesignSpace', deserializable=False)
     module_type = properties.String('module_type', default='DESIGN_SPACE')
 
     def __init__(self,

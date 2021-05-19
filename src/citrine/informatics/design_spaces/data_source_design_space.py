@@ -27,9 +27,8 @@ class DataSourceDesignSpace(Resource['DataSourceDesignSpace'], DesignSpace, AIRe
     _resource_type = ResourceTypeEnum.MODULE
 
     data_source = properties.Object(DataSource, 'config.data_source')
-    typ = properties.String('config.type', default='DataSourceDesignSpace', deserializable=False)
 
-    # NOTE: These could go here or in _post_dump - it's unclear which is better right now
+    typ = properties.String('config.type', default='DataSourceDesignSpace', deserializable=False)
     module_type = properties.String('module_type', default='DESIGN_SPACE', deserializable=False)
 
     def __init__(self,
