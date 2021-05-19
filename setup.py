@@ -30,8 +30,7 @@ setup(name='citrine',
           "boto3>=1.9.226,<2",
           "botocore>=1.12.226,<2",
           "deprecation>=2.0.7,<3",
-          "urllib3>=1.25.7,<2",
-          "pandas>=1.0.3,<2"
+          "urllib3>=1.25.7,<2"
       ],
       extras_require={
           "builders": [
