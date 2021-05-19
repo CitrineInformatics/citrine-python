@@ -2,7 +2,6 @@ from copy import copy
 from warnings import warn
 from typing import List, Union, Optional, Tuple
 from uuid import UUID
-import numpy as np
 
 from deprecation import deprecated
 from gemd.entity.object import MaterialRun
@@ -281,7 +280,7 @@ class TableConfigCollection(Collection[TableConfig]):
             path = self._get_path(uid)
             data = self.session.get_resource(path)
             version_numbers = [version_data['version_number'] for version_data in data['versions']]
-            index = np.argmax(version_numbers)
+            index = version_numbers.index(max(version_numbers))
             data['version'] = data['versions'][index]
         return self.build(data)
 
