@@ -22,6 +22,7 @@ class DesignSpace(Module):
     _session: Optional[Session] = None
 
     uid = properties.Optional(properties.UUID, 'id', serializable=False)
+    """:Optional[UUID]: Citrine Platform unique identifier"""
     name = properties.String('config.name')
     description = properties.Optional(properties.String(), 'config.description')
 

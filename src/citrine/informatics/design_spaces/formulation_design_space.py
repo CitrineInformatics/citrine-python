@@ -51,12 +51,12 @@ class FormulationDesignSpace(Resource['FormulationDesignSpace'], DesignSpace, AI
     ), 'config.labels')
     constraints = properties.Set(properties.Object(Constraint), 'config.constraints')
     resolution = properties.Float('config.resolution')
+
     typ = properties.String(
         'config.type',
         default='FormulationDesignSpace',
         deserializable=False
     )
-
     module_type = properties.String('module_type', default='DESIGN_SPACE', deserializable=False)
 
     def __init__(self, *,

@@ -25,7 +25,6 @@ class PerformanceWorkflow(Resource['PerformanceWorkflow'], Workflow):
 
     """
 
-    uid = properties.Optional(properties.UUID, 'id', serializable=False)
     name = properties.String('display_name')
     status = properties.String('status', serializable=False)
     status_info = properties.Optional(
