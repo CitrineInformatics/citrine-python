@@ -70,7 +70,7 @@ class JobStatusResponse(Resource['JobStatusResponse']):
     status = properties.String("status")
     """:str: The status of the job. One of "Running", "Success", or "Failure"."""
     tasks = properties.List(Object(TaskNode), "tasks")
-    """:str: all of the constituent task required to complete this job"""
+    """:List[TaskNode]: all of the constituent task required to complete this job"""
     output = properties.Optional(properties.Mapping(String, String), 'output')
     """:Optional[dict[str, str]]: job output properties and results"""
 

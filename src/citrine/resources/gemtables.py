@@ -32,7 +32,7 @@ class GemTable(Resource['Table']):
     _resource_type = ResourceTypeEnum.TABLE
 
     uid = properties.Optional(properties.UUID(), 'id')
-    """:Optional[str]: unique Citrine id of this GEM Table"""
+    """:Optional[UUID]: unique Citrine id of this GEM Table"""
     version = properties.Optional(properties.Integer, 'version')
     """:Optional[int]: Version number of the GEM Table.
     The first table built from a given config is version 1."""
