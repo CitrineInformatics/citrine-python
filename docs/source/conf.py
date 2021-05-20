@@ -35,7 +35,8 @@ release = citrine.__version__
 extensions = [
     'sphinxcontrib.apidoc',
     'sphinx.ext.napoleon',
-    'sphinx.ext.intersphinx'
+    'sphinx.ext.intersphinx',
+    'sphinx_rtd_theme'
 ]
 
 # Use the sphinxcontrib.apidoc extension to wire in the sphinx-apidoc invocation
@@ -65,23 +66,24 @@ exclude_patterns = []
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'alabaster'
+html_theme = "sphinx_rtd_theme"
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
 
+# These paths are either relative to html_static_path or fully qualified paths (eg. https://...)
+html_css_files = [
+    'css/custom.css',
+]
+
+autodoc_member_order = 'groupwise'
 autodoc_mock_imports = []  # autodoc_mock_imports allows Spyinx to ignore any external modules listed in the array
 
 html_favicon = '_static/favicon.png'
+html_logo = '_static/logo.png'
 html_theme_options = {
-    'logo': 'logo.png',
-    'github_user': 'CitrineInformatics',
-    'github_repo': 'citrine-python',
-    'sidebar_collapse': False,
-    'head_font_family': ['Barlow', 'Helvetica', 'Arial', 'Sans-Serif'],
-    'font_family': ['Lusitana', 'Times New Roman', 'serif'],
-    'page_width': '1440px',  # default is 940 https://github.com/bitprophet/alabaster/blob/master/alabaster/theme.conf#L29
-    'sidebar_width': '350px'  # default is 220 https://github.com/bitprophet/alabaster/blob/master/alabaster/theme.conf#L38
+    'sticky_navigation': False,
+    'logo_only': True
 }

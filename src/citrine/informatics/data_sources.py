@@ -95,6 +95,10 @@ class GemTableDataSource(Serializable['GemTableDataSource'], DataSource):
         has version = 1. Strings are cast to ints.
     formulation_descriptor: Optional[FormulationDescriptor]
         Optional descriptor used to store formulations emitted by the data source.
+        If the data source emits a formulation but this argument is not provided, then a
+        default formulation descriptor will be generated. The formulations descriptor, and
+        other descriptors, can be retrieved using
+        :func:`~citrine.resources.descriptors.DescriptorMethods.descriptors_from_data_source`.
 
     """
 
