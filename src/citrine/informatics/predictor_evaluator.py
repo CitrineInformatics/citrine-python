@@ -55,8 +55,9 @@ class PredictorEvaluator(PolymorphicSerializable["PredictorEvaluator"]):
 class CrossValidationEvaluator(Serializable["CrossValidationEvaluator"], PredictorEvaluator):
     """Evaluate a predictor via cross validation.
 
-    Performs cross-validation on requested predictor responses and
-    computes the requested metrics on each response.
+    Performs cross-validation on requested predictor responses and computes the requested metrics
+    on each response. For a discussion of how many folds and trials to use,
+    please see the :ref:`documentation<Cross-validation evaluator>`.
 
     In addition to a name, set of responses to validate, trials, folds and metrics to compute,
     this evaluator defines a set of descriptor keys to ignore when grouping.  Candidates with

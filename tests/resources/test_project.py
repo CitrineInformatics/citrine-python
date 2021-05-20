@@ -231,6 +231,9 @@ def test_pe_workflows_get_project_id(project):
 
 def test_pe_executions_get_project_id(project):
     assert project.uid == project.predictor_evaluation_executions.project_id
+    # The resulting collection cannot be used to trigger executions.
+    with pytest.raises(RuntimeError):
+        project.predictor_evaluation_executions.trigger(uuid.uuid4())
 
 
 def test_design_workflows_get_project_id(project):
