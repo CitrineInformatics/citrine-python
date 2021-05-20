@@ -5,6 +5,7 @@ Subpackages
 -----------
 
 .. toctree::
+   :maxdepth: 4
 
    citrine.ara
    citrine.builders
@@ -18,6 +19,7 @@ Submodules
 ----------
 
 .. toctree::
+   :maxdepth: 4
 
    citrine.citrine
    citrine.exceptions
@@ -29,4 +31,5 @@ Module contents
 .. automodule:: citrine
    :members:
    :undoc-members:
+   :inherited-members:
    :show-inheritance:

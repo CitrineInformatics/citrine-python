@@ -4,4 +4,5 @@ citrine.seeding.find\_or\_create module
 .. automodule:: citrine.seeding.find_or_create
    :members:
    :undoc-members:
+   :inherited-members:
    :show-inheritance:

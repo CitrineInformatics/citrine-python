@@ -4,4 +4,5 @@ citrine.informatics.workflows.performance\_workflow module
 .. automodule:: citrine.informatics.workflows.performance_workflow
    :members:
    :undoc-members:
+   :inherited-members:
    :show-inheritance:

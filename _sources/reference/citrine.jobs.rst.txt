@@ -5,6 +5,7 @@ Submodules
 ----------
 
 .. toctree::
+   :maxdepth: 4
 
    citrine.jobs.waiting
 
@@ -14,4 +15,5 @@ Module contents
 .. automodule:: citrine.jobs
    :members:
    :undoc-members:
+   :inherited-members:
    :show-inheritance:

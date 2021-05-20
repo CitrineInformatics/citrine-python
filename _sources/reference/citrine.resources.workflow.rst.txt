@@ -4,4 +4,5 @@ citrine.resources.workflow module
 .. automodule:: citrine.resources.workflow
    :members:
    :undoc-members:
+   :inherited-members:
    :show-inheritance:

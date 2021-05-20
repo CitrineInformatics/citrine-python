@@ -5,6 +5,7 @@ Submodules
 ----------
 
 .. toctree::
+   :maxdepth: 4
 
    citrine.gemtables.columns
    citrine.gemtables.rows
@@ -16,4 +17,5 @@ Module contents
 .. automodule:: citrine.gemtables
    :members:
    :undoc-members:
+   :inherited-members:
    :show-inheritance:

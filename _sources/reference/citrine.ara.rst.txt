@@ -5,6 +5,7 @@ Submodules
 ----------
 
 .. toctree::
+   :maxdepth: 4
 
    citrine.ara.columns
    citrine.ara.rows
@@ -16,4 +17,5 @@ Module contents
 .. automodule:: citrine.ara
    :members:
    :undoc-members:
+   :inherited-members:
    :show-inheritance:

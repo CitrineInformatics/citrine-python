@@ -4,4 +4,5 @@ citrine.informatics.design\_spaces.product\_design\_space module
 .. automodule:: citrine.informatics.design_spaces.product_design_space
    :members:
    :undoc-members:
+   :inherited-members:
    :show-inheritance:

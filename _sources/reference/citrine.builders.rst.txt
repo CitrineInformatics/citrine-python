@@ -5,6 +5,7 @@ Submodules
 ----------
 
 .. toctree::
+   :maxdepth: 4
 
    citrine.builders.descriptors
    citrine.builders.design_spaces
@@ -16,4 +17,5 @@ Module contents
 .. automodule:: citrine.builders
    :members:
    :undoc-members:
+   :inherited-members:
    :show-inheritance:

@@ -4,4 +4,5 @@ citrine.resources.measurement\_run module
 .. automodule:: citrine.resources.measurement_run
    :members:
    :undoc-members:
+   :inherited-members:
    :show-inheritance:

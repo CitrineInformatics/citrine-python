@@ -4,4 +4,5 @@ citrine.exceptions module
 .. automodule:: citrine.exceptions
    :members:
    :undoc-members:
+   :inherited-members:
    :show-inheritance:

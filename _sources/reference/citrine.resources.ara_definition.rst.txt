@@ -4,4 +4,5 @@ citrine.resources.ara\_definition module
 .. automodule:: citrine.resources.ara_definition
    :members:
    :undoc-members:
+   :inherited-members:
    :show-inheritance:

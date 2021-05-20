@@ -1,51 +1,226 @@
 
+
 <!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-<html xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>citrine.informatics.workflows.workflow module &mdash; Citrine Python 0.128.2 documentation</title>
+  
 
-    <title>citrine.informatics.workflows.workflow module &#8212; Citrine Python 0.125.1 documentation</title>
-    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
+
+  
+  
     <link rel="shortcut icon" href="../_static/favicon.png"/>
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
     <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
    
-  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
-  
-  
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
-
-  </head><body>
-  
-
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
           
 
-          <div class="body" role="main">
+          
+            <a href="../index.html">
+          
+
+          
+            
+            <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.128.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/index.html">1. Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_entry.html">2. GEMD Data Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_extraction.html">3. [ALPHA] Data Extraction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">4. AI Engine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../formulations_example.html">5. Formulations Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">6. FAQ</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Citrine Python</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>citrine.informatics.workflows.workflow module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/reference/citrine.informatics.workflows.workflow.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
             
   <section id="module-citrine.informatics.workflows.workflow">
 <span id="citrine-informatics-workflows-workflow-module"></span><h1>citrine.informatics.workflows.workflow module<a class="headerlink" href="#module-citrine.informatics.workflows.workflow" title="Permalink to this headline">¶</a></h1>
-<p>Tools for working with design workflows.</p>
-<dl class="class">
-<dt id="citrine.informatics.workflows.workflow.Workflow">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.informatics.workflows.workflow.</code><code class="sig-name descname">Workflow</code><a class="headerlink" href="#citrine.informatics.workflows.workflow.Workflow" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.polymorphic_serializable.PolymorphicSerializable</span></code></p>
-<p>[DEPRECATED] A Citrine Workflow is a collection of Modules that together accomplish some task.</p>
+<p>Tools for working with workflow resources.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="citrine.informatics.workflows.workflow.Workflow">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">citrine.informatics.workflows.workflow.</span></span><span class="sig-name descname"><span class="pre">Workflow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwds</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.workflows.workflow.Workflow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.polymorphic_serializable.PolymorphicSerializable</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">Workflow</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.asynchronous_object.AsynchronousObject</span></code></p>
+<p>A Citrine Workflow is a collection of Modules that together accomplish some task.</p>
 <p>Abstract type that returns the proper type given a serialized dict.</p>
-<dl class="method">
-<dt id="citrine.informatics.workflows.workflow.Workflow.get_type">
-<em class="property">classmethod </em><code class="sig-name descname">get_type</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span> &#x2192; Type[citrine.informatics.workflows.workflow.Workflow]<a class="headerlink" href="#citrine.informatics.workflows.workflow.Workflow.get_type" title="Permalink to this definition">¶</a></dt>
+<p>All workflows must inherit AIResourceMetadata, and hence have a <code class="docutils literal notranslate"><span class="pre">status</span></code> field.
+Possible statuses are INPROGRESS, SUCCEEDED, and FAILED.
+Workflows also have a <code class="docutils literal notranslate"><span class="pre">status_description</span></code> field with more information.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.informatics.workflows.workflow.Workflow.build">
+<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">SelfType</span><a class="headerlink" href="#citrine.informatics.workflows.workflow.Workflow.build" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build the underlying type.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.informatics.workflows.workflow.Workflow.failed">
+<span class="sig-name descname"><span class="pre">failed</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">bool</span><a class="headerlink" href="#citrine.informatics.workflows.workflow.Workflow.failed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether workflow validation has completed unsuccessfully. Does not query state.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.informatics.workflows.workflow.Workflow.get_type">
+<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">get_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Type</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#citrine.informatics.workflows.workflow.Workflow" title="citrine.informatics.workflows.workflow.Workflow"><span class="pre">citrine.informatics.workflows.workflow.Workflow</span></a><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#citrine.informatics.workflows.workflow.Workflow.get_type" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the subtype.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.informatics.workflows.workflow.Workflow.in_progress">
+<span class="sig-name descname"><span class="pre">in_progress</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">bool</span><a class="headerlink" href="#citrine.informatics.workflows.workflow.Workflow.in_progress" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether workflow validation is in progress. Does not query state.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.informatics.workflows.workflow.Workflow.succeeded">
+<span class="sig-name descname"><span class="pre">succeeded</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">bool</span><a class="headerlink" href="#citrine.informatics.workflows.workflow.Workflow.succeeded" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether workflow validation has completed successfully. Does not query state.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.informatics.workflows.workflow.Workflow.uid">
+<span class="sig-name descname"><span class="pre">uid</span></span><em class="property"> <span class="pre">=</span> <span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.workflows.workflow.Workflow.uid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Citrine Platform unique identifier</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>Optional[UUID]</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -53,141 +228,47 @@
 </section>
 
 
+           </div>
+           
           </div>
-          
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2019, Citrine Informatics.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-<p class="logo">
-  <a href="../index.html">
-    <img class="logo" src="../_static/logo.png" alt="Logo"/>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script>
+
+  
+  
     
-  </a>
-</p>
+   
 
-
-
-
-
-
-<p>
-<iframe src="https://ghbtns.com/github-btn.html?user=CitrineInformatics&repo=citrine-python&type=watch&count=true&size=large&v=2"
-  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
-</p>
-
-
-
-
-
-<h3>Navigation</h3>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../getting_started/index.html">1. Getting Started</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../getting_started/overview.html">1.1. Overview</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../getting_started/connecting.html">1.2. Connecting to the Citrine Platform</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../getting_started/basic_functionality.html">1.3. Managing Resources</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../getting_started/projects.html">1.4. Projects</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../getting_started/datasets.html">1.5. Datasets</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../getting_started/data_model.html">1.6. Data Model Overview</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../getting_started/ai_modules.html">1.7. AI Engine Overview</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../getting_started/code_examples.html">1.8. Code Examples</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../data_entry.html">2. GEMD Data Model</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#creating-data-model-objects">2.1. Creating Data Model Objects</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#identifying-data-model-objects">2.2. Identifying Data Model Objects</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#registering-data-model-objects">2.3. Registering Data Model Objects</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#finding-data-model-objects">2.4. Finding Data Model Objects</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#updating-data-model-objects">2.5. Updating Data Model Objects</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#referencing-data-model-objects">2.6. Referencing Data Model Objects</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#material-history">2.7. Material History</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#validating-data-model-objects">2.8. Validating Data Model Objects</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../data_extraction.html">3. [ALPHA] Data Extraction</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#defining-row-and-columns">3.1. Defining row and columns</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#defining-tables">3.2. Defining tables</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#previewing-tables">3.3. Previewing tables</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#building-and-downloading-tables">3.4. Building and downloading tables</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-row-definitions">3.5. Available Row Definitions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-variable-definitions">3.6. Available Variable Definitions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-column-definitions">3.7. Available Column Definitions</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">4. AI Engine</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/getting_started.html">4.1. Getting Started</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/descriptors.html">4.2. Descriptors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/descriptors.html#platform-vocabularies">4.3. Platform Vocabularies</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/predictors.html">4.4. Predictors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/design_spaces.html">4.5. Design Spaces</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/processors.html">4.6. Processors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/design_workflows.html">4.7. Design Workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/scores.html">4.8. Scores</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/data_sources.html">4.9. Data Sources</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/predictor_reports.html">4.10. Predictor Reports</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/predictor_evaluation_workflows.html">4.11. Predictor Evaluation Workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/performance_workflows.html">4.12. [DEPRECATED] Performance Workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/code_examples.html">4.13. AI Engine Code Examples</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../formulations_example.html">5. Formulations Example</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../formulations_example.html#example-raw-data">5.1. Example Raw Data</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../formulations_example.html#ingesting-data">5.2. Ingesting Data</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../formulations_example.html#building-a-table">5.3. Building a Table</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../formulations_example.html#training-a-predictor">5.4. Training a Predictor</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../formulations_example.html#defining-a-design-space">5.5. Defining a Design Space</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../formulations_example.html#proposing-new-formulation-candidates">5.6. Proposing New Formulation Candidates</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">6. FAQ</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../FAQ/prohibited_data_patterns.html">6.1. Prohibited Data Patterns</a></li>
-</ul>
-</li>
-</ul>
-
-<div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="../index.html">Documentation overview</a><ul>
-  </ul></li>
-</ul>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
-
-
-
-
-
-
-
-
-        </div>
-      </div>
-      <div class="clearer"></div>
-    </div>
-    <div class="footer">
-      &copy;2019, Citrine Informatics.
-      
-      |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.0</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
-      
-      |
-      <a href="../_sources/reference/citrine.informatics.workflows.workflow.rst.txt"
-          rel="nofollow">Page source</a>
-    </div>
-
-    
-
-    
-  </body>
+</body>
 </html>

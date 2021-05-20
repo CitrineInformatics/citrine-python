@@ -4,4 +4,5 @@ citrine.informatics.constraints.ingredient\_count\_constraint module
 .. automodule:: citrine.informatics.constraints.ingredient_count_constraint
    :members:
    :undoc-members:
+   :inherited-members:
    :show-inheritance:

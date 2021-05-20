@@ -5,6 +5,7 @@ Submodules
 ----------
 
 .. toctree::
+   :maxdepth: 4
 
    citrine.informatics.design_spaces.data_source_design_space
    citrine.informatics.design_spaces.design_space
@@ -18,4 +19,5 @@ Module contents
 .. automodule:: citrine.informatics.design_spaces
    :members:
    :undoc-members:
+   :inherited-members:
    :show-inheritance:

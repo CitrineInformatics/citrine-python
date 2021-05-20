@@ -5,6 +5,7 @@ Submodules
 ----------
 
 .. toctree::
+   :maxdepth: 4
 
    citrine.informatics.constraints.categorical_constraint
    citrine.informatics.constraints.constraint
@@ -19,4 +20,5 @@ Module contents
 .. automodule:: citrine.informatics.constraints
    :members:
    :undoc-members:
+   :inherited-members:
    :show-inheritance:

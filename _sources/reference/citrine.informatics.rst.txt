@@ -5,6 +5,7 @@ Subpackages
 -----------
 
 .. toctree::
+   :maxdepth: 4
 
    citrine.informatics.constraints
    citrine.informatics.design_spaces
@@ -15,6 +16,7 @@ Submodules
 ----------
 
 .. toctree::
+   :maxdepth: 4
 
    citrine.informatics.analysis_configuration
    citrine.informatics.data_sources
@@ -36,4 +38,5 @@ Module contents
 .. automodule:: citrine.informatics
    :members:
    :undoc-members:
+   :inherited-members:
    :show-inheritance:

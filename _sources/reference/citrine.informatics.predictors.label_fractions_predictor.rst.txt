@@ -4,4 +4,5 @@ citrine.informatics.predictors.label\_fractions\_predictor module
 .. automodule:: citrine.informatics.predictors.label_fractions_predictor
    :members:
    :undoc-members:
+   :inherited-members:
    :show-inheritance:

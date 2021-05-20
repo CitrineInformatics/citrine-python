@@ -1,57 +1,668 @@
 
+
 <!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-<html xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>citrine.resources.templates module &mdash; Citrine Python 0.128.2 documentation</title>
+  
 
-    <title>citrine.resources.templates module &#8212; Citrine Python 0.125.1 documentation</title>
-    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
+
+  
+  
     <link rel="shortcut icon" href="../_static/favicon.png"/>
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
     <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
    
-  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
-  
-  
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
-
-  </head><body>
-  
-
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
           
 
-          <div class="body" role="main">
+          
+            <a href="../index.html">
+          
+
+          
+            
+            <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.128.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/index.html">1. Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_entry.html">2. GEMD Data Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_extraction.html">3. [ALPHA] Data Extraction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">4. AI Engine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../formulations_example.html">5. Formulations Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">6. FAQ</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Citrine Python</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>citrine.resources.templates module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/reference/citrine.resources.templates.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
             
   <section id="module-citrine.resources.templates">
 <span id="citrine-resources-templates-module"></span><h1>citrine.resources.templates module<a class="headerlink" href="#module-citrine.resources.templates" title="Permalink to this headline">¶</a></h1>
 <p>Top-level class for all template objects and collections thereof.</p>
-<dl class="class">
-<dt id="citrine.resources.templates.Template">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.resources.templates.</code><code class="sig-name descname">Template</code><span class="sig-paren">(</span><em class="sig-param">typ: str</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.templates.Template" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt class="sig sig-object py" id="citrine.resources.templates.Template">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">citrine.resources.templates.</span></span><span class="sig-name descname"><span class="pre">Template</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">typ</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.templates.Template" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConcepts" title="citrine.resources.data_concepts.DataConcepts"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.resources.data_concepts.DataConcepts</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
 <p>An abstract template object.</p>
 <p>Template must be extended along with <cite>Resource</cite></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.templates.Template.as_dict">
+<span class="sig-name descname"><span class="pre">as_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">dict</span><a class="headerlink" href="#citrine.resources.templates.Template.as_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dump to a dictionary (useful for interoperability with gemd).</p>
 </dd></dl>
 
-<dl class="class">
-<dt id="citrine.resources.templates.TemplateCollection">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.resources.templates.</code><code class="sig-name descname">TemplateCollection</code><span class="sig-paren">(</span><em class="sig-param">project_id: uuid.UUID</em>, <em class="sig-param">dataset_id: uuid.UUID</em>, <em class="sig-param">session: citrine._session.Session</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.templates.TemplateCollection" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConceptsCollection" title="citrine.resources.data_concepts.DataConceptsCollection"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.resources.data_concepts.DataConceptsCollection</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.templates.Template.build">
+<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.templates.Template.build" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build a data concepts object from a dictionary or from a GEMD object.</p>
+<p>This is an internal method, and should not be called directly by users.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>dict</em>) – A representation of the object. It must be possible to put this dictionary through
+the loads/dumps cycle of the GMED
+<a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.json.html#module-gemd.json" title="(in GEMD-python)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">JSON</span> <span class="pre">encoder</span></code></a>. The ensuing dictionary must
+have a <cite>type</cite> field that corresponds to the response key of this class or of
+<a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.link_by_uid.html#gemd.entity.link_by_uid.LinkByUID" title="(in GEMD-python)"><code class="xref py py-class docutils literal notranslate"><span class="pre">LinkByUID</span></code></a>.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>An object corresponding to a data concepts resource.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConcepts" title="citrine.resources.data_concepts.DataConcepts">DataConcepts</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.templates.Template.dump">
+<span class="sig-name descname"><span class="pre">dump</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.templates.Template.dump" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert the object to a JSON dictionary, so that every entry is serialized.</p>
+<p>Uses the json encoder client, so objects with uids are converted to LinkByUID dictionaries.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A string representation of the object as a dictionary.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.templates.Template.from_dict">
+<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.templates.Template.from_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build a data concepts object from a dictionary.</p>
+<p>This is an internal method, and should not be called directly by users.  First,
+it removes client_specific_fields from d, if present, and then calls the gemd
+object’s from_dict method.  Finally, it adds those fields back.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>d</strong> (<em>dict</em>) – A representation of the object that will be shallowly loaded into the object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.templates.Template.get_json_support">
+<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">get_json_support</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.templates.Template.get_json_support" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a DataConcepts-compatible json serializer/deserializer.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.templates.Template.get_type">
+<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">get_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Type</span><span class="p"><span class="pre">[</span></span><span class="pre">citrine._serialization.serializable.Serializable</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#citrine.resources.templates.Template.get_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine the class of a serialized object.</p>
+<p>The data dictionary must have a ‘type’ key whose value corresponds to the response key
+of one of the classes that extends <code class="xref py py-class docutils literal notranslate"><span class="pre">DataConcepts</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>dict</em>) – A dictionary corresponding to a serialized data concepts object of unknown type.
+This method will also work if data is a deserialized GEMD object.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The class corresponding to data.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>class</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="citrine.resources.templates.Template.audit_info">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">audit_info</span></span><em class="property"><span class="pre">:</span> <span class="pre">Optional[citrine.resources.audit_info.AuditInfo]</span></em><a class="headerlink" href="#citrine.resources.templates.Template.audit_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the audit info object.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.templates.Template.class_dict">
+<span class="sig-name descname"><span class="pre">class_dict</span></span><em class="property"> <span class="pre">=</span> <span class="pre">{}</span></em><a class="headerlink" href="#citrine.resources.templates.Template.class_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>dictionary from the type key to the class for every class     that extends DataConcepts.</p>
+<p>Only populated if the <a class="reference internal" href="#citrine.resources.templates.Template.get_type" title="citrine.resources.templates.Template.get_type"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_type()</span></code></a> method is invoked.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>Dict[str, class]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.templates.Template.client_specific_fields">
+<span class="sig-name descname"><span class="pre">client_specific_fields</span></span><em class="property"> <span class="pre">=</span> <span class="pre">{'audit_info':</span> <span class="pre">citrine.resources.audit_info.AuditInfo,</span> <span class="pre">'dataset':</span> <span class="pre">citrine._serialization.properties.UUID}</span></em><a class="headerlink" href="#citrine.resources.templates.Template.client_specific_fields" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fields that are added to the gemd data objects when they are used in this client</p>
+<ul class="simple">
+<li><p>audit_info contains who/when information about the resource on the citrine platform</p></li>
+<li><p>dataset is the unique Citrine id of the dataset that owns this resource</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="citrine.resources.templates.Template.dataset">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">dataset</span></span><em class="property"><span class="pre">:</span> <span class="pre">Optional[uuid.UUID]</span></em><a class="headerlink" href="#citrine.resources.templates.Template.dataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>[ALPHA] Get the dataset of this object, if it was returned by the backend.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.templates.Template.json_support">
+<span class="sig-name descname"><span class="pre">json_support</span></span><em class="property"> <span class="pre">=</span> <span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.templates.Template.json_support" title="Permalink to this definition">¶</a></dt>
+<dd><p>Custom json support object, which knows how to serialize and deserialize DataConcepts classes.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.templates.Template.skip">
+<span class="sig-name descname"><span class="pre">skip</span></span><em class="property"> <span class="pre">=</span> <span class="pre">{}</span></em><a class="headerlink" href="#citrine.resources.templates.Template.skip" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.templates.Template.typ">
+<span class="sig-name descname"><span class="pre">typ</span></span><em class="property"> <span class="pre">=</span> <span class="pre">NotImplemented</span></em><a class="headerlink" href="#citrine.resources.templates.Template.typ" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="citrine.resources.templates.TemplateCollection">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">citrine.resources.templates.</span></span><span class="sig-name descname"><span class="pre">TemplateCollection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project_id</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">uuid.UUID</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset_id</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">uuid.UUID</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">session</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">citrine._session.Session</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.templates.TemplateCollection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConceptsCollection" title="citrine.resources.data_concepts.DataConceptsCollection"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.resources.data_concepts.DataConceptsCollection</span></code></a>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">TemplateResourceType</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
 <p>A collection of one kind of template object.</p>
-<dl class="method">
-<dt id="citrine.resources.templates.TemplateCollection.update">
-<code class="sig-name descname">update</code><span class="sig-paren">(</span><em class="sig-param">model: TemplateResourceType</em><span class="sig-paren">)</span> &#x2192; TemplateResourceType<a class="headerlink" href="#citrine.resources.templates.TemplateCollection.update" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.templates.TemplateCollection.async_update">
+<span class="sig-name descname"><span class="pre">async_update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">ResourceType</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dry_run</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wait_for_response</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">120</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">polling_delay</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#citrine.resources.templates.TemplateCollection.async_update" title="Permalink to this definition">¶</a></dt>
+<dd><p>[ALPHA] Update a particular element of the collection with data validation.</p>
+<p>Update a particular element of the collection, doing a deeper check to ensure that
+the dependent data objects are still with the (potentially) changed constraints
+of this change. This will allow you to make bounds and allowed named/labels changes
+to templates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>ResourceType</em>) – The DataConcepts object.</p></li>
+<li><p><strong>dry_run</strong> (<em>bool</em>) – Whether to actually update the item or run a dry run of the update operation.
+Dry run is intended to be used for validation. Default: false</p></li>
+<li><p><strong>wait_for_response</strong> – Whether to poll for the eventual response. This changes the return type (see
+below).</p></li>
+<li><p><strong>timeout</strong> – How long to poll for the result before giving up. This is expressed in
+(fractional) seconds.</p></li>
+<li><p><strong>polling_delay</strong> – How long to delay between each polling retry attempt.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><p>If wait_for_response if True, then this call will poll the backend, waiting
+for the eventual job result. In the case of successful validation/update,
+a return value of None is provided which indicates success. In the case of
+a failure validating or processing the update, an exception (JobFailureError)
+is raised and an error message is logged with the underlying reason of the
+failure.</p>
+<p>If wait_for_response if False, A job ID (of type UUID) is returned that one
+can use to poll for the job completion and result with the
+<code class="xref py py-func docutils literal notranslate"><span class="pre">poll_async_update_job()</span></code>
+method.</p>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Optional[UUID]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.templates.TemplateCollection.build">
+<span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">ResourceType</span><a class="headerlink" href="#citrine.resources.templates.TemplateCollection.build" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build an object of type ResourceType from a serialized dictionary.</p>
+<p>This is an internal method, and should not be called directly by users.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>dict</em>) – A serialized data model object.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A data model object built from the dictionary.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>ResourceType</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.templates.TemplateCollection.delete">
+<span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scope</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'id'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dry_run</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.templates.TemplateCollection.delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete the element of the collection with ID equal to uid.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>uid</strong> (<em>Union</em><em>[</em><em>UUID</em><em>, </em><em>str</em><em>]</em>) – The ID.</p></li>
+<li><p><strong>scope</strong> (<em>str</em>) – The scope of the uid, defaults to Citrine scope (CITRINE_SCOPE)</p></li>
+<li><p><strong>dry_run</strong> (<em>bool</em>) – Whether to actually delete the item or run a dry run of the delete operation.
+Dry run is intended to be used for validation. Default: false</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.templates.TemplateCollection.filter_by_name">
+<span class="sig-name descname"><span class="pre">filter_by_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exact</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">per_page</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.templates.TemplateCollection.filter_by_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all objects with specified name in this dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – case-insensitive object name prefix to search.</p></li>
+<li><p><strong>exact</strong> (<em>bool</em>) – Set to True to change prefix search to exact search (but still case-insensitive).
+Default is False.</p></li>
+<li><p><strong>page</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>) – The page of results to list, 1-indexed (i.e., the first page is page=1)</p></li>
+<li><p><strong>per_page</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>) – The number of results to list per page</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>List of every object in this collection whose <cite>name</cite> matches the search term.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>List[ResourceType]</p>
+</dd>
+</dl>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version filter_by_name: </span>is deprecated due to poor performance. Please use list_by_name instead.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.templates.TemplateCollection.filter_by_tags">
+<span class="sig-name descname"><span class="pre">filter_by_tags</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tags</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">per_page</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.templates.TemplateCollection.filter_by_tags" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all objects in the collection that match any one of a list of tags.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tags</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – A list of strings, each one a tag that an object can match. Currently
+limited to a length of 1 or 0 (empty list does not filter).</p></li>
+<li><p><strong>page</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>) – The page of results to list, 1-indexed (i.e., the first page is page=1)</p></li>
+<li><p><strong>per_page</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>) – The number of results to list per page</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Every object in this collection that matches one of the tags.
+See (insert link) for a discussion of how to match on tags.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>List[ResourceType]</p>
+</dd>
+</dl>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version filter_by_tags: </span>is deprecated due to poor performance. Please use list_by_tag instead.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.templates.TemplateCollection.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scope</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'id'</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">ResourceType</span><a class="headerlink" href="#citrine.resources.templates.TemplateCollection.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the element of the collection with ID equal to uid.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>uid</strong> (<em>Union</em><em>[</em><em>UUID</em><em>, </em><em>str</em><em>]</em>) – The ID.</p></li>
+<li><p><strong>scope</strong> (<em>str</em>) – The scope of the uid, defaults to Citrine scope (CITRINE_SCOPE)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>An object with specified scope and uid</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>ResourceType</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.templates.TemplateCollection.get_type">
+<em class="property"><span class="pre">abstract</span> <span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">get_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">Type</span><span class="p"><span class="pre">[</span></span><span class="pre">citrine._serialization.serializable.Serializable</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#citrine.resources.templates.TemplateCollection.get_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the resource type in the collection.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.templates.TemplateCollection.list">
+<span class="sig-name descname"><span class="pre">list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">page</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">per_page</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">ResourceType</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#citrine.resources.templates.TemplateCollection.list" title="Permalink to this definition">¶</a></dt>
+<dd><p>List all visible elements of the collection.</p>
+<p>page and per_page parameters of this method are deprecated and ignored.
+This method will will return a list of all elements in the collection.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>page</strong> (<em>int</em><em>, </em><em>optional</em>) – [DEPRECATED][IGNORED] This parameter is ignored. To load individual
+pages lazily, use the list_all method.</p></li>
+<li><p><strong>per_page</strong> (<em>int</em><em>, </em><em>optional</em>) – Max number of results to return per page. It is very unlikely that
+setting this parameter to something other than the default is useful.
+It exists for rare situations where the client is bandwidth constrained
+or experiencing latency from large payload sizes.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Every object in this collection.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>List[ResourceType]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.templates.TemplateCollection.list_all">
+<span class="sig-name descname"><span class="pre">list_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">forward</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">per_page</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">ResourceType</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#citrine.resources.templates.TemplateCollection.list_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all objects in the collection.</p>
+<p>The order of results should not be relied upon, but for now they are sorted by
+dataset, object type, and creation time (in that order of priority).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>forward</strong> (<em>bool</em>) – Set to False to reverse the order of results (i.e., return in descending order).</p></li>
+<li><p><strong>per_page</strong> (<em>int</em>) – Controls the number of results fetched with each http request to the backend.
+Typically, this is set to a sensible default and should not be modified. Consider
+modifying this value only if you find this method is unacceptably latent.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Every object in this collection.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Iterator[ResourceType]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.templates.TemplateCollection.list_by_name">
+<span class="sig-name descname"><span class="pre">list_by_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exact</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">forward</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">per_page</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">ResourceType</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#citrine.resources.templates.TemplateCollection.list_by_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all objects with specified name in this dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – case-insensitive object name prefix to search.</p></li>
+<li><p><strong>exact</strong> (<em>bool</em>) – Set to True to change prefix search to exact search (but still case-insensitive).
+Default is False.</p></li>
+<li><p><strong>forward</strong> (<em>bool</em>) – Set to False to reverse the order of results (i.e., return in descending order).</p></li>
+<li><p><strong>per_page</strong> (<em>int</em>) – Controls the number of results fetched with each http request to the backend.
+Typically, this is set to a sensible default and should not be modified. Consider
+modifying this value only if you find this method is unacceptably latent.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>List of every object in this collection whose <cite>name</cite> matches the search term.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Iterator[ResourceType]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.templates.TemplateCollection.list_by_tag">
+<span class="sig-name descname"><span class="pre">list_by_tag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">per_page</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">ResourceType</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#citrine.resources.templates.TemplateCollection.list_by_tag" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all objects bearing a tag prefixed with <cite>tag</cite> in the collection.</p>
+<p>The order of results is largely not meaningful. Results from the same dataset will be
+grouped together but no other meaningful ordering can be relied upon. Duplication in
+the result set may (but needn’t) occur when one object has multiple tags matching the
+search tag. For this reason, it is inadvisable to put 2 tags with the same prefix
+(e.g., ‘foo::bar’ and ‘foo::baz’) in the same object when it can be avoided.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tag</strong> (<em>str</em>) – The prefix with which to search. Must fully match up to the first delimiter (ex.
+‘foo’ and ‘foo::b’ both match ‘foo::bar’ but ‘fo’ is insufficient.</p></li>
+<li><p><strong>per_page</strong> (<em>int</em>) – Controls the number of results fetched with each http request to the backend.
+Typically, this is set to a sensible default and should not be modified. Consider
+modifying this value only if you find this method is unacceptably latent.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Every object in this collection.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Iterator[ResourceType]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.templates.TemplateCollection.poll_async_update_job">
+<span class="sig-name descname"><span class="pre">poll_async_update_job</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">job_id</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">uuid.UUID</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">120</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">polling_delay</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="headerlink" href="#citrine.resources.templates.TemplateCollection.poll_async_update_job" title="Permalink to this definition">¶</a></dt>
+<dd><p>[ALPHA] Poll for the result of the async_update call.</p>
+<p>This call will poll the backend given the Job ID that came from a call to
+<code class="xref py py-func docutils literal notranslate"><span class="pre">async_update()</span></code>,
+waiting for the eventual job result. In the case of successful validation/update,
+a return value of None is provided which indicates success. In the case of
+a failure validating or processing the update, an exception (JobFailureError)
+is raised and an error message is logged with the underlying reason of the
+failure.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>job_id</strong> (<em>UUID</em>) – The job ID for the asynchronous update job we wish to poll.</p></li>
+<li><p><strong>timeout</strong> – How long to poll for the result before giving up. This is expressed in
+(fractional) seconds.</p></li>
+<li><p><strong>polling_delay</strong> – How long to delay between each polling retry attempt.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>This method will raise an appropriate exception if the job failed, else
+it will return None to indicate the job was successful.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.templates.TemplateCollection.register">
+<span class="sig-name descname"><span class="pre">register</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">ResourceType</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dry_run</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.templates.TemplateCollection.register" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new element of the collection or update an existing element.</p>
+<p>If the input model has an ID that corresponds to an existing object in the
+database, then that object will be updated. Otherwise a new object will be created.</p>
+<p>Only the top-level object in <cite>model</cite> itself is written to the database with this
+method. References to other objects are persisted as links, and the object returned
+by this method has all instances of data objects replaced by instances of LinkByUid.
+Registering an object which references other objects does NOT implicitly register
+those other objects. Rather, those other objects’ values are ignored, and the
+pre-existence of objects with their IDs is asserted before attempting to write
+<cite>model</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>ResourceType</em>) – The DataConcepts object.</p></li>
+<li><p><strong>dry_run</strong> (<em>bool</em>) – Whether to actually register the item or run a dry run of the register operation.
+Dry run is intended to be used for validation. Default: false</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A copy of the registered object as it now exists in the database.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>ResourceType</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.templates.TemplateCollection.register_all">
+<span class="sig-name descname"><span class="pre">register_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">models</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">ResourceType</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dry_run</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">ResourceType</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#citrine.resources.templates.TemplateCollection.register_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>[ALPHA] Create or update each model in models.</p>
+<p>This method has the same behavior as <cite>register</cite>, except that all no models will be
+written if any one of them is invalid.</p>
+<p>Using this method should yield significant improvements to write speed over separate
+calls to <cite>register</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>models</strong> (<em>List</em><em>[</em><em>ResourceType</em><em>]</em>) – The objects to be written.</p></li>
+<li><p><strong>dry_run</strong> (<em>bool</em>) – Whether to actually register the objects or run a dry run of the register operation.
+Dry run is intended to be used for validation. Default: false</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Each object model as it now exists in the database. The order and number of models
+is guaranteed to be the same as originally specified.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>List[ResourceType]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.templates.TemplateCollection.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">TemplateResourceType</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">TemplateResourceType</span><a class="headerlink" href="#citrine.resources.templates.TemplateCollection.update" title="Permalink to this definition">¶</a></dt>
 <dd><p>Update a template object.</p>
 </dd></dl>
 
@@ -60,141 +671,47 @@
 </section>
 
 
+           </div>
+           
           </div>
-          
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2019, Citrine Informatics.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-<p class="logo">
-  <a href="../index.html">
-    <img class="logo" src="../_static/logo.png" alt="Logo"/>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script>
+
+  
+  
     
-  </a>
-</p>
+   
 
-
-
-
-
-
-<p>
-<iframe src="https://ghbtns.com/github-btn.html?user=CitrineInformatics&repo=citrine-python&type=watch&count=true&size=large&v=2"
-  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
-</p>
-
-
-
-
-
-<h3>Navigation</h3>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../getting_started/index.html">1. Getting Started</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../getting_started/overview.html">1.1. Overview</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../getting_started/connecting.html">1.2. Connecting to the Citrine Platform</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../getting_started/basic_functionality.html">1.3. Managing Resources</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../getting_started/projects.html">1.4. Projects</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../getting_started/datasets.html">1.5. Datasets</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../getting_started/data_model.html">1.6. Data Model Overview</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../getting_started/ai_modules.html">1.7. AI Engine Overview</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../getting_started/code_examples.html">1.8. Code Examples</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../data_entry.html">2. GEMD Data Model</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#creating-data-model-objects">2.1. Creating Data Model Objects</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#identifying-data-model-objects">2.2. Identifying Data Model Objects</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#registering-data-model-objects">2.3. Registering Data Model Objects</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#finding-data-model-objects">2.4. Finding Data Model Objects</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#updating-data-model-objects">2.5. Updating Data Model Objects</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#referencing-data-model-objects">2.6. Referencing Data Model Objects</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#material-history">2.7. Material History</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#validating-data-model-objects">2.8. Validating Data Model Objects</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../data_extraction.html">3. [ALPHA] Data Extraction</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#defining-row-and-columns">3.1. Defining row and columns</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#defining-tables">3.2. Defining tables</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#previewing-tables">3.3. Previewing tables</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#building-and-downloading-tables">3.4. Building and downloading tables</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-row-definitions">3.5. Available Row Definitions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-variable-definitions">3.6. Available Variable Definitions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-column-definitions">3.7. Available Column Definitions</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">4. AI Engine</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/getting_started.html">4.1. Getting Started</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/descriptors.html">4.2. Descriptors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/descriptors.html#platform-vocabularies">4.3. Platform Vocabularies</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/predictors.html">4.4. Predictors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/design_spaces.html">4.5. Design Spaces</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/processors.html">4.6. Processors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/design_workflows.html">4.7. Design Workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/scores.html">4.8. Scores</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/data_sources.html">4.9. Data Sources</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/predictor_reports.html">4.10. Predictor Reports</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/predictor_evaluation_workflows.html">4.11. Predictor Evaluation Workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/performance_workflows.html">4.12. [DEPRECATED] Performance Workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/code_examples.html">4.13. AI Engine Code Examples</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../formulations_example.html">5. Formulations Example</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../formulations_example.html#example-raw-data">5.1. Example Raw Data</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../formulations_example.html#ingesting-data">5.2. Ingesting Data</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../formulations_example.html#building-a-table">5.3. Building a Table</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../formulations_example.html#training-a-predictor">5.4. Training a Predictor</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../formulations_example.html#defining-a-design-space">5.5. Defining a Design Space</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../formulations_example.html#proposing-new-formulation-candidates">5.6. Proposing New Formulation Candidates</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">6. FAQ</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../FAQ/prohibited_data_patterns.html">6.1. Prohibited Data Patterns</a></li>
-</ul>
-</li>
-</ul>
-
-<div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="../index.html">Documentation overview</a><ul>
-  </ul></li>
-</ul>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
-
-
-
-
-
-
-
-
-        </div>
-      </div>
-      <div class="clearer"></div>
-    </div>
-    <div class="footer">
-      &copy;2019, Citrine Informatics.
-      
-      |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.0</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
-      
-      |
-      <a href="../_sources/reference/citrine.resources.templates.rst.txt"
-          rel="nofollow">Page source</a>
-    </div>
-
-    
-
-    
-  </body>
+</body>
 </html>

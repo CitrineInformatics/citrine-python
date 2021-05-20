@@ -5,6 +5,7 @@ Submodules
 ----------
 
 .. toctree::
+   :maxdepth: 4
 
    citrine.informatics.workflows.design_workflow
    citrine.informatics.workflows.performance_workflow
@@ -17,4 +18,5 @@ Module contents
 .. automodule:: citrine.informatics.workflows
    :members:
    :undoc-members:
+   :inherited-members:
    :show-inheritance:

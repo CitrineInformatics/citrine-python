@@ -5,6 +5,7 @@ Submodules
 ----------
 
 .. toctree::
+   :maxdepth: 4
 
    citrine.seeding.find_or_create
    citrine.seeding.sort_gems
@@ -15,4 +16,5 @@ Module contents
 .. automodule:: citrine.seeding
    :members:
    :undoc-members:
+   :inherited-members:
    :show-inheritance:

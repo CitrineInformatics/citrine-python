@@ -4,4 +4,5 @@ citrine.informatics.predictors.ingredient\_fractions\_predictor module
 .. automodule:: citrine.informatics.predictors.ingredient_fractions_predictor
    :members:
    :undoc-members:
+   :inherited-members:
    :show-inheritance:

@@ -4,4 +4,5 @@ citrine.resources.api\_error module
 .. automodule:: citrine.resources.api_error
    :members:
    :undoc-members:
+   :inherited-members:
    :show-inheritance:

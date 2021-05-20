@@ -4,4 +4,5 @@ citrine.informatics.predictors.chemical\_formula\_featurizer module
 .. automodule:: citrine.informatics.predictors.chemical_formula_featurizer
    :members:
    :undoc-members:
+   :inherited-members:
    :show-inheritance:

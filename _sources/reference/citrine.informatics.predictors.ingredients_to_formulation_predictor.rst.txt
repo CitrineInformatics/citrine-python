@@ -1,0 +1,8 @@
+citrine.informatics.predictors.ingredients\_to\_formulation\_predictor module
+=============================================================================
+
+.. automodule:: citrine.informatics.predictors.ingredients_to_formulation_predictor
+   :members:
+   :undoc-members:
+   :inherited-members:
+   :show-inheritance:

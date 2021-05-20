@@ -4,4 +4,5 @@ citrine.builders.predictors module
 .. automodule:: citrine.builders.predictors
    :members:
    :undoc-members:
+   :inherited-members:
    :show-inheritance:

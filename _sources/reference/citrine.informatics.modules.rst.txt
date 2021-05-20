@@ -4,4 +4,5 @@ citrine.informatics.modules module
 .. automodule:: citrine.informatics.modules
    :members:
    :undoc-members:
+   :inherited-members:
    :show-inheritance:

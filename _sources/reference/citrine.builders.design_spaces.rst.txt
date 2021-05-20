@@ -4,4 +4,5 @@ citrine.builders.design\_spaces module
 .. automodule:: citrine.builders.design_spaces
    :members:
    :undoc-members:
+   :inherited-members:
    :show-inheritance:

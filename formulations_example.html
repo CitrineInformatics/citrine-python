@@ -1,42 +1,187 @@
 
+
 <!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-<html xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>5. Formulations Example &mdash; Citrine Python 0.128.2 documentation</title>
+  
 
-    <title>5. Formulations Example &#8212; Citrine Python 0.125.1 documentation</title>
-    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/custom.css" type="text/css" />
+
+  
+  
     <link rel="shortcut icon" href="_static/favicon.png"/>
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="6. FAQ" href="FAQ/index.html" />
-    <link rel="prev" title="4.13. AI Engine Code Examples" href="workflows/code_examples.html" />
+    <link rel="prev" title="4.13. AI Engine Code Examples" href="workflows/code_examples.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
    
-  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
-  
-  
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
-
-  </head><body>
-  
-
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
           
 
-          <div class="body" role="main">
+          
+            <a href="index.html">
+          
+
+          
+            
+            <img src="_static/logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.128.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="getting_started/index.html">1. Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_entry.html">2. GEMD Data Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_extraction.html">3. [ALPHA] Data Extraction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="workflows/index.html">4. AI Engine</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">5. Formulations Example</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#example-raw-data">5.1. Example Raw Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#ingesting-data">5.2. Ingesting Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#building-a-table">5.3. Building a Table</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#training-a-predictor">5.4. Training a Predictor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#defining-a-design-space">5.5. Defining a Design Space</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#proposing-new-formulation-candidates">5.6. Proposing New Formulation Candidates</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="FAQ/index.html">6. FAQ</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Citrine Python</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li><span class="section-number">5. </span>Formulations Example</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/formulations_example.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
             
   <section id="formulations-example">
-<h1>5. Formulations Example<a class="headerlink" href="#formulations-example" title="Permalink to this headline">¶</a></h1>
+<h1><span class="section-number">5. </span>Formulations Example<a class="headerlink" href="#formulations-example" title="Permalink to this headline">¶</a></h1>
 <p>The Citrine Platform is a powerful tool to analyze formulations data.
 A formulation is, generally speaking, a mixture of mixtures.
 Individual ingredients are mixed together to form more complex ingredients, which may themselves be mixed with other ingredients and/or mixtures, and so on.
@@ -47,7 +192,7 @@ In addition, each mixing process may be characterized by attributes such as the 
 and Citrine’s AI Engine turns this information into trained models that can predict the properties of novel formulations.
 This section demonstrates how to express a complete formulations example in Citrine-python, from data ingestion to new candidate generation.</p>
 <section id="example-raw-data">
-<h2>5.1. Example Raw Data<a class="headerlink" href="#example-raw-data" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">5.1. </span>Example Raw Data<a class="headerlink" href="#example-raw-data" title="Permalink to this headline">¶</a></h2>
 <p>To demonstrate the formulations machinery, we consider a toy problem – margaritas!
 We scour our pantry and gather some materials, laid out in the table below.
 These are known as “atomic” materials because for our purposes they are not broken into more fundamental materials.
@@ -196,7 +341,7 @@ The table below shows two examples.</p>
 </table>
 </section>
 <section id="ingesting-data">
-<h2>5.2. Ingesting Data<a class="headerlink" href="#ingesting-data" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">5.2. </span>Ingesting Data<a class="headerlink" href="#ingesting-data" title="Permalink to this headline">¶</a></h2>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>Ingesting data to GEMD is most easily done with additional tooling to reduce the amount of required programming.</p>
@@ -340,7 +485,7 @@ That’s a lot, which is why this is best done with additional tooling, whether 
 <p>Repeating this process once for each margarita sample, we can build up a rich dataset for machine learning.</p>
 </section>
 <section id="building-a-table">
-<h2>5.3. Building a Table<a class="headerlink" href="#building-a-table" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">5.3. </span>Building a Table<a class="headerlink" href="#building-a-table" title="Permalink to this headline">¶</a></h2>
 <p>We now build a GEM Table to represent the margaritas’ material histories in tabular format.
 This table will be used as training data when building a machine learning graphical model.
 For more detailed information on GEM Tables, see the section on <a class="reference internal" href="data_extraction.html"><span class="doc">data extraction</span></a>.</p>
@@ -501,7 +646,7 @@ To build the table asynchronously, use <a class="reference internal" href="refer
 </div>
 </section>
 <section id="training-a-predictor">
-<h2>5.4. Training a Predictor<a class="headerlink" href="#training-a-predictor" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">5.4. </span>Training a Predictor<a class="headerlink" href="#training-a-predictor" title="Permalink to this headline">¶</a></h2>
 <p>With the GEM Table in hand, we build and train a predictor to predict the tastiness of novel margarita recipes.
 The first step is to define a <a class="reference internal" href="reference/citrine.informatics.data_sources.html#citrine.informatics.data_sources.GemTableDataSource" title="citrine.informatics.data_sources.GemTableDataSource"><code class="xref py py-class docutils literal notranslate"><span class="pre">GemTableDataSource</span></code></a> based on the GEM Table, <code class="docutils literal notranslate"><span class="pre">table</span></code>.
 We choose to define a <a class="reference internal" href="reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.FormulationDescriptor" title="citrine.informatics.descriptors.FormulationDescriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">FormulationDescriptor</span></code></a> to hold the formulation;
@@ -651,7 +796,7 @@ Make sure that these are the descriptors you are using as inputs to your predict
 </figure>
 </section>
 <section id="defining-a-design-space">
-<h2>5.5. Defining a Design Space<a class="headerlink" href="#defining-a-design-space" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">5.5. </span>Defining a Design Space<a class="headerlink" href="#defining-a-design-space" title="Permalink to this headline">¶</a></h2>
 <p>Now that we have a trained predictor, the next step to finding the <em>world’s best margarita</em> is to define the search space.
 A <a class="reference internal" href="reference/citrine.informatics.design_spaces.formulation_design_space.html#citrine.informatics.design_spaces.formulation_design_space.FormulationDesignSpace" title="citrine.informatics.design_spaces.formulation_design_space.FormulationDesignSpace"><code class="xref py py-class docutils literal notranslate"><span class="pre">FormulationDesignSpace</span></code></a> defines the ingredients, the labels, and any constraints.
 In addition to the labels used in the predictor, we also create a label for “simple syrup A” and “simple syrup B.”
@@ -697,7 +842,7 @@ We do this by wrapping a <a class="reference internal" href="reference/citrine.i
 </div>
 </section>
 <section id="proposing-new-formulation-candidates">
-<h2>5.6. Proposing New Formulation Candidates<a class="headerlink" href="#proposing-new-formulation-candidates" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">5.6. </span>Proposing New Formulation Candidates<a class="headerlink" href="#proposing-new-formulation-candidates" title="Permalink to this headline">¶</a></h2>
 <p>With the pieces assembled, we define a <a class="reference internal" href="reference/citrine.informatics.workflows.design_workflow.html#citrine.informatics.workflows.design_workflow.DesignWorkflow" title="citrine.informatics.workflows.design_workflow.DesignWorkflow"><code class="xref py py-class docutils literal notranslate"><span class="pre">DesignWorkflow</span></code></a>.
 Our goal is to find the margarita that is most likely to have a tastiness score above 7.5, while keeping the cost per kg below $12.50.
 We define an <a class="reference internal" href="reference/citrine.informatics.scores.html#citrine.informatics.scores.LIScore" title="citrine.informatics.scores.LIScore"><code class="xref py py-class docutils literal notranslate"><span class="pre">LIScore</span></code></a> with this objective and constraint, define a design workflow with the predictor and design space, and trigger the design workflow on the score.</p>
@@ -732,143 +877,51 @@ Well, that depends on the training data.</p>
 </section>
 
 
+           </div>
+           
           </div>
-          
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="FAQ/index.html" class="btn btn-neutral float-right" title="6. FAQ" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="workflows/code_examples.html" class="btn btn-neutral float-left" title="4.13. AI Engine Code Examples" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2019, Citrine Informatics.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-<p class="logo">
-  <a href="index.html">
-    <img class="logo" src="_static/logo.png" alt="Logo"/>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script>
+
+  
+  
     
-  </a>
-</p>
+   
 
-
-
-
-
-
-<p>
-<iframe src="https://ghbtns.com/github-btn.html?user=CitrineInformatics&repo=citrine-python&type=watch&count=true&size=large&v=2"
-  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
-</p>
-
-
-
-
-
-<h3>Navigation</h3>
-<ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="getting_started/index.html">1. Getting Started</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="getting_started/overview.html">1.1. Overview</a></li>
-<li class="toctree-l2"><a class="reference internal" href="getting_started/connecting.html">1.2. Connecting to the Citrine Platform</a></li>
-<li class="toctree-l2"><a class="reference internal" href="getting_started/basic_functionality.html">1.3. Managing Resources</a></li>
-<li class="toctree-l2"><a class="reference internal" href="getting_started/projects.html">1.4. Projects</a></li>
-<li class="toctree-l2"><a class="reference internal" href="getting_started/datasets.html">1.5. Datasets</a></li>
-<li class="toctree-l2"><a class="reference internal" href="getting_started/data_model.html">1.6. Data Model Overview</a></li>
-<li class="toctree-l2"><a class="reference internal" href="getting_started/ai_modules.html">1.7. AI Engine Overview</a></li>
-<li class="toctree-l2"><a class="reference internal" href="getting_started/code_examples.html">1.8. Code Examples</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="data_entry.html">2. GEMD Data Model</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="data_entry.html#creating-data-model-objects">2.1. Creating Data Model Objects</a></li>
-<li class="toctree-l2"><a class="reference internal" href="data_entry.html#identifying-data-model-objects">2.2. Identifying Data Model Objects</a></li>
-<li class="toctree-l2"><a class="reference internal" href="data_entry.html#registering-data-model-objects">2.3. Registering Data Model Objects</a></li>
-<li class="toctree-l2"><a class="reference internal" href="data_entry.html#finding-data-model-objects">2.4. Finding Data Model Objects</a></li>
-<li class="toctree-l2"><a class="reference internal" href="data_entry.html#updating-data-model-objects">2.5. Updating Data Model Objects</a></li>
-<li class="toctree-l2"><a class="reference internal" href="data_entry.html#referencing-data-model-objects">2.6. Referencing Data Model Objects</a></li>
-<li class="toctree-l2"><a class="reference internal" href="data_entry.html#material-history">2.7. Material History</a></li>
-<li class="toctree-l2"><a class="reference internal" href="data_entry.html#validating-data-model-objects">2.8. Validating Data Model Objects</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="data_extraction.html">3. [ALPHA] Data Extraction</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="data_extraction.html#defining-row-and-columns">3.1. Defining row and columns</a></li>
-<li class="toctree-l2"><a class="reference internal" href="data_extraction.html#defining-tables">3.2. Defining tables</a></li>
-<li class="toctree-l2"><a class="reference internal" href="data_extraction.html#previewing-tables">3.3. Previewing tables</a></li>
-<li class="toctree-l2"><a class="reference internal" href="data_extraction.html#building-and-downloading-tables">3.4. Building and downloading tables</a></li>
-<li class="toctree-l2"><a class="reference internal" href="data_extraction.html#available-row-definitions">3.5. Available Row Definitions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="data_extraction.html#available-variable-definitions">3.6. Available Variable Definitions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="data_extraction.html#available-column-definitions">3.7. Available Column Definitions</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="workflows/index.html">4. AI Engine</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="workflows/getting_started.html">4.1. Getting Started</a></li>
-<li class="toctree-l2"><a class="reference internal" href="workflows/descriptors.html">4.2. Descriptors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="workflows/descriptors.html#platform-vocabularies">4.3. Platform Vocabularies</a></li>
-<li class="toctree-l2"><a class="reference internal" href="workflows/predictors.html">4.4. Predictors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="workflows/design_spaces.html">4.5. Design Spaces</a></li>
-<li class="toctree-l2"><a class="reference internal" href="workflows/processors.html">4.6. Processors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="workflows/design_workflows.html">4.7. Design Workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="workflows/scores.html">4.8. Scores</a></li>
-<li class="toctree-l2"><a class="reference internal" href="workflows/data_sources.html">4.9. Data Sources</a></li>
-<li class="toctree-l2"><a class="reference internal" href="workflows/predictor_reports.html">4.10. Predictor Reports</a></li>
-<li class="toctree-l2"><a class="reference internal" href="workflows/predictor_evaluation_workflows.html">4.11. Predictor Evaluation Workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="workflows/performance_workflows.html">4.12. [DEPRECATED] Performance Workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="workflows/code_examples.html">4.13. AI Engine Code Examples</a></li>
-</ul>
-</li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">5. Formulations Example</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#example-raw-data">5.1. Example Raw Data</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#ingesting-data">5.2. Ingesting Data</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#building-a-table">5.3. Building a Table</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#training-a-predictor">5.4. Training a Predictor</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#defining-a-design-space">5.5. Defining a Design Space</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#proposing-new-formulation-candidates">5.6. Proposing New Formulation Candidates</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="FAQ/index.html">6. FAQ</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="FAQ/prohibited_data_patterns.html">6.1. Prohibited Data Patterns</a></li>
-</ul>
-</li>
-</ul>
-
-<div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="workflows/code_examples.html" title="previous chapter">4.13. AI Engine Code Examples</a></li>
-      <li>Next: <a href="FAQ/index.html" title="next chapter">6. FAQ</a></li>
-  </ul></li>
-</ul>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
-
-
-
-
-
-
-
-
-        </div>
-      </div>
-      <div class="clearer"></div>
-    </div>
-    <div class="footer">
-      &copy;2019, Citrine Informatics.
-      
-      |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.0</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
-      
-      |
-      <a href="_sources/formulations_example.rst.txt"
-          rel="nofollow">Page source</a>
-    </div>
-
-    
-
-    
-  </body>
+</body>
 </html>

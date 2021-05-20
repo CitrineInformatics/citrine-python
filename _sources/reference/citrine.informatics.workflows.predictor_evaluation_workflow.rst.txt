@@ -4,4 +4,5 @@ citrine.informatics.workflows.predictor\_evaluation\_workflow module
 .. automodule:: citrine.informatics.workflows.predictor_evaluation_workflow
    :members:
    :undoc-members:
+   :inherited-members:
    :show-inheritance:

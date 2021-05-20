@@ -4,4 +4,5 @@ citrine.resources.process\_template module
 .. automodule:: citrine.resources.process_template
    :members:
    :undoc-members:
+   :inherited-members:
    :show-inheritance:

@@ -1,54 +1,218 @@
 
+
 <!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-<html xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>4.11. Predictor Evaluation Workflows &mdash; Citrine Python 0.128.2 documentation</title>
+  
 
-    <title>4.11. Predictor Evaluation Workflows &#8212; Citrine Python 0.125.1 documentation</title>
-    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
+
+  
+  
     <link rel="shortcut icon" href="../_static/favicon.png"/>
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="4.12. [DEPRECATED] Performance Workflows" href="performance_workflows.html" />
-    <link rel="prev" title="4.10. Predictor Reports" href="predictor_reports.html" />
+    <link rel="prev" title="4.10. Predictor Reports" href="predictor_reports.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
    
-  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
-  
-  
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
-
-  </head><body>
-  
-
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
           
 
-          <div class="body" role="main">
+          
+            <a href="../index.html">
+          
+
+          
+            
+            <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.128.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/index.html">1. Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_entry.html">2. GEMD Data Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_extraction.html">3. [ALPHA] Data Extraction</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">4. AI Engine</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="getting_started.html">4.1. Getting Started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="descriptors.html">4.2. Descriptors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="descriptors.html#platform-vocabularies">4.3. Platform Vocabularies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="predictors.html">4.4. Predictors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="design_spaces.html">4.5. Design Spaces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="processors.html">4.6. Processors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="design_workflows.html">4.7. Design Workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scores.html">4.8. Scores</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_sources.html">4.9. Data Sources</a></li>
+<li class="toctree-l2"><a class="reference internal" href="predictor_reports.html">4.10. Predictor Reports</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">4.11. Predictor Evaluation Workflows</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#predictor-evaluators">4.11.1. Predictor evaluators</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id1">4.11.1.1. Cross-validation evaluator</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#predictor-evaluation-metrics">4.11.2. Predictor evaluation metrics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#execution-and-results">4.11.3. Execution and results</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#example">4.11.4. Example</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#archive-and-restore">4.11.5. Archive and restore</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="performance_workflows.html">4.12. [DEPRECATED] Performance Workflows</a></li>
+<li class="toctree-l2"><a class="reference internal" href="code_examples.html">4.13. AI Engine Code Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../formulations_example.html">5. Formulations Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">6. FAQ</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Citrine Python</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="index.html"><span class="section-number">4. </span>AI Engine</a> &raquo;</li>
+        
+      <li><span class="section-number">4.11. </span>Predictor Evaluation Workflows</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/workflows/predictor_evaluation_workflows.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
             
   <section id="predictor-evaluation-workflows">
-<h1>4.11. Predictor Evaluation Workflows<a class="headerlink" href="#predictor-evaluation-workflows" title="Permalink to this headline">¶</a></h1>
+<h1><span class="section-number">4.11. </span>Predictor Evaluation Workflows<a class="headerlink" href="#predictor-evaluation-workflows" title="Permalink to this headline">¶</a></h1>
 <p>A <a class="reference internal" href="../reference/citrine.informatics.workflows.predictor_evaluation_workflow.html#citrine.informatics.workflows.predictor_evaluation_workflow.PredictorEvaluationWorkflow" title="citrine.informatics.workflows.predictor_evaluation_workflow.PredictorEvaluationWorkflow"><code class="xref py py-class docutils literal notranslate"><span class="pre">PredictorEvaluationWorkflow</span></code></a> evaluates the performance of a <a class="reference internal" href="predictors.html"><span class="doc">Predictor</span></a>.
 Each workflow is composed of one or more <a class="reference internal" href="../reference/citrine.informatics.predictor_evaluator.html#citrine.informatics.predictor_evaluator.PredictorEvaluator" title="citrine.informatics.predictor_evaluator.PredictorEvaluator"><code class="xref py py-class docutils literal notranslate"><span class="pre">PredictorEvaluators</span></code></a>.</p>
 <section id="predictor-evaluators">
-<h2>4.11.1. Predictor evaluators<a class="headerlink" href="#predictor-evaluators" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">4.11.1. </span>Predictor evaluators<a class="headerlink" href="#predictor-evaluators" title="Permalink to this headline">¶</a></h2>
 <p>A predictor evaluator defines a method to evaluate a predictor and any relevant configuration, e.g., k-fold cross-validation evaluation that specifies 3 folds.
 Minimally, each predictor evaluator specifies a name, a set of predictor responses to evaluate and a set of metrics to compute for each response.
 Evaluator names must be unique within a single workflow (more on that <a class="reference external" href="#execution-and-results">below</a>).
 Responses are specified as a set of strings, where each string corresponds to a descriptor key of a predictor output.
 Metrics are specified as a set of <a class="reference internal" href="../reference/citrine.informatics.predictor_evaluation_metrics.html#citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric" title="citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">PredictorEvaluationMetrics</span></code></a>.
 The evaluator will only compute the subset of metrics valid for each response, so the top-level metrics defined by an evaluator should contain the union of all metrics computed across all responses.</p>
-<section id="cross-validation-evaluator">
-<h3>4.11.1.1. Cross-validation evaluator<a class="headerlink" href="#cross-validation-evaluator" title="Permalink to this headline">¶</a></h3>
+<section id="id1">
+<h3><span class="section-number">4.11.1.1. </span>Cross-validation evaluator<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
 <p>A <a class="reference internal" href="../reference/citrine.informatics.predictor_evaluator.html#citrine.informatics.predictor_evaluator.CrossValidationEvaluator" title="citrine.informatics.predictor_evaluator.CrossValidationEvaluator"><code class="xref py py-class docutils literal notranslate"><span class="pre">CrossValidationEvaluator</span></code></a> performs k-fold cross-validation on a predictor.
 Cross-validation can only be evaluated on predictors that define training data.
 During cross-validation, the predictor’s training data is partitioned into k folds.
@@ -57,15 +221,29 @@ When the number of folds equals the number of training data points, the analysis
 Metrics are computed by comparing the model’s predictions to observed values.
 Where a metric is computed by taking an average over points in the test folds
 the fold-wise average is reported as opposed to the point-wise average.</p>
-<p>In addition to a name, set of responses to validate, trials, folds and metrics to compute, this evaluator defines a set of descriptor keys to ignore when grouping.
+<p>We recommend 5 folds and 3 trials as the default.
+Decreasing the number of folds makes the cross-validation metrics less accurate, since the training sets are substantially reduced in size.
+This can make the model appear to be less accurate than it actually is.
+Conversely, increasing the number of folds makes the <em>uncertainty estimates</em> for cross-validation metrics less accurate (see warning below).
+It makes the uncertainty larger, meaning it is more likely that two models will appear to have equivalent performance when in fact one is better than the other.
+Increasing the number of trials results in more accurate cross-validation metrics, but takes longer because more models need to be trained.</p>
+<p>This evaluator has an <code class="docutils literal notranslate"><span class="pre">ignore_when_grouping</span></code> argument, which can be used to keep similar materials together in a fold and thereby avoid unrealistically optimistic results.
 Candidates with different values for ignored keys and identical values for all other predictor inputs will be placed in the same fold.
 For example, if you are baking cakes with different ingredients and different oven temperatures and want to group together the data by the ingredients, then
-you can set <cite>ignore_when_grouping={“oven temperature”}</cite>.
+you can set <code class="docutils literal notranslate"><span class="pre">ignore_when_grouping={&quot;oven</span> <span class="pre">temperature&quot;}</span></code>.
 That way, two recipes that differ only in their oven temperature will always end up in the same fold.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>There is no unbiased way to estimate the variance of a metric computed by cross-validation
+(<a class="reference external" href="https://www.jmlr.org/papers/volume5/grandvalet04a/grandvalet04a.pdf">source</a>).
+Citrine Platform uses the bias-corrected fold-wise standard deviation, as this was found to be reasonably accurate, especially when the number of folds is &lt;= 5.
+It is biased-upward, which makes the results more conservative.
+If two models are found to differ significantly in their cross-validation metrics, that difference is likely repeatable.</p>
+</div>
 </section>
 </section>
 <section id="predictor-evaluation-metrics">
-<h2>4.11.2. Predictor evaluation metrics<a class="headerlink" href="#predictor-evaluation-metrics" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">4.11.2. </span>Predictor evaluation metrics<a class="headerlink" href="#predictor-evaluation-metrics" title="Permalink to this headline">¶</a></h2>
 <p>Predictor evaluation metrics are defined as part of a <a class="reference internal" href="../reference/citrine.informatics.predictor_evaluator.html#citrine.informatics.predictor_evaluator.PredictorEvaluator" title="citrine.informatics.predictor_evaluator.PredictorEvaluator"><code class="xref py py-class docutils literal notranslate"><span class="pre">PredictorEvaluator</span></code></a>.
 For all response types, the metric (<a class="reference internal" href="../reference/citrine.informatics.predictor_evaluation_metrics.html#citrine.informatics.predictor_evaluation_metrics.PVA" title="citrine.informatics.predictor_evaluation_metrics.PVA"><code class="xref py py-class docutils literal notranslate"><span class="pre">PVA</span></code></a>) is available to compare predicted versus actual data.
 Other available metrics depend on whether the response’s type is numeric or categorical.</p>
@@ -114,7 +292,7 @@ At a value of 1, the model has perfect precision and recall.</p></li>
 </ul>
 </section>
 <section id="execution-and-results">
-<span id="id1"></span><h2>4.11.3. Execution and results<a class="headerlink" href="#execution-and-results" title="Permalink to this headline">¶</a></h2>
+<span id="id2"></span><h2><span class="section-number">4.11.3. </span>Execution and results<a class="headerlink" href="#execution-and-results" title="Permalink to this headline">¶</a></h2>
 <p>Triggering a Predictor Evaluation Workflow produces a <a class="reference internal" href="../reference/citrine.resources.predictor_evaluation_execution.html#citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecution" title="citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecution"><code class="xref py py-class docutils literal notranslate"><span class="pre">PredictorEvaluationExecution</span></code></a>.
 This execution allows you to track the progress using its <code class="docutils literal notranslate"><span class="pre">status</span></code> and <code class="docutils literal notranslate"><span class="pre">status_info</span></code> properties.
 The <code class="docutils literal notranslate"><span class="pre">status</span></code> can be one of <code class="docutils literal notranslate"><span class="pre">INPROGRESS</span></code>, <code class="docutils literal notranslate"><span class="pre">READY</span></code> or <code class="docutils literal notranslate"><span class="pre">FAILED</span></code>.
@@ -156,7 +334,7 @@ For categorical responses, class probabilities are returned as a mapping from ea
 </div></blockquote>
 </section>
 <section id="example">
-<h2>4.11.4. Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">4.11.4. </span>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
 <p>The following demonstrates how to create a <a class="reference internal" href="../reference/citrine.informatics.predictor_evaluator.html#citrine.informatics.predictor_evaluator.CrossValidationEvaluator" title="citrine.informatics.predictor_evaluator.CrossValidationEvaluator"><code class="xref py py-class docutils literal notranslate"><span class="pre">CrossValidationEvaluator</span></code></a>, add it to a <a class="reference internal" href="../reference/citrine.informatics.workflows.predictor_evaluation_workflow.html#citrine.informatics.workflows.predictor_evaluation_workflow.PredictorEvaluationWorkflow" title="citrine.informatics.workflows.predictor_evaluation_workflow.PredictorEvaluationWorkflow"><code class="xref py py-class docutils literal notranslate"><span class="pre">PredictorEvaluationWorkflow</span></code></a> and use it to evaluate a <a class="reference internal" href="../reference/citrine.informatics.predictors.predictor.html#citrine.informatics.predictors.predictor.Predictor" title="citrine.informatics.predictors.predictor.Predictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">Predictor</span></code></a>.</p>
 <p>The predictor we’ll evaluate is defined below:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.informatics.data_sources</span> <span class="kn">import</span> <span class="n">CSVDataSource</span>
@@ -270,7 +448,7 @@ Then wait for the results to be ready:</p>
 </div>
 </section>
 <section id="archive-and-restore">
-<h2>4.11.5. Archive and restore<a class="headerlink" href="#archive-and-restore" title="Permalink to this headline">¶</a></h2>
+<h2><span class="section-number">4.11.5. </span>Archive and restore<a class="headerlink" href="#archive-and-restore" title="Permalink to this headline">¶</a></h2>
 <p>Both <a class="reference internal" href="../reference/citrine.informatics.workflows.predictor_evaluation_workflow.html#citrine.informatics.workflows.predictor_evaluation_workflow.PredictorEvaluationWorkflow" title="citrine.informatics.workflows.predictor_evaluation_workflow.PredictorEvaluationWorkflow"><code class="xref py py-class docutils literal notranslate"><span class="pre">PredictorEvaluationWorkflows</span></code></a> and <a class="reference internal" href="../reference/citrine.resources.predictor_evaluation_execution.html#citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecution" title="citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecution"><code class="xref py py-class docutils literal notranslate"><span class="pre">PredictorEvaluationExecutions</span></code></a> can be archived and restored.
 To archive a workflow:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">project</span><span class="o">.</span><span class="n">predictor_evaluation_workflows</span><span class="o">.</span><span class="n">archive</span><span class="p">(</span><span class="n">workflow</span><span class="o">.</span><span class="n">uid</span><span class="p">)</span>
@@ -286,145 +464,51 @@ To archive a workflow:</p>
 </section>
 
 
+           </div>
+           
           </div>
-          
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="performance_workflows.html" class="btn btn-neutral float-right" title="4.12. [DEPRECATED] Performance Workflows" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="predictor_reports.html" class="btn btn-neutral float-left" title="4.10. Predictor Reports" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2019, Citrine Informatics.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-<p class="logo">
-  <a href="../index.html">
-    <img class="logo" src="../_static/logo.png" alt="Logo"/>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script>
+
+  
+  
     
-  </a>
-</p>
+   
 
-
-
-
-
-
-<p>
-<iframe src="https://ghbtns.com/github-btn.html?user=CitrineInformatics&repo=citrine-python&type=watch&count=true&size=large&v=2"
-  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
-</p>
-
-
-
-
-
-<h3>Navigation</h3>
-<ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../getting_started/index.html">1. Getting Started</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../getting_started/overview.html">1.1. Overview</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../getting_started/connecting.html">1.2. Connecting to the Citrine Platform</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../getting_started/basic_functionality.html">1.3. Managing Resources</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../getting_started/projects.html">1.4. Projects</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../getting_started/datasets.html">1.5. Datasets</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../getting_started/data_model.html">1.6. Data Model Overview</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../getting_started/ai_modules.html">1.7. AI Engine Overview</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../getting_started/code_examples.html">1.8. Code Examples</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../data_entry.html">2. GEMD Data Model</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#creating-data-model-objects">2.1. Creating Data Model Objects</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#identifying-data-model-objects">2.2. Identifying Data Model Objects</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#registering-data-model-objects">2.3. Registering Data Model Objects</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#finding-data-model-objects">2.4. Finding Data Model Objects</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#updating-data-model-objects">2.5. Updating Data Model Objects</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#referencing-data-model-objects">2.6. Referencing Data Model Objects</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#material-history">2.7. Material History</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#validating-data-model-objects">2.8. Validating Data Model Objects</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../data_extraction.html">3. [ALPHA] Data Extraction</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#defining-row-and-columns">3.1. Defining row and columns</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#defining-tables">3.2. Defining tables</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#previewing-tables">3.3. Previewing tables</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#building-and-downloading-tables">3.4. Building and downloading tables</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-row-definitions">3.5. Available Row Definitions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-variable-definitions">3.6. Available Variable Definitions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-column-definitions">3.7. Available Column Definitions</a></li>
-</ul>
-</li>
-<li class="toctree-l1 current"><a class="reference internal" href="index.html">4. AI Engine</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="getting_started.html">4.1. Getting Started</a></li>
-<li class="toctree-l2"><a class="reference internal" href="descriptors.html">4.2. Descriptors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="descriptors.html#platform-vocabularies">4.3. Platform Vocabularies</a></li>
-<li class="toctree-l2"><a class="reference internal" href="predictors.html">4.4. Predictors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="design_spaces.html">4.5. Design Spaces</a></li>
-<li class="toctree-l2"><a class="reference internal" href="processors.html">4.6. Processors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="design_workflows.html">4.7. Design Workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="scores.html">4.8. Scores</a></li>
-<li class="toctree-l2"><a class="reference internal" href="data_sources.html">4.9. Data Sources</a></li>
-<li class="toctree-l2"><a class="reference internal" href="predictor_reports.html">4.10. Predictor Reports</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">4.11. Predictor Evaluation Workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="performance_workflows.html">4.12. [DEPRECATED] Performance Workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="code_examples.html">4.13. AI Engine Code Examples</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../formulations_example.html">5. Formulations Example</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../formulations_example.html#example-raw-data">5.1. Example Raw Data</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../formulations_example.html#ingesting-data">5.2. Ingesting Data</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../formulations_example.html#building-a-table">5.3. Building a Table</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../formulations_example.html#training-a-predictor">5.4. Training a Predictor</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../formulations_example.html#defining-a-design-space">5.5. Defining a Design Space</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../formulations_example.html#proposing-new-formulation-candidates">5.6. Proposing New Formulation Candidates</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">6. FAQ</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../FAQ/prohibited_data_patterns.html">6.1. Prohibited Data Patterns</a></li>
-</ul>
-</li>
-</ul>
-
-<div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="../index.html">Documentation overview</a><ul>
-  <li><a href="index.html">4. AI Engine</a><ul>
-      <li>Previous: <a href="predictor_reports.html" title="previous chapter">4.10. Predictor Reports</a></li>
-      <li>Next: <a href="performance_workflows.html" title="next chapter">4.12. [DEPRECATED] Performance Workflows</a></li>
-  </ul></li>
-  </ul></li>
-</ul>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
-
-
-
-
-
-
-
-
-        </div>
-      </div>
-      <div class="clearer"></div>
-    </div>
-    <div class="footer">
-      &copy;2019, Citrine Informatics.
-      
-      |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.0</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
-      
-      |
-      <a href="../_sources/workflows/predictor_evaluation_workflows.rst.txt"
-          rel="nofollow">Page source</a>
-    </div>
-
-    
-
-    
-  </body>
+</body>
 </html>

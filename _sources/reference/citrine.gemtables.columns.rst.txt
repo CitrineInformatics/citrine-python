@@ -4,4 +4,5 @@ citrine.gemtables.columns module
 .. automodule:: citrine.gemtables.columns
    :members:
    :undoc-members:
+   :inherited-members:
    :show-inheritance:

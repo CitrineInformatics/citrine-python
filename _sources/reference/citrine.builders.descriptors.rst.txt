@@ -4,4 +4,5 @@ citrine.builders.descriptors module
 .. automodule:: citrine.builders.descriptors
    :members:
    :undoc-members:
+   :inherited-members:
    :show-inheritance:

@@ -1,80 +1,315 @@
 
+
 <!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-<html xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>citrine.resources.module module &mdash; Citrine Python 0.128.2 documentation</title>
+  
 
-    <title>citrine.resources.module module &#8212; Citrine Python 0.125.1 documentation</title>
-    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
+
+  
+  
     <link rel="shortcut icon" href="../_static/favicon.png"/>
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
     <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
    
-  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
-  
-  
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
-
-  </head><body>
-  
-
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
           
 
-          <div class="body" role="main">
+          
+            <a href="../index.html">
+          
+
+          
+            
+            <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.128.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/index.html">1. Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_entry.html">2. GEMD Data Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_extraction.html">3. [ALPHA] Data Extraction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">4. AI Engine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../formulations_example.html">5. Formulations Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">6. FAQ</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Citrine Python</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>citrine.resources.module module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/reference/citrine.resources.module.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
             
   <section id="module-citrine.resources.module">
 <span id="citrine-resources-module-module"></span><h1>citrine.resources.module module<a class="headerlink" href="#module-citrine.resources.module" title="Permalink to this headline">¶</a></h1>
-<p>Resources that represent collections of design spaces.</p>
-<dl class="class">
-<dt id="citrine.resources.module.AbstractModuleCollection">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.resources.module.</code><code class="sig-name descname">AbstractModuleCollection</code><a class="headerlink" href="#citrine.resources.module.AbstractModuleCollection" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.collection.Collection</span></code></p>
+<p>Resources that represent collections of modules.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="citrine.resources.module.AbstractModuleCollection">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">citrine.resources.module.</span></span><span class="sig-name descname"><span class="pre">AbstractModuleCollection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwds</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.module.AbstractModuleCollection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.collection.Collection</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">ModuleType</span></code>]</p>
 <p>Abstract class for representing collection of modules.</p>
-<dl class="method">
-<dt id="citrine.resources.module.AbstractModuleCollection.archive">
-<code class="sig-name descname">archive</code><span class="sig-paren">(</span><em class="sig-param">module_id: Union[uuid.UUID, str]</em><span class="sig-paren">)</span> &#x2192; ModuleType<a class="headerlink" href="#citrine.resources.module.AbstractModuleCollection.archive" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.module.AbstractModuleCollection.archive">
+<span class="sig-name descname"><span class="pre">archive</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">module_id</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">ModuleType</span><a class="headerlink" href="#citrine.resources.module.AbstractModuleCollection.archive" title="Permalink to this definition">¶</a></dt>
 <dd><p>Archiving a module removes it from view, but is not a hard delete.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="citrine.resources.module.AbstractModuleCollection.delete">
-<code class="sig-name descname">delete</code><span class="sig-paren">(</span><em class="sig-param">uid: Union[uuid.UUID, str]</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.module.AbstractModuleCollection.delete" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.module.AbstractModuleCollection.build">
+<em class="property"><span class="pre">abstract</span> </em><span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.module.AbstractModuleCollection.build" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build an individual element of the collection.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.module.AbstractModuleCollection.delete">
+<span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.module.AbstractModuleCollection.delete" title="Permalink to this definition">¶</a></dt>
 <dd><p>Modules cannot be deleted at this time.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="citrine.resources.module.AbstractModuleCollection.restore">
-<code class="sig-name descname">restore</code><span class="sig-paren">(</span><em class="sig-param">module_id: Union[uuid.UUID, str]</em><span class="sig-paren">)</span> &#x2192; ModuleType<a class="headerlink" href="#citrine.resources.module.AbstractModuleCollection.restore" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.module.AbstractModuleCollection.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">ResourceType</span><a class="headerlink" href="#citrine.resources.module.AbstractModuleCollection.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a particular element of the collection.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.module.AbstractModuleCollection.list">
+<span class="sig-name descname"><span class="pre">list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">page</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">per_page</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">ResourceType</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#citrine.resources.module.AbstractModuleCollection.list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Paginate over the elements of the collection.</p>
+<p>Leaving page and per_page as default values will yield all elements in the
+collection, paginating over all available pages.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>page</strong> (<em>int</em><em>, </em><em>optional</em>) – The “page” of results to list. Default is to read all pages and yield
+all results.  This option is deprecated.</p></li>
+<li><p><strong>per_page</strong> (<em>int</em><em>, </em><em>optional</em>) – Max number of results to return per page. Default is 100.  This parameter
+is used when making requests to the backend service.  If the page parameter
+is specified it limits the maximum number of elements in the response.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Resources in this collection.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Iterable[ResourceType]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.module.AbstractModuleCollection.register">
+<span class="sig-name descname"><span class="pre">register</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">CreationType</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">CreationType</span><a class="headerlink" href="#citrine.resources.module.AbstractModuleCollection.register" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new element of the collection by registering an existing resource.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.module.AbstractModuleCollection.restore">
+<span class="sig-name descname"><span class="pre">restore</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">module_id</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">ModuleType</span><a class="headerlink" href="#citrine.resources.module.AbstractModuleCollection.restore" title="Permalink to this definition">¶</a></dt>
 <dd><p>Restore an archived module.</p>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.module.AbstractModuleCollection.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">CreationType</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">CreationType</span><a class="headerlink" href="#citrine.resources.module.AbstractModuleCollection.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update a particular element of the collection.</p>
 </dd></dl>
 
-<dl class="class">
-<dt id="citrine.resources.module.ModuleCollection">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.resources.module.</code><code class="sig-name descname">ModuleCollection</code><span class="sig-paren">(</span><em class="sig-param">project_id: uuid.UUID</em>, <em class="sig-param">session: citrine._session.Session = &lt;citrine._session.Session object&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.module.ModuleCollection" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.collection.Collection</span></code></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="citrine.resources.module.ModuleCollection">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">citrine.resources.module.</span></span><span class="sig-name descname"><span class="pre">ModuleCollection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">project_id:</span> <span class="pre">uuid.UUID</span></em>, <em class="sig-param"><span class="pre">session:</span> <span class="pre">citrine._session.Session</span> <span class="pre">=</span> <span class="pre">&lt;citrine._session.Session</span> <span class="pre">object&gt;</span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.module.ModuleCollection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.collection.Collection</span></code>[<a class="reference internal" href="citrine.informatics.modules.html#citrine.informatics.modules.Module" title="citrine.informatics.modules.Module"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.modules.Module</span></code></a>]</p>
 <p>Represents the collection of all modules as well as the resources belonging to it.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>project_id</strong> (<em>UUID</em>) – the UUID of the project</p>
 </dd>
 </dl>
-<dl class="method">
-<dt id="citrine.resources.module.ModuleCollection.build">
-<code class="sig-name descname">build</code><span class="sig-paren">(</span><em class="sig-param">data: dict</em><span class="sig-paren">)</span> &#x2192; citrine.informatics.modules.Module<a class="headerlink" href="#citrine.resources.module.ModuleCollection.build" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.module.ModuleCollection.build">
+<span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="citrine.informatics.modules.html#citrine.informatics.modules.Module" title="citrine.informatics.modules.Module"><span class="pre">citrine.informatics.modules.Module</span></a><a class="headerlink" href="#citrine.resources.module.ModuleCollection.build" title="Permalink to this definition">¶</a></dt>
 <dd><p>Build an individual module.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.module.ModuleCollection.delete">
+<span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="citrine.resources.response.html#citrine.resources.response.Response" title="citrine.resources.response.Response"><span class="pre">citrine.resources.response.Response</span></a><a class="headerlink" href="#citrine.resources.module.ModuleCollection.delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete a particular element of the collection.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.module.ModuleCollection.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">ResourceType</span><a class="headerlink" href="#citrine.resources.module.ModuleCollection.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a particular element of the collection.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.module.ModuleCollection.list">
+<span class="sig-name descname"><span class="pre">list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">page</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">per_page</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">ResourceType</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#citrine.resources.module.ModuleCollection.list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Paginate over the elements of the collection.</p>
+<p>Leaving page and per_page as default values will yield all elements in the
+collection, paginating over all available pages.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>page</strong> (<em>int</em><em>, </em><em>optional</em>) – The “page” of results to list. Default is to read all pages and yield
+all results.  This option is deprecated.</p></li>
+<li><p><strong>per_page</strong> (<em>int</em><em>, </em><em>optional</em>) – Max number of results to return per page. Default is 100.  This parameter
+is used when making requests to the backend service.  If the page parameter
+is specified it limits the maximum number of elements in the response.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Resources in this collection.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Iterable[ResourceType]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.module.ModuleCollection.register">
+<span class="sig-name descname"><span class="pre">register</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">CreationType</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">CreationType</span><a class="headerlink" href="#citrine.resources.module.ModuleCollection.register" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new element of the collection by registering an existing resource.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.module.ModuleCollection.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">CreationType</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">CreationType</span><a class="headerlink" href="#citrine.resources.module.ModuleCollection.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update a particular element of the collection.</p>
 </dd></dl>
 
 </dd></dl>
@@ -82,141 +317,47 @@
 </section>
 
 
+           </div>
+           
           </div>
-          
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2019, Citrine Informatics.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-<p class="logo">
-  <a href="../index.html">
-    <img class="logo" src="../_static/logo.png" alt="Logo"/>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script>
+
+  
+  
     
-  </a>
-</p>
+   
 
-
-
-
-
-
-<p>
-<iframe src="https://ghbtns.com/github-btn.html?user=CitrineInformatics&repo=citrine-python&type=watch&count=true&size=large&v=2"
-  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
-</p>
-
-
-
-
-
-<h3>Navigation</h3>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../getting_started/index.html">1. Getting Started</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../getting_started/overview.html">1.1. Overview</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../getting_started/connecting.html">1.2. Connecting to the Citrine Platform</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../getting_started/basic_functionality.html">1.3. Managing Resources</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../getting_started/projects.html">1.4. Projects</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../getting_started/datasets.html">1.5. Datasets</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../getting_started/data_model.html">1.6. Data Model Overview</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../getting_started/ai_modules.html">1.7. AI Engine Overview</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../getting_started/code_examples.html">1.8. Code Examples</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../data_entry.html">2. GEMD Data Model</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#creating-data-model-objects">2.1. Creating Data Model Objects</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#identifying-data-model-objects">2.2. Identifying Data Model Objects</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#registering-data-model-objects">2.3. Registering Data Model Objects</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#finding-data-model-objects">2.4. Finding Data Model Objects</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#updating-data-model-objects">2.5. Updating Data Model Objects</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#referencing-data-model-objects">2.6. Referencing Data Model Objects</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#material-history">2.7. Material History</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#validating-data-model-objects">2.8. Validating Data Model Objects</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../data_extraction.html">3. [ALPHA] Data Extraction</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#defining-row-and-columns">3.1. Defining row and columns</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#defining-tables">3.2. Defining tables</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#previewing-tables">3.3. Previewing tables</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#building-and-downloading-tables">3.4. Building and downloading tables</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-row-definitions">3.5. Available Row Definitions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-variable-definitions">3.6. Available Variable Definitions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-column-definitions">3.7. Available Column Definitions</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">4. AI Engine</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/getting_started.html">4.1. Getting Started</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/descriptors.html">4.2. Descriptors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/descriptors.html#platform-vocabularies">4.3. Platform Vocabularies</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/predictors.html">4.4. Predictors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/design_spaces.html">4.5. Design Spaces</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/processors.html">4.6. Processors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/design_workflows.html">4.7. Design Workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/scores.html">4.8. Scores</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/data_sources.html">4.9. Data Sources</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/predictor_reports.html">4.10. Predictor Reports</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/predictor_evaluation_workflows.html">4.11. Predictor Evaluation Workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/performance_workflows.html">4.12. [DEPRECATED] Performance Workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/code_examples.html">4.13. AI Engine Code Examples</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../formulations_example.html">5. Formulations Example</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../formulations_example.html#example-raw-data">5.1. Example Raw Data</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../formulations_example.html#ingesting-data">5.2. Ingesting Data</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../formulations_example.html#building-a-table">5.3. Building a Table</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../formulations_example.html#training-a-predictor">5.4. Training a Predictor</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../formulations_example.html#defining-a-design-space">5.5. Defining a Design Space</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../formulations_example.html#proposing-new-formulation-candidates">5.6. Proposing New Formulation Candidates</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">6. FAQ</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../FAQ/prohibited_data_patterns.html">6.1. Prohibited Data Patterns</a></li>
-</ul>
-</li>
-</ul>
-
-<div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="../index.html">Documentation overview</a><ul>
-  </ul></li>
-</ul>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
-
-
-
-
-
-
-
-
-        </div>
-      </div>
-      <div class="clearer"></div>
-    </div>
-    <div class="footer">
-      &copy;2019, Citrine Informatics.
-      
-      |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.0</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
-      
-      |
-      <a href="../_sources/reference/citrine.resources.module.rst.txt"
-          rel="nofollow">Page source</a>
-    </div>
-
-    
-
-    
-  </body>
+</body>
 </html>

@@ -5,6 +5,7 @@ Submodules
 ----------
 
 .. toctree::
+   :maxdepth: 4
 
    citrine.resources.api_error
    citrine.resources.ara_definition
@@ -62,4 +63,5 @@ Module contents
 .. automodule:: citrine.resources
    :members:
    :undoc-members:
+   :inherited-members:
    :show-inheritance:

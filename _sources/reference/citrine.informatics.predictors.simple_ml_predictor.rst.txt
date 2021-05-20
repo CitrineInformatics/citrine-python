@@ -4,4 +4,5 @@ citrine.informatics.predictors.simple\_ml\_predictor module
 .. automodule:: citrine.informatics.predictors.simple_ml_predictor
    :members:
    :undoc-members:
+   :inherited-members:
    :show-inheritance:

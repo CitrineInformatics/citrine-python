@@ -4,4 +4,5 @@ citrine.resources.table\_config module
 .. automodule:: citrine.resources.table_config
    :members:
    :undoc-members:
+   :inherited-members:
    :show-inheritance:

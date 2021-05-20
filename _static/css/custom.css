@@ -1,0 +1,19 @@
+/* Displays method signatures with one parameter per line.
+See https://github.com/sphinx-doc/sphinx/issues/1514 */
+
+/* Newline (\a) and spaces (\20) before each parameter */
+.sig-param::before {
+    content: "\a\20\20\20\20\20\20\20\20\20\20\20\20\20\20\20\20";
+    white-space: pre;
+}
+
+/* Newline after the last parameter (so the closing bracket is on a new line) */
+dt em.sig-param:last-of-type::after {
+    content: "\a";
+    white-space: pre;
+}
+
+/* To have blue background be width of the block (instead of width of content) */
+dl.class > dt:first-of-type {
+    display: block !important;
+}

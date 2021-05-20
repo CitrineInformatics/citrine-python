@@ -4,4 +4,5 @@ citrine.informatics.predictor\_evaluator module
 .. automodule:: citrine.informatics.predictor_evaluator
    :members:
    :undoc-members:
+   :inherited-members:
    :show-inheritance:

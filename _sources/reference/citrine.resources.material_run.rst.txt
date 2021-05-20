@@ -4,4 +4,5 @@ citrine.resources.material\_run module
 .. automodule:: citrine.resources.material_run
    :members:
    :undoc-members:
+   :inherited-members:
    :show-inheritance:

@@ -4,4 +4,5 @@ citrine.resources.predictor\_evaluation\_execution module
 .. automodule:: citrine.resources.predictor_evaluation_execution
    :members:
    :undoc-members:
+   :inherited-members:
    :show-inheritance:

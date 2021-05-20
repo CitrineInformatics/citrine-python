@@ -4,4 +4,5 @@ citrine.informatics.analysis\_configuration module
 .. automodule:: citrine.informatics.analysis_configuration
    :members:
    :undoc-members:
+   :inherited-members:
    :show-inheritance:

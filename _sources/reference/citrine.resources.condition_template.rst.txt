@@ -4,4 +4,5 @@ citrine.resources.condition\_template module
 .. automodule:: citrine.resources.condition_template
    :members:
    :undoc-members:
+   :inherited-members:
    :show-inheritance:

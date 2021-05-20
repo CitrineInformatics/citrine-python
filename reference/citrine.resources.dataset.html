@@ -1,45 +1,182 @@
 
+
 <!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-<html xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>citrine.resources.dataset module &mdash; Citrine Python 0.128.2 documentation</title>
+  
 
-    <title>citrine.resources.dataset module &#8212; Citrine Python 0.125.1 documentation</title>
-    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
-    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
+
+  
+  
     <link rel="shortcut icon" href="../_static/favicon.png"/>
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
     <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
    
-  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
-  
-  
-  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
-
-  </head><body>
-  
-
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
           
 
-          <div class="body" role="main">
+          
+            <a href="../index.html">
+          
+
+          
+            
+            <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.128.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/index.html">1. Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_entry.html">2. GEMD Data Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_extraction.html">3. [ALPHA] Data Extraction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">4. AI Engine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../formulations_example.html">5. Formulations Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">6. FAQ</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Citrine Python</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>citrine.resources.dataset module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/reference/citrine.resources.dataset.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
             
   <section id="module-citrine.resources.dataset">
 <span id="citrine-resources-dataset-module"></span><h1>citrine.resources.dataset module<a class="headerlink" href="#module-citrine.resources.dataset" title="Permalink to this headline">¶</a></h1>
 <p>Resources that represent both individual and collections of datasets.</p>
-<dl class="class">
-<dt id="citrine.resources.dataset.Dataset">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.resources.dataset.</code><code class="sig-name descname">Dataset</code><span class="sig-paren">(</span><em class="sig-param">name: str</em>, <em class="sig-param">summary: str</em>, <em class="sig-param">description: str</em>, <em class="sig-param">unique_name: Optional[str] = None</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.dataset.Dataset" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.resource.Resource</span></code></p>
+<dl class="py class">
+<dt class="sig sig-object py" id="citrine.resources.dataset.Dataset">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">citrine.resources.dataset.</span></span><span class="sig-name descname"><span class="pre">Dataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">summary</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unique_name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.dataset.Dataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.resource.Resource</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">Dataset</span></code>]</p>
 <p>A collection of data objects.</p>
 <p>Datasets are the basic unit of access control. A user with read access to a dataset can view
 every object in that dataset. A user with write access to a dataset can create, update,
@@ -54,9 +191,9 @@ and delete objects in the dataset.</p>
 </ul>
 </dd>
 </dl>
-<dl class="attribute">
-<dt id="citrine.resources.dataset.Dataset.uid">
-<code class="sig-name descname">uid</code><a class="headerlink" href="#citrine.resources.dataset.Dataset.uid" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.dataset.Dataset.uid">
+<span class="sig-name descname"><span class="pre">uid</span></span><a class="headerlink" href="#citrine.resources.dataset.Dataset.uid" title="Permalink to this definition">¶</a></dt>
 <dd><p>Unique uuid4 identifier of this dataset.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -65,9 +202,9 @@ and delete objects in the dataset.</p>
 </dl>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="citrine.resources.dataset.Dataset.deleted">
-<code class="sig-name descname">deleted</code><a class="headerlink" href="#citrine.resources.dataset.Dataset.deleted" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.dataset.Dataset.deleted">
+<span class="sig-name descname"><span class="pre">deleted</span></span><a class="headerlink" href="#citrine.resources.dataset.Dataset.deleted" title="Permalink to this definition">¶</a></dt>
 <dd><p>Flag indicating whether or not this dataset has been deleted.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -76,9 +213,9 @@ and delete objects in the dataset.</p>
 </dl>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="citrine.resources.dataset.Dataset.created_by">
-<code class="sig-name descname">created_by</code><a class="headerlink" href="#citrine.resources.dataset.Dataset.created_by" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.dataset.Dataset.created_by">
+<span class="sig-name descname"><span class="pre">created_by</span></span><a class="headerlink" href="#citrine.resources.dataset.Dataset.created_by" title="Permalink to this definition">¶</a></dt>
 <dd><p>ID of the user who created the dataset.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -87,9 +224,9 @@ and delete objects in the dataset.</p>
 </dl>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="citrine.resources.dataset.Dataset.updated_by">
-<code class="sig-name descname">updated_by</code><a class="headerlink" href="#citrine.resources.dataset.Dataset.updated_by" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.dataset.Dataset.updated_by">
+<span class="sig-name descname"><span class="pre">updated_by</span></span><a class="headerlink" href="#citrine.resources.dataset.Dataset.updated_by" title="Permalink to this definition">¶</a></dt>
 <dd><p>ID of the user who last updated the dataset.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -98,9 +235,9 @@ and delete objects in the dataset.</p>
 </dl>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="citrine.resources.dataset.Dataset.deleted_by">
-<code class="sig-name descname">deleted_by</code><a class="headerlink" href="#citrine.resources.dataset.Dataset.deleted_by" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.dataset.Dataset.deleted_by">
+<span class="sig-name descname"><span class="pre">deleted_by</span></span><a class="headerlink" href="#citrine.resources.dataset.Dataset.deleted_by" title="Permalink to this definition">¶</a></dt>
 <dd><p>ID of the user who deleted the dataset, if it is deleted.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -109,9 +246,9 @@ and delete objects in the dataset.</p>
 </dl>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="citrine.resources.dataset.Dataset.create_time">
-<code class="sig-name descname">create_time</code><a class="headerlink" href="#citrine.resources.dataset.Dataset.create_time" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.dataset.Dataset.create_time">
+<span class="sig-name descname"><span class="pre">create_time</span></span><a class="headerlink" href="#citrine.resources.dataset.Dataset.create_time" title="Permalink to this definition">¶</a></dt>
 <dd><p>Time the dataset was created, in seconds since epoch.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -120,9 +257,9 @@ and delete objects in the dataset.</p>
 </dl>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="citrine.resources.dataset.Dataset.update_time">
-<code class="sig-name descname">update_time</code><a class="headerlink" href="#citrine.resources.dataset.Dataset.update_time" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.dataset.Dataset.update_time">
+<span class="sig-name descname"><span class="pre">update_time</span></span><a class="headerlink" href="#citrine.resources.dataset.Dataset.update_time" title="Permalink to this definition">¶</a></dt>
 <dd><p>Time the dataset was most recently updated, in seconds since epoch.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -131,9 +268,9 @@ and delete objects in the dataset.</p>
 </dl>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="citrine.resources.dataset.Dataset.delete_time">
-<code class="sig-name descname">delete_time</code><a class="headerlink" href="#citrine.resources.dataset.Dataset.delete_time" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.dataset.Dataset.delete_time">
+<span class="sig-name descname"><span class="pre">delete_time</span></span><a class="headerlink" href="#citrine.resources.dataset.Dataset.delete_time" title="Permalink to this definition">¶</a></dt>
 <dd><p>Time the dataset was deleted, in seconds since epoch, if it is deleted.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -142,9 +279,9 @@ and delete objects in the dataset.</p>
 </dl>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="citrine.resources.dataset.Dataset.public">
-<code class="sig-name descname">public</code><a class="headerlink" href="#citrine.resources.dataset.Dataset.public" title="Permalink to this definition">¶</a></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.dataset.Dataset.public">
+<span class="sig-name descname"><span class="pre">public</span></span><a class="headerlink" href="#citrine.resources.dataset.Dataset.public" title="Permalink to this definition">¶</a></dt>
 <dd><p>Flag indicating whether the dataset is publicly readable.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -153,31 +290,27 @@ and delete objects in the dataset.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="citrine.resources.dataset.Dataset.condition_templates">
-<em class="property">property </em><code class="sig-name descname">condition_templates</code><a class="headerlink" href="#citrine.resources.dataset.Dataset.condition_templates" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a resource representing all condition templates in this dataset.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.dataset.Dataset.as_entity_dict">
+<span class="sig-name descname"><span class="pre">as_entity_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">dict</span><a class="headerlink" href="#citrine.resources.dataset.Dataset.as_entity_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return an access control entity representation of this resource.</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">create_time</code><em class="property"> = None</em></dt>
-<dd></dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.dataset.Dataset.build">
+<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Self</span><a class="headerlink" href="#citrine.resources.dataset.Dataset.build" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build an instance of this object from given data.</p>
+</dd></dl>
 
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">created_by</code><em class="property"> = None</em></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="citrine.resources.dataset.Dataset.delete">
-<code class="sig-name descname">delete</code><span class="sig-paren">(</span><em class="sig-param">data_concepts_resource: ResourceType</em>, <em class="sig-param">dry_run=False</em><span class="sig-paren">)</span> &#x2192; ResourceType<a class="headerlink" href="#citrine.resources.dataset.Dataset.delete" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.dataset.Dataset.delete">
+<span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_concepts_resource</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">ResourceType</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dry_run</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">ResourceType</span><a class="headerlink" href="#citrine.resources.dataset.Dataset.delete" title="Permalink to this definition">¶</a></dt>
 <dd><p>Delete a data concepts resource to the appropriate collection.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="citrine.resources.dataset.Dataset.delete_contents">
-<code class="sig-name descname">delete_contents</code><span class="sig-paren">(</span><em class="sig-param">*</em>, <em class="sig-param">timeout: float = 120</em>, <em class="sig-param">polling_delay: float = 1.0</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.dataset.Dataset.delete_contents" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.dataset.Dataset.delete_contents">
+<span class="sig-name descname"><span class="pre">delete_contents</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">120</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">polling_delay</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.dataset.Dataset.delete_contents" title="Permalink to this definition">¶</a></dt>
 <dd><p>Delete all the GEMD objects from within a single Dataset.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -199,35 +332,15 @@ deleted.</p>
 </dl>
 </dd></dl>
 
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">delete_time</code><em class="property"> = None</em></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">deleted</code><em class="property"> = None</em></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">deleted_by</code><em class="property"> = None</em></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="citrine.resources.dataset.Dataset.description">
-<code class="sig-name descname">description</code><em class="property"> = None</em><a class="headerlink" href="#citrine.resources.dataset.Dataset.description" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="citrine.resources.dataset.Dataset.files">
-<em class="property">property </em><code class="sig-name descname">files</code><a class="headerlink" href="#citrine.resources.dataset.Dataset.files" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a resource representing all files in the dataset.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.dataset.Dataset.dump">
+<span class="sig-name descname"><span class="pre">dump</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">dict</span><a class="headerlink" href="#citrine.resources.dataset.Dataset.dump" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dump this instance.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="citrine.resources.dataset.Dataset.gemd_batch_delete">
-<code class="sig-name descname">gemd_batch_delete</code><span class="sig-paren">(</span><em class="sig-param">id_list: List[Union[gemd.entity.link_by_uid.LinkByUID, uuid.UUID, str, gemd.entity.base_entity.BaseEntity]], *, timeout: float = 120, polling_delay: float = 1.0</em><span class="sig-paren">)</span> &#x2192; List[Tuple[gemd.entity.link_by_uid.LinkByUID, citrine.resources.api_error.ApiError]]<a class="headerlink" href="#citrine.resources.dataset.Dataset.gemd_batch_delete" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.dataset.Dataset.gemd_batch_delete">
+<span class="sig-name descname"><span class="pre">gemd_batch_delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id_list</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.link_by_uid.html#gemd.entity.link_by_uid.LinkByUID" title="(in GEMD-python)"><span class="pre">gemd.entity.link_by_uid.LinkByUID</span></a><span class="p"><span class="pre">,</span> </span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.base_entity.html#gemd.entity.base_entity.BaseEntity" title="(in GEMD-python)"><span class="pre">gemd.entity.base_entity.BaseEntity</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">120</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">polling_delay</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.link_by_uid.html#gemd.entity.link_by_uid.LinkByUID" title="(in GEMD-python)"><span class="pre">gemd.entity.link_by_uid.LinkByUID</span></a><span class="p"><span class="pre">,</span> </span><a class="reference internal" href="citrine.resources.api_error.html#citrine.resources.api_error.ApiError" title="citrine.resources.api_error.ApiError"><span class="pre">citrine.resources.api_error.ApiError</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#citrine.resources.dataset.Dataset.gemd_batch_delete" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove a set of GEMD objects.</p>
 <p>You may provide GEMD objects that reference each other, and the objects
 will be removed in the appropriate order.</p>
@@ -257,103 +370,15 @@ deleted.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="citrine.resources.dataset.Dataset.ingredient_runs">
-<em class="property">property </em><code class="sig-name descname">ingredient_runs</code><a class="headerlink" href="#citrine.resources.dataset.Dataset.ingredient_runs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a resource representing all ingredient runs in this dataset.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="citrine.resources.dataset.Dataset.ingredient_specs">
-<em class="property">property </em><code class="sig-name descname">ingredient_specs</code><a class="headerlink" href="#citrine.resources.dataset.Dataset.ingredient_specs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a resource representing all ingredient specs in this dataset.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="citrine.resources.dataset.Dataset.material_runs">
-<em class="property">property </em><code class="sig-name descname">material_runs</code><a class="headerlink" href="#citrine.resources.dataset.Dataset.material_runs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a resource representing all material runs in this dataset.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="citrine.resources.dataset.Dataset.material_specs">
-<em class="property">property </em><code class="sig-name descname">material_specs</code><a class="headerlink" href="#citrine.resources.dataset.Dataset.material_specs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a resource representing all material specs in this dataset.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="citrine.resources.dataset.Dataset.material_templates">
-<em class="property">property </em><code class="sig-name descname">material_templates</code><a class="headerlink" href="#citrine.resources.dataset.Dataset.material_templates" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a resource representing all material templates in this dataset.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="citrine.resources.dataset.Dataset.measurement_runs">
-<em class="property">property </em><code class="sig-name descname">measurement_runs</code><a class="headerlink" href="#citrine.resources.dataset.Dataset.measurement_runs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a resource representing all measurement runs in this dataset.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="citrine.resources.dataset.Dataset.measurement_specs">
-<em class="property">property </em><code class="sig-name descname">measurement_specs</code><a class="headerlink" href="#citrine.resources.dataset.Dataset.measurement_specs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a resource representing all measurement specs in this dataset.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="citrine.resources.dataset.Dataset.measurement_templates">
-<em class="property">property </em><code class="sig-name descname">measurement_templates</code><a class="headerlink" href="#citrine.resources.dataset.Dataset.measurement_templates" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a resource representing all measurement templates in this dataset.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="citrine.resources.dataset.Dataset.name">
-<code class="sig-name descname">name</code><em class="property"> = None</em><a class="headerlink" href="#citrine.resources.dataset.Dataset.name" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="citrine.resources.dataset.Dataset.parameter_templates">
-<em class="property">property </em><code class="sig-name descname">parameter_templates</code><a class="headerlink" href="#citrine.resources.dataset.Dataset.parameter_templates" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a resource representing all parameter templates in this dataset.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="citrine.resources.dataset.Dataset.process_runs">
-<em class="property">property </em><code class="sig-name descname">process_runs</code><a class="headerlink" href="#citrine.resources.dataset.Dataset.process_runs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a resource representing all process runs in this dataset.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="citrine.resources.dataset.Dataset.process_specs">
-<em class="property">property </em><code class="sig-name descname">process_specs</code><a class="headerlink" href="#citrine.resources.dataset.Dataset.process_specs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a resource representing all process specs in this dataset.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="citrine.resources.dataset.Dataset.process_templates">
-<em class="property">property </em><code class="sig-name descname">process_templates</code><a class="headerlink" href="#citrine.resources.dataset.Dataset.process_templates" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a resource representing all process templates in this dataset.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="citrine.resources.dataset.Dataset.property_templates">
-<em class="property">property </em><code class="sig-name descname">property_templates</code><a class="headerlink" href="#citrine.resources.dataset.Dataset.property_templates" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a resource representing all property templates in this dataset.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">public</code><em class="property"> = None</em></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="citrine.resources.dataset.Dataset.register">
-<code class="sig-name descname">register</code><span class="sig-paren">(</span><em class="sig-param">data_concepts_resource: ResourceType</em>, <em class="sig-param">dry_run=False</em><span class="sig-paren">)</span> &#x2192; ResourceType<a class="headerlink" href="#citrine.resources.dataset.Dataset.register" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.dataset.Dataset.register">
+<span class="sig-name descname"><span class="pre">register</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_concepts_resource</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">ResourceType</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dry_run</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">ResourceType</span><a class="headerlink" href="#citrine.resources.dataset.Dataset.register" title="Permalink to this definition">¶</a></dt>
 <dd><p>Register a data concepts resource to the appropriate collection.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="citrine.resources.dataset.Dataset.register_all">
-<code class="sig-name descname">register_all</code><span class="sig-paren">(</span><em class="sig-param">data_concepts_resources: List[ResourceType], dry_run=False</em><span class="sig-paren">)</span> &#x2192; List[ResourceType]<a class="headerlink" href="#citrine.resources.dataset.Dataset.register_all" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.dataset.Dataset.register_all">
+<span class="sig-name descname"><span class="pre">register_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_concepts_resources</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">ResourceType</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dry_run</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">ResourceType</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#citrine.resources.dataset.Dataset.register_all" title="Permalink to this definition">¶</a></dt>
 <dd><p>Register multiple data concepts resources to each of their appropriate collections.</p>
 <p>Does so in an order that is guaranteed to store all linked items before the item that
 references them.</p>
@@ -376,43 +401,173 @@ Dry run is intended to be used for validation. Default: false</p></li>
 </dl>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="citrine.resources.dataset.Dataset.summary">
-<code class="sig-name descname">summary</code><em class="property"> = None</em><a class="headerlink" href="#citrine.resources.dataset.Dataset.summary" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">uid</code><em class="property"> = None</em></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="citrine.resources.dataset.Dataset.unique_name">
-<code class="sig-name descname">unique_name</code><em class="property"> = None</em><a class="headerlink" href="#citrine.resources.dataset.Dataset.unique_name" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="citrine.resources.dataset.Dataset.update">
-<code class="sig-name descname">update</code><span class="sig-paren">(</span><em class="sig-param">model: ResourceType</em><span class="sig-paren">)</span> &#x2192; ResourceType<a class="headerlink" href="#citrine.resources.dataset.Dataset.update" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.dataset.Dataset.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">ResourceType</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">ResourceType</span><a class="headerlink" href="#citrine.resources.dataset.Dataset.update" title="Permalink to this definition">¶</a></dt>
 <dd><p>Update a data concepts resource using the appropriate collection.</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">update_time</code><em class="property"> = None</em></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="citrine.resources.dataset.Dataset.condition_templates">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">condition_templates</span></span><em class="property"><span class="pre">:</span> <span class="pre">citrine.resources.condition_template.ConditionTemplateCollection</span></em><a class="headerlink" href="#citrine.resources.dataset.Dataset.condition_templates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a resource representing all condition templates in this dataset.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id0">
+<span class="sig-name descname"><span class="pre">create_time</span></span><em class="property"> <span class="pre">=</span> <span class="pre">None</span></em><a class="headerlink" href="#id0" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt>
-<code class="sig-name descname">updated_by</code><em class="property"> = None</em></dt>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id1">
+<span class="sig-name descname"><span class="pre">created_by</span></span><em class="property"> <span class="pre">=</span> <span class="pre">None</span></em><a class="headerlink" href="#id1" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id2">
+<span class="sig-name descname"><span class="pre">delete_time</span></span><em class="property"> <span class="pre">=</span> <span class="pre">None</span></em><a class="headerlink" href="#id2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id3">
+<span class="sig-name descname"><span class="pre">deleted</span></span><em class="property"> <span class="pre">=</span> <span class="pre">None</span></em><a class="headerlink" href="#id3" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id4">
+<span class="sig-name descname"><span class="pre">deleted_by</span></span><em class="property"> <span class="pre">=</span> <span class="pre">None</span></em><a class="headerlink" href="#id4" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.dataset.Dataset.description">
+<span class="sig-name descname"><span class="pre">description</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><em class="property"> <span class="pre">=</span> <span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.dataset.Dataset.description" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="citrine.resources.dataset.Dataset.files">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">files</span></span><em class="property"><span class="pre">:</span> <span class="pre">citrine.resources.file_link.FileCollection</span></em><a class="headerlink" href="#citrine.resources.dataset.Dataset.files" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a resource representing all files in the dataset.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="citrine.resources.dataset.Dataset.ingredient_runs">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">ingredient_runs</span></span><em class="property"><span class="pre">:</span> <span class="pre">citrine.resources.ingredient_run.IngredientRunCollection</span></em><a class="headerlink" href="#citrine.resources.dataset.Dataset.ingredient_runs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a resource representing all ingredient runs in this dataset.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="citrine.resources.dataset.Dataset.ingredient_specs">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">ingredient_specs</span></span><em class="property"><span class="pre">:</span> <span class="pre">citrine.resources.ingredient_spec.IngredientSpecCollection</span></em><a class="headerlink" href="#citrine.resources.dataset.Dataset.ingredient_specs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a resource representing all ingredient specs in this dataset.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="citrine.resources.dataset.Dataset.material_runs">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">material_runs</span></span><em class="property"><span class="pre">:</span> <span class="pre">citrine.resources.material_run.MaterialRunCollection</span></em><a class="headerlink" href="#citrine.resources.dataset.Dataset.material_runs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a resource representing all material runs in this dataset.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="citrine.resources.dataset.Dataset.material_specs">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">material_specs</span></span><em class="property"><span class="pre">:</span> <span class="pre">citrine.resources.material_spec.MaterialSpecCollection</span></em><a class="headerlink" href="#citrine.resources.dataset.Dataset.material_specs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a resource representing all material specs in this dataset.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="citrine.resources.dataset.Dataset.material_templates">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">material_templates</span></span><em class="property"><span class="pre">:</span> <span class="pre">citrine.resources.material_template.MaterialTemplateCollection</span></em><a class="headerlink" href="#citrine.resources.dataset.Dataset.material_templates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a resource representing all material templates in this dataset.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="citrine.resources.dataset.Dataset.measurement_runs">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">measurement_runs</span></span><em class="property"><span class="pre">:</span> <span class="pre">citrine.resources.measurement_run.MeasurementRunCollection</span></em><a class="headerlink" href="#citrine.resources.dataset.Dataset.measurement_runs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a resource representing all measurement runs in this dataset.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="citrine.resources.dataset.Dataset.measurement_specs">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">measurement_specs</span></span><em class="property"><span class="pre">:</span> <span class="pre">citrine.resources.measurement_spec.MeasurementSpecCollection</span></em><a class="headerlink" href="#citrine.resources.dataset.Dataset.measurement_specs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a resource representing all measurement specs in this dataset.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="citrine.resources.dataset.Dataset.measurement_templates">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">measurement_templates</span></span><em class="property"><span class="pre">:</span> <span class="pre">citrine.resources.measurement_template.MeasurementTemplateCollection</span></em><a class="headerlink" href="#citrine.resources.dataset.Dataset.measurement_templates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a resource representing all measurement templates in this dataset.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.dataset.Dataset.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><em class="property"> <span class="pre">=</span> <span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.dataset.Dataset.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="citrine.resources.dataset.Dataset.parameter_templates">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">parameter_templates</span></span><em class="property"><span class="pre">:</span> <span class="pre">citrine.resources.parameter_template.ParameterTemplateCollection</span></em><a class="headerlink" href="#citrine.resources.dataset.Dataset.parameter_templates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a resource representing all parameter templates in this dataset.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="citrine.resources.dataset.Dataset.process_runs">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">process_runs</span></span><em class="property"><span class="pre">:</span> <span class="pre">citrine.resources.process_run.ProcessRunCollection</span></em><a class="headerlink" href="#citrine.resources.dataset.Dataset.process_runs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a resource representing all process runs in this dataset.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="citrine.resources.dataset.Dataset.process_specs">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">process_specs</span></span><em class="property"><span class="pre">:</span> <span class="pre">citrine.resources.process_spec.ProcessSpecCollection</span></em><a class="headerlink" href="#citrine.resources.dataset.Dataset.process_specs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a resource representing all process specs in this dataset.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="citrine.resources.dataset.Dataset.process_templates">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">process_templates</span></span><em class="property"><span class="pre">:</span> <span class="pre">citrine.resources.process_template.ProcessTemplateCollection</span></em><a class="headerlink" href="#citrine.resources.dataset.Dataset.process_templates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a resource representing all process templates in this dataset.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="citrine.resources.dataset.Dataset.property_templates">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">property_templates</span></span><em class="property"><span class="pre">:</span> <span class="pre">citrine.resources.property_template.PropertyTemplateCollection</span></em><a class="headerlink" href="#citrine.resources.dataset.Dataset.property_templates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a resource representing all property templates in this dataset.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id5">
+<span class="sig-name descname"><span class="pre">public</span></span><em class="property"> <span class="pre">=</span> <span class="pre">None</span></em><a class="headerlink" href="#id5" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.dataset.Dataset.summary">
+<span class="sig-name descname"><span class="pre">summary</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><em class="property"> <span class="pre">=</span> <span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.dataset.Dataset.summary" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id6">
+<span class="sig-name descname"><span class="pre">uid</span></span><em class="property"> <span class="pre">=</span> <span class="pre">None</span></em><a class="headerlink" href="#id6" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.dataset.Dataset.unique_name">
+<span class="sig-name descname"><span class="pre">unique_name</span></span><em class="property"> <span class="pre">=</span> <span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.dataset.Dataset.unique_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id7">
+<span class="sig-name descname"><span class="pre">update_time</span></span><em class="property"> <span class="pre">=</span> <span class="pre">None</span></em><a class="headerlink" href="#id7" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id8">
+<span class="sig-name descname"><span class="pre">updated_by</span></span><em class="property"> <span class="pre">=</span> <span class="pre">None</span></em><a class="headerlink" href="#id8" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
-<dl class="class">
-<dt id="citrine.resources.dataset.DatasetCollection">
-<em class="property">class </em><code class="sig-prename descclassname">citrine.resources.dataset.</code><code class="sig-name descname">DatasetCollection</code><span class="sig-paren">(</span><em class="sig-param">project_id: uuid.UUID</em>, <em class="sig-param">session: citrine._session.Session</em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.dataset.DatasetCollection" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.collection.Collection</span></code></p>
+<dl class="py class">
+<dt class="sig sig-object py" id="citrine.resources.dataset.DatasetCollection">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">citrine.resources.dataset.</span></span><span class="sig-name descname"><span class="pre">DatasetCollection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project_id</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">uuid.UUID</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">session</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">citrine._session.Session</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.dataset.DatasetCollection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.collection.Collection</span></code>[<a class="reference internal" href="#citrine.resources.dataset.Dataset" title="citrine.resources.dataset.Dataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.resources.dataset.Dataset</span></code></a>]</p>
 <p>Represents the collection of all datasets associated with a project.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -422,9 +577,9 @@ Dry run is intended to be used for validation. Default: false</p></li>
 </ul>
 </dd>
 </dl>
-<dl class="method">
-<dt id="citrine.resources.dataset.DatasetCollection.build">
-<code class="sig-name descname">build</code><span class="sig-paren">(</span><em class="sig-param">data: dict</em><span class="sig-paren">)</span> &#x2192; citrine.resources.dataset.Dataset<a class="headerlink" href="#citrine.resources.dataset.DatasetCollection.build" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.dataset.DatasetCollection.build">
+<span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#citrine.resources.dataset.Dataset" title="citrine.resources.dataset.Dataset"><span class="pre">citrine.resources.dataset.Dataset</span></a><a class="headerlink" href="#citrine.resources.dataset.DatasetCollection.build" title="Permalink to this definition">¶</a></dt>
 <dd><p>Build an individual dataset from a dictionary.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -439,15 +594,27 @@ Dry run is intended to be used for validation. Default: false</p></li>
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="citrine.resources.dataset.DatasetCollection.get_by_unique_name">
-<code class="sig-name descname">get_by_unique_name</code><span class="sig-paren">(</span><em class="sig-param">unique_name: str</em><span class="sig-paren">)</span> &#x2192; ResourceType<a class="headerlink" href="#citrine.resources.dataset.DatasetCollection.get_by_unique_name" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.dataset.DatasetCollection.delete">
+<span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="citrine.resources.response.html#citrine.resources.response.Response" title="citrine.resources.response.Response"><span class="pre">citrine.resources.response.Response</span></a><a class="headerlink" href="#citrine.resources.dataset.DatasetCollection.delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete a particular element of the collection.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.dataset.DatasetCollection.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">ResourceType</span><a class="headerlink" href="#citrine.resources.dataset.DatasetCollection.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a particular element of the collection.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.dataset.DatasetCollection.get_by_unique_name">
+<span class="sig-name descname"><span class="pre">get_by_unique_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">unique_name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">ResourceType</span><a class="headerlink" href="#citrine.resources.dataset.DatasetCollection.get_by_unique_name" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a Dataset with the given unique name.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="citrine.resources.dataset.DatasetCollection.list">
-<code class="sig-name descname">list</code><span class="sig-paren">(</span><em class="sig-param">page: Optional[int] = None</em>, <em class="sig-param">per_page: int = 1000</em><span class="sig-paren">)</span> &#x2192; Iterable[citrine.resources.dataset.Dataset]<a class="headerlink" href="#citrine.resources.dataset.DatasetCollection.list" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.dataset.DatasetCollection.list">
+<span class="sig-name descname"><span class="pre">list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">page</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">per_page</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1000</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#citrine.resources.dataset.Dataset" title="citrine.resources.dataset.Dataset"><span class="pre">citrine.resources.dataset.Dataset</span></a><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#citrine.resources.dataset.DatasetCollection.list" title="Permalink to this definition">¶</a></dt>
 <dd><p>List datasets using pagination.</p>
 <p>Leaving page and per_page as default values will yield all elements in the
 collection, paginating over all available pages.</p>
@@ -470,9 +637,9 @@ is specified it limits the maximum number of elements in the response.</p></li>
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="citrine.resources.dataset.DatasetCollection.register">
-<code class="sig-name descname">register</code><span class="sig-paren">(</span><em class="sig-param">model: citrine.resources.dataset.Dataset</em><span class="sig-paren">)</span> &#x2192; citrine.resources.dataset.Dataset<a class="headerlink" href="#citrine.resources.dataset.DatasetCollection.register" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.dataset.DatasetCollection.register">
+<span class="sig-name descname"><span class="pre">register</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#citrine.resources.dataset.Dataset" title="citrine.resources.dataset.Dataset"><span class="pre">citrine.resources.dataset.Dataset</span></a></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#citrine.resources.dataset.Dataset" title="citrine.resources.dataset.Dataset"><span class="pre">citrine.resources.dataset.Dataset</span></a><a class="headerlink" href="#citrine.resources.dataset.DatasetCollection.register" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a new dataset in the collection, or update an existing one.</p>
 <p>If the Dataset has an ID present, then we update the existing resource,
 else we create a new one.</p>
@@ -493,146 +660,58 @@ will be unified in the backend, and one register() method will suffice.</p>
 </dl>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.dataset.DatasetCollection.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">CreationType</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">CreationType</span><a class="headerlink" href="#citrine.resources.dataset.DatasetCollection.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update a particular element of the collection.</p>
+</dd></dl>
+
 </dd></dl>
 
 </section>
 
 
+           </div>
+           
           </div>
-          
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2019, Citrine Informatics.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
         </div>
       </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-<p class="logo">
-  <a href="../index.html">
-    <img class="logo" src="../_static/logo.png" alt="Logo"/>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script>
+
+  
+  
     
-  </a>
-</p>
+   
 
-
-
-
-
-
-<p>
-<iframe src="https://ghbtns.com/github-btn.html?user=CitrineInformatics&repo=citrine-python&type=watch&count=true&size=large&v=2"
-  allowtransparency="true" frameborder="0" scrolling="0" width="200px" height="35px"></iframe>
-</p>
-
-
-
-
-
-<h3>Navigation</h3>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../getting_started/index.html">1. Getting Started</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../getting_started/overview.html">1.1. Overview</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../getting_started/connecting.html">1.2. Connecting to the Citrine Platform</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../getting_started/basic_functionality.html">1.3. Managing Resources</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../getting_started/projects.html">1.4. Projects</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../getting_started/datasets.html">1.5. Datasets</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../getting_started/data_model.html">1.6. Data Model Overview</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../getting_started/ai_modules.html">1.7. AI Engine Overview</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../getting_started/code_examples.html">1.8. Code Examples</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../data_entry.html">2. GEMD Data Model</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#creating-data-model-objects">2.1. Creating Data Model Objects</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#identifying-data-model-objects">2.2. Identifying Data Model Objects</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#registering-data-model-objects">2.3. Registering Data Model Objects</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#finding-data-model-objects">2.4. Finding Data Model Objects</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#updating-data-model-objects">2.5. Updating Data Model Objects</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#referencing-data-model-objects">2.6. Referencing Data Model Objects</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#material-history">2.7. Material History</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_entry.html#validating-data-model-objects">2.8. Validating Data Model Objects</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../data_extraction.html">3. [ALPHA] Data Extraction</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#defining-row-and-columns">3.1. Defining row and columns</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#defining-tables">3.2. Defining tables</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#previewing-tables">3.3. Previewing tables</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#building-and-downloading-tables">3.4. Building and downloading tables</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-row-definitions">3.5. Available Row Definitions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-variable-definitions">3.6. Available Variable Definitions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_extraction.html#available-column-definitions">3.7. Available Column Definitions</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">4. AI Engine</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/getting_started.html">4.1. Getting Started</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/descriptors.html">4.2. Descriptors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/descriptors.html#platform-vocabularies">4.3. Platform Vocabularies</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/predictors.html">4.4. Predictors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/design_spaces.html">4.5. Design Spaces</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/processors.html">4.6. Processors</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/design_workflows.html">4.7. Design Workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/scores.html">4.8. Scores</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/data_sources.html">4.9. Data Sources</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/predictor_reports.html">4.10. Predictor Reports</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/predictor_evaluation_workflows.html">4.11. Predictor Evaluation Workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/performance_workflows.html">4.12. [DEPRECATED] Performance Workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../workflows/code_examples.html">4.13. AI Engine Code Examples</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../formulations_example.html">5. Formulations Example</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../formulations_example.html#example-raw-data">5.1. Example Raw Data</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../formulations_example.html#ingesting-data">5.2. Ingesting Data</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../formulations_example.html#building-a-table">5.3. Building a Table</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../formulations_example.html#training-a-predictor">5.4. Training a Predictor</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../formulations_example.html#defining-a-design-space">5.5. Defining a Design Space</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../formulations_example.html#proposing-new-formulation-candidates">5.6. Proposing New Formulation Candidates</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">6. FAQ</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../FAQ/prohibited_data_patterns.html">6.1. Prohibited Data Patterns</a></li>
-</ul>
-</li>
-</ul>
-
-<div class="relations">
-<h3>Related Topics</h3>
-<ul>
-  <li><a href="../index.html">Documentation overview</a><ul>
-  </ul></li>
-</ul>
-</div>
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
-
-
-
-
-
-
-
-
-        </div>
-      </div>
-      <div class="clearer"></div>
-    </div>
-    <div class="footer">
-      &copy;2019, Citrine Informatics.
-      
-      |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.0</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
-      
-      |
-      <a href="../_sources/reference/citrine.resources.dataset.rst.txt"
-          rel="nofollow">Page source</a>
-    </div>
-
-    
-
-    
-  </body>
+</body>
 </html>
