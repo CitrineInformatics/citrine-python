@@ -176,8 +176,8 @@ Docstrings must follow [Numpy style](https://numpydoc.readthedocs.io/en/latest/f
 For additional (non-binding) inspiration, check out the [Google Python Style Guide](https://github.com/google/styleguide/blob/gh-pages/pyguide.md).
 
 ## PR Submission<a name="pr"></a>
-Features should be developed in a branch with a descriptive name and the pull request (PR) submitted into the `master` branch.
-Every PR to `master` should increment the version number following [semantic versioning](https://semver.org/). 
+Features should be developed in a branch with a descriptive name and the pull request (PR) submitted into the `main` branch.
+Every PR to `main` should increment the version number following [semantic versioning](https://semver.org/).
 In order to be merged, a PR must be approved by one authorized user and the build must pass.
 A passing build requires the following:
 * All tests pass
