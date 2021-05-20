@@ -28,7 +28,7 @@ Where a metric is computed by taking an average over points in the test folds
 the fold-wise average is reported as opposed to the point-wise average.
 
 We recommend 5 folds and 3 trials as the default.
-Decreasing the number of folds makes the cross-validation metrics less accurate, since the training sets are substantially reduced.
+Decreasing the number of folds makes the cross-validation metrics less accurate, since the training sets are substantially reduced in size.
 This can make the model appear to be less accurate than it actually is.
 Conversely, increasing the number of folds makes the *uncertainty estimates* for cross-validation metrics less accurate (see warning below).
 It makes the uncertainty larger, meaning it is more likely that two models will appear to have equivalent performance when in fact one is better than the other.
