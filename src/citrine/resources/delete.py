@@ -8,6 +8,7 @@ from gemd.entity.link_by_uid import LinkByUID
 from citrine._session import Session
 from citrine.resources.api_error import ApiError
 from citrine.resources.job import _poll_for_job_completion
+from citrine.resources.data_concepts import CITRINE_SCOPE
 
 
 def _async_gemd_batch_delete(
@@ -63,7 +64,7 @@ def _async_gemd_batch_delete(
     scoped_uids = []
     for uid in id_list:  # And now normalize to id/scope pairs
         if isinstance(uid, BaseEntity):
-            link_by_uid = LinkByUID.from_entity(uid)
+            link_by_uid = LinkByUID.from_entity(uid, CITRINE_SCOPE)
             scoped_uids.append({'scope': link_by_uid.scope, 'id': link_by_uid.id})
         elif isinstance(uid, LinkByUID):
             scoped_uids.append({'scope': uid.scope, 'id': uid.id})

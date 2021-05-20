@@ -52,9 +52,14 @@ class Processor(Module):
 class GridProcessor(Resource['GridProcessor'], Processor, AIResourceMetadata):
     """Generates samples from the Cartesian product of finite dimensions, then scans over them.
 
-    To create a finite set of materials from continuous dimensions, a uniform grid is created
-    between the lower and upper bounds of the descriptor.
-    The number of points along each dimension is specified by `grid_sizes`.
+    For each continuous dimensions, a uniform grid is created between the lower and upper bounds of
+    the descriptor. The number of points along each continuous dimension is specified.
+    by ``grid_sizes``. No such discretization is necessary for enumerated dimensions,
+    because they are finite.
+
+    Be careful when using a grid processor, as the number of points grows exponentially with
+    the number of dimensions. For high-dimensional design spaces, a continuous processor
+    is often preferable.
 
     Parameters
     ----------
@@ -63,7 +68,7 @@ class GridProcessor(Resource['GridProcessor'], Processor, AIResourceMetadata):
     description: str
         description of the processor
     grid_sizes: dict[str, int]
-        the number of points to select along each dimension of the grid, by dimension name
+        the number of points to select along each continuous dimension, by dimension name
 
     """
 
