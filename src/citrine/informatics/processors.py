@@ -23,6 +23,11 @@ class Processor(Module):
     _project_id: Optional[UUID] = None
     _session: Optional[Session] = None
 
+    uid = properties.Optional(properties.UUID, 'id', serializable=False)
+    """:Optional[UUID]: Citrine Platform unique identifier"""
+    name = properties.String('config.name')
+    description = properties.Optional(properties.String(), 'config.description')
+
     @classmethod
     def get_type(cls, data) -> Type['Processor']:
         """Return the sole currently implemented subtype."""
@@ -64,9 +69,6 @@ class GridProcessor(Resource['GridProcessor'], Processor, AIResourceMetadata):
 
     _resource_type = ResourceTypeEnum.MODULE
 
-    uid = properties.Optional(properties.UUID, 'id', serializable=False)
-    name = properties.String('config.name')
-    description = properties.Optional(properties.String(), 'config.description')
     grid_sizes = properties.Mapping(
         properties.String,
         properties.Integer,
@@ -115,9 +117,6 @@ class EnumeratedProcessor(Resource['EnumeratedProcessor'], Processor, AIResource
 
     _resource_type = ResourceTypeEnum.MODULE
 
-    uid = properties.Optional(properties.UUID, 'id', serializable=False)
-    name = properties.String('config.name')
-    description = properties.Optional(properties.String(), 'config.description')
     max_candidates = properties.Integer('config.max_size')
 
     typ = properties.String('config.type', default='Enumerated', deserializable=False)
@@ -177,9 +176,6 @@ class MonteCarloProcessor(Resource['GridProcessor'], Processor, AIResourceMetada
 
     _resource_type = ResourceTypeEnum.MODULE
 
-    uid = properties.Optional(properties.UUID, 'id', serializable=False)
-    name = properties.String('config.name')
-    description = properties.Optional(properties.String(), 'config.description')
     max_candidates = properties.Optional(properties.Integer, 'config.max_candidates')
 
     typ = properties.String('config.type', default='ContinuousSearch', deserializable=False)
