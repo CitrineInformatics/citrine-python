@@ -3,6 +3,7 @@ from typing import Type
 
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
 from citrine._rest.asynchronous_object import AsynchronousObject
+from citrine._serialization import properties
 
 
 __all__ = ['Workflow']
@@ -20,6 +21,9 @@ class Workflow(PolymorphicSerializable['Workflow'], AsynchronousObject):
     """
 
     _response_key = None
+
+    uid = properties.Optional(properties.UUID, 'id', serializable=False)
+    """:Optional[UUID]: Citrine Platform unique identifier"""
 
     @classmethod
     def get_type(cls, data) -> Type['Workflow']:

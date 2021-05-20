@@ -6,10 +6,7 @@ import pytest
 
 from . import serialization_check, valid_serialization_output
 from citrine.informatics.descriptors import RealDescriptor
-from citrine.informatics.predictors import ExpressionPredictor, GeneralizedMeanPropertyPredictor, \
-    GraphPredictor, Predictor, SimpleMLPredictor, IngredientsToSimpleMixturePredictor, \
-    LabelFractionsPredictor, SimpleMixturePredictor, IngredientFractionsPredictor, \
-    DeprecatedExpressionPredictor, AutoMLPredictor, MeanPropertyPredictor
+from citrine.informatics.predictors import *
 
 
 def test_simple_legacy_deserialization(valid_simple_ml_predictor_data):
@@ -67,9 +64,9 @@ def test_expression_serialization(valid_expression_predictor_data):
     serialization_check(valid_expression_predictor_data, ExpressionPredictor)
 
 
-def test_ing_to_simple_mixture_serialization(valid_ing_to_simple_mixture_predictor_data):
-    """Ensure that a serialized IngredientsToSimpleMixturePredictor looks sane."""
-    serialization_check(valid_ing_to_simple_mixture_predictor_data, IngredientsToSimpleMixturePredictor)
+def test_ing_to_formulation_serialization(valid_ing_formulation_predictor_data):
+    """Ensure that a serialized IngredientsToFormulationPredictor looks sane."""
+    serialization_check(valid_ing_formulation_predictor_data, IngredientsToFormulationPredictor)
 
 
 def test_generalized_mean_property_serialization(valid_generalized_mean_property_predictor_data):

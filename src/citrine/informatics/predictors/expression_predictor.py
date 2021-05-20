@@ -38,9 +38,8 @@ class ExpressionPredictor(Resource['ExpressionPredictor'], Predictor, AIResource
     output = _properties.Object(RealDescriptor, 'config.output')
     aliases = _properties.Mapping(_properties.String, _properties.Object(RealDescriptor),
                                   'config.aliases')
-    typ = _properties.String('config.type', default='AnalyticExpression', deserializable=False)
 
-    # NOTE: These could go here or in _post_dump - it's unclear which is better right now
+    typ = _properties.String('config.type', default='AnalyticExpression', deserializable=False)
     module_type = _properties.String('module_type', default='PREDICTOR')
 
     def __init__(self,
@@ -159,9 +158,8 @@ class DeprecatedExpressionPredictor(Resource['DeprecatedExpressionPredictor'],
     output = _properties.Object(RealDescriptor, 'config.output')
     aliases = _properties.Optional(_properties.Mapping(_properties.String, _properties.String),
                                    'config.aliases')
-    typ = _properties.String('config.type', default='Expression', deserializable=False)
 
-    # NOTE: These could go here or in _post_dump - it's unclear which is better right now
+    typ = _properties.String('config.type', default='Expression', deserializable=False)
     module_type = _properties.String('module_type', default='PREDICTOR')
 
     def __init__(self,
