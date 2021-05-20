@@ -1,5 +1,3 @@
-from datetime import datetime  # noqa: F401
-from typing import Optional, List  # noqa: F401
 from citrine._serialization import properties
 
 

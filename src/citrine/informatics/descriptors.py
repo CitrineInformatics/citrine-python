@@ -1,6 +1,6 @@
 """Tools for working with Descriptors."""
 import warnings
-from typing import Type, Optional, Set  # noqa: F401
+from typing import Type, Optional, Set
 
 from citrine._serialization.serializable import Serializable
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable

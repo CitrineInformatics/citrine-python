@@ -1,4 +1,4 @@
-from typing import TypeVar, Optional  # noqa: F401
+from typing import TypeVar, Optional
 from citrine._serialization.serializable import Serializable
 from gemd.enumeration.base_enumeration import BaseEnumeration
 

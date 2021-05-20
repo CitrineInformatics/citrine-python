@@ -1,6 +1,6 @@
 """Variable definitions for GEM Tables."""
 from abc import abstractmethod
-from typing import Type, Optional, List, Union  # noqa: F401
+from typing import Type, Optional, List, Union
 
 from gemd.entity.bounds.base_bounds import BaseBounds
 from gemd.entity.link_by_uid import LinkByUID
