@@ -1,5 +1,5 @@
 """Row definitions for GEM Tables."""
-from typing import Type, List  # noqa: F401
+from typing import Type, List
 from abc import abstractmethod
 
 from gemd.entity.link_by_uid import LinkByUID

@@ -20,12 +20,11 @@ class Predictor(Module):
 
     """
 
-    _response_key = None
     _project_id: Optional[UUID] = None
     _session: Optional[Session] = None
-    uid = properties.Optional(properties.UUID, 'id', serializable=False)
-    """UUID of the predictor, if it has been retrieved from the platform."""
 
+    uid = properties.Optional(properties.UUID, 'id', serializable=False)
+    """:Optional[UUID]: Citrine Platform unique identifier"""
     name = properties.String('config.name')
     description = properties.Optional(properties.String(), 'config.description')
 

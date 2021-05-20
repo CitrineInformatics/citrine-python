@@ -29,10 +29,9 @@ class LabelFractionsPredictor(Resource['LabelFractionsPredictor'], Predictor, AI
 
     input_descriptor = _properties.Object(FormulationDescriptor, 'config.input')
     labels = _properties.Set(_properties.String, 'config.labels')
+
     typ = _properties.String('config.type', default='LabelFractions',
                              deserializable=False)
-
-    # NOTE: These could go here or in _post_dump - it's unclear which is better right now
     module_type = _properties.String('module_type', default='PREDICTOR')
 
     def __init__(self,

@@ -1,6 +1,6 @@
 """Tools for working with Descriptors."""
 from abc import abstractmethod
-from typing import Type, List, Mapping, Optional, Union  # noqa: F401
+from typing import Type, List, Mapping, Optional, Union
 from uuid import UUID
 
 from citrine._serialization import properties
