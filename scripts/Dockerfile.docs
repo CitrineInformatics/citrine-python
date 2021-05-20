@@ -7,6 +7,7 @@ WORKDIR /opt/app
 
 RUN pip install sphinx
 RUN pip install sphinxcontrib-apidoc
+RUN pip install sphinx-rtd-theme
 RUN pip install -e .
 
 WORKDIR /opt/app/docs
