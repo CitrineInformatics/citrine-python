@@ -118,13 +118,12 @@ class DesignCandidate(Serializable["DesignCandidate"]):
     """
 
     material_id = properties.UUID('material_id')
-    """:UUID: unique identifier of the material"""
+    """:UUID: unique Citrine id of the material"""
     identifiers = properties.List(properties.String(), 'identifiers')
-    """:List[str]: human-readable identifiers assigned to the material"""
+    """:List[str]: globally unique identifiers assigned to the material"""
     primary_score = properties.Float('primary_score')
     """:float: numerical score describing how well the candidate satisfies the objectives
-    and constraints (higher is better)
-    """
+    and constraints (higher is better)"""
     material = properties.Object(DesignMaterial, 'material')
     """:DesignMaterial: the material returned by the design workflow"""
 
