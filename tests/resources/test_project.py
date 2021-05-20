@@ -5,6 +5,7 @@ import pytest
 from dateutil.parser import parse
 from gemd.entity.link_by_uid import LinkByUID
 
+from citrine.informatics.workflows.design_workflow import DesignWorkflow
 from citrine.resources.api_error import ApiError, ValidationError
 from citrine.resources.gemtables import GemTableCollection
 from citrine.resources.process_spec import ProcessSpec
@@ -666,3 +667,18 @@ def test_owned_table_config_ids(project, session):
     assert expect_call == session.last_call
     assert all(x in id_set for x in ids)
     assert len(ids) == len(id_set)
+
+def test_depricated_worklfows(project):
+    # Given
+    design_worflow = DesignWorkflow(
+        name="Test",
+        design_space_id=str(uuid.uuid4()),
+        processor_id=str(uuid.uuid4()),
+        predictor_id=str(uuid.uuid4()),
+    )
+
+    #Then
+    with pytest.raises(NotImplementedError):
+        project.workflows.register(design_worflow)
+    with pytest.raises(NotImplementedError):
+        project.workflows.update(design_worflow)
