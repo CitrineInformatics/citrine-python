@@ -1,7 +1,7 @@
 from typing import List, Optional, Union
 from uuid import UUID
 
-from citrine._rest.resource import Resource
+from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties as _properties
 from citrine.informatics.data_sources import DataSource
 from citrine.informatics.predictors import Predictor
@@ -32,15 +32,16 @@ class GraphPredictor(Resource['GraphPredictor'], Predictor, AIResourceMetadata):
 
     """
 
+    _resource_type = ResourceTypeEnum.MODULE
+
     predictors = _properties.List(_properties.Union(
         [_properties.UUID, _properties.Object(Predictor)]), 'config.predictors')
     # the default seems to be defined in instances, not the class itself
     # this is tested in test_graph_default_training_data
     training_data = _properties.List(
         _properties.Object(DataSource), 'config.training_data', default=[])
-    typ = _properties.String('config.type', default='Graph', deserializable=False)
 
-    # NOTE: These could go here or in _post_dump - it's unclear which is better right now
+    typ = _properties.String('config.type', default='Graph', deserializable=False)
     module_type = _properties.String('module_type', default='PREDICTOR')
 
     def __init__(self,

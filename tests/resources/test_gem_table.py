@@ -6,7 +6,7 @@ import requests_mock
 from mock import patch, call
 
 from citrine.exceptions import JobFailureError, PollingTimeoutError
-from citrine.resources.ara_definition import AraDefinition
+from citrine.resources.table_config import TableConfig
 from citrine.resources.gemtables import GemTableCollection, GemTable
 from tests.utils.factories import GemTableDataFactory, ListGemTableVersionsDataFactory
 from tests.utils.session import FakeSession, FakeCall
@@ -74,6 +74,17 @@ def test_get_table_metadata(collection, session):
     assert retrieved_table.version == gem_table["version"]
     assert retrieved_table.download_url == gem_table["signed_download_url"]
 
+    # Given
+    gem_tables = ListGemTableVersionsDataFactory()
+    session.set_response(gem_tables)
+    version_number = max([table["version"] for table in gem_tables["tables"]])
+
+    # When
+    retrieved_table = collection.get(gem_table["id"])
+
+    # Then
+    assert retrieved_table.version == version_number
+
 
 def test_list_tables(collection, session):
     # Given
@@ -84,7 +95,7 @@ def test_list_tables(collection, session):
     results = list(collection.list())
 
     # Then
-    assert len(results) == 1
+    assert len(results) == 3
     assert results[0].uid is not None
 
 
@@ -97,7 +108,7 @@ def test_list_table_versions(collection, session):
     results = list(collection.list_versions(tableVersions['tables'][0]['id']))
 
     # Then
-    assert len(results) == 1
+    assert len(results) == 3
     assert results[0].uid is not None
 
 
@@ -112,7 +123,7 @@ def test_list_by_config(collection, session):
     results = list(collection.list_by_config(tableVersions['tables'][0]['id']))
 
     # Then
-    assert len(results) == 1
+    assert len(results) == 3
     assert results[0].uid is not None
 
 
@@ -146,7 +157,7 @@ def test_delete_table(collection, table):
 def test_build_from_config(collection: GemTableCollection, session):
     config_uid = uuid4()
     config_version = 2
-    config = AraDefinition(
+    config = TableConfig(
         name='foo',
         description='bar',
         columns=[],
@@ -177,7 +188,7 @@ def test_build_from_config(collection: GemTableCollection, session):
 def test_build_from_config_failures(collection: GemTableCollection, session):
     with pytest.raises(ValueError):
         collection.build_from_config(uuid4())
-    config = AraDefinition(
+    config = TableConfig(
         name='foo',
         description='bar',
         columns=[],

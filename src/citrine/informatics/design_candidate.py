@@ -45,7 +45,9 @@ class MeanAndStd(Serializable["MeanAndStd"], DesignVariable):
     """
 
     mean = properties.Float('m')
+    """:float: mean of the continuous distribution"""
     std = properties.Float('s')
+    """:float: standard deviation of the continuous distribution"""
 
     def __init__(self):
         pass  # pragma: no cover
@@ -59,6 +61,7 @@ class TopCategories(Serializable["CategoriesAndProbabilities"], DesignVariable):
     """
 
     probabilities = properties.Mapping(properties.String, properties.Float, 'cp')
+    """:Dict[str, float]: mapping from category names to their probabilities"""
 
     def __init__(self):
         pass  # pragma: no cover
@@ -72,6 +75,7 @@ class Mixture(Serializable["Mixture"], DesignVariable):
     """
 
     quantities = properties.Mapping(properties.String, properties.Float, 'q')
+    """:Dict[str, float]: mapping from ingredient identifiers to their quantities"""
 
     def __init__(self):
         pass  # pragma: no cover
@@ -81,6 +85,7 @@ class ChemicalFormula(Serializable["ChemicalFormula"], DesignVariable):
     """Chemical formula as a string."""
 
     formula = properties.String('f')
+    """:str: chemical formula"""
 
     def __init__(self):
         pass  # pragma: no cover
@@ -90,6 +95,7 @@ class MolecularStructure(Serializable["MolecularStructure"], DesignVariable):
     """SMILES string representation of a molecular structure."""
 
     smiles = properties.String('s')
+    """:str: SMILES string"""
 
     def __init__(self):
         pass  # pragma: no cover
@@ -99,6 +105,7 @@ class DesignMaterial(Serializable["DesignMaterial"]):
     """Description of the material that was designed, as a set of DesignVariables."""
 
     values = properties.Mapping(properties.String, properties.Object(DesignVariable), 'vars')
+    """:Dict[str, DesignVariable]: mapping from descriptor keys to the value for this material"""
 
     def __init__(self):
         pass  # pragma: no cover
@@ -111,9 +118,14 @@ class DesignCandidate(Serializable["DesignCandidate"]):
     """
 
     material_id = properties.UUID('material_id')
+    """:UUID: unique Citrine id of the material"""
     identifiers = properties.List(properties.String(), 'identifiers')
+    """:List[str]: globally unique identifiers assigned to the material"""
     primary_score = properties.Float('primary_score')
+    """:float: numerical score describing how well the candidate satisfies the objectives
+    and constraints (higher is better)"""
     material = properties.Object(DesignMaterial, 'material')
+    """:DesignMaterial: the material returned by the design workflow"""
 
     def __init__(self):
         pass  # pragma: no cover

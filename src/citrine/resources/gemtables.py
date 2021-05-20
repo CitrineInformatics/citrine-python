@@ -8,7 +8,7 @@ import requests
 
 from citrine._rest.collection import Collection
 from citrine._rest.paginator import Paginator
-from citrine._rest.resource import Resource
+from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
 from citrine._serialization.properties import UUID
 from citrine._session import Session
@@ -26,24 +26,19 @@ class GemTable(Resource['Table']):
     While data objects can represent complex materials data, the format
     is NOT conducive to analysis and machine learning. GEM Tables, however,
     can be used to 'flatten' data objects into useful projections.
-
-    Attributes
-    ----------
-    uid: UUID
-        Unique uuid4 identifier of this GEM Table.
-    version: str
-        Version number of the GEM Table. The first table built from a given config is version 1.
-    download_url: int
-        Url pointing to the location of the GEM Table's contents.
-        This is an expiring download link and is not unique.
-
     """
 
     _response_key = 'table'
+    _resource_type = ResourceTypeEnum.TABLE
 
     uid = properties.Optional(properties.UUID(), 'id')
+    """:Optional[UUID]: unique Citrine id of this GEM Table"""
     version = properties.Optional(properties.Integer, 'version')
+    """:Optional[int]: Version number of the GEM Table.
+    The first table built from a given config is version 1."""
     download_url = properties.Optional(properties.String, 'signed_download_url')
+    """:Optional[str]: Url pointing to the location of the GEM Table's contents.
+    This is an expiring download link and is not unique."""
 
     def __init__(self):
         self.uid = None
@@ -52,10 +47,6 @@ class GemTable(Resource['Table']):
 
     def __str__(self):
         return '<GEM Table {!r}, version {}>'.format(self.uid, self.version)
-
-    def resource_type(self) -> str:
-        """Get the access control resource type of this resource."""
-        return 'TABLE'
 
     @deprecation.deprecated(deprecated_in="0.16.0", details="Use TableCollection.read() instead")
     def read(self, local_path):
@@ -90,11 +81,16 @@ class GemTableCollection(Collection[GemTable]):
         self.project_id = project_id
         self.session: Session = session
 
-    def get(self, uid: Union[UUID, str], version: int) -> GemTable:
-        """Get a Table's metadata."""
-        path = self._get_path(uid) + "/versions/{}".format(version)
-        data = self.session.get_resource(path)
-        return self.build(data)
+    def get(self, uid: Union[UUID, str], version: Optional[int] = None) -> GemTable:
+        """Get a Table's metadata. If no version is specified, get the most recent version."""
+        if version is not None:
+            path = self._get_path(uid) + "/versions/{}".format(version)
+            data = self.session.get_resource(path)
+            return self.build(data)
+        else:
+            tables = self.list_versions(uid)
+            newest_table = max(tables, key=lambda x: x.version or 0)
+            return newest_table
 
     def list_versions(self,
                       uid: UUID,
@@ -113,7 +109,7 @@ class GemTableCollection(Collection[GemTable]):
         """
         def fetch_versions(page: Optional[int],
                            per_page: int) -> Tuple[Iterable[dict], str]:
-            data = self.session.get_resource(self._get_path() + '/' + str(uid),
+            data = self.session.get_resource(self._get_path(uid),
                                              params=self._page_params(page, per_page))
             return (data[self._collection_key], data.get('next', ""))
 

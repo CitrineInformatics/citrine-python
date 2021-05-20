@@ -1,17 +1,18 @@
 from uuid import UUID, uuid4
-
+import warnings
 import pytest
-from gemd.entity.link_by_uid import LinkByUID
 
+from gemd.entity.link_by_uid import LinkByUID
 from citrine.gemtables.columns import MeanColumn, OriginalUnitsColumn, StdDevColumn, IdentityColumn
 from citrine.gemtables.rows import MaterialRunByTemplate
 from citrine.gemtables.variables import AttributeByTemplate, RootInfo, IngredientQuantityDimension, \
     IngredientQuantityByProcessAndName, IngredientIdentifierByProcessTemplateAndName, RootIdentifier
 from citrine.resources.table_config import TableConfig, TableConfigCollection, TableBuildAlgorithm
+from citrine.resources.data_concepts import CITRINE_SCOPE
 from citrine.resources.material_run import MaterialRun
 from citrine.resources.project import Project
 from citrine.resources.process_template import ProcessTemplate
-from tests.utils.factories import TableConfigResponseDataFactory
+from tests.utils.factories import TableConfigResponseDataFactory, ListTableConfigResponseDataFactory
 from tests.utils.session import FakeSession, FakeCall
 
 @pytest.fixture
@@ -49,8 +50,8 @@ def empty_defn() -> TableConfig:
                        columns=[], config_uid=UUID("6b608f78-e341-422c-8076-35adc8828545"))
 
 
-def test_get_table_config_metadata(collection, session):
-    """Get with version gets TBD"""
+def test_get_table_config(collection, session):
+    """Get table config, with or without version"""
 
     # Given
     project_id = '6b608f78-e341-422c-8076-35adc8828545'
@@ -60,7 +61,7 @@ def test_get_table_config_metadata(collection, session):
     ver_number = table_config_response["version"]["version_number"]
 
     # When
-    retrieved_table_config: TableConfig = collection.get_with_version(defn_id, ver_number)
+    retrieved_table_config: TableConfig = collection.get(defn_id, ver_number)
 
     # Then
     assert 1 == session.num_calls
@@ -71,6 +72,25 @@ def test_get_table_config_metadata(collection, session):
     assert session.last_call == expect_call
     assert str(retrieved_table_config.config_uid) == defn_id
     assert retrieved_table_config.version_number == ver_number
+
+    # Given
+    table_configs_response = ListTableConfigResponseDataFactory()
+    defn_id = table_configs_response["definition"]["id"]
+    version_number = max([version_dict["version_number"] for version_dict in table_configs_response["versions"]])
+    session.set_response(table_configs_response)
+
+    # When
+    retrieved_table_config: TableConfig = collection.get(defn_id)
+
+    # Then
+    assert 2 == session.num_calls
+    expect_call = FakeCall(
+        method="GET",
+        path="projects/{}/ara-definitions/{}".format(project_id, defn_id)
+    )
+    assert session.last_call == expect_call
+    assert str(retrieved_table_config.config_uid) == defn_id
+    assert retrieved_table_config.version_number == version_number
 
 
 def test_init_table_config():
@@ -190,14 +210,36 @@ def test_default_for_material(collection: TableConfigCollection, session):
             ]
         ],
     }
+    # Specify by Citrine ID
     session.responses.append(dummy_resp)
     collection.default_for_material(
         material='my_id',
-        scope='my_scope',
         name='my_name',
         description='my_description',
     )
-
+    assert 1 == session.num_calls
+    assert session.last_call == FakeCall(
+        method="GET",
+        path="projects/{}/table-configs/default".format(project_id),
+        params={
+            'id': 'my_id',
+            'scope': CITRINE_SCOPE,
+            'name': 'my_name',
+            'description': 'my_description'
+        }
+    )
+    # Specify by id with custom scope, throwing a warning
+    session.calls.clear()
+    session.responses.append(dummy_resp)
+    with warnings.catch_warnings(record=True) as caught:
+        collection.default_for_material(
+            material='my_id',
+            scope='my_scope',
+            name='my_name',
+            description='my_description'
+        )
+        assert len(caught) == 1
+        assert issubclass(caught[0].category, DeprecationWarning)
     assert 1 == session.num_calls
     assert session.last_call == FakeCall(
         method="GET",
@@ -209,13 +251,14 @@ def test_default_for_material(collection: TableConfigCollection, session):
             'description': 'my_description'
         }
     )
+    # Specify by MaterialRun
     session.calls.clear()
     session.responses.append(dummy_resp)
     collection.default_for_material(
         material=MaterialRun('foo', uids={'scope': 'id'}),
-        scope='ignored',
         name='my_name',
         description='my_description',
+        algorithm=TableBuildAlgorithm.FORMULATIONS
     )
     assert 1 == session.num_calls
     assert session.last_call == FakeCall(
@@ -225,15 +268,15 @@ def test_default_for_material(collection: TableConfigCollection, session):
             'id': 'id',
             'scope': 'scope',
             'name': 'my_name',
-            'description': 'my_description'
+            'description': 'my_description',
+            'algorithm': TableBuildAlgorithm.FORMULATIONS.value
         }
     )
+    # Specify by LinkByUID
     session.calls.clear()
     session.responses.append(dummy_resp)
     collection.default_for_material(
-        material=MaterialRun('foo', uids={'scope': 'id'}),
-        scope='ignored',
-        algorithm=TableBuildAlgorithm.FORMULATIONS,
+        material=LinkByUID(scope="scope", id="id"),
         name='my_name',
         description='my_description',
     )
@@ -244,7 +287,6 @@ def test_default_for_material(collection: TableConfigCollection, session):
         params={
             'id': 'id',
             'scope': 'scope',
-            'algorithm': TableBuildAlgorithm.FORMULATIONS.value,
             'name': 'my_name',
             'description': 'my_description'
         }

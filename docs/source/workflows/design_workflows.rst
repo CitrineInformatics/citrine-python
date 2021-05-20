@@ -1,7 +1,7 @@
 Design Workflows
 ========================
 
-A design workflow ranks materials according to a :doc:`score <scores>`.
+A :class:`~citrine.informatics.workflows.design_workflow.DesignWorkflow` ranks materials according to a :doc:`score <scores>`.
 This workflow is comprised of three modules:
 
 -  :doc:`Design space <design_spaces>` defines all possible materials that can be generated.
@@ -216,11 +216,12 @@ DesignMaterials are simpler approximations ("projections") of the materials info
 
 DesignMaterials approximate the distribution of values that a variable might take.
 Each variable is represented as one of:
-    * :class:`~citrine.informatics.design_candidate.MeanAndStd`
-    * :class:`~citrine.informatics.design_candidate.TopCategories`
-    * :class:`~citrine.informatics.design_candidate.Mixture`
-    * :class:`~citrine.informatics.design_candidate.ChemicalFormula`
-    * :class:`~citrine.informatics.design_candidate.MolecularStructure`.
+
+* :class:`~citrine.informatics.design_candidate.MeanAndStd`
+* :class:`~citrine.informatics.design_candidate.TopCategories`
+* :class:`~citrine.informatics.design_candidate.Mixture`
+* :class:`~citrine.informatics.design_candidate.ChemicalFormula`
+* :class:`~citrine.informatics.design_candidate.MolecularStructure`.
 
 For example:
 

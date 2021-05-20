@@ -1,9 +1,10 @@
 """Tools for working with Processors."""
 from typing import Optional, Mapping, Type, List
+from uuid import UUID
 from warnings import warn
 
 from citrine._serialization import properties
-from citrine._serialization.serializable import Serializable
+from citrine._rest.resource import ResourceTypeEnum, Resource
 from citrine._session import Session
 from citrine.informatics.modules import Module
 from citrine._rest.ai_resource_metadata import AIResourceMetadata
@@ -19,7 +20,13 @@ class Processor(Module):
 
     """
 
-    _response_key = None
+    _project_id: Optional[UUID] = None
+    _session: Optional[Session] = None
+
+    uid = properties.Optional(properties.UUID, 'id', serializable=False)
+    """:Optional[UUID]: Citrine Platform unique identifier"""
+    name = properties.String('config.name')
+    description = properties.Optional(properties.String(), 'config.description')
 
     @classmethod
     def get_type(cls, data) -> Type['Processor']:
@@ -42,12 +49,17 @@ class Processor(Module):
             return False
 
 
-class GridProcessor(Serializable['GridProcessor'], Processor, AIResourceMetadata):
+class GridProcessor(Resource['GridProcessor'], Processor, AIResourceMetadata):
     """Generates samples from the Cartesian product of finite dimensions, then scans over them.
 
-    To create a finite set of materials from continuous dimensions, a uniform grid is created
-    between the lower and upper bounds of the descriptor.
-    The number of points along each dimension is specified by `grid_sizes`.
+    For each continuous dimensions, a uniform grid is created between the lower and upper bounds of
+    the descriptor. The number of points along each continuous dimension is specified.
+    by ``grid_sizes``. No such discretization is necessary for enumerated dimensions,
+    because they are finite.
+
+    Be careful when using a grid processor, as the number of points grows exponentially with
+    the number of dimensions. For high-dimensional design spaces, a continuous processor
+    is often preferable.
 
     Parameters
     ----------
@@ -56,21 +68,19 @@ class GridProcessor(Serializable['GridProcessor'], Processor, AIResourceMetadata
     description: str
         description of the processor
     grid_sizes: dict[str, int]
-        the number of points to select along each dimension of the grid, by dimension name
+        the number of points to select along each continuous dimension, by dimension name
 
     """
 
-    uid = properties.Optional(properties.UUID, 'id', serializable=False)
-    name = properties.String('config.name')
-    description = properties.Optional(properties.String(), 'config.description')
-    typ = properties.String('config.type', default='Grid', deserializable=False)
+    _resource_type = ResourceTypeEnum.MODULE
+
     grid_sizes = properties.Mapping(
         properties.String,
         properties.Integer,
         'config.grid_dimensions'
     )
 
-    # NOTE: These could go here or in _post_dump - it's unclear which is better right now
+    typ = properties.String('config.type', default='Grid', deserializable=False)
     module_type = properties.String('module_type', default='PROCESSOR')
 
     def _attrs(self) -> List[str]:
@@ -94,7 +104,7 @@ class GridProcessor(Serializable['GridProcessor'], Processor, AIResourceMetadata
         return '<GridProcessor {!r}>'.format(self.name)
 
 
-class EnumeratedProcessor(Serializable['EnumeratedProcessor'], Processor, AIResourceMetadata):
+class EnumeratedProcessor(Resource['EnumeratedProcessor'], Processor, AIResourceMetadata):
     """Process a design space by enumerating up to a fixed number of samples from the domain.
 
     Each sample is processed independently.
@@ -110,13 +120,11 @@ class EnumeratedProcessor(Serializable['EnumeratedProcessor'], Processor, AIReso
 
     """
 
-    uid = properties.Optional(properties.UUID, 'id', serializable=False)
-    name = properties.String('config.name')
-    description = properties.Optional(properties.String(), 'config.description')
-    max_candidates = properties.Integer('config.max_size')
-    typ = properties.String('config.type', default='Enumerated', deserializable=False)
+    _resource_type = ResourceTypeEnum.MODULE
 
-    # NOTE: These could go here or in _post_dump - it's unclear which is better right now
+    max_candidates = properties.Integer('config.max_size')
+
+    typ = properties.String('config.type', default='Enumerated', deserializable=False)
     module_type = properties.String('module_type', default='PROCESSOR')
 
     def _attrs(self) -> List[str]:
@@ -154,7 +162,7 @@ class EnumeratedProcessor(Serializable['EnumeratedProcessor'], Processor, AIReso
         return self.max_candidates
 
 
-class MonteCarloProcessor(Serializable['GridProcessor'], Processor, AIResourceMetadata):
+class MonteCarloProcessor(Resource['GridProcessor'], Processor, AIResourceMetadata):
     """Using a Monte Carlo optimizer to search for the best candidate.
 
     The moves that the MonteCarlo optimizer makes are inferred from the descriptors in the
@@ -171,14 +179,12 @@ class MonteCarloProcessor(Serializable['GridProcessor'], Processor, AIResourceMe
 
     """
 
-    uid = properties.Optional(properties.UUID, 'id', serializable=False)
-    name = properties.String('config.name')
-    description = properties.Optional(properties.String(), 'config.description')
-    typ = properties.String('config.type', default='ContinuousSearch', deserializable=False)
+    _resource_type = ResourceTypeEnum.MODULE
+
     max_candidates = properties.Optional(properties.Integer, 'config.max_candidates')
     mode = properties.Optional(properties.String(), 'config.mode')
 
-    # NOTE: These could go here or in _post_dump - it's unclear which is better right now
+    typ = properties.String('config.type', default='ContinuousSearch', deserializable=False)
     module_type = properties.String('module_type', default='PROCESSOR')
 
     def _attrs(self) -> List[str]:

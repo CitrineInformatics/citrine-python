@@ -1,6 +1,6 @@
 from typing import Set
 
-from citrine._rest.resource import Resource
+from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties as _properties
 from citrine.informatics.descriptors import FormulationDescriptor
 from citrine.informatics.predictors import Predictor
@@ -11,7 +11,7 @@ __all__ = ['IngredientFractionsPredictor']
 
 class IngredientFractionsPredictor(Resource["IngredientFractionsPredictor"],
                                    Predictor, AIResourceMetadata):
-    """[ALPHA] A predictor interface that computes ingredient fractions.
+    """A predictor interface that computes ingredient fractions.
 
     Parameters
     ----------
@@ -28,10 +28,11 @@ class IngredientFractionsPredictor(Resource["IngredientFractionsPredictor"],
 
     """
 
+    _resource_type = ResourceTypeEnum.MODULE
+
     input_descriptor = _properties.Object(FormulationDescriptor, 'config.input')
     ingredients = _properties.Set(_properties.String, 'config.ingredients')
 
-    # NOTE: These could go here or in _post_dump - it's unclear which is better right now
     module_type = _properties.String('module_type', default='PREDICTOR')
     typ = _properties.String('config.type', default='IngredientFractions',
                              deserializable=False)

@@ -1,6 +1,6 @@
 from typing import Mapping, Optional, Set
 
-from citrine._rest.resource import Resource
+from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
 from citrine._session import Session
 from citrine.informatics.constraints import Constraint
@@ -38,7 +38,7 @@ class FormulationDesignSpace(Resource['FormulationDesignSpace'], DesignSpace, AI
 
     """
 
-    _response_key = None
+    _resource_type = ResourceTypeEnum.MODULE
 
     formulation_descriptor = properties.Object(
         FormulationDescriptor,
@@ -51,12 +51,12 @@ class FormulationDesignSpace(Resource['FormulationDesignSpace'], DesignSpace, AI
     ), 'config.labels')
     constraints = properties.Set(properties.Object(Constraint), 'config.constraints')
     resolution = properties.Float('config.resolution')
+
     typ = properties.String(
         'config.type',
         default='FormulationDesignSpace',
         deserializable=False
     )
-
     module_type = properties.String('module_type', default='DESIGN_SPACE', deserializable=False)
 
     def __init__(self, *,

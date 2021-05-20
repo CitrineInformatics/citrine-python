@@ -1,4 +1,4 @@
-"""Resources that represent collections of design spaces."""
+"""Resources that represent collections of modules."""
 from uuid import UUID
 from typing import TypeVar, Union
 
@@ -54,4 +54,14 @@ class AbstractModuleCollection(Collection[ModuleType]):
             raise RuntimeError(f"{self._module_type} with id {module_id} was not found, "
                                f"and hence cannot be archived.")
         module.archived = True
+        return self.update(module)
+
+    def restore(self, module_id: Union[UUID, str]) -> ModuleType:
+        """Restore an archived module."""
+        try:
+            module = self.get(module_id)
+        except CitrineException:
+            raise RuntimeError(f"{self._module_type} with id {module_id} was not found, "
+                               f"and hence cannot be restored.")
+        module.archived = False
         return self.update(module)

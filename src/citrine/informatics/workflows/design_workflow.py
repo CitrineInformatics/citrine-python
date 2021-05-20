@@ -32,20 +32,21 @@ class DesignWorkflow(Resource['DesignWorkflow'], Workflow, AIResourceMetadata):
 
     """
 
-    uid = properties.Optional(properties.UUID, 'id', serializable=False)
+    # TODO: after PerformanceWorkflows are removed, get rid of this line and also
+    #   consolidate common fields in the Workflow object
     name = properties.String('display_name')
     name = properties.String('name')
     description = properties.Optional(properties.String, 'description')
 
-    module_type = properties.String('module_type', default='DESIGN_WORKFLOW')
-    typ = properties.String('type', default='DesignWorkflow', deserializable=False)
-
-    status_description = properties.String('status_description', serializable=False)
-
     design_space_id = properties.UUID('design_space_id')
-
     processor_id = properties.Optional(properties.UUID, 'processor_id')
     predictor_id = properties.UUID('predictor_id')
+
+    status_description = properties.String('status_description', serializable=False)
+    """:str: more detailed description of the workflow's status"""
+
+    module_type = properties.String('module_type', default='DESIGN_WORKFLOW')
+    typ = properties.String('type', default='DesignWorkflow', deserializable=False)
 
     def __init__(self,
                  name: str,

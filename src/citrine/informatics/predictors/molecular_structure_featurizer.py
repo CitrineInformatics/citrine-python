@@ -3,7 +3,7 @@
 # the whole file than to pick out the offending lines.
 from typing import List, Optional
 
-from citrine._rest.resource import Resource
+from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties as _properties
 from citrine.informatics.descriptors import Descriptor, MolecularStructureDescriptor
 from citrine.informatics.predictors import Predictor
@@ -79,12 +79,13 @@ class MolecularStructureFeaturizer(Resource['MolecularStructureFeaturizer'], Pre
 
     """
 
+    _resource_type = ResourceTypeEnum.MODULE
+
     descriptor = _properties.Object(Descriptor, 'config.descriptor')
     features = _properties.List(_properties.String, 'config.features')
     excludes = _properties.List(_properties.String, 'config.excludes')
-    typ = _properties.String('config.type', default='MoleculeFeaturizer', deserializable=False)
 
-    # NOTE: These could go here or in _post_dump - it's unclear which is better right now
+    typ = _properties.String('config.type', default='MoleculeFeaturizer', deserializable=False)
     module_type = _properties.String('module_type', default='PREDICTOR')
 
     def __init__(self,

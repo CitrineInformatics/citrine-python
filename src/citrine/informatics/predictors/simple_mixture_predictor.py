@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from citrine._rest.resource import Resource
+from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties as _properties
 from citrine.informatics.data_sources import DataSource
 from citrine.informatics.descriptors import FormulationDescriptor
@@ -11,8 +11,7 @@ __all__ = ['SimpleMixturePredictor']
 
 
 class SimpleMixturePredictor(Resource['SimpleMixturePredictor'], Predictor, AIResourceMetadata):
-    """
-    [ALPHA] A predictor interface that builds a simple graphical model.
+    """A predictor interface that flattens a formulation into a simple mixture.
 
     Parameters
     ----------
@@ -34,13 +33,14 @@ class SimpleMixturePredictor(Resource['SimpleMixturePredictor'], Predictor, AIRe
 
     """
 
+    _resource_type = ResourceTypeEnum.MODULE
+
     input_descriptor = _properties.Object(FormulationDescriptor, 'config.input')
     output_descriptor = _properties.Object(FormulationDescriptor, 'config.output')
     training_data = _properties.List(_properties.Object(DataSource), 'config.training_data')
+
     typ = _properties.String('config.type', default='SimpleMixture',
                              deserializable=False)
-
-    # NOTE: These could go here or in _post_dump - it's unclear which is better right now
     module_type = _properties.String('module_type', default='PREDICTOR')
 
     def __init__(self,

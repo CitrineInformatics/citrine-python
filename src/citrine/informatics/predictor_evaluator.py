@@ -44,7 +44,7 @@ class PredictorEvaluator(PolymorphicSerializable["PredictorEvaluator"]):
     def name(self) -> str:
         """Name of the evaluator.
 
-        A name required by all evaluators because it is used as the top-level key
+        A name is required by all evaluators because it is used as the top-level key
         in the results returned by a
         :class:`citrine.informatics.workflows.PredictorEvaluationWorkflow`.
         As such, the names of all evaluators within a single workflow must be unique.
@@ -55,8 +55,9 @@ class PredictorEvaluator(PolymorphicSerializable["PredictorEvaluator"]):
 class CrossValidationEvaluator(Serializable["CrossValidationEvaluator"], PredictorEvaluator):
     """Evaluate a predictor via cross validation.
 
-    Performs cross-validation on requested predictor responses and
-    computes the requested metrics on each response.
+    Performs cross-validation on requested predictor responses and computes the requested metrics
+    on each response. For a discussion of how many folds and trials to use,
+    please see the :ref:`documentation<Cross-validation evaluator>`.
 
     In addition to a name, set of responses to validate, trials, folds and metrics to compute,
     this evaluator defines a set of descriptor keys to ignore when grouping.  Candidates with

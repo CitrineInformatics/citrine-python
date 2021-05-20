@@ -1,10 +1,11 @@
-"""Resources that represent both individual and collections of workflow executions."""
+"""Resources that represent both individual and collections of predictor evaluation executions."""
 from functools import lru_cache, partial
 from typing import Optional, Iterable, Union
 from uuid import UUID
 
 from citrine._rest.collection import Collection
 from citrine._rest.resource import Resource
+from citrine._rest.asynchronous_object import AsynchronousObject
 from citrine._serialization import properties
 from citrine._session import Session
 from citrine.informatics.modules import ModuleRef
@@ -12,40 +13,43 @@ from citrine.informatics.predictor_evaluation_result import PredictorEvaluationR
 from citrine.resources.response import Response
 
 
-class PredictorEvaluationExecution(Resource['PredictorEvaluationExecution']):
+class PredictorEvaluationExecution(Resource['PredictorEvaluationExecution'], AsynchronousObject):
     """The execution of a PredictorEvaluationWorkflow.
+
+    Possible statuses are INPROGRESS, SUCCEEDED, and FAILED.
+    Predictor evaluation executions also have a ``status_description`` field with more information.
 
     Parameters
     ----------
-    uid: str
-        Unique identifier of the workflow execution
     project_id: str
         Unique identifier of the project that contains the workflow execution
-    workflow_id: str
-        Unique identifier of the workflow that was executed
 
     """
 
-    _response_key = None
-
     uid: UUID = properties.UUID('id', serializable=False)
-    """UUID of the execution."""
-
+    """:UUID: Unique identifier of the workflow execution"""
     evaluator_names = properties.List(properties.String, "evaluator_names", serializable=False)
+    """:List[str]: names of the predictor evaluators that were executed. These are used
+    when calling the ``results()`` method."""
     workflow_id = properties.UUID('workflow_id', serializable=False)
+    """:UUID: Unique identifier of the workflow that was executed"""
     predictor_id = properties.UUID('predictor_id', serializable=False)
     status = properties.Optional(properties.String(), 'status', serializable=False)
+    """:Optional[str]: short description of the execution's status"""
     status_info = properties.Optional(
         properties.List(properties.String()),
         'status_info',
         serializable=False
     )
+    """:Optional[List[str]]: human-readable explanations of the status"""
     experimental = properties.Boolean("experimental", serializable=False, default=True)
+    """:bool: whether the execution is experimental (newer, less well-tested functionality)"""
     experimental_reasons = properties.Optional(
         properties.List(properties.String()),
         'experimental_reasons',
         serializable=False
     )
+    """:Optional[List[str]]: human-readable reasons why the execution is experimental"""
 
     def __init__(self):
         """This shouldn't be called, but it defines members that are set elsewhere."""
@@ -60,6 +64,18 @@ class PredictorEvaluationExecution(Resource['PredictorEvaluationExecution']):
             .format(project_id=self.project_id,
                     execution_id=self.uid)
 
+    def in_progress(self) -> bool:
+        """Whether predictor evaluation execution is in progress. Does not query state."""
+        return self.status == "INPROGRESS"
+
+    def succeeded(self) -> bool:
+        """Whether predictor evaluation execution has completed successfully. Does not query state."""  # noqa: E501
+        return self.status == "SUCCEEDED"
+
+    def failed(self) -> bool:
+        """Whether predictor evaluation execution has completed unsuccessfully. Does not query state."""  # noqa: E501
+        return self.status == "FAILED"
+
     @lru_cache()
     def results(self, evaluator_name: str) -> PredictorEvaluationResult:
         """
@@ -72,7 +88,8 @@ class PredictorEvaluationExecution(Resource['PredictorEvaluationExecution']):
 
         Returns
         -------
-        The evaluation result from the evaluator with the given name
+        PredictorEvaluationResult
+            The evaluation result from the evaluator with the given name
 
         """
         params = {"evaluator_name": evaluator_name}
@@ -114,6 +131,11 @@ class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExec
 
     def trigger(self, predictor_id: UUID):
         """Trigger a predictor evaluation execution against a predictor, by id."""
+        if self.workflow_id is None:
+            msg = "Cannot trigger a predictor evaluation execution without knowing the " \
+                  "predictor evaluation workflow. Use workflow.executions.trigger instead of " \
+                  "project.predictor_evaluation_executions.trigger"
+            raise RuntimeError(msg)
         path = '/projects/{project_id}/predictor-evaluation-workflows/{workflow_id}/executions' \
             .format(project_id=self.project_id, workflow_id=self.workflow_id)
         data = self.session.post_resource(path, ModuleRef(str(predictor_id)).dump())

@@ -1,8 +1,10 @@
 """Tools for working with design spaces."""
-from typing import Type
+from typing import Type, Optional
+from uuid import UUID
 
 from citrine._serialization import properties
 from citrine._serialization.serializable import Serializable
+from citrine._session import Session
 from citrine.informatics.modules import Module
 
 
@@ -16,9 +18,11 @@ class DesignSpace(Module):
 
     """
 
-    _response_key = None
+    _project_id: Optional[UUID] = None
+    _session: Optional[Session] = None
 
     uid = properties.Optional(properties.UUID, 'id', serializable=False)
+    """:Optional[UUID]: Citrine Platform unique identifier"""
     name = properties.String('config.name')
     description = properties.Optional(properties.String(), 'config.description')
 

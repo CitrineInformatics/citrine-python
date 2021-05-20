@@ -8,13 +8,14 @@ from uuid import UUID
 from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
 from citrine._serialization.serializable import Serializable
+from citrine._rest.asynchronous_object import AsynchronousObject
 from citrine._session import Session
 from citrine.informatics.descriptors import Descriptor
 
 SelfType = TypeVar('SelfType', bound='Report')
 
 
-class Report(PolymorphicSerializable['Report']):
+class Report(PolymorphicSerializable['Report'], AsynchronousObject):
     """[ALPHA] A Citrine Report contains information related to a module.
 
     Abstract type that returns the proper type given a serialized dict.
@@ -46,19 +47,13 @@ class FeatureImportanceReport(Serializable["FeatureImportanceReport"]):
 
     FeatureImportanceReport objects are constructed from saved models and
     should not be user-instantiated.
-
-    Parameters
-    ----------
-    output_key: str
-        key for the output
-    importances: dict[str, float]
-        feature importances
-
     """
 
     output_key = properties.String('response_key')
+    """:str: output descriptor key for which these feature importances are applicable"""
     importances = properties.Mapping(keys_type=properties.String, values_type=properties.Float,
                                      serialization_path='importances')
+    """:dict[str, float]: map from feature name to its importance"""
 
     def __init__(self, output_key: str, importances: Dict[str, float]):
         self.output_key = output_key
@@ -72,46 +67,33 @@ class ModelSummary(Serializable['ModelSummary']):
     """[ALPHA] Summary of information about a single model in a predictor.
 
     ModelSummary objects are constructed from saved models and should not be user-instantiated.
-
-    Parameters
-    ----------
-    name: str
-        the name of the model
-    type_: str
-        the type of the model (e.g., "ML Model", "Featurizer", etc.)
-    inputs: List[Descriptor]
-        list of input descriptors
-    outputs: List[Descriptor]
-        list of output descriptors
-    model_settings: dict
-        settings of the model, as a dictionary (details depend on model type)
-    feature_importances: List[FeatureImportanceReport]
-        list of feature importance reports, one for each output
-    predictor_name: str
-        the name of the predictor that created this model
-    predictor_uid: Optional[uuid]
-        the uid of the predictor that created this model
-
     """
 
     name = properties.String('name')
+    """:str: the name of the model"""
     type_ = properties.String('type')
+    """:str: the type of the model (e.g., "ML Model", "Featurizer", etc.)"""
     inputs = properties.List(
         properties.Union([properties.Object(Descriptor), properties.String()]),
         'inputs'
     )
+    """:List[Descriptor]: list of input descriptors"""
     outputs = properties.List(
         properties.Union([properties.Object(Descriptor), properties.String()]),
         'outputs'
     )
+    """:List[Descriptor]: list of output descriptors"""
     model_settings = properties.Raw('model_settings')
+    """:dict: model settings, as a dictionary (keys depend on the model type)"""
     feature_importances = properties.List(
         properties.Object(FeatureImportanceReport), 'feature_importances')
+    """:List[FeatureImportanceReport]: feature importance reports for each output"""
     predictor_name = properties.String('predictor_configuration_name', default='')
+    """:str: the name of the predictor that created this model"""
     predictor_uid = properties.Optional(properties.UUID(), 'predictor_configuration_uid')
-
+    """:Optional[UUID]: the unique Citrine id of the predictor that created this model"""
     training_data_count = properties.Optional(properties.Integer, "training_data_count")
-    """Number of rows in the training data for the model, if applicable."""
+    """:int: Number of rows in the training data for the model, if applicable."""
 
     def __init__(self,
                  name: str,
@@ -139,22 +121,16 @@ class PredictorReport(Serializable['PredictorReport'], Report):
     """[ALPHA] The performance metrics corresponding to a predictor.
 
     PredictorReport objects are constructed from saved models and should not be user-instantiated.
-
-    Parameters
-    ----------
-    status: str
-        the status of the report (e.g., PENDING, ERROR, OK, etc)
-    descriptors: List[Descriptor]
-        All descriptors that appear in the predictor
-    model_summaries: List[ModelSummary]
-        Summaries of all models in the predictor
-
     """
 
     uid = properties.Optional(properties.UUID, 'id', serializable=False)
+    """:UUID: Unique Citrine id of the predictor report"""
     status = properties.String('status')
+    """:str: The status of the report. Possible statuses are PENDING, ERROR, and OK."""
     descriptors = properties.List(properties.Object(Descriptor), 'report.descriptors', default=[])
+    """:List[Descriptor]: All descriptors that appear in the predictor"""
     model_summaries = properties.List(properties.Object(ModelSummary), 'report.models', default=[])
+    """:List[ModelSummary]: Summaries of all models in the predictor"""
 
     def __init__(self, status: str,
                  descriptors: Optional[List[Descriptor]] = None,
@@ -164,6 +140,18 @@ class PredictorReport(Serializable['PredictorReport'], Report):
         self.descriptors = descriptors or []
         self.model_summaries = model_summaries or []
         self.session: Optional[Session] = session
+
+    def in_progress(self) -> bool:
+        """Whether report generation is in progress."""
+        return self.status == "PENDING"
+
+    def succeeded(self) -> bool:
+        """Whether report generation has completed successfully."""
+        return self.status == "OK"
+
+    def failed(self) -> bool:
+        """Whether report generation has completed unsuccessfully."""
+        return self.status == "ERROR"
 
     def post_build(self):
         """Modify a PredictorReport object in-place after deserialization."""

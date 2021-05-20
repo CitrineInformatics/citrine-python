@@ -180,7 +180,7 @@ def valid_simple_ml_predictor_data(valid_gem_data_source_dict):
     z = RealDescriptor("z", 0, 100, "")
     return dict(
         module_type='PREDICTOR',
-        status='VALID',
+        status='READY',
         status_info=[],
         archived=False,
         display_name='ML predictor',
@@ -206,7 +206,7 @@ def valid_auto_ml_predictor_data(valid_gem_data_source_dict):
     z = RealDescriptor("z", 0, 100, "")
     return dict(
         module_type='PREDICTOR',
-        status='VALID',
+        status='READY',
         status_info=[],
         archived=False,
         display_name='AutoML predictor',
@@ -231,7 +231,7 @@ def old_auto_ml_predictor_data(valid_gem_data_source_dict):
     z = RealDescriptor("z", 0, 100, "")
     return dict(
         module_type='PREDICTOR',
-        status='VALID',
+        status='READY',
         status_info=[],
         archived=False,
         display_name='AutoML predictor',
@@ -254,7 +254,7 @@ def valid_graph_predictor_data():
     from citrine.informatics.descriptors import RealDescriptor
     return dict(
         module_type='PREDICTOR',
-        status='VALID',
+        status='READY',
         status_info=[],
         archived=False,
         display_name='Graph predictor',
@@ -291,7 +291,7 @@ def valid_deprecated_expression_predictor_data():
     shear_modulus = RealDescriptor('Property~Shear modulus', lower_bound=0, upper_bound=100, units='GPa')
     return dict(
         module_type='PREDICTOR',
-        status='VALID',
+        status='READY',
         status_info=[],
         archived=False,
         display_name='Expression predictor',
@@ -319,7 +319,7 @@ def valid_expression_predictor_data():
     poissons_ratio = RealDescriptor('Property~Poisson\'s ratio', lower_bound=-1, upper_bound=0.5, units='')
     return dict(
         module_type='PREDICTOR',
-        status='VALID',
+        status='READY',
         status_info=[],
         archived=False,
         display_name='Expression predictor',
@@ -403,19 +403,19 @@ def valid_predictor_report_data():
 
 
 @pytest.fixture
-def valid_ing_to_simple_mixture_predictor_data():
+def valid_ing_formulation_predictor_data():
     """Produce valid data used for tests."""
     from citrine.informatics.descriptors import FormulationDescriptor, RealDescriptor
     return dict(
         module_type='PREDICTOR',
-        status='VALID',
+        status='READY',
         status_info=[],
         archived=False,
-        display_name='Ingredients to simple mixture predictor',
+        display_name='Ingredients to formulation predictor',
         id=str(uuid.uuid4()),
         config=dict(
             type='IngredientsToSimpleMixture',
-            name='Ingredients to simple mixture predictor',
+            name='Ingredients to formulation predictor',
             description='Constructs mixtures from ingredients',
             output=FormulationDescriptor('simple mixture').dump(),
             id_to_quantity={
@@ -438,7 +438,7 @@ def valid_generalized_mean_property_predictor_data():
     formulation_descriptor = FormulationDescriptor('simple mixture')
     return dict(
         module_type='PREDICTOR',
-        status='VALID',
+        status='READY',
         status_info=[],
         archived=False,
         display_name='Mean property predictor',
@@ -467,7 +467,7 @@ def valid_mean_property_predictor_data():
     density = RealDescriptor(key='density', lower_bound=0, upper_bound=100, units='g/cm^3')
     return dict(
         module_type='PREDICTOR',
-        status='VALID',
+        status='READY',
         status_info=[],
         archived=False,
         display_name='Mean property predictor',
@@ -493,7 +493,7 @@ def valid_label_fractions_predictor_data():
     from citrine.informatics.descriptors import FormulationDescriptor
     return dict(
         module_type='PREDICTOR',
-        status='VALID',
+        status='READY',
         status_info=[],
         archived=False,
         display_name='Label fractions predictor',
@@ -514,7 +514,7 @@ def valid_ingredient_fractions_predictor_data():
     from citrine.informatics.descriptors import FormulationDescriptor
     return dict(
         module_type='PREDICTOR',
-        status='VALID',
+        status='READY',
         status_info=[],
         archived=False,
         display_name='Ingredient fractions predictor',
@@ -594,7 +594,7 @@ def valid_simple_mixture_predictor_data():
     output_formulation = FormulationDescriptor('output formulation')
     return dict(
         module_type='PREDICTOR',
-        status='VALID',
+        status='READY',
         status_info=[],
         archived=False,
         display_name='Simple mixture predictor',

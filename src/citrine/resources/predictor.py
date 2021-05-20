@@ -40,6 +40,9 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
         """
         Check if there are updates available for a predictor.
 
+        Typically these are updates to the training data. For example, a GEM Table may have
+        been re-built to include additional rows.
+
         This check does not update the predictor; it just returns the update that is available.
         To perform the update, the response should then be used to call PredictorCollection.update
 

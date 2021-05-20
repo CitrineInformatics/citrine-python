@@ -15,17 +15,16 @@ __all__ = ['Predictor']
 class Predictor(Module):
     """Module that describes the ability to compute/predict properties of materials.
 
-    Abstract type that returns the proper type given a serialized dict. subtype
+    Abstract type that returns the proper type given a serialized dict. Subtype
     based on the 'type' value of the passed in dict.
 
     """
 
-    _response_key = None
     _project_id: Optional[UUID] = None
     _session: Optional[Session] = None
-    uid = properties.Optional(properties.UUID, 'id', serializable=False)
-    """UUID of the predictor, if it has been retrieved from the platform."""
 
+    uid = properties.Optional(properties.UUID, 'id', serializable=False)
+    """:Optional[UUID]: Citrine Platform unique identifier"""
     name = properties.String('config.name')
     description = properties.Optional(properties.String(), 'config.description')
 
@@ -44,7 +43,7 @@ class Predictor(Module):
         from .graph_predictor import GraphPredictor
         from .expression_predictor import ExpressionPredictor, DeprecatedExpressionPredictor
         from .molecular_structure_featurizer import MolecularStructureFeaturizer
-        from .ingredients_to_simple_mixture_predictor import IngredientsToSimpleMixturePredictor
+        from .ingredients_to_formulation_predictor import IngredientsToFormulationPredictor
         from .generalized_mean_property_predictor import GeneralizedMeanPropertyPredictor
         from .label_fractions_predictor import LabelFractionsPredictor
         from .simple_mixture_predictor import SimpleMixturePredictor
@@ -58,7 +57,7 @@ class Predictor(Module):
             "Expression": DeprecatedExpressionPredictor,
             "AnalyticExpression": ExpressionPredictor,
             "MoleculeFeaturizer": MolecularStructureFeaturizer,
-            "IngredientsToSimpleMixture": IngredientsToSimpleMixturePredictor,
+            "IngredientsToSimpleMixture": IngredientsToFormulationPredictor,
             "GeneralizedMeanProperty": GeneralizedMeanPropertyPredictor,
             "MeanProperty": MeanPropertyPredictor,
             "LabelFractions": LabelFractionsPredictor,

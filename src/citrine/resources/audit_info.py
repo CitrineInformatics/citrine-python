@@ -8,26 +8,17 @@ from gemd.entity.dict_serializable import DictSerializable
 
 
 class AuditInfo(Serializable, DictSerializable):
-    """
-    Model that holds audit metadata. AuditInfo objects should not be created by the user.
-
-    Parameters
-    ----------
-    created_by: Optional[UUID]
-        ID of the user who created the object
-    created_at: Optional[Datetime]
-        Time, in ms since epoch, at which the object was created
-    updated_by: Optional[UUID]
-        ID of the user who most recently updated the object
-    updated_at: Optional[Datetime]
-        Time, in ms since epoch, at which the object was most recently updated
-
-    """
+    """Model that holds audit metadata. AuditInfo objects should not be created by the user."""
 
     created_by = properties.Optional(properties.UUID, 'created_by')
+    """:Optional[UUID]: ID of the user who created the object"""
     created_at = properties.Optional(properties.Datetime, 'created_at')
+    """:Optional[datetime]: Time, in ms since epoch, at which the object was created"""
     updated_by = properties.Optional(properties.UUID, 'updated_by')
+    """:Optional[UUID]: ID of the user who most recently updated the object"""
     updated_at = properties.Optional(properties.Datetime, 'updated_at')
+    """:Optional[datetime]: Time, in ms since epoch, at which the object was
+    most recently updated"""
 
     def __init__(self, created_by: Optional[UUID], created_at: Optional[datetime],
                  updated_by: Optional[UUID] = None, updated_at: Optional[datetime] = None):
