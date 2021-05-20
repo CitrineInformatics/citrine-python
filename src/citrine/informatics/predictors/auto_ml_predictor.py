@@ -42,9 +42,8 @@ class AutoMLPredictor(Resource['AutoMLPredictor'], Predictor, AIResourceMetadata
     inputs = _properties.List(_properties.Object(Descriptor), 'config.inputs')
     output = _properties.Object(Descriptor, 'output')
     training_data = _properties.List(_properties.Object(DataSource), 'config.training_data')
-    typ = _properties.String('config.type', default='AutoML', deserializable=False)
 
-    # NOTE: These could go here or in _post_dump - it's unclear which is better right now
+    typ = _properties.String('config.type', default='AutoML', deserializable=False)
     module_type = _properties.String('module_type', default='PREDICTOR')
 
     def __init__(self,

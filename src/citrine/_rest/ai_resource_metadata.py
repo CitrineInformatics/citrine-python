@@ -1,5 +1,3 @@
-from datetime import datetime  # noqa: F401
-from typing import Optional, List  # noqa: F401
 from citrine._serialization import properties
 
 
@@ -12,16 +10,19 @@ class AIResourceMetadata():
     """:Optional[datetime]: date and time at which the resource was created"""
 
     updated_by = properties.Optional(properties.UUID, 'updated_by', serializable=False)
-    """:Optional[UUID]: id of the user who most recently updated the resource, if it has been updated"""  # noqa: E501
+    """:Optional[UUID]: id of the user who most recently updated the resource,
+    if it has been updated"""
     update_time = properties.Optional(properties.Datetime, 'update_time', serializable=False)
-    """:Optional[datetime]: ate and time at which the resource was most recently updated, if it has been updated"""  # noqa: E501
+    """:Optional[datetime]: date and time at which the resource was most recently updated,
+    if it has been updated"""
 
     archived = properties.Boolean('archived', default=False)
     """:bool: whether the resource is archived (hidden but not deleted)"""
     archived_by = properties.Optional(properties.UUID, 'archived_by', serializable=False)
     """:Optional[UUID]: id of the user who archived the resource, if it has been archived"""
     archive_time = properties.Optional(properties.Datetime, 'archive_time', serializable=False)
-    """:Optional[datetime]: date and time at which the resource was archived, if it has been archived"""  # noqa: E501
+    """:Optional[datetime]: date and time at which the resource was archived,
+    if it has been archived"""
 
     experimental = properties.Boolean("experimental", serializable=False, default=True)
     """:bool: whether the resource is experimental (newer, less well-tested functionality)"""

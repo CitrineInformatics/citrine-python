@@ -21,35 +21,35 @@ class PredictorEvaluationExecution(Resource['PredictorEvaluationExecution'], Asy
 
     Parameters
     ----------
-    uid: str
-        Unique identifier of the workflow execution
     project_id: str
         Unique identifier of the project that contains the workflow execution
-    workflow_id: str
-        Unique identifier of the workflow that was executed
 
     """
 
-    _response_key = None
-
     uid: UUID = properties.UUID('id', serializable=False)
-    """UUID of the execution."""
-
+    """:UUID: Unique identifier of the workflow execution"""
     evaluator_names = properties.List(properties.String, "evaluator_names", serializable=False)
+    """:List[str]: names of the predictor evaluators that were executed. These are used
+    when calling the ``results()`` method."""
     workflow_id = properties.UUID('workflow_id', serializable=False)
+    """:UUID: Unique identifier of the workflow that was executed"""
     predictor_id = properties.UUID('predictor_id', serializable=False)
     status = properties.Optional(properties.String(), 'status', serializable=False)
+    """:Optional[str]: short description of the execution's status"""
     status_info = properties.Optional(
         properties.List(properties.String()),
         'status_info',
         serializable=False
     )
+    """:Optional[List[str]]: human-readable explanations of the status"""
     experimental = properties.Boolean("experimental", serializable=False, default=True)
+    """:bool: whether the execution is experimental (newer, less well-tested functionality)"""
     experimental_reasons = properties.Optional(
         properties.List(properties.String()),
         'experimental_reasons',
         serializable=False
     )
+    """:Optional[List[str]]: human-readable reasons why the execution is experimental"""
 
     def __init__(self):
         """This shouldn't be called, but it defines members that are set elsewhere."""
@@ -88,7 +88,8 @@ class PredictorEvaluationExecution(Resource['PredictorEvaluationExecution'], Asy
 
         Returns
         -------
-        The evaluation result from the evaluator with the given name
+        PredictorEvaluationResult
+            The evaluation result from the evaluator with the given name
 
         """
         params = {"evaluator_name": evaluator_name}

@@ -38,10 +38,9 @@ class SimpleMixturePredictor(Resource['SimpleMixturePredictor'], Predictor, AIRe
     input_descriptor = _properties.Object(FormulationDescriptor, 'config.input')
     output_descriptor = _properties.Object(FormulationDescriptor, 'config.output')
     training_data = _properties.List(_properties.Object(DataSource), 'config.training_data')
+
     typ = _properties.String('config.type', default='SimpleMixture',
                              deserializable=False)
-
-    # NOTE: These could go here or in _post_dump - it's unclear which is better right now
     module_type = _properties.String('module_type', default='PREDICTOR')
 
     def __init__(self,

@@ -15,7 +15,7 @@ from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
 from citrine._session import Session
 from citrine.resources.data_concepts import CITRINE_SCOPE
-from citrine.resources.process_template import ProcessTemplate  # noqa: F401
+from citrine.resources.process_template import ProcessTemplate
 from citrine.gemtables.columns import Column, MeanColumn, IdentityColumn, OriginalUnitsColumn
 from citrine.gemtables.rows import Row
 from citrine.gemtables.variables import Variable, IngredientIdentifierByProcessTemplateAndName, \

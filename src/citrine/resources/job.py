@@ -17,15 +17,10 @@ class JobSubmissionResponse(Resource['AraJobStatus']):
     """[ALPHA] a response to a submit-job request for the job submission framework.
 
     This is returned as a successful response from the remote service.
-
-    Parameters
-    ----------
-    job_id: UUID
-        job id of the of a job submission request
-
     """
 
     job_id = properties.UUID("job_id")
+    """:UUID: job id of the job submission request"""
 
     def __init__(self, job_id: UUID):
         self.job_id = job_id
@@ -35,28 +30,19 @@ class TaskNode(Resource['TaskNode']):
     """[ALPHA] individual task status.
 
     The TaskNode describes a component of an overall job.
-
-    Parameters
-    ----------
-    id: str
-        unique identification number for the job task.
-    task_type: str
-        the type of task running
-    status: str
-        the last reported status of this particular task.
-        One of "Submitted", "Pending", "Running", "Success", or "Failure".
-    dependencies: Set[str]
-        all the tasks that this task is dependent on.
-    failure_reason: Optional[str]
-        if a task has failed, the failure reason will be in this parameter.
-
     """
 
     id = properties.String("id")
+    """:str: unique identification number for the job task"""
     task_type = properties.String("task_type")
+    """:str: the type of task running"""
     status = properties.String("status")
+    """:str: The last reported status of this particular task.
+    One of "Submitted", "Pending", "Running", "Success", or "Failure"."""
     dependencies = PropertySet(String(), "dependencies")
+    """:Set[str]: all the tasks that this task is dependent on"""
     failure_reason = properties.Optional(String(), "failure_reason")
+    """:str: if a task has failed, the failure reason will be in this parameter"""
 
     def __init__(
             self,
@@ -77,25 +63,16 @@ class JobStatusResponse(Resource['JobStatusResponse']):
     """[ALPHA] a response to a job status check.
 
     The JobStatusResponse summarizes the status for the entire job.
-
-    Parameters
-    ----------
-    job_type: str
-        the type of job for this status report
-    status: str
-        the actual status of the job.
-        One of "Running", "Success", or "Failure".
-    tasks: List[TaskNode]
-        all of the constituent task required to complete this job
-    output: Optional[Map[String,String]]
-        job output properties and results
-
     """
 
     job_type = properties.String("job_type")
+    """:str: the type of job for this status report"""
     status = properties.String("status")
+    """:str: The status of the job. One of "Running", "Success", or "Failure"."""
     tasks = properties.List(Object(TaskNode), "tasks")
+    """:List[TaskNode]: all of the constituent task required to complete this job"""
     output = properties.Optional(properties.Mapping(String, String), 'output')
+    """:Optional[dict[str, str]]: job output properties and results"""
 
     def __init__(
             self,
