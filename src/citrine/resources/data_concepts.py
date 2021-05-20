@@ -64,7 +64,8 @@ class DataConcepts(PolymorphicSerializable['DataConcepts'], DictSerializable, AB
     """
     Fields that are added to the gemd data objects when they are used in this client
 
-    * AuditInfo contains who/when information about the resource on the citrine platform
+    * audit_info contains who/when information about the resource on the citrine platform
+    * dataset is the unique Citrine id of the dataset that owns this resource
     """
 
     def __init__(self, typ: str):
