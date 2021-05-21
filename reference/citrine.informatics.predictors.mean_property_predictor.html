@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>citrine.informatics.predictors.mean_property_predictor module &mdash; Citrine Python 0.128.2 documentation</title>
+  <title>citrine.informatics.predictors.mean_property_predictor module &mdash; Citrine Python 0.129.2 documentation</title>
   
 
   
@@ -71,7 +71,7 @@
             
             
               <div class="version">
-                0.128.2
+                0.129.2
               </div>
             
           
@@ -199,7 +199,8 @@ If <code class="docutils literal notranslate"><span class="pre">True</span></cod
 entire dataset is used.
 If <code class="docutils literal notranslate"><span class="pre">True</span></code> and a default is specified in <code class="docutils literal notranslate"><span class="pre">default_properties</span></code>, then the specified
 default is used in place of missing values.</p></li>
-<li><p><strong>label</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Optional label</p></li>
+<li><p><strong>label</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Only ingredients with this label will be counted in calculating the generalized mean.
+If <code class="docutils literal notranslate"><span class="pre">None</span></code> (default) all ingredients will be counted.</p></li>
 <li><p><strong>training_data</strong> (<em>Optional</em><em>[</em><em>List</em><em>[</em><a class="reference internal" href="citrine.informatics.data_sources.html#citrine.informatics.data_sources.DataSource" title="citrine.informatics.data_sources.DataSource"><em>DataSource</em></a><em>]</em><em>]</em>) – Sources of training data. Each can be either a CSV or an GEM Table. Candidates from
 multiple data sources will be combined into a flattened list and de-duplicated by uid and
 identifiers. De-duplication is performed if a uid or identifier is shared between two or
