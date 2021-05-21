@@ -216,6 +216,7 @@ def test_default_for_material(collection: TableConfigCollection, session):
         material='my_id',
         name='my_name',
         description='my_description',
+        algorithm=TableBuildAlgorithm.SINGLE_ROW
     )
     assert 1 == session.num_calls
     assert session.last_call == FakeCall(
@@ -224,6 +225,7 @@ def test_default_for_material(collection: TableConfigCollection, session):
         params={
             'id': 'my_id',
             'scope': CITRINE_SCOPE,
+            'algorithm': TableBuildAlgorithm.SINGLE_ROW.value,
             'name': 'my_name',
             'description': 'my_description'
         }

@@ -567,6 +567,7 @@ def test_delete_missing_uid(dataset):
     with pytest.raises(ValueError):
         dataset.delete(obj)
 
+
 def test_batch_delete(dataset):
     job_resp = {
         'job_id': '1234'
@@ -621,37 +622,8 @@ def test_batch_delete(dataset):
 
     assert first_failure == (LinkByUID('somescope', 'abcd-1234'), expected_api_error)
 
-    # And again with tuples of (scope, id)
-    session.set_responses(job_resp, failed_job_resp)
-    del_resp = dataset.gemd_batch_delete([LinkByUID('id',
-                                                    '16fd2706-8baf-433b-82eb-8c7fada847da')])
-    assert len(del_resp) == 1
-    first_failure = del_resp[0]
-
-    assert first_failure == (LinkByUID('somescope', 'abcd-1234'), expected_api_error)
-
-    # And again with UUID-like strings
-    session.set_responses(job_resp, failed_job_resp)
-    del_resp = dataset.gemd_batch_delete(['16fd2706-8baf-433b-82eb-8c7fada847da'])
-    assert len(del_resp) == 1
-    first_failure = del_resp[0]
-
-    assert first_failure == (LinkByUID('somescope', 'abcd-1234'), expected_api_error)
-
-    # And again with a Base Entity
-    session.set_responses(job_resp, failed_job_resp)
-    del_resp = dataset.gemd_batch_delete([ProcessSpec(name='PS', uids={"foof": "1"})])
-    assert len(del_resp) == 1
-    first_failure = del_resp[0]
-
-    assert first_failure == (LinkByUID('somescope', 'abcd-1234'), expected_api_error)
-
 
 def test_batch_delete_bad_input(dataset):
-
-    with pytest.raises(TypeError):
-        dataset.gemd_batch_delete(['hiya!'])
-
     with pytest.raises(TypeError):
         dataset.gemd_batch_delete([False])
 
