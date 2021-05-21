@@ -30,7 +30,8 @@ class MeanPropertyPredictor(
     properties: List[RealDescriptor]
         List of descriptors to featurize
     p: int
-        Power of the generalized mean. Only integer powers are supported.
+        Power of the `generalized mean <https://en.wikipedia.org/wiki/Generalized_mean>`_.
+        Only integer powers are supported.
     impute_properties: bool
         Whether to impute missing ingredient properties.
         If ``False`` all ingredients must define values for all featurized properties.
@@ -69,9 +70,8 @@ class MeanPropertyPredictor(
     default_properties = _properties.Optional(
         _properties.Mapping(_properties.String, _properties.Float), 'config.default_properties')
     label = _properties.Optional(_properties.String, 'config.label')
-    typ = _properties.String('config.type', default='MeanProperty', deserializable=False)
 
-    # NOTE: These could go here or in _post_dump - it's unclear which is better right now
+    typ = _properties.String('config.type', default='MeanProperty', deserializable=False)
     module_type = _properties.String('module_type', default='PREDICTOR')
 
     def __init__(self,

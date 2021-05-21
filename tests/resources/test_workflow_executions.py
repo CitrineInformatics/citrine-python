@@ -97,26 +97,18 @@ def test_workflow_execution_candidates(workflow_execution, example_candidates, s
     assert session.last_call == FakeCall(method='GET', path=expected_path, params={"page": 2, "per_page": 4})
 
 
-def test_trigger_workflow_execution(collection: WorkflowExecutionCollection, workflow_execution, session):
-    # Given
-    session.set_response(workflow_execution.dump())
-
+def test_deprecated_calls(collection: WorkflowExecutionCollection, workflow_execution, session):
     # When
     score = MLIScoreFactory()
-    actual_execution = collection.trigger(score)
+    # triggering legacy Workflows has been removed
+    with pytest.raises(NotImplementedError):
+        actual_execution = collection.trigger(score)
 
-    # Then
-    assert actual_execution.uid == workflow_execution.uid
-    expected_path = '/projects/{}/workflows/{}/executions'.format(
-        collection.project_id,
-        collection.workflow_id,
-    )
-    assert session.last_call == FakeCall(
-        method='POST',
-        path=expected_path,
-        json=score.dump()
-    )
-
+    with pytest.raises(NotImplementedError):
+        actual_execution = collection.update(workflow_execution)
+    with pytest.raises(NotImplementedError):
+        actual_execution = collection.register(workflow_execution)
+    
 
 def test_workflow_success_status():
     status = WorkflowExecutionStatus('Succeeded', None)

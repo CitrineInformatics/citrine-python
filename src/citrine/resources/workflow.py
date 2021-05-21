@@ -40,6 +40,18 @@ class WorkflowCollection(Collection[Workflow]):
         self.project_id = project_id
         self.session: Session = session
 
+    def register(self, model: CreationType) -> CreationType:
+        """Legacy workflows are deprecated and can not be registered."""
+        msg = "Legacy Workflows are deprecated and can not be registered. " \
+              "Use project.design_workflows instead"
+        raise NotImplementedError(msg)
+
+    def update(self, model: CreationType) -> CreationType:
+        """Legacy workflows are deprecated and can not be updated."""
+        msg = "Legacy Workflows are deprecated and can not be updated. " \
+              "Use project.design_workflows instead"
+        raise NotImplementedError(msg)
+
     def list(self,
              page: Optional[int] = None,
              per_page: int = 100) -> Iterable[Workflow]:

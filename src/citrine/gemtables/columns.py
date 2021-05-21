@@ -1,5 +1,5 @@
 """Column definitions for GEM Tables."""
-from typing import Type, Optional, List  # noqa: F401
+from typing import Type, Optional, List
 from abc import abstractmethod
 
 from gemd.enumeration.base_enumeration import BaseEnumeration

@@ -60,8 +60,11 @@ class CsvColumnInfo(Serializable):
     """The info for a CSV Column, contains the name, recommended and exact bounds."""
 
     name = String('name')
+    """:str: name of the column"""
     bounds = Object(BaseBounds, 'bounds')
+    """:BaseBounds: recommended bounds of the column (might include some padding)"""
     exact_range_bounds = Object(BaseBounds, 'exact_range_bounds')
+    """:BaseBounds: exact bounds of the column"""
 
     def __init__(self, name: String, bounds: BaseBounds,
                  exact_range_bounds: BaseBounds):  # pragma: no cover
@@ -75,7 +78,9 @@ class CsvValidationData(FileProcessingData, Serializable):
 
     columns = PropertyOptional(PropertyList(Object(CsvColumnInfo)), 'columns',
                                override=True)
+    """:Optional[List[CsvColumnInfo]]: all of the columns in the CSV"""
     record_count = Integer('record_count')
+    """:int: the number of rows in the CSV"""
 
     def __init__(self, columns: List[CsvColumnInfo],
                  record_count: int):  # pragma: no cover

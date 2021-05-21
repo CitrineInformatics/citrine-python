@@ -26,25 +26,19 @@ class GemTable(Resource['Table']):
     While data objects can represent complex materials data, the format
     is NOT conducive to analysis and machine learning. GEM Tables, however,
     can be used to 'flatten' data objects into useful projections.
-
-    Attributes
-    ----------
-    uid: UUID
-        Unique uuid4 identifier of this GEM Table.
-    version: str
-        Version number of the GEM Table. The first table built from a given config is version 1.
-    download_url: int
-        Url pointing to the location of the GEM Table's contents.
-        This is an expiring download link and is not unique.
-
     """
 
     _response_key = 'table'
     _resource_type = ResourceTypeEnum.TABLE
 
     uid = properties.Optional(properties.UUID(), 'id')
+    """:Optional[UUID]: unique Citrine id of this GEM Table"""
     version = properties.Optional(properties.Integer, 'version')
+    """:Optional[int]: Version number of the GEM Table.
+    The first table built from a given config is version 1."""
     download_url = properties.Optional(properties.String, 'signed_download_url')
+    """:Optional[str]: Url pointing to the location of the GEM Table's contents.
+    This is an expiring download link and is not unique."""
 
     def __init__(self):
         self.uid = None

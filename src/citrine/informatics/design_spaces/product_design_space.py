@@ -31,7 +31,6 @@ class ProductDesignSpace(Resource['ProductDesignSpace'], DesignSpace, AIResource
 
     """
 
-    _response_key = None
     _resource_type = ResourceTypeEnum.MODULE
 
     subspaces = properties.List(properties.Union(
@@ -40,11 +39,10 @@ class ProductDesignSpace(Resource['ProductDesignSpace'], DesignSpace, AIResource
     dimensions = properties.Optional(
         properties.List(properties.Object(Dimension)), 'config.dimensions'
     )
-    typ = properties.String('config.type', default='ProductDesignSpace', deserializable=False)
     # Product design spaces should not be embedded in other subspaces, hence status is required
     status = properties.String('status', serializable=False)
 
-    # NOTE: These could go here or in _post_dump - it's unclear which is better right now
+    typ = properties.String('config.type', default='ProductDesignSpace', deserializable=False)
     module_type = properties.String('module_type', default='DESIGN_SPACE')
 
     def __init__(self, *,

@@ -20,9 +20,13 @@ class Processor(Module):
 
     """
 
-    _response_key = None
     _project_id: Optional[UUID] = None
     _session: Optional[Session] = None
+
+    uid = properties.Optional(properties.UUID, 'id', serializable=False)
+    """:Optional[UUID]: Citrine Platform unique identifier"""
+    name = properties.String('config.name')
+    description = properties.Optional(properties.String(), 'config.description')
 
     @classmethod
     def get_type(cls, data) -> Type['Processor']:
@@ -48,9 +52,14 @@ class Processor(Module):
 class GridProcessor(Resource['GridProcessor'], Processor, AIResourceMetadata):
     """Generates samples from the Cartesian product of finite dimensions, then scans over them.
 
-    To create a finite set of materials from continuous dimensions, a uniform grid is created
-    between the lower and upper bounds of the descriptor.
-    The number of points along each dimension is specified by `grid_sizes`.
+    For each continuous dimensions, a uniform grid is created between the lower and upper bounds of
+    the descriptor. The number of points along each continuous dimension is specified.
+    by ``grid_sizes``. No such discretization is necessary for enumerated dimensions,
+    because they are finite.
+
+    Be careful when using a grid processor, as the number of points grows exponentially with
+    the number of dimensions. For high-dimensional design spaces, a continuous processor
+    is often preferable.
 
     Parameters
     ----------
@@ -59,23 +68,19 @@ class GridProcessor(Resource['GridProcessor'], Processor, AIResourceMetadata):
     description: str
         description of the processor
     grid_sizes: dict[str, int]
-        the number of points to select along each dimension of the grid, by dimension name
+        the number of points to select along each continuous dimension, by dimension name
 
     """
 
     _resource_type = ResourceTypeEnum.MODULE
 
-    uid = properties.Optional(properties.UUID, 'id', serializable=False)
-    name = properties.String('config.name')
-    description = properties.Optional(properties.String(), 'config.description')
-    typ = properties.String('config.type', default='Grid', deserializable=False)
     grid_sizes = properties.Mapping(
         properties.String,
         properties.Integer,
         'config.grid_dimensions'
     )
 
-    # NOTE: These could go here or in _post_dump - it's unclear which is better right now
+    typ = properties.String('config.type', default='Grid', deserializable=False)
     module_type = properties.String('module_type', default='PROCESSOR')
 
     def _attrs(self) -> List[str]:
@@ -117,13 +122,9 @@ class EnumeratedProcessor(Resource['EnumeratedProcessor'], Processor, AIResource
 
     _resource_type = ResourceTypeEnum.MODULE
 
-    uid = properties.Optional(properties.UUID, 'id', serializable=False)
-    name = properties.String('config.name')
-    description = properties.Optional(properties.String(), 'config.description')
     max_candidates = properties.Integer('config.max_size')
-    typ = properties.String('config.type', default='Enumerated', deserializable=False)
 
-    # NOTE: These could go here or in _post_dump - it's unclear which is better right now
+    typ = properties.String('config.type', default='Enumerated', deserializable=False)
     module_type = properties.String('module_type', default='PROCESSOR')
 
     def _attrs(self) -> List[str]:
@@ -180,13 +181,9 @@ class MonteCarloProcessor(Resource['GridProcessor'], Processor, AIResourceMetada
 
     _resource_type = ResourceTypeEnum.MODULE
 
-    uid = properties.Optional(properties.UUID, 'id', serializable=False)
-    name = properties.String('config.name')
-    description = properties.Optional(properties.String(), 'config.description')
-    typ = properties.String('config.type', default='ContinuousSearch', deserializable=False)
     max_candidates = properties.Optional(properties.Integer, 'config.max_candidates')
 
-    # NOTE: These could go here or in _post_dump - it's unclear which is better right now
+    typ = properties.String('config.type', default='ContinuousSearch', deserializable=False)
     module_type = properties.String('module_type', default='PROCESSOR')
 
     def _attrs(self) -> List[str]:

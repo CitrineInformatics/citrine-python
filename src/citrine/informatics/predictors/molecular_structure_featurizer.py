@@ -84,9 +84,8 @@ class MolecularStructureFeaturizer(Resource['MolecularStructureFeaturizer'], Pre
     descriptor = _properties.Object(Descriptor, 'config.descriptor')
     features = _properties.List(_properties.String, 'config.features')
     excludes = _properties.List(_properties.String, 'config.excludes')
-    typ = _properties.String('config.type', default='MoleculeFeaturizer', deserializable=False)
 
-    # NOTE: These could go here or in _post_dump - it's unclear which is better right now
+    typ = _properties.String('config.type', default='MoleculeFeaturizer', deserializable=False)
     module_type = _properties.String('module_type', default='PREDICTOR')
 
     def __init__(self,
