@@ -41,7 +41,8 @@ class MeanPropertyPredictor(
         If ``True`` and a default is specified in ``default_properties``, then the specified
         default is used in place of missing values.
     label: Optional[str]
-        Optional label
+        Only ingredients with this label will be counted in calculating the generalized mean.
+        If ``None`` (default) all ingredients will be counted.
     training_data: Optional[List[DataSource]]
         Sources of training data. Each can be either a CSV or an GEM Table. Candidates from
         multiple data sources will be combined into a flattened list and de-duplicated by uid and
