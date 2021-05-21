@@ -210,7 +210,7 @@ def test_default_for_material(collection: TableConfigCollection, session):
             ]
         ],
     }
-    # Specify by Citrine ID
+
     session.responses.append(dummy_resp)
     collection.default_for_material(
         material='my_id',
@@ -228,71 +228,8 @@ def test_default_for_material(collection: TableConfigCollection, session):
             'description': 'my_description'
         }
     )
-    # Specify by id with custom scope, throwing a warning
-    session.calls.clear()
-    session.responses.append(dummy_resp)
-    with warnings.catch_warnings(record=True) as caught:
-        collection.default_for_material(
-            material='my_id',
-            scope='my_scope',
-            name='my_name',
-            description='my_description'
-        )
-        assert len(caught) == 1
-        assert issubclass(caught[0].category, DeprecationWarning)
-    assert 1 == session.num_calls
-    assert session.last_call == FakeCall(
-        method="GET",
-        path="projects/{}/table-configs/default".format(project_id),
-        params={
-            'id': 'my_id',
-            'scope': 'my_scope',
-            'name': 'my_name',
-            'description': 'my_description'
-        }
-    )
-    # Specify by MaterialRun
-    session.calls.clear()
-    session.responses.append(dummy_resp)
-    collection.default_for_material(
-        material=MaterialRun('foo', uids={'scope': 'id'}),
-        name='my_name',
-        description='my_description',
-        algorithm=TableBuildAlgorithm.FORMULATIONS
-    )
-    assert 1 == session.num_calls
-    assert session.last_call == FakeCall(
-        method="GET",
-        path="projects/{}/table-configs/default".format(project_id),
-        params={
-            'id': 'id',
-            'scope': 'scope',
-            'name': 'my_name',
-            'description': 'my_description',
-            'algorithm': TableBuildAlgorithm.FORMULATIONS.value
-        }
-    )
-    # Specify by LinkByUID
-    session.calls.clear()
-    session.responses.append(dummy_resp)
-    collection.default_for_material(
-        material=LinkByUID(scope="scope", id="id"),
-        name='my_name',
-        description='my_description',
-    )
-    assert 1 == session.num_calls
-    assert session.last_call == FakeCall(
-        method="GET",
-        path="projects/{}/table-configs/default".format(project_id),
-        params={
-            'id': 'id',
-            'scope': 'scope',
-            'name': 'my_name',
-            'description': 'my_description'
-        }
-    )
 
-    # And we allowed for the more forgiving call structure, so test it.
+    # We allowed for the more forgiving call structure, so test it.
     session.calls.clear()
     session.responses.append(dummy_resp)
     collection.default_for_material(

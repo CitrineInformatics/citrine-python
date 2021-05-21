@@ -1,5 +1,6 @@
 """Top-level class for all data concepts objects and collections thereof."""
 from abc import abstractmethod, ABC
+from warnings import warn
 from typing import TypeVar, Type, List, Union, Optional, Iterator
 from uuid import UUID, uuid4
 
@@ -210,6 +211,26 @@ class DataConcepts(PolymorphicSerializable['DataConcepts'], DictSerializable, AB
     def as_dict(self) -> dict:
         """Dump to a dictionary (useful for interoperability with gemd)."""
         return self.dump()
+
+
+def _make_link_by_uid(gemd_object_rep: Union[str, UUID, DataConcepts, LinkByUID],
+                      scope: Optional[str] = None) -> LinkByUID:
+    if scope is not None:
+        warn("\'scope\' as a separate argument is deprecated when creating a link to a GEMD"
+             "object. To specify a custom scope, use a LinkByUID.", DeprecationWarning)
+    if isinstance(gemd_object_rep, DataConcepts):
+        if not gemd_object_rep.uids:  # an empty dictionary
+            raise ValueError('GEMD object must have at least one uid to construct a link.')
+        return LinkByUID.from_entity(gemd_object_rep, name=CITRINE_SCOPE)
+    elif isinstance(gemd_object_rep, LinkByUID):
+        return gemd_object_rep
+    elif isinstance(gemd_object_rep, (str, UUID)):
+        uid = str(gemd_object_rep)
+        scope = scope or CITRINE_SCOPE
+        return LinkByUID(scope, uid)
+    else:
+        raise TypeError("Link can only created from a GEMD DataConcepts object, LinkByUID, str,"
+                        "or UUID. Instead got {}.".format(gemd_object_rep))
 
 
 ResourceType = TypeVar('ResourceType', bound='DataConcepts')

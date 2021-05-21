@@ -1,5 +1,4 @@
 from copy import copy
-from warnings import warn
 from typing import List, Union, Optional, Tuple
 from uuid import UUID
 
@@ -14,7 +13,7 @@ from citrine._rest.collection import Collection
 from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
 from citrine._session import Session
-from citrine.resources.data_concepts import CITRINE_SCOPE
+from citrine.resources.data_concepts import CITRINE_SCOPE, _make_link_by_uid
 from citrine.resources.process_template import ProcessTemplate
 from citrine.gemtables.columns import Column, MeanColumn, IdentityColumn, OriginalUnitsColumn
 from citrine.gemtables.rows import Row
@@ -346,26 +345,10 @@ class TableConfigCollection(Collection[TableConfig]):
 
 
         """
-        if scope is not None:
-            warn("\'scope\' is deprecated in default_for_material() and will soon be removed. "
-                 "To specify a custom scope, use a LinkByUID object.", DeprecationWarning)
-        if isinstance(material, MaterialRun):
-            uid_tup = next(iter(material.uids.items()), None)
-            if uid_tup is None:
-                raise ValueError('Material must have a uid to build default table config.')
-            scope, uid = uid_tup
-        elif isinstance(material, LinkByUID):
-            scope, uid = material.scope, material.id
-        elif isinstance(material, (str, UUID)):
-            uid = str(material)
-            scope = scope or CITRINE_SCOPE
-        else:
-            raise TypeError(  # pragma: no cover
-                'material must be one of MaterialRun, LinkByUID, str, or UUID but was {}'
-                .format(type(material)))
+        link = _make_link_by_uid(material, scope)
         params = {
-            'id': uid,
-            'scope': scope,
+            'id': link.id,
+            'scope': link.scope,
             'name': name,
         }
         if description is not None:
