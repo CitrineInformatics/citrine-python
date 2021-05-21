@@ -172,7 +172,7 @@ class TableConfig(Resource["TableConfig"]):
         )
 
     def add_all_ingredients(self, *,
-                            process_template: LinkByUID,
+                            process_template: Union[LinkByUID, ProcessTemplate, str, UUID],
                             project,
                             quantity_dimension: IngredientQuantityDimension,
                             scope: str = CITRINE_SCOPE,
@@ -186,8 +186,8 @@ class TableConfig(Resource["TableConfig"]):
 
         Parameters
         ------------
-        process_template: LinkByUID
-            scope and id of a registered process template
+        process_template: Union[LinkByUID, ProcessTemplate, str, UUID]
+            representation of a registered process template
         project: Project
             a project that has access to the process template
         quantity_dimension: IngredientQuantityDimension
@@ -204,8 +204,8 @@ class TableConfig(Resource["TableConfig"]):
             IngredientQuantityDimension.VOLUME: "volume fraction",
             IngredientQuantityDimension.NUMBER: "number fraction"
         }
-        process: ProcessTemplate = project.process_templates.get(
-            uid=process_template.id, scope=process_template.scope)
+        link = _make_link_by_uid(process_template)
+        process: ProcessTemplate = project.process_templates.get(uid=link.id, scope=link.scope)
         if not process.allowed_names:
             raise RuntimeError(
                 "Cannot add ingredients for process template \'{}\' because it has no defined "
@@ -215,17 +215,17 @@ class TableConfig(Resource["TableConfig"]):
         new_columns = []
         for name in process.allowed_names:
             identifier_variable = IngredientIdentifierByProcessTemplateAndName(
-                name='_'.join([process.name, name, str(hash(process_template.id + name + scope))]),
+                name='_'.join([process.name, name, str(hash(link.id + name + scope))]),
                 headers=[process.name, name, scope],
-                process_template=process_template,
+                process_template=link,
                 ingredient_name=name,
                 scope=scope
             )
             quantity_variable = IngredientQuantityByProcessAndName(
                 name='_'.join([process.name, name, str(hash(
-                    process_template.id + name + dimension_display[quantity_dimension]))]),
+                    link.id + name + dimension_display[quantity_dimension]))]),
                 headers=[process.name, name, dimension_display[quantity_dimension]],
-                process_template=process_template,
+                process_template=link,
                 ingredient_name=name,
                 quantity_dimension=quantity_dimension,
                 unit=unit
