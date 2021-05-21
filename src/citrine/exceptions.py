@@ -65,10 +65,8 @@ class NonRetryableHttpException(NonRetryableException):
                     self.api_error = None
                     if response.text is not None:
                         self.detailed_error_info.append(response.text)
-
-            # TODO: throw specific exception in DictSerializable when deserialization
-            #  fails due to from JSON keys
             except (TypeError, ValueError):
+                # If the response does not have a json dictionary, use its text
                 self.api_error = None
                 if response.text is not None:
                     self.detailed_error_info.append(response.text)
