@@ -1,6 +1,6 @@
 """Resources that represent both individual and collections of workflow executions."""
 from functools import partial
-from typing import Optional, Iterable
+from typing import Optional, Iterable, TypeVar
 from uuid import UUID
 from warnings import warn
 
@@ -19,6 +19,8 @@ from citrine.resources.predictor_evaluation_execution import (
     PredictorEvaluationExecution,
     PredictorEvaluationExecutionCollection
 )
+
+CreationType = TypeVar('CreationType', bound='Resource')
 
 
 class WorkflowExecution(Resource['WorkflowExecution'], Pageable):
@@ -136,6 +138,18 @@ class WorkflowExecutionCollection(Collection[WorkflowExecution]):
         self.workflow_id: Optional[UUID] = workflow_id
         self.session: Optional[Session] = session
 
+    def register(self, model: CreationType) -> CreationType:
+        """Legacy workflow executions are deprecated and can not be registered."""
+        msg = "Legacy Workflow Executions are deprecated and can not be registered. " \
+              "Use project.design_workflows or project.predictor_evaluation_workflows instead"
+        raise NotImplementedError(msg)
+
+    def update(self, model: CreationType) -> CreationType:
+        """Legacy workflow executions are deprecated and can not be updated."""
+        msg = "Legacy Workflow Executions are deprecated and can not be updated. " \
+              "Use project.design_workflows or project.predictor_evaluation_workflows instead"
+        raise NotImplementedError(msg)
+
     def build(self, data: dict) -> WorkflowExecution:
         """Build an individual WorkflowExecution."""
         execution = WorkflowExecution.build(data)
@@ -146,8 +160,10 @@ class WorkflowExecutionCollection(Collection[WorkflowExecution]):
         return execution
 
     def trigger(self, execution_input: [Score, ModuleRef]) -> WorkflowExecution:
-        """Create a new workflow execution."""
-        return self.register(execution_input)
+        """Legacy workflow executions are deprecated and can not be triggered."""
+        msg = "Legacy Workflow Executions are deprecated and can not be triggered. " \
+              "Use project.design_workflows or project.predictor_evaluation_workflows instead"
+        raise NotImplementedError(msg)
 
 
 class WorkflowExecutionStatus(Resource['WorkflowExecutionStatus']):
