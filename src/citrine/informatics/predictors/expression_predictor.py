@@ -1,5 +1,6 @@
 from typing import Optional, Mapping
 from warnings import warn
+from deprecation import deprecated
 
 from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties as _properties
@@ -67,6 +68,7 @@ class ExpressionPredictor(Resource['ExpressionPredictor'], Predictor, AIResource
         return '<ExpressionPredictor {!r}>'.format(self.name)
 
 
+@deprecated(deprecated_in="0.100.0", removed_in="1.0.0", details="Use ExpressionPredictor instead.")
 class DeprecatedExpressionPredictor(Resource['DeprecatedExpressionPredictor'],
                                     Predictor, AIResourceMetadata):
     """[DEPRECATED] A predictor that computes an output from an analytic expression.
