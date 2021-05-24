@@ -3,7 +3,6 @@ from abc import abstractmethod, ABC
 from typing import TypeVar, Type, List, Union, Optional, Iterator
 from uuid import UUID, uuid4
 
-import deprecation
 from gemd.entity.dict_serializable import DictSerializable
 from gemd.entity.link_by_uid import LinkByUID
 from gemd.json import GEMDJson
@@ -516,85 +515,6 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         path = self._get_path(ignore_dataset=self.dataset_id is None) + "/{}/{}".format(scope, uid)
         data = self.session.get_resource(path)
         return self.build(data)
-
-    @deprecation.deprecated(details="filter_by_tags is deprecated due to poor "
-                                    "performance. Please use list_by_tag instead.")
-    def filter_by_tags(self, tags: List[str],
-                       page: Optional[int] = None, per_page: Optional[int] = None):
-        """
-        Get all objects in the collection that match any one of a list of tags.
-
-        Parameters
-        ----------
-        tags: List[str]
-            A list of strings, each one a tag that an object can match. Currently
-            limited to a length of 1 or 0 (empty list does not filter).
-        page: Optional[int]
-            The page of results to list, 1-indexed (i.e., the first page is page=1)
-        per_page: Optional[int]
-            The number of results to list per page
-
-        Returns
-        -------
-        List[ResourceType]
-            Every object in this collection that matches one of the tags.
-            See (insert link) for a discussion of how to match on tags.
-
-        """
-        if type(tags) == str:
-            tags = [tags]
-        if len(tags) > 1:
-            raise NotImplementedError('Searching by multiple tags is not currently supported.')
-        params = {'tags': tags}
-        if self.dataset_id is not None:
-            params['dataset_id'] = str(self.dataset_id)
-        if page is not None:
-            params['page'] = page
-        if per_page is not None:
-            params['per_page'] = per_page
-
-        response = self.session.get_resource(
-            self._get_path(ignore_dataset=True),
-            params=params)
-        return [self.build(content) for content in response["contents"]]
-
-    @deprecation.deprecated(details="filter_by_name is deprecated due to poor "
-                                    "performance. Please use list_by_name instead.")
-    def filter_by_name(self, name: str, exact: bool = False,
-                       page: Optional[int] = None, per_page: Optional[int] = None):
-        """
-        Get all objects with specified name in this dataset.
-
-        Parameters
-        ----------
-        name: str
-            case-insensitive object name prefix to search.
-        exact: bool
-            Set to True to change prefix search to exact search (but still case-insensitive).
-            Default is False.
-        page: Optional[int]
-            The page of results to list, 1-indexed (i.e., the first page is page=1)
-        per_page: Optional[int]
-            The number of results to list per page
-
-        Returns
-        -------
-        List[ResourceType]
-            List of every object in this collection whose `name` matches the search term.
-
-        """
-        if self.dataset_id is None:
-            raise RuntimeError("Must specify a dataset to filter by name.")
-        params = {'dataset_id': str(self.dataset_id), 'name': name, 'exact': exact}
-        if page is not None:
-            params['page'] = page
-        if per_page is not None:
-            params['per_page'] = per_page
-        response = self.session.get_resource(
-            # "Ignoring" dataset because it is in the query params (and required)
-            self._get_path(ignore_dataset=True) + "/filter-by-name",
-            params=params)
-        return [self.build(content) for content in response["contents"]]
 
     def list_by_name(self, name: str, exact: bool = False,
                      forward: bool = True, per_page: int = 100) -> Iterator[ResourceType]:
