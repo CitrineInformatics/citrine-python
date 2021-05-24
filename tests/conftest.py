@@ -274,8 +274,8 @@ def valid_graph_predictor_data():
                         'Property~Some metric', lower_bound=0, upper_bound=1000, units='W'
                     ).dump(),
                     aliases={
-                        "Property~X": RealDescriptor("X", lower_bound=0, upper_bound=1000).dump(),
-                        "Property~Y": RealDescriptor("Y", lower_bound=0, upper_bound=1000).dump()
+                        "Property~X": RealDescriptor("X", lower_bound=0, upper_bound=1000, units='').dump(),
+                        "Property~Y": RealDescriptor("Y", lower_bound=0, upper_bound=1000, units='').dump()
                     }
                 )
             ],
