@@ -1,12 +1,10 @@
 from typing import Optional
 from uuid import UUID
 
-from deprecation import deprecated
 from citrine._rest.resource import Resource
 from citrine._serialization import properties
 from citrine._session import Session
 from citrine.informatics.workflows.workflow import Workflow
-from citrine.resources.workflow_executions import WorkflowExecutionCollection
 from citrine.resources.design_execution import DesignExecutionCollection
 from citrine._rest.ai_resource_metadata import AIResourceMetadata
 
@@ -98,15 +96,6 @@ class DesignWorkflow(Resource['DesignWorkflow'], Workflow, AIResourceMetadata):
             config['processor_id'] = data['processor_id']
         data['config'] = config
         return data
-
-    @property
-    @deprecated(deprecated_in="0.101.0",
-                details="Use design_executions instead")
-    def executions(self) -> WorkflowExecutionCollection:
-        """Return a resource representing all visible executions of this workflow."""
-        if getattr(self, 'project_id', None) is None:
-            raise AttributeError('Cannot initialize execution without project reference!')
-        return WorkflowExecutionCollection(self.project_id, self.uid, self.session)
 
     @property
     def design_executions(self) -> DesignExecutionCollection:

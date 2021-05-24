@@ -2,7 +2,6 @@
 from typing import Optional, Dict, List, Union, Iterable, Tuple
 from uuid import UUID
 
-from deprecation import deprecated
 from gemd.entity.base_entity import BaseEntity
 from gemd.entity.link_by_uid import LinkByUID
 
@@ -43,7 +42,6 @@ from citrine.resources.property_template import PropertyTemplateCollection
 from citrine.resources.response import Response
 from citrine.resources.table_config import TableConfigCollection
 from citrine.resources.user import User
-from citrine.resources.workflow import WorkflowCollection
 
 
 class Project(Resource['Project']):
@@ -120,13 +118,6 @@ class Project(Resource['Project']):
     def descriptors(self) -> DescriptorMethods:
         """Return a resource containing a set of methods returning descriptors."""
         return DescriptorMethods(self.uid, self.session)
-
-    @property
-    @deprecated(deprecated_in="0.101.0",
-                details="Use design_workflows or predictor_evaluation_workflows instead")
-    def workflows(self) -> WorkflowCollection:
-        """Return a resource representing all visible workflows."""
-        return WorkflowCollection(self.uid, self.session)
 
     @property
     def predictor_evaluation_workflows(self) -> PredictorEvaluationWorkflowCollection:

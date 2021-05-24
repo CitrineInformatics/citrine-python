@@ -14,11 +14,6 @@ class MeanPropertyPredictor(
         Resource['MeanPropertyPredictor'], Predictor, AIResourceMetadata):
     """A predictor interface that computes mean component properties.
 
-    .. seealso::
-       If you are using a deprecated generalized mean property predictor please see
-       :class:`~citrine.informatics.predictors.generalized_mean_property_predictor.GeneralizedMeanPropertyPredictor`
-       for details on how to migrate to the new format.
-
     Parameters
     ----------
     name: str

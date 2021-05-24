@@ -29,11 +29,9 @@ class Workflow(PolymorphicSerializable['Workflow'], AsynchronousObject):
     def get_type(cls, data) -> Type['Workflow']:
         """Return the subtype."""
         from .design_workflow import DesignWorkflow
-        from .performance_workflow import PerformanceWorkflow
         from .predictor_evaluation_workflow import PredictorEvaluationWorkflow
         type_dict = {
             'DESIGN_WORKFLOW': DesignWorkflow,
-            'PERFORMANCE_WORKFLOW': PerformanceWorkflow,
             'PREDICTOR_EVALUATION_WORKFLOW': PredictorEvaluationWorkflow,
         }
         typ = type_dict.get(data['module_type'])

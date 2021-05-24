@@ -17,7 +17,6 @@ from citrine.resources.process_spec import ProcessSpec, ProcessSpecCollection
 from citrine.resources.process_template import ProcessTemplate, ProcessTemplateCollection
 from citrine.resources.property_template import PropertyTemplate, PropertyTemplateCollection
 from citrine.resources.response import Response
-from citrine.resources.workflow_executions import WorkflowExecution, WorkflowExecutionStatus
 
 arbitrary_uuid = uuid.uuid4()
 
@@ -35,11 +34,7 @@ resource_string_data = [
     (ProcessTemplate, {'name': 'foo'}, "<Process template 'foo'>"),
     (PropertyTemplate, {'name': 'foo', 'bounds': RealBounds(0, 1, '')}, "<Property template 'foo'>"),
     (ConditionTemplate, {'name': 'foo', 'bounds': RealBounds(0, 1, '')}, "<Condition template 'foo'>"),
-    (Response, {'status_code': 200}, "<Response '200'>"),
-    (WorkflowExecution,
-     {'uid': arbitrary_uuid, 'project_id': arbitrary_uuid, 'workflow_id': arbitrary_uuid, 'version_number': 1},
-     "<WorkflowExecution '{}'>".format(arbitrary_uuid)),
-    (WorkflowExecutionStatus, {'status': 'Failed', 'session': None}, "<WorkflowExecutionStatus 'Failed'>"),
+    (Response, {'status_code': 200}, "<Response '200'>")
 ]
 
 resource_type_data = [
