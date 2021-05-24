@@ -81,20 +81,6 @@ def graph_predictor() -> GraphPredictor:
 
 
 @pytest.fixture
-def deprecated_expression_predictor() -> DeprecatedExpressionPredictor:
-    """Build a DeprecatedExpressionPredictor for testing."""
-    return DeprecatedExpressionPredictor(
-        name='Expression predictor',
-        description='Computes shear modulus from Youngs modulus and Poissons ratio',
-        expression='Y / (2 * (1 + v))',
-        output=shear_modulus,
-        aliases={
-            'Y': "Property~Young's modulus",
-            'v': "Property~Poisson's ratio"
-        })
-
-
-@pytest.fixture
 def expression_predictor() -> ExpressionPredictor:
     """Build an ExpressionPredictor for testing."""
     return ExpressionPredictor(
@@ -123,22 +109,6 @@ def ing_to_formulation_predictor() -> IngredientsToFormulationPredictor:
             'solvent': {'water'},
             'solute': {'salt'}
         }
-    )
-
-
-@pytest.fixture
-def generalized_mean_property_predictor() -> GeneralizedMeanPropertyPredictor:
-    """Build a mean property predictor for testing."""
-    return GeneralizedMeanPropertyPredictor(
-        name='Mean property predictor',
-        description='Computes mean ingredient properties',
-        input_descriptor=formulation,
-        properties=['density'],
-        p=2,
-        training_data=[formulation_data_source],
-        impute_properties=True,
-        default_properties={'density': 1.0},
-        label='solvent'
     )
 
 
@@ -230,16 +200,6 @@ def test_graph_initialization(graph_predictor):
     assert str(graph_predictor) == '<GraphPredictor \'Graph predictor\'>'
 
 
-
-def test_deprecated_expression_initialization(deprecated_expression_predictor):
-    """Make sure the correct fields go to the correct places for a deprecated expression predictor."""
-    assert deprecated_expression_predictor.name == 'Expression predictor'
-    assert deprecated_expression_predictor.output.key == 'Property~Shear modulus'
-    assert deprecated_expression_predictor.expression == 'Y / (2 * (1 + v))'
-    assert deprecated_expression_predictor.aliases == {'Y': "Property~Young's modulus", 'v': "Property~Poisson's ratio"}
-    assert str(deprecated_expression_predictor) == '<DeprecatedExpressionPredictor \'Expression predictor\'>'
-
-
 def test_expression_initialization(expression_predictor):
     """Make sure the correct fields go to the correct places for an expression predictor."""
     assert expression_predictor.name == 'Expression predictor'
@@ -318,20 +278,6 @@ def test_ing_to_formulation_initialization(ing_to_formulation_predictor):
     assert str(ing_to_formulation_predictor) == expected_str
 
 
-def test_generalized_mean_property_initialization(generalized_mean_property_predictor):
-    """Make sure the correct fields go to the correct places for a mean property predictor."""
-    assert generalized_mean_property_predictor.name == 'Mean property predictor'
-    assert generalized_mean_property_predictor.input_descriptor.key == 'formulation'
-    assert generalized_mean_property_predictor.properties == ['density']
-    assert generalized_mean_property_predictor.p == 2
-    assert generalized_mean_property_predictor.impute_properties == True
-    assert generalized_mean_property_predictor.training_data == [formulation_data_source]
-    assert generalized_mean_property_predictor.default_properties == {'density': 1.0}
-    assert generalized_mean_property_predictor.label == 'solvent'
-    expected_str = '<GeneralizedMeanPropertyPredictor \'Mean property predictor\'>'
-    assert str(generalized_mean_property_predictor) == expected_str
-
-
 def test_mean_property_initialization(mean_property_predictor):
     """Make sure the correct fields go to the correct places for a mean property predictor."""
     assert mean_property_predictor.name == 'Mean property predictor'
@@ -344,27 +290,6 @@ def test_mean_property_initialization(mean_property_predictor):
     assert mean_property_predictor.label == 'solvent'
     expected_str = '<MeanPropertyPredictor \'Mean property predictor\'>'
     assert str(mean_property_predictor) == expected_str
-
-
-def test_deprecated_gmpp():
-    """Make sure deprecation warnings are issued"""
-    with warnings.catch_warnings(record=True) as caught:
-        warnings.simplefilter("always")
-        gmpp = GeneralizedMeanPropertyPredictor(
-            name='deprecated',
-            description='p as float',
-            input_descriptor=FormulationDescriptor('formulation'),
-            properties=['foo'],
-            p=2.0,
-            impute_properties=False
-        )
-        assert gmpp.p == 2
-        assert len(caught) == 2
-        for w in caught:
-            assert issubclass(w.category, DeprecationWarning)
-            msg = str(w.message)
-            assert msg.startswith('p must be an integer') or \
-                   msg.startswith('GeneralizedMeanPropertyPredictor is deprecated')
 
 
 def test_deprecated_ingredients_to_simple_mixture():

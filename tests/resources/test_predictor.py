@@ -12,7 +12,7 @@ from citrine.informatics.predictors import (
     SimpleMLPredictor,
     ExpressionPredictor,
     Predictor,
-    AutoMLPredictor, DeprecatedExpressionPredictor
+    AutoMLPredictor
 )
 from citrine.resources.predictor import PredictorCollection
 from tests.utils.session import FakeSession, FakeCall
@@ -324,4 +324,4 @@ def test_returned_predictor(valid_graph_predictor_data):
     # including nested predictors
     assert len(result.predictors) == 2
     assert isinstance(result.predictors[0], uuid.UUID)
-    assert isinstance(result.predictors[1], DeprecatedExpressionPredictor)
+    assert isinstance(result.predictors[1], ExpressionPredictor)

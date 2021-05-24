@@ -54,11 +54,6 @@ def test_graph_serialization(valid_graph_predictor_data):
     assert serialized == valid_serialization_output(graph_data_copy)
 
 
-def test_deprecated_expression_serialization(valid_deprecated_expression_predictor_data):
-    """Ensure that a serialized DeprecatedExpressionPredictor looks sane."""
-    serialization_check(valid_deprecated_expression_predictor_data, DeprecatedExpressionPredictor)
-
-
 def test_expression_serialization(valid_expression_predictor_data):
     """Ensure that a serialized ExpressionPredictor looks sane."""
     serialization_check(valid_expression_predictor_data, ExpressionPredictor)
@@ -67,11 +62,6 @@ def test_expression_serialization(valid_expression_predictor_data):
 def test_ing_to_formulation_serialization(valid_ing_formulation_predictor_data):
     """Ensure that a serialized IngredientsToFormulationPredictor looks sane."""
     serialization_check(valid_ing_formulation_predictor_data, IngredientsToFormulationPredictor)
-
-
-def test_generalized_mean_property_serialization(valid_generalized_mean_property_predictor_data):
-    """Ensure that a serialized GeneralizedMeanPropertyPredictor looks sane."""
-    serialization_check(valid_generalized_mean_property_predictor_data, GeneralizedMeanPropertyPredictor)
 
 
 def test_mean_property_serialization(valid_mean_property_predictor_data):

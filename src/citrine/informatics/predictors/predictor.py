@@ -41,10 +41,9 @@ class Predictor(Module):
         """Return the subtype."""
         from .simple_ml_predictor import SimpleMLPredictor
         from .graph_predictor import GraphPredictor
-        from .expression_predictor import ExpressionPredictor, DeprecatedExpressionPredictor
+        from .expression_predictor import ExpressionPredictor
         from .molecular_structure_featurizer import MolecularStructureFeaturizer
         from .ingredients_to_formulation_predictor import IngredientsToFormulationPredictor
-        from .generalized_mean_property_predictor import GeneralizedMeanPropertyPredictor
         from .label_fractions_predictor import LabelFractionsPredictor
         from .simple_mixture_predictor import SimpleMixturePredictor
         from .ingredient_fractions_predictor import IngredientFractionsPredictor
@@ -54,11 +53,10 @@ class Predictor(Module):
         type_dict = {
             "Simple": SimpleMLPredictor,
             "Graph": GraphPredictor,
-            "Expression": DeprecatedExpressionPredictor,
             "AnalyticExpression": ExpressionPredictor,
             "MoleculeFeaturizer": MolecularStructureFeaturizer,
             "IngredientsToSimpleMixture": IngredientsToFormulationPredictor,
-            "GeneralizedMeanProperty": GeneralizedMeanPropertyPredictor,
+
             "MeanProperty": MeanPropertyPredictor,
             "LabelFractions": LabelFractionsPredictor,
             "SimpleMixture": SimpleMixturePredictor,
