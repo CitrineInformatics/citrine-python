@@ -302,7 +302,7 @@ The code below defines the rows and defines one column that contains the identif
         datasets=[dataset.uid],
         rows=[
             MaterialRunByTemplate(
-                templates=[LinkByUID.from_entity(t) for t in material_templates_to_include]
+                templates=[LinkByUID.from_entity(t, scope) for t in material_templates_to_include]
             )
         ],
         variables=[RootIdentifier(name="name", headers=["name"], scope=scope)],
@@ -390,7 +390,7 @@ This must be repeated once for each ingredient.
     from citrine.gemtables.columns import ConcatColumn
 
     ing_name = "simple syrup"
-    mix_template_link = LinkByUID.from_entity(mix_template)
+    mix_template_link = LinkByUID.from_entity(mix_template, scope)
     identity_var = IngredientIdentifierInOutput(
         name=f"{ing_name} identifier",
         headers=[ing_name, "Identifier"],
