@@ -6,11 +6,12 @@ from citrine._rest.resource import Resource
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Optional as PropertyOptional
 from citrine._serialization.properties import String, Mapping, Object, LinkOrElse
-from citrine.resources.data_concepts import DataConcepts, CITRINE_SCOPE
+from citrine.resources.data_concepts import DataConcepts, _make_link_by_uid
 from citrine.resources.object_specs import ObjectSpec, ObjectSpecCollection
 from gemd.entity.attribute.condition import Condition
 from gemd.entity.attribute.parameter import Parameter
 from gemd.entity.file_link import FileLink
+from gemd.entity.link_by_uid import LinkByUID
 from gemd.entity.object.process_spec import ProcessSpec as GEMDProcessSpec
 from gemd.entity.template.process_template import ProcessTemplate as GEMDProcessTemplate
 
@@ -104,21 +105,24 @@ class ProcessSpecCollection(ObjectSpecCollection[ProcessSpec]):
         """Return the resource type in the collection."""
         return ProcessSpec
 
-    def list_by_template(self, uid: Union[UUID, str],
-                         scope: str = CITRINE_SCOPE) -> Iterator[ProcessSpec]:
+    def list_by_template(self, uid: Union[UUID, str, LinkByUID, GEMDProcessTemplate],
+                         scope: Optional[str] = None) -> Iterator[ProcessSpec]:
         """
         [ALPHA] Get the process specs using the specified process template.
 
         Parameters
         ----------
-        uid
-            The unique ID of the process template whose process spec usages are to be located.
-        scope
-            The scope of `uid`.
+        uid: Union[UUID, str, LinkByUID, GEMDProcessTemplate]
+            A representation of the process template whose process spec usages are to be located.
+        scope: Optional[str]
+            [DEPRECATED] use a LinkByUID to specify a custom scope
+            The scope of the uid, defaults to Citrine scope ("id")
+
         Returns
         -------
         Iterator[ProcessSpec]
             The process specs using the specified process template
 
         """
-        return self._get_relation('process-templates', uid=uid, scope=scope)
+        link = _make_link_by_uid(uid, scope)
+        return self._get_relation('process-templates', uid=link.id, scope=link.scope)
