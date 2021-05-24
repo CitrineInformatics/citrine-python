@@ -1,9 +1,11 @@
 """Top-level class for all data concepts objects and collections thereof."""
 from abc import abstractmethod, ABC
+from warnings import warn
 from typing import TypeVar, Type, List, Union, Optional, Iterator
 from uuid import UUID, uuid4
 
 from gemd.entity.dict_serializable import DictSerializable
+from gemd.entity.base_entity import BaseEntity
 from gemd.entity.link_by_uid import LinkByUID
 from gemd.json import GEMDJson
 from gemd.util import recursive_foreach
@@ -209,6 +211,26 @@ class DataConcepts(PolymorphicSerializable['DataConcepts'], DictSerializable, AB
     def as_dict(self) -> dict:
         """Dump to a dictionary (useful for interoperability with gemd)."""
         return self.dump()
+
+
+def _make_link_by_uid(gemd_object_rep: Union[str, UUID, BaseEntity, LinkByUID],
+                      scope: Optional[str] = None) -> LinkByUID:
+    if scope is not None:
+        warn("\'scope\' as a separate argument is deprecated when creating a link to a GEMD"
+             "object. To specify a custom scope, use a LinkByUID.", DeprecationWarning)
+    if isinstance(gemd_object_rep, BaseEntity):
+        if not gemd_object_rep.uids:  # an empty dictionary
+            raise ValueError('GEMD object must have at least one uid to construct a link.')
+        return LinkByUID.from_entity(gemd_object_rep, name=CITRINE_SCOPE)
+    elif isinstance(gemd_object_rep, LinkByUID):
+        return gemd_object_rep
+    elif isinstance(gemd_object_rep, (str, UUID)):
+        uid = str(gemd_object_rep)
+        scope = scope or CITRINE_SCOPE
+        return LinkByUID(scope, uid)
+    else:
+        raise TypeError("Link can only created from a GEMD object, LinkByUID, str, or UUID."
+                        "Instead got {}.".format(gemd_object_rep))
 
 
 ResourceType = TypeVar('ResourceType', bound='DataConcepts')
@@ -495,15 +517,17 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         # That worked, nothing returned in this case
         return None
 
-    def get(self, uid: Union[UUID, str], scope: str = CITRINE_SCOPE) -> ResourceType:
+    def get(self, uid: Union[UUID, str, LinkByUID, BaseEntity],
+            scope: Optional[str] = None) -> ResourceType:
         """
-        Get the element of the collection with ID equal to uid.
+        Get an element of the collection by its id.
 
         Parameters
         ----------
-        uid: Union[UUID, str]
-            The ID.
-        scope: str
+        uid: Union[UUID, str, LinkByUID, BaseEntity]
+            A representation of the object (Citrine id, LinkByUID, or the object itself)
+        scope: Optional[str]
+            [DEPRECATED] use a LinkByUID to specify a custom scope
             The scope of the uid, defaults to Citrine scope (CITRINE_SCOPE)
 
         Returns
@@ -512,7 +536,9 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
             An object with specified scope and uid
 
         """
-        path = self._get_path(ignore_dataset=self.dataset_id is None) + "/{}/{}".format(scope, uid)
+        link = _make_link_by_uid(uid)
+        path = self._get_path(ignore_dataset=self.dataset_id is None) + "/{}/{}"\
+            .format(link.scope, link.id)
         data = self.session.get_resource(path)
         return self.build(data)
 
@@ -622,28 +648,32 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
             params=params)
         return (self.build(raw) for raw in raw_objects)
 
-    def delete(self, uid: Union[UUID, str], scope: str = CITRINE_SCOPE, dry_run: bool = False):
+    def delete(self, uid: Union[UUID, str, LinkByUID, BaseEntity],
+               scope: Optional[str] = None, dry_run: bool = False):
         """
-        Delete the element of the collection with ID equal to uid.
+        Delete an element of the collection by its id.
 
         Parameters
         ----------
-        uid: Union[UUID, str]
-            The ID.
-        scope: str
+        uid: Union[UUID, str, LinkByUID, BaseEntity]
+            A representation of the object (Citrine id, LinkByUID, or the object itself)
+        scope: Optional[str]
+            [DEPRECATED] use a LinkByUID to specify a custom scope
             The scope of the uid, defaults to Citrine scope (CITRINE_SCOPE)
         dry_run: bool
             Whether to actually delete the item or run a dry run of the delete operation.
             Dry run is intended to be used for validation. Default: false
 
         """
-        path = self._get_path() + "/{}/{}".format(scope, uid)
+        link = _make_link_by_uid(uid)
+        path = self._get_path() + "/{}/{}".format(link.scope, link.id)
         params = {'dry_run': dry_run}
         self.session.delete_resource(path, params=params)
         return Response(status_code=200)  # delete succeeded
 
-    def _get_relation(self, relation: str, uid: Union[UUID, str], scope: str,
-                      forward: bool = True, per_page: int = 100) -> Iterator[ResourceType]:
+    def _get_relation(self, relation: str, uid: Union[UUID, str, LinkByUID, BaseEntity],
+                      scope: Optional[str] = None, forward: bool = True, per_page: int = 100
+                      ) -> Iterator[ResourceType]:
         """
         Generic method for searching this collection by relation to another object.
 
@@ -653,10 +683,10 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
             Reflects the type of the object with the provided uid and scope, e.g.,
             'process-templates' if searching for process specs by process template.
         uid
-            The unique ID of the object upon which this search is based, e.g., an
-            External or Citrine ID of a process template whose process spec usages
-            are being located.
+            A representation of the object upon which this search is based, e.g., a
+            Citrine ID of a process template whose process spec usages are being located.
         scope
+            [DEPRECATED] use a LinkByUID to specify a custom scope
             The scope of `uid`
         forward
             Whether to pages results in ascending order. Typically this is an
@@ -674,10 +704,11 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         params = {}
         if self.dataset_id is not None:
             params['dataset_id'] = str(self.dataset_id)
+        link = _make_link_by_uid(uid, scope)
         raw_objects = self.session.cursor_paged_resource(
             self.session.get_resource,
-            'projects/{}/{}/{}/{}/{}'.format(
-                self.project_id, relation, scope, uid, self._collection_key.replace('_', '-')),
+            'projects/{}/{}/{}/{}/{}'.format(self.project_id, relation, link.scope, link.id,
+                                             self._collection_key.replace('_', '-')),
             forward=forward,
             per_page=per_page,
             params=params,

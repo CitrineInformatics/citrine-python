@@ -1,5 +1,4 @@
 from copy import copy
-from warnings import warn
 from typing import List, Union, Optional, Tuple
 from uuid import UUID
 
@@ -13,7 +12,7 @@ from citrine._rest.collection import Collection
 from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
 from citrine._session import Session
-from citrine.resources.data_concepts import CITRINE_SCOPE
+from citrine.resources.data_concepts import CITRINE_SCOPE, _make_link_by_uid
 from citrine.resources.process_template import ProcessTemplate
 from citrine.gemtables.columns import Column, MeanColumn, IdentityColumn, OriginalUnitsColumn
 from citrine.gemtables.rows import Row
@@ -155,7 +154,7 @@ class TableConfig(Resource["TableConfig"]):
         )
 
     def add_all_ingredients(self, *,
-                            process_template: LinkByUID,
+                            process_template: Union[LinkByUID, ProcessTemplate, str, UUID],
                             project,
                             quantity_dimension: IngredientQuantityDimension,
                             scope: str = CITRINE_SCOPE,
@@ -169,8 +168,8 @@ class TableConfig(Resource["TableConfig"]):
 
         Parameters
         ------------
-        process_template: LinkByUID
-            scope and id of a registered process template
+        process_template: Union[LinkByUID, ProcessTemplate, str, UUID]
+            representation of a registered process template
         project: Project
             a project that has access to the process template
         quantity_dimension: IngredientQuantityDimension
@@ -187,8 +186,8 @@ class TableConfig(Resource["TableConfig"]):
             IngredientQuantityDimension.VOLUME: "volume fraction",
             IngredientQuantityDimension.NUMBER: "number fraction"
         }
-        process: ProcessTemplate = project.process_templates.get(
-            uid=process_template.id, scope=process_template.scope)
+        link = _make_link_by_uid(process_template)
+        process: ProcessTemplate = project.process_templates.get(uid=link.id, scope=link.scope)
         if not process.allowed_names:
             raise RuntimeError(
                 "Cannot add ingredients for process template \'{}\' because it has no defined "
@@ -198,17 +197,17 @@ class TableConfig(Resource["TableConfig"]):
         new_columns = []
         for name in process.allowed_names:
             identifier_variable = IngredientIdentifierByProcessTemplateAndName(
-                name='_'.join([process.name, name, str(hash(process_template.id + name + scope))]),
+                name='_'.join([process.name, name, str(hash(link.id + name + scope))]),
                 headers=[process.name, name, scope],
-                process_template=process_template,
+                process_template=link,
                 ingredient_name=name,
                 scope=scope
             )
             quantity_variable = IngredientQuantityByProcessAndName(
                 name='_'.join([process.name, name, str(hash(
-                    process_template.id + name + dimension_display[quantity_dimension]))]),
+                    link.id + name + dimension_display[quantity_dimension]))]),
                 headers=[process.name, name, dimension_display[quantity_dimension]],
-                process_template=process_template,
+                process_template=link,
                 ingredient_name=name,
                 quantity_dimension=quantity_dimension,
                 unit=unit
@@ -328,26 +327,10 @@ class TableConfigCollection(Collection[TableConfig]):
 
 
         """
-        if scope is not None:
-            warn("\'scope\' is deprecated in default_for_material() and will soon be removed. "
-                 "To specify a custom scope, use a LinkByUID object.", DeprecationWarning)
-        if isinstance(material, MaterialRun):
-            uid_tup = next(iter(material.uids.items()), None)
-            if uid_tup is None:
-                raise ValueError('Material must have a uid to build default table config.')
-            scope, uid = uid_tup
-        elif isinstance(material, LinkByUID):
-            scope, uid = material.scope, material.id
-        elif isinstance(material, (str, UUID)):
-            uid = str(material)
-            scope = scope or CITRINE_SCOPE
-        else:
-            raise TypeError(  # pragma: no cover
-                'material must be one of MaterialRun, LinkByUID, str, or UUID but was {}'
-                .format(type(material)))
+        link = _make_link_by_uid(material, scope)
         params = {
-            'id': uid,
-            'scope': scope,
+            'id': link.id,
+            'scope': link.scope,
             'name': name,
         }
         if description is not None:

@@ -6,9 +6,10 @@ from citrine._rest.resource import Resource
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Mapping, String, LinkOrElse, Object
 from citrine._serialization.properties import Optional as PropertyOptional
-from citrine.resources.data_concepts import DataConcepts, CITRINE_SCOPE
+from citrine.resources.data_concepts import DataConcepts, _make_link_by_uid
 from citrine.resources.object_runs import ObjectRun, ObjectRunCollection
 from gemd.entity.file_link import FileLink
+from gemd.entity.link_by_uid import LinkByUID
 from gemd.entity.object.ingredient_run import IngredientRun as GEMDIngredientRun
 from gemd.entity.object.ingredient_spec import IngredientSpec as GEMDIngredientSpec
 from gemd.entity.object.material_run import MaterialRun as GEMDMaterialRun
@@ -117,61 +118,70 @@ class IngredientRunCollection(ObjectRunCollection[IngredientRun]):
         return IngredientRun
 
     def list_by_spec(self,
-                     uid: Union[UUID, str],
-                     scope: str = CITRINE_SCOPE) -> Iterator[IngredientRun]:
+                     uid: Union[UUID, str, LinkByUID, GEMDIngredientSpec],
+                     scope: Optional[str] = None) -> Iterator[IngredientRun]:
         """
         [ALPHA] Get the ingredient runs using the specified ingredient spec.
 
         Parameters
         ----------
-        uid
-            The unique ID of the ingredient spec whose ingredient run usages are to be located.
-        scope
-            The scope of `uid`.
+        uid: Union[UUID, str, LinkByUID, GEMDIngredientSpec]
+            A representation of the ingredient spec whose ingredient run usages are to be located.
+        scope: Optional[str]
+            [DEPRECATED] use a LinkByUID to specify a custom scope
+            The scope of the uid, defaults to Citrine scope ("id")
+
         Returns
         -------
         Iterator[IngredientRun]
             The ingredient runs using the specified ingredient spec.
 
         """
-        return self._get_relation('ingredient-specs', uid=uid, scope=scope)
+        link = _make_link_by_uid(uid, scope)
+        return self._get_relation('ingredient-specs', uid=link.id, scope=link.scope)
 
     def list_by_process(self,
-                        uid: Union[UUID, str],
-                        scope: str = CITRINE_SCOPE) -> Iterator[IngredientRun]:
+                        uid: Union[UUID, str, LinkByUID, GEMDProcessRun],
+                        scope: Optional[str] = None) -> Iterator[IngredientRun]:
         """
         [ALPHA] Get ingredients to a process.
 
         Parameters
         ----------
-        uid
-            The unique ID of the process whose ingredients are to be located.
-        scope
-            The scope of `uid`.
+        uid: Union[UUID, str, LinkByUID, GEMDProcessRun]
+            A representation of the process whose ingredients are to be located.
+        scope: Optional[str]
+            [DEPRECATED] use a LinkByUID to specify a custom scope
+            The scope of the uid, defaults to Citrine scope ("id")
+
         Returns
         -------
         Iterator[IngredientRun]
             The ingredients to the specified process.
 
         """
-        return self._get_relation(relation='process-runs', uid=uid, scope=scope)
+        link = _make_link_by_uid(uid, scope)
+        return self._get_relation(relation='process-runs', uid=link.id, scope=link.scope)
 
     def list_by_material(self,
-                         uid: Union[UUID, str],
-                         scope: str = CITRINE_SCOPE) -> Iterator[IngredientRun]:
+                         uid: Union[UUID, str, LinkByUID, GEMDMaterialRun],
+                         scope: Optional[str] = None) -> Iterator[IngredientRun]:
         """
         [ALPHA] Get ingredients using the specified material.
 
         Parameters
         ----------
-        uid
-            The unique ID of the material whose ingredient usages are to be located.
-        scope
-            The scope of `uid`.
+        uid: Union[UUID, str, LinkByUID, GEMDMaterialRun]
+            A representation of the material whose ingredient run usages are to be located.
+        scope: Optional[str]
+            [DEPRECATED] use a LinkByUID to specify a custom scope
+            The scope of the uid, defaults to Citrine scope ("id")
+
         Returns
         -------
         Iterator[IngredientRun]
             The ingredients using the specified material
 
         """
-        return self._get_relation(relation='material-runs', uid=uid, scope=scope)
+        link = _make_link_by_uid(uid, scope)
+        return self._get_relation(relation='material-runs', uid=link.id, scope=link.scope)
