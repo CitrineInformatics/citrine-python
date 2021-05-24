@@ -64,8 +64,6 @@ def wait_for_asynchronous_object(
     start = time.time()
 
     def is_finished():
-        if collection is None:
-            raise ValueError("Must provide collection")
         current_resource = collection.get(resource.uid)
         if print_status_info:
             _print_string_status(current_resource.status, start)
