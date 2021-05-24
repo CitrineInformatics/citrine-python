@@ -154,9 +154,6 @@ class TableConfig(Resource["TableConfig"]):
             Optional re-description of the table
 
         """
-        @deprecated(details="a test", deprecated_in="whatever this isnt' parsed", removed_in="0.45")
-        def _add_columns_foo():
-            return None
         if variable.name in [x.name for x in self.variables]:
             raise ValueError("The variable name {} is already used".format(variable.name))
 
@@ -400,9 +397,6 @@ class TableConfigCollection(Collection[TableConfig]):
             the Table Config describing the new table
 
         """
-        @deprecated(details="another test", deprecated_in="0.5", removed_in="1.x.3")
-        def _build_ara_table_foo():
-            return None
         from citrine.resources.gemtables import GemTableCollection
         table_collection = GemTableCollection(self.project_id, self.session)
         return table_collection.initiate_build(ara_def, None)
