@@ -1,10 +1,8 @@
-from typing import List, Optional, Type, Union
+from typing import Optional, Type
 from uuid import UUID
-from warnings import warn
 
 from citrine._serialization import properties
 from citrine._session import Session
-from citrine.informatics.data_sources import DataSource
 from citrine.informatics.modules import Module
 from citrine.resources.report import ReportResource
 
@@ -73,28 +71,3 @@ class Predictor(Module):
                 '{} is not a valid predictor type. '
                 'Must be in {}.'.format(data['config']['type'], type_dict.keys())
             )
-
-    def _wrap_training_data(self,
-                            training_data: Optional[Union[DataSource, List[DataSource]]]
-                            ) -> List[DataSource]:
-        """Wraps a single training data source in a list.
-
-        Parameters
-        ----------
-        training_data: Optional[Union[DataSource, List[DataSource]]]
-            Either a single data source, list of data sources or ``None``
-
-        Returns
-        -------
-        List[DataSource]
-            A list of data sources
-
-        """
-        if training_data is None:
-            return []
-        if isinstance(training_data, DataSource):
-            warn("Specifying training data as a single data source is deprecated. "
-                 "Please use a list of data sources to create {} instead.".format(self),
-                 DeprecationWarning)
-            return [training_data]
-        return training_data

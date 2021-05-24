@@ -267,30 +267,6 @@ def test_check_update_some():
     assert update_check.uid == predictor_id
 
 
-def test_graph_default_training_data():
-    """Test that default training data list isn't shared."""
-    # create two serialized graph predictors with no defined training data
-    gp1raw = {'config': {'name': 'one', 'description': '', 'predictors': [], 'type': 'Graph'},
-              'archived': False, 'module_type': 'PREDICTOR', 'display_name': 'one'}
-    gp2raw = {'config': {'name': 'two', 'description': '', 'predictors': [], 'type': 'Graph'},
-              'archived': False, 'module_type': 'PREDICTOR', 'display_name': 'two'}
-
-    # build them, populating the default empty list of training data
-    gp1: GraphPredictor = Predictor.build(gp1raw)
-    gp2: GraphPredictor = Predictor.build(gp2raw)
-
-    # check it is empty
-    assert len(gp1.training_data) == 0
-    assert len(gp2.training_data) == 0
-
-    # add training data to one of them
-    gp1.training_data.append(GemTableDataSource(uuid.uuid4(), 1))
-
-    # check that the training data doesn't bleed into both
-    assert len(gp1.training_data) == 1
-    assert len(gp2.training_data) == 0
-
-
 def test_unexpected_pattern():
     """Check that unexpected patterns result in a value error"""
     # Given

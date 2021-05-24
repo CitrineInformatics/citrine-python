@@ -338,41 +338,6 @@ def test_ingredient_fractions_property_initialization(ingredient_fractions_predi
     assert str(ingredient_fractions_predictor) == expected_str
 
 
-def test_wrap_training_data():
-    """Test training data is converted to a list if ``None`` or a single source."""
-    predictor_without_data = GraphPredictor(
-        name="",
-        description="",
-        predictors=[],
-        training_data=None
-    )
-    assert predictor_without_data.training_data == []
-
-    with warnings.catch_warnings(record=True) as w:
-        warnings.simplefilter("always")
-        predictor_single_data_source = GraphPredictor(
-            name="",
-            description="",
-            predictors=[],
-            training_data=data_source
-        )
-        assert predictor_single_data_source.training_data == [data_source]
-        assert len(w) == 1
-        recorded_warning = w[0]
-        assert issubclass(recorded_warning.category, DeprecationWarning)
-        assert str(recorded_warning.message).startswith(
-            "Specifying training data as a single data source is deprecated."
-        )
-
-    predictor_multiple_data_sources = GraphPredictor(
-        name="",
-        description="",
-        predictors=[],
-        training_data=[data_source, formulation_data_source]
-    )
-    assert predictor_multiple_data_sources.training_data == [data_source, formulation_data_source]
-
-
 def test_status(valid_label_fractions_predictor_data, auto_ml):
     """Ensure we can check the status of predictor validation."""
     # A locally built predictor should be "False" for all status checks
