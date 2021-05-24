@@ -3,7 +3,6 @@ import pytest
 from gemd.entity.bounds.real_bounds import RealBounds
 
 from citrine.gemtables.variables import *
-import citrine.ara.variables as oldvariables
 from gemd.entity.link_by_uid import LinkByUID
 
 
@@ -61,11 +60,6 @@ def test_quantity_dimension_serializes_to_string():
     )
     variable_data = variable.dump()
     assert variable_data["quantity_dimension"] == "number"
-
-
-def test_renamed_classes_are_the_same():
-    # Mostly make code coverage happy
-    assert oldvariables.IngredientQuantityDimension == IngredientQuantityDimension
 
 
 def test_absolute_units():
