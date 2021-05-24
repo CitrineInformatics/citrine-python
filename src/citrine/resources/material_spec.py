@@ -9,7 +9,7 @@ from citrine._rest.resource import Resource
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Optional as PropertyOptional
 from citrine._serialization.properties import String, LinkOrElse, Mapping, Object
-from citrine.resources.data_concepts import DataConcepts, CITRINE_SCOPE, _make_link_by_uid
+from citrine.resources.data_concepts import DataConcepts, _make_link_by_uid
 from citrine.resources.object_specs import ObjectSpec, ObjectSpecCollection
 from gemd.entity.attribute.property_and_conditions import PropertyAndConditions
 from gemd.entity.file_link import FileLink
@@ -102,7 +102,7 @@ class MaterialSpecCollection(ObjectSpecCollection[MaterialSpec]):
     @deprecation.deprecated(details='Use list_by_template instead.')
     def filter_by_template(self,
                            template_id: str,
-                           template_scope: str = CITRINE_SCOPE,
+                           template_scope: Optional[str] = None,
                            per_page: int = None) -> Iterator[MaterialSpec]:
         """
         [ALPHA] Get all material specs associated with a material template.
