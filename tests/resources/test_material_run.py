@@ -406,3 +406,29 @@ def test_validate_templates_unrelated_400_with_api_error(collection, session):
     session.set_response(BadRequest("path", FakeRequestResponseApiError(400, "I am not a validation error", [])))
     with pytest.raises(BadRequest):
         collection.validate_templates(run)
+
+
+def test_list_by_template(collection, session):
+    """
+    Test that MaterialRunCollection.list_by_template() hits the expected endpoints and post-processes the results into the expected format
+    """
+    # Given
+    material_template = MaterialTemplateFactory()
+    test_scope = 'id'
+    template_id = material_template.uids[test_scope]
+    sample_spec1 = MaterialSpecDataFactory(template=material_template)
+    sample_spec2 = MaterialSpecDataFactory(template=material_template)
+    key = 'contents'
+    sample_run1_1 = MaterialRunDataFactory(spec=sample_spec1)
+    sample_run2_1 = MaterialRunDataFactory(spec=sample_spec2)
+    sample_run1_2 = MaterialRunDataFactory(spec=sample_spec1)
+    sample_run2_2 = MaterialRunDataFactory(spec=sample_spec2)
+    session.set_responses({key: [sample_spec1, sample_spec2]}, {key: [sample_run1_1, sample_run1_2]},
+                          {key: [sample_run2_1, sample_run2_2]})
+
+    # When
+    runs = [run for run in collection.list_by_template(template_id)]
+
+    # Then
+    assert 3 == session.num_calls
+    assert runs == [collection.build(run) for run in [sample_run1_1, sample_run1_2, sample_run2_1, sample_run2_2]]
