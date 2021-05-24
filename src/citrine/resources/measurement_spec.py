@@ -6,12 +6,11 @@ from citrine._rest.resource import Resource
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Optional as PropertyOptional
 from citrine._serialization.properties import String, Object, Mapping, LinkOrElse
-from citrine.resources.data_concepts import DataConcepts, _make_link_by_uid
+from citrine.resources.data_concepts import DataConcepts, CITRINE_SCOPE
 from citrine.resources.object_specs import ObjectSpec, ObjectSpecCollection
 from gemd.entity.attribute.condition import Condition
 from gemd.entity.attribute.parameter import Parameter
 from gemd.entity.file_link import FileLink
-from gemd.entity.link_by_uid import LinkByUID
 from gemd.entity.object.measurement_spec import MeasurementSpec as GEMDMeasurementSpec
 from gemd.entity.template.measurement_template import \
     MeasurementTemplate as GEMDMeasurementTemplate
@@ -94,25 +93,22 @@ class MeasurementSpecCollection(ObjectSpecCollection[MeasurementSpec]):
         """Return the resource type in the collection."""
         return MeasurementSpec
 
-    def list_by_template(self, uid: Union[UUID, str, LinkByUID, GEMDMeasurementTemplate],
-                         scope: Optional[str] = None) -> Iterator[MeasurementSpec]:
+    def list_by_template(self, uid: Union[UUID, str],
+                         scope: str = CITRINE_SCOPE) -> Iterator[MeasurementSpec]:
         """
         [ALPHA] Get the measurement specs using the specified measurement template.
 
         Parameters
         ----------
-        uid: Union[UUID, str, LinkByUID, GEMDMeasurementTemplate]
-            A representation of of the measurement template whose measurement spec usages are
+        uid
+            The unique ID of the measurement template whose measurement spec usages are
             to be located.
-        scope: Optional[str]
-            [DEPRECATED] use a LinkByUID to specify a custom scope
-            The scope of the uid, defaults to Citrine scope ("id")
-
+        scope
+            The scope of `uid`.
         Returns
         -------
         Iterator[MeasurementSpec]
             The measurement specs using the specified measurement template.
 
         """
-        link = _make_link_by_uid(uid, scope)
-        return self._get_relation('measurement-templates', uid=link.id, scope=link.scope)
+        return self._get_relation('measurement-templates', uid=uid, scope=scope)
