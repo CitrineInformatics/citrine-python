@@ -537,7 +537,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
             An object with specified scope and uid
 
         """
-        link = _make_link_by_uid(uid)
+        link = _make_link_by_uid(uid, scope)
         path = self._get_path(ignore_dataset=self.dataset_id is None) + "/{}/{}"\
             .format(link.scope, link.id)
         data = self.session.get_resource(path)
@@ -745,7 +745,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
             Dry run is intended to be used for validation. Default: false
 
         """
-        link = _make_link_by_uid(uid)
+        link = _make_link_by_uid(uid, scope)
         path = self._get_path() + "/{}/{}".format(link.scope, link.id)
         params = {'dry_run': dry_run}
         self.session.delete_resource(path, params=params)
