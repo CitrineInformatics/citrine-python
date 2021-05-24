@@ -228,15 +228,6 @@ class Project(Resource['Project']):
         """Return a resource representing all Table Configs in the project."""
         return TableConfigCollection(self.uid, self.session)
 
-    @property
-    @deprecated(deprecated_in="0.52.2", details="Use table_configs instead")
-    def ara_definitions(self) -> TableConfigCollection:  # pragma: no cover
-        """[DEPRECATED] Use table_configs instead."""
-        from warnings import warn
-        warn("ara_definitions is deprecated and will soon be removed. "
-             "Please call table_configs instead.", DeprecationWarning)
-        return self.table_configs
-
     def share(self,
               project_id: str,
               resource_type: str,
