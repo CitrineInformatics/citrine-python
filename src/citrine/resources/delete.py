@@ -8,7 +8,7 @@ from gemd.entity.link_by_uid import LinkByUID
 from citrine._session import Session
 from citrine.resources.api_error import ApiError
 from citrine.resources.job import _poll_for_job_completion
-from citrine.resources.data_concepts import CITRINE_SCOPE
+from citrine.resources.data_concepts import _make_link_by_uid
 
 
 def _async_gemd_batch_delete(
@@ -63,21 +63,8 @@ def _async_gemd_batch_delete(
     """
     scoped_uids = []
     for uid in id_list:  # And now normalize to id/scope pairs
-        if isinstance(uid, BaseEntity):
-            link_by_uid = LinkByUID.from_entity(uid, CITRINE_SCOPE)
-            scoped_uids.append({'scope': link_by_uid.scope, 'id': link_by_uid.id})
-        elif isinstance(uid, LinkByUID):
-            scoped_uids.append({'scope': uid.scope, 'id': uid.id})
-        elif isinstance(uid, UUID):
-            scoped_uids.append({'scope': 'id', 'id': uid})
-        elif isinstance(uid, str):
-            try:
-                scoped_uids.append({'scope': 'id', 'id': UUID(uid)})
-            except ValueError:
-                raise TypeError("{} does not look like a UUID".format(uid))
-        else:
-            raise TypeError(
-                "id_list must contain only LinkByUIDs, UUIDs, strings, or BaseEntities")
+        link_by_uid = _make_link_by_uid(uid)
+        scoped_uids.append({'scope': link_by_uid.scope, 'id': link_by_uid.id})
 
     body = {'ids': scoped_uids}
 
