@@ -61,6 +61,7 @@ def test_share_post_content(project, session):
     dataset_id = str(uuid.uuid4())
 
     # When
+    # Share using resource type/id, which is deprecated
     with warnings.catch_warnings(record=True) as caught:
         project.share(project_id=project.uid, resource_type='DATASET', resource_id=dataset_id)
         assert len(caught) == 1
@@ -78,10 +79,13 @@ def test_share_post_content(project, session):
     )
     assert expected_call == session.last_call
 
+    # Share by resource
+    # When
     dataset = Dataset(name="foo", summary="", description="")
     dataset.uid = str(uuid.uuid4())
     project.share(resource=dataset, project_id=project.uid)
 
+    # Then
     assert 2 == session.num_calls
     expected_call = FakeCall(
         method='POST',
@@ -93,9 +97,11 @@ def test_share_post_content(project, session):
     )
     assert expected_call == session.last_call
 
+    # providing both the resource and the type/id is an error
     with pytest.raises(ValueError):
         project.share(resource=dataset, project_id=project.uid, resource_type='DATASET', resource_id=dataset_id)
 
+    # Providing neither the resource nor the type/id is an error
     with pytest.raises(ValueError):
         project.share(project_id=project.uid)
 
