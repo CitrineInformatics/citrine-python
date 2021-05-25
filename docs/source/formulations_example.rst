@@ -287,7 +287,7 @@ The code below defines the rows and defines one column that contains the identif
 
     from citrine.resources.table_config import TableConfig
     from citrine.gemtables.rows import MaterialRunByTemplate
-    from citrine.gemtables.variables import TerminalMaterialIdentifier
+    from citrine.gemtables.variables import RootIdentifier
     from citrine.gemtables.columns import IdentityColumn
 
 
@@ -305,7 +305,7 @@ The code below defines the rows and defines one column that contains the identif
                 templates=[LinkByUID.from_entity(t, scope) for t in material_templates_to_include]
             )
         ],
-        variables=[TerminalMaterialIdentifier(name="name", headers=["name"], scope=scope)],
+        variables=[RootIdentifier(name="name", headers=["name"], scope=scope)],
         columns=[IdentityColumn(data_source="name")]
     )
 
