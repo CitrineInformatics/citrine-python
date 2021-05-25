@@ -45,7 +45,7 @@ class SimpleMLPredictor(Resource['SimplePredictor'], Predictor, AIResourceMetada
     outputs = _properties.List(_properties.Object(Descriptor), 'config.outputs')
     latent_variables = _properties.List(_properties.Object(Descriptor), 'config.latent_variables')
     training_data = _properties.Optional(_properties.List(_properties.Object(DataSource)),
-                                         'config.training_data')
+                                         'config.training_data', default=[])
 
     typ = _properties.String('config.type', default='Simple', deserializable=False)
     module_type = _properties.String('module_type', default='PREDICTOR')
@@ -63,7 +63,7 @@ class SimpleMLPredictor(Resource['SimplePredictor'], Predictor, AIResourceMetada
         self.inputs: List[Descriptor] = inputs
         self.outputs: List[Descriptor] = outputs
         self.latent_variables: List[Descriptor] = latent_variables
-        self.training_data: List[DataSource] = training_data
+        self.training_data: List[DataSource] = training_data or []
         self.archived: bool = archived
 
     def _post_dump(self, data: dict) -> dict:

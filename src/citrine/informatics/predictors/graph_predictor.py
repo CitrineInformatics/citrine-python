@@ -39,7 +39,7 @@ class GraphPredictor(Resource['GraphPredictor'], Predictor, AIResourceMetadata):
     # the default seems to be defined in instances, not the class itself
     # this is tested in test_graph_default_training_data
     training_data = _properties.Optional(_properties.List(_properties.Object(DataSource)),
-                                         'config.training_data')
+                                         'config.training_data', default=[])
 
     typ = _properties.String('config.type', default='Graph', deserializable=False)
     module_type = _properties.String('module_type', default='PREDICTOR')
@@ -53,7 +53,7 @@ class GraphPredictor(Resource['GraphPredictor'], Predictor, AIResourceMetadata):
         self.name: str = name
         self.description: str = description
         self.predictors: List[Union[UUID, Predictor]] = predictors
-        self.training_data: List[DataSource] = training_data
+        self.training_data: List[DataSource] = training_data or []
         self.archived: bool = archived
 
     def _post_dump(self, data: dict) -> dict:
