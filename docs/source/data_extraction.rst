@@ -227,8 +227,8 @@ There are several ways to define variables that take their values from Attribute
 
 * Identifiers
 
-  * :class:`~citrine.gemtables.variables.RootInfo`: for fields defined on the material at the terminal of the Material History, like the name of the material
-  * :class:`~citrine.gemtables.variables.RootIdentifier`: for the id of the Material History, which can be used as a unique identifier for the rows
+  * :class:`~citrine.gemtables.variables.TerminalMaterialInfo`: for fields defined on the material at the terminal of the Material History, like the name of the material
+  * :class:`~citrine.gemtables.variables.TerminalMaterialIdentifier`: for the id of the Material History, which can be used as a unique identifier for the rows
   * :class:`~citrine.gemtables.variables.IngredientIdentifierByProcessTemplateAndName`: for the id of the material being used in an ingredient, which can be used as a key for looking up that input material
   * :class:`~citrine.gemtables.variables.IngredientIdentifierInOutput`: for the id of a material used in an ingredient between the terminal material and a given set of processes (useful for ingredients used in multiple processes)
   * :class:`~citrine.gemtables.variables.IngredientLabelByProcessAndName`: for a boolean that indicates whether an ingredient is assigned a given label
