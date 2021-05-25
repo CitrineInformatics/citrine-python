@@ -35,18 +35,13 @@ The following example demonstrates how to use the python SDK to register a workf
     # (i.e. why the workflow is valid/invalid)
     print(validated_workflow.status_info)
 
-.. warning::
-    
-    Registering DesignWorkflows using `project.workflows` is deprecated, please use `project.design_workflows` as described above instead.
-
-
 .. code:: python
 
     from time import sleep
     from citrine.informatics.workflows import DesignWorkflow
 
     # create a workflow using existing modules and register it with the project
-    workflow = project.workflows.register(
+    workflow = project.design_workflows.register(
         DesignWorkflow(
             name='Example workflow',
             predictor_id=predictor.uid,
@@ -57,11 +52,11 @@ The following example demonstrates how to use the python SDK to register a workf
 
     # wait until the workflow is no longer validating
     # we must get the workflow every time we wish to fetch the latest status
-    while project.workflows.get(workflow.uid).status == "VALIDATING":
+    while project.design_workflows.get(workflow.uid).status == "VALIDATING":
         sleep(10)
 
     # print final validation status
-    validated_workflow = project.workflows.get(workflow.uid)
+    validated_workflow = project.design_workflows.get(workflow.uid)
     print(validated_workflow.status)
     # status info will contain relevant validation information
     # (i.e. why the workflow is valid/invalid)
