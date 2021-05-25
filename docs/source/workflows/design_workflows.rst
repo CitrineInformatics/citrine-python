@@ -99,7 +99,7 @@ Candidate results are paginated and returned as `DesignCandidate <#design-candid
     execution = workflow.design_executions.trigger(score)
 
     # wait for execution to complete
-    wait_while_executing(execution, print_status_info=True, collection=workflow.design_executions)
+    wait_while_executing(workflow.design_executions, execution, print_status_info=True)
 
     # get the candidate generator
     execution_results = execution.candidates()
@@ -132,9 +132,6 @@ You can to look up what :doc:`score <scores>` was used for a particular executio
     score = execution.score
     descriptors = execution.descriptors
 
-.. warning::
-    
-    Executing DesignWorkflows using `workflow.executions` is deprecated, please use `workflow.design_executions` as described above instead.
 
 Results of a successful workflow are returned as a dictionary.
 The ``results`` key maps to a dictionary containing ``candidates`` and ``scores``.
@@ -183,10 +180,10 @@ The following demonstrates how to trigger workflow execution, wait for the desig
     )
 
     # trigger a design run using a previously registered and validated workflow
-    execution = workflow.executions.trigger(score)
+    execution = workflow.design_executions.trigger(score)
 
     # wait for execution to complete
-    wait_while_executing(execution, print_status_info=True, collection=workflow.design_executions)
+    wait_while_executing(workflow.design_executions, execution, print_status_info=True)
 
     # retrieve the results
     execution_results = execution.results()

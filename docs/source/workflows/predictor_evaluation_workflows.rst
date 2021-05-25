@@ -236,7 +236,7 @@ Then wait for the results to be ready:
     from citrine.jobs.waiting import wait_while_executing
 
     execution = workflow.executions.trigger(predictor.uid)
-    wait_while_executing(execution, print_status_info=True, collection = project.predictor_evaluation_executions)
+    (project.predictor_evaluation_executions, execution, print_status_info=True)
 
 Finally, load the results and inspect the metrics and their computed values:
 
@@ -286,11 +286,11 @@ To archive a workflow:
 
     project.predictor_evaluation_workflows.archive(workflow.uid)
 
-and to archive all executions associated with a workflow:
+and to archive all executions associated with a predictor evaluation workflow:
 
 .. code:: python
 
-    for execution in workflow.executions.list():
+    for execution in workflow.predictor.list():
         project.predictor_evaluation_executions.archive(execution.uid)
 
 To restore a workflow or execution, simply replace ``archive`` with ``restore`` in the code above.
