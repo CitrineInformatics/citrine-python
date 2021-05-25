@@ -19,7 +19,6 @@ from citrine._utils.functions import scrub_none
 from citrine.exceptions import NotFound
 from citrine.resources.api_error import ApiError
 from citrine.resources.condition_template import ConditionTemplateCollection
-from citrine.resources.data_concepts import _make_link_by_uid
 from citrine.resources.delete import _async_gemd_batch_delete, _poll_for_async_batch_delete_result
 from citrine.resources.file_link import FileCollection
 from citrine.resources.ingredient_run import IngredientRunCollection
@@ -283,23 +282,13 @@ class Dataset(Resource['Dataset']):
         """Update a data concepts resource using the appropriate collection."""
         return self._collection_for(model).update(model)
 
-    def delete(self, data_concepts_resource: Union[UUID, str, LinkByUID, ResourceType],
-               dry_run=False) -> ResourceType:
-        """
-        Delete a data concepts resource from the appropriate collection.
-
-        Parameters
-        ----------
-        data_concepts_resource: Union[UUID, str, LinkByUID, ResourceType]
-            A representation of the resource to delete (Citrine id, LinkByUID, or the object)
-        dry_run: bool
-            Whether to actually delete the item or run a dry run of the delete operation.
-            Dry run is intended to be used for validation. Default: false
-
-        """
-        link = _make_link_by_uid(data_concepts_resource)
+    def delete(self, data_concepts_resource: ResourceType, dry_run=False) -> ResourceType:
+        """Delete a data concepts resource to the appropriate collection."""
+        uid = next(iter(data_concepts_resource.uids.items()), None)
+        if uid is None:
+            raise ValueError("Only objects that contain identifiers can be deleted.")
         return self._collection_for(data_concepts_resource) \
-            .delete(link.id, scope=link.scope, dry_run=dry_run)
+            .delete(uid[1], scope=uid[0], dry_run=dry_run)
 
     def delete_contents(
         self,

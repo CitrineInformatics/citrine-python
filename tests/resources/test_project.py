@@ -595,7 +595,7 @@ def test_project_batch_delete(project, session):
 
 def test_batch_delete_bad_input(project, session):
     with pytest.raises(TypeError):
-        project.gemd_batch_delete([True])
+        project.gemd_batch_delete(['hiya!'])
 
 
 def test_project_tables(project):

@@ -1,12 +1,10 @@
 from collections.abc import Iterator
 
 import pytest
-import warnings
 from uuid import uuid4
 
-from gemd.entity.link_by_uid import LinkByUID
 from citrine.resources.audit_info import AuditInfo
-from citrine.resources.data_concepts import DataConcepts, _make_link_by_uid, CITRINE_SCOPE
+from citrine.resources.data_concepts import DataConcepts
 from citrine.resources.process_run import ProcessRun
 from citrine.resources.process_spec import ProcessSpec
 from tests.utils.session import FakeCall
@@ -59,32 +57,6 @@ def test_assign_audit_info():
             'name': "A process spec",
             "audit_info": "Created by me, yesterday"
         })
-
-
-def test_make_link_by_uid():
-    """Test that _make_link_by_uid convenience method works."""
-    uid = uuid4()
-    expected_link = LinkByUID(scope=CITRINE_SCOPE, id=str(uid))
-    spec = ProcessSpec("spec", uids={"custom scope": "custom id", CITRINE_SCOPE: str(uid)})
-    assert _make_link_by_uid(spec) == expected_link
-    assert _make_link_by_uid(expected_link) == expected_link
-    assert _make_link_by_uid(uid) == expected_link
-    assert _make_link_by_uid(str(uid)) == expected_link
-
-    # If there's no Citrine ID, use an available ID
-    no_citrine_id = ProcessSpec("spec", uids={"custom scope": "custom id"})
-    assert _make_link_by_uid(no_citrine_id) == LinkByUID(scope="custom scope", id="custom id")
-
-    # If the scope argument is specified, throw a warning but respect the argument
-    with warnings.catch_warnings(record=True) as caught:
-        assert _make_link_by_uid(uid, scope="my scope") == LinkByUID(scope="my scope", id=str(uid))
-        assert len(caught) == 1
-        assert issubclass(caught[0].category, DeprecationWarning)
-
-    with pytest.raises(ValueError):
-        _make_link_by_uid(ProcessSpec("spec"))  # no ids
-    with pytest.raises(TypeError):
-        _make_link_by_uid(7)  # not a valid type
 
 
 def test_get_type():
