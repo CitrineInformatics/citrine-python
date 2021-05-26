@@ -33,7 +33,7 @@ class Resource(Serializable[Self]):
     _response_key: Optional[str] = None
     _resource_type: ResourceTypeEnum = NotImplemented
 
-    def as_entity_dict(self) -> dict:
+    def access_control_dict(self) -> dict:
         """Return an access control entity representation of this resource."""
         return {
             "type": self._resource_type.value,

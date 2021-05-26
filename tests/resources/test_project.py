@@ -164,7 +164,7 @@ def test_transfer_resource(project, session):
         path='/projects/{}/transfer-resource'.format(project.uid),
         json={
             'to_project_id': str(project.uid),
-            'resource': dataset.as_entity_dict()
+            'resource': dataset.access_control_dict()
         }
     )
     assert expected_call == session.last_call

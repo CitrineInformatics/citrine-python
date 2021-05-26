@@ -263,7 +263,7 @@ class Project(Resource['Project']):
         """
         resource_dict = None
         if resource is not None:
-            resource_dict = resource.as_entity_dict()
+            resource_dict = resource.access_control_dict()
         if resource_type is not None and resource_id is not None:
             warn("Asset sharing through resource_type and resource_id is deprecated. Please pass "
                  "the resource to share instead.", DeprecationWarning)
@@ -303,7 +303,7 @@ class Project(Resource['Project']):
         try:
             self.session.checked_post(self._path() + "/transfer-resource", {
                 "to_project_id": str(receiving_project_uid),
-                "resource": resource.as_entity_dict()})
+                "resource": resource.access_control_dict()})
         except AttributeError:  # If _resource_type is not implemented
             raise RuntimeError(f"Resource of type  {resource.__class__.__name__} "
                                f"cannot be made transferred")
@@ -328,7 +328,7 @@ class Project(Resource['Project']):
         """
         try:
             self.session.checked_post(self._path() + "/make-public", {
-                "resource": resource.as_entity_dict()
+                "resource": resource.access_control_dict()
             })
         except AttributeError:  # If _resource_type is not implemented
             raise RuntimeError(f"Resource of type  {resource.__class__.__name__} "
@@ -353,7 +353,7 @@ class Project(Resource['Project']):
         """
         try:
             self.session.checked_post(self._path() + "/make-private", {
-                "resource": resource.as_entity_dict()
+                "resource": resource.access_control_dict()
             })
         except AttributeError:  # If _resource_type is not implemented
             raise RuntimeError(f"Resource of type  {resource.__class__.__name__} "
