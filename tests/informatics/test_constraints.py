@@ -69,7 +69,6 @@ def test_scalar_range_initialization(scalar_range_constraint):
     assert scalar_range_constraint.max == 10.0
     assert not scalar_range_constraint.min_inclusive
     assert scalar_range_constraint.max_inclusive
-    assert scalar_range_constraint.session is None
 
 
 def test_categorical_initialization(categorical_constraint):
@@ -86,7 +85,6 @@ def test_ingredient_fraction_initialization(ingredient_fraction_constraint):
     assert ingredient_fraction_constraint.min == 0.0
     assert ingredient_fraction_constraint.max == 1.0
     assert not ingredient_fraction_constraint.is_required
-    assert ingredient_fraction_constraint.session is None
 
 
 def test_ingredient_count_initialization(ingredient_count_constraint):
@@ -95,7 +93,6 @@ def test_ingredient_count_initialization(ingredient_count_constraint):
     assert ingredient_count_constraint.min == 0
     assert ingredient_count_constraint.max == 1
     assert ingredient_count_constraint.label == 'bar'
-    assert ingredient_count_constraint.session is None
 
 
 def test_label_fraction_initialization(label_fraction_constraint):
@@ -105,7 +102,6 @@ def test_label_fraction_initialization(label_fraction_constraint):
     assert label_fraction_constraint.min == 0.0
     assert label_fraction_constraint.max == 1.0
     assert not label_fraction_constraint.is_required
-    assert label_fraction_constraint.session is None
 
 
 def test_range_defaults():

@@ -3,7 +3,6 @@ from warnings import warn
 
 from citrine._serialization import properties
 from citrine._serialization.serializable import Serializable
-from citrine._session import Session
 from citrine.informatics.constraints.constraint import Constraint
 
 __all__ = ['ScalarRangeConstraint']
@@ -43,8 +42,7 @@ class ScalarRangeConstraint(Serializable['ScalarRangeConstraint'], Constraint):
                  min: Optional[float] = None,
                  max: Optional[float] = None,
                  min_inclusive: Optional[bool] = None,
-                 max_inclusive: Optional[bool] = None,
-                 session: Optional[Session] = None):
+                 max_inclusive: Optional[bool] = None):
         if lower_bound is not None and min is not None:
             raise ValueError("Both lower_bound and min were specified.  "
                              "Please only specify lower_bound.")
@@ -91,8 +89,6 @@ class ScalarRangeConstraint(Serializable['ScalarRangeConstraint'], Constraint):
             self.upper_inclusive = upper_inclusive
         elif max_inclusive is not None:
             self.upper_inclusive = max_inclusive
-
-        self.session: Optional[Session] = session
 
     def __str__(self):
         return '<ScalarRangeConstraint {!r}>'.format(self.descriptor_key)
