@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>citrine.resources.table_config module &mdash; Citrine Python 0.129.2 documentation</title>
+  <title>citrine.resources.table_config module &mdash; Citrine Python 0.133.1 documentation</title>
   
 
   
@@ -71,7 +71,7 @@
             
             
               <div class="version">
-                0.129.2
+                0.133.1
               </div>
             
           
@@ -213,7 +213,7 @@ material, splitting the graph at branches.</p></li>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.resources.table_config.TableConfig.add_all_ingredients">
-<span class="sig-name descname"><span class="pre">add_all_ingredients</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_template</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.link_by_uid.html#gemd.entity.link_by_uid.LinkByUID" title="(in GEMD-python)"><span class="pre">gemd.entity.link_by_uid.LinkByUID</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">project</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quantity_dimension</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="citrine.gemtables.variables.html#citrine.gemtables.variables.IngredientQuantityDimension" title="citrine.gemtables.variables.IngredientQuantityDimension"><span class="pre">citrine.gemtables.variables.IngredientQuantityDimension</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">scope</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'id'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unit</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.table_config.TableConfig.add_all_ingredients" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">add_all_ingredients</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_template</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.link_by_uid.html#gemd.entity.link_by_uid.LinkByUID" title="(in GEMD-python)"><span class="pre">gemd.entity.link_by_uid.LinkByUID</span></a><span class="p"><span class="pre">,</span> </span><a class="reference internal" href="citrine.resources.process_template.html#citrine.resources.process_template.ProcessTemplate" title="citrine.resources.process_template.ProcessTemplate"><span class="pre">citrine.resources.process_template.ProcessTemplate</span></a><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">project</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quantity_dimension</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="citrine.gemtables.variables.html#citrine.gemtables.variables.IngredientQuantityDimension" title="citrine.gemtables.variables.IngredientQuantityDimension"><span class="pre">citrine.gemtables.variables.IngredientQuantityDimension</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">scope</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'id'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unit</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.table_config.TableConfig.add_all_ingredients" title="Permalink to this definition">¶</a></dt>
 <dd><p>[ALPHA] Add variables and columns for all of the possible ingredients in a process.</p>
 <p>For each allowed ingredient name in the process template there is a column for the id of
 the ingredient and a column for the quantity of the ingredient. If the quantities are
@@ -221,7 +221,7 @@ given in absolute amounts then there is also a column for units.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>process_template</strong> (<em>LinkByUID</em>) – scope and id of a registered process template</p></li>
+<li><p><strong>process_template</strong> (<em>Union</em><em>[</em><em>LinkByUID</em><em>, </em><a class="reference internal" href="citrine.resources.process_template.html#citrine.resources.process_template.ProcessTemplate" title="citrine.resources.process_template.ProcessTemplate"><em>ProcessTemplate</em></a><em>, </em><em>str</em><em>, </em><em>UUID</em><em>]</em>) – representation of a registered process template</p></li>
 <li><p><strong>project</strong> (<a class="reference internal" href="citrine.resources.project.html#citrine.resources.project.Project" title="citrine.resources.project.Project"><em>Project</em></a>) – a project that has access to the process template</p></li>
 <li><p><strong>quantity_dimension</strong> (<a class="reference internal" href="citrine.gemtables.variables.html#citrine.gemtables.variables.IngredientQuantityDimension" title="citrine.gemtables.variables.IngredientQuantityDimension"><em>IngredientQuantityDimension</em></a>) – the dimension in which to report ingredient quantities</p></li>
 <li><p><strong>scope</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – the scope for which to get ingredient ids (default is Citrine scope, ‘id’)</p></li>

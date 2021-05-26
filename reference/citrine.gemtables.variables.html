@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>citrine.gemtables.variables module &mdash; Citrine Python 0.129.2 documentation</title>
+  <title>citrine.gemtables.variables module &mdash; Citrine Python 0.133.1 documentation</title>
   
 
   
@@ -71,7 +71,7 @@
             
             
               <div class="version">
-                0.129.2
+                0.133.1
               </div>
             
           
@@ -852,16 +852,16 @@ used to represent the labels applied to yellow in both mixing processes (red and
 paint) in a single column provided the process templates that mixed red and the final paint
 are included as cutoffs.</p>
 <p>In general, this variable should be preferred over an
-<code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientLabelSetByProcessTemplateAndName</span></code> when
+<a class="reference internal" href="#citrine.gemtables.variables.IngredientLabelsSetByProcessAndName" title="citrine.gemtables.variables.IngredientLabelsSetByProcessAndName"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientLabelsSetByProcessAndName</span></code></a> when
 mixtures are hierarchical (i.e., blends of blends).
 It allows an ingredient with a single name to be used in
 multiple processes without defining additional variables that manifest as additional columns
 in your GEM table, and must be used in place of the former if the same process template is
 used to represent mixing at multiple levels in the material history hierarchy. Going back
 to the previous example, this variable must be used in place of an
-<code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientLabelSetByProcessTemplateAndName</span></code> if the same
+<a class="reference internal" href="#citrine.gemtables.variables.IngredientLabelsSetByProcessAndName" title="citrine.gemtables.variables.IngredientLabelsSetByProcessAndName"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientLabelsSetByProcessAndName</span></code></a> if the same
 process template was used to represent the process that mixed red and the final paint.
-Using <code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientLabelSetByProcessTemplateAndName</span></code>
+Using <a class="reference internal" href="#citrine.gemtables.variables.IngredientLabelsSetByProcessAndName" title="citrine.gemtables.variables.IngredientLabelsSetByProcessAndName"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientLabelsSetByProcessAndName</span></code></a>
 would result in an ambiguous match because yellow would be found twice in the
 material history, once when mixing red and again when mixing the final paint.</p>
 <dl class="field-list simple">

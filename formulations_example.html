@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>5. Formulations Example &mdash; Citrine Python 0.129.2 documentation</title>
+  <title>5. Formulations Example &mdash; Citrine Python 0.133.1 documentation</title>
   
 
   
@@ -73,7 +73,7 @@
             
             
               <div class="version">
-                0.129.2
+                0.133.1
               </div>
             
           
@@ -510,7 +510,7 @@ As we will see, templates are crucial to configuring the table.</p>
     <span class="n">datasets</span><span class="o">=</span><span class="p">[</span><span class="n">dataset</span><span class="o">.</span><span class="n">uid</span><span class="p">],</span>
     <span class="n">rows</span><span class="o">=</span><span class="p">[</span>
         <span class="n">MaterialRunByTemplate</span><span class="p">(</span>
-            <span class="n">templates</span><span class="o">=</span><span class="p">[</span><span class="n">LinkByUID</span><span class="o">.</span><span class="n">from_entity</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">material_templates_to_include</span><span class="p">]</span>
+            <span class="n">templates</span><span class="o">=</span><span class="p">[</span><span class="n">LinkByUID</span><span class="o">.</span><span class="n">from_entity</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">scope</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">material_templates_to_include</span><span class="p">]</span>
         <span class="p">)</span>
     <span class="p">],</span>
     <span class="n">variables</span><span class="o">=</span><span class="p">[</span><span class="n">RootIdentifier</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">],</span> <span class="n">scope</span><span class="o">=</span><span class="n">scope</span><span class="p">)],</span>
@@ -592,7 +592,7 @@ This must be repeated once for each ingredient.</p>
 <span class="kn">from</span> <span class="nn">citrine.gemtables.columns</span> <span class="kn">import</span> <span class="n">ConcatColumn</span>
 
 <span class="n">ing_name</span> <span class="o">=</span> <span class="s2">&quot;simple syrup&quot;</span>
-<span class="n">mix_template_link</span> <span class="o">=</span> <span class="n">LinkByUID</span><span class="o">.</span><span class="n">from_entity</span><span class="p">(</span><span class="n">mix_template</span><span class="p">)</span>
+<span class="n">mix_template_link</span> <span class="o">=</span> <span class="n">LinkByUID</span><span class="o">.</span><span class="n">from_entity</span><span class="p">(</span><span class="n">mix_template</span><span class="p">,</span> <span class="n">scope</span><span class="p">)</span>
 <span class="n">identity_var</span> <span class="o">=</span> <span class="n">IngredientIdentifierInOutput</span><span class="p">(</span>
     <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ing_name</span><span class="si">}</span><span class="s2"> identifier&quot;</span><span class="p">,</span>
     <span class="n">headers</span><span class="o">=</span><span class="p">[</span><span class="n">ing_name</span><span class="p">,</span> <span class="s2">&quot;Identifier&quot;</span><span class="p">],</span>

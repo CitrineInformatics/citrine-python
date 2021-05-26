@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>4.4. Predictors &mdash; Citrine Python 0.129.2 documentation</title>
+  <title>4.4. Predictors &mdash; Citrine Python 0.133.1 documentation</title>
   
 
   
@@ -74,7 +74,7 @@
             
             
               <div class="version">
-                0.129.2
+                0.133.1
               </div>
             
           
@@ -114,10 +114,10 @@
 <li class="toctree-l3"><a class="reference internal" href="#molecular-structure-featurizer">4.4.4. Molecular Structure Featurizer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#chemical-formula-featurizer">4.4.5. Chemical Formula Featurizer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#ingredients-to-formulation-predictor-alpha">4.4.6. Ingredients to formulation predictor (ALPHA)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#simple-mixture-predictor-alpha">4.4.7. Simple mixture predictor (ALPHA)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#mean-property-predictor-alpha">4.4.8. Mean property predictor (ALPHA)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#ingredient-fractions-predictor-alpha">4.4.9. Ingredient fractions predictor (ALPHA)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#label-fractions-predictor-alpha">4.4.10. Label fractions predictor (ALPHA)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#simple-mixture-predictor">4.4.7. Simple mixture predictor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mean-property-predictor">4.4.8. Mean property predictor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ingredient-fractions-predictor">4.4.9. Ingredient fractions predictor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#label-fractions-predictor">4.4.10. Label fractions predictor</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#simple-ml-predictor">4.4.11. Simple ML predictor</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#predictor-reports">4.4.12. Predictor reports</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#training-data">4.4.13. Training data</a></li>
@@ -581,8 +581,8 @@ These labels are specified via:</p>
 </pre></div>
 </div>
 </section>
-<section id="simple-mixture-predictor-alpha">
-<h2><span class="section-number">4.4.7. </span>Simple mixture predictor (ALPHA)<a class="headerlink" href="#simple-mixture-predictor-alpha" title="Permalink to this headline">¶</a></h2>
+<section id="simple-mixture-predictor">
+<h2><span class="section-number">4.4.7. </span>Simple mixture predictor<a class="headerlink" href="#simple-mixture-predictor" title="Permalink to this headline">¶</a></h2>
 <p>Formulations may contain ingredients that are blends of other ingredients.
 Along the lines of the example above, hypertonic saline can be mixed with water to form isotonic saline.
 Often, the properties of a hierarchical mixture are strongly associated with its leaf ingredients.
@@ -610,9 +610,9 @@ The <code class="docutils literal notranslate"><span class="pre">training_data</
 </pre></div>
 </div>
 </section>
-<section id="mean-property-predictor-alpha">
-<h2><span class="section-number">4.4.8. </span>Mean property predictor (ALPHA)<a class="headerlink" href="#mean-property-predictor-alpha" title="Permalink to this headline">¶</a></h2>
-<p>Often, properties of a mixture are proportional to the properties of it’s ingredients.
+<section id="mean-property-predictor">
+<h2><span class="section-number">4.4.8. </span>Mean property predictor<a class="headerlink" href="#mean-property-predictor" title="Permalink to this headline">¶</a></h2>
+<p>Often, properties of a mixture are proportional to the properties of its ingredients.
 For example, the density of a saline solution can be computed from the densities of water and salt multiplied by their respective amounts:</p>
 <div class="math notranslate nohighlight">
 \[d_{saline} = d_{water} * f_{water} + d_{salt} * f_{salt}\]</div>
@@ -710,8 +710,8 @@ If a value other than 1.58 should be used, e.g. 2.0, this can be specified by se
 </div>
 <p>If <code class="docutils literal notranslate"><span class="pre">p</span></code> is given a value other than <code class="docutils literal notranslate"><span class="pre">1</span></code>, that value will be included in the key for the feature, e.g. <code class="docutils literal notranslate"><span class="pre">2.0-mean</span> <span class="pre">of</span> <span class="pre">property</span> <span class="pre">viscosity</span></code>.</p>
 </section>
-<section id="ingredient-fractions-predictor-alpha">
-<h2><span class="section-number">4.4.9. </span>Ingredient fractions predictor (ALPHA)<a class="headerlink" href="#ingredient-fractions-predictor-alpha" title="Permalink to this headline">¶</a></h2>
+<section id="ingredient-fractions-predictor">
+<h2><span class="section-number">4.4.9. </span>Ingredient fractions predictor<a class="headerlink" href="#ingredient-fractions-predictor" title="Permalink to this headline">¶</a></h2>
 <p>The <a class="reference internal" href="../reference/citrine.informatics.predictors.ingredient_fractions_predictor.html#citrine.informatics.predictors.ingredient_fractions_predictor.IngredientFractionsPredictor" title="citrine.informatics.predictors.ingredient_fractions_predictor.IngredientFractionsPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientFractionsPredictor</span></code></a> featurizes ingredient fractions in a formulation.
 The predictor is configured by specifying a descriptor that contains formulation data and a list of known ingredients to featurize.
 The list of ingredients should be the list of all possible ingredients for the input mixture.
@@ -749,8 +749,8 @@ this predictor would compute outputs:</p>
 <p>This will return a real descriptor for each featurized ingredient with bounds <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">1]</span></code> and key in the form <code class="docutils literal notranslate"><span class="pre">'{ingredient}</span> <span class="pre">share</span> <span class="pre">in</span> <span class="pre">{formulation</span> <span class="pre">key}'</span></code>
 where <code class="docutils literal notranslate"><span class="pre">`{formulation</span> <span class="pre">key}`</span></code> is “formulation” and <code class="docutils literal notranslate"><span class="pre">{ingredient}</span></code> is either <code class="docutils literal notranslate"><span class="pre">water</span></code>, <code class="docutils literal notranslate"><span class="pre">salt</span></code> or <code class="docutils literal notranslate"><span class="pre">boric</span> <span class="pre">acid</span></code>.</p>
 </section>
-<section id="label-fractions-predictor-alpha">
-<h2><span class="section-number">4.4.10. </span>Label fractions predictor (ALPHA)<a class="headerlink" href="#label-fractions-predictor-alpha" title="Permalink to this headline">¶</a></h2>
+<section id="label-fractions-predictor">
+<h2><span class="section-number">4.4.10. </span>Label fractions predictor<a class="headerlink" href="#label-fractions-predictor" title="Permalink to this headline">¶</a></h2>
 <p>The <a class="reference internal" href="../reference/citrine.informatics.predictors.label_fractions_predictor.html#citrine.informatics.predictors.label_fractions_predictor.LabelFractionsPredictor" title="citrine.informatics.predictors.label_fractions_predictor.LabelFractionsPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">LabelFractionsPredictor</span></code></a> computes total fraction of ingredients with a given label.
 The predictor is configured by specifying a formulation descriptor that holds formulation data (i.e. recipes and ingredient labels) and a set of labels to featurize.
 A separate response is computed for each featurized label by summing all quantities in the recipe associated with ingredients given the label.</p>
