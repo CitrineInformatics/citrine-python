@@ -422,14 +422,15 @@ class TableConfigCollection(Collection[TableConfig]):
             [DEPRECATED] Use preview_materials instead
 
         """
-        if preview_materials is None and preview_roots is None:
-            raise ValueError("Must specify preview materials")
-        if preview_materials is not None and preview_roots is not None:
-            raise ValueError("Cannot specify both preview_materials and preview_roots")
         if preview_roots is not None:
-            preview_materials = preview_roots
             warn("preview_roots argument is deprecated in favor of preview_materials",
                  DeprecationWarning)
+            if preview_materials is None:
+                preview_materials = preview_roots
+            else:
+                raise ValueError("Cannot specify both preview_materials and preview_roots")
+        elif preview_materials is None:
+                raise ValueError("Must specify preview materials")
         path = self._get_path() + "/preview"
         body = {
             "definition": table_config.dump(),
