@@ -1,7 +1,3 @@
-from typing import Optional
-from uuid import UUID
-from datetime import datetime
-
 from citrine._serialization.serializable import Serializable
 from citrine._serialization import properties
 from gemd.entity.dict_serializable import DictSerializable
@@ -20,12 +16,8 @@ class AuditInfo(Serializable, DictSerializable):
     """:Optional[datetime]: Time, in ms since epoch, at which the object was
     most recently updated"""
 
-    def __init__(self, created_by: Optional[UUID], created_at: Optional[datetime],
-                 updated_by: Optional[UUID] = None, updated_at: Optional[datetime] = None):
-        self.created_by = created_by
-        self.created_at = created_at
-        self.updated_by = updated_by
-        self.updated_at = updated_at
+    def __init__(self):
+        pass  # pragma: no cover
 
     def __repr__(self):
         return 'Created by: {!r}\nCreated at: {!r}\nUpdated by: {!r}\nUpdated at: {!r}'.format(
