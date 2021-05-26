@@ -48,13 +48,11 @@ class GraphPredictor(Resource['GraphPredictor'], Predictor, AIResourceMetadata):
                  name: str,
                  description: str,
                  predictors: List[Union[UUID, Predictor]],
-                 training_data: Optional[List[DataSource]] = None,
-                 archived: bool = False):
+                 training_data: Optional[List[DataSource]] = None):
         self.name: str = name
         self.description: str = description
         self.predictors: List[Union[UUID, Predictor]] = predictors
         self.training_data: List[DataSource] = self._wrap_training_data(training_data)
-        self.archived: bool = archived
 
     def _post_dump(self, data: dict) -> dict:
         data['display_name'] = data['config']['name']
