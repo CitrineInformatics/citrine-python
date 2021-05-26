@@ -16,7 +16,7 @@ PROJECT_ID = uuid4()
 
 @pytest.fixture
 def design_workflow() -> DesignWorkflow:
-    return DesignWorkflow('foo', DESIGN_SPACE_ID, PROCESSOR_ID, PREDICTOR_ID, PROJECT_ID)
+    return DesignWorkflow('foo', DESIGN_SPACE_ID, PROCESSOR_ID, PREDICTOR_ID)
 
 @pytest.fixture
 def performance_workflow(cv_conf) -> PerformanceWorkflow:
@@ -34,7 +34,6 @@ def test_workflow_initialization(design_workflow):
     assert design_workflow.design_space_id == DESIGN_SPACE_ID
     assert design_workflow.processor_id == PROCESSOR_ID
     assert design_workflow.predictor_id == PREDICTOR_ID
-    assert isinstance(design_workflow.session, Session)
 
 
 def test_d_workflow_str(design_workflow):

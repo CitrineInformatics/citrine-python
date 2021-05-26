@@ -30,5 +30,5 @@ def test_execution_error(pew):
     with pytest.raises(AttributeError):
         pew.executions
 
-    pew.project_id = "foo"
+    pew._project_id = "foo"
     assert pew.executions.project_id == "foo"

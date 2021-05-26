@@ -1,8 +1,10 @@
 """Tools for working with workflow resources."""
-from typing import Type
+from typing import Type, Optional
+from uuid import UUID
 
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
 from citrine._rest.asynchronous_object import AsynchronousObject
+from citrine._session import Session
 from citrine._serialization import properties
 
 
@@ -21,6 +23,8 @@ class Workflow(PolymorphicSerializable['Workflow'], AsynchronousObject):
     """
 
     _response_key = None
+    _session: Optional[Session] = None
+    _project_id: Optional[UUID] = None
 
     uid = properties.Optional(properties.UUID, 'id', serializable=False)
     """:Optional[UUID]: Citrine Platform unique identifier"""

@@ -27,7 +27,7 @@ def workflow(collection: DesignWorkflowCollection, design_workflow_dict) -> Desi
 
 def test_basic_methods(workflow, collection):
     assert "DesignWorkflow" in str(workflow)
-    assert workflow.design_executions.project_id == workflow.project_id
+    assert workflow.design_executions.project_id == workflow._project_id
     # assert workflow.evaluators[0].name == "Example evaluator"
 
 
@@ -57,7 +57,6 @@ def test_missing_project(design_workflow_dict):
         predictor_id=design_workflow_dict["predictor_id"],
         design_space_id=design_workflow_dict["design_space_id"]
     )
-    assert workflow.project_id is None
 
     with pytest.raises(AttributeError):
         workflow.design_executions
