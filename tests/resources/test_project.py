@@ -4,6 +4,7 @@ from logging import getLogger
 import pytest
 from dateutil.parser import parse
 from gemd.entity.link_by_uid import LinkByUID
+import warnings
 
 from citrine.informatics.workflows.design_workflow import DesignWorkflow
 from citrine.resources.api_error import ApiError, ValidationError
@@ -12,6 +13,7 @@ from citrine.resources.process_spec import ProcessSpec
 from citrine.resources.project import Project, ProjectCollection
 from citrine.resources.project_member import ProjectMember
 from citrine.resources.project_roles import MEMBER, LEAD, WRITE
+from citrine.resources.dataset import Dataset
 from tests.utils.factories import ProjectDataFactory, UserDataFactory
 from tests.utils.session import FakeSession, FakeCall, FakePaginatedSession
 
@@ -59,7 +61,11 @@ def test_share_post_content(project, session):
     dataset_id = str(uuid.uuid4())
 
     # When
-    project.share(project.uid, 'DATASET', dataset_id)
+    # Share using resource type/id, which is deprecated
+    with warnings.catch_warnings(record=True) as caught:
+        project.share(project_id=project.uid, resource_type='DATASET', resource_id=dataset_id)
+        assert len(caught) == 1
+        assert caught[0].category == DeprecationWarning
 
     # Then
     assert 1 == session.num_calls
@@ -72,6 +78,32 @@ def test_share_post_content(project, session):
         }
     )
     assert expected_call == session.last_call
+
+    # Share by resource
+    # When
+    dataset = Dataset(name="foo", summary="", description="")
+    dataset.uid = str(uuid.uuid4())
+    project.share(resource=dataset, project_id=project.uid)
+
+    # Then
+    assert 2 == session.num_calls
+    expected_call = FakeCall(
+        method='POST',
+        path='/projects/{}/share'.format(project.uid),
+        json={
+            'project_id': project.uid,
+            'resource': {'type': 'DATASET', 'id': str(dataset.uid)}
+        }
+    )
+    assert expected_call == session.last_call
+
+    # providing both the resource and the type/id is an error
+    with pytest.raises(ValueError):
+        project.share(resource=dataset, project_id=project.uid, resource_type='DATASET', resource_id=dataset_id)
+
+    # Providing neither the resource nor the type/id is an error
+    with pytest.raises(ValueError):
+        project.share(project_id=project.uid)
 
 
 def test_make_resource_public(project, session):
@@ -132,7 +164,7 @@ def test_transfer_resource(project, session):
         path='/projects/{}/transfer-resource'.format(project.uid),
         json={
             'to_project_id': str(project.uid),
-            'resource': dataset.as_entity_dict()
+            'resource': dataset.access_control_dict()
         }
     )
     assert expected_call == session.last_call

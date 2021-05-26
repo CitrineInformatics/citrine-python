@@ -392,8 +392,8 @@ The following example illustrates how an :class:`~citrine.informatics.predictors
     )
 
 
-Simple mixture predictor (ALPHA)
---------------------------------------
+Simple mixture predictor
+------------------------
 
 Formulations may contain ingredients that are blends of other ingredients.
 Along the lines of the example above, hypertonic saline can be mixed with water to form isotonic saline.
@@ -425,10 +425,10 @@ The following example illustrates how a :class:`~citrine.informatics.predictors.
         training_data=[data_source]
     )
 
-Mean property predictor (ALPHA)
--------------------------------
+Mean property predictor
+-----------------------
 
-Often, properties of a mixture are proportional to the properties of it's ingredients.
+Often, properties of a mixture are proportional to the properties of its ingredients.
 For example, the density of a saline solution can be computed from the densities of water and salt multiplied by their respective amounts:
 
 .. math::
@@ -441,14 +441,14 @@ If the densities of water and salt are known, we can compute the expected densit
 The :class:`~citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor` computes mean properties of formulation ingredients.
 To configure a mean property predictor, we must specify:
 
-- An input descriptor that holds the mixture's recipe and ingredient labels
-- A list of properties to featurize
-- The power of the `generalized mean <https://en.wikipedia.org/wiki/Generalized_mean>`_.
+* An input descriptor that holds the mixture's recipe and ingredient labels
+* A list of properties to featurize
+* The power of the `generalized mean <https://en.wikipedia.org/wiki/Generalized_mean>`_.
   Only integer powers are supported. ``p=1`` corresponds to the arithmetic mean, which weights
   all values evenly. Higher powers, such as ``p=2`` (the root mean square) place more weight
   on larger values of the property. Negative powers place more weight on smaller values.
-- A data source that contains all ingredients and their properties
-- How to handle missing ingredient properties
+* A data source that contains all ingredients and their properties
+* How to handle missing ingredient properties
 
 An optional label may also be specified if the mean should only be computed over ingredients given a specific label.
 
@@ -525,8 +525,8 @@ This predictor will compute a real descriptor with a key ``mean of property dens
 
 If ``p`` is given a value other than ``1``, that value will be included in the key for the feature, e.g. ``2.0-mean of property viscosity``.
 
-Ingredient fractions predictor (ALPHA)
------------------------------------------
+Ingredient fractions predictor
+------------------------------
 
 The :class:`~citrine.informatics.predictors.ingredient_fractions_predictor.IngredientFractionsPredictor` featurizes ingredient fractions in a formulation.
 The predictor is configured by specifying a descriptor that contains formulation data and a list of known ingredients to featurize.
@@ -570,8 +570,8 @@ The response descriptors can be retrieved using:
 This will return a real descriptor for each featurized ingredient with bounds ``[0, 1]`` and key in the form ``'{ingredient} share in {formulation key}'``
 where ```{formulation key}``` is "formulation" and ``{ingredient}`` is either ``water``, ``salt`` or ``boric acid``.
 
-Label fractions predictor (ALPHA)
-----------------------------------
+Label fractions predictor
+-------------------------
 
 The :class:`~citrine.informatics.predictors.label_fractions_predictor.LabelFractionsPredictor` computes total fraction of ingredients with a given label.
 The predictor is configured by specifying a formulation descriptor that holds formulation data (i.e. recipes and ingredient labels) and a set of labels to featurize.

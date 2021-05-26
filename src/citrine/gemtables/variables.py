@@ -705,16 +705,16 @@ class IngredientLabelsSetInOutput(Serializable['IngredientLabelsSetInOutput'], V
     are included as cutoffs.
 
     In general, this variable should be preferred over an
-    :class:`~citrine.gemtables.variables.IngredientLabelSetByProcessTemplateAndName` when
+    :class:`~citrine.gemtables.variables.IngredientLabelsSetByProcessAndName` when
     mixtures are hierarchical (i.e., blends of blends).
     It allows an ingredient with a single name to be used in
     multiple processes without defining additional variables that manifest as additional columns
     in your GEM table, and must be used in place of the former if the same process template is
     used to represent mixing at multiple levels in the material history hierarchy. Going back
     to the previous example, this variable must be used in place of an
-    :class:`~citrine.gemtables.variables.IngredientLabelSetByProcessTemplateAndName` if the same
+    :class:`~citrine.gemtables.variables.IngredientLabelsSetByProcessAndName` if the same
     process template was used to represent the process that mixed red and the final paint.
-    Using :class:`~citrine.gemtables.variables.IngredientLabelSetByProcessTemplateAndName`
+    Using :class:`~citrine.gemtables.variables.IngredientLabelsSetByProcessAndName`
     would result in an ambiguous match because yellow would be found twice in the
     material history, once when mixing red and again when mixing the final paint.
 

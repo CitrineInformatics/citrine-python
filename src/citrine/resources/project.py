@@ -1,8 +1,9 @@
 """Resources that represent both individual and collections of projects."""
 from typing import Optional, Dict, List, Union, Iterable, Tuple
 from uuid import UUID
-
 from deprecation import deprecated
+from warnings import warn
+
 from gemd.entity.base_entity import BaseEntity
 from gemd.entity.link_by_uid import LinkByUID
 
@@ -237,14 +238,44 @@ class Project(Resource['Project']):
              "Please call table_configs instead.", DeprecationWarning)
         return self.table_configs
 
-    def share(self,
-              project_id: str,
-              resource_type: str,
-              resource_id: str) -> Dict[str, str]:
-        """Share a resource with another project."""
+    def share(self, *,
+              resource: Optional[Resource] = None,
+              project_id: Optional[Union[str, UUID]] = None,
+              resource_type: Optional[str] = None,
+              resource_id: Optional[str] = None
+              ) -> Dict[str, str]:
+        """Share a resource with another project.
+
+        Parameters
+        ----------
+        resource: Resource
+            The resource owned by this project, which will be shared
+        project_id: Union[str, UUID]
+            The id of the project with which to share the resource
+        resource_type: Optional[str]
+            [DEPRECATED] Please use ``resource`` instead
+            The type of the resource to share. Must be one of DATASET, MODULE, USER,
+            TABLE, OR TABLE_DEFINITION
+        resource_id: Optional[str]
+            [DEPRECATED] Please use ``resource`` instead
+            The id of the resource to share
+
+        """
+        resource_dict = None
+        if resource is not None:
+            resource_dict = resource.access_control_dict()
+        if resource_type is not None and resource_id is not None:
+            warn("Asset sharing through resource_type and resource_id is deprecated. Please pass "
+                 "the resource to share instead.", DeprecationWarning)
+            if resource_dict is not None:
+                raise ValueError("Cannot specify resource to share and also specify the "
+                                 "resource type and id")
+            resource_dict = {"type": resource_type, "id": resource_id}
+        if resource_dict is None:
+            raise ValueError("Must specify resource to share or specify the resource type and id")
         return self.session.post_resource(self._path() + "/share", {
             "project_id": project_id,
-            "resource": {"type": resource_type, "id": resource_id}
+            "resource": resource_dict
         })
 
     def transfer_resource(self, resource: Resource,
@@ -272,7 +303,7 @@ class Project(Resource['Project']):
         try:
             self.session.checked_post(self._path() + "/transfer-resource", {
                 "to_project_id": str(receiving_project_uid),
-                "resource": resource.as_entity_dict()})
+                "resource": resource.access_control_dict()})
         except AttributeError:  # If _resource_type is not implemented
             raise RuntimeError(f"Resource of type  {resource.__class__.__name__} "
                                f"cannot be made transferred")
@@ -297,7 +328,7 @@ class Project(Resource['Project']):
         """
         try:
             self.session.checked_post(self._path() + "/make-public", {
-                "resource": resource.as_entity_dict()
+                "resource": resource.access_control_dict()
             })
         except AttributeError:  # If _resource_type is not implemented
             raise RuntimeError(f"Resource of type  {resource.__class__.__name__} "
@@ -322,7 +353,7 @@ class Project(Resource['Project']):
         """
         try:
             self.session.checked_post(self._path() + "/make-private", {
-                "resource": resource.as_entity_dict()
+                "resource": resource.access_control_dict()
             })
         except AttributeError:  # If _resource_type is not implemented
             raise RuntimeError(f"Resource of type  {resource.__class__.__name__} "
