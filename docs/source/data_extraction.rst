@@ -115,7 +115,7 @@ For example:
    table_configs = project.table_configs
    preview = table_configs.preview(
          table_config = table_config,
-         preview_roots = [
+         preview_materials = [
                LinkByUID(scope="products", id="best cookie ever"),
                LinkByUID(scope="products", id="worst cookie ever")])
 
@@ -131,7 +131,7 @@ For example, if you wanted to print the warnings and then load the preview into 
    from io import StringIO
    import pandas as pd
 
-   preview = table_configs.preview(table_config, preview_roots)
+   preview = table_configs.preview(table_config=table_config, preview_materials=preview_materials)
    print("\n\n".join(preview["warnings"]))
    data_frame = pd.read_csv(StringIO(preview["csv"]))
 

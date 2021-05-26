@@ -178,7 +178,7 @@ def test_preview(collection, session):
     project_id = '6b608f78-e341-422c-8076-35adc8828545'
 
     # When
-    collection.preview(empty_defn(), [])
+    collection.preview(table_config=empty_defn(), preview_materials=[])
 
     # Then
     assert 1 == session.num_calls
@@ -188,6 +188,24 @@ def test_preview(collection, session):
         json={"definition": empty_defn().dump(), "rows": []}
     )
     assert session.last_call == expect_call
+
+    # When
+    collection.preview(table_config=empty_defn(), preview_roots=[])
+
+    # Then
+    assert 2 == session.num_calls
+    expect_call = FakeCall(
+        method="POST",
+        path="projects/{}/ara-definitions/preview".format(project_id),
+        json={"definition": empty_defn().dump(), "rows": []}
+    )
+    assert session.last_call == expect_call
+
+    with pytest.raises(ValueError):
+        collection.preview(table_config=empty_defn(), preview_materials=[], preview_roots=[])
+
+    with pytest.raises(ValueError):
+        collection.preview(table_config=empty_defn())
 
 
 def test_default_for_material(collection: TableConfigCollection, session):
