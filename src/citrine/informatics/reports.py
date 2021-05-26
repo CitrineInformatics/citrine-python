@@ -1,15 +1,13 @@
 """Tools for working with reports."""
-from typing import Optional, Type, List, Dict, TypeVar, Iterable, Any
+from typing import Type, Dict, TypeVar, Iterable
 from abc import abstractmethod
 from itertools import groupby
 import warnings
-from uuid import UUID
 
 from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
 from citrine._serialization.serializable import Serializable
 from citrine._rest.asynchronous_object import AsynchronousObject
-from citrine._session import Session
 from citrine.informatics.descriptors import Descriptor
 
 SelfType = TypeVar('SelfType', bound='Report')
@@ -55,9 +53,8 @@ class FeatureImportanceReport(Serializable["FeatureImportanceReport"]):
                                      serialization_path='importances')
     """:dict[str, float]: map from feature name to its importance"""
 
-    def __init__(self, output_key: str, importances: Dict[str, float]):
-        self.output_key = output_key
-        self.importances = importances
+    def __init__(self):
+        pass  # pragma: no cover
 
     def __str__(self):
         return "<FeatureImportanceReport {!r}>".format(self.output_key)
@@ -95,23 +92,8 @@ class ModelSummary(Serializable['ModelSummary']):
     training_data_count = properties.Optional(properties.Integer, "training_data_count")
     """:int: Number of rows in the training data for the model, if applicable."""
 
-    def __init__(self,
-                 name: str,
-                 type_: str,
-                 inputs: List[Descriptor],
-                 outputs: List[Descriptor],
-                 model_settings: Dict[str, Any],
-                 feature_importances: List[FeatureImportanceReport],
-                 predictor_name: str,
-                 predictor_uid: Optional[UUID] = None):
-        self.name = name
-        self.type_ = type_
-        self.inputs = inputs
-        self.outputs = outputs
-        self.model_settings = model_settings
-        self.feature_importances = feature_importances
-        self.predictor_name = predictor_name
-        self.predictor_uid = predictor_uid
+    def __init__(self):
+        pass  # pragma: no cover
 
     def __str__(self):
         return '<ModelSummary {!r}>'.format(self.name)
@@ -132,14 +114,8 @@ class PredictorReport(Serializable['PredictorReport'], Report):
     model_summaries = properties.List(properties.Object(ModelSummary), 'report.models', default=[])
     """:List[ModelSummary]: Summaries of all models in the predictor"""
 
-    def __init__(self, status: str,
-                 descriptors: Optional[List[Descriptor]] = None,
-                 model_summaries: Optional[List[ModelSummary]] = None,
-                 session: Optional[Session] = None):
-        self.status = status
-        self.descriptors = descriptors or []
-        self.model_summaries = model_summaries or []
-        self.session: Optional[Session] = session
+    def __init__(self):
+        pass  # pragma: no cover
 
     def in_progress(self) -> bool:
         """Whether report generation is in progress."""
