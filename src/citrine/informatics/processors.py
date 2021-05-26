@@ -89,12 +89,10 @@ class GridProcessor(Resource['GridProcessor'], Processor, AIResourceMetadata):
     def __init__(self,
                  name: str,
                  description: str,
-                 grid_sizes: Mapping[str, int],
-                 session: Optional[Session] = None):
+                 grid_sizes: Mapping[str, int]):
         self.name: str = name
         self.description: str = description
         self.grid_sizes: Mapping[str, int] = grid_sizes
-        self.session: Optional[Session] = session
 
     def _post_dump(self, data: dict) -> dict:
         data['display_name'] = data['config']['name']
@@ -134,8 +132,7 @@ class EnumeratedProcessor(Resource['EnumeratedProcessor'], Processor, AIResource
                  name: str,
                  description: str,
                  max_candidates: Optional[int] = None,
-                 max_size: Optional[int] = None,
-                 session: Optional[Session] = None):
+                 max_size: Optional[int] = None):
         if max_candidates is not None and max_size is not None:
             raise ValueError("Both max_candidates and max_size were specified.  "
                              "Please only specify max_candidates.")
@@ -145,7 +142,6 @@ class EnumeratedProcessor(Resource['EnumeratedProcessor'], Processor, AIResource
         self.name: str = name
         self.description: str = description
         self.max_candidates: int = max_candidates or max_size or 1000
-        self.session: Optional[Session] = session
 
     def _post_dump(self, data: dict) -> dict:
         data['display_name'] = data['config']['name']
@@ -196,12 +192,10 @@ class MonteCarloProcessor(Resource['GridProcessor'], Processor, AIResourceMetada
                  name: str,
                  description: str,
                  max_candidates: Optional[int] = None,
-                 mode: Optional[str] = None,
-                 session: Optional[Session] = None):
+                 mode: Optional[str] = None):
         self.name: str = name
         self.description: str = description
         self.max_candidates: Optional[int] = max_candidates
-        self.session: Optional[Session] = session
         self.mode: Optional[str] = mode
 
     def _post_dump(self, data: dict) -> dict:
