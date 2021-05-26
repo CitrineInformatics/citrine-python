@@ -5,8 +5,8 @@ import pytest
 from gemd.entity.link_by_uid import LinkByUID
 from citrine.gemtables.columns import MeanColumn, OriginalUnitsColumn, StdDevColumn, IdentityColumn
 from citrine.gemtables.rows import MaterialRunByTemplate
-from citrine.gemtables.variables import AttributeByTemplate, RootInfo, IngredientQuantityDimension, \
-    IngredientQuantityByProcessAndName, IngredientIdentifierByProcessTemplateAndName, RootIdentifier
+from citrine.gemtables.variables import AttributeByTemplate, TerminalMaterialInfo, IngredientQuantityDimension, \
+    IngredientQuantityByProcessAndName, IngredientIdentifierByProcessTemplateAndName, TerminalMaterialIdentifier
 from citrine.resources.table_config import TableConfig, TableConfigCollection, TableBuildAlgorithm
 from citrine.resources.data_concepts import CITRINE_SCOPE
 from citrine.resources.material_run import MaterialRun
@@ -120,8 +120,8 @@ def test_dup_names():
         TableConfig(
             name="foo", description="bar", datasets=[], rows=[], columns=[],
             variables=[
-                RootInfo(name="foo", headers=["foo", "bar"], field="name"),
-                RootInfo(name="foo", headers=["foo", "baz"], field="name")
+                TerminalMaterialInfo(name="foo", headers=["foo", "bar"], field="name"),
+                TerminalMaterialInfo(name="foo", headers=["foo", "baz"], field="name")
             ]
         )
     assert "Multiple" in str(excinfo.value)
@@ -131,8 +131,8 @@ def test_dup_names():
         TableConfig(
             name="foo", description="bar", datasets=[], rows=[], columns=[],
             variables=[
-                RootInfo(name="foo", headers=["spam", "eggs"], field="name"),
-                RootInfo(name="bar", headers=["spam", "eggs"], field="name")
+                TerminalMaterialInfo(name="foo", headers=["spam", "eggs"], field="name"),
+                TerminalMaterialInfo(name="bar", headers=["spam", "eggs"], field="name")
             ]
         )
     assert "Multiple" in str(excinfo.value)
@@ -205,7 +205,7 @@ def test_default_for_material(collection: TableConfigCollection, session):
         ).dump(),
         'ambiguous': [
             [
-                RootIdentifier(name='foo', headers=['foo'], scope='id').dump(),
+                TerminalMaterialIdentifier(name='foo', headers=['foo'], scope='id').dump(),
                 IdentityColumn(data_source='foo').dump(),
             ]
         ],
@@ -270,24 +270,24 @@ def test_add_columns():
     # Check the mismatched name error
     with pytest.raises(ValueError) as excinfo:
         empty.add_columns(
-            variable=RootInfo(name="foo", headers=["bar"], field="name"),
+            variable=TerminalMaterialInfo(name="foo", headers=["bar"], field="name"),
             columns=[IdentityColumn(data_source="bar")]
         )
     assert "data_source must be" in str(excinfo.value)
 
     # Check desired behavior
     with_name_col = empty.add_columns(
-        variable=RootInfo(name="name", headers=["bar"], field="name"),
+        variable=TerminalMaterialInfo(name="name", headers=["bar"], field="name"),
         columns=[IdentityColumn(data_source="name")]
     )
-    assert with_name_col.variables == [RootInfo(name="name", headers=["bar"], field="name")]
+    assert with_name_col.variables == [TerminalMaterialInfo(name="name", headers=["bar"], field="name")]
     assert with_name_col.columns == [IdentityColumn(data_source="name")]
     assert with_name_col.config_uid == UUID('6b608f78-e341-422c-8076-35adc8828545')
 
     # Check duplicate variable name error
     with pytest.raises(ValueError) as excinfo:
         with_name_col.add_columns(
-            variable=RootInfo(name="name", headers=["bar"], field="name"),
+            variable=TerminalMaterialInfo(name="name", headers=["bar"], field="name"),
             columns=[IdentityColumn(data_source="name")]
         )
     assert "already used" in str(excinfo.value)
