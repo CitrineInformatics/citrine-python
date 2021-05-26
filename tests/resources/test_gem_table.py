@@ -267,7 +267,7 @@ def test_get_and_read_table_from_collection(mock_write_files_locally, table, ses
 
 def test_gem_table_entity_dict():
     table = GemTable.build(GemTableDataFactory())
-    entity = table.as_entity_dict()
+    entity = table.access_control_dict()
 
     assert entity == {
         'id': str(table.uid),
