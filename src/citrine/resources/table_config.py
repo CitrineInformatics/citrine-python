@@ -430,7 +430,7 @@ class TableConfigCollection(Collection[TableConfig]):
             else:
                 raise ValueError("Cannot specify both preview_materials and preview_roots")
         elif preview_materials is None:
-                raise ValueError("Must specify preview materials")
+            raise ValueError("Must specify preview materials")
         path = self._get_path() + "/preview"
         body = {
             "definition": table_config.dump(),
