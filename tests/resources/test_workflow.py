@@ -10,14 +10,12 @@ from tests.utils.session import FakeSession, FakeCall
 def basic_design_workflow_data():
     return {
         'id': str(uuid.uuid4()),
-        'display_name': 'Test Workflow',
+        'name': 'Test Workflow',
         'status': 'SUCCEEDED',
         'status_description': 'READY',
-        'config': {
-            'design_space_id': str(uuid.uuid4()),
-            'processor_id': str(uuid.uuid4()),
-            'predictor_id': str(uuid.uuid4()),
-        },
+        'design_space_id': str(uuid.uuid4()),
+        'processor_id': str(uuid.uuid4()),
+        'predictor_id': str(uuid.uuid4()),
         'module_type': 'DESIGN_WORKFLOW',
         'create_time': datetime(2020, 1, 1, 1, 1, 1, 1).isoformat("T"),
         'created_by': str(uuid.uuid4()),

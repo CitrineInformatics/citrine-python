@@ -30,12 +30,6 @@ class DesignWorkflow(Resource['DesignWorkflow'], Workflow, AIResourceMetadata):
 
     """
 
-    # TODO: after PerformanceWorkflows are removed, get rid of this line and also
-    #   consolidate common fields in the Workflow object
-    name = properties.String('display_name')
-    name = properties.String('name')
-    description = properties.Optional(properties.String, 'description')
-
     design_space_id = properties.UUID('design_space_id')
     processor_id = properties.Optional(properties.UUID, 'processor_id')
     predictor_id = properties.UUID('predictor_id')
@@ -43,6 +37,9 @@ class DesignWorkflow(Resource['DesignWorkflow'], Workflow, AIResourceMetadata):
     status_description = properties.String('status_description', serializable=False)
     """:str: more detailed description of the workflow's status"""
 
+    # TODO: I think that module_type is a vestige of when workflows were accessed through a
+    #   generic WorkflowCollection. We can remove it and also make it so that Workflow
+    #   no longer extends PolymorphicSerializable.
     module_type = properties.String('module_type', default='DESIGN_WORKFLOW')
     typ = properties.String('type', default='DesignWorkflow', deserializable=False)
 
@@ -64,38 +61,6 @@ class DesignWorkflow(Resource['DesignWorkflow'], Workflow, AIResourceMetadata):
 
     def __str__(self):
         return '<DesignWorkflow {!r}>'.format(self.name)
-
-    @classmethod
-    def _pre_build(cls, data: dict) -> dict:
-        """Makes Design Workflows backwards compatible.
-
-        module route used to return info in the `config`
-        """
-        if 'config' in data:
-            # pull config info out of old style workflow
-            data['name'] = data['display_name']
-            data['status_description'] = data['status']
-            data['predictor_id'] = data['config']['predictor_id']
-            data['design_space_id'] = data['config']['design_space_id']
-            if 'processor_id' in data['config']:
-                data['processor_id'] = data['config']['processor_id']
-        return data
-
-    def _post_dump(self, data: dict) -> dict:
-        """Makes Design Workflows backwards compatible.
-
-        the old module route expects `config` and `display_name`
-        """
-        data['display_name'] = data['name']
-        config = {
-            'predictor_id': data['predictor_id'],
-            'design_space_id': data['design_space_id'],
-            'type': 'DesignWorkflow'  # needs to be added here so it doesn't get overwritten
-        }
-        if 'processor_id' in data:
-            config['processor_id'] = data['processor_id']
-        data['config'] = config
-        return data
 
     @property
     def design_executions(self) -> DesignExecutionCollection:

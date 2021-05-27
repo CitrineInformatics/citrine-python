@@ -105,7 +105,7 @@ def create_or_update(collection: Collection[CreationType], resource: CreationTyp
 
     Parameters
     ----------
-    collection : Collection[ResourceType]
+    collection : Collection[CreationType]
         Collection within which you want to update or create a resource
     resource : CreationType
         Resource that you want to create or update.
