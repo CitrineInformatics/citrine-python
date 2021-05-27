@@ -4,18 +4,26 @@ from uuid import uuid4
 import pytest
 
 from citrine.informatics.workflows import DesignWorkflow, PerformanceWorkflow, Workflow
+from citrine.resources.design_workflow import DesignWorkflowCollection
 from citrine.resources.workflow_executions import WorkflowExecutionCollection
+from citrine._session import Session
 from .test_analysis_configuration import cv_conf  # noqa
 
-DESIGN_SPACE_ID = uuid4()
-PROCESSOR_ID = uuid4()
-PREDICTOR_ID = uuid4()
+
+@pytest.fixture
+def collection() -> DesignWorkflowCollection:
+    return DesignWorkflowCollection(
+        project_id=uuid4(),
+        session=Session(),
+    )
+
+
 PROJECT_ID = uuid4()
 
 
 @pytest.fixture
-def design_workflow() -> DesignWorkflow:
-    return DesignWorkflow('foo', DESIGN_SPACE_ID, PROCESSOR_ID, PREDICTOR_ID)
+def design_workflow(collection, design_workflow_dict) -> DesignWorkflow:
+    return collection.build(design_workflow_dict)
 
 @pytest.fixture
 def performance_workflow(cv_conf) -> PerformanceWorkflow:
@@ -27,24 +35,14 @@ def test_missing_module_type():
         Workflow.build(dict(module_type='foo'))
 
 
-def test_workflow_initialization(design_workflow):
-    """Make sure the correct fields go to the correct places."""
-    assert design_workflow.name == 'foo'
-    assert design_workflow.design_space_id == DESIGN_SPACE_ID
-    assert design_workflow.processor_id == PROCESSOR_ID
-    assert design_workflow.predictor_id == PREDICTOR_ID
-
-
 def test_d_workflow_str(design_workflow):
-    assert str(design_workflow) == '<DesignWorkflow \'foo\'>'
+    assert str(design_workflow) == f'<DesignWorkflow \'{design_workflow.name}\'>'
 
 
 def test_p_workflow_str(performance_workflow):
     assert str(performance_workflow) == '<PerformanceWorkflow \'bar\'>'
 
 
-@pytest.mark.xfail(reason="This is deprecated so I'm not bothering to fix it, but it would work if"
-                   " design_workflow had a session and project_id")
 def test_workflow_executions_with_project(design_workflow):
     assert isinstance(design_workflow.executions, WorkflowExecutionCollection)
 
