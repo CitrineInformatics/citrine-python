@@ -24,7 +24,7 @@ class PredictorEvaluationWorkflowCollection(Collection[PredictorEvaluationWorkfl
         """Build an individual PredictorEvaluationExecution."""
         workflow = PredictorEvaluationWorkflow.build(data)
         workflow._session = self.session
-        workflow._project_id = self.project_id
+        workflow.project_id = self.project_id
         return workflow
 
     def archive(self, workflow_id: UUID):

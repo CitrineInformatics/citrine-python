@@ -27,7 +27,7 @@ def workflow(collection: DesignWorkflowCollection, design_workflow_dict) -> Desi
 
 def test_basic_methods(workflow, collection):
     assert "DesignWorkflow" in str(workflow)
-    assert workflow.design_executions.project_id == workflow._project_id
+    assert workflow.design_executions.project_id == workflow.project_id
     # assert workflow.evaluators[0].name == "Example evaluator"
 
 

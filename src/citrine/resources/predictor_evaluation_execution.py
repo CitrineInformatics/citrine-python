@@ -24,7 +24,8 @@ class PredictorEvaluationExecution(Resource['PredictorEvaluationExecution'], Asy
     # This should really be _session, but _fetch_page assumes there is a 'pageable' parameter
     _session: Optional[Session] = None
     """:str: Unique identifier of the project that contains the workflow execution"""
-    _project_id: Optional[UUID] = None
+    project_id: Optional[UUID] = None
+    """:Optional[UUID]: Unique ID of the project that contains this execution."""
 
     uid: UUID = properties.UUID('id', serializable=False)
     """:UUID: Unique identifier of the workflow execution"""
@@ -60,7 +61,7 @@ class PredictorEvaluationExecution(Resource['PredictorEvaluationExecution'], Asy
 
     def _path(self):
         return '/projects/{project_id}/predictor-evaluation-executions/{execution_id}' \
-            .format(project_id=self._project_id,
+            .format(project_id=self.project_id,
                     execution_id=self.uid)
 
     def in_progress(self) -> bool:
@@ -125,7 +126,7 @@ class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExec
         """Build an individual PredictorEvaluationExecution."""
         execution = PredictorEvaluationExecution.build(data)
         execution._session = self.session
-        execution._project_id = self.project_id
+        execution.project_id = self.project_id
         return execution
 
     def trigger(self, predictor_id: UUID):

@@ -99,14 +99,14 @@ class DesignWorkflow(Resource['DesignWorkflow'], Workflow, AIResourceMetadata):
                 details="Use design_executions instead")
     def executions(self) -> WorkflowExecutionCollection:
         """Return a resource representing all visible executions of this workflow."""
-        if getattr(self, '_project_id', None) is None:
+        if getattr(self, 'project_id', None) is None:
             raise AttributeError('Cannot initialize execution without project reference!')
-        return WorkflowExecutionCollection(self._project_id, self.uid, self._session)
+        return WorkflowExecutionCollection(self.project_id, self.uid, self._session)
 
     @property
     def design_executions(self) -> DesignExecutionCollection:
         """Return a resource representing all visible executions of this workflow."""
-        if getattr(self, '_project_id', None) is None:
+        if getattr(self, 'project_id', None) is None:
             raise AttributeError('Cannot initialize execution without project reference!')
         return DesignExecutionCollection(
-            project_id=self._project_id, session=self._session, workflow_id=self.uid)
+            project_id=self.project_id, session=self._session, workflow_id=self.uid)

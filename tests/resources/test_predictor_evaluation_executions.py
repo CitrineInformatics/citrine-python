@@ -55,7 +55,7 @@ def test_build_new_execution(collection, predictor_evaluation_execution_dict):
 
     # Then
     assert execution.uid == workflow_execution_id
-    assert execution._project_id == collection.project_id
+    assert execution.project_id == collection.project_id
     assert execution.workflow_id == collection.workflow_id
     assert execution._session == collection.session
     assert execution.in_progress() and not execution.succeeded() and not execution.failed()
@@ -71,7 +71,7 @@ def test_workflow_execution_results(workflow_execution: PredictorEvaluationExecu
     # Then
     assert results.evaluator == PredictorEvaluationResult.build(example_result_dict).evaluator
     expected_path = '/projects/{}/predictor-evaluation-executions/{}/results'.format(
-        workflow_execution._project_id,
+        workflow_execution.project_id,
         workflow_execution.uid,
     )
     assert session.last_call == FakeCall(method='GET', path=expected_path, params={"evaluator_name": "Example Evaluator"})

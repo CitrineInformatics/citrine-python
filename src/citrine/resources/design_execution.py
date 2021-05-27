@@ -29,7 +29,8 @@ class DesignExecution(Resource['DesignExecution'], Pageable, AsynchronousObject)
     # This should really be _session, but _fetch_page assumes there is a 'pageable' parameter
     session: Optional[Session] = None
     """:str: Unique identifier of the project that contains the workflow execution"""
-    _project_id: Optional[UUID] = None
+    project_id: Optional[UUID] = None
+    """:Optional[UUID]: Unique ID of the project that contains this execution."""
 
     uid: UUID = properties.UUID('id', serializable=False)
     """:UUID: Unique identifier of the workflow execution"""
@@ -83,7 +84,7 @@ class DesignExecution(Resource['DesignExecution'], Pageable, AsynchronousObject)
 
     def _path(self):
         return '/projects/{project_id}/design-workflows/{workflow_id}/executions/{execution_id}' \
-            .format(project_id=self._project_id,
+            .format(project_id=self.project_id,
                     workflow_id=self.workflow_id,
                     execution_id=self.uid)
 

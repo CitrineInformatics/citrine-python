@@ -23,7 +23,7 @@ class DesignWorkflowCollection(Collection[DesignWorkflow]):
         """Build an individual DesignExecution."""
         workflow = DesignWorkflow.build(data)
         workflow._session = self.session
-        workflow._project_id = self.project_id
+        workflow.project_id = self.project_id
         return workflow
 
     def archive(self, workflow_id: UUID):

@@ -93,7 +93,7 @@ def test_workflow_execution_results(workflow_execution: DesignExecution, session
 
     # Then
     expected_path = '/projects/{}/design-workflows/{}/executions/{}/candidates'.format(
-        workflow_execution._project_id,
+        workflow_execution.project_id,
         workflow_execution.workflow_id,
         workflow_execution.uid,
     )

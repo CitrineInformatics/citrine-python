@@ -48,7 +48,7 @@ class PredictorEvaluationWorkflow(Resource['PredictorEvaluationWorkflow'],
     @property
     def executions(self) -> PredictorEvaluationExecutionCollection:
         """Return a resource representing all visible executions of this workflow."""
-        if getattr(self, '_project_id', None) is None:
+        if getattr(self, 'project_id', None) is None:
             raise AttributeError('Cannot initialize execution without project reference!')
         return PredictorEvaluationExecutionCollection(
-            project_id=self._project_id, session=self._session, workflow_id=self.uid)
+            project_id=self.project_id, session=self._session, workflow_id=self.uid)

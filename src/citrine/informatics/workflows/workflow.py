@@ -24,8 +24,9 @@ class Workflow(PolymorphicSerializable['Workflow'], AsynchronousObject):
 
     _response_key = None
     _session: Optional[Session] = None
-    _project_id: Optional[UUID] = None
 
+    project_id: Optional[UUID] = None
+    """:Optional[UUID]: Unique ID of the project that contains this workflow."""
     uid = properties.Optional(properties.UUID, 'id', serializable=False)
     """:Optional[UUID]: Citrine Platform unique identifier"""
 
