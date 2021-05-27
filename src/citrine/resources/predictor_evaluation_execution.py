@@ -53,7 +53,7 @@ class PredictorEvaluationExecution(Resource['PredictorEvaluationExecution'], Asy
 
     def __init__(self):
         """Predictor evaluation executions are not directly instantiated by the user."""
-        pass
+        pass  # pragma: no cover
 
     def __str__(self):
         return '<PredictorEvaluationExecution {!r}>'.format(str(self.uid))

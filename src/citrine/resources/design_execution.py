@@ -76,7 +76,7 @@ class DesignExecution(Resource['DesignExecution'], Pageable, AsynchronousObject)
 
     def __init__(self):
         """Design executions are not directly instantiated by the user."""
-        pass
+        pass  # pragma: no cover
 
     def __str__(self):
         return '<DesignExecution {!r}>'.format(str(self.uid))
