@@ -287,32 +287,42 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
 
     def list(self,
              page: Optional[int] = None,
-             per_page: Optional[int] = 100) -> List[ResourceType]:
+             per_page: Optional[int] = 100,
+             forward: bool = True) -> Iterator[ResourceType]:
         """
-        List all visible elements of the collection.
+        Get all visible elements of the collection.
 
-        page and per_page parameters of this method are deprecated and ignored.
-        This method will will return a list of all elements in the collection.
+        The order of results should not be relied upon, but for now they are sorted by
+        dataset, object type, and creation time (in that order of priority).
 
         Parameters
         ---------
         page: int, optional
-            [DEPRECATED][IGNORED] This parameter is ignored. To load individual
-            pages lazily, use the list_all method.
+            [DEPRECATED][IGNORED] This parameter is ignored. All pages are loaded lazily.
         per_page: int, optional
             Max number of results to return per page. It is very unlikely that
             setting this parameter to something other than the default is useful.
             It exists for rare situations where the client is bandwidth constrained
             or experiencing latency from large payload sizes.
+        forward: bool
+            Set to False to reverse the order of results (i.e., return in descending order)
 
         Returns
         -------
-        List[ResourceType]
+        Iterator[ResourceType]
             Every object in this collection.
 
         """
-        # Convert the iterator to a list to avoid breaking existing client relying on lists
-        return [x for x in self.list_all(per_page=per_page)]
+        params = {}
+        if self.dataset_id is not None:
+            params['dataset_id'] = str(self.dataset_id)
+        raw_objects = self.session.cursor_paged_resource(
+            self.session.get_resource,
+            self._get_path(ignore_dataset=True),
+            forward=forward,
+            per_page=per_page,
+            params=params)
+        return (self.build(raw) for raw in raw_objects)
 
     def register(self, model: ResourceType, dry_run=False):
         """
@@ -659,6 +669,8 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
             params=params)
         return (self.build(raw) for raw in raw_objects)
 
+    @deprecation.deprecated(deprecated_in="0.133.0", removed_in="1.0.0",
+                            details="Please use list instead of list_all")
     def list_all(self, forward: bool = True, per_page: int = 100) -> Iterator[ResourceType]:
         """
         Get all objects in the collection.
@@ -681,16 +693,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
             Every object in this collection.
 
         """
-        params = {}
-        if self.dataset_id is not None:
-            params['dataset_id'] = str(self.dataset_id)
-        raw_objects = self.session.cursor_paged_resource(
-            self.session.get_resource,
-            self._get_path(ignore_dataset=True),
-            forward=forward,
-            per_page=per_page,
-            params=params)
-        return (self.build(raw) for raw in raw_objects)
+        return self.list(forward=forward, per_page=per_page)  # pragma: no cover
 
     def list_by_tag(self, tag: str, per_page: int = 100) -> Iterator[ResourceType]:
         """

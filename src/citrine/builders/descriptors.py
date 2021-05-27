@@ -114,7 +114,7 @@ class PlatformVocabulary(Mapping[str, Descriptor]):
 
         """
         def _from_collection(collection: DataConceptsCollection):
-            return {x.uids[scope]: x for x in collection.list_all() if scope in x.uids}
+            return {x.uids[scope]: x for x in collection.list() if scope in x.uids}
 
         properties = _from_collection(project.property_templates)
         parameters = _from_collection(project.parameter_templates)

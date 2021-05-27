@@ -129,7 +129,7 @@ def test_list_material_runs(collection, session):
     })
 
     # When
-    runs = collection.list()
+    runs = list(collection.list())
 
     # Then
     assert 1 == session.num_calls
@@ -231,7 +231,7 @@ def test_cursor_paginated_searches(collection, session):
     setattr(session, 'cursor_paged_resource', Session.cursor_paged_resource)
 
     assert len(list(collection.list_by_name('unused', per_page=2))) == len(all_runs)
-    assert len(list(collection.list_all(per_page=2))) == len(all_runs)
+    assert len(list(collection.list(per_page=2))) == len(all_runs)
     assert len(list(collection.list_by_tag('unused', per_page=2))) == len(all_runs)
     assert len(list(collection.list_by_attribute_bounds(
         {LinkByUIDFactory(): IntegerBounds(1, 5)}, per_page=2))) == len(all_runs)

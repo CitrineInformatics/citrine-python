@@ -22,7 +22,7 @@ pressure_desc = RealDescriptor("pressure", lower_bound=0, upper_bound=10000, uni
 
 @pytest.fixture()
 def fake_project():
-    """Fake project that serves templates from template collection's list_all method."""
+    """Fake project that serves templates from template collection's list method."""
     templates = [
         PropertyTemplate("density", bounds=RealBounds(lower_bound=0, upper_bound=100, default_units="g / cm^3"), uids={"my_scope": "density"}),
         ConditionTemplate("volume", bounds=IntegerBounds(lower_bound=0, upper_bound=11), uids={"my_scope": "volume"}),
@@ -33,21 +33,21 @@ def fake_project():
         def __init__(self):
             pass
 
-        def list_all(self, forward: bool = True, per_page: int = 100) -> Iterator[PropertyTemplate]:
+        def list(self, forward: bool = True, per_page: int = 100) -> Iterator[PropertyTemplate]:
             return iter([x for x in templates if isinstance(x, PropertyTemplate)])
 
     class FakeConditionTemplateCollection(ConditionTemplateCollection):
         def __init__(self):
             pass
 
-        def list_all(self, forward: bool = True, per_page: int = 100) -> Iterator[ConditionTemplate]:
+        def list(self, forward: bool = True, per_page: int = 100) -> Iterator[ConditionTemplate]:
             return iter([x for x in templates if isinstance(x, ConditionTemplate)])
 
     class FakeParameterTemplateCollection(ParameterTemplateCollection):
         def __init__(self):
             pass
 
-        def list_all(self, forward: bool = True, per_page: int = 100) -> Iterator[ParameterTemplate]:
+        def list(self, forward: bool = True, per_page: int = 100) -> Iterator[ParameterTemplate]:
             return iter([x for x in templates if isinstance(x, ParameterTemplate)])
 
     class FakeProject(Project):
