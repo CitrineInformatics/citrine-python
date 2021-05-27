@@ -57,7 +57,7 @@ class FeatureImportanceReport(Serializable["FeatureImportanceReport"]):
         pass  # pragma: no cover
 
     def __str__(self):
-        return "<FeatureImportanceReport {!r}>".format(self.output_key)
+        return "<FeatureImportanceReport {!r}>".format(self.output_key)  # pragma: no cover
 
 
 class ModelSummary(Serializable['ModelSummary']):
@@ -96,7 +96,7 @@ class ModelSummary(Serializable['ModelSummary']):
         pass  # pragma: no cover
 
     def __str__(self):
-        return '<ModelSummary {!r}>'.format(self.name)
+        return '<ModelSummary {!r}>'.format(self.name)  # pragma: no cover
 
 
 class PredictorReport(Serializable['PredictorReport'], Report):
