@@ -1,5 +1,4 @@
 from uuid import UUID, uuid4
-import warnings
 import pytest
 
 from gemd.entity.link_by_uid import LinkByUID
@@ -46,8 +45,7 @@ def table_config() -> TableConfig:
 
 
 def empty_defn() -> TableConfig:
-    return TableConfig(name="empty", description="empty", datasets=[], rows=[], variables=[],
-                       columns=[], config_uid=UUID("6b608f78-e341-422c-8076-35adc8828545"))
+    return TableConfig(name="empty", description="empty", datasets=[], rows=[], variables=[], columns=[])
 
 
 def test_get_table_config(collection, session):
@@ -97,21 +95,6 @@ def test_init_table_config():
     table_config = TableConfig(name="foo", description="bar", rows=[], columns=[], variables=[], datasets=[])
     assert table_config.config_uid is None
     assert table_config.version_number is None
-
-
-def test_init_table_config_with_old_definition_uid():
-    uid = UUID('6b608f78-e341-422c-8076-35adc8828566')
-    table_config = TableConfig(name="foo", description="bar", rows=[], columns=[], variables=[], datasets=[],
-                               definition_uid=uid)
-    assert table_config.config_uid == uid
-    assert table_config.definition_uid == uid
-
-def test_init_table_config_with_new_config_uid():
-    uid = UUID('6b608f78-e341-422c-8076-35adc8828566')
-    table_config = TableConfig(name="foo", description="bar", rows=[], columns=[], variables=[], datasets=[],
-                               config_uid=uid)
-    assert table_config.config_uid == uid
-    assert table_config.definition_uid == uid
 
 
 def test_dup_names():
@@ -284,6 +267,7 @@ def test_default_for_material_failure(collection: TableConfigCollection):
 def test_add_columns():
     """Test the behavior of AraDefinition.add_columns"""
     empty = empty_defn()
+    empty.config_uid = uuid4()
 
     # Check the mismatched name error
     with pytest.raises(ValueError) as excinfo:
@@ -300,7 +284,7 @@ def test_add_columns():
     )
     assert with_name_col.variables == [TerminalMaterialInfo(name="name", headers=["bar"], field="name")]
     assert with_name_col.columns == [IdentityColumn(data_source="name")]
-    assert with_name_col.config_uid == UUID('6b608f78-e341-422c-8076-35adc8828545')
+    assert with_name_col.config_uid == empty.config_uid
 
     # Check duplicate variable name error
     with pytest.raises(ValueError) as excinfo:
@@ -323,8 +307,11 @@ def test_add_all_ingredients(session, project):
     )
 
     # WHEN we add all ingredients in a volume basis
-    def1 = empty_defn().add_all_ingredients(process_template=process_link, project=project,
+    empty = empty_defn()
+    def1 = empty.add_all_ingredients(process_template=process_link, project=project,
                                             quantity_dimension=IngredientQuantityDimension.VOLUME)
+    def1.config_uid = uuid4()
+
     # THEN there should be 2 variables and columns for each name, one for id and one for quantity
     assert len(def1.variables) == len(allowed_names) * 2
     assert len(def1.columns) == len(def1.variables)
@@ -348,7 +335,7 @@ def test_add_all_ingredients(session, project):
     new_columns = def2.columns[len(def1.columns):]
     assert len(new_variables) == len(allowed_names)
     assert len(new_columns) == len(allowed_names) * 2
-    assert def2.config_uid == UUID("6b608f78-e341-422c-8076-35adc8828545")
+    assert def2.config_uid == def1.config_uid
     for name in allowed_names:
         assert next((var for var in new_variables if name in var.headers
                      and isinstance(var, IngredientQuantityByProcessAndName)), None) is not None
@@ -403,8 +390,8 @@ def test_register_existing(collection, session):
     # table_config = TableConfigResponseDataFactory()
     # config_uid = table_config["definition_id"]
 
-    table_config = TableConfig(name="name", description="description", datasets=[], rows=[], variables=[], columns=[],
-                                   definition_uid = UUID('6b608f78-e341-422c-8076-35adc8828545'))
+    table_config = TableConfig(name="name", description="description", datasets=[], rows=[], variables=[], columns=[])
+    table_config.config_uid = uuid4()
 
     table_config_response = TableConfigResponseDataFactory()
     defn_uid = table_config_response["definition"]["id"]
@@ -414,21 +401,21 @@ def test_register_existing(collection, session):
     # When
     registered = collection.register(table_config)
 
-    assert registered.definition_uid == UUID(defn_uid)
+    assert registered.config_uid == UUID(defn_uid)
     assert registered.version_uid == UUID(ver_uid)
     assert session.num_calls == 1
 
     # Ensure we PUT if we were called with a table config id
     assert session.last_call.method == "PUT"
-    assert session.last_call.path == "projects/{}/ara-definitions/6b608f78-e341-422c-8076-35adc8828545".format(project_id)
+    assert session.last_call.path == "projects/{}/ara-definitions/{}".format(project_id, table_config.config_uid)
 
 
 def test_update(collection, session):
     """Test the behavior of AraDefinitionCollection.update() on a registered AraDefinition"""
     # Given
     project_id = '6b608f78-e341-422c-8076-35adc8828545'
-    table_config = TableConfig(name="name", description="description", datasets=[], rows=[], variables=[], columns=[],
-                                   definition_uid = UUID('6b608f78-e341-422c-8076-35adc8828545'))
+    table_config = TableConfig(name="name", description="description", datasets=[], rows=[], variables=[], columns=[])
+    table_config.config_uid = uuid4()
 
     table_config_response = TableConfigResponseDataFactory()
     defn_uid = table_config_response["definition"]["id"]
@@ -445,7 +432,7 @@ def test_update(collection, session):
 
     # Ensure we POST if we weren't created with a table config id
     assert session.last_call.method == "PUT"
-    assert session.last_call.path == "projects/{}/ara-definitions/6b608f78-e341-422c-8076-35adc8828545".format(project_id)
+    assert session.last_call.path == "projects/{}/ara-definitions/{}".format(project_id, table_config.config_uid)
 
 
 def test_update_unregistered_fail(collection, session):
@@ -453,8 +440,7 @@ def test_update_unregistered_fail(collection, session):
 
     # Given
 
-    table_config = TableConfig(name="name", description="description", datasets=[], rows=[], variables=[], columns=[],
-                                   definition_uid = None)
+    table_config = TableConfig(name="name", description="description", datasets=[], rows=[], variables=[], columns=[])
 
     # When
     with pytest.raises(ValueError, match="Cannot update Table Config without a config_uid."):

@@ -163,10 +163,10 @@ def test_build_from_config(collection: GemTableCollection, session):
         columns=[],
         rows=[],
         variables=[],
-        datasets=[],
-        definition_uid=config_uid,
-        version_number=config_version,
+        datasets=[]
     )
+    config.config_uid = config_uid
+    config.version_number = config_version
     expected_table_data = GemTableDataFactory()
     session.set_responses(
         {'job_id': '12345678-1234-1234-1234-123456789ccc'},
@@ -194,9 +194,9 @@ def test_build_from_config_failures(collection: GemTableCollection, session):
         columns=[],
         rows=[],
         variables=[],
-        datasets=[],
-        definition_uid=uuid4()
+        datasets=[]
     )
+    config.definition_uid = uuid4()
     with pytest.raises(ValueError):
         collection.build_from_config(config)
     config.version_number = 1

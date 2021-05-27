@@ -65,8 +65,13 @@ class TableConfig(Resource["TableConfig"]):
         return [x for x in lst if lst.count(x) > 1]
 
     config_uid = properties.Optional(properties.UUID(), 'definition_id')
-    version_uid = properties.Optional(properties.UUID(), 'id')
+    """:Optional[UUID]: Unique ID of the table config, independent of its version."""
     version_number = properties.Optional(properties.Integer, 'version_number')
+    """:Optional[int]: The version of the table config, starting from 1.
+    It increases every time the table config is updated."""
+    version_uid = properties.Optional(properties.UUID(), 'id')
+    """:Optional[UUID]: Unique ID that specifies one version of one table config."""
+
     name = properties.String("name")
     description = properties.String("description")
     datasets = properties.List(properties.UUID, "datasets")
@@ -92,24 +97,13 @@ class TableConfig(Resource["TableConfig"]):
         self.config_uid = value
 
     def __init__(self, *, name: str, description: str, datasets: List[UUID],
-                 variables: List[Variable], rows: List[Row], columns: List[Column],
-                 version_uid: Optional[UUID] = None, version_number: Optional[int] = None,
-                 definition_uid: Optional[UUID] = None, config_uid: Optional[UUID] = None):
+                 variables: List[Variable], rows: List[Row], columns: List[Column]):
         self.name = name
         self.description = description
         self.datasets = datasets
         self.rows = rows
         self.variables = variables
         self.columns = columns
-        self.version_uid = version_uid
-        self.version_number = version_number
-
-        if config_uid is not None:
-            assert definition_uid is None, "Please supply config_uid " \
-                                           "instead of definition_uid, and not both"
-            self.config_uid = config_uid
-        else:
-            self.config_uid = definition_uid
 
         # Note that these validations only apply at construction time. The current intended usage
         # is for this object to be created holistically; if changed, then these will need
@@ -162,15 +156,18 @@ class TableConfig(Resource["TableConfig"]):
             raise ValueError("Column.data_source must be {} but found {}"
                              .format(variable.name, mismatched_data_source))
 
-        return TableConfig(
+        new_config = TableConfig(
             name=name or self.name,
             description=description or self.description,
             datasets=copy(self.datasets),
             rows=copy(self.rows),
             variables=copy(self.variables) + [variable],
-            columns=copy(self.columns) + columns,
-            config_uid=copy(self.config_uid)
+            columns=copy(self.columns) + columns
         )
+        new_config.version_number = copy(self.version_number)
+        new_config.config_uid = copy(self.config_uid)
+        new_config.version_uid = copy(self.version_uid)
+        return new_config
 
     def add_all_ingredients(self, *,
                             process_template: Union[LinkByUID, ProcessTemplate, str, UUID],
@@ -240,15 +237,18 @@ class TableConfig(Resource["TableConfig"]):
             if quantity_dimension == IngredientQuantityDimension.ABSOLUTE:
                 new_columns.append(OriginalUnitsColumn(data_source=quantity_variable.name))
 
-        return TableConfig(
+        new_config = TableConfig(
             name=self.name,
             description=self.description,
             datasets=copy(self.datasets),
             rows=copy(self.rows),
             variables=copy(self.variables) + new_variables,
-            columns=copy(self.columns) + new_columns,
-            config_uid=copy(self.config_uid)
+            columns=copy(self.columns) + new_columns
         )
+        new_config.version_number = copy(self.version_number)
+        new_config.config_uid = copy(self.config_uid)
+        new_config.version_uid = copy(self.version_uid)
+        return new_config
 
 
 class TableConfigCollection(Collection[TableConfig]):
