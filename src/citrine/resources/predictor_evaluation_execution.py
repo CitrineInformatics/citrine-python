@@ -19,12 +19,12 @@ class PredictorEvaluationExecution(Resource['PredictorEvaluationExecution'], Asy
     Possible statuses are INPROGRESS, SUCCEEDED, and FAILED.
     Predictor evaluation executions also have a ``status_description`` field with more information.
 
-    Parameters
-    ----------
-    project_id: str
-        Unique identifier of the project that contains the workflow execution
-
     """
+
+    # This should really be _session, but _fetch_page assumes there is a 'pageable' parameter
+    _session: Optional[Session] = None
+    """:str: Unique identifier of the project that contains the workflow execution"""
+    _project_id: Optional[UUID] = None
 
     uid: UUID = properties.UUID('id', serializable=False)
     """:UUID: Unique identifier of the workflow execution"""
@@ -52,16 +52,15 @@ class PredictorEvaluationExecution(Resource['PredictorEvaluationExecution'], Asy
     """:Optional[List[str]]: human-readable reasons why the execution is experimental"""
 
     def __init__(self):
-        """This shouldn't be called, but it defines members that are set elsewhere."""
-        self.project_id: Optional[UUID] = None  # pragma: no cover
-        self.session: Optional[Session] = None  # pragma: no cover
+        """Predictor evaluation executions are not directly instantiated by the user."""
+        pass
 
     def __str__(self):
         return '<PredictorEvaluationExecution {!r}>'.format(str(self.uid))
 
     def _path(self):
         return '/projects/{project_id}/predictor-evaluation-executions/{execution_id}' \
-            .format(project_id=self.project_id,
+            .format(project_id=self._project_id,
                     execution_id=self.uid)
 
     def in_progress(self) -> bool:
@@ -93,7 +92,7 @@ class PredictorEvaluationExecution(Resource['PredictorEvaluationExecution'], Asy
 
         """
         params = {"evaluator_name": evaluator_name}
-        resource = self.session.get_resource(self._path() + "/results", params=params)
+        resource = self._session.get_resource(self._path() + "/results", params=params)
         return PredictorEvaluationResult.build(resource)
 
     def __getitem__(self, item):
@@ -125,8 +124,8 @@ class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExec
     def build(self, data: dict) -> PredictorEvaluationExecution:
         """Build an individual PredictorEvaluationExecution."""
         execution = PredictorEvaluationExecution.build(data)
-        execution.session = self.session
-        execution.project_id = self.project_id
+        execution._session = self.session
+        execution._project_id = self.project_id
         return execution
 
     def trigger(self, predictor_id: UUID):
