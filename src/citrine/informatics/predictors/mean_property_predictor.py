@@ -60,8 +60,8 @@ class MeanPropertyPredictor(
     input_descriptor = _properties.Object(FormulationDescriptor, 'config.input')
     properties = _properties.List(_properties.Object(RealDescriptor), 'config.properties')
     p = _properties.Integer('config.p')
-    training_data = _properties.Optional(_properties.List(_properties.Object(DataSource)),
-                                         'config.training_data', default=[])
+    training_data = _properties.List(_properties.Object(DataSource),
+                                     'config.training_data', default=[])
     impute_properties = _properties.Boolean('config.impute_properties')
     default_properties = _properties.Optional(
         _properties.Mapping(_properties.String, _properties.Float), 'config.default_properties')

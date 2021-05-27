@@ -44,8 +44,8 @@ class SimpleMLPredictor(Resource['SimplePredictor'], Predictor, AIResourceMetada
     inputs = _properties.List(_properties.Object(Descriptor), 'config.inputs')
     outputs = _properties.List(_properties.Object(Descriptor), 'config.outputs')
     latent_variables = _properties.List(_properties.Object(Descriptor), 'config.latent_variables')
-    training_data = _properties.Optional(_properties.List(_properties.Object(DataSource)),
-                                         'config.training_data', default=[])
+    training_data = _properties.List(_properties.Object(DataSource),
+                                     'config.training_data', default=[])
 
     typ = _properties.String('config.type', default='Simple', deserializable=False)
     module_type = _properties.String('module_type', default='PREDICTOR')

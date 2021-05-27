@@ -37,8 +37,8 @@ class SimpleMixturePredictor(Resource['SimpleMixturePredictor'], Predictor, AIRe
 
     input_descriptor = _properties.Object(FormulationDescriptor, 'config.input')
     output_descriptor = _properties.Object(FormulationDescriptor, 'config.output')
-    training_data = _properties.Optional(_properties.List(_properties.Object(DataSource)),
-                                         'config.training_data', default=[])
+    training_data = _properties.List(_properties.Object(DataSource),
+                                     'config.training_data', default=[])
 
     typ = _properties.String('config.type', default='SimpleMixture',
                              deserializable=False)
