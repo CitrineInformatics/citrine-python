@@ -1,6 +1,7 @@
 """Variable definitions for GEM Tables."""
 from abc import abstractmethod
 from typing import Type, Optional, List, Union
+from deprecation import deprecated
 
 from gemd.entity.bounds.base_bounds import BaseBounds
 from gemd.entity.link_by_uid import LinkByUID
@@ -71,11 +72,11 @@ class Variable(PolymorphicSerializable['Variable']):
         if "type" not in data:
             raise ValueError("Can only get types from dicts with a 'type' key")
         types: List[Type[Serializable]] = [
-            RootInfo, AttributeByTemplate, AttributeByTemplateAfterProcessTemplate,
+            TerminalMaterialInfo, AttributeByTemplate, AttributeByTemplateAfterProcessTemplate,
             AttributeByTemplateAndObjectTemplate, IngredientIdentifierByProcessTemplateAndName,
             IngredientLabelByProcessAndName, IngredientLabelsSetByProcessAndName,
             IngredientQuantityByProcessAndName,
-            RootIdentifier, AttributeInOutput, IngredientIdentifierInOutput,
+            TerminalMaterialIdentifier, AttributeInOutput, IngredientIdentifierInOutput,
             IngredientLabelsSetInOutput, IngredientQuantityInOutput, XOR
         ]
         res = next((x for x in types if x.typ == data["type"]), None)
@@ -85,7 +86,7 @@ class Variable(PolymorphicSerializable['Variable']):
         return res
 
 
-class RootInfo(Serializable['RootInfo'], Variable):
+class TerminalMaterialInfo(Serializable['TerminalMaterialInfo'], Variable):
     """[ALPHA] Metadata from the terminal material of the material history.
 
     Parameters
@@ -115,6 +116,13 @@ class RootInfo(Serializable['RootInfo'], Variable):
         self.name = name
         self.headers = headers
         self.field = field
+
+
+@deprecated(deprecated_in="0.133.0", removed_in="2.0.0",
+            details="RootInfo is deprecated in favor of TerminalMaterialInfo")
+def RootInfo(*, name: str, headers: List[str], field: str) -> TerminalMaterialInfo:
+    """[DEPRECATED] Use TerminalMaterialInfo instead."""
+    return TerminalMaterialInfo(name=name, headers=headers, field=field)
 
 
 class AttributeByTemplate(Serializable['AttributeByTemplate'], Variable):
@@ -493,7 +501,7 @@ class IngredientQuantityByProcessAndName(
         self.unit = unit
 
 
-class RootIdentifier(Serializable['RootIdentifier'], Variable):
+class TerminalMaterialIdentifier(Serializable['TerminalMaterialIdentifier'], Variable):
     """[ALPHA] A unique identifier of the terminal material of the material history, by scope.
 
     Parameters
@@ -522,6 +530,16 @@ class RootIdentifier(Serializable['RootIdentifier'], Variable):
         self.name = name
         self.headers = headers
         self.scope = scope
+
+
+@deprecated(deprecated_in="0.133.0", removed_in="2.0.0",
+            details="RootIdentifier is deprecated in favor of TerminalMaterialIdentifier")
+def RootIdentifier(*,
+                   name: str,
+                   headers: List[str],
+                   scope: str = CITRINE_SCOPE) -> TerminalMaterialIdentifier:
+    """[DEPRECATED] Use TerminalMaterialIdentifier instead."""
+    return TerminalMaterialIdentifier(name=name, headers=headers, scope=scope)
 
 
 class AttributeInOutput(Serializable['AttributeInOutput'], Variable):
@@ -687,16 +705,16 @@ class IngredientLabelsSetInOutput(Serializable['IngredientLabelsSetInOutput'], V
     are included as cutoffs.
 
     In general, this variable should be preferred over an
-    :class:`~citrine.gemtables.variables.IngredientLabelSetByProcessTemplateAndName` when
+    :class:`~citrine.gemtables.variables.IngredientLabelsSetByProcessAndName` when
     mixtures are hierarchical (i.e., blends of blends).
     It allows an ingredient with a single name to be used in
     multiple processes without defining additional variables that manifest as additional columns
     in your GEM table, and must be used in place of the former if the same process template is
     used to represent mixing at multiple levels in the material history hierarchy. Going back
     to the previous example, this variable must be used in place of an
-    :class:`~citrine.gemtables.variables.IngredientLabelSetByProcessTemplateAndName` if the same
+    :class:`~citrine.gemtables.variables.IngredientLabelsSetByProcessAndName` if the same
     process template was used to represent the process that mixed red and the final paint.
-    Using :class:`~citrine.gemtables.variables.IngredientLabelSetByProcessTemplateAndName`
+    Using :class:`~citrine.gemtables.variables.IngredientLabelsSetByProcessAndName`
     would result in an ambiguous match because yellow would be found twice in the
     material history, once when mixing red and again when mixing the final paint.
 
@@ -842,7 +860,7 @@ class XOR(Serializable['XOR'], Variable):
     undefined.
 
     XOR can only operate on inputs with the same output type. For example, you may XOR
-    :class:`~citrine.gemtables.variables.RootIdentifier` with
+    :class:`~citrine.gemtables.variables.TerminalMaterialIdentifier` with
     :class:`~citrine.gemtables.variables.IngredientIdentifierByProcessTemplateAndName`
     because they both produce simple strings, but not with
     :class:`~citrine.gemtables.variables.IngredientQuantityInOutput`

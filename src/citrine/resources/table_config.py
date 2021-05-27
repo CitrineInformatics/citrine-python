@@ -1,6 +1,7 @@
 from copy import copy
 from typing import List, Union, Optional, Tuple
 from uuid import UUID
+from warnings import warn
 
 from deprecation import deprecated
 from gemd.entity.object import MaterialRun
@@ -348,21 +349,36 @@ class TableConfigCollection(Collection[TableConfig]):
         ambiguous = [(Variable.build(v), Column.build(c)) for v, c in data['ambiguous']]
         return config, ambiguous
 
-    def preview(self, table_config: TableConfig, preview_roots: List[LinkByUID]) -> dict:
+    def preview(self, *,
+                table_config: TableConfig,
+                preview_materials: List[LinkByUID] = None,
+                preview_roots: List[LinkByUID] = None
+                ) -> dict:
         """[ALPHA] Preview a Table Config on an explicit set of terminal materials.
 
         Parameters
         ----------
         table_config: TableConfig
             Table Config to preview
-        preview_roots: List[LinkByUID]
+        preview_materials: List[LinkByUID]
             List of links to the material runs to use as terminal materials in the preview
+        preview_roots: List[LinkByUID]
+            [DEPRECATED] Use preview_materials instead
 
         """
+        if preview_roots is not None:
+            warn("preview_roots argument is deprecated in favor of preview_materials",
+                 DeprecationWarning)
+            if preview_materials is None:
+                preview_materials = preview_roots
+            else:
+                raise ValueError("Cannot specify both preview_materials and preview_roots")
+        elif preview_materials is None:
+            raise ValueError("Must specify preview materials")
         path = self._get_path() + "/preview"
         body = {
             "definition": table_config.dump(),
-            "rows": [x.as_dict() for x in preview_roots]
+            "rows": [x.as_dict() for x in preview_materials]
         }
         return self.session.post_resource(path, body)
 

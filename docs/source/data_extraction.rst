@@ -115,7 +115,7 @@ For example:
    table_configs = project.table_configs
    preview = table_configs.preview(
          table_config = table_config,
-         preview_roots = [
+         preview_materials = [
                LinkByUID(scope="products", id="best cookie ever"),
                LinkByUID(scope="products", id="worst cookie ever")])
 
@@ -131,7 +131,7 @@ For example, if you wanted to print the warnings and then load the preview into 
    from io import StringIO
    import pandas as pd
 
-   preview = table_configs.preview(table_config, preview_roots)
+   preview = table_configs.preview(table_config=table_config, preview_materials=preview_materials)
    print("\n\n".join(preview["warnings"]))
    data_frame = pd.read_csv(StringIO(preview["csv"]))
 
@@ -227,8 +227,8 @@ There are several ways to define variables that take their values from Attribute
 
 * Identifiers
 
-  * :class:`~citrine.gemtables.variables.RootInfo`: for fields defined on the material at the terminal of the Material History, like the name of the material
-  * :class:`~citrine.gemtables.variables.RootIdentifier`: for the id of the Material History, which can be used as a unique identifier for the rows
+  * :class:`~citrine.gemtables.variables.TerminalMaterialInfo`: for fields defined on the material at the terminus of the Material History, like the name of the material
+  * :class:`~citrine.gemtables.variables.TerminalMaterialIdentifier`: for the id of the Material History, which can be used as a unique identifier for the rows
   * :class:`~citrine.gemtables.variables.IngredientIdentifierByProcessTemplateAndName`: for the id of the material being used in an ingredient, which can be used as a key for looking up that input material
   * :class:`~citrine.gemtables.variables.IngredientIdentifierInOutput`: for the id of a material used in an ingredient between the terminal material and a given set of processes (useful for ingredients used in multiple processes)
   * :class:`~citrine.gemtables.variables.IngredientLabelByProcessAndName`: for a boolean that indicates whether an ingredient is assigned a given label
