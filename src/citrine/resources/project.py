@@ -1,5 +1,5 @@
 """Resources that represent both individual and collections of projects."""
-from typing import Optional, Dict, List, Union, Iterable, Tuple
+from typing import Optional, Dict, List, Union, Iterable, Tuple, Iterator
 from uuid import UUID
 from warnings import warn
 
@@ -549,7 +549,7 @@ class ProjectCollection(Collection[Project]):
 
     def list(self,
              page: Optional[int] = None,
-             per_page: int = 1000) -> Iterable[Project]:
+             per_page: int = 1000) -> Iterator[Project]:
         """
         List projects using pagination.
 
@@ -568,7 +568,7 @@ class ProjectCollection(Collection[Project]):
 
         Returns
         -------
-        Iterable[Project]
+        Iterator[Project]
             Projects in this collection.
 
         """
