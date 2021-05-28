@@ -2,6 +2,7 @@
 from abc import ABC
 from typing import Dict, Union, Optional, Iterator, List, TypeVar
 from uuid import uuid4
+from deprecation import deprecated
 
 from gemd.json import GEMDJson
 from gemd.util import recursive_foreach
@@ -31,6 +32,8 @@ DataObjectResourceType = TypeVar("DataObjectResourceType", bound="DataObject")
 class DataObjectCollection(DataConceptsCollection[DataObjectResourceType], ABC):
     """A collection of one kind of data object object."""
 
+    @deprecated(deprecated_in="0.130.0", removed_in="1.0.0",
+                details="For performance reasons, please use list_by_attribute_bounds instead")
     def filter_by_attribute_bounds(
             self,
             attribute_bounds: Dict[Union[AttributeTemplate, LinkByUID], BaseBounds],

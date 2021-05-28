@@ -8,7 +8,7 @@ from citrine.informatics.processors import Processor, GridProcessor, EnumeratedP
 @pytest.fixture(params=[
     MonteCarloProcessor("test", "mc optimizer test", max_candidates=123),
     MonteCarloProcessor("test", "mc optimizer test", max_candidates=123, mode="test"),
-    EnumeratedProcessor("test", "test_enumeration", max_size=64),
+    EnumeratedProcessor("test", "test_enumeration", max_candidates=64),
     GridProcessor("test", "test_grid", grid_sizes={"foo": 2, "bar": 5})
 ])
 def processor(request):

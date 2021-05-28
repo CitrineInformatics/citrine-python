@@ -1,11 +1,11 @@
 from copy import copy
 from typing import List, Union, Optional, Tuple
 from uuid import UUID
+from warnings import warn
 
 from deprecation import deprecated
 from gemd.entity.object import MaterialRun
 
-from citrine.resources.job import JobSubmissionResponse, JobStatusResponse
 from gemd.entity.link_by_uid import LinkByUID
 from gemd.enumeration.base_enumeration import BaseEnumeration
 
@@ -72,23 +72,6 @@ class TableConfig(Resource["TableConfig"]):
     variables = properties.List(properties.Object(Variable), "variables")
     rows = properties.List(properties.Object(Row), "rows")
     columns = properties.List(properties.Object(Column), "columns")
-
-    # Provide some backwards compatible support for definition_uid, redirecting to config_uid
-    @property
-    def definition_uid(self):
-        """[[DEPRECATED]] This is a deprecated alias to config_uid. Please use that instead."""
-        from warnings import warn
-        warn("definition_uid is deprecated and will soon be removed. "
-             "Please use config_uid instead", DeprecationWarning)
-        return self.config_uid
-
-    @definition_uid.setter
-    def definition_uid(self, value):  # pragma: no cover
-        """[[DEPRECATED]] This is a deprecated alias to config_uid. Please use that instead."""
-        from warnings import warn
-        warn("definition_uid is deprecated and will soon be removed. "
-             "Please use config_uid instead", DeprecationWarning)
-        self.config_uid = value
 
     def __init__(self, *, name: str, description: str, datasets: List[UUID],
                  variables: List[Variable], rows: List[Row], columns: List[Column],
@@ -283,7 +266,7 @@ class TableConfigCollection(Collection[TableConfig]):
             data['version'] = data['versions'][index]
         return self.build(data)
 
-    @deprecated(deprecated_in="0.124.0",
+    @deprecated(deprecated_in="0.124.0", removed_in="1.0.0",
                 details="get_with_version() is deprecated in favor of get()")
     def get_with_version(self, table_config_uid: Union[UUID, str],
                          version_number: int) -> TableConfig:
@@ -366,59 +349,36 @@ class TableConfigCollection(Collection[TableConfig]):
         ambiguous = [(Variable.build(v), Column.build(c)) for v, c in data['ambiguous']]
         return config, ambiguous
 
-    @deprecated(details='Please use TableCollection.build_from config or '
-                        'TableCollection.initiate_build')
-    def build_ara_table(self, ara_def: TableConfig) -> JobSubmissionResponse:
-        """[ALPHA] submit a Table construction job.
-
-        This method makes a call out to the job framework to start a new job to build
-        the respective table for a given Table Config.
-
-        Parameters
-        ----------
-        ara_def: TableConfig
-            the Table Config describing the new table
-
-        """
-        from citrine.resources.gemtables import GemTableCollection
-        table_collection = GemTableCollection(self.project_id, self.session)
-        return table_collection.initiate_build(ara_def, None)
-
-    @deprecated(details='Table build job status does not have a stable format. Please use '
-                        'TableCollection.build_from_config or TableCollection.get_by_build_job')
-    def get_job_status(self, job_id: str):
-        """[ALPHA] get status of a running job.
-
-        This method grabs a JobStatusResponse object for the given job_id.
-
-        Parameters
-        ----------
-        job_id: str
-            The job we retrieve the status for
-
-        """
-        url_suffix: str = "/execution/job-status?job_id={job_id}"
-        path: str = 'projects/{project_id}'.format(
-            project_id=self.project_id
-        ) + url_suffix.format(job_id=job_id)
-        response: dict = self.session.get_resource(path=path)
-        return JobStatusResponse.build(response)
-
-    def preview(self, table_config: TableConfig, preview_roots: List[LinkByUID]) -> dict:
+    def preview(self, *,
+                table_config: TableConfig,
+                preview_materials: List[LinkByUID] = None,
+                preview_roots: List[LinkByUID] = None
+                ) -> dict:
         """[ALPHA] Preview a Table Config on an explicit set of terminal materials.
 
         Parameters
         ----------
         table_config: TableConfig
             Table Config to preview
-        preview_roots: List[LinkByUID]
+        preview_materials: List[LinkByUID]
             List of links to the material runs to use as terminal materials in the preview
+        preview_roots: List[LinkByUID]
+            [DEPRECATED] Use preview_materials instead
 
         """
+        if preview_roots is not None:
+            warn("preview_roots argument is deprecated in favor of preview_materials",
+                 DeprecationWarning)
+            if preview_materials is None:
+                preview_materials = preview_roots
+            else:
+                raise ValueError("Cannot specify both preview_materials and preview_roots")
+        elif preview_materials is None:
+            raise ValueError("Must specify preview materials")
         path = self._get_path() + "/preview"
         body = {
             "definition": table_config.dump(),
-            "rows": [x.as_dict() for x in preview_roots]
+            "rows": [x.as_dict() for x in preview_materials]
         }
         return self.session.post_resource(path, body)
 

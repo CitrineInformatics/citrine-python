@@ -1,7 +1,7 @@
 import pytest
 
 from citrine.informatics.descriptors import FormulationDescriptor
-from citrine.informatics.constraints import ScalarRangeConstraint, CategoricalConstraint, \
+from citrine.informatics.constraints import ScalarRangeConstraint, AcceptableCategoriesConstraint, \
     IngredientCountConstraint, IngredientFractionConstraint, LabelFractionConstraint
 from citrine.informatics.design_spaces import ProductDesignSpace, EnumeratedDesignSpace, FormulationDesignSpace
 from citrine.informatics.objectives import ScalarMaxObjective, ScalarMinObjective
@@ -27,7 +27,7 @@ informatics_string_data = [
         max=1
     ), "<LabelFractionConstraint 'x'::'y'>"),
     (ScalarRangeConstraint('z'), "<ScalarRangeConstraint 'z'>"),
-    (CategoricalConstraint('x', []), "<CategoricalConstraint 'x'>"),
+    (AcceptableCategoriesConstraint('x', []), "<AcceptableCategoriesConstraint 'x'>"),
     (ProductDesignSpace(name='my design space', description='does some things'),
      "<ProductDesignSpace 'my design space'>"),
     (EnumeratedDesignSpace('enumerated', 'desc', [], []), "<EnumeratedDesignSpace 'enumerated'>"),

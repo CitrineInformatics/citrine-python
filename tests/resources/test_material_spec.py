@@ -22,33 +22,6 @@ def collection(session) -> MaterialSpecCollection:
         session=session)
 
 
-def test_filter_by_template(collection, session):
-    """
-    Test that MaterialSpecCollection.filter_by_template() hits the expected endpoint
-    """
-    # Given
-    project_id = '6b608f78-e341-422c-8076-35adc8828545'
-    material_template = MaterialTemplateFactory()
-    test_scope = 'id'
-    test_id = material_template.uids[test_scope]
-    sample_spec = MaterialSpecDataFactory(template=material_template)
-    session.set_response({'contents': [sample_spec]})
-
-    # When
-    specs = [spec for spec in collection.filter_by_template(test_id, per_page=20)]
-
-    # Then
-    assert 1 == session.num_calls
-    expected_call = FakeCall(
-        method="GET",
-        path="projects/{}/material-templates/{}/{}/material-specs".format(project_id, test_scope, test_id),
-        # per_page will be ignored
-        params={"dataset_id": str(collection.dataset_id), "forward": True, "ascending": True, "per_page": 100}
-    )
-    assert session.last_call == expected_call
-    assert specs == [collection.build(sample_spec)]
-
-
 def test_list_by_template(collection):
     run_noop_gemd_relation_search_test(
         search_for='material-specs',

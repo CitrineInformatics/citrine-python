@@ -27,13 +27,10 @@ class PredictorEvaluationWorkflow(Resource['PredictorEvaluationWorkflow'],
 
     """
 
-    name = properties.String('name')
-    description = properties.String('description')
     evaluators = properties.List(properties.Object(PredictorEvaluator), "evaluators")
 
     status_description = properties.String('status_description', serializable=False)
     """:str: more detailed description of the workflow's status"""
-
     typ = properties.String('type', default='PredictorEvaluationWorkflow', deserializable=False)
 
     def __init__(self, *,
