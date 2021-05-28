@@ -3,11 +3,10 @@ from uuid import uuid4
 
 import pytest
 
-from citrine.informatics.workflows import DesignWorkflow, PerformanceWorkflow, Workflow
 from citrine.resources.design_workflow import DesignWorkflowCollection
-from citrine.resources.workflow_executions import WorkflowExecutionCollection
 from citrine._session import Session
-from .test_analysis_configuration import cv_conf  # noqa
+from citrine.informatics.workflows import DesignWorkflow, Workflow
+from citrine.resources.design_execution import DesignExecutionCollection
 
 
 @pytest.fixture
@@ -25,10 +24,6 @@ PROJECT_ID = uuid4()
 def design_workflow(collection, design_workflow_dict) -> DesignWorkflow:
     return collection.build(design_workflow_dict)
 
-@pytest.fixture
-def performance_workflow(cv_conf) -> PerformanceWorkflow:
-    return PerformanceWorkflow('bar', cv_conf, PROJECT_ID)
-
 
 def test_missing_module_type():
     with pytest.raises(ValueError):
@@ -39,16 +34,8 @@ def test_d_workflow_str(design_workflow):
     assert str(design_workflow) == f'<DesignWorkflow \'{design_workflow.name}\'>'
 
 
-def test_p_workflow_str(performance_workflow):
-    assert str(performance_workflow) == '<PerformanceWorkflow \'bar\'>'
-
-
 def test_workflow_executions_with_project(design_workflow):
-    assert isinstance(design_workflow.executions, WorkflowExecutionCollection)
-
-
-def test_p_workflow_executions_with_project(performance_workflow):
-    assert isinstance(performance_workflow.executions, WorkflowExecutionCollection)
+    assert isinstance(design_workflow.design_executions, DesignExecutionCollection)
 
 
 def test_workflow_executions_without_project():
@@ -59,10 +46,4 @@ def test_workflow_executions_without_project():
         predictor_id=uuid4()
     )
     with pytest.raises(AttributeError):
-        workflow.executions
-
-
-def test_p_workflow_executions_without_project(cv_conf):
-    workflow = PerformanceWorkflow('foo', cv_conf)
-    with pytest.raises(AttributeError):
-        workflow.executions
+        workflow.design_executions

@@ -1,12 +1,8 @@
 from citrine.exceptions import NotFound
 from citrine.resources import ProjectCollection
-from citrine.resources.design_space import DesignSpaceCollection
-from citrine.resources.workflow import WorkflowCollection
 from citrine.resources.dataset import Dataset
-from citrine.resources.predictor import PredictorCollection
-from citrine._rest.collection import CreationType
+from citrine._rest.collection import CreationType, Collection
 from copy import deepcopy
-from typing import Union
 
 
 def find_collection(collection, name):
@@ -99,8 +95,7 @@ def find_or_create_dataset(dataset_collection, dataset_name, raise_error=False):
     return dataset
 
 
-def create_or_update(collection: Union[DesignSpaceCollection, PredictorCollection,
-                     WorkflowCollection], resource: CreationType) -> CreationType:
+def create_or_update(collection: Collection[CreationType], resource: CreationType) -> CreationType:
     """
     Update a resource of a given name belonging to a collection.
 
@@ -110,7 +105,7 @@ def create_or_update(collection: Union[DesignSpaceCollection, PredictorCollectio
 
     Parameters
     ----------
-    collection : Union[DesignSpaceCollection, PredictorCollection, WorkflowCollection]
+    collection : Collection[CreationType]
         Collection within which you want to update or create a resource
     resource : CreationType
         Resource that you want to create or update.

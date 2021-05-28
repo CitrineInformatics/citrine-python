@@ -374,7 +374,7 @@ def test_register_new(collection, session):
     registered = collection.register(table_config)
 
     # Then
-    assert registered.definition_uid == UUID(defn_uid)
+    assert registered.config_uid == UUID(defn_uid)
     assert registered.version_uid == UUID(ver_uid)
     assert session.num_calls == 1
 

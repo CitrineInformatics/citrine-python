@@ -33,27 +33,6 @@ def table():
     return _table
 
 
-@patch("citrine.resources.gemtables.write_file_locally")
-def test_read_gem_table(mock_write_files_locally, table):
-    # When
-    with requests_mock.mock() as mock_get:
-        remote_url = "http://otherhost:4572/anywhere"
-        mock_get.get(remote_url, text='stuff')
-        table(remote_url).read("table.pdf")
-        assert mock_get.call_count == 1
-        assert mock_write_files_locally.call_count == 1
-        assert mock_write_files_locally.call_args == call(b'stuff', "table.pdf")
-
-    with requests_mock.mock() as mock_get:
-        # When
-        localstack_url = "http://localstack:4572/anywhere"
-        mock_get.get("http://localhost:9572/anywhere", text='stuff')
-        table(localstack_url).read("table2.pdf")
-        assert mock_get.call_count == 1
-        assert mock_write_files_locally.call_count == 2
-        assert mock_write_files_locally.call_args == call(b'stuff', "table2.pdf")
-
-
 def test_get_table_metadata(collection, session):
     # Given
     project_id = '6b608f78-e341-422c-8076-35adc8828545'

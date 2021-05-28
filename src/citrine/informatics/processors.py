@@ -1,7 +1,6 @@
 """Tools for working with Processors."""
 from typing import Optional, Mapping, Type, List
 from uuid import UUID
-from warnings import warn
 
 from citrine._serialization import properties
 from citrine._rest.resource import ResourceTypeEnum, Resource
@@ -126,22 +125,15 @@ class EnumeratedProcessor(Resource['EnumeratedProcessor'], Processor, AIResource
     module_type = properties.String('module_type', default='PROCESSOR')
 
     def _attrs(self) -> List[str]:
-        return ["name", "description", "max_size", "typ"]
+        return ["name", "description", "max_candidates", "typ"]
 
     def __init__(self,
                  name: str,
                  description: str,
-                 max_candidates: Optional[int] = None,
-                 max_size: Optional[int] = None):
-        if max_candidates is not None and max_size is not None:
-            raise ValueError("Both max_candidates and max_size were specified.  "
-                             "Please only specify max_candidates.")
-        if max_size is not None:
-            warn("The max_size argument is deprecated.  Please use max_candidates instead.",
-                 DeprecationWarning)
+                 max_candidates: Optional[int] = None):
         self.name: str = name
         self.description: str = description
-        self.max_candidates: int = max_candidates or max_size or 1000
+        self.max_candidates: int = max_candidates or 1000
 
     def _post_dump(self, data: dict) -> dict:
         data['display_name'] = data['config']['name']
@@ -149,13 +141,6 @@ class EnumeratedProcessor(Resource['EnumeratedProcessor'], Processor, AIResource
 
     def __str__(self):
         return '<EnumeratedProcessor {!r}>'.format(self.name)
-
-    @property
-    def max_size(self):
-        """[DEPRECATED] Alias for max_candidates."""
-        warn("EnumeratedProcessor.max_size is deprecated.  Please use max_candidates instead",
-             DeprecationWarning)
-        return self.max_candidates
 
 
 class MonteCarloProcessor(Resource['GridProcessor'], Processor, AIResourceMetadata):

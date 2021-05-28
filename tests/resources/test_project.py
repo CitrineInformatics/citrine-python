@@ -253,10 +253,6 @@ def test_predictors_get_project_id(project):
     assert project.uid == project.predictors.project_id
 
 
-def test_workflows_get_project_id(project):
-    assert project.uid == project.workflows.project_id
-
-
 def test_pe_workflows_get_project_id(project):
     assert project.uid == project.predictor_evaluation_workflows.project_id
 
@@ -699,18 +695,3 @@ def test_owned_table_config_ids(project, session):
     assert expect_call == session.last_call
     assert all(x in id_set for x in ids)
     assert len(ids) == len(id_set)
-
-def test_depricated_worklfows(project):
-    # Given
-    design_worflow = DesignWorkflow(
-        name="Test",
-        design_space_id=str(uuid.uuid4()),
-        processor_id=str(uuid.uuid4()),
-        predictor_id=str(uuid.uuid4()),
-    )
-
-    #Then
-    with pytest.raises(NotImplementedError):
-        project.workflows.register(design_worflow)
-    with pytest.raises(NotImplementedError):
-        project.workflows.update(design_worflow)

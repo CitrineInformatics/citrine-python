@@ -1,9 +1,10 @@
 from uuid import UUID
 
 import pytest
-from citrine.resources.ara_definition import AraDefinition, AraDefinitionCollection
-from citrine.resources.ara_job import TaskNode, JobStatusResponse, JobSubmissionResponse
+from citrine.resources.job import TaskNode, JobStatusResponse, JobSubmissionResponse
 from citrine.resources.project import Project
+from citrine.resources.table_config import TableConfig
+from citrine.resources.gemtables import GemTableCollection
 
 from tests.utils.session import FakeSession
 
@@ -40,16 +41,16 @@ def session() -> FakeSession:
 
 
 @pytest.fixture
-def collection(session) -> AraDefinitionCollection:
-    return AraDefinitionCollection(
+def collection(session) -> GemTableCollection:
+    return GemTableCollection(
         project_id=UUID('6b608f78-e341-422c-8076-35adc8828545'),
         session=session
     )
 
 
 @pytest.fixture
-def table_config() -> AraDefinition:
-    table_config: AraDefinition = AraDefinition(name="name", description="description", datasets=[], rows=[], variables=[], columns=[])
+def table_config() -> TableConfig:
+    table_config = TableConfig(name="name", description="description", datasets=[], rows=[], variables=[], columns=[])
     table_config.version_number = 1
     table_config.config_uid = UUID('12345678-1234-1234-1234-123456789bbb')
     return table_config
@@ -106,24 +107,7 @@ def test_js_serde_with_output():
     assert js.dump() == expected_js.dump()
 
 
-def test_build_job(collection: AraDefinitionCollection, table_config: AraDefinition):
+def test_build_job(collection: GemTableCollection, table_config: TableConfig):
     collection.session.set_response({"job_id": '12345678-1234-1234-1234-123456789ccc'})
-    resp = collection.build_ara_table(table_config)
+    resp = collection.initiate_build(table_config)
     assert resp.dump() == JobSubmissionResponse(UUID('12345678-1234-1234-1234-123456789ccc')).dump()
-
-
-def test_job_status(collection: AraDefinitionCollection):
-    status = job_status()
-    collection.session.set_response(status)
-    resp = collection.get_job_status(job_id='12345678-1234-1234-1234-123456789ccc')
-    status['tasks'][0]['failure_reason'] = None
-    status['output'] = None
-    assert status == resp.dump()
-
-
-def test_job_status_with_output(collection: AraDefinitionCollection):
-    status = job_status_with_output()
-    collection.session.set_response(status)
-    resp = collection.get_job_status(job_id='12345678-1234-1234-1234-123456789ccc')
-    status['tasks'][0]['failure_reason'] = None
-    assert status == resp.dump()
