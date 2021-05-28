@@ -3,6 +3,7 @@ from abc import abstractmethod, ABC
 from warnings import warn
 from typing import TypeVar, Type, List, Union, Optional, Iterator
 from uuid import UUID, uuid4
+import deprecation
 
 from gemd.entity.dict_serializable import DictSerializable
 from gemd.entity.base_entity import BaseEntity
