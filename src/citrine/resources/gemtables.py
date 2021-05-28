@@ -3,7 +3,6 @@ from logging import getLogger
 from typing import Union, Iterable, Optional, Any, Tuple
 from uuid import uuid4
 
-import deprecation
 import requests
 
 from citrine._rest.collection import Collection
@@ -47,14 +46,6 @@ class GemTable(Resource['Table']):
 
     def __str__(self):
         return '<GEM Table {!r}, version {}>'.format(self.uid, self.version)
-
-    @deprecation.deprecated(deprecated_in="0.16.0", details="Use TableCollection.read() instead")
-    def read(self, local_path):
-        """[DEPRECATED] Use TableCollection.read() instead."""  # noqa: D402
-        data_location = self.download_url
-        data_location = rewrite_s3_links_locally(data_location)
-        response = requests.get(data_location)
-        write_file_locally(response.content, local_path)
 
 
 class GemTableVersionPaginator(Paginator[GemTable]):

@@ -1,7 +1,6 @@
 """Resources that represent both individual and collections of projects."""
 from typing import Optional, Dict, List, Union, Iterable, Tuple
 from uuid import UUID
-from deprecation import deprecated
 from warnings import warn
 
 from gemd.entity.base_entity import BaseEntity
@@ -44,7 +43,6 @@ from citrine.resources.property_template import PropertyTemplateCollection
 from citrine.resources.response import Response
 from citrine.resources.table_config import TableConfigCollection
 from citrine.resources.user import User
-from citrine.resources.workflow import WorkflowCollection
 
 
 class Project(Resource['Project']):
@@ -121,13 +119,6 @@ class Project(Resource['Project']):
     def descriptors(self) -> DescriptorMethods:
         """Return a resource containing a set of methods returning descriptors."""
         return DescriptorMethods(self.uid, self.session)
-
-    @property
-    @deprecated(deprecated_in="0.101.0",
-                details="Use design_workflows or predictor_evaluation_workflows instead")
-    def workflows(self) -> WorkflowCollection:
-        """Return a resource representing all visible workflows."""
-        return WorkflowCollection(self.uid, self.session)
 
     @property
     def predictor_evaluation_workflows(self) -> PredictorEvaluationWorkflowCollection:
@@ -228,15 +219,6 @@ class Project(Resource['Project']):
     def table_configs(self) -> TableConfigCollection:
         """Return a resource representing all Table Configs in the project."""
         return TableConfigCollection(self.uid, self.session)
-
-    @property
-    @deprecated(deprecated_in="0.52.2", details="Use table_configs instead")
-    def ara_definitions(self) -> TableConfigCollection:  # pragma: no cover
-        """[DEPRECATED] Use table_configs instead."""
-        from warnings import warn
-        warn("ara_definitions is deprecated and will soon be removed. "
-             "Please call table_configs instead.", DeprecationWarning)
-        return self.table_configs
 
     def share(self, *,
               resource: Optional[Resource] = None,

@@ -266,7 +266,7 @@ def valid_graph_predictor_data():
             predictors=[
                 str(uuid.uuid4()),
                 dict(
-                    type='Expression',
+                    type='AnalyticExpression',
                     name='Expression predictor',
                     description='mean of 2 outputs',
                     expression='(X + Y)/2',
@@ -274,8 +274,8 @@ def valid_graph_predictor_data():
                         'Property~Some metric', lower_bound=0, upper_bound=1000, units='W'
                     ).dump(),
                     aliases={
-                        "Property~X": "X",
-                        "Property~Y": "Y"
+                        "Property~X": RealDescriptor("X", lower_bound=0, upper_bound=1000, units='').dump(),
+                        "Property~Y": RealDescriptor("Y", lower_bound=0, upper_bound=1000, units='').dump()
                     }
                 )
             ],

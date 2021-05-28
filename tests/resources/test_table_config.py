@@ -104,14 +104,12 @@ def test_init_table_config_with_old_definition_uid():
     table_config = TableConfig(name="foo", description="bar", rows=[], columns=[], variables=[], datasets=[],
                                definition_uid=uid)
     assert table_config.config_uid == uid
-    assert table_config.definition_uid == uid
 
 def test_init_table_config_with_new_config_uid():
     uid = UUID('6b608f78-e341-422c-8076-35adc8828566')
     table_config = TableConfig(name="foo", description="bar", rows=[], columns=[], variables=[], datasets=[],
                                config_uid=uid)
     assert table_config.config_uid == uid
-    assert table_config.definition_uid == uid
 
 
 def test_dup_names():
@@ -387,7 +385,7 @@ def test_register_new(collection, session):
     registered = collection.register(table_config)
 
     # Then
-    assert registered.definition_uid == UUID(defn_uid)
+    assert registered.config_uid == UUID(defn_uid)
     assert registered.version_uid == UUID(ver_uid)
     assert session.num_calls == 1
 
@@ -414,7 +412,7 @@ def test_register_existing(collection, session):
     # When
     registered = collection.register(table_config)
 
-    assert registered.definition_uid == UUID(defn_uid)
+    assert registered.config_uid == UUID(defn_uid)
     assert registered.version_uid == UUID(ver_uid)
     assert session.num_calls == 1
 

@@ -63,9 +63,3 @@ def test_to_json(descriptor):
     json_str = json.dumps(descriptor.dump())
     desc = Descriptor.build(json.loads(json_str))
     assert desc == descriptor
-
-
-def test_units_default_deprecation():
-    """Make sure that a deprecation warning is raised when no units are given."""
-    with pytest.warns(DeprecationWarning, match="Default of dimensionless is deprecated"):
-        RealDescriptor("foo", 0, 100)

@@ -14,11 +14,6 @@ class MeanPropertyPredictor(
         Resource['MeanPropertyPredictor'], Predictor, AIResourceMetadata):
     """A predictor interface that computes mean component properties.
 
-    .. seealso::
-       If you are using a deprecated generalized mean property predictor please see
-       :class:`~citrine.informatics.predictors.generalized_mean_property_predictor.GeneralizedMeanPropertyPredictor`
-       for details on how to migrate to the new format.
-
     Parameters
     ----------
     name: str
@@ -65,7 +60,8 @@ class MeanPropertyPredictor(
     input_descriptor = _properties.Object(FormulationDescriptor, 'config.input')
     properties = _properties.List(_properties.Object(RealDescriptor), 'config.properties')
     p = _properties.Integer('config.p')
-    training_data = _properties.List(_properties.Object(DataSource), 'config.training_data')
+    training_data = _properties.List(_properties.Object(DataSource),
+                                     'config.training_data', default=[])
     impute_properties = _properties.Boolean('config.impute_properties')
     default_properties = _properties.Optional(
         _properties.Mapping(_properties.String, _properties.Float), 'config.default_properties')
@@ -90,7 +86,7 @@ class MeanPropertyPredictor(
         self.input_descriptor: FormulationDescriptor = input_descriptor
         self.properties: List[RealDescriptor] = properties
         self.p: int = p
-        self.training_data: List[DataSource] = self._wrap_training_data(training_data)
+        self.training_data: List[DataSource] = training_data or []
         self.impute_properties: bool = impute_properties
         self.default_properties: Optional[Mapping[str, float]] = default_properties
         self.label: Optional[str] = label

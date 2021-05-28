@@ -303,7 +303,7 @@ Formulations are constructed automatically by GEM Tables when a ``formulation_de
 an :class:`~citrine.informatics.predictors.ingredients_to_formulation_predictor.IngredientsToFormulationPredictor` in not required in those cases.
 
 Ingredients are specified by a map from ingredient id to the descriptor that contains the ingredient's quantity.
-For example, ``{'water': RealDescriptor('water quantity', 0, 1}`` defines an ingredient ``water`` with quantity held by the descriptor ``water quantity``.
+For example, ``{'water': RealDescriptor('water quantity', lower_bound=0, upper_bound=1, units='')}`` defines an ingredient ``water`` with quantity held by the descriptor ``water quantity``.
 There must be a corresponding (id, quantity) pair in the map for all possible ingredients.
 If a material does not contain data for a given quantity descriptor key it is assumed that ingredient is not present in the mixture.
 

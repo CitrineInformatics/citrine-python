@@ -24,4 +24,4 @@ def test_processor_build():
     # Then
     assert processor.uid == processor_id
     assert processor.name == 'My enumerated processor'
-    assert processor.max_size == 100
+    assert processor.max_candidates == 100
