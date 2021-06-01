@@ -2,6 +2,7 @@
 # The docstring includes many long links that violate flake8, and it's easier to noqa
 # the whole file than to pick out the offending lines.
 from typing import List, Optional
+from warnings import warn
 
 from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties as _properties
@@ -81,23 +82,35 @@ class MolecularStructureFeaturizer(Resource['MolecularStructureFeaturizer'], Pre
 
     _resource_type = ResourceTypeEnum.MODULE
 
-    descriptor = _properties.Object(Descriptor, 'config.descriptor')
+    input_descriptor = _properties.Object(Descriptor, 'config.descriptor')
     features = _properties.List(_properties.String, 'config.features')
     excludes = _properties.List(_properties.String, 'config.excludes')
 
     typ = _properties.String('config.type', default='MoleculeFeaturizer', deserializable=False)
     module_type = _properties.String('module_type', default='PREDICTOR')
 
-    def __init__(self,
+    def __init__(self, *,
                  name: str,
                  description: str,
-                 descriptor: MolecularStructureDescriptor,
+                 input_descriptor: MolecularStructureDescriptor = None,
                  features: Optional[List[str]] = None,
                  excludes: Optional[List[str]] = None,
+                 descriptor: MolecularStructureDescriptor = None,
                  archived: bool = False):
         self.name: str = name
         self.description: str = description
-        self.descriptor = descriptor
+        if descriptor is not None:
+            warn("\'descriptor\' argument is deprecated in favor of \'input_descriptor\' for "
+                 "MolecularStructureFeaturizer", DeprecationWarning)
+            if input_descriptor is None:
+                input_descriptor = descriptor
+            else:
+                raise ValueError("Cannot specify both \'descriptor\' and \'input_descriptor\' "
+                                 "for MolecularStructureFeaturizer")
+        elif input_descriptor is None:
+            raise ValueError("Must specify \'input_descriptor\' for MolecularStructureFeaturizer")
+
+        self.input_descriptor = input_descriptor
         self.features = features if features is not None else ["standard"]
         self.excludes = excludes if excludes is not None else []
         self.archived: bool = archived
