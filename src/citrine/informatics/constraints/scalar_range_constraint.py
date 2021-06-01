@@ -1,5 +1,4 @@
 from typing import Optional
-from warnings import warn
 
 from citrine._serialization import properties
 from citrine._serialization.serializable import Serializable
@@ -40,89 +39,23 @@ class ScalarRangeConstraint(Serializable['ScalarRangeConstraint'], Constraint):
                  upper_bound: Optional[float] = None,
                  lower_inclusive: Optional[bool] = None,
                  upper_inclusive: Optional[bool] = None,
-                 min: Optional[float] = None,
-                 max: Optional[float] = None,
-                 min_inclusive: Optional[bool] = None,
-                 max_inclusive: Optional[bool] = None,
                  session: Optional[Session] = None):
-        if lower_bound is not None and min is not None:
-            raise ValueError("Both lower_bound and min were specified.  "
-                             "Please only specify lower_bound.")
-        if upper_bound is not None and max is not None:
-            raise ValueError("Both upper_bound and max were specified.  "
-                             "Please only specify upper_bound.")
-        if lower_inclusive is not None and min_inclusive is not None:
-            raise ValueError("Both lower_inclusive and min_inclusive were specified.  "
-                             "Please only specify lower_inclusive.")
-        if upper_inclusive is not None and max_inclusive is not None:
-            raise ValueError("Both upper_inclusive and max_inclusive were specified.  "
-                             "Please only specify upper_inclusive.")
-        if min is not None or max is not None:
-            msg = "The min/max arguments for ScalarRangeConstraint are deprecated.  " \
-                  "Please use lower_bound/upper_bound instead."
-            warn(msg, DeprecationWarning)
-        if min_inclusive is not None or max_inclusive is not None:
-            msg = "The min_inclusive/max_inclusive arguments for ScalarRangeConstraint " \
-                  "are deprecated.  " \
-                  "Please use lower_inclusive/upper_inclusive instead."
-            warn(msg, DeprecationWarning)
-
         self.descriptor_key = descriptor_key
 
-        if lower_bound is not None:
-            self.lower_bound = lower_bound
-        else:
-            self.lower_bound = min
-        if upper_bound is not None:
-            self.upper_bound = upper_bound
-        else:
-            self.upper_bound = max
+        self.lower_bound = lower_bound
+        self.upper_bound = upper_bound
 
         # we have to be careful with None and boolean values
         # None or False or True -> True, so that pattern doesn't work
         self.lower_inclusive = True
         if lower_inclusive is not None:
             self.lower_inclusive = lower_inclusive
-        elif min_inclusive is not None:
-            self.lower_inclusive = min_inclusive
 
         self.upper_inclusive = True
         if upper_inclusive is not None:
             self.upper_inclusive = upper_inclusive
-        elif max_inclusive is not None:
-            self.upper_inclusive = max_inclusive
 
         self.session: Optional[Session] = session
 
     def __str__(self):
         return '<ScalarRangeConstraint {!r}>'.format(self.descriptor_key)
-
-    @property
-    def min(self):
-        """[DEPRECATED] Alias for lower_bound."""
-        warn("ScalarRangeConstraint.min is deprecated.  Please use lower_bound instead",
-             DeprecationWarning)
-        return self.lower_bound
-
-    @property
-    def max(self):
-        """[DEPRECATED] Alias for upper_bound."""
-        warn("ScalarRangeConstraint.max is deprecated.  Please use upper_bound instead",
-             DeprecationWarning)
-        return self.upper_bound
-
-    @property
-    def min_inclusive(self):
-        """[DEPRECATED] Alias for lower_inclusive."""
-        warn("ScalarRangeConstraint.min_inclusive is deprecated.  "
-             "Please use lower_inclusive instead",
-             DeprecationWarning)
-        return self.lower_inclusive
-
-    @property
-    def max_inclusive(self):
-        """[DEPRECATED] Alias for upper_inclusive."""
-        warn("ScalarRangeConstraint.max_inclusive is deprecated.  "
-             "Please use upper_inclusive instead",
-             DeprecationWarning)
-        return self.upper_inclusive

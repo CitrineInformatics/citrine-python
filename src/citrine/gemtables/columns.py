@@ -1,5 +1,5 @@
 """Column definitions for GEM Tables."""
-from typing import Type, Optional, List  # noqa: F401
+from typing import Type, Optional, List
 from abc import abstractmethod
 
 from gemd.enumeration.base_enumeration import BaseEnumeration
@@ -61,7 +61,7 @@ class Column(PolymorphicSerializable['Column']):
             MostLikelyCategoryColumn, MostLikelyProbabilityColumn,
             FlatCompositionColumn, ComponentQuantityColumn,
             NthBiggestComponentNameColumn, NthBiggestComponentQuantityColumn,
-            MolecularStructureColumn
+            MolecularStructureColumn, ConcatColumn
         ]
         res = next((x for x in types if x.typ == data["type"]), None)
         if res is None:
@@ -182,8 +182,7 @@ class OriginalUnitsColumn(Serializable["OriginalUnitsColumn"], Column):
     def _attrs(self) -> List[str]:
         return ["data_source", "typ"]
 
-    def __init__(self, *,
-                 data_source: str):
+    def __init__(self, *, data_source: str):
         self.data_source = data_source
 
 
@@ -203,8 +202,7 @@ class MostLikelyCategoryColumn(Serializable["MostLikelyCategoryColumn"], Column)
     def _attrs(self) -> List[str]:
         return ["data_source", "typ"]
 
-    def __init__(self, *,
-                 data_source: str):
+    def __init__(self, *, data_source: str):
         self.data_source = data_source
 
 
@@ -224,8 +222,7 @@ class MostLikelyProbabilityColumn(Serializable["MostLikelyProbabilityColumn"], C
     def _attrs(self) -> List[str]:
         return ["data_source", "typ"]
 
-    def __init__(self, *,
-                 data_source: str):
+    def __init__(self, *, data_source: str):
         self.data_source = data_source
 
 
@@ -270,14 +267,14 @@ class ComponentQuantityColumn(Serializable["ComponentQuantityColumn"], Column):
         name of the variable to use when populating the column
     component_name: str
         name of the component from which to extract the quantity
-    normalize: Optional[bool]
+    normalize: bool
         whether to normalize the quantity by the sum of all component amounts. Default is false
 
     """
 
     data_source = properties.String('data_source')
     component_name = properties.String("component_name")
-    normalize = properties.Optional(properties.Boolean, "normalize")
+    normalize = properties.Boolean("normalize")
     typ = properties.String('type', default="component_quantity_column", deserializable=False)
 
     def _attrs(self) -> List[str]:
@@ -286,7 +283,7 @@ class ComponentQuantityColumn(Serializable["ComponentQuantityColumn"], Column):
     def __init__(self, *,
                  data_source: str,
                  component_name: str,
-                 normalize: Optional[bool] = False):
+                 normalize: bool = False):
         self.data_source = data_source
         self.component_name = component_name
         self.normalize = normalize
@@ -295,7 +292,7 @@ class ComponentQuantityColumn(Serializable["ComponentQuantityColumn"], Column):
 class NthBiggestComponentNameColumn(Serializable["NthBiggestComponentNameColumn"], Column):
     """[ALPHA] Name of the Nth biggest component.
 
-    If there are not N components in the composition, then this column will be empty.
+    If there are fewer than N components in the composition, then this column will be empty.
 
     Parameters
     ----------
@@ -323,7 +320,7 @@ class NthBiggestComponentNameColumn(Serializable["NthBiggestComponentNameColumn"
 class NthBiggestComponentQuantityColumn(Serializable["NthBiggestComponentQuantityColumn"], Column):
     """[ALPHA] Quantity of the Nth biggest component.
 
-    If there are not N components in the composition, then this column will be empty.
+    If there are fewer than N components in the composition, then this column will be empty.
 
     Parameters
     ----------
@@ -331,14 +328,14 @@ class NthBiggestComponentQuantityColumn(Serializable["NthBiggestComponentQuantit
         name of the variable to use when populating the column
     n: int
         index of the component quantity to extract, starting with 1 for the biggest
-    normalize: Optional[bool]
+    normalize: bool
         whether to normalize the quantity by the sum of all component amounts. Default is false
 
     """
 
     data_source = properties.String('data_source')
     n = properties.Integer("n")
-    normalize = properties.Optional(properties.Boolean, "normalize")
+    normalize = properties.Boolean("normalize")
     typ = properties.String('type',
                             default="biggest_component_quantity_column", deserializable=False)
 
@@ -348,7 +345,7 @@ class NthBiggestComponentQuantityColumn(Serializable["NthBiggestComponentQuantit
     def __init__(self, *,
                  data_source: str,
                  n: int,
-                 normalize: Optional[bool] = False):
+                 normalize: bool = False):
         self.data_source = data_source
         self.n = n
         self.normalize = normalize
@@ -370,8 +367,7 @@ class IdentityColumn(Serializable['IdentityColumn'], Column):
     def _attrs(self) -> List[str]:
         return ["data_source", "typ"]
 
-    def __init__(self, *,
-                 data_source: str):
+    def __init__(self, *, data_source: str):
         self.data_source = data_source
 
 
@@ -397,3 +393,31 @@ class MolecularStructureColumn(Serializable['MolecularStructureColumn'], Column)
     def __init__(self, *, data_source: str, format: ChemicalDisplayFormat):
         self.data_source = data_source
         self.format = format
+
+
+class ConcatColumn(Serializable['ConcatColumn'], Column):
+    """[ALPHA] Column that concatenates multiple values produced by a list- or set-valued variable.
+
+    The input subcolumn need not exist elsewhere in the table config, and its parameters have
+    no bearing on how the table is constructed. Only the type of column is relevant. That a
+    complete Column object is required is simply a limitation of the current API.
+
+    Parameters
+    ----------
+    data_source: str
+        name of the variable to use when populating the column
+    subcolumn: Column
+        a column of the type of the individual values to be concatenated
+
+    """
+
+    data_source = properties.String('data_source')
+    subcolumn = properties.Object(Column, 'subcolumn')
+    typ = properties.String('type', default="concat_column", deserializable=False)
+
+    def _attrs(self) -> List[str]:
+        return ["data_source", "typ"]
+
+    def __init__(self, *, data_source: str, subcolumn: Column):
+        self.data_source = data_source
+        self.subcolumn = subcolumn

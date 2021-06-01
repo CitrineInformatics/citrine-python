@@ -14,6 +14,7 @@ Responses are specified as a set of strings, where each string corresponds to a 
 Metrics are specified as a set of :class:`PredictorEvaluationMetrics <citrine.informatics.predictor_evaluation_metrics.PredictorEvaluationMetric>`.
 The evaluator will only compute the subset of metrics valid for each response, so the top-level metrics defined by an evaluator should contain the union of all metrics computed across all responses.
 
+.. _Cross-validation evaluator:
 Cross-validation evaluator
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -26,11 +27,25 @@ Metrics are computed by comparing the model's predictions to observed values.
 Where a metric is computed by taking an average over points in the test folds 
 the fold-wise average is reported as opposed to the point-wise average.
 
-In addition to a name, set of responses to validate, trials, folds and metrics to compute, this evaluator defines a set of descriptor keys to ignore when grouping.
+We recommend 5 folds and 3 trials as the default.
+Decreasing the number of folds makes the cross-validation metrics less accurate, since the training sets are substantially reduced in size.
+This can make the model appear to be less accurate than it actually is.
+Conversely, increasing the number of folds makes the *uncertainty estimates* for cross-validation metrics less accurate (see warning below).
+It makes the uncertainty larger, meaning it is more likely that two models will appear to have equivalent performance when in fact one is better than the other.
+Increasing the number of trials results in more accurate cross-validation metrics, but takes longer because more models need to be trained.
+
+This evaluator has an ``ignore_when_grouping`` argument, which can be used to keep similar materials together in a fold and thereby avoid unrealistically optimistic results.
 Candidates with different values for ignored keys and identical values for all other predictor inputs will be placed in the same fold.
 For example, if you are baking cakes with different ingredients and different oven temperatures and want to group together the data by the ingredients, then
-you can set `ignore_when_grouping={"oven temperature"}`.
+you can set ``ignore_when_grouping={"oven temperature"}``.
 That way, two recipes that differ only in their oven temperature will always end up in the same fold.
+
+.. Warning::
+    There is no unbiased way to estimate the variance of a metric computed by cross-validation
+    (`source <https://www.jmlr.org/papers/volume5/grandvalet04a/grandvalet04a.pdf>`_).
+    Citrine Platform uses the bias-corrected fold-wise standard deviation, as this was found to be reasonably accurate, especially when the number of folds is <= 5.
+    It is biased-upward, which makes the results more conservative.
+    If two models are found to differ significantly in their cross-validation metrics, that difference is likely repeatable.
 
 Predictor evaluation metrics
 ----------------------------
@@ -221,7 +236,7 @@ Then wait for the results to be ready:
     from citrine.jobs.waiting import wait_while_executing
 
     execution = workflow.executions.trigger(predictor.uid)
-    wait_while_executing(execution, print_status_info=True, collection = project.predictor_evaluation_executions)
+    wait_while_executing(project.predictor_evaluation_executions, execution, print_status_info=True)
 
 Finally, load the results and inspect the metrics and their computed values:
 
@@ -271,7 +286,7 @@ To archive a workflow:
 
     project.predictor_evaluation_workflows.archive(workflow.uid)
 
-and to archive all executions associated with a workflow:
+and to archive all executions associated with a predictor evaluation workflow:
 
 .. code:: python
 

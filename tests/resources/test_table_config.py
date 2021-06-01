@@ -1,17 +1,18 @@
 from uuid import UUID, uuid4
-
+import warnings
 import pytest
-from gemd.entity.link_by_uid import LinkByUID
 
+from gemd.entity.link_by_uid import LinkByUID
 from citrine.gemtables.columns import MeanColumn, OriginalUnitsColumn, StdDevColumn, IdentityColumn
 from citrine.gemtables.rows import MaterialRunByTemplate
-from citrine.gemtables.variables import AttributeByTemplate, RootInfo, IngredientQuantityDimension, \
-    IngredientQuantityByProcessAndName, IngredientIdentifierByProcessTemplateAndName, RootIdentifier
+from citrine.gemtables.variables import AttributeByTemplate, TerminalMaterialInfo, IngredientQuantityDimension, \
+    IngredientQuantityByProcessAndName, IngredientIdentifierByProcessTemplateAndName, TerminalMaterialIdentifier
 from citrine.resources.table_config import TableConfig, TableConfigCollection, TableBuildAlgorithm
+from citrine.resources.data_concepts import CITRINE_SCOPE
 from citrine.resources.material_run import MaterialRun
 from citrine.resources.project import Project
 from citrine.resources.process_template import ProcessTemplate
-from tests.utils.factories import TableConfigResponseDataFactory
+from tests.utils.factories import TableConfigResponseDataFactory, ListTableConfigResponseDataFactory
 from tests.utils.session import FakeSession, FakeCall
 
 @pytest.fixture
@@ -49,8 +50,8 @@ def empty_defn() -> TableConfig:
                        columns=[], config_uid=UUID("6b608f78-e341-422c-8076-35adc8828545"))
 
 
-def test_get_table_config_metadata(collection, session):
-    """Get with version gets TBD"""
+def test_get_table_config(collection, session):
+    """Get table config, with or without version"""
 
     # Given
     project_id = '6b608f78-e341-422c-8076-35adc8828545'
@@ -60,7 +61,7 @@ def test_get_table_config_metadata(collection, session):
     ver_number = table_config_response["version"]["version_number"]
 
     # When
-    retrieved_table_config: TableConfig = collection.get_with_version(defn_id, ver_number)
+    retrieved_table_config: TableConfig = collection.get(defn_id, ver_number)
 
     # Then
     assert 1 == session.num_calls
@@ -71,6 +72,25 @@ def test_get_table_config_metadata(collection, session):
     assert session.last_call == expect_call
     assert str(retrieved_table_config.config_uid) == defn_id
     assert retrieved_table_config.version_number == ver_number
+
+    # Given
+    table_configs_response = ListTableConfigResponseDataFactory()
+    defn_id = table_configs_response["definition"]["id"]
+    version_number = max([version_dict["version_number"] for version_dict in table_configs_response["versions"]])
+    session.set_response(table_configs_response)
+
+    # When
+    retrieved_table_config: TableConfig = collection.get(defn_id)
+
+    # Then
+    assert 2 == session.num_calls
+    expect_call = FakeCall(
+        method="GET",
+        path="projects/{}/ara-definitions/{}".format(project_id, defn_id)
+    )
+    assert session.last_call == expect_call
+    assert str(retrieved_table_config.config_uid) == defn_id
+    assert retrieved_table_config.version_number == version_number
 
 
 def test_init_table_config():
@@ -84,14 +104,12 @@ def test_init_table_config_with_old_definition_uid():
     table_config = TableConfig(name="foo", description="bar", rows=[], columns=[], variables=[], datasets=[],
                                definition_uid=uid)
     assert table_config.config_uid == uid
-    assert table_config.definition_uid == uid
 
 def test_init_table_config_with_new_config_uid():
     uid = UUID('6b608f78-e341-422c-8076-35adc8828566')
     table_config = TableConfig(name="foo", description="bar", rows=[], columns=[], variables=[], datasets=[],
                                config_uid=uid)
     assert table_config.config_uid == uid
-    assert table_config.definition_uid == uid
 
 
 def test_dup_names():
@@ -100,8 +118,8 @@ def test_dup_names():
         TableConfig(
             name="foo", description="bar", datasets=[], rows=[], columns=[],
             variables=[
-                RootInfo(name="foo", headers=["foo", "bar"], field="name"),
-                RootInfo(name="foo", headers=["foo", "baz"], field="name")
+                TerminalMaterialInfo(name="foo", headers=["foo", "bar"], field="name"),
+                TerminalMaterialInfo(name="foo", headers=["foo", "baz"], field="name")
             ]
         )
     assert "Multiple" in str(excinfo.value)
@@ -111,8 +129,8 @@ def test_dup_names():
         TableConfig(
             name="foo", description="bar", datasets=[], rows=[], columns=[],
             variables=[
-                RootInfo(name="foo", headers=["spam", "eggs"], field="name"),
-                RootInfo(name="bar", headers=["spam", "eggs"], field="name")
+                TerminalMaterialInfo(name="foo", headers=["spam", "eggs"], field="name"),
+                TerminalMaterialInfo(name="bar", headers=["spam", "eggs"], field="name")
             ]
         )
     assert "Multiple" in str(excinfo.value)
@@ -158,7 +176,7 @@ def test_preview(collection, session):
     project_id = '6b608f78-e341-422c-8076-35adc8828545'
 
     # When
-    collection.preview(empty_defn(), [])
+    collection.preview(table_config=empty_defn(), preview_materials=[])
 
     # Then
     assert 1 == session.num_calls
@@ -168,6 +186,24 @@ def test_preview(collection, session):
         json={"definition": empty_defn().dump(), "rows": []}
     )
     assert session.last_call == expect_call
+
+    # When
+    collection.preview(table_config=empty_defn(), preview_roots=[])
+
+    # Then
+    assert 2 == session.num_calls
+    expect_call = FakeCall(
+        method="POST",
+        path="projects/{}/ara-definitions/preview".format(project_id),
+        json={"definition": empty_defn().dump(), "rows": []}
+    )
+    assert session.last_call == expect_call
+
+    with pytest.raises(ValueError):
+        collection.preview(table_config=empty_defn(), preview_materials=[], preview_roots=[])
+
+    with pytest.raises(ValueError):
+        collection.preview(table_config=empty_defn())
 
 
 def test_default_for_material(collection: TableConfigCollection, session):
@@ -185,72 +221,33 @@ def test_default_for_material(collection: TableConfigCollection, session):
         ).dump(),
         'ambiguous': [
             [
-                RootIdentifier(name='foo', headers=['foo'], scope='id').dump(),
+                TerminalMaterialIdentifier(name='foo', headers=['foo'], scope='id').dump(),
                 IdentityColumn(data_source='foo').dump(),
             ]
         ],
     }
+
     session.responses.append(dummy_resp)
     collection.default_for_material(
         material='my_id',
-        scope='my_scope',
         name='my_name',
         description='my_description',
+        algorithm=TableBuildAlgorithm.SINGLE_ROW
     )
-
     assert 1 == session.num_calls
     assert session.last_call == FakeCall(
         method="GET",
         path="projects/{}/table-configs/default".format(project_id),
         params={
             'id': 'my_id',
-            'scope': 'my_scope',
-            'name': 'my_name',
-            'description': 'my_description'
-        }
-    )
-    session.calls.clear()
-    session.responses.append(dummy_resp)
-    collection.default_for_material(
-        material=MaterialRun('foo', uids={'scope': 'id'}),
-        scope='ignored',
-        name='my_name',
-        description='my_description',
-    )
-    assert 1 == session.num_calls
-    assert session.last_call == FakeCall(
-        method="GET",
-        path="projects/{}/table-configs/default".format(project_id),
-        params={
-            'id': 'id',
-            'scope': 'scope',
-            'name': 'my_name',
-            'description': 'my_description'
-        }
-    )
-    session.calls.clear()
-    session.responses.append(dummy_resp)
-    collection.default_for_material(
-        material=MaterialRun('foo', uids={'scope': 'id'}),
-        scope='ignored',
-        algorithm=TableBuildAlgorithm.FORMULATIONS,
-        name='my_name',
-        description='my_description',
-    )
-    assert 1 == session.num_calls
-    assert session.last_call == FakeCall(
-        method="GET",
-        path="projects/{}/table-configs/default".format(project_id),
-        params={
-            'id': 'id',
-            'scope': 'scope',
-            'algorithm': TableBuildAlgorithm.FORMULATIONS.value,
+            'scope': CITRINE_SCOPE,
+            'algorithm': TableBuildAlgorithm.SINGLE_ROW.value,
             'name': 'my_name',
             'description': 'my_description'
         }
     )
 
-    # And we allowed for the more forgiving call structure, so test it.
+    # We allowed for the more forgiving call structure, so test it.
     session.calls.clear()
     session.responses.append(dummy_resp)
     collection.default_for_material(
@@ -289,24 +286,24 @@ def test_add_columns():
     # Check the mismatched name error
     with pytest.raises(ValueError) as excinfo:
         empty.add_columns(
-            variable=RootInfo(name="foo", headers=["bar"], field="name"),
+            variable=TerminalMaterialInfo(name="foo", headers=["bar"], field="name"),
             columns=[IdentityColumn(data_source="bar")]
         )
     assert "data_source must be" in str(excinfo.value)
 
     # Check desired behavior
     with_name_col = empty.add_columns(
-        variable=RootInfo(name="name", headers=["bar"], field="name"),
+        variable=TerminalMaterialInfo(name="name", headers=["bar"], field="name"),
         columns=[IdentityColumn(data_source="name")]
     )
-    assert with_name_col.variables == [RootInfo(name="name", headers=["bar"], field="name")]
+    assert with_name_col.variables == [TerminalMaterialInfo(name="name", headers=["bar"], field="name")]
     assert with_name_col.columns == [IdentityColumn(data_source="name")]
     assert with_name_col.config_uid == UUID('6b608f78-e341-422c-8076-35adc8828545')
 
     # Check duplicate variable name error
     with pytest.raises(ValueError) as excinfo:
         with_name_col.add_columns(
-            variable=RootInfo(name="name", headers=["bar"], field="name"),
+            variable=TerminalMaterialInfo(name="name", headers=["bar"], field="name"),
             columns=[IdentityColumn(data_source="name")]
         )
     assert "already used" in str(excinfo.value)
@@ -388,7 +385,7 @@ def test_register_new(collection, session):
     registered = collection.register(table_config)
 
     # Then
-    assert registered.definition_uid == UUID(defn_uid)
+    assert registered.config_uid == UUID(defn_uid)
     assert registered.version_uid == UUID(ver_uid)
     assert session.num_calls == 1
 
@@ -415,7 +412,7 @@ def test_register_existing(collection, session):
     # When
     registered = collection.register(table_config)
 
-    assert registered.definition_uid == UUID(defn_uid)
+    assert registered.config_uid == UUID(defn_uid)
     assert registered.version_uid == UUID(ver_uid)
     assert session.num_calls == 1
 
@@ -460,3 +457,8 @@ def test_update_unregistered_fail(collection, session):
     # When
     with pytest.raises(ValueError, match="Cannot update Table Config without a config_uid."):
         collection.update(table_config)
+
+
+def test_delete(collection):
+    with pytest.raises(NotImplementedError):
+        collection.delete(empty_defn().config_uid)

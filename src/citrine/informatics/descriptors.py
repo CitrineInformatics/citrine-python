@@ -1,6 +1,5 @@
 """Tools for working with Descriptors."""
-import warnings
-from typing import Type, Optional, List, Iterable, Set  # noqa: F401
+from typing import Type, Set
 
 from citrine._serialization.serializable import Serializable
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
@@ -15,7 +14,7 @@ __all__ = ['Descriptor',
 
 
 class Descriptor(PolymorphicSerializable['Descriptor']):
-    """A Citrine Descriptor describes the range of values that a quantity can take on.
+    """A Descriptor describes the range of values that a quantity can take on.
 
     Abstract type that returns the proper type given a serialized dict.
     """
@@ -51,12 +50,14 @@ class RealDescriptor(Serializable['RealDescriptor'], Descriptor):
         inclusive lower bound for valid real values
     upper_bound: float
         inclusive upper bound for valid real values
+    units: str
+        units string; use an empty string to denote a dimensionless quantity
 
     """
 
     lower_bound = properties.Float('lower_bound')
     upper_bound = properties.Float('upper_bound')
-    units = properties.Optional(properties.String, 'units', default='')
+    units = properties.String('units', default='')
     typ = properties.String('type', default='Real', deserializable=False)
 
     def __eq__(self, other):
@@ -72,18 +73,11 @@ class RealDescriptor(Serializable['RealDescriptor'], Descriptor):
                  key: str,
                  lower_bound: float,
                  upper_bound: float,
-                 units: Optional[str] = None):
+                 units: str):
         self.key: str = key
         self.lower_bound: float = lower_bound
         self.upper_bound: float = upper_bound
-
-        if units is None:
-            msg = "Default of dimensionless is deprecated; \
-            please specify an empty string explicitly."
-            warnings.warn(msg, category=DeprecationWarning)
-            self.units = ""
-        else:
-            self.units = units
+        self.units = units
 
     def __str__(self):
         return "<RealDescriptor {!r}>".format(self.key)
@@ -167,7 +161,7 @@ class CategoricalDescriptor(Serializable['CategoricalDescriptor'], Descriptor):
     ----------
     key: str
         the key corresponding to a descriptor
-    categories: list[str]
+    categories: Set[str]
         possible categories for this descriptor
 
     """
@@ -184,12 +178,12 @@ class CategoricalDescriptor(Serializable['CategoricalDescriptor'], Descriptor):
         except AttributeError:
             return False
 
-    def __init__(self, key: str, categories: Iterable[str]):
+    def __init__(self, key: str, categories: Set[str]):
         self.key: str = key
         for category in categories:
             if not isinstance(category, str):
                 raise TypeError("All categories must be strings")
-        self.categories: Set[str] = set(categories)
+        self.categories: Set[str] = categories
 
     def __str__(self):
         return "<CategoricalDescriptor {!r}>".format(self.key)

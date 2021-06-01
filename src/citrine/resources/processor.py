@@ -2,14 +2,14 @@
 from uuid import UUID
 from typing import TypeVar
 
-from citrine._rest.collection import Collection
 from citrine._session import Session
+from citrine.resources.module import AbstractModuleCollection
 from citrine.informatics.processors import Processor
 
 CreationType = TypeVar('CreationType', bound=Processor)
 
 
-class ProcessorCollection(Collection[Processor]):
+class ProcessorCollection(AbstractModuleCollection[Processor]):
     """Represents the collection of all processors for a project.
 
     Parameters
@@ -30,6 +30,7 @@ class ProcessorCollection(Collection[Processor]):
 
     def build(self, data: dict) -> Processor:
         """Build an individual Processor."""
-        processor = Processor.build(data)
-        processor.session = self.session
+        processor: Processor = Processor.build(data)
+        processor._session = self.session
+        processor._project_id = self.project_id
         return processor

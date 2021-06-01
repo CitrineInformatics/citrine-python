@@ -1,15 +1,16 @@
 from typing import Optional
 
-from citrine._rest.resource import Resource
+from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
 from citrine._session import Session
 from citrine.informatics.data_sources import DataSource
 from citrine.informatics.design_spaces.design_space import DesignSpace
+from citrine._rest.ai_resource_metadata import AIResourceMetadata
 
 __all__ = ['DataSourceDesignSpace']
 
 
-class DataSourceDesignSpace(Resource['DataSourceDesignSpace'], DesignSpace):
+class DataSourceDesignSpace(Resource['DataSourceDesignSpace'], DesignSpace, AIResourceMetadata):
     """An enumeration of candidates stored in a data source.
 
     Parameters
@@ -23,12 +24,11 @@ class DataSourceDesignSpace(Resource['DataSourceDesignSpace'], DesignSpace):
 
     """
 
-    _response_key = None
+    _resource_type = ResourceTypeEnum.MODULE
 
     data_source = properties.Object(DataSource, 'config.data_source')
-    typ = properties.String('config.type', default='DataSourceDesignSpace', deserializable=False)
 
-    # NOTE: These could go here or in _post_dump - it's unclear which is better right now
+    typ = properties.String('config.type', default='DataSourceDesignSpace', deserializable=False)
     module_type = properties.String('module_type', default='DESIGN_SPACE', deserializable=False)
 
     def __init__(self,

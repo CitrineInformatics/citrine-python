@@ -28,7 +28,7 @@ In this example, the following steps occurred:
 3. An ingredient was assigned the above material and process, which makes it an input to that process belonging to that material.
 
 This is a cyclic pattern because the material is an output to the process, but the ingredient (from the same material) is an input to the same process. 
-In general, an object should not reference any other object in it's history to make a cyclic pattern.
+In general, an object should not reference any other object in its history to make a cyclic pattern.
 It does not make sense for a material to be used as an ingredient in its own history.
 In other words, the data model does not support time traveling materials.
 

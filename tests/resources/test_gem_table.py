@@ -6,7 +6,7 @@ import requests_mock
 from mock import patch, call
 
 from citrine.exceptions import JobFailureError, PollingTimeoutError
-from citrine.resources.ara_definition import AraDefinition
+from citrine.resources.table_config import TableConfig
 from citrine.resources.gemtables import GemTableCollection, GemTable
 from tests.utils.factories import GemTableDataFactory, ListGemTableVersionsDataFactory
 from tests.utils.session import FakeSession, FakeCall
@@ -33,27 +33,6 @@ def table():
     return _table
 
 
-@patch("citrine.resources.gemtables.write_file_locally")
-def test_read_gem_table(mock_write_files_locally, table):
-    # When
-    with requests_mock.mock() as mock_get:
-        remote_url = "http://otherhost:4572/anywhere"
-        mock_get.get(remote_url, text='stuff')
-        table(remote_url).read("table.pdf")
-        assert mock_get.call_count == 1
-        assert mock_write_files_locally.call_count == 1
-        assert mock_write_files_locally.call_args == call(b'stuff', "table.pdf")
-
-    with requests_mock.mock() as mock_get:
-        # When
-        localstack_url = "http://localstack:4572/anywhere"
-        mock_get.get("http://localhost:9572/anywhere", text='stuff')
-        table(localstack_url).read("table2.pdf")
-        assert mock_get.call_count == 1
-        assert mock_write_files_locally.call_count == 2
-        assert mock_write_files_locally.call_args == call(b'stuff', "table2.pdf")
-
-
 def test_get_table_metadata(collection, session):
     # Given
     project_id = '6b608f78-e341-422c-8076-35adc8828545'
@@ -74,6 +53,17 @@ def test_get_table_metadata(collection, session):
     assert retrieved_table.version == gem_table["version"]
     assert retrieved_table.download_url == gem_table["signed_download_url"]
 
+    # Given
+    gem_tables = ListGemTableVersionsDataFactory()
+    session.set_response(gem_tables)
+    version_number = max([table["version"] for table in gem_tables["tables"]])
+
+    # When
+    retrieved_table = collection.get(gem_table["id"])
+
+    # Then
+    assert retrieved_table.version == version_number
+
 
 def test_list_tables(collection, session):
     # Given
@@ -84,7 +74,7 @@ def test_list_tables(collection, session):
     results = list(collection.list())
 
     # Then
-    assert len(results) == 1
+    assert len(results) == 3
     assert results[0].uid is not None
 
 
@@ -97,7 +87,7 @@ def test_list_table_versions(collection, session):
     results = list(collection.list_versions(tableVersions['tables'][0]['id']))
 
     # Then
-    assert len(results) == 1
+    assert len(results) == 3
     assert results[0].uid is not None
 
 
@@ -112,7 +102,7 @@ def test_list_by_config(collection, session):
     results = list(collection.list_by_config(tableVersions['tables'][0]['id']))
 
     # Then
-    assert len(results) == 1
+    assert len(results) == 3
     assert results[0].uid is not None
 
 
@@ -133,10 +123,20 @@ def test_register_table(collection):
         collection.register(GemTable.build(GemTableDataFactory()))
 
 
+def test_update_table(collection, table):
+    with pytest.raises(RuntimeError):
+        collection.update(GemTable.build(GemTableDataFactory()))
+
+
+def test_delete_table(collection, table):
+    with pytest.raises(NotImplementedError):
+        collection.delete(GemTable.build(GemTableDataFactory()).uid)
+
+
 def test_build_from_config(collection: GemTableCollection, session):
     config_uid = uuid4()
     config_version = 2
-    config = AraDefinition(
+    config = TableConfig(
         name='foo',
         description='bar',
         columns=[],
@@ -167,7 +167,7 @@ def test_build_from_config(collection: GemTableCollection, session):
 def test_build_from_config_failures(collection: GemTableCollection, session):
     with pytest.raises(ValueError):
         collection.build_from_config(uuid4())
-    config = AraDefinition(
+    config = TableConfig(
         name='foo',
         description='bar',
         columns=[],
@@ -246,7 +246,7 @@ def test_get_and_read_table_from_collection(mock_write_files_locally, table, ses
 
 def test_gem_table_entity_dict():
     table = GemTable.build(GemTableDataFactory())
-    entity = table.as_entity_dict()
+    entity = table.access_control_dict()
 
     assert entity == {
         'id': str(table.uid),

@@ -37,6 +37,37 @@ def test_build(valid_simple_ml_predictor_data, basic_predictor_report_data):
     assert predictor.description == 'Predicts z from input x and latent variable y'
 
 
+def test_delete():
+    pc = PredictorCollection(uuid.uuid4(), mock.Mock())
+    with pytest.raises(NotImplementedError):
+        pc.delete(uuid.uuid4())
+
+
+def test_archive_and_restore(valid_label_fractions_predictor_data):
+    session = mock.Mock()
+    pc = PredictorCollection(uuid.uuid4(), session)
+    session.get_resource.return_value = valid_label_fractions_predictor_data
+
+    def _mock_put_resource(url, data):
+        """Assume that update returns the serialized predictor data."""
+        return data
+    session.put_resource.side_effect = _mock_put_resource
+    archived_predictor = pc.archive(uuid.uuid4())
+    assert archived_predictor.archived
+
+    valid_label_fractions_predictor_data["archived"] = True
+    session.get_resource.return_value = valid_label_fractions_predictor_data
+    restored_predictor = pc.restore(uuid.uuid4())
+    assert not restored_predictor.archived
+
+    session.get_resource.side_effect = NotFound("")
+    with pytest.raises(RuntimeError):
+        pc.archive(uuid.uuid4())
+
+    with pytest.raises(RuntimeError):
+        pc.restore(uuid.uuid4())
+
+
 def test_automl_build(valid_auto_ml_predictor_data, basic_predictor_report_data):
     session = mock.Mock()
     session.get_resource.return_value = basic_predictor_report_data
@@ -148,7 +179,7 @@ def test_mark_predictor_invalid(valid_simple_ml_predictor_data, valid_predictor_
     collection.update(predictor)
 
     # Then
-    assert 2 == session.num_calls, session.calls  # This is a little strange, the report is fetched eagerly
+    assert 1 == session.num_calls, session.calls
 
     first_call = session.calls[0]  # First call is the update
     assert first_call.method == 'PUT'
@@ -176,7 +207,7 @@ def test_list_predictors(valid_simple_ml_predictor_data, valid_expression_predic
     # Then
     expected_call = FakeCall(method='GET', path='/projects/{}/modules'.format(collection.project_id),
                                    params={'per_page': 20, 'module_type': 'PREDICTOR'})
-    assert 3 == session.num_calls, session.calls  # This is a little strange, the report is fetched eagerly
+    assert 1 == session.num_calls, session.calls
     assert expected_call == session.calls[0]
     assert len(predictors) == 2
 
@@ -236,25 +267,37 @@ def test_check_update_some():
     assert update_check.uid == predictor_id
 
 
-def test_graph_default_training_data():
-    """Test that default training data list isn't shared."""
-    # create two serialized graph predictors with no defined training data
-    gp1raw = {'config': {'name': 'one', 'description': '', 'predictors': [], 'type': 'Graph'},
-              'archived': False, 'module_type': 'PREDICTOR', 'display_name': 'one'}
-    gp2raw = {'config': {'name': 'two', 'description': '', 'predictors': [], 'type': 'Graph'},
-              'archived': False, 'module_type': 'PREDICTOR', 'display_name': 'two'}
+def test_unexpected_pattern():
+    """Check that unexpected patterns result in a value error"""
+    # Given
+    session = FakeSession()
+    pc = PredictorCollection(uuid.uuid4(), session)
 
-    # build them, populating the default empty list of training data
-    gp1: GraphPredictor = Predictor.build(gp1raw)
-    gp2: GraphPredictor = Predictor.build(gp2raw)
+    # Then
+    with pytest.raises(ValueError):
+        pc.auto_configure(GemTableDataSource(uuid.uuid4(), 0), "yogurt")
 
-    # check it is empty
-    assert len(gp1.training_data) == 0
-    assert len(gp2.training_data) == 0
 
-    # add training data to one of them
-    gp1.training_data.append(GemTableDataSource(uuid.uuid4(), 1))
+def test_returned_predictor(valid_graph_predictor_data):
+    """Check that auto_configure works on the happy path."""
+    # Given
+    session = FakeSession()
 
-    # check that the training data doesn't bleed into both
-    assert len(gp1.training_data) == 1
-    assert len(gp2.training_data) == 0
+    # Setup a response that includes instance instead of config
+    response = deepcopy(valid_graph_predictor_data)
+    response["instance"] = response["config"]
+    del response["config"]
+
+    session.set_response(response)
+    pc = PredictorCollection(uuid.uuid4(), session)
+
+    # When
+    result = pc.auto_configure(GemTableDataSource(uuid.uuid4(), 0), "PLAIN")
+
+    # Then the response is parsed in a predictor
+    assert result.name == valid_graph_predictor_data["display_name"]
+    assert isinstance(result, GraphPredictor)
+    # including nested predictors
+    assert len(result.predictors) == 2
+    assert isinstance(result.predictors[0], uuid.UUID)
+    assert isinstance(result.predictors[1], ExpressionPredictor)

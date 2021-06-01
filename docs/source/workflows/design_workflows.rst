@@ -1,7 +1,7 @@
 Design Workflows
 ========================
 
-A design workflow ranks materials according to a :doc:`score <scores>`.
+A :class:`~citrine.informatics.workflows.design_workflow.DesignWorkflow` ranks materials according to a :doc:`score <scores>`.
 This workflow is comprised of three modules:
 
 -  :doc:`Design space <design_spaces>` defines all possible materials that can be generated.
@@ -35,37 +35,6 @@ The following example demonstrates how to use the python SDK to register a workf
     # (i.e. why the workflow is valid/invalid)
     print(validated_workflow.status_info)
 
-.. warning::
-    
-    Registering DesignWorkflows using `project.workflows` is deprecated, please use `project.design_workflows` as described above instead.
-
-
-.. code:: python
-
-    from time import sleep
-    from citrine.informatics.workflows import DesignWorkflow
-
-    # create a workflow using existing modules and register it with the project
-    workflow = project.workflows.register(
-        DesignWorkflow(
-            name='Example workflow',
-            predictor_id=predictor.uid,
-            processor_id=processor.uid,
-            design_space_id=design_space.uid
-        )
-    )
-
-    # wait until the workflow is no longer validating
-    # we must get the workflow every time we wish to fetch the latest status
-    while project.workflows.get(workflow.uid).status == "VALIDATING":
-        sleep(10)
-
-    # print final validation status
-    validated_workflow = project.workflows.get(workflow.uid)
-    print(validated_workflow.status)
-    # status info will contain relevant validation information
-    # (i.e. why the workflow is valid/invalid)
-    print(validated_workflow.status_info)
 
 Execution and results
 ---------------------
@@ -99,7 +68,7 @@ Candidate results are paginated and returned as `DesignCandidate <#design-candid
     execution = workflow.design_executions.trigger(score)
 
     # wait for execution to complete
-    wait_while_executing(execution, print_status_info=True, collection=workflow.design_executions)
+    wait_while_executing(workflow.design_executions, execution, print_status_info=True)
 
     # get the candidate generator
     execution_results = execution.candidates()
@@ -132,92 +101,22 @@ You can to look up what :doc:`score <scores>` was used for a particular executio
     score = execution.score
     descriptors = execution.descriptors
 
-.. warning::
-    
-    Executing DesignWorkflows using `workflow.executions` is deprecated, please use `workflow.design_executions` as described above instead.
-
-Results of a successful workflow are returned as a dictionary.
-The ``results`` key maps to a dictionary containing ``candidates`` and ``scores``.
-The ``i`` th candidate corresponds to the ``i`` th score.
-
-Each candidate and score is a dictionary.
-The former contains descriptor key-value pairs and uncertainty in descriptor values.
-The latter contains a key-value pair for each score.
-
-For example, if input materials contain an input ``x`` and are scored by using LI for predicted output ``z`` the execution results would have the form:
-
-.. code:: python
-
-    {
-        "results": {
-            "candidates": [
-                {"x": 1, "uncertainty_in_x": 0, "z": 2, "uncertainty_in_x": 0.1},
-                # ...
-            ],
-            "scores": [
-                {"li_z": 0.8},
-                # ...
-            ]
-        }
-    }
-
-The length of ``candidates`` will always equal that of ``scores``.
-A maximum of 200 candidates and scores can be returned by an execution.
-If the design space contains more than 200 possible materials, only the top 200 will be returned by an execution.
-
-The following demonstrates how to trigger workflow execution, wait for the design run to complete and inspect the best material found by the workflow:
-
-.. code:: python
-
-    from time import sleep
-    from citrine.informatics.objectives import ScalarMaxObjective
-    from citrine.informatics.scores import LIScore
-
-
-    # create a score with the desired objectives and baselines
-    score = LIScore(
-        # create an objective to maximize shear modulus
-        # the descriptor key must match a descriptor in materials produced from teh design space
-        objectives=[ScalarMaxObjective(descriptor_key='Shear modulus')],
-        baselines=[150.0] # one for each objective
-    )
-
-    # trigger a design run using a previously registered and validated workflow
-    execution = workflow.executions.trigger(score)
-
-    # wait for execution to complete
-    wait_while_executing(execution, print_status_info=True, collection=workflow.design_executions)
-
-    # retrieve the results
-    execution_results = execution.results()
-    # extract the candidates and the scores
-    candidates = execution_results['results']['candidates']
-    scores = execution_results['results']['scores']
-
-    # pull out the candidate with the highest shear modulus and its score
-    # (this should be the candidate at the head of the list since we used shear modulus to score and rank materials)
-    best_candidate = candidates[0]
-    print(best_candidate)
-    best_score = scores[0]
-    print(best_score)
-
-    # we can confirm the best candidate is at the head of the list using
-    # this candidate will be the same as best_candidate above
-    candidate_with_max_shear_modulus = max(candidates, key=lambda candidate: float(candidate['Shear modulus']))
-    print(candidate_with_max_shear_modulus)
-
 
 Design Candidate
 -----------------
 
-A :class:`~citrine.informatics.design_candidate.DesignCandidate` represents the result of the Design Execution. They contain the `primary score` of the candidate and the :class:`~citrine.informatics.design_candidate.DesignMaterial` for that candidate. DesignMaterials are simpler approximations ("projections") of the materials information about a particular design candidate.
+A :class:`~citrine.informatics.design_candidate.DesignCandidate` represents the result of the Design Execution.
+They contain the `primary score` of the candidate and the :class:`~citrine.informatics.design_candidate.DesignMaterial` for that candidate.
+DesignMaterials are simpler approximations ("projections") of the materials information about a particular design candidate.
 
-DesignMaterials approximate the distribution of values the variable might take. They may be one of:
-    * :class:`~citrine.informatics.design_candidate.MeanAndStd`
-    * :class:`~citrine.informatics.design_candidate.TopCategories`
-    * :class:`~citrine.informatics.design_candidate.Mixture`
-    * :class:`~citrine.informatics.design_candidate.ChemicalFormula`
-    * :class:`~citrine.informatics.design_candidate.MolecularStructure`.
+DesignMaterials approximate the distribution of values that a variable might take.
+Each variable is represented as one of:
+
+* :class:`~citrine.informatics.design_candidate.MeanAndStd`
+* :class:`~citrine.informatics.design_candidate.TopCategories`
+* :class:`~citrine.informatics.design_candidate.Mixture`
+* :class:`~citrine.informatics.design_candidate.ChemicalFormula`
+* :class:`~citrine.informatics.design_candidate.MolecularStructure`.
 
 For example:
 
@@ -228,18 +127,18 @@ For example:
     # to get the score of a particular candidate
     score = candidate.primary_score
 
-    # A MeanAndStd material will have mean and std
-    candidate.material.values['mean_and_std_material'].mean
-    candidate.material.values['mean_and_std_material'].std
+    # Assume a real descriptor, 'elastic limit', represented as a MeanAndStd variable
+    candidate.material.values['elastic limit'].mean
+    candidate.material.values['elastic limit'].std
 
-    # A TopCategories material will have the probability map for the most probable categories
-    candidate.material.values['top_categories_material'].probabilities
+    # Assume a categorical descriptor, 'color', represented as a TopCategories variable
+    candidate.material.values['color'].probabilities
 
-    # A Mixture material will have the most likely quantity values for all of the components in a mixture
-    candidate.material.values['mixture_material'].quantities
+    # Assume a formulation descriptor, 'final mixture', represented as a Mixture variable
+    candidate.material.values['final mixture'].quantities
 
-    # A ChemicalFormula material will have the chemical formula as a string
-    candidate.material.values['chemical_formula_material'].formula
+    # Assume a chemical formula descriptor, 'alloying material', represented as a ChemicalFormula variable
+    candidate.material.values['alloying material'].formula
 
-    # A MolecularStructure material will have the molecular structure represented by the SMILE string
-    candidate.material.values['molecular_material'].smiles
+    # Assume a molecular structure descriptor, 'solvent', represented as a MolecularStructure variable
+    candidate.material.values['solvent'].smiles

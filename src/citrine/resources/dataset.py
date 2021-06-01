@@ -1,16 +1,26 @@
 """Resources that represent both individual and collections of datasets."""
 from collections import defaultdict
-from typing import TypeVar, List, Optional, Iterable, Union, Tuple
+from typing import TypeVar, List, Optional, Union, Tuple, Iterator
 from uuid import UUID
 
+from gemd.entity.base_entity import BaseEntity
+from gemd.entity.link_by_uid import LinkByUID
+from gemd.entity.object import MeasurementSpec, MeasurementRun, MaterialSpec, MaterialRun, \
+    ProcessSpec, ProcessRun, IngredientSpec, IngredientRun
+from gemd.entity.template import PropertyTemplate, MaterialTemplate, MeasurementTemplate, \
+    ParameterTemplate, ProcessTemplate, ConditionTemplate
+from gemd.util import writable_sort_order
+
 from citrine._rest.collection import Collection
-from citrine._rest.resource import Resource
+from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
 from citrine._session import Session
 from citrine._utils.functions import scrub_none
 from citrine.exceptions import NotFound
 from citrine.resources.api_error import ApiError
 from citrine.resources.condition_template import ConditionTemplateCollection
+from citrine.resources.data_concepts import _make_link_by_uid
+from citrine.resources.delete import _async_gemd_batch_delete, _poll_for_async_batch_delete_result
 from citrine.resources.file_link import FileCollection
 from citrine.resources.ingredient_run import IngredientRunCollection
 from citrine.resources.ingredient_spec import IngredientSpecCollection
@@ -25,18 +35,6 @@ from citrine.resources.process_run import ProcessRunCollection
 from citrine.resources.process_spec import ProcessSpecCollection
 from citrine.resources.process_template import ProcessTemplateCollection
 from citrine.resources.property_template import PropertyTemplateCollection
-
-from gemd.entity.object import MeasurementSpec, MeasurementRun, MaterialSpec, MaterialRun, \
-    ProcessSpec, ProcessRun, IngredientSpec, IngredientRun
-from gemd.entity.template.condition_template import ConditionTemplate
-from gemd.entity.template.material_template import MaterialTemplate
-from gemd.entity.template.measurement_template import MeasurementTemplate
-from gemd.entity.template.parameter_template import ParameterTemplate
-from gemd.entity.template.process_template import ProcessTemplate
-from gemd.entity.template.property_template import PropertyTemplate
-from gemd.entity.base_entity import BaseEntity
-from gemd.entity.link_by_uid import LinkByUID
-from gemd.util import writable_sort_order
 
 ResourceType = TypeVar('ResourceType', bound='DataConcepts')
 
@@ -57,6 +55,8 @@ class Dataset(Resource['Dataset']):
         A summary of this dataset.
     description: str
         Long-form description of the dataset.
+    unique_name: Optional[str]
+        An optional, globally unique name that can be used to retrieve the dataset.
 
     Attributes
     ----------
@@ -82,6 +82,7 @@ class Dataset(Resource['Dataset']):
     """
 
     _response_key = 'dataset'
+    _resource_type = ResourceTypeEnum.DATASET
 
     uid = properties.Optional(properties.UUID(), 'id')
     name = properties.String('name')
@@ -97,7 +98,8 @@ class Dataset(Resource['Dataset']):
     delete_time = properties.Optional(properties.Datetime(), 'delete_time')
     public = properties.Optional(properties.Boolean(), 'public')
 
-    def __init__(self, name: str, summary: str, description: str, unique_name: str = None):
+    def __init__(self, name: str, summary: str,
+                 description: str, unique_name: Optional[str] = None):
         self.name: str = name
         self.summary: str = summary
         self.description: str = description
@@ -281,16 +283,69 @@ class Dataset(Resource['Dataset']):
         """Update a data concepts resource using the appropriate collection."""
         return self._collection_for(model).update(model)
 
-    def delete(self, data_concepts_resource: ResourceType, dry_run=False) -> ResourceType:
-        """Delete a data concepts resource to the appropriate collection."""
-        uid = next(iter(data_concepts_resource.uids.items()), None)
-        if uid is None:
-            raise ValueError("Only objects that contain identifiers can be deleted.")
-        return self._collection_for(data_concepts_resource) \
-            .delete(uid[1], scope=uid[0], dry_run=dry_run)
+    def delete(self, data_concepts_resource: Union[UUID, str, LinkByUID, ResourceType],
+               dry_run=False) -> ResourceType:
+        """
+        Delete a data concepts resource from the appropriate collection.
 
-    def gemd_batch_delete(self, id_list: List[Union[LinkByUID, UUID, str, BaseEntity]]) -> \
-            List[Tuple[LinkByUID, ApiError]]:
+        Parameters
+        ----------
+        data_concepts_resource: Union[UUID, str, LinkByUID, ResourceType]
+            A representation of the resource to delete (Citrine id, LinkByUID, or the object)
+        dry_run: bool
+            Whether to actually delete the item or run a dry run of the delete operation.
+            Dry run is intended to be used for validation. Default: false
+
+        """
+        link = _make_link_by_uid(data_concepts_resource)
+        return self._collection_for(data_concepts_resource) \
+            .delete(link.id, scope=link.scope, dry_run=dry_run)
+
+    def delete_contents(
+        self,
+        *,
+        timeout: float = 2 * 60,
+        polling_delay: float = 1.0
+    ):
+        """
+        Delete all the GEMD objects from within a single Dataset.
+
+        Parameters
+        ----------
+        timeout: float
+            Amount of time to wait on the job (in seconds) before giving up.
+            Note that this number has no effect on the underlying job itself,
+            which can also time out server-side.
+
+        polling_delay: float
+            How long to delay between each polling retry attempt.
+
+        Returns
+        -------
+        List[Tuple[LinkByUID, ApiError]]
+            A list of (LinkByUID, api_error) for each failure to delete an object.
+            Note that this method doesn't raise an exception if an object fails to be
+            deleted.
+
+        """
+        path = 'projects/{project_id}/datasets/{dataset_uid}/contents'.format(
+            dataset_uid=self.uid,
+            project_id=self.project_id
+        )
+
+        response = self.session.delete_resource(path)
+        job_id = response["job_id"]
+
+        return _poll_for_async_batch_delete_result(self.project_id, self.session, job_id, timeout,
+                                                   polling_delay)
+
+    def gemd_batch_delete(
+            self,
+            id_list: List[Union[LinkByUID, UUID, str, BaseEntity]],
+            *,
+            timeout: float = 2 * 60,
+            polling_delay: float = 1.0
+    ) -> List[Tuple[LinkByUID, ApiError]]:
         """
         Remove a set of GEMD objects.
 
@@ -325,8 +380,8 @@ class Dataset(Resource['Dataset']):
             deleted.
 
         """
-        from citrine.resources.delete import _gemd_batch_delete
-        return _gemd_batch_delete(id_list, self.project_id, self.session, self.uid)
+        return _async_gemd_batch_delete(id_list, self.project_id, self.session,
+                                        self.uid, timeout=timeout, polling_delay=polling_delay)
 
 
 class DatasetCollection(Collection[Dataset]):
@@ -420,7 +475,7 @@ class DatasetCollection(Collection[Dataset]):
 
     def list(self,
              page: Optional[int] = None,
-             per_page: int = 1000) -> Iterable[Dataset]:
+             per_page: int = 1000) -> Iterator[Dataset]:
         """
         List datasets using pagination.
 
@@ -439,7 +494,7 @@ class DatasetCollection(Collection[Dataset]):
 
         Returns
         -------
-        Iterable[Dataset]
+        Iterator[Dataset]
             Datasets in this collection.
 
         """

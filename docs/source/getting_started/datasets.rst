@@ -2,7 +2,7 @@
 Datasets
 ========
 
-A dataset is a collection of data objects and files.
+A :class:`~citrine.resources.dataset.Dataset` is a collection of data objects and files.
 It is a basic unit of access control: a user with read/write access on a dataset can read/write **all** of the resources in that dataset.
 A dataset is owned by a specific project, but it may be shared with other projects as well.
 Objects in a dataset may reference objects in a *different* dataset; hence, a single user might not be able to view all of the relevant information about a material.
@@ -62,7 +62,7 @@ A dataset can be deleted using the project from which it originates. Note that t
 Example
 ^^^^^^^
 
-Assume you have a "band gaps project" with known ID, ``band_gaps_project_id``, and are trying to delete a dataset within that project with known ID, `strehlow_cook_dataset_id`.
+Assume you have a "band gaps project" with known ID, ``band_gaps_project_id``, and are trying to delete a dataset within that project with known ID, ``strehlow_cook_dataset_id``.
 
 .. code-block:: python
 

@@ -1,17 +1,17 @@
-from typing import List, Optional
+from typing import Set
 
+from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties as _properties
-from citrine._serialization.serializable import Serializable
-from citrine._session import Session
 from citrine.informatics.descriptors import FormulationDescriptor
-from citrine.informatics.reports import Report
 from citrine.informatics.predictors import Predictor
+from citrine._rest.ai_resource_metadata import AIResourceMetadata
 
 __all__ = ['IngredientFractionsPredictor']
 
 
-class IngredientFractionsPredictor(Serializable["IngredientFractionsPredictor"], Predictor):
-    """[ALPHA] A predictor interface that computes ingredient fractions.
+class IngredientFractionsPredictor(Resource["IngredientFractionsPredictor"],
+                                   Predictor, AIResourceMetadata):
+    """A predictor interface that computes ingredient fractions.
 
     Parameters
     ----------
@@ -21,17 +21,18 @@ class IngredientFractionsPredictor(Serializable["IngredientFractionsPredictor"],
         the description of the predictor
     input_descriptor: FormulationDescriptor
         descriptor that represents the input formulation
-    ingredients: List[str]
-        list of ingredients to featurize.
-        This list should contain all possible ingredients.
+    ingredients: Set[str]
+        set of ingredients to featurize.
+        This set should contain all possible ingredients.
         If an unknown ingredient is encountered, an error will be thrown.
 
     """
 
-    input_descriptor = _properties.Object(FormulationDescriptor, 'config.input')
-    ingredients = _properties.List(_properties.String, 'config.ingredients')
+    _resource_type = ResourceTypeEnum.MODULE
 
-    # NOTE: These could go here or in _post_dump - it's unclear which is better right now
+    input_descriptor = _properties.Object(FormulationDescriptor, 'config.input')
+    ingredients = _properties.Set(_properties.String, 'config.ingredients')
+
     module_type = _properties.String('module_type', default='PREDICTOR')
     typ = _properties.String('config.type', default='IngredientFractions',
                              deserializable=False)
@@ -40,16 +41,12 @@ class IngredientFractionsPredictor(Serializable["IngredientFractionsPredictor"],
                  name: str,
                  description: str,
                  input_descriptor: FormulationDescriptor,
-                 ingredients: List[str],
-                 session: Optional[Session] = None,
-                 report: Optional[Report] = None,
+                 ingredients: Set[str],
                  archived: bool = False):
         self.name: str = name
         self.description: str = description
         self.input_descriptor: FormulationDescriptor = input_descriptor
-        self.ingredients: List[str] = ingredients
-        self.session: Optional[Session] = session
-        self.report: Optional[Report] = report
+        self.ingredients: Set[str] = ingredients
         self.archived: bool = archived
 
     def _post_dump(self, data: dict) -> dict:

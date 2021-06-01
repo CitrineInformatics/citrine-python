@@ -1,8 +1,15 @@
 """Top-level class for all data concepts objects and collections thereof."""
 from abc import abstractmethod, ABC
+from warnings import warn
 from typing import TypeVar, Type, List, Union, Optional, Iterator
 from uuid import UUID, uuid4
 import deprecation
+
+from gemd.entity.dict_serializable import DictSerializable
+from gemd.entity.base_entity import BaseEntity
+from gemd.entity.link_by_uid import LinkByUID
+from gemd.json import GEMDJson
+from gemd.util import recursive_foreach
 
 from citrine._rest.collection import Collection
 from citrine._serialization import properties
@@ -12,11 +19,8 @@ from citrine._serialization.serializable import Serializable
 from citrine._session import Session
 from citrine._utils.functions import scrub_none, replace_objects_with_links
 from citrine.resources.audit_info import AuditInfo
+from citrine.resources.job import _poll_for_job_completion
 from citrine.resources.response import Response
-from gemd.entity.dict_serializable import DictSerializable
-from gemd.entity.link_by_uid import LinkByUID
-from gemd.json import GEMDJson
-from gemd.util import recursive_foreach
 
 CITRINE_SCOPE = 'id'
 
@@ -62,7 +66,8 @@ class DataConcepts(PolymorphicSerializable['DataConcepts'], DictSerializable, AB
     """
     Fields that are added to the gemd data objects when they are used in this client
 
-    * AuditInfo contains who/when information about the resource on the citrine platform
+    * audit_info contains who/when information about the resource on the citrine platform
+    * dataset is the unique Citrine id of the dataset that owns this resource
     """
 
     def __init__(self, typ: str):
@@ -128,7 +133,7 @@ class DataConcepts(PolymorphicSerializable['DataConcepts'], DictSerializable, AB
         data: dict
             A representation of the object. It must be possible to put this dictionary through
             the loads/dumps cycle of the GMED
-            :py:mod:`JSON encoder <gemd.jsonr>`. The ensuing dictionary must
+            :py:mod:`JSON encoder <gemd.json>`. The ensuing dictionary must
             have a `type` field that corresponds to the response key of this class or of
             :py:class:`LinkByUID <gemd.entity.link_by_uid.LinkByUID>`.
 
@@ -209,6 +214,26 @@ class DataConcepts(PolymorphicSerializable['DataConcepts'], DictSerializable, AB
         return self.dump()
 
 
+def _make_link_by_uid(gemd_object_rep: Union[str, UUID, BaseEntity, LinkByUID],
+                      scope: Optional[str] = None) -> LinkByUID:
+    if scope is not None:
+        warn("\'scope\' as a separate argument is deprecated when creating a link to a GEMD"
+             "object. To specify a custom scope, use a LinkByUID.", DeprecationWarning)
+    if isinstance(gemd_object_rep, BaseEntity):
+        if not gemd_object_rep.uids:  # an empty dictionary
+            raise ValueError('GEMD object must have at least one uid to construct a link.')
+        return LinkByUID.from_entity(gemd_object_rep, name=CITRINE_SCOPE)
+    elif isinstance(gemd_object_rep, LinkByUID):
+        return gemd_object_rep
+    elif isinstance(gemd_object_rep, (str, UUID)):
+        uid = str(gemd_object_rep)
+        scope = scope or CITRINE_SCOPE
+        return LinkByUID(scope, uid)
+    else:
+        raise TypeError("Link can only created from a GEMD object, LinkByUID, str, or UUID."
+                        "Instead got {}.".format(gemd_object_rep))
+
+
 ResourceType = TypeVar('ResourceType', bound='DataConcepts')
 
 
@@ -262,32 +287,42 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
 
     def list(self,
              page: Optional[int] = None,
-             per_page: Optional[int] = 100) -> List[ResourceType]:
+             per_page: Optional[int] = 100,
+             forward: bool = True) -> Iterator[ResourceType]:
         """
-        List all visible elements of the collection.
+        Get all visible elements of the collection.
 
-        page and per_page parameters of this method are deprecated and ignored.
-        This method will will return a list of all elements in the collection.
+        The order of results should not be relied upon, but for now they are sorted by
+        dataset, object type, and creation time (in that order of priority).
 
         Parameters
         ---------
         page: int, optional
-            [DEPRECATED][IGNORED] This parameter is ignored. To load individual
-            pages lazily, use the list_all method.
+            [DEPRECATED][IGNORED] This parameter is ignored. All pages are loaded lazily.
         per_page: int, optional
             Max number of results to return per page. It is very unlikely that
             setting this parameter to something other than the default is useful.
             It exists for rare situations where the client is bandwidth constrained
             or experiencing latency from large payload sizes.
+        forward: bool
+            Set to False to reverse the order of results (i.e., return in descending order)
 
         Returns
         -------
-        List[ResourceType]
+        Iterator[ResourceType]
             Every object in this collection.
 
         """
-        # Convert the iterator to a list to avoid breaking existing client relying on lists
-        return [x for x in self.list_all(per_page=per_page)]
+        params = {}
+        if self.dataset_id is not None:
+            params['dataset_id'] = str(self.dataset_id)
+        raw_objects = self.session.cursor_paged_resource(
+            self.session.get_resource,
+            self._get_path(ignore_dataset=True),
+            forward=forward,
+            per_page=per_page,
+            params=params)
+        return (self.build(raw) for raw in raw_objects)
 
     def register(self, model: ResourceType, dry_run=False):
         """
@@ -487,21 +522,23 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
 
         """
         # Poll for job completion - this will raise an error if the job failed
-        self._poll_for_job_completion(self.project_id, job_id, timeout=timeout,
-                                      polling_delay=polling_delay)
+        _poll_for_job_completion(self.session, self.project_id, job_id, timeout=timeout,
+                                 polling_delay=polling_delay)
 
         # That worked, nothing returned in this case
         return None
 
-    def get(self, uid: Union[UUID, str], scope: str = CITRINE_SCOPE) -> ResourceType:
+    def get(self, uid: Union[UUID, str, LinkByUID, BaseEntity],
+            scope: Optional[str] = None) -> ResourceType:
         """
-        Get the element of the collection with ID equal to uid.
+        Get an element of the collection by its id.
 
         Parameters
         ----------
-        uid: Union[UUID, str]
-            The ID.
-        scope: str
+        uid: Union[UUID, str, LinkByUID, BaseEntity]
+            A representation of the object (Citrine id, LinkByUID, or the object itself)
+        scope: Optional[str]
+            [DEPRECATED] use a LinkByUID to specify a custom scope
             The scope of the uid, defaults to Citrine scope (CITRINE_SCOPE)
 
         Returns
@@ -510,88 +547,11 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
             An object with specified scope and uid
 
         """
-        path = self._get_path(ignore_dataset=self.dataset_id is None) + "/{}/{}".format(scope, uid)
+        link = _make_link_by_uid(uid, scope)
+        path = self._get_path(ignore_dataset=self.dataset_id is None) + "/{}/{}"\
+            .format(link.scope, link.id)
         data = self.session.get_resource(path)
         return self.build(data)
-
-    @deprecation.deprecated(details="filter_by_tags is deprecated due to poor "
-                                    "performance. Please use list_by_tag instead.")
-    def filter_by_tags(self, tags: List[str],
-                       page: Optional[int] = None, per_page: Optional[int] = None):
-        """
-        Get all objects in the collection that match any one of a list of tags.
-
-        Parameters
-        ----------
-        tags: List[str]
-            A list of strings, each one a tag that an object can match. Currently
-            limited to a length of 1 or 0 (empty list does not filter).
-        page: Optional[int]
-            The page of results to list, 1-indexed (i.e. the first page is page=1)
-        per_page: Optional[int]
-            The number of results to list per page
-
-        Returns
-        -------
-        List[ResourceType]
-            Every object in this collection that matches one of the tags.
-            See (insert link) for a discussion of how to match on tags.
-
-        """
-        if type(tags) == str:
-            tags = [tags]
-        if len(tags) > 1:
-            raise NotImplementedError('Searching by multiple tags is not currently supported.')
-        params = {'tags': tags}
-        if self.dataset_id is not None:
-            params['dataset_id'] = str(self.dataset_id)
-        if page is not None:
-            params['page'] = page
-        if per_page is not None:
-            params['per_page'] = per_page
-
-        response = self.session.get_resource(
-            self._get_path(ignore_dataset=True),
-            params=params)
-        return [self.build(content) for content in response["contents"]]
-
-    @deprecation.deprecated(details="filter_by_name is deprecated due to poor "
-                                    "performance. Please use list_by_name instead.")
-    def filter_by_name(self, name: str, exact: bool = False,
-                       page: Optional[int] = None, per_page: Optional[int] = None):
-        """
-        Get all objects with specified name in this dataset.
-
-        Parameters
-        ----------
-        name: str
-            case-insensitive object name prefix to search.
-        exact: bool
-            Set to True to change prefix search to exact search (but still case-insensitive).
-            Default is False.
-        page: Optional[int]
-            The page of results to list, 1-indexed (i.e. the first page is page=1)
-        per_page: Optional[int]
-            The number of results to list per page
-
-        Returns
-        -------
-        List[ResourceType]
-            List of every object in this collection whose `name` matches the search term.
-
-        """
-        if self.dataset_id is None:
-            raise RuntimeError("Must specify a dataset to filter by name.")
-        params = {'dataset_id': str(self.dataset_id), 'name': name, 'exact': exact}
-        if page is not None:
-            params['page'] = page
-        if per_page is not None:
-            params['per_page'] = per_page
-        response = self.session.get_resource(
-            # "Ignoring" dataset because it is in the query params (and required)
-            self._get_path(ignore_dataset=True) + "/filter-by-name",
-            params=params)
-        return [self.build(content) for content in response["contents"]]
 
     def list_by_name(self, name: str, exact: bool = False,
                      forward: bool = True, per_page: int = 100) -> Iterator[ResourceType]:
@@ -606,7 +566,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
             Set to True to change prefix search to exact search (but still case-insensitive).
             Default is False.
         forward: bool
-            Set to False to reverse the order of results (i.e. return in descending order).
+            Set to False to reverse the order of results (i.e., return in descending order).
         per_page: int
             Controls the number of results fetched with each http request to the backend.
             Typically, this is set to a sensible default and should not be modified. Consider
@@ -630,6 +590,8 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
             params=params)
         return (self.build(raw) for raw in raw_objects)
 
+    @deprecation.deprecated(deprecated_in="0.133.0", removed_in="1.0.0",
+                            details="Please use list instead of list_all")
     def list_all(self, forward: bool = True, per_page: int = 100) -> Iterator[ResourceType]:
         """
         Get all objects in the collection.
@@ -640,7 +602,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         Parameters
         ----------
         forward: bool
-            Set to False to reverse the order of results (i.e. return in descending order).
+            Set to False to reverse the order of results (i.e., return in descending order).
         per_page: int
             Controls the number of results fetched with each http request to the backend.
             Typically, this is set to a sensible default and should not be modified. Consider
@@ -652,26 +614,17 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
             Every object in this collection.
 
         """
-        params = {}
-        if self.dataset_id is not None:
-            params['dataset_id'] = str(self.dataset_id)
-        raw_objects = self.session.cursor_paged_resource(
-            self.session.get_resource,
-            self._get_path(ignore_dataset=True),
-            forward=forward,
-            per_page=per_page,
-            params=params)
-        return (self.build(raw) for raw in raw_objects)
+        return self.list(forward=forward, per_page=per_page)  # pragma: no cover
 
     def list_by_tag(self, tag: str, per_page: int = 100) -> Iterator[ResourceType]:
         """
         Get all objects bearing a tag prefixed with `tag` in the collection.
 
-        The order of results is largely unmeaningul. Results from the same dataset will be
+        The order of results is largely not meaningful. Results from the same dataset will be
         grouped together but no other meaningful ordering can be relied upon. Duplication in
         the result set may (but needn't) occur when one object has multiple tags matching the
         search tag. For this reason, it is inadvisable to put 2 tags with the same prefix
-        (e.g. 'foo::bar' and 'foo::baz') the same object when it can be avoided.
+        (e.g., 'foo::bar' and 'foo::baz') in the same object when it can be avoided.
 
         Parameters
         ----------
@@ -699,41 +652,45 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
             params=params)
         return (self.build(raw) for raw in raw_objects)
 
-    def delete(self, uid: Union[UUID, str], scope: str = CITRINE_SCOPE, dry_run: bool = False):
+    def delete(self, uid: Union[UUID, str, LinkByUID, BaseEntity],
+               scope: Optional[str] = None, dry_run: bool = False):
         """
-        Delete the element of the collection with ID equal to uid.
+        Delete an element of the collection by its id.
 
         Parameters
         ----------
-        uid: Union[UUID, str]
-            The ID.
-        scope: str
+        uid: Union[UUID, str, LinkByUID, BaseEntity]
+            A representation of the object (Citrine id, LinkByUID, or the object itself)
+        scope: Optional[str]
+            [DEPRECATED] use a LinkByUID to specify a custom scope
             The scope of the uid, defaults to Citrine scope (CITRINE_SCOPE)
         dry_run: bool
             Whether to actually delete the item or run a dry run of the delete operation.
             Dry run is intended to be used for validation. Default: false
 
         """
-        path = self._get_path() + "/{}/{}".format(scope, uid)
+        link = _make_link_by_uid(uid, scope)
+        path = self._get_path() + "/{}/{}".format(link.scope, link.id)
         params = {'dry_run': dry_run}
         self.session.delete_resource(path, params=params)
         return Response(status_code=200)  # delete succeeded
 
-    def _get_relation(self, relation: str, uid: Union[UUID, str], scope: str,
-                      forward: bool = True, per_page: int = 100) -> Iterator[ResourceType]:
+    def _get_relation(self, relation: str, uid: Union[UUID, str, LinkByUID, BaseEntity],
+                      scope: Optional[str] = None, forward: bool = True, per_page: int = 100
+                      ) -> Iterator[ResourceType]:
         """
         Generic method for searching this collection by relation to another object.
 
         Parameters
         ----------
         relation
-            Reflects the type of the object with the provided uid and scope, e.g.
+            Reflects the type of the object with the provided uid and scope, e.g.,
             'process-templates' if searching for process specs by process template.
         uid
-            The unique ID of the object upon which this search is based, e.g. an
-            External or Citrine ID of a process template whose process spec usages
-            are being located.
+            A representation of the object upon which this search is based, e.g., a
+            Citrine ID of a process template whose process spec usages are being located.
         scope
+            [DEPRECATED] use a LinkByUID to specify a custom scope
             The scope of `uid`
         forward
             Whether to pages results in ascending order. Typically this is an
@@ -751,10 +708,11 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         params = {}
         if self.dataset_id is not None:
             params['dataset_id'] = str(self.dataset_id)
+        link = _make_link_by_uid(uid, scope)
         raw_objects = self.session.cursor_paged_resource(
             self.session.get_resource,
-            'projects/{}/{}/{}/{}/{}'.format(
-                self.project_id, relation, scope, uid, self._collection_key.replace('_', '-')),
+            'projects/{}/{}/{}/{}/{}'.format(self.project_id, relation, link.scope, link.id,
+                                             self._collection_key.replace('_', '-')),
             forward=forward,
             per_page=per_page,
             params=params,

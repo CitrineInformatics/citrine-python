@@ -1,17 +1,16 @@
 from typing import List, Optional
 
+from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties as _properties
-from citrine._serialization.serializable import Serializable
-from citrine._session import Session
 from citrine.informatics.data_sources import DataSource
 from citrine.informatics.descriptors import Descriptor
-from citrine.informatics.reports import Report
 from citrine.informatics.predictors import Predictor
+from citrine._rest.ai_resource_metadata import AIResourceMetadata
 
 __all__ = ['AutoMLPredictor']
 
 
-class AutoMLPredictor(Serializable['AutoMLPredictor'], Predictor):
+class AutoMLPredictor(Resource['AutoMLPredictor'], Predictor, AIResourceMetadata):
     """[ALPHA] A predictor interface that builds a single ML model.
 
     The model uses the set of inputs to predict the output.
@@ -30,20 +29,22 @@ class AutoMLPredictor(Serializable['AutoMLPredictor'], Predictor):
         A single Descriptor that represents the output of the model
     training_data: Optional[List[DataSource]]
         Sources of training data. Each can be either a CSV or an GEM Table. Candidates from
-        multiple data sources will be combined into a flattened list and deduplicated by uid and
-        identifiers. Deduplication is performed if a uid or identifier is shared between two or
-        more rows. The content of a deduplicated row will contain the union of data across all rows
-        that share the same uid or at least 1 identifier. Training data is unnecessary if the
+        multiple data sources will be combined into a flattened list and de-duplicated by uid and
+        identifiers. De-duplication is performed if a uid or identifier is shared between two or
+        more rows. The content of a de-duplicated row will contain the union of data across all
+        rows that share the same uid or at least 1 identifier. Training data is unnecessary if the
         predictor is part of a graph that includes all training data required by this predictor.
 
     """
 
+    _resource_type = ResourceTypeEnum.MODULE
+
     inputs = _properties.List(_properties.Object(Descriptor), 'config.inputs')
     output = _properties.Object(Descriptor, 'output')
-    training_data = _properties.List(_properties.Object(DataSource), 'config.training_data')
-    typ = _properties.String('config.type', default='AutoML', deserializable=False)
+    training_data = _properties.List(_properties.Object(DataSource),
+                                     'config.training_data', default=[])
 
-    # NOTE: These could go here or in _post_dump - it's unclear which is better right now
+    typ = _properties.String('config.type', default='AutoML', deserializable=False)
     module_type = _properties.String('module_type', default='PREDICTOR')
 
     def __init__(self,
@@ -52,16 +53,12 @@ class AutoMLPredictor(Serializable['AutoMLPredictor'], Predictor):
                  output: Descriptor,
                  inputs: List[Descriptor],
                  training_data: Optional[List[DataSource]] = None,
-                 session: Optional[Session] = None,
-                 report: Optional[Report] = None,
                  archived: bool = False):
         self.name: str = name
         self.description: str = description
         self.inputs: List[Descriptor] = inputs
         self.output: Descriptor = output
-        self.training_data: List[DataSource] = self._wrap_training_data(training_data)
-        self.session: Optional[Session] = session
-        self.report: Optional[Report] = report
+        self.training_data: List[DataSource] = training_data or []
         self.archived: bool = archived
 
     def _post_dump(self, data: dict) -> dict:

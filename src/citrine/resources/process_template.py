@@ -4,6 +4,7 @@ from typing import List, Dict, Optional, Union, Sequence, Type
 from citrine._rest.resource import Resource
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Optional as PropertyOptional
+from citrine._serialization.properties import Union as PropertyUnion
 from citrine._serialization.properties import String, Mapping, Object, SpecifiedMixedList, \
     LinkOrElse
 from citrine.resources.condition_template import ConditionTemplate
@@ -56,10 +57,10 @@ class ProcessTemplate(ObjectTemplate, Resource['ProcessTemplate'], GEMDProcessTe
     description = PropertyOptional(String(), 'description', override=True)
     uids = Mapping(String('scope'), String('id'), 'uids', override=True)
     tags = PropertyOptional(PropertyList(String()), 'tags', override=True)
-    conditions = PropertyOptional(PropertyList(SpecifiedMixedList(
-        [LinkOrElse, PropertyOptional(Object(BaseBounds))])), 'conditions', override=True)
-    parameters = PropertyOptional(PropertyList(SpecifiedMixedList(
-        [LinkOrElse, PropertyOptional(Object(BaseBounds))])), 'parameters', override=True)
+    conditions = PropertyOptional(PropertyList(PropertyUnion([LinkOrElse, SpecifiedMixedList(
+        [LinkOrElse, PropertyOptional(Object(BaseBounds))])])), 'conditions', override=True)
+    parameters = PropertyOptional(PropertyList(PropertyUnion([LinkOrElse, SpecifiedMixedList(
+        [LinkOrElse, PropertyOptional(Object(BaseBounds))])])), 'parameters', override=True)
     allowed_labels = PropertyOptional(PropertyList(String()), 'allowed_labels', override=True)
     allowed_names = PropertyOptional(PropertyList(String()), 'allowed_names', override=True)
     typ = String('type')

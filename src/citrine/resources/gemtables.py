@@ -3,17 +3,16 @@ from logging import getLogger
 from typing import Union, Iterable, Optional, Any, Tuple
 from uuid import uuid4
 
-import deprecation
 import requests
 
 from citrine._rest.collection import Collection
 from citrine._rest.paginator import Paginator
-from citrine._rest.resource import Resource
+from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
 from citrine._serialization.properties import UUID
 from citrine._session import Session
 from citrine._utils.functions import rewrite_s3_links_locally, write_file_locally
-from citrine.resources.job import JobSubmissionResponse
+from citrine.resources.job import JobSubmissionResponse, _poll_for_job_completion
 from citrine.resources.table_config import TableConfig
 
 logger = getLogger(__name__)
@@ -26,24 +25,19 @@ class GemTable(Resource['Table']):
     While data objects can represent complex materials data, the format
     is NOT conducive to analysis and machine learning. GEM Tables, however,
     can be used to 'flatten' data objects into useful projections.
-
-    Attributes
-    ----------
-    uid: UUID
-        Unique uuid4 identifier of this GEM Table.
-    version: str
-        Version number of the GEM Table
-    download_url: int
-        Url pointing to the location of the GEM Table's contents.
-        This is an expiring download link and is not unique.
-
     """
 
     _response_key = 'table'
+    _resource_type = ResourceTypeEnum.TABLE
 
     uid = properties.Optional(properties.UUID(), 'id')
+    """:Optional[UUID]: unique Citrine id of this GEM Table"""
     version = properties.Optional(properties.Integer, 'version')
+    """:Optional[int]: Version number of the GEM Table.
+    The first table built from a given config is version 1."""
     download_url = properties.Optional(properties.String, 'signed_download_url')
+    """:Optional[str]: Url pointing to the location of the GEM Table's contents.
+    This is an expiring download link and is not unique."""
 
     def __init__(self):
         self.uid = None
@@ -52,18 +46,6 @@ class GemTable(Resource['Table']):
 
     def __str__(self):
         return '<GEM Table {!r}, version {}>'.format(self.uid, self.version)
-
-    def resource_type(self) -> str:
-        """Get the access control resource type of this resource."""
-        return 'TABLE'
-
-    @deprecation.deprecated(deprecated_in="0.16.0", details="Use TableCollection.read() instead")
-    def read(self, local_path):
-        """[DEPRECATED] Use TableCollection.read() instead."""  # noqa: D402
-        data_location = self.download_url
-        data_location = rewrite_s3_links_locally(data_location)
-        response = requests.get(data_location)
-        write_file_locally(response.content, local_path)
 
 
 class GemTableVersionPaginator(Paginator[GemTable]):
@@ -90,11 +72,16 @@ class GemTableCollection(Collection[GemTable]):
         self.project_id = project_id
         self.session: Session = session
 
-    def get(self, uid: Union[UUID, str], version: int) -> GemTable:
-        """Get a Table's metadata."""
-        path = self._get_path(uid) + "/versions/{}".format(version)
-        data = self.session.get_resource(path)
-        return self.build(data)
+    def get(self, uid: Union[UUID, str], version: Optional[int] = None) -> GemTable:
+        """Get a Table's metadata. If no version is specified, get the most recent version."""
+        if version is not None:
+            path = self._get_path(uid) + "/versions/{}".format(version)
+            data = self.session.get_resource(path)
+            return self.build(data)
+        else:
+            tables = self.list_versions(uid)
+            newest_table = max(tables, key=lambda x: x.version or 0)
+            return newest_table
 
     def list_versions(self,
                       uid: UUID,
@@ -113,7 +100,7 @@ class GemTableCollection(Collection[GemTable]):
         """
         def fetch_versions(page: Optional[int],
                            per_page: int) -> Tuple[Iterable[dict], str]:
-            data = self.session.get_resource(self._get_path() + '/' + str(uid),
+            data = self.session.get_resource(self._get_path(uid),
                                              params=self._page_params(page, per_page))
             return (data[self._collection_key], data.get('next', ""))
 
@@ -173,7 +160,7 @@ class GemTableCollection(Collection[GemTable]):
         config:
             The persisted table config from which to build a table (or its ID).
         version
-            The version of the table config, only necessary when config is a uid.
+            The version of the table config; only necessary when config is a uid.
 
         Returns
         -------
@@ -234,7 +221,7 @@ class GemTableCollection(Collection[GemTable]):
             The table built by the specified job.
 
         """
-        status = self._poll_for_job_completion(self.project_id, job, timeout=timeout)
+        status = _poll_for_job_completion(self.session, self.project_id, job, timeout=timeout)
 
         table_id = status.output['display_table_id']
         table_version = status.output['display_table_version']
@@ -263,7 +250,7 @@ class GemTableCollection(Collection[GemTable]):
         config:
             The persisted table config from which to build a table (or its ID).
         version
-            The version of the table config, only necessary when config is a uid.
+            The version of the table config; only necessary when config is a uid.
         timeout
             Amount of time to wait on build job (in seconds) before giving up. Defaults
             to 15 minutes. Note that this number has no effect on the build job itself,
@@ -288,6 +275,17 @@ class GemTableCollection(Collection[GemTable]):
     def register(self, model: GemTable) -> GemTable:
         """Tables cannot be created at this time."""
         raise RuntimeError('Creating Tables is not supported at this time.')
+
+    def update(self, model: GemTable) -> GemTable:
+        """Tables cannot be updated."""
+        raise RuntimeError(
+            "Tables cannot be updated. You may want to update a table configuration and/or "
+            "re-build the table, especially if new GEMD data are available."
+        )
+
+    def delete(self, uid: Union[UUID, str]):
+        """Tables cannot be deleted at this time."""
+        raise NotImplementedError("Tables cannot be deleted at this time.")
 
     def read(self, table: Union[GemTable, Tuple[str, int]], local_path: str):
         """

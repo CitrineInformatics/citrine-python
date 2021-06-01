@@ -10,7 +10,7 @@ __all__ = ['Dimension', 'ContinuousDimension', 'EnumeratedDimension']
 
 
 class Dimension(PolymorphicSerializable['Dimension']):
-    """A Citrine Dimension describes the range of values that some quantity can take.
+    """A Dimension describes the values that a quantity can take in the context of a design space.
 
     Abstract type that returns the proper type given a serialized dict.
 

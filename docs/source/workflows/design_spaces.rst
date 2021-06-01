@@ -13,7 +13,7 @@ Currently, there are four design spaces:
 Enumerated design space
 -----------------------
 
-An enumerated design space is composed of an explicit list of candidates.
+An :class:`~citrine.informatics.design_spaces.enumerated_design_space.EnumeratedDesignSpace` is composed of an explicit list of candidates.
 Each candidate is specified using a dictionary keyed on the key of a corresponding :class:`~citrine.informatics.descriptors.Descriptor`.
 A list of descriptors defines what key-value pairs must be present in each candidate.
 If a candidate is missing a descriptor key-value pair, contains extra key-value pairs or any value is not valid for the corresponding descriptor, it is removed from the design space.
@@ -56,7 +56,7 @@ As an example, an enumerated design space that represents points from a 2D Carte
 Product design space
 --------------------
 
-Materials from a product design space are composed of the `Cartesian product`_ of independent factors.
+Materials from a :class:`~citrine.informatics.design_spaces.product_design_space.ProductDesignSpace` are composed of the `Cartesian product`_ of independent factors.
 Each factor can be a separate design space _or_ a univariate dimension.
 Any other type of design space can be a valid subspace.
 Subspaces can either be registered on the platform and referenced through their uid, or they can be defined anonymously and embedded in the product design space.
@@ -175,7 +175,7 @@ The enumerated design space defined in this way might product the following cand
 Data Source Design Space
 ------------------------
 
-A data source design space is similar in spirit to an enumerated design space, but the candidates are drawn from an existing data source instead of being specified through a list of dictionaries.
+A :class:`~citrine.informatics.design_spaces.data_source_design_space.DataSourceDesignSpace` is similar in spirit to an enumerated design space, but the candidates are drawn from an existing data source instead of being specified through a list of dictionaries.
 Any data source can be used and no additional information is needed.
 
 For example, assume you have a :class:`~citrine.resources.gemtables.GemTable` that contains one
@@ -204,7 +204,7 @@ The example code below creates a registers a design space based on this Gem Tabl
 Formulation Design Space
 ------------------------
 
-A formulation design space defines the set of formulations that can be produced from a given set of ingredient names, labels, and constraints.
+A :class:`~citrine.informatics.design_spaces.formulation_design_space.FormulationDesignSpace` defines the set of formulations that can be produced from a given set of ingredient names, labels, and constraints.
 Ingredient names are specified as a set of strings, each mapping to a unique ingredient in a design space.
 For example, ``{"water","salt"}`` may be the set of names for a design space with two ingredients.
 Labels provide a way to map a string to a set of ingredient names.
@@ -237,7 +237,7 @@ This resolution defines the minimum step size between consecutive formulations s
 Resolution does not impose a grid over fractional ingredient amounts.
 Instead, it provides a way to specify the characteristic length scale for the problem.
 The resolution should be set to the minimum change in fractional ingredient amount that can be expected to make a difference in your problem.
-The default resolution is 0.01, which means that at least one ingredient fraction will differ by at least 0.01 between consecutive candidates sampled from the formulation design space.
+The default resolution is 0.0001, which means that at least one ingredient fraction will differ by at least 0.0001 between consecutive candidates sampled from the formulation design space.
 
 Formulations sampled from the design space are stored using the :class:`~citrine.informatics.descriptors.FormulationDescriptor` passed to the design space when it is configured.
 Each formulation contains two pieces of information: a recipe and a collection of ingredient labels.
@@ -277,6 +277,7 @@ We will require that formulations contain 2 ingredients, that no more than 1 sol
   design_space = FormulationDesignSpace(
     name = "Saline solution design space",
     description = "Composes formulations from water, salt, and boric acid",
+    formulation_descriptor = descriptor,
     ingredients = ingredients,
     labels = labels,
     constraints = constraints

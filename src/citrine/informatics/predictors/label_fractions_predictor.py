@@ -1,18 +1,16 @@
-from typing import Set, Optional
-from warnings import warn
+from typing import Set
 
+from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties as _properties
-from citrine._serialization.serializable import Serializable
-from citrine._session import Session
 from citrine.informatics.descriptors import FormulationDescriptor
-from citrine.informatics.reports import Report
 from citrine.informatics.predictors import Predictor
+from citrine._rest.ai_resource_metadata import AIResourceMetadata
 
 __all__ = ['LabelFractionsPredictor']
 
 
-class LabelFractionsPredictor(Serializable['LabelFractionsPredictor'], Predictor):
-    """[ALPHA] A predictor interface that computes the relative proportions of labeled ingredients.
+class LabelFractionsPredictor(Resource['LabelFractionsPredictor'], Predictor, AIResourceMetadata):
+    """A predictor interface that computes the relative proportions of labeled ingredients.
 
     Parameters
     ----------
@@ -27,12 +25,13 @@ class LabelFractionsPredictor(Serializable['LabelFractionsPredictor'], Predictor
 
     """
 
+    _resource_type = ResourceTypeEnum.MODULE
+
     input_descriptor = _properties.Object(FormulationDescriptor, 'config.input')
     labels = _properties.Set(_properties.String, 'config.labels')
+
     typ = _properties.String('config.type', default='LabelFractions',
                              deserializable=False)
-
-    # NOTE: These could go here or in _post_dump - it's unclear which is better right now
     module_type = _properties.String('module_type', default='PREDICTOR')
 
     def __init__(self,
@@ -40,23 +39,11 @@ class LabelFractionsPredictor(Serializable['LabelFractionsPredictor'], Predictor
                  description: str,
                  input_descriptor: FormulationDescriptor,
                  labels: Set[str],
-                 session: Optional[Session] = None,
-                 report: Optional[Report] = None,
                  archived: bool = False):
         self.name: str = name
         self.description: str = description
         self.input_descriptor: FormulationDescriptor = input_descriptor
-        if not isinstance(labels, set):
-            warn(f"Labels for predictor '{self.name}' must be specified as a set of strings."
-                 "Support for other collections is deprecated and will be removed in a "
-                 "future release.",
-                 DeprecationWarning)
-            _labels = set(labels)
-        else:
-            _labels = labels
-        self.labels: Set[str] = _labels
-        self.session: Optional[Session] = session
-        self.report: Optional[Report] = report
+        self.labels: Set[str] = labels
         self.archived: bool = archived
 
     def _post_dump(self, data: dict) -> dict:

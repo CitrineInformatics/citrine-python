@@ -1,4 +1,4 @@
-.. Citrine Python documentation master file, created by
+.. Citrine Python documentation main file, created by
    sphinx-quickstart on Thu Aug 22 14:40:14 2019.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
@@ -38,6 +38,7 @@ Table of Contents
    data_entry
    data_extraction
    workflows/index
+   formulations_example
    FAQ/index
 
 Indices and tables

@@ -3,13 +3,12 @@ import pytest
 from gemd.entity.bounds.real_bounds import RealBounds
 
 from citrine.gemtables.variables import *
-import citrine.ara.variables as oldvariables
 from gemd.entity.link_by_uid import LinkByUID
 
 
 @pytest.fixture(params=[
-    RootInfo(name="root name", headers=["Root", "Name"], field="name"),
-    XOR(name="root name or sample_type", headers=["Root", "Info"], variables=[RootInfo(name="root name", headers=["Root", "Name"], field="name"), RootInfo(name="root name", headers=["Root", "Sample Type"], field="sample_type")]),
+    TerminalMaterialInfo(name="terminal name", headers=["Root", "Name"], field="name"),
+    XOR(name="terminal name or sample_type", headers=["Root", "Info"], variables=[TerminalMaterialInfo(name="terminal name", headers=["Root", "Name"], field="name"), TerminalMaterialInfo(name="terminal name", headers=["Root", "Sample Type"], field="sample_type")]),
     AttributeByTemplate(name="density", headers=["density"], template=LinkByUID(scope="templates", id="density"), attribute_constraints=[[LinkByUID(scope="templates", id="density"), RealBounds(0, 100, "g/cm**3")]]),
     AttributeByTemplateAfterProcessTemplate(name="density", headers=["density"], attribute_template=LinkByUID(scope="template", id="density"), process_template=LinkByUID(scope="template", id="process")),
     AttributeByTemplateAndObjectTemplate(name="density", headers=["density"], attribute_template=LinkByUID(scope="template", id="density"), object_template=LinkByUID(scope="template", id="object")),
@@ -17,9 +16,11 @@ from gemd.entity.link_by_uid import LinkByUID
     IngredientIdentifierByProcessTemplateAndName(name="ingredient id", headers=["density"], process_template=LinkByUID(scope="template", id="process"), ingredient_name="ingredient", scope="scope"),
     IngredientIdentifierInOutput(name="ingredient id", headers=["ingredient id"], ingredient_name="ingredient", process_templates=[LinkByUID(scope="template", id="object")], scope="scope"),
     IngredientLabelByProcessAndName(name="ingredient label", headers=["label"], process_template=LinkByUID(scope="template", id="process"), ingredient_name="ingredient", label="label"),
+    IngredientLabelsSetByProcessAndName(name="ingredient label", headers=["label"], process_template=LinkByUID(scope="template", id="process"), ingredient_name="ingredient"),
+    IngredientLabelsSetInOutput(name="ingredient label", headers=["label"], process_templates=[LinkByUID(scope="template", id="process")], ingredient_name="ingredient"),
     IngredientQuantityByProcessAndName(name="ingredient quantity dimension", headers=["quantity"], process_template=LinkByUID(scope="template", id="process"), ingredient_name="ingredient", quantity_dimension=IngredientQuantityDimension.ABSOLUTE, unit='kg'),
     IngredientQuantityInOutput(name="ingredient quantity", headers=["ingredient quantity"], ingredient_name="ingredient", quantity_dimension=IngredientQuantityDimension.MASS, process_templates=[LinkByUID(scope="template", id="object")]),
-    RootIdentifier(name="root id", headers=["id"], scope="scope")
+    TerminalMaterialIdentifier(name="terminal id", headers=["id"], scope="scope")
 ])
 def variable(request):
     return request.param
@@ -61,9 +62,13 @@ def test_quantity_dimension_serializes_to_string():
     assert variable_data["quantity_dimension"] == "number"
 
 
-def test_renamed_classes_are_the_same():
-    # Mostly make code coverage happy
-    assert oldvariables.IngredientQuantityDimension == IngredientQuantityDimension
+def test_deprecated_variables():
+    variable = RootInfo(name="name", headers=["headers"], field="foo")
+    assert isinstance(variable, TerminalMaterialInfo)
+    assert variable.name == "name"
+    variable = RootIdentifier(name="name", headers=["headers"], scope="scope")
+    assert isinstance(variable, TerminalMaterialIdentifier)
+    assert variable.name == "name"
 
 
 def test_absolute_units():

@@ -1,7 +1,8 @@
-"""Top-level class for all data object (i.e. spec and run) objects and collections thereof."""
+"""Top-level class for all data object (i.e., spec and run) objects and collections thereof."""
 from abc import ABC
 from typing import Dict, Union, Optional, Iterator, List, TypeVar
 from uuid import uuid4
+from deprecation import deprecated
 
 from gemd.json import GEMDJson
 from gemd.util import recursive_foreach
@@ -31,6 +32,8 @@ DataObjectResourceType = TypeVar("DataObjectResourceType", bound="DataObject")
 class DataObjectCollection(DataConceptsCollection[DataObjectResourceType], ABC):
     """A collection of one kind of data object object."""
 
+    @deprecated(deprecated_in="0.130.0", removed_in="1.0.0",
+                details="For performance reasons, please use list_by_attribute_bounds instead")
     def filter_by_attribute_bounds(
             self,
             attribute_bounds: Dict[Union[AttributeTemplate, LinkByUID], BaseBounds],
@@ -54,7 +57,7 @@ class DataObjectCollection(DataConceptsCollection[DataObjectResourceType], ABC):
             Only the uid is passed, so if you would like to update an attribute template you
             must register that change to the database before you can use it to filter.
         page: Optional[int]
-            The page of results to list, 1-indexed (i.e. the first page is page=1)
+            The page of results to list, 1-indexed (i.e., the first page is page=1)
         per_page: Optional[int]
             The number of results to list per page
 
@@ -105,7 +108,7 @@ class DataObjectCollection(DataConceptsCollection[DataObjectResourceType], ABC):
             Only the uid is passed, so if you would like to update an attribute template you
             must register that change to the database before you can use it to filter.
         forward: bool
-            Set to False to reverse the order of results (i.e. return in descending order).
+            Set to False to reverse the order of results (i.e., return in descending order).
         per_page: int
             Controls the number of results fetched with each http request to the backend.
             Typically, this is set to a sensible default and should not be modified. Consider

@@ -2,11 +2,10 @@
 import pytest
 
 from citrine.gemtables.columns import *
-import citrine.ara.columns as oldcolumns
 
 
 @pytest.fixture(params=[
-    IdentityColumn(data_source="root name"),
+    IdentityColumn(data_source="terminal name"),
     MeanColumn(data_source="density", target_units="g/cm^3"),
     StdDevColumn(data_source="density", target_units="g/cm^3"),
     QuantileColumn(data_source="density", quantile=0.95),
@@ -17,7 +16,8 @@ import citrine.ara.columns as oldcolumns
     ComponentQuantityColumn(data_source="formula", component_name="Si", normalize=True),
     NthBiggestComponentNameColumn(data_source="formula", n=1),
     NthBiggestComponentQuantityColumn(data_source="formula", n=2),
-    MolecularStructureColumn(data_source="molecule", format=ChemicalDisplayFormat.SMILES)
+    MolecularStructureColumn(data_source="molecule", format=ChemicalDisplayFormat.SMILES),
+    ConcatColumn(data_source="labels", subcolumn=IdentityColumn(data_source="terminal name"))
 ])
 def column(request):
     return request.param
@@ -41,7 +41,3 @@ def test_invalid_deser():
 
     with pytest.raises(ValueError):
         Column.build({"type": "foo"})
-
-def test_renamed_classes_are_the_same():
-    # Mostly make code coverage happy
-    assert oldcolumns.CompositionSortOrder == CompositionSortOrder

@@ -39,7 +39,7 @@ class PredictorEvaluationWorkflowCollection(Collection[PredictorEvaluationWorkfl
         return self._put_module_ref('archive', workflow_id)
 
     def restore(self, workflow_id: UUID):
-        """Restore a predictor evaluation workflow.
+        """Restore an archived predictor evaluation workflow.
 
         Parameters
         ----------
@@ -62,8 +62,10 @@ class PredictorEvaluationWorkflowCollection(Collection[PredictorEvaluationWorkfl
         following predictors:
 
         * :class:`~citrine.informatics.predictors.generalized_mean_property_predictor.GeneralizedMeanPropertyPredictor`
+        * :class:`~citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor`
         * :class:`~citrine.informatics.predictors.ingredient_fractions_predictor.IngredientFractionsPredictor`
         * :class:`~citrine.informatics.predictors.ingredients_to_simple_mixture_predictor.IngredientsToSimpleMixturePredictor`
+        * :class:`~citrine.informatics.predictors.ingredients_to_formulation_predictor.IngredientsToFormulationPredictor`
         * :class:`~citrine.informatics.predictors.label_fractions_predictor.LabelFractionsPredictor`
         * :class:`~citrine.informatics.predictors.molecular_structure_featurizer.MolecularStructureFeaturizer`
         * :class:`~citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor`

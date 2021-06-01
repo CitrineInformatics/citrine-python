@@ -4,12 +4,16 @@ from logging import getLogger
 import pytest
 from dateutil.parser import parse
 from gemd.entity.link_by_uid import LinkByUID
+import warnings
 
+from citrine.informatics.workflows.design_workflow import DesignWorkflow
 from citrine.resources.api_error import ApiError, ValidationError
 from citrine.resources.gemtables import GemTableCollection
+from citrine.resources.process_spec import ProcessSpec
 from citrine.resources.project import Project, ProjectCollection
 from citrine.resources.project_member import ProjectMember
 from citrine.resources.project_roles import MEMBER, LEAD, WRITE
+from citrine.resources.dataset import Dataset
 from tests.utils.factories import ProjectDataFactory, UserDataFactory
 from tests.utils.session import FakeSession, FakeCall, FakePaginatedSession
 
@@ -57,7 +61,11 @@ def test_share_post_content(project, session):
     dataset_id = str(uuid.uuid4())
 
     # When
-    project.share(project.uid, 'DATASET', dataset_id)
+    # Share using resource type/id, which is deprecated
+    with warnings.catch_warnings(record=True) as caught:
+        project.share(project_id=project.uid, resource_type='DATASET', resource_id=dataset_id)
+        assert len(caught) == 1
+        assert caught[0].category == DeprecationWarning
 
     # Then
     assert 1 == session.num_calls
@@ -71,8 +79,34 @@ def test_share_post_content(project, session):
     )
     assert expected_call == session.last_call
 
+    # Share by resource
+    # When
+    dataset = Dataset(name="foo", summary="", description="")
+    dataset.uid = str(uuid.uuid4())
+    project.share(resource=dataset, project_id=project.uid)
 
-def test_make_resource_public_post_content(project, session):
+    # Then
+    assert 2 == session.num_calls
+    expected_call = FakeCall(
+        method='POST',
+        path='/projects/{}/share'.format(project.uid),
+        json={
+            'project_id': project.uid,
+            'resource': {'type': 'DATASET', 'id': str(dataset.uid)}
+        }
+    )
+    assert expected_call == session.last_call
+
+    # providing both the resource and the type/id is an error
+    with pytest.raises(ValueError):
+        project.share(resource=dataset, project_id=project.uid, resource_type='DATASET', resource_id=dataset_id)
+
+    # Providing neither the resource nor the type/id is an error
+    with pytest.raises(ValueError):
+        project.share(project_id=project.uid)
+
+
+def test_make_resource_public(project, session):
     dataset_id = str(uuid.uuid4())
     dataset = project.datasets.build(dict(
         id=dataset_id,
@@ -90,8 +124,11 @@ def test_make_resource_public_post_content(project, session):
     )
     assert expected_call == session.last_call
 
+    with pytest.raises(RuntimeError):
+        project.make_public(ProcessSpec("dummy process"))
 
-def test_make_resource_private_post_content(project, session):
+
+def test_make_resource_private(project, session):
     dataset_id = str(uuid.uuid4())
     dataset = project.datasets.build(dict(
         id=dataset_id,
@@ -108,8 +145,11 @@ def test_make_resource_private_post_content(project, session):
     )
     assert expected_call == session.last_call
 
+    with pytest.raises(RuntimeError):
+        project.make_private(ProcessSpec("dummy process"))
 
-def test_transfer_resource_post_content(project, session):
+
+def test_transfer_resource(project, session):
 
     dataset_id = str(uuid.uuid4())
     dataset = project.datasets.build(dict(
@@ -124,10 +164,13 @@ def test_transfer_resource_post_content(project, session):
         path='/projects/{}/transfer-resource'.format(project.uid),
         json={
             'to_project_id': str(project.uid),
-            'resource': dataset.as_entity_dict()
+            'resource': dataset.access_control_dict()
         }
     )
     assert expected_call == session.last_call
+
+    with pytest.raises(RuntimeError):
+        project.transfer_resource(ProcessSpec("dummy process"), project.uid)
 
 
 def test_datasets_get_project_id(project):
@@ -210,16 +253,15 @@ def test_predictors_get_project_id(project):
     assert project.uid == project.predictors.project_id
 
 
-def test_workflows_get_project_id(project):
-    assert project.uid == project.workflows.project_id
-
-
 def test_pe_workflows_get_project_id(project):
     assert project.uid == project.predictor_evaluation_workflows.project_id
 
 
 def test_pe_executions_get_project_id(project):
     assert project.uid == project.predictor_evaluation_executions.project_id
+    # The resulting collection cannot be used to trigger executions.
+    with pytest.raises(RuntimeError):
+        project.predictor_evaluation_executions.trigger(uuid.uuid4())
 
 
 def test_design_workflows_get_project_id(project):
@@ -396,6 +438,12 @@ def test_delete_project(collection, session):
     assert expected_call == session.last_call
 
 
+def test_update_project(collection, project):
+    project.name = "updated name"
+    with pytest.raises(NotImplementedError):
+        collection.update(project)
+
+
 def test_list_members(project, session):
     # Given
     user = UserDataFactory()
@@ -478,8 +526,49 @@ def test_remove_user(project, session):
     assert remove_user_response is True
 
 
-def test_batch_delete(project, session):
-    failure_resp = {'failures': [
+def test_project_batch_delete_no_errors(project, session):
+    job_resp = {
+        'job_id': '1234'
+    }
+
+    # Actual response-like data - note there is no 'failures' array within 'output'
+    successful_job_resp = {
+        'job_type': 'batch_delete',
+        'status': 'Success',
+        'tasks': [
+            {
+                "id": "7b6bafd9-f32a-4567-b54c-7ce594edc018", "task_type": "batch_delete",
+                "status": "Success", "dependencies": []
+             }
+            ],
+        'output': {}
+    }
+
+    session.set_responses(job_resp, successful_job_resp)
+
+    # When
+    del_resp = project.gemd_batch_delete([uuid.UUID(
+        '16fd2706-8baf-433b-82eb-8c7fada847da')])
+
+    # Then
+    assert len(del_resp) == 0
+
+    # When trying with entities
+    session.set_responses(job_resp, successful_job_resp)
+    entity = ProcessSpec(name="proc spec", uids={'id': '16fd2706-8baf-433b-82eb-8c7fada847da'})
+    del_resp = project.gemd_batch_delete([entity])
+
+    # Then
+    assert len(del_resp) == 0
+
+
+def test_project_batch_delete(project, session):
+    job_resp = {
+        'job_id': '1234'
+    }
+
+    import json
+    failures_escaped_json = json.dumps([
         {
             "id":{
                 'scope': 'somescope',
@@ -496,21 +585,25 @@ def test_batch_delete(project, session):
                 ]
             }
         }
-    ]}
-    session.set_responses(failure_resp, failure_resp)
+    ])
+
+    failed_job_resp = {
+        'job_type': 'batch_delete',
+        'status': 'Success',
+        'tasks': [],
+        'output': {
+            'failures': failures_escaped_json
+        }
+    }
+
+    session.set_responses(job_resp, failed_job_resp, job_resp, failed_job_resp)
 
     # When
     del_resp = project.gemd_batch_delete([uuid.UUID(
         '16fd2706-8baf-433b-82eb-8c7fada847da')])
 
     # Then
-    assert 1 == session.num_calls
-    expect_call = FakeCall(
-        method="POST",
-        path="/projects/{}/gemd/batch-delete".format(project.uid)
-    )
-    assert expect_call.method == session.last_call.method
-    assert expect_call.path == session.last_call.path
+    assert 2 == session.num_calls
 
     assert len(del_resp) == 1
     first_failure = del_resp[0]
@@ -534,7 +627,8 @@ def test_batch_delete(project, session):
 
 def test_batch_delete_bad_input(project, session):
     with pytest.raises(TypeError):
-        project.gemd_batch_delete(['hiya!'])
+        project.gemd_batch_delete([True])
+
 
 def test_project_tables(project):
     assert isinstance(project.tables, GemTableCollection)

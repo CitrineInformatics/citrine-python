@@ -2,17 +2,18 @@ from typing import List, Union, Optional
 from uuid import UUID
 from copy import deepcopy
 
-from citrine._rest.resource import Resource
+from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
 from citrine._session import Session
 from citrine.informatics.design_spaces.design_space import DesignSpace
 from citrine.informatics.dimensions import Dimension
+from citrine._rest.ai_resource_metadata import AIResourceMetadata
 
 __all__ = ['ProductDesignSpace']
 
 
-class ProductDesignSpace(Resource['ProductDesignSpace'], DesignSpace):
-    """An outer product of design spaces.
+class ProductDesignSpace(Resource['ProductDesignSpace'], DesignSpace, AIResourceMetadata):
+    """A Cartesian product of design spaces.
 
     Factors can be other design spaces and/or univariate dimensions.
 
@@ -30,7 +31,7 @@ class ProductDesignSpace(Resource['ProductDesignSpace'], DesignSpace):
 
     """
 
-    _response_key = None
+    _resource_type = ResourceTypeEnum.MODULE
 
     subspaces = properties.List(properties.Union(
         [properties.UUID, properties.Object(DesignSpace)]
@@ -38,11 +39,10 @@ class ProductDesignSpace(Resource['ProductDesignSpace'], DesignSpace):
     dimensions = properties.Optional(
         properties.List(properties.Object(Dimension)), 'config.dimensions'
     )
-    typ = properties.String('config.type', default='ProductDesignSpace', deserializable=False)
     # Product design spaces should not be embedded in other subspaces, hence status is required
     status = properties.String('status', serializable=False)
 
-    # NOTE: These could go here or in _post_dump - it's unclear which is better right now
+    typ = properties.String('config.type', default='ProductDesignSpace', deserializable=False)
     module_type = properties.String('module_type', default='DESIGN_SPACE')
 
     def __init__(self, *,

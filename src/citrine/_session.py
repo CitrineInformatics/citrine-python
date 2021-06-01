@@ -141,7 +141,6 @@ class Session(requests.Session):
             # might occur if we get a 401 response without a JSON body
             pass
 
-        # TODO: More substantial/careful error handling
         if 200 <= response.status_code <= 299:
             logger.info('%s %s %s', response.status_code, method, path)
             return response

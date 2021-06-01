@@ -1,14 +1,12 @@
 import time
 from pprint import pprint
+from typing import Union
+
 from citrine._rest.collection import Collection
+from citrine._rest.asynchronous_object import AsynchronousObject
 from citrine.informatics.modules import Module
 from citrine.resources.predictor_evaluation_execution import PredictorEvaluationExecution
 from citrine.resources.design_execution import DesignExecution
-from citrine.resources.workflow_executions import (
-    WorkflowExecution,
-    WorkflowExecutionStatus,
-)
-from typing import Union
 
 
 class ConditionTimeoutError(RuntimeError):
@@ -27,20 +25,61 @@ def _print_string_status(
     )
 
 
-def _pretty_execution_status(status: WorkflowExecutionStatus):
-    status_text = status.status
-    output_text = status_text if status_text != "InProgress" else "In progress"
-    return output_text
+def wait_for_asynchronous_object(
+    resource: AsynchronousObject,
+    collection: Collection[AsynchronousObject],
+    print_status_info: bool = False,
+    timeout: float = 1800.0,
+    interval: float = 3.0
+) -> AsynchronousObject:
+    """
+    Wait until an asynchronous object has finished.
 
+    This could be a module, workflow, workflow execution, or report.
 
-def _print_execution_status(
-    status: WorkflowExecutionStatus, start_time: float, line_end: str = "\r"
-):
-    print(
-        "Status = {:<25}Elapsed time".format(_pretty_execution_status(status)),
-        " = {}s".format(str(int(time.time() - start_time)).rjust(3)),
-        end=line_end,
-    )
+    Parameters
+    ----------
+    resource: AsynchronousObject
+        a module, workflow, workflow execution, or report to monitor
+    collection: Collection[AsynchronousObject]
+        Collection containing the resource
+    print_status_info: bool
+        Whether to print status info, by default False
+    timeout : float
+        Maximum time spent waiting, in seconds, by default 1800.0
+    interval: float
+        Inquiry interval in seconds, by default 3.0
+
+    Returns
+    -------
+    AsynchronousObject
+        The resource after the asynchronous work has finished or timed out.
+
+    Raises
+    ------
+    ConditionTimeoutError
+        If fails to finish within timeout
+
+    """
+    start = time.time()
+
+    def is_finished():
+        current_resource = collection.get(resource.uid)
+        if print_status_info:
+            _print_string_status(current_resource.status, start)
+        in_progress = current_resource.in_progress()
+        return not in_progress
+
+    while not is_finished() and (time.time() - start < timeout):
+        time.sleep(interval)
+    if not is_finished():
+        raise ConditionTimeoutError("Timeout reached, but task is still in progress")
+
+    current_resource = collection.get(resource.uid)
+    if print_status_info and hasattr(current_resource, 'status_info'):
+        print("\nStatus info:")
+        pprint(current_resource.status_info)
+    return current_resource
 
 
 def wait_while_validating(
@@ -77,41 +116,22 @@ def wait_while_validating(
         If fails to validate within timeout
 
     """
-    start = time.time()
-
-    def is_validated():
-        status = collection.get(module.uid).status
-        if print_status_info:
-            _print_string_status(status, start)
-        return status != "VALIDATING" and status != "INPROGRESS"
-
-    while not is_validated() and time.time() - start < timeout:
-        time.sleep(interval)
-    if not is_validated():
-        msg = "Timeout reached, but condition is still {}".format(is_validated())
-        raise ConditionTimeoutError(msg)
-
-    if print_status_info:
-        print("\nStatus info:")
-        status_info = collection.get(module.uid).status_info
-        pprint(status_info)
-
-    return collection.get(module.uid)
+    return wait_for_asynchronous_object(module, collection, print_status_info, timeout, interval)
 
 
 def wait_while_executing(
-    execution: Union[WorkflowExecution, PredictorEvaluationExecution, DesignExecution],
+    collection: Union[Collection[PredictorEvaluationExecution], Collection[DesignExecution]],
+    execution: Union[PredictorEvaluationExecution, DesignExecution],
     print_status_info: bool = False,
     timeout: float = 1800.0,
     interval: float = 3.0,
-    collection: Collection[Module] = None,
-) -> Union[WorkflowExecution, PredictorEvaluationExecution, DesignExecution]:
+) -> Union[PredictorEvaluationExecution, DesignExecution]:
     """
     Wait until execution is finished.
 
     Parameters
     ----------
-    execution : WorkflowExecution, PredictorEvaluationExecution or DesignExecution
+    execution : Union[PredictorEvaluationExecution, DesignExecution]
         an execution to monitor
     print_status_info : bool, optional
         Whether to print status info, by default False
@@ -119,12 +139,12 @@ def wait_while_executing(
         Maximum time spent inquiring in seconds, by default 1800.0
     interval : float, optional
         Inquiry interval in seconds, by default 3.0
-    collection : Collection[Module]
-        Collection containing module, only needed for PredictorEvaluationExecutions
+    collection : Union[Collection[PredictorEvaluationExecution], Collection[DesignExecution]]
+        Collection containing executions
 
     Returns
     -------
-    WorkflowExecution, PredictorEvaluationExecution or DesignExecution
+    Union[PredictorEvaluationExecution, DesignExecution]
         the updated execution after it has finished executing
 
 
@@ -134,29 +154,5 @@ def wait_while_executing(
         If fails to finish execution within timeout
 
     """
-    start = time.time()
-
-    def execution_is_finished():
-        if isinstance(execution, (PredictorEvaluationExecution, DesignExecution)):
-            if collection is None:
-                raise ValueError("Must provide collection")
-            status = collection.get(execution.uid).status
-            if print_status_info:
-                _print_string_status(status, start)
-            return status != "INPROGRESS"
-        else:
-            status = execution.status()
-            if print_status_info:
-                _print_execution_status(status, start)
-            return not status.in_progress
-
-    while not execution_is_finished() and (time.time() - start < timeout):
-        time.sleep(interval)
-    if not execution_is_finished():
-        msg = "Timeout reached, but condition is still {}".format(execution_is_finished())
-        raise ConditionTimeoutError(msg)
-
-    # re-fetch the execution if we have a collection to fetch it with
-    if collection is not None:
-        execution = collection.get(execution.uid)
-    return execution
+    return wait_for_asynchronous_object(execution, collection,
+                                        print_status_info, timeout, interval)

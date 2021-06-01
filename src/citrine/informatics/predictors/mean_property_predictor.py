@@ -1,20 +1,18 @@
 from typing import List, Optional, Mapping
-from warnings import warn
 
+from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties as _properties
-from citrine._serialization.serializable import Serializable
-from citrine._session import Session
 from citrine.informatics.data_sources import DataSource
-from citrine.informatics.descriptors import FormulationDescriptor
-from citrine.informatics.reports import Report
+from citrine.informatics.descriptors import FormulationDescriptor, RealDescriptor
 from citrine.informatics.predictors import Predictor
+from citrine._rest.ai_resource_metadata import AIResourceMetadata
 
-__all__ = ['GeneralizedMeanPropertyPredictor']
+__all__ = ['MeanPropertyPredictor']
 
 
-class GeneralizedMeanPropertyPredictor(
-        Serializable['GeneralizedMeanPropertyPredictor'], Predictor):
-    """[ALPHA] A predictor interface that computes generalized mean component properties.
+class MeanPropertyPredictor(
+        Resource['MeanPropertyPredictor'], Predictor, AIResourceMetadata):
+    """A predictor interface that computes mean component properties.
 
     Parameters
     ----------
@@ -24,25 +22,28 @@ class GeneralizedMeanPropertyPredictor(
         description of the predictor
     input_descriptor: FormulationDescriptor
         descriptor that represents the input formulation
-    properties: List[str]
-        List of component properties to featurize
+    properties: List[RealDescriptor]
+        List of descriptors to featurize
     p: int
-        Power of the generalized mean. Only integer powers are supported.
+        Power of the `generalized mean <https://en.wikipedia.org/wiki/Generalized_mean>`_.
+        Only integer powers are supported.
     impute_properties: bool
         Whether to impute missing ingredient properties.
-        If ``False`` an error is thrown when a missing ingredient property is encountered.
+        If ``False`` all ingredients must define values for all featurized properties.
+        Otherwise, the row will not be featurized.
         If ``True`` and no ``default_properties`` are specified, then the average over the
         entire dataset is used.
         If ``True`` and a default is specified in ``default_properties``, then the specified
         default is used in place of missing values.
     label: Optional[str]
-        Optional label
+        Only ingredients with this label will be counted in calculating the generalized mean.
+        If ``None`` (default) all ingredients will be counted.
     training_data: Optional[List[DataSource]]
         Sources of training data. Each can be either a CSV or an GEM Table. Candidates from
-        multiple data sources will be combined into a flattened list and deduplicated by uid and
-        identifiers. Deduplication is performed if a uid or identifier is shared between two or
-        more rows. The content of a deduplicated row will contain the union of data across all rows
-        that share the same uid or at least 1 identifier. Training data is unnecessary if the
+        multiple data sources will be combined into a flattened list and de-duplicated by uid and
+        identifiers. De-duplication is performed if a uid or identifier is shared between two or
+        more rows. The content of a de-duplicated row will contain the union of data across all
+        rows that share the same uid or at least 1 identifier. Training data is unnecessary if the
         predictor is part of a graph that includes all training data required by this predictor.
     default_properties: Optional[Mapping[str, float]]
         Default values to use for imputed properties.
@@ -54,51 +55,41 @@ class GeneralizedMeanPropertyPredictor(
 
     """
 
+    _resource_type = ResourceTypeEnum.MODULE
+
     input_descriptor = _properties.Object(FormulationDescriptor, 'config.input')
-    properties = _properties.List(_properties.String, 'config.properties')
+    properties = _properties.List(_properties.Object(RealDescriptor), 'config.properties')
     p = _properties.Integer('config.p')
-    training_data = _properties.List(_properties.Object(DataSource), 'config.training_data')
+    training_data = _properties.List(_properties.Object(DataSource),
+                                     'config.training_data', default=[])
     impute_properties = _properties.Boolean('config.impute_properties')
     default_properties = _properties.Optional(
         _properties.Mapping(_properties.String, _properties.Float), 'config.default_properties')
     label = _properties.Optional(_properties.String, 'config.label')
-    typ = _properties.String('config.type', default='GeneralizedMeanProperty',
-                             deserializable=False)
 
-    # NOTE: These could go here or in _post_dump - it's unclear which is better right now
+    typ = _properties.String('config.type', default='MeanProperty', deserializable=False)
     module_type = _properties.String('module_type', default='PREDICTOR')
 
     def __init__(self,
                  name: str,
                  description: str,
                  input_descriptor: FormulationDescriptor,
-                 properties: List[str],
+                 properties: List[RealDescriptor],
                  p: int,
                  impute_properties: bool,
                  default_properties: Optional[Mapping[str, float]] = None,
                  label: Optional[str] = None,
                  training_data: Optional[List[DataSource]] = None,
-                 session: Optional[Session] = None,
-                 report: Optional[Report] = None,
                  archived: bool = False):
         self.name: str = name
         self.description: str = description
         self.input_descriptor: FormulationDescriptor = input_descriptor
-        self.properties: List[str] = properties
-        if isinstance(p, float):
-            warn(f"p must be an integer. Support for floating point values is deprecated "
-                 f"and will be removed in a future release.",
-                 DeprecationWarning)
-            _p = int(p)
-        else:
-            _p = p
-        self.p: int = _p
-        self.training_data: List[DataSource] = self._wrap_training_data(training_data)
+        self.properties: List[RealDescriptor] = properties
+        self.p: int = p
+        self.training_data: List[DataSource] = training_data or []
         self.impute_properties: bool = impute_properties
         self.default_properties: Optional[Mapping[str, float]] = default_properties
         self.label: Optional[str] = label
-        self.session: Optional[Session] = session
-        self.report: Optional[Report] = report
         self.archived: bool = archived
 
     def _post_dump(self, data: dict) -> dict:
@@ -106,4 +97,4 @@ class GeneralizedMeanPropertyPredictor(
         return data
 
     def __str__(self):
-        return '<GeneralizedMeanPropertyPredictor {!r}>'.format(self.name)
+        return '<MeanPropertyPredictor {!r}>'.format(self.name)

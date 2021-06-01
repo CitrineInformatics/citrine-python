@@ -1,18 +1,19 @@
 """Resources that represent both individual and collections of projects."""
-from typing import Optional, Dict, List, Union, Iterable, Tuple
+from typing import Optional, Dict, List, Union, Iterable, Tuple, Iterator
 from uuid import UUID
+from warnings import warn
 
-from deprecation import deprecated
-from gemd.entity.link_by_uid import LinkByUID
 from gemd.entity.base_entity import BaseEntity
+from gemd.entity.link_by_uid import LinkByUID
 
 from citrine._rest.collection import Collection
-from citrine._rest.resource import Resource
+from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
 from citrine._session import Session
 from citrine.resources.api_error import ApiError
 from citrine.resources.condition_template import ConditionTemplateCollection
 from citrine.resources.dataset import DatasetCollection
+from citrine.resources.delete import _async_gemd_batch_delete
 from citrine.resources.descriptors import DescriptorMethods
 from citrine.resources.design_space import DesignSpaceCollection
 from citrine.resources.design_workflow import DesignWorkflowCollection
@@ -42,7 +43,6 @@ from citrine.resources.property_template import PropertyTemplateCollection
 from citrine.resources.response import Response
 from citrine.resources.table_config import TableConfigCollection
 from citrine.resources.user import User
-from citrine.resources.workflow import WorkflowCollection
 
 
 class Project(Resource['Project']):
@@ -73,6 +73,7 @@ class Project(Resource['Project']):
     """
 
     _response_key = 'project'
+    _resource_type = ResourceTypeEnum.PROJECT
 
     name = properties.String('name')
     description = properties.Optional(properties.String(), 'description')
@@ -118,13 +119,6 @@ class Project(Resource['Project']):
     def descriptors(self) -> DescriptorMethods:
         """Return a resource containing a set of methods returning descriptors."""
         return DescriptorMethods(self.uid, self.session)
-
-    @property
-    @deprecated(deprecated_in="0.101.0",
-                details="Use design_workflows or predictor_evaluation_workflows instead")
-    def workflows(self) -> WorkflowCollection:
-        """Return a resource representing all visible workflows."""
-        return WorkflowCollection(self.uid, self.session)
 
     @property
     def predictor_evaluation_workflows(self) -> PredictorEvaluationWorkflowCollection:
@@ -226,23 +220,44 @@ class Project(Resource['Project']):
         """Return a resource representing all Table Configs in the project."""
         return TableConfigCollection(self.uid, self.session)
 
-    @property
-    @deprecated(deprecated_in="0.52.2", details="Use table_configs instead")
-    def ara_definitions(self) -> TableConfigCollection:  # pragma: no cover
-        """[DEPRECATED] Use table_configs instead."""
-        from warnings import warn
-        warn("ara_definitions is deprecated and will soon be removed. "
-             "Please call table_configs instead.", DeprecationWarning)
-        return self.table_configs
+    def share(self, *,
+              resource: Optional[Resource] = None,
+              project_id: Optional[Union[str, UUID]] = None,
+              resource_type: Optional[str] = None,
+              resource_id: Optional[str] = None
+              ) -> Dict[str, str]:
+        """Share a resource with another project.
 
-    def share(self,
-              project_id: str,
-              resource_type: str,
-              resource_id: str) -> Dict[str, str]:
-        """Share a resource with another project."""
+        Parameters
+        ----------
+        resource: Resource
+            The resource owned by this project, which will be shared
+        project_id: Union[str, UUID]
+            The id of the project with which to share the resource
+        resource_type: Optional[str]
+            [DEPRECATED] Please use ``resource`` instead
+            The type of the resource to share. Must be one of DATASET, MODULE, USER,
+            TABLE, OR TABLE_DEFINITION
+        resource_id: Optional[str]
+            [DEPRECATED] Please use ``resource`` instead
+            The id of the resource to share
+
+        """
+        resource_dict = None
+        if resource is not None:
+            resource_dict = resource.access_control_dict()
+        if resource_type is not None and resource_id is not None:
+            warn("Asset sharing through resource_type and resource_id is deprecated. Please pass "
+                 "the resource to share instead.", DeprecationWarning)
+            if resource_dict is not None:
+                raise ValueError("Cannot specify resource to share and also specify the "
+                                 "resource type and id")
+            resource_dict = {"type": resource_type, "id": resource_id}
+        if resource_dict is None:
+            raise ValueError("Must specify resource to share or specify the resource type and id")
         return self.session.post_resource(self._path() + "/share", {
             "project_id": project_id,
-            "resource": {"type": resource_type, "id": resource_id}
+            "resource": resource_dict
         })
 
     def transfer_resource(self, resource: Resource,
@@ -267,9 +282,13 @@ class Project(Resource['Project']):
             Returns ``True`` upon successful resource transfer.
 
         """
-        self.session.checked_post(self._path() + "/transfer-resource", {
-            "to_project_id": str(receiving_project_uid),
-            "resource": resource.as_entity_dict()})
+        try:
+            self.session.checked_post(self._path() + "/transfer-resource", {
+                "to_project_id": str(receiving_project_uid),
+                "resource": resource.access_control_dict()})
+        except AttributeError:  # If _resource_type is not implemented
+            raise RuntimeError(f"Resource of type  {resource.__class__.__name__} "
+                               f"cannot be made transferred")
 
         return True
 
@@ -281,7 +300,7 @@ class Project(Resource['Project']):
         Parameters
         ----------
         resource: Resource
-            An instance of a resource owned by this project (e.g. a dataset).
+            An instance of a resource owned by this project (e.g., a dataset).
 
         Returns
         -------
@@ -289,9 +308,13 @@ class Project(Resource['Project']):
             ``True`` if the action was performed successfully
 
         """
-        self.session.checked_post(self._path() + "/make-public", {
-            "resource": resource.as_entity_dict()
-        })
+        try:
+            self.session.checked_post(self._path() + "/make-public", {
+                "resource": resource.access_control_dict()
+            })
+        except AttributeError:  # If _resource_type is not implemented
+            raise RuntimeError(f"Resource of type  {resource.__class__.__name__} "
+                               f"cannot be made public")
         return True
 
     def make_private(self,
@@ -302,7 +325,7 @@ class Project(Resource['Project']):
         Parameters
         ----------
         resource: Resource
-            An instance of a resource owned by this project (e.g. a dataset).
+            An instance of a resource owned by this project (e.g., a dataset).
 
         Returns
         -------
@@ -310,9 +333,13 @@ class Project(Resource['Project']):
             ``True`` if the action was performed successfully
 
         """
-        self.session.checked_post(self._path() + "/make-private", {
-            "resource": resource.as_entity_dict()
-        })
+        try:
+            self.session.checked_post(self._path() + "/make-private", {
+                "resource": resource.access_control_dict()
+            })
+        except AttributeError:  # If _resource_type is not implemented
+            raise RuntimeError(f"Resource of type  {resource.__class__.__name__} "
+                               f"cannot be made private")
         return True
 
     def creator(self) -> str:
@@ -430,8 +457,13 @@ class Project(Resource['Project']):
         )
         return True
 
-    def gemd_batch_delete(self, id_list: List[Union[LinkByUID, UUID, str, BaseEntity]]) -> \
-            List[Tuple[LinkByUID, ApiError]]:
+    def gemd_batch_delete(
+            self,
+            id_list: List[Union[LinkByUID, UUID, str, BaseEntity]],
+            *,
+            timeout: float = 2 * 60,
+            polling_delay: float = 1.0
+    ) -> List[Tuple[LinkByUID, ApiError]]:
         """
         Remove a set of GEMD objects.
 
@@ -441,13 +473,7 @@ class Project(Resource['Project']):
         A failure will be returned if the object cannot be deleted due to an external
         reference.
 
-        You must have Write access on the assoociated datasets for each object.
-
-        If you wish to delete more than 50 objects, queuing of deletes requires that
-        the types of objects be known, and thus you _must_ provide ids in the form
-        of BaseEntities.
-
-        Also note that Attribute Templates cannot be deleted at present.
+        You must have Write access on the associated datasets for each object.
 
         Parameters
         ----------
@@ -465,8 +491,8 @@ class Project(Resource['Project']):
             deleted.
 
         """
-        from citrine.resources.delete import _gemd_batch_delete
-        return _gemd_batch_delete(id_list, self.uid, self.session, None)
+        return _async_gemd_batch_delete(id_list, self.uid, self.session, None,
+                                        timeout=timeout, polling_delay=polling_delay)
 
 
 class ProjectCollection(Collection[Project]):
@@ -523,7 +549,7 @@ class ProjectCollection(Collection[Project]):
 
     def list(self,
              page: Optional[int] = None,
-             per_page: int = 1000) -> Iterable[Project]:
+             per_page: int = 1000) -> Iterator[Project]:
         """
         List projects using pagination.
 
@@ -542,7 +568,7 @@ class ProjectCollection(Collection[Project]):
 
         Returns
         -------
-        Iterable[Project]
+        Iterator[Project]
             Projects in this collection.
 
         """
@@ -570,7 +596,7 @@ class ProjectCollection(Collection[Project]):
         ----------
         search_params: dict, optional
             A ``dict`` representing the body of the post request that will be sent to the search
-            endpoint to filter the results i.e.
+            endpoint to filter the results, e.g.,
 
             .. code:: python
 
@@ -612,8 +638,18 @@ class ProjectCollection(Collection[Project]):
                                         search_params=search_params)
 
     def delete(self, uid: Union[UUID, str]) -> Response:
-        """[ALPHA] Delete a particular element of the collection."""
+        """
+        [ALPHA] Delete a particular project.
+
+        Only empty projects can be deleted.
+        If the project is not empty, then the Response will contain a list of all of the project's
+        resources. These must be deleted before the project can be deleted.
+        """
         return super().delete(uid)  # pragma: no cover
+
+    def update(self, model: Project) -> Project:
+        """Projects cannot be updated."""
+        raise NotImplementedError("Project update is not supported at this time.")
 
     def _fetch_page_search(self, page: Optional[int] = None,
                            per_page: Optional[int] = None,
@@ -635,7 +671,7 @@ class ProjectCollection(Collection[Project]):
             A ``dict`` representing a request body that could be sent to a POST request. The "json"
             field should be passed as the key for the outermost ``dict``, with its value the
             request body, so that we can easily unpack the keyword argument when it gets passed to
-            ``fetch_func``, i.e. ``{'name': {'value': 'Project', 'search_method': 'SUBSTRING'} }``
+            ``fetch_func``, e.g., ``{'name': {'value': 'Project', 'search_method': 'SUBSTRING'} }``
 
         Returns
         -------

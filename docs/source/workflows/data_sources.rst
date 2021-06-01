@@ -64,20 +64,20 @@ That file could be used as the training data for a predictor as:
     )
 
 An optional list of identifiers can be specified.
-Identifiers uniquely identify a row and are used in the context of simple mixtures to link from an ingredient to the its properties.
+Identifiers uniquely identify a row and are used in the context of formulations to link from an ingredient to its properties.
 Each identifier must correspond to a column header name.
 No two rows within this column can contain the same value.
 If a column should be parsed as data and used as an identifier, identifier columns may overlap with the keys defined in the mapping from column header names to descriptors.
 
 Identifiers are required in two circumstances.
-These circumstances are only relevant if CSV data source represents simple mixture data.
+These circumstances are only relevant if CSV data source represents formulation data.
 
-1. Ingredient properties are featurized using a :class:`~citrine.informatics.predictors.generalized_mean_property_predictor.GeneralizedMeanPropertyPredictor`.
+1. Ingredient properties are featurized using a :class:`~citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor`.
    In this case, the link from identifier to row is used to compute mean ingredient property values.
-2. Simple mixtures that contain mixtures are simplified to recipes that contain only leaf ingredients using a :class:`~citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor`.
+2. Mixtures that contain mixtures are simplified to simple mixtures that contain only leaf ingredients using a :class:`~citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor`.
    In this case, links from each mixture's ingredients to its row (which may also be a mixture) are used to recursively crawl hierarchical blends of blends and construct a recipe that contains only leaf ingredients.
 
-Note: to build a formulation from a CSV data source an :class:`~citrine.informatics.predictors.ingredients_to_simple_mixture_predictor.IngredientsToSimpleMixturePredictor` must be present in the workflow.
+Note: to build a formulation from a CSV data source an :class:`~citrine.informatics.predictors.ingredients_to_formulation_predictor.IngredientsToFormulationPredictor` must be present in the workflow.
 Additionally, each ingredient id used as a key in the predictor's map from ingredient id to its quantity must exist in an identifier column.
 
 As an example, consider the following saline solution data.
@@ -96,13 +96,13 @@ As an example, consider the following saline solution data.
 
 Hypertonic and isotonic saline are mixtures formed by mixing water and salt.
 Ingredient identifiers are given by the first column.
-A CSV data source and :class:`~citrine.informatics.predictors.ingredients_to_simple_mixture_predictor.IngredientsToSimpleMixturePredictor` can be configured to construct simple mixtures from this data via the following:
+A CSV data source and :class:`~citrine.informatics.predictors.ingredients_to_formulation_predictor.IngredientsToFormulationPredictor` can be configured to construct formulations from this data via the following:
 
 .. code:: python
 
     from citrine.informatics.data_sources import CSVDataSource
     from citrine.informatics.descriptors import FormulationDescriptor, RealDescriptor
-    from citrine.informatics.predictors import IngredientsToSimpleMixturePredictor
+    from citrine.informatics.predictors import IngredientsToFormulationPredictor
 
     file_link = dataset.files.upload("./saline_solutions.csv", "saline_solutions.csv")
 
@@ -123,11 +123,11 @@ A CSV data source and :class:`~citrine.informatics.predictors.ingredients_to_sim
         identifiers=['Ingredient id']
     )
 
-    # create a descriptor to hold simple mixtures
-    formulation = FormulationDescriptor(key='simple mixture')
+    # create a descriptor to hold formulations
+    formulation = FormulationDescriptor(key='formulation')
 
-    IngredientsToSimpleMixturePredictor(
-        name='Ingredients to simple mixture predictor',
+    IngredientsToFormulationPredictor(
+        name='Ingredients to formulation predictor',
         description='Constructs a mixture from ingredient quantities',
         output=formulation,
         # map from ingredient id to its quantity
@@ -167,11 +167,11 @@ The example below assumes that the uuid and the version of the desired GEM Table
         name = "Band gap predictor",
         description = "Predict the band gap from the chemical formula and crystallinity",
         inputs = [
-            ChemicalFormulaDescriptor("root~formula"),
-            CategoricalDescriptor("root~crystallinity", categories=[
+            ChemicalFormulaDescriptor("terminal~formula"),
+            CategoricalDescriptor("terminal~crystallinity", categories=[
                 "Single crystalline", "Amorphous", "Polycrystalline"])
         ],
-        outputs = [RealDescriptor("root~band gap", lower_bound=0, upper_bound=20, units="eV")],
+        outputs = [RealDescriptor("terminal~band gap", lower_bound=0, upper_bound=20, units="eV")],
         latent_variables = [],
         training_data = [data_source]
     )

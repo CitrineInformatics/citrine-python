@@ -1,5 +1,5 @@
 """Row definitions for GEM Tables."""
-from typing import Type, List  # noqa: F401
+from typing import Type, List
 from abc import abstractmethod
 
 from gemd.entity.link_by_uid import LinkByUID
@@ -42,7 +42,7 @@ class Row(PolymorphicSerializable['Row']):
 
 
 class MaterialRunByTemplate(Serializable['MaterialRunByTemplate'], Row):
-    """[ALPHA] Rows rooted in MaterialRuns, marked by their template.
+    """[ALPHA] Rows corresponding to MaterialRuns, marked by their template.
 
     Parameters
     ----------

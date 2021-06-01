@@ -1,17 +1,13 @@
 import warnings
 from abc import abstractmethod
 from logging import getLogger
-from typing import Optional, Union, Generic, TypeVar, Iterable
+from typing import Optional, Union, Generic, TypeVar, Iterable, Iterator
 from uuid import UUID
 
-from time import time, sleep
-
-from citrine._rest.paginator import Paginator
 from citrine._rest.pageable import Pageable
-from citrine.exceptions import ModuleRegistrationFailedException, NonRetryableException, \
-    PollingTimeoutError, JobFailureError
+from citrine._rest.paginator import Paginator
+from citrine.exceptions import ModuleRegistrationFailedException, NonRetryableException
 from citrine.informatics.modules import ModuleRef
-from citrine.resources.job import JobSubmissionResponse, JobStatusResponse
 from citrine.resources.response import Response
 
 logger = getLogger(__name__)
@@ -74,7 +70,7 @@ class Collection(Generic[ResourceType], Pageable):
 
     def list(self,
              page: Optional[int] = None,
-             per_page: int = 100) -> Iterable[ResourceType]:
+             per_page: int = 100) -> Iterator[ResourceType]:
         """
         Paginate over the elements of the collection.
 
@@ -93,8 +89,9 @@ class Collection(Generic[ResourceType], Pageable):
 
         Returns
         -------
-        Iterable[ResourceType]
-            Resources in this collection.
+        Iterator[ResourceType]
+            An iterator that can be used to loop over all of the resources in this collection.
+            Use list() to force evaluation of all results into an in-memory list.
 
         """
         return self._paginator.paginate(page_fetcher=self._fetch_page,
@@ -117,7 +114,7 @@ class Collection(Generic[ResourceType], Pageable):
         return Response(body=data)
 
     def _build_collection_elements(self,
-                                   collection: Iterable[dict]) -> Iterable[ResourceType]:
+                                   collection: Iterable[dict]) -> Iterator[ResourceType]:
         """
         For each element in the collection, build the appropriate resource type.
 
@@ -128,7 +125,7 @@ class Collection(Generic[ResourceType], Pageable):
 
         Returns
         -------
-        Iterable[ResourceType]
+        Iterator[ResourceType]
             Resources in this collection.
 
         """
@@ -144,67 +141,3 @@ class Collection(Generic[ResourceType], Pageable):
                 "\n  ".join(data.get("experimental_reasons") or ["Unknown reason"])
             )
             warnings.warn(msg)
-
-    def _poll_for_job_completion(self, project_id: Union[UUID, str],
-                                 job: Union[JobSubmissionResponse, UUID, str], *,
-                                 timeout: float = 2 * 60,
-                                 polling_delay: float = 2.0) -> JobStatusResponse:
-        """
-        Polls for job completion given a timeout, failing with an exception on job failure.
-
-        This polls for job completion given the Job ID, failing appropriately if the job result
-        was not successful.
-
-        Parameters
-        ----------
-        job
-            The job submission object or job ID that was given from a job submission.
-        timeout
-            Amount of time to wait on the job (in seconds) before giving up. Defaults
-            to 2 minutes. Note that this number has no effect on the underlying job
-            itself, which can also time out server-side.
-        polling_delay:
-            How long to delay between each polling retry attempt.
-
-        Returns
-        -------
-        JobStatusResponse
-            The job response information that can be used to extract relevant
-            information from the completed job.
-
-        """
-        if isinstance(job, JobSubmissionResponse):
-            job_id = job.job_id
-        else:
-            job_id = job  # pragma: no cover
-        path = 'projects/{}/execution/job-status'.format(project_id)
-        params = {'job_id': job_id}
-        start_time = time()
-        while True:
-            response = self.session.get_resource(path=path, params=params)
-            status: JobStatusResponse = JobStatusResponse.build(response)
-            if status.status in ['Success', 'Failure']:
-                break
-            elif time() - start_time < timeout:
-                logger.info('Job still in progress, polling status again in {:.2f} seconds.'
-                            .format(polling_delay))
-
-                sleep(polling_delay)
-            else:
-                logger.error('Job exceeded user timeout of {} seconds.'.format(timeout))
-                logger.debug('Last status: {}'.format(status.dump()))
-                raise PollingTimeoutError('Job {} timed out.'.format(job_id))
-        if status.status == 'Failure':
-            logger.debug('Job terminated with Failure status: {}'.format(status.dump()))
-            failure_reasons = []
-            for task in status.tasks:
-                if task.status == 'Failure':
-                    logger.error('Task {} failed with reason "{}"'.format(
-                        task.id, task.failure_reason))
-                    failure_reasons.append(task.failure_reason)
-            raise JobFailureError(
-                message='Job {} terminated with Failure status. Failure reasons: {}'.format(
-                    job_id, failure_reasons), job_id=job_id,
-                failure_reasons=failure_reasons)
-
-        return status
