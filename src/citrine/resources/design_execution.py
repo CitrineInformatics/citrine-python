@@ -26,11 +26,9 @@ class DesignExecution(Resource['DesignExecution'], Pageable, AsynchronousObject)
 
     _paginator: Paginator = Paginator()
     _collection_key = 'response'
-    # This should really be _session, but _fetch_page assumes there is a 'pageable' parameter
-    session: Optional[Session] = None
-    """:str: Unique identifier of the project that contains the workflow execution"""
+    _session: Optional[Session] = None
     project_id: Optional[UUID] = None
-    """:Optional[UUID]: Unique ID of the project that contains this execution."""
+    """:Optional[UUID]: Unique ID of the project that contains this workflow execution."""
 
     uid: UUID = properties.UUID('id', serializable=False)
     """:UUID: Unique identifier of the workflow execution"""
@@ -112,7 +110,7 @@ class DesignExecution(Resource['DesignExecution'], Pageable, AsynchronousObject)
         """Fetch the Design Candidates for the particular execution, paginated."""
         path = self._path() + '/candidates'
 
-        fetcher = partial(self._fetch_page, path=path)
+        fetcher = partial(self._fetch_page, path=path, fetch_func=self._session.get_resource)
 
         return self._paginator.paginate(page_fetcher=fetcher,
                                         collection_builder=self._build_candidates,
@@ -139,7 +137,7 @@ class DesignExecutionCollection(Collection["DesignExecution"]):
     def build(self, data: dict) -> DesignExecution:
         """Build an individual DesignWorkflowExecution."""
         execution = DesignExecution.build(data)
-        execution.session = self.session
+        execution._session = self.session
         execution.project_id = self.project_id
         return execution
 
