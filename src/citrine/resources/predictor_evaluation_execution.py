@@ -1,6 +1,6 @@
 """Resources that represent both individual and collections of predictor evaluation executions."""
 from functools import lru_cache, partial
-from typing import Optional, Iterable, Union
+from typing import Optional, Union, Iterator
 from uuid import UUID
 
 from citrine._rest.collection import Collection
@@ -176,7 +176,7 @@ class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExec
              page: Optional[int] = None,
              per_page: int = 100,
              predictor_id: Optional[UUID] = None
-             ) -> Iterable[PredictorEvaluationExecution]:
+             ) -> Iterator[PredictorEvaluationExecution]:
         """
         Paginate over the elements of the collection.
 
@@ -197,7 +197,7 @@ class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExec
 
         Returns
         -------
-        Iterable[ResourceType]
+        Iterator[ResourceType]
             Resources in this collection.
 
         """

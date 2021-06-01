@@ -1,6 +1,6 @@
 """Resources that represent both individual and collections of design workflow executions."""
 from functools import partial
-from typing import Optional, Iterable, Union
+from typing import Optional, Iterable, Union, Iterator
 from uuid import UUID
 
 from citrine._rest.collection import Collection
@@ -183,7 +183,7 @@ class DesignExecutionCollection(Collection["DesignExecution"]):
     def list(self,
              page: Optional[int] = None,
              per_page: int = 100,
-             ) -> Iterable[DesignExecution]:
+             ) -> Iterator[DesignExecution]:
         """
         Paginate over the elements of the collection.
 
@@ -204,7 +204,7 @@ class DesignExecutionCollection(Collection["DesignExecution"]):
 
         Returns
         -------
-        Iterable[ResourceType]
+        Iterator[ResourceType]
             Resources in this collection.
 
         """

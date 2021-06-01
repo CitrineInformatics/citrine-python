@@ -1,6 +1,6 @@
 """Resources that represent both individual and collections of datasets."""
 from collections import defaultdict
-from typing import TypeVar, List, Optional, Iterable, Union, Tuple
+from typing import TypeVar, List, Optional, Union, Tuple, Iterator
 from uuid import UUID
 
 from gemd.entity.base_entity import BaseEntity
@@ -475,7 +475,7 @@ class DatasetCollection(Collection[Dataset]):
 
     def list(self,
              page: Optional[int] = None,
-             per_page: int = 1000) -> Iterable[Dataset]:
+             per_page: int = 1000) -> Iterator[Dataset]:
         """
         List datasets using pagination.
 
@@ -494,7 +494,7 @@ class DatasetCollection(Collection[Dataset]):
 
         Returns
         -------
-        Iterable[Dataset]
+        Iterator[Dataset]
             Datasets in this collection.
 
         """
