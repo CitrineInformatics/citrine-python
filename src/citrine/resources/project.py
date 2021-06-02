@@ -84,7 +84,7 @@ class Project(Resource['Project']):
     def __init__(self,
                  name: str,
                  description: Optional[str] = None,
-                 session: Optional[Session] = Session()):
+                 session: Optional[Session] = None):
         self.name: str = name
         self.description: Optional[str] = description
         self.session: Session = session
@@ -511,7 +511,7 @@ class ProjectCollection(Collection[Project]):
     _collection_key = 'projects'
     _resource = Project
 
-    def __init__(self, session: Session = Session()):
+    def __init__(self, session: Session):
         self.session = session
 
     def build(self, data) -> Project:

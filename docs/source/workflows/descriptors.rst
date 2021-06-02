@@ -77,7 +77,7 @@ The descriptors can then be associated with the names from that namespace.
    from citrine.builders.descriptors import PlatformVocabulary
 
    # create a session with citrine using your API key
-   session = Citrine(api_key = API_KEY)
+   session = Citrine(api_key=API_KEY)
 
    # create project
    project = session.projects.register('Example project')

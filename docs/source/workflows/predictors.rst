@@ -630,7 +630,7 @@ The following example demonstrates how to use the python SDK to create a :class:
    from citrine.informatics.data_sources import GemTableDataSource
 
    # create a session with citrine using your API key
-   session = Citrine(api_key = API_KEY)
+   session = Citrine(api_key=API_KEY)
 
    # find project by name 'Example project' or create it if not found
    project = find_or_create_project(project_collection=session.projects,
@@ -676,7 +676,7 @@ The following demonstrates how to create an :class:`~citrine.informatics.predict
     from citrine.informatics.descriptors import FormulationDescriptor
 
     # create a session with citrine using your API key
-    session = Citrine(api_key = API_KEY)
+    session = Citrine(api_key=API_KEY)
 
     # find project by name 'Example project' or create it if not found
     project = find_or_create_project(project_collection=session.projects,
