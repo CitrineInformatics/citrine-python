@@ -338,7 +338,7 @@ Labels provide a way to group or distinguish one or more ingredients and can be 
 The same label may be given to multiple ingredients, and a single ingredient may be given multiple labels.
 Labels are specified using a map from each label to a list of all ingredients that should be given that label.
 Anytime a recipe contains a non-zero amount of labeled ingredient, the ingredient is assigned the label.
-For example, we may wish to label ``water`` as a solute and ``salt`` as a solvent.
+For example, we may wish to label ``water`` as a solvent and ``salt`` as a solute.
 These labels are specified via:
 
 .. code:: python
