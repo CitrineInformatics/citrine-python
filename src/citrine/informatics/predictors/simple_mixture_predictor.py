@@ -49,14 +49,12 @@ class SimpleMixturePredictor(Resource['SimpleMixturePredictor'], Predictor, AIRe
                  description: str,
                  input_descriptor: FormulationDescriptor,
                  output_descriptor: FormulationDescriptor,
-                 training_data: Optional[List[DataSource]] = None,
-                 archived: bool = False):
+                 training_data: Optional[List[DataSource]] = None):
         self.name: str = name
         self.description: str = description
         self.input_descriptor: FormulationDescriptor = input_descriptor
         self.output_descriptor: FormulationDescriptor = output_descriptor
         self.training_data: List[DataSource] = training_data or []
-        self.archived: bool = archived
 
     def _post_dump(self, data: dict) -> dict:
         data['display_name'] = data['config']['name']

@@ -95,8 +95,7 @@ class MolecularStructureFeaturizer(Resource['MolecularStructureFeaturizer'], Pre
                  input_descriptor: MolecularStructureDescriptor = None,
                  features: Optional[List[str]] = None,
                  excludes: Optional[List[str]] = None,
-                 descriptor: MolecularStructureDescriptor = None,
-                 archived: bool = False):
+                 descriptor: MolecularStructureDescriptor = None):
         self.name: str = name
         self.description: str = description
         if descriptor is not None:
@@ -113,7 +112,6 @@ class MolecularStructureFeaturizer(Resource['MolecularStructureFeaturizer'], Pre
         self.input_descriptor = input_descriptor
         self.features = features if features is not None else ["standard"]
         self.excludes = excludes if excludes is not None else []
-        self.archived: bool = archived
 
     def _post_dump(self, data: dict) -> dict:
         data['display_name'] = data['config']['name']

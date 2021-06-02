@@ -1,8 +1,7 @@
-from typing import List, Optional
+from typing import List
 
 from citrine._serialization import properties
 from citrine._serialization.serializable import Serializable
-from citrine._session import Session
 from citrine.informatics.constraints.constraint import Constraint
 
 __all__ = ['AcceptableCategoriesConstraint']
@@ -27,11 +26,9 @@ class AcceptableCategoriesConstraint(Serializable['AcceptableCategoriesConstrain
 
     def __init__(self,
                  descriptor_key: str,
-                 acceptable_categories: List[str],
-                 session: Optional[Session] = None):
+                 acceptable_categories: List[str]):
         self.descriptor_key = descriptor_key
         self.acceptable_categories = acceptable_categories
-        self.session = session
 
     def __str__(self):
         return '<AcceptableCategoriesConstraint {!r}>'.format(self.descriptor_key)

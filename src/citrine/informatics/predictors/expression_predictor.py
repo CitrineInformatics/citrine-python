@@ -44,14 +44,12 @@ class ExpressionPredictor(Resource['ExpressionPredictor'], Predictor, AIResource
                  description: str,
                  expression: str,
                  output: RealDescriptor,
-                 aliases: Mapping[str, RealDescriptor],
-                 archived: bool = False):
+                 aliases: Mapping[str, RealDescriptor]):
         self.name: str = name
         self.description: str = description
         self.expression: str = expression
         self.output: RealDescriptor = output
         self.aliases: Mapping[str, RealDescriptor] = aliases
-        self.archived: bool = archived
 
     def _post_dump(self, data: dict) -> dict:
         data['display_name'] = data['config']['name']

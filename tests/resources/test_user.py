@@ -13,13 +13,12 @@ def session() -> FakeSession:
 
 
 @pytest.fixture
-def user(session) -> User:
+def user() -> User:
     user = User(
         screen_name='Test User',
         email="test@user.io",
         position="QA",
-        is_admin=False,
-        session=session,
+        is_admin=False
     )
     user.uid = UUID('16fd2706-8baf-433b-82eb-8c7fada847da')
     return user

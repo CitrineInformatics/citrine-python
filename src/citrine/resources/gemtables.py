@@ -40,9 +40,7 @@ class GemTable(Resource['Table']):
     This is an expiring download link and is not unique."""
 
     def __init__(self):
-        self.uid = None
-        self.version = None
-        self.download_url = None
+        pass  # pragma: no cover
 
     def __str__(self):
         return '<GEM Table {!r}, version {}>'.format(self.uid, self.version)

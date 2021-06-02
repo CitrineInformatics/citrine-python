@@ -1,12 +1,12 @@
 """Tests of the Measurement Run schema"""
 import pytest
 from uuid import uuid4, UUID
+from datetime import datetime
 
 from gemd.entity.attribute.property import Property
 from gemd.entity.value.nominal_integer import NominalInteger
 from citrine.resources.measurement_run import MeasurementRun
 from citrine.resources.material_run import MaterialRun
-from citrine.resources.audit_info import AuditInfo
 
 
 @pytest.fixture
@@ -73,11 +73,11 @@ def test_simple_deserialization(valid_data):
     assert measurement_run.material == MaterialRun('sponge cake',
                                                    uids={'id': valid_data['material']['uids']['id']},
                                                    sample_type='experimental')
-    assert measurement_run.material.audit_info == AuditInfo(**valid_data['material']['audit_info'])
+    assert measurement_run.material.audit_info.created_by == UUID(valid_data['material']['audit_info']['created_by'])
     assert measurement_run.material.dataset == UUID(valid_data['material']['dataset'])
     assert measurement_run.spec is None
     assert measurement_run.typ == 'measurement_run'
-    assert measurement_run.audit_info == AuditInfo(**valid_data['audit_info'])
+    assert measurement_run.audit_info.created_by == UUID(valid_data['audit_info']['created_by'])
     assert measurement_run.dataset == UUID(valid_data['dataset'])
 
 
