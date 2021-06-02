@@ -22,7 +22,7 @@ class DesignWorkflowCollection(Collection[DesignWorkflow]):
     def build(self, data: dict) -> DesignWorkflow:
         """Build an individual DesignExecution."""
         workflow = DesignWorkflow.build(data)
-        workflow.session = self.session
+        workflow._session = self.session
         workflow.project_id = self.project_id
         return workflow
 

@@ -47,14 +47,12 @@ class IngredientsToFormulationPredictor(
                  description: str,
                  output: FormulationDescriptor,
                  id_to_quantity: Mapping[str, RealDescriptor],
-                 labels: Mapping[str, Set[str]],
-                 archived: bool = False):
+                 labels: Mapping[str, Set[str]]):
         self.name: str = name
         self.description: str = description
         self.output: FormulationDescriptor = output
         self.id_to_quantity: Mapping[str, RealDescriptor] = id_to_quantity
         self.labels: Mapping[str, Set[str]] = labels
-        self.archived: bool = archived
 
     def _post_dump(self, data: dict) -> dict:
         data['display_name'] = data['config']['name']

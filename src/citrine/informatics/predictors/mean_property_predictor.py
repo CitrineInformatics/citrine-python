@@ -79,8 +79,7 @@ class MeanPropertyPredictor(
                  impute_properties: bool,
                  default_properties: Optional[Mapping[str, float]] = None,
                  label: Optional[str] = None,
-                 training_data: Optional[List[DataSource]] = None,
-                 archived: bool = False):
+                 training_data: Optional[List[DataSource]] = None):
         self.name: str = name
         self.description: str = description
         self.input_descriptor: FormulationDescriptor = input_descriptor
@@ -90,7 +89,6 @@ class MeanPropertyPredictor(
         self.impute_properties: bool = impute_properties
         self.default_properties: Optional[Mapping[str, float]] = default_properties
         self.label: Optional[str] = label
-        self.archived: bool = archived
 
     def _post_dump(self, data: dict) -> dict:
         data['display_name'] = data['config']['name']

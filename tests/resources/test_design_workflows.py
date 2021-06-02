@@ -57,7 +57,6 @@ def test_missing_project(design_workflow_dict):
         predictor_id=design_workflow_dict["predictor_id"],
         design_space_id=design_workflow_dict["design_space_id"]
     )
-    assert workflow.project_id is None
 
     with pytest.raises(AttributeError):
         workflow.design_executions

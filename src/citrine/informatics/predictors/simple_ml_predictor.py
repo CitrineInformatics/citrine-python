@@ -56,15 +56,13 @@ class SimpleMLPredictor(Resource['SimplePredictor'], Predictor, AIResourceMetada
                  inputs: List[Descriptor],
                  outputs: List[Descriptor],
                  latent_variables: List[Descriptor],
-                 training_data: Optional[List[DataSource]] = None,
-                 archived: bool = False):
+                 training_data: Optional[List[DataSource]] = None):
         self.name: str = name
         self.description: str = description
         self.inputs: List[Descriptor] = inputs
         self.outputs: List[Descriptor] = outputs
         self.latent_variables: List[Descriptor] = latent_variables
         self.training_data: List[DataSource] = training_data or []
-        self.archived: bool = archived
 
     def _post_dump(self, data: dict) -> dict:
         data['display_name'] = data['config']['name']
