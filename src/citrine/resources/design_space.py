@@ -25,7 +25,7 @@ class DesignSpaceCollection(AbstractModuleCollection[DesignSpace]):
     _module_type = 'DESIGN_SPACE'
     _enumerated_cell_limit = 128 * 2000
 
-    def __init__(self, project_id: UUID, session: Session = Session()):
+    def __init__(self, project_id: UUID, session: Session):
         self.project_id = project_id
         self.session: Session = session
 

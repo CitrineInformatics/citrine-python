@@ -57,7 +57,7 @@ def project_collection() -> Callable[[bool], ProjectCollection]:
         projects = []
 
         def __init__(self, search_implemented: bool = True):
-            ProjectCollection.__init__(self)
+            ProjectCollection.__init__(self, session=FakeSession)
             self.search_implemented = search_implemented
 
         def register(self, name: str, description: Optional[str] = None) -> Project:

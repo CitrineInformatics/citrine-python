@@ -35,7 +35,7 @@ class Session(requests.Session):
                  port: Optional[str] = None):
         super().__init__()
         self.scheme: str = scheme
-        self.authority = ':'.join([host, port or ''])
+        self.authority = ':'.join([host or '', port or ''])
         self.refresh_token: str = refresh_token
         self.access_token: Optional[str] = None
         self.access_token_expiration: datetime = datetime.utcnow()
