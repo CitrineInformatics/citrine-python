@@ -52,14 +52,12 @@ class AutoMLPredictor(Resource['AutoMLPredictor'], Predictor, AIResourceMetadata
                  description: str,
                  output: Descriptor,
                  inputs: List[Descriptor],
-                 training_data: Optional[List[DataSource]] = None,
-                 archived: bool = False):
+                 training_data: Optional[List[DataSource]] = None):
         self.name: str = name
         self.description: str = description
         self.inputs: List[Descriptor] = inputs
         self.output: Descriptor = output
         self.training_data: List[DataSource] = training_data or []
-        self.archived: bool = archived
 
     def _post_dump(self, data: dict) -> dict:
         data['display_name'] = data['config']['name']

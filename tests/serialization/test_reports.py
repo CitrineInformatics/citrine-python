@@ -31,7 +31,9 @@ def test_predictor_report_build(valid_predictor_report_data):
         'Leaf model': 'Mean',
         'Use jackknife': True
     }
-    assert lolo_model.feature_importances[0].dump() == FeatureImportanceReport('y', {'x': 1.0}).dump()
+    feature_importance = lolo_model.feature_importances[0]
+    assert feature_importance.importances == {"x": 1.0}
+    assert feature_importance.output_key == "y"
     assert lolo_model.predictor_name == 'Predict y from x with ML'
     assert lolo_model.predictor_uid is None
 

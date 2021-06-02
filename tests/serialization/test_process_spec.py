@@ -1,6 +1,6 @@
 """Tests of the Process Run schema"""
 import pytest
-from uuid import uuid4
+from uuid import uuid4, UUID
 
 from gemd.entity.attribute.parameter import Parameter
 from gemd.entity.bounds.real_bounds import RealBounds
@@ -9,7 +9,6 @@ from gemd.entity.file_link import FileLink
 from citrine.resources.process_spec import ProcessSpec
 from citrine.resources.process_template import ProcessTemplate
 from citrine.resources.parameter_template import ParameterTemplate
-from citrine.resources.audit_info import AuditInfo
 
 
 @pytest.fixture
@@ -81,7 +80,7 @@ def test_simple_deserialization(valid_data):
     assert process_spec.notes == 'make sure to use oven mitts'
     assert process_spec.file_links == [FileLink('cake_recipe.txt', 'www.baking.com')]
     assert process_spec.typ == 'process_spec'
-    assert process_spec.audit_info == AuditInfo(**valid_data['audit_info'])
+    assert process_spec.audit_info.created_by == UUID(valid_data['audit_info']['created_by'])
 
 
 def test_serialization(valid_data):

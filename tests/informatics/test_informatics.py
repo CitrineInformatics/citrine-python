@@ -46,8 +46,6 @@ informatics_string_data = [
     (LIScore(objectives=[], baselines=[]), "<LIScore>"),
     (EIScore(objectives=[], baselines=[], constraints=[]), "<EIScore>"),
     (EVScore(objectives=[], constraints=[]), "<EVScore>"),
-    (FeatureImportanceReport("reflectivity", {}), "<FeatureImportanceReport 'reflectivity'>"),
-    (ModelSummary("my model", "ML Model", [], [], {}, [], "predictor name"), "<ModelSummary 'my model'>"),
 ]
 
 

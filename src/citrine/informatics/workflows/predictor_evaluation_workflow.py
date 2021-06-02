@@ -1,9 +1,7 @@
-from typing import List, Optional  # noqa
-from uuid import UUID  # noqa
+from typing import List
 
 from citrine._rest.resource import Resource
 from citrine._serialization import properties
-from citrine._session import Session  # noqa
 from citrine.informatics.predictor_evaluator import PredictorEvaluator
 from citrine.informatics.workflows.workflow import Workflow
 from citrine.resources.predictor_evaluation_execution import PredictorEvaluationExecutionCollection
@@ -40,8 +38,6 @@ class PredictorEvaluationWorkflow(Resource['PredictorEvaluationWorkflow'],
         self.name: str = name
         self.description: str = description
         self.evaluators: List[PredictorEvaluator] = evaluators
-        self.session: Optional[Session] = None
-        self.project_id: Optional[UUID] = None
 
     def __str__(self):
         return '<PredictorEvaluationWorkflow {!r}>'.format(self.name)
@@ -52,4 +48,4 @@ class PredictorEvaluationWorkflow(Resource['PredictorEvaluationWorkflow'],
         if getattr(self, 'project_id', None) is None:
             raise AttributeError('Cannot initialize execution without project reference!')
         return PredictorEvaluationExecutionCollection(
-            project_id=self.project_id, session=self.session, workflow_id=self.uid)
+            project_id=self.project_id, session=self._session, workflow_id=self.uid)

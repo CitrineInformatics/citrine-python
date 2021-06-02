@@ -41,7 +41,7 @@ def molecule_featurizer() -> MolecularStructureFeaturizer:
     return MolecularStructureFeaturizer(
         name="Molecule featurizer",
         description="description",
-        descriptor=MolecularStructureDescriptor("SMILES"),
+        input_descriptor=MolecularStructureDescriptor("SMILES"),
         features=["all"],
         excludes=["standard"]
     )
@@ -212,7 +212,7 @@ def test_expression_initialization(expression_predictor):
 def test_molecule_featurizer(molecule_featurizer):
     assert molecule_featurizer.name == "Molecule featurizer"
     assert molecule_featurizer.description == "description"
-    assert molecule_featurizer.descriptor == MolecularStructureDescriptor("SMILES")
+    assert molecule_featurizer.input_descriptor == MolecularStructureDescriptor("SMILES")
     assert molecule_featurizer.features == ["all"]
     assert molecule_featurizer.excludes == ["standard"]
 
@@ -229,6 +229,21 @@ def test_molecule_featurizer(molecule_featurizer):
         'module_type': 'PREDICTOR',
         'display_name': 'Molecule featurizer'
     }
+
+
+def test_molecule_featurizer_deprecation():
+    with pytest.raises(ValueError):
+        MolecularStructureFeaturizer(name="", description="")
+
+    descriptor = MolecularStructureDescriptor("SMILES")
+    with pytest.raises(ValueError):
+        MolecularStructureFeaturizer(name="", description="", descriptor=descriptor, input_descriptor=descriptor)
+
+    with warnings.catch_warnings(record=True) as caught:
+        featurizer = MolecularStructureFeaturizer(name="", description="", descriptor=descriptor)
+        assert featurizer.input_descriptor == descriptor
+        w = caught[0]
+        assert issubclass(w.category, DeprecationWarning)
 
 
 def test_chemical_featurizer(chemical_featurizer):

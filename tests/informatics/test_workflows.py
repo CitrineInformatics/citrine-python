@@ -3,19 +3,26 @@ from uuid import uuid4
 
 import pytest
 
+from citrine.resources.design_workflow import DesignWorkflowCollection
 from citrine._session import Session
 from citrine.informatics.workflows import DesignWorkflow, Workflow
 from citrine.resources.design_execution import DesignExecutionCollection
 
-DESIGN_SPACE_ID = uuid4()
-PROCESSOR_ID = uuid4()
-PREDICTOR_ID = uuid4()
+
+@pytest.fixture
+def collection() -> DesignWorkflowCollection:
+    return DesignWorkflowCollection(
+        project_id=uuid4(),
+        session=Session(),
+    )
+
+
 PROJECT_ID = uuid4()
 
 
 @pytest.fixture
-def design_workflow() -> DesignWorkflow:
-    return DesignWorkflow('foo', DESIGN_SPACE_ID, PROCESSOR_ID, PREDICTOR_ID, PROJECT_ID)
+def design_workflow(collection, design_workflow_dict) -> DesignWorkflow:
+    return collection.build(design_workflow_dict)
 
 
 def test_missing_module_type():
@@ -23,17 +30,8 @@ def test_missing_module_type():
         Workflow.build(dict(module_type='foo'))
 
 
-def test_workflow_initialization(design_workflow):
-    """Make sure the correct fields go to the correct places."""
-    assert design_workflow.name == 'foo'
-    assert design_workflow.design_space_id == DESIGN_SPACE_ID
-    assert design_workflow.processor_id == PROCESSOR_ID
-    assert design_workflow.predictor_id == PREDICTOR_ID
-    assert isinstance(design_workflow.session, Session)
-
-
 def test_d_workflow_str(design_workflow):
-    assert str(design_workflow) == '<DesignWorkflow \'foo\'>'
+    assert str(design_workflow) == f'<DesignWorkflow \'{design_workflow.name}\'>'
 
 
 def test_workflow_executions_with_project(design_workflow):

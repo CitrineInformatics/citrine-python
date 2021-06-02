@@ -2,7 +2,6 @@ from typing import Optional
 
 from citrine._serialization import properties
 from citrine._serialization.serializable import Serializable
-from citrine._session import Session
 from citrine.informatics.constraints.constraint import Constraint
 
 __all__ = ['ScalarRangeConstraint']
@@ -38,8 +37,7 @@ class ScalarRangeConstraint(Serializable['ScalarRangeConstraint'], Constraint):
                  lower_bound: Optional[float] = None,
                  upper_bound: Optional[float] = None,
                  lower_inclusive: Optional[bool] = None,
-                 upper_inclusive: Optional[bool] = None,
-                 session: Optional[Session] = None):
+                 upper_inclusive: Optional[bool] = None):
         self.descriptor_key = descriptor_key
 
         self.lower_bound = lower_bound
@@ -54,8 +52,6 @@ class ScalarRangeConstraint(Serializable['ScalarRangeConstraint'], Constraint):
         self.upper_inclusive = True
         if upper_inclusive is not None:
             self.upper_inclusive = upper_inclusive
-
-        self.session: Optional[Session] = session
 
     def __str__(self):
         return '<ScalarRangeConstraint {!r}>'.format(self.descriptor_key)

@@ -2,7 +2,6 @@ from typing import Optional
 
 from citrine._serialization import properties
 from citrine._serialization.serializable import Serializable
-from citrine._session import Session
 from citrine.informatics.constraints.constraint import Constraint
 from citrine.informatics.descriptors import FormulationDescriptor
 
@@ -37,13 +36,11 @@ class IngredientCountConstraint(Serializable['IngredientCountConstraint'], Const
                  formulation_descriptor: FormulationDescriptor,
                  min: int,
                  max: int,
-                 label: Optional[str] = None,
-                 session: Optional[Session] = None):
+                 label: Optional[str] = None):
         self.formulation_descriptor: FormulationDescriptor = formulation_descriptor
         self.min: int = min
         self.max: int = max
         self.label: Optional[str] = label
-        self.session: Optional[Session] = session
 
     def __str__(self):
         return '<IngredientCountConstraint {!r}>'.format(self.formulation_descriptor.key)

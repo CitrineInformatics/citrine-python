@@ -30,7 +30,6 @@ def test_design_space_build():
             'description': 'For testing',
             'dimensions': [{
                 'type': 'ContinuousDimension',
-                'template_id': str(uuid.uuid4()),
                 'descriptor': {
                     'type': 'RealDescriptor',
                     'descriptor_key': 'foo',

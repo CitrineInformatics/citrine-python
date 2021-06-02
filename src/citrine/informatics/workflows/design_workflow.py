@@ -3,7 +3,6 @@ from uuid import UUID
 
 from citrine._rest.resource import Resource
 from citrine._serialization import properties
-from citrine._session import Session
 from citrine.informatics.workflows.workflow import Workflow
 from citrine.resources.design_execution import DesignExecutionCollection
 from citrine._rest.ai_resource_metadata import AIResourceMetadata
@@ -48,15 +47,11 @@ class DesignWorkflow(Resource['DesignWorkflow'], Workflow, AIResourceMetadata):
                  design_space_id: UUID,
                  processor_id: Optional[UUID],
                  predictor_id: UUID,
-                 project_id: Optional[UUID] = None,
-                 session: Session = Session(),
                  description: Optional[str] = None):
         self.name = name
         self.design_space_id = design_space_id
         self.processor_id = processor_id
         self.predictor_id = predictor_id
-        self.project_id = project_id
-        self.session = session
         self.description = description
 
     def __str__(self):
@@ -68,4 +63,4 @@ class DesignWorkflow(Resource['DesignWorkflow'], Workflow, AIResourceMetadata):
         if getattr(self, 'project_id', None) is None:
             raise AttributeError('Cannot initialize execution without project reference!')
         return DesignExecutionCollection(
-            project_id=self.project_id, session=self.session, workflow_id=self.uid)
+            project_id=self.project_id, session=self._session, workflow_id=self.uid)

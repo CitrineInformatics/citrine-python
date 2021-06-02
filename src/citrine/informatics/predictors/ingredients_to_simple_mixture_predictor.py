@@ -56,8 +56,7 @@ class IngredientsToSimpleMixturePredictor(
                  description: str,
                  output: FormulationDescriptor,
                  id_to_quantity: Mapping[str, RealDescriptor],
-                 labels: Mapping[str, Set[str]],
-                 archived: bool = False):
+                 labels: Mapping[str, Set[str]]):
         warn("{this_class} has been renamed. Please use {replacement} instead"
              .format(this_class=self.__class__.__name__,
                      replacement="Ingredients To Formulation Predictor"),
@@ -68,7 +67,6 @@ class IngredientsToSimpleMixturePredictor(
         self.output: FormulationDescriptor = output
         self.id_to_quantity: Mapping[str, RealDescriptor] = id_to_quantity
         self.labels: Mapping[str, Set[str]] = labels
-        self.archived: bool = archived
 
     def _post_dump(self, data: dict) -> dict:
         data['display_name'] = data['config']['name']  # pragma: no cover

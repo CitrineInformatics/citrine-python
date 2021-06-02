@@ -5,7 +5,6 @@ from typing import List, Optional
 from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
 from citrine._serialization.serializable import Serializable
-from citrine._session import Session
 from citrine.informatics.constraints import Constraint
 from citrine.informatics.objectives import Objective
 
@@ -73,12 +72,10 @@ class LIScore(Serializable['LIScore'], Score):
                  description: Optional[str] = None,
                  objectives: List[Objective],
                  baselines: List[float],
-                 constraints: Optional[List[Constraint]] = None,
-                 session: Optional[Session] = None):
+                 constraints: Optional[List[Constraint]] = None):
         self.objectives: List[Objective] = objectives
         self.baselines: List[float] = baselines
         self.constraints: List[Constraint] = constraints or []
-        self.session: Optional[Session] = session
 
         if name is not None:
             msg = "Naming of Scores is deprecated.  Please do not define the name."
@@ -124,12 +121,10 @@ class EIScore(Serializable['EIScore'], Score):
                  description: Optional[str] = None,
                  objectives: List[Objective],
                  baselines: List[float],
-                 constraints: Optional[List[Constraint]] = None,
-                 session: Optional[Session] = None):
+                 constraints: Optional[List[Constraint]] = None):
         self.objectives: List[Objective] = objectives
         self.baselines: List[float] = baselines
         self.constraints: List[Constraint] = constraints or []
-        self.session: Optional[Session] = session
 
         if name is not None:
             msg = "Naming of Scores is deprecated.  Please do not define the name."
@@ -173,11 +168,9 @@ class EVScore(Serializable['EVScore'], Score):
                  name: Optional[str] = None,
                  description: Optional[str] = None,
                  objectives: List[Objective],
-                 constraints: Optional[List[Constraint]] = None,
-                 session: Optional[Session] = None):
+                 constraints: Optional[List[Constraint]] = None):
         self.objectives: List[Objective] = objectives
         self.constraints: List[Constraint] = constraints or []
-        self.session: Optional[Session] = session
 
         if name is not None:
             msg = "Naming of Scores is deprecated.  Please do not define the name."
