@@ -29,9 +29,9 @@ class Session(requests.Session):
     """Wrapper around requests.Session that is both refresh-token and schema aware."""
 
     def __init__(self,
-                 refresh_token: str = environ.get('CITRINE_API_TOKEN'),
+                 refresh_token: str = environ.get('CITRINE_API_KEY'),
                  scheme: str = 'https',
-                 host: str = 'citrine.io',
+                 host: str = environ.get('CITRINE_API_HOST'),
                  port: Optional[str] = None):
         super().__init__()
         self.scheme: str = scheme
