@@ -58,7 +58,6 @@ def valid_product_design_space_data():
             dimensions=[
                 dict(
                     type='ContinuousDimension',
-                    template_id=str(uuid.uuid4()),
                     descriptor=dict(
                         type='Real',
                         descriptor_key='alpha',
@@ -71,7 +70,6 @@ def valid_product_design_space_data():
                 ),
                 dict(
                     type='EnumeratedDimension',
-                    template_id=str(uuid.uuid4()),
                     descriptor=dict(
                         type='Categorical',
                         descriptor_key='color',
