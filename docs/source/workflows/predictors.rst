@@ -117,13 +117,13 @@ The following example demonstrates how to create an :class:`~citrine.informatics
 
 .. code:: python
 
-   from citrine.informatics.predictors import ExpressionPredictor
+    from citrine.informatics.predictors import ExpressionPredictor
 
-   youngs_modulus = RealDescriptor(key='Property~Young\'s modulus', lower_bound=0, upper_bound=100, units='GPa')
-   poissons_ratio = RealDescriptor(key='Property~Poisson\'s ratio', lower_bound=-1, upper_bound=0.5, units='')
-   shear_modulus = RealDescriptor(key='Property~Shear modulus', lower_bound=0, upper_bound=100, units='GPa')
+    youngs_modulus = RealDescriptor(key='Property~Young\'s modulus', lower_bound=0, upper_bound=100, units='GPa')
+    poissons_ratio = RealDescriptor(key='Property~Poisson\'s ratio', lower_bound=-1, upper_bound=0.5, units='')
+    shear_modulus = RealDescriptor(key='Property~Shear modulus', lower_bound=0, upper_bound=100, units='GPa')
 
-   shear_modulus_predictor = ExpressionPredictor(
+    shear_modulus_predictor = ExpressionPredictor(
        name = 'Shear modulus predictor',
        description = "Computes shear modulus from Young's modulus and Poisson's ratio.",
        expression = 'Y / (2 * (1 + v))',
@@ -132,12 +132,13 @@ The following example demonstrates how to create an :class:`~citrine.informatics
            'Y': youngs_modulus,
            'v': poissons_ratio
        }
-   )
+    )
 
-   # register or update predictor by name
-   predictor = create_or_update(collection=project.predictors,
-                                module=shear_modulus_predictor
-                               )
+    # register or update predictor by name
+    predictor = create_or_update(
+        collection=project.predictors,
+        module=shear_modulus_predictor
+    )
 
 For an example of expression predictors used in a graph predictor, see :ref:`AI Engine Code Examples <graph_predictor_example>`.
 
@@ -415,7 +416,11 @@ The following example illustrates how a :class:`~citrine.informatics.predictors.
     output_formulation = FormulationDescriptor(key='diluted saline (flattened)')
 
     # table with simple mixtures and their ingredients
-    data_source = GemTableDataSource(table_id=table_uid, table_version=1, formulation_descriptor=input_descriptor)
+    data_source = GemTableDataSource(
+        table_id=table_uid,
+        table_version=1,
+        formulation_descriptor=input_formulation
+    )
 
     SimpleMixturePredictor(
         name='Simple mixture predictor',
@@ -495,7 +500,11 @@ The example below show how to configure a mean property predictor to compute mea
     density = RealDescriptor(key='density', lower_bound=0, upper_bound=100, units='g/cm^3')
 
     # table with formulations and their ingredients
-    data_source = GemTableDataSource(table_id=table_uid, table_version=1, formulation_descriptor=formulation)
+    data_source = GemTableDataSource(
+        table_id=table_uid,
+        table_version=1,
+        formulation_descriptor=formulation
+    )
 
     mean_property_predictor = MeanPropertyPredictor(
         name='Mean property predictor',
@@ -707,7 +716,11 @@ The following demonstrates how to create an :class:`~citrine.informatics.predict
         inputs = ingredient_fraction_descriptors,
         outputs = [output_descriptor],
         latent_variables = [],
-        training_data = GemTableDataSource(training_data_table_uid, 1, formulation_descriptor)
+        training_data = GemTableDataSource(
+            table_id=training_data_table_uid,
+            table_version=1,
+            formulation_descriptor=formulation_descriptor
+        )
     )
 
 
