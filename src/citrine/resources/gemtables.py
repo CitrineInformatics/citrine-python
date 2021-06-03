@@ -287,7 +287,7 @@ class GemTableCollection(Collection[GemTable]):
         """Tables cannot be deleted at this time."""
         raise NotImplementedError("Tables cannot be deleted at this time.")
 
-    def read(self, table: Union[GemTable, Tuple[str, int]],  *, local_path: str):
+    def read(self, table: Union[GemTable, Tuple[str, int]], *, local_path: str):
         """
         Read the Table file from S3.
 

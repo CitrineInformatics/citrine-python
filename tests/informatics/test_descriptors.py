@@ -7,11 +7,11 @@ from citrine.informatics.descriptors import *
 
 
 @pytest.fixture(params=[
-    RealDescriptor('alpha', 0, 100, ""),
+    RealDescriptor('alpha', lower_bound=0, upper_bound=100, units=""),
     ChemicalFormulaDescriptor('formula'),
     MolecularStructureDescriptor("organic"),
-    CategoricalDescriptor("my categorical", ["a", "b"]),
-    CategoricalDescriptor("categorical", ["*"]),
+    CategoricalDescriptor("my categorical", categories=["a", "b"]),
+    CategoricalDescriptor("categorical", categories=["*"]),
     FormulationDescriptor("formulation")
 ])
 def descriptor(request):
@@ -53,9 +53,9 @@ def test_string_rep(descriptor):
 def test_categorical_descriptor_categories_types():
     """Categories in a categorical descriptor should be of type str, and other types should raise TypeError."""
     with pytest.raises(TypeError):
-        CategoricalDescriptor("my categorical", ["a", "b", 1])
+        CategoricalDescriptor("my categorical", categories=["a", "b", 1])
     with pytest.raises(TypeError):
-        CategoricalDescriptor("my categorical", ["a", "b", None])
+        CategoricalDescriptor("my categorical", categories=["a", "b", None])
 
 
 def test_to_json(descriptor):
