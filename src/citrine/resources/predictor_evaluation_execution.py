@@ -114,7 +114,7 @@ class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExec
     _collection_key = 'response'
     _resource = PredictorEvaluationExecution
 
-    def __init__(self, *,
+    def __init__(self,
                  project_id: UUID,
                  session: Session,
                  workflow_id: Optional[UUID] = None):
@@ -150,7 +150,7 @@ class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExec
         """Cannot update an execution."""
         raise NotImplementedError("Cannot update a PredictorEvaluationExecution.")
 
-    def archive(self, execution_id: UUID):
+    def archive(self, uid: UUID):
         """Archive a predictor evaluation execution.
 
         Parameters
@@ -159,9 +159,9 @@ class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExec
             Unique identifier of the execution to archive
 
         """
-        self._put_module_ref('archive', execution_id)
+        self._put_module_ref('archive', uid)
 
-    def restore(self, execution_id: UUID):
+    def restore(self, uid: UUID):
         """Restore an archived predictor evaluation execution.
 
         Parameters
@@ -170,9 +170,10 @@ class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExec
             Unique identifier of the execution to restore
 
         """
-        self._put_module_ref('restore', execution_id)
+        self._put_module_ref('restore', uid)
 
     def list(self,
+             *,
              page: Optional[int] = None,
              per_page: int = 100,
              predictor_id: Optional[UUID] = None

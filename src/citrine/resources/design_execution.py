@@ -103,7 +103,7 @@ class DesignExecution(Resource['DesignExecution'], Pageable, AsynchronousObject)
         for candidate in subset_collection:
             yield DesignCandidate.build(candidate)
 
-    def candidates(self,
+    def candidates(self, *,
                    page: Optional[int] = None,
                    per_page: int = 100,
                    ) -> Iterable[DesignCandidate]:
@@ -156,31 +156,31 @@ class DesignExecutionCollection(Collection["DesignExecution"]):
         """Cannot update an execution."""
         raise NotImplementedError("Cannot update a DesignExecution.")
 
-    def archive(self, execution_id: UUID):
+    def archive(self, uid: UUID):
         """Archive a Design Workflow execution.
 
         Parameters
         ----------
-        execution_id: UUID
+        uid: UUID
             Unique identifier of the execution to archive
 
         """
         raise NotImplementedError(
             "Design Executions cannot be archived")
 
-    def restore(self, execution_id: UUID):
+    def restore(self, uid: UUID):
         """Restore an archived Design Workflow execution.
 
         Parameters
         ----------
-        execution_id: UUID
+        uid: UUID
             Unique identifier of the execution to restore
 
         """
         raise NotImplementedError(
             "Design Executions cannot be restored")
 
-    def list(self,
+    def list(self, *,
              page: Optional[int] = None,
              per_page: int = 100,
              ) -> Iterator[DesignExecution]:

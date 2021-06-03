@@ -229,7 +229,7 @@ class FileCollection(Collection[FileLink]):
         }
         return file_dict
 
-    def upload(self, file_path: str, dest_name: str = None) -> FileLink:
+    def upload(self, file_path: str, *, dest_name: str = None) -> FileLink:
         """
         Uploads a file to the dataset.
 
@@ -405,7 +405,7 @@ class FileCollection(Collection[FileLink]):
         url = self._get_path(file_id) + '/versions/{}'.format(version)
         return FileLink(filename=dest_name, url=url)
 
-    def download(self, file_link: FileLink, local_path: str):
+    def download(self, file_link: FileLink, *, local_path: str):
         """
         Download the file associated with a given FileLink to the local computer.
 
@@ -430,7 +430,7 @@ class FileCollection(Collection[FileLink]):
         download_response = requests.get(pre_signed_url)
         write_file_locally(download_response.content, local_path)
 
-    def process(self, file_link: FileLink,
+    def process(self, file_link: FileLink, *,
                 processing_type: FileProcessingType,
                 wait_for_response: bool = True,
                 timeout: float = 2 * 60,
@@ -457,10 +457,9 @@ class FileCollection(Collection[FileLink]):
         else:
             return job
 
-    def poll_file_processing_job(self, file_link: FileLink,
+    def poll_file_processing_job(self, file_link: FileLink, *,
                                  processing_type: FileProcessingType,
                                  job_id: UUID,
-                                 *,
                                  timeout: float = 2 * 60,
                                  polling_delay: float = 1.0) -> Dict[FileProcessingType,
                                                                      FileProcessingResult]:
@@ -490,7 +489,7 @@ class FileCollection(Collection[FileLink]):
 
         return self.file_processing_result(file_link, [processing_type])
 
-    def file_processing_result(self,
+    def file_processing_result(self, *,
                                file_link: FileLink,
                                processing_types: List[FileProcessingType]) -> \
             Dict[FileProcessingType, FileProcessingResult]:

@@ -46,22 +46,22 @@ class AbstractModuleCollection(Collection[ModuleType]):
         msg = "Modules cannot be deleted at this time. Use 'archive' instead."
         raise NotImplementedError(msg)
 
-    def archive(self, module_id: Union[UUID, str]) -> ModuleType:
+    def archive(self, uid: Union[UUID, str]) -> ModuleType:
         """Archiving a module removes it from view, but is not a hard delete."""
         try:
-            module = self.get(module_id)
+            module = self.get(uid)
         except CitrineException:
-            raise RuntimeError(f"{self._module_type} with id {module_id} was not found, "
+            raise RuntimeError(f"{self._module_type} with id {uid} was not found, "
                                f"and hence cannot be archived.")
         module.archived = True
         return self.update(module)
 
-    def restore(self, module_id: Union[UUID, str]) -> ModuleType:
+    def restore(self, uid: Union[UUID, str]) -> ModuleType:
         """Restore an archived module."""
         try:
-            module = self.get(module_id)
+            module = self.get(uid)
         except CitrineException:
-            raise RuntimeError(f"{self._module_type} with id {module_id} was not found, "
+            raise RuntimeError(f"{self._module_type} with id {uid} was not found, "
                                f"and hence cannot be restored.")
         module.archived = False
         return self.update(module)

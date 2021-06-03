@@ -83,6 +83,7 @@ class GemTableCollection(Collection[GemTable]):
 
     def list_versions(self,
                       uid: UUID,
+                      *,
                       page: Optional[int] = None,
                       per_page: int = 100) -> Iterable[GemTable]:
         """
@@ -112,6 +113,7 @@ class GemTableCollection(Collection[GemTable]):
 
     def list_by_config(self,
                        table_config_uid: UUID,
+                       *,
                        page: Optional[int] = None,
                        per_page: int = 100) -> Iterable[GemTable]:
         """
@@ -144,7 +146,7 @@ class GemTableCollection(Collection[GemTable]):
             # Don't deduplicate on uid since uids are shared between versions
             fetch_versions, build_versions, page, per_page, deduplicate=False)
 
-    def initiate_build(self, config: Union[TableConfig, str, UUID],
+    def initiate_build(self, config: Union[TableConfig, str, UUID], *,
                        version: Union[str, UUID] = None) -> JobSubmissionResponse:
         """
         [ALPHA] Initiates tables build with provided config.
@@ -285,7 +287,7 @@ class GemTableCollection(Collection[GemTable]):
         """Tables cannot be deleted at this time."""
         raise NotImplementedError("Tables cannot be deleted at this time.")
 
-    def read(self, table: Union[GemTable, Tuple[str, int]], local_path: str):
+    def read(self, table: Union[GemTable, Tuple[str, int]],  *, local_path: str):
         """
         Read the Table file from S3.
 

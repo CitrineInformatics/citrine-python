@@ -27,34 +27,34 @@ class PredictorEvaluationWorkflowCollection(Collection[PredictorEvaluationWorkfl
         workflow.project_id = self.project_id
         return workflow
 
-    def archive(self, workflow_id: UUID):
+    def archive(self, uid: UUID):
         """Archive a predictor evaluation workflow.
 
         Parameters
         ----------
-        workflow_id: UUID
+        uid: UUID
             Unique identifier of the workflow to archive
 
         """
-        return self._put_module_ref('archive', workflow_id)
+        return self._put_module_ref('archive', uid)
 
-    def restore(self, workflow_id: UUID):
+    def restore(self, uid: UUID):
         """Restore an archived predictor evaluation workflow.
 
         Parameters
         ----------
-        workflow_id: UUID
+        uid: UUID
             Unique identifier of the workflow to restore
 
         """
-        return self._put_module_ref('restore', workflow_id)
+        return self._put_module_ref('restore', uid)
 
     def delete(self, uid: Union[UUID, str]) -> Response:
         """Predictor Evaluation Workflows cannot be deleted; they can be archived instead."""
         raise NotImplementedError(
             "Predictor Evaluation Workflows cannot be deleted; they can be archived instead.")
 
-    def create_default(self, predictor_id: UUID) -> PredictorEvaluationWorkflow:
+    def create_default(self, *, predictor_id: UUID) -> PredictorEvaluationWorkflow:
         """[ALPHA] Create a default predictor evaluation workflow for a predictor and execute it.
 
         The current default predictor evaluation workflow performs 5-fold, 1-trial cross-validation

@@ -83,6 +83,7 @@ class Project(Resource['Project']):
 
     def __init__(self,
                  name: str,
+                 *,
                  description: Optional[str] = None,
                  session: Optional[Session] = None):
         self.name: str = name
@@ -260,7 +261,7 @@ class Project(Resource['Project']):
             "resource": resource_dict
         })
 
-    def transfer_resource(self, resource: Resource,
+    def transfer_resource(self, *, resource: Resource,
                           receiving_project_uid: Union[str, UUID]) -> bool:
         """
         Transfer ownership of a resource.
@@ -292,8 +293,7 @@ class Project(Resource['Project']):
 
         return True
 
-    def make_public(self,
-                    resource: Resource) -> bool:
+    def make_public(self, resource: Resource) -> bool:
         """
         Grant public access to a resource owned by this project.
 
@@ -317,8 +317,7 @@ class Project(Resource['Project']):
                                f"cannot be made public")
         return True
 
-    def make_private(self,
-                     resource: Resource) -> bool:
+    def make_private(self, resource: Resource) -> bool:
         """
         Remove public access for a resource owned by this project.
 
@@ -407,7 +406,7 @@ class Project(Resource['Project']):
         members = self.session.get_resource(self._path() + "/users")["users"]
         return [ProjectMember(user=User.build(m), project=self, role=m["role"]) for m in members]
 
-    def update_user_role(self, user_uid: Union[str, UUID], role: ROLES, actions: ACTIONS = []):
+    def update_user_role(self, *, user_uid: Union[str, UUID], role: ROLES, actions: ACTIONS = []):
         """
         Update a User's role and action permissions in the Project.
 
@@ -533,7 +532,7 @@ class ProjectCollection(Collection[Project]):
         project.session = self.session
         return project
 
-    def register(self, name: str, description: Optional[str] = None) -> Project:
+    def register(self, name: str, *, description: Optional[str] = None) -> Project:
         """
         Create and upload new project.
 
@@ -547,7 +546,7 @@ class ProjectCollection(Collection[Project]):
         """
         return super().register(Project(name, description))
 
-    def list(self,
+    def list(self, *,
              page: Optional[int] = None,
              per_page: int = 1000) -> Iterator[Project]:
         """
@@ -574,7 +573,7 @@ class ProjectCollection(Collection[Project]):
         """
         return super().list(page, per_page)
 
-    def search(self, search_params: Optional[dict] = None,
+    def search(self, *, search_params: Optional[dict] = None,
                per_page: int = 1000) -> Iterable[Project]:
         """
         Search for projects matching the desired name or description.

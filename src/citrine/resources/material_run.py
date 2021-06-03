@@ -108,7 +108,7 @@ class MaterialRunCollection(ObjectRunCollection[MaterialRun]):
         """Return the resource type in the collection."""
         return MaterialRun
 
-    def get_history(self, scope: Optional[str],
+    def get_history(self, *, scope: Optional[str],
                     id: Union[str, UUID, LinkByUID, MaterialRun]) -> Type[MaterialRun]:
         """
         Get the history associated with a terminal material.
@@ -155,7 +155,7 @@ class MaterialRunCollection(ObjectRunCollection[MaterialRun]):
             json.dumps(blob, cls=GEMDEncoder, sort_keys=True))
 
     def get_by_process(self,
-                       uid: Union[UUID, str, LinkByUID, GEMDProcessRun],
+                       uid: Union[UUID, str, LinkByUID, GEMDProcessRun], *,
                        scope: Optional[str] = None) -> Optional[MaterialRun]:
         """
         [ALPHA] Get output material of a process.
@@ -181,7 +181,7 @@ class MaterialRunCollection(ObjectRunCollection[MaterialRun]):
         )
 
     def list_by_spec(self,
-                     uid: Union[UUID, str, LinkByUID, GEMDMaterialSpec],
+                     uid: Union[UUID, str, LinkByUID, GEMDMaterialSpec], *,
                      scope: Optional[str] = None) -> Iterator[MaterialRun]:
         """
         [ALPHA] Get the material runs using the specified material spec.
@@ -203,7 +203,7 @@ class MaterialRunCollection(ObjectRunCollection[MaterialRun]):
         link = _make_link_by_uid(uid, scope)
         return self._get_relation('material-specs', uid=link.id, scope=link.scope)
 
-    def list_by_template(self, uid: Union[UUID, str, LinkByUID, GEMDMaterialTemplate],
+    def list_by_template(self, uid: Union[UUID, str, LinkByUID, GEMDMaterialTemplate], *,
                          scope: Optional[str] = None) -> Iterator[MaterialRun]:
         """
         [ALPHA] Get the material runs using the specified material template.

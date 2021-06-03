@@ -285,7 +285,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         data_concepts_object = self.get_type().build(data)
         return data_concepts_object
 
-    def list(self,
+    def list(self, *,
              page: Optional[int] = None,
              per_page: Optional[int] = 100,
              forward: bool = True) -> Iterator[ResourceType]:
@@ -324,7 +324,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
             params=params)
         return (self.build(raw) for raw in raw_objects)
 
-    def register(self, model: ResourceType, dry_run=False):
+    def register(self, model: ResourceType, *, dry_run=False):
         """
         Create a new element of the collection or update an existing element.
 
@@ -368,7 +368,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         full_model = self.build(data)
         return full_model
 
-    def register_all(self, models: List[ResourceType], dry_run=False) -> List[ResourceType]:
+    def register_all(self, models: List[ResourceType], *, dry_run=False) -> List[ResourceType]:
         """
         [ALPHA] Create or update each model in models.
 
@@ -528,7 +528,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         # That worked, nothing returned in this case
         return None
 
-    def get(self, uid: Union[UUID, str, LinkByUID, BaseEntity],
+    def get(self, uid: Union[UUID, str, LinkByUID, BaseEntity], *,
             scope: Optional[str] = None) -> ResourceType:
         """
         Get an element of the collection by its id.
@@ -553,7 +553,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         data = self.session.get_resource(path)
         return self.build(data)
 
-    def list_by_name(self, name: str, exact: bool = False,
+    def list_by_name(self, name: str, *, exact: bool = False,
                      forward: bool = True, per_page: int = 100) -> Iterator[ResourceType]:
         """
         Get all objects with specified name in this dataset.
@@ -592,7 +592,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
 
     @deprecation.deprecated(deprecated_in="0.133.0", removed_in="1.0.0",
                             details="Please use list instead of list_all")
-    def list_all(self, forward: bool = True, per_page: int = 100) -> Iterator[ResourceType]:
+    def list_all(self, *, forward: bool = True, per_page: int = 100) -> Iterator[ResourceType]:
         """
         Get all objects in the collection.
 
@@ -616,7 +616,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         """
         return self.list(forward=forward, per_page=per_page)  # pragma: no cover
 
-    def list_by_tag(self, tag: str, per_page: int = 100) -> Iterator[ResourceType]:
+    def list_by_tag(self, tag: str, *, per_page: int = 100) -> Iterator[ResourceType]:
         """
         Get all objects bearing a tag prefixed with `tag` in the collection.
 
@@ -652,7 +652,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
             params=params)
         return (self.build(raw) for raw in raw_objects)
 
-    def delete(self, uid: Union[UUID, str, LinkByUID, BaseEntity],
+    def delete(self, uid: Union[UUID, str, LinkByUID, BaseEntity], *,
                scope: Optional[str] = None, dry_run: bool = False):
         """
         Delete an element of the collection by its id.

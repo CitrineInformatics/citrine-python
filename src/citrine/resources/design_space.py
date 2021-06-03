@@ -64,7 +64,7 @@ class DesignSpaceCollection(AbstractModuleCollection[DesignSpace]):
         self.validate_write_request(model)
         return AbstractModuleCollection.update(self, model)
 
-    def create_default(self, predictor_id: UUID) -> DesignSpace:
+    def create_default(self, *, predictor_id: UUID) -> DesignSpace:
         """[ALPHA] Create a default design space for a predictor.
 
         This method will return an unregistered design space for all inputs
