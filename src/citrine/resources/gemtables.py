@@ -292,6 +292,15 @@ class GemTableCollection(Collection[GemTable]):
         Read the Table file from S3.
 
         If a Table object is not provided, retrieve it using the provided table and version ids.
+
+
+        Parameters
+        ----------
+        table:
+            The persisted table config from which to build a table (or its ID).
+        local_path
+            The path to the local location to save the file
+
         """
         # NOTE: this uses the pre-signed S3 download url. If we need to download larger files,
         # we have other options available (using multi-part downloads in parallel , for example).
