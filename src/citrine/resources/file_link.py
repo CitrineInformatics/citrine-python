@@ -405,7 +405,7 @@ class FileCollection(Collection[FileLink]):
         url = self._get_path(file_id) + '/versions/{}'.format(version)
         return FileLink(filename=dest_name, url=url)
 
-    def download(self, file_link: FileLink, *, local_path: str):
+    def download(self, *, file_link: FileLink, local_path: str):
         """
         Download the file associated with a given FileLink to the local computer.
 
