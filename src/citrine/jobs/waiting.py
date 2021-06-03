@@ -119,7 +119,8 @@ def wait_while_validating(
 
     """
     return wait_for_asynchronous_object(resource=module, collection=collection,
-                                        print_status_info=print_status_info, timeout=timeout, interval=interval)
+                                        print_status_info=print_status_info, timeout=timeout,
+                                        interval=interval)
 
 
 def wait_while_executing(
@@ -159,4 +160,5 @@ def wait_while_executing(
 
     """
     return wait_for_asynchronous_object(resource=execution, collection=collection,
-                                        print_status_info=print_status_info, timeout=timeout, interval=interval)
+                                        print_status_info=print_status_info, timeout=timeout,
+                                        interval=interval)

@@ -121,7 +121,8 @@ def enumerate_formulation_grid(
     """
     # Generate descriptors if none passed
     if descriptors is None:
-        descriptors = [RealDescriptor(kk, lower_bound=0, upper_bound=1, units="") for kk in formulation_grid.keys()]
+        descriptors = [RealDescriptor(kk, lower_bound=0, upper_bound=1, units="")
+                       for kk in formulation_grid.keys()]
 
     # Check that the passed balance ingredient is in the grid keys
     if balance_ingredient not in list(formulation_grid.keys()):

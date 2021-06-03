@@ -451,8 +451,9 @@ class FileCollection(Collection[FileLink]):
         logger.info('Build job submitted with job ID {}.'.format(job.job_id))
 
         if wait_for_response:
-            return self.poll_file_processing_job(file_link, processing_type=processing_type, job_id=job.job_id,
-                                                 timeout=timeout, polling_delay=polling_delay)
+            return self.poll_file_processing_job(file_link, processing_type=processing_type,
+                                                 job_id=job.job_id, timeout=timeout,
+                                                 polling_delay=polling_delay)
         else:
             return job
 
