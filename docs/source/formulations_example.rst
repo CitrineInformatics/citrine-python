@@ -457,7 +457,11 @@ if we do not specify it then a default descriptor will be generated, but given h
     from citrine.informatics.data_sources import GemTableDataSource
 
     formulation = FormulationDescriptor("mixed and blended margarita")
-    data_source = GemTableDataSource(table_id=table.uid, table_version=table.version, formulation_descriptor=formulation)
+    data_source = GemTableDataSource(
+        table_id=table.uid,
+        table_version=table.version,
+        formulation_descriptor=formulation
+    )
 
 The first component of the graphical model is a :class:`~citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor`, which flattens the input formulation--it repeatedly replaces components with their ingredients until only the atomic ingredients remain.
 This flattening efficiently teaches the predictor about the relationship between materials.

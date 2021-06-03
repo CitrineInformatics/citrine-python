@@ -95,10 +95,10 @@ Assume that the process template is accessible from a known project, ``project``
     from citrine.gemtables.variables import IngredientQuantityDimension
 
     table_config = table_config.add_all_ingredients(
-                                            process_template = LinkByUID('id', '3a308f78-e341-f39c-8076-35a2c88292ad'),
-                                            project=project,
-                                            quantity_dimension=IngredientQuantityDimension.MASS
-                                            )
+        process_template = LinkByUID('id', '3a308f78-e341-f39c-8076-35a2c88292ad'),
+        project=project,
+        quantity_dimension=IngredientQuantityDimension.MASS
+    )
 
 If the process template's allowed names includes, for example, "flour" then there will now be columns "batter mixing~flour~id" and "batter mixing~flour~mass fraction~mean."
 
@@ -117,7 +117,8 @@ For example:
          table_config = table_config,
          preview_roots = [
                LinkByUID(scope="products", id="best cookie ever"),
-               LinkByUID(scope="products", id="worst cookie ever")])
+               LinkByUID(scope="products", id="worst cookie ever")]
+    )
 
 The preview returns a dictionary with two keys:
 
