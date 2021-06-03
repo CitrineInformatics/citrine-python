@@ -101,7 +101,7 @@ def test_trigger_workflow_execution(collection: PredictorEvaluationExecutionColl
 def test_list(collection: PredictorEvaluationExecutionCollection, session):
     session.set_response({"page": 2, "per_page": 4, "next": "foo", "response": []})
     predictor_id = uuid.uuid4()
-    lst = list(collection.list(2, 4, predictor_id=predictor_id))
+    lst = list(collection.list(page=2, per_page=4, predictor_id=predictor_id))
     assert len(lst) == 0
 
     expected_path = '/projects/{}/predictor-evaluation-executions'.format(collection.project_id)

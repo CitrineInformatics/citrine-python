@@ -90,7 +90,7 @@ def test_get_history(collection, session):
     })
 
     # When
-    run = collection.get_history('id', '1234')
+    run = collection.get_history(scope='id', id='1234')
 
     # Then
     assert 1 == session.num_calls
@@ -345,7 +345,7 @@ def test_validate_templates_successful_all_params(collection, session):
 
     # When
     session.set_response("")
-    errors = collection.validate_templates(run, template, unused_process_template)
+    errors = collection.validate_templates(run, object_template=template, ingredient_process_template=unused_process_template)
 
     # Then
     assert 1 == session.num_calls

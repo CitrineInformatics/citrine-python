@@ -70,7 +70,7 @@ class GemTableCollection(Collection[GemTable]):
         self.project_id = project_id
         self.session: Session = session
 
-    def get(self, uid: Union[UUID, str], version: Optional[int] = None) -> GemTable:
+    def get(self, uid: Union[UUID, str], *, version: Optional[int] = None) -> GemTable:
         """Get a Table's metadata. If no version is specified, get the most recent version."""
         if version is not None:
             path = self._get_path(uid) + "/versions/{}".format(version)
@@ -237,7 +237,7 @@ class GemTableCollection(Collection[GemTable]):
                     warn_lines.append('and {} more similar.'
                                       .format(total_count - len(limited_results)))
             logger.warning('\n\t'.join(warn_lines))
-        return self.get(table_id, table_version)
+        return self.get(table_id, version=table_version)
 
     def build_from_config(self, config: Union[TableConfig, str, UUID], *,
                           version: Union[str, int] = None,
@@ -262,7 +262,7 @@ class GemTableCollection(Collection[GemTable]):
             A new table built from the supplied config.
 
         """
-        job = self.initiate_build(config, version)
+        job = self.initiate_build(config, version=version)
         return self.get_by_build_job(job, timeout=timeout)
 
     def build(self, data: dict) -> GemTable:
@@ -287,7 +287,7 @@ class GemTableCollection(Collection[GemTable]):
         """Tables cannot be deleted at this time."""
         raise NotImplementedError("Tables cannot be deleted at this time.")
 
-    def read(self, table: Union[GemTable, Tuple[str, int]], *, local_path: str):
+    def read(self, *, table: Union[GemTable, Tuple[str, int]], local_path: str):
         """
         Read the Table file from S3.
 
@@ -296,7 +296,7 @@ class GemTableCollection(Collection[GemTable]):
         # NOTE: this uses the pre-signed S3 download url. If we need to download larger files,
         # we have other options available (using multi-part downloads in parallel , for example).
         if isinstance(table, Tuple):
-            table = self.get(table[0], table[1])
+            table = self.get(uid=table[0], version=table[1])
 
         data_location = table.download_url
         data_location = rewrite_s3_links_locally(data_location, self.session.s3_endpoint_url)

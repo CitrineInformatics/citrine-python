@@ -498,7 +498,7 @@ class DatasetCollection(Collection[Dataset]):
             Datasets in this collection.
 
         """
-        return super().list(page, per_page)
+        return super().list(page=page, per_page=per_page)
 
     def get_by_unique_name(self, unique_name: str) -> ResourceType:
         """Get a Dataset with the given unique name."""

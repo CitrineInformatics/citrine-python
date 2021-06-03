@@ -150,8 +150,8 @@ class DataObjectCollection(DataConceptsCollection[DataObjectResourceType], ABC):
             }
         }
 
-    def validate_templates(self, *,
-                           model: DataObjectResourceType,
+    def validate_templates(self,
+                           model: DataObjectResourceType, *,
                            object_template: Optional[ObjectTemplateResourceType] = None,
                            ingredient_process_template: Optional[ProcessTemplate] = None)\
             -> List[ValidationError]:

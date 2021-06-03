@@ -118,7 +118,8 @@ def wait_while_validating(
         If fails to validate within timeout
 
     """
-    return wait_for_asynchronous_object(module, collection, print_status_info, timeout, interval)
+    return wait_for_asynchronous_object(resource=module, collection=collection,
+                                        print_status_info=print_status_info, timeout=timeout, interval=interval)
 
 
 def wait_while_executing(
@@ -157,5 +158,5 @@ def wait_while_executing(
         If fails to finish execution within timeout
 
     """
-    return wait_for_asynchronous_object(execution, collection,
-                                        print_status_info, timeout, interval)
+    return wait_for_asynchronous_object(resource=execution, collection=collection,
+                                        print_status_info=print_status_info, timeout=timeout, interval=interval)

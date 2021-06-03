@@ -544,7 +544,7 @@ class ProjectCollection(Collection[Project]):
             Long-form description of the project to be created.
 
         """
-        return super().register(Project(name, description))
+        return super().register(Project(name, description=description))
 
     def list(self, *,
              page: Optional[int] = None,
@@ -571,7 +571,7 @@ class ProjectCollection(Collection[Project]):
             Projects in this collection.
 
         """
-        return super().list(page, per_page)
+        return super().list(page=page, per_page=per_page)
 
     def search(self, *, search_params: Optional[dict] = None,
                per_page: int = 1000) -> Iterable[Project]:

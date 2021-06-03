@@ -125,9 +125,9 @@ def dataset_collection() -> DatasetCollection:
     datasets = SeedingTestDatasetCollection(UUID('6b608f78-e341-422c-8076-35adc8828545'), session)
     for i in range(0, 5):
         num_string = str(i)
-        datasets.register(Dataset("dataset " + num_string, "summ " + num_string, "desc " + num_string))
+        datasets.register(Dataset("dataset " + num_string, summary="summ " + num_string, description="desc " + num_string))
     for i in range(0, 2):
-        datasets.register(Dataset(duplicate_name, "dup", "duplicate"))
+        datasets.register(Dataset(duplicate_name, summary="dup", description="duplicate"))
     return datasets
 
 @pytest.fixture

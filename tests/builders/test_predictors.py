@@ -36,7 +36,7 @@ class FakeDescriptorMethods(DescriptorMethods):
             return [
                 RealDescriptor(f"{input_descriptor.key} real property {i}", lower_bound=0, upper_bound=1, units="")
                        for i in range(self.num_properties)
-            ] + [CategoricalDescriptor(f"{input_descriptor.key} categorical property", ["cat1", "cat2"])]
+            ] + [CategoricalDescriptor(f"{input_descriptor.key} categorical property", categories=["cat1", "cat2"])]
 
         elif isinstance(predictor, MeanPropertyPredictor):
             label_str = predictor.label or "all ingredients"

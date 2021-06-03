@@ -90,7 +90,7 @@ def find_or_create_dataset(dataset_collection, dataset_name, raise_error=False):
         dataset = get_by_name_or_raise_error(dataset_collection, dataset_name)
     else:
         def default_provider():
-            return dataset_collection.register(Dataset(dataset_name, "seed summ.", "seed desc."))
+            return dataset_collection.register(Dataset(dataset_name, summary="seed summ.", description="seed desc."))
         dataset = get_by_name_or_create(dataset_collection, dataset_name, default_provider)
     return dataset
 

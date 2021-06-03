@@ -40,7 +40,7 @@ def test_get_table_metadata(collection, session):
     session.set_response(gem_table)
 
     # When
-    retrieved_table: GemTable = collection.get(gem_table["id"], gem_table["version"])
+    retrieved_table: GemTable = collection.get(gem_table["id"], version=gem_table["version"])
 
     # Then
     assert 1 == session.num_calls
@@ -67,8 +67,8 @@ def test_get_table_metadata(collection, session):
 
 def test_list_tables(collection, session):
     # Given
-    tableVersions = ListGemTableVersionsDataFactory()
-    session.set_response(tableVersions)
+    table_versions = ListGemTableVersionsDataFactory()
+    session.set_response(table_versions)
 
     # When
     results = list(collection.list())
@@ -80,11 +80,11 @@ def test_list_tables(collection, session):
 
 def test_list_table_versions(collection, session):
     # Given
-    tableVersions = ListGemTableVersionsDataFactory()
-    session.set_response(tableVersions)
+    table_versions = ListGemTableVersionsDataFactory()
+    session.set_response(table_versions)
 
     # When
-    results = list(collection.list_versions(tableVersions['tables'][0]['id']))
+    results = list(collection.list_versions(table_versions['tables'][0]['id']))
 
     # Then
     assert len(results) == 3
@@ -93,13 +93,13 @@ def test_list_table_versions(collection, session):
 
 def test_list_by_config(collection, session):
     # Given
-    tableVersions = ListGemTableVersionsDataFactory()
-    session.set_response(tableVersions)
+    table_versions = ListGemTableVersionsDataFactory()
+    session.set_response(table_versions)
 
     # When
     # NOTE: list_by_config returns slightly more info in this call, but it's a superset of
     # a typical Table, and parsed identically in citrine-python.
-    results = list(collection.list_by_config(tableVersions['tables'][0]['id']))
+    results = list(collection.list_by_config(table_versions['tables'][0]['id']))
 
     # Then
     assert len(results) == 3
@@ -205,7 +205,7 @@ def test_read_table_from_collection(mock_write_files_locally, collection, table)
     with requests_mock.mock() as mock_get:
         remote_url = "http://otherhost:4572/anywhere"
         mock_get.get(remote_url, text='stuff')
-        collection.read(table(remote_url), "table.pdf")
+        collection.read(table=table(remote_url), local_path="table.pdf")
         assert mock_get.call_count == 1
         assert mock_write_files_locally.call_count == 1
         assert mock_write_files_locally.call_args == call(b'stuff', "table.pdf")
@@ -214,7 +214,7 @@ def test_read_table_from_collection(mock_write_files_locally, collection, table)
         # When
         localstack_url = "http://localstack:4572/anywhere"
         mock_get.get("http://localhost:9572/anywhere", text='stuff')
-        collection.read(table(localstack_url), "table2.pdf")
+        collection.read(table=table(localstack_url), local_path="table2.pdf")
         assert mock_get.call_count == 1
         assert mock_write_files_locally.call_count == 2
         assert mock_write_files_locally.call_args == call(b'stuff', "table2.pdf")
@@ -225,7 +225,7 @@ def test_read_table_from_collection(mock_write_files_locally, collection, table)
         override_url = "https://fakestack:1337"
         collection.session.s3_endpoint_url = override_url
         mock_get.get(override_url + "/anywhere", text='stuff')
-        collection.read(table(localstack_url), "table3.pdf")
+        collection.read(table=table(localstack_url), local_path="table3.pdf")
         assert mock_get.call_count == 1
         assert mock_write_files_locally.call_count == 3
         assert mock_write_files_locally.call_args == call(b'stuff', "table3.pdf")
@@ -239,7 +239,7 @@ def test_get_and_read_table_from_collection(mock_write_files_locally, table, ses
         retrieved_table = table(remote_url)
         session.set_response(retrieved_table.dump())
         mock_get.get(remote_url, text='stuff')
-        collection.read((retrieved_table.uid, retrieved_table.version), "table4.csv")
+        collection.read(table=(retrieved_table.uid, retrieved_table.version), local_path="table4.csv")
         assert mock_get.call_count == 1
         assert mock_write_files_locally.call_count == 1
         assert mock_write_files_locally.call_args == call(b'stuff', "table4.csv")

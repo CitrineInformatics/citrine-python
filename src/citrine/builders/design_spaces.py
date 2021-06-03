@@ -121,7 +121,7 @@ def enumerate_formulation_grid(
     """
     # Generate descriptors if none passed
     if descriptors is None:
-        descriptors = [RealDescriptor(kk, 0, 1, "") for kk in formulation_grid.keys()]
+        descriptors = [RealDescriptor(kk, lower_bound=0, upper_bound=1, units="") for kk in formulation_grid.keys()]
 
     # Check that the passed balance ingredient is in the grid keys
     if balance_ingredient not in list(formulation_grid.keys()):
@@ -277,7 +277,7 @@ def enumerated_to_data_source(*,
             writer.writerow([datum.get(k, '') for k in headers])
 
     file_link = dataset.files.upload(csv_filename)
-    data_source = CSVDataSource(file_link, descriptors)
+    data_source = CSVDataSource(file_link=file_link, column_definitions=descriptors)
     data_source_ds = DataSourceDesignSpace(
         name=enumerated_ds.name, description=enumerated_ds.description, data_source=data_source)
     return data_source_ds

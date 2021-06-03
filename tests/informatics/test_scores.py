@@ -33,7 +33,7 @@ def ei_score() -> EIScore:
             )
         ],
         baselines=[1.0],
-        constraints=[ScalarRangeConstraint('y', 0.0, 1.0)]
+        constraints=[ScalarRangeConstraint(descriptor_key='y', lower_bound=0.0, upper_bound=1.0)]
     )
 
 
@@ -48,7 +48,7 @@ def ev_score() -> EVScore:
                 descriptor_key="x"
             )
         ],
-        constraints=[ScalarRangeConstraint('y', 0.0, 1.0)]
+        constraints=[ScalarRangeConstraint(descriptor_key='y', lower_bound=0.0, upper_bound=1.0)]
     )
 
 
