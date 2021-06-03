@@ -319,7 +319,7 @@ def test_validate_templates_successful_minimal_params(collection, session):
 
     # When
     session.set_response("")
-    errors = collection.validate_templates(run)
+    errors = collection.validate_templates(model=run)
 
     # Then
     assert 1 == session.num_calls
@@ -345,7 +345,7 @@ def test_validate_templates_successful_all_params(collection, session):
 
     # When
     session.set_response("")
-    errors = collection.validate_templates(run, object_template=template, ingredient_process_template=unused_process_template)
+    errors = collection.validate_templates(model=run, object_template=template, ingredient_process_template=unused_process_template)
 
     # Then
     assert 1 == session.num_calls
@@ -370,7 +370,7 @@ def test_validate_templates_errors(collection, session):
     # When
     validation_error = ValidationError(failure_message="you failed", failure_id="failure_id")
     session.set_response(BadRequest("path", FakeRequestResponseApiError(400, "Bad Request", [validation_error])))
-    errors = collection.validate_templates(run)
+    errors = collection.validate_templates(model=run)
 
     # Then
     assert 1 == session.num_calls
@@ -392,7 +392,7 @@ def test_validate_templates_unrelated_400(collection, session):
     # When
     session.set_response(BadRequest("path", FakeRequestResponse(400)))
     with pytest.raises(BadRequest):
-        collection.validate_templates(run)
+        collection.validate_templates(model=run)
 
 
 def test_validate_templates_unrelated_400_with_api_error(collection, session):
@@ -405,7 +405,7 @@ def test_validate_templates_unrelated_400_with_api_error(collection, session):
     # When
     session.set_response(BadRequest("path", FakeRequestResponseApiError(400, "I am not a validation error", [])))
     with pytest.raises(BadRequest):
-        collection.validate_templates(run)
+        collection.validate_templates(model=run)
 
 
 def test_list_by_template(collection, session):

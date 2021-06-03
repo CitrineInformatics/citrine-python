@@ -349,9 +349,8 @@ class TableConfigCollection(Collection[TableConfig]):
         ambiguous = [(Variable.build(v), Column.build(c)) for v, c in data['ambiguous']]
         return config, ambiguous
 
-    def preview(self,
+    def preview(self, *,
                 table_config: TableConfig,
-                *,
                 preview_materials: List[LinkByUID] = None,
                 preview_roots: List[LinkByUID] = None
                 ) -> dict:

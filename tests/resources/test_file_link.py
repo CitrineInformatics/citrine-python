@@ -144,7 +144,7 @@ def test_upload(mock_isfile, mock_stat, mock_open, mock_boto3_client, collection
 
     for dest_name in dest_names:
         session.set_responses(uploads_response, file_info_response)
-        file_link = collection.upload(dest_name)
+        file_link = collection.upload(file_path=dest_name)
 
         url = 'projects/{}/datasets/{}/files/{}/versions/{}'\
             .format(collection.project_id, collection.dataset_id, file_id, version)
@@ -155,7 +155,7 @@ def test_upload(mock_isfile, mock_stat, mock_open, mock_boto3_client, collection
 
 def test_upload_missing_file(collection):
     with pytest.raises(ValueError):
-        collection.upload('this-file-does-not-exist.xls')
+        collection.upload(file_path='this-file-does-not-exist.xls')
 
 @patch('citrine.resources.file_link.os.stat')
 def test_upload_request(mock_stat, collection, session, uploader):
@@ -425,7 +425,7 @@ def test_process_file(collection, session):
     # then does a GET on the job executions endpoint
     # then gets the file processing result
     session.set_responses(job_id_resp, job_execution_resp, file_processing_result_resp)
-    collection.process(file_link, processing_type=FileProcessingType.VALIDATE_CSV)
+    collection.process(file_link=file_link, processing_type=FileProcessingType.VALIDATE_CSV)
 
 def test_process_file_no_waiting(collection, session):
     """Test processing an existing file without waiting on the result."""
@@ -441,6 +441,6 @@ def test_process_file_no_waiting(collection, session):
     # First does a PUT on the /processed endpoint
     # then does a GET on the job executions endpoint
     session.set_response(job_id_resp)
-    resp = collection.process(file_link, processing_type=FileProcessingType.VALIDATE_CSV,
+    resp = collection.process(file_link=file_link, processing_type=FileProcessingType.VALIDATE_CSV,
                               wait_for_response=False)
     assert str(resp.job_id) == job_id_resp['job_id']

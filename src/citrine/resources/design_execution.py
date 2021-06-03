@@ -126,7 +126,7 @@ class DesignExecutionCollection(Collection["DesignExecution"]):
     _collection_key = 'response'
     _resource = DesignExecution
 
-    def __init__(self, *,
+    def __init__(self,
                  project_id: UUID,
                  session: Session,
                  workflow_id: Optional[UUID] = None):
