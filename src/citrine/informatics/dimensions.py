@@ -75,8 +75,8 @@ class EnumeratedDimension(Serializable['EnumeratedDimension'], Dimension):
     values = properties.List(properties.String(), 'list')
     typ = properties.String('type', default='EnumeratedDimension', deserializable=False)
 
-    def __init__(self, *,
-                 descriptor: Descriptor,
+    def __init__(self,
+                 descriptor: Descriptor, *,
                  values: List[str]):
         self.descriptor: Descriptor = descriptor
         self.values: List[str] = values

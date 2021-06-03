@@ -67,8 +67,8 @@ class LIScore(Serializable['LIScore'], Score):
     constraints = properties.List(properties.Object(Constraint), 'constraints')
     typ = properties.String('type', default='MLI')
 
-    def __init__(self, *,
-                 name: Optional[str] = None,
+    def __init__(self,
+                 name: Optional[str] = None, *,
                  description: Optional[str] = None,
                  objectives: List[Objective],
                  baselines: List[float],
@@ -116,8 +116,8 @@ class EIScore(Serializable['EIScore'], Score):
     constraints = properties.List(properties.Object(Constraint), 'constraints')
     typ = properties.String('type', default='MEI')
 
-    def __init__(self, *,
-                 name: Optional[str] = None,
+    def __init__(self,
+                 name: Optional[str] = None, *,
                  description: Optional[str] = None,
                  objectives: List[Objective],
                  baselines: List[float],
@@ -164,8 +164,8 @@ class EVScore(Serializable['EVScore'], Score):
     constraints = properties.List(properties.Object(Constraint), 'constraints')
     typ = properties.String('type', default='MEV')
 
-    def __init__(self, *,
-                 name: Optional[str] = None,
+    def __init__(self,
+                 name: Optional[str] = None, *,
                  description: Optional[str] = None,
                  objectives: List[Objective],
                  constraints: Optional[List[Constraint]] = None):
