@@ -46,6 +46,7 @@ class GraphPredictor(Resource['GraphPredictor'], Predictor, AIResourceMetadata):
 
     def __init__(self,
                  name: str,
+                 *,
                  description: str,
                  predictors: List[Union[UUID, Predictor]],
                  training_data: Optional[List[DataSource]] = None):

@@ -27,6 +27,7 @@ def _print_string_status(
 
 def wait_for_asynchronous_object(
     resource: AsynchronousObject,
+    *,
     collection: Collection[AsynchronousObject],
     print_status_info: bool = False,
     timeout: float = 1800.0,
@@ -83,6 +84,7 @@ def wait_for_asynchronous_object(
 
 
 def wait_while_validating(
+    *,
     collection: Collection[Module],
     module: Module,
     print_status_info: bool = False,
@@ -120,6 +122,7 @@ def wait_while_validating(
 
 
 def wait_while_executing(
+    *,
     collection: Union[Collection[PredictorEvaluationExecution], Collection[DesignExecution]],
     execution: Union[PredictorEvaluationExecution, DesignExecution],
     print_status_info: bool = False,

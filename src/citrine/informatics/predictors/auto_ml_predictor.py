@@ -49,6 +49,7 @@ class AutoMLPredictor(Resource['AutoMLPredictor'], Predictor, AIResourceMetadata
 
     def __init__(self,
                  name: str,
+                 *,
                  description: str,
                  output: Descriptor,
                  inputs: List[Descriptor],

@@ -72,6 +72,7 @@ class MeanPropertyPredictor(
 
     def __init__(self,
                  name: str,
+                 *,
                  description: str,
                  input_descriptor: FormulationDescriptor,
                  properties: List[RealDescriptor],

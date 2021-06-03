@@ -46,6 +46,7 @@ class SimpleMixturePredictor(Resource['SimpleMixturePredictor'], Predictor, AIRe
 
     def __init__(self,
                  name: str,
+                 *,
                  description: str,
                  input_descriptor: FormulationDescriptor,
                  output_descriptor: FormulationDescriptor,

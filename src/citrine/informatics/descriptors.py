@@ -24,19 +24,13 @@ class Descriptor(PolymorphicSerializable['Descriptor']):
     @classmethod
     def get_type(cls, data) -> Type[Serializable]:
         """Return the subtype."""
-        # Current backend bug PLA-4036 means that some descriptors come back with "category"
-        # as type key. This should be resolved soon
-        try:
-            t = data["type"]
-        except KeyError:
-            t = data["category"]
         return {
             "Categorical": CategoricalDescriptor,
             "Formulation": FormulationDescriptor,
             "Inorganic": ChemicalFormulaDescriptor,
             "Organic": MolecularStructureDescriptor,
             "Real": RealDescriptor,
-        }[t]
+        }[data["type"]]
 
 
 class RealDescriptor(Serializable['RealDescriptor'], Descriptor):
@@ -71,6 +65,7 @@ class RealDescriptor(Serializable['RealDescriptor'], Descriptor):
 
     def __init__(self,
                  key: str,
+                 *,
                  lower_bound: float,
                  upper_bound: float,
                  units: str):
@@ -178,7 +173,7 @@ class CategoricalDescriptor(Serializable['CategoricalDescriptor'], Descriptor):
         except AttributeError:
             return False
 
-    def __init__(self, key: str, categories: Set[str]):
+    def __init__(self, key: str, *, categories: Set[str]):
         self.key: str = key
         for category in categories:
             if not isinstance(category, str):

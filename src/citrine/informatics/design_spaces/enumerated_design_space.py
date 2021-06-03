@@ -39,6 +39,7 @@ class EnumeratedDesignSpace(Resource['EnumeratedDesignSpace'], DesignSpace, AIRe
 
     def __init__(self,
                  name: str,
+                 *,
                  description: str,
                  descriptors: List[Descriptor],
                  data: List[Mapping[str, Any]]):

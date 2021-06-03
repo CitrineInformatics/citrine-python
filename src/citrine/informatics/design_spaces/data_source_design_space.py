@@ -30,6 +30,7 @@ class DataSourceDesignSpace(Resource['DataSourceDesignSpace'], DesignSpace, AIRe
 
     def __init__(self,
                  name: str,
+                 *,
                  description: str,
                  data_source: DataSource):
         self.name: str = name

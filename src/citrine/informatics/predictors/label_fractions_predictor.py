@@ -36,6 +36,7 @@ class LabelFractionsPredictor(Resource['LabelFractionsPredictor'], Predictor, AI
 
     def __init__(self,
                  name: str,
+                 *,
                  description: str,
                  input_descriptor: FormulationDescriptor,
                  labels: Set[str]):

@@ -41,6 +41,7 @@ class ExpressionPredictor(Resource['ExpressionPredictor'], Predictor, AIResource
 
     def __init__(self,
                  name: str,
+                 *,
                  description: str,
                  expression: str,
                  output: RealDescriptor,
