@@ -70,14 +70,7 @@ def test_tn_serde():
     tn = TaskNode.build(task_node_1())
     expected = task_node_1()
     expected['failure_reason'] = None
-    expected_tn = TaskNode(
-        id=expected['id'],
-        task_type=expected['task_type'],
-        status=expected['status'],
-        dependencies=expected['dependencies'],
-        failure_reason=expected['failure_reason']
-    )
-    assert tn.dump() == expected_tn.dump()
+    assert tn.dump() == expected
 
 
 def test_js_serde():
@@ -85,29 +78,18 @@ def test_js_serde():
     expected = job_status()
     expected['tasks'][0]['failure_reason'] = None
     expected['output'] = None
-    expected_js = JobStatusResponse(
-        job_type=expected['job_type'],
-        status=expected['status'],
-        tasks=[TaskNode.build(i) for i in expected['tasks']],
-        output=expected['output']
-    )
-    assert js.dump() == expected_js.dump()
+    assert js.dump() == expected
 
 
 def test_js_serde_with_output():
     js = JobStatusResponse.build(job_status_with_output())
     expected = job_status_with_output()
     expected['tasks'][0]['failure_reason'] = None
-    expected_js = JobStatusResponse(
-        job_type=expected['job_type'],
-        status=expected['status'],
-        tasks=[TaskNode.build(i) for i in expected['tasks']],
-        output={"key1": "val1", "key2": "val2"}
-    )
-    assert js.dump() == expected_js.dump()
+    assert js.dump() == expected
 
 
 def test_build_job(collection: GemTableCollection, table_config: TableConfig):
     collection.session.set_response({"job_id": '12345678-1234-1234-1234-123456789ccc'})
     resp = collection.initiate_build(table_config)
-    assert resp.dump() == JobSubmissionResponse(UUID('12345678-1234-1234-1234-123456789ccc')).dump()
+    assert isinstance(resp, JobSubmissionResponse)
+    assert resp.job_id == UUID('12345678-1234-1234-1234-123456789ccc')

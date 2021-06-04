@@ -36,7 +36,7 @@ class DesignSpaceCollection(AbstractModuleCollection[DesignSpace]):
         design_space._project_id = self.project_id
         return design_space
 
-    def validate_write_request(self, design_space: DesignSpace):
+    def _validate_write_request(self, design_space: DesignSpace):
         """Perform write-time validations of the design space registration or update.
 
         EnumeratedDesignSpaces can be pretty big, so we want to return a helpful error message
@@ -56,12 +56,12 @@ class DesignSpaceCollection(AbstractModuleCollection[DesignSpace]):
 
     def register(self, model: DesignSpace) -> DesignSpace:
         """Create a new design space."""
-        self.validate_write_request(model)
+        self._validate_write_request(model)
         return AbstractModuleCollection.register(self, model)
 
     def update(self, model: DesignSpace) -> DesignSpace:
         """Update an existing design space by uid."""
-        self.validate_write_request(model)
+        self._validate_write_request(model)
         return AbstractModuleCollection.update(self, model)
 
     def create_default(self, predictor_id: UUID) -> DesignSpace:
