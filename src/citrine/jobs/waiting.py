@@ -26,8 +26,8 @@ def _print_string_status(
 
 
 def wait_for_asynchronous_object(
-    resource: AsynchronousObject,
     *,
+    resource: AsynchronousObject,
     collection: Collection[AsynchronousObject],
     print_status_info: bool = False,
     timeout: float = 1800.0,

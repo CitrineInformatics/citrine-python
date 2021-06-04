@@ -122,7 +122,7 @@ def test_dict_behavior():
         "pressure": RealDescriptor("pressure", lower_bound=0, upper_bound=10000, units="GPa")
     }
 
-    v = PlatformVocabulary(entries)
+    v = PlatformVocabulary(entries=entries)
 
     assert len(v) == 2
     assert set(v) == {"density", "pressure"}
@@ -132,7 +132,7 @@ def test_dict_behavior():
 
 def test_from_template(fake_project: Project):
     """Test that only correct scopes and bounds are loaded from templates."""
-    v = PlatformVocabulary.from_templates(fake_project, scope="my_scope")
+    v = PlatformVocabulary.from_templates(project=fake_project, scope="my_scope")
 
     # no volume since it is an integer, no speed since it doesn't have the right scope
     assert len(v) == 1

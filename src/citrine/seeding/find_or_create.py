@@ -5,7 +5,7 @@ from citrine._rest.collection import CreationType, Collection
 from copy import deepcopy
 
 
-def find_collection(collection, name):
+def find_collection(*, collection, name):
     """
     Looks through the pages of a collection for a resource with the specified name.
 
@@ -38,13 +38,13 @@ def find_collection(collection, name):
         return None
 
 
-def get_by_name_or_create(collection, name, default_provider):
+def get_by_name_or_create(*, collection, name, default_provider):
     """
     Tries to find a collection by its name (returns first hit).
 
     If not found, implements default_provider
     """
-    found = find_collection(collection, name)
+    found = find_collection(collection=collection, name=name)
     if found:
         return found
     else:
@@ -52,51 +52,54 @@ def get_by_name_or_create(collection, name, default_provider):
         return default_provider()
 
 
-def get_by_name_or_raise_error(collection, name):
+def get_by_name_or_raise_error(*, collection, name):
     """
     Tries to find a collection by its name (returns first hit).
 
     If not found, raises error
     """
-    found = find_collection(collection, name)
+    found = find_collection(collection=collection, name=name)
     if found:
         return found
     else:
         raise ValueError("Did not find resource with the given name: {}".format(name))
 
 
-def find_or_create_project(project_collection, project_name, raise_error=False):
+def find_or_create_project(*, project_collection, project_name, raise_error=False):
     """
     Tries to find a project by name (returns first hit).
 
     If not found, creates a new project with the given name
     """
     if raise_error:
-        project = get_by_name_or_raise_error(project_collection, project_name)
+        project = get_by_name_or_raise_error(collection=project_collection, name=project_name)
     else:
         def default_provider():
             return project_collection.register(project_name)
-        project = get_by_name_or_create(project_collection, project_name, default_provider)
+        project = get_by_name_or_create(collection=project_collection,
+                                        name=project_name, default_provider=default_provider)
     return project
 
 
-def find_or_create_dataset(dataset_collection, dataset_name, raise_error=False):
+def find_or_create_dataset(*, dataset_collection, dataset_name, raise_error=False):
     """
     Tries to find a dataset by name (returns first hit).
 
     If not found, creates a new dataset with the given name
     """
     if raise_error:
-        dataset = get_by_name_or_raise_error(dataset_collection, dataset_name)
+        dataset = get_by_name_or_raise_error(collection=dataset_collection, name=dataset_name)
     else:
         def default_provider():
             return dataset_collection.register(
                 Dataset(dataset_name, summary="seed summ.", description="seed desc."))
-        dataset = get_by_name_or_create(dataset_collection, dataset_name, default_provider)
+        dataset = get_by_name_or_create(collection=dataset_collection,
+                                        name=dataset_name, default_provider=default_provider)
     return dataset
 
 
-def create_or_update(collection: Collection[CreationType], resource: CreationType) -> CreationType:
+def create_or_update(*, collection: Collection[CreationType], resource: CreationType)\
+        -> CreationType:
     """
     Update a resource of a given name belonging to a collection.
 
@@ -117,7 +120,7 @@ def create_or_update(collection: Collection[CreationType], resource: CreationTyp
         Registered updated or created resource.
 
     """
-    old_resource = find_collection(collection, resource.name)
+    old_resource = find_collection(collection=collection, name=resource.name)
     if old_resource:
         print("Updating module: {}".format(resource.name))
         # Copy so that passed-in resource is unaffected
