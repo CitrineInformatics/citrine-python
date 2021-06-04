@@ -27,27 +27,27 @@ class PredictorEvaluationWorkflowCollection(Collection[PredictorEvaluationWorkfl
         workflow.project_id = self.project_id
         return workflow
 
-    def archive(self, uid: UUID):
+    def archive(self, workflow_id: UUID):
         """Archive a predictor evaluation workflow.
 
         Parameters
         ----------
-        uid: UUID
+        workflow_id: UUID
             Unique identifier of the workflow to archive
 
         """
-        return self._put_module_ref('archive', uid)
+        return self._put_module_ref('archive', workflow_id)
 
-    def restore(self, uid: UUID):
+    def restore(self, workflow_id: UUID):
         """Restore an archived predictor evaluation workflow.
 
         Parameters
         ----------
-        uid: UUID
+        workflow_id: UUID
             Unique identifier of the workflow to restore
 
         """
-        return self._put_module_ref('restore', uid)
+        return self._put_module_ref('restore', workflow_id)
 
     def delete(self, uid: Union[UUID, str]) -> Response:
         """Predictor Evaluation Workflows cannot be deleted; they can be archived instead."""

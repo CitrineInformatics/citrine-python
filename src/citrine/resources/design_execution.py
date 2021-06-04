@@ -156,24 +156,24 @@ class DesignExecutionCollection(Collection["DesignExecution"]):
         """Cannot update an execution."""
         raise NotImplementedError("Cannot update a DesignExecution.")
 
-    def archive(self, uid: UUID):
+    def archive(self, execution_id: UUID):
         """Archive a Design Workflow execution.
 
         Parameters
         ----------
-        uid: UUID
+        execution_id: UUID
             Unique identifier of the execution to archive
 
         """
         raise NotImplementedError(
             "Design Executions cannot be archived")
 
-    def restore(self, uid: UUID):
+    def restore(self, execution_id: UUID):
         """Restore an archived Design Workflow execution.
 
         Parameters
         ----------
-        uid: UUID
+        execution_id: UUID
             Unique identifier of the execution to restore
 
         """

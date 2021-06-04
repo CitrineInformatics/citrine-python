@@ -26,30 +26,30 @@ class DesignWorkflowCollection(Collection[DesignWorkflow]):
         workflow.project_id = self.project_id
         return workflow
 
-    def archive(self, uid: UUID):
+    def archive(self, workflow_id: UUID):
         """Archive a design workflow.
 
         Parameters
         ----------
-        uid: UUID
+        workflow_id: UUID
             Unique identifier of the workflow to archive
 
         """
         url = self._path_template.format(project_id=self.project_id) \
-            + "/{}/archive".format(uid)
+            + "/{}/archive".format(workflow_id)
         self.session.put_resource(url, {})
 
-    def restore(self, uid: UUID):
+    def restore(self, workflow_id: UUID):
         """Restore an archived design workflow.
 
         Parameters
         ----------
-        uid: UUID
+        workflow_id: UUID
             Unique identifier of the workflow to restore
 
         """
         url = self._path_template.format(project_id=self.project_id) \
-            + "/{}/restore".format(uid)
+            + "/{}/restore".format(workflow_id)
         self.session.put_resource(url, {})
 
     def delete(self, uid: Union[UUID, str]) -> Response:
