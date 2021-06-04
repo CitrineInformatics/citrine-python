@@ -297,7 +297,7 @@ class GemTableCollection(Collection[GemTable]):
         Parameters
         ----------
         table:
-            The persisted table config from which to build a table (or its ID).
+            The persisted table config from which to build a table (or its ID and version number).
         local_path
             The path to the local location to save the file
 
