@@ -26,7 +26,7 @@ The following example demonstrates how to use the python SDK to register a workf
     )
 
     # wait until the workflow is no longer validating
-    wait_while_validating(project.design_workflows, workflow, print_status_info=True)
+    wait_while_validating(collection=project.design_workflows, module=workflow, print_status_info=True)
 
     # print final validation status
     validated_workflow = project.design_workflows.get(workflow.uid)
@@ -59,7 +59,7 @@ Candidate results are paginated and returned as `DesignCandidate <#design-candid
     # create a score with the desired objectives and baselines
     score = LIScore(
         # create an objective to maximize shear modulus
-        # the descriptor key must match a descriptor in materials produced from teh design space
+        # the descriptor key must match a descriptor in materials produced from the design space
         objectives=[ScalarMaxObjective(descriptor_key='Shear modulus')],
         baselines=[150.0] # one for each objective
     )
@@ -68,7 +68,7 @@ Candidate results are paginated and returned as `DesignCandidate <#design-candid
     execution = workflow.design_executions.trigger(score)
 
     # wait for execution to complete
-    wait_while_executing(workflow.design_executions, execution, print_status_info=True)
+    wait_while_executing(collection=workflow.design_executions, execution=execution, print_status_info=True)
 
     # get the candidate generator
     execution_results = execution.candidates()

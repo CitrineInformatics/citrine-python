@@ -154,7 +154,7 @@ Transfering a dataset:
     strehlow_cook_dataset = band_gaps_project.datasets.get(strehlow_cook_dataset_id)
     
     # transfer ownership of the strehlow_cook_dataset to another project with a known ID semiconductors_id
-    band_gaps_project.transfer_resource(resource = strehlow_cook_dataset, receiving_project_uid = semiconductors_id)
+    band_gaps_project.transfer_resource(resource=strehlow_cook_dataset, receiving_project_uid=semiconductors_id)
 
 Files
 -----
