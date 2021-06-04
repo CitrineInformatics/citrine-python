@@ -70,7 +70,8 @@ class Collection(Generic[ResourceType], Pageable):
 
     def list(self,
              page: Optional[int] = None,
-             per_page: int = 100) -> Iterable[ResourceType]:
+             per_page: int = 100,
+             search_params: Optional[dict] = None) -> Iterable[ResourceType]:
         """
         Paginate over the elements of the collection.
 
@@ -86,7 +87,8 @@ class Collection(Generic[ResourceType], Pageable):
             Max number of results to return per page. Default is 100.  This parameter
             is used when making requests to the backend service.  If the page parameter
             is specified it limits the maximum number of elements in the response.
-
+        search_params: dict, optional
+            A dict that allows extra parameters to be added to the request parameters
         Returns
         -------
         Iterable[ResourceType]
@@ -96,7 +98,8 @@ class Collection(Generic[ResourceType], Pageable):
         return self._paginator.paginate(page_fetcher=self._fetch_page,
                                         collection_builder=self._build_collection_elements,
                                         page=page,
-                                        per_page=per_page)
+                                        per_page=per_page,
+                                        search_params=search_params)
 
     def update(self, model: CreationType) -> CreationType:
         """Update a particular element of the collection."""

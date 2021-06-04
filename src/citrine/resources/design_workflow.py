@@ -5,6 +5,7 @@ from citrine._rest.collection import Collection
 from citrine._session import Session
 from citrine.informatics.workflows import DesignWorkflow
 from citrine.resources.response import Response
+from typing import Optional, Union, Iterable
 
 
 class DesignWorkflowCollection(Collection[DesignWorkflow]):
@@ -36,7 +37,7 @@ class DesignWorkflowCollection(Collection[DesignWorkflow]):
 
         """
         url = self._path_template.format(project_id=self.project_id) \
-            + "/{}/archive".format(workflow_id)
+              + "/{}/archive".format(workflow_id)
         self.session.put_resource(url, {})
 
     def restore(self, workflow_id: UUID):
@@ -49,10 +50,16 @@ class DesignWorkflowCollection(Collection[DesignWorkflow]):
 
         """
         url = self._path_template.format(project_id=self.project_id) \
-            + "/{}/restore".format(workflow_id)
+              + "/{}/restore".format(workflow_id)
         self.session.put_resource(url, {})
 
     def delete(self, uid: Union[UUID, str]) -> Response:
         """Design Workflows cannot be deleted; they can be archived instead."""
         raise NotImplementedError(
             "Design Workflows cannot be deleted; they can be archived instead.")
+
+    def list_archived(self,
+                      page: Optional[int] = None,
+                      per_page: int = 1000) -> Iterable[DesignWorkflow]:
+        """List archived Design Workflows"""
+        super().list(page, per_page, search_params={"filter": "archived eq 'true'"})
