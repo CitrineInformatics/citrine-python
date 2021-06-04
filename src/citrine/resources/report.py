@@ -22,9 +22,9 @@ class ReportResource(Resource['ReportResource']):
         self.project_id = project_id
         self.session = session
 
-    def get(self, module_id: UUID) -> Report:
+    def get(self, uid: UUID) -> Report:
         """Gets a single report keyed on the module_id."""
-        url_path = self._path_template.format(project_id=self.project_id, module_id=module_id)
+        url_path = self._path_template.format(project_id=self.project_id, module_id=uid)
         data = self.session.get_resource(url_path)
         report = Report.build(data)
         report.session = self.session

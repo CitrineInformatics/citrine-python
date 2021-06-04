@@ -53,6 +53,7 @@ class IngredientsToSimpleMixturePredictor(
 
     def __init__(self,
                  name: str,
+                 *,
                  description: str,
                  output: FormulationDescriptor,
                  id_to_quantity: Mapping[str, RealDescriptor],

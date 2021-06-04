@@ -114,7 +114,7 @@ class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExec
     _collection_key = 'response'
     _resource = PredictorEvaluationExecution
 
-    def __init__(self, *,
+    def __init__(self,
                  project_id: UUID,
                  session: Session,
                  workflow_id: Optional[UUID] = None):
@@ -173,6 +173,7 @@ class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExec
         self._put_module_ref('restore', execution_id)
 
     def list(self,
+             *,
              page: Optional[int] = None,
              per_page: int = 100,
              predictor_id: Optional[UUID] = None

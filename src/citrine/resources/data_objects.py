@@ -36,7 +36,7 @@ class DataObjectCollection(DataConceptsCollection[DataObjectResourceType], ABC):
                 details="For performance reasons, please use list_by_attribute_bounds instead")
     def filter_by_attribute_bounds(
             self,
-            attribute_bounds: Dict[Union[AttributeTemplate, LinkByUID], BaseBounds],
+            attribute_bounds: Dict[Union[AttributeTemplate, LinkByUID], BaseBounds], *,
             page: Optional[int] = None, per_page: Optional[int] = None) -> List[DataObject]:
         """
         Get all objects in the collection with attributes within certain bounds.
@@ -84,7 +84,7 @@ class DataObjectCollection(DataConceptsCollection[DataObjectResourceType], ABC):
 
     def list_by_attribute_bounds(
             self,
-            attribute_bounds: Dict[Union[AttributeTemplate, LinkByUID], BaseBounds],
+            attribute_bounds: Dict[Union[AttributeTemplate, LinkByUID], BaseBounds], *,
             forward: bool = True, per_page: int = 100) -> Iterator[DataObject]:
         """
         Get all objects in the collection with attributes within certain bounds.
@@ -150,7 +150,7 @@ class DataObjectCollection(DataConceptsCollection[DataObjectResourceType], ABC):
             }
         }
 
-    def validate_templates(self,
+    def validate_templates(self, *,
                            model: DataObjectResourceType,
                            object_template: Optional[ObjectTemplateResourceType] = None,
                            ingredient_process_template: Optional[ProcessTemplate] = None)\

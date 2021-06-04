@@ -58,8 +58,9 @@ class FormulationDesignSpace(Resource['FormulationDesignSpace'], DesignSpace, AI
     )
     module_type = properties.String('module_type', default='DESIGN_SPACE', deserializable=False)
 
-    def __init__(self, *,
+    def __init__(self,
                  name: str,
+                 *,
                  description: str,
                  formulation_descriptor: FormulationDescriptor,
                  ingredients: Set[str],

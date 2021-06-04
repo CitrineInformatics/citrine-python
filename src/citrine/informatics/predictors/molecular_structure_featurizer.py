@@ -89,8 +89,9 @@ class MolecularStructureFeaturizer(Resource['MolecularStructureFeaturizer'], Pre
     typ = _properties.String('config.type', default='MoleculeFeaturizer', deserializable=False)
     module_type = _properties.String('module_type', default='PREDICTOR')
 
-    def __init__(self, *,
+    def __init__(self,
                  name: str,
+                 *,
                  description: str,
                  input_descriptor: MolecularStructureDescriptor = None,
                  features: Optional[List[str]] = None,

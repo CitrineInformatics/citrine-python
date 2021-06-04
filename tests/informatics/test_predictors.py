@@ -10,19 +10,19 @@ from citrine.informatics.descriptors import RealDescriptor, MolecularStructureDe
     FormulationDescriptor, ChemicalFormulaDescriptor
 from citrine.informatics.predictors import *
 
-x = RealDescriptor("x", 0, 100, "")
-y = RealDescriptor("y", 0, 100, "")
-z = RealDescriptor("z", 0, 100, "")
+x = RealDescriptor("x", lower_bound=0, upper_bound=100, units="")
+y = RealDescriptor("y", lower_bound=0, upper_bound=100, units="")
+z = RealDescriptor("z", lower_bound=0, upper_bound=100, units="")
 density = RealDescriptor('density', lower_bound=0, upper_bound=100, units='g/cm^3')
 shear_modulus = RealDescriptor('Property~Shear modulus', lower_bound=0, upper_bound=100, units='GPa')
 youngs_modulus = RealDescriptor('Property~Young\'s modulus', lower_bound=0, upper_bound=100, units='GPa')
 poissons_ratio = RealDescriptor('Property~Poisson\'s ratio', lower_bound=-1, upper_bound=0.5, units='')
 formulation = FormulationDescriptor('formulation')
 formulation_output = FormulationDescriptor('output formulation')
-water_quantity = RealDescriptor('water quantity', 0, 1, "")
-salt_quantity = RealDescriptor('salt quantity', 0, 1, "")
-data_source = GemTableDataSource(uuid.UUID('e5c51369-8e71-4ec6-b027-1f92bdc14762'), 0)
-formulation_data_source = GemTableDataSource(uuid.UUID('6894a181-81d2-4304-9dfa-a6c5b114d8bc'), 0, formulation)
+water_quantity = RealDescriptor('water quantity', lower_bound=0, upper_bound=1, units="")
+salt_quantity = RealDescriptor('salt quantity', lower_bound=0, upper_bound=1, units="")
+data_source = GemTableDataSource(table_id=uuid.UUID('e5c51369-8e71-4ec6-b027-1f92bdc14762'), table_version=0)
+formulation_data_source = GemTableDataSource(table_id=uuid.UUID('6894a181-81d2-4304-9dfa-a6c5b114d8bc'), table_version=0, formulation_descriptor=formulation)
 
 
 @pytest.fixture

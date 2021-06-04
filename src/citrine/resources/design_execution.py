@@ -103,7 +103,7 @@ class DesignExecution(Resource['DesignExecution'], Pageable, AsynchronousObject)
         for candidate in subset_collection:
             yield DesignCandidate.build(candidate)
 
-    def candidates(self,
+    def candidates(self, *,
                    page: Optional[int] = None,
                    per_page: int = 100,
                    ) -> Iterable[DesignCandidate]:
@@ -126,7 +126,7 @@ class DesignExecutionCollection(Collection["DesignExecution"]):
     _collection_key = 'response'
     _resource = DesignExecution
 
-    def __init__(self, *,
+    def __init__(self,
                  project_id: UUID,
                  session: Session,
                  workflow_id: Optional[UUID] = None):
@@ -180,7 +180,7 @@ class DesignExecutionCollection(Collection["DesignExecution"]):
         raise NotImplementedError(
             "Design Executions cannot be restored")
 
-    def list(self,
+    def list(self, *,
              page: Optional[int] = None,
              per_page: int = 100,
              ) -> Iterator[DesignExecution]:

@@ -39,6 +39,7 @@ class IngredientFractionsPredictor(Resource["IngredientFractionsPredictor"],
 
     def __init__(self,
                  name: str,
+                 *,
                  description: str,
                  input_descriptor: FormulationDescriptor,
                  ingredients: Set[str]):

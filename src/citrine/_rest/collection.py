@@ -68,7 +68,7 @@ class Collection(Generic[ResourceType], Pageable):
         except NonRetryableException as e:
             raise ModuleRegistrationFailedException(model.__class__.__name__, e)
 
-    def list(self,
+    def list(self, *,
              page: Optional[int] = None,
              per_page: int = 100) -> Iterator[ResourceType]:
         """

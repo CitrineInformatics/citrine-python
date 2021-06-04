@@ -86,7 +86,7 @@ class GridProcessor(Resource['GridProcessor'], Processor, AIResourceMetadata):
         return ["name", "description", "grid_sizes", "typ"]
 
     def __init__(self,
-                 name: str,
+                 name: str, *,
                  description: str,
                  grid_sizes: Mapping[str, int]):
         self.name: str = name
@@ -128,7 +128,7 @@ class EnumeratedProcessor(Resource['EnumeratedProcessor'], Processor, AIResource
         return ["name", "description", "max_candidates", "typ"]
 
     def __init__(self,
-                 name: str,
+                 name: str, *,
                  description: str,
                  max_candidates: Optional[int] = None):
         self.name: str = name
@@ -174,7 +174,7 @@ class MonteCarloProcessor(Resource['GridProcessor'], Processor, AIResourceMetada
         return ["name", "description", "mode", "typ"]
 
     def __init__(self,
-                 name: str,
+                 name: str, *,
                  description: str,
                  max_candidates: Optional[int] = None,
                  mode: Optional[str] = None):

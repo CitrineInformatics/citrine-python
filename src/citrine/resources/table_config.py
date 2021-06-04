@@ -78,7 +78,7 @@ class TableConfig(Resource["TableConfig"]):
     rows = properties.List(properties.Object(Row), "rows")
     columns = properties.List(properties.Object(Column), "columns")
 
-    def __init__(self, *, name: str, description: str, datasets: List[UUID],
+    def __init__(self, name: str, *, description: str, datasets: List[UUID],
                  variables: List[Variable], rows: List[Row], columns: List[Column]):
         self.name = name
         self.description = description
@@ -249,7 +249,7 @@ class TableConfigCollection(Collection[TableConfig]):
         self.project_id = project_id
         self.session: Session = session
 
-    def get(self, uid: Union[UUID, str], version: Optional[int] = None):
+    def get(self, uid: Union[UUID, str], *, version: Optional[int] = None):
         """[ALPHA] Get a table config.
 
         If no version is specified, then the most recent version is returned.
@@ -268,7 +268,7 @@ class TableConfigCollection(Collection[TableConfig]):
 
     @deprecated(deprecated_in="0.124.0", removed_in="1.0.0",
                 details="get_with_version() is deprecated in favor of get()")
-    def get_with_version(self, table_config_uid: Union[UUID, str],
+    def get_with_version(self, *, table_config_uid: Union[UUID, str],
                          version_number: int) -> TableConfig:
         """[ALPHA] Get a Table Config at a specific version."""
         return self.get(uid=table_config_uid, version=version_number)  # pragma: no cover

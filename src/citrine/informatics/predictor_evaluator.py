@@ -104,8 +104,8 @@ class CrossValidationEvaluator(Serializable["CrossValidationEvaluator"], Predict
                                                "ignore_when_grouping")
     typ = properties.String("type", default="CrossValidationEvaluator", deserializable=False)
 
-    def __init__(self, *,
-                 name: str,
+    def __init__(self,
+                 name: str, *,
                  description: str = "",
                  responses: Set[str],
                  n_folds: int = 5,

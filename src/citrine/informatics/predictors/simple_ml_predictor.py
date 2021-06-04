@@ -52,6 +52,7 @@ class SimpleMLPredictor(Resource['SimplePredictor'], Predictor, AIResourceMetada
 
     def __init__(self,
                  name: str,
+                 *,
                  description: str,
                  inputs: List[Descriptor],
                  outputs: List[Descriptor],

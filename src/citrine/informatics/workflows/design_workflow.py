@@ -44,6 +44,7 @@ class DesignWorkflow(Resource['DesignWorkflow'], Workflow, AIResourceMetadata):
 
     def __init__(self,
                  name: str,
+                 *,
                  design_space_id: UUID,
                  processor_id: Optional[UUID],
                  predictor_id: UUID,

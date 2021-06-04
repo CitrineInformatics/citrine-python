@@ -106,13 +106,13 @@ def test_label_fraction_initialization(label_fraction_constraint):
 
 def test_range_defaults():
     """Check that deprecated and default values work as expected."""
-    assert ScalarRangeConstraint("x").lower_bound is None
-    assert ScalarRangeConstraint("x").upper_bound is None
-    assert ScalarRangeConstraint("x").lower_inclusive is True
-    assert ScalarRangeConstraint("x").upper_inclusive is True
+    assert ScalarRangeConstraint(descriptor_key="x").lower_bound is None
+    assert ScalarRangeConstraint(descriptor_key="x").upper_bound is None
+    assert ScalarRangeConstraint(descriptor_key="x").lower_inclusive is True
+    assert ScalarRangeConstraint(descriptor_key="x").upper_inclusive is True
 
-    assert ScalarRangeConstraint("x", upper_inclusive=False).upper_inclusive is False
-    assert ScalarRangeConstraint("x", lower_inclusive=False).lower_inclusive is False
+    assert ScalarRangeConstraint(descriptor_key="x", upper_inclusive=False).upper_inclusive is False
+    assert ScalarRangeConstraint(descriptor_key="x", lower_inclusive=False).lower_inclusive is False
 
-    assert ScalarRangeConstraint("x", lower_bound=0).lower_bound == 0.0
-    assert ScalarRangeConstraint("x", upper_bound=0).upper_bound == 0.0
+    assert ScalarRangeConstraint(descriptor_key="x", lower_bound=0).lower_bound == 0.0
+    assert ScalarRangeConstraint(descriptor_key="x", upper_bound=0).upper_bound == 0.0

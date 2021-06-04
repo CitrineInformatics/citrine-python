@@ -44,8 +44,9 @@ class ProductDesignSpace(Resource['ProductDesignSpace'], DesignSpace, AIResource
     typ = properties.String('config.type', default='ProductDesignSpace', deserializable=False)
     module_type = properties.String('module_type', default='DESIGN_SPACE')
 
-    def __init__(self, *,
+    def __init__(self,
                  name: str,
+                 *,
                  description: str,
                  subspaces: Optional[List[Union[UUID, DesignSpace]]] = None,
                  dimensions: Optional[List[Dimension]] = None):

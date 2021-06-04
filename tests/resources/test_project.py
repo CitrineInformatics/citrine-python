@@ -157,7 +157,7 @@ def test_transfer_resource(project, session):
         name="dataset to transfer", summary="test", description="test"
     ))
 
-    assert project.transfer_resource(dataset, project.uid)
+    assert project.transfer_resource(resource=dataset, receiving_project_uid=project.uid)
 
     expected_call = FakeCall(
         method='POST',
@@ -170,7 +170,7 @@ def test_transfer_resource(project, session):
     assert expected_call == session.last_call
 
     with pytest.raises(RuntimeError):
-        project.transfer_resource(ProcessSpec("dummy process"), project.uid)
+        project.transfer_resource(resource=ProcessSpec("dummy process"), receiving_project_uid=project.uid)
 
 
 def test_datasets_get_project_id(project):
@@ -347,7 +347,7 @@ def test_list_projects_filters_non_projects(collection, session):
     # Then
     with pytest.raises(RuntimeError):
         # When
-        projects = list(collection.list())
+        list(collection.list())
 
 
 def test_list_projects_with_page_params(collection, session):
@@ -394,7 +394,7 @@ def test_search_projects_with_pagination(paginated_collection, paginated_session
     common_name = "same name"
 
     same_name_projects_data = ProjectDataFactory.create_batch(35, name=common_name)
-    more_data = ProjectDataFactory.create_batch(35, name="some other name")
+    ProjectDataFactory.create_batch(35, name="some other name")
 
 
     per_page = 10
@@ -430,7 +430,7 @@ def test_delete_project(collection, session):
     uid = '151199ec-e9aa-49a1-ac8e-da722aaf74c4'
 
     # When
-    resp = collection.delete(uid)
+    collection.delete(uid)
 
     # Then
     assert 1 == session.num_calls
@@ -466,7 +466,7 @@ def test_update_user_role(project, session):
     session.set_response({'actions': [], 'role': 'LEAD'})
 
     # When
-    update_user_role_response = project.update_user_role(user["id"], LEAD)
+    update_user_role_response = project.update_user_role(user_uid=user["id"], role=LEAD)
 
     # Then
     assert 1 == session.num_calls
@@ -481,7 +481,7 @@ def test_update_user_actions(project, session):
     session.set_response({'actions': ['READ'], 'role': 'LEAD'})
 
     # When
-    update_user_role_response = project.update_user_role(user["id"], LEAD, [WRITE])
+    update_user_role_response = project.update_user_role(user_uid=user["id"], role=LEAD, actions=[WRITE])
 
     # Then
     assert 1 == session.num_calls

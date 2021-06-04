@@ -32,7 +32,7 @@ class ScalarRangeConstraint(Serializable['ScalarRangeConstraint'], Constraint):
     upper_inclusive = properties.Boolean('max_inclusive')
     typ = properties.String('type', default='ScalarRange')
 
-    def __init__(self,
+    def __init__(self, *,
                  descriptor_key: str,
                  lower_bound: Optional[float] = None,
                  upper_bound: Optional[float] = None,

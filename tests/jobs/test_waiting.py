@@ -26,7 +26,7 @@ def test_wait_while_validating(sleep_mock):
     module.in_progress = in_progress
     collection.get.return_value = module
 
-    wait_while_validating(collection, module, print_status_info=True)
+    wait_while_validating(collection=collection, module=module, print_status_info=True)
 
     assert("Status = VALID" in captured_output.getvalue())
     assert("The predictor is now validated." in captured_output.getvalue())
@@ -51,7 +51,7 @@ def test_wait_while_validating_timeout(sleep_mock, time_mock):
     collection.get.return_value = module
 
     with pytest.raises(ConditionTimeoutError):
-        wait_while_validating(collection, module, timeout=1.0)
+        wait_while_validating(collection=collection, module=module, timeout=1.0)
 
 
 @mock.patch('time.sleep', return_value=None)
@@ -67,6 +67,6 @@ def test_wait_while_executing(sleep_mock):
     workflow_execution.in_progress = in_progress
     collection.get.return_value = workflow_execution
 
-    wait_while_executing(collection, workflow_execution, print_status_info=True)
+    wait_while_executing(collection=collection, execution=workflow_execution, print_status_info=True)
 
     assert("SUCCEEDED" in captured_output.getvalue())

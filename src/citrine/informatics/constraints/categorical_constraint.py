@@ -25,6 +25,7 @@ class AcceptableCategoriesConstraint(Serializable['AcceptableCategoriesConstrain
     typ = properties.String('type', default='AcceptableCategoriesConstraint')
 
     def __init__(self,
+                 *,
                  descriptor_key: str,
                  acceptable_categories: List[str]):
         self.descriptor_key = descriptor_key

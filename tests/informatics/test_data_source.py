@@ -9,10 +9,12 @@ from citrine.resources.file_link import FileLink
 
 
 @pytest.fixture(params=[
-    CSVDataSource(FileLink("foo.spam", "http://example.com"), {"spam": RealDescriptor("eggs", lower_bound=0, upper_bound=1.0, units="")}, ["identifier"]),
-    GemTableDataSource(uuid.uuid4(), 1),
-    GemTableDataSource(uuid.uuid4(), "2"),
-    GemTableDataSource(uuid.uuid4(), "2", FormulationDescriptor("formulation")),
+    CSVDataSource(file_link=FileLink("foo.spam", "http://example.com"),
+                  column_definitions={"spam": RealDescriptor("eggs", lower_bound=0, upper_bound=1.0, units="")},
+                  identifiers=["identifier"]),
+    GemTableDataSource(table_id=uuid.uuid4(), table_version=1),
+    GemTableDataSource(table_id=uuid.uuid4(), table_version="2"),
+    GemTableDataSource(table_id=uuid.uuid4(), table_version="2", formulation_descriptor=FormulationDescriptor("formulation")),
 ])
 def data_source(request):
     return request.param

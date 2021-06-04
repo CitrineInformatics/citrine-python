@@ -45,7 +45,7 @@ class ContinuousDimension(Serializable['ContinuousDimension'], Dimension):
     typ = properties.String('type', default='ContinuousDimension', deserializable=False)
 
     def __init__(self,
-                 descriptor: RealDescriptor,
+                 descriptor: RealDescriptor, *,
                  lower_bound: Optional[float] = None,
                  upper_bound: Optional[float] = None):
         self.descriptor: RealDescriptor = descriptor
@@ -76,7 +76,7 @@ class EnumeratedDimension(Serializable['EnumeratedDimension'], Dimension):
     typ = properties.String('type', default='EnumeratedDimension', deserializable=False)
 
     def __init__(self,
-                 descriptor: Descriptor,
+                 descriptor: Descriptor, *,
                  values: List[str]):
         self.descriptor: Descriptor = descriptor
         self.values: List[str] = values

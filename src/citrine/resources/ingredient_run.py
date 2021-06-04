@@ -118,7 +118,7 @@ class IngredientRunCollection(ObjectRunCollection[IngredientRun]):
         return IngredientRun
 
     def list_by_spec(self,
-                     uid: Union[UUID, str, LinkByUID, GEMDIngredientSpec],
+                     uid: Union[UUID, str, LinkByUID, GEMDIngredientSpec], *,
                      scope: Optional[str] = None) -> Iterator[IngredientRun]:
         """
         [ALPHA] Get the ingredient runs using the specified ingredient spec.
@@ -141,7 +141,7 @@ class IngredientRunCollection(ObjectRunCollection[IngredientRun]):
         return self._get_relation('ingredient-specs', uid=link.id, scope=link.scope)
 
     def list_by_process(self,
-                        uid: Union[UUID, str, LinkByUID, GEMDProcessRun],
+                        uid: Union[UUID, str, LinkByUID, GEMDProcessRun], *,
                         scope: Optional[str] = None) -> Iterator[IngredientRun]:
         """
         [ALPHA] Get ingredients to a process.
@@ -164,7 +164,7 @@ class IngredientRunCollection(ObjectRunCollection[IngredientRun]):
         return self._get_relation(relation='process-runs', uid=link.id, scope=link.scope)
 
     def list_by_material(self,
-                         uid: Union[UUID, str, LinkByUID, GEMDMaterialRun],
+                         uid: Union[UUID, str, LinkByUID, GEMDMaterialRun], *,
                          scope: Optional[str] = None) -> Iterator[IngredientRun]:
         """
         [ALPHA] Get ingredients using the specified material.

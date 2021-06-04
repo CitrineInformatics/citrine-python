@@ -15,7 +15,7 @@ class DescriptorMethods:
         self.project_id = project_id
         self.session: Session = session
 
-    def from_predictor_responses(self, predictor: Predictor,
+    def from_predictor_responses(self, *, predictor: Predictor,
                                  inputs: List[Descriptor]) -> List[Descriptor]:
         """
         Get responses for a predictor, given an input space.
@@ -43,7 +43,7 @@ class DescriptorMethods:
         )
         return [Descriptor.build(r) for r in response['responses']]
 
-    def descriptors_from_data_source(self, data_source: DataSource) -> List[Descriptor]:
+    def descriptors_from_data_source(self, *, data_source: DataSource) -> List[Descriptor]:
         """
         Get all descriptors associated with a data source.
 

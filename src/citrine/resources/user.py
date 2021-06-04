@@ -36,6 +36,7 @@ class User(Resource['User']):
     is_admin = properties.Boolean('is_admin')
 
     def __init__(self,
+                 *,
                  screen_name: str,
                  email: str,
                  position: str,
@@ -89,6 +90,7 @@ class UserCollection(Collection[User]):
         return user
 
     def register(self,
+                 *,
                  screen_name: str,
                  email: str,
                  position: str,

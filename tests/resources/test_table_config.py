@@ -59,7 +59,7 @@ def test_get_table_config(collection, session):
     ver_number = table_config_response["version"]["version_number"]
 
     # When
-    retrieved_table_config: TableConfig = collection.get(defn_id, ver_number)
+    retrieved_table_config: TableConfig = collection.get(defn_id, version=ver_number)
 
     # Then
     assert 1 == session.num_calls
