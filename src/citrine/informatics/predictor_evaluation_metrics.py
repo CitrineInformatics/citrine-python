@@ -171,7 +171,7 @@ class CoverageProbability(Serializable["CoverageProbability"], PredictorEvaluati
     _level_str = properties.String("coverage_level")
     typ = properties.String("type", default="CoverageProbability", deserializable=False)
 
-    def __init__(self, coverage_level: Union[str, float] = "0.683"):
+    def __init__(self, *, coverage_level: Union[str, float] = "0.683"):
         if isinstance(coverage_level, str):
             try:
                 raw_float = float(coverage_level)

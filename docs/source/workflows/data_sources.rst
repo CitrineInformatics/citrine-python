@@ -104,7 +104,7 @@ A CSV data source and :class:`~citrine.informatics.predictors.ingredients_to_for
     from citrine.informatics.descriptors import FormulationDescriptor, RealDescriptor
     from citrine.informatics.predictors import IngredientsToFormulationPredictor
 
-    file_link = dataset.files.upload("./saline_solutions.csv", "saline_solutions.csv")
+    file_link = dataset.files.upload(file_path="./saline_solutions.csv", dest_name="saline_solutions.csv")
 
     # create descriptors for each ingredient quantity (volume fraction)
     water_quantity = RealDescriptor(key='water quantity', lower_bound=0, upper_bound=1, units="")

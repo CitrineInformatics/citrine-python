@@ -1,6 +1,6 @@
 """Resources that represent both individual and collections of predictor evaluation executions."""
 from functools import lru_cache, partial
-from typing import Optional, Iterable, Union
+from typing import Optional, Union, Iterator
 from uuid import UUID
 
 from citrine._rest.collection import Collection
@@ -19,12 +19,13 @@ class PredictorEvaluationExecution(Resource['PredictorEvaluationExecution'], Asy
     Possible statuses are INPROGRESS, SUCCEEDED, and FAILED.
     Predictor evaluation executions also have a ``status_description`` field with more information.
 
-    Parameters
-    ----------
-    project_id: str
-        Unique identifier of the project that contains the workflow execution
-
     """
+
+    # This should really be _session, but _fetch_page assumes there is a 'pageable' parameter
+    _session: Optional[Session] = None
+    """:str: Unique identifier of the project that contains the workflow execution"""
+    project_id: Optional[UUID] = None
+    """:Optional[UUID]: Unique ID of the project that contains this execution."""
 
     uid: UUID = properties.UUID('id', serializable=False)
     """:UUID: Unique identifier of the workflow execution"""
@@ -52,9 +53,8 @@ class PredictorEvaluationExecution(Resource['PredictorEvaluationExecution'], Asy
     """:Optional[List[str]]: human-readable reasons why the execution is experimental"""
 
     def __init__(self):
-        """This shouldn't be called, but it defines members that are set elsewhere."""
-        self.project_id: Optional[UUID] = None  # pragma: no cover
-        self.session: Optional[Session] = None  # pragma: no cover
+        """Predictor evaluation executions are not directly instantiated by the user."""
+        pass  # pragma: no cover
 
     def __str__(self):
         return '<PredictorEvaluationExecution {!r}>'.format(str(self.uid))
@@ -93,7 +93,7 @@ class PredictorEvaluationExecution(Resource['PredictorEvaluationExecution'], Asy
 
         """
         params = {"evaluator_name": evaluator_name}
-        resource = self.session.get_resource(self._path() + "/results", params=params)
+        resource = self._session.get_resource(self._path() + "/results", params=params)
         return PredictorEvaluationResult.build(resource)
 
     def __getitem__(self, item):
@@ -114,7 +114,7 @@ class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExec
     _collection_key = 'response'
     _resource = PredictorEvaluationExecution
 
-    def __init__(self, *,
+    def __init__(self,
                  project_id: UUID,
                  session: Session,
                  workflow_id: Optional[UUID] = None):
@@ -125,7 +125,7 @@ class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExec
     def build(self, data: dict) -> PredictorEvaluationExecution:
         """Build an individual PredictorEvaluationExecution."""
         execution = PredictorEvaluationExecution.build(data)
-        execution.session = self.session
+        execution._session = self.session
         execution.project_id = self.project_id
         return execution
 
@@ -173,10 +173,11 @@ class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExec
         self._put_module_ref('restore', execution_id)
 
     def list(self,
+             *,
              page: Optional[int] = None,
              per_page: int = 100,
              predictor_id: Optional[UUID] = None
-             ) -> Iterable[PredictorEvaluationExecution]:
+             ) -> Iterator[PredictorEvaluationExecution]:
         """
         Paginate over the elements of the collection.
 
@@ -197,7 +198,7 @@ class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExec
 
         Returns
         -------
-        Iterable[ResourceType]
+        Iterator[ResourceType]
             Resources in this collection.
 
         """

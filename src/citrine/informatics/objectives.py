@@ -1,7 +1,4 @@
 """Tools for working with Objectives."""
-from typing import Optional
-
-from citrine._session import Session
 from citrine._serialization import properties
 from citrine._serialization.serializable import Serializable
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
@@ -43,11 +40,8 @@ class ScalarMaxObjective(Serializable['ScalarMaxObjective'], Objective):
     descriptor_key = properties.String('descriptor_key')
     typ = properties.String('type', default='ScalarMax')
 
-    def __init__(self,
-                 descriptor_key: str,
-                 session: Optional[Session] = None):
+    def __init__(self, descriptor_key: str):
         self.descriptor_key = descriptor_key
-        self.session: Optional[Session] = session
 
     def __str__(self):
         return '<ScalarMaxObjective {!r}>'.format(self.descriptor_key)
@@ -67,11 +61,8 @@ class ScalarMinObjective(Serializable['ScalarMinObjective'], Objective):
     descriptor_key = properties.String('descriptor_key')
     typ = properties.String('type', default='ScalarMin')
 
-    def __init__(self,
-                 descriptor_key: str,
-                 session: Optional[Session] = None):
+    def __init__(self, descriptor_key: str):
         self.descriptor_key = descriptor_key
-        self.session: Optional[Session] = session
 
     def __str__(self):
         return '<ScalarMinObjective {!r}>'.format(self.descriptor_key)

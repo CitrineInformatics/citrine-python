@@ -145,6 +145,7 @@ class ChemicalFormulaFeaturizer(Resource['ChemicalFormulaFeaturizer'],
 
     def __init__(self,
                  name: str,
+                 *,
                  description: str,
                  input_descriptor: ChemicalFormulaDescriptor,
                  features: Optional[List[str]] = None,

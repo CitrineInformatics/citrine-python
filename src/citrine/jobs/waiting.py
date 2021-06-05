@@ -1,15 +1,12 @@
 import time
 from pprint import pprint
+from typing import Union
+
 from citrine._rest.collection import Collection
 from citrine._rest.asynchronous_object import AsynchronousObject
 from citrine.informatics.modules import Module
 from citrine.resources.predictor_evaluation_execution import PredictorEvaluationExecution
 from citrine.resources.design_execution import DesignExecution
-from citrine.resources.workflow_executions import (
-    WorkflowExecution,
-    WorkflowExecutionStatus,
-)
-from typing import Union, Optional
 
 
 class ConditionTimeoutError(RuntimeError):
@@ -28,42 +25,25 @@ def _print_string_status(
     )
 
 
-def _pretty_execution_status(status: WorkflowExecutionStatus):
-    status_text = status.status
-    output_text = status_text if status_text != "InProgress" else "In progress"
-    return output_text
-
-
-def _print_execution_status(
-    status: WorkflowExecutionStatus, start_time: float, line_end: str = "\r"
-):
-    print(
-        "Status = {:<25}Elapsed time".format(_pretty_execution_status(status)),
-        " = {}s".format(str(int(time.time() - start_time)).rjust(3)),
-        end=line_end,
-    )
-
-
 def wait_for_asynchronous_object(
-    resource: Union[AsynchronousObject, WorkflowExecution],
-    collection: Optional[Collection[AsynchronousObject]] = None,
+    *,
+    resource: AsynchronousObject,
+    collection: Collection[AsynchronousObject],
     print_status_info: bool = False,
     timeout: float = 1800.0,
     interval: float = 3.0
-) -> Union[AsynchronousObject, WorkflowExecution]:
+) -> AsynchronousObject:
     """
     Wait until an asynchronous object has finished.
 
     This could be a module, workflow, workflow execution, or report.
-    WorkflowExecution is deprecated, and once it is removed the special logic required here
-    for WorkflowExecutions can be removed.
 
     Parameters
     ----------
-    resource: Union[AsynchronousObject, WorkflowExecution]
+    resource: AsynchronousObject
         a module, workflow, workflow execution, or report to monitor
-    collection: Optional[Collection[AsynchronousObjet]]
-        Collection containing the resource. Not necessary for WorkflowExecution
+    collection: Collection[AsynchronousObject]
+        Collection containing the resource
     print_status_info: bool
         Whether to print status info, by default False
     timeout : float
@@ -73,7 +53,7 @@ def wait_for_asynchronous_object(
 
     Returns
     -------
-    Union[AsynchronousObject, WorkflowExecution]
+    AsynchronousObject
         The resource after the asynchronous work has finished or timed out.
 
     Raises
@@ -85,36 +65,26 @@ def wait_for_asynchronous_object(
     start = time.time()
 
     def is_finished():
-        if isinstance(resource, WorkflowExecution):
-            status = resource.status()
-            if print_status_info:
-                _print_execution_status(status, start)
-            return not status.in_progress
-        else:
-            if collection is None:
-                raise ValueError("Must provide collection")
-            current_resource = collection.get(resource.uid)
-            if print_status_info:
-                _print_string_status(current_resource.status, start)
-            in_progress = current_resource.in_progress()
-            return not in_progress
+        current_resource = collection.get(resource.uid)
+        if print_status_info:
+            _print_string_status(current_resource.status, start)
+        in_progress = current_resource.in_progress()
+        return not in_progress
 
     while not is_finished() and (time.time() - start < timeout):
         time.sleep(interval)
     if not is_finished():
         raise ConditionTimeoutError("Timeout reached, but task is still in progress")
 
-    if isinstance(resource, WorkflowExecution):
-        return resource
-    else:
-        current_resource = collection.get(resource.uid)
-        if print_status_info and hasattr(current_resource, 'status_info'):
-            print("\nStatus info:")
-            pprint(current_resource.status_info)
-        return current_resource
+    current_resource = collection.get(resource.uid)
+    if print_status_info and hasattr(current_resource, 'status_info'):
+        print("\nStatus info:")
+        pprint(current_resource.status_info)
+    return current_resource
 
 
 def wait_while_validating(
+    *,
     collection: Collection[Module],
     module: Module,
     print_status_info: bool = False,
@@ -148,22 +118,25 @@ def wait_while_validating(
         If fails to validate within timeout
 
     """
-    return wait_for_asynchronous_object(module, collection, print_status_info, timeout, interval)
+    return wait_for_asynchronous_object(resource=module, collection=collection,
+                                        print_status_info=print_status_info, timeout=timeout,
+                                        interval=interval)
 
 
 def wait_while_executing(
-    execution: Union[WorkflowExecution, PredictorEvaluationExecution, DesignExecution],
+    *,
+    collection: Union[Collection[PredictorEvaluationExecution], Collection[DesignExecution]],
+    execution: Union[PredictorEvaluationExecution, DesignExecution],
     print_status_info: bool = False,
     timeout: float = 1800.0,
     interval: float = 3.0,
-    collection: Collection[Module] = None,
-) -> Union[WorkflowExecution, PredictorEvaluationExecution, DesignExecution]:
+) -> Union[PredictorEvaluationExecution, DesignExecution]:
     """
     Wait until execution is finished.
 
     Parameters
     ----------
-    execution : WorkflowExecution, PredictorEvaluationExecution or DesignExecution
+    execution : Union[PredictorEvaluationExecution, DesignExecution]
         an execution to monitor
     print_status_info : bool, optional
         Whether to print status info, by default False
@@ -171,12 +144,12 @@ def wait_while_executing(
         Maximum time spent inquiring in seconds, by default 1800.0
     interval : float, optional
         Inquiry interval in seconds, by default 3.0
-    collection : Collection[Module]
-        Collection containing module, not needed for deprecated WorkflowExecution
+    collection : Union[Collection[PredictorEvaluationExecution], Collection[DesignExecution]]
+        Collection containing executions
 
     Returns
     -------
-    WorkflowExecution, PredictorEvaluationExecution or DesignExecution
+    Union[PredictorEvaluationExecution, DesignExecution]
         the updated execution after it has finished executing
 
 
@@ -186,5 +159,6 @@ def wait_while_executing(
         If fails to finish execution within timeout
 
     """
-    return wait_for_asynchronous_object(execution, collection,
-                                        print_status_info, timeout, interval)
+    return wait_for_asynchronous_object(resource=execution, collection=collection,
+                                        print_status_info=print_status_info, timeout=timeout,
+                                        interval=interval)

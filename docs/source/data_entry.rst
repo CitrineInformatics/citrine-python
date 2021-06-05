@@ -253,7 +253,7 @@ Example with validation errors for an ingredient:
         labels=["ingredient"]
     )
     dataset.ingredient_specs.validate_templates(
-        ingredient_spec,
+        model=ingredient_spec,
         ingredient_process_template=process_template
     )
 

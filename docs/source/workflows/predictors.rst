@@ -41,7 +41,7 @@ The following example demonstrates how to use the python SDK to create an :class
        description = 'Predictor description',
        inputs = [input_descriptor_1, input_descriptor_2],
        output = output_descriptor_1,
-       training_data = [GemTableDataSource(training_data_table_uid, 1)]
+       training_data = [GemTableDataSource(table_id=training_data_table_uid, table_version=1)]
    )
 
    predictor = create_or_update(collection=project.predictors,
@@ -74,7 +74,7 @@ The following example demonstrates how to use the python SDK to create a :class:
        name = 'Predictor name',
        description = 'Predictor description',
        predictors = [predictor1.uid, predictor2.uid, predictor3.uid],
-       training_data = [GemTableDataSource(training_data_table_uid, 1)] # training data shared by all sub-predictors
+       training_data = [GemTableDataSource(table_id=training_data_table_uid, table_version=1)] # training data shared by all sub-predictors
    )
 
    # register or update predictor by name
@@ -205,7 +205,7 @@ The following example demonstrates how to use a :class:`~citrine.informatics.pre
         name='Density from solvent molecular structure',
         description='Predict the density from the solvent molecular structure using molecular structure features.',
         predictors = [featurizer, ml_predictor],
-        training_data = [GemTableDataSource(training_data_table_uid, 1)] # training data shared by all sub-predictors
+        training_data = [GemTableDataSource(table_id=training_data_table_uid, table_version=1)] # training data shared by all sub-predictors
     )
  
     # register or update predictor by name
@@ -285,7 +285,7 @@ The following example demonstrates how to use a :class:`~citrine.informatics.pre
         name='Melting temperature from alloy chemical formula',
         description='Predict the melting temperature from the alloy chemical formula using chemical formula features.',
         predictors = [featurizer, ml_predictor],
-        training_data = [GemTableDataSource(training_data_table_uid, 1)] # training data shared by all sub-predictors
+        training_data = [GemTableDataSource(table_id=training_data_table_uid, table_version=1)] # training data shared by all sub-predictors
     )
 
     # register or update predictor by name
@@ -304,7 +304,7 @@ Formulations are constructed automatically by GEM Tables when a ``formulation_de
 an :class:`~citrine.informatics.predictors.ingredients_to_formulation_predictor.IngredientsToFormulationPredictor` in not required in those cases.
 
 Ingredients are specified by a map from ingredient id to the descriptor that contains the ingredient's quantity.
-For example, ``{'water': RealDescriptor('water quantity', 0, 1}`` defines an ingredient ``water`` with quantity held by the descriptor ``water quantity``.
+For example, ``{'water': RealDescriptor('water quantity', lower_bound=0, upper_bound=1, units='')}`` defines an ingredient ``water`` with quantity held by the descriptor ``water quantity``.
 There must be a corresponding (id, quantity) pair in the map for all possible ingredients.
 If a material does not contain data for a given quantity descriptor key it is assumed that ingredient is not present in the mixture.
 
@@ -353,11 +353,11 @@ The following example illustrates how an :class:`~citrine.informatics.predictors
     from citrine.informatics.descriptors import FormulationDescriptor, RealDescriptor
     from citrine.informatics.predictors import IngredientsToFormulationPredictor
 
-    file_link = dataset.files.upload("./saline_solutions.csv", "saline_solutions.csv")
+    file_link = dataset.files.upload(file_path="./saline_solutions.csv", dest_name"saline_solutions.csv")
 
     # create descriptors for each ingredient quantity (volume fraction)
-    water_quantity = RealDescriptor(key='water quantity', 0, 1, units='')
-    salt_quantity = RealDescriptor(key='salt quantity', 0, 1, units='')
+    water_quantity = RealDescriptor(key='water quantity', lower_bound=0, upper_bound=1, units='')
+    salt_quantity = RealDescriptor(key='salt quantity', lower_bound=0, upper_bound=1, units='')
 
     # create a descriptor to hold density data
     density = RealDescriptor(key='density', lower_bound=0, upper_bound=1000, units='g/cc')
@@ -639,7 +639,7 @@ The following example demonstrates how to use the python SDK to create a :class:
    from citrine.informatics.data_sources import GemTableDataSource
 
    # create a session with citrine using your API key
-   session = Citrine(api_key = API_KEY)
+   session = Citrine(api_key=API_KEY)
 
    # find project by name 'Example project' or create it if not found
    project = find_or_create_project(project_collection=session.projects,
@@ -654,7 +654,7 @@ The following example demonstrates how to use the python SDK to create a :class:
        inputs = [input_descriptor_1, input_descriptor_2],
        outputs = [output_descriptor_1, output_descriptor_2],
        latent_variables = [latent_variable_descriptor_1],
-       training_data = [GemTableDataSource(training_data_table_uid, 1)]
+       training_data = [GemTableDataSource(table_id=training_data_table_uid, table_version=1)]
    )
 
    # register predictor or update predictor of same name if it already
@@ -685,7 +685,7 @@ The following demonstrates how to create an :class:`~citrine.informatics.predict
     from citrine.informatics.descriptors import FormulationDescriptor
 
     # create a session with citrine using your API key
-    session = Citrine(api_key = API_KEY)
+    session = Citrine(api_key=API_KEY)
 
     # find project by name 'Example project' or create it if not found
     project = find_or_create_project(project_collection=session.projects,

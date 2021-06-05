@@ -2,7 +2,6 @@ from typing import List, Mapping, Any
 
 from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
-from citrine._session import Session
 from citrine.informatics.descriptors import Descriptor
 from citrine.informatics.design_spaces.design_space import DesignSpace
 from citrine._rest.ai_resource_metadata import AIResourceMetadata
@@ -40,15 +39,14 @@ class EnumeratedDesignSpace(Resource['EnumeratedDesignSpace'], DesignSpace, AIRe
 
     def __init__(self,
                  name: str,
+                 *,
                  description: str,
                  descriptors: List[Descriptor],
-                 data: List[Mapping[str, Any]],
-                 session: Session = Session()):
+                 data: List[Mapping[str, Any]]):
         self.name: str = name
         self.description: str = description
         self.descriptors: List[Descriptor] = descriptors
         self.data: List[Mapping[str, Any]] = data
-        self.session: Session = session
 
     def _post_dump(self, data: dict) -> dict:
         data['display_name'] = data['config']['name']

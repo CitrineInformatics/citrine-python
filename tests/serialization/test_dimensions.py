@@ -12,7 +12,6 @@ def valid_continuous_data():
     """Produce valid continuous dimension data."""
     return dict(
         type='ContinuousDimension',
-        template_id=str(uuid.uuid4()),
         descriptor=dict(
             type='Real',
             descriptor_key='alpha',
@@ -30,7 +29,6 @@ def valid_enumerated_data():
     """Produce valid enumerated dimension data."""
     return dict(
         type='EnumeratedDimension',
-        template_id=str(uuid.uuid4()),
         descriptor=dict(
             type='Categorical',
             descriptor_key='color',
@@ -46,7 +44,6 @@ def test_simple_continuous_deserialization(valid_continuous_data):
     assert type(dimension) == ContinuousDimension
     assert dimension.lower_bound == 6.0
     assert dimension.upper_bound == 7.0
-    assert dimension.template_id == uuid.UUID(valid_continuous_data['template_id'])
     assert type(dimension.descriptor) == RealDescriptor
 
 
@@ -56,7 +53,6 @@ def test_polymorphic_continuous_deserialization(valid_continuous_data):
     assert type(dimension) == ContinuousDimension
     assert dimension.lower_bound == 6.0
     assert dimension.upper_bound == 7.0
-    assert dimension.template_id == uuid.UUID(valid_continuous_data['template_id'])
     assert type(dimension.descriptor) == RealDescriptor
 
 
@@ -72,7 +68,6 @@ def test_simple_enumerated_deserialization(valid_enumerated_data):
     dimension: EnumeratedDimension = EnumeratedDimension.build(valid_enumerated_data)
     assert type(dimension) == EnumeratedDimension
     assert dimension.values == ['red']
-    assert dimension.template_id == uuid.UUID(valid_enumerated_data['template_id'])
     assert type(dimension.descriptor) == CategoricalDescriptor
 
 
@@ -81,7 +76,6 @@ def test_polymorphic_enumerated_deserialization(valid_enumerated_data):
     dimension: EnumeratedDimension = Dimension.build(valid_enumerated_data)
     assert type(dimension) == EnumeratedDimension
     assert dimension.values == ['red']
-    assert dimension.template_id == uuid.UUID(valid_enumerated_data['template_id'])
     assert type(dimension.descriptor) == CategoricalDescriptor
 
 

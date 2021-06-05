@@ -1,7 +1,7 @@
 import warnings
 from abc import abstractmethod
 from logging import getLogger
-from typing import Optional, Union, Generic, TypeVar, Iterable
+from typing import Optional, Union, Generic, TypeVar, Iterable, Iterator
 from uuid import UUID
 
 from citrine._rest.pageable import Pageable
@@ -68,9 +68,9 @@ class Collection(Generic[ResourceType], Pageable):
         except NonRetryableException as e:
             raise ModuleRegistrationFailedException(model.__class__.__name__, e)
 
-    def list(self,
+    def list(self, *,
              page: Optional[int] = None,
-             per_page: int = 100) -> Iterable[ResourceType]:
+             per_page: int = 100) -> Iterator[ResourceType]:
         """
         Paginate over the elements of the collection.
 
@@ -89,8 +89,9 @@ class Collection(Generic[ResourceType], Pageable):
 
         Returns
         -------
-        Iterable[ResourceType]
-            Resources in this collection.
+        Iterator[ResourceType]
+            An iterator that can be used to loop over all of the resources in this collection.
+            Use list() to force evaluation of all results into an in-memory list.
 
         """
         return self._paginator.paginate(page_fetcher=self._fetch_page,
@@ -113,7 +114,7 @@ class Collection(Generic[ResourceType], Pageable):
         return Response(body=data)
 
     def _build_collection_elements(self,
-                                   collection: Iterable[dict]) -> Iterable[ResourceType]:
+                                   collection: Iterable[dict]) -> Iterator[ResourceType]:
         """
         For each element in the collection, build the appropriate resource type.
 
@@ -124,7 +125,7 @@ class Collection(Generic[ResourceType], Pageable):
 
         Returns
         -------
-        Iterable[ResourceType]
+        Iterator[ResourceType]
             Resources in this collection.
 
         """

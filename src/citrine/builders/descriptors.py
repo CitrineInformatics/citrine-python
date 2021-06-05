@@ -79,7 +79,7 @@ class PlatformVocabulary(Mapping[str, Descriptor]):
 
     """
 
-    def __init__(self, entries: Mapping[str, Descriptor]):
+    def __init__(self, *, entries: Mapping[str, Descriptor]):
         self._entries = entries
 
     def __getitem__(self, k: str) -> Descriptor:
@@ -92,7 +92,7 @@ class PlatformVocabulary(Mapping[str, Descriptor]):
         return iter(self._entries)
 
     @staticmethod
-    def from_templates(project: Project, scope: str):
+    def from_templates(*, project: Project, scope: str):
         """
         Build a PlatformVocabulary from the templates visible to a project.
 
@@ -114,7 +114,7 @@ class PlatformVocabulary(Mapping[str, Descriptor]):
 
         """
         def _from_collection(collection: DataConceptsCollection):
-            return {x.uids[scope]: x for x in collection.list_all() if scope in x.uids}
+            return {x.uids[scope]: x for x in collection.list() if scope in x.uids}
 
         properties = _from_collection(project.property_templates)
         parameters = _from_collection(project.parameter_templates)
@@ -128,4 +128,4 @@ class PlatformVocabulary(Mapping[str, Descriptor]):
             except NoEquivalentDescriptorError:
                 continue
 
-        return PlatformVocabulary(res)
+        return PlatformVocabulary(entries=res)

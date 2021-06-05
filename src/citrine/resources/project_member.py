@@ -6,6 +6,7 @@ class ProjectMember:
     """A Member of a Project."""
 
     def __init__(self,
+                 *,
                  user: User,
                  project: 'Project',  # noqa: F821
                  role: ROLES):

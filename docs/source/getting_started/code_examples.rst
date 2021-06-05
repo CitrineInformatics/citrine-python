@@ -122,7 +122,7 @@ a parameter template ``wavelength_template``, and a property template ``refracti
         ProcessRun("A chemical reaction", spec=reaction_spec))
     toluene_ingredient = solvents_dataset.ingredient_runs.register(
         IngredientRun("Toluene solvent", spec=toluene_ingredient_spec,
-        material=toluene, process=reation_run, absolute_quantity=NominalReal(40, 'mL'), notes="I poured too much!"))
+        material=toluene, process=reaction_run, absolute_quantity=NominalReal(40, 'mL'), notes="I poured too much!"))
 
 Getting a material history
 --------------------------

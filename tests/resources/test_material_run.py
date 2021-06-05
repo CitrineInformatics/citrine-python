@@ -90,7 +90,7 @@ def test_get_history(collection, session):
     })
 
     # When
-    run = collection.get_history('id', '1234')
+    run = collection.get_history(scope='id', id='1234')
 
     # Then
     assert 1 == session.num_calls
@@ -129,7 +129,7 @@ def test_list_material_runs(collection, session):
     })
 
     # When
-    runs = collection.list()
+    runs = list(collection.list())
 
     # Then
     assert 1 == session.num_calls
@@ -141,73 +141,6 @@ def test_list_material_runs(collection, session):
             'forward': True,
             'ascending': True,
             'per_page': 100
-        }
-    )
-    assert expected_call == session.last_call
-    assert 1 == len(runs)
-    assert sample_run['uids'] == runs[0].uids
-
-
-def test_filter_by_tags(collection, session):
-    # Given
-    sample_run = MaterialRunDataFactory()
-    session.set_response({
-        'contents': [sample_run]
-    })
-
-    # When
-    runs = collection.filter_by_tags(tags=["color"], page=1, per_page=10)
-
-    # Then
-    assert 1 == session.num_calls
-    expected_call = FakeCall(
-        method='GET',
-        path='projects/{}/material-runs'.format(collection.project_id),
-        params={
-            'dataset_id': str(collection.dataset_id),
-            'tags': ["color"],
-            'page': 1,
-            'per_page': 10
-        }
-    )
-    assert expected_call == session.last_call
-    assert 1 == len(runs)
-    assert sample_run['uids'] == runs[0].uids
-
-    # When user gives a single string for tags, it should still work.
-    session.set_response({
-        'contents': [sample_run]
-    })
-    collection.filter_by_tags(tags="color", page=1, per_page=10)
-
-    # Then
-    assert session.num_calls == 2
-    assert session.last_call == expected_call
-
-    # When user gives multiple tags, should raise NotImplemented Error
-    with pytest.raises(NotImplementedError):
-        collection.filter_by_tags(tags=["color", "shape"])
-
-
-def test_filter_by_name(collection, session):
-    # Given
-    sample_run = MaterialRunDataFactory()
-    session.set_response({'contents': [sample_run]})
-
-    # When
-    runs = collection.filter_by_name('test run', page=1, per_page=10)
-
-    # Then
-    assert 1 == session.num_calls
-    expected_call = FakeCall(
-        method='GET',
-        path='projects/{}/material-runs/filter-by-name'.format(collection.project_id),
-        params={
-            'dataset_id': str(collection.dataset_id),
-            'name': 'test run',
-            'exact': False,
-            "page": 1,
-            "per_page": 10
         }
     )
     assert expected_call == session.last_call
@@ -231,7 +164,7 @@ def test_cursor_paginated_searches(collection, session):
     setattr(session, 'cursor_paged_resource', Session.cursor_paged_resource)
 
     assert len(list(collection.list_by_name('unused', per_page=2))) == len(all_runs)
-    assert len(list(collection.list_all(per_page=2))) == len(all_runs)
+    assert len(list(collection.list(per_page=2))) == len(all_runs)
     assert len(list(collection.list_by_tag('unused', per_page=2))) == len(all_runs)
     assert len(list(collection.list_by_attribute_bounds(
         {LinkByUIDFactory(): IntegerBounds(1, 5)}, per_page=2))) == len(all_runs)
@@ -355,42 +288,6 @@ def test_material_run_can_get_with_no_id(collection, session):
     assert 'Cake 2' == run.name
 
 
-def test_material_run_filter_by_name_with_no_id(collection):
-    # Given
-    collection.dataset_id = None
-
-    # Then
-    with pytest.raises(RuntimeError):
-        collection.filter_by_name('foo')
-
-
-def test_filter_by_spec(collection: MaterialRunCollection, session):
-    """
-    Test that MaterialRunCollection.filter_by_spec() hits the expected endpoint
-    """
-    # Given
-    project_id = '6b608f78-e341-422c-8076-35adc8828545'
-    material_spec = MaterialSpecFactory()
-    test_scope = 'id'
-    test_id = material_spec.uids[test_scope]
-    sample_run = MaterialRunDataFactory(spec=material_spec)
-    session.set_response({'contents': [sample_run]})
-
-    # When
-    runs = [run for run in collection.filter_by_spec(test_id, per_page=20)]
-
-    # Then
-    assert 1 == session.num_calls
-    expected_call = FakeCall(
-        method="GET",
-        path="projects/{}/material-specs/{}/{}/material-runs".format(project_id, test_scope, test_id),
-        # per_page will be ignored
-        params={"dataset_id": str(collection.dataset_id), "forward": True, "ascending": True, "per_page": 100}
-    )
-    assert session.last_call == expected_call
-    assert runs == [collection.build(sample_run)]
-
-
 def test_get_by_process(collection):
     run_noop_gemd_relation_search_test(
         search_for='material-runs',
@@ -410,32 +307,6 @@ def test_list_by_spec(collection):
     )
 
 
-def test_filter_by_template(collection, session):
-    """
-    Test that MaterialRunCollection.filter_by_template() hits the expected endpoints and post-processes the results into the expected format
-    """
-    # Given
-    material_template = MaterialTemplateFactory()
-    test_scope = 'id'
-    template_id = material_template.uids[test_scope]
-    sample_spec1 = MaterialSpecDataFactory(template=material_template)
-    sample_spec2 = MaterialSpecDataFactory(template=material_template)
-    key = 'contents'
-    sample_run1_1 = MaterialRunDataFactory(spec=sample_spec1)
-    sample_run2_1 = MaterialRunDataFactory(spec=sample_spec2)
-    sample_run1_2 = MaterialRunDataFactory(spec=sample_spec1)
-    sample_run2_2 = MaterialRunDataFactory(spec=sample_spec2)
-    session.set_responses({key: [sample_spec1, sample_spec2]}, {key: [sample_run1_1, sample_run1_2]},
-                          {key: [sample_run2_1, sample_run2_2]})
-
-    # When
-    runs = [run for run in collection.filter_by_template(template_id, per_page=1)]
-
-    # Then
-    assert 3 == session.num_calls
-    assert runs == [collection.build(run) for run in [sample_run1_1, sample_run1_2, sample_run2_1, sample_run2_2]]
-
-
 def test_validate_templates_successful_minimal_params(collection, session):
     """
     Test that DataObjectCollection.validate_templates() handles a successful return value when
@@ -448,7 +319,7 @@ def test_validate_templates_successful_minimal_params(collection, session):
 
     # When
     session.set_response("")
-    errors = collection.validate_templates(run)
+    errors = collection.validate_templates(model=run)
 
     # Then
     assert 1 == session.num_calls
@@ -474,7 +345,7 @@ def test_validate_templates_successful_all_params(collection, session):
 
     # When
     session.set_response("")
-    errors = collection.validate_templates(run, template, unused_process_template)
+    errors = collection.validate_templates(model=run, object_template=template, ingredient_process_template=unused_process_template)
 
     # Then
     assert 1 == session.num_calls
@@ -499,7 +370,7 @@ def test_validate_templates_errors(collection, session):
     # When
     validation_error = ValidationError(failure_message="you failed", failure_id="failure_id")
     session.set_response(BadRequest("path", FakeRequestResponseApiError(400, "Bad Request", [validation_error])))
-    errors = collection.validate_templates(run)
+    errors = collection.validate_templates(model=run)
 
     # Then
     assert 1 == session.num_calls
@@ -521,7 +392,7 @@ def test_validate_templates_unrelated_400(collection, session):
     # When
     session.set_response(BadRequest("path", FakeRequestResponse(400)))
     with pytest.raises(BadRequest):
-        collection.validate_templates(run)
+        collection.validate_templates(model=run)
 
 
 def test_validate_templates_unrelated_400_with_api_error(collection, session):
@@ -534,4 +405,30 @@ def test_validate_templates_unrelated_400_with_api_error(collection, session):
     # When
     session.set_response(BadRequest("path", FakeRequestResponseApiError(400, "I am not a validation error", [])))
     with pytest.raises(BadRequest):
-        collection.validate_templates(run)
+        collection.validate_templates(model=run)
+
+
+def test_list_by_template(collection, session):
+    """
+    Test that MaterialRunCollection.list_by_template() hits the expected endpoints and post-processes the results into the expected format
+    """
+    # Given
+    material_template = MaterialTemplateFactory()
+    test_scope = 'id'
+    template_id = material_template.uids[test_scope]
+    sample_spec1 = MaterialSpecDataFactory(template=material_template)
+    sample_spec2 = MaterialSpecDataFactory(template=material_template)
+    key = 'contents'
+    sample_run1_1 = MaterialRunDataFactory(spec=sample_spec1)
+    sample_run2_1 = MaterialRunDataFactory(spec=sample_spec2)
+    sample_run1_2 = MaterialRunDataFactory(spec=sample_spec1)
+    sample_run2_2 = MaterialRunDataFactory(spec=sample_spec2)
+    session.set_responses({key: [sample_spec1, sample_spec2]}, {key: [sample_run1_1, sample_run1_2]},
+                          {key: [sample_run2_1, sample_run2_2]})
+
+    # When
+    runs = [run for run in collection.list_by_template(template_id)]
+
+    # Then
+    assert 3 == session.num_calls
+    assert runs == [collection.build(run) for run in [sample_run1_1, sample_run1_2, sample_run2_1, sample_run2_2]]

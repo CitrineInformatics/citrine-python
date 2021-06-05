@@ -112,7 +112,7 @@ class MeasurementRunCollection(ObjectRunCollection[MeasurementRun]):
         return MeasurementRun
 
     def list_by_spec(self,
-                     uid: Union[UUID, str, LinkByUID, GEMDMeasurementSpec],
+                     uid: Union[UUID, str, LinkByUID, GEMDMeasurementSpec], *,
                      scope: Optional[str] = None) -> Iterator[MeasurementRun]:
         """
         [ALPHA] Get the measurement runs using the specified measurement spec.
@@ -135,7 +135,7 @@ class MeasurementRunCollection(ObjectRunCollection[MeasurementRun]):
         return self._get_relation('measurement-specs', uid=link.id, scope=link.scope)
 
     def list_by_material(self,
-                         uid: Union[UUID, str, LinkByUID, GEMDMaterialRun],
+                         uid: Union[UUID, str, LinkByUID, GEMDMaterialRun], *,
                          scope: Optional[str] = None) -> Iterator[MeasurementRun]:
         """
         [ALPHA] Get measurements of the specified material.

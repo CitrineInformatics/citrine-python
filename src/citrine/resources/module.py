@@ -22,7 +22,7 @@ class ModuleCollection(Collection[Module]):
     _individual_key = None
     _resource = Module
 
-    def __init__(self, project_id: UUID, session: Session = Session()):
+    def __init__(self, project_id: UUID, session: Session):
         self.project_id = project_id
         self.session: Session = session
 

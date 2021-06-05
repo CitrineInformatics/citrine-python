@@ -1,8 +1,5 @@
-from typing import Optional
-
 from citrine._serialization import properties
 from citrine._serialization.serializable import Serializable
-from citrine._session import Session
 from citrine.informatics.constraints.constraint import Constraint
 from citrine.informatics.descriptors import FormulationDescriptor
 
@@ -42,14 +39,12 @@ class IngredientFractionConstraint(Serializable['IngredientFractionConstraint'],
                  ingredient: str,
                  min: float,
                  max: float,
-                 is_required: bool = True,
-                 session: Optional[Session] = None):
+                 is_required: bool = True):
         self.formulation_descriptor: FormulationDescriptor = formulation_descriptor
         self.ingredient: str = ingredient
         self.min: float = min
         self.max: float = max
         self.is_required: bool = is_required
-        self.session: Optional[Session] = session
 
     def __str__(self):
         return '<IngredientFractionConstraint {!r}::{!r}>'.format(

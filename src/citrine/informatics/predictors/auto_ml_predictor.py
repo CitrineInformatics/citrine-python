@@ -41,24 +41,24 @@ class AutoMLPredictor(Resource['AutoMLPredictor'], Predictor, AIResourceMetadata
 
     inputs = _properties.List(_properties.Object(Descriptor), 'config.inputs')
     output = _properties.Object(Descriptor, 'output')
-    training_data = _properties.List(_properties.Object(DataSource), 'config.training_data')
+    training_data = _properties.List(_properties.Object(DataSource),
+                                     'config.training_data', default=[])
 
     typ = _properties.String('config.type', default='AutoML', deserializable=False)
     module_type = _properties.String('module_type', default='PREDICTOR')
 
     def __init__(self,
                  name: str,
+                 *,
                  description: str,
                  output: Descriptor,
                  inputs: List[Descriptor],
-                 training_data: Optional[List[DataSource]] = None,
-                 archived: bool = False):
+                 training_data: Optional[List[DataSource]] = None):
         self.name: str = name
         self.description: str = description
         self.inputs: List[Descriptor] = inputs
         self.output: Descriptor = output
-        self.training_data: List[DataSource] = self._wrap_training_data(training_data)
-        self.archived: bool = archived
+        self.training_data: List[DataSource] = training_data or []
 
     def _post_dump(self, data: dict) -> dict:
         data['display_name'] = data['config']['name']

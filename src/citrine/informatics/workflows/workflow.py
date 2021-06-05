@@ -1,8 +1,10 @@
 """Tools for working with workflow resources."""
-from typing import Type
+from typing import Type, Optional
+from uuid import UUID
 
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
 from citrine._rest.asynchronous_object import AsynchronousObject
+from citrine._session import Session
 from citrine._serialization import properties
 
 
@@ -21,7 +23,12 @@ class Workflow(PolymorphicSerializable['Workflow'], AsynchronousObject):
     """
 
     _response_key = None
+    _session: Optional[Session] = None
 
+    project_id: Optional[UUID] = None
+    """:Optional[UUID]: Unique ID of the project that contains this workflow."""
+    name = properties.String('name')
+    description = properties.Optional(properties.String, 'description')
     uid = properties.Optional(properties.UUID, 'id', serializable=False)
     """:Optional[UUID]: Citrine Platform unique identifier"""
 
@@ -29,11 +36,9 @@ class Workflow(PolymorphicSerializable['Workflow'], AsynchronousObject):
     def get_type(cls, data) -> Type['Workflow']:
         """Return the subtype."""
         from .design_workflow import DesignWorkflow
-        from .performance_workflow import PerformanceWorkflow
         from .predictor_evaluation_workflow import PredictorEvaluationWorkflow
         type_dict = {
             'DESIGN_WORKFLOW': DesignWorkflow,
-            'PERFORMANCE_WORKFLOW': PerformanceWorkflow,
             'PREDICTOR_EVALUATION_WORKFLOW': PredictorEvaluationWorkflow,
         }
         typ = type_dict.get(data['module_type'])

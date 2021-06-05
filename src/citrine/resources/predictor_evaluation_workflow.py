@@ -23,7 +23,7 @@ class PredictorEvaluationWorkflowCollection(Collection[PredictorEvaluationWorkfl
     def build(self, data: dict) -> PredictorEvaluationWorkflow:
         """Build an individual PredictorEvaluationExecution."""
         workflow = PredictorEvaluationWorkflow.build(data)
-        workflow.session = self.session
+        workflow._session = self.session
         workflow.project_id = self.project_id
         return workflow
 
@@ -54,7 +54,7 @@ class PredictorEvaluationWorkflowCollection(Collection[PredictorEvaluationWorkfl
         raise NotImplementedError(
             "Predictor Evaluation Workflows cannot be deleted; they can be archived instead.")
 
-    def create_default(self, predictor_id: UUID) -> PredictorEvaluationWorkflow:
+    def create_default(self, *, predictor_id: UUID) -> PredictorEvaluationWorkflow:
         """[ALPHA] Create a default predictor evaluation workflow for a predictor and execute it.
 
         The current default predictor evaluation workflow performs 5-fold, 1-trial cross-validation

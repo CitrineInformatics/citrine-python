@@ -3,8 +3,8 @@ from abc import abstractmethod, ABC
 from warnings import warn
 from typing import TypeVar, Type, List, Union, Optional, Iterator
 from uuid import UUID, uuid4
-
 import deprecation
+
 from gemd.entity.dict_serializable import DictSerializable
 from gemd.entity.base_entity import BaseEntity
 from gemd.entity.link_by_uid import LinkByUID
@@ -285,36 +285,46 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         data_concepts_object = self.get_type().build(data)
         return data_concepts_object
 
-    def list(self,
+    def list(self, *,
              page: Optional[int] = None,
-             per_page: Optional[int] = 100) -> List[ResourceType]:
+             per_page: Optional[int] = 100,
+             forward: bool = True) -> Iterator[ResourceType]:
         """
-        List all visible elements of the collection.
+        Get all visible elements of the collection.
 
-        page and per_page parameters of this method are deprecated and ignored.
-        This method will will return a list of all elements in the collection.
+        The order of results should not be relied upon, but for now they are sorted by
+        dataset, object type, and creation time (in that order of priority).
 
         Parameters
         ---------
         page: int, optional
-            [DEPRECATED][IGNORED] This parameter is ignored. To load individual
-            pages lazily, use the list_all method.
+            [DEPRECATED][IGNORED] This parameter is ignored. All pages are loaded lazily.
         per_page: int, optional
             Max number of results to return per page. It is very unlikely that
             setting this parameter to something other than the default is useful.
             It exists for rare situations where the client is bandwidth constrained
             or experiencing latency from large payload sizes.
+        forward: bool
+            Set to False to reverse the order of results (i.e., return in descending order)
 
         Returns
         -------
-        List[ResourceType]
+        Iterator[ResourceType]
             Every object in this collection.
 
         """
-        # Convert the iterator to a list to avoid breaking existing client relying on lists
-        return [x for x in self.list_all(per_page=per_page)]
+        params = {}
+        if self.dataset_id is not None:
+            params['dataset_id'] = str(self.dataset_id)
+        raw_objects = self.session.cursor_paged_resource(
+            self.session.get_resource,
+            self._get_path(ignore_dataset=True),
+            forward=forward,
+            per_page=per_page,
+            params=params)
+        return (self.build(raw) for raw in raw_objects)
 
-    def register(self, model: ResourceType, dry_run=False):
+    def register(self, model: ResourceType, *, dry_run=False):
         """
         Create a new element of the collection or update an existing element.
 
@@ -358,7 +368,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         full_model = self.build(data)
         return full_model
 
-    def register_all(self, models: List[ResourceType], dry_run=False) -> List[ResourceType]:
+    def register_all(self, models: List[ResourceType], *, dry_run=False) -> List[ResourceType]:
         """
         [ALPHA] Create or update each model in models.
 
@@ -518,7 +528,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         # That worked, nothing returned in this case
         return None
 
-    def get(self, uid: Union[UUID, str, LinkByUID, BaseEntity],
+    def get(self, uid: Union[UUID, str, LinkByUID, BaseEntity], *,
             scope: Optional[str] = None) -> ResourceType:
         """
         Get an element of the collection by its id.
@@ -543,86 +553,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         data = self.session.get_resource(path)
         return self.build(data)
 
-    @deprecation.deprecated(details="filter_by_tags is deprecated due to poor "
-                                    "performance. Please use list_by_tag instead.")
-    def filter_by_tags(self, tags: List[str],
-                       page: Optional[int] = None, per_page: Optional[int] = None):
-        """
-        Get all objects in the collection that match any one of a list of tags.
-
-        Parameters
-        ----------
-        tags: List[str]
-            A list of strings, each one a tag that an object can match. Currently
-            limited to a length of 1 or 0 (empty list does not filter).
-        page: Optional[int]
-            The page of results to list, 1-indexed (i.e., the first page is page=1)
-        per_page: Optional[int]
-            The number of results to list per page
-
-        Returns
-        -------
-        List[ResourceType]
-            Every object in this collection that matches one of the tags.
-            See (insert link) for a discussion of how to match on tags.
-
-        """
-        if type(tags) == str:
-            tags = [tags]
-        if len(tags) > 1:
-            raise NotImplementedError('Searching by multiple tags is not currently supported.')
-        params = {'tags': tags}
-        if self.dataset_id is not None:
-            params['dataset_id'] = str(self.dataset_id)
-        if page is not None:
-            params['page'] = page
-        if per_page is not None:
-            params['per_page'] = per_page
-
-        response = self.session.get_resource(
-            self._get_path(ignore_dataset=True),
-            params=params)
-        return [self.build(content) for content in response["contents"]]
-
-    @deprecation.deprecated(details="filter_by_name is deprecated due to poor "
-                                    "performance. Please use list_by_name instead.")
-    def filter_by_name(self, name: str, exact: bool = False,
-                       page: Optional[int] = None, per_page: Optional[int] = None):
-        """
-        Get all objects with specified name in this dataset.
-
-        Parameters
-        ----------
-        name: str
-            case-insensitive object name prefix to search.
-        exact: bool
-            Set to True to change prefix search to exact search (but still case-insensitive).
-            Default is False.
-        page: Optional[int]
-            The page of results to list, 1-indexed (i.e., the first page is page=1)
-        per_page: Optional[int]
-            The number of results to list per page
-
-        Returns
-        -------
-        List[ResourceType]
-            List of every object in this collection whose `name` matches the search term.
-
-        """
-        if self.dataset_id is None:
-            raise RuntimeError("Must specify a dataset to filter by name.")
-        params = {'dataset_id': str(self.dataset_id), 'name': name, 'exact': exact}
-        if page is not None:
-            params['page'] = page
-        if per_page is not None:
-            params['per_page'] = per_page
-        response = self.session.get_resource(
-            # "Ignoring" dataset because it is in the query params (and required)
-            self._get_path(ignore_dataset=True) + "/filter-by-name",
-            params=params)
-        return [self.build(content) for content in response["contents"]]
-
-    def list_by_name(self, name: str, exact: bool = False,
+    def list_by_name(self, name: str, *, exact: bool = False,
                      forward: bool = True, per_page: int = 100) -> Iterator[ResourceType]:
         """
         Get all objects with specified name in this dataset.
@@ -659,7 +590,9 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
             params=params)
         return (self.build(raw) for raw in raw_objects)
 
-    def list_all(self, forward: bool = True, per_page: int = 100) -> Iterator[ResourceType]:
+    @deprecation.deprecated(deprecated_in="0.133.0", removed_in="1.0.0",
+                            details="Please use list instead of list_all")
+    def list_all(self, *, forward: bool = True, per_page: int = 100) -> Iterator[ResourceType]:
         """
         Get all objects in the collection.
 
@@ -681,18 +614,9 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
             Every object in this collection.
 
         """
-        params = {}
-        if self.dataset_id is not None:
-            params['dataset_id'] = str(self.dataset_id)
-        raw_objects = self.session.cursor_paged_resource(
-            self.session.get_resource,
-            self._get_path(ignore_dataset=True),
-            forward=forward,
-            per_page=per_page,
-            params=params)
-        return (self.build(raw) for raw in raw_objects)
+        return self.list(forward=forward, per_page=per_page)  # pragma: no cover
 
-    def list_by_tag(self, tag: str, per_page: int = 100) -> Iterator[ResourceType]:
+    def list_by_tag(self, tag: str, *, per_page: int = 100) -> Iterator[ResourceType]:
         """
         Get all objects bearing a tag prefixed with `tag` in the collection.
 
@@ -728,7 +652,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
             params=params)
         return (self.build(raw) for raw in raw_objects)
 
-    def delete(self, uid: Union[UUID, str, LinkByUID, BaseEntity],
+    def delete(self, uid: Union[UUID, str, LinkByUID, BaseEntity], *,
                scope: Optional[str] = None, dry_run: bool = False):
         """
         Delete an element of the collection by its id.

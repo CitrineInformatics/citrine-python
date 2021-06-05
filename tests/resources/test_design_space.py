@@ -30,7 +30,6 @@ def test_design_space_build():
             'description': 'For testing',
             'dimensions': [{
                 'type': 'ContinuousDimension',
-                'template_id': str(uuid.uuid4()),
                 'descriptor': {
                     'type': 'RealDescriptor',
                     'descriptor_key': 'foo',
@@ -75,15 +74,15 @@ def test_design_space_limits():
 
     too_big = EnumeratedDesignSpace(
         "foo",
-        "bar",
-        descriptors=[RealDescriptor("R-{}".format(i), 0, 1, "") for i in range(128)],
+        description="bar",
+        descriptors=[RealDescriptor("R-{}".format(i), lower_bound=0, upper_bound=1, units="") for i in range(128)],
         data=[{"R-{}".format(i): random() for i in range(128)} for _ in range(2001)]
     )
 
     just_right = EnumeratedDesignSpace(
         "foo",
-        "bar",
-        descriptors=[RealDescriptor("R-{}".format(i), 0, 1, "") for i in range(128)],
+        description="bar",
+        descriptors=[RealDescriptor("R-{}".format(i), lower_bound=0, upper_bound=1, units="") for i in range(128)],
         data=[{"R-{}".format(i): random() for i in range(128)} for _ in range(2000)]
     )
 
@@ -120,5 +119,5 @@ def test_create_default(valid_product_design_space_data,
         project_id=uuid.uuid4(),
         session=session
     )
-    default_design_space = collection.create_default(uuid.uuid4())
+    default_design_space = collection.create_default(predictor_id=uuid.uuid4())
     assert default_design_space.dump() == valid_product_design_space.dump()
