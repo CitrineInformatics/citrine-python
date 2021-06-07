@@ -61,6 +61,9 @@ A ``GraphPredictor`` is created by specifying the sub-predictors.
 These can either be references to predictors that exist on-platform, or they can be predictors that are defined locally.
 A sub-predictor **cannot** be another ``GraphPredictor``.
 
+Training data can be specified when creating a graph predictor.
+This will be combined with any training data present in the sub-predictors.
+
 The following example demonstrates how to create a :class:`~citrine.informatics.predictors.graph_predictor.GraphPredictor` from on-platform and locally-defined predictors.
 Assume that there exists a CSV file with columns for time, bulk modulus, and Poisson's ratio.
 We train ML models to predict bulk modulus and Poisson's ratio, then apply an expression to calculate Young's modulus.
