@@ -73,7 +73,6 @@ The ML models are independently registered on-platform, but the expression predi
 
     from citrine.informatics.predictors import GraphPredictor, AutoMLPredictor, ExpressionPredictor
     from citrine.informatics.data_sources import CSVDataSource
-    from citrine.seeding.find_or_create import create_or_update
 
     time = RealDescriptor("tempering time", lower_bound=0, upper_bound=30, units="s")
     bulk_modulus = RealDescriptor("Bulk Modulus", lower_bound=0, upper_bound=1E3, units="GPa")
