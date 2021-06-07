@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>citrine.informatics.workflows.design_workflow module &mdash; Citrine Python 0.133.1 documentation</title>
+  <title>citrine.informatics.workflows.design_workflow module &mdash; Citrine Python 0.134.0 documentation</title>
   
 
   
@@ -71,7 +71,7 @@
             
             
               <div class="version">
-                0.133.1
+                0.134.0
               </div>
             
           
@@ -174,7 +174,7 @@
 <span id="citrine-informatics-workflows-design-workflow-module"></span><h1>citrine.informatics.workflows.design_workflow module<a class="headerlink" href="#module-citrine.informatics.workflows.design_workflow" title="Permalink to this headline">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="citrine.informatics.workflows.design_workflow.DesignWorkflow">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">citrine.informatics.workflows.design_workflow.</span></span><span class="sig-name descname"><span class="pre">DesignWorkflow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">name:</span> <span class="pre">str,</span> <span class="pre">design_space_id:</span> <span class="pre">uuid.UUID,</span> <span class="pre">processor_id:</span> <span class="pre">Optional[uuid.UUID],</span> <span class="pre">predictor_id:</span> <span class="pre">uuid.UUID,</span> <span class="pre">project_id:</span> <span class="pre">Optional[uuid.UUID]</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">session:</span> <span class="pre">citrine._session.Session</span> <span class="pre">=</span> <span class="pre">&lt;citrine._session.Session</span> <span class="pre">object&gt;,</span> <span class="pre">description:</span> <span class="pre">Optional[str]</span> <span class="pre">=</span> <span class="pre">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.workflows.design_workflow.DesignWorkflow" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">citrine.informatics.workflows.design_workflow.</span></span><span class="sig-name descname"><span class="pre">DesignWorkflow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">design_space_id</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">uuid.UUID</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">processor_id</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">predictor_id</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">uuid.UUID</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.workflows.design_workflow.DesignWorkflow" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.resource.Resource</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">DesignWorkflow</span></code>], <a class="reference internal" href="citrine.informatics.workflows.workflow.html#citrine.informatics.workflows.workflow.Workflow" title="citrine.informatics.workflows.workflow.Workflow"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.workflows.workflow.Workflow</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.ai_resource_metadata.AIResourceMetadata</span></code></p>
 <p>Object that generates scored materials that may approach higher values of the score.</p>
 <dl class="field-list simple">
@@ -190,9 +190,9 @@ if none is provided, one matching your design space will be automatically genera
 </dd>
 </dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="citrine.informatics.workflows.design_workflow.DesignWorkflow.as_entity_dict">
-<span class="sig-name descname"><span class="pre">as_entity_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">dict</span><a class="headerlink" href="#citrine.informatics.workflows.design_workflow.DesignWorkflow.as_entity_dict" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return an access control entity representation of this resource.</p>
+<dt class="sig sig-object py" id="citrine.informatics.workflows.design_workflow.DesignWorkflow.access_control_dict">
+<span class="sig-name descname"><span class="pre">access_control_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">dict</span><a class="headerlink" href="#citrine.informatics.workflows.design_workflow.DesignWorkflow.access_control_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return an access control entity representation of this resource. Internal use only.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -303,15 +303,6 @@ if it has been archived</p>
 <span class="sig-name descname"><span class="pre">design_space_id</span></span><em class="property"> <span class="pre">=</span> <span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.workflows.design_workflow.DesignWorkflow.design_space_id" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="py property">
-<dt class="sig sig-object py" id="citrine.informatics.workflows.design_workflow.DesignWorkflow.executions">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">executions</span></span><em class="property"><span class="pre">:</span> <span class="pre">citrine.resources.workflow_executions.WorkflowExecutionCollection</span></em><a class="headerlink" href="#citrine.informatics.workflows.design_workflow.DesignWorkflow.executions" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a resource representing all visible executions of this workflow.</p>
-<div class="deprecated">
-<p><span class="versionmodified deprecated">Deprecated since version 0.101.0: </span>Use design_executions instead</p>
-</div>
-</dd></dl>
-
 <dl class="py attribute">
 <dt class="sig sig-object py" id="citrine.informatics.workflows.design_workflow.DesignWorkflow.experimental">
 <span class="sig-name descname"><span class="pre">experimental</span></span><em class="property"> <span class="pre">=</span> <span class="pre">True</span></em><a class="headerlink" href="#citrine.informatics.workflows.design_workflow.DesignWorkflow.experimental" title="Permalink to this definition">¶</a></dt>
@@ -353,6 +344,17 @@ if it has been archived</p>
 <dt class="sig sig-object py" id="citrine.informatics.workflows.design_workflow.DesignWorkflow.processor_id">
 <span class="sig-name descname"><span class="pre">processor_id</span></span><em class="property"> <span class="pre">=</span> <span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.workflows.design_workflow.DesignWorkflow.processor_id" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.informatics.workflows.design_workflow.DesignWorkflow.project_id">
+<span class="sig-name descname"><span class="pre">project_id</span></span><em class="property"><span class="pre">:</span> <span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">UUID</span><span class="p"><span class="pre">]</span></span></em><em class="property"> <span class="pre">=</span> <span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.workflows.design_workflow.DesignWorkflow.project_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unique ID of the project that contains this workflow.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>Optional[UUID]</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="citrine.informatics.workflows.design_workflow.DesignWorkflow.status">

@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>citrine.resources.job module &mdash; Citrine Python 0.133.1 documentation</title>
+  <title>citrine.resources.job module &mdash; Citrine Python 0.134.0 documentation</title>
   
 
   
@@ -71,7 +71,7 @@
             
             
               <div class="version">
-                0.133.1
+                0.134.0
               </div>
             
           
@@ -174,14 +174,14 @@
 <span id="citrine-resources-job-module"></span><h1>citrine.resources.job module<a class="headerlink" href="#module-citrine.resources.job" title="Permalink to this headline">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="citrine.resources.job.JobStatusResponse">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">citrine.resources.job.</span></span><span class="sig-name descname"><span class="pre">JobStatusResponse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">job_type</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">status</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tasks</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#citrine.resources.job.TaskNode" title="citrine.resources.job.TaskNode"><span class="pre">citrine.resources.job.TaskNode</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.job.JobStatusResponse" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">citrine.resources.job.</span></span><span class="sig-name descname"><span class="pre">JobStatusResponse</span></span><a class="headerlink" href="#citrine.resources.job.JobStatusResponse" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.resource.Resource</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">JobStatusResponse</span></code>]</p>
 <p>[ALPHA] a response to a job status check.</p>
 <p>The JobStatusResponse summarizes the status for the entire job.</p>
 <dl class="py method">
-<dt class="sig sig-object py" id="citrine.resources.job.JobStatusResponse.as_entity_dict">
-<span class="sig-name descname"><span class="pre">as_entity_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">dict</span><a class="headerlink" href="#citrine.resources.job.JobStatusResponse.as_entity_dict" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return an access control entity representation of this resource.</p>
+<dt class="sig sig-object py" id="citrine.resources.job.JobStatusResponse.access_control_dict">
+<span class="sig-name descname"><span class="pre">access_control_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">dict</span><a class="headerlink" href="#citrine.resources.job.JobStatusResponse.access_control_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return an access control entity representation of this resource. Internal use only.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -244,14 +244,14 @@
 
 <dl class="py class">
 <dt class="sig sig-object py" id="citrine.resources.job.JobSubmissionResponse">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">citrine.resources.job.</span></span><span class="sig-name descname"><span class="pre">JobSubmissionResponse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">job_id</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">uuid.UUID</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.job.JobSubmissionResponse" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">citrine.resources.job.</span></span><span class="sig-name descname"><span class="pre">JobSubmissionResponse</span></span><a class="headerlink" href="#citrine.resources.job.JobSubmissionResponse" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.resource.Resource</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">AraJobStatus</span></code>]</p>
 <p>[ALPHA] a response to a submit-job request for the job submission framework.</p>
 <p>This is returned as a successful response from the remote service.</p>
 <dl class="py method">
-<dt class="sig sig-object py" id="citrine.resources.job.JobSubmissionResponse.as_entity_dict">
-<span class="sig-name descname"><span class="pre">as_entity_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">dict</span><a class="headerlink" href="#citrine.resources.job.JobSubmissionResponse.as_entity_dict" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return an access control entity representation of this resource.</p>
+<dt class="sig sig-object py" id="citrine.resources.job.JobSubmissionResponse.access_control_dict">
+<span class="sig-name descname"><span class="pre">access_control_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">dict</span><a class="headerlink" href="#citrine.resources.job.JobSubmissionResponse.access_control_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return an access control entity representation of this resource. Internal use only.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -281,14 +281,14 @@
 
 <dl class="py class">
 <dt class="sig sig-object py" id="citrine.resources.job.TaskNode">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">citrine.resources.job.</span></span><span class="sig-name descname"><span class="pre">TaskNode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task_type</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">status</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dependencies</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">failure_reason</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.job.TaskNode" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">citrine.resources.job.</span></span><span class="sig-name descname"><span class="pre">TaskNode</span></span><a class="headerlink" href="#citrine.resources.job.TaskNode" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.resource.Resource</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">TaskNode</span></code>]</p>
 <p>[ALPHA] individual task status.</p>
 <p>The TaskNode describes a component of an overall job.</p>
 <dl class="py method">
-<dt class="sig sig-object py" id="citrine.resources.job.TaskNode.as_entity_dict">
-<span class="sig-name descname"><span class="pre">as_entity_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">dict</span><a class="headerlink" href="#citrine.resources.job.TaskNode.as_entity_dict" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return an access control entity representation of this resource.</p>
+<dt class="sig sig-object py" id="citrine.resources.job.TaskNode.access_control_dict">
+<span class="sig-name descname"><span class="pre">access_control_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">dict</span><a class="headerlink" href="#citrine.resources.job.TaskNode.access_control_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return an access control entity representation of this resource. Internal use only.</p>
 </dd></dl>
 
 <dl class="py method">

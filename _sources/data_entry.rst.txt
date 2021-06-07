@@ -196,7 +196,12 @@ Example with validation errors with no object template:
     parameter1 = Parameter('parameter_name', value=UniformInteger(1, 4))
     parameter2 = Parameter('parameter_name', value=UniformInteger(1, 5))
     process_spec = ProcessSpec(name='spec name')
-    process_run = ProcessRun(name='run name', spec=process_spec, conditions=[condition1, condition2], parameters=[parameter1, parameter2])
+    process_run = ProcessRun(
+        name='run name',
+        spec=process_spec,
+        conditions=[condition1, condition2],
+        parameters=[parameter1, parameter2]
+    )
     dataset.process_runs.validate_templates(process_run)
 
 has return value:
@@ -214,7 +219,10 @@ Example with validation errors with an object template:
     condition_template = dataset.condition_templates.register(condition_template)
 
     condition = Condition("condition", value=UniformInteger(1, 3), template=condition_template)
-    process_template = ProcessTemplate("pt", conditions=[[LinkByUID("id", condition_template.uids["id"]), IntegerBounds(2, 4)]])
+    process_template = ProcessTemplate(
+        "pt",
+        conditions=[[LinkByUID("id", condition_template.uids["id"]), IntegerBounds(2, 4)]]
+    )
     process_spec = ProcessSpec("ps", template=process_template)
     process_run = ProcessRun("pr", conditions=[condition], spec=process_spec)
     dataset.process_runs.validate_templates(process_run, object_template=process_template)
@@ -238,8 +246,16 @@ Example with validation errors for an ingredient:
     mat_process_spec = ProcessSpec("mps")
     material_spec = MaterialSpec("ms", process=mat_process_spec)
 
-    ingredient_spec = IngredientSpec("is", process=process_spec, material=material_spec, labels=["ingredient"])
-    dataset.ingredient_specs.validate_templates(ingredient_spec, ingredient_process_template=process_template)
+    ingredient_spec = IngredientSpec(
+        "is",
+        process=process_spec,
+        material=material_spec,
+        labels=["ingredient"]
+    )
+    dataset.ingredient_specs.validate_templates(
+        model=ingredient_spec,
+        ingredient_process_template=process_template
+    )
 
 has return value:
 

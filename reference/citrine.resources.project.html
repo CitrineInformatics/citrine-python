@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>citrine.resources.project module &mdash; Citrine Python 0.133.1 documentation</title>
+  <title>citrine.resources.project module &mdash; Citrine Python 0.134.0 documentation</title>
   
 
   
@@ -71,7 +71,7 @@
             
             
               <div class="version">
-                0.133.1
+                0.134.0
               </div>
             
           
@@ -175,7 +175,7 @@
 <p>Resources that represent both individual and collections of projects.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="citrine.resources.project.Project">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">citrine.resources.project.</span></span><span class="sig-name descname"><span class="pre">Project</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">name:</span> <span class="pre">str</span></em>, <em class="sig-param"><span class="pre">description:</span> <span class="pre">Optional[str]</span> <span class="pre">=</span> <span class="pre">None</span></em>, <em class="sig-param"><span class="pre">session:</span> <span class="pre">Optional[citrine._session.Session]</span> <span class="pre">=</span> <span class="pre">&lt;citrine._session.Session</span> <span class="pre">object&gt;</span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.project.Project" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">citrine.resources.project.</span></span><span class="sig-name descname"><span class="pre">Project</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">session</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">citrine._session.Session</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.project.Project" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.resource.Resource</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">Project</span></code>]</p>
 <p>A Citrine Project.</p>
 <p>A project is a collection of datasets, some of which belong directly to the project
@@ -223,6 +223,12 @@ and some of which have been shared with the project.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.project.Project.access_control_dict">
+<span class="sig-name descname"><span class="pre">access_control_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">dict</span><a class="headerlink" href="#citrine.resources.project.Project.access_control_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return an access control entity representation of this resource. Internal use only.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="citrine.resources.project.Project.add_user">
 <span class="sig-name descname"><span class="pre">add_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_uid</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.project.Project.add_user" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add a User to a Project.</p>
@@ -236,12 +242,6 @@ Use the <code class="docutils literal notranslate"><span class="pre">update_user
 <dd class="field-even"><p>bool</p>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="citrine.resources.project.Project.as_entity_dict">
-<span class="sig-name descname"><span class="pre">as_entity_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">dict</span><a class="headerlink" href="#citrine.resources.project.Project.as_entity_dict" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return an access control entity representation of this resource.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -403,13 +403,26 @@ deleted.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.resources.project.Project.share">
-<span class="sig-name descname"><span class="pre">share</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project_id</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resource_type</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resource_id</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#citrine.resources.project.Project.share" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">share</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resource</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">citrine._rest.resource.Resource</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">project_id</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resource_type</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resource_id</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#citrine.resources.project.Project.share" title="Permalink to this definition">¶</a></dt>
 <dd><p>Share a resource with another project.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>resource</strong> (<em>Resource</em>) – The resource owned by this project, which will be shared</p></li>
+<li><p><strong>project_id</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>UUID</em><em>]</em>) – The id of the project with which to share the resource</p></li>
+<li><p><strong>resource_type</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – [DEPRECATED] Please use <code class="docutils literal notranslate"><span class="pre">resource</span></code> instead
+The type of the resource to share. Must be one of DATASET, MODULE, USER,
+TABLE, OR TABLE_DEFINITION</p></li>
+<li><p><strong>resource_id</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – [DEPRECATED] Please use <code class="docutils literal notranslate"><span class="pre">resource</span></code> instead
+The id of the resource to share</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.resources.project.Project.transfer_resource">
-<span class="sig-name descname"><span class="pre">transfer_resource</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">resource</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">citrine._rest.resource.Resource</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">receiving_project_uid</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">bool</span><a class="headerlink" href="#citrine.resources.project.Project.transfer_resource" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">transfer_resource</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resource</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">citrine._rest.resource.Resource</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">receiving_project_uid</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">bool</span><a class="headerlink" href="#citrine.resources.project.Project.transfer_resource" title="Permalink to this definition">¶</a></dt>
 <dd><p>Transfer ownership of a resource.</p>
 <p>The new owner of the the supplied resource becomes the project
 with <code class="docutils literal notranslate"><span class="pre">uid</span> <span class="pre">==</span> <span class="pre">receiving_project_uid</span></code>.</p>
@@ -432,7 +445,7 @@ the project with <code class="docutils literal notranslate"><span class="pre">ui
 
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.resources.project.Project.update_user_role">
-<span class="sig-name descname"><span class="pre">update_user_role</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_uid</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">role</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">LEAD</span><span class="p"><span class="pre">,</span> </span><span class="pre">MEMBER</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">actions</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">WRITE</span><span class="p"><span class="pre">,</span> </span><span class="pre">READ</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">[]</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.project.Project.update_user_role" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">update_user_role</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_uid</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">role</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">LEAD</span><span class="p"><span class="pre">,</span> </span><span class="pre">MEMBER</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">actions</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">WRITE</span><span class="p"><span class="pre">,</span> </span><span class="pre">READ</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">[]</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.project.Project.update_user_role" title="Permalink to this definition">¶</a></dt>
 <dd><p>Update a User’s role and action permissions in the Project.</p>
 <p>Valid roles are <code class="docutils literal notranslate"><span class="pre">MEMBER</span></code> or <code class="docutils literal notranslate"><span class="pre">LEAD</span></code>.</p>
 <p><code class="docutils literal notranslate"><span class="pre">WRITE</span></code> is the only action available for specification.</p>
@@ -444,15 +457,6 @@ the project with <code class="docutils literal notranslate"><span class="pre">ui
 <dd class="field-even"><p>bool</p>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="citrine.resources.project.Project.ara_definitions">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">ara_definitions</span></span><em class="property"><span class="pre">:</span> <span class="pre">citrine.resources.table_config.TableConfigCollection</span></em><a class="headerlink" href="#citrine.resources.project.Project.ara_definitions" title="Permalink to this definition">¶</a></dt>
-<dd><p>[DEPRECATED] Use table_configs instead.</p>
-<div class="deprecated">
-<p><span class="versionmodified deprecated">Deprecated since version 0.52.2: </span>Use table_configs instead</p>
-</div>
 </dd></dl>
 
 <dl class="py property">
@@ -630,20 +634,11 @@ the project with <code class="docutils literal notranslate"><span class="pre">ui
 <span class="sig-name descname"><span class="pre">uid</span></span><em class="property"> <span class="pre">=</span> <span class="pre">None</span></em><a class="headerlink" href="#id2" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="py property">
-<dt class="sig sig-object py" id="citrine.resources.project.Project.workflows">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">workflows</span></span><em class="property"><span class="pre">:</span> <span class="pre">citrine.resources.workflow.WorkflowCollection</span></em><a class="headerlink" href="#citrine.resources.project.Project.workflows" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a resource representing all visible workflows.</p>
-<div class="deprecated">
-<p><span class="versionmodified deprecated">Deprecated since version 0.101.0: </span>Use design_workflows or predictor_evaluation_workflows instead</p>
-</div>
-</dd></dl>
-
 </dd></dl>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="citrine.resources.project.ProjectCollection">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">citrine.resources.project.</span></span><span class="sig-name descname"><span class="pre">ProjectCollection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">session:</span> <span class="pre">citrine._session.Session</span> <span class="pre">=</span> <span class="pre">&lt;citrine._session.Session</span> <span class="pre">object&gt;</span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.project.ProjectCollection" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">citrine.resources.project.</span></span><span class="sig-name descname"><span class="pre">ProjectCollection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">session</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">citrine._session.Session</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.project.ProjectCollection" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.collection.Collection</span></code>[<a class="reference internal" href="#citrine.resources.project.Project" title="citrine.resources.project.Project"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.resources.project.Project</span></code></a>]</p>
 <p>Represents the collection of all projects as well as the resources belonging to it.</p>
 <dl class="field-list simple">
@@ -685,7 +680,7 @@ resources. These must be deleted before the project can be deleted.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.resources.project.ProjectCollection.list">
-<span class="sig-name descname"><span class="pre">list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">page</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">per_page</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1000</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#citrine.resources.project.Project" title="citrine.resources.project.Project"><span class="pre">citrine.resources.project.Project</span></a><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#citrine.resources.project.ProjectCollection.list" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">per_page</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1000</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#citrine.resources.project.Project" title="citrine.resources.project.Project"><span class="pre">citrine.resources.project.Project</span></a><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#citrine.resources.project.ProjectCollection.list" title="Permalink to this definition">¶</a></dt>
 <dd><p>List projects using pagination.</p>
 <p>Leaving page and per_page as default values will yield all elements in the
 collection, paginating over all available pages.</p>
@@ -703,14 +698,14 @@ is specified it limits the maximum number of elements in the response.</p></li>
 <dd class="field-even"><p>Projects in this collection.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Iterable[<a class="reference internal" href="#citrine.resources.project.Project" title="citrine.resources.project.Project">Project</a>]</p>
+<dd class="field-odd"><p>Iterator[<a class="reference internal" href="#citrine.resources.project.Project" title="citrine.resources.project.Project">Project</a>]</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.resources.project.ProjectCollection.register">
-<span class="sig-name descname"><span class="pre">register</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#citrine.resources.project.Project" title="citrine.resources.project.Project"><span class="pre">citrine.resources.project.Project</span></a><a class="headerlink" href="#citrine.resources.project.ProjectCollection.register" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">register</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#citrine.resources.project.Project" title="citrine.resources.project.Project"><span class="pre">citrine.resources.project.Project</span></a><a class="headerlink" href="#citrine.resources.project.ProjectCollection.register" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create and upload new project.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -724,7 +719,7 @@ is specified it limits the maximum number of elements in the response.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.resources.project.ProjectCollection.search">
-<span class="sig-name descname"><span class="pre">search</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">search_params</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">per_page</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1000</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#citrine.resources.project.Project" title="citrine.resources.project.Project"><span class="pre">citrine.resources.project.Project</span></a><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#citrine.resources.project.ProjectCollection.search" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">search</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">search_params</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">per_page</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1000</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#citrine.resources.project.Project" title="citrine.resources.project.Project"><span class="pre">citrine.resources.project.Project</span></a><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#citrine.resources.project.ProjectCollection.search" title="Permalink to this definition">¶</a></dt>
 <dd><p>Search for projects matching the desired name or description.</p>
 <p>You can search for projects matching the desired name or description by either exact match
 or substring match, as specified by the search_params argument. Defaults to no search

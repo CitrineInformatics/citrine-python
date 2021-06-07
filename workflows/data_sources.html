@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>4.9. Data Sources &mdash; Citrine Python 0.133.1 documentation</title>
+  <title>4.9. Data Sources &mdash; Citrine Python 0.134.0 documentation</title>
   
 
   
@@ -73,7 +73,7 @@
             
             
               <div class="version">
-                0.133.1
+                0.134.0
               </div>
             
           
@@ -118,8 +118,7 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="predictor_reports.html">4.10. Predictor Reports</a></li>
 <li class="toctree-l2"><a class="reference internal" href="predictor_evaluation_workflows.html">4.11. Predictor Evaluation Workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="performance_workflows.html">4.12. [DEPRECATED] Performance Workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="code_examples.html">4.13. AI Engine Code Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="code_examples.html">4.12. AI Engine Code Examples</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../formulations_example.html">5. Formulations Example</a></li>
@@ -307,7 +306,7 @@ A CSV data source and <a class="reference internal" href="../reference/citrine.i
 <span class="kn">from</span> <span class="nn">citrine.informatics.descriptors</span> <span class="kn">import</span> <span class="n">FormulationDescriptor</span><span class="p">,</span> <span class="n">RealDescriptor</span>
 <span class="kn">from</span> <span class="nn">citrine.informatics.predictors</span> <span class="kn">import</span> <span class="n">IngredientsToFormulationPredictor</span>
 
-<span class="n">file_link</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">upload</span><span class="p">(</span><span class="s2">&quot;./saline_solutions.csv&quot;</span><span class="p">,</span> <span class="s2">&quot;saline_solutions.csv&quot;</span><span class="p">)</span>
+<span class="n">file_link</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">upload</span><span class="p">(</span><span class="n">file_path</span><span class="o">=</span><span class="s2">&quot;./saline_solutions.csv&quot;</span><span class="p">,</span> <span class="n">dest_name</span><span class="o">=</span><span class="s2">&quot;saline_solutions.csv&quot;</span><span class="p">)</span>
 
 <span class="c1"># create descriptors for each ingredient quantity (volume fraction)</span>
 <span class="n">water_quantity</span> <span class="o">=</span> <span class="n">RealDescriptor</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;water quantity&#39;</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>

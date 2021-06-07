@@ -8,8 +8,6 @@ Submodules
    :maxdepth: 4
 
    citrine.resources.api_error
-   citrine.resources.ara_definition
-   citrine.resources.ara_job
    citrine.resources.attribute_templates
    citrine.resources.audit_info
    citrine.resources.condition_template
@@ -50,12 +48,9 @@ Submodules
    citrine.resources.property_template
    citrine.resources.report
    citrine.resources.response
-   citrine.resources.table
    citrine.resources.table_config
    citrine.resources.templates
    citrine.resources.user
-   citrine.resources.workflow
-   citrine.resources.workflow_executions
 
 Module contents
 ---------------

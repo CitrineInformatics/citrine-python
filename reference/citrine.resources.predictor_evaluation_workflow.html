@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>citrine.resources.predictor_evaluation_workflow module &mdash; Citrine Python 0.133.1 documentation</title>
+  <title>citrine.resources.predictor_evaluation_workflow module &mdash; Citrine Python 0.134.0 documentation</title>
   
 
   
@@ -71,7 +71,7 @@
             
             
               <div class="version">
-                0.133.1
+                0.134.0
               </div>
             
           
@@ -197,13 +197,13 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.resources.predictor_evaluation_workflow.PredictorEvaluationWorkflowCollection.create_default">
-<span class="sig-name descname"><span class="pre">create_default</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">predictor_id</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">uuid.UUID</span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="citrine.informatics.workflows.predictor_evaluation_workflow.html#citrine.informatics.workflows.predictor_evaluation_workflow.PredictorEvaluationWorkflow" title="citrine.informatics.workflows.predictor_evaluation_workflow.PredictorEvaluationWorkflow"><span class="pre">citrine.informatics.workflows.predictor_evaluation_workflow.PredictorEvaluationWorkflow</span></a><a class="headerlink" href="#citrine.resources.predictor_evaluation_workflow.PredictorEvaluationWorkflowCollection.create_default" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">create_default</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">predictor_id</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">uuid.UUID</span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="citrine.informatics.workflows.predictor_evaluation_workflow.html#citrine.informatics.workflows.predictor_evaluation_workflow.PredictorEvaluationWorkflow" title="citrine.informatics.workflows.predictor_evaluation_workflow.PredictorEvaluationWorkflow"><span class="pre">citrine.informatics.workflows.predictor_evaluation_workflow.PredictorEvaluationWorkflow</span></a><a class="headerlink" href="#citrine.resources.predictor_evaluation_workflow.PredictorEvaluationWorkflowCollection.create_default" title="Permalink to this definition">¶</a></dt>
 <dd><p>[ALPHA] Create a default predictor evaluation workflow for a predictor and execute it.</p>
 <p>The current default predictor evaluation workflow performs 5-fold, 1-trial cross-validation
 on all valid predictor responses. Valid responses are those that are <strong>not</strong> produced by the
 following predictors:</p>
 <ul class="simple">
-<li><p><a class="reference internal" href="citrine.informatics.predictors.generalized_mean_property_predictor.html#citrine.informatics.predictors.generalized_mean_property_predictor.GeneralizedMeanPropertyPredictor" title="citrine.informatics.predictors.generalized_mean_property_predictor.GeneralizedMeanPropertyPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">GeneralizedMeanPropertyPredictor</span></code></a></p></li>
+<li><p><code class="xref py py-class docutils literal notranslate"><span class="pre">GeneralizedMeanPropertyPredictor</span></code></p></li>
 <li><p><a class="reference internal" href="citrine.informatics.predictors.mean_property_predictor.html#citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor" title="citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">MeanPropertyPredictor</span></code></a></p></li>
 <li><p><a class="reference internal" href="citrine.informatics.predictors.ingredient_fractions_predictor.html#citrine.informatics.predictors.ingredient_fractions_predictor.IngredientFractionsPredictor" title="citrine.informatics.predictors.ingredient_fractions_predictor.IngredientFractionsPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientFractionsPredictor</span></code></a></p></li>
 <li><p><a class="reference internal" href="citrine.informatics.predictors.ingredients_to_simple_mixture_predictor.html#citrine.informatics.predictors.ingredients_to_simple_mixture_predictor.IngredientsToSimpleMixturePredictor" title="citrine.informatics.predictors.ingredients_to_simple_mixture_predictor.IngredientsToSimpleMixturePredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientsToSimpleMixturePredictor</span></code></a></p></li>
@@ -240,7 +240,7 @@ following predictors:</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.resources.predictor_evaluation_workflow.PredictorEvaluationWorkflowCollection.list">
-<span class="sig-name descname"><span class="pre">list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">page</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">per_page</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">ResourceType</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#citrine.resources.predictor_evaluation_workflow.PredictorEvaluationWorkflowCollection.list" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">per_page</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">ResourceType</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#citrine.resources.predictor_evaluation_workflow.PredictorEvaluationWorkflowCollection.list" title="Permalink to this definition">¶</a></dt>
 <dd><p>Paginate over the elements of the collection.</p>
 <p>Leaving page and per_page as default values will yield all elements in the
 collection, paginating over all available pages.</p>
@@ -255,10 +255,11 @@ is specified it limits the maximum number of elements in the response.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Resources in this collection.</p>
+<dd class="field-even"><p>An iterator that can be used to loop over all of the resources in this collection.
+Use list() to force evaluation of all results into an in-memory list.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Iterable[ResourceType]</p>
+<dd class="field-odd"><p>Iterator[ResourceType]</p>
 </dd>
 </dl>
 </dd></dl>

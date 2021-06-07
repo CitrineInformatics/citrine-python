@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>citrine.informatics.constraints.categorical_constraint module &mdash; Citrine Python 0.133.1 documentation</title>
+  <title>citrine.informatics.constraints.categorical_constraint module &mdash; Citrine Python 0.134.0 documentation</title>
   
 
   
@@ -71,7 +71,7 @@
             
             
               <div class="version">
-                0.133.1
+                0.134.0
               </div>
             
           
@@ -174,7 +174,7 @@
 <span id="citrine-informatics-constraints-categorical-constraint-module"></span><h1>citrine.informatics.constraints.categorical_constraint module<a class="headerlink" href="#module-citrine.informatics.constraints.categorical_constraint" title="Permalink to this headline">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="citrine.informatics.constraints.categorical_constraint.AcceptableCategoriesConstraint">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">citrine.informatics.constraints.categorical_constraint.</span></span><span class="sig-name descname"><span class="pre">AcceptableCategoriesConstraint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">descriptor_key</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">acceptable_categories</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">session</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">citrine._session.Session</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.constraints.categorical_constraint.AcceptableCategoriesConstraint" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">citrine.informatics.constraints.categorical_constraint.</span></span><span class="sig-name descname"><span class="pre">AcceptableCategoriesConstraint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">descriptor_key</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">acceptable_categories</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.constraints.categorical_constraint.AcceptableCategoriesConstraint" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">AcceptableCategoriesConstraint</span></code>], <a class="reference internal" href="citrine.informatics.constraints.constraint.html#citrine.informatics.constraints.constraint.Constraint" title="citrine.informatics.constraints.constraint.Constraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.constraints.constraint.Constraint</span></code></a></p>
 <p>A constraint on a categorical material attribute to be in a set of acceptable values.</p>
 <dl class="field-list simple">
@@ -216,54 +216,6 @@
 <dl class="py attribute">
 <dt class="sig sig-object py" id="citrine.informatics.constraints.categorical_constraint.AcceptableCategoriesConstraint.typ">
 <span class="sig-name descname"><span class="pre">typ</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'AcceptableCategoriesConstraint'</span></em><a class="headerlink" href="#citrine.informatics.constraints.categorical_constraint.AcceptableCategoriesConstraint.typ" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="citrine.informatics.constraints.categorical_constraint.CategoricalConstraint">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">citrine.informatics.constraints.categorical_constraint.</span></span><span class="sig-name descname"><span class="pre">CategoricalConstraint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">descriptor_key</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">acceptable_categories</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">session</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">citrine._session.Session</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.constraints.categorical_constraint.CategoricalConstraint" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">CategoricalConstraint</span></code>], <a class="reference internal" href="citrine.informatics.constraints.constraint.html#citrine.informatics.constraints.constraint.Constraint" title="citrine.informatics.constraints.constraint.Constraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.constraints.constraint.Constraint</span></code></a></p>
-<p>[DEPRECATED] A constraint on a categorical material attribute in a set of acceptable values.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>descriptor_key</strong> (<em>str</em>) – the key corresponding to the associated Categorical descriptor</p></li>
-<li><p><strong>acceptable_categories</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – the names of the acceptable categories to constrain to</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="citrine.informatics.constraints.categorical_constraint.CategoricalConstraint.build">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Self</span><a class="headerlink" href="#citrine.informatics.constraints.categorical_constraint.CategoricalConstraint.build" title="Permalink to this definition">¶</a></dt>
-<dd><p>Build an instance of this object from given data.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="citrine.informatics.constraints.categorical_constraint.CategoricalConstraint.dump">
-<span class="sig-name descname"><span class="pre">dump</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">dict</span><a class="headerlink" href="#citrine.informatics.constraints.categorical_constraint.CategoricalConstraint.dump" title="Permalink to this definition">¶</a></dt>
-<dd><p>Dump this instance.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="citrine.informatics.constraints.categorical_constraint.CategoricalConstraint.get_type">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">get_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.constraints.categorical_constraint.CategoricalConstraint.get_type" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the subtype.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="citrine.informatics.constraints.categorical_constraint.CategoricalConstraint.acceptable_categories">
-<span class="sig-name descname"><span class="pre">acceptable_categories</span></span><em class="property"> <span class="pre">=</span> <span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.constraints.categorical_constraint.CategoricalConstraint.acceptable_categories" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="citrine.informatics.constraints.categorical_constraint.CategoricalConstraint.descriptor_key">
-<span class="sig-name descname"><span class="pre">descriptor_key</span></span><em class="property"> <span class="pre">=</span> <span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.constraints.categorical_constraint.CategoricalConstraint.descriptor_key" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="citrine.informatics.constraints.categorical_constraint.CategoricalConstraint.typ">
-<span class="sig-name descname"><span class="pre">typ</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'AcceptableCategoriesConstraint'</span></em><a class="headerlink" href="#citrine.informatics.constraints.categorical_constraint.CategoricalConstraint.typ" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>

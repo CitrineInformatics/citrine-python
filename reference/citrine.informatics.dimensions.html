@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>citrine.informatics.dimensions module &mdash; Citrine Python 0.133.1 documentation</title>
+  <title>citrine.informatics.dimensions module &mdash; Citrine Python 0.134.0 documentation</title>
   
 
   
@@ -71,7 +71,7 @@
             
             
               <div class="version">
-                0.133.1
+                0.134.0
               </div>
             
           
@@ -175,7 +175,7 @@
 <p>Tools for working with Dimensions.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="citrine.informatics.dimensions.ContinuousDimension">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">citrine.informatics.dimensions.</span></span><span class="sig-name descname"><span class="pre">ContinuousDimension</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">descriptor</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.RealDescriptor" title="citrine.informatics.descriptors.RealDescriptor"><span class="pre">citrine.informatics.descriptors.RealDescriptor</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower_bound</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upper_bound</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">template_id</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.dimensions.ContinuousDimension" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">citrine.informatics.dimensions.</span></span><span class="sig-name descname"><span class="pre">ContinuousDimension</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">descriptor</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.RealDescriptor" title="citrine.informatics.descriptors.RealDescriptor"><span class="pre">citrine.informatics.descriptors.RealDescriptor</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower_bound</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upper_bound</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.dimensions.ContinuousDimension" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">ContinuousDimension</span></code>], <a class="reference internal" href="#citrine.informatics.dimensions.Dimension" title="citrine.informatics.dimensions.Dimension"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.dimensions.Dimension</span></code></a></p>
 <p>A continuous, real-valued dimension.</p>
 <dl class="field-list simple">
@@ -184,7 +184,6 @@
 <li><p><strong>descriptor</strong> (<a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.RealDescriptor" title="citrine.informatics.descriptors.RealDescriptor"><em>RealDescriptor</em></a>) – a descriptor of the single dimension</p></li>
 <li><p><strong>lower_bound</strong> (<em>float</em>) – inclusive lower bound</p></li>
 <li><p><strong>upper_bound</strong> (<em>float</em>) – inclusive upper bound</p></li>
-<li><p><strong>template_id</strong> (<em>UUID</em>) – UUID that corresponds to the template in DC</p></li>
 </ul>
 </dd>
 </dl>
@@ -214,11 +213,6 @@
 <dl class="py attribute">
 <dt class="sig sig-object py" id="citrine.informatics.dimensions.ContinuousDimension.lower_bound">
 <span class="sig-name descname"><span class="pre">lower_bound</span></span><em class="property"><span class="pre">:</span> <span class="pre">float</span></em><em class="property"> <span class="pre">=</span> <span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.dimensions.ContinuousDimension.lower_bound" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="citrine.informatics.dimensions.ContinuousDimension.template_id">
-<span class="sig-name descname"><span class="pre">template_id</span></span><em class="property"><span class="pre">:</span> <span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">]</span></span></em><em class="property"> <span class="pre">=</span> <span class="pre">UUID('4183bd99-b143-4628-a83b-eb2a15db5b89')</span></em><a class="headerlink" href="#citrine.informatics.dimensions.ContinuousDimension.template_id" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -255,14 +249,13 @@
 
 <dl class="py class">
 <dt class="sig sig-object py" id="citrine.informatics.dimensions.EnumeratedDimension">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">citrine.informatics.dimensions.</span></span><span class="sig-name descname"><span class="pre">EnumeratedDimension</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">descriptor</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.Descriptor" title="citrine.informatics.descriptors.Descriptor"><span class="pre">citrine.informatics.descriptors.Descriptor</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">values</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">template_id</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.dimensions.EnumeratedDimension" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">citrine.informatics.dimensions.</span></span><span class="sig-name descname"><span class="pre">EnumeratedDimension</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">descriptor</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.Descriptor" title="citrine.informatics.descriptors.Descriptor"><span class="pre">citrine.informatics.descriptors.Descriptor</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">values</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.dimensions.EnumeratedDimension" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">EnumeratedDimension</span></code>], <a class="reference internal" href="#citrine.informatics.dimensions.Dimension" title="citrine.informatics.dimensions.Dimension"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.dimensions.Dimension</span></code></a></p>
 <p>A finite, enumerated dimension.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>descriptor</strong> (<a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.Descriptor" title="citrine.informatics.descriptors.Descriptor"><em>Descriptor</em></a>) – a descriptor of the single dimension</p></li>
-<li><p><strong>template_id</strong> (<em>UUID</em>) – UUID that corresponds to the template in DC</p></li>
 <li><p><strong>values</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – list of values that can be parsed by the descriptor</p></li>
 </ul>
 </dd>
@@ -288,11 +281,6 @@
 <dl class="py attribute">
 <dt class="sig sig-object py" id="citrine.informatics.dimensions.EnumeratedDimension.descriptor">
 <span class="sig-name descname"><span class="pre">descriptor</span></span><em class="property"><span class="pre">:</span> <a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.Descriptor" title="citrine.informatics.descriptors.Descriptor"><span class="pre">citrine.informatics.descriptors.Descriptor</span></a></em><em class="property"> <span class="pre">=</span> <span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.dimensions.EnumeratedDimension.descriptor" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="citrine.informatics.dimensions.EnumeratedDimension.template_id">
-<span class="sig-name descname"><span class="pre">template_id</span></span><em class="property"><span class="pre">:</span> <span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">]</span></span></em><em class="property"> <span class="pre">=</span> <span class="pre">UUID('f9965466-8a5c-43d1-aa5d-8bcf0c062e5e')</span></em><a class="headerlink" href="#citrine.informatics.dimensions.EnumeratedDimension.template_id" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">

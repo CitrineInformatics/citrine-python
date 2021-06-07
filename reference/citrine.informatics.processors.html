@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>citrine.informatics.processors module &mdash; Citrine Python 0.133.1 documentation</title>
+  <title>citrine.informatics.processors module &mdash; Citrine Python 0.134.0 documentation</title>
   
 
   
@@ -71,7 +71,7 @@
             
             
               <div class="version">
-                0.133.1
+                0.134.0
               </div>
             
           
@@ -175,7 +175,7 @@
 <p>Tools for working with Processors.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="citrine.informatics.processors.EnumeratedProcessor">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">citrine.informatics.processors.</span></span><span class="sig-name descname"><span class="pre">EnumeratedProcessor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_candidates</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_size</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">session</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">citrine._session.Session</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.processors.EnumeratedProcessor" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">citrine.informatics.processors.</span></span><span class="sig-name descname"><span class="pre">EnumeratedProcessor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_candidates</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.processors.EnumeratedProcessor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.resource.Resource</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">EnumeratedProcessor</span></code>], <a class="reference internal" href="#citrine.informatics.processors.Processor" title="citrine.informatics.processors.Processor"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.processors.Processor</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.ai_resource_metadata.AIResourceMetadata</span></code></p>
 <p>Process a design space by enumerating up to a fixed number of samples from the domain.</p>
 <p>Each sample is processed independently.</p>
@@ -189,9 +189,9 @@
 </dd>
 </dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="citrine.informatics.processors.EnumeratedProcessor.as_entity_dict">
-<span class="sig-name descname"><span class="pre">as_entity_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">dict</span><a class="headerlink" href="#citrine.informatics.processors.EnumeratedProcessor.as_entity_dict" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return an access control entity representation of this resource.</p>
+<dt class="sig sig-object py" id="citrine.informatics.processors.EnumeratedProcessor.access_control_dict">
+<span class="sig-name descname"><span class="pre">access_control_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">dict</span><a class="headerlink" href="#citrine.informatics.processors.EnumeratedProcessor.access_control_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return an access control entity representation of this resource. Internal use only.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -318,12 +318,6 @@ if it has been archived</p>
 <span class="sig-name descname"><span class="pre">max_candidates</span></span><em class="property"><span class="pre">:</span> <span class="pre">int</span></em><em class="property"> <span class="pre">=</span> <span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.processors.EnumeratedProcessor.max_candidates" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="py property">
-<dt class="sig sig-object py" id="citrine.informatics.processors.EnumeratedProcessor.max_size">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">max_size</span></span><a class="headerlink" href="#citrine.informatics.processors.EnumeratedProcessor.max_size" title="Permalink to this definition">¶</a></dt>
-<dd><p>[DEPRECATED] Alias for max_candidates.</p>
-</dd></dl>
-
 <dl class="py attribute">
 <dt class="sig sig-object py" id="citrine.informatics.processors.EnumeratedProcessor.module_type">
 <span class="sig-name descname"><span class="pre">module_type</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'PROCESSOR'</span></em><a class="headerlink" href="#citrine.informatics.processors.EnumeratedProcessor.module_type" title="Permalink to this definition">¶</a></dt>
@@ -400,7 +394,7 @@ if it has been updated</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="citrine.informatics.processors.GridProcessor">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">citrine.informatics.processors.</span></span><span class="sig-name descname"><span class="pre">GridProcessor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_sizes</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Mapping</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">session</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">citrine._session.Session</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.processors.GridProcessor" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">citrine.informatics.processors.</span></span><span class="sig-name descname"><span class="pre">GridProcessor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_sizes</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Mapping</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.processors.GridProcessor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.resource.Resource</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">GridProcessor</span></code>], <a class="reference internal" href="#citrine.informatics.processors.Processor" title="citrine.informatics.processors.Processor"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.processors.Processor</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.ai_resource_metadata.AIResourceMetadata</span></code></p>
 <p>Generates samples from the Cartesian product of finite dimensions, then scans over them.</p>
 <p>For each continuous dimensions, a uniform grid is created between the lower and upper bounds of
@@ -420,9 +414,9 @@ is often preferable.</p>
 </dd>
 </dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="citrine.informatics.processors.GridProcessor.as_entity_dict">
-<span class="sig-name descname"><span class="pre">as_entity_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">dict</span><a class="headerlink" href="#citrine.informatics.processors.GridProcessor.as_entity_dict" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return an access control entity representation of this resource.</p>
+<dt class="sig sig-object py" id="citrine.informatics.processors.GridProcessor.access_control_dict">
+<span class="sig-name descname"><span class="pre">access_control_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">dict</span><a class="headerlink" href="#citrine.informatics.processors.GridProcessor.access_control_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return an access control entity representation of this resource. Internal use only.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -625,7 +619,7 @@ if it has been updated</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="citrine.informatics.processors.MonteCarloProcessor">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">citrine.informatics.processors.</span></span><span class="sig-name descname"><span class="pre">MonteCarloProcessor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_candidates</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">session</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">citrine._session.Session</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.processors.MonteCarloProcessor" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">citrine.informatics.processors.</span></span><span class="sig-name descname"><span class="pre">MonteCarloProcessor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_candidates</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.processors.MonteCarloProcessor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.resource.Resource</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">GridProcessor</span></code>], <a class="reference internal" href="#citrine.informatics.processors.Processor" title="citrine.informatics.processors.Processor"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.processors.Processor</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.ai_resource_metadata.AIResourceMetadata</span></code></p>
 <p>Using a Monte Carlo optimizer to search for the best candidate.</p>
 <p>The moves that the MonteCarlo optimizer makes are inferred from the descriptors in the
@@ -641,9 +635,9 @@ design space.</p>
 </dd>
 </dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="citrine.informatics.processors.MonteCarloProcessor.as_entity_dict">
-<span class="sig-name descname"><span class="pre">as_entity_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">dict</span><a class="headerlink" href="#citrine.informatics.processors.MonteCarloProcessor.as_entity_dict" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return an access control entity representation of this resource.</p>
+<dt class="sig sig-object py" id="citrine.informatics.processors.MonteCarloProcessor.access_control_dict">
+<span class="sig-name descname"><span class="pre">access_control_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">dict</span><a class="headerlink" href="#citrine.informatics.processors.MonteCarloProcessor.access_control_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return an access control entity representation of this resource. Internal use only.</p>
 </dd></dl>
 
 <dl class="py method">

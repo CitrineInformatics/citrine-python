@@ -7,7 +7,6 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
-   citrine.ara
    citrine.builders
    citrine.gemtables
    citrine.informatics

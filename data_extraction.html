@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>3. [ALPHA] Data Extraction &mdash; Citrine Python 0.133.1 documentation</title>
+  <title>3. [ALPHA] Data Extraction &mdash; Citrine Python 0.134.0 documentation</title>
   
 
   
@@ -73,7 +73,7 @@
             
             
               <div class="version">
-                0.133.1
+                0.134.0
               </div>
             
           
@@ -212,10 +212,10 @@ Assuming they are next to each other, the <code class="docutils literal notransl
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.gemtables.variables</span> <span class="kn">import</span> <span class="n">AttributeByTemplateAfterProcessTemplate</span>
 <span class="kn">from</span> <span class="nn">gemd.entity.link_by_uid</span> <span class="kn">import</span> <span class="n">LinkByUID</span>
 <span class="n">final_density</span> <span class="o">=</span> <span class="n">AttributeByTemplateAfterProcessTemplate</span><span class="p">(</span>
-      <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;final density&quot;</span><span class="p">,</span>
-      <span class="n">headers</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Product&quot;</span><span class="p">,</span> <span class="s2">&quot;Density&quot;</span><span class="p">],</span>
-      <span class="n">attribute_template</span> <span class="o">=</span> <span class="n">LinkByUID</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s2">&quot;templates&quot;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;cookie density&quot;</span><span class="p">),</span>
-      <span class="n">process_template</span> <span class="o">=</span> <span class="n">LinkByUID</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s2">&quot;templates&quot;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;apply glaze&quot;</span><span class="p">))</span>
+      <span class="n">name</span><span class="o">=</span><span class="s2">&quot;final density&quot;</span><span class="p">,</span>
+      <span class="n">headers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Product&quot;</span><span class="p">,</span> <span class="s2">&quot;Density&quot;</span><span class="p">],</span>
+      <span class="n">attribute_template</span><span class="o">=</span><span class="n">LinkByUID</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s2">&quot;templates&quot;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;cookie density&quot;</span><span class="p">),</span>
+      <span class="n">process_template</span><span class="o">=</span><span class="n">LinkByUID</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s2">&quot;templates&quot;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;apply glaze&quot;</span><span class="p">))</span>
 </pre></div>
 </div>
 <p>A <a class="reference internal" href="reference/citrine.gemtables.columns.html#citrine.gemtables.columns.Column" title="citrine.gemtables.columns.Column"><code class="xref py py-class docutils literal notranslate"><span class="pre">Column</span></code></a> object describes how to transform a <a class="reference internal" href="reference/citrine.gemtables.variables.html#citrine.gemtables.variables.Variable" title="citrine.gemtables.variables.Variable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Variable</span></code></a> into a primitive value (e.g., a real number, an integer, or a string) that can be entered into a cell in a table.
@@ -238,13 +238,13 @@ and a list of <a class="reference internal" href="reference/citrine.gemtables.co
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.resources.table_config</span> <span class="kn">import</span> <span class="n">TableConfig</span>
 <span class="kn">from</span> <span class="nn">uuid</span> <span class="kn">import</span> <span class="n">UUID</span>
 <span class="n">table_config</span> <span class="o">=</span> <span class="n">TableConfig</span><span class="p">(</span>
-      <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;cookies&quot;</span><span class="p">,</span>
-      <span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;Cookie densities&quot;</span><span class="p">,</span>
-      <span class="n">datasets</span> <span class="o">=</span> <span class="p">[</span><span class="n">UUID</span><span class="p">(</span><span class="s2">&quot;7d040451-7cfb-45ca-9e0e-4b2b7010edd6&quot;</span><span class="p">),</span>
+      <span class="n">name</span><span class="o">=</span><span class="s2">&quot;cookies&quot;</span><span class="p">,</span>
+      <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Cookie densities&quot;</span><span class="p">,</span>
+      <span class="n">datasets</span><span class="o">=</span><span class="p">[</span><span class="n">UUID</span><span class="p">(</span><span class="s2">&quot;7d040451-7cfb-45ca-9e0e-4b2b7010edd6&quot;</span><span class="p">),</span>
                   <span class="n">UUID</span><span class="p">(</span><span class="s2">&quot;7cfb45ca-9e0e-4b2b-7010-edd67d040451&quot;</span><span class="p">)],</span>
-      <span class="n">variables</span> <span class="o">=</span> <span class="p">[</span><span class="n">final_density</span><span class="p">],</span>
-      <span class="n">rows</span> <span class="o">=</span> <span class="p">[</span><span class="n">row_def</span><span class="p">],</span>
-      <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">final_density_mean</span><span class="p">,</span> <span class="n">final_density_std</span><span class="p">])</span>
+      <span class="n">variables</span><span class="o">=</span><span class="p">[</span><span class="n">final_density</span><span class="p">],</span>
+      <span class="n">rows</span><span class="o">=</span><span class="p">[</span><span class="n">row_def</span><span class="p">],</span>
+      <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="n">final_density_mean</span><span class="p">,</span> <span class="n">final_density_std</span><span class="p">])</span>
 </pre></div>
 </div>
 <p>Note the inclusion of two datasets above.
@@ -260,10 +260,10 @@ Assume that the process template is accessible from a known project, <code class
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.gemtables.variables</span> <span class="kn">import</span> <span class="n">IngredientQuantityDimension</span>
 
 <span class="n">table_config</span> <span class="o">=</span> <span class="n">table_config</span><span class="o">.</span><span class="n">add_all_ingredients</span><span class="p">(</span>
-                                        <span class="n">process_template</span> <span class="o">=</span> <span class="n">LinkByUID</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;3a308f78-e341-f39c-8076-35a2c88292ad&#39;</span><span class="p">),</span>
-                                        <span class="n">project</span><span class="o">=</span><span class="n">project</span><span class="p">,</span>
-                                        <span class="n">quantity_dimension</span><span class="o">=</span><span class="n">IngredientQuantityDimension</span><span class="o">.</span><span class="n">MASS</span>
-                                        <span class="p">)</span>
+    <span class="n">process_template</span><span class="o">=</span><span class="n">LinkByUID</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;3a308f78-e341-f39c-8076-35a2c88292ad&#39;</span><span class="p">),</span>
+    <span class="n">project</span><span class="o">=</span><span class="n">project</span><span class="p">,</span>
+    <span class="n">quantity_dimension</span><span class="o">=</span><span class="n">IngredientQuantityDimension</span><span class="o">.</span><span class="n">MASS</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 <p>If the process template’s allowed names includes, for example, “flour” then there will now be columns “batter mixing~flour~id” and “batter mixing~flour~mass fraction~mean.”</p>
@@ -275,10 +275,11 @@ Via such an object, one can preview a draft TableConfig on an explicit set of Ma
 <p>For example:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">table_configs</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">table_configs</span>
 <span class="n">preview</span> <span class="o">=</span> <span class="n">table_configs</span><span class="o">.</span><span class="n">preview</span><span class="p">(</span>
-      <span class="n">table_config</span> <span class="o">=</span> <span class="n">table_config</span><span class="p">,</span>
-      <span class="n">preview_roots</span> <span class="o">=</span> <span class="p">[</span>
+      <span class="n">table_config</span><span class="o">=</span><span class="n">table_config</span><span class="p">,</span>
+      <span class="n">preview_materials</span><span class="o">=</span><span class="p">[</span>
             <span class="n">LinkByUID</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s2">&quot;products&quot;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;best cookie ever&quot;</span><span class="p">),</span>
-            <span class="n">LinkByUID</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s2">&quot;products&quot;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;worst cookie ever&quot;</span><span class="p">)])</span>
+            <span class="n">LinkByUID</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s2">&quot;products&quot;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;worst cookie ever&quot;</span><span class="p">)]</span>
+ <span class="p">)</span>
 </pre></div>
 </div>
 <p>The preview returns a dictionary with two keys:</p>
@@ -290,7 +291,7 @@ Via such an object, one can preview a draft TableConfig on an explicit set of Ma
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">StringIO</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
-<span class="n">preview</span> <span class="o">=</span> <span class="n">table_configs</span><span class="o">.</span><span class="n">preview</span><span class="p">(</span><span class="n">table_config</span><span class="p">,</span> <span class="n">preview_roots</span><span class="p">)</span>
+<span class="n">preview</span> <span class="o">=</span> <span class="n">table_configs</span><span class="o">.</span><span class="n">preview</span><span class="p">(</span><span class="n">table_config</span><span class="o">=</span><span class="n">table_config</span><span class="p">,</span> <span class="n">preview_materials</span><span class="o">=</span><span class="n">preview_materials</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">preview</span><span class="p">[</span><span class="s2">&quot;warnings&quot;</span><span class="p">]))</span>
 <span class="n">data_frame</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">StringIO</span><span class="p">(</span><span class="n">preview</span><span class="p">[</span><span class="s2">&quot;csv&quot;</span><span class="p">]))</span>
 </pre></div>
@@ -339,7 +340,7 @@ Just like the <a class="reference internal" href="reference/citrine.resources.fi
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get the table resource as an object</span>
 <span class="n">table</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">tables</span><span class="o">.</span><span class="n">get_by_build_job</span><span class="p">(</span><span class="n">job</span><span class="p">)</span>
 <span class="c1"># Download the table</span>
-<span class="n">project</span><span class="o">.</span><span class="n">tables</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="s2">&quot;./my_table.csv&quot;</span><span class="p">)</span>
+<span class="n">project</span><span class="o">.</span><span class="n">tables</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">table</span><span class="o">=</span><span class="n">table</span><span class="p">,</span> <span class="n">local_path</span><span class="o">=</span><span class="s2">&quot;./my_table.csv&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -372,8 +373,8 @@ By including one or both of those templates, you can define a table of Cakes, Br
 </li>
 <li><p>Identifiers</p>
 <ul>
-<li><p><a class="reference internal" href="reference/citrine.gemtables.variables.html#citrine.gemtables.variables.RootInfo" title="citrine.gemtables.variables.RootInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">RootInfo</span></code></a>: for fields defined on the material at the terminal of the Material History, like the name of the material</p></li>
-<li><p><a class="reference internal" href="reference/citrine.gemtables.variables.html#citrine.gemtables.variables.RootIdentifier" title="citrine.gemtables.variables.RootIdentifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">RootIdentifier</span></code></a>: for the id of the Material History, which can be used as a unique identifier for the rows</p></li>
+<li><p><a class="reference internal" href="reference/citrine.gemtables.variables.html#citrine.gemtables.variables.TerminalMaterialInfo" title="citrine.gemtables.variables.TerminalMaterialInfo"><code class="xref py py-class docutils literal notranslate"><span class="pre">TerminalMaterialInfo</span></code></a>: for fields defined on the material at the terminus of the Material History, like the name of the material</p></li>
+<li><p><a class="reference internal" href="reference/citrine.gemtables.variables.html#citrine.gemtables.variables.TerminalMaterialIdentifier" title="citrine.gemtables.variables.TerminalMaterialIdentifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">TerminalMaterialIdentifier</span></code></a>: for the id of the Material History, which can be used as a unique identifier for the rows</p></li>
 <li><p><a class="reference internal" href="reference/citrine.gemtables.variables.html#citrine.gemtables.variables.IngredientIdentifierByProcessTemplateAndName" title="citrine.gemtables.variables.IngredientIdentifierByProcessTemplateAndName"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientIdentifierByProcessTemplateAndName</span></code></a>: for the id of the material being used in an ingredient, which can be used as a key for looking up that input material</p></li>
 <li><p><a class="reference internal" href="reference/citrine.gemtables.variables.html#citrine.gemtables.variables.IngredientIdentifierInOutput" title="citrine.gemtables.variables.IngredientIdentifierInOutput"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientIdentifierInOutput</span></code></a>: for the id of a material used in an ingredient between the terminal material and a given set of processes (useful for ingredients used in multiple processes)</p></li>
 <li><p><a class="reference internal" href="reference/citrine.gemtables.variables.html#citrine.gemtables.variables.IngredientLabelByProcessAndName" title="citrine.gemtables.variables.IngredientLabelByProcessAndName"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientLabelByProcessAndName</span></code></a>: for a boolean that indicates whether an ingredient is assigned a given label</p></li>

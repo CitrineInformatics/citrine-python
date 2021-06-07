@@ -1,8 +1,0 @@
-citrine.ara.rows module
-=======================
-
-.. automodule:: citrine.ara.rows
-   :members:
-   :undoc-members:
-   :inherited-members:
-   :show-inheritance:

@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>4.6. Processors &mdash; Citrine Python 0.133.1 documentation</title>
+  <title>4.6. Processors &mdash; Citrine Python 0.134.0 documentation</title>
   
 
   
@@ -73,7 +73,7 @@
             
             
               <div class="version">
-                0.133.1
+                0.134.0
               </div>
             
           
@@ -119,8 +119,7 @@
 <li class="toctree-l2"><a class="reference internal" href="data_sources.html">4.9. Data Sources</a></li>
 <li class="toctree-l2"><a class="reference internal" href="predictor_reports.html">4.10. Predictor Reports</a></li>
 <li class="toctree-l2"><a class="reference internal" href="predictor_evaluation_workflows.html">4.11. Predictor Evaluation Workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="performance_workflows.html">4.12. [DEPRECATED] Performance Workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="code_examples.html">4.13. AI Engine Code Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="code_examples.html">4.12. AI Engine Code Examples</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../formulations_example.html">5. Formulations Example</a></li>
@@ -206,13 +205,13 @@ There are three processors:</p>
 <section id="enumerated-processor">
 <h2><span class="section-number">4.6.1. </span>Enumerated processor<a class="headerlink" href="#enumerated-processor" title="Permalink to this headline">¶</a></h2>
 <p>An <a class="reference internal" href="../reference/citrine.informatics.processors.html#citrine.informatics.processors.EnumeratedProcessor" title="citrine.informatics.processors.EnumeratedProcessor"><code class="xref py py-class docutils literal notranslate"><span class="pre">EnumeratedProcessor</span></code></a> takes up to a maximum number of materials from a <a class="reference internal" href="design_spaces.html"><span class="doc">design space</span></a> and processes each independently.
-The maximum number of candidates sampled from the design space is defined by the optional <code class="docutils literal notranslate"><span class="pre">max_size</span></code> parameter when creating an <a class="reference internal" href="../reference/citrine.informatics.processors.html#citrine.informatics.processors.EnumeratedProcessor" title="citrine.informatics.processors.EnumeratedProcessor"><code class="xref py py-class docutils literal notranslate"><span class="pre">EnumeratedProcessor</span></code></a> using the python SDK.
-To be valid, enumerated processors must have a maximum size of at least 1.</p>
+The maximum number of candidates sampled from the design space is defined by the optional <code class="docutils literal notranslate"><span class="pre">max_candidates</span></code> parameter when creating an <a class="reference internal" href="../reference/citrine.informatics.processors.html#citrine.informatics.processors.EnumeratedProcessor" title="citrine.informatics.processors.EnumeratedProcessor"><code class="xref py py-class docutils literal notranslate"><span class="pre">EnumeratedProcessor</span></code></a> using the python SDK.
+To be valid, enumerated processors must have a maximum number of candidates of at least 1.</p>
 <p>An enumerated processor can be used with finite and infinite design spaces.
 A finite space can be defined using an <code class="xref py py-class docutils literal notranslate"><span class="pre">EnumeratedDesignSpace</span></code> or a <code class="xref py py-class docutils literal notranslate"><span class="pre">ProductDesignSpace</span></code> composed only of <a class="reference internal" href="../reference/citrine.informatics.dimensions.html#citrine.informatics.dimensions.EnumeratedDimension" title="citrine.informatics.dimensions.EnumeratedDimension"><code class="xref py py-class docutils literal notranslate"><span class="pre">EnumeratedDimensions</span></code></a>.
-In these cases, the processor will systematically pull up to <code class="docutils literal notranslate"><span class="pre">max_size</span></code> samples from the space.</p>
+In these cases, the processor will systematically pull up to <code class="docutils literal notranslate"><span class="pre">max_candidates</span></code> samples from the space.</p>
 <p>An infinite design space is created when a <code class="xref py py-class docutils literal notranslate"><span class="pre">ProductDesignSpace</span></code> contains one or more continuous dimensions.
-When an enumerated processor is combined with an infinite design space, <code class="docutils literal notranslate"><span class="pre">max_size</span></code> samples are always pulled from the domain.
+When an enumerated processor is combined with an infinite design space, <code class="docutils literal notranslate"><span class="pre">max_candidates</span></code> samples are always pulled from the domain.
 If all dimensions of a design pace are continuous, samples are created by randomly sampling from each dimension.
 If there are mixed continuous and enumerated dimensions in the design space, samples are created by combining the Cartesian product of enumerated dimensions with random samples from continuous dimensions.
 Finite elements repeat once the Cartesian product is exhausted.</p>
@@ -231,7 +230,7 @@ Finite elements repeat once the Cartesian product is exhausted.</p>
     <span class="n">EnumeratedProcessor</span><span class="p">(</span>
         <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Enumerated processor&#39;</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Samples up to 100 items from a design space&#39;</span><span class="p">,</span>
-        <span class="n">max_size</span><span class="o">=</span><span class="mi">100</span>
+        <span class="n">max_candidates</span><span class="o">=</span><span class="mi">100</span>
     <span class="p">)</span>
 <span class="p">)</span>
 

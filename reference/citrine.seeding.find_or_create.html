@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>citrine.seeding.find_or_create module &mdash; Citrine Python 0.133.1 documentation</title>
+  <title>citrine.seeding.find_or_create module &mdash; Citrine Python 0.134.0 documentation</title>
   
 
   
@@ -71,7 +71,7 @@
             
             
               <div class="version">
-                0.133.1
+                0.134.0
               </div>
             
           
@@ -174,7 +174,7 @@
 <span id="citrine-seeding-find-or-create-module"></span><h1>citrine.seeding.find_or_create module<a class="headerlink" href="#module-citrine.seeding.find_or_create" title="Permalink to this headline">¶</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="citrine.seeding.find_or_create.create_or_update">
-<span class="sig-prename descclassname"><span class="pre">citrine.seeding.find_or_create.</span></span><span class="sig-name descname"><span class="pre">create_or_update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">collection</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="citrine.resources.design_space.html#citrine.resources.design_space.DesignSpaceCollection" title="citrine.resources.design_space.DesignSpaceCollection"><span class="pre">citrine.resources.design_space.DesignSpaceCollection</span></a><span class="p"><span class="pre">,</span> </span><a class="reference internal" href="citrine.resources.predictor.html#citrine.resources.predictor.PredictorCollection" title="citrine.resources.predictor.PredictorCollection"><span class="pre">citrine.resources.predictor.PredictorCollection</span></a><span class="p"><span class="pre">,</span> </span><a class="reference internal" href="citrine.resources.workflow.html#citrine.resources.workflow.WorkflowCollection" title="citrine.resources.workflow.WorkflowCollection"><span class="pre">citrine.resources.workflow.WorkflowCollection</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resource</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">CreationType</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">CreationType</span><a class="headerlink" href="#citrine.seeding.find_or_create.create_or_update" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">citrine.seeding.find_or_create.</span></span><span class="sig-name descname"><span class="pre">create_or_update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collection</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">citrine._rest.collection.Collection</span><span class="p"><span class="pre">[</span></span><span class="pre">CreationType</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resource</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">CreationType</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">CreationType</span><a class="headerlink" href="#citrine.seeding.find_or_create.create_or_update" title="Permalink to this definition">¶</a></dt>
 <dd><p>Update a resource of a given name belonging to a collection.</p>
 <p>Create it if it doesn’t exist. If collection already contains
 a resource with the same name it will be updated. If there are multiple
@@ -182,7 +182,7 @@ resources with the same name it will throw an error.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>collection</strong> (<em>Union</em><em>[</em><a class="reference internal" href="citrine.resources.design_space.html#citrine.resources.design_space.DesignSpaceCollection" title="citrine.resources.design_space.DesignSpaceCollection"><em>DesignSpaceCollection</em></a><em>, </em><a class="reference internal" href="citrine.resources.predictor.html#citrine.resources.predictor.PredictorCollection" title="citrine.resources.predictor.PredictorCollection"><em>PredictorCollection</em></a><em>, </em><a class="reference internal" href="citrine.resources.workflow.html#citrine.resources.workflow.WorkflowCollection" title="citrine.resources.workflow.WorkflowCollection"><em>WorkflowCollection</em></a><em>]</em>) – Collection within which you want to update or create a resource</p></li>
+<li><p><strong>collection</strong> (<em>Collection</em><em>[</em><em>CreationType</em><em>]</em>) – Collection within which you want to update or create a resource</p></li>
 <li><p><strong>resource</strong> (<em>CreationType</em>) – Resource that you want to create or update.</p></li>
 </ul>
 </dd>
@@ -197,35 +197,35 @@ resources with the same name it will throw an error.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="citrine.seeding.find_or_create.find_collection">
-<span class="sig-prename descclassname"><span class="pre">citrine.seeding.find_or_create.</span></span><span class="sig-name descname"><span class="pre">find_collection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">collection</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.seeding.find_or_create.find_collection" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">citrine.seeding.find_or_create.</span></span><span class="sig-name descname"><span class="pre">find_collection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collection</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.seeding.find_or_create.find_collection" title="Permalink to this definition">¶</a></dt>
 <dd><p>Looks through the pages of a collection for a resource with the specified name.</p>
 <p>Returns it, or if not found, returns None</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="citrine.seeding.find_or_create.find_or_create_dataset">
-<span class="sig-prename descclassname"><span class="pre">citrine.seeding.find_or_create.</span></span><span class="sig-name descname"><span class="pre">find_or_create_dataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset_collection</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raise_error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.seeding.find_or_create.find_or_create_dataset" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">citrine.seeding.find_or_create.</span></span><span class="sig-name descname"><span class="pre">find_or_create_dataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset_collection</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raise_error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.seeding.find_or_create.find_or_create_dataset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Tries to find a dataset by name (returns first hit).</p>
 <p>If not found, creates a new dataset with the given name</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="citrine.seeding.find_or_create.find_or_create_project">
-<span class="sig-prename descclassname"><span class="pre">citrine.seeding.find_or_create.</span></span><span class="sig-name descname"><span class="pre">find_or_create_project</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project_collection</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">project_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raise_error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.seeding.find_or_create.find_or_create_project" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">citrine.seeding.find_or_create.</span></span><span class="sig-name descname"><span class="pre">find_or_create_project</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">project_collection</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">project_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raise_error</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.seeding.find_or_create.find_or_create_project" title="Permalink to this definition">¶</a></dt>
 <dd><p>Tries to find a project by name (returns first hit).</p>
 <p>If not found, creates a new project with the given name</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="citrine.seeding.find_or_create.get_by_name_or_create">
-<span class="sig-prename descclassname"><span class="pre">citrine.seeding.find_or_create.</span></span><span class="sig-name descname"><span class="pre">get_by_name_or_create</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">collection</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_provider</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.seeding.find_or_create.get_by_name_or_create" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">citrine.seeding.find_or_create.</span></span><span class="sig-name descname"><span class="pre">get_by_name_or_create</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collection</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_provider</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.seeding.find_or_create.get_by_name_or_create" title="Permalink to this definition">¶</a></dt>
 <dd><p>Tries to find a collection by its name (returns first hit).</p>
 <p>If not found, implements default_provider</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="citrine.seeding.find_or_create.get_by_name_or_raise_error">
-<span class="sig-prename descclassname"><span class="pre">citrine.seeding.find_or_create.</span></span><span class="sig-name descname"><span class="pre">get_by_name_or_raise_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">collection</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.seeding.find_or_create.get_by_name_or_raise_error" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">citrine.seeding.find_or_create.</span></span><span class="sig-name descname"><span class="pre">get_by_name_or_raise_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collection</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.seeding.find_or_create.get_by_name_or_raise_error" title="Permalink to this definition">¶</a></dt>
 <dd><p>Tries to find a collection by its name (returns first hit).</p>
 <p>If not found, raises error</p>
 </dd></dl>

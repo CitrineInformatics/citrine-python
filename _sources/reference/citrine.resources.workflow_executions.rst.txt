@@ -1,8 +1,0 @@
-citrine.resources.workflow\_executions module
-=============================================
-
-.. automodule:: citrine.resources.workflow_executions
-   :members:
-   :undoc-members:
-   :inherited-members:
-   :show-inheritance:

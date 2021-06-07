@@ -12,15 +12,15 @@ Enumerated processor
 --------------------
 
 An :class:`~citrine.informatics.processors.EnumeratedProcessor` takes up to a maximum number of materials from a :doc:`design space <design_spaces>` and processes each independently.
-The maximum number of candidates sampled from the design space is defined by the optional ``max_size`` parameter when creating an :class:`~citrine.informatics.processors.EnumeratedProcessor` using the python SDK.
-To be valid, enumerated processors must have a maximum size of at least 1.
+The maximum number of candidates sampled from the design space is defined by the optional ``max_candidates`` parameter when creating an :class:`~citrine.informatics.processors.EnumeratedProcessor` using the python SDK.
+To be valid, enumerated processors must have a maximum number of candidates of at least 1.
 
 An enumerated processor can be used with finite and infinite design spaces.
 A finite space can be defined using an :class:`~citrine.informatics.design_spaces.EnumeratedDesignSpace` or a :class:`~citrine.informatics.design_spaces.ProductDesignSpace` composed only of :class:`EnumeratedDimensions <citrine.informatics.dimensions.EnumeratedDimension>`.
-In these cases, the processor will systematically pull up to ``max_size`` samples from the space.
+In these cases, the processor will systematically pull up to ``max_candidates`` samples from the space.
 
 An infinite design space is created when a :class:`~citrine.informatics.design_spaces.ProductDesignSpace` contains one or more continuous dimensions.
-When an enumerated processor is combined with an infinite design space, ``max_size`` samples are always pulled from the domain.
+When an enumerated processor is combined with an infinite design space, ``max_candidates`` samples are always pulled from the domain.
 If all dimensions of a design pace are continuous, samples are created by randomly sampling from each dimension.
 If there are mixed continuous and enumerated dimensions in the design space, samples are created by combining the Cartesian product of enumerated dimensions with random samples from continuous dimensions.
 Finite elements repeat once the Cartesian product is exhausted.
@@ -43,7 +43,7 @@ The following demonstrates how to create an enumerated processor that takes up t
        EnumeratedProcessor(
            name='Enumerated processor',
            description='Samples up to 100 items from a design space',
-           max_size=100
+           max_candidates=100
        )
    )
 

@@ -1,8 +1,0 @@
-citrine.resources.table module
-==============================
-
-.. automodule:: citrine.resources.table
-   :members:
-   :undoc-members:
-   :inherited-members:
-   :show-inheritance:

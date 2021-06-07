@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>citrine.resources.design_space module &mdash; Citrine Python 0.133.1 documentation</title>
+  <title>citrine.resources.design_space module &mdash; Citrine Python 0.134.0 documentation</title>
   
 
   
@@ -71,7 +71,7 @@
             
             
               <div class="version">
-                0.133.1
+                0.134.0
               </div>
             
           
@@ -175,7 +175,7 @@
 <p>Resources that represent collections of design spaces.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="citrine.resources.design_space.DesignSpaceCollection">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">citrine.resources.design_space.</span></span><span class="sig-name descname"><span class="pre">DesignSpaceCollection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">project_id:</span> <span class="pre">uuid.UUID</span></em>, <em class="sig-param"><span class="pre">session:</span> <span class="pre">citrine._session.Session</span> <span class="pre">=</span> <span class="pre">&lt;citrine._session.Session</span> <span class="pre">object&gt;</span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.design_space.DesignSpaceCollection" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">citrine.resources.design_space.</span></span><span class="sig-name descname"><span class="pre">DesignSpaceCollection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project_id</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">uuid.UUID</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">session</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">citrine._session.Session</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.design_space.DesignSpaceCollection" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="citrine.resources.module.html#citrine.resources.module.AbstractModuleCollection" title="citrine.resources.module.AbstractModuleCollection"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.resources.module.AbstractModuleCollection</span></code></a>[<a class="reference internal" href="citrine.informatics.design_spaces.design_space.html#citrine.informatics.design_spaces.design_space.DesignSpace" title="citrine.informatics.design_spaces.design_space.DesignSpace"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.design_spaces.design_space.DesignSpace</span></code></a>]</p>
 <p>Represents the collection of design spaces as well as the resources belonging to it.</p>
 <dl class="field-list simple">
@@ -197,7 +197,7 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.resources.design_space.DesignSpaceCollection.create_default">
-<span class="sig-name descname"><span class="pre">create_default</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">predictor_id</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">uuid.UUID</span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="citrine.informatics.design_spaces.design_space.html#citrine.informatics.design_spaces.design_space.DesignSpace" title="citrine.informatics.design_spaces.design_space.DesignSpace"><span class="pre">citrine.informatics.design_spaces.design_space.DesignSpace</span></a><a class="headerlink" href="#citrine.resources.design_space.DesignSpaceCollection.create_default" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">create_default</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">predictor_id</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">uuid.UUID</span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="citrine.informatics.design_spaces.design_space.html#citrine.informatics.design_spaces.design_space.DesignSpace" title="citrine.informatics.design_spaces.design_space.DesignSpace"><span class="pre">citrine.informatics.design_spaces.design_space.DesignSpace</span></a><a class="headerlink" href="#citrine.resources.design_space.DesignSpaceCollection.create_default" title="Permalink to this definition">¶</a></dt>
 <dd><p>[ALPHA] Create a default design space for a predictor.</p>
 <p>This method will return an unregistered design space for all inputs
 that are not responses of the predictor. The design space will contain a
@@ -236,7 +236,7 @@ unique values from the training data for all other descriptors.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.resources.design_space.DesignSpaceCollection.list">
-<span class="sig-name descname"><span class="pre">list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">page</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">per_page</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">ResourceType</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#citrine.resources.design_space.DesignSpaceCollection.list" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">per_page</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">ResourceType</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#citrine.resources.design_space.DesignSpaceCollection.list" title="Permalink to this definition">¶</a></dt>
 <dd><p>Paginate over the elements of the collection.</p>
 <p>Leaving page and per_page as default values will yield all elements in the
 collection, paginating over all available pages.</p>
@@ -251,10 +251,11 @@ is specified it limits the maximum number of elements in the response.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Resources in this collection.</p>
+<dd class="field-even"><p>An iterator that can be used to loop over all of the resources in this collection.
+Use list() to force evaluation of all results into an in-memory list.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Iterable[ResourceType]</p>
+<dd class="field-odd"><p>Iterator[ResourceType]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -275,16 +276,6 @@ is specified it limits the maximum number of elements in the response.</p></li>
 <dt class="sig sig-object py" id="citrine.resources.design_space.DesignSpaceCollection.update">
 <span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="citrine.informatics.design_spaces.design_space.html#citrine.informatics.design_spaces.design_space.DesignSpace" title="citrine.informatics.design_spaces.design_space.DesignSpace"><span class="pre">citrine.informatics.design_spaces.design_space.DesignSpace</span></a></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="citrine.informatics.design_spaces.design_space.html#citrine.informatics.design_spaces.design_space.DesignSpace" title="citrine.informatics.design_spaces.design_space.DesignSpace"><span class="pre">citrine.informatics.design_spaces.design_space.DesignSpace</span></a><a class="headerlink" href="#citrine.resources.design_space.DesignSpaceCollection.update" title="Permalink to this definition">¶</a></dt>
 <dd><p>Update an existing design space by uid.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="citrine.resources.design_space.DesignSpaceCollection.validate_write_request">
-<span class="sig-name descname"><span class="pre">validate_write_request</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">design_space</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="citrine.informatics.design_spaces.design_space.html#citrine.informatics.design_spaces.design_space.DesignSpace" title="citrine.informatics.design_spaces.design_space.DesignSpace"><span class="pre">citrine.informatics.design_spaces.design_space.DesignSpace</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.design_space.DesignSpaceCollection.validate_write_request" title="Permalink to this definition">¶</a></dt>
-<dd><p>Perform write-time validations of the design space registration or update.</p>
-<p>EnumeratedDesignSpaces can be pretty big, so we want to return a helpful error message
-rather than let the POST or PUT call fail because the request body is too big.  This
-validation is performed when the design space is sent to the platform in case a user
-creates a large intermediate design space but then filters it down before registering it.</p>
 </dd></dl>
 
 </dd></dl>

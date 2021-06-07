@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>citrine.informatics.design_spaces.product_design_space module &mdash; Citrine Python 0.133.1 documentation</title>
+  <title>citrine.informatics.design_spaces.product_design_space module &mdash; Citrine Python 0.134.0 documentation</title>
   
 
   
@@ -71,7 +71,7 @@
             
             
               <div class="version">
-                0.133.1
+                0.134.0
               </div>
             
           
@@ -174,7 +174,7 @@
 <span id="citrine-informatics-design-spaces-product-design-space-module"></span><h1>citrine.informatics.design_spaces.product_design_space module<a class="headerlink" href="#module-citrine.informatics.design_spaces.product_design_space" title="Permalink to this headline">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="citrine.informatics.design_spaces.product_design_space.ProductDesignSpace">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">citrine.informatics.design_spaces.product_design_space.</span></span><span class="sig-name descname"><span class="pre">ProductDesignSpace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">*</span></em>, <em class="sig-param"><span class="pre">name:</span> <span class="pre">str</span></em>, <em class="sig-param"><span class="pre">description:</span> <span class="pre">str</span></em>, <em class="sig-param"><span class="pre">subspaces:</span> <span class="pre">Optional[List[Union[uuid.UUID</span></em>, <em class="sig-param"><span class="pre">citrine.informatics.design_spaces.design_space.DesignSpace]]]</span> <span class="pre">=</span> <span class="pre">None</span></em>, <em class="sig-param"><span class="pre">dimensions:</span> <span class="pre">Optional[List[citrine.informatics.dimensions.Dimension]]</span> <span class="pre">=</span> <span class="pre">None</span></em>, <em class="sig-param"><span class="pre">session:</span> <span class="pre">citrine._session.Session</span> <span class="pre">=</span> <span class="pre">&lt;citrine._session.Session</span> <span class="pre">object&gt;</span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.design_spaces.product_design_space.ProductDesignSpace" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">citrine.informatics.design_spaces.product_design_space.</span></span><span class="sig-name descname"><span class="pre">ProductDesignSpace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subspaces</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">,</span> </span><a class="reference internal" href="citrine.informatics.design_spaces.design_space.html#citrine.informatics.design_spaces.design_space.DesignSpace" title="citrine.informatics.design_spaces.design_space.DesignSpace"><span class="pre">citrine.informatics.design_spaces.design_space.DesignSpace</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dimensions</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="citrine.informatics.dimensions.html#citrine.informatics.dimensions.Dimension" title="citrine.informatics.dimensions.Dimension"><span class="pre">citrine.informatics.dimensions.Dimension</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.design_spaces.product_design_space.ProductDesignSpace" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.resource.Resource</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">ProductDesignSpace</span></code>], <a class="reference internal" href="citrine.informatics.design_spaces.design_space.html#citrine.informatics.design_spaces.design_space.DesignSpace" title="citrine.informatics.design_spaces.design_space.DesignSpace"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.design_spaces.design_space.DesignSpace</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.ai_resource_metadata.AIResourceMetadata</span></code></p>
 <p>A Cartesian product of design spaces.</p>
 <p>Factors can be other design spaces and/or univariate dimensions.</p>
@@ -190,9 +190,9 @@ or UUIDs that reference design spaces on the platform</p></li>
 </dd>
 </dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="citrine.informatics.design_spaces.product_design_space.ProductDesignSpace.as_entity_dict">
-<span class="sig-name descname"><span class="pre">as_entity_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">dict</span><a class="headerlink" href="#citrine.informatics.design_spaces.product_design_space.ProductDesignSpace.as_entity_dict" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return an access control entity representation of this resource.</p>
+<dt class="sig sig-object py" id="citrine.informatics.design_spaces.product_design_space.ProductDesignSpace.access_control_dict">
+<span class="sig-name descname"><span class="pre">access_control_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">dict</span><a class="headerlink" href="#citrine.informatics.design_spaces.product_design_space.ProductDesignSpace.access_control_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return an access control entity representation of this resource. Internal use only.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -294,7 +294,7 @@ if it has been archived</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="citrine.informatics.design_spaces.product_design_space.ProductDesignSpace.dimensions">
-<span class="sig-name descname"><span class="pre">dimensions</span></span><em class="property"><span class="pre">:</span> <span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="citrine.informatics.dimensions.html#citrine.informatics.dimensions.Dimension" title="citrine.informatics.dimensions.Dimension"><span class="pre">citrine.informatics.dimensions.Dimension</span></a><span class="p"><span class="pre">]</span></span></em><em class="property"> <span class="pre">=</span> <span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.design_spaces.product_design_space.ProductDesignSpace.dimensions" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">dimensions</span></span><em class="property"><span class="pre">:</span> <span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Dimension</span><span class="p"><span class="pre">]</span></span></em><em class="property"> <span class="pre">=</span> <span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.design_spaces.product_design_space.ProductDesignSpace.dimensions" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
@@ -353,7 +353,7 @@ if it has been archived</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="citrine.informatics.design_spaces.product_design_space.ProductDesignSpace.subspaces">
-<span class="sig-name descname"><span class="pre">subspaces</span></span><em class="property"><span class="pre">:</span> <span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">,</span> </span><a class="reference internal" href="citrine.informatics.design_spaces.design_space.html#citrine.informatics.design_spaces.design_space.DesignSpace" title="citrine.informatics.design_spaces.design_space.DesignSpace"><span class="pre">citrine.informatics.design_spaces.design_space.DesignSpace</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"> <span class="pre">=</span> <span class="pre">[]</span></em><a class="headerlink" href="#citrine.informatics.design_spaces.product_design_space.ProductDesignSpace.subspaces" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">subspaces</span></span><em class="property"><span class="pre">:</span> <span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">UUID</span><span class="p"><span class="pre">,</span> </span><span class="pre">DesignSpace</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"> <span class="pre">=</span> <span class="pre">[]</span></em><a class="headerlink" href="#citrine.informatics.design_spaces.product_design_space.ProductDesignSpace.subspaces" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">

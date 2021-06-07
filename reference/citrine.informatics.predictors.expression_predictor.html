@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>citrine.informatics.predictors.expression_predictor module &mdash; Citrine Python 0.133.1 documentation</title>
+  <title>citrine.informatics.predictors.expression_predictor module &mdash; Citrine Python 0.134.0 documentation</title>
   
 
   
@@ -71,7 +71,7 @@
             
             
               <div class="version">
-                0.133.1
+                0.134.0
               </div>
             
           
@@ -173,320 +173,12 @@
   <section id="module-citrine.informatics.predictors.expression_predictor">
 <span id="citrine-informatics-predictors-expression-predictor-module"></span><h1>citrine.informatics.predictors.expression_predictor module<a class="headerlink" href="#module-citrine.informatics.predictors.expression_predictor" title="Permalink to this headline">¶</a></h1>
 <dl class="py class">
-<dt class="sig sig-object py" id="citrine.informatics.predictors.expression_predictor.DeprecatedExpressionPredictor">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">citrine.informatics.predictors.expression_predictor.</span></span><span class="sig-name descname"><span class="pre">DeprecatedExpressionPredictor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expression</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.RealDescriptor" title="citrine.informatics.descriptors.RealDescriptor"><span class="pre">citrine.informatics.descriptors.RealDescriptor</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">aliases</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Mapping</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">archived</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.predictors.expression_predictor.DeprecatedExpressionPredictor" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.resource.Resource</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">DeprecatedExpressionPredictor</span></code>], <a class="reference internal" href="citrine.informatics.predictors.predictor.html#citrine.informatics.predictors.predictor.Predictor" title="citrine.informatics.predictors.predictor.Predictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.predictors.predictor.Predictor</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.ai_resource_metadata.AIResourceMetadata</span></code></p>
-<p>[DEPRECATED] A predictor that computes an output from an analytic expression.</p>
-<p>This predictor is deprecated. Please use the
-<code class="xref py py-class docutils literal notranslate"><span class="pre">ExpressionPredictor</span></code> instead.
-To migrate to the new predictor:</p>
-<ol class="arabic simple">
-<li><p>add an alias for all unknown expression arguments and</p></li>
-<li><p>replace descriptor keys in <code class="docutils literal notranslate"><span class="pre">aliases</span></code> with the associated descriptor</p></li>
-</ol>
-<p>These changes allow the expression to respect descriptor bounds when computing the output and
-avoid potential descriptor mismatches if a descriptor with an identical key and different
-bounds is present in the graph.</p>
-<p>The following example shows how to migrate a deprecated expression predictor to the new format.
-In the deprecated format, an expression that computes shear modulus from Young’s modulus and
-Poisson’s ratio is given by:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.informatics.predictors</span> <span class="kn">import</span> <span class="n">DeprecatedExpressionPredictor</span>
-
-<span class="n">shear_modulus</span> <span class="o">=</span> <span class="n">RealDescriptor</span><span class="p">(</span>
-    <span class="s1">&#39;Property~Shear modulus&#39;</span><span class="p">,</span>
-    <span class="n">lower_bound</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-    <span class="n">upper_bound</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
-    <span class="n">units</span><span class="o">=</span><span class="s1">&#39;GPa&#39;</span>
- <span class="p">)</span>
-
-<span class="n">shear_modulus_predictor</span> <span class="o">=</span> <span class="n">DeprecatedExpressionPredictor</span><span class="p">(</span>
-    <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Shear modulus predictor&#39;</span><span class="p">,</span>
-    <span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;Computes shear modulus from Young&#39;s modulus and Poisson&#39;s ratio.&quot;</span><span class="p">,</span>
-    <span class="n">expression</span> <span class="o">=</span> <span class="s1">&#39;Y / (2 * (1 + v))&#39;</span><span class="p">,</span>
-    <span class="n">output</span> <span class="o">=</span> <span class="n">shear_modulus</span><span class="p">,</span>
-    <span class="n">aliases</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s1">&#39;Y&#39;</span><span class="p">:</span> <span class="s2">&quot;Young&#39;s modulus&quot;</span><span class="p">,</span>
-        <span class="s1">&#39;v&#39;</span><span class="p">:</span> <span class="s2">&quot;Poisson&#39;s ratio&quot;</span>
-    <span class="p">}</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-<p>To create a predictor using the format, we need to create descriptors for the expression
-inputs: Young’s modulus and Poisson’s ratio. We also need to replace references to the
-descriptor keys in <code class="docutils literal notranslate"><span class="pre">aliases</span></code> with the new descriptors:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.informatics.predictors</span> <span class="kn">import</span> <span class="n">ExpressionPredictor</span>
-
-<span class="c1"># create a descriptor for each input in addition to the output</span>
-<span class="n">youngs_modulus</span> <span class="o">=</span> <span class="n">RealDescriptor</span><span class="p">(</span><span class="s1">&#39;Property~Young&#39;</span><span class="n">s</span> <span class="n">modulus</span><span class="s1">&#39;, lower_bound=0,</span>
-                                <span class="n">upper_bound</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;GPa&#39;</span><span class="p">)</span>
-<span class="n">poissons_ratio</span> <span class="o">=</span> <span class="n">RealDescriptor</span><span class="p">(</span><span class="s1">&#39;Property~Poisson&#39;</span><span class="n">s</span> <span class="n">ratio</span><span class="s1">&#39;, lower_bound=-1,</span>
-                                <span class="n">upper_bound</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
-<span class="n">shear_modulus</span> <span class="o">=</span> <span class="n">RealDescriptor</span><span class="p">(</span><span class="s1">&#39;Property~Shear modulus&#39;</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-                               <span class="n">upper_bound</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;GPa&#39;</span><span class="p">)</span>
-
-<span class="n">shear_modulus_predictor</span> <span class="o">=</span> <span class="n">ExpressionPredictor</span><span class="p">(</span>
-    <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Shear modulus predictor&#39;</span><span class="p">,</span>
-    <span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;Computes shear modulus from Young&#39;s modulus and Poisson&#39;s ratio.&quot;</span><span class="p">,</span>
-    <span class="n">expression</span> <span class="o">=</span> <span class="s1">&#39;Y / (2 * (1 + v))&#39;</span><span class="p">,</span>
-    <span class="n">output</span> <span class="o">=</span> <span class="n">shear_modulus</span><span class="p">,</span>
-    <span class="c1"># note, arguments map to descriptors not descriptor keys</span>
-    <span class="n">aliases</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s1">&#39;Y&#39;</span><span class="p">:</span> <span class="n">youngs_modulus</span><span class="p">,</span>
-        <span class="s1">&#39;v&#39;</span><span class="p">:</span> <span class="n">poissons_ratio</span>
-    <span class="p">}</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-<div class="admonition seealso">
-<p class="admonition-title">See also</p>
-<p><code class="xref py py-class docutils literal notranslate"><span class="pre">ExpressionPredictor</span></code></p>
-</div>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<em>str</em>) – name of the configuration</p></li>
-<li><p><strong>description</strong> (<em>str</em>) – the description of the predictor</p></li>
-<li><p><strong>expression</strong> (<em>str</em>) – expression that computes an output from a set of inputs</p></li>
-<li><p><strong>output</strong> (<a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.RealDescriptor" title="citrine.informatics.descriptors.RealDescriptor"><em>RealDescriptor</em></a>) – descriptor that represents the output of the expression</p></li>
-<li><p><strong>aliases</strong> (<em>Optional</em><em>[</em><em>Mapping</em><em>[</em><em>str</em><em>, </em><em>str</em><em>]</em><em>]</em>) – a mapping from each each argument as it appears in the <code class="docutils literal notranslate"><span class="pre">expression</span></code> to its descriptor
-key. If an unknown argument is not aliased, the argument and descriptor key are assumed
-to be identical.</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="citrine.informatics.predictors.expression_predictor.DeprecatedExpressionPredictor.as_entity_dict">
-<span class="sig-name descname"><span class="pre">as_entity_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">dict</span><a class="headerlink" href="#citrine.informatics.predictors.expression_predictor.DeprecatedExpressionPredictor.as_entity_dict" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return an access control entity representation of this resource.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="citrine.informatics.predictors.expression_predictor.DeprecatedExpressionPredictor.build">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Self</span><a class="headerlink" href="#citrine.informatics.predictors.expression_predictor.DeprecatedExpressionPredictor.build" title="Permalink to this definition">¶</a></dt>
-<dd><p>Build an instance of this object from given data.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="citrine.informatics.predictors.expression_predictor.DeprecatedExpressionPredictor.dump">
-<span class="sig-name descname"><span class="pre">dump</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">dict</span><a class="headerlink" href="#citrine.informatics.predictors.expression_predictor.DeprecatedExpressionPredictor.dump" title="Permalink to this definition">¶</a></dt>
-<dd><p>Dump this instance.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="citrine.informatics.predictors.expression_predictor.DeprecatedExpressionPredictor.failed">
-<span class="sig-name descname"><span class="pre">failed</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">bool</span><a class="headerlink" href="#citrine.informatics.predictors.expression_predictor.DeprecatedExpressionPredictor.failed" title="Permalink to this definition">¶</a></dt>
-<dd><p>Whether module validation has completed unsuccessfully. Does not query state.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="citrine.informatics.predictors.expression_predictor.DeprecatedExpressionPredictor.get_type">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">get_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Type</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="citrine.informatics.predictors.predictor.html#citrine.informatics.predictors.predictor.Predictor" title="citrine.informatics.predictors.predictor.Predictor"><span class="pre">citrine.informatics.predictors.predictor.Predictor</span></a><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#citrine.informatics.predictors.expression_predictor.DeprecatedExpressionPredictor.get_type" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the subtype.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="citrine.informatics.predictors.expression_predictor.DeprecatedExpressionPredictor.in_progress">
-<span class="sig-name descname"><span class="pre">in_progress</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">bool</span><a class="headerlink" href="#citrine.informatics.predictors.expression_predictor.DeprecatedExpressionPredictor.in_progress" title="Permalink to this definition">¶</a></dt>
-<dd><p>Whether module validation is in progress. Does not query state.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="citrine.informatics.predictors.expression_predictor.DeprecatedExpressionPredictor.succeeded">
-<span class="sig-name descname"><span class="pre">succeeded</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">bool</span><a class="headerlink" href="#citrine.informatics.predictors.expression_predictor.DeprecatedExpressionPredictor.succeeded" title="Permalink to this definition">¶</a></dt>
-<dd><p>Whether module validation has completed successfully. Does not query state.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="citrine.informatics.predictors.expression_predictor.DeprecatedExpressionPredictor.aliases">
-<span class="sig-name descname"><span class="pre">aliases</span></span><em class="property"><span class="pre">:</span> <span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Mapping</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"> <span class="pre">=</span> <span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.predictors.expression_predictor.DeprecatedExpressionPredictor.aliases" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="citrine.informatics.predictors.expression_predictor.DeprecatedExpressionPredictor.archive_time">
-<span class="sig-name descname"><span class="pre">archive_time</span></span><em class="property"> <span class="pre">=</span> <span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.predictors.expression_predictor.DeprecatedExpressionPredictor.archive_time" title="Permalink to this definition">¶</a></dt>
-<dd><p>date and time at which the resource was archived,
-if it has been archived</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>Optional[datetime]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="citrine.informatics.predictors.expression_predictor.DeprecatedExpressionPredictor.archived">
-<span class="sig-name descname"><span class="pre">archived</span></span><em class="property"><span class="pre">:</span> <span class="pre">bool</span></em><em class="property"> <span class="pre">=</span> <span class="pre">False</span></em><a class="headerlink" href="#citrine.informatics.predictors.expression_predictor.DeprecatedExpressionPredictor.archived" title="Permalink to this definition">¶</a></dt>
-<dd><p>whether the resource is archived (hidden but not deleted)</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>bool</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="citrine.informatics.predictors.expression_predictor.DeprecatedExpressionPredictor.archived_by">
-<span class="sig-name descname"><span class="pre">archived_by</span></span><em class="property"> <span class="pre">=</span> <span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.predictors.expression_predictor.DeprecatedExpressionPredictor.archived_by" title="Permalink to this definition">¶</a></dt>
-<dd><p>id of the user who archived the resource, if it has been archived</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>Optional[UUID]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="citrine.informatics.predictors.expression_predictor.DeprecatedExpressionPredictor.create_time">
-<span class="sig-name descname"><span class="pre">create_time</span></span><em class="property"> <span class="pre">=</span> <span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.predictors.expression_predictor.DeprecatedExpressionPredictor.create_time" title="Permalink to this definition">¶</a></dt>
-<dd><p>date and time at which the resource was created</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>Optional[datetime]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="citrine.informatics.predictors.expression_predictor.DeprecatedExpressionPredictor.created_by">
-<span class="sig-name descname"><span class="pre">created_by</span></span><em class="property"> <span class="pre">=</span> <span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.predictors.expression_predictor.DeprecatedExpressionPredictor.created_by" title="Permalink to this definition">¶</a></dt>
-<dd><p>id of the user who created the resource</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>Optional[UUID]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="citrine.informatics.predictors.expression_predictor.DeprecatedExpressionPredictor.description">
-<span class="sig-name descname"><span class="pre">description</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><em class="property"> <span class="pre">=</span> <span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.predictors.expression_predictor.DeprecatedExpressionPredictor.description" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="citrine.informatics.predictors.expression_predictor.DeprecatedExpressionPredictor.experimental">
-<span class="sig-name descname"><span class="pre">experimental</span></span><em class="property"> <span class="pre">=</span> <span class="pre">True</span></em><a class="headerlink" href="#citrine.informatics.predictors.expression_predictor.DeprecatedExpressionPredictor.experimental" title="Permalink to this definition">¶</a></dt>
-<dd><p>whether the resource is experimental (newer, less well-tested functionality)</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>bool</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="citrine.informatics.predictors.expression_predictor.DeprecatedExpressionPredictor.experimental_reasons">
-<span class="sig-name descname"><span class="pre">experimental_reasons</span></span><em class="property"> <span class="pre">=</span> <span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.predictors.expression_predictor.DeprecatedExpressionPredictor.experimental_reasons" title="Permalink to this definition">¶</a></dt>
-<dd><p>human-readable reasons why the resource is experimental</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>Optional[List[str]]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="citrine.informatics.predictors.expression_predictor.DeprecatedExpressionPredictor.expression">
-<span class="sig-name descname"><span class="pre">expression</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><em class="property"> <span class="pre">=</span> <span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.predictors.expression_predictor.DeprecatedExpressionPredictor.expression" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="citrine.informatics.predictors.expression_predictor.DeprecatedExpressionPredictor.module_type">
-<span class="sig-name descname"><span class="pre">module_type</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'PREDICTOR'</span></em><a class="headerlink" href="#citrine.informatics.predictors.expression_predictor.DeprecatedExpressionPredictor.module_type" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="citrine.informatics.predictors.expression_predictor.DeprecatedExpressionPredictor.name">
-<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><em class="property"> <span class="pre">=</span> <span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.predictors.expression_predictor.DeprecatedExpressionPredictor.name" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="citrine.informatics.predictors.expression_predictor.DeprecatedExpressionPredictor.output">
-<span class="sig-name descname"><span class="pre">output</span></span><em class="property"><span class="pre">:</span> <span class="pre">RealDescriptor</span></em><em class="property"> <span class="pre">=</span> <span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.predictors.expression_predictor.DeprecatedExpressionPredictor.output" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="citrine.informatics.predictors.expression_predictor.DeprecatedExpressionPredictor.report">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">report</span></span><a class="headerlink" href="#citrine.informatics.predictors.expression_predictor.DeprecatedExpressionPredictor.report" title="Permalink to this definition">¶</a></dt>
-<dd><p>Fetch the predictor report.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="citrine.informatics.predictors.expression_predictor.DeprecatedExpressionPredictor.status">
-<span class="sig-name descname"><span class="pre">status</span></span><em class="property"> <span class="pre">=</span> <span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.predictors.expression_predictor.DeprecatedExpressionPredictor.status" title="Permalink to this definition">¶</a></dt>
-<dd><p>short description of the resource’s status</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>Optional[str]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="citrine.informatics.predictors.expression_predictor.DeprecatedExpressionPredictor.status_info">
-<span class="sig-name descname"><span class="pre">status_info</span></span><em class="property"> <span class="pre">=</span> <span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.predictors.expression_predictor.DeprecatedExpressionPredictor.status_info" title="Permalink to this definition">¶</a></dt>
-<dd><p>human-readable explanations of the status</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>Optional[List[str]]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="citrine.informatics.predictors.expression_predictor.DeprecatedExpressionPredictor.typ">
-<span class="sig-name descname"><span class="pre">typ</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'Expression'</span></em><a class="headerlink" href="#citrine.informatics.predictors.expression_predictor.DeprecatedExpressionPredictor.typ" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="citrine.informatics.predictors.expression_predictor.DeprecatedExpressionPredictor.uid">
-<span class="sig-name descname"><span class="pre">uid</span></span><em class="property"> <span class="pre">=</span> <span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.predictors.expression_predictor.DeprecatedExpressionPredictor.uid" title="Permalink to this definition">¶</a></dt>
-<dd><p>Citrine Platform unique identifier</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>Optional[UUID]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="citrine.informatics.predictors.expression_predictor.DeprecatedExpressionPredictor.update_time">
-<span class="sig-name descname"><span class="pre">update_time</span></span><em class="property"> <span class="pre">=</span> <span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.predictors.expression_predictor.DeprecatedExpressionPredictor.update_time" title="Permalink to this definition">¶</a></dt>
-<dd><p>date and time at which the resource was most recently updated,
-if it has been updated</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>Optional[datetime]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="citrine.informatics.predictors.expression_predictor.DeprecatedExpressionPredictor.updated_by">
-<span class="sig-name descname"><span class="pre">updated_by</span></span><em class="property"> <span class="pre">=</span> <span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.predictors.expression_predictor.DeprecatedExpressionPredictor.updated_by" title="Permalink to this definition">¶</a></dt>
-<dd><p>id of the user who most recently updated the resource,
-if it has been updated</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>Optional[UUID]</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
 <dt class="sig sig-object py" id="citrine.informatics.predictors.expression_predictor.ExpressionPredictor">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">citrine.informatics.predictors.expression_predictor.</span></span><span class="sig-name descname"><span class="pre">ExpressionPredictor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expression</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.RealDescriptor" title="citrine.informatics.descriptors.RealDescriptor"><span class="pre">citrine.informatics.descriptors.RealDescriptor</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">aliases</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Mapping</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.RealDescriptor" title="citrine.informatics.descriptors.RealDescriptor"><span class="pre">citrine.informatics.descriptors.RealDescriptor</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">archived</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.predictors.expression_predictor.ExpressionPredictor" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">citrine.informatics.predictors.expression_predictor.</span></span><span class="sig-name descname"><span class="pre">ExpressionPredictor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expression</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.RealDescriptor" title="citrine.informatics.descriptors.RealDescriptor"><span class="pre">citrine.informatics.descriptors.RealDescriptor</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">aliases</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Mapping</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.RealDescriptor" title="citrine.informatics.descriptors.RealDescriptor"><span class="pre">citrine.informatics.descriptors.RealDescriptor</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.predictors.expression_predictor.ExpressionPredictor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.resource.Resource</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">ExpressionPredictor</span></code>], <a class="reference internal" href="citrine.informatics.predictors.predictor.html#citrine.informatics.predictors.predictor.Predictor" title="citrine.informatics.predictors.predictor.Predictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.informatics.predictors.predictor.Predictor</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.ai_resource_metadata.AIResourceMetadata</span></code></p>
 <p>A predictor that computes an output from an expression and set of bounded inputs.</p>
 <p>For a discussion of expression syntax and a list of allowed symbols,
 please see the <a class="reference internal" href="../workflows/predictors.html#expression-predictor"><span class="std std-ref">documentation</span></a>.</p>
-<div class="admonition seealso">
-<p class="admonition-title">See also</p>
-<p>If you are using the deprecated predictor please see
-<code class="xref py py-class docutils literal notranslate"><span class="pre">DeprecatedExpressionPredictor</span></code> for an example that
-shows how to migrate to the new format.</p>
-</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -500,9 +192,9 @@ All unknown arguments must have an associated descriptor.</p></li>
 </dd>
 </dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="citrine.informatics.predictors.expression_predictor.ExpressionPredictor.as_entity_dict">
-<span class="sig-name descname"><span class="pre">as_entity_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">dict</span><a class="headerlink" href="#citrine.informatics.predictors.expression_predictor.ExpressionPredictor.as_entity_dict" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return an access control entity representation of this resource.</p>
+<dt class="sig sig-object py" id="citrine.informatics.predictors.expression_predictor.ExpressionPredictor.access_control_dict">
+<span class="sig-name descname"><span class="pre">access_control_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">dict</span><a class="headerlink" href="#citrine.informatics.predictors.expression_predictor.ExpressionPredictor.access_control_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return an access control entity representation of this resource. Internal use only.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -560,7 +252,7 @@ if it has been archived</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="citrine.informatics.predictors.expression_predictor.ExpressionPredictor.archived">
-<span class="sig-name descname"><span class="pre">archived</span></span><em class="property"><span class="pre">:</span> <span class="pre">bool</span></em><em class="property"> <span class="pre">=</span> <span class="pre">False</span></em><a class="headerlink" href="#citrine.informatics.predictors.expression_predictor.ExpressionPredictor.archived" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">archived</span></span><em class="property"> <span class="pre">=</span> <span class="pre">False</span></em><a class="headerlink" href="#citrine.informatics.predictors.expression_predictor.ExpressionPredictor.archived" title="Permalink to this definition">¶</a></dt>
 <dd><p>whether the resource is archived (hidden but not deleted)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>

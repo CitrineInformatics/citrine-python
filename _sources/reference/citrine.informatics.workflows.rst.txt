@@ -8,7 +8,6 @@ Submodules
    :maxdepth: 4
 
    citrine.informatics.workflows.design_workflow
-   citrine.informatics.workflows.performance_workflow
    citrine.informatics.workflows.predictor_evaluation_workflow
    citrine.informatics.workflows.workflow
 

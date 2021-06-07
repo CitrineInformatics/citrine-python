@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>4.13. AI Engine Code Examples &mdash; Citrine Python 0.133.1 documentation</title>
+  <title>4.12. AI Engine Code Examples &mdash; Citrine Python 0.134.0 documentation</title>
   
 
   
@@ -46,7 +46,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="5. Formulations Example" href="../formulations_example.html" />
-    <link rel="prev" title="4.12. [DEPRECATED] Performance Workflows" href="performance_workflows.html" /> 
+    <link rel="prev" title="4.11. Predictor Evaluation Workflows" href="predictor_evaluation_workflows.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -73,7 +73,7 @@
             
             
               <div class="version">
-                0.133.1
+                0.134.0
               </div>
             
           
@@ -114,9 +114,8 @@
 <li class="toctree-l2"><a class="reference internal" href="data_sources.html">4.9. Data Sources</a></li>
 <li class="toctree-l2"><a class="reference internal" href="predictor_reports.html">4.10. Predictor Reports</a></li>
 <li class="toctree-l2"><a class="reference internal" href="predictor_evaluation_workflows.html">4.11. Predictor Evaluation Workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="performance_workflows.html">4.12. [DEPRECATED] Performance Workflows</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="#">4.13. AI Engine Code Examples</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#example-preprocessing-and-postprocessing-in-a-graphpredictor">4.13.1. Example: preprocessing and postprocessing in a GraphPredictor</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">4.12. AI Engine Code Examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#example-preprocessing-and-postprocessing-in-a-graphpredictor">4.12.1. Example: preprocessing and postprocessing in a GraphPredictor</a></li>
 </ul>
 </li>
 </ul>
@@ -173,7 +172,7 @@
         
           <li><a href="index.html"><span class="section-number">4. </span>AI Engine</a> &raquo;</li>
         
-      <li><span class="section-number">4.13. </span>AI Engine Code Examples</li>
+      <li><span class="section-number">4.12. </span>AI Engine Code Examples</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -193,9 +192,9 @@
            <div itemprop="articleBody">
             
   <section id="ai-engine-code-examples">
-<h1><span class="section-number">4.13. </span>AI Engine Code Examples<a class="headerlink" href="#ai-engine-code-examples" title="Permalink to this headline">¶</a></h1>
+<h1><span class="section-number">4.12. </span>AI Engine Code Examples<a class="headerlink" href="#ai-engine-code-examples" title="Permalink to this headline">¶</a></h1>
 <section id="example-preprocessing-and-postprocessing-in-a-graphpredictor">
-<span id="graph-predictor-example"></span><h2><span class="section-number">4.13.1. </span>Example: preprocessing and postprocessing in a GraphPredictor<a class="headerlink" href="#example-preprocessing-and-postprocessing-in-a-graphpredictor" title="Permalink to this headline">¶</a></h2>
+<span id="graph-predictor-example"></span><h2><span class="section-number">4.12.1. </span>Example: preprocessing and postprocessing in a GraphPredictor<a class="headerlink" href="#example-preprocessing-and-postprocessing-in-a-graphpredictor" title="Permalink to this headline">¶</a></h2>
 <p>Within a <a class="reference internal" href="../reference/citrine.informatics.predictors.graph_predictor.html#citrine.informatics.predictors.graph_predictor.GraphPredictor" title="citrine.informatics.predictors.graph_predictor.GraphPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">GraphPredictor</span></code></a>, one can use <a class="reference internal" href="../reference/citrine.informatics.predictors.expression_predictor.html#citrine.informatics.predictors.expression_predictor.ExpressionPredictor" title="citrine.informatics.predictors.expression_predictor.ExpressionPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExpressionPredictor</span></code></a> modules to preprocess data before performing machine learning with a <a class="reference internal" href="../reference/citrine.informatics.predictors.simple_ml_predictor.html#citrine.informatics.predictors.simple_ml_predictor.SimpleMLPredictor" title="citrine.informatics.predictors.simple_ml_predictor.SimpleMLPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleMLPredictor</span></code></a>, and to post-process the SimpleMLPredictor’s output.
 This is a very common and powerful use case for graphical modeling.
 Here we show an example of how to combine these modules to accomplish those many suitable tasks.</p>
@@ -307,7 +306,7 @@ Nodes with dotted outlines represent predicted quantities; note that only <code 
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
         <a href="../formulations_example.html" class="btn btn-neutral float-right" title="5. Formulations Example" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
-        <a href="performance_workflows.html" class="btn btn-neutral float-left" title="4.12. [DEPRECATED] Performance Workflows" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="predictor_evaluation_workflows.html" class="btn btn-neutral float-left" title="4.11. Predictor Evaluation Workflows" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>

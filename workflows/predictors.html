@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>4.4. Predictors &mdash; Citrine Python 0.133.1 documentation</title>
+  <title>4.4. Predictors &mdash; Citrine Python 0.134.0 documentation</title>
   
 
   
@@ -74,7 +74,7 @@
             
             
               <div class="version">
-                0.133.1
+                0.134.0
               </div>
             
           
@@ -130,8 +130,7 @@
 <li class="toctree-l2"><a class="reference internal" href="data_sources.html">4.9. Data Sources</a></li>
 <li class="toctree-l2"><a class="reference internal" href="predictor_reports.html">4.10. Predictor Reports</a></li>
 <li class="toctree-l2"><a class="reference internal" href="predictor_evaluation_workflows.html">4.11. Predictor Evaluation Workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="performance_workflows.html">4.12. [DEPRECATED] Performance Workflows</a></li>
-<li class="toctree-l2"><a class="reference internal" href="code_examples.html">4.13. AI Engine Code Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="code_examples.html">4.12. AI Engine Code Examples</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../formulations_example.html">5. Formulations Example</a></li>
@@ -236,7 +235,7 @@ There are two important helper methods in this regard.
     <span class="n">description</span> <span class="o">=</span> <span class="s1">&#39;Predictor description&#39;</span><span class="p">,</span>
     <span class="n">inputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">input_descriptor_1</span><span class="p">,</span> <span class="n">input_descriptor_2</span><span class="p">],</span>
     <span class="n">output</span> <span class="o">=</span> <span class="n">output_descriptor_1</span><span class="p">,</span>
-    <span class="n">training_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">GemTableDataSource</span><span class="p">(</span><span class="n">training_data_table_uid</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]</span>
+    <span class="n">training_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">GemTableDataSource</span><span class="p">(</span><span class="n">table_id</span><span class="o">=</span><span class="n">training_data_table_uid</span><span class="p">,</span> <span class="n">table_version</span><span class="o">=</span><span class="mi">1</span><span class="p">)]</span>
 <span class="p">)</span>
 
 <span class="n">predictor</span> <span class="o">=</span> <span class="n">create_or_update</span><span class="p">(</span><span class="n">collection</span><span class="o">=</span><span class="n">project</span><span class="o">.</span><span class="n">predictors</span><span class="p">,</span>
@@ -263,7 +262,7 @@ one output descriptor.</p>
     <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Predictor name&#39;</span><span class="p">,</span>
     <span class="n">description</span> <span class="o">=</span> <span class="s1">&#39;Predictor description&#39;</span><span class="p">,</span>
     <span class="n">predictors</span> <span class="o">=</span> <span class="p">[</span><span class="n">predictor1</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span> <span class="n">predictor2</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span> <span class="n">predictor3</span><span class="o">.</span><span class="n">uid</span><span class="p">],</span>
-    <span class="n">training_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">GemTableDataSource</span><span class="p">(</span><span class="n">training_data_table_uid</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]</span> <span class="c1"># training data shared by all sub-predictors</span>
+    <span class="n">training_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">GemTableDataSource</span><span class="p">(</span><span class="n">table_id</span><span class="o">=</span><span class="n">training_data_table_uid</span><span class="p">,</span> <span class="n">table_version</span><span class="o">=</span><span class="mi">1</span><span class="p">)]</span> <span class="c1"># training data shared by all sub-predictors</span>
 <span class="p">)</span>
 
 <span class="c1"># register or update predictor by name</span>
@@ -307,20 +306,21 @@ Citrine-python currently supports the following operators and functions:</p>
 <span class="n">shear_modulus</span> <span class="o">=</span> <span class="n">RealDescriptor</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;Property~Shear modulus&#39;</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;GPa&#39;</span><span class="p">)</span>
 
 <span class="n">shear_modulus_predictor</span> <span class="o">=</span> <span class="n">ExpressionPredictor</span><span class="p">(</span>
-    <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Shear modulus predictor&#39;</span><span class="p">,</span>
-    <span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;Computes shear modulus from Young&#39;s modulus and Poisson&#39;s ratio.&quot;</span><span class="p">,</span>
-    <span class="n">expression</span> <span class="o">=</span> <span class="s1">&#39;Y / (2 * (1 + v))&#39;</span><span class="p">,</span>
-    <span class="n">output</span> <span class="o">=</span> <span class="n">shear_modulus</span><span class="p">,</span>
-    <span class="n">aliases</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s1">&#39;Y&#39;</span><span class="p">:</span> <span class="n">youngs_modulus</span><span class="p">,</span>
-        <span class="s1">&#39;v&#39;</span><span class="p">:</span> <span class="n">poissons_ratio</span>
-    <span class="p">}</span>
+   <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Shear modulus predictor&#39;</span><span class="p">,</span>
+   <span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;Computes shear modulus from Young&#39;s modulus and Poisson&#39;s ratio.&quot;</span><span class="p">,</span>
+   <span class="n">expression</span> <span class="o">=</span> <span class="s1">&#39;Y / (2 * (1 + v))&#39;</span><span class="p">,</span>
+   <span class="n">output</span> <span class="o">=</span> <span class="n">shear_modulus</span><span class="p">,</span>
+   <span class="n">aliases</span> <span class="o">=</span> <span class="p">{</span>
+       <span class="s1">&#39;Y&#39;</span><span class="p">:</span> <span class="n">youngs_modulus</span><span class="p">,</span>
+       <span class="s1">&#39;v&#39;</span><span class="p">:</span> <span class="n">poissons_ratio</span>
+   <span class="p">}</span>
 <span class="p">)</span>
 
 <span class="c1"># register or update predictor by name</span>
-<span class="n">predictor</span> <span class="o">=</span> <span class="n">create_or_update</span><span class="p">(</span><span class="n">collection</span><span class="o">=</span><span class="n">project</span><span class="o">.</span><span class="n">predictors</span><span class="p">,</span>
-                             <span class="n">module</span><span class="o">=</span><span class="n">shear_modulus_predictor</span>
-                            <span class="p">)</span>
+<span class="n">predictor</span> <span class="o">=</span> <span class="n">create_or_update</span><span class="p">(</span>
+    <span class="n">collection</span><span class="o">=</span><span class="n">project</span><span class="o">.</span><span class="n">predictors</span><span class="p">,</span>
+    <span class="n">module</span><span class="o">=</span><span class="n">shear_modulus_predictor</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 <p>For an example of expression predictors used in a graph predictor, see <a class="reference internal" href="code_examples.html#graph-predictor-example"><span class="std std-ref">AI Engine Code Examples</span></a>.</p>
@@ -382,7 +382,7 @@ e.g., the <a class="reference internal" href="../reference/citrine.informatics.p
     <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Density from solvent molecular structure&#39;</span><span class="p">,</span>
     <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Predict the density from the solvent molecular structure using molecular structure features.&#39;</span><span class="p">,</span>
     <span class="n">predictors</span> <span class="o">=</span> <span class="p">[</span><span class="n">featurizer</span><span class="p">,</span> <span class="n">ml_predictor</span><span class="p">],</span>
-    <span class="n">training_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">GemTableDataSource</span><span class="p">(</span><span class="n">training_data_table_uid</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]</span> <span class="c1"># training data shared by all sub-predictors</span>
+    <span class="n">training_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">GemTableDataSource</span><span class="p">(</span><span class="n">table_id</span><span class="o">=</span><span class="n">training_data_table_uid</span><span class="p">,</span> <span class="n">table_version</span><span class="o">=</span><span class="mi">1</span><span class="p">)]</span> <span class="c1"># training data shared by all sub-predictors</span>
 <span class="p">)</span>
 
 <span class="c1"># register or update predictor by name</span>
@@ -457,7 +457,7 @@ e.g., the <a class="reference internal" href="../reference/citrine.informatics.p
     <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Melting temperature from alloy chemical formula&#39;</span><span class="p">,</span>
     <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Predict the melting temperature from the alloy chemical formula using chemical formula features.&#39;</span><span class="p">,</span>
     <span class="n">predictors</span> <span class="o">=</span> <span class="p">[</span><span class="n">featurizer</span><span class="p">,</span> <span class="n">ml_predictor</span><span class="p">],</span>
-    <span class="n">training_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">GemTableDataSource</span><span class="p">(</span><span class="n">training_data_table_uid</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]</span> <span class="c1"># training data shared by all sub-predictors</span>
+    <span class="n">training_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">GemTableDataSource</span><span class="p">(</span><span class="n">table_id</span><span class="o">=</span><span class="n">training_data_table_uid</span><span class="p">,</span> <span class="n">table_version</span><span class="o">=</span><span class="mi">1</span><span class="p">)]</span> <span class="c1"># training data shared by all sub-predictors</span>
 <span class="p">)</span>
 
 <span class="c1"># register or update predictor by name</span>
@@ -475,7 +475,7 @@ This predictor is only required to construct formulations from CSV data sources.
 Formulations are constructed automatically by GEM Tables when a <code class="docutils literal notranslate"><span class="pre">formulation_descriptor</span></code> is specified by the data source, so
 an <a class="reference internal" href="../reference/citrine.informatics.predictors.ingredients_to_formulation_predictor.html#citrine.informatics.predictors.ingredients_to_formulation_predictor.IngredientsToFormulationPredictor" title="citrine.informatics.predictors.ingredients_to_formulation_predictor.IngredientsToFormulationPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientsToFormulationPredictor</span></code></a> in not required in those cases.</p>
 <p>Ingredients are specified by a map from ingredient id to the descriptor that contains the ingredient’s quantity.
-For example, <code class="docutils literal notranslate"><span class="pre">{'water':</span> <span class="pre">RealDescriptor('water</span> <span class="pre">quantity',</span> <span class="pre">0,</span> <span class="pre">1}</span></code> defines an ingredient <code class="docutils literal notranslate"><span class="pre">water</span></code> with quantity held by the descriptor <code class="docutils literal notranslate"><span class="pre">water</span> <span class="pre">quantity</span></code>.
+For example, <code class="docutils literal notranslate"><span class="pre">{'water':</span> <span class="pre">RealDescriptor('water</span> <span class="pre">quantity',</span> <span class="pre">lower_bound=0,</span> <span class="pre">upper_bound=1,</span> <span class="pre">units='')}</span></code> defines an ingredient <code class="docutils literal notranslate"><span class="pre">water</span></code> with quantity held by the descriptor <code class="docutils literal notranslate"><span class="pre">water</span> <span class="pre">quantity</span></code>.
 There must be a corresponding (id, quantity) pair in the map for all possible ingredients.
 If a material does not contain data for a given quantity descriptor key it is assumed that ingredient is not present in the mixture.</p>
 <p>Let’s add another ingredient <code class="docutils literal notranslate"><span class="pre">salt</span></code> to our map and say we are given data in the form:</p>
@@ -531,7 +531,7 @@ Labels provide a way to group or distinguish one or more ingredients and can be 
 The same label may be given to multiple ingredients, and a single ingredient may be given multiple labels.
 Labels are specified using a map from each label to a list of all ingredients that should be given that label.
 Anytime a recipe contains a non-zero amount of labeled ingredient, the ingredient is assigned the label.
-For example, we may wish to label <code class="docutils literal notranslate"><span class="pre">water</span></code> as a solute and <code class="docutils literal notranslate"><span class="pre">salt</span></code> as a solvent.
+For example, we may wish to label <code class="docutils literal notranslate"><span class="pre">water</span></code> as a solvent and <code class="docutils literal notranslate"><span class="pre">salt</span></code> as a solute.
 These labels are specified via:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">labels</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;solvent&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;water&#39;}, &quot;</span><span class="n">solute</span><span class="s2">&quot;: {&quot;</span><span class="n">salt</span><span class="s2">&quot;}}</span>
 </pre></div>
@@ -540,11 +540,11 @@ These labels are specified via:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.informatics.descriptors</span> <span class="kn">import</span> <span class="n">FormulationDescriptor</span><span class="p">,</span> <span class="n">RealDescriptor</span>
 <span class="kn">from</span> <span class="nn">citrine.informatics.predictors</span> <span class="kn">import</span> <span class="n">IngredientsToFormulationPredictor</span>
 
-<span class="n">file_link</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">upload</span><span class="p">(</span><span class="s2">&quot;./saline_solutions.csv&quot;</span><span class="p">,</span> <span class="s2">&quot;saline_solutions.csv&quot;</span><span class="p">)</span>
+<span class="n">file_link</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">upload</span><span class="p">(</span><span class="n">file_path</span><span class="o">=</span><span class="s2">&quot;./saline_solutions.csv&quot;</span><span class="p">,</span> <span class="n">dest_name</span><span class="s2">&quot;saline_solutions.csv&quot;</span><span class="p">)</span>
 
 <span class="c1"># create descriptors for each ingredient quantity (volume fraction)</span>
-<span class="n">water_quantity</span> <span class="o">=</span> <span class="n">RealDescriptor</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;water quantity&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
-<span class="n">salt_quantity</span> <span class="o">=</span> <span class="n">RealDescriptor</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;salt quantity&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+<span class="n">water_quantity</span> <span class="o">=</span> <span class="n">RealDescriptor</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;water quantity&#39;</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+<span class="n">salt_quantity</span> <span class="o">=</span> <span class="n">RealDescriptor</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;salt quantity&#39;</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
 
 <span class="c1"># create a descriptor to hold density data</span>
 <span class="n">density</span> <span class="o">=</span> <span class="n">RealDescriptor</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;density&#39;</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;g/cc&#39;</span><span class="p">)</span>
@@ -598,7 +598,11 @@ The <code class="docutils literal notranslate"><span class="pre">training_data</
 <span class="n">output_formulation</span> <span class="o">=</span> <span class="n">FormulationDescriptor</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;diluted saline (flattened)&#39;</span><span class="p">)</span>
 
 <span class="c1"># table with simple mixtures and their ingredients</span>
-<span class="n">data_source</span> <span class="o">=</span> <span class="n">GemTableDataSource</span><span class="p">(</span><span class="n">table_id</span><span class="o">=</span><span class="n">table_uid</span><span class="p">,</span> <span class="n">table_version</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">formulation_descriptor</span><span class="o">=</span><span class="n">input_descriptor</span><span class="p">)</span>
+<span class="n">data_source</span> <span class="o">=</span> <span class="n">GemTableDataSource</span><span class="p">(</span>
+    <span class="n">table_id</span><span class="o">=</span><span class="n">table_uid</span><span class="p">,</span>
+    <span class="n">table_version</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">formulation_descriptor</span><span class="o">=</span><span class="n">input_formulation</span>
+<span class="p">)</span>
 
 <span class="n">SimpleMixturePredictor</span><span class="p">(</span>
     <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Simple mixture predictor&#39;</span><span class="p">,</span>
@@ -681,7 +685,11 @@ If a value other than 1.58 should be used, e.g. 2.0, this can be specified by se
 <span class="n">density</span> <span class="o">=</span> <span class="n">RealDescriptor</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;density&#39;</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;g/cm^3&#39;</span><span class="p">)</span>
 
 <span class="c1"># table with formulations and their ingredients</span>
-<span class="n">data_source</span> <span class="o">=</span> <span class="n">GemTableDataSource</span><span class="p">(</span><span class="n">table_id</span><span class="o">=</span><span class="n">table_uid</span><span class="p">,</span> <span class="n">table_version</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">formulation_descriptor</span><span class="o">=</span><span class="n">formulation</span><span class="p">)</span>
+<span class="n">data_source</span> <span class="o">=</span> <span class="n">GemTableDataSource</span><span class="p">(</span>
+    <span class="n">table_id</span><span class="o">=</span><span class="n">table_uid</span><span class="p">,</span>
+    <span class="n">table_version</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">formulation_descriptor</span><span class="o">=</span><span class="n">formulation</span>
+<span class="p">)</span>
 
 <span class="n">mean_property_predictor</span> <span class="o">=</span> <span class="n">MeanPropertyPredictor</span><span class="p">(</span>
     <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Mean property predictor&#39;</span><span class="p">,</span>
@@ -797,7 +805,7 @@ Thus, all inputs and latent variables are used to predict outputs.</p>
 <span class="kn">from</span> <span class="nn">citrine.informatics.data_sources</span> <span class="kn">import</span> <span class="n">GemTableDataSource</span>
 
 <span class="c1"># create a session with citrine using your API key</span>
-<span class="n">session</span> <span class="o">=</span> <span class="n">Citrine</span><span class="p">(</span><span class="n">api_key</span> <span class="o">=</span> <span class="n">API_KEY</span><span class="p">)</span>
+<span class="n">session</span> <span class="o">=</span> <span class="n">Citrine</span><span class="p">(</span><span class="n">api_key</span><span class="o">=</span><span class="n">API_KEY</span><span class="p">)</span>
 
 <span class="c1"># find project by name &#39;Example project&#39; or create it if not found</span>
 <span class="n">project</span> <span class="o">=</span> <span class="n">find_or_create_project</span><span class="p">(</span><span class="n">project_collection</span><span class="o">=</span><span class="n">session</span><span class="o">.</span><span class="n">projects</span><span class="p">,</span>
@@ -812,7 +820,7 @@ Thus, all inputs and latent variables are used to predict outputs.</p>
     <span class="n">inputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">input_descriptor_1</span><span class="p">,</span> <span class="n">input_descriptor_2</span><span class="p">],</span>
     <span class="n">outputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">output_descriptor_1</span><span class="p">,</span> <span class="n">output_descriptor_2</span><span class="p">],</span>
     <span class="n">latent_variables</span> <span class="o">=</span> <span class="p">[</span><span class="n">latent_variable_descriptor_1</span><span class="p">],</span>
-    <span class="n">training_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">GemTableDataSource</span><span class="p">(</span><span class="n">training_data_table_uid</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]</span>
+    <span class="n">training_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">GemTableDataSource</span><span class="p">(</span><span class="n">table_id</span><span class="o">=</span><span class="n">training_data_table_uid</span><span class="p">,</span> <span class="n">table_version</span><span class="o">=</span><span class="mi">1</span><span class="p">)]</span>
 <span class="p">)</span>
 
 <span class="c1"># register predictor or update predictor of same name if it already</span>
@@ -840,7 +848,7 @@ Instead of entering these manually, outputs from a predictor can be retrieved pr
 <span class="kn">from</span> <span class="nn">citrine.informatics.descriptors</span> <span class="kn">import</span> <span class="n">FormulationDescriptor</span>
 
 <span class="c1"># create a session with citrine using your API key</span>
-<span class="n">session</span> <span class="o">=</span> <span class="n">Citrine</span><span class="p">(</span><span class="n">api_key</span> <span class="o">=</span> <span class="n">API_KEY</span><span class="p">)</span>
+<span class="n">session</span> <span class="o">=</span> <span class="n">Citrine</span><span class="p">(</span><span class="n">api_key</span><span class="o">=</span><span class="n">API_KEY</span><span class="p">)</span>
 
 <span class="c1"># find project by name &#39;Example project&#39; or create it if not found</span>
 <span class="n">project</span> <span class="o">=</span> <span class="n">find_or_create_project</span><span class="p">(</span><span class="n">project_collection</span><span class="o">=</span><span class="n">session</span><span class="o">.</span><span class="n">projects</span><span class="p">,</span>
@@ -871,7 +879,11 @@ Instead of entering these manually, outputs from a predictor can be retrieved pr
     <span class="n">inputs</span> <span class="o">=</span> <span class="n">ingredient_fraction_descriptors</span><span class="p">,</span>
     <span class="n">outputs</span> <span class="o">=</span> <span class="p">[</span><span class="n">output_descriptor</span><span class="p">],</span>
     <span class="n">latent_variables</span> <span class="o">=</span> <span class="p">[],</span>
-    <span class="n">training_data</span> <span class="o">=</span> <span class="n">GemTableDataSource</span><span class="p">(</span><span class="n">training_data_table_uid</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">formulation_descriptor</span><span class="p">)</span>
+    <span class="n">training_data</span> <span class="o">=</span> <span class="n">GemTableDataSource</span><span class="p">(</span>
+        <span class="n">table_id</span><span class="o">=</span><span class="n">training_data_table_uid</span><span class="p">,</span>
+        <span class="n">table_version</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">formulation_descriptor</span><span class="o">=</span><span class="n">formulation_descriptor</span>
+    <span class="p">)</span>
 <span class="p">)</span>
 </pre></div>
 </div>

@@ -10,7 +10,6 @@ Submodules
    citrine.informatics.predictors.auto_ml_predictor
    citrine.informatics.predictors.chemical_formula_featurizer
    citrine.informatics.predictors.expression_predictor
-   citrine.informatics.predictors.generalized_mean_property_predictor
    citrine.informatics.predictors.graph_predictor
    citrine.informatics.predictors.ingredient_fractions_predictor
    citrine.informatics.predictors.ingredients_to_formulation_predictor

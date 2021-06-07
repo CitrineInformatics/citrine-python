@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>2. GEMD Data Model &mdash; Citrine Python 0.133.1 documentation</title>
+  <title>2. GEMD Data Model &mdash; Citrine Python 0.134.0 documentation</title>
   
 
   
@@ -73,7 +73,7 @@
             
             
               <div class="version">
-                0.133.1
+                0.134.0
               </div>
             
           
@@ -235,9 +235,9 @@ For example:</p>
 </pre></div>
 </div>
 <p>The
-<a class="reference internal" href="reference/citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConceptsCollection.filter_by_tags" title="citrine.resources.data_concepts.DataConceptsCollection.filter_by_tags"><code class="xref py py-meth docutils literal notranslate"><span class="pre">filter_by_tags()</span></code></a>,
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">filter_by_tags()</span></code>,
 <a class="reference internal" href="reference/citrine.resources.data_objects.html#citrine.resources.data_objects.DataObjectCollection.filter_by_attribute_bounds" title="citrine.resources.data_objects.DataObjectCollection.filter_by_attribute_bounds"><code class="xref py py-meth docutils literal notranslate"><span class="pre">filter_by_attribute_bounds()</span></code></a>,
-and <a class="reference internal" href="reference/citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConceptsCollection.filter_by_name" title="citrine.resources.data_concepts.DataConceptsCollection.filter_by_name"><code class="xref py py-meth docutils literal notranslate"><span class="pre">filter_by_name()</span></code></a>
+and <code class="xref py py-meth docutils literal notranslate"><span class="pre">filter_by_name()</span></code>
 methods can help refine the listing to make the target object easier to find.</p>
 <p>There also exist methods for locating data objects by its reference to another object:</p>
 <p>Runs may be listed by spec with
@@ -335,7 +335,12 @@ This method returns a list of validation errors, which is empty on validation su
 <span class="n">parameter1</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="s1">&#39;parameter_name&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">UniformInteger</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
 <span class="n">parameter2</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="s1">&#39;parameter_name&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">UniformInteger</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
 <span class="n">process_spec</span> <span class="o">=</span> <span class="n">ProcessSpec</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;spec name&#39;</span><span class="p">)</span>
-<span class="n">process_run</span> <span class="o">=</span> <span class="n">ProcessRun</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;run name&#39;</span><span class="p">,</span> <span class="n">spec</span><span class="o">=</span><span class="n">process_spec</span><span class="p">,</span> <span class="n">conditions</span><span class="o">=</span><span class="p">[</span><span class="n">condition1</span><span class="p">,</span> <span class="n">condition2</span><span class="p">],</span> <span class="n">parameters</span><span class="o">=</span><span class="p">[</span><span class="n">parameter1</span><span class="p">,</span> <span class="n">parameter2</span><span class="p">])</span>
+<span class="n">process_run</span> <span class="o">=</span> <span class="n">ProcessRun</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;run name&#39;</span><span class="p">,</span>
+    <span class="n">spec</span><span class="o">=</span><span class="n">process_spec</span><span class="p">,</span>
+    <span class="n">conditions</span><span class="o">=</span><span class="p">[</span><span class="n">condition1</span><span class="p">,</span> <span class="n">condition2</span><span class="p">],</span>
+    <span class="n">parameters</span><span class="o">=</span><span class="p">[</span><span class="n">parameter1</span><span class="p">,</span> <span class="n">parameter2</span><span class="p">]</span>
+<span class="p">)</span>
 <span class="n">dataset</span><span class="o">.</span><span class="n">process_runs</span><span class="o">.</span><span class="n">validate_templates</span><span class="p">(</span><span class="n">process_run</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -349,7 +354,10 @@ This method returns a list of validation errors, which is empty on validation su
 <span class="n">condition_template</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">condition_templates</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">condition_template</span><span class="p">)</span>
 
 <span class="n">condition</span> <span class="o">=</span> <span class="n">Condition</span><span class="p">(</span><span class="s2">&quot;condition&quot;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">UniformInteger</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">template</span><span class="o">=</span><span class="n">condition_template</span><span class="p">)</span>
-<span class="n">process_template</span> <span class="o">=</span> <span class="n">ProcessTemplate</span><span class="p">(</span><span class="s2">&quot;pt&quot;</span><span class="p">,</span> <span class="n">conditions</span><span class="o">=</span><span class="p">[[</span><span class="n">LinkByUID</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="n">condition_template</span><span class="o">.</span><span class="n">uids</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]),</span> <span class="n">IntegerBounds</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">)]])</span>
+<span class="n">process_template</span> <span class="o">=</span> <span class="n">ProcessTemplate</span><span class="p">(</span>
+    <span class="s2">&quot;pt&quot;</span><span class="p">,</span>
+    <span class="n">conditions</span><span class="o">=</span><span class="p">[[</span><span class="n">LinkByUID</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="n">condition_template</span><span class="o">.</span><span class="n">uids</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]),</span> <span class="n">IntegerBounds</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">)]]</span>
+<span class="p">)</span>
 <span class="n">process_spec</span> <span class="o">=</span> <span class="n">ProcessSpec</span><span class="p">(</span><span class="s2">&quot;ps&quot;</span><span class="p">,</span> <span class="n">template</span><span class="o">=</span><span class="n">process_template</span><span class="p">)</span>
 <span class="n">process_run</span> <span class="o">=</span> <span class="n">ProcessRun</span><span class="p">(</span><span class="s2">&quot;pr&quot;</span><span class="p">,</span> <span class="n">conditions</span><span class="o">=</span><span class="p">[</span><span class="n">condition</span><span class="p">],</span> <span class="n">spec</span><span class="o">=</span><span class="n">process_spec</span><span class="p">)</span>
 <span class="n">dataset</span><span class="o">.</span><span class="n">process_runs</span><span class="o">.</span><span class="n">validate_templates</span><span class="p">(</span><span class="n">process_run</span><span class="p">,</span> <span class="n">object_template</span><span class="o">=</span><span class="n">process_template</span><span class="p">)</span>
@@ -368,8 +376,16 @@ value provided to the <code class="docutils literal notranslate"><span class="pr
 <span class="n">mat_process_spec</span> <span class="o">=</span> <span class="n">ProcessSpec</span><span class="p">(</span><span class="s2">&quot;mps&quot;</span><span class="p">)</span>
 <span class="n">material_spec</span> <span class="o">=</span> <span class="n">MaterialSpec</span><span class="p">(</span><span class="s2">&quot;ms&quot;</span><span class="p">,</span> <span class="n">process</span><span class="o">=</span><span class="n">mat_process_spec</span><span class="p">)</span>
 
-<span class="n">ingredient_spec</span> <span class="o">=</span> <span class="n">IngredientSpec</span><span class="p">(</span><span class="s2">&quot;is&quot;</span><span class="p">,</span> <span class="n">process</span><span class="o">=</span><span class="n">process_spec</span><span class="p">,</span> <span class="n">material</span><span class="o">=</span><span class="n">material_spec</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;ingredient&quot;</span><span class="p">])</span>
-<span class="n">dataset</span><span class="o">.</span><span class="n">ingredient_specs</span><span class="o">.</span><span class="n">validate_templates</span><span class="p">(</span><span class="n">ingredient_spec</span><span class="p">,</span> <span class="n">ingredient_process_template</span><span class="o">=</span><span class="n">process_template</span><span class="p">)</span>
+<span class="n">ingredient_spec</span> <span class="o">=</span> <span class="n">IngredientSpec</span><span class="p">(</span>
+    <span class="s2">&quot;is&quot;</span><span class="p">,</span>
+    <span class="n">process</span><span class="o">=</span><span class="n">process_spec</span><span class="p">,</span>
+    <span class="n">material</span><span class="o">=</span><span class="n">material_spec</span><span class="p">,</span>
+    <span class="n">labels</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;ingredient&quot;</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="n">dataset</span><span class="o">.</span><span class="n">ingredient_specs</span><span class="o">.</span><span class="n">validate_templates</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">=</span><span class="n">ingredient_spec</span><span class="p">,</span>
+    <span class="n">ingredient_process_template</span><span class="o">=</span><span class="n">process_template</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 <p>has return value:</p>

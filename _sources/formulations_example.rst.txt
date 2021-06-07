@@ -287,7 +287,7 @@ The code below defines the rows and defines one column that contains the identif
 
     from citrine.resources.table_config import TableConfig
     from citrine.gemtables.rows import MaterialRunByTemplate
-    from citrine.gemtables.variables import RootIdentifier
+    from citrine.gemtables.variables import TerminalMaterialIdentifier
     from citrine.gemtables.columns import IdentityColumn
 
 
@@ -305,7 +305,7 @@ The code below defines the rows and defines one column that contains the identif
                 templates=[LinkByUID.from_entity(t, scope) for t in material_templates_to_include]
             )
         ],
-        variables=[RootIdentifier(name="name", headers=["name"], scope=scope)],
+        variables=[TerminalMaterialIdentifier(name="name", headers=["name"], scope=scope)],
         columns=[IdentityColumn(data_source="name")]
     )
 
@@ -457,7 +457,11 @@ if we do not specify it then a default descriptor will be generated, but given h
     from citrine.informatics.data_sources import GemTableDataSource
 
     formulation = FormulationDescriptor("mixed and blended margarita")
-    data_source = GemTableDataSource(table_id=table.uid, table_version=table.version, formulation_descriptor=formulation)
+    data_source = GemTableDataSource(
+        table_id=table.uid,
+        table_version=table.version,
+        formulation_descriptor=formulation
+    )
 
 The first component of the graphical model is a :class:`~citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor`, which flattens the input formulation--it repeatedly replaces components with their ingredients until only the atomic ingredients remain.
 This flattening efficiently teaches the predictor about the relationship between materials.
