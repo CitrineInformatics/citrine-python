@@ -1,4 +1,3 @@
-from typing import Union
 from uuid import UUID
 
 from citrine._rest.collection import Collection
@@ -37,7 +36,7 @@ class DesignWorkflowCollection(Collection[DesignWorkflow]):
 
         """
         url = self._path_template.format(project_id=self.project_id) \
-              + "/{}/archive".format(workflow_id)
+            + "/{}/archive".format(workflow_id)
         self.session.put_resource(url, {})
 
     def restore(self, workflow_id: UUID):
@@ -50,7 +49,7 @@ class DesignWorkflowCollection(Collection[DesignWorkflow]):
 
         """
         url = self._path_template.format(project_id=self.project_id) \
-              + "/{}/restore".format(workflow_id)
+            + "/{}/restore".format(workflow_id)
         self.session.put_resource(url, {})
 
     def delete(self, uid: Union[UUID, str]) -> Response:
@@ -60,6 +59,7 @@ class DesignWorkflowCollection(Collection[DesignWorkflow]):
 
     def list_archived(self,
                       page: Optional[int] = None,
-                      per_page: int = 1000) -> Iterable[DesignWorkflow]:
+                      per_page: int = 1000,
+                      **kwargs) -> Iterable[DesignWorkflow]:
         """List archived Design Workflows"""
         super().list(page, per_page, search_params={"filter": "archived eq 'true'"})
