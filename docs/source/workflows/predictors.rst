@@ -52,37 +52,80 @@ The following example demonstrates how to use the python SDK to create an :class
 Graph predictor
 ---------------
 
-The :class:`~citrine.informatics.predictors.graph_predictor.GraphPredictor` stitches together multiple other predictors into a
-directed bipartite graph, where every model node is connected to an arbitrary number of input descriptors and exactly
-one output descriptor.
+The :class:`~citrine.informatics.predictors.graph_predictor.GraphPredictor` stitches together multiple predictors into a directed bipartite graph.
+The predictors are connected based on their descriptors -- using a descriptor as the output of one predictor and also as the input of another will ensure that the predictors are wired together.
+The graph structure is quite flexible.
+A descriptor can be the output and/or input of multiple predictors, and cycles are permitted.
 
-Note, if multiple associated predictors use descriptors with the same key the output value with the least loss will be used.
+A ``GraphPredictor`` is created by specifying the sub-predictors.
+These can either be references to predictors that exist on-platform, or they can be predictors that are defined locally.
+A sub-predictor **cannot** be another ``GraphPredictor``.
 
-There are restrictions for a predictor to be used in a GraphPredictor:
-- it must be registered and validated
-- it must NOT be another GraphPredictor
-
-The following example demonstrates how to use the python SDK to create a :class:`~citrine.informatics.predictors.graph_predictor.GraphPredictor`.
+The following example demonstrates how to create a :class:`~citrine.informatics.predictors.graph_predictor.GraphPredictor` from on-platform and locally-defined predictors.
+Assume that there exists a CSV file with columns for time, bulk modulus, and Poisson's ratio.
+We train ML models to predict bulk modulus and Poisson's ratio, then apply an expression to calculate Young's modulus.
+The ML models are independently registered on-platform, but the expression predictor is defined locally and hence cannot be re-used.
 
 .. code:: python
 
-   from citrine.informatics.predictors import GraphPredictor
-   from citrine.seeding.find_or_create import create_or_update
+    from citrine.informatics.predictors import GraphPredictor, AutoMLPredictor, ExpressionPredictor
+    from citrine.informatics.data_sources import CSVDataSource
+    from citrine.seeding.find_or_create import create_or_update
 
-   # the other predictors have already been created and validated
-   graph_predictor = GraphPredictor(
-       name = 'Predictor name',
-       description = 'Predictor description',
-       predictors = [predictor1.uid, predictor2.uid, predictor3.uid],
-       training_data = [GemTableDataSource(table_id=training_data_table_uid, table_version=1)] # training data shared by all sub-predictors
-   )
+    time = RealDescriptor("tempering time", lower_bound=0, upper_bound=30, units="s")
+    bulk_modulus = RealDescriptor("Bulk Modulus", lower_bound=0, upper_bound=1E3, units="GPa")
+    poissons_ratio = RealDescriptor("Poisson\'s Ratio", lower_bound=0, upper_bound=0.5, units="")
+    training_data = CSVDataSource(
+        file_link = elastic_properties_file,
+        column_definition = {
+            "Tempering Time (s)": time,
+            "Bulk Modulus (GPa)": bulk_modulu,
+            "Poisson\'s Ratio": poissons_ratio
+        }
+    )
 
-   # register or update predictor by name
-   predictor = create_or_update(collection=project.predictors,
-                                module=graph_predictor
-                               )
+    bulk_modulus_predictor = project.predictors.register(
+        AutoMLPredictor(
+            name="predict bulk modulus from tempering time",
+            description="",
+            inputs=[time],
+            output=bulk_modulus,
+            training_data=[training_data]
+        )
+    )
+    poissons_ratio_predictor = project.predictors.register(
+        AutoMLPredictor(
+            name="predict Poisson\'s ratio from tempering time",
+            description="",
+            inputs=[time],
+            output=poissons_ratio,
+            training_data=[training_data]
+        )
+    )
 
-For a more complete example of graph predictor usage, see :ref:`AI Engine Code Examples <graph_predictor_example>`.
+    youngs_modulus = RealDescriptor("Young\'s Modulus", lower_bound=0, upper_bound=1E4, units="GPa")
+    expression_predictor = ExpressionPredictor(
+        name="Young\'s modulus from bulk modulus and Poisson's ratio",
+        description="",
+        expression="3 * K * (1 - 2 * eta)",
+        output=youngs_modulus,
+        aliases={"K": bulk_modulus, "eta": poissons_ratio}
+    )
+
+    graph_predictor = project.predictors.register(
+        GraphPredictor(
+            name = "Big elastic constant predictor,
+            description = ""
+            predictors = [
+                bulk_modulus_predictor.uid,
+                poissons_ratio_predictor.uid,
+                expression_predictor
+            ],
+           training_data = []
+        )
+    )
+
+For another example of graph predictor usage, see :ref:`AI Engine Code Examples <graph_predictor_example>`.
 
 .. _Expression Predictor:
 Expression predictor
