@@ -1,8 +1,9 @@
 """Resources that represent collections of predictors."""
 from uuid import UUID
-from typing import TypeVar, Optional
+from typing import TypeVar, Optional, Union
 
 from citrine._session import Session
+from citrine._utils.functions import migrate_deprecated_argument
 from citrine.resources.module import AbstractModuleCollection
 from citrine.informatics.data_sources import DataSource
 from citrine.informatics.predictors import Predictor, GraphPredictor
@@ -36,7 +37,8 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
         predictor._project_id = self.project_id
         return predictor
 
-    def check_for_update(self, predictor_id: UUID) -> Optional[Predictor]:
+    def check_for_update(self, uid: Union[UUID, str] = None,
+                         predictor_id: Union[UUID, str] = None) -> Optional[Predictor]:
         """
         Check if there are updates available for a predictor.
 
@@ -48,8 +50,10 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
 
         Parameters
         ----------
-        predictor_id: UUID
+        uid: Union[UUID, str]
             Unique identifier of the predictor to check
+        predictor_id: Union[UUID, str]
+            [DEPRECATED] please use uid instead
 
         Returns
         -------
@@ -57,12 +61,13 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
             The update, if an update is available; None otherwise.
 
         """
-        path = "/projects/{}/predictors/{}/check-for-update".format(self.project_id, predictor_id)
+        uid = migrate_deprecated_argument(uid, "uid", predictor_id, "predictor_id")
+        path = "/projects/{}/predictors/{}/check-for-update".format(self.project_id, uid)
         data = self.session.get_resource(path)
         if data["updatable"]:
             enveloped = GraphPredictor.stuff_predictor_into_envelope(data["update"])
             built: Predictor = Predictor.build(enveloped)
-            built.uid = predictor_id
+            built.uid = uid
             return built
         else:
             return None

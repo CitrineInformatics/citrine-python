@@ -175,6 +175,9 @@ The only exception is that the first argument should be a positional argument if
 * Its identity is obvious
 * It is consistent (all similar methods have the same first argument)
 
+Unique identifiers are always denoted ``uid`` _unless_ the object being referenced and the object doing the referencing have different types.
+If object of type "Foo" has a method that accepts the id of an object of type "Bar", it is denoted ``bar_id``.
+
 Docstrings must follow [Numpy style](https://numpydoc.readthedocs.io/en/latest/format.html) so that Sphinx can parse them to make the docs.
 
 For additional (non-binding) inspiration, check out the [Google Python Style Guide](https://github.com/google/styleguide/blob/gh-pages/pyguide.md).
