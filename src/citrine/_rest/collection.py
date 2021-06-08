@@ -30,7 +30,7 @@ class Collection(Generic[ResourceType], Pageable):
     _collection_key: str = 'entries'
     _paginator: Paginator = Paginator()
 
-    def _put_module_ref(self, subpath: str, uid: UUID):
+    def _put_module_ref(self, subpath: str, uid: Union[UUID, str]):
         url = self._get_path(subpath)
         ref = ModuleRef(str(uid))
         return self.session.put_resource(url, ref.dump())
