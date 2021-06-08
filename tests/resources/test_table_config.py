@@ -172,24 +172,6 @@ def test_preview(collection, session):
     )
     assert session.last_call == expect_call
 
-    # When
-    collection.preview(table_config=empty_defn(), preview_roots=[])
-
-    # Then
-    assert 2 == session.num_calls
-    expect_call = FakeCall(
-        method="POST",
-        path="projects/{}/ara-definitions/preview".format(project_id),
-        json={"definition": empty_defn().dump(), "rows": []}
-    )
-    assert session.last_call == expect_call
-
-    with pytest.raises(ValueError):
-        collection.preview(table_config=empty_defn(), preview_materials=[], preview_roots=[])
-
-    with pytest.raises(ValueError):
-        collection.preview(table_config=empty_defn())
-
 
 def test_default_for_material(collection: TableConfigCollection, session):
     """Test that default for material hits the right route"""

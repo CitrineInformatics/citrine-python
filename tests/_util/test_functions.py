@@ -1,12 +1,13 @@
 import uuid
 
 import pytest
-from mock import patch, call, MagicMock, mock_open
+import warnings
+from mock import patch, call, mock_open
 from gemd.entity.bounds.real_bounds import RealBounds
 from gemd.entity.link_by_uid import LinkByUID
 
 from citrine._utils.functions import get_object_id, validate_type, object_to_link_by_uid, \
-    rewrite_s3_links_locally, write_file_locally, shadow_classes_in_module
+    rewrite_s3_links_locally, write_file_locally, shadow_classes_in_module, migrate_deprecated_argument
 from gemd.entity.attribute.property import Property
 from citrine.resources.condition_template import ConditionTemplate
 
@@ -98,3 +99,24 @@ def test_shadow_classes_in_module():
     # Python also considers the classes equivalent
     assert issubclass(copied_class, source_mod.ExampleClass)
     assert issubclass(source_mod.ExampleClass, copied_class)
+
+
+def test_migrate_deprecated_argument():
+    with pytest.raises(ValueError):
+        # ValueError if neither argument is specified
+        migrate_deprecated_argument(None, "new name", None, "old name")
+
+    with pytest.raises(ValueError):
+        # ValueError if boht arguments are specified
+        migrate_deprecated_argument("something", "new name", "something else", "old name")
+
+    # Return the value if the new argument is specified
+    assert migrate_deprecated_argument(14, "new name", None, "old name") == 14
+
+    with warnings.catch_warnings(record=True) as caught:
+        # If the old argument is specified, return the value and throw a deprecation warning
+        returned = migrate_deprecated_argument(None, "new name", 15, "old name")
+        assert returned == 15
+        assert issubclass(caught[0].category, DeprecationWarning)
+        msg = str(caught[0].message)
+        assert "old name" in msg and "new name" in msg
