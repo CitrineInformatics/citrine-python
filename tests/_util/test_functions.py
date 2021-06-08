@@ -107,7 +107,7 @@ def test_migrate_deprecated_argument():
         migrate_deprecated_argument(None, "new name", None, "old name")
 
     with pytest.raises(ValueError):
-        # ValueError if boht arguments are specified
+        # ValueError if both arguments are specified
         migrate_deprecated_argument("something", "new name", "something else", "old name")
 
     # Return the value if the new argument is specified
@@ -115,8 +115,7 @@ def test_migrate_deprecated_argument():
 
     with warnings.catch_warnings(record=True) as caught:
         # If the old argument is specified, return the value and throw a deprecation warning
-        returned = migrate_deprecated_argument(None, "new name", 15, "old name")
-        assert returned == 15
+        assert migrate_deprecated_argument(None, "new name", 15, "old name") == 15
         assert issubclass(caught[0].category, DeprecationWarning)
         msg = str(caught[0].message)
         assert "old name" in msg and "new name" in msg

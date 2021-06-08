@@ -150,7 +150,7 @@ def migrate_deprecated_argument(
     This method handles the situation in which a function has two arguments for the same thing,
     one old and one new. It ensures that only one of the two arguments is provided, throwing a
     ValueError is both/neither are provided. If the old version of the argument is provided,
-    it creates a deprecation warning message.
+    it throws a deprecation warning.
 
     Parameters
     ----------
