@@ -231,21 +231,6 @@ def test_molecule_featurizer(molecule_featurizer):
     }
 
 
-def test_molecule_featurizer_deprecation():
-    with pytest.raises(ValueError):
-        MolecularStructureFeaturizer(name="", description="")
-
-    descriptor = MolecularStructureDescriptor("SMILES")
-    with pytest.raises(ValueError):
-        MolecularStructureFeaturizer(name="", description="", descriptor=descriptor, input_descriptor=descriptor)
-
-    with warnings.catch_warnings(record=True) as caught:
-        featurizer = MolecularStructureFeaturizer(name="", description="", descriptor=descriptor)
-        assert featurizer.input_descriptor == descriptor
-        w = caught[0]
-        assert issubclass(w.category, DeprecationWarning)
-
-
 def test_chemical_featurizer(chemical_featurizer):
     assert chemical_featurizer.name == "Chemical featurizer"
     assert chemical_featurizer.description == "description"

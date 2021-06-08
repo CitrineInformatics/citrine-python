@@ -1,7 +1,6 @@
 from copy import copy
 from typing import List, Union, Optional, Tuple
 from uuid import UUID
-from warnings import warn
 
 from deprecation import deprecated
 from gemd.entity.object import MaterialRun
@@ -13,6 +12,7 @@ from citrine._rest.collection import Collection
 from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
 from citrine._session import Session
+from citrine._utils.functions import migrate_deprecated_argument
 from citrine.resources.data_concepts import CITRINE_SCOPE, _make_link_by_uid
 from citrine.resources.process_template import ProcessTemplate
 from citrine.gemtables.columns import Column, MeanColumn, IdentityColumn, OriginalUnitsColumn
@@ -366,15 +366,8 @@ class TableConfigCollection(Collection[TableConfig]):
             [DEPRECATED] Use preview_materials instead
 
         """
-        if preview_roots is not None:
-            warn("preview_roots argument is deprecated in favor of preview_materials",
-                 DeprecationWarning)
-            if preview_materials is None:
-                preview_materials = preview_roots
-            else:
-                raise ValueError("Cannot specify both preview_materials and preview_roots")
-        elif preview_materials is None:
-            raise ValueError("Must specify preview materials")
+        preview_materials = migrate_deprecated_argument(preview_materials, "preview_materials",
+                                                        preview_roots, "preview_roots")
         path = self._get_path() + "/preview"
         body = {
             "definition": table_config.dump(),

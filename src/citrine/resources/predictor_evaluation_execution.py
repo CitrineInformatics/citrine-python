@@ -6,7 +6,7 @@ from uuid import UUID
 
 from citrine._rest.collection import Collection
 from citrine._session import Session
-from citrine._utils.functions import shadow_classes_in_module
+from citrine._utils.functions import migrate_deprecated_argument, shadow_classes_in_module
 from citrine.informatics.executions import PredictorEvaluationExecution
 import citrine.informatics.executions.predictor_evaluation_execution
 from citrine.informatics.modules import ModuleRef
@@ -61,27 +61,33 @@ class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExec
         """Cannot update an execution."""
         raise NotImplementedError("Cannot update a PredictorEvaluationExecution.")
 
-    def archive(self, execution_id: UUID):
+    def archive(self, uid: Union[UUID, str] = None, execution_id: Union[UUID, str] = None):
         """Archive a predictor evaluation execution.
 
         Parameters
         ----------
-        execution_id: UUID
+        uid: Union[UUID, str]
             Unique identifier of the execution to archive
+        execution_id: Union[UUID, str]
+            [DEPRECATED] please use uid instead
 
         """
-        self._put_module_ref('archive', execution_id)
+        uid = migrate_deprecated_argument(uid, "uid", execution_id, "execution_id")
+        self._put_module_ref('archive', uid)
 
-    def restore(self, execution_id: UUID):
+    def restore(self, uid: Union[UUID, str] = None, execution_id: Union[UUID, str] = None):
         """Restore an archived predictor evaluation execution.
 
         Parameters
         ----------
-        execution_id: UUID
+        uid: Union[UUID, str]
             Unique identifier of the execution to restore
+        execution_id: Union[UUID, str]
+            [DEPRECATED] please use uid instead
 
         """
-        self._put_module_ref('restore', execution_id)
+        uid = migrate_deprecated_argument(uid, "uid", execution_id, "execution_id")
+        self._put_module_ref('restore', uid)
 
     def list(self,
              *,
