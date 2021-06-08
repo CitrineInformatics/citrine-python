@@ -19,7 +19,7 @@ from citrine._serialization.serializable import Serializable
 from citrine._session import Session
 from citrine._utils.functions import scrub_none, replace_objects_with_links
 from citrine.resources.audit_info import AuditInfo
-from citrine.resources.job import _poll_for_job_completion
+from citrine.jobs.job import _poll_for_job_completion
 from citrine.resources.response import Response
 
 CITRINE_SCOPE = 'id'

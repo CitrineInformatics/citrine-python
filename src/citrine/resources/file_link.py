@@ -21,7 +21,7 @@ from citrine._serialization.properties import String, Object, Integer
 from citrine._serialization.serializable import Serializable
 from citrine._session import Session
 from citrine._utils.functions import write_file_locally
-from citrine.resources.job import JobSubmissionResponse, _poll_for_job_completion
+from citrine.jobs.job import JobSubmissionResponse, _poll_for_job_completion
 from citrine.resources.response import Response
 
 logger = getLogger(__name__)
