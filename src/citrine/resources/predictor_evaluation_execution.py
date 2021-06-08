@@ -1,20 +1,20 @@
 """Resources that represent both individual and collections of predictor evaluation executions."""
 from functools import partial
+import sys
 from typing import Optional, Union, Iterator
 from uuid import UUID
-import sys
 
 from citrine._rest.collection import Collection
 from citrine._session import Session
+from citrine._utils.functions import shadow_classes_in_module
+from citrine.informatics.executions import PredictorEvaluationExecution
+import citrine.informatics.executions.predictor_evaluation_execution
 from citrine.informatics.modules import ModuleRef
 from citrine.resources.response import Response
-import citrine.informatics.executions
-from citrine.informatics.executions import PredictorEvaluationExecution
-
-from citrine._utils.functions import shadow_classes_in_module
 
 
-shadow_classes_in_module(citrine.informatics.executions, sys.modules[__name__])
+shadow_classes_in_module(citrine.informatics.executions.predictor_evaluation_execution,
+                         sys.modules[__name__])
 
 
 class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExecution"]):
