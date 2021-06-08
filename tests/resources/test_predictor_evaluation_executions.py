@@ -2,10 +2,10 @@ import uuid
 
 import pytest
 
+from citrine.informatics.executions.predictor_evaluation_execution import PredictorEvaluationExecution
 from citrine.informatics.modules import ModuleRef
 from citrine.informatics.predictor_evaluation_result import PredictorEvaluationResult
-from citrine.resources.predictor_evaluation_execution import PredictorEvaluationExecutionCollection, \
-    PredictorEvaluationExecution
+from citrine.resources.predictor_evaluation_execution import PredictorEvaluationExecutionCollection
 from tests.utils.session import FakeSession, FakeCall
 
 
