@@ -169,7 +169,11 @@ The citrine-python library follows [PEP8](https://www.python.org/dev/peps/pep-00
 Type hints are strongly encouraged.
 
 Positional arguments are strongly discouraged for methods with multiple arguments.
-Any positional argument should be required.
+Keywords should be required for almost all arguments.
+The only exception is that the first argument should be a positional argument if and only if the following are all true:
+* It is required
+* Its identity is obvious
+* It is consistent (all similar methods have the same first argument)
 
 Docstrings must follow [Numpy style](https://numpydoc.readthedocs.io/en/latest/format.html) so that Sphinx can parse them to make the docs.
 
