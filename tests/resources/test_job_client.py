@@ -2,6 +2,7 @@ import pytest
 from uuid import UUID
 
 from citrine.jobs.job import TaskNode, JobStatusResponse, JobSubmissionResponse
+import citrine.resources.job as oldjobs
 from citrine.resources.gemtables import GemTableCollection
 from citrine.resources.project import Project
 from citrine.resources.table_config import TableConfig
@@ -92,3 +93,8 @@ def test_build_job(collection: GemTableCollection, table_config: TableConfig):
     resp = collection.initiate_build(table_config)
     assert isinstance(resp, JobSubmissionResponse)
     assert resp.job_id == UUID('12345678-1234-1234-1234-123456789ccc')
+
+
+def test_renamed_classes_are_the_same():
+    # Mostly make code coverage happy
+    assert oldjobs.JobSubmissionResponse == JobSubmissionResponse
