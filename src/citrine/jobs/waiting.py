@@ -4,9 +4,9 @@ from typing import Union
 
 from citrine._rest.collection import Collection
 from citrine._rest.asynchronous_object import AsynchronousObject
+from citrine.informatics.executions.design_execution import DesignExecution
+from citrine.informatics.executions import PredictorEvaluationExecution
 from citrine.informatics.modules import Module
-from citrine.resources.predictor_evaluation_execution import PredictorEvaluationExecution
-from citrine.resources.design_execution import DesignExecution
 
 
 class ConditionTimeoutError(RuntimeError):

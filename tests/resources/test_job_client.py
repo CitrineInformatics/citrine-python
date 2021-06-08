@@ -1,11 +1,10 @@
+import pytest
 from uuid import UUID
 
-import pytest
-from citrine.resources.job import TaskNode, JobStatusResponse, JobSubmissionResponse
+from citrine.jobs.job import TaskNode, JobStatusResponse, JobSubmissionResponse
+from citrine.resources.gemtables import GemTableCollection
 from citrine.resources.project import Project
 from citrine.resources.table_config import TableConfig
-from citrine.resources.gemtables import GemTableCollection
-
 from tests.utils.session import FakeSession
 
 
