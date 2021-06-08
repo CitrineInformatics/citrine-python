@@ -58,8 +58,8 @@ class DesignWorkflowCollection(Collection[DesignWorkflow]):
             "Design Workflows cannot be deleted; they can be archived instead.")
 
     def list_archived(self,
+                      *,
                       page: Optional[int] = None,
-                      per_page: int = 1000,
-                      **kwargs) -> Iterable[DesignWorkflow]:
+                      per_page: int = 1000) -> Iterable[DesignWorkflow]:
         """List archived Design Workflows"""
-        super().list(page, per_page, search_params={"filter": "archived eq 'true'"})
+        super().list(page=page, per_page=per_page, search_params={"filter": "archived eq 'true'"})
