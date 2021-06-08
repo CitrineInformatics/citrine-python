@@ -3,8 +3,6 @@ from logging import getLogger
 from typing import List, Dict, Optional, Type, Iterator, Union
 from uuid import UUID
 
-import deprecation
-
 from citrine._rest.resource import Resource
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Optional as PropertyOptional
@@ -99,29 +97,8 @@ class MaterialSpecCollection(ObjectSpecCollection[MaterialSpec]):
         """Return the resource type in the collection."""
         return MaterialSpec
 
-    @deprecation.deprecated(details='Use list_by_template instead.')
-    def filter_by_template(self,
-                           template_id: str,
-                           template_scope: Optional[str] = None,
-                           per_page: int = None) -> Iterator[MaterialSpec]:
-        """
-        [ALPHA] Get all material specs associated with a material template.
-
-        The material template is specified by its scope and id.
-
-        :param template_id: The unique id corresponding to `scope`.
-            The lookup will be most efficient if you use the Citrine ID (scope='id')
-            of the material template.
-        :param template_scope: The scope used to locate the material template.
-        :param per_page: The number of results to return per page.
-        :return: A search result of material specs
-        """
-        if per_page is not None:
-            logger.warning('The per_page parameter will be ignored. Please remove it.')
-        return self.list_by_template(uid=template_id, scope=template_scope)
-
     def list_by_template(self,
-                         uid: Union[UUID, str, LinkByUID, GEMDMaterialTemplate],
+                         uid: Union[UUID, str, LinkByUID, GEMDMaterialTemplate], *,
                          scope: Optional[str] = None) -> Iterator[MaterialSpec]:
         """
         [ALPHA] Get the material specs using the specified material template.
@@ -144,7 +121,7 @@ class MaterialSpecCollection(ObjectSpecCollection[MaterialSpec]):
         return self._get_relation('material-templates', uid=link.id, scope=link.scope)
 
     def get_by_process(self,
-                       uid: Union[UUID, str, LinkByUID, GEMDProcessSpec],
+                       uid: Union[UUID, str, LinkByUID, GEMDProcessSpec], *,
                        scope: Optional[str] = None) -> Optional[MaterialSpec]:
         """
         [ALPHA] Get output material of a process.

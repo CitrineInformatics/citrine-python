@@ -1,7 +1,7 @@
 """Tests for citrine.informatics.constraints."""
 import pytest
 
-from citrine.informatics.constraints import Constraint, ScalarRangeConstraint, CategoricalConstraint, \
+from citrine.informatics.constraints import Constraint, ScalarRangeConstraint, \
     AcceptableCategoriesConstraint
 
 
@@ -10,16 +10,16 @@ def scalar_range_constraint() -> ScalarRangeConstraint:
     """Build a ScalarRangeConstraint."""
     return ScalarRangeConstraint(
         descriptor_key='z',
-        min=1.0,
-        max=10.0,
-        min_inclusive=False
+        lower_bound=1.0,
+        upper_bound=10.0,
+        lower_inclusive=False
     )
 
 
 @pytest.fixture
-def categorical_constraint() -> CategoricalConstraint:
+def acceptable_categories_constraint() -> AcceptableCategoriesConstraint:
     """Build a CategoricalConstraint."""
-    return CategoricalConstraint(
+    return AcceptableCategoriesConstraint(
         descriptor_key='x',
         acceptable_categories=['y', 'z']
     )
@@ -42,15 +42,15 @@ def test_get_scalar_range_type(scalar_range_constraint):
     assert typ == ScalarRangeConstraint
 
 
-def test_categorical_dumps(categorical_constraint):
+def test_categorical_dumps(acceptable_categories_constraint):
     """Ensure values are persisted through deser."""
-    result = categorical_constraint.dump()
+    result = acceptable_categories_constraint.dump()
     assert result['type'] == 'AcceptableCategoriesConstraint'
     assert result['descriptor_key'] == 'x'
     assert result['acceptable_classes'] == ['y', 'z']
 
 
-def test_get_categorical_type(categorical_constraint):
-    result = categorical_constraint.dump()
+def test_get_categorical_type(acceptable_categories_constraint):
+    result = acceptable_categories_constraint.dump()
     typ = Constraint.get_type(result)
     assert typ == AcceptableCategoriesConstraint

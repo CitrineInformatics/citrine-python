@@ -1,7 +1,7 @@
 import pytest
 
 from citrine.informatics.descriptors import FormulationDescriptor
-from citrine.informatics.constraints import ScalarRangeConstraint, CategoricalConstraint, \
+from citrine.informatics.constraints import ScalarRangeConstraint, AcceptableCategoriesConstraint, \
     IngredientCountConstraint, IngredientFractionConstraint, LabelFractionConstraint
 from citrine.informatics.design_spaces import ProductDesignSpace, EnumeratedDesignSpace, FormulationDesignSpace
 from citrine.informatics.objectives import ScalarMaxObjective, ScalarMinObjective
@@ -26,11 +26,11 @@ informatics_string_data = [
         min=0,
         max=1
     ), "<LabelFractionConstraint 'x'::'y'>"),
-    (ScalarRangeConstraint('z'), "<ScalarRangeConstraint 'z'>"),
-    (CategoricalConstraint('x', []), "<CategoricalConstraint 'x'>"),
+    (ScalarRangeConstraint(descriptor_key='z'), "<ScalarRangeConstraint 'z'>"),
+    (AcceptableCategoriesConstraint(descriptor_key='x', acceptable_categories=[]), "<AcceptableCategoriesConstraint 'x'>"),
     (ProductDesignSpace(name='my design space', description='does some things'),
      "<ProductDesignSpace 'my design space'>"),
-    (EnumeratedDesignSpace('enumerated', 'desc', [], []), "<EnumeratedDesignSpace 'enumerated'>"),
+    (EnumeratedDesignSpace('enumerated', description='desc', descriptors=[], data=[]), "<EnumeratedDesignSpace 'enumerated'>"),
     (FormulationDesignSpace(
         name='formulation',
         description='desc',
@@ -41,13 +41,11 @@ informatics_string_data = [
     ), "<FormulationDesignSpace 'formulation'>"),
     (ScalarMaxObjective('z'), "<ScalarMaxObjective 'z'>"),
     (ScalarMinObjective('z'), "<ScalarMinObjective 'z'>"),
-    (GridProcessor('my thing', 'does a thing', dict(x=1)), "<GridProcessor 'my thing'>"),
-    (EnumeratedProcessor('my enumerated thing', 'enumerates', 10), "<EnumeratedProcessor 'my enumerated thing'>"),
+    (GridProcessor('my thing', description='does a thing', grid_sizes=dict(x=1)), "<GridProcessor 'my thing'>"),
+    (EnumeratedProcessor('my enumerated thing', description='enumerates', max_candidates=10), "<EnumeratedProcessor 'my enumerated thing'>"),
     (LIScore(objectives=[], baselines=[]), "<LIScore>"),
     (EIScore(objectives=[], baselines=[], constraints=[]), "<EIScore>"),
     (EVScore(objectives=[], constraints=[]), "<EVScore>"),
-    (FeatureImportanceReport("reflectivity", {}), "<FeatureImportanceReport 'reflectivity'>"),
-    (ModelSummary("my model", "ML Model", [], [], {}, [], "predictor name"), "<ModelSummary 'my model'>"),
 ]
 
 

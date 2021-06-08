@@ -94,7 +94,7 @@ class MeasurementSpecCollection(ObjectSpecCollection[MeasurementSpec]):
         """Return the resource type in the collection."""
         return MeasurementSpec
 
-    def list_by_template(self, uid: Union[UUID, str, LinkByUID, GEMDMeasurementTemplate],
+    def list_by_template(self, uid: Union[UUID, str, LinkByUID, GEMDMeasurementTemplate], *,
                          scope: Optional[str] = None) -> Iterator[MeasurementSpec]:
         """
         [ALPHA] Get the measurement specs using the specified measurement template.

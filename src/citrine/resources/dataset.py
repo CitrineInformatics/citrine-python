@@ -1,6 +1,6 @@
 """Resources that represent both individual and collections of datasets."""
 from collections import defaultdict
-from typing import TypeVar, List, Optional, Iterable, Union, Tuple
+from typing import TypeVar, List, Optional, Union, Tuple, Iterator
 from uuid import UUID
 
 from gemd.entity.base_entity import BaseEntity
@@ -98,7 +98,7 @@ class Dataset(Resource['Dataset']):
     delete_time = properties.Optional(properties.Datetime(), 'delete_time')
     public = properties.Optional(properties.Boolean(), 'public')
 
-    def __init__(self, name: str, summary: str,
+    def __init__(self, name: str, *, summary: str,
                  description: str, unique_name: Optional[str] = None):
         self.name: str = name
         self.summary: str = summary
@@ -229,12 +229,12 @@ class Dataset(Resource['Dataset']):
         if isinstance(data_concepts_resource, ConditionTemplate):
             return self.condition_templates
 
-    def register(self, data_concepts_resource: ResourceType, dry_run=False) -> ResourceType:
+    def register(self, data_concepts_resource: ResourceType, *, dry_run=False) -> ResourceType:
         """Register a data concepts resource to the appropriate collection."""
         return self._collection_for(data_concepts_resource)\
             .register(data_concepts_resource, dry_run=dry_run)
 
-    def register_all(self, data_concepts_resources: List[ResourceType],
+    def register_all(self, data_concepts_resources: List[ResourceType], *,
                      dry_run=False) -> List[ResourceType]:
         """
         Register multiple data concepts resources to each of their appropriate collections.
@@ -283,7 +283,7 @@ class Dataset(Resource['Dataset']):
         """Update a data concepts resource using the appropriate collection."""
         return self._collection_for(model).update(model)
 
-    def delete(self, data_concepts_resource: Union[UUID, str, LinkByUID, ResourceType],
+    def delete(self, data_concepts_resource: Union[UUID, str, LinkByUID, ResourceType], *,
                dry_run=False) -> ResourceType:
         """
         Delete a data concepts resource from the appropriate collection.
@@ -473,9 +473,9 @@ class DatasetCollection(Collection[Dataset]):
         full_model.project_id = self.project_id
         return full_model
 
-    def list(self,
+    def list(self, *,
              page: Optional[int] = None,
-             per_page: int = 1000) -> Iterable[Dataset]:
+             per_page: int = 1000) -> Iterator[Dataset]:
         """
         List datasets using pagination.
 
@@ -494,11 +494,11 @@ class DatasetCollection(Collection[Dataset]):
 
         Returns
         -------
-        Iterable[Dataset]
+        Iterator[Dataset]
             Datasets in this collection.
 
         """
-        return super().list(page, per_page)
+        return super().list(page=page, per_page=per_page)
 
     def get_by_unique_name(self, unique_name: str) -> ResourceType:
         """Get a Dataset with the given unique name."""

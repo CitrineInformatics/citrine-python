@@ -36,10 +36,10 @@ Assuming they are next to each other, the ``Density`` and ``Hardness`` columns i
    from citrine.gemtables.variables import AttributeByTemplateAfterProcessTemplate
    from gemd.entity.link_by_uid import LinkByUID
    final_density = AttributeByTemplateAfterProcessTemplate(
-         name = "final density",
-         headers = ["Product", "Density"],
-         attribute_template = LinkByUID(scope="templates", id="cookie density"),
-         process_template = LinkByUID(scope="templates", id="apply glaze"))
+         name="final density",
+         headers=["Product", "Density"],
+         attribute_template=LinkByUID(scope="templates", id="cookie density"),
+         process_template=LinkByUID(scope="templates", id="apply glaze"))
 
 A :class:`~citrine.gemtables.columns.Column` object describes how to transform a :class:`~citrine.gemtables.variables.Variable` into a primitive value (e.g., a real number, an integer, or a string) that can be entered into a cell in a table.
 This is necessary because `GEMD Attributes`__ are more general than primitive values; they often convey uncertainty estimates, for example.
@@ -69,13 +69,13 @@ and a list of :class:`~citrine.gemtables.columns.Column` objects to transform th
    from citrine.resources.table_config import TableConfig
    from uuid import UUID
    table_config = TableConfig(
-         name = "cookies",
-         description = "Cookie densities",
-         datasets = [UUID("7d040451-7cfb-45ca-9e0e-4b2b7010edd6"),
+         name="cookies",
+         description="Cookie densities",
+         datasets=[UUID("7d040451-7cfb-45ca-9e0e-4b2b7010edd6"),
                      UUID("7cfb45ca-9e0e-4b2b-7010-edd67d040451")],
-         variables = [final_density],
-         rows = [row_def],
-         columns = [final_density_mean, final_density_std])
+         variables=[final_density],
+         rows=[row_def],
+         columns=[final_density_mean, final_density_std])
 
 Note the inclusion of two datasets above.
 In general, you should have at least two datasets referenced because Objects and Templates are generally associated with different datasets.
@@ -95,7 +95,7 @@ Assume that the process template is accessible from a known project, ``project``
     from citrine.gemtables.variables import IngredientQuantityDimension
 
     table_config = table_config.add_all_ingredients(
-        process_template = LinkByUID('id', '3a308f78-e341-f39c-8076-35a2c88292ad'),
+        process_template=LinkByUID('id', '3a308f78-e341-f39c-8076-35a2c88292ad'),
         project=project,
         quantity_dimension=IngredientQuantityDimension.MASS
     )
@@ -114,8 +114,8 @@ For example:
 
    table_configs = project.table_configs
    preview = table_configs.preview(
-         table_config = table_config,
-         preview_roots = [
+         table_config=table_config,
+         preview_materials=[
                LinkByUID(scope="products", id="best cookie ever"),
                LinkByUID(scope="products", id="worst cookie ever")]
     )
@@ -132,7 +132,7 @@ For example, if you wanted to print the warnings and then load the preview into 
    from io import StringIO
    import pandas as pd
 
-   preview = table_configs.preview(table_config, preview_roots)
+   preview = table_configs.preview(table_config=table_config, preview_materials=preview_materials)
    print("\n\n".join(preview["warnings"]))
    data_frame = pd.read_csv(StringIO(preview["csv"]))
 
@@ -195,7 +195,7 @@ For example, once the above ``initiate_build`` method has completed:
    # Get the table resource as an object
    table = project.tables.get_by_build_job(job)
    # Download the table
-   project.tables.read(table, "./my_table.csv")
+   project.tables.read(table=table, local_path="./my_table.csv")
 
 Available Row Definitions
 -------------------------
@@ -228,8 +228,8 @@ There are several ways to define variables that take their values from Attribute
 
 * Identifiers
 
-  * :class:`~citrine.gemtables.variables.RootInfo`: for fields defined on the material at the terminal of the Material History, like the name of the material
-  * :class:`~citrine.gemtables.variables.RootIdentifier`: for the id of the Material History, which can be used as a unique identifier for the rows
+  * :class:`~citrine.gemtables.variables.TerminalMaterialInfo`: for fields defined on the material at the terminus of the Material History, like the name of the material
+  * :class:`~citrine.gemtables.variables.TerminalMaterialIdentifier`: for the id of the Material History, which can be used as a unique identifier for the rows
   * :class:`~citrine.gemtables.variables.IngredientIdentifierByProcessTemplateAndName`: for the id of the material being used in an ingredient, which can be used as a key for looking up that input material
   * :class:`~citrine.gemtables.variables.IngredientIdentifierInOutput`: for the id of a material used in an ingredient between the terminal material and a given set of processes (useful for ingredients used in multiple processes)
   * :class:`~citrine.gemtables.variables.IngredientLabelByProcessAndName`: for a boolean that indicates whether an ingredient is assigned a given label

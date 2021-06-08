@@ -22,7 +22,7 @@ pressure_desc = RealDescriptor("pressure", lower_bound=0, upper_bound=10000, uni
 
 @pytest.fixture()
 def fake_project():
-    """Fake project that serves templates from template collection's list_all method."""
+    """Fake project that serves templates from template collection's list method."""
     templates = [
         PropertyTemplate("density", bounds=RealBounds(lower_bound=0, upper_bound=100, default_units="g / cm^3"), uids={"my_scope": "density"}),
         ConditionTemplate("volume", bounds=IntegerBounds(lower_bound=0, upper_bound=11), uids={"my_scope": "volume"}),
@@ -33,21 +33,21 @@ def fake_project():
         def __init__(self):
             pass
 
-        def list_all(self, forward: bool = True, per_page: int = 100) -> Iterator[PropertyTemplate]:
+        def list(self, forward: bool = True, per_page: int = 100) -> Iterator[PropertyTemplate]:
             return iter([x for x in templates if isinstance(x, PropertyTemplate)])
 
     class FakeConditionTemplateCollection(ConditionTemplateCollection):
         def __init__(self):
             pass
 
-        def list_all(self, forward: bool = True, per_page: int = 100) -> Iterator[ConditionTemplate]:
+        def list(self, forward: bool = True, per_page: int = 100) -> Iterator[ConditionTemplate]:
             return iter([x for x in templates if isinstance(x, ConditionTemplate)])
 
     class FakeParameterTemplateCollection(ParameterTemplateCollection):
         def __init__(self):
             pass
 
-        def list_all(self, forward: bool = True, per_page: int = 100) -> Iterator[ParameterTemplate]:
+        def list(self, forward: bool = True, per_page: int = 100) -> Iterator[ParameterTemplate]:
             return iter([x for x in templates if isinstance(x, ParameterTemplate)])
 
     class FakeProject(Project):
@@ -122,7 +122,7 @@ def test_dict_behavior():
         "pressure": RealDescriptor("pressure", lower_bound=0, upper_bound=10000, units="GPa")
     }
 
-    v = PlatformVocabulary(entries)
+    v = PlatformVocabulary(entries=entries)
 
     assert len(v) == 2
     assert set(v) == {"density", "pressure"}
@@ -132,7 +132,7 @@ def test_dict_behavior():
 
 def test_from_template(fake_project: Project):
     """Test that only correct scopes and bounds are loaded from templates."""
-    v = PlatformVocabulary.from_templates(fake_project, scope="my_scope")
+    v = PlatformVocabulary.from_templates(project=fake_project, scope="my_scope")
 
     # no volume since it is an integer, no speed since it doesn't have the right scope
     assert len(v) == 1

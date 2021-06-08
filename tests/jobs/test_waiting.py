@@ -8,7 +8,7 @@ import time
 
 from citrine.jobs.waiting import wait_while_executing, wait_while_validating, ConditionTimeoutError
 from citrine.resources.predictor_evaluation_execution import PredictorEvaluationExecution
-from citrine.resources.workflow_executions import WorkflowExecutionStatus, WorkflowExecution
+from citrine.resources.design_execution import DesignExecution
 
 
 @mock.patch('time.sleep', return_value=None)
@@ -26,7 +26,7 @@ def test_wait_while_validating(sleep_mock):
     module.in_progress = in_progress
     collection.get.return_value = module
 
-    wait_while_validating(collection, module, print_status_info=True)
+    wait_while_validating(collection=collection, module=module, print_status_info=True)
 
     assert("Status = VALID" in captured_output.getvalue())
     assert("The predictor is now validated." in captured_output.getvalue())
@@ -45,13 +45,13 @@ def test_wait_while_validating_timeout(sleep_mock, time_mock):
 
     collection = mock.Mock()
     module = mock.Mock()
-    statuses = mock.PropertyMock(return_value = "VALIDATING")
+    statuses = mock.PropertyMock(return_value="VALIDATING")
     type(module).status = statuses
     module.in_progress.return_value = True
     collection.get.return_value = module
 
     with pytest.raises(ConditionTimeoutError):
-        wait_while_validating(collection, module, timeout=1.0)
+        wait_while_validating(collection=collection, module=module, timeout=1.0)
 
 
 @mock.patch('time.sleep', return_value=None)
@@ -59,21 +59,14 @@ def test_wait_while_executing(sleep_mock):
     captured_output = io.StringIO()
     sys.stdout = captured_output
 
-    workflow_execution = mock.Mock(spec=WorkflowExecution)
-    statuses = mock.PropertyMock(side_effect=[
-        WorkflowExecutionStatus("InProgress", None),
-        WorkflowExecutionStatus("Succeeded", None),
-        WorkflowExecutionStatus("Succeeded", None)
-    ])
-    workflow_execution.status = statuses
+    collection = mock.Mock()
+    workflow_execution = mock.Mock(spec=DesignExecution)
+    statuses = mock.PropertyMock(side_effect=["INPROGRESS", "SUCCEEDED", "SUCCEEDED"])
+    in_progress = mock.PropertyMock(side_effect=[True, False, False])
+    type(workflow_execution).status = statuses
+    workflow_execution.in_progress = in_progress
+    collection.get.return_value = workflow_execution
 
-    wait_while_executing(workflow_execution, print_status_info=True)
+    wait_while_executing(collection=collection, execution=workflow_execution, print_status_info=True)
 
-    assert("Succeeded" in captured_output.getvalue())
-
-
-def test_wait_while_executing_predictor_evaluation_execution_missing_collection():
-    predictor_evaluation_execution = mock.Mock(spec=PredictorEvaluationExecution)
-
-    with pytest.raises(ValueError):
-        wait_while_executing(predictor_evaluation_execution, print_status_info=True)
+    assert("SUCCEEDED" in captured_output.getvalue())

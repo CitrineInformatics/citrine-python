@@ -15,11 +15,11 @@ def test_simple_legacy_deserialization(valid_simple_ml_predictor_data):
     assert predictor.name == 'ML predictor'
     assert predictor.description == 'Predicts z from input x and latent variable y'
     assert len(predictor.inputs) == 1
-    assert predictor.inputs[0] == RealDescriptor("x", 0, 100, "")
+    assert predictor.inputs[0] == RealDescriptor("x", lower_bound=0, upper_bound=100, units="")
     assert len(predictor.outputs) == 1
-    assert predictor.outputs[0] == RealDescriptor("z", 0, 100, "")
+    assert predictor.outputs[0] == RealDescriptor("z", lower_bound=0, upper_bound=100, units="")
     assert len(predictor.latent_variables) == 1
-    assert predictor.latent_variables[0] == RealDescriptor("y", 0, 100, "")
+    assert predictor.latent_variables[0] == RealDescriptor("y", lower_bound=0, upper_bound=100, units="")
     assert len(predictor.training_data) == 1
     assert predictor.training_data[0].table_id == UUID('e5c51369-8e71-4ec6-b027-1f92bdc14762')
 
@@ -30,11 +30,11 @@ def test_polymorphic_legacy_deserialization(valid_simple_ml_predictor_data):
     assert predictor.name == 'ML predictor'
     assert predictor.description == 'Predicts z from input x and latent variable y'
     assert len(predictor.inputs) == 1
-    assert predictor.inputs[0] == RealDescriptor("x", 0, 100, "")
+    assert predictor.inputs[0] == RealDescriptor("x", lower_bound=0, upper_bound=100, units="")
     assert len(predictor.outputs) == 1
-    assert predictor.outputs[0] == RealDescriptor("z", 0, 100, "")
+    assert predictor.outputs[0] == RealDescriptor("z", lower_bound=0, upper_bound=100, units="")
     assert len(predictor.latent_variables) == 1
-    assert predictor.latent_variables[0] == RealDescriptor("y", 0, 100, "")
+    assert predictor.latent_variables[0] == RealDescriptor("y", lower_bound=0, upper_bound=100, units="")
     assert len(predictor.training_data) == 1
     assert predictor.training_data[0].table_id == UUID('e5c51369-8e71-4ec6-b027-1f92bdc14762')
 
@@ -54,11 +54,6 @@ def test_graph_serialization(valid_graph_predictor_data):
     assert serialized == valid_serialization_output(graph_data_copy)
 
 
-def test_deprecated_expression_serialization(valid_deprecated_expression_predictor_data):
-    """Ensure that a serialized DeprecatedExpressionPredictor looks sane."""
-    serialization_check(valid_deprecated_expression_predictor_data, DeprecatedExpressionPredictor)
-
-
 def test_expression_serialization(valid_expression_predictor_data):
     """Ensure that a serialized ExpressionPredictor looks sane."""
     serialization_check(valid_expression_predictor_data, ExpressionPredictor)
@@ -67,11 +62,6 @@ def test_expression_serialization(valid_expression_predictor_data):
 def test_ing_to_formulation_serialization(valid_ing_formulation_predictor_data):
     """Ensure that a serialized IngredientsToFormulationPredictor looks sane."""
     serialization_check(valid_ing_formulation_predictor_data, IngredientsToFormulationPredictor)
-
-
-def test_generalized_mean_property_serialization(valid_generalized_mean_property_predictor_data):
-    """Ensure that a serialized GeneralizedMeanPropertyPredictor looks sane."""
-    serialization_check(valid_generalized_mean_property_predictor_data, GeneralizedMeanPropertyPredictor)
 
 
 def test_mean_property_serialization(valid_mean_property_predictor_data):

@@ -1,5 +1,5 @@
 from logging import getLogger
-from typing import List, Optional, Set, Dict, Union
+from typing import Union
 from uuid import UUID
 
 from time import time, sleep
@@ -22,8 +22,8 @@ class JobSubmissionResponse(Resource['AraJobStatus']):
     job_id = properties.UUID("job_id")
     """:UUID: job id of the job submission request"""
 
-    def __init__(self, job_id: UUID):
-        self.job_id = job_id
+    def __init__(self):
+        pass  # pragma: no cover
 
 
 class TaskNode(Resource['TaskNode']):
@@ -44,19 +44,8 @@ class TaskNode(Resource['TaskNode']):
     failure_reason = properties.Optional(String(), "failure_reason")
     """:str: if a task has failed, the failure reason will be in this parameter"""
 
-    def __init__(
-            self,
-            id: str,
-            task_type: str,
-            status: str,
-            dependencies: Set[str],
-            failure_reason: Optional[str]
-    ):
-        self.id = id
-        self.task_type = task_type
-        self.status = status
-        self.dependencies = dependencies
-        self.failure_reason = failure_reason
+    def __init__(self):
+        pass  # pragma: no cover
 
 
 class JobStatusResponse(Resource['JobStatusResponse']):
@@ -74,17 +63,8 @@ class JobStatusResponse(Resource['JobStatusResponse']):
     output = properties.Optional(properties.Mapping(String, String), 'output')
     """:Optional[dict[str, str]]: job output properties and results"""
 
-    def __init__(
-            self,
-            job_type: str,
-            status: str,
-            tasks: List[TaskNode],
-            output: Optional[Dict[str, str]]
-    ):
-        self.job_type = job_type
-        self.status = status
-        self.tasks = tasks
-        self.output = output
+    def __init__(self):
+        pass  # pragma: no cover
 
 
 def _poll_for_job_completion(session: Session, project_id: Union[UUID, str],

@@ -4,6 +4,7 @@ from uuid import UUID
 
 from citrine._rest.collection import Collection
 from citrine._session import Session
+from citrine._utils.functions import migrate_deprecated_argument
 from citrine.informatics.workflows import PredictorEvaluationWorkflow
 from citrine.resources.response import Response
 
@@ -23,38 +24,44 @@ class PredictorEvaluationWorkflowCollection(Collection[PredictorEvaluationWorkfl
     def build(self, data: dict) -> PredictorEvaluationWorkflow:
         """Build an individual PredictorEvaluationExecution."""
         workflow = PredictorEvaluationWorkflow.build(data)
-        workflow.session = self.session
+        workflow._session = self.session
         workflow.project_id = self.project_id
         return workflow
 
-    def archive(self, workflow_id: UUID):
+    def archive(self, uid: Union[UUID, str] = None, workflow_id: Union[UUID, str] = None):
         """Archive a predictor evaluation workflow.
 
         Parameters
         ----------
-        workflow_id: UUID
+        uid: Union[UUID, str]
             Unique identifier of the workflow to archive
+        workflow_id: Union[UUID, str]
+            [DEPRECATED] please use uid instead
 
         """
-        return self._put_module_ref('archive', workflow_id)
+        uid = migrate_deprecated_argument(uid, "uid", workflow_id, "workflow_id")
+        return self._put_module_ref('archive', uid)
 
-    def restore(self, workflow_id: UUID):
+    def restore(self, uid: Union[UUID, str] = None, workflow_id: Union[UUID, str] = None):
         """Restore an archived predictor evaluation workflow.
 
         Parameters
         ----------
-        workflow_id: UUID
+        uid: Union[UUID, str]
             Unique identifier of the workflow to restore
+        workflow_id: Union[UUID, str]
+            [DEPRECATED] please use uid instead
 
         """
-        return self._put_module_ref('restore', workflow_id)
+        uid = migrate_deprecated_argument(uid, "uid", workflow_id, "workflow_id")
+        return self._put_module_ref('restore', uid)
 
     def delete(self, uid: Union[UUID, str]) -> Response:
         """Predictor Evaluation Workflows cannot be deleted; they can be archived instead."""
         raise NotImplementedError(
             "Predictor Evaluation Workflows cannot be deleted; they can be archived instead.")
 
-    def create_default(self, predictor_id: UUID) -> PredictorEvaluationWorkflow:
+    def create_default(self, *, predictor_id: UUID) -> PredictorEvaluationWorkflow:
         """[ALPHA] Create a default predictor evaluation workflow for a predictor and execute it.
 
         The current default predictor evaluation workflow performs 5-fold, 1-trial cross-validation

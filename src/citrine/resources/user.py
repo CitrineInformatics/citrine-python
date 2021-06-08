@@ -27,6 +27,7 @@ class User(Resource['User']):
     """
 
     _resource_type = ResourceTypeEnum.USER
+    _session: Optional[Session] = None
 
     uid = properties.Optional(properties.UUID, 'id')
     screen_name = properties.String('screen_name')
@@ -35,16 +36,15 @@ class User(Resource['User']):
     is_admin = properties.Boolean('is_admin')
 
     def __init__(self,
+                 *,
                  screen_name: str,
                  email: str,
                  position: str,
-                 is_admin: bool,
-                 session: Optional[Session] = None):
+                 is_admin: bool):
         self.email: str = email
         self.position: str = position
         self.screen_name: str = screen_name
         self.is_admin: bool = is_admin
-        self.session: Optional[Session] = session
 
     def __str__(self):
         return '<User {!r}>'.format(self.screen_name)
@@ -86,10 +86,11 @@ class UserCollection(Collection[User]):
 
         """
         user = User.build(data)
-        user.session = self.session
+        user._session = self.session
         return user
 
     def register(self,
+                 *,
                  screen_name: str,
                  email: str,
                  position: str,

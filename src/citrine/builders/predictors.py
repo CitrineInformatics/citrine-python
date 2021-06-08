@@ -59,9 +59,7 @@ def build_mean_feature_property_predictors(
         as inputs to one or more ML models.
 
     """
-    if isinstance(featurizer, MolecularStructureFeaturizer):
-        input_descriptor = featurizer.descriptor
-    elif isinstance(featurizer, ChemicalFormulaFeaturizer):
+    if isinstance(featurizer, (MolecularStructureFeaturizer, ChemicalFormulaFeaturizer)):
         input_descriptor = featurizer.input_descriptor
     else:
         raise TypeError(f"Featurizer of type {type(featurizer)} is not supported.")

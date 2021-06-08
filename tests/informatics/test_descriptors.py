@@ -7,11 +7,11 @@ from citrine.informatics.descriptors import *
 
 
 @pytest.fixture(params=[
-    RealDescriptor('alpha', 0, 100, ""),
+    RealDescriptor('alpha', lower_bound=0, upper_bound=100, units=""),
     ChemicalFormulaDescriptor('formula'),
     MolecularStructureDescriptor("organic"),
-    CategoricalDescriptor("my categorical", ["a", "b"]),
-    CategoricalDescriptor("categorical", ["*"]),
+    CategoricalDescriptor("my categorical", categories=["a", "b"]),
+    CategoricalDescriptor("categorical", categories=["*"]),
     FormulationDescriptor("formulation")
 ])
 def descriptor(request):
@@ -23,20 +23,6 @@ def test_deser_from_parent(descriptor):
     descriptor_data = descriptor.dump()
     descriptor_deserialized = Descriptor.build(descriptor_data)
     assert descriptor == descriptor_deserialized
-
-
-def test_buggy_deserialization():
-    """Should be able to deserialize a descriptor with type key 'category'.
-    THIS IS TEMPORARY, TO BE REMOVED AS SOON AS PLA-4036 IS FIXED.
-    """
-    buggy_data = dict(
-        descriptor_key='key',
-        lower_bound=0,
-        upper_bound=1,
-        units="",
-        category='Real'
-    )
-    Descriptor.build(buggy_data)
 
 
 def test_invalid_eq(descriptor):
@@ -53,9 +39,9 @@ def test_string_rep(descriptor):
 def test_categorical_descriptor_categories_types():
     """Categories in a categorical descriptor should be of type str, and other types should raise TypeError."""
     with pytest.raises(TypeError):
-        CategoricalDescriptor("my categorical", ["a", "b", 1])
+        CategoricalDescriptor("my categorical", categories=["a", "b", 1])
     with pytest.raises(TypeError):
-        CategoricalDescriptor("my categorical", ["a", "b", None])
+        CategoricalDescriptor("my categorical", categories=["a", "b", None])
 
 
 def test_to_json(descriptor):
@@ -63,9 +49,3 @@ def test_to_json(descriptor):
     json_str = json.dumps(descriptor.dump())
     desc = Descriptor.build(json.loads(json_str))
     assert desc == descriptor
-
-
-def test_units_default_deprecation():
-    """Make sure that a deprecation warning is raised when no units are given."""
-    with pytest.warns(DeprecationWarning, match="Default of dimensionless is deprecated"):
-        RealDescriptor("foo", 0, 100)

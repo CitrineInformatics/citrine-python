@@ -10,19 +10,19 @@ from citrine.informatics.descriptors import RealDescriptor, MolecularStructureDe
     FormulationDescriptor, ChemicalFormulaDescriptor
 from citrine.informatics.predictors import *
 
-x = RealDescriptor("x", 0, 100, "")
-y = RealDescriptor("y", 0, 100, "")
-z = RealDescriptor("z", 0, 100, "")
+x = RealDescriptor("x", lower_bound=0, upper_bound=100, units="")
+y = RealDescriptor("y", lower_bound=0, upper_bound=100, units="")
+z = RealDescriptor("z", lower_bound=0, upper_bound=100, units="")
 density = RealDescriptor('density', lower_bound=0, upper_bound=100, units='g/cm^3')
 shear_modulus = RealDescriptor('Property~Shear modulus', lower_bound=0, upper_bound=100, units='GPa')
 youngs_modulus = RealDescriptor('Property~Young\'s modulus', lower_bound=0, upper_bound=100, units='GPa')
 poissons_ratio = RealDescriptor('Property~Poisson\'s ratio', lower_bound=-1, upper_bound=0.5, units='')
 formulation = FormulationDescriptor('formulation')
 formulation_output = FormulationDescriptor('output formulation')
-water_quantity = RealDescriptor('water quantity', 0, 1, "")
-salt_quantity = RealDescriptor('salt quantity', 0, 1, "")
-data_source = GemTableDataSource(uuid.UUID('e5c51369-8e71-4ec6-b027-1f92bdc14762'), 0)
-formulation_data_source = GemTableDataSource(uuid.UUID('6894a181-81d2-4304-9dfa-a6c5b114d8bc'), 0, formulation)
+water_quantity = RealDescriptor('water quantity', lower_bound=0, upper_bound=1, units="")
+salt_quantity = RealDescriptor('salt quantity', lower_bound=0, upper_bound=1, units="")
+data_source = GemTableDataSource(table_id=uuid.UUID('e5c51369-8e71-4ec6-b027-1f92bdc14762'), table_version=0)
+formulation_data_source = GemTableDataSource(table_id=uuid.UUID('6894a181-81d2-4304-9dfa-a6c5b114d8bc'), table_version=0, formulation_descriptor=formulation)
 
 
 @pytest.fixture
@@ -41,7 +41,7 @@ def molecule_featurizer() -> MolecularStructureFeaturizer:
     return MolecularStructureFeaturizer(
         name="Molecule featurizer",
         description="description",
-        descriptor=MolecularStructureDescriptor("SMILES"),
+        input_descriptor=MolecularStructureDescriptor("SMILES"),
         features=["all"],
         excludes=["standard"]
     )
@@ -81,20 +81,6 @@ def graph_predictor() -> GraphPredictor:
 
 
 @pytest.fixture
-def deprecated_expression_predictor() -> DeprecatedExpressionPredictor:
-    """Build a DeprecatedExpressionPredictor for testing."""
-    return DeprecatedExpressionPredictor(
-        name='Expression predictor',
-        description='Computes shear modulus from Youngs modulus and Poissons ratio',
-        expression='Y / (2 * (1 + v))',
-        output=shear_modulus,
-        aliases={
-            'Y': "Property~Young's modulus",
-            'v': "Property~Poisson's ratio"
-        })
-
-
-@pytest.fixture
 def expression_predictor() -> ExpressionPredictor:
     """Build an ExpressionPredictor for testing."""
     return ExpressionPredictor(
@@ -123,22 +109,6 @@ def ing_to_formulation_predictor() -> IngredientsToFormulationPredictor:
             'solvent': {'water'},
             'solute': {'salt'}
         }
-    )
-
-
-@pytest.fixture
-def generalized_mean_property_predictor() -> GeneralizedMeanPropertyPredictor:
-    """Build a mean property predictor for testing."""
-    return GeneralizedMeanPropertyPredictor(
-        name='Mean property predictor',
-        description='Computes mean ingredient properties',
-        input_descriptor=formulation,
-        properties=['density'],
-        p=2,
-        training_data=[formulation_data_source],
-        impute_properties=True,
-        default_properties={'density': 1.0},
-        label='solvent'
     )
 
 
@@ -230,16 +200,6 @@ def test_graph_initialization(graph_predictor):
     assert str(graph_predictor) == '<GraphPredictor \'Graph predictor\'>'
 
 
-
-def test_deprecated_expression_initialization(deprecated_expression_predictor):
-    """Make sure the correct fields go to the correct places for a deprecated expression predictor."""
-    assert deprecated_expression_predictor.name == 'Expression predictor'
-    assert deprecated_expression_predictor.output.key == 'Property~Shear modulus'
-    assert deprecated_expression_predictor.expression == 'Y / (2 * (1 + v))'
-    assert deprecated_expression_predictor.aliases == {'Y': "Property~Young's modulus", 'v': "Property~Poisson's ratio"}
-    assert str(deprecated_expression_predictor) == '<DeprecatedExpressionPredictor \'Expression predictor\'>'
-
-
 def test_expression_initialization(expression_predictor):
     """Make sure the correct fields go to the correct places for an expression predictor."""
     assert expression_predictor.name == 'Expression predictor'
@@ -252,7 +212,7 @@ def test_expression_initialization(expression_predictor):
 def test_molecule_featurizer(molecule_featurizer):
     assert molecule_featurizer.name == "Molecule featurizer"
     assert molecule_featurizer.description == "description"
-    assert molecule_featurizer.descriptor == MolecularStructureDescriptor("SMILES")
+    assert molecule_featurizer.input_descriptor == MolecularStructureDescriptor("SMILES")
     assert molecule_featurizer.features == ["all"]
     assert molecule_featurizer.excludes == ["standard"]
 
@@ -318,20 +278,6 @@ def test_ing_to_formulation_initialization(ing_to_formulation_predictor):
     assert str(ing_to_formulation_predictor) == expected_str
 
 
-def test_generalized_mean_property_initialization(generalized_mean_property_predictor):
-    """Make sure the correct fields go to the correct places for a mean property predictor."""
-    assert generalized_mean_property_predictor.name == 'Mean property predictor'
-    assert generalized_mean_property_predictor.input_descriptor.key == 'formulation'
-    assert generalized_mean_property_predictor.properties == ['density']
-    assert generalized_mean_property_predictor.p == 2
-    assert generalized_mean_property_predictor.impute_properties == True
-    assert generalized_mean_property_predictor.training_data == [formulation_data_source]
-    assert generalized_mean_property_predictor.default_properties == {'density': 1.0}
-    assert generalized_mean_property_predictor.label == 'solvent'
-    expected_str = '<GeneralizedMeanPropertyPredictor \'Mean property predictor\'>'
-    assert str(generalized_mean_property_predictor) == expected_str
-
-
 def test_mean_property_initialization(mean_property_predictor):
     """Make sure the correct fields go to the correct places for a mean property predictor."""
     assert mean_property_predictor.name == 'Mean property predictor'
@@ -344,27 +290,6 @@ def test_mean_property_initialization(mean_property_predictor):
     assert mean_property_predictor.label == 'solvent'
     expected_str = '<MeanPropertyPredictor \'Mean property predictor\'>'
     assert str(mean_property_predictor) == expected_str
-
-
-def test_deprecated_gmpp():
-    """Make sure deprecation warnings are issued"""
-    with warnings.catch_warnings(record=True) as caught:
-        warnings.simplefilter("always")
-        gmpp = GeneralizedMeanPropertyPredictor(
-            name='deprecated',
-            description='p as float',
-            input_descriptor=FormulationDescriptor('formulation'),
-            properties=['foo'],
-            p=2.0,
-            impute_properties=False
-        )
-        assert gmpp.p == 2
-        assert len(caught) == 2
-        for w in caught:
-            assert issubclass(w.category, DeprecationWarning)
-            msg = str(w.message)
-            assert msg.startswith('p must be an integer') or \
-                   msg.startswith('GeneralizedMeanPropertyPredictor is deprecated')
 
 
 def test_deprecated_ingredients_to_simple_mixture():
@@ -411,41 +336,6 @@ def test_ingredient_fractions_property_initialization(ingredient_fractions_predi
     assert ingredient_fractions_predictor.ingredients == {"Green Paste", "Blue Paste"}
     expected_str = '<IngredientFractionsPredictor \'Ingredient fractions predictor\'>'
     assert str(ingredient_fractions_predictor) == expected_str
-
-
-def test_wrap_training_data():
-    """Test training data is converted to a list if ``None`` or a single source."""
-    predictor_without_data = GraphPredictor(
-        name="",
-        description="",
-        predictors=[],
-        training_data=None
-    )
-    assert predictor_without_data.training_data == []
-
-    with warnings.catch_warnings(record=True) as w:
-        warnings.simplefilter("always")
-        predictor_single_data_source = GraphPredictor(
-            name="",
-            description="",
-            predictors=[],
-            training_data=data_source
-        )
-        assert predictor_single_data_source.training_data == [data_source]
-        assert len(w) == 1
-        recorded_warning = w[0]
-        assert issubclass(recorded_warning.category, DeprecationWarning)
-        assert str(recorded_warning.message).startswith(
-            "Specifying training data as a single data source is deprecated."
-        )
-
-    predictor_multiple_data_sources = GraphPredictor(
-        name="",
-        description="",
-        predictors=[],
-        training_data=[data_source, formulation_data_source]
-    )
-    assert predictor_multiple_data_sources.training_data == [data_source, formulation_data_source]
 
 
 def test_status(valid_label_fractions_predictor_data, auto_ml):

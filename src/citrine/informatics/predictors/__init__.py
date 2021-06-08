@@ -2,7 +2,6 @@
 from .predictor import *
 from .expression_predictor import *
 from .simple_ml_predictor import *
-from .generalized_mean_property_predictor import *
 from .graph_predictor import *
 from .ingredient_fractions_predictor import *
 from .ingredients_to_simple_mixture_predictor import *
