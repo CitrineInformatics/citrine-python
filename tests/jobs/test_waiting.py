@@ -1,14 +1,14 @@
 """Tests waiting utilities"""
-import pytest
-import mock
-import io
-import sys
 from datetime import datetime
+import io
+import mock
+import pytest
+import sys
 import time
 
+from citrine.informatics.executions.design_execution import DesignExecution
+from citrine.informatics.executions.predictor_evaluation_execution import PredictorEvaluationExecution
 from citrine.jobs.waiting import wait_while_executing, wait_while_validating, ConditionTimeoutError
-from citrine.resources.predictor_evaluation_execution import PredictorEvaluationExecution
-from citrine.resources.design_execution import DesignExecution
 
 
 @mock.patch('time.sleep', return_value=None)

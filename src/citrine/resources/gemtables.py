@@ -12,7 +12,7 @@ from citrine._serialization import properties
 from citrine._serialization.properties import UUID
 from citrine._session import Session
 from citrine._utils.functions import rewrite_s3_links_locally, write_file_locally
-from citrine.resources.job import JobSubmissionResponse, _poll_for_job_completion
+from citrine.jobs.job import JobSubmissionResponse, _poll_for_job_completion
 from citrine.resources.table_config import TableConfig
 
 logger = getLogger(__name__)

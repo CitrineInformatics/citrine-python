@@ -7,7 +7,7 @@ from gemd.entity.link_by_uid import LinkByUID
 
 from citrine._session import Session
 from citrine.resources.api_error import ApiError
-from citrine.resources.job import _poll_for_job_completion
+from citrine.jobs.job import _poll_for_job_completion
 from citrine.resources.data_concepts import _make_link_by_uid
 
 
