@@ -67,6 +67,8 @@ class DesignWorkflowCollection(Collection[DesignWorkflow]):
     def list_archived(self,
                       *,
                       page: Optional[int] = None,
-                      per_page: int = 1000) -> Iterable[DesignWorkflow]:
+                      per_page: int = 500) -> Iterable[DesignWorkflow]:
         """List archived Design Workflows"""
-        super().list(page=page, per_page=per_page, search_params={"filter": "archived eq 'true'"})
+        return self.session.get_resource(path=self._get_path(),
+                                         params={'page': page, 'per_page': per_page, 'filter': "archived eq 'true'"}
+                                         )
