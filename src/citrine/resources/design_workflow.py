@@ -70,5 +70,7 @@ class DesignWorkflowCollection(Collection[DesignWorkflow]):
                       per_page: int = 500) -> Iterable[DesignWorkflow]:
         """List archived Design Workflows"""
         return self.session.get_resource(path=self._get_path(),
-                                         params={'page': page, 'per_page': per_page, 'filter': "archived eq 'true'"}
+                                         params={'page': page,
+                                                 'per_page': per_page,
+                                                 'filter': "archived eq 'true'"}
                                          )
