@@ -1,3 +1,4 @@
+from typing import Union, Iterable, Optional
 from uuid import UUID
 
 from citrine._rest.collection import Collection
@@ -5,7 +6,6 @@ from citrine._session import Session
 from citrine._utils.functions import migrate_deprecated_argument
 from citrine.informatics.workflows import DesignWorkflow
 from citrine.resources.response import Response
-from typing import Optional, Union, Iterable
 
 
 class DesignWorkflowCollection(Collection[DesignWorkflow]):
