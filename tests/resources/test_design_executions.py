@@ -1,12 +1,12 @@
+import pytest
 import uuid
 
-import pytest
-
-from citrine.informatics.modules import ModuleRef
 from citrine.informatics.design_candidate import DesignCandidate
-from citrine.resources.design_execution import DesignExecutionCollection, DesignExecution
-from tests.utils.session import FakeSession, FakeCall
+from citrine.informatics.executions.design_execution import DesignExecution
+from citrine.informatics.modules import ModuleRef
+from citrine.resources.design_execution import DesignExecutionCollection
 from tests.utils.factories import MLIScoreFactory
+from tests.utils.session import FakeSession, FakeCall
 
 
 @pytest.fixture
