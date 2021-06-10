@@ -1,4 +1,4 @@
-import uuid
+from uuid import uuid4
 
 import pytest
 
@@ -15,7 +15,7 @@ def session() -> FakeSession:
 @pytest.fixture
 def collection(session) -> DesignWorkflowCollection:
     return DesignWorkflowCollection(
-        project_id=uuid.uuid4(),
+        project_id=uuid4(),
         session=session,
     )
 
@@ -45,7 +45,7 @@ def test_restore(workflow, collection):
 
 def test_delete(collection):
     with pytest.raises(NotImplementedError):
-        collection.delete(uuid.uuid4())
+        collection.delete(uuid4())
 
 
 def test_list_archived(workflow, collection):
@@ -73,6 +73,6 @@ def test_missing_project(design_workflow_dict):
 
 def test_fetch_status(session, workflow, design_workflow_dict):
     with pytest.raises(RuntimeError):
-        workflow.failed()
+        DesignWorkflow("foo", design_space_id=uuid4(), predictor_id=uuid4(), processor_id=None).failed()
     session.set_response(design_workflow_dict)
     assert not workflow.failed()

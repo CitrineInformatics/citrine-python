@@ -64,14 +64,15 @@ def wait_for_asynchronous_object(
     """
     start = time.time()
 
-    def _is_finished():
+    def is_finished():
+        current_resource = collection.get(resource.uid)
         if print_status_info:
-            _print_string_status(resource._fetch_status(), start)
-        return not resource.in_progress()
+            _print_string_status(current_resource.status, start)
+        return not current_resource.in_progress()
 
-    while not _is_finished() and (time.time() - start < timeout):
+    while not is_finished() and (time.time() - start < timeout):
         time.sleep(interval)
-    if not _is_finished():
+    if not is_finished():
         raise ConditionTimeoutError("Timeout reached, but task is still in progress")
 
     current_resource = collection.get(resource.uid)

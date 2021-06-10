@@ -64,6 +64,6 @@ def test_create_default(predictor_evaluation_workflow_dict: dict,
 
 def test_fetch_status(session, workflow, predictor_evaluation_workflow_dict):
     with pytest.raises(RuntimeError):
-        workflow.succeeded()
+        PredictorEvaluationWorkflow(name="foo", evaluators=[]).succeeded()
     session.set_response(predictor_evaluation_workflow_dict)
     assert not workflow.succeeded()
