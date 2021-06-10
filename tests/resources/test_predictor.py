@@ -11,6 +11,7 @@ from citrine.informatics.predictors import (
     GraphPredictor,
     SimpleMLPredictor,
     ExpressionPredictor,
+    Predictor,
     AutoMLPredictor
 )
 from citrine.resources.predictor import PredictorCollection
