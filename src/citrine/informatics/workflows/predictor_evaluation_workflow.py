@@ -50,3 +50,12 @@ class PredictorEvaluationWorkflow(Resource['PredictorEvaluationWorkflow'],
             raise AttributeError('Cannot initialize execution without project reference!')
         return PredictorEvaluationExecutionCollection(
             project_id=self.project_id, session=self._session, workflow_id=self.uid)
+
+    def _fetch_status(self) -> 'PredictorEvaluationWorkflow':
+        if self.project_id is None or self._session is None or self.uid is None:
+            raise RuntimeError(f"Cannot get updated status of resource \'{self.name}\'. "
+                               "Are you using an on-platform resource?")
+        path = f'/projects/{self.project_id}/predictor-evaluation-workflows/{self.uid}'
+        data = self._session.get_resource(path)
+        module = self.build(data)
+        return module.status

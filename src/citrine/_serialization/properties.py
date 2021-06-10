@@ -88,7 +88,7 @@ class Property(typing.Generic[DeserializedType, SerializedType]):
             next_value = value.get(field)
             if next_value is None:
                 if self.default is None and not self.optional:
-                    msg = "Unable to deserialize {} into {}: missing a required field {}".format(
+                    msg = "Unable to deserialize {} into {}: missing a required field: {}".format(
                         data, self.underlying_types, field)
                     raise RuntimeError(msg)
                 # This occurs if a `field` is unexpectedly not present in the data dictionary

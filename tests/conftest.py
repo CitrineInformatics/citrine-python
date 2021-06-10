@@ -489,7 +489,7 @@ def valid_label_fractions_predictor_data():
     from citrine.informatics.descriptors import FormulationDescriptor
     return dict(
         module_type='PREDICTOR',
-        status='READY',
+        status='CREATED',
         status_info=[],
         archived=False,
         display_name='Label fractions predictor',

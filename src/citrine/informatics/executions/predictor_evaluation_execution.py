@@ -89,3 +89,8 @@ class PredictorEvaluationExecution(Resource['PredictorEvaluationExecution'], Asy
 
     def __iter__(self):
         return iter(self.evaluator_names)
+
+    def _fetch_status(self) -> 'PredictorEvaluationExecution':
+        data = self._session.get_resource(self._path())
+        module = self.build(data)
+        return module.status

@@ -69,3 +69,10 @@ def test_missing_project(design_workflow_dict):
 
     with pytest.raises(AttributeError):
         workflow.design_executions
+
+
+def test_fetch_status(session, workflow, design_workflow_dict):
+    with pytest.raises(RuntimeError):
+        workflow.failed()
+    session.set_response(design_workflow_dict)
+    assert not workflow.failed()

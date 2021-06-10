@@ -57,7 +57,11 @@ def test_build_new_execution(collection, design_execution_dict):
     assert execution.project_id == collection.project_id
     assert execution.workflow_id == collection.workflow_id
     assert execution._session == collection.session
-    assert execution.in_progress() and not execution.succeeded() and not execution.failed()
+
+
+def test_fetch_status(session, workflow_execution, design_execution_dict):
+    session.set_response(design_execution_dict)
+    assert workflow_execution.in_progress()
 
 
 def test_trigger_workflow_execution(collection: DesignExecutionCollection, design_execution_dict, session):

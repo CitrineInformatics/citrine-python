@@ -58,7 +58,11 @@ def test_build_new_execution(collection, predictor_evaluation_execution_dict):
     assert execution.project_id == collection.project_id
     assert execution.workflow_id == collection.workflow_id
     assert execution._session == collection.session
-    assert execution.in_progress() and not execution.succeeded() and not execution.failed()
+
+
+def test_fetch_status(session, predictor_evaluation_execution_dict, workflow_execution):
+    session.set_response(predictor_evaluation_execution_dict)
+    assert workflow_execution.in_progress()
 
 
 def test_workflow_execution_results(workflow_execution: PredictorEvaluationExecution, session, example_result_dict):

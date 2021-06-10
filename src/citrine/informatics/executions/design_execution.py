@@ -104,3 +104,8 @@ class DesignExecution(Resource['DesignExecution'], Pageable, AsynchronousObject)
                                         collection_builder=self._build_candidates,
                                         page=page,
                                         per_page=per_page)
+
+    def _fetch_status(self) -> 'DesignExecution':
+        data = self._session.get_resource(self._path())
+        module = self.build(data)
+        return module.status

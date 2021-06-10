@@ -32,7 +32,6 @@ def test_build_design_workflow(basic_design_workflow_data):
     # Then
     assert workflow.project_id == workflow_collection.project_id
     assert workflow._session is None
-    assert workflow.succeeded() and not workflow.in_progress() and not workflow.failed()
 
 
 def test_list_workflows(basic_design_workflow_data):

@@ -351,8 +351,8 @@ def test_fetch_status(valid_label_fractions_predictor_data, auto_ml):
     predictor = collection.build(valid_label_fractions_predictor_data)
     # Each status check gets the predictor
     session.set_response(valid_label_fractions_predictor_data)
-    assert predictor.succeeded()
+    assert predictor.in_progress()
     session.set_response(valid_label_fractions_predictor_data)
     assert not predictor.failed()
     session.set_response(valid_label_fractions_predictor_data)
-    assert not predictor.in_progress()
+    assert not predictor.succeeded()

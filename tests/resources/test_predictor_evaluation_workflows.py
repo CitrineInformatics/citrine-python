@@ -60,3 +60,10 @@ def test_create_default(predictor_evaluation_workflow_dict: dict,
     )
     default_workflow = collection.create_default(predictor_id=uuid.uuid4())
     assert default_workflow.dump() == workflow.dump()
+
+
+def test_fetch_status(session, workflow, predictor_evaluation_workflow_dict):
+    with pytest.raises(RuntimeError):
+        workflow.succeeded()
+    session.set_response(predictor_evaluation_workflow_dict)
+    assert not workflow.succeeded()
