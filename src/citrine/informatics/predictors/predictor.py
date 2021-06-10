@@ -1,8 +1,6 @@
-from typing import Optional, Type
-from uuid import UUID
+from typing import Type
 
 from citrine._serialization import properties
-from citrine._session import Session
 from citrine.informatics.modules import Module
 from citrine.resources.report import ReportResource
 
@@ -17,9 +15,6 @@ class Predictor(Module):
     based on the 'type' value of the passed in dict.
 
     """
-
-    _project_id: Optional[UUID] = None
-    _session: Optional[Session] = None
 
     uid = properties.Optional(properties.UUID, 'id', serializable=False)
     """:Optional[UUID]: Citrine Platform unique identifier"""

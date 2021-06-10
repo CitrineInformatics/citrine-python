@@ -1,5 +1,8 @@
-from typing import TypeVar, Optional
+from typing import TypeVar, Optional, Union
+from uuid import UUID
+
 from citrine._serialization.serializable import Serializable
+from citrine._serialization import properties
 from gemd.enumeration.base_enumeration import BaseEnumeration
 
 
@@ -39,3 +42,13 @@ class Resource(Serializable[Self]):
             "type": self._resource_type.value,
             "id": str(self.uid)
         }
+
+
+class ResourceRef(Serializable['ResourceRef']):
+    """A reference to a resource by UID."""
+
+    # json key is 'module_uid', which is a legacy of when this object was only used for modules
+    uid = properties.UUID('module_uid')
+
+    def __init__(self, uid: Union[UUID, str]):
+        self.uid = uid

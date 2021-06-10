@@ -2,8 +2,8 @@ import uuid
 
 import pytest
 
+from citrine._rest.resource import ResourceRef
 from citrine.informatics.executions.predictor_evaluation_execution import PredictorEvaluationExecution
-from citrine.informatics.modules import ModuleRef
 from citrine.informatics.predictor_evaluation_result import PredictorEvaluationResult
 from citrine.resources.predictor_evaluation_execution import PredictorEvaluationExecutionCollection
 from tests.utils.session import FakeSession, FakeCall
@@ -94,7 +94,7 @@ def test_trigger_workflow_execution(collection: PredictorEvaluationExecutionColl
     assert session.last_call == FakeCall(
         method='POST',
         path=expected_path,
-        json=ModuleRef(str(predictor_id)).dump()
+        json=ResourceRef(predictor_id).dump()
     )
 
 

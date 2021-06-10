@@ -40,7 +40,7 @@ class PredictorEvaluationWorkflowCollection(Collection[PredictorEvaluationWorkfl
 
         """
         uid = migrate_deprecated_argument(uid, "uid", workflow_id, "workflow_id")
-        return self._put_module_ref('archive', uid)
+        return self._put_resource_ref('archive', uid)
 
     def restore(self, uid: Union[UUID, str] = None, workflow_id: Union[UUID, str] = None):
         """Restore an archived predictor evaluation workflow.
@@ -54,7 +54,7 @@ class PredictorEvaluationWorkflowCollection(Collection[PredictorEvaluationWorkfl
 
         """
         uid = migrate_deprecated_argument(uid, "uid", workflow_id, "workflow_id")
-        return self._put_module_ref('restore', uid)
+        return self._put_resource_ref('restore', uid)
 
     def delete(self, uid: Union[UUID, str]) -> Response:
         """Predictor Evaluation Workflows cannot be deleted; they can be archived instead."""

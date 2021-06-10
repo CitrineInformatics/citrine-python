@@ -1,12 +1,12 @@
 """Tools for working with module resources."""
-from typing import Type
+from typing import Type, Optional
+from uuid import UUID
 
-from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
-from citrine._serialization.serializable import Serializable
+from citrine._session import Session
 from citrine._rest.asynchronous_object import AsynchronousObject
 
-__all__ = ['Module', 'ModuleRef']
+__all__ = ['Module']
 
 
 class Module(PolymorphicSerializable['Module'], AsynchronousObject):
@@ -20,6 +20,8 @@ class Module(PolymorphicSerializable['Module'], AsynchronousObject):
     """
 
     _response_key = None
+    _project_id: Optional[UUID] = None
+    _session: Optional[Session] = None
 
     @classmethod
     def get_type(cls, data) -> Type['Module']:
@@ -34,22 +36,24 @@ class Module(PolymorphicSerializable['Module'], AsynchronousObject):
         }[data['module_type']].get_type(data)
 
     def in_progress(self) -> bool:
-        """Whether module validation is in progress. Does not query state."""
-        return self.status == "VALIDATING" or self.status == "CREATED"
+        """Whether module validation is in progress."""
+        updated_status = self._fetch_updated().status
+        return updated_status == "VALIDATING" or updated_status == "CREATED"
 
     def succeeded(self) -> bool:
-        """Whether module validation has completed successfully. Does not query state."""
-        return self.status == "READY"
+        """Whether module validation has completed successfully."""
+        updated_status = self._fetch_updated().status
+        return updated_status == "READY"
 
     def failed(self) -> bool:
         """Whether module validation has completed unsuccessfully. Does not query state."""
-        return self.status == "INVALID" or self.status == "ERROR"
+        updated_status = self._fetch_updated().status
+        return updated_status == "INVALID" or updated_status == "ERROR"
 
-
-class ModuleRef(Serializable['ModuleRef']):
-    """A reference to a Module by UID."""
-
-    module_uid = properties.UUID('module_uid')
-
-    def __init__(self, module_uid: str):
-        self.module_uid = module_uid
+    def _fetch_updated(self) -> 'Module':
+        if self._project_id is None or self._session is None or self.uid is None:
+            raise RuntimeError(f"Cannot get updated version of resource \'{self.name}\'. "
+                               "Are you using an on-platform resource?")
+        path = f'/projects/{self._project_id}/modules/{self.uid}'
+        data = self._session.get_resource(path)
+        return self.build(data)

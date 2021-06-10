@@ -1,9 +1,7 @@
 import pytest
 import uuid
 
-from citrine.informatics.design_candidate import DesignCandidate
 from citrine.informatics.executions.design_execution import DesignExecution
-from citrine.informatics.modules import ModuleRef
 from citrine.resources.design_execution import DesignExecutionCollection
 from tests.utils.factories import MLIScoreFactory
 from tests.utils.session import FakeSession, FakeCall
