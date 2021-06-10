@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Union, Iterable, Optional
 from uuid import UUID
 
 from citrine._rest.collection import Collection
@@ -63,3 +63,14 @@ class DesignWorkflowCollection(Collection[DesignWorkflow]):
         """Design Workflows cannot be deleted; they can be archived instead."""
         raise NotImplementedError(
             "Design Workflows cannot be deleted; they can be archived instead.")
+
+    def list_archived(self,
+                      *,
+                      page: Optional[int] = None,
+                      per_page: int = 500) -> Iterable[DesignWorkflow]:
+        """List archived Design Workflows."""
+        return self.session.get_resource(path=self._get_path(),
+                                         params={'page': page,
+                                                 'per_page': per_page,
+                                                 'filter': "archived eq 'true'"}
+                                         )
