@@ -5,6 +5,8 @@ import warnings
 import mock
 import pytest
 
+from tests.utils.session import FakeSession
+from citrine.resources.predictor import PredictorCollection
 from citrine.informatics.data_sources import GemTableDataSource
 from citrine.informatics.descriptors import RealDescriptor, MolecularStructureDescriptor, \
     FormulationDescriptor, ChemicalFormulaDescriptor
@@ -338,10 +340,19 @@ def test_ingredient_fractions_property_initialization(ingredient_fractions_predi
     assert str(ingredient_fractions_predictor) == expected_str
 
 
-def test_status(valid_label_fractions_predictor_data, auto_ml):
+def test_fetch_status(valid_label_fractions_predictor_data, auto_ml):
     """Ensure we can check the status of predictor validation."""
-    # A locally built predictor should be "False" for all status checks
-    assert not auto_ml.in_progress() and not auto_ml.failed() and not auto_ml.succeeded()
-    # A deserialized predictor should have the correct status
-    predictor = LabelFractionsPredictor.build(valid_label_fractions_predictor_data)
-    assert predictor.succeeded() and not predictor.in_progress() and not predictor.failed()
+    # A locally built predictor should throw an exception when trying to query the updated status
+    with pytest.raises(RuntimeError):
+        auto_ml.in_progress()
+
+    session = FakeSession()
+    collection = PredictorCollection(project_id=uuid.uuid4(), session=session)
+    predictor = collection.build(valid_label_fractions_predictor_data)
+    # Each status check gets the predictor
+    session.set_response(valid_label_fractions_predictor_data)
+    assert predictor.succeeded()
+    session.set_response(valid_label_fractions_predictor_data)
+    assert not predictor.failed()
+    session.set_response(valid_label_fractions_predictor_data)
+    assert not predictor.in_progress()

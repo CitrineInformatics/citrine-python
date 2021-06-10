@@ -105,6 +105,10 @@ class PredictorReport(Serializable['PredictorReport'], Report):
     PredictorReport objects are constructed from saved models and should not be user-instantiated.
     """
 
+    _in_progress_statuses = ["PENDING"]
+    _succeeded_statuses = ["OK"]
+    _failed_statuses = ["ERROR"]
+
     uid = properties.Optional(properties.UUID, 'id', serializable=False)
     """:UUID: Unique Citrine id of the predictor report"""
     status = properties.String('status')
@@ -116,18 +120,6 @@ class PredictorReport(Serializable['PredictorReport'], Report):
 
     def __init__(self):
         pass  # pragma: no cover
-
-    def in_progress(self) -> bool:
-        """Whether report generation is in progress."""
-        return self.status == "PENDING"
-
-    def succeeded(self) -> bool:
-        """Whether report generation has completed successfully."""
-        return self.status == "OK"
-
-    def failed(self) -> bool:
-        """Whether report generation has completed unsuccessfully."""
-        return self.status == "ERROR"
 
     def post_build(self):
         """Modify a PredictorReport object in-place after deserialization."""

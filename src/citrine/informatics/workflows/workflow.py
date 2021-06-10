@@ -24,6 +24,9 @@ class Workflow(PolymorphicSerializable['Workflow'], AsynchronousObject):
 
     _response_key = None
     _session: Optional[Session] = None
+    _in_progress_statuses = ["INPROGRESS"]
+    _succeeded_statuses = ["SUCCEEDED"]
+    _failed_statuses = ["FAILED"]
 
     project_id: Optional[UUID] = None
     """:Optional[UUID]: Unique ID of the project that contains this workflow."""
@@ -50,15 +53,3 @@ class Workflow(PolymorphicSerializable['Workflow'], AsynchronousObject):
                 '{} is not a valid workflow type. '
                 'Must be in {}.'.format(data['module_type'], type_dict.keys())
             )
-
-    def in_progress(self) -> bool:
-        """Whether workflow validation is in progress. Does not query state."""
-        return self.status == "INPROGRESS"
-
-    def succeeded(self) -> bool:
-        """Whether workflow validation has completed successfully. Does not query state."""
-        return self.status == "SUCCEEDED"
-
-    def failed(self) -> bool:
-        """Whether workflow validation has completed unsuccessfully. Does not query state."""
-        return self.status == "FAILED"

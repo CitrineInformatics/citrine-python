@@ -17,9 +17,10 @@ class PredictorEvaluationExecution(Resource['PredictorEvaluationExecution'], Asy
 
     """
 
-    # This should really be _session, but _fetch_page assumes there is a 'pageable' parameter
     _session: Optional[Session] = None
-    """:str: Unique identifier of the project that contains the workflow execution"""
+    _in_progress_statuses = ["INPROGRESS"]
+    _succeeded_statuses = ["SUCCEEDED"]
+    _failed_statuses = ["FAILED"]
     project_id: Optional[UUID] = None
     """:Optional[UUID]: Unique ID of the project that contains this execution."""
 
@@ -59,18 +60,6 @@ class PredictorEvaluationExecution(Resource['PredictorEvaluationExecution'], Asy
         return '/projects/{project_id}/predictor-evaluation-executions/{execution_id}' \
             .format(project_id=self.project_id,
                     execution_id=self.uid)
-
-    def in_progress(self) -> bool:
-        """Whether predictor evaluation execution is in progress. Does not query state."""
-        return self.status == "INPROGRESS"
-
-    def succeeded(self) -> bool:
-        """Whether predictor evaluation execution has completed successfully. Does not query state."""  # noqa: E501
-        return self.status == "SUCCEEDED"
-
-    def failed(self) -> bool:
-        """Whether predictor evaluation execution has completed unsuccessfully. Does not query state."""  # noqa: E501
-        return self.status == "FAILED"
 
     @lru_cache()
     def results(self, evaluator_name: str) -> PredictorEvaluationResult:
