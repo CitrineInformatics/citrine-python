@@ -19,6 +19,7 @@ class Paginator(Generic[ResourceType]):
                  page: Optional[int] = None,
                  per_page: int = 100,
                  search_params: Optional[dict] = None,
+                 additional_params: Optional[dict] = None,
                  deduplicate: bool = True) -> Iterator[ResourceType]:
         """
         A generic support class to paginate requests into an iterable of a built object.
@@ -47,6 +48,8 @@ class Paginator(Generic[ResourceType]):
             page_fetcher function should have a key word argument "search_params" should it
             pass a request body to the target endpoint. If no search_params are supplied,
             no search_params argument will get passed to the page_fetcher function.
+        additional_params: dict, optional
+            A dict that allows extra parameters to be added to the request parameters
         deduplicate: bool, optional
             Whether or not to deduplicate the yielded resources by their uid.  The default
             is true.
@@ -59,7 +62,9 @@ class Paginator(Generic[ResourceType]):
         """
         # To avoid setting default to {} -> reduce mutation risk, and to make more extensible. Also
         # making 'search_params' key of outermost dict for keyword expansion by page_fetcher func
-        search_params = {} if search_params is None else {'search_params': search_params}
+        params = {} if search_params is None else {'search_params': search_params}
+        if additional_params:
+            params.update({'additional_params': additional_params})
 
         if page is not None:
             warnings.warn("The page parameter is deprecated, default is automatic pagination",
@@ -71,7 +76,7 @@ class Paginator(Generic[ResourceType]):
 
         while True:
             subset_collection, next_uri = page_fetcher(page=page_idx, per_page=per_page,
-                                                       **search_params)
+                                                       **params)
 
             subset = collection_builder(subset_collection)
 
