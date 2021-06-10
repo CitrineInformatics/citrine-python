@@ -18,7 +18,6 @@ from citrine._serialization.properties import Property as SerializableProperty
 from citrine._serialization.serializable import Serializable
 from citrine._session import Session
 from citrine._utils.functions import scrub_none, replace_objects_with_links
-from citrine.exceptions import BadRequest
 from citrine.resources.audit_info import AuditInfo
 from citrine.jobs.job import _poll_for_job_completion
 from citrine.resources.response import Response
@@ -365,13 +364,9 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         dumped_data = replace_objects_with_links(scrub_none(model.dump()))
         recursive_foreach(model, lambda x: x.uids.pop(temp_scope, None))  # Strip temp uids
 
-        try:
-            data = self.session.post_resource(path, dumped_data, params=params)
-            return self.build(data)
-        except BadRequest:
-            # If register() cannot be used because an asynchronous check is required
-            return self.async_update(model, dry_run=dry_run,
-                                     wait_for_response=True, return_model=True)
+        data = self.session.post_resource(path, dumped_data, params=params)
+        full_model = self.build(data)
+        return full_model
 
     def register_all(self, models: List[ResourceType], *, dry_run=False) -> List[ResourceType]:
         """
@@ -427,8 +422,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
                      dry_run: bool = False,
                      wait_for_response: bool = True,
                      timeout: float = 2 * 60,
-                     polling_delay: float = 1.0,
-                     return_model: bool = False) -> Optional[Union[UUID, ResourceType]]:
+                     polling_delay: float = 1.0) -> Optional[UUID]:
         """
         [ALPHA] Update a particular element of the collection with data validation.
 
@@ -444,27 +438,24 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         dry_run: bool
             Whether to actually update the item or run a dry run of the update operation.
             Dry run is intended to be used for validation. Default: false
-        wait_for_response: bool
+        wait_for_response:
             Whether to poll for the eventual response. This changes the return type (see
             below).
-        timeout: float
+        timeout:
             How long to poll for the result before giving up. This is expressed in
             (fractional) seconds.
-        polling_delay: float
+        polling_delay:
             How long to delay between each polling retry attempt.
-        return_model: bool
-            Whether or not to return an updated version of the resource
-            If wait_for_response is False, then this argument has no effect
 
         Returns
         -------
         Optional[UUID]
             If wait_for_response if True, then this call will poll the backend, waiting
             for the eventual job result. In the case of successful validation/update,
-            a return value of None is provided unless return_model is True, in which case
-            the updated resource is fetched and returned. In the case of a failure
-            validating or processing the update, an exception (JobFailureError) is raised
-            and an error message is logged with the underlying reason of the failure.
+            a return value of None is provided which indicates success. In the case of
+            a failure validating or processing the update, an exception (JobFailureError)
+            is raised and an error message is logged with the underlying reason of the
+            failure.
 
             If wait_for_response if False, A job ID (of type UUID) is returned that one
             can use to poll for the job completion and result with the
@@ -478,7 +469,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         recursive_foreach(model, lambda x: x.uids.pop(temp_scope, None))  # Strip temp uids
 
         scope = CITRINE_SCOPE
-        id = dumped_data['uids'][scope]
+        id = dumped_data['uids']['id']
         if self.dataset_id is None:
             raise RuntimeError("Must specify a dataset in order to update "
                                "a data model object with data validation.")
@@ -494,11 +485,8 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
             self.poll_async_update_job(job_id, timeout=timeout,
                                        polling_delay=polling_delay)
 
-            # That worked, return nothing or return the object
-            if return_model:
-                return self.get(LinkByUID(scope=scope, id=id))
-            else:
-                return None
+            # That worked, nothing returned in this case
+            return None
         else:
             # TODO: use JobSubmissionResponse here instead
             return job_id
