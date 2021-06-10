@@ -342,8 +342,7 @@ def test_update(dataset):
     template = MaterialTemplate("to be updated")
     template = dataset.register(template)
     template.description = "updated description"
-    with pytest.warns(UserWarning):
-        template_updated = dataset.update(template)
+    template_updated = dataset.update(template)
     assert template_updated == template
     assert dataset.session.calls[0].path == dataset.session.calls[1].path
 
