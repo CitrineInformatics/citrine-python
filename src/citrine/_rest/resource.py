@@ -47,7 +47,7 @@ class Resource(Serializable[Self]):
 class ResourceRef(Serializable['ResourceRef']):
     """A reference to a resource by UID."""
 
-    # json key is 'module_uid', which is a legacy of when this object was only used for modules
+    # json key 'module_uid' is a legacy of when this object was only used for modules
     uid = properties.UUID('module_uid')
 
     def __init__(self, uid: Union[UUID, str]):
