@@ -54,7 +54,6 @@ class Predictor(Module):
             "AnalyticExpression": ExpressionPredictor,
             "MoleculeFeaturizer": MolecularStructureFeaturizer,
             "IngredientsToSimpleMixture": IngredientsToFormulationPredictor,
-
             "MeanProperty": MeanPropertyPredictor,
             "LabelFractions": LabelFractionsPredictor,
             "SimpleMixture": SimpleMixturePredictor,
