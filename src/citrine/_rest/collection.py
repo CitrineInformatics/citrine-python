@@ -135,7 +135,7 @@ class Collection(Generic[ResourceType], Pageable):
             except(KeyError, ValueError) as e:
                 # TODO:  This is a patch to handle deprecated predictors client side.
                 # Remove when predictors are migrated
-                warnings.warn(f"Element of collection skipped due to error: {e}")
+                warnings.warn(f"Building element skipped due to error: {e}")  # pragma: no cover
                 pass  # pragma: no cover
 
     def _check_experimental(self, data):
