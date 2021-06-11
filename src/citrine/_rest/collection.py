@@ -132,7 +132,7 @@ class Collection(Generic[ResourceType], Pageable):
         for element in collection:
             try:
                 yield self.build(element)
-            except(KeyError, ValueError, RuntimeError) as e:
+            except(KeyError, ValueError) as e:
                 # TODO:  This is a patch to handle deprecated predictors client side.
                 # Remove when predictors are migrated
                 warnings.warn(f"Element of collection skipped due to error: {e}")
