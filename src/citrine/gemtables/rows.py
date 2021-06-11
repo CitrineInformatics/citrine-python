@@ -53,10 +53,13 @@ class MaterialRunByTemplate(Serializable['MaterialRunByTemplate'], Row):
 
     templates = properties.List(properties.Object(LinkByUID), "templates")
     typ = properties.String('type', default="material_run_by_template", deserializable=False)
+    tags = properties.Optional(properties.List(properties.String), "tags")
 
     def _attrs(self) -> List[str]:
-        return ["templates", "typ"]
+        return ["templates", "typ", "tags"]
 
     def __init__(self, *,
-                 templates: List[LinkByUID]):
+                 templates: List[LinkByUID],
+                 tags: List[str] = None):
         self.templates = templates
+        self.tags = tags
