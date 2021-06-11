@@ -6,6 +6,7 @@ from citrine._session import Session
 from citrine._utils.functions import migrate_deprecated_argument
 from citrine.informatics.workflows import DesignWorkflow
 from citrine.resources.response import Response
+from functools import partial
 
 
 class DesignWorkflowCollection(Collection[DesignWorkflow]):
@@ -69,8 +70,8 @@ class DesignWorkflowCollection(Collection[DesignWorkflow]):
                       page: Optional[int] = None,
                       per_page: int = 500) -> Iterable[DesignWorkflow]:
         """List archived Design Workflows."""
-        return self.session.get_resource(path=self._get_path(),
-                                         params={'page': page,
-                                                 'per_page': per_page,
-                                                 'filter': "archived eq 'true'"}
-                                         )
+        fetcher = partial(self._fetch_page, additional_params={"filter": "archived eq 'true'"})
+        return self._paginator.paginate(page_fetcher=fetcher,
+                                        collection_builder=self._build_collection_elements,
+                                        page=page,
+                                        per_page=per_page)
