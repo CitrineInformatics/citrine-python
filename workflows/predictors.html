@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>4.4. Predictors &mdash; Citrine Python 0.134.0 documentation</title>
+  <title>4.4. Predictors &mdash; Citrine Python 0.135.7 documentation</title>
   
 
   
@@ -74,7 +74,7 @@
             
             
               <div class="version">
-                0.134.0
+                0.135.7
               </div>
             
           
@@ -246,32 +246,77 @@ There are two important helper methods in this regard.
 </section>
 <section id="graph-predictor">
 <h2><span class="section-number">4.4.2. </span>Graph predictor<a class="headerlink" href="#graph-predictor" title="Permalink to this headline">¶</a></h2>
-<p>The <a class="reference internal" href="../reference/citrine.informatics.predictors.graph_predictor.html#citrine.informatics.predictors.graph_predictor.GraphPredictor" title="citrine.informatics.predictors.graph_predictor.GraphPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">GraphPredictor</span></code></a> stitches together multiple other predictors into a
-directed bipartite graph, where every model node is connected to an arbitrary number of input descriptors and exactly
-one output descriptor.</p>
-<p>Note, if multiple associated predictors use descriptors with the same key the output value with the least loss will be used.</p>
-<p>There are restrictions for a predictor to be used in a GraphPredictor:
-- it must be registered and validated
-- it must NOT be another GraphPredictor</p>
-<p>The following example demonstrates how to use the python SDK to create a <a class="reference internal" href="../reference/citrine.informatics.predictors.graph_predictor.html#citrine.informatics.predictors.graph_predictor.GraphPredictor" title="citrine.informatics.predictors.graph_predictor.GraphPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">GraphPredictor</span></code></a>.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.informatics.predictors</span> <span class="kn">import</span> <span class="n">GraphPredictor</span>
-<span class="kn">from</span> <span class="nn">citrine.seeding.find_or_create</span> <span class="kn">import</span> <span class="n">create_or_update</span>
+<p>The <a class="reference internal" href="../reference/citrine.informatics.predictors.graph_predictor.html#citrine.informatics.predictors.graph_predictor.GraphPredictor" title="citrine.informatics.predictors.graph_predictor.GraphPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">GraphPredictor</span></code></a> stitches together multiple predictors into a directed bipartite graph.
+The predictors are connected based on their descriptors – using a descriptor as the output of one predictor and also as the input of another will ensure that the predictors are wired together.
+The graph structure is quite flexible.
+A descriptor can be the output and/or input of multiple predictors, and cycles are permitted.</p>
+<p>A <code class="docutils literal notranslate"><span class="pre">GraphPredictor</span></code> is created by specifying the sub-predictors.
+These can either be references to predictors that exist on-platform, or they can be predictors that are defined locally.
+A sub-predictor <strong>cannot</strong> be another <code class="docutils literal notranslate"><span class="pre">GraphPredictor</span></code>.</p>
+<p>Training data can be specified when creating a graph predictor.
+This will be combined with any training data present in the sub-predictors.</p>
+<p>The following example demonstrates how to create a <a class="reference internal" href="../reference/citrine.informatics.predictors.graph_predictor.html#citrine.informatics.predictors.graph_predictor.GraphPredictor" title="citrine.informatics.predictors.graph_predictor.GraphPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">GraphPredictor</span></code></a> from on-platform and locally-defined predictors.
+Assume that there exists a CSV file with columns for time, bulk modulus, and Poisson’s ratio.
+We train ML models to predict bulk modulus and Poisson’s ratio, then apply an expression to calculate Young’s modulus.
+The ML models are independently registered on-platform, but the expression predictor is defined locally and hence cannot be re-used.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.informatics.predictors</span> <span class="kn">import</span> <span class="n">GraphPredictor</span><span class="p">,</span> <span class="n">AutoMLPredictor</span><span class="p">,</span> <span class="n">ExpressionPredictor</span>
+<span class="kn">from</span> <span class="nn">citrine.informatics.data_sources</span> <span class="kn">import</span> <span class="n">CSVDataSource</span>
 
-<span class="c1"># the other predictors have already been created and validated</span>
-<span class="n">graph_predictor</span> <span class="o">=</span> <span class="n">GraphPredictor</span><span class="p">(</span>
-    <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Predictor name&#39;</span><span class="p">,</span>
-    <span class="n">description</span> <span class="o">=</span> <span class="s1">&#39;Predictor description&#39;</span><span class="p">,</span>
-    <span class="n">predictors</span> <span class="o">=</span> <span class="p">[</span><span class="n">predictor1</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span> <span class="n">predictor2</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span> <span class="n">predictor3</span><span class="o">.</span><span class="n">uid</span><span class="p">],</span>
-    <span class="n">training_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">GemTableDataSource</span><span class="p">(</span><span class="n">table_id</span><span class="o">=</span><span class="n">training_data_table_uid</span><span class="p">,</span> <span class="n">table_version</span><span class="o">=</span><span class="mi">1</span><span class="p">)]</span> <span class="c1"># training data shared by all sub-predictors</span>
+<span class="n">time</span> <span class="o">=</span> <span class="n">RealDescriptor</span><span class="p">(</span><span class="s2">&quot;tempering time&quot;</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;s&quot;</span><span class="p">)</span>
+<span class="n">bulk_modulus</span> <span class="o">=</span> <span class="n">RealDescriptor</span><span class="p">(</span><span class="s2">&quot;Bulk Modulus&quot;</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mf">1E3</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;GPa&quot;</span><span class="p">)</span>
+<span class="n">poissons_ratio</span> <span class="o">=</span> <span class="n">RealDescriptor</span><span class="p">(</span><span class="s2">&quot;Poisson</span><span class="se">\&#39;</span><span class="s2">s Ratio&quot;</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+<span class="n">training_data</span> <span class="o">=</span> <span class="n">CSVDataSource</span><span class="p">(</span>
+    <span class="n">file_link</span> <span class="o">=</span> <span class="n">elastic_properties_file</span><span class="p">,</span>
+    <span class="n">column_definition</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;Tempering Time (s)&quot;</span><span class="p">:</span> <span class="n">time</span><span class="p">,</span>
+        <span class="s2">&quot;Bulk Modulus (GPa)&quot;</span><span class="p">:</span> <span class="n">bulk_modulu</span><span class="p">,</span>
+        <span class="s2">&quot;Poisson</span><span class="se">\&#39;</span><span class="s2">s Ratio&quot;</span><span class="p">:</span> <span class="n">poissons_ratio</span>
+    <span class="p">}</span>
 <span class="p">)</span>
 
-<span class="c1"># register or update predictor by name</span>
-<span class="n">predictor</span> <span class="o">=</span> <span class="n">create_or_update</span><span class="p">(</span><span class="n">collection</span><span class="o">=</span><span class="n">project</span><span class="o">.</span><span class="n">predictors</span><span class="p">,</span>
-                             <span class="n">module</span><span class="o">=</span><span class="n">graph_predictor</span>
-                            <span class="p">)</span>
+<span class="n">bulk_modulus_predictor</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">predictors</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
+    <span class="n">AutoMLPredictor</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;predict bulk modulus from tempering time&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">inputs</span><span class="o">=</span><span class="p">[</span><span class="n">time</span><span class="p">],</span>
+        <span class="n">output</span><span class="o">=</span><span class="n">bulk_modulus</span><span class="p">,</span>
+        <span class="n">training_data</span><span class="o">=</span><span class="p">[</span><span class="n">training_data</span><span class="p">]</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+<span class="n">poissons_ratio_predictor</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">predictors</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
+    <span class="n">AutoMLPredictor</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;predict Poisson</span><span class="se">\&#39;</span><span class="s2">s ratio from tempering time&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">inputs</span><span class="o">=</span><span class="p">[</span><span class="n">time</span><span class="p">],</span>
+        <span class="n">output</span><span class="o">=</span><span class="n">poissons_ratio</span><span class="p">,</span>
+        <span class="n">training_data</span><span class="o">=</span><span class="p">[</span><span class="n">training_data</span><span class="p">]</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+
+<span class="n">youngs_modulus</span> <span class="o">=</span> <span class="n">RealDescriptor</span><span class="p">(</span><span class="s2">&quot;Young</span><span class="se">\&#39;</span><span class="s2">s Modulus&quot;</span><span class="p">,</span> <span class="n">lower_bound</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">upper_bound</span><span class="o">=</span><span class="mf">1E4</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;GPa&quot;</span><span class="p">)</span>
+<span class="n">expression_predictor</span> <span class="o">=</span> <span class="n">ExpressionPredictor</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Young</span><span class="se">\&#39;</span><span class="s2">s modulus from bulk modulus and Poisson&#39;s ratio&quot;</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">expression</span><span class="o">=</span><span class="s2">&quot;3 * K * (1 - 2 * eta)&quot;</span><span class="p">,</span>
+    <span class="n">output</span><span class="o">=</span><span class="n">youngs_modulus</span><span class="p">,</span>
+    <span class="n">aliases</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;K&quot;</span><span class="p">:</span> <span class="n">bulk_modulus</span><span class="p">,</span> <span class="s2">&quot;eta&quot;</span><span class="p">:</span> <span class="n">poissons_ratio</span><span class="p">}</span>
+<span class="p">)</span>
+
+<span class="n">graph_predictor</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">predictors</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
+    <span class="n">GraphPredictor</span><span class="p">(</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Big elastic constant predictor,</span>
+        <span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">predictors</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">bulk_modulus_predictor</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span>
+            <span class="n">poissons_ratio_predictor</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span>
+            <span class="n">expression_predictor</span>
+        <span class="p">],</span>
+       <span class="n">training_data</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="p">)</span>
+<span class="p">)</span>
 </pre></div>
 </div>
-<p>For a more complete example of graph predictor usage, see <a class="reference internal" href="code_examples.html#graph-predictor-example"><span class="std std-ref">AI Engine Code Examples</span></a>.</p>
+<p>For another example of graph predictor usage, see <a class="reference internal" href="code_examples.html#graph-predictor-example"><span class="std std-ref">AI Engine Code Examples</span></a>.</p>
 </section>
 <section id="id2">
 <h2><span class="section-number">4.4.3. </span>Expression predictor<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>

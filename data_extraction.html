@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>3. [ALPHA] Data Extraction &mdash; Citrine Python 0.134.0 documentation</title>
+  <title>3. [ALPHA] Data Extraction &mdash; Citrine Python 0.135.7 documentation</title>
   
 
   
@@ -73,7 +73,7 @@
             
             
               <div class="version">
-                0.134.0
+                0.135.7
               </div>
             
           
@@ -332,9 +332,9 @@ For example:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">job</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">tables</span><span class="o">.</span><span class="n">initiate_build</span><span class="p">(</span><span class="n">table_config</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>The return type of the <code class="docutils literal notranslate"><span class="pre">initiate_build</span></code> method is a <a class="reference internal" href="reference/citrine.resources.job.html#citrine.resources.job.JobSubmissionResponse" title="citrine.resources.job.JobSubmissionResponse"><code class="xref py py-class docutils literal notranslate"><span class="pre">JobSubmissionResponse</span></code></a> that contains a unique identifier for the submitted job.</p>
+<p>The return type of the <code class="docutils literal notranslate"><span class="pre">initiate_build</span></code> method is a <code class="xref py py-class docutils literal notranslate"><span class="pre">JobSubmissionResponse</span></code> that contains a unique identifier for the submitted job.</p>
 <p>The table id and version can be used to get a <a class="reference internal" href="reference/citrine.resources.gemtables.html#citrine.resources.gemtables.GemTable" title="citrine.resources.gemtables.GemTable"><code class="xref py py-class docutils literal notranslate"><span class="pre">GemTable</span></code></a> resource that provides access to the table.</p>
-<p>You can also use the <a class="reference internal" href="reference/citrine.resources.job.html#citrine.resources.job.JobStatusResponse" title="citrine.resources.job.JobStatusResponse"><code class="xref py py-class docutils literal notranslate"><span class="pre">JobStatusResponse</span></code></a> to return the <a class="reference internal" href="reference/citrine.resources.gemtables.html#citrine.resources.gemtables.GemTable" title="citrine.resources.gemtables.GemTable"><code class="xref py py-class docutils literal notranslate"><span class="pre">GemTable</span></code></a> resource directly with the <code class="docutils literal notranslate"><span class="pre">get_by_build_job</span></code> method.
+<p>You can also use the <code class="xref py py-class docutils literal notranslate"><span class="pre">JobStatusResponse</span></code> to return the <a class="reference internal" href="reference/citrine.resources.gemtables.html#citrine.resources.gemtables.GemTable" title="citrine.resources.gemtables.GemTable"><code class="xref py py-class docutils literal notranslate"><span class="pre">GemTable</span></code></a> resource directly with the <code class="docutils literal notranslate"><span class="pre">get_by_build_job</span></code> method.
 Just like the <a class="reference internal" href="reference/citrine.resources.file_link.html#citrine.resources.file_link.FileLink" title="citrine.resources.file_link.FileLink"><code class="xref py py-class docutils literal notranslate"><span class="pre">FileLink</span></code></a> resource, <a class="reference internal" href="reference/citrine.resources.gemtables.html#citrine.resources.gemtables.GemTable" title="citrine.resources.gemtables.GemTable"><code class="xref py py-class docutils literal notranslate"><span class="pre">GemTable</span></code></a> does not literally contain the table but does expose a <code class="docutils literal notranslate"><span class="pre">read</span></code> method that will download it.</p>
 <p>For example, once the above <code class="docutils literal notranslate"><span class="pre">initiate_build</span></code> method has completed:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get the table resource as an object</span>

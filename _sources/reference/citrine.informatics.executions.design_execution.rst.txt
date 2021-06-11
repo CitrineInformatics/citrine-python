@@ -1,0 +1,8 @@
+citrine.informatics.executions.design\_execution module
+=======================================================
+
+.. automodule:: citrine.informatics.executions.design_execution
+   :members:
+   :undoc-members:
+   :inherited-members:
+   :show-inheritance:

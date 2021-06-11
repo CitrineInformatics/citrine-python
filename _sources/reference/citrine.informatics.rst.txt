@@ -9,6 +9,7 @@ Subpackages
 
    citrine.informatics.constraints
    citrine.informatics.design_spaces
+   citrine.informatics.executions
    citrine.informatics.predictors
    citrine.informatics.workflows
 

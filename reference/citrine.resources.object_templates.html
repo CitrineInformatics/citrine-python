@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>citrine.resources.object_templates module &mdash; Citrine Python 0.134.0 documentation</title>
+  <title>citrine.resources.object_templates module &mdash; Citrine Python 0.135.7 documentation</title>
   
 
   
@@ -71,7 +71,7 @@
             
             
               <div class="version">
-                0.134.0
+                0.135.7
               </div>
             
           
@@ -321,7 +321,7 @@ This method will also work if data is a deserialized GEMD object.</p>
 <p>A collection of one kind of object template object.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.resources.object_templates.ObjectTemplateCollection.async_update">
-<span class="sig-name descname"><span class="pre">async_update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">ResourceType</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dry_run</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wait_for_response</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">120</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">polling_delay</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#citrine.resources.object_templates.ObjectTemplateCollection.async_update" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">async_update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">ResourceType</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dry_run</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wait_for_response</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">120</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">polling_delay</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_model</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">,</span> </span><span class="pre">ResourceType</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#citrine.resources.object_templates.ObjectTemplateCollection.async_update" title="Permalink to this definition">¶</a></dt>
 <dd><p>[ALPHA] Update a particular element of the collection with data validation.</p>
 <p>Update a particular element of the collection, doing a deeper check to ensure that
 the dependent data objects are still with the (potentially) changed constraints
@@ -333,20 +333,22 @@ to templates.</p>
 <li><p><strong>model</strong> (<em>ResourceType</em>) – The DataConcepts object.</p></li>
 <li><p><strong>dry_run</strong> (<em>bool</em>) – Whether to actually update the item or run a dry run of the update operation.
 Dry run is intended to be used for validation. Default: false</p></li>
-<li><p><strong>wait_for_response</strong> – Whether to poll for the eventual response. This changes the return type (see
+<li><p><strong>wait_for_response</strong> (<em>bool</em>) – Whether to poll for the eventual response. This changes the return type (see
 below).</p></li>
-<li><p><strong>timeout</strong> – How long to poll for the result before giving up. This is expressed in
+<li><p><strong>timeout</strong> (<em>float</em>) – How long to poll for the result before giving up. This is expressed in
 (fractional) seconds.</p></li>
-<li><p><strong>polling_delay</strong> – How long to delay between each polling retry attempt.</p></li>
+<li><p><strong>polling_delay</strong> (<em>float</em>) – How long to delay between each polling retry attempt.</p></li>
+<li><p><strong>return_model</strong> (<em>bool</em>) – Whether or not to return an updated version of the resource
+If wait_for_response is False, then this argument has no effect</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><p>If wait_for_response if True, then this call will poll the backend, waiting
 for the eventual job result. In the case of successful validation/update,
-a return value of None is provided which indicates success. In the case of
-a failure validating or processing the update, an exception (JobFailureError)
-is raised and an error message is logged with the underlying reason of the
-failure.</p>
+a return value of None is provided unless return_model is True, in which case
+the updated resource is fetched and returned. In the case of a failure
+validating or processing the update, an exception (JobFailureError) is raised
+and an error message is logged with the underlying reason of the failure.</p>
 <p>If wait_for_response if False, A job ID (of type UUID) is returned that one
 can use to poll for the job completion and result with the
 <code class="xref py py-func docutils literal notranslate"><span class="pre">poll_async_update_job()</span></code>

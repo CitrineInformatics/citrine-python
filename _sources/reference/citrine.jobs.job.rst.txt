@@ -1,0 +1,8 @@
+citrine.jobs.job module
+=======================
+
+.. automodule:: citrine.jobs.job
+   :members:
+   :undoc-members:
+   :inherited-members:
+   :show-inheritance:
