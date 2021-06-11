@@ -130,7 +130,12 @@ class Collection(Generic[ResourceType], Pageable):
 
         """
         for element in collection:
-            yield self.build(element)
+            try:
+                yield self.build(element)
+            except(KeyError, ValueError):
+                # TODO:  This is a patch to handle deprecated predictors client side.
+                # Remove when predictors are migrated
+                pass # pragma: no cover
 
     def _check_experimental(self, data):
         if data.get("experimental", False):
