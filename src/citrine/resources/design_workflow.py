@@ -75,4 +75,3 @@ class DesignWorkflowCollection(Collection[DesignWorkflow]):
                                         collection_builder=self._build_collection_elements,
                                         page=page,
                                         per_page=per_page)
-
