@@ -5,7 +5,7 @@ Scores rank materials according to a set of objectives and constraints.
 An objective defines the goal for a scalar value associated with a particular descriptor.
 The goal can be to either maximize or minimize a value by using :class:`~citrine.informatics.objectives.ScalarMaxObjective` or :class:`~citrine.informatics.objectives.ScalarMinObjective`, respectively.
 Constraints represent a set of conditions on variables that should be satisfied.
-Constraints can used to restrict either a design space or descriptor values in design candidates.
+Constraints can be used to restrict either a design space or descriptor values in design candidates.
 There are five constraint types:
 
 - :class:`~citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint` restricts a scalar value between lower and upper bounds.
@@ -26,14 +26,14 @@ Currently, there are three scores:
 Expected improvement
 ---------------------
 
-Expected improvement (EI) is the magnitude of the expected value of improvement calculated as the integral from the best training objective (i.e. baseline) to infinity of ``p(x)(x-a)``, where ``a`` is the best objective value in the training set.
+Expected improvement (EI) is the magnitude of the expected value of improvement calculated as the integral from the best training objective (i.e., baseline) to infinity of ``p(x)(x-a)``, where ``a`` is the best objective value in the training set.
 :class:`~citrine.informatics.scores.EIScore` supports 0 or 1 objective.
 If no objective is provided, the score is the probability of satisfying all constraints.
 
 EI is calculated from two components: predicted value and uncertainty.
 Higher scores result from a more optimal predicted value, higher uncertainty or both.
-Higher predicted values exploit information known about the current dataset, e.g. materials of a given type are known to perform well.
-Higher uncertainty leads to exploration of a design space, e.g. little is known about a certain class materials, but materials from this region of the design space could perform well.
+Higher predicted values exploit information known about the current dataset, e.g., materials of a given type are known to perform well.
+Higher uncertainty leads to exploration of a design space, e.g., little is known about a certain class materials, but materials from this region of the design space could perform well.
 
 Likelihood of improvement
 -------------------------
