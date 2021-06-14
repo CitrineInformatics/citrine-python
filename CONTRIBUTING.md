@@ -140,9 +140,8 @@ logger.setLevel(logging.DEBUG)
 ```
 will enable `DEBUG` level output in the for all activity relating to HTTP requests to Citrine APIs.
 
-In general, all log output originating from Citrine source code will include the module from which
-log output originates. By convention loggers are named `logger`, so importing `logger` from the
-originating module will locate the correct instance.
+In general, all log output originating from Citrine source code will include the module from which log output originates. 
+By convention loggers are named `logger`, so importing `logger` from the originating module will locate the correct instance.
 The log line
 
 ```
