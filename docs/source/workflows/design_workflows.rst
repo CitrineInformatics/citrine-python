@@ -8,7 +8,7 @@ This workflow is comprised of three modules:
 -  :doc:`Predictor <predictors>` adds information to a material using predictions from a machine-learned model.
 -  :doc:`Processor <processors>` defines how to pick the “next” material.
 
-The following example demonstrates how to use the python SDK to register a workflow (assuming a design space, predictor and processor were registered previously), wait for validation to complete and check the final status:
+The following example demonstrates how to use the Citrine Python client to register a workflow (assuming a design space, predictor and processor were registered previously), wait for validation to complete and check the final status:
 
 .. code:: python
 
@@ -43,7 +43,7 @@ When a design workflow is executed, the processor will search the design space f
 The result is a list of scored and ranked materials.
 Materials at the head of the list are the best materials found from searching the design space.
 
-A workflow can be run using the python SDK.
+A workflow can be run using the Citrine Python client.
 Triggering a workflow returns a workflow execution object.
 A workflow execution has a status (in progress, succeeded, or failed) and results (once execution has succeeded).
 

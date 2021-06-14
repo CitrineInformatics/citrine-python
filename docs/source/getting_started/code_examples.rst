@@ -6,7 +6,7 @@ Create a Session
 ----------------
 
 All interaction with the Citrine API begins by creating a Citrine session.
-This session establishes a link to the Citrine platform with your API key.
+This session establishes a link to the Citrine Platform with your API key.
 Your API key is unique and must be kept secret.
 Best practice is to store is as an environment variable, here named ``CITRINE_API_KEY``.
 Assuming that your Citrine deployment is ``https://matsci.citrine-platform.com`` and uses port 443, the code below would establish a Citrine session.
@@ -24,9 +24,9 @@ Assuming that your Citrine deployment is ``https://matsci.citrine-platform.com``
 Create a Project and Dataset
 ----------------------------
 
-One of your first actions might be to create a new project and a dataset, which you and your collaborators can populate.
-The code below creates a project and one dataset associated with it.
-It also inspects the newly registered project to get its unique id.
+One of your first actions might be to create a new Project and a Dataset, which you and your collaborators can populate.
+The code below creates a Project and one Dataset associated with it.
+It also inspects the newly registered Project to get its unique id.
 Note that all resources are given descriptive names and summaries.
 
 .. code-block:: python
@@ -48,7 +48,7 @@ Find an existing Project and Dataset
 ------------------------------------
 
 Often you will work with existing resources.
-The code below retrieves a project with the name "Copper oxides project" and a datset with a known unique id that is stored as ``dataset_A_uid``.
+The code below retrieves a Project with the name "Copper oxides project" and a datset with a known unique id that is stored as ``dataset_A_uid``.
 For more information on retrieving resources, see :ref:`Reading Resources <functionality_reading_label>`.
 
 .. code-block:: python
@@ -80,7 +80,7 @@ Imagine you purchase some toluene, measure its index of refraction, and then use
 The code below converts those actions into data model objects: the process of purchasing, the material of toluene,
 the optical measurement, and the use of the toluene as an ingredient in a subsequent process.
 Specs relate the intent and runs relate what actually happened, which may or may not be the same.
-This assumes that you have a dataset named ``solvents_dataset`` and that you have already created or retrieved the following:
+This assumes that you have a Dataset named ``solvents_dataset`` and that you have already created or retrieved the following:
 a process template ``purchase_template``, a material template ``toluene_template``, a measurement template ``refractive_index_template``,
 a process template ``reaction_template``, a condition template ``temperature_template``,
 a parameter template ``wavelength_template``, and a property template ``refractive_index_template``.
@@ -127,7 +127,7 @@ a parameter template ``wavelength_template``, and a property template ``refracti
 Getting a material history
 --------------------------
 
-Continuing the above example, the following code would retrieve the material history for toluene by using its Citrine ID.
+Continuing the above example, the following code would retrieve the material history for toluene by using its Citrine id.
 
 .. code-block:: python
 
