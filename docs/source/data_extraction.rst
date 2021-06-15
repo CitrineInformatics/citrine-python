@@ -15,12 +15,18 @@ Each Material History corresponds to exactly one row, though the Material Histor
 For example, the material histories of distinct Material Runs will map to exactly two rows even if their histories are identical up to differing Process Runs of their final baking step.
 The only way to define rows right now is through :class:`~citrine.gemtables.rows.MaterialRunByTemplate`, which produces one row per Material Run associated with any of a list of material templates.
 
+The set of tags is optional.
+The usage scenario is for fine-grained curation.
+If a terminal material doesn't contain any of the tags it will be filtered out.
+
 .. code-block:: python
 
    from citrine.gemtables.rows import MaterialRunByTemplate
    from gemd.entity.link_by_uid import LinkByUID
    row_def = MaterialRunByTemplate(
-         templates=[LinkByUID(scope="templates", id="finished cookie")])
+         templates=[LinkByUID(scope="templates", id="finished cookie")],
+         tags=["foo::bar"]
+         )
 
 A :class:`~citrine.gemtables.variables.Variable` object specifies how to select a piece of data from each Material History.
 Thus, it performs the first part of a mapping from the set of Material Histories to columns in the GEM Table.
