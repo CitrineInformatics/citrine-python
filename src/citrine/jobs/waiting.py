@@ -68,8 +68,7 @@ def wait_for_asynchronous_object(
         current_resource = collection.get(resource.uid)
         if print_status_info:
             _print_string_status(current_resource.status, start)
-        in_progress = current_resource.in_progress()
-        return not in_progress
+        return not current_resource.in_progress()
 
     while not is_finished() and (time.time() - start < timeout):
         time.sleep(interval)

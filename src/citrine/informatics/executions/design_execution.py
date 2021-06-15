@@ -23,6 +23,9 @@ class DesignExecution(Resource['DesignExecution'], Pageable, AsynchronousObject)
 
     _paginator: Paginator = Paginator()
     _collection_key = 'response'
+    _in_progress_statuses = ["INPROGRESS"]
+    _succeeded_statuses = ["SUCCEEDED"]
+    _failed_statuses = ["FAILED"]
     _session: Optional[Session] = None
     project_id: Optional[UUID] = None
     """:Optional[UUID]: Unique ID of the project that contains this workflow execution."""
@@ -82,18 +85,6 @@ class DesignExecution(Resource['DesignExecution'], Pageable, AsynchronousObject)
             .format(project_id=self.project_id,
                     workflow_id=self.workflow_id,
                     execution_id=self.uid)
-
-    def in_progress(self) -> bool:
-        """Whether design execution is in progress. Does not query state."""
-        return self.status == "INPROGRESS"
-
-    def succeeded(self) -> bool:
-        """Whether design execution has completed successfully. Does not query state."""
-        return self.status == "SUCCEEDED"
-
-    def failed(self) -> bool:
-        """Whether design execution has completed unsuccessfully. Does not query state."""
-        return self.status == "FAILED"
 
     @classmethod
     def _build_candidates(cls, subset_collection: Iterable[dict]) -> Iterable[DesignCandidate]:
