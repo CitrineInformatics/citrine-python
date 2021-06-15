@@ -49,8 +49,8 @@ class MaterialRunByTemplate(Serializable['MaterialRunByTemplate'], Row):
     templates: list[LinkByUID]
         templates of materials to include
     tags: Set[str]
-        optional list of tags for filtering. If a terminal material doesn't contain any of the tags it
-        will be filtered out.
+        optional list of tags for filtering. If a terminal material doesn't
+        contain any of the tags it will be filtered out.
 
     """
 
