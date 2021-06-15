@@ -2,13 +2,11 @@
 from typing import Type, Optional
 from uuid import UUID
 
-from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
-from citrine._serialization.serializable import Serializable
 from citrine._session import Session
 from citrine._rest.asynchronous_object import AsynchronousObject
 
-__all__ = ['Module', 'ModuleRef']
+__all__ = ['Module']
 
 
 class Module(PolymorphicSerializable['Module'], AsynchronousObject):
@@ -39,12 +37,3 @@ class Module(PolymorphicSerializable['Module'], AsynchronousObject):
             'PROCESSOR': Processor,
             'PREDICTOR': Predictor
         }[data['module_type']].get_type(data)
-
-
-class ModuleRef(Serializable['ModuleRef']):
-    """A reference to a Module by UID."""
-
-    module_uid = properties.UUID('module_uid')
-
-    def __init__(self, module_uid: str):
-        self.module_uid = module_uid
