@@ -9,6 +9,13 @@ from gemd.entity.link_by_uid import LinkByUID
     MaterialRunByTemplate(templates=[
         LinkByUID(scope="templates", id="density"), LinkByUID(scope="templates", id="ingredients")
     ]),
+    MaterialRunByTemplate(templates=[
+        LinkByUID(scope="templates", id="density"), LinkByUID(scope="templates", id="ingredients")
+    ],
+        tags=[
+            "foo::bar", "some::tag"
+        ]
+    ),
 ])
 def row(request):
     return request.param
