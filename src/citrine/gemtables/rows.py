@@ -1,5 +1,5 @@
 """Row definitions for GEM Tables."""
-from typing import Type, List
+from typing import Type, List, Set
 from abc import abstractmethod
 
 from gemd.entity.link_by_uid import LinkByUID
@@ -48,15 +48,21 @@ class MaterialRunByTemplate(Serializable['MaterialRunByTemplate'], Row):
     ----------
     templates: list[LinkByUID]
         templates of materials to include
+    tags: Set[str]
+        optional list of tags for filtering. If a terminal material doesn't
+        contain any of the tags it will be filtered out.
 
     """
 
     templates = properties.List(properties.Object(LinkByUID), "templates")
     typ = properties.String('type', default="material_run_by_template", deserializable=False)
+    tags = properties.Optional(properties.Set(properties.String), "tags")
 
     def _attrs(self) -> List[str]:
-        return ["templates", "typ"]
+        return ["templates", "typ", "tags"]
 
     def __init__(self, *,
-                 templates: List[LinkByUID]):
+                 templates: List[LinkByUID],
+                 tags: Set[str] = None):
         self.templates = templates
+        self.tags = tags
