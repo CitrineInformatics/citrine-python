@@ -27,7 +27,7 @@ There are two important helper methods in this regard.
 :func:`~citrine.resources.descriptors.DescriptorMethods.descriptors_from_data_source` can provide all of the descriptors that are present in the training data.
 :func:`~citrine.resources.descriptors.DescriptorMethods.from_predictor_responses` can tell you what the outputs of a predictor will be, which is especially useful for featurizers.
 
-The following example demonstrates how to use the python SDK to create an :class:`~citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor`, register the predictor to a project and wait for validation:
+The following example demonstrates how to use the Citrine Python client to create an :class:`~citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor`, register the predictor to a project and wait for validation:
 
 .. code:: python
 
@@ -41,7 +41,7 @@ The following example demonstrates how to use the python SDK to create an :class
        description = 'Predictor description',
        inputs = [input_descriptor_1, input_descriptor_2],
        output = output_descriptor_1,
-       training_data = [GemTableDataSource(training_data_table_uid, 1)]
+       training_data = [GemTableDataSource(table_id=training_data_table_uid, table_version=1)]
    )
 
    predictor = create_or_update(collection=project.predictors,
@@ -52,37 +52,82 @@ The following example demonstrates how to use the python SDK to create an :class
 Graph predictor
 ---------------
 
-The :class:`~citrine.informatics.predictors.graph_predictor.GraphPredictor` stitches together multiple other predictors into a
-directed bipartite graph, where every model node is connected to an arbitrary number of input descriptors and exactly
-one output descriptor.
+The :class:`~citrine.informatics.predictors.graph_predictor.GraphPredictor` stitches together multiple predictors into a directed bipartite graph.
+The predictors are connected based on their descriptors -- using a descriptor as the output of one predictor and also as the input of another will ensure that the predictors are wired together.
+The graph structure is quite flexible.
+A descriptor can be the output and/or input of multiple predictors, and cycles are permitted.
 
-Note, if multiple associated predictors use descriptors with the same key the output value with the least loss will be used.
+A ``GraphPredictor`` is created by specifying the sub-predictors.
+These can either be references to predictors that exist on-platform, or they can be predictors that are defined locally.
+A sub-predictor **cannot** be another ``GraphPredictor``.
 
-There are restrictions for a predictor to be used in a GraphPredictor:
-- it must be registered and validated
-- it must NOT be another GraphPredictor
+Training data can be specified when creating a graph predictor.
+This will be combined with any training data present in the sub-predictors.
 
-The following example demonstrates how to use the python SDK to create a :class:`~citrine.informatics.predictors.graph_predictor.GraphPredictor`.
+The following example demonstrates how to create a :class:`~citrine.informatics.predictors.graph_predictor.GraphPredictor` from on-platform and locally-defined predictors.
+Assume that there exists a CSV file with columns for time, bulk modulus, and Poisson's ratio.
+We train ML models to predict bulk modulus and Poisson's ratio, then apply an expression to calculate Young's modulus.
+The ML models are independently registered on-platform, but the expression predictor is defined locally and hence cannot be re-used.
 
 .. code:: python
 
-   from citrine.informatics.predictors import GraphPredictor
-   from citrine.seeding.find_or_create import create_or_update
+    from citrine.informatics.predictors import GraphPredictor, AutoMLPredictor, ExpressionPredictor
+    from citrine.informatics.data_sources import CSVDataSource
 
-   # the other predictors have already been created and validated
-   graph_predictor = GraphPredictor(
-       name = 'Predictor name',
-       description = 'Predictor description',
-       predictors = [predictor1.uid, predictor2.uid, predictor3.uid],
-       training_data = [GemTableDataSource(training_data_table_uid, 1)] # training data shared by all sub-predictors
-   )
+    time = RealDescriptor("tempering time", lower_bound=0, upper_bound=30, units="s")
+    bulk_modulus = RealDescriptor("Bulk Modulus", lower_bound=0, upper_bound=1E3, units="GPa")
+    poissons_ratio = RealDescriptor("Poisson\'s Ratio", lower_bound=0, upper_bound=0.5, units="")
+    training_data = CSVDataSource(
+        file_link = elastic_properties_file,
+        column_definition = {
+            "Tempering Time (s)": time,
+            "Bulk Modulus (GPa)": bulk_modulu,
+            "Poisson\'s Ratio": poissons_ratio
+        }
+    )
 
-   # register or update predictor by name
-   predictor = create_or_update(collection=project.predictors,
-                                module=graph_predictor
-                               )
+    bulk_modulus_predictor = project.predictors.register(
+        AutoMLPredictor(
+            name="predict bulk modulus from tempering time",
+            description="",
+            inputs=[time],
+            output=bulk_modulus,
+            training_data=[training_data]
+        )
+    )
+    poissons_ratio_predictor = project.predictors.register(
+        AutoMLPredictor(
+            name="predict Poisson\'s ratio from tempering time",
+            description="",
+            inputs=[time],
+            output=poissons_ratio,
+            training_data=[training_data]
+        )
+    )
 
-For a more complete example of graph predictor usage, see :ref:`AI Engine Code Examples <graph_predictor_example>`.
+    youngs_modulus = RealDescriptor("Young\'s Modulus", lower_bound=0, upper_bound=1E4, units="GPa")
+    expression_predictor = ExpressionPredictor(
+        name="Young\'s modulus from bulk modulus and Poisson's ratio",
+        description="",
+        expression="3 * K * (1 - 2 * eta)",
+        output=youngs_modulus,
+        aliases={"K": bulk_modulus, "eta": poissons_ratio}
+    )
+
+    graph_predictor = project.predictors.register(
+        GraphPredictor(
+            name = "Big elastic constant predictor,
+            description = ""
+            predictors = [
+                bulk_modulus_predictor.uid,
+                poissons_ratio_predictor.uid,
+                expression_predictor
+            ],
+           training_data = []
+        )
+    )
+
+For another example of graph predictor usage, see :ref:`AI Engine Code Examples <graph_predictor_example>`.
 
 .. _Expression Predictor:
 Expression predictor
@@ -96,7 +141,7 @@ An alias is required for each expression argument.
 The ``aliases`` parameter defines a mapping from expression arguments to their associated input descriptors.
 The expression argument does not need to match its descriptor key.
 This is useful to avoid typing out the verbose descriptor keys in the expression string.
-Note, spaces are not supported in expression arguments, e.g. ``Y`` is a valid argument while ``Young's modulus`` is not.
+Note, spaces are not supported in expression arguments, e.g., ``Y`` is a valid argument while ``Young's modulus`` is not.
 
 The syntax is described in the `mXparser documentation <http://mathparser.org/mxparser-math-collection>`_.
 Citrine-python currently supports the following operators and functions:
@@ -117,13 +162,13 @@ The following example demonstrates how to create an :class:`~citrine.informatics
 
 .. code:: python
 
-   from citrine.informatics.predictors import ExpressionPredictor
+    from citrine.informatics.predictors import ExpressionPredictor
 
-   youngs_modulus = RealDescriptor(key='Property~Young\'s modulus', lower_bound=0, upper_bound=100, units='GPa')
-   poissons_ratio = RealDescriptor(key='Property~Poisson\'s ratio', lower_bound=-1, upper_bound=0.5, units='')
-   shear_modulus = RealDescriptor(key='Property~Shear modulus', lower_bound=0, upper_bound=100, units='GPa')
+    youngs_modulus = RealDescriptor(key='Property~Young\'s modulus', lower_bound=0, upper_bound=100, units='GPa')
+    poissons_ratio = RealDescriptor(key='Property~Poisson\'s ratio', lower_bound=-1, upper_bound=0.5, units='')
+    shear_modulus = RealDescriptor(key='Property~Shear modulus', lower_bound=0, upper_bound=100, units='GPa')
 
-   shear_modulus_predictor = ExpressionPredictor(
+    shear_modulus_predictor = ExpressionPredictor(
        name = 'Shear modulus predictor',
        description = "Computes shear modulus from Young's modulus and Poisson's ratio.",
        expression = 'Y / (2 * (1 + v))',
@@ -132,19 +177,20 @@ The following example demonstrates how to create an :class:`~citrine.informatics
            'Y': youngs_modulus,
            'v': poissons_ratio
        }
-   )
+    )
 
-   # register or update predictor by name
-   predictor = create_or_update(collection=project.predictors,
-                                module=shear_modulus_predictor
-                               )
+    # register or update predictor by name
+    predictor = create_or_update(
+        collection=project.predictors,
+        module=shear_modulus_predictor
+    )
 
 For an example of expression predictors used in a graph predictor, see :ref:`AI Engine Code Examples <graph_predictor_example>`.
 
 Molecular Structure Featurizer
 ------------------------------------
 The :class:`~citrine.informatics.predictors.molecular_structure_featurizer.MolecularStructureFeaturizer`
-computes a configurable set of features on molecular structure data, e.g. SMILES or InChI strings, using the `Chemistry Development Kit (CDK) <https://cdk.github.io/>`_.
+computes a configurable set of features on molecular structure data, e.g., SMILES or InChI strings, using the `Chemistry Development Kit (CDK) <https://cdk.github.io/>`_.
 The features are configured using the ``features`` and ``excludes`` arguments, which accept either feature names or predefined aliases.
 The default is the `standard` alias, corresponding to eight features that are a good balance of cost and performance.
 
@@ -204,7 +250,7 @@ The following example demonstrates how to use a :class:`~citrine.informatics.pre
         name='Density from solvent molecular structure',
         description='Predict the density from the solvent molecular structure using molecular structure features.',
         predictors = [featurizer, ml_predictor],
-        training_data = [GemTableDataSource(training_data_table_uid, 1)] # training data shared by all sub-predictors
+        training_data = [GemTableDataSource(table_id=training_data_table_uid, table_version=1)] # training data shared by all sub-predictors
     )
  
     # register or update predictor by name
@@ -222,7 +268,7 @@ Many of the features are stoichiometrically weighted generalized means of elemen
 The generalized means are configured with the ``powers`` argument, which is a list of means to calculate.
 For example, setting ``powers=[1, 3]`` will calculate the mean and 3-mean of all applicable features.
 
-The feature to compute are configured using the ``features`` and ``excludes`` arguments, which accept either feature names or predefined aliases.
+The features to compute are configured using the ``features`` and ``excludes`` arguments, which accept either feature names or predefined aliases.
 The default is the `standard` alias, corresponding to a variety of features that are intuitive and often correlate with properties of interest.
 Other aliases are "physical," "electronic," and "periodicTable."
 A complete list of features and which aliases they map to can be found in the class docstring.
@@ -284,7 +330,7 @@ The following example demonstrates how to use a :class:`~citrine.informatics.pre
         name='Melting temperature from alloy chemical formula',
         description='Predict the melting temperature from the alloy chemical formula using chemical formula features.',
         predictors = [featurizer, ml_predictor],
-        training_data = [GemTableDataSource(training_data_table_uid, 1)] # training data shared by all sub-predictors
+        training_data = [GemTableDataSource(table_id=training_data_table_uid, table_version=1)] # training data shared by all sub-predictors
     )
 
     # register or update predictor by name
@@ -300,12 +346,12 @@ Ingredients to formulation predictor (ALPHA)
 The :class:`~citrine.informatics.predictors.ingredients_to_formulation_predictor.IngredientsToFormulationPredictor` constructs a formulation from a list of ingredients.
 This predictor is only required to construct formulations from CSV data sources.
 Formulations are constructed automatically by GEM Tables when a ``formulation_descriptor`` is specified by the data source, so
-an :class:`~citrine.informatics.predictors.ingredients_to_formulation_predictor.IngredientsToFormulationPredictor` in not required in those cases.
+an :class:`~citrine.informatics.predictors.ingredients_to_formulation_predictor.IngredientsToFormulationPredictor` is not required in those cases.
 
 Ingredients are specified by a map from ingredient id to the descriptor that contains the ingredient's quantity.
-For example, ``{'water': RealDescriptor('water quantity', 0, 1}`` defines an ingredient ``water`` with quantity held by the descriptor ``water quantity``.
+For example, ``{'water': RealDescriptor('water quantity', lower_bound=0, upper_bound=1, units='')}`` defines an ingredient ``water`` with quantity held by the descriptor ``water quantity``.
 There must be a corresponding (id, quantity) pair in the map for all possible ingredients.
-If a material does not contain data for a given quantity descriptor key it is assumed that ingredient is not present in the mixture.
+If a material does not contain data for a given quantity descriptor key, it is assumed that ingredient is not present in the mixture.
 
 Let's add another ingredient ``salt`` to our map and say we are given data in the form:
 
@@ -321,8 +367,8 @@ Let's add another ingredient ``salt`` to our map and say we are given data in th
 | salt              |                |               | 2.16           |
 +-------------------+----------------+---------------+----------------+
 
-There are two mixtures, hypertonic and isotonic saline formed by mixing water and salt together in different amounts.
-(Note, water and salt are leaf ingredients; and, hence these rows do not contain quantity data.)
+There are two mixtures, hypertonic and isotonic saline, formed by mixing water and salt together in different amounts.
+(Note, water and salt are leaf ingredients; hence these rows do not contain quantity data.)
 Mixtures are defined by a map from ingredient id to quantity, so this predictor would form 2 mixtures with recipes:
 
 .. code:: python
@@ -352,11 +398,11 @@ The following example illustrates how an :class:`~citrine.informatics.predictors
     from citrine.informatics.descriptors import FormulationDescriptor, RealDescriptor
     from citrine.informatics.predictors import IngredientsToFormulationPredictor
 
-    file_link = dataset.files.upload("./saline_solutions.csv", "saline_solutions.csv")
+    file_link = dataset.files.upload(file_path="./saline_solutions.csv", dest_name"saline_solutions.csv")
 
     # create descriptors for each ingredient quantity (volume fraction)
-    water_quantity = RealDescriptor(key='water quantity', 0, 1, units='')
-    salt_quantity = RealDescriptor(key='salt quantity', 0, 1, units='')
+    water_quantity = RealDescriptor(key='water quantity', lower_bound=0, upper_bound=1, units='')
+    salt_quantity = RealDescriptor(key='salt quantity', lower_bound=0, upper_bound=1, units='')
 
     # create a descriptor to hold density data
     density = RealDescriptor(key='density', lower_bound=0, upper_bound=1000, units='g/cc')
@@ -415,7 +461,11 @@ The following example illustrates how a :class:`~citrine.informatics.predictors.
     output_formulation = FormulationDescriptor(key='diluted saline (flattened)')
 
     # table with simple mixtures and their ingredients
-    data_source = GemTableDataSource(table_id=table_uid, table_version=1, formulation_descriptor=input_descriptor)
+    data_source = GemTableDataSource(
+        table_id=table_uid,
+        table_version=1,
+        formulation_descriptor=input_formulation
+    )
 
     SimpleMixturePredictor(
         name='Simple mixture predictor',
@@ -445,7 +495,7 @@ To configure a mean property predictor, we must specify:
 * A list of properties to featurize
 * The power of the `generalized mean <https://en.wikipedia.org/wiki/Generalized_mean>`_.
   Only integer powers are supported. ``p=1`` corresponds to the arithmetic mean, which weights
-  all values evenly. Higher powers, such as ``p=2`` (the root mean square) place more weight
+  all values evenly. Higher powers, such as ``p=2`` (the root mean square), place more weight
   on larger values of the property. Negative powers place more weight on smaller values.
 * A data source that contains all ingredients and their properties
 * How to handle missing ingredient properties
@@ -458,7 +508,7 @@ Missing ingredient properties can be handled one of three ways:
    Otherwise, the row will not be featurized.
    Use this option if you expect ingredient properties to be dense (always present) and would like to exclude rows when properties are missing.
 2. If ``impute_properties == True`` and no ``default_properties`` are specified, missing properties will be filled in using the average value across the entire dataset.
-   The average is computed from any row with data corresponding to the missing property, regardless of label or material type (i.e. the average is computed from all leaf ingredients and mixtures).
+   The average is computed from any row with data corresponding to the missing property, regardless of label or material type (i.e., the average is computed from all leaf ingredients and mixtures).
 3. If ``impute_properties == True`` and ``default_properties`` are specified, the specified property value will be used when an ingredient property is missing (instead of the average over the dataset).
    This allows complete control over what values are imputed.
    Default properties cannot be specified if ``impute_properties == False`` (because missing properties are not filled in).
@@ -478,9 +528,9 @@ Our leaf ingredient data might resemble:
 
 If ``impute_properties == False``, any mixture that includes boric acid will not be featurized.
 If ``impute_properties == True`` and no ``default_properties`` are specified, an density of :math:`\left( 1.0 + 2.16 \right) / 2 = 1.58` will be used.
-If a value other than 1.58 should be used, e.g. 2.0, this can be specified by setting ``default_properties = {'density': 2.0}``.
+If a value other than 1.58 should be used (e.g., 2.0), this can be specified by setting ``default_properties = {'density': 2.0}``.
 
-The example below show how to configure a mean property predictor to compute mean solute density in formulations.
+The example below shows how to configure a mean property predictor to compute mean solute density in formulations.
 
 .. code:: python
 
@@ -495,7 +545,11 @@ The example below show how to configure a mean property predictor to compute mea
     density = RealDescriptor(key='density', lower_bound=0, upper_bound=100, units='g/cm^3')
 
     # table with formulations and their ingredients
-    data_source = GemTableDataSource(table_id=table_uid, table_version=1, formulation_descriptor=formulation)
+    data_source = GemTableDataSource(
+        table_id=table_uid,
+        table_version=1,
+        formulation_descriptor=formulation
+    )
 
     mean_property_predictor = MeanPropertyPredictor(
         name='Mean property predictor',
@@ -523,7 +577,7 @@ This predictor will compute a real descriptor with a key ``mean of property dens
         inputs=[formulation_descriptor]
     )
 
-If ``p`` is given a value other than ``1``, that value will be included in the key for the feature, e.g. ``2.0-mean of property viscosity``.
+If ``p`` is given a value other than ``1``, that value will be included in the key for the feature (e.g., ``2.0-mean of property viscosity``).
 
 Ingredient fractions predictor
 ------------------------------
@@ -574,7 +628,7 @@ Label fractions predictor
 -------------------------
 
 The :class:`~citrine.informatics.predictors.label_fractions_predictor.LabelFractionsPredictor` computes total fraction of ingredients with a given label.
-The predictor is configured by specifying a formulation descriptor that holds formulation data (i.e. recipes and ingredient labels) and a set of labels to featurize.
+The predictor is configured by specifying a formulation descriptor that holds formulation data (i.e., recipes and ingredient labels) and a set of labels to featurize.
 A separate response is computed for each featurized label by summing all quantities in the recipe associated with ingredients given the label.
 
 The following example demonstrates how to create a predictor that computes the total fractions of solute and solvent in a formulation.
@@ -606,7 +660,7 @@ Simple ML predictor
 -------------------
 
 The :class:`~citrine.informatics.predictors.simple_ml_predictor.SimpleMLPredictor` predicts material properties using a machine-learned model.
-Each predictor is defined by a set of inputs, outputs and latent variables.
+Each predictor is defined by a set of inputs, outputs, and latent variables.
 Inputs are used as input features to the machine learning model.
 Outputs are the properties that you would like the model to predict.
 There must be at least one input and one output.
@@ -630,7 +684,7 @@ The following example demonstrates how to use the python SDK to create a :class:
    from citrine.informatics.data_sources import GemTableDataSource
 
    # create a session with citrine using your API key
-   session = Citrine(api_key = API_KEY)
+   session = Citrine(api_key=API_KEY)
 
    # find project by name 'Example project' or create it if not found
    project = find_or_create_project(project_collection=session.projects,
@@ -645,7 +699,7 @@ The following example demonstrates how to use the python SDK to create a :class:
        inputs = [input_descriptor_1, input_descriptor_2],
        outputs = [output_descriptor_1, output_descriptor_2],
        latent_variables = [latent_variable_descriptor_1],
-       training_data = [GemTableDataSource(training_data_table_uid, 1)]
+       training_data = [GemTableDataSource(table_id=training_data_table_uid, table_version=1)]
    )
 
    # register predictor or update predictor of same name if it already
@@ -676,7 +730,7 @@ The following demonstrates how to create an :class:`~citrine.informatics.predict
     from citrine.informatics.descriptors import FormulationDescriptor
 
     # create a session with citrine using your API key
-    session = Citrine(api_key = API_KEY)
+    session = Citrine(api_key=API_KEY)
 
     # find project by name 'Example project' or create it if not found
     project = find_or_create_project(project_collection=session.projects,
@@ -707,7 +761,11 @@ The following demonstrates how to create an :class:`~citrine.informatics.predict
         inputs = ingredient_fraction_descriptors,
         outputs = [output_descriptor],
         latent_variables = [],
-        training_data = GemTableDataSource(training_data_table_uid, 1, formulation_descriptor)
+        training_data = GemTableDataSource(
+            table_id=training_data_table_uid,
+            table_version=1,
+            formulation_descriptor=formulation_descriptor
+        )
     )
 
 
@@ -725,16 +783,16 @@ Training data are defined by a list of :doc:`data sources <data_sources>`.
 When multiple data sources are specified, data from all sources is combined into a flattened list and deduplicated prior to training a predictor.
 Deduplication is performed if a uid or identifier is shared between two or more rows.
 The content of a deduplicated row will contain the union of data across all rows that share the same uid or at least 1 identifier.
-An error will be thrown if two deduplicated rows contain different data for the same descriptor because it's unclear which value should be used in the deduplcated row.
+An error will be thrown if two deduplicated rows contain different data for the same descriptor because it's unclear which value should be used in the deduplicated row.
 
 Deduplication is additive.
 Given three rows with identifiers ``[a]``, ``[b]`` and ``[a, b]``, deduplication will result in a single row with three identifiers (``[a, b, c]``) and the union of all data from these rows.
 Care must be taken to ensure uids and identifiers aren't shared across multiple data sources to avoid unwanted deduplication.
 
-When using a :class:`~citrine.informatics.predictors.graph_predictor.GraphPredictor`, training data provided by the graph predictor and all subpredictors are combined into a single deduplicated list.
+When using a :class:`~citrine.informatics.predictors.graph_predictor.GraphPredictor`, training data provided by the graph predictor and all sub-predictors are combined into a single deduplicated list.
 Each predictor is trained on the subset of the combined data that is valid for the model.
-Note, data may come from sources defined by other subpredictors in the graph.
-Because training data are shared by all predictors in the graph, a data source does not need to be redefined by all subpredictors that require it.
-If all data sources required train a predictor are specified elsewhere in the graph, the ``training_data`` parameter may be omitted.
+Note, data may come from sources defined by other sub-predictors in the graph.
+Because training data are shared by all predictors in the graph, a data source does not need to be redefined by all sub-predictors that require it.
+If all data sources required to train a predictor are specified elsewhere in the graph, the ``training_data`` parameter may be omitted.
 If the graph contains a predictor that requires formulations data, e.g. a :class:`~citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor` or :class:`~citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor`, any GEM Tables specified by the graph predictor that contain formulation data must provide a formulation descriptor,
 and this descriptor must match the input formulation descriptor of the sub-predictors that require these data.

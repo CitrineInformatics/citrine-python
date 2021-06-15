@@ -64,7 +64,7 @@ For numeric responses, the following metrics are available:
   - *R^2* (:class:`~citrine.informatics.predictor_evaluation_metrics.RSquared`): 1 - (mean squared error / variance of data).
     More precisely known as the "fraction of variance explained," this metric is equal to the coefficient of determination calculated with respect to the line ``predicted = actual``.
     Hence it is commonly referred to as "R^2," but unlike R^2 in the context of linear regression, this metric can be negative.
-    Positive values mean that the model captures some of the variation across the training data, and it can be used to drive sequential learning.
+    Positive values mean that the model captures some of the variation across the training data, and it can be used to drive Sequential Learning.
     A value of 1.0 indicates a perfect model.
     R^2 is evaluated over all cross-validation folds, hence no uncertainty is calculated for the metric, though the value will vary slightly if cross validation is re-run.
   - *Non-dimensional error* (:class:`~citrine.informatics.predictor_evaluation_metrics.NDME`): RMSE divided by the standard deviation of the observed values in the test set.
@@ -77,8 +77,8 @@ For numeric responses, the following metrics are available:
     1.0 is perfectly calibrated.
     Standard residual provides a way to determine whether uncertainty estimates are well-calibrated for this model.
     Residuals are calculated using ``(Predicted - Actual)/(Uncertainty Estimate)``.
-    A value below 1 indicates the model is underconfident, i.e. actual values are within predicted error bars, on average.
-    A value over 1 indicates the model is overconfident, i.e. actual values fall outside predicted error bars, on average.
+    A value below 1 indicates the model is underconfident, i.e., actual values are within predicted error bars, on average.
+    A value over 1 indicates the model is overconfident, i.e., actual values fall outside predicted error bars, on average.
   - *Coverage probability* (:class:`~citrine.informatics.predictor_evaluation_metrics.CoverageProbability`) is the fraction of observations for which the magnitude of the error is within a confidence interval of a given coverage level.
     The default coverage level is 0.683, corresponding to one standard deviation.
     The coverage level and coverage probability must both be between 0 and 1.0.
@@ -103,7 +103,7 @@ Execution and results
 
 Triggering a Predictor Evaluation Workflow produces a :class:`~citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecution`.
 This execution allows you to track the progress using its ``status`` and ``status_info`` properties.
-The ``status`` can be one of ``INPROGRESS``, ``READY`` or ``FAILED``.
+The ``status`` can be one of ``INPROGRESS``, ``READY``, or ``FAILED``.
 Information about the execution status, e.g., warnings or reasons for failure, can be accessed via ``status_info``.
 
 When the ``status`` is ``READY``, results for each evaluation defined as part of the workflow can be accessed using the ``results`` method:
@@ -136,8 +136,8 @@ These metrics can be listed using ``list(response_metrics)``,
 and the value associated with a specific metric can be accessed by the metric itself, e.g., ``response_metrics[RMSE()]`` to retrieve the root-mean squared error.
 
 With the exception of predicted vs. actual data, all metric values are returned as a :class:`~citrine.informatics.predictor_evaluation_result.RealMetricValue`.
-This object defines properties ``mean`` and ``standard_error``.
-The latter optionally returns a float if the evaluation was configured with enough trials allow ``standard_error`` to be computed.
+This object defines the properties ``mean`` and ``standard_error``.
+The latter optionally returns a float if the evaluation was configured with enough trials to allow ``standard_error`` to be computed.
 (A :class:`~citrine.informatics.predictor_evaluator.CrossValidationEvaluator` requires at least 3 trials to compute ``standard_error``.)
 
 Predicted vs. actual data (``response_metrics[PVA()]``) is returned as a list of predicted vs. actual data points.
@@ -152,7 +152,7 @@ Each data point defines properties ``uuid``, ``identifiers``, ``trial``, ``fold`
 Example
 -------
 
-The following demonstrates how to create a :class:`~citrine.informatics.predictor_evaluator.CrossValidationEvaluator`, add it to a :class:`~citrine.informatics.workflows.predictor_evaluation_workflow.PredictorEvaluationWorkflow` and use it to evaluate a :class:`~citrine.informatics.predictors.predictor.Predictor`.
+The following demonstrates how to create a :class:`~citrine.informatics.predictor_evaluator.CrossValidationEvaluator`, add it to a :class:`~citrine.informatics.workflows.predictor_evaluation_workflow.PredictorEvaluationWorkflow`, and use it to evaluate a :class:`~citrine.informatics.predictors.predictor.Predictor`.
 
 The predictor we'll evaluate is defined below:
 
@@ -214,7 +214,7 @@ In this example we'll create a cross-validation evaluator for the response ``y``
         metrics={RMSE(), PVA()}
     )
 
-Then add the evaluator to a :class:`~citrine.informatics.workflows.predictor_evaluation_workflow.PredictorEvaluationWorkflow`, register it with your project and wait for validation to finish:
+Then add the evaluator to a :class:`~citrine.informatics.workflows.predictor_evaluation_workflow.PredictorEvaluationWorkflow`, register it with your project, and wait for validation to finish:
 
 .. code:: python
 
@@ -236,7 +236,7 @@ Then wait for the results to be ready:
     from citrine.jobs.waiting import wait_while_executing
 
     execution = workflow.executions.trigger(predictor.uid)
-    wait_while_executing(execution, print_status_info=True, collection = project.predictor_evaluation_executions)
+    wait_while_executing(collection=project.predictor_evaluation_executions, execution=execution, print_status_info=True)
 
 Finally, load the results and inspect the metrics and their computed values:
 
@@ -286,7 +286,7 @@ To archive a workflow:
 
     project.predictor_evaluation_workflows.archive(workflow.uid)
 
-and to archive all executions associated with a workflow:
+and to archive all executions associated with a predictor evaluation workflow:
 
 .. code:: python
 

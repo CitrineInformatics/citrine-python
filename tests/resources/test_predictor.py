@@ -11,8 +11,7 @@ from citrine.informatics.predictors import (
     GraphPredictor,
     SimpleMLPredictor,
     ExpressionPredictor,
-    Predictor,
-    AutoMLPredictor, DeprecatedExpressionPredictor
+    AutoMLPredictor
 )
 from citrine.resources.predictor import PredictorCollection
 from tests.utils.session import FakeSession, FakeCall
@@ -245,13 +244,13 @@ def test_check_update_some():
     """Test the update check correctly builds a module."""
     # given
     session = FakeSession()
-    desc = RealDescriptor("spam", 0, 1, "kg")
+    desc = RealDescriptor("spam", lower_bound=0, upper_bound=1, units="kg")
     response = {
         "type": "AnalyticExpression",
         "name": "foo",
         "description": "bar",
         "expression": "2 * x",
-        "output": RealDescriptor("spam", 0, 1, "kg").dump(),
+        "output": RealDescriptor("spam", lower_bound=0, upper_bound=1, units="kg").dump(),
         "aliases": {}
     }
     session.set_response({"updatable": True, "update": response})
@@ -262,33 +261,9 @@ def test_check_update_some():
     update_check = pc.check_for_update(predictor_id)
 
     # then
-    expected = ExpressionPredictor("foo", "bar", "2 * x", desc, {})
+    expected = ExpressionPredictor("foo", description="bar", expression="2 * x", output=desc, aliases={})
     assert update_check.dump() == expected.dump()
     assert update_check.uid == predictor_id
-
-
-def test_graph_default_training_data():
-    """Test that default training data list isn't shared."""
-    # create two serialized graph predictors with no defined training data
-    gp1raw = {'config': {'name': 'one', 'description': '', 'predictors': [], 'type': 'Graph'},
-              'archived': False, 'module_type': 'PREDICTOR', 'display_name': 'one'}
-    gp2raw = {'config': {'name': 'two', 'description': '', 'predictors': [], 'type': 'Graph'},
-              'archived': False, 'module_type': 'PREDICTOR', 'display_name': 'two'}
-
-    # build them, populating the default empty list of training data
-    gp1: GraphPredictor = Predictor.build(gp1raw)
-    gp2: GraphPredictor = Predictor.build(gp2raw)
-
-    # check it is empty
-    assert len(gp1.training_data) == 0
-    assert len(gp2.training_data) == 0
-
-    # add training data to one of them
-    gp1.training_data.append(GemTableDataSource(uuid.uuid4(), 1))
-
-    # check that the training data doesn't bleed into both
-    assert len(gp1.training_data) == 1
-    assert len(gp2.training_data) == 0
 
 
 def test_unexpected_pattern():
@@ -299,7 +274,7 @@ def test_unexpected_pattern():
 
     # Then
     with pytest.raises(ValueError):
-        pc.auto_configure(GemTableDataSource(uuid.uuid4(), 0), "yogurt")
+        pc.auto_configure(training_data=GemTableDataSource(table_id=uuid.uuid4(), table_version=0), pattern="yogurt")
 
 
 def test_returned_predictor(valid_graph_predictor_data):
@@ -316,7 +291,7 @@ def test_returned_predictor(valid_graph_predictor_data):
     pc = PredictorCollection(uuid.uuid4(), session)
 
     # When
-    result = pc.auto_configure(GemTableDataSource(uuid.uuid4(), 0), "PLAIN")
+    result = pc.auto_configure(training_data=GemTableDataSource(table_id=uuid.uuid4(), table_version=0), pattern="PLAIN")
 
     # Then the response is parsed in a predictor
     assert result.name == valid_graph_predictor_data["display_name"]
@@ -324,4 +299,4 @@ def test_returned_predictor(valid_graph_predictor_data):
     # including nested predictors
     assert len(result.predictors) == 2
     assert isinstance(result.predictors[0], uuid.UUID)
-    assert isinstance(result.predictors[1], DeprecatedExpressionPredictor)
+    assert isinstance(result.predictors[1], ExpressionPredictor)

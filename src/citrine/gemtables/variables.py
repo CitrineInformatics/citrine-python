@@ -1,6 +1,7 @@
 """Variable definitions for GEM Tables."""
 from abc import abstractmethod
 from typing import Type, Optional, List, Union
+from deprecation import deprecated
 
 from gemd.entity.bounds.base_bounds import BaseBounds
 from gemd.entity.link_by_uid import LinkByUID
@@ -71,11 +72,11 @@ class Variable(PolymorphicSerializable['Variable']):
         if "type" not in data:
             raise ValueError("Can only get types from dicts with a 'type' key")
         types: List[Type[Serializable]] = [
-            RootInfo, AttributeByTemplate, AttributeByTemplateAfterProcessTemplate,
+            TerminalMaterialInfo, AttributeByTemplate, AttributeByTemplateAfterProcessTemplate,
             AttributeByTemplateAndObjectTemplate, IngredientIdentifierByProcessTemplateAndName,
             IngredientLabelByProcessAndName, IngredientLabelsSetByProcessAndName,
             IngredientQuantityByProcessAndName,
-            RootIdentifier, AttributeInOutput, IngredientIdentifierInOutput,
+            TerminalMaterialIdentifier, AttributeInOutput, IngredientIdentifierInOutput,
             IngredientLabelsSetInOutput, IngredientQuantityInOutput, XOR
         ]
         res = next((x for x in types if x.typ == data["type"]), None)
@@ -85,7 +86,7 @@ class Variable(PolymorphicSerializable['Variable']):
         return res
 
 
-class RootInfo(Serializable['RootInfo'], Variable):
+class TerminalMaterialInfo(Serializable['TerminalMaterialInfo'], Variable):
     """[ALPHA] Metadata from the terminal material of the material history.
 
     Parameters
@@ -108,13 +109,20 @@ class RootInfo(Serializable['RootInfo'], Variable):
     def _attrs(self) -> List[str]:
         return ["name", "headers", "field", "typ"]
 
-    def __init__(self, *,
-                 name: str,
+    def __init__(self,
+                 name: str, *,
                  headers: List[str],
                  field: str):
         self.name = name
         self.headers = headers
         self.field = field
+
+
+@deprecated(deprecated_in="0.133.0", removed_in="2.0.0",
+            details="RootInfo is deprecated in favor of TerminalMaterialInfo")
+def RootInfo(name: str, *, headers: List[str], field: str) -> TerminalMaterialInfo:
+    """[DEPRECATED] Use TerminalMaterialInfo instead."""
+    return TerminalMaterialInfo(name=name, headers=headers, field=field)
 
 
 class AttributeByTemplate(Serializable['AttributeByTemplate'], Variable):
@@ -152,8 +160,9 @@ class AttributeByTemplate(Serializable['AttributeByTemplate'], Variable):
     def _attrs(self) -> List[str]:
         return ["name", "headers", "template", "attribute_constraints", "type_selector", "typ"]
 
-    def __init__(self, *,
+    def __init__(self,
                  name: str,
+                 *,
                  headers: List[str],
                  template: LinkByUID,
                  attribute_constraints: Optional[List[List[Union[LinkByUID, BaseBounds]]]] = None,
@@ -205,8 +214,9 @@ class AttributeByTemplateAfterProcessTemplate(
         return ["name", "headers", "attribute_template", "process_template",
                 "attribute_constraints", "type_selector", "typ"]
 
-    def __init__(self, *,
+    def __init__(self,
                  name: str,
+                 *,
                  headers: List[str],
                  attribute_template: LinkByUID,
                  process_template: LinkByUID,
@@ -265,8 +275,9 @@ class AttributeByTemplateAndObjectTemplate(
         return ["name", "headers", "attribute_template", "object_template",
                 "attribute_constraints", "type_selector", "typ"]
 
-    def __init__(self, *,
+    def __init__(self,
                  name: str,
+                 *,
                  headers: List[str],
                  attribute_template: LinkByUID,
                  object_template: LinkByUID,
@@ -313,8 +324,9 @@ class IngredientIdentifierByProcessTemplateAndName(
         return ["name", "headers", "process_template", "ingredient_name", "scope",
                 "type_selector", "typ"]
 
-    def __init__(self, *,
+    def __init__(self,
                  name: str,
+                 *,
                  headers: List[str],
                  process_template: LinkByUID,
                  ingredient_name: str,
@@ -366,8 +378,9 @@ class IngredientLabelByProcessAndName(Serializable['IngredientLabelByProcessAndN
         return ["name", "headers", "process_template", "ingredient_name", "label",
                 "type_selector", "typ"]
 
-    def __init__(self, *,
+    def __init__(self,
                  name: str,
+                 *,
                  headers: List[str],
                  process_template: LinkByUID,
                  ingredient_name: str,
@@ -413,8 +426,9 @@ class IngredientLabelsSetByProcessAndName(
     def _attrs(self) -> List[str]:
         return ["name", "headers", "process_template", "ingredient_name", "typ"]
 
-    def __init__(self, *,
+    def __init__(self,
                  name: str,
+                 *,
                  headers: List[str],
                  process_template: LinkByUID,
                  ingredient_name: str):
@@ -465,8 +479,9 @@ class IngredientQuantityByProcessAndName(
         return ["name", "headers", "process_template", "ingredient_name", "quantity_dimension",
                 "type_selector", "typ"]
 
-    def __init__(self, *,
+    def __init__(self,
                  name: str,
+                 *,
                  headers: List[str],
                  process_template: LinkByUID,
                  ingredient_name: str,
@@ -493,7 +508,7 @@ class IngredientQuantityByProcessAndName(
         self.unit = unit
 
 
-class RootIdentifier(Serializable['RootIdentifier'], Variable):
+class TerminalMaterialIdentifier(Serializable['TerminalMaterialIdentifier'], Variable):
     """[ALPHA] A unique identifier of the terminal material of the material history, by scope.
 
     Parameters
@@ -515,13 +530,23 @@ class RootIdentifier(Serializable['RootIdentifier'], Variable):
     def _attrs(self) -> List[str]:
         return ["name", "headers", "scope", "typ"]
 
-    def __init__(self, *,
+    def __init__(self,
                  name: str,
+                 *,
                  headers: List[str],
                  scope: str = CITRINE_SCOPE):
         self.name = name
         self.headers = headers
         self.scope = scope
+
+
+@deprecated(deprecated_in="0.133.0", removed_in="2.0.0",
+            details="RootIdentifier is deprecated in favor of TerminalMaterialIdentifier")
+def RootIdentifier(name: str, *,
+                   headers: List[str],
+                   scope: str = CITRINE_SCOPE) -> TerminalMaterialIdentifier:
+    """[DEPRECATED] Use TerminalMaterialIdentifier instead."""
+    return TerminalMaterialIdentifier(name=name, headers=headers, scope=scope)
 
 
 class AttributeInOutput(Serializable['AttributeInOutput'], Variable):
@@ -583,8 +608,8 @@ class AttributeInOutput(Serializable['AttributeInOutput'], Variable):
         return ["name", "headers", "attribute_template", "process_templates",
                 "attribute_constraints", "type_selector", "typ"]
 
-    def __init__(self, *,
-                 name: str,
+    def __init__(self,
+                 name: str, *,
                  headers: List[str],
                  attribute_template: LinkByUID,
                  process_templates: List[LinkByUID],
@@ -656,8 +681,8 @@ class IngredientIdentifierInOutput(Serializable['IngredientIdentifierInOutput'],
         return ["name", "headers", "ingredient_name", "process_templates", "scope",
                 "type_selector", "typ"]
 
-    def __init__(self, *,
-                 name: str,
+    def __init__(self,
+                 name: str, *,
                  headers: List[str],
                  ingredient_name: str,
                  process_templates: List[LinkByUID],
@@ -723,8 +748,8 @@ class IngredientLabelsSetInOutput(Serializable['IngredientLabelsSetInOutput'], V
     def _attrs(self) -> List[str]:
         return ["name", "headers", "process_templates", "ingredient_name", "typ"]
 
-    def __init__(self, *,
-                 name: str,
+    def __init__(self,
+                 name: str, *,
                  headers: List[str],
                  process_templates: List[LinkByUID],
                  ingredient_name: str):
@@ -806,8 +831,8 @@ class IngredientQuantityInOutput(Serializable['IngredientQuantityInOutput'], Var
                 "unit",
                 "typ"]
 
-    def __init__(self, *,
-                 name: str,
+    def __init__(self,
+                 name: str, *,
                  headers: List[str],
                  ingredient_name: str,
                  quantity_dimension: IngredientQuantityDimension,
@@ -842,7 +867,7 @@ class XOR(Serializable['XOR'], Variable):
     undefined.
 
     XOR can only operate on inputs with the same output type. For example, you may XOR
-    :class:`~citrine.gemtables.variables.RootIdentifier` with
+    :class:`~citrine.gemtables.variables.TerminalMaterialIdentifier` with
     :class:`~citrine.gemtables.variables.IngredientIdentifierByProcessTemplateAndName`
     because they both produce simple strings, but not with
     :class:`~citrine.gemtables.variables.IngredientQuantityInOutput`
@@ -871,7 +896,7 @@ class XOR(Serializable['XOR'], Variable):
     def _attrs(self) -> List[str]:
         return ["name", "headers", "variables", "typ"]
 
-    def __init__(self, *, name, headers, variables):
+    def __init__(self, name, *, headers, variables):
         self.name = name
         self.headers = headers
         self.variables = variables

@@ -58,7 +58,6 @@ def valid_product_design_space_data():
             dimensions=[
                 dict(
                     type='ContinuousDimension',
-                    template_id=str(uuid.uuid4()),
                     descriptor=dict(
                         type='Real',
                         descriptor_key='alpha',
@@ -71,7 +70,6 @@ def valid_product_design_space_data():
                 ),
                 dict(
                     type='EnumeratedDimension',
-                    template_id=str(uuid.uuid4()),
                     descriptor=dict(
                         type='Categorical',
                         descriptor_key='color',
@@ -175,9 +173,9 @@ def valid_gem_data_source_dict():
 def valid_simple_ml_predictor_data(valid_gem_data_source_dict):
     """Produce valid data used for tests."""
     from citrine.informatics.descriptors import RealDescriptor
-    x = RealDescriptor("x", 0, 100, "")
-    y = RealDescriptor("y", 0, 100, "")
-    z = RealDescriptor("z", 0, 100, "")
+    x = RealDescriptor("x", lower_bound=0, upper_bound=100, units="")
+    y = RealDescriptor("y", lower_bound=0, upper_bound=100, units="")
+    z = RealDescriptor("z", lower_bound=0, upper_bound=100, units="")
     return dict(
         module_type='PREDICTOR',
         status='READY',
@@ -201,9 +199,8 @@ def valid_simple_ml_predictor_data(valid_gem_data_source_dict):
 def valid_auto_ml_predictor_data(valid_gem_data_source_dict):
     """Produce valid data used for tests."""
     from citrine.informatics.descriptors import RealDescriptor
-    x = RealDescriptor("x", 0, 100, "")
-    y = RealDescriptor("y", 0, 100, "")
-    z = RealDescriptor("z", 0, 100, "")
+    x = RealDescriptor("x", lower_bound=0, upper_bound=100, units="")
+    z = RealDescriptor("z", lower_bound=0, upper_bound=100, units="")
     return dict(
         module_type='PREDICTOR',
         status='READY',
@@ -226,9 +223,8 @@ def valid_auto_ml_predictor_data(valid_gem_data_source_dict):
 def old_auto_ml_predictor_data(valid_gem_data_source_dict):
     """Produce valid data used for tests."""
     from citrine.informatics.descriptors import RealDescriptor
-    x = RealDescriptor("x", 0, 100, "")
-    y = RealDescriptor("y", 0, 100, "")
-    z = RealDescriptor("z", 0, 100, "")
+    x = RealDescriptor("x", lower_bound=0, upper_bound=100, units="")
+    z = RealDescriptor("z", lower_bound=0, upper_bound=100, units="")
     return dict(
         module_type='PREDICTOR',
         status='READY',
@@ -266,7 +262,7 @@ def valid_graph_predictor_data():
             predictors=[
                 str(uuid.uuid4()),
                 dict(
-                    type='Expression',
+                    type='AnalyticExpression',
                     name='Expression predictor',
                     description='mean of 2 outputs',
                     expression='(X + Y)/2',
@@ -274,12 +270,12 @@ def valid_graph_predictor_data():
                         'Property~Some metric', lower_bound=0, upper_bound=1000, units='W'
                     ).dump(),
                     aliases={
-                        "Property~X": "X",
-                        "Property~Y": "Y"
+                        "Property~X": RealDescriptor("X", lower_bound=0, upper_bound=1000, units='').dump(),
+                        "Property~Y": RealDescriptor("Y", lower_bound=0, upper_bound=1000, units='').dump()
                     }
                 )
             ],
-            training_data=[GemTableDataSource(uuid.uuid4(), 0).dump()]
+            training_data=[GemTableDataSource(table_id=uuid.uuid4(), table_version=0).dump()]
         )
     )
 
@@ -342,9 +338,9 @@ def valid_expression_predictor_data():
 def valid_predictor_report_data():
     """Produce valid data used for tests."""
     from citrine.informatics.descriptors import RealDescriptor
-    x = RealDescriptor("x", 0, 1, "")
-    y = RealDescriptor("y", 0, 100, "")
-    z = RealDescriptor("z", 0, 101, "")
+    x = RealDescriptor("x", lower_bound=0, upper_bound=1, units="")
+    y = RealDescriptor("y", lower_bound=0, upper_bound=100, units="")
+    z = RealDescriptor("z", lower_bound=0, upper_bound=101, units="")
     return dict(
         id='7c2dda5d-675a-41b6-829c-e485163f0e43',
         module_id='31c7f311-6f3d-4a93-9387-94cc877f170c',
@@ -419,8 +415,8 @@ def valid_ing_formulation_predictor_data():
             description='Constructs mixtures from ingredients',
             output=FormulationDescriptor('simple mixture').dump(),
             id_to_quantity={
-                'water': RealDescriptor('water quantity', 0, 1, "").dump(),
-                'salt': RealDescriptor('salt quantity', 0, 1, "").dump()
+                'water': RealDescriptor('water quantity', lower_bound=0, upper_bound=1, units="").dump(),
+                'salt': RealDescriptor('salt quantity', lower_bound=0, upper_bound=1, units="").dump()
             },
             labels={
                 'solvent': ['water'],
@@ -450,7 +446,7 @@ def valid_generalized_mean_property_predictor_data():
             input=formulation_descriptor.dump(),
             properties=['density'],
             p=2,
-            training_data=[GemTableDataSource(uuid.uuid4(), 0, formulation_descriptor).dump()],
+            training_data=[GemTableDataSource(table_id=uuid.uuid4(), table_version=0, formulation_descriptor=formulation_descriptor).dump()],
             impute_properties=True,
             default_properties={'density': 1.0},
             label='solvent'
@@ -479,7 +475,7 @@ def valid_mean_property_predictor_data():
             input=formulation_descriptor.dump(),
             properties=[density.dump()],
             p=2,
-            training_data=[GemTableDataSource(uuid.uuid4(), 0, formulation_descriptor).dump()],
+            training_data=[GemTableDataSource(table_id=uuid.uuid4(), table_version=0, formulation_descriptor=formulation_descriptor).dump()],
             impute_properties=True,
             default_properties={'density': 1.0},
             label='solvent'
@@ -546,9 +542,9 @@ def valid_data_source_design_space_dict(valid_gem_data_source_dict):
 def invalid_predictor_data():
     """Produce valid data used for tests."""
     from citrine.informatics.descriptors import RealDescriptor
-    x = RealDescriptor("x", 0, 100, "")
-    y = RealDescriptor("y", 0, 100, "")
-    z = RealDescriptor("z", 0, 100, "")
+    x = RealDescriptor("x", lower_bound=0, upper_bound=100, units="")
+    y = RealDescriptor("y", lower_bound=0, upper_bound=100, units="")
+    z = RealDescriptor("z", lower_bound=0, upper_bound=100, units="")
     return dict(
         module_type='PREDICTOR',
         status='INVALID',
@@ -605,7 +601,7 @@ def valid_simple_mixture_predictor_data():
             description='simple mixture description',
             input=input_formulation.dump(),
             output=output_formulation.dump(),
-            training_data=[GemTableDataSource(uuid.uuid4(), 0, input_formulation).dump()]
+            training_data=[GemTableDataSource(table_id=uuid.uuid4(), table_version=0, formulation_descriptor=input_formulation).dump()]
         ),
     )
 

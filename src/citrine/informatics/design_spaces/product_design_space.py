@@ -4,7 +4,6 @@ from copy import deepcopy
 
 from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
-from citrine._session import Session
 from citrine.informatics.design_spaces.design_space import DesignSpace
 from citrine.informatics.dimensions import Dimension
 from citrine._rest.ai_resource_metadata import AIResourceMetadata
@@ -45,17 +44,16 @@ class ProductDesignSpace(Resource['ProductDesignSpace'], DesignSpace, AIResource
     typ = properties.String('config.type', default='ProductDesignSpace', deserializable=False)
     module_type = properties.String('module_type', default='DESIGN_SPACE')
 
-    def __init__(self, *,
+    def __init__(self,
                  name: str,
+                 *,
                  description: str,
                  subspaces: Optional[List[Union[UUID, DesignSpace]]] = None,
-                 dimensions: Optional[List[Dimension]] = None,
-                 session: Session = Session()):
+                 dimensions: Optional[List[Dimension]] = None):
         self.name: str = name
         self.description: str = description
         self.subspaces: List[Union[UUID, DesignSpace]] = subspaces or []
         self.dimensions: List[Dimension] = dimensions or []
-        self.session: Session = session
 
     def dump(self) -> dict:
         """Override dump to replace on-platform subspaces with their uids."""

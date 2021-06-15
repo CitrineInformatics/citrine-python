@@ -1,109 +1,20 @@
 """Resources that represent both individual and collections of predictor evaluation executions."""
-from functools import lru_cache, partial
-from typing import Optional, Iterable, Union
+from functools import partial
+import sys
+from typing import Optional, Union, Iterator
 from uuid import UUID
 
 from citrine._rest.collection import Collection
-from citrine._rest.resource import Resource
-from citrine._rest.asynchronous_object import AsynchronousObject
-from citrine._serialization import properties
 from citrine._session import Session
+from citrine._utils.functions import migrate_deprecated_argument, shadow_classes_in_module
+from citrine.informatics.executions import PredictorEvaluationExecution
+import citrine.informatics.executions.predictor_evaluation_execution
 from citrine.informatics.modules import ModuleRef
-from citrine.informatics.predictor_evaluation_result import PredictorEvaluationResult
 from citrine.resources.response import Response
 
 
-class PredictorEvaluationExecution(Resource['PredictorEvaluationExecution'], AsynchronousObject):
-    """The execution of a PredictorEvaluationWorkflow.
-
-    Possible statuses are INPROGRESS, SUCCEEDED, and FAILED.
-    Predictor evaluation executions also have a ``status_description`` field with more information.
-
-    Parameters
-    ----------
-    project_id: str
-        Unique identifier of the project that contains the workflow execution
-
-    """
-
-    uid: UUID = properties.UUID('id', serializable=False)
-    """:UUID: Unique identifier of the workflow execution"""
-    evaluator_names = properties.List(properties.String, "evaluator_names", serializable=False)
-    """:List[str]: names of the predictor evaluators that were executed. These are used
-    when calling the ``results()`` method."""
-    workflow_id = properties.UUID('workflow_id', serializable=False)
-    """:UUID: Unique identifier of the workflow that was executed"""
-    predictor_id = properties.UUID('predictor_id', serializable=False)
-    status = properties.Optional(properties.String(), 'status', serializable=False)
-    """:Optional[str]: short description of the execution's status"""
-    status_info = properties.Optional(
-        properties.List(properties.String()),
-        'status_info',
-        serializable=False
-    )
-    """:Optional[List[str]]: human-readable explanations of the status"""
-    experimental = properties.Boolean("experimental", serializable=False, default=True)
-    """:bool: whether the execution is experimental (newer, less well-tested functionality)"""
-    experimental_reasons = properties.Optional(
-        properties.List(properties.String()),
-        'experimental_reasons',
-        serializable=False
-    )
-    """:Optional[List[str]]: human-readable reasons why the execution is experimental"""
-
-    def __init__(self):
-        """This shouldn't be called, but it defines members that are set elsewhere."""
-        self.project_id: Optional[UUID] = None  # pragma: no cover
-        self.session: Optional[Session] = None  # pragma: no cover
-
-    def __str__(self):
-        return '<PredictorEvaluationExecution {!r}>'.format(str(self.uid))
-
-    def _path(self):
-        return '/projects/{project_id}/predictor-evaluation-executions/{execution_id}' \
-            .format(project_id=self.project_id,
-                    execution_id=self.uid)
-
-    def in_progress(self) -> bool:
-        """Whether predictor evaluation execution is in progress. Does not query state."""
-        return self.status == "INPROGRESS"
-
-    def succeeded(self) -> bool:
-        """Whether predictor evaluation execution has completed successfully. Does not query state."""  # noqa: E501
-        return self.status == "SUCCEEDED"
-
-    def failed(self) -> bool:
-        """Whether predictor evaluation execution has completed unsuccessfully. Does not query state."""  # noqa: E501
-        return self.status == "FAILED"
-
-    @lru_cache()
-    def results(self, evaluator_name: str) -> PredictorEvaluationResult:
-        """
-        Get a specific evaluation result by the name of the evaluator that produced it.
-
-        Parameters
-        ----------
-        evaluator_name: str
-            Name of the evaluator for which to get the results
-
-        Returns
-        -------
-        PredictorEvaluationResult
-            The evaluation result from the evaluator with the given name
-
-        """
-        params = {"evaluator_name": evaluator_name}
-        resource = self.session.get_resource(self._path() + "/results", params=params)
-        return PredictorEvaluationResult.build(resource)
-
-    def __getitem__(self, item):
-        if isinstance(item, str):
-            return self.results(item)
-        else:
-            raise TypeError("Results are accessed by string names")
-
-    def __iter__(self):
-        return iter(self.evaluator_names)
+shadow_classes_in_module(citrine.informatics.executions.predictor_evaluation_execution,
+                         sys.modules[__name__])
 
 
 class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExecution"]):
@@ -114,7 +25,7 @@ class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExec
     _collection_key = 'response'
     _resource = PredictorEvaluationExecution
 
-    def __init__(self, *,
+    def __init__(self,
                  project_id: UUID,
                  session: Session,
                  workflow_id: Optional[UUID] = None):
@@ -125,7 +36,7 @@ class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExec
     def build(self, data: dict) -> PredictorEvaluationExecution:
         """Build an individual PredictorEvaluationExecution."""
         execution = PredictorEvaluationExecution.build(data)
-        execution.session = self.session
+        execution._session = self.session
         execution.project_id = self.project_id
         return execution
 
@@ -150,33 +61,40 @@ class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExec
         """Cannot update an execution."""
         raise NotImplementedError("Cannot update a PredictorEvaluationExecution.")
 
-    def archive(self, execution_id: UUID):
+    def archive(self, uid: Union[UUID, str] = None, execution_id: Union[UUID, str] = None):
         """Archive a predictor evaluation execution.
 
         Parameters
         ----------
-        execution_id: UUID
+        uid: Union[UUID, str]
             Unique identifier of the execution to archive
+        execution_id: Union[UUID, str]
+            [DEPRECATED] please use uid instead
 
         """
-        self._put_module_ref('archive', execution_id)
+        uid = migrate_deprecated_argument(uid, "uid", execution_id, "execution_id")
+        self._put_module_ref('archive', uid)
 
-    def restore(self, execution_id: UUID):
+    def restore(self, uid: Union[UUID, str] = None, execution_id: Union[UUID, str] = None):
         """Restore an archived predictor evaluation execution.
 
         Parameters
         ----------
-        execution_id: UUID
+        uid: Union[UUID, str]
             Unique identifier of the execution to restore
+        execution_id: Union[UUID, str]
+            [DEPRECATED] please use uid instead
 
         """
-        self._put_module_ref('restore', execution_id)
+        uid = migrate_deprecated_argument(uid, "uid", execution_id, "execution_id")
+        self._put_module_ref('restore', uid)
 
     def list(self,
+             *,
              page: Optional[int] = None,
              per_page: int = 100,
              predictor_id: Optional[UUID] = None
-             ) -> Iterable[PredictorEvaluationExecution]:
+             ) -> Iterator[PredictorEvaluationExecution]:
         """
         Paginate over the elements of the collection.
 
@@ -197,7 +115,7 @@ class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExec
 
         Returns
         -------
-        Iterable[ResourceType]
+        Iterator[ResourceType]
             Resources in this collection.
 
         """

@@ -1,7 +1,8 @@
 import inspect
 import os
-from typing import Any
+from typing import Any, Optional
 from urllib.parse import urlparse
+from warnings import warn
 
 from gemd.entity.link_by_uid import LinkByUID
 
@@ -135,3 +136,46 @@ def shadow_classes_in_module(source_module, target_module):
     for c in [cls for _, cls in inspect.getmembers(source_module, inspect.isclass) if
               cls.__module__ == source_module.__name__]:
         setattr(target_module, c.__qualname__, c)
+
+
+def migrate_deprecated_argument(
+        new_arg: Optional[Any],
+        new_arg_name: str,
+        old_arg: Optional[Any],
+        old_arg_name: str
+) -> Any:
+    """
+    Facilitates the migration of an argument's name.
+
+    This method handles the situation in which a function has two arguments for the same thing,
+    one old and one new. It ensures that only one of the two arguments is provided, throwing a
+    ValueError is both/neither are provided. If the old version of the argument is provided,
+    it throws a deprecation warning.
+
+    Parameters
+    ----------
+    new_arg: Optional[Any]
+        the value provided using the new argument (or None, if not provided)
+    new_arg_name: str
+        the new name of the argument (used for creating user-facing messages)
+    old_arg: Optional[Any]
+        the value provided using the old argument (or None, if not provided)
+    old_arg_name: str
+        the old name of the argument (used for creating user-facing messages)
+
+    Returns
+    -------
+    Any
+        the value of the argument to be used by the calling method
+
+    """
+    if old_arg is not None:
+        warn(f"\'{old_arg_name}\' is deprecated in favor of \'{new_arg_name}\'",
+             DeprecationWarning)
+        if new_arg is None:
+            return old_arg
+        else:
+            raise ValueError(f"Cannot specify both \'{new_arg_name}\' and \'{new_arg_name}\'")
+    elif new_arg is None:
+        raise ValueError(f"Please specify \'{new_arg_name}\'")
+    return new_arg

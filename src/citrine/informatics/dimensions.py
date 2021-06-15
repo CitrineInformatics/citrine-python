@@ -1,6 +1,5 @@
 """Tools for working with Dimensions."""
 from typing import Optional, Type, List
-from uuid import uuid4, UUID
 
 from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
@@ -37,8 +36,6 @@ class ContinuousDimension(Serializable['ContinuousDimension'], Dimension):
         inclusive lower bound
     upper_bound: float
         inclusive upper bound
-    template_id: UUID
-        UUID that corresponds to the template in DC
 
     """
 
@@ -46,13 +43,11 @@ class ContinuousDimension(Serializable['ContinuousDimension'], Dimension):
     lower_bound = properties.Float('lower_bound')
     upper_bound = properties.Float('upper_bound')
     typ = properties.String('type', default='ContinuousDimension', deserializable=False)
-    template_id = properties.Optional(properties.UUID, 'template_id', default=uuid4())
 
     def __init__(self,
-                 descriptor: RealDescriptor,
+                 descriptor: RealDescriptor, *,
                  lower_bound: Optional[float] = None,
-                 upper_bound: Optional[float] = None,
-                 template_id: Optional[UUID] = None):
+                 upper_bound: Optional[float] = None):
         self.descriptor: RealDescriptor = descriptor
         if lower_bound is not None:
             self.lower_bound: float = lower_bound
@@ -62,7 +57,6 @@ class ContinuousDimension(Serializable['ContinuousDimension'], Dimension):
             self.upper_bound: float = upper_bound
         else:
             self.upper_bound: float = descriptor.upper_bound
-        self.template_id: Optional[UUID] = template_id
 
 
 class EnumeratedDimension(Serializable['EnumeratedDimension'], Dimension):
@@ -72,8 +66,6 @@ class EnumeratedDimension(Serializable['EnumeratedDimension'], Dimension):
     ----------
     descriptor: Descriptor
         a descriptor of the single dimension
-    template_id: UUID
-        UUID that corresponds to the template in DC
     values: list[str]
         list of values that can be parsed by the descriptor
 
@@ -82,12 +74,9 @@ class EnumeratedDimension(Serializable['EnumeratedDimension'], Dimension):
     descriptor = properties.Object(Descriptor, 'descriptor')
     values = properties.List(properties.String(), 'list')
     typ = properties.String('type', default='EnumeratedDimension', deserializable=False)
-    template_id = properties.Optional(properties.UUID, 'template_id', default=uuid4())
 
     def __init__(self,
-                 descriptor: Descriptor,
-                 values: List[str],
-                 template_id: Optional[UUID] = None):
+                 descriptor: Descriptor, *,
+                 values: List[str]):
         self.descriptor: Descriptor = descriptor
         self.values: List[str] = values
-        self.template_id: Optional[UUID] = template_id

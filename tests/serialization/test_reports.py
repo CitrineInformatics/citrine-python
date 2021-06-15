@@ -15,9 +15,9 @@ def test_predictor_report_build(valid_predictor_report_data):
     assert report.status == 'OK'
     assert str(report.uid) == valid_predictor_report_data['id']
 
-    x = RealDescriptor("x", 0, 1, "")
-    y = RealDescriptor("y", 0, 100, "")
-    z = RealDescriptor("z", 0, 101, "")
+    x = RealDescriptor("x", lower_bound=0, upper_bound=1, units="")
+    y = RealDescriptor("y", lower_bound=0, upper_bound=100, units="")
+    z = RealDescriptor("z", lower_bound=0, upper_bound=101, units="")
     assert report.descriptors == [x, y, z]
 
     lolo_model: ModelSummary = report.model_summaries[0]
@@ -31,7 +31,9 @@ def test_predictor_report_build(valid_predictor_report_data):
         'Leaf model': 'Mean',
         'Use jackknife': True
     }
-    assert lolo_model.feature_importances[0].dump() == FeatureImportanceReport('y', {'x': 1.0}).dump()
+    feature_importance = lolo_model.feature_importances[0]
+    assert feature_importance.importances == {"x": 1.0}
+    assert feature_importance.output_key == "y"
     assert lolo_model.predictor_name == 'Predict y from x with ML'
     assert lolo_model.predictor_uid is None
 
@@ -59,7 +61,7 @@ def test_bad_predictor_report_build(valid_predictor_report_data):
     """Modify the predictor report to be non-ideal and check the behavior."""
     too_many_descriptors = deepcopy(valid_predictor_report_data)
     # Multiple descriptors with the same key
-    other_x = RealDescriptor("x", 0, 100, "")
+    other_x = RealDescriptor("x", lower_bound=0, upper_bound=100, units="")
     too_many_descriptors['report']['descriptors'].append(other_x.dump())
     with warnings.catch_warnings(record=True) as w:
         Report.build(too_many_descriptors)

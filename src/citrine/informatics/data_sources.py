@@ -75,6 +75,7 @@ class CSVDataSource(Serializable['CSVDataSource'], DataSource):
         return ["file_link", "column_definitions", "identifiers", "typ"]
 
     def __init__(self,
+                 *,
                  file_link: FileLink,
                  column_definitions: Mapping[str, Descriptor],
                  identifiers: Optional[List[str]] = None):
@@ -114,6 +115,7 @@ class GemTableDataSource(Serializable['GemTableDataSource'], DataSource):
         return ["table_id", "table_version", "typ"]
 
     def __init__(self,
+                 *,
                  table_id: UUID,
                  table_version: Union[int, str],
                  formulation_descriptor: Optional[FormulationDescriptor] = None):

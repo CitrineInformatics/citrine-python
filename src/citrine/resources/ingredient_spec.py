@@ -120,7 +120,7 @@ class IngredientSpecCollection(ObjectSpecCollection[IngredientSpec]):
         return IngredientSpec
 
     def list_by_process(self,
-                        uid: Union[UUID, str, LinkByUID, GEMDProcessSpec],
+                        uid: Union[UUID, str, LinkByUID, GEMDProcessSpec], *,
                         scope: Optional[str] = None) -> Iterator[IngredientSpec]:
         """
         [ALPHA] Get ingredients to a process.
@@ -143,7 +143,7 @@ class IngredientSpecCollection(ObjectSpecCollection[IngredientSpec]):
         return self._get_relation(relation='process-specs', uid=link.id, scope=link.scope)
 
     def list_by_material(self,
-                         uid: Union[UUID, str, LinkByUID, GEMDMaterialSpec],
+                         uid: Union[UUID, str, LinkByUID, GEMDMaterialSpec], *,
                          scope: Optional[str] = None) -> Iterator[IngredientSpec]:
         """
         [ALPHA] Get ingredients using the specified material.

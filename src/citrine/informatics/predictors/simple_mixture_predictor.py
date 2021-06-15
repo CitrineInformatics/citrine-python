@@ -37,7 +37,8 @@ class SimpleMixturePredictor(Resource['SimpleMixturePredictor'], Predictor, AIRe
 
     input_descriptor = _properties.Object(FormulationDescriptor, 'config.input')
     output_descriptor = _properties.Object(FormulationDescriptor, 'config.output')
-    training_data = _properties.List(_properties.Object(DataSource), 'config.training_data')
+    training_data = _properties.List(_properties.Object(DataSource),
+                                     'config.training_data', default=[])
 
     typ = _properties.String('config.type', default='SimpleMixture',
                              deserializable=False)
@@ -45,17 +46,16 @@ class SimpleMixturePredictor(Resource['SimpleMixturePredictor'], Predictor, AIRe
 
     def __init__(self,
                  name: str,
+                 *,
                  description: str,
                  input_descriptor: FormulationDescriptor,
                  output_descriptor: FormulationDescriptor,
-                 training_data: Optional[List[DataSource]] = None,
-                 archived: bool = False):
+                 training_data: Optional[List[DataSource]] = None):
         self.name: str = name
         self.description: str = description
         self.input_descriptor: FormulationDescriptor = input_descriptor
         self.output_descriptor: FormulationDescriptor = output_descriptor
-        self.training_data: List[DataSource] = self._wrap_training_data(training_data)
-        self.archived: bool = archived
+        self.training_data: List[DataSource] = training_data or []
 
     def _post_dump(self, data: dict) -> dict:
         data['display_name'] = data['config']['name']

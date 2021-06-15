@@ -86,7 +86,7 @@ To run all unit tests in the Docker container with default parameters:
 docker run --rm -it citrine-python
 ```
 
-To run all tests in a module or run a specific test, run a command like the following (note that this will result a reported test coverage that is low):
+To run all tests in a module or run a specific test, run a command like the following (note that this will result in a reported test coverage that is low):
 ```bash
 docker run --rm -it citrine-python tests/serialization/test_table.py
 docker run --rm -it citrine-python tests/serialization/test_table.py::test_simple_deserialization
@@ -94,18 +94,18 @@ docker run --rm -it citrine-python tests/serialization/test_table.py::test_simpl
 
 ### Logging<a name="logging"></a>
 
-A number of our python modules use python's built-in `logging` module, which supports several log
+A number of our Python modules use Python's built-in `logging` module, which supports several log
 levels:
 
 * `FATAL` - indicates a very serious (probably irrecoverable) failure has occurred
-* `ERROR` - indicates an error which by default will not be handled has occurred
+* `ERROR` - indicates an error, which by default will not be handled has occurred
 * `WARNING` - indicates that something unusual is happening, often precedes failures
 * `INFO` - informational output unrelated to problems
 * `DEBUG` - verbose information output that may assist the developer while debugging
 * `NOTSET` - currently unused in Citrine code, typically *extremely* verbose output describing
   the details of every operation being performed
 
-As set, a logging level will return any logs at the set level and above, e.g. `WARNING` includes
+As set, a logging level will return any logs at the set level and above, e.g., `WARNING` includes
 itself, `ERROR`, and `FATAL`. By default, the log level is set to `WARNING`. However, it may be
 preferable to set the log level to `ERROR` if your program's output should be particularly concise
 and/or only produce actionable information. When debugging issues, increasing the verbosity to `DEBUG`
@@ -140,9 +140,9 @@ logger.setLevel(logging.DEBUG)
 ```
 will enable `DEBUG` level output in the for all activity relating to HTTP requests to Citrine APIs.
 
-In general, all log output originating from Citrine source code will include the module from which
-log output originates. By convention loggers are named `logger`, so importing `logger` from the
-originating module will locate the correct instance, e.g. the log line
+In general, all log output originating from Citrine source code will include the module from which log output originates. 
+By convention loggers are named `logger`, so importing `logger` from the originating module will locate the correct instance.
+The log line
 
 ```
 INFO:citrine._session:200 GET /projects/fc568490-224a-4070-807f-1427c4f4dcd8
@@ -169,7 +169,14 @@ The citrine-python library follows [PEP8](https://www.python.org/dev/peps/pep-00
 Type hints are strongly encouraged.
 
 Positional arguments are strongly discouraged for methods with multiple arguments.
-Any positional argument should be required.
+Keywords should be required for almost all arguments.
+The only exception is that the first argument should be a positional argument if and only if the following are all true:
+* It is required
+* Its identity is obvious
+* It is consistent (all similar methods have the same first argument)
+
+Unique identifiers are always denoted ``uid`` _unless_ the object being referenced and the object doing the referencing have different types.
+If object of type "Foo" has a method that accepts the id of an object of type "Bar", it is denoted ``bar_id``.
 
 Docstrings must follow [Numpy style](https://numpydoc.readthedocs.io/en/latest/format.html) so that Sphinx can parse them to make the docs.
 
@@ -210,7 +217,7 @@ the current state of the docstrings in the source code.
 ### Custom documentation<a name="customdocs"></a>
 
 One of the outstanding features of sphinx is its support for arbitrarily organized documentation
-materials such as tutorials, introductions, and other context providing content. These items should
+materials such as tutorials, introductions, and other context-providing content. These items should
 be stored in source control under the `docs/source` directory in properly formatted `.rst` files.
 
 

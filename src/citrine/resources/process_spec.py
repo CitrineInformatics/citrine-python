@@ -105,7 +105,7 @@ class ProcessSpecCollection(ObjectSpecCollection[ProcessSpec]):
         """Return the resource type in the collection."""
         return ProcessSpec
 
-    def list_by_template(self, uid: Union[UUID, str, LinkByUID, GEMDProcessTemplate],
+    def list_by_template(self, uid: Union[UUID, str, LinkByUID, GEMDProcessTemplate], *,
                          scope: Optional[str] = None) -> Iterator[ProcessSpec]:
         """
         [ALPHA] Get the process specs using the specified process template.

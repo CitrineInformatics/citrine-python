@@ -1,20 +1,31 @@
 from typing import Optional
+from os import environ
+
 from citrine._session import Session
 from citrine.resources.project import ProjectCollection
 from citrine.resources.user import UserCollection
 
 
-DEFAULT_HOST: str = 'citrine.io'
-DEFAULT_SCHEME: str = 'https'
-
-
 class Citrine:
-    """The entry point for interacting with the Citrine Platform."""
+    """The entry point for interacting with the Citrine Platform.
+
+    Parameters
+    ----------
+    api_key: str
+        Unique key that allows a user to access the Citrine Platform.
+    scheme: str
+        Networking protocol; usually https
+    host: str
+        Host URL, generally '<your_site>.citrine-platform.com'
+    port: Optional[str]
+        Optional networking port
+
+    """
 
     def __init__(self,
-                 api_key: str,
-                 scheme: str = DEFAULT_SCHEME,
-                 host: str = DEFAULT_HOST,
+                 api_key: str = environ.get('CITRINE_API_KEY'),
+                 scheme: str = 'https',
+                 host: str = environ.get('CITRINE_API_HOST'),
                  port: Optional[str] = None):
         self.session: Session = Session(api_key, scheme, host, port)
 

@@ -1,10 +1,12 @@
-from typing import Union
+from typing import Union, Iterable, Optional
 from uuid import UUID
 
 from citrine._rest.collection import Collection
 from citrine._session import Session
+from citrine._utils.functions import migrate_deprecated_argument
 from citrine.informatics.workflows import DesignWorkflow
 from citrine.resources.response import Response
+from functools import partial
 
 
 class DesignWorkflowCollection(Collection[DesignWorkflow]):
@@ -22,37 +24,54 @@ class DesignWorkflowCollection(Collection[DesignWorkflow]):
     def build(self, data: dict) -> DesignWorkflow:
         """Build an individual DesignExecution."""
         workflow = DesignWorkflow.build(data)
-        workflow.session = self.session
+        workflow._session = self.session
         workflow.project_id = self.project_id
         return workflow
 
-    def archive(self, workflow_id: UUID):
+    def archive(self, uid: Union[UUID, str] = None, workflow_id: Union[UUID, str] = None):
         """Archive a design workflow.
 
         Parameters
         ----------
-        workflow_id: UUID
+        uid: Union[UUID, str]
             Unique identifier of the workflow to archive
+        workflow_id: Union[UUID, str]
+            [DEPRECATED] please use uid instead
 
         """
+        uid = migrate_deprecated_argument(uid, "uid", workflow_id, "workflow_id")
         url = self._path_template.format(project_id=self.project_id) \
-            + "/{}/archive".format(workflow_id)
+            + "/{}/archive".format(uid)
         self.session.put_resource(url, {})
 
-    def restore(self, workflow_id: UUID):
+    def restore(self, uid: Union[UUID, str] = None, workflow_id: [UUID, str] = None):
         """Restore an archived design workflow.
 
         Parameters
         ----------
-        workflow_id: UUID
+        uid: Union[UUID, str]
             Unique identifier of the workflow to restore
+        workflow_id: Union[UUID, str]
+            [DEPRECATED] please use uid instead
 
         """
+        uid = migrate_deprecated_argument(uid, "uid", workflow_id, "workflow_id")
         url = self._path_template.format(project_id=self.project_id) \
-            + "/{}/restore".format(workflow_id)
+            + "/{}/restore".format(uid)
         self.session.put_resource(url, {})
 
     def delete(self, uid: Union[UUID, str]) -> Response:
         """Design Workflows cannot be deleted; they can be archived instead."""
         raise NotImplementedError(
             "Design Workflows cannot be deleted; they can be archived instead.")
+
+    def list_archived(self,
+                      *,
+                      page: Optional[int] = None,
+                      per_page: int = 500) -> Iterable[DesignWorkflow]:
+        """List archived Design Workflows."""
+        fetcher = partial(self._fetch_page, additional_params={"filter": "archived eq 'true'"})
+        return self._paginator.paginate(page_fetcher=fetcher,
+                                        collection_builder=self._build_collection_elements,
+                                        page=page,
+                                        per_page=per_page)

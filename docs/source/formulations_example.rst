@@ -12,7 +12,7 @@ In addition, each mixing process may be characterized by attributes such as the 
 
 The GEMD data model provides a way to record all of the information relevant to a formulations problem,
 and Citrine's AI Engine turns this information into trained models that can predict the properties of novel formulations.
-This section demonstrates how to express a complete formulations example in Citrine-python, from data ingestion to new candidate generation.
+This section demonstrates how to express a complete formulations example with the Citrine Python client, from data ingestion to new candidate generation.
 
 Example Raw Data
 ----------------
@@ -180,9 +180,9 @@ Make sure to set the bounds wide enough to encompass all anticipated use cases o
 The attribute templates are attached to relevant object templates.
 For example, the process template to represent blending should include ``blend_time_template`` as a ``parameter``.
 
-Although it contains no attributes, we should particular pay attention to the templates that represent the mixing processes.
+Although it contains no attributes, we should pay particular attention to the templates that represent the mixing processes.
 These will be used to convert GEMD data into formulations.
-It is possible to use different process templates to distinguish between different types of mixing, but here we use the one template to represesnt both types of mixing that occur (mixing the simple syrup and mixing the margarita ingredients).
+It is possible to use different process templates to distinguish between different types of mixing, but here we use the one template to represent both types of mixing that occur (mixing the simple syrup and mixing the margarita ingredients).
 The template includes a comprehensive list of all allowed names and labels.
 
 .. code-block:: python
@@ -287,7 +287,7 @@ The code below defines the rows and defines one column that contains the identif
 
     from citrine.resources.table_config import TableConfig
     from citrine.gemtables.rows import MaterialRunByTemplate
-    from citrine.gemtables.variables import RootIdentifier
+    from citrine.gemtables.variables import TerminalMaterialIdentifier
     from citrine.gemtables.columns import IdentityColumn
 
 
@@ -305,7 +305,7 @@ The code below defines the rows and defines one column that contains the identif
                 templates=[LinkByUID.from_entity(t, scope) for t in material_templates_to_include]
             )
         ],
-        variables=[RootIdentifier(name="name", headers=["name"], scope=scope)],
+        variables=[TerminalMaterialIdentifier(name="name", headers=["name"], scope=scope)],
         columns=[IdentityColumn(data_source="name")]
     )
 
@@ -457,9 +457,13 @@ if we do not specify it then a default descriptor will be generated, but given h
     from citrine.informatics.data_sources import GemTableDataSource
 
     formulation = FormulationDescriptor("mixed and blended margarita")
-    data_source = GemTableDataSource(table_id=table.uid, table_version=table.version, formulation_descriptor=formulation)
+    data_source = GemTableDataSource(
+        table_id=table.uid,
+        table_version=table.version,
+        formulation_descriptor=formulation
+    )
 
-The first component of the graphical model is a :class:`~citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor`, which flattens the input formulation--it repeatedly replaces components with their ingredients until only the atomic ingredients remain.
+The first component of the graphical model is a :class:`~citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor`, which flattens the input formulation -- it repeatedly replaces components with their ingredients until only the atomic ingredients remain.
 This flattening efficiently teaches the predictor about the relationship between materials.
 In this case, it learns exactly how "simple syrup A" and "simple syrup B" are similar to each other because they both contain atomic materials sugar and water but in slightly different amounts.
 Although the homogeneous representation is not entirely appropriate for all formulations problems, it is usually an excellent approximation,
@@ -480,7 +484,7 @@ especially when coupled with flexible machine learning models that can emulate m
 Using the flattened formulation as an input, we create several "featurizers" to compute features; these will be the inputs to the machine learning model(s).
 The featurizer predictors are :class:`~citrine.informatics.predictors.ingredient_fractions_predictor.IngredientFractionsPredictor`,
 :class:`~citrine.informatics.predictors.label_fractions_predictor.LabelFractionsPredictor`, and :class:`~citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor`.
-We create one predictor each for ingredient and label fractions, and two mean property predictors--
+We create one predictor each for ingredient and label fractions, and two mean property predictors --
 one that computes the mean price over all ingredients (this will be used to constraint the price of new margarita recipes) and one that computes the mean sucrose content of just the sweeteners.
 
 .. code-block:: python

@@ -1,8 +1,5 @@
-from typing import Optional
-
 from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
-from citrine._session import Session
 from citrine.informatics.data_sources import DataSource
 from citrine.informatics.design_spaces.design_space import DesignSpace
 from citrine._rest.ai_resource_metadata import AIResourceMetadata
@@ -33,13 +30,12 @@ class DataSourceDesignSpace(Resource['DataSourceDesignSpace'], DesignSpace, AIRe
 
     def __init__(self,
                  name: str,
+                 *,
                  description: str,
-                 data_source: DataSource,
-                 session: Optional[Session] = None):
+                 data_source: DataSource):
         self.name: str = name
         self.description: str = description
         self.data_source: DataSource = data_source
-        self.session: Optional[Session] = session
 
     def _post_dump(self, data: dict) -> dict:
         data['display_name'] = data['config']['name']

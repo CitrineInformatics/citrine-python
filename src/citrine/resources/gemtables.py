@@ -3,7 +3,6 @@ from logging import getLogger
 from typing import Union, Iterable, Optional, Any, Tuple
 from uuid import uuid4
 
-import deprecation
 import requests
 
 from citrine._rest.collection import Collection
@@ -13,7 +12,7 @@ from citrine._serialization import properties
 from citrine._serialization.properties import UUID
 from citrine._session import Session
 from citrine._utils.functions import rewrite_s3_links_locally, write_file_locally
-from citrine.resources.job import JobSubmissionResponse, _poll_for_job_completion
+from citrine.jobs.job import JobSubmissionResponse, _poll_for_job_completion
 from citrine.resources.table_config import TableConfig
 
 logger = getLogger(__name__)
@@ -41,20 +40,10 @@ class GemTable(Resource['Table']):
     This is an expiring download link and is not unique."""
 
     def __init__(self):
-        self.uid = None
-        self.version = None
-        self.download_url = None
+        pass  # pragma: no cover
 
     def __str__(self):
         return '<GEM Table {!r}, version {}>'.format(self.uid, self.version)
-
-    @deprecation.deprecated(deprecated_in="0.16.0", details="Use TableCollection.read() instead")
-    def read(self, local_path):
-        """[DEPRECATED] Use TableCollection.read() instead."""  # noqa: D402
-        data_location = self.download_url
-        data_location = rewrite_s3_links_locally(data_location)
-        response = requests.get(data_location)
-        write_file_locally(response.content, local_path)
 
 
 class GemTableVersionPaginator(Paginator[GemTable]):
@@ -81,7 +70,7 @@ class GemTableCollection(Collection[GemTable]):
         self.project_id = project_id
         self.session: Session = session
 
-    def get(self, uid: Union[UUID, str], version: Optional[int] = None) -> GemTable:
+    def get(self, uid: Union[UUID, str], *, version: Optional[int] = None) -> GemTable:
         """Get a Table's metadata. If no version is specified, get the most recent version."""
         if version is not None:
             path = self._get_path(uid) + "/versions/{}".format(version)
@@ -94,6 +83,7 @@ class GemTableCollection(Collection[GemTable]):
 
     def list_versions(self,
                       uid: UUID,
+                      *,
                       page: Optional[int] = None,
                       per_page: int = 100) -> Iterable[GemTable]:
         """
@@ -123,6 +113,7 @@ class GemTableCollection(Collection[GemTable]):
 
     def list_by_config(self,
                        table_config_uid: UUID,
+                       *,
                        page: Optional[int] = None,
                        per_page: int = 100) -> Iterable[GemTable]:
         """
@@ -155,7 +146,7 @@ class GemTableCollection(Collection[GemTable]):
             # Don't deduplicate on uid since uids are shared between versions
             fetch_versions, build_versions, page, per_page, deduplicate=False)
 
-    def initiate_build(self, config: Union[TableConfig, str, UUID],
+    def initiate_build(self, config: Union[TableConfig, str, UUID], *,
                        version: Union[str, UUID] = None) -> JobSubmissionResponse:
         """
         [ALPHA] Initiates tables build with provided config.
@@ -246,7 +237,7 @@ class GemTableCollection(Collection[GemTable]):
                     warn_lines.append('and {} more similar.'
                                       .format(total_count - len(limited_results)))
             logger.warning('\n\t'.join(warn_lines))
-        return self.get(table_id, table_version)
+        return self.get(table_id, version=table_version)
 
     def build_from_config(self, config: Union[TableConfig, str, UUID], *,
                           version: Union[str, int] = None,
@@ -271,7 +262,7 @@ class GemTableCollection(Collection[GemTable]):
             A new table built from the supplied config.
 
         """
-        job = self.initiate_build(config, version)
+        job = self.initiate_build(config, version=version)
         return self.get_by_build_job(job, timeout=timeout)
 
     def build(self, data: dict) -> GemTable:
@@ -296,16 +287,25 @@ class GemTableCollection(Collection[GemTable]):
         """Tables cannot be deleted at this time."""
         raise NotImplementedError("Tables cannot be deleted at this time.")
 
-    def read(self, table: Union[GemTable, Tuple[str, int]], local_path: str):
+    def read(self, *, table: Union[GemTable, Tuple[str, int]], local_path: str):
         """
         Read the Table file from S3.
 
         If a Table object is not provided, retrieve it using the provided table and version ids.
+
+
+        Parameters
+        ----------
+        table:
+            The persisted table config from which to build a table (or its ID and version number).
+        local_path
+            The path to the local location to save the file
+
         """
         # NOTE: this uses the pre-signed S3 download url. If we need to download larger files,
         # we have other options available (using multi-part downloads in parallel , for example).
         if isinstance(table, Tuple):
-            table = self.get(table[0], table[1])
+            table = self.get(uid=table[0], version=table[1])
 
         data_location = table.download_url
         data_location = rewrite_s3_links_locally(data_location, self.session.s3_endpoint_url)

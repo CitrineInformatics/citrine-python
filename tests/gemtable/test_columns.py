@@ -2,7 +2,6 @@
 import pytest
 
 from citrine.gemtables.columns import *
-import citrine.ara.columns as oldcolumns
 
 
 @pytest.fixture(params=[
@@ -42,8 +41,3 @@ def test_invalid_deser():
 
     with pytest.raises(ValueError):
         Column.build({"type": "foo"})
-
-
-def test_renamed_classes_are_the_same():
-    # Mostly make code coverage happy
-    assert oldcolumns.CompositionSortOrder == CompositionSortOrder

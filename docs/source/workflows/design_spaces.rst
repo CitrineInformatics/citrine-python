@@ -1,9 +1,9 @@
 Design Spaces
 =====================
 
-A design space defines a set of materials that should be searched over when performing a material design.
+A Design Space defines a set of materials that should be searched over when performing a material design.
 Design Spaces must be registered to be used in a :doc:`design workflow <design_workflows>`.
-Currently, there are four design spaces:
+Currently, there are four Design Spaces:
 
 -  `EnumeratedDesignSpace <#enumerated-design-space>`__
 -  `ProductDesignSpace <#product-design-space>`__
@@ -18,7 +18,7 @@ Each candidate is specified using a dictionary keyed on the key of a correspondi
 A list of descriptors defines what key-value pairs must be present in each candidate.
 If a candidate is missing a descriptor key-value pair, contains extra key-value pairs or any value is not valid for the corresponding descriptor, it is removed from the design space.
 
-As an example, an enumerated design space that represents points from a 2D Cartesian coordinate system can be created using the python SDK:
+As an example, an enumerated design space that represents points from a 2D Cartesian coordinate system can be created using the Citrine Python client:
 
 .. code:: python
 
@@ -85,7 +85,7 @@ Once all combinations of finite variables have been sampled, the cycle repeats w
 
 Finite sets of value are defined using an :class:`~citrine.informatics.dimensions.EnumeratedDimension`.
 Valid variable values are specified using a list of strings.
-An enumerated dimension of two temperatures, for example, can be specified using the python SDK via:
+An enumerated dimension of two temperatures, for example, can be specified using the Citrine Python client via:
 
 .. code:: python
 
@@ -208,7 +208,7 @@ A :class:`~citrine.informatics.design_spaces.formulation_design_space.Formulatio
 Ingredient names are specified as a set of strings, each mapping to a unique ingredient in a design space.
 For example, ``{"water","salt"}`` may be the set of names for a design space with two ingredients.
 Labels provide a way to map a string to a set of ingredient names.
-For example, salt can be labelled as a solute by specifying the mapping ``{"solute": {"salt"}}``.
+For example, salt can be labeled as a solute by specifying the mapping ``{"solute": {"salt"}}``.
 An ingredient may be given multiple labels, and an ingredient will always be given all applicable labels when present in a formulation.
 
 Constraints restrict the total number or fractional amount of ingredients in formulations sampled from the design space.
@@ -216,7 +216,7 @@ There are three types of constraint that can be specified as part of a formulati
 
 - :class:`~citrine.informatics.constraints.ingredient_count_constraint.IngredientCountConstraint` constrains the total number of ingredients in a formulation.
   At least one constraint on the total number of ingredients is required.
-  Formulation design spaces without this constraint will fail validation.
+  Formulation Design Spaces without this constraint will fail validation.
   Additional ingredient count constraints may specify a label.
   If specified, only ingredients with the given label count towards the constraint total.
   This could be used, for example, to constrain the total number of solutes in a formulation without constraining the number of solvents.
@@ -229,10 +229,10 @@ All minimum and maximum bounds for these three formulation constraints are inclu
 :class:`~citrine.informatics.constraints.ingredient_fraction_constraint.IngredientFractionConstraint` and :class:`~citrine.informatics.constraints.label_fraction_constraint.LabelFractionConstraint` also have an ``is_required`` flag.
 By default ``is_required == True``, indicating that ingredient and label fractions unconditionally must be within the minimum and maximum bound defined by the constraint.
 If set to ``False``, the fractional amount may be either zero or within the specified bounds.
-In other words, the fractional amount is restricted to the specified bounds *only* when the formulations contains the constrained ingredient (for ingredient fraction constraints) or any ingredient with the given label (for label fraction constraints).
+In other words, the fractional amount is restricted to the specified bounds *only* when the formulation contains the constrained ingredient (for ingredient fraction constraints) or any ingredient with the given label (for label fraction constraints).
 Setting ``is_required`` to ``False`` effectively adds 0 as a valid value.
 
-Formulation design spaces define an inherent ``resolution`` for formulations sampled from the domain.
+Formulation Design Spaces define an inherent ``resolution`` for formulations sampled from the domain.
 This resolution defines the minimum step size between consecutive formulations sampled from the space.
 Resolution does not impose a grid over fractional ingredient amounts.
 Instead, it provides a way to specify the characteristic length scale for the problem.

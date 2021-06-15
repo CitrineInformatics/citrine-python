@@ -5,27 +5,27 @@ A processor defines how a :doc:`design space <design_spaces>` is searched.
 There are three processors:
 
 -  `EnumeratedProcessor <#enumerated-processor>`__ enumerates up to a fixed number of materials from a finite, enumerable space.
--  `GridProcessor <#grid-processor>`__ creates finite, enumerable space from a (semi)-continuous one by discretizing the continuous variables and enumerating the finite variables.
+-  `GridProcessor <#grid-processor>`__ creates finite, enumerable space from a (semi-)continuous one by discretizing the continuous variables and enumerating the finite variables.
 -  `MonteCarloProcessor <#monte-carlo-processor>`__ uses Monte Carlo methods to explore a space, taking a semi-directed random walk to find high-performing points.
 
 Enumerated processor
 --------------------
 
 An :class:`~citrine.informatics.processors.EnumeratedProcessor` takes up to a maximum number of materials from a :doc:`design space <design_spaces>` and processes each independently.
-The maximum number of candidates sampled from the design space is defined by the optional ``max_size`` parameter when creating an :class:`~citrine.informatics.processors.EnumeratedProcessor` using the python SDK.
-To be valid, enumerated processors must have a maximum size of at least 1.
+The maximum number of candidates sampled from the Design Space is defined by the optional ``max_candidates`` parameter when creating an :class:`~citrine.informatics.processors.EnumeratedProcessor` using the Citrine Python client.
+To be valid, enumerated processors must have a maximum number of candidates of at least 1.
 
-An enumerated processor can be used with finite and infinite design spaces.
+An enumerated processor can be used with finite and infinite Design Spaces.
 A finite space can be defined using an :class:`~citrine.informatics.design_spaces.EnumeratedDesignSpace` or a :class:`~citrine.informatics.design_spaces.ProductDesignSpace` composed only of :class:`EnumeratedDimensions <citrine.informatics.dimensions.EnumeratedDimension>`.
-In these cases, the processor will systematically pull up to ``max_size`` samples from the space.
+In these cases, the processor will systematically pull up to ``max_candidates`` samples from the space.
 
-An infinite design space is created when a :class:`~citrine.informatics.design_spaces.ProductDesignSpace` contains one or more continuous dimensions.
-When an enumerated processor is combined with an infinite design space, ``max_size`` samples are always pulled from the domain.
-If all dimensions of a design pace are continuous, samples are created by randomly sampling from each dimension.
-If there are mixed continuous and enumerated dimensions in the design space, samples are created by combining the Cartesian product of enumerated dimensions with random samples from continuous dimensions.
+An infinite Design Space is created when a :class:`~citrine.informatics.design_spaces.ProductDesignSpace` contains one or more continuous dimensions.
+When an enumerated processor is combined with an infinite Design Space, ``max_candidates`` samples are always pulled from the domain.
+If all dimensions of a Design Space are continuous, samples are created by randomly sampling from each dimension.
+If there are mixed continuous and enumerated dimensions in the Design Space, samples are created by combining the Cartesian product of enumerated dimensions with random samples from continuous dimensions.
 Finite elements repeat once the Cartesian product is exhausted.
 
-The following demonstrates how to create an enumerated processor that takes up to 100 samples from a design space, register it with a project and view validation results:
+The following demonstrates how to create an enumerated processor that takes up to 100 samples from a Design Space, register it with a project, and view validation results:
 
 .. code:: python
 
@@ -43,7 +43,7 @@ The following demonstrates how to create an enumerated processor that takes up t
        EnumeratedProcessor(
            name='Enumerated processor',
            description='Samples up to 100 items from a design space',
-           max_size=100
+           max_candidates=100
        )
    )
 
@@ -66,11 +66,11 @@ To create a finite set of materials from continuous dimensions, a uniform grid i
 The number of points is specified by ``grid_sizes``.
 ``grid_sizes`` is a map from descriptor key to the number of points to select between bounds of the dimension.
 For example, if the dimension is bounded by 0 and 10 and the grid size is 11, points are taken from 0 to 10 in increments of 1.
-Each continuous dimension in the design space must be given a grid size.
+Each continuous dimension in the Design Space must be given a grid size.
 Enumerated dimensions cannot be given a grid size because it is not clear how to downsample or create a grid for a finite dimension.
 
 The following demonstrates how to create a grid processor that searches
-a 2D design space of enumerated x values and continuous y values:
+a 2D Design Space of enumerated x values and continuous y values:
 
 .. code:: python
 

@@ -13,14 +13,14 @@ def test_from_predictor_responses():
     response_json = {
         'responses': [  # shortened sample response
             {
-                'category': 'Real',
+                'type': 'Real',
                 'descriptor_key': 'khs.sNH3 KierHallSmarts for {}'.format(col),
                 'units': '',
                 'lower_bound': 0,
                 'upper_bound': 1000000000
             },
             {
-                'category': 'Real',
+                'type': 'Real',
                 'descriptor_key': 'khs.dsN KierHallSmarts for {}'.format(col),
                 'units': '',
                 'lower_bound': 0,
@@ -37,7 +37,7 @@ def test_from_predictor_responses():
         features=["all"],
         excludes=["standard"]
     )
-    results = descriptors.from_predictor_responses(featurizer, [MolecularStructureDescriptor(col)])
+    results = descriptors.from_predictor_responses(predictor=featurizer, inputs=[MolecularStructureDescriptor(col)])
     assert results == [
         RealDescriptor(
             key=r['descriptor_key'],
@@ -57,14 +57,14 @@ def test_descriptors_from_data_source():
     response_json = {
         'descriptors': [  # shortened sample response
             {
-                'category': 'Real',
+                'type': 'Real',
                 'descriptor_key': 'khs.sNH3 KierHallSmarts for {}'.format(col),
                 'units': '',
                 'lower_bound': 0,
                 'upper_bound': 1000000000
             },
             {
-                'category': 'Real',
+                'type': 'Real',
                 'descriptor_key': 'khs.dsN KierHallSmarts for {}'.format(col),
                 'units': '',
                 'lower_bound': 0,
@@ -74,9 +74,9 @@ def test_descriptors_from_data_source():
     }
     session.set_response(response_json)
     descriptors = DescriptorMethods(uuid4(), session)
-    data_source = GemTableDataSource('43357a66-3644-4959-8115-77b2630aca45', 123)
+    data_source = GemTableDataSource(table_id='43357a66-3644-4959-8115-77b2630aca45', table_version=123)
 
-    results = descriptors.descriptors_from_data_source(data_source)
+    results = descriptors.descriptors_from_data_source(data_source=data_source)
     assert results == [
         RealDescriptor(
             key=r['descriptor_key'],

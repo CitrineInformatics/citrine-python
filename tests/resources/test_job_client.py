@@ -1,10 +1,11 @@
+import pytest
 from uuid import UUID
 
-import pytest
-from citrine.resources.ara_definition import AraDefinition, AraDefinitionCollection
-from citrine.resources.ara_job import TaskNode, JobStatusResponse, JobSubmissionResponse
+from citrine.jobs.job import TaskNode, JobStatusResponse, JobSubmissionResponse
+import citrine.resources.job as oldjobs
+from citrine.resources.gemtables import GemTableCollection
 from citrine.resources.project import Project
-
+from citrine.resources.table_config import TableConfig
 from tests.utils.session import FakeSession
 
 
@@ -40,16 +41,16 @@ def session() -> FakeSession:
 
 
 @pytest.fixture
-def collection(session) -> AraDefinitionCollection:
-    return AraDefinitionCollection(
+def collection(session) -> GemTableCollection:
+    return GemTableCollection(
         project_id=UUID('6b608f78-e341-422c-8076-35adc8828545'),
         session=session
     )
 
 
 @pytest.fixture
-def table_config() -> AraDefinition:
-    table_config: AraDefinition = AraDefinition(name="name", description="description", datasets=[], rows=[], variables=[], columns=[])
+def table_config() -> TableConfig:
+    table_config = TableConfig(name="name", description="description", datasets=[], rows=[], variables=[], columns=[])
     table_config.version_number = 1
     table_config.config_uid = UUID('12345678-1234-1234-1234-123456789bbb')
     return table_config
@@ -69,14 +70,7 @@ def test_tn_serde():
     tn = TaskNode.build(task_node_1())
     expected = task_node_1()
     expected['failure_reason'] = None
-    expected_tn = TaskNode(
-        id=expected['id'],
-        task_type=expected['task_type'],
-        status=expected['status'],
-        dependencies=expected['dependencies'],
-        failure_reason=expected['failure_reason']
-    )
-    assert tn.dump() == expected_tn.dump()
+    assert tn.dump() == expected
 
 
 def test_js_serde():
@@ -84,46 +78,23 @@ def test_js_serde():
     expected = job_status()
     expected['tasks'][0]['failure_reason'] = None
     expected['output'] = None
-    expected_js = JobStatusResponse(
-        job_type=expected['job_type'],
-        status=expected['status'],
-        tasks=[TaskNode.build(i) for i in expected['tasks']],
-        output=expected['output']
-    )
-    assert js.dump() == expected_js.dump()
+    assert js.dump() == expected
 
 
 def test_js_serde_with_output():
     js = JobStatusResponse.build(job_status_with_output())
     expected = job_status_with_output()
     expected['tasks'][0]['failure_reason'] = None
-    expected_js = JobStatusResponse(
-        job_type=expected['job_type'],
-        status=expected['status'],
-        tasks=[TaskNode.build(i) for i in expected['tasks']],
-        output={"key1": "val1", "key2": "val2"}
-    )
-    assert js.dump() == expected_js.dump()
+    assert js.dump() == expected
 
 
-def test_build_job(collection: AraDefinitionCollection, table_config: AraDefinition):
+def test_build_job(collection: GemTableCollection, table_config: TableConfig):
     collection.session.set_response({"job_id": '12345678-1234-1234-1234-123456789ccc'})
-    resp = collection.build_ara_table(table_config)
-    assert resp.dump() == JobSubmissionResponse(UUID('12345678-1234-1234-1234-123456789ccc')).dump()
+    resp = collection.initiate_build(table_config)
+    assert isinstance(resp, JobSubmissionResponse)
+    assert resp.job_id == UUID('12345678-1234-1234-1234-123456789ccc')
 
 
-def test_job_status(collection: AraDefinitionCollection):
-    status = job_status()
-    collection.session.set_response(status)
-    resp = collection.get_job_status(job_id='12345678-1234-1234-1234-123456789ccc')
-    status['tasks'][0]['failure_reason'] = None
-    status['output'] = None
-    assert status == resp.dump()
-
-
-def test_job_status_with_output(collection: AraDefinitionCollection):
-    status = job_status_with_output()
-    collection.session.set_response(status)
-    resp = collection.get_job_status(job_id='12345678-1234-1234-1234-123456789ccc')
-    status['tasks'][0]['failure_reason'] = None
-    assert status == resp.dump()
+def test_renamed_classes_are_the_same():
+    # Mostly make code coverage happy
+    assert oldjobs.JobSubmissionResponse == JobSubmissionResponse
