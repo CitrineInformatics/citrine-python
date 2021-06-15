@@ -27,7 +27,7 @@ There are two important helper methods in this regard.
 :func:`~citrine.resources.descriptors.DescriptorMethods.descriptors_from_data_source` can provide all of the descriptors that are present in the training data.
 :func:`~citrine.resources.descriptors.DescriptorMethods.from_predictor_responses` can tell you what the outputs of a predictor will be, which is especially useful for featurizers.
 
-The following example demonstrates how to use the python SDK to create an :class:`~citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor`, register the predictor to a project and wait for validation:
+The following example demonstrates how to use the Citrine Python client to create an :class:`~citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor`, register the predictor to a project and wait for validation:
 
 .. code:: python
 
@@ -141,7 +141,7 @@ An alias is required for each expression argument.
 The ``aliases`` parameter defines a mapping from expression arguments to their associated input descriptors.
 The expression argument does not need to match its descriptor key.
 This is useful to avoid typing out the verbose descriptor keys in the expression string.
-Note, spaces are not supported in expression arguments, e.g. ``Y`` is a valid argument while ``Young's modulus`` is not.
+Note, spaces are not supported in expression arguments, e.g., ``Y`` is a valid argument while ``Young's modulus`` is not.
 
 The syntax is described in the `mXparser documentation <http://mathparser.org/mxparser-math-collection>`_.
 Citrine-python currently supports the following operators and functions:
@@ -190,7 +190,7 @@ For an example of expression predictors used in a graph predictor, see :ref:`AI 
 Molecular Structure Featurizer
 ------------------------------------
 The :class:`~citrine.informatics.predictors.molecular_structure_featurizer.MolecularStructureFeaturizer`
-computes a configurable set of features on molecular structure data, e.g. SMILES or InChI strings, using the `Chemistry Development Kit (CDK) <https://cdk.github.io/>`_.
+computes a configurable set of features on molecular structure data, e.g., SMILES or InChI strings, using the `Chemistry Development Kit (CDK) <https://cdk.github.io/>`_.
 The features are configured using the ``features`` and ``excludes`` arguments, which accept either feature names or predefined aliases.
 The default is the `standard` alias, corresponding to eight features that are a good balance of cost and performance.
 
@@ -268,7 +268,7 @@ Many of the features are stoichiometrically weighted generalized means of elemen
 The generalized means are configured with the ``powers`` argument, which is a list of means to calculate.
 For example, setting ``powers=[1, 3]`` will calculate the mean and 3-mean of all applicable features.
 
-The feature to compute are configured using the ``features`` and ``excludes`` arguments, which accept either feature names or predefined aliases.
+The features to compute are configured using the ``features`` and ``excludes`` arguments, which accept either feature names or predefined aliases.
 The default is the `standard` alias, corresponding to a variety of features that are intuitive and often correlate with properties of interest.
 Other aliases are "physical," "electronic," and "periodicTable."
 A complete list of features and which aliases they map to can be found in the class docstring.
@@ -346,12 +346,12 @@ Ingredients to formulation predictor (ALPHA)
 The :class:`~citrine.informatics.predictors.ingredients_to_formulation_predictor.IngredientsToFormulationPredictor` constructs a formulation from a list of ingredients.
 This predictor is only required to construct formulations from CSV data sources.
 Formulations are constructed automatically by GEM Tables when a ``formulation_descriptor`` is specified by the data source, so
-an :class:`~citrine.informatics.predictors.ingredients_to_formulation_predictor.IngredientsToFormulationPredictor` in not required in those cases.
+an :class:`~citrine.informatics.predictors.ingredients_to_formulation_predictor.IngredientsToFormulationPredictor` is not required in those cases.
 
 Ingredients are specified by a map from ingredient id to the descriptor that contains the ingredient's quantity.
 For example, ``{'water': RealDescriptor('water quantity', lower_bound=0, upper_bound=1, units='')}`` defines an ingredient ``water`` with quantity held by the descriptor ``water quantity``.
 There must be a corresponding (id, quantity) pair in the map for all possible ingredients.
-If a material does not contain data for a given quantity descriptor key it is assumed that ingredient is not present in the mixture.
+If a material does not contain data for a given quantity descriptor key, it is assumed that ingredient is not present in the mixture.
 
 Let's add another ingredient ``salt`` to our map and say we are given data in the form:
 
@@ -367,8 +367,8 @@ Let's add another ingredient ``salt`` to our map and say we are given data in th
 | salt              |                |               | 2.16           |
 +-------------------+----------------+---------------+----------------+
 
-There are two mixtures, hypertonic and isotonic saline formed by mixing water and salt together in different amounts.
-(Note, water and salt are leaf ingredients; and, hence these rows do not contain quantity data.)
+There are two mixtures, hypertonic and isotonic saline, formed by mixing water and salt together in different amounts.
+(Note, water and salt are leaf ingredients; hence these rows do not contain quantity data.)
 Mixtures are defined by a map from ingredient id to quantity, so this predictor would form 2 mixtures with recipes:
 
 .. code:: python
@@ -495,7 +495,7 @@ To configure a mean property predictor, we must specify:
 * A list of properties to featurize
 * The power of the `generalized mean <https://en.wikipedia.org/wiki/Generalized_mean>`_.
   Only integer powers are supported. ``p=1`` corresponds to the arithmetic mean, which weights
-  all values evenly. Higher powers, such as ``p=2`` (the root mean square) place more weight
+  all values evenly. Higher powers, such as ``p=2`` (the root mean square), place more weight
   on larger values of the property. Negative powers place more weight on smaller values.
 * A data source that contains all ingredients and their properties
 * How to handle missing ingredient properties
@@ -508,7 +508,7 @@ Missing ingredient properties can be handled one of three ways:
    Otherwise, the row will not be featurized.
    Use this option if you expect ingredient properties to be dense (always present) and would like to exclude rows when properties are missing.
 2. If ``impute_properties == True`` and no ``default_properties`` are specified, missing properties will be filled in using the average value across the entire dataset.
-   The average is computed from any row with data corresponding to the missing property, regardless of label or material type (i.e. the average is computed from all leaf ingredients and mixtures).
+   The average is computed from any row with data corresponding to the missing property, regardless of label or material type (i.e., the average is computed from all leaf ingredients and mixtures).
 3. If ``impute_properties == True`` and ``default_properties`` are specified, the specified property value will be used when an ingredient property is missing (instead of the average over the dataset).
    This allows complete control over what values are imputed.
    Default properties cannot be specified if ``impute_properties == False`` (because missing properties are not filled in).
@@ -528,9 +528,9 @@ Our leaf ingredient data might resemble:
 
 If ``impute_properties == False``, any mixture that includes boric acid will not be featurized.
 If ``impute_properties == True`` and no ``default_properties`` are specified, an density of :math:`\left( 1.0 + 2.16 \right) / 2 = 1.58` will be used.
-If a value other than 1.58 should be used, e.g. 2.0, this can be specified by setting ``default_properties = {'density': 2.0}``.
+If a value other than 1.58 should be used (e.g., 2.0), this can be specified by setting ``default_properties = {'density': 2.0}``.
 
-The example below show how to configure a mean property predictor to compute mean solute density in formulations.
+The example below shows how to configure a mean property predictor to compute mean solute density in formulations.
 
 .. code:: python
 
@@ -577,7 +577,7 @@ This predictor will compute a real descriptor with a key ``mean of property dens
         inputs=[formulation_descriptor]
     )
 
-If ``p`` is given a value other than ``1``, that value will be included in the key for the feature, e.g. ``2.0-mean of property viscosity``.
+If ``p`` is given a value other than ``1``, that value will be included in the key for the feature (e.g., ``2.0-mean of property viscosity``).
 
 Ingredient fractions predictor
 ------------------------------
@@ -628,7 +628,7 @@ Label fractions predictor
 -------------------------
 
 The :class:`~citrine.informatics.predictors.label_fractions_predictor.LabelFractionsPredictor` computes total fraction of ingredients with a given label.
-The predictor is configured by specifying a formulation descriptor that holds formulation data (i.e. recipes and ingredient labels) and a set of labels to featurize.
+The predictor is configured by specifying a formulation descriptor that holds formulation data (i.e., recipes and ingredient labels) and a set of labels to featurize.
 A separate response is computed for each featurized label by summing all quantities in the recipe associated with ingredients given the label.
 
 The following example demonstrates how to create a predictor that computes the total fractions of solute and solvent in a formulation.
@@ -660,7 +660,7 @@ Simple ML predictor
 -------------------
 
 The :class:`~citrine.informatics.predictors.simple_ml_predictor.SimpleMLPredictor` predicts material properties using a machine-learned model.
-Each predictor is defined by a set of inputs, outputs and latent variables.
+Each predictor is defined by a set of inputs, outputs, and latent variables.
 Inputs are used as input features to the machine learning model.
 Outputs are the properties that you would like the model to predict.
 There must be at least one input and one output.
@@ -783,16 +783,16 @@ Training data are defined by a list of :doc:`data sources <data_sources>`.
 When multiple data sources are specified, data from all sources is combined into a flattened list and deduplicated prior to training a predictor.
 Deduplication is performed if a uid or identifier is shared between two or more rows.
 The content of a deduplicated row will contain the union of data across all rows that share the same uid or at least 1 identifier.
-An error will be thrown if two deduplicated rows contain different data for the same descriptor because it's unclear which value should be used in the deduplcated row.
+An error will be thrown if two deduplicated rows contain different data for the same descriptor because it's unclear which value should be used in the deduplicated row.
 
 Deduplication is additive.
 Given three rows with identifiers ``[a]``, ``[b]`` and ``[a, b]``, deduplication will result in a single row with three identifiers (``[a, b, c]``) and the union of all data from these rows.
 Care must be taken to ensure uids and identifiers aren't shared across multiple data sources to avoid unwanted deduplication.
 
-When using a :class:`~citrine.informatics.predictors.graph_predictor.GraphPredictor`, training data provided by the graph predictor and all subpredictors are combined into a single deduplicated list.
+When using a :class:`~citrine.informatics.predictors.graph_predictor.GraphPredictor`, training data provided by the graph predictor and all sub-predictors are combined into a single deduplicated list.
 Each predictor is trained on the subset of the combined data that is valid for the model.
-Note, data may come from sources defined by other subpredictors in the graph.
-Because training data are shared by all predictors in the graph, a data source does not need to be redefined by all subpredictors that require it.
-If all data sources required train a predictor are specified elsewhere in the graph, the ``training_data`` parameter may be omitted.
+Note, data may come from sources defined by other sub-predictors in the graph.
+Because training data are shared by all predictors in the graph, a data source does not need to be redefined by all sub-predictors that require it.
+If all data sources required to train a predictor are specified elsewhere in the graph, the ``training_data`` parameter may be omitted.
 If the graph contains a predictor that requires formulations data, e.g. a :class:`~citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor` or :class:`~citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor`, any GEM Tables specified by the graph predictor that contain formulation data must provide a formulation descriptor,
 and this descriptor must match the input formulation descriptor of the sub-predictors that require these data.

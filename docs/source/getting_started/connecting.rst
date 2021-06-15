@@ -2,7 +2,7 @@
 Connecting to the Citrine Platform
 ======================================
 
-The Citrine Python Client connects to the Citrine Platform API.
+The Citrine Python client connects to the Citrine Platform API.
 To create a client, you must specify the specific site that you want to connect to and your API key:
 
 .. code-block:: python

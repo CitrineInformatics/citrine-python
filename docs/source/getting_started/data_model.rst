@@ -5,7 +5,7 @@ Data Model Overview
 Overview
 --------
 
-The Citrine python client is built on our NextGen data model, GEMD.
+The Citrine Python client is built on our NextGen data model, GEMD.
 GEMD is a format that links together materials, the processes that produced them, and the measurements that characterize them.
 Complete documentation of GEMD can be found in the `data model docs <https://citrineinformatics.github.io/gemd-docs/>`_,
 and a more thorough discussion of working with data objects in this client can be found in the :doc:`data entry docs <../data_entry>`.
@@ -35,7 +35,7 @@ We make a first class distinction between intent (specs) and reality (runs).
 The same spec can be used to create many runs.
 For example, you might create a single material spec for 10 cm silicon wafers and hundreds of associated material runs, one representing each physical sample produced.
 
-It is often expected that a run and its spec will agree with each other but that is not enforced.
+It is often expected that a run and its spec will agree with each other, but that is not enforced.
 A measurement spec on the silicon wafers might state that the property "mass" is expected to have a value of 36.6 +/- 0.1 grams, but the measurement run on one sample has a value of 37.5 grams.
 That is OK and *should* be recorded.
 Materials science is messy and reality does not always align with our intent.
@@ -44,9 +44,9 @@ That's why we've made our data model flexible.
 Attributes
 ----------
 
-Properties are characteristics of a material that could be measured, e.g. chemical composition, density, yield strength.
-Conditions are the environmental variables (typically measured) that may affect a process or measurement: e.g. Temperature, Pressure.
-Parameters are the non-environmental variables (typically specified and controlled) that may affect a process or measurement: e.g. oven dial temperature position for a kiln firing, magnification for a measurement taken with a SEM.
+Properties are characteristics of a material that could be measured, e.g., chemical composition, density, yield strength.
+Conditions are the environmental variables (typically measured) that may affect a process or measurement: e.g., Temperature, Pressure.
+Parameters are the non-environmental variables (typically specified and controlled) that may affect a process or measurement: e.g., oven dial temperature position for a kiln firing, magnification for a measurement taken with a SEM.
 
 Each type of object can be assigned some subset of these attributes.
 For example, process specs have optional conditions and parameters but not properties.

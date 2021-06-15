@@ -2,7 +2,7 @@
 Overview
 ========
 
-The Citrine python client serves as the entry point for creating and interacting with resources on the Citrine Platform.
+The Citrine Python client serves as the entry point for creating and interacting with resources on the Citrine Platform.
 There are a few basic types of resources to become acquainted with: :doc:`projects <projects>`, :doc:`datasets <datasets>`, :doc:`data objects <data_model>`, and :doc:`AI modules <ai_modules>`.
 A project is a container for a thematically related group of datasets and AI modules that a specific group of people have access to.
 A dataset is an access control unit for data objects and files: information about materials samples, the way they were processed, and the measurements performed on them.

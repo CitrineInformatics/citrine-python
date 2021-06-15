@@ -7,10 +7,10 @@ GEM Tables are a component of the Citrine Platform data service that extracts da
 A GEM Table is defined on a set of material histories, and the rows in the resulting GEM Table are in 1-to-1 correspondence with those material histories.
 Columns correspond to data about the material histories, such as the temperature measured in a kiln used at a specific manufacturing step.
 
-Defining row and columns
+Defining rows and columns
 ------------------------
 
-A RowDefinition object describes a mapping from a list of datasets to rows of a table by selecting a set of Material Histories.
+A Row object describes a mapping from a list of Datasets to rows of a table by selecting a set of Material Histories.
 Each Material History corresponds to exactly one row, though the Material Histories may overlap such that the same objects contribute data to multiple rows.
 For example, the material histories of distinct Material Runs will map to exactly two rows even if their histories are identical up to differing Process Runs of their final baking step.
 The only way to define rows right now is through :class:`~citrine.gemtables.rows.MaterialRunByTemplate`, which produces one row per Material Run associated with any of a list of material templates.
@@ -63,7 +63,7 @@ Defining tables
 ---------------
 
 The :class:`~citrine.resources.table_config.TableConfig` object defines how to build a GEM Table.
-It specifies a list of UUIDs for datasets to query in generating the table,
+It specifies a list of UUIDs for Datasets to query in generating the table,
 a list of :class:`~citrine.gemtables.rows.Row` objects that define material histories to use as rows,
 a list of :class:`~citrine.gemtables.variables.Variable` objects that specify how to extract data from those material histories,
 and a list of :class:`~citrine.gemtables.columns.Column` objects to transform those variables into columns.
@@ -81,18 +81,18 @@ and a list of :class:`~citrine.gemtables.columns.Column` objects to transform th
          rows=[row_def],
          columns=[final_density_mean, final_density_std])
 
-Note the inclusion of two datasets above.
-In general, you should have at least two datasets referenced because Objects and Templates are generally associated with different datasets.
+Note the inclusion of two Datasets above.
+In general, you should have at least two Datasets referenced because Objects and Templates are generally associated with different Datasets.
 
 In addition to defining variables, rows, and columns individually, there are convenience methods that simultaneously add multiple elements to an existing Table Config.
 One such method is :func:`~citrine.resources.table_config.TableConfig.add_all_ingredients`, which creates variables and columns for every potential ingredient in a process.
 The user provides a link to a process template that has a non-empty set of ``allowed_names`` (the allowed names of the ingredient runs and specs in the process).
 This creates an id variable/column and a quantity variable/column for each allowed name.
 The user specifies the dimension to report the quantity in: mass fraction, volume fraction, number fraction, or absolute quantity.
-If the quantities are reported in absolute amounts then there is also a column for the units.
+If the quantities are reported in absolute amounts, then there is also a column for the units.
 
 The code below takes the ``table_config`` object defined in the preceding code block and adds the ingredient amounts for a "batter mixing" process with known uid "3a308f78-e341-f39c-8076-35a2c88292ad".
-Assume that the process template is accessible from a known project, ``project``.
+Assume that the process template is accessible from a known Project, ``project``.
 
 .. code-block:: python
 
@@ -104,13 +104,13 @@ Assume that the process template is accessible from a known project, ``project``
         quantity_dimension=IngredientQuantityDimension.MASS
     )
 
-If the process template's allowed names includes, for example, "flour" then there will now be columns "batter mixing~flour~id" and "batter mixing~flour~mass fraction~mean."
+If the process template's allowed names includes, e.g., "flour", then there will now be columns "batter mixing~flour~id" and "batter mixing~flour~mass fraction~mean."
 
 Previewing tables
 -----------------
 
-Calling :func:`~citrine.resources.project.Project.table_configs` on a project returns an :class:`~citrine.resources.table_config.TableConfigCollection` object, which facilitates access to the collection of all TableConfigs visible to a Project.
-Via such an object, one can preview a draft TableConfig on an explicit set of Material Histories, defined by their terminal materials:
+Calling :func:`~citrine.resources.project.Project.table_configs` on a Project returns an :class:`~citrine.resources.table_config.TableConfigCollection` object, which facilitates access to the collection of all TableConfigs visible to a Project.
+Via such an object, one can preview a draft TableConfig on an explicit set of Material Histories, defined by their terminal materials.
 
 For example:
 
@@ -204,13 +204,13 @@ For example, once the above ``initiate_build`` method has completed:
 Available Row Definitions
 -------------------------
 
-Currently, GEM Tables provide a single way to define Rows: by the :class:`~gemd.entity.template.material_template.MaterialTemplate` of the terminal materials of the material histories that correspond to each row.
+Currently, GEM Tables provide a single way to define rows: by the :class:`~gemd.entity.template.material_template.MaterialTemplate` of the terminal materials of the material histories that correspond to each row.
 
 :class:`~citrine.gemtables.rows.MaterialRunByTemplate`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The :class:`~citrine.gemtables.rows.MaterialRunByTemplate` class defines Rows through a list of :class:`~gemd.entity.template.material_template.MaterialTemplate`.
-Every :class:`~gemd.entity.object.material_run.MaterialRun` that is assigned to any template in the list is used as the terminal material of a Material History to be mapped to a Row.
+The :class:`~citrine.gemtables.rows.MaterialRunByTemplate` class defines rows through a list of :class:`~gemd.entity.template.material_template.MaterialTemplate`.
+Every :class:`~gemd.entity.object.material_run.MaterialRun` that is assigned to any template in the list is used as the terminal material of a Material History to be mapped to a row.
 This is helpful when the rows correspond to classes of materials that are defined through their templates.
 For example, there could be a :class:`~gemd.entity.template.material_template.MaterialTemplate` called "Cake" that is used in all
 of the cakes and another called "Brownies" that is used in all of the brownies.
@@ -236,7 +236,7 @@ There are several ways to define variables that take their values from Attribute
   * :class:`~citrine.gemtables.variables.TerminalMaterialIdentifier`: for the id of the Material History, which can be used as a unique identifier for the rows
   * :class:`~citrine.gemtables.variables.IngredientIdentifierByProcessTemplateAndName`: for the id of the material being used in an ingredient, which can be used as a key for looking up that input material
   * :class:`~citrine.gemtables.variables.IngredientIdentifierInOutput`: for the id of a material used in an ingredient between the terminal material and a given set of processes (useful for ingredients used in multiple processes)
-  * :class:`~citrine.gemtables.variables.IngredientLabelByProcessAndName`: for a boolean that indicates whether an ingredient is assigned a given label
+  * :class:`~citrine.gemtables.variables.IngredientLabelByProcessAndName`: for a Boolean that indicates whether an ingredient is assigned a given label
   * :class:`~citrine.gemtables.variables.IngredientLabelsSetByProcessAndName`: for the set of labels belonging to an ingredient in a process
   * :class:`~citrine.gemtables.variables.IngredientLabelsSetInOutput`: for the set of labels belonging to an ingredient between the terminal material and a given set of processes (useful for ingredients used in multiple processes)
 
@@ -272,7 +272,7 @@ There are several ways to define columns, depending on the type of the attribute
 
  * :class:`~citrine.gemtables.columns.MolecularStructureColumn`: for getting molecular structures in a line notation
 
-* String and boolean valued fields, like identifiers and non-attribute fields
+* String- and Boolean-valued fields, like identifiers and non-attribute fields
 
  * :class:`~citrine.gemtables.columns.IdentityColumn`: for simply casting the value to a string, which doesn't work on values from Attributes
 
