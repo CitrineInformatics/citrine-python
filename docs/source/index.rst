@@ -24,7 +24,7 @@ or a specific version can be installed, for example:
 
 .. code::
 
-  pip install citrine==0.8.0
+  pip install citrine==1.0.0
 
 
 Table of Contents
