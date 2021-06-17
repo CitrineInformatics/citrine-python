@@ -25,11 +25,6 @@ def design_workflow(collection, design_workflow_dict) -> DesignWorkflow:
     return collection.build(design_workflow_dict)
 
 
-def test_missing_module_type():
-    with pytest.raises(ValueError):
-        Workflow.build(dict(module_type='foo'))
-
-
 def test_d_workflow_str(design_workflow):
     assert str(design_workflow) == f'<DesignWorkflow \'{design_workflow.name}\'>'
 

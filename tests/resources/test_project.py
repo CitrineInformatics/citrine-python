@@ -73,7 +73,7 @@ def test_share_post_content(project, session):
         method='POST',
         path='/projects/{}/share'.format(project.uid),
         json={
-            'project_id': project.uid,
+            'project_id': str(project.uid),
             'resource': {'type': 'DATASET', 'id': dataset_id}
         }
     )
@@ -91,7 +91,7 @@ def test_share_post_content(project, session):
         method='POST',
         path='/projects/{}/share'.format(project.uid),
         json={
-            'project_id': project.uid,
+            'project_id': str(project.uid),
             'resource': {'type': 'DATASET', 'id': str(dataset.uid)}
         }
     )

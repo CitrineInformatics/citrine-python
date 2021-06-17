@@ -1,10 +1,8 @@
 """Tools for working with Processors."""
 from typing import Optional, Mapping, Type, List
-from uuid import UUID
 
 from citrine._serialization import properties
 from citrine._rest.resource import ResourceTypeEnum, Resource
-from citrine._session import Session
 from citrine.informatics.modules import Module
 from citrine._rest.ai_resource_metadata import AIResourceMetadata
 
@@ -18,9 +16,6 @@ class Processor(Module):
     Abstract type that returns the proper type given a serialized dict.
 
     """
-
-    _project_id: Optional[UUID] = None
-    _session: Optional[Session] = None
 
     uid = properties.Optional(properties.UUID, 'id', serializable=False)
     """:Optional[UUID]: Citrine Platform unique identifier"""

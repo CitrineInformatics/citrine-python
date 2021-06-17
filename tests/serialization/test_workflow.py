@@ -2,7 +2,7 @@
 import pytest
 from datetime import datetime
 from uuid import uuid4, UUID
-from citrine.informatics.workflows import Workflow, DesignWorkflow
+from citrine.informatics.workflows import DesignWorkflow
 
 
 @pytest.fixture
@@ -10,7 +10,6 @@ def valid_data():
     """Return valid data used for these tests."""
     return dict(
         id=str(uuid4()),
-        module_type='DESIGN_WORKFLOW',
         name='A rad new workflow',
         description='All about my workflow',
         status='SUCCEEDED',
@@ -73,17 +72,9 @@ def test_deserialization_missing_create_time(valid_data):
     assert workflow.create_time is None
 
 
-def test_polymorphic_deserialization(valid_data):
-    """Ensure a polymorphically deserialized designWorkflow looks sane."""
-    workflow: DesignWorkflow = Workflow.build(valid_data)
-    assert workflow.design_space_id == UUID(valid_data['design_space_id'])
-    assert workflow.processor_id == UUID(valid_data['processor_id'])
-    assert workflow.predictor_id == UUID(valid_data['predictor_id'])
-
-
 def test_serialization(valid_data, valid_serialization_output):
     """Ensure a serialized DesignWorkflow looks sane."""
-    workflow: DesignWorkflow = Workflow.build(valid_data)
+    workflow: DesignWorkflow = DesignWorkflow.build(valid_data)
     serialized = workflow.dump()
     serialized['id'] = valid_data['id']
     # we can have extra fields in the output of `dump`

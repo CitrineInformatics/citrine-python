@@ -35,11 +35,6 @@ class DesignWorkflow(Resource['DesignWorkflow'], Workflow, AIResourceMetadata):
 
     status_description = properties.String('status_description', serializable=False)
     """:str: more detailed description of the workflow's status"""
-
-    # TODO: I think that module_type is a vestige of when workflows were accessed through a
-    #   generic WorkflowCollection. We can remove it and also make it so that Workflow
-    #   no longer extends PolymorphicSerializable.
-    module_type = properties.String('module_type', default='DESIGN_WORKFLOW')
     typ = properties.String('type', default='DesignWorkflow', deserializable=False)
 
     def __init__(self,
