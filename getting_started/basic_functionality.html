@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>1.3. Managing Resources &mdash; Citrine Python 0.135.7 documentation</title>
+  <title>1.3. Managing Resources &mdash; Citrine Python 1.0.0 documentation</title>
   
 
   
@@ -73,7 +73,7 @@
             
             
               <div class="version">
-                0.135.7
+                1.0.0
               </div>
             
           
@@ -197,7 +197,7 @@
             
   <section id="managing-resources">
 <h1><span class="section-number">1.3. </span>Managing Resources<a class="headerlink" href="#managing-resources" title="Permalink to this headline">¶</a></h1>
-<p>The Citrine python client can create, read, update, and delete resources.
+<p>The Citrine Python client can create, read, update, and delete resources.
 This document describes those mechanics in general terms, without assuming a knowledge of what the resources are.</p>
 <p>In general, for every resource type there is a corresponding collection.
 For example, a <a class="reference internal" href="../reference/citrine.resources.project.html#citrine.resources.project.ProjectCollection" title="citrine.resources.project.ProjectCollection"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProjectCollection</span></code></a> contains <a class="reference internal" href="../reference/citrine.resources.project.html#citrine.resources.project.Project" title="citrine.resources.project.Project"><code class="xref py py-class docutils literal notranslate"><span class="pre">Projects</span></code></a>.
@@ -205,7 +205,7 @@ Generally, the collection is used to perform create/read/update/delete actions o
 This pattern is illustrated in the examples below.</p>
 <section id="creating">
 <h2><span class="section-number">1.3.1. </span>Creating<a class="headerlink" href="#creating" title="Permalink to this headline">¶</a></h2>
-<p>To create a local resource, initialize it as you would any other python object. For example,</p>
+<p>To create a local resource, initialize it as you would any other Python object. For example,</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.resources.process_spec</span> <span class="kn">import</span> <span class="n">ProcessSpec</span>
 <span class="n">buy_electrolyte_spec</span> <span class="o">=</span> <span class="n">ProcessSpec</span><span class="p">(</span><span class="s2">&quot;Buy ammonium chloride&quot;</span><span class="p">)</span>
 </pre></div>

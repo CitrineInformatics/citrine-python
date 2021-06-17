@@ -19,7 +19,7 @@ Real Descriptor
 :class:`~citrine.informatics.descriptors.RealDescriptor` is used to represent continuous variables.
 Each Real Descriptor must provide a lower and upper bound, which is used to both validate input data and as a prior when making predictions.
 If you are not sure what bounds to use, you may want to look at the attribute templates to see if another user has defined bounds for you.
-It is better to err on the side of broader bounds rather than narrower ones.
+It is better to err on the side of broader bounds than narrower ones.
 
 Additionally, each Real Descriptor defines the units of every variable associated with that descriptor.
 Any `GEMD-compatible <https://citrineinformatics.github.io/gemd-python/depth/unit_parsing.html>`__ unit string may be used.
@@ -29,7 +29,7 @@ Categorical Descriptor
 ----------------------
 
 :class:`~citrine.informatics.descriptors.CategoricalDescriptor` is used to represent variables that can take one of
-a set of values, i.e. categories.
+a set of values, i.e., categories.
 All of the possible categories must be known ahead of time and specified in the Categorical Descriptor.
 
 Chemical Formula Descriptor

@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>4.8. Scores &mdash; Citrine Python 0.135.7 documentation</title>
+  <title>4.8. Scores &mdash; Citrine Python 1.0.0 documentation</title>
   
 
   
@@ -73,7 +73,7 @@
             
             
               <div class="version">
-                0.135.7
+                1.0.0
               </div>
             
           
@@ -199,7 +199,7 @@
 An objective defines the goal for a scalar value associated with a particular descriptor.
 The goal can be to either maximize or minimize a value by using <a class="reference internal" href="../reference/citrine.informatics.objectives.html#citrine.informatics.objectives.ScalarMaxObjective" title="citrine.informatics.objectives.ScalarMaxObjective"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScalarMaxObjective</span></code></a> or <a class="reference internal" href="../reference/citrine.informatics.objectives.html#citrine.informatics.objectives.ScalarMinObjective" title="citrine.informatics.objectives.ScalarMinObjective"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScalarMinObjective</span></code></a>, respectively.
 Constraints represent a set of conditions on variables that should be satisfied.
-Constraints can used to restrict either a design space or descriptor values in design candidates.
+Constraints can be used to restrict either a design space or descriptor values in design candidates.
 There are five constraint types:</p>
 <ul class="simple">
 <li><p><a class="reference internal" href="../reference/citrine.informatics.constraints.scalar_range_constraint.html#citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint" title="citrine.informatics.constraints.scalar_range_constraint.ScalarRangeConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScalarRangeConstraint</span></code></a> restricts a scalar value between lower and upper bounds.</p></li>
@@ -218,13 +218,13 @@ Higher scores represent “better” materials.</p>
 </ul>
 <section id="expected-improvement">
 <h2><span class="section-number">4.8.1. </span>Expected improvement<a class="headerlink" href="#expected-improvement" title="Permalink to this headline">¶</a></h2>
-<p>Expected improvement (EI) is the magnitude of the expected value of improvement calculated as the integral from the best training objective (i.e. baseline) to infinity of <code class="docutils literal notranslate"><span class="pre">p(x)(x-a)</span></code>, where <code class="docutils literal notranslate"><span class="pre">a</span></code> is the best objective value in the training set.
+<p>Expected improvement (EI) is the magnitude of the expected value of improvement calculated as the integral from the best training objective (i.e., baseline) to infinity of <code class="docutils literal notranslate"><span class="pre">p(x)(x-a)</span></code>, where <code class="docutils literal notranslate"><span class="pre">a</span></code> is the best objective value in the training set.
 <a class="reference internal" href="../reference/citrine.informatics.scores.html#citrine.informatics.scores.EIScore" title="citrine.informatics.scores.EIScore"><code class="xref py py-class docutils literal notranslate"><span class="pre">EIScore</span></code></a> supports 0 or 1 objective.
 If no objective is provided, the score is the probability of satisfying all constraints.</p>
 <p>EI is calculated from two components: predicted value and uncertainty.
 Higher scores result from a more optimal predicted value, higher uncertainty or both.
-Higher predicted values exploit information known about the current dataset, e.g. materials of a given type are known to perform well.
-Higher uncertainty leads to exploration of a design space, e.g. little is known about a certain class materials, but materials from this region of the design space could perform well.</p>
+Higher predicted values exploit information known about the current dataset, e.g., materials of a given type are known to perform well.
+Higher uncertainty leads to exploration of a design space, e.g., little is known about a certain class materials, but materials from this region of the design space could perform well.</p>
 </section>
 <section id="likelihood-of-improvement">
 <h2><span class="section-number">4.8.2. </span>Likelihood of improvement<a class="headerlink" href="#likelihood-of-improvement" title="Permalink to this headline">¶</a></h2>

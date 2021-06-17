@@ -4,9 +4,9 @@ Getting Started
 ===============
 
 The Citrine Platform provides tools to make data-driven decisions for materials research and development using artificial intelligence (AI) workflows.
-AI Workflows are composed of modules, which provide the ability to programmatically codify domain knowledge, research capabilities and experimental objectives.
+AI Workflows are composed of modules, which provide the ability to programmatically codify domain knowledge, research capabilities, and experimental objectives.
 Workflows leverage data and domain knowledge to help materials researchers make traceable, data-driven decisions in pursuit of their research and development goals.
-These capabilities include generating candidates for sequential learning, identifying outliers or imputing missing values.
+These capabilities include generating candidates for Sequential Learning, identifying outliers, or imputing missing values.
 
 Workflows Overview
 ------------------
@@ -19,7 +19,7 @@ Design Workflow
 ***************
 
 The :doc:`DesignWorkflow <design_workflows>` is the core AI workflow on the platform.
-This workflow generates scored candidates for sequential learning.
+This workflow generates scored candidates for Sequential Learning.
 It requires one of each of the modules listed below and executes in the following manner:
 
 -  Material candidates are pulled from the design space.
@@ -56,7 +56,7 @@ There are 3 types of modules on the platform:
 Archiving
 *********
 
-Modules and workflows come active by default when created.
+Modules and workflows start active by default when created.
 An archived resource will not show up when listing, and an archived module cannot be used in workflows.
 To archive a resource with a known ``uid``, use the ``.archive()`` method of the relevant collection
 (e.g., :meth:`DesignWorkflowCollection.archive() <citrine.resources.design_workflow.DesignWorkflowCollection.archive>`).
@@ -87,5 +87,5 @@ Another example could be a workflow that contains an experimental module.
 Because the experimental status of a module or workflow may not be known at registration time, it is computed as part
 of the validation process and then returned via two fields:
 
-- `experimental` is a boolean field that is true when the module or workflow is experimental
+- `experimental` is a Boolean field that is true when the module or workflow is experimental
 - `experimental_reasons` is a list of strings that describe what about the module or workflow makes it experimental

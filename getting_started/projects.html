@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>1.4. Projects &mdash; Citrine Python 0.135.7 documentation</title>
+  <title>1.4. Projects &mdash; Citrine Python 1.0.0 documentation</title>
   
 
   
@@ -73,7 +73,7 @@
             
             
               <div class="version">
-                0.135.7
+                1.0.0
               </div>
             
           
@@ -196,24 +196,24 @@
             
   <section id="projects">
 <h1><span class="section-number">1.4. </span>Projects<a class="headerlink" href="#projects" title="Permalink to this headline">¶</a></h1>
-<p>A Project is the basic unit of collaboration and access on the Citrine platform.
+<p>A Project is the basic unit of collaboration and access on the Citrine Platform.
 They are containers for other resources, such as Datasets and modules.
 Access rights on resources inside a Project are managed, granted, and revoked at the Project level.</p>
-<p>Users are individuals using the Citrine Platform, and they are made members of projects.
-A user who is a member of a Project has access to all of the Datasets and AI Modules that the project has access to.</p>
+<p>Users are individuals using the Citrine Platform, and they are made members of Projects.
+A user who is a member of a Project has access to all of the Datasets and AI Modules that the Project has access to.</p>
 <p>Every interaction with every other type of resource is scoped to a single Project.
 This means that the same user can have different permissions on a resource depending on which Project they are using to access it.
 For example, imagine that a Dataset is owned by Project A and shared with Project B, but Project B only has read, not write, permissions.
 Then a user who is a member of both Projects would be able to add new data if accessing it through Project A, but not if accessing it through Project B.</p>
 <section id="basic-project-use">
 <h2><span class="section-number">1.4.1. </span>Basic Project Use<a class="headerlink" href="#basic-project-use" title="Permalink to this headline">¶</a></h2>
-<p>Most commonly, the first thing you will want to do after connecting to the Citrine Platform is to find a certain project.
+<p>Most commonly, the first thing you will want to do after connecting to the Citrine Platform is to find a certain Project.
 Assume that you have created a <a class="reference internal" href="../reference/citrine.citrine.html#citrine.citrine.Citrine" title="citrine.citrine.Citrine"><code class="xref py py-class docutils literal notranslate"><span class="pre">Citrine</span></code></a> client object named <code class="docutils literal notranslate"><span class="pre">citrine</span></code>.
-To list all of the projects that you are a member of, use the <code class="docutils literal notranslate"><span class="pre">list</span></code> command.</p>
+To list all of the Projects that you are a member of, use the <code class="docutils literal notranslate"><span class="pre">list</span></code> command.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">citrine</span><span class="o">.</span><span class="n">projects</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>To retrieve a project that you are a member of, either find the project in the list:</p>
+<p>To retrieve a Project that you are a member of, either find the Project in the list:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">project_name</span> <span class="o">=</span> <span class="s2">&quot;Copper oxides project&quot;</span>
 <span class="n">all_projects</span> <span class="o">=</span> <span class="n">citrine</span><span class="o">.</span><span class="n">projects</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
 <span class="n">copper_oxides_project</span> <span class="o">=</span> <span class="nb">next</span><span class="p">((</span><span class="n">project</span> <span class="k">for</span> <span class="n">project</span> <span class="ow">in</span> <span class="n">all_projects</span>
@@ -229,14 +229,14 @@ To list all of the projects that you are a member of, use the <code class="docut
 <h2><span class="section-number">1.4.2. </span>Managing Users<a class="headerlink" href="#managing-users" title="Permalink to this headline">¶</a></h2>
 <p>There are two types of roles users can have, MEMBER and ADMIN.
 There are two types of access permissions: READ and WRITE.
-READ allows a user to view resources in a project.
+READ allows a user to view resources in a Project.
 WRITE allows them to modify those resources.
 Users with the ADMIN role have both READ and WRITE access, and can also add or remove other users and change their roles and permissions.</p>
 <p>There are several methods for managing Projects, Users, and user membership in Projects.</p>
 <section id="listing-users-in-a-project">
 <h3><span class="section-number">1.4.2.1. </span>Listing Users in a Project<a class="headerlink" href="#listing-users-in-a-project" title="Permalink to this headline">¶</a></h3>
 <p>Users in a Project can be listed using the <a class="reference internal" href="../reference/citrine.resources.project.html#citrine.resources.project.Project.list_members" title="citrine.resources.project.Project.list_members"><code class="xref py py-func docutils literal notranslate"><span class="pre">list_members()</span></code></a> method.
-The <code class="docutils literal notranslate"><span class="pre">ProjectMember</span></code> array returned from this method has the user’s role in the project as well as a copy of the User and Project objects.</p>
+The <code class="docutils literal notranslate"><span class="pre">ProjectMember</span></code> array returned from this method has the user’s role in the Project as well as a copy of the User and Project objects.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">project</span> <span class="o">=</span> <span class="n">citrine</span><span class="o">.</span><span class="n">projects</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Your Project&quot;</span><span class="p">)</span>
 
 <span class="c1"># List Members of a Project</span>

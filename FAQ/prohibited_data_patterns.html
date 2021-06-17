@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>6.1. Prohibited Data Patterns &mdash; Citrine Python 0.135.7 documentation</title>
+  <title>6.1. Prohibited Data Patterns &mdash; Citrine Python 1.0.0 documentation</title>
   
 
   
@@ -72,7 +72,7 @@
             
             
               <div class="version">
-                0.135.7
+                1.0.0
               </div>
             
           
@@ -189,13 +189,13 @@
 <section id="summary">
 <h2><span class="section-number">6.1.1. </span>Summary<a class="headerlink" href="#summary" title="Permalink to this headline">¶</a></h2>
 <p>This is a disclaimer on our end to let you know that there are some invalid usage patterns that are not prevented by the API but may corrupt your data and eliminate
-some of the functionality the api and/or platform would otherwise provide.</p>
+some of the functionality the API and/or Platform would otherwise provide.</p>
 </section>
 <section id="cyclic-data-patterns">
 <h2><span class="section-number">6.1.2. </span>Cyclic data patterns<a class="headerlink" href="#cyclic-data-patterns" title="Permalink to this headline">¶</a></h2>
 <section id="description">
 <h3><span class="section-number">6.1.2.1. </span>Description<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h3>
-<p>Data objects should <strong>NOT</strong> be linked in a cyclic pattern. Consider the following example (where the citrine session is created and dataset already defined):</p>
+<p>Data objects should <strong>NOT</strong> be linked in a cyclic pattern. Consider the following example (where the Citrine session is created and dataset already defined):</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">procsp</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">process_specs</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">ProcessSpec</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;test proc&#39;</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">matsp</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">material_specs</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">MaterialSpec</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;test mat&#39;</span><span class="p">,</span><span class="n">process</span><span class="o">=</span><span class="n">procsp</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ingsp</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">ingredient_specs</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">IngredientSpec</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;ing&#39;</span><span class="p">,</span><span class="n">material</span><span class="o">=</span><span class="n">matsp</span><span class="p">,</span> <span class="n">process</span><span class="o">=</span><span class="n">procsp</span><span class="p">))</span>

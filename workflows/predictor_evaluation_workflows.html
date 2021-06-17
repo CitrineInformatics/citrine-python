@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>4.11. Predictor Evaluation Workflows &mdash; Citrine Python 0.135.7 documentation</title>
+  <title>4.11. Predictor Evaluation Workflows &mdash; Citrine Python 1.0.0 documentation</title>
   
 
   
@@ -73,7 +73,7 @@
             
             
               <div class="version">
-                0.135.7
+                1.0.0
               </div>
             
           
@@ -257,7 +257,7 @@ Lower RMSE means the model is more accurate.</p></li>
 <li><p><em>R^2</em> (<a class="reference internal" href="../reference/citrine.informatics.predictor_evaluation_metrics.html#citrine.informatics.predictor_evaluation_metrics.RSquared" title="citrine.informatics.predictor_evaluation_metrics.RSquared"><code class="xref py py-class docutils literal notranslate"><span class="pre">RSquared</span></code></a>): 1 - (mean squared error / variance of data).
 More precisely known as the “fraction of variance explained,” this metric is equal to the coefficient of determination calculated with respect to the line <code class="docutils literal notranslate"><span class="pre">predicted</span> <span class="pre">=</span> <span class="pre">actual</span></code>.
 Hence it is commonly referred to as “R^2,” but unlike R^2 in the context of linear regression, this metric can be negative.
-Positive values mean that the model captures some of the variation across the training data, and it can be used to drive sequential learning.
+Positive values mean that the model captures some of the variation across the training data, and it can be used to drive Sequential Learning.
 A value of 1.0 indicates a perfect model.
 R^2 is evaluated over all cross-validation folds, hence no uncertainty is calculated for the metric, though the value will vary slightly if cross validation is re-run.</p></li>
 <li><p><em>Non-dimensional error</em> (<a class="reference internal" href="../reference/citrine.informatics.predictor_evaluation_metrics.html#citrine.informatics.predictor_evaluation_metrics.NDME" title="citrine.informatics.predictor_evaluation_metrics.NDME"><code class="xref py py-class docutils literal notranslate"><span class="pre">NDME</span></code></a>): RMSE divided by the standard deviation of the observed values in the test set.
@@ -270,8 +270,8 @@ Generally, models with NDME &lt; 0.9 can be used in a design workflow.</p></li>
 1.0 is perfectly calibrated.
 Standard residual provides a way to determine whether uncertainty estimates are well-calibrated for this model.
 Residuals are calculated using <code class="docutils literal notranslate"><span class="pre">(Predicted</span> <span class="pre">-</span> <span class="pre">Actual)/(Uncertainty</span> <span class="pre">Estimate)</span></code>.
-A value below 1 indicates the model is underconfident, i.e. actual values are within predicted error bars, on average.
-A value over 1 indicates the model is overconfident, i.e. actual values fall outside predicted error bars, on average.</p></li>
+A value below 1 indicates the model is underconfident, i.e., actual values are within predicted error bars, on average.
+A value over 1 indicates the model is overconfident, i.e., actual values fall outside predicted error bars, on average.</p></li>
 <li><p><em>Coverage probability</em> (<a class="reference internal" href="../reference/citrine.informatics.predictor_evaluation_metrics.html#citrine.informatics.predictor_evaluation_metrics.CoverageProbability" title="citrine.informatics.predictor_evaluation_metrics.CoverageProbability"><code class="xref py py-class docutils literal notranslate"><span class="pre">CoverageProbability</span></code></a>) is the fraction of observations for which the magnitude of the error is within a confidence interval of a given coverage level.
 The default coverage level is 0.683, corresponding to one standard deviation.
 The coverage level and coverage probability must both be between 0 and 1.0.
@@ -294,7 +294,7 @@ At a value of 1, the model has perfect precision and recall.</p></li>
 <span id="id2"></span><h2><span class="section-number">4.11.3. </span>Execution and results<a class="headerlink" href="#execution-and-results" title="Permalink to this headline">¶</a></h2>
 <p>Triggering a Predictor Evaluation Workflow produces a <code class="xref py py-class docutils literal notranslate"><span class="pre">PredictorEvaluationExecution</span></code>.
 This execution allows you to track the progress using its <code class="docutils literal notranslate"><span class="pre">status</span></code> and <code class="docutils literal notranslate"><span class="pre">status_info</span></code> properties.
-The <code class="docutils literal notranslate"><span class="pre">status</span></code> can be one of <code class="docutils literal notranslate"><span class="pre">INPROGRESS</span></code>, <code class="docutils literal notranslate"><span class="pre">READY</span></code> or <code class="docutils literal notranslate"><span class="pre">FAILED</span></code>.
+The <code class="docutils literal notranslate"><span class="pre">status</span></code> can be one of <code class="docutils literal notranslate"><span class="pre">INPROGRESS</span></code>, <code class="docutils literal notranslate"><span class="pre">READY</span></code>, or <code class="docutils literal notranslate"><span class="pre">FAILED</span></code>.
 Information about the execution status, e.g., warnings or reasons for failure, can be accessed via <code class="docutils literal notranslate"><span class="pre">status_info</span></code>.</p>
 <p>When the <code class="docutils literal notranslate"><span class="pre">status</span></code> is <code class="docutils literal notranslate"><span class="pre">READY</span></code>, results for each evaluation defined as part of the workflow can be accessed using the <code class="docutils literal notranslate"><span class="pre">results</span></code> method:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">results</span> <span class="o">=</span> <span class="n">execution</span><span class="o">.</span><span class="n">results</span><span class="p">(</span><span class="s1">&#39;evaluator_name&#39;</span><span class="p">)</span>
@@ -317,8 +317,8 @@ This object contains all metrics that were computed for the <code class="docutil
 These metrics can be listed using <code class="docutils literal notranslate"><span class="pre">list(response_metrics)</span></code>,
 and the value associated with a specific metric can be accessed by the metric itself, e.g., <code class="docutils literal notranslate"><span class="pre">response_metrics[RMSE()]</span></code> to retrieve the root-mean squared error.</p>
 <p>With the exception of predicted vs. actual data, all metric values are returned as a <a class="reference internal" href="../reference/citrine.informatics.predictor_evaluation_result.html#citrine.informatics.predictor_evaluation_result.RealMetricValue" title="citrine.informatics.predictor_evaluation_result.RealMetricValue"><code class="xref py py-class docutils literal notranslate"><span class="pre">RealMetricValue</span></code></a>.
-This object defines properties <code class="docutils literal notranslate"><span class="pre">mean</span></code> and <code class="docutils literal notranslate"><span class="pre">standard_error</span></code>.
-The latter optionally returns a float if the evaluation was configured with enough trials allow <code class="docutils literal notranslate"><span class="pre">standard_error</span></code> to be computed.
+This object defines the properties <code class="docutils literal notranslate"><span class="pre">mean</span></code> and <code class="docutils literal notranslate"><span class="pre">standard_error</span></code>.
+The latter optionally returns a float if the evaluation was configured with enough trials to allow <code class="docutils literal notranslate"><span class="pre">standard_error</span></code> to be computed.
 (A <a class="reference internal" href="../reference/citrine.informatics.predictor_evaluator.html#citrine.informatics.predictor_evaluator.CrossValidationEvaluator" title="citrine.informatics.predictor_evaluator.CrossValidationEvaluator"><code class="xref py py-class docutils literal notranslate"><span class="pre">CrossValidationEvaluator</span></code></a> requires at least 3 trials to compute <code class="docutils literal notranslate"><span class="pre">standard_error</span></code>.)</p>
 <p>Predicted vs. actual data (<code class="docutils literal notranslate"><span class="pre">response_metrics[PVA()]</span></code>) is returned as a list of predicted vs. actual data points.
 Each data point defines properties <code class="docutils literal notranslate"><span class="pre">uuid</span></code>, <code class="docutils literal notranslate"><span class="pre">identifiers</span></code>, <code class="docutils literal notranslate"><span class="pre">trial</span></code>, <code class="docutils literal notranslate"><span class="pre">fold</span></code>, <code class="docutils literal notranslate"><span class="pre">predicted</span></code> and <code class="docutils literal notranslate"><span class="pre">actual</span></code>:</p>
@@ -334,7 +334,7 @@ For categorical responses, class probabilities are returned as a mapping from ea
 </section>
 <section id="example">
 <h2><span class="section-number">4.11.4. </span>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
-<p>The following demonstrates how to create a <a class="reference internal" href="../reference/citrine.informatics.predictor_evaluator.html#citrine.informatics.predictor_evaluator.CrossValidationEvaluator" title="citrine.informatics.predictor_evaluator.CrossValidationEvaluator"><code class="xref py py-class docutils literal notranslate"><span class="pre">CrossValidationEvaluator</span></code></a>, add it to a <a class="reference internal" href="../reference/citrine.informatics.workflows.predictor_evaluation_workflow.html#citrine.informatics.workflows.predictor_evaluation_workflow.PredictorEvaluationWorkflow" title="citrine.informatics.workflows.predictor_evaluation_workflow.PredictorEvaluationWorkflow"><code class="xref py py-class docutils literal notranslate"><span class="pre">PredictorEvaluationWorkflow</span></code></a> and use it to evaluate a <a class="reference internal" href="../reference/citrine.informatics.predictors.predictor.html#citrine.informatics.predictors.predictor.Predictor" title="citrine.informatics.predictors.predictor.Predictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">Predictor</span></code></a>.</p>
+<p>The following demonstrates how to create a <a class="reference internal" href="../reference/citrine.informatics.predictor_evaluator.html#citrine.informatics.predictor_evaluator.CrossValidationEvaluator" title="citrine.informatics.predictor_evaluator.CrossValidationEvaluator"><code class="xref py py-class docutils literal notranslate"><span class="pre">CrossValidationEvaluator</span></code></a>, add it to a <a class="reference internal" href="../reference/citrine.informatics.workflows.predictor_evaluation_workflow.html#citrine.informatics.workflows.predictor_evaluation_workflow.PredictorEvaluationWorkflow" title="citrine.informatics.workflows.predictor_evaluation_workflow.PredictorEvaluationWorkflow"><code class="xref py py-class docutils literal notranslate"><span class="pre">PredictorEvaluationWorkflow</span></code></a>, and use it to evaluate a <a class="reference internal" href="../reference/citrine.informatics.predictors.predictor.html#citrine.informatics.predictors.predictor.Predictor" title="citrine.informatics.predictors.predictor.Predictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">Predictor</span></code></a>.</p>
 <p>The predictor we’ll evaluate is defined below:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.informatics.data_sources</span> <span class="kn">import</span> <span class="n">CSVDataSource</span>
 <span class="kn">from</span> <span class="nn">citrine.informatics.descriptors</span> <span class="kn">import</span> <span class="n">RealDescriptor</span>
@@ -389,7 +389,7 @@ Training data is provided by a <a class="reference internal" href="../reference/
 <span class="p">)</span>
 </pre></div>
 </div>
-<p>Then add the evaluator to a <a class="reference internal" href="../reference/citrine.informatics.workflows.predictor_evaluation_workflow.html#citrine.informatics.workflows.predictor_evaluation_workflow.PredictorEvaluationWorkflow" title="citrine.informatics.workflows.predictor_evaluation_workflow.PredictorEvaluationWorkflow"><code class="xref py py-class docutils literal notranslate"><span class="pre">PredictorEvaluationWorkflow</span></code></a>, register it with your project and wait for validation to finish:</p>
+<p>Then add the evaluator to a <a class="reference internal" href="../reference/citrine.informatics.workflows.predictor_evaluation_workflow.html#citrine.informatics.workflows.predictor_evaluation_workflow.PredictorEvaluationWorkflow" title="citrine.informatics.workflows.predictor_evaluation_workflow.PredictorEvaluationWorkflow"><code class="xref py py-class docutils literal notranslate"><span class="pre">PredictorEvaluationWorkflow</span></code></a>, register it with your project, and wait for validation to finish:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.informatics.workflows</span> <span class="kn">import</span> <span class="n">PredictorEvaluationWorkflow</span>
 
 <span class="n">workflow</span> <span class="o">=</span> <span class="n">PredictorEvaluationWorkflow</span><span class="p">(</span>

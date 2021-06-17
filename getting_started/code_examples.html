@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>1.8. Code Examples &mdash; Citrine Python 0.135.7 documentation</title>
+  <title>1.8. Code Examples &mdash; Citrine Python 1.0.0 documentation</title>
   
 
   
@@ -73,7 +73,7 @@
             
             
               <div class="version">
-                0.135.7
+                1.0.0
               </div>
             
           
@@ -197,7 +197,7 @@
 <section id="create-a-session">
 <h2><span class="section-number">1.8.1. </span>Create a Session<a class="headerlink" href="#create-a-session" title="Permalink to this headline">¶</a></h2>
 <p>All interaction with the Citrine API begins by creating a Citrine session.
-This session establishes a link to the Citrine platform with your API key.
+This session establishes a link to the Citrine Platform with your API key.
 Your API key is unique and must be kept secret.
 Best practice is to store is as an environment variable, here named <code class="docutils literal notranslate"><span class="pre">CITRINE_API_KEY</span></code>.
 Assuming that your Citrine deployment is <code class="docutils literal notranslate"><span class="pre">https://matsci.citrine-platform.com</span></code> and uses port 443, the code below would establish a Citrine session.</p>
@@ -212,9 +212,9 @@ Assuming that your Citrine deployment is <code class="docutils literal notransla
 </section>
 <section id="create-a-project-and-dataset">
 <h2><span class="section-number">1.8.2. </span>Create a Project and Dataset<a class="headerlink" href="#create-a-project-and-dataset" title="Permalink to this headline">¶</a></h2>
-<p>One of your first actions might be to create a new project and a dataset, which you and your collaborators can populate.
-The code below creates a project and one dataset associated with it.
-It also inspects the newly registered project to get its unique id.
+<p>One of your first actions might be to create a new Project and a Dataset, which you and your collaborators can populate.
+The code below creates a Project and one Dataset associated with it.
+It also inspects the newly registered Project to get its unique id.
 Note that all resources are given descriptive names and summaries.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.resources.project</span> <span class="kn">import</span> <span class="n">Project</span>
 <span class="kn">from</span> <span class="nn">citrine.resources.dataset</span> <span class="kn">import</span> <span class="n">Dataset</span>
@@ -234,7 +234,7 @@ Note that all resources are given descriptive names and summaries.</p>
 <section id="find-an-existing-project-and-dataset">
 <h2><span class="section-number">1.8.3. </span>Find an existing Project and Dataset<a class="headerlink" href="#find-an-existing-project-and-dataset" title="Permalink to this headline">¶</a></h2>
 <p>Often you will work with existing resources.
-The code below retrieves a project with the name “Copper oxides project” and a datset with a known unique id that is stored as <code class="docutils literal notranslate"><span class="pre">dataset_A_uid</span></code>.
+The code below retrieves a Project with the name “Copper oxides project” and a datset with a known unique id that is stored as <code class="docutils literal notranslate"><span class="pre">dataset_A_uid</span></code>.
 For more information on retrieving resources, see <a class="reference internal" href="basic_functionality.html#functionality-reading-label"><span class="std std-ref">Reading Resources</span></a>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">project_name</span> <span class="o">=</span> <span class="s2">&quot;Copper oxides project&quot;</span>
 <span class="n">all_projects</span> <span class="o">=</span> <span class="n">citrine</span><span class="o">.</span><span class="n">projects</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
@@ -262,7 +262,7 @@ The example below searches for a process template with the tag “Oven_17” and
 The code below converts those actions into data model objects: the process of purchasing, the material of toluene,
 the optical measurement, and the use of the toluene as an ingredient in a subsequent process.
 Specs relate the intent and runs relate what actually happened, which may or may not be the same.
-This assumes that you have a dataset named <code class="docutils literal notranslate"><span class="pre">solvents_dataset</span></code> and that you have already created or retrieved the following:
+This assumes that you have a Dataset named <code class="docutils literal notranslate"><span class="pre">solvents_dataset</span></code> and that you have already created or retrieved the following:
 a process template <code class="docutils literal notranslate"><span class="pre">purchase_template</span></code>, a material template <code class="docutils literal notranslate"><span class="pre">toluene_template</span></code>, a measurement template <code class="docutils literal notranslate"><span class="pre">refractive_index_template</span></code>,
 a process template <code class="docutils literal notranslate"><span class="pre">reaction_template</span></code>, a condition template <code class="docutils literal notranslate"><span class="pre">temperature_template</span></code>,
 a parameter template <code class="docutils literal notranslate"><span class="pre">wavelength_template</span></code>, and a property template <code class="docutils literal notranslate"><span class="pre">refractive_index_template</span></code>.</p>
@@ -307,7 +307,7 @@ a parameter template <code class="docutils literal notranslate"><span class="pre
 </section>
 <section id="getting-a-material-history">
 <h2><span class="section-number">1.8.6. </span>Getting a material history<a class="headerlink" href="#getting-a-material-history" title="Permalink to this headline">¶</a></h2>
-<p>Continuing the above example, the following code would retrieve the material history for toluene by using its Citrine ID.</p>
+<p>Continuing the above example, the following code would retrieve the material history for toluene by using its Citrine id.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">scope</span> <span class="o">=</span> <span class="s1">&#39;id&#39;</span>
 <span class="n">uid</span> <span class="o">=</span> <span class="n">toluene</span><span class="o">.</span><span class="n">uids</span><span class="p">[</span><span class="n">scope</span><span class="p">]</span>
 <span class="n">toluene_history</span> <span class="o">=</span> <span class="n">solvents_dataset</span><span class="o">.</span><span class="n">material_runs</span><span class="o">.</span><span class="n">get_history</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="n">scope</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="n">uid</span><span class="p">)</span>

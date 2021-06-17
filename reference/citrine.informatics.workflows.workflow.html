@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>citrine.informatics.workflows.workflow module &mdash; Citrine Python 0.135.7 documentation</title>
+  <title>citrine.informatics.workflows.workflow module &mdash; Citrine Python 1.0.0 documentation</title>
   
 
   
@@ -71,7 +71,7 @@
             
             
               <div class="version">
-                0.135.7
+                1.0.0
               </div>
             
           
@@ -175,41 +175,28 @@
 <p>Tools for working with workflow resources.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="citrine.informatics.workflows.workflow.Workflow">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">citrine.informatics.workflows.workflow.</span></span><span class="sig-name descname"><span class="pre">Workflow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwds</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.workflows.workflow.Workflow" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.polymorphic_serializable.PolymorphicSerializable</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">Workflow</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.asynchronous_object.AsynchronousObject</span></code></p>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">citrine.informatics.workflows.workflow.</span></span><span class="sig-name descname"><span class="pre">Workflow</span></span><a class="headerlink" href="#citrine.informatics.workflows.workflow.Workflow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._rest.asynchronous_object.AsynchronousObject</span></code></p>
 <p>A Citrine Workflow is a collection of Modules that together accomplish some task.</p>
-<p>Abstract type that returns the proper type given a serialized dict.</p>
 <p>All workflows must inherit AIResourceMetadata, and hence have a <code class="docutils literal notranslate"><span class="pre">status</span></code> field.
 Possible statuses are INPROGRESS, SUCCEEDED, and FAILED.
 Workflows also have a <code class="docutils literal notranslate"><span class="pre">status_description</span></code> field with more information.</p>
 <dl class="py method">
-<dt class="sig sig-object py" id="citrine.informatics.workflows.workflow.Workflow.build">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">SelfType</span><a class="headerlink" href="#citrine.informatics.workflows.workflow.Workflow.build" title="Permalink to this definition">¶</a></dt>
-<dd><p>Build the underlying type.</p>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="citrine.informatics.workflows.workflow.Workflow.failed">
 <span class="sig-name descname"><span class="pre">failed</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">bool</span><a class="headerlink" href="#citrine.informatics.workflows.workflow.Workflow.failed" title="Permalink to this definition">¶</a></dt>
-<dd><p>Whether workflow validation has completed unsuccessfully. Does not query state.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="citrine.informatics.workflows.workflow.Workflow.get_type">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">get_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Type</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#citrine.informatics.workflows.workflow.Workflow" title="citrine.informatics.workflows.workflow.Workflow"><span class="pre">citrine.informatics.workflows.workflow.Workflow</span></a><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#citrine.informatics.workflows.workflow.Workflow.get_type" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the subtype.</p>
+<dd><p>Whether the backend process has completed unsuccessfully.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.informatics.workflows.workflow.Workflow.in_progress">
 <span class="sig-name descname"><span class="pre">in_progress</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">bool</span><a class="headerlink" href="#citrine.informatics.workflows.workflow.Workflow.in_progress" title="Permalink to this definition">¶</a></dt>
-<dd><p>Whether workflow validation is in progress. Does not query state.</p>
+<dd><p>Whether the backend process is in progress.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.informatics.workflows.workflow.Workflow.succeeded">
 <span class="sig-name descname"><span class="pre">succeeded</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">bool</span><a class="headerlink" href="#citrine.informatics.workflows.workflow.Workflow.succeeded" title="Permalink to this definition">¶</a></dt>
-<dd><p>Whether workflow validation has completed successfully. Does not query state.</p>
+<dd><p>Whether the backend process has completed successfully.</p>
 </dd></dl>
 
 <dl class="py attribute">

@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>4.6. Processors &mdash; Citrine Python 0.135.7 documentation</title>
+  <title>4.6. Processors &mdash; Citrine Python 1.0.0 documentation</title>
   
 
   
@@ -73,7 +73,7 @@
             
             
               <div class="version">
-                0.135.7
+                1.0.0
               </div>
             
           
@@ -199,23 +199,23 @@
 There are three processors:</p>
 <ul class="simple">
 <li><p><a class="reference external" href="#enumerated-processor">EnumeratedProcessor</a> enumerates up to a fixed number of materials from a finite, enumerable space.</p></li>
-<li><p><a class="reference external" href="#grid-processor">GridProcessor</a> creates finite, enumerable space from a (semi)-continuous one by discretizing the continuous variables and enumerating the finite variables.</p></li>
+<li><p><a class="reference external" href="#grid-processor">GridProcessor</a> creates finite, enumerable space from a (semi-)continuous one by discretizing the continuous variables and enumerating the finite variables.</p></li>
 <li><p><a class="reference external" href="#monte-carlo-processor">MonteCarloProcessor</a> uses Monte Carlo methods to explore a space, taking a semi-directed random walk to find high-performing points.</p></li>
 </ul>
 <section id="enumerated-processor">
 <h2><span class="section-number">4.6.1. </span>Enumerated processor<a class="headerlink" href="#enumerated-processor" title="Permalink to this headline">¶</a></h2>
 <p>An <a class="reference internal" href="../reference/citrine.informatics.processors.html#citrine.informatics.processors.EnumeratedProcessor" title="citrine.informatics.processors.EnumeratedProcessor"><code class="xref py py-class docutils literal notranslate"><span class="pre">EnumeratedProcessor</span></code></a> takes up to a maximum number of materials from a <a class="reference internal" href="design_spaces.html"><span class="doc">design space</span></a> and processes each independently.
-The maximum number of candidates sampled from the design space is defined by the optional <code class="docutils literal notranslate"><span class="pre">max_candidates</span></code> parameter when creating an <a class="reference internal" href="../reference/citrine.informatics.processors.html#citrine.informatics.processors.EnumeratedProcessor" title="citrine.informatics.processors.EnumeratedProcessor"><code class="xref py py-class docutils literal notranslate"><span class="pre">EnumeratedProcessor</span></code></a> using the python SDK.
+The maximum number of candidates sampled from the Design Space is defined by the optional <code class="docutils literal notranslate"><span class="pre">max_candidates</span></code> parameter when creating an <a class="reference internal" href="../reference/citrine.informatics.processors.html#citrine.informatics.processors.EnumeratedProcessor" title="citrine.informatics.processors.EnumeratedProcessor"><code class="xref py py-class docutils literal notranslate"><span class="pre">EnumeratedProcessor</span></code></a> using the Citrine Python client.
 To be valid, enumerated processors must have a maximum number of candidates of at least 1.</p>
-<p>An enumerated processor can be used with finite and infinite design spaces.
+<p>An enumerated processor can be used with finite and infinite Design Spaces.
 A finite space can be defined using an <code class="xref py py-class docutils literal notranslate"><span class="pre">EnumeratedDesignSpace</span></code> or a <code class="xref py py-class docutils literal notranslate"><span class="pre">ProductDesignSpace</span></code> composed only of <a class="reference internal" href="../reference/citrine.informatics.dimensions.html#citrine.informatics.dimensions.EnumeratedDimension" title="citrine.informatics.dimensions.EnumeratedDimension"><code class="xref py py-class docutils literal notranslate"><span class="pre">EnumeratedDimensions</span></code></a>.
 In these cases, the processor will systematically pull up to <code class="docutils literal notranslate"><span class="pre">max_candidates</span></code> samples from the space.</p>
-<p>An infinite design space is created when a <code class="xref py py-class docutils literal notranslate"><span class="pre">ProductDesignSpace</span></code> contains one or more continuous dimensions.
-When an enumerated processor is combined with an infinite design space, <code class="docutils literal notranslate"><span class="pre">max_candidates</span></code> samples are always pulled from the domain.
-If all dimensions of a design pace are continuous, samples are created by randomly sampling from each dimension.
-If there are mixed continuous and enumerated dimensions in the design space, samples are created by combining the Cartesian product of enumerated dimensions with random samples from continuous dimensions.
+<p>An infinite Design Space is created when a <code class="xref py py-class docutils literal notranslate"><span class="pre">ProductDesignSpace</span></code> contains one or more continuous dimensions.
+When an enumerated processor is combined with an infinite Design Space, <code class="docutils literal notranslate"><span class="pre">max_candidates</span></code> samples are always pulled from the domain.
+If all dimensions of a Design Space are continuous, samples are created by randomly sampling from each dimension.
+If there are mixed continuous and enumerated dimensions in the Design Space, samples are created by combining the Cartesian product of enumerated dimensions with random samples from continuous dimensions.
 Finite elements repeat once the Cartesian product is exhausted.</p>
-<p>The following demonstrates how to create an enumerated processor that takes up to 100 samples from a design space, register it with a project and view validation results:</p>
+<p>The following demonstrates how to create an enumerated processor that takes up to 100 samples from a Design Space, register it with a project, and view validation results:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">sleep</span>
 <span class="kn">from</span> <span class="nn">citrine</span> <span class="kn">import</span> <span class="n">Citrine</span>
 <span class="kn">from</span> <span class="nn">citrine.informatics.processors</span> <span class="kn">import</span> <span class="n">EnumeratedProcessor</span>
@@ -254,10 +254,10 @@ To create a finite set of materials from continuous dimensions, a uniform grid i
 The number of points is specified by <code class="docutils literal notranslate"><span class="pre">grid_sizes</span></code>.
 <code class="docutils literal notranslate"><span class="pre">grid_sizes</span></code> is a map from descriptor key to the number of points to select between bounds of the dimension.
 For example, if the dimension is bounded by 0 and 10 and the grid size is 11, points are taken from 0 to 10 in increments of 1.
-Each continuous dimension in the design space must be given a grid size.
+Each continuous dimension in the Design Space must be given a grid size.
 Enumerated dimensions cannot be given a grid size because it is not clear how to downsample or create a grid for a finite dimension.</p>
 <p>The following demonstrates how to create a grid processor that searches
-a 2D design space of enumerated x values and continuous y values:</p>
+a 2D Design Space of enumerated x values and continuous y values:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.informatics.descriptors</span> <span class="kn">import</span> <span class="n">RealDescriptor</span>
 <span class="kn">from</span> <span class="nn">citrine.informatics.dimensions</span> <span class="kn">import</span> <span class="n">ContinuousDimension</span><span class="p">,</span> <span class="n">EnumeratedDimension</span>
 <span class="kn">from</span> <span class="nn">citrine.informatics.processors</span> <span class="kn">import</span> <span class="n">GridProcessor</span>

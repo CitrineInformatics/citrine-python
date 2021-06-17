@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>1.6. Data Model Overview &mdash; Citrine Python 0.135.7 documentation</title>
+  <title>1.6. Data Model Overview &mdash; Citrine Python 1.0.0 documentation</title>
   
 
   
@@ -73,7 +73,7 @@
             
             
               <div class="version">
-                0.135.7
+                1.0.0
               </div>
             
           
@@ -196,7 +196,7 @@
 <h1><span class="section-number">1.6. </span>Data Model Overview<a class="headerlink" href="#data-model-overview" title="Permalink to this headline">¶</a></h1>
 <section id="overview">
 <h2><span class="section-number">1.6.1. </span>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
-<p>The Citrine python client is built on our NextGen data model, GEMD.
+<p>The Citrine Python client is built on our NextGen data model, GEMD.
 GEMD is a format that links together materials, the processes that produced them, and the measurements that characterize them.
 Complete documentation of GEMD can be found in the <a class="reference external" href="https://citrineinformatics.github.io/gemd-docs/">data model docs</a>,
 and a more thorough discussion of working with data objects in this client can be found in the <a class="reference internal" href="../data_entry.html"><span class="doc">data entry docs</span></a>.
@@ -224,7 +224,7 @@ that describes the materials role in the process.</p>
 <p>We make a first class distinction between intent (specs) and reality (runs).
 The same spec can be used to create many runs.
 For example, you might create a single material spec for 10 cm silicon wafers and hundreds of associated material runs, one representing each physical sample produced.</p>
-<p>It is often expected that a run and its spec will agree with each other but that is not enforced.
+<p>It is often expected that a run and its spec will agree with each other, but that is not enforced.
 A measurement spec on the silicon wafers might state that the property “mass” is expected to have a value of 36.6 +/- 0.1 grams, but the measurement run on one sample has a value of 37.5 grams.
 That is OK and <em>should</em> be recorded.
 Materials science is messy and reality does not always align with our intent.
@@ -232,9 +232,9 @@ That’s why we’ve made our data model flexible.</p>
 </section>
 <section id="attributes">
 <h2><span class="section-number">1.6.3. </span>Attributes<a class="headerlink" href="#attributes" title="Permalink to this headline">¶</a></h2>
-<p>Properties are characteristics of a material that could be measured, e.g. chemical composition, density, yield strength.
-Conditions are the environmental variables (typically measured) that may affect a process or measurement: e.g. Temperature, Pressure.
-Parameters are the non-environmental variables (typically specified and controlled) that may affect a process or measurement: e.g. oven dial temperature position for a kiln firing, magnification for a measurement taken with a SEM.</p>
+<p>Properties are characteristics of a material that could be measured, e.g., chemical composition, density, yield strength.
+Conditions are the environmental variables (typically measured) that may affect a process or measurement: e.g., Temperature, Pressure.
+Parameters are the non-environmental variables (typically specified and controlled) that may affect a process or measurement: e.g., oven dial temperature position for a kiln firing, magnification for a measurement taken with a SEM.</p>
 <p>Each type of object can be assigned some subset of these attributes.
 For example, process specs have optional conditions and parameters but not properties.
 For more information, please see the documentation related to each data object.</p>

@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>4.5. Design Spaces &mdash; Citrine Python 0.135.7 documentation</title>
+  <title>4.5. Design Spaces &mdash; Citrine Python 1.0.0 documentation</title>
   
 
   
@@ -73,7 +73,7 @@
             
             
               <div class="version">
-                0.135.7
+                1.0.0
               </div>
             
           
@@ -196,9 +196,9 @@
             
   <section id="design-spaces">
 <h1><span class="section-number">4.5. </span>Design Spaces<a class="headerlink" href="#design-spaces" title="Permalink to this headline">¶</a></h1>
-<p>A design space defines a set of materials that should be searched over when performing a material design.
+<p>A Design Space defines a set of materials that should be searched over when performing a material design.
 Design Spaces must be registered to be used in a <a class="reference internal" href="design_workflows.html"><span class="doc">design workflow</span></a>.
-Currently, there are four design spaces:</p>
+Currently, there are four Design Spaces:</p>
 <ul class="simple">
 <li><p><a class="reference external" href="#enumerated-design-space">EnumeratedDesignSpace</a></p></li>
 <li><p><a class="reference external" href="#product-design-space">ProductDesignSpace</a></p></li>
@@ -211,7 +211,7 @@ Currently, there are four design spaces:</p>
 Each candidate is specified using a dictionary keyed on the key of a corresponding <a class="reference internal" href="../reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.Descriptor" title="citrine.informatics.descriptors.Descriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">Descriptor</span></code></a>.
 A list of descriptors defines what key-value pairs must be present in each candidate.
 If a candidate is missing a descriptor key-value pair, contains extra key-value pairs or any value is not valid for the corresponding descriptor, it is removed from the design space.</p>
-<p>As an example, an enumerated design space that represents points from a 2D Cartesian coordinate system can be created using the python SDK:</p>
+<p>As an example, an enumerated design space that represents points from a 2D Cartesian coordinate system can be created using the Citrine Python client:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.informatics.descriptors</span> <span class="kn">import</span> <span class="n">RealDescriptor</span>
 <span class="kn">from</span> <span class="nn">citrine.informatics.design_spaces</span> <span class="kn">import</span> <span class="n">EnumeratedDesignSpace</span>
 
@@ -270,7 +270,7 @@ If a continuous range is included, a random sample is drawn for that variable, a
 Once all combinations of finite variables have been sampled, the cycle repeats while continuing to sample new values from the infinite dimension.</p>
 <p>Finite sets of value are defined using an <a class="reference internal" href="../reference/citrine.informatics.dimensions.html#citrine.informatics.dimensions.EnumeratedDimension" title="citrine.informatics.dimensions.EnumeratedDimension"><code class="xref py py-class docutils literal notranslate"><span class="pre">EnumeratedDimension</span></code></a>.
 Valid variable values are specified using a list of strings.
-An enumerated dimension of two temperatures, for example, can be specified using the python SDK via:</p>
+An enumerated dimension of two temperatures, for example, can be specified using the Citrine Python client via:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.informatics.descriptors</span> <span class="kn">import</span> <span class="n">RealDescriptor</span>
 <span class="kn">from</span> <span class="nn">citrine.informatics.dimensions</span> <span class="kn">import</span> <span class="n">EnumeratedDimension</span>
 
@@ -379,14 +379,14 @@ The example code below creates a registers a design space based on this Gem Tabl
 Ingredient names are specified as a set of strings, each mapping to a unique ingredient in a design space.
 For example, <code class="docutils literal notranslate"><span class="pre">{&quot;water&quot;,&quot;salt&quot;}</span></code> may be the set of names for a design space with two ingredients.
 Labels provide a way to map a string to a set of ingredient names.
-For example, salt can be labelled as a solute by specifying the mapping <code class="docutils literal notranslate"><span class="pre">{&quot;solute&quot;:</span> <span class="pre">{&quot;salt&quot;}}</span></code>.
+For example, salt can be labeled as a solute by specifying the mapping <code class="docutils literal notranslate"><span class="pre">{&quot;solute&quot;:</span> <span class="pre">{&quot;salt&quot;}}</span></code>.
 An ingredient may be given multiple labels, and an ingredient will always be given all applicable labels when present in a formulation.</p>
 <p>Constraints restrict the total number or fractional amount of ingredients in formulations sampled from the design space.
 There are three types of constraint that can be specified as part of a formulation design space:</p>
 <ul class="simple">
 <li><p><a class="reference internal" href="../reference/citrine.informatics.constraints.ingredient_count_constraint.html#citrine.informatics.constraints.ingredient_count_constraint.IngredientCountConstraint" title="citrine.informatics.constraints.ingredient_count_constraint.IngredientCountConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientCountConstraint</span></code></a> constrains the total number of ingredients in a formulation.
 At least one constraint on the total number of ingredients is required.
-Formulation design spaces without this constraint will fail validation.
+Formulation Design Spaces without this constraint will fail validation.
 Additional ingredient count constraints may specify a label.
 If specified, only ingredients with the given label count towards the constraint total.
 This could be used, for example, to constrain the total number of solutes in a formulation without constraining the number of solvents.</p></li>
@@ -398,9 +398,9 @@ This could be used, for example, to ensure the total fraction of ingredients lab
 <p><a class="reference internal" href="../reference/citrine.informatics.constraints.ingredient_fraction_constraint.html#citrine.informatics.constraints.ingredient_fraction_constraint.IngredientFractionConstraint" title="citrine.informatics.constraints.ingredient_fraction_constraint.IngredientFractionConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientFractionConstraint</span></code></a> and <a class="reference internal" href="../reference/citrine.informatics.constraints.label_fraction_constraint.html#citrine.informatics.constraints.label_fraction_constraint.LabelFractionConstraint" title="citrine.informatics.constraints.label_fraction_constraint.LabelFractionConstraint"><code class="xref py py-class docutils literal notranslate"><span class="pre">LabelFractionConstraint</span></code></a> also have an <code class="docutils literal notranslate"><span class="pre">is_required</span></code> flag.
 By default <code class="docutils literal notranslate"><span class="pre">is_required</span> <span class="pre">==</span> <span class="pre">True</span></code>, indicating that ingredient and label fractions unconditionally must be within the minimum and maximum bound defined by the constraint.
 If set to <code class="docutils literal notranslate"><span class="pre">False</span></code>, the fractional amount may be either zero or within the specified bounds.
-In other words, the fractional amount is restricted to the specified bounds <em>only</em> when the formulations contains the constrained ingredient (for ingredient fraction constraints) or any ingredient with the given label (for label fraction constraints).
+In other words, the fractional amount is restricted to the specified bounds <em>only</em> when the formulation contains the constrained ingredient (for ingredient fraction constraints) or any ingredient with the given label (for label fraction constraints).
 Setting <code class="docutils literal notranslate"><span class="pre">is_required</span></code> to <code class="docutils literal notranslate"><span class="pre">False</span></code> effectively adds 0 as a valid value.</p>
-<p>Formulation design spaces define an inherent <code class="docutils literal notranslate"><span class="pre">resolution</span></code> for formulations sampled from the domain.
+<p>Formulation Design Spaces define an inherent <code class="docutils literal notranslate"><span class="pre">resolution</span></code> for formulations sampled from the domain.
 This resolution defines the minimum step size between consecutive formulations sampled from the space.
 Resolution does not impose a grid over fractional ingredient amounts.
 Instead, it provides a way to specify the characteristic length scale for the problem.

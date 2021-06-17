@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>4.1. Getting Started &mdash; Citrine Python 0.135.7 documentation</title>
+  <title>4.1. Getting Started &mdash; Citrine Python 1.0.0 documentation</title>
   
 
   
@@ -73,7 +73,7 @@
             
             
               <div class="version">
-                0.135.7
+                1.0.0
               </div>
             
           
@@ -206,9 +206,9 @@
   <section id="getting-started">
 <span id="id1"></span><h1><span class="section-number">4.1. </span>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
 <p>The Citrine Platform provides tools to make data-driven decisions for materials research and development using artificial intelligence (AI) workflows.
-AI Workflows are composed of modules, which provide the ability to programmatically codify domain knowledge, research capabilities and experimental objectives.
+AI Workflows are composed of modules, which provide the ability to programmatically codify domain knowledge, research capabilities, and experimental objectives.
 Workflows leverage data and domain knowledge to help materials researchers make traceable, data-driven decisions in pursuit of their research and development goals.
-These capabilities include generating candidates for sequential learning, identifying outliers or imputing missing values.</p>
+These capabilities include generating candidates for Sequential Learning, identifying outliers, or imputing missing values.</p>
 <section id="workflows-overview">
 <h2><span class="section-number">4.1.1. </span>Workflows Overview<a class="headerlink" href="#workflows-overview" title="Permalink to this headline">¶</a></h2>
 <p>Currently, there are two workflows on the AI Engine: the <a class="reference internal" href="design_workflows.html"><span class="doc">DesignWorkflow</span></a> and the <a class="reference internal" href="predictor_evaluation_workflows.html"><span class="doc">PredictorEvaluationWorkflow</span></a>.
@@ -217,7 +217,7 @@ There are three different types of modules, and these are discussed in greater d
 <section id="design-workflow">
 <h3><span class="section-number">4.1.1.1. </span>Design Workflow<a class="headerlink" href="#design-workflow" title="Permalink to this headline">¶</a></h3>
 <p>The <a class="reference internal" href="design_workflows.html"><span class="doc">DesignWorkflow</span></a> is the core AI workflow on the platform.
-This workflow generates scored candidates for sequential learning.
+This workflow generates scored candidates for Sequential Learning.
 It requires one of each of the modules listed below and executes in the following manner:</p>
 <ul class="simple">
 <li><p>Material candidates are pulled from the design space.</p></li>
@@ -252,7 +252,7 @@ The processor and design space are coupled: depending on the design space used, 
 </ul>
 <section id="archiving">
 <span id="archiving-label"></span><h3><span class="section-number">4.1.2.1. </span>Archiving<a class="headerlink" href="#archiving" title="Permalink to this headline">¶</a></h3>
-<p>Modules and workflows come active by default when created.
+<p>Modules and workflows start active by default when created.
 An archived resource will not show up when listing, and an archived module cannot be used in workflows.
 To archive a resource with a known <code class="docutils literal notranslate"><span class="pre">uid</span></code>, use the <code class="docutils literal notranslate"><span class="pre">.archive()</span></code> method of the relevant collection
 (e.g., <a class="reference internal" href="../reference/citrine.resources.design_workflow.html#citrine.resources.design_workflow.DesignWorkflowCollection.archive" title="citrine.resources.design_workflow.DesignWorkflowCollection.archive"><code class="xref py py-meth docutils literal notranslate"><span class="pre">DesignWorkflowCollection.archive()</span></code></a>).
@@ -281,7 +281,7 @@ Another example could be a workflow that contains an experimental module.
 Because the experimental status of a module or workflow may not be known at registration time, it is computed as part
 of the validation process and then returned via two fields:</p>
 <ul class="simple">
-<li><p><cite>experimental</cite> is a boolean field that is true when the module or workflow is experimental</p></li>
+<li><p><cite>experimental</cite> is a Boolean field that is true when the module or workflow is experimental</p></li>
 <li><p><cite>experimental_reasons</cite> is a list of strings that describe what about the module or workflow makes it experimental</p></li>
 </ul>
 </section>

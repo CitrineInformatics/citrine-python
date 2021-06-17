@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>citrine.informatics.modules module &mdash; Citrine Python 0.135.7 documentation</title>
+  <title>citrine.informatics.modules module &mdash; Citrine Python 1.0.0 documentation</title>
   
 
   
@@ -71,7 +71,7 @@
             
             
               <div class="version">
-                0.135.7
+                1.0.0
               </div>
             
           
@@ -190,7 +190,7 @@ Possible statuses are CREATED, VALIDATING, INVALID, ERROR, and READY.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.informatics.modules.Module.failed">
 <span class="sig-name descname"><span class="pre">failed</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">bool</span><a class="headerlink" href="#citrine.informatics.modules.Module.failed" title="Permalink to this definition">¶</a></dt>
-<dd><p>Whether module validation has completed unsuccessfully. Does not query state.</p>
+<dd><p>Whether the backend process has completed unsuccessfully.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -202,38 +202,14 @@ Possible statuses are CREATED, VALIDATING, INVALID, ERROR, and READY.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.informatics.modules.Module.in_progress">
 <span class="sig-name descname"><span class="pre">in_progress</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">bool</span><a class="headerlink" href="#citrine.informatics.modules.Module.in_progress" title="Permalink to this definition">¶</a></dt>
-<dd><p>Whether module validation is in progress. Does not query state.</p>
+<dd><p>Whether the backend process is in progress.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.informatics.modules.Module.succeeded">
 <span class="sig-name descname"><span class="pre">succeeded</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">bool</span><a class="headerlink" href="#citrine.informatics.modules.Module.succeeded" title="Permalink to this definition">¶</a></dt>
-<dd><p>Whether module validation has completed successfully. Does not query state.</p>
+<dd><p>Whether the backend process has completed successfully.</p>
 </dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="citrine.informatics.modules.ModuleRef">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">citrine.informatics.modules.</span></span><span class="sig-name descname"><span class="pre">ModuleRef</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">module_uid</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.informatics.modules.ModuleRef" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">citrine._serialization.serializable.Serializable</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">ModuleRef</span></code>]</p>
-<p>A reference to a Module by UID.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="citrine.informatics.modules.ModuleRef.build">
-<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Self</span><a class="headerlink" href="#citrine.informatics.modules.ModuleRef.build" title="Permalink to this definition">¶</a></dt>
-<dd><p>Build an instance of this object from given data.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="citrine.informatics.modules.ModuleRef.dump">
-<span class="sig-name descname"><span class="pre">dump</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">dict</span><a class="headerlink" href="#citrine.informatics.modules.ModuleRef.dump" title="Permalink to this definition">¶</a></dt>
-<dd><p>Dump this instance.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="citrine.informatics.modules.ModuleRef.module_uid">
-<span class="sig-name descname"><span class="pre">module_uid</span></span><em class="property"> <span class="pre">=</span> <span class="pre">None</span></em><a class="headerlink" href="#citrine.informatics.modules.ModuleRef.module_uid" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
 
 </dd></dl>
 

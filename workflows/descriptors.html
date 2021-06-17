@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>4.2. Descriptors &mdash; Citrine Python 0.135.7 documentation</title>
+  <title>4.2. Descriptors &mdash; Citrine Python 1.0.0 documentation</title>
   
 
   
@@ -73,7 +73,7 @@
             
             
               <div class="version">
-                0.135.7
+                1.0.0
               </div>
             
           
@@ -213,7 +213,7 @@ If you are familiar with the GEMD data model, descriptors are roughly equivalent
 <p><a class="reference internal" href="../reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.RealDescriptor" title="citrine.informatics.descriptors.RealDescriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">RealDescriptor</span></code></a> is used to represent continuous variables.
 Each Real Descriptor must provide a lower and upper bound, which is used to both validate input data and as a prior when making predictions.
 If you are not sure what bounds to use, you may want to look at the attribute templates to see if another user has defined bounds for you.
-It is better to err on the side of broader bounds rather than narrower ones.</p>
+It is better to err on the side of broader bounds than narrower ones.</p>
 <p>Additionally, each Real Descriptor defines the units of every variable associated with that descriptor.
 Any <a class="reference external" href="https://citrineinformatics.github.io/gemd-python/depth/unit_parsing.html">GEMD-compatible</a> unit string may be used.
 If a variable is dimensionless, you can use an empty string.</p>
@@ -221,7 +221,7 @@ If a variable is dimensionless, you can use an empty string.</p>
 <section id="categorical-descriptor">
 <h2><span class="section-number">4.2.2. </span>Categorical Descriptor<a class="headerlink" href="#categorical-descriptor" title="Permalink to this headline">¶</a></h2>
 <p><a class="reference internal" href="../reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.CategoricalDescriptor" title="citrine.informatics.descriptors.CategoricalDescriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">CategoricalDescriptor</span></code></a> is used to represent variables that can take one of
-a set of values, i.e. categories.
+a set of values, i.e., categories.
 All of the possible categories must be known ahead of time and specified in the Categorical Descriptor.</p>
 </section>
 <section id="chemical-formula-descriptor">

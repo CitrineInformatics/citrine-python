@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>3. [ALPHA] Data Extraction &mdash; Citrine Python 0.135.7 documentation</title>
+  <title>3. [ALPHA] Data Extraction &mdash; Citrine Python 1.0.0 documentation</title>
   
 
   
@@ -73,7 +73,7 @@
             
             
               <div class="version">
-                0.135.7
+                1.0.0
               </div>
             
           
@@ -102,7 +102,7 @@
 <li class="toctree-l1"><a class="reference internal" href="getting_started/index.html">1. Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_entry.html">2. GEMD Data Model</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">3. [ALPHA] Data Extraction</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#defining-row-and-columns">3.1. Defining row and columns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#defining-rows-and-columns">3.1. Defining rows and columns</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#defining-tables">3.2. Defining tables</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#previewing-tables">3.3. Previewing tables</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#building-and-downloading-tables">3.4. Building and downloading tables</a></li>
@@ -189,16 +189,21 @@
 <p>GEM Tables are a component of the Citrine Platform data service that extracts data from GEMD’s complex and expressive graphical representations into a tabular structure (like a CSV file) that is easier to consume in analytical contexts.
 A GEM Table is defined on a set of material histories, and the rows in the resulting GEM Table are in 1-to-1 correspondence with those material histories.
 Columns correspond to data about the material histories, such as the temperature measured in a kiln used at a specific manufacturing step.</p>
-<section id="defining-row-and-columns">
-<h2><span class="section-number">3.1. </span>Defining row and columns<a class="headerlink" href="#defining-row-and-columns" title="Permalink to this headline">¶</a></h2>
-<p>A RowDefinition object describes a mapping from a list of datasets to rows of a table by selecting a set of Material Histories.
+<section id="defining-rows-and-columns">
+<h2><span class="section-number">3.1. </span>Defining rows and columns<a class="headerlink" href="#defining-rows-and-columns" title="Permalink to this headline">¶</a></h2>
+<p>A Row object describes a mapping from a list of Datasets to rows of a table by selecting a set of Material Histories.
 Each Material History corresponds to exactly one row, though the Material Histories may overlap such that the same objects contribute data to multiple rows.
 For example, the material histories of distinct Material Runs will map to exactly two rows even if their histories are identical up to differing Process Runs of their final baking step.
 The only way to define rows right now is through <a class="reference internal" href="reference/citrine.gemtables.rows.html#citrine.gemtables.rows.MaterialRunByTemplate" title="citrine.gemtables.rows.MaterialRunByTemplate"><code class="xref py py-class docutils literal notranslate"><span class="pre">MaterialRunByTemplate</span></code></a>, which produces one row per Material Run associated with any of a list of material templates.</p>
+<p>The set of tags is optional.
+The usage scenario is for fine-grained curation.
+If a terminal material doesn’t contain any of the tags it will be filtered out.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.gemtables.rows</span> <span class="kn">import</span> <span class="n">MaterialRunByTemplate</span>
 <span class="kn">from</span> <span class="nn">gemd.entity.link_by_uid</span> <span class="kn">import</span> <span class="n">LinkByUID</span>
 <span class="n">row_def</span> <span class="o">=</span> <span class="n">MaterialRunByTemplate</span><span class="p">(</span>
-      <span class="n">templates</span><span class="o">=</span><span class="p">[</span><span class="n">LinkByUID</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s2">&quot;templates&quot;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;finished cookie&quot;</span><span class="p">)])</span>
+      <span class="n">templates</span><span class="o">=</span><span class="p">[</span><span class="n">LinkByUID</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s2">&quot;templates&quot;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;finished cookie&quot;</span><span class="p">)],</span>
+      <span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;foo::bar&quot;</span><span class="p">]</span>
+      <span class="p">)</span>
 </pre></div>
 </div>
 <p>A <a class="reference internal" href="reference/citrine.gemtables.variables.html#citrine.gemtables.variables.Variable" title="citrine.gemtables.variables.Variable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Variable</span></code></a> object specifies how to select a piece of data from each Material History.
@@ -231,7 +236,7 @@ All columns are linked to a variable through the <code class="docutils literal n
 <section id="defining-tables">
 <h2><span class="section-number">3.2. </span>Defining tables<a class="headerlink" href="#defining-tables" title="Permalink to this headline">¶</a></h2>
 <p>The <a class="reference internal" href="reference/citrine.resources.table_config.html#citrine.resources.table_config.TableConfig" title="citrine.resources.table_config.TableConfig"><code class="xref py py-class docutils literal notranslate"><span class="pre">TableConfig</span></code></a> object defines how to build a GEM Table.
-It specifies a list of UUIDs for datasets to query in generating the table,
+It specifies a list of UUIDs for Datasets to query in generating the table,
 a list of <a class="reference internal" href="reference/citrine.gemtables.rows.html#citrine.gemtables.rows.Row" title="citrine.gemtables.rows.Row"><code class="xref py py-class docutils literal notranslate"><span class="pre">Row</span></code></a> objects that define material histories to use as rows,
 a list of <a class="reference internal" href="reference/citrine.gemtables.variables.html#citrine.gemtables.variables.Variable" title="citrine.gemtables.variables.Variable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Variable</span></code></a> objects that specify how to extract data from those material histories,
 and a list of <a class="reference internal" href="reference/citrine.gemtables.columns.html#citrine.gemtables.columns.Column" title="citrine.gemtables.columns.Column"><code class="xref py py-class docutils literal notranslate"><span class="pre">Column</span></code></a> objects to transform those variables into columns.</p>
@@ -247,16 +252,16 @@ and a list of <a class="reference internal" href="reference/citrine.gemtables.co
       <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="n">final_density_mean</span><span class="p">,</span> <span class="n">final_density_std</span><span class="p">])</span>
 </pre></div>
 </div>
-<p>Note the inclusion of two datasets above.
-In general, you should have at least two datasets referenced because Objects and Templates are generally associated with different datasets.</p>
+<p>Note the inclusion of two Datasets above.
+In general, you should have at least two Datasets referenced because Objects and Templates are generally associated with different Datasets.</p>
 <p>In addition to defining variables, rows, and columns individually, there are convenience methods that simultaneously add multiple elements to an existing Table Config.
 One such method is <a class="reference internal" href="reference/citrine.resources.table_config.html#citrine.resources.table_config.TableConfig.add_all_ingredients" title="citrine.resources.table_config.TableConfig.add_all_ingredients"><code class="xref py py-func docutils literal notranslate"><span class="pre">add_all_ingredients()</span></code></a>, which creates variables and columns for every potential ingredient in a process.
 The user provides a link to a process template that has a non-empty set of <code class="docutils literal notranslate"><span class="pre">allowed_names</span></code> (the allowed names of the ingredient runs and specs in the process).
 This creates an id variable/column and a quantity variable/column for each allowed name.
 The user specifies the dimension to report the quantity in: mass fraction, volume fraction, number fraction, or absolute quantity.
-If the quantities are reported in absolute amounts then there is also a column for the units.</p>
+If the quantities are reported in absolute amounts, then there is also a column for the units.</p>
 <p>The code below takes the <code class="docutils literal notranslate"><span class="pre">table_config</span></code> object defined in the preceding code block and adds the ingredient amounts for a “batter mixing” process with known uid “3a308f78-e341-f39c-8076-35a2c88292ad”.
-Assume that the process template is accessible from a known project, <code class="docutils literal notranslate"><span class="pre">project</span></code>.</p>
+Assume that the process template is accessible from a known Project, <code class="docutils literal notranslate"><span class="pre">project</span></code>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.gemtables.variables</span> <span class="kn">import</span> <span class="n">IngredientQuantityDimension</span>
 
 <span class="n">table_config</span> <span class="o">=</span> <span class="n">table_config</span><span class="o">.</span><span class="n">add_all_ingredients</span><span class="p">(</span>
@@ -266,12 +271,12 @@ Assume that the process template is accessible from a known project, <code class
 <span class="p">)</span>
 </pre></div>
 </div>
-<p>If the process template’s allowed names includes, for example, “flour” then there will now be columns “batter mixing~flour~id” and “batter mixing~flour~mass fraction~mean.”</p>
+<p>If the process template’s allowed names includes, e.g., “flour”, then there will now be columns “batter mixing~flour~id” and “batter mixing~flour~mass fraction~mean.”</p>
 </section>
 <section id="previewing-tables">
 <h2><span class="section-number">3.3. </span>Previewing tables<a class="headerlink" href="#previewing-tables" title="Permalink to this headline">¶</a></h2>
-<p>Calling <a class="reference internal" href="reference/citrine.resources.project.html#citrine.resources.project.Project.table_configs" title="citrine.resources.project.Project.table_configs"><code class="xref py py-func docutils literal notranslate"><span class="pre">table_configs()</span></code></a> on a project returns an <a class="reference internal" href="reference/citrine.resources.table_config.html#citrine.resources.table_config.TableConfigCollection" title="citrine.resources.table_config.TableConfigCollection"><code class="xref py py-class docutils literal notranslate"><span class="pre">TableConfigCollection</span></code></a> object, which facilitates access to the collection of all TableConfigs visible to a Project.
-Via such an object, one can preview a draft TableConfig on an explicit set of Material Histories, defined by their terminal materials:</p>
+<p>Calling <a class="reference internal" href="reference/citrine.resources.project.html#citrine.resources.project.Project.table_configs" title="citrine.resources.project.Project.table_configs"><code class="xref py py-func docutils literal notranslate"><span class="pre">table_configs()</span></code></a> on a Project returns an <a class="reference internal" href="reference/citrine.resources.table_config.html#citrine.resources.table_config.TableConfigCollection" title="citrine.resources.table_config.TableConfigCollection"><code class="xref py py-class docutils literal notranslate"><span class="pre">TableConfigCollection</span></code></a> object, which facilitates access to the collection of all TableConfigs visible to a Project.
+Via such an object, one can preview a draft TableConfig on an explicit set of Material Histories, defined by their terminal materials.</p>
 <p>For example:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">table_configs</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">table_configs</span>
 <span class="n">preview</span> <span class="o">=</span> <span class="n">table_configs</span><span class="o">.</span><span class="n">preview</span><span class="p">(</span>
@@ -346,11 +351,11 @@ Just like the <a class="reference internal" href="reference/citrine.resources.fi
 </section>
 <section id="available-row-definitions">
 <h2><span class="section-number">3.5. </span>Available Row Definitions<a class="headerlink" href="#available-row-definitions" title="Permalink to this headline">¶</a></h2>
-<p>Currently, GEM Tables provide a single way to define Rows: by the <a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.template.material_template.html#gemd.entity.template.material_template.MaterialTemplate" title="(in GEMD-python)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MaterialTemplate</span></code></a> of the terminal materials of the material histories that correspond to each row.</p>
+<p>Currently, GEM Tables provide a single way to define rows: by the <a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.template.material_template.html#gemd.entity.template.material_template.MaterialTemplate" title="(in GEMD-python)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MaterialTemplate</span></code></a> of the terminal materials of the material histories that correspond to each row.</p>
 <section id="materialrunbytemplate">
 <h3><span class="section-number">3.5.1. </span><a class="reference internal" href="reference/citrine.gemtables.rows.html#citrine.gemtables.rows.MaterialRunByTemplate" title="citrine.gemtables.rows.MaterialRunByTemplate"><code class="xref py py-class docutils literal notranslate"><span class="pre">MaterialRunByTemplate</span></code></a><a class="headerlink" href="#materialrunbytemplate" title="Permalink to this headline">¶</a></h3>
-<p>The <a class="reference internal" href="reference/citrine.gemtables.rows.html#citrine.gemtables.rows.MaterialRunByTemplate" title="citrine.gemtables.rows.MaterialRunByTemplate"><code class="xref py py-class docutils literal notranslate"><span class="pre">MaterialRunByTemplate</span></code></a> class defines Rows through a list of <a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.template.material_template.html#gemd.entity.template.material_template.MaterialTemplate" title="(in GEMD-python)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MaterialTemplate</span></code></a>.
-Every <a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.object.material_run.html#gemd.entity.object.material_run.MaterialRun" title="(in GEMD-python)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MaterialRun</span></code></a> that is assigned to any template in the list is used as the terminal material of a Material History to be mapped to a Row.
+<p>The <a class="reference internal" href="reference/citrine.gemtables.rows.html#citrine.gemtables.rows.MaterialRunByTemplate" title="citrine.gemtables.rows.MaterialRunByTemplate"><code class="xref py py-class docutils literal notranslate"><span class="pre">MaterialRunByTemplate</span></code></a> class defines rows through a list of <a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.template.material_template.html#gemd.entity.template.material_template.MaterialTemplate" title="(in GEMD-python)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MaterialTemplate</span></code></a>.
+Every <a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.object.material_run.html#gemd.entity.object.material_run.MaterialRun" title="(in GEMD-python)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MaterialRun</span></code></a> that is assigned to any template in the list is used as the terminal material of a Material History to be mapped to a row.
 This is helpful when the rows correspond to classes of materials that are defined through their templates.
 For example, there could be a <a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.template.material_template.html#gemd.entity.template.material_template.MaterialTemplate" title="(in GEMD-python)"><code class="xref py py-class docutils literal notranslate"><span class="pre">MaterialTemplate</span></code></a> called “Cake” that is used in all
 of the cakes and another called “Brownies” that is used in all of the brownies.
@@ -377,7 +382,7 @@ By including one or both of those templates, you can define a table of Cakes, Br
 <li><p><a class="reference internal" href="reference/citrine.gemtables.variables.html#citrine.gemtables.variables.TerminalMaterialIdentifier" title="citrine.gemtables.variables.TerminalMaterialIdentifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">TerminalMaterialIdentifier</span></code></a>: for the id of the Material History, which can be used as a unique identifier for the rows</p></li>
 <li><p><a class="reference internal" href="reference/citrine.gemtables.variables.html#citrine.gemtables.variables.IngredientIdentifierByProcessTemplateAndName" title="citrine.gemtables.variables.IngredientIdentifierByProcessTemplateAndName"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientIdentifierByProcessTemplateAndName</span></code></a>: for the id of the material being used in an ingredient, which can be used as a key for looking up that input material</p></li>
 <li><p><a class="reference internal" href="reference/citrine.gemtables.variables.html#citrine.gemtables.variables.IngredientIdentifierInOutput" title="citrine.gemtables.variables.IngredientIdentifierInOutput"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientIdentifierInOutput</span></code></a>: for the id of a material used in an ingredient between the terminal material and a given set of processes (useful for ingredients used in multiple processes)</p></li>
-<li><p><a class="reference internal" href="reference/citrine.gemtables.variables.html#citrine.gemtables.variables.IngredientLabelByProcessAndName" title="citrine.gemtables.variables.IngredientLabelByProcessAndName"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientLabelByProcessAndName</span></code></a>: for a boolean that indicates whether an ingredient is assigned a given label</p></li>
+<li><p><a class="reference internal" href="reference/citrine.gemtables.variables.html#citrine.gemtables.variables.IngredientLabelByProcessAndName" title="citrine.gemtables.variables.IngredientLabelByProcessAndName"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientLabelByProcessAndName</span></code></a>: for a Boolean that indicates whether an ingredient is assigned a given label</p></li>
 <li><p><a class="reference internal" href="reference/citrine.gemtables.variables.html#citrine.gemtables.variables.IngredientLabelsSetByProcessAndName" title="citrine.gemtables.variables.IngredientLabelsSetByProcessAndName"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientLabelsSetByProcessAndName</span></code></a>: for the set of labels belonging to an ingredient in a process</p></li>
 <li><p><a class="reference internal" href="reference/citrine.gemtables.variables.html#citrine.gemtables.variables.IngredientLabelsSetInOutput" title="citrine.gemtables.variables.IngredientLabelsSetInOutput"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientLabelsSetInOutput</span></code></a>: for the set of labels belonging to an ingredient between the terminal material and a given set of processes (useful for ingredients used in multiple processes)</p></li>
 </ul>
@@ -432,7 +437,7 @@ By including one or both of those templates, you can define a table of Cakes, Br
 </ul>
 </div></blockquote>
 <ul class="simple">
-<li><p>String and boolean valued fields, like identifiers and non-attribute fields</p></li>
+<li><p>String- and Boolean-valued fields, like identifiers and non-attribute fields</p></li>
 </ul>
 <blockquote>
 <div><ul class="simple">

@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>4.4. Predictors &mdash; Citrine Python 0.135.7 documentation</title>
+  <title>4.4. Predictors &mdash; Citrine Python 1.0.0 documentation</title>
   
 
   
@@ -74,7 +74,7 @@
             
             
               <div class="version">
-                0.135.7
+                1.0.0
               </div>
             
           
@@ -224,7 +224,7 @@ The inputs and outputs are descriptors, which must correspond precisely to descr
 There are two important helper methods in this regard.
 <a class="reference internal" href="../reference/citrine.resources.descriptors.html#citrine.resources.descriptors.DescriptorMethods.descriptors_from_data_source" title="citrine.resources.descriptors.DescriptorMethods.descriptors_from_data_source"><code class="xref py py-func docutils literal notranslate"><span class="pre">descriptors_from_data_source()</span></code></a> can provide all of the descriptors that are present in the training data.
 <a class="reference internal" href="../reference/citrine.resources.descriptors.html#citrine.resources.descriptors.DescriptorMethods.from_predictor_responses" title="citrine.resources.descriptors.DescriptorMethods.from_predictor_responses"><code class="xref py py-func docutils literal notranslate"><span class="pre">from_predictor_responses()</span></code></a> can tell you what the outputs of a predictor will be, which is especially useful for featurizers.</p>
-<p>The following example demonstrates how to use the python SDK to create an <a class="reference internal" href="../reference/citrine.informatics.predictors.auto_ml_predictor.html#citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor" title="citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">AutoMLPredictor</span></code></a>, register the predictor to a project and wait for validation:</p>
+<p>The following example demonstrates how to use the Citrine Python client to create an <a class="reference internal" href="../reference/citrine.informatics.predictors.auto_ml_predictor.html#citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor" title="citrine.informatics.predictors.auto_ml_predictor.AutoMLPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">AutoMLPredictor</span></code></a>, register the predictor to a project and wait for validation:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.informatics.predictors</span> <span class="kn">import</span> <span class="n">AutoMLPredictor</span>
 <span class="kn">from</span> <span class="nn">citrine.seeding.find_or_create</span> <span class="kn">import</span> <span class="n">create_or_update</span>
 
@@ -327,7 +327,7 @@ An alias is required for each expression argument.
 The <code class="docutils literal notranslate"><span class="pre">aliases</span></code> parameter defines a mapping from expression arguments to their associated input descriptors.
 The expression argument does not need to match its descriptor key.
 This is useful to avoid typing out the verbose descriptor keys in the expression string.
-Note, spaces are not supported in expression arguments, e.g. <code class="docutils literal notranslate"><span class="pre">Y</span></code> is a valid argument while <code class="docutils literal notranslate"><span class="pre">Young's</span> <span class="pre">modulus</span></code> is not.</p>
+Note, spaces are not supported in expression arguments, e.g., <code class="docutils literal notranslate"><span class="pre">Y</span></code> is a valid argument while <code class="docutils literal notranslate"><span class="pre">Young's</span> <span class="pre">modulus</span></code> is not.</p>
 <p>The syntax is described in the <a class="reference external" href="http://mathparser.org/mxparser-math-collection">mXparser documentation</a>.
 Citrine-python currently supports the following operators and functions:</p>
 <ul class="simple">
@@ -373,7 +373,7 @@ Citrine-python currently supports the following operators and functions:</p>
 <section id="molecular-structure-featurizer">
 <h2><span class="section-number">4.4.4. </span>Molecular Structure Featurizer<a class="headerlink" href="#molecular-structure-featurizer" title="Permalink to this headline">¶</a></h2>
 <p>The <a class="reference internal" href="../reference/citrine.informatics.predictors.molecular_structure_featurizer.html#citrine.informatics.predictors.molecular_structure_featurizer.MolecularStructureFeaturizer" title="citrine.informatics.predictors.molecular_structure_featurizer.MolecularStructureFeaturizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">MolecularStructureFeaturizer</span></code></a>
-computes a configurable set of features on molecular structure data, e.g. SMILES or InChI strings, using the <a class="reference external" href="https://cdk.github.io/">Chemistry Development Kit (CDK)</a>.
+computes a configurable set of features on molecular structure data, e.g., SMILES or InChI strings, using the <a class="reference external" href="https://cdk.github.io/">Chemistry Development Kit (CDK)</a>.
 The features are configured using the <code class="docutils literal notranslate"><span class="pre">features</span></code> and <code class="docutils literal notranslate"><span class="pre">excludes</span></code> arguments, which accept either feature names or predefined aliases.
 The default is the <cite>standard</cite> alias, corresponding to eight features that are a good balance of cost and performance.</p>
 <p>The feature names and descriptors are automatically constructed from the name of the input and the feature names.
@@ -446,7 +446,7 @@ and their stoichiometric amounts.
 Many of the features are stoichiometrically weighted generalized means of element-level properties, though some are more complex functions of the chemical formula.
 The generalized means are configured with the <code class="docutils literal notranslate"><span class="pre">powers</span></code> argument, which is a list of means to calculate.
 For example, setting <code class="docutils literal notranslate"><span class="pre">powers=[1,</span> <span class="pre">3]</span></code> will calculate the mean and 3-mean of all applicable features.</p>
-<p>The feature to compute are configured using the <code class="docutils literal notranslate"><span class="pre">features</span></code> and <code class="docutils literal notranslate"><span class="pre">excludes</span></code> arguments, which accept either feature names or predefined aliases.
+<p>The features to compute are configured using the <code class="docutils literal notranslate"><span class="pre">features</span></code> and <code class="docutils literal notranslate"><span class="pre">excludes</span></code> arguments, which accept either feature names or predefined aliases.
 The default is the <cite>standard</cite> alias, corresponding to a variety of features that are intuitive and often correlate with properties of interest.
 Other aliases are “physical,” “electronic,” and “periodicTable.”
 A complete list of features and which aliases they map to can be found in the class docstring.</p>
@@ -518,11 +518,11 @@ e.g., the <a class="reference internal" href="../reference/citrine.informatics.p
 <p>The <a class="reference internal" href="../reference/citrine.informatics.predictors.ingredients_to_formulation_predictor.html#citrine.informatics.predictors.ingredients_to_formulation_predictor.IngredientsToFormulationPredictor" title="citrine.informatics.predictors.ingredients_to_formulation_predictor.IngredientsToFormulationPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientsToFormulationPredictor</span></code></a> constructs a formulation from a list of ingredients.
 This predictor is only required to construct formulations from CSV data sources.
 Formulations are constructed automatically by GEM Tables when a <code class="docutils literal notranslate"><span class="pre">formulation_descriptor</span></code> is specified by the data source, so
-an <a class="reference internal" href="../reference/citrine.informatics.predictors.ingredients_to_formulation_predictor.html#citrine.informatics.predictors.ingredients_to_formulation_predictor.IngredientsToFormulationPredictor" title="citrine.informatics.predictors.ingredients_to_formulation_predictor.IngredientsToFormulationPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientsToFormulationPredictor</span></code></a> in not required in those cases.</p>
+an <a class="reference internal" href="../reference/citrine.informatics.predictors.ingredients_to_formulation_predictor.html#citrine.informatics.predictors.ingredients_to_formulation_predictor.IngredientsToFormulationPredictor" title="citrine.informatics.predictors.ingredients_to_formulation_predictor.IngredientsToFormulationPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">IngredientsToFormulationPredictor</span></code></a> is not required in those cases.</p>
 <p>Ingredients are specified by a map from ingredient id to the descriptor that contains the ingredient’s quantity.
 For example, <code class="docutils literal notranslate"><span class="pre">{'water':</span> <span class="pre">RealDescriptor('water</span> <span class="pre">quantity',</span> <span class="pre">lower_bound=0,</span> <span class="pre">upper_bound=1,</span> <span class="pre">units='')}</span></code> defines an ingredient <code class="docutils literal notranslate"><span class="pre">water</span></code> with quantity held by the descriptor <code class="docutils literal notranslate"><span class="pre">water</span> <span class="pre">quantity</span></code>.
 There must be a corresponding (id, quantity) pair in the map for all possible ingredients.
-If a material does not contain data for a given quantity descriptor key it is assumed that ingredient is not present in the mixture.</p>
+If a material does not contain data for a given quantity descriptor key, it is assumed that ingredient is not present in the mixture.</p>
 <p>Let’s add another ingredient <code class="docutils literal notranslate"><span class="pre">salt</span></code> to our map and say we are given data in the form:</p>
 <table class="docutils align-default">
 <colgroup>
@@ -561,8 +561,8 @@ If a material does not contain data for a given quantity descriptor key it is as
 </tr>
 </tbody>
 </table>
-<p>There are two mixtures, hypertonic and isotonic saline formed by mixing water and salt together in different amounts.
-(Note, water and salt are leaf ingredients; and, hence these rows do not contain quantity data.)
+<p>There are two mixtures, hypertonic and isotonic saline, formed by mixing water and salt together in different amounts.
+(Note, water and salt are leaf ingredients; hence these rows do not contain quantity data.)
 Mixtures are defined by a map from ingredient id to quantity, so this predictor would form 2 mixtures with recipes:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># hypertonic saline</span>
 <span class="p">{</span><span class="s1">&#39;water&#39;</span><span class="p">:</span> <span class="mf">0.93</span><span class="p">,</span> <span class="s1">&#39;salt&#39;</span><span class="p">:</span> <span class="mf">0.07</span><span class="p">}</span>
@@ -674,7 +674,7 @@ To configure a mean property predictor, we must specify:</p>
 <li><p>A list of properties to featurize</p></li>
 <li><p>The power of the <a class="reference external" href="https://en.wikipedia.org/wiki/Generalized_mean">generalized mean</a>.
 Only integer powers are supported. <code class="docutils literal notranslate"><span class="pre">p=1</span></code> corresponds to the arithmetic mean, which weights
-all values evenly. Higher powers, such as <code class="docutils literal notranslate"><span class="pre">p=2</span></code> (the root mean square) place more weight
+all values evenly. Higher powers, such as <code class="docutils literal notranslate"><span class="pre">p=2</span></code> (the root mean square), place more weight
 on larger values of the property. Negative powers place more weight on smaller values.</p></li>
 <li><p>A data source that contains all ingredients and their properties</p></li>
 <li><p>How to handle missing ingredient properties</p></li>
@@ -686,7 +686,7 @@ on larger values of the property. Negative powers place more weight on smaller v
 Otherwise, the row will not be featurized.
 Use this option if you expect ingredient properties to be dense (always present) and would like to exclude rows when properties are missing.</p></li>
 <li><p>If <code class="docutils literal notranslate"><span class="pre">impute_properties</span> <span class="pre">==</span> <span class="pre">True</span></code> and no <code class="docutils literal notranslate"><span class="pre">default_properties</span></code> are specified, missing properties will be filled in using the average value across the entire dataset.
-The average is computed from any row with data corresponding to the missing property, regardless of label or material type (i.e. the average is computed from all leaf ingredients and mixtures).</p></li>
+The average is computed from any row with data corresponding to the missing property, regardless of label or material type (i.e., the average is computed from all leaf ingredients and mixtures).</p></li>
 <li><p>If <code class="docutils literal notranslate"><span class="pre">impute_properties</span> <span class="pre">==</span> <span class="pre">True</span></code> and <code class="docutils literal notranslate"><span class="pre">default_properties</span></code> are specified, the specified property value will be used when an ingredient property is missing (instead of the average over the dataset).
 This allows complete control over what values are imputed.
 Default properties cannot be specified if <code class="docutils literal notranslate"><span class="pre">impute_properties</span> <span class="pre">==</span> <span class="pre">False</span></code> (because missing properties are not filled in).</p></li>
@@ -717,8 +717,8 @@ Our leaf ingredient data might resemble:</p>
 </table>
 <p>If <code class="docutils literal notranslate"><span class="pre">impute_properties</span> <span class="pre">==</span> <span class="pre">False</span></code>, any mixture that includes boric acid will not be featurized.
 If <code class="docutils literal notranslate"><span class="pre">impute_properties</span> <span class="pre">==</span> <span class="pre">True</span></code> and no <code class="docutils literal notranslate"><span class="pre">default_properties</span></code> are specified, an density of <span class="math notranslate nohighlight">\(\left( 1.0 + 2.16 \right) / 2 = 1.58\)</span> will be used.
-If a value other than 1.58 should be used, e.g. 2.0, this can be specified by setting <code class="docutils literal notranslate"><span class="pre">default_properties</span> <span class="pre">=</span> <span class="pre">{'density':</span> <span class="pre">2.0}</span></code>.</p>
-<p>The example below show how to configure a mean property predictor to compute mean solute density in formulations.</p>
+If a value other than 1.58 should be used (e.g., 2.0), this can be specified by setting <code class="docutils literal notranslate"><span class="pre">default_properties</span> <span class="pre">=</span> <span class="pre">{'density':</span> <span class="pre">2.0}</span></code>.</p>
+<p>The example below shows how to configure a mean property predictor to compute mean solute density in formulations.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.informatics.data_sources</span> <span class="kn">import</span> <span class="n">GemTableDataSource</span>
 <span class="kn">from</span> <span class="nn">citrine.informatics.descriptors</span> <span class="kn">import</span> <span class="n">FormulationDescriptor</span><span class="p">,</span> <span class="n">RealDescriptor</span>
 <span class="kn">from</span> <span class="nn">citrine.informatics.predictors</span> <span class="kn">import</span> <span class="n">MeanPropertyPredictor</span>
@@ -761,7 +761,7 @@ If a value other than 1.58 should be used, e.g. 2.0, this can be specified by se
 <span class="p">)</span>
 </pre></div>
 </div>
-<p>If <code class="docutils literal notranslate"><span class="pre">p</span></code> is given a value other than <code class="docutils literal notranslate"><span class="pre">1</span></code>, that value will be included in the key for the feature, e.g. <code class="docutils literal notranslate"><span class="pre">2.0-mean</span> <span class="pre">of</span> <span class="pre">property</span> <span class="pre">viscosity</span></code>.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">p</span></code> is given a value other than <code class="docutils literal notranslate"><span class="pre">1</span></code>, that value will be included in the key for the feature (e.g., <code class="docutils literal notranslate"><span class="pre">2.0-mean</span> <span class="pre">of</span> <span class="pre">property</span> <span class="pre">viscosity</span></code>).</p>
 </section>
 <section id="ingredient-fractions-predictor">
 <h2><span class="section-number">4.4.9. </span>Ingredient fractions predictor<a class="headerlink" href="#ingredient-fractions-predictor" title="Permalink to this headline">¶</a></h2>
@@ -805,7 +805,7 @@ where <code class="docutils literal notranslate"><span class="pre">`{formulation
 <section id="label-fractions-predictor">
 <h2><span class="section-number">4.4.10. </span>Label fractions predictor<a class="headerlink" href="#label-fractions-predictor" title="Permalink to this headline">¶</a></h2>
 <p>The <a class="reference internal" href="../reference/citrine.informatics.predictors.label_fractions_predictor.html#citrine.informatics.predictors.label_fractions_predictor.LabelFractionsPredictor" title="citrine.informatics.predictors.label_fractions_predictor.LabelFractionsPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">LabelFractionsPredictor</span></code></a> computes total fraction of ingredients with a given label.
-The predictor is configured by specifying a formulation descriptor that holds formulation data (i.e. recipes and ingredient labels) and a set of labels to featurize.
+The predictor is configured by specifying a formulation descriptor that holds formulation data (i.e., recipes and ingredient labels) and a set of labels to featurize.
 A separate response is computed for each featurized label by summing all quantities in the recipe associated with ingredients given the label.</p>
 <p>The following example demonstrates how to create a predictor that computes the total fractions of solute and solvent in a formulation.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">citrine.informatics.descriptors</span> <span class="kn">import</span> <span class="n">FormulationDescriptor</span>
@@ -831,7 +831,7 @@ A separate response is computed for each featurized label by summing all quantit
 <section id="simple-ml-predictor">
 <h2><span class="section-number">4.4.11. </span>Simple ML predictor<a class="headerlink" href="#simple-ml-predictor" title="Permalink to this headline">¶</a></h2>
 <p>The <a class="reference internal" href="../reference/citrine.informatics.predictors.simple_ml_predictor.html#citrine.informatics.predictors.simple_ml_predictor.SimpleMLPredictor" title="citrine.informatics.predictors.simple_ml_predictor.SimpleMLPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleMLPredictor</span></code></a> predicts material properties using a machine-learned model.
-Each predictor is defined by a set of inputs, outputs and latent variables.
+Each predictor is defined by a set of inputs, outputs, and latent variables.
 Inputs are used as input features to the machine learning model.
 Outputs are the properties that you would like the model to predict.
 There must be at least one input and one output.
@@ -945,15 +945,15 @@ To learn more about predictor evaluation metrics, please see <a class="reference
 When multiple data sources are specified, data from all sources is combined into a flattened list and deduplicated prior to training a predictor.
 Deduplication is performed if a uid or identifier is shared between two or more rows.
 The content of a deduplicated row will contain the union of data across all rows that share the same uid or at least 1 identifier.
-An error will be thrown if two deduplicated rows contain different data for the same descriptor because it’s unclear which value should be used in the deduplcated row.</p>
+An error will be thrown if two deduplicated rows contain different data for the same descriptor because it’s unclear which value should be used in the deduplicated row.</p>
 <p>Deduplication is additive.
 Given three rows with identifiers <code class="docutils literal notranslate"><span class="pre">[a]</span></code>, <code class="docutils literal notranslate"><span class="pre">[b]</span></code> and <code class="docutils literal notranslate"><span class="pre">[a,</span> <span class="pre">b]</span></code>, deduplication will result in a single row with three identifiers (<code class="docutils literal notranslate"><span class="pre">[a,</span> <span class="pre">b,</span> <span class="pre">c]</span></code>) and the union of all data from these rows.
 Care must be taken to ensure uids and identifiers aren’t shared across multiple data sources to avoid unwanted deduplication.</p>
-<p>When using a <a class="reference internal" href="../reference/citrine.informatics.predictors.graph_predictor.html#citrine.informatics.predictors.graph_predictor.GraphPredictor" title="citrine.informatics.predictors.graph_predictor.GraphPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">GraphPredictor</span></code></a>, training data provided by the graph predictor and all subpredictors are combined into a single deduplicated list.
+<p>When using a <a class="reference internal" href="../reference/citrine.informatics.predictors.graph_predictor.html#citrine.informatics.predictors.graph_predictor.GraphPredictor" title="citrine.informatics.predictors.graph_predictor.GraphPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">GraphPredictor</span></code></a>, training data provided by the graph predictor and all sub-predictors are combined into a single deduplicated list.
 Each predictor is trained on the subset of the combined data that is valid for the model.
-Note, data may come from sources defined by other subpredictors in the graph.
-Because training data are shared by all predictors in the graph, a data source does not need to be redefined by all subpredictors that require it.
-If all data sources required train a predictor are specified elsewhere in the graph, the <code class="docutils literal notranslate"><span class="pre">training_data</span></code> parameter may be omitted.
+Note, data may come from sources defined by other sub-predictors in the graph.
+Because training data are shared by all predictors in the graph, a data source does not need to be redefined by all sub-predictors that require it.
+If all data sources required to train a predictor are specified elsewhere in the graph, the <code class="docutils literal notranslate"><span class="pre">training_data</span></code> parameter may be omitted.
 If the graph contains a predictor that requires formulations data, e.g. a <a class="reference internal" href="../reference/citrine.informatics.predictors.simple_mixture_predictor.html#citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor" title="citrine.informatics.predictors.simple_mixture_predictor.SimpleMixturePredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimpleMixturePredictor</span></code></a> or <a class="reference internal" href="../reference/citrine.informatics.predictors.mean_property_predictor.html#citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor" title="citrine.informatics.predictors.mean_property_predictor.MeanPropertyPredictor"><code class="xref py py-class docutils literal notranslate"><span class="pre">MeanPropertyPredictor</span></code></a>, any GEM Tables specified by the graph predictor that contain formulation data must provide a formulation descriptor,
 and this descriptor must match the input formulation descriptor of the sub-predictors that require these data.</p>
 </section>
