@@ -2,12 +2,12 @@
 Projects
 ========
 
-A Project is the basic unit of collaboration and access on the Citrine platform.
+A Project is the basic unit of collaboration and access on the Citrine Platform.
 They are containers for other resources, such as Datasets and modules.
 Access rights on resources inside a Project are managed, granted, and revoked at the Project level.
 
-Users are individuals using the Citrine Platform, and they are made members of projects.
-A user who is a member of a Project has access to all of the Datasets and AI Modules that the project has access to.
+Users are individuals using the Citrine Platform, and they are made members of Projects.
+A user who is a member of a Project has access to all of the Datasets and AI Modules that the Project has access to.
 
 Every interaction with every other type of resource is scoped to a single Project.
 This means that the same user can have different permissions on a resource depending on which Project they are using to access it.
@@ -17,15 +17,15 @@ Then a user who is a member of both Projects would be able to add new data if ac
 Basic Project Use
 -----------------
 
-Most commonly, the first thing you will want to do after connecting to the Citrine Platform is to find a certain project.
+Most commonly, the first thing you will want to do after connecting to the Citrine Platform is to find a certain Project.
 Assume that you have created a :class:`~citrine.citrine.Citrine` client object named ``citrine``.
-To list all of the projects that you are a member of, use the ``list`` command.
+To list all of the Projects that you are a member of, use the ``list`` command.
 
 .. code-block:: python
 
     citrine.projects.list()
 
-To retrieve a project that you are a member of, either find the project in the list:
+To retrieve a Project that you are a member of, either find the Project in the list:
 
 .. code-block:: python
 
@@ -45,7 +45,7 @@ Managing Users
 
 There are two types of roles users can have, MEMBER and ADMIN.
 There are two types of access permissions: READ and WRITE.
-READ allows a user to view resources in a project.
+READ allows a user to view resources in a Project.
 WRITE allows them to modify those resources.
 Users with the ADMIN role have both READ and WRITE access, and can also add or remove other users and change their roles and permissions.
 
@@ -57,7 +57,7 @@ Listing Users in a Project
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Users in a Project can be listed using the :func:`~citrine.resources.project.Project.list_members` method.
-The ``ProjectMember`` array returned from this method has the user's role in the project as well as a copy of the User and Project objects.
+The ``ProjectMember`` array returned from this method has the user's role in the Project as well as a copy of the User and Project objects.
 
 .. code-block:: python
 

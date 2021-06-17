@@ -6,12 +6,12 @@ GEMD Data Model
 Creating Data Model Objects
 ---------------------------------
 
-Each data object and template in the GEMD_ (Graphical Expression of Materials Data) data model has a corresponding resource in the Citrine Python Client.
+Each data object and template in the GEMD_ (Graphical Expression of Materials Data) data model has a corresponding resource in the Citrine Python client.
 For example, the :class:`~citrine.resources.process_spec.ProcessSpec` class implements the ProcessSpec_ object in GEMD_.
-The Citrine Python Client implementations are consistent with the GEMD_ model specification.
+The Citrine Python client implementations are consistent with the GEMD_ model specification.
 
-The Citrine Python Client is built on top of and entirely interoperable with the gemd-python_ package.
-Any method that accepts the Citrine Python Client's implementations of data model objects should also accept those from GEMD.
+The Citrine Python client is built on top of and entirely interoperable with the gemd-python_ package.
+Any method that accepts the Citrine Python client's implementations of data model objects should also accept those from GEMD.
 
 Identifying Data Model Objects
 ---------------------------------
@@ -23,7 +23,7 @@ These identifiers are UUID4_, which are extremely robust but also not especially
 
 `Alternative identifiers`__ are an easier way to recall data objects.
 To create an alternative identifier, simply add key-value pairs to the ``uids`` dictionary in the data model object.
-The key defines the ``scope`` and the value the ``id``.
+The key defines the ``scope`` and the value of the ``id``.
 As a pair, they must be unique across the entire platform.
 You can think of each value of ``scope`` as defining a namespace, with ``id`` being the name within that namespace.
 
@@ -42,7 +42,7 @@ For example:
 Note that registration must be performed within the scope of a dataset: the dataset into which the objects are being written.
 The data model object collections that are defined with the project scope (such as `project.process_specs`) are read-only and will throw an error if their register method is called.
 
-If you have GEMD_ objects, e.g. :class:`~gemd.entity.object.process_spec.ProcessSpec`, you can register it just like the objects defined in the Citrine Python Client.
+If you have GEMD_ objects, e.g., :class:`~gemd.entity.object.process_spec.ProcessSpec`, you can register it just like the objects defined in the Citrine Python client.
 
 
 Finding Data Model Objects
@@ -109,7 +109,7 @@ Referencing Data Model Objects
 
 Many data model objects contain links to other data model objects.
 For example, a :class:`~citrine.resources.material_spec.MaterialSpec` references the :class:`~citrine.resources.process_spec.ProcessSpec` that produced it.
-These links are created with the :class:`~gemd.entity.link_by_uid.LinkByUID` class, e.g.:
+These links are created with the :class:`~gemd.entity.link_by_uid.LinkByUID` class, for example:
 
 .. code-block:: python
 
@@ -128,7 +128,7 @@ Material History
 ----------------
 
 Starting with a specific terminal :class:`~citrine.resources.material_run.MaterialRun`,
-you can retrieve the complete material history--every process, ingredient and material that contributed to
+you can retrieve the complete material history -- every process, ingredient, and material that contributed to
 the target material, as well as the measurements that were performed on all of those materials.
 The method is :func:`~citrine.resources.material_run.MaterialRunCollection.get_history`,
 and it requires you to know a unique identifier (scope/id pair) for the material.

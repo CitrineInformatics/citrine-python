@@ -88,7 +88,7 @@ class Property(typing.Generic[DeserializedType, SerializedType]):
             next_value = value.get(field)
             if next_value is None:
                 if self.default is None and not self.optional:
-                    msg = "Unable to deserialize {} into {}: missing a required field: {}".format(
+                    msg = "Unable to deserialize {} into {}, missing a required field: {}".format(
                         data, self.underlying_types, field)
                     raise RuntimeError(msg)
                 # This occurs if a `field` is unexpectedly not present in the data dictionary
@@ -497,7 +497,7 @@ class Union(Property[typing.Any, typing.Any]):
         # this is a failsafe that shouldn't actually ever get hit, hence no cover
         msg = "An unexpected error occurred while trying to deserialize {} to one of the " \
               "following types: {}.".format(value, self.underlying_types)  # pragma: no cover
-        raise RuntimeError(msg)  # pragma: no cover
+        raise ValueError(msg)  # pragma: no cover
 
 
 class SpecifiedMixedList(PropertyCollection[list, list]):

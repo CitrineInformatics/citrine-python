@@ -257,7 +257,7 @@ class Project(Resource['Project']):
         if resource_dict is None:
             raise ValueError("Must specify resource to share or specify the resource type and id")
         return self.session.post_resource(self._path() + "/share", {
-            "project_id": project_id,
+            "project_id": str(project_id),
             "resource": resource_dict
         })
 

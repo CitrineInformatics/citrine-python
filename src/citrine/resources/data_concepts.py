@@ -365,13 +365,8 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         dumped_data = replace_objects_with_links(scrub_none(model.dump()))
         recursive_foreach(model, lambda x: x.uids.pop(temp_scope, None))  # Strip temp uids
 
-        try:
-            data = self.session.post_resource(path, dumped_data, params=params)
-            return self.build(data)
-        except BadRequest:
-            # If register() cannot be used because an asynchronous check is required
-            return self.async_update(model, dry_run=dry_run,
-                                     wait_for_response=True, return_model=True)
+        data = self.session.post_resource(path, dumped_data, params=params)
+        return self.build(data)
 
     def register_all(self, models: List[ResourceType], *, dry_run=False) -> List[ResourceType]:
         """
@@ -421,7 +416,12 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
 
     def update(self, model: ResourceType) -> ResourceType:
         """Update a data object model."""
-        return self.register(model, dry_run=False)
+        try:
+            return self.register(model, dry_run=False)
+        except BadRequest:
+            # If register() cannot be used because an asynchronous check is required
+            return self.async_update(model, dry_run=False,
+                                     wait_for_response=True, return_model=True)
 
     def async_update(self, model: ResourceType, *,
                      dry_run: bool = False,

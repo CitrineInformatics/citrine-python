@@ -1,8 +1,7 @@
 """Tools for working with workflow resources."""
-from typing import Type, Optional
+from typing import Optional
 from uuid import UUID
 
-from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
 from citrine._rest.asynchronous_object import AsynchronousObject
 from citrine._session import Session
 from citrine._serialization import properties
@@ -11,10 +10,8 @@ from citrine._serialization import properties
 __all__ = ['Workflow']
 
 
-class Workflow(PolymorphicSerializable['Workflow'], AsynchronousObject):
+class Workflow(AsynchronousObject):
     """A Citrine Workflow is a collection of Modules that together accomplish some task.
-
-    Abstract type that returns the proper type given a serialized dict.
 
     All workflows must inherit AIResourceMetadata, and hence have a ``status`` field.
     Possible statuses are INPROGRESS, SUCCEEDED, and FAILED.
@@ -34,22 +31,3 @@ class Workflow(PolymorphicSerializable['Workflow'], AsynchronousObject):
     description = properties.Optional(properties.String, 'description')
     uid = properties.Optional(properties.UUID, 'id', serializable=False)
     """:Optional[UUID]: Citrine Platform unique identifier"""
-
-    @classmethod
-    def get_type(cls, data) -> Type['Workflow']:
-        """Return the subtype."""
-        from .design_workflow import DesignWorkflow
-        from .predictor_evaluation_workflow import PredictorEvaluationWorkflow
-        type_dict = {
-            'DESIGN_WORKFLOW': DesignWorkflow,
-            'PREDICTOR_EVALUATION_WORKFLOW': PredictorEvaluationWorkflow,
-        }
-        typ = type_dict.get(data['module_type'])
-
-        if typ is not None:
-            return typ
-        else:
-            raise ValueError(
-                '{} is not a valid workflow type. '
-                'Must be in {}.'.format(data['module_type'], type_dict.keys())
-            )
