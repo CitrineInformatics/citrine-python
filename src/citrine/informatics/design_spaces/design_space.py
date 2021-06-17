@@ -1,10 +1,8 @@
 """Tools for working with design spaces."""
-from typing import Type, Optional
-from uuid import UUID
+from typing import Type
 
 from citrine._serialization import properties
 from citrine._serialization.serializable import Serializable
-from citrine._session import Session
 from citrine.informatics.modules import Module
 
 
@@ -17,9 +15,6 @@ class DesignSpace(Module):
     Abstract type that returns the proper type given a serialized dict.
 
     """
-
-    _project_id: Optional[UUID] = None
-    _session: Optional[Session] = None
 
     uid = properties.Optional(properties.UUID, 'id', serializable=False)
     """:Optional[UUID]: Citrine Platform unique identifier"""
