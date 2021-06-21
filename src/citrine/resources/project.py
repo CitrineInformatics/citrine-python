@@ -13,6 +13,7 @@ from citrine._session import Session
 from citrine.resources.api_error import ApiError
 from citrine.resources.condition_template import ConditionTemplateCollection
 from citrine.resources.dataset import DatasetCollection
+from citrine.resources.data_concepts import _make_link_by_uid, DataConcepts
 from citrine.resources.delete import _async_gemd_batch_delete
 from citrine.resources.descriptors import DescriptorMethods
 from citrine.resources.design_space import DesignSpaceCollection
@@ -493,6 +494,29 @@ class Project(Resource['Project']):
         return _async_gemd_batch_delete(id_list, self.uid, self.session, None,
                                         timeout=timeout, polling_delay=polling_delay)
 
+    def get_gemd(self, uid: Union[UUID, str, LinkByUID, BaseEntity], *,
+            scope: Optional[str] = None) -> DataConcepts:
+        """
+        Get a GEMD data object within the project by its id.
+
+        Parameters
+        ----------
+        uid: Union[UUID, str, LinkByUID, BaseEntity]
+            A representation of the object (Citrine id, LinkByUID, or the object itself)
+        scope: Optional[str]
+            [DEPRECATED] use a LinkByUID to specify a custom scope
+            The scope of the uid, defaults to Citrine scope (CITRINE_SCOPE)
+
+        Returns
+        -------
+        ResourceType
+            An object with specified scope and uid
+
+        """
+        link = _make_link_by_uid(uid, scope)
+        path = self._path() + "/storables/{}/{}".format(link.scope, link.id)
+        data = self.session.get_resource(path)
+        return data
 
 class ProjectCollection(Collection[Project]):
     """
