@@ -19,6 +19,7 @@ from citrine.resources.descriptors import DescriptorMethods
 from citrine.resources.design_space import DesignSpaceCollection
 from citrine.resources.design_workflow import DesignWorkflowCollection
 from citrine.resources.gemtables import GemTableCollection
+from citrine.resources.gem_resource import GemResourceCollection
 from citrine.resources.ingredient_run import IngredientRunCollection
 from citrine.resources.ingredient_spec import IngredientSpecCollection
 from citrine.resources.material_run import MaterialRunCollection
@@ -216,6 +217,11 @@ class Project(Resource['Project']):
     def ingredient_specs(self) -> IngredientSpecCollection:
         """Return a resource representing all ingredient specs in this dataset."""
         return IngredientSpecCollection(self.uid, None, self.session)
+
+    @property
+    def gemd(self) -> GemResourceCollection:
+        """Return a resource representing all GEMD objects/templates in this dataset."""
+        return GemResourceCollection(self.uid, None, self.session)
 
     @property
     def table_configs(self) -> TableConfigCollection:
@@ -493,30 +499,6 @@ class Project(Resource['Project']):
         """
         return _async_gemd_batch_delete(id_list, self.uid, self.session, None,
                                         timeout=timeout, polling_delay=polling_delay)
-
-    def get_gemd(self, uid: Union[UUID, str, LinkByUID, BaseEntity], *,
-            scope: Optional[str] = None) -> DataConcepts:
-        """
-        Get a GEMD data object within the project by its id.
-
-        Parameters
-        ----------
-        uid: Union[UUID, str, LinkByUID, BaseEntity]
-            A representation of the object (Citrine id, LinkByUID, or the object itself)
-        scope: Optional[str]
-            [DEPRECATED] use a LinkByUID to specify a custom scope
-            The scope of the uid, defaults to Citrine scope (CITRINE_SCOPE)
-
-        Returns
-        -------
-        ResourceType
-            An object with specified scope and uid
-
-        """
-        link = _make_link_by_uid(uid, scope)
-        path = self._path() + "/storables/{}/{}".format(link.scope, link.id)
-        data = self.session.get_resource(path)
-        return data
 
 class ProjectCollection(Collection[Project]):
     """

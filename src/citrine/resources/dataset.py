@@ -22,6 +22,7 @@ from citrine.resources.condition_template import ConditionTemplateCollection
 from citrine.resources.data_concepts import _make_link_by_uid
 from citrine.resources.delete import _async_gemd_batch_delete, _poll_for_async_batch_delete_result
 from citrine.resources.file_link import FileCollection
+from citrine.resources.gem_resource import GemResourceCollection
 from citrine.resources.ingredient_run import IngredientRunCollection
 from citrine.resources.ingredient_spec import IngredientSpecCollection
 from citrine.resources.material_run import MaterialRunCollection
@@ -189,6 +190,11 @@ class Dataset(Resource['Dataset']):
     def ingredient_specs(self) -> IngredientSpecCollection:
         """Return a resource representing all ingredient specs in this dataset."""
         return IngredientSpecCollection(self.project_id, self.uid, self.session)
+
+    @property
+    def gemd(self) -> GemResourceCollection:
+        """Return a resource representing all GEMD objects/templates in this dataset."""
+        return GemResourceCollection(self.project_id, self.uid, self.session)
 
     @property
     def files(self) -> FileCollection:
@@ -382,44 +388,6 @@ class Dataset(Resource['Dataset']):
         """
         return _async_gemd_batch_delete(id_list, self.project_id, self.session,
                                         self.uid, timeout=timeout, polling_delay=polling_delay)
-
-    def gemd_list_by_name(self, name: str, *, exact: bool = False,
-                     forward: bool = True, per_page: int = 100):
-        """
-        Get all objects with specified name in this dataset.
-
-        Parameters
-        ----------
-        name: str
-            case-insensitive object name prefix to search.
-        exact: bool
-            Set to True to change prefix search to exact search (but still case-insensitive).
-            Default is False.
-        forward: bool
-            Set to False to reverse the order of results (i.e., return in descending order).
-        per_page: int
-            Controls the number of results fetched with each http request to the backend.
-            Typically, this is set to a sensible default and should not be modified. Consider
-            modifying this value only if you find this method is unacceptably latent.
-
-        Returns
-        -------
-        Iterator[ResourceType]
-            List of every object in this collection whose `name` matches the search term.
-
-        """
-        params = {'dataset_id': str(self.uid), 'name': name, 'exact': exact}
-        path = 'projects/{project_id}/storables/filter-by-name'.format(
-            dataset_uid=self.uid,
-            project_id=self.project_id
-        )
-        raw_objects = self.session.cursor_paged_resource(
-            self.session.get_resource, path,
-            forward=forward,
-            per_page=per_page,
-            params=params)
-        return raw_objects
-        #return (self.build(raw) for raw in raw_objects)
 
 class DatasetCollection(Collection[Dataset]):
     """
