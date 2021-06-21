@@ -10,8 +10,7 @@ from citrine.resources.data_concepts import _make_link_by_uid, DataConcepts
 from citrine._rest.collection import Collection
 from citrine._session import Session
 
-# It will hold subclasses of DataConcepts, but multiple types at once
-# How to annotate?
+# Proper type parameter for inheritance?
 ResourceType = TypeVar('ResourceType', bound='DataConcepts')
 
 class GemResourceCollection(Collection, ABC):
@@ -31,7 +30,7 @@ class GemResourceCollection(Collection, ABC):
         return DataConcepts.get_type(data).build(data)
 
     def get(self, uid: Union[UUID, str, LinkByUID, BaseEntity], *,
-                 scope: Optional[str] = None) -> DataConcepts:
+                 scope: Optional[str] = None) -> ResourceType:
         """
         Get a GEMD resource within the project by its id.
 
@@ -55,7 +54,7 @@ class GemResourceCollection(Collection, ABC):
         return DataConcepts.get_type(data).build(data)
 
     def list_by_name(self, name: str, *, exact: bool = False,
-                     forward: bool = True, per_page: int = 100):
+                     forward: bool = True, per_page: int = 100) -> Iterator[ResourceType]:
         """
         Get all GEMD objects/templates with specified name in this dataset.
 
@@ -87,6 +86,42 @@ class GemResourceCollection(Collection, ABC):
             # "Ignoring" dataset because it is in the query params (and required)
             self._get_path(ignore_dataset=True) + "/filter-by-name",
             forward=forward,
+            per_page=per_page,
+            params=params)
+        return (self.build(raw) for raw in raw_objects)
+
+    def list_by_tag(self, tag: str, *, per_page: int = 100) -> Iterator[ResourceType]:
+        """
+        Get all objects bearing a tag prefixed with `tag` in the collection.
+
+        The order of results is largely not meaningful. Results from the same dataset will be
+        grouped together but no other meaningful ordering can be relied upon. Duplication in
+        the result set may (but needn't) occur when one object has multiple tags matching the
+        search tag. For this reason, it is inadvisable to put 2 tags with the same prefix
+        (e.g., 'foo::bar' and 'foo::baz') in the same object when it can be avoided.
+
+        Parameters
+        ----------
+        tag: str
+            The prefix with which to search. Must fully match up to the first delimiter (ex.
+            'foo' and 'foo::b' both match 'foo::bar' but 'fo' is insufficient.
+        per_page: int
+            Controls the number of results fetched with each http request to the backend.
+            Typically, this is set to a sensible default and should not be modified. Consider
+            modifying this value only if you find this method is unacceptably latent.
+
+        Returns
+        -------
+        Iterator[ResourceType]
+            Every object in this collection.
+
+        """
+        params = {'tags': [tag]}
+        if self.dataset_id is not None:
+            params['dataset_id'] = str(self.dataset_id)
+        raw_objects = self.session.cursor_paged_resource(
+            self.session.get_resource,
+            self._get_path(ignore_dataset=True),
             per_page=per_page,
             params=params)
         return (self.build(raw) for raw in raw_objects)
