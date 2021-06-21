@@ -13,7 +13,7 @@ from citrine._session import Session
 # Proper type parameter for inheritance?
 ResourceType = TypeVar('ResourceType', bound='DataConcepts')
 
-class GemResourceCollection(Collection, ABC):
+class GemResourceCollection(Collection[ResourceType], ABC):
     """A collection of GEMD objects/templates of any kind."""
 
     _path_template = 'projects/{project_id}/storables'
