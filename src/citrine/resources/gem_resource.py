@@ -6,31 +6,52 @@ from uuid import UUID, uuid4
 from gemd.entity.base_entity import BaseEntity
 from gemd.entity.link_by_uid import LinkByUID
 
-from citrine.resources.data_concepts import _make_link_by_uid, DataConcepts
+from citrine.resources.data_concepts import _make_link_by_uid
+from citrine.resources.data_concepts import DataConcepts
 from citrine._rest.collection import Collection
 from citrine._session import Session
 
-# Proper type parameter for inheritance?
-ResourceType = TypeVar('ResourceType', bound='DataConcepts')
+# Proper generic parameter for typing?
+# It is not a single generic type, but rather
+# polymorphic for any GEM object
+GemResourceType = TypeVar('GemResourceType', bound='DataConcepts')
 
-class GemResourceCollection(Collection[ResourceType], ABC):
+class GemResourceCollection(Collection[GemResourceType], ABC):
     """A collection of GEMD objects/templates of any kind."""
 
     _path_template = 'projects/{project_id}/storables'
     _dataset_agnostic_path_template = 'projects/{project_id}/storables'
     _individual_key = None
     _collection_key = None
+    _resource = GemResourceType
 
     def __init__(self, project_id: UUID, dataset_id: UUID, session: Session):
         self.project_id = project_id
         self.dataset_id = dataset_id
         self.session = session
+        DataConcepts._make_class_dict()
 
     def build(self, data: dict):
+        """
+        Build an arbitary GEMD resource from a serialized dictionary.
+
+        This is an internal method, and should not be called directly by users.
+
+        Parameters
+        ----------
+        data: dict
+            A serialized data model object.
+
+        Returns
+        -------
+        GemResourceType
+            A data model object built from the dictionary.
+
+        """
         return DataConcepts.get_type(data).build(data)
 
     def get(self, uid: Union[UUID, str, LinkByUID, BaseEntity], *,
-                 scope: Optional[str] = None) -> ResourceType:
+                 scope: Optional[str] = None) -> GemResourceType:
         """
         Get a GEMD resource within the project by its id.
 
@@ -51,12 +72,12 @@ class GemResourceCollection(Collection[ResourceType], ABC):
         link = _make_link_by_uid(uid, scope)
         path = self._get_path() + "/{}/{}".format(link.scope, link.id)
         data = self.session.get_resource(path)
-        return DataConcepts.get_type(data).build(data)
+        return self.build(data)
 
     def list_by_name(self, name: str, *, exact: bool = False,
-                     forward: bool = True, per_page: int = 100) -> Iterator[ResourceType]:
+                     forward: bool = True, per_page: int = 100) -> Iterator[GemResourceType]:
         """
-        Get all GEMD objects/templates with specified name in this dataset.
+        Get all GEMD resources with specified name in this dataset.
 
         Parameters
         ----------
@@ -90,9 +111,9 @@ class GemResourceCollection(Collection[ResourceType], ABC):
             params=params)
         return (self.build(raw) for raw in raw_objects)
 
-    def list_by_tag(self, tag: str, *, per_page: int = 100) -> Iterator[ResourceType]:
+    def list_by_tag(self, tag: str, *, per_page: int = 100) -> Iterator[GemResourceType]:
         """
-        Get all objects bearing a tag prefixed with `tag` in the collection.
+        Get all GEMD resources bearing a tag prefixed with `tag` in the collection.
 
         The order of results is largely not meaningful. Results from the same dataset will be
         grouped together but no other meaningful ordering can be relied upon. Duplication in
