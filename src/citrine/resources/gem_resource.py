@@ -1,7 +1,7 @@
 """Top-level class for all object template objects and collections thereof."""
 from abc import ABC
-from typing import TypeVar, Type, List, Union, Optional, Iterator
-from uuid import UUID, uuid4
+from typing import TypeVar, Union, Iterator
+from uuid import UUID
 
 from gemd.entity.base_entity import BaseEntity
 from gemd.entity.link_by_uid import LinkByUID
@@ -11,10 +11,8 @@ from citrine.resources.data_concepts import DataConcepts
 from citrine._rest.collection import Collection
 from citrine._session import Session
 
-# Proper generic parameter for typing?
-# It is not a single generic type, but rather
-# polymorphic for any GEM object
 GemResourceType = TypeVar('GemResourceType', bound='DataConcepts')
+
 
 class GemResourceCollection(Collection[GemResourceType], ABC):
     """A collection of GEMD objects/templates of any kind."""
@@ -48,10 +46,9 @@ class GemResourceCollection(Collection[GemResourceType], ABC):
             A data model object built from the dictionary.
 
         """
-        return DataConcepts.get_type(data).build(data)
+        return DataConcepts.build(data)
 
-    def get(self, uid: Union[UUID, str, LinkByUID, BaseEntity], *,
-                 scope: Optional[str] = None) -> GemResourceType:
+    def get(self, uid: Union[UUID, str, LinkByUID, BaseEntity]) -> GemResourceType:
         """
         Get a GEMD resource within the project by its id.
 
@@ -59,9 +56,6 @@ class GemResourceCollection(Collection[GemResourceType], ABC):
         ----------
         uid: Union[UUID, str, LinkByUID, BaseEntity]
             A representation of the object (Citrine id, LinkByUID, or the object itself)
-        scope: Optional[str]
-            [DEPRECATED] use a LinkByUID to specify a custom scope
-            The scope of the uid, defaults to Citrine scope (CITRINE_SCOPE)
 
         Returns
         -------
@@ -69,7 +63,7 @@ class GemResourceCollection(Collection[GemResourceType], ABC):
             An object with specified scope and uid
 
         """
-        link = _make_link_by_uid(uid, scope)
+        link = _make_link_by_uid(uid)
         path = self._get_path() + "/{}/{}".format(link.scope, link.id)
         data = self.session.get_resource(path)
         return self.build(data)

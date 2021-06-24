@@ -389,6 +389,7 @@ class Dataset(Resource['Dataset']):
         return _async_gemd_batch_delete(id_list, self.project_id, self.session,
                                         self.uid, timeout=timeout, polling_delay=polling_delay)
 
+
 class DatasetCollection(Collection[Dataset]):
     """
     Represents the collection of all datasets associated with a project.

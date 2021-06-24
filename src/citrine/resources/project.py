@@ -13,7 +13,6 @@ from citrine._session import Session
 from citrine.resources.api_error import ApiError
 from citrine.resources.condition_template import ConditionTemplateCollection
 from citrine.resources.dataset import DatasetCollection
-from citrine.resources.data_concepts import _make_link_by_uid, DataConcepts
 from citrine.resources.delete import _async_gemd_batch_delete
 from citrine.resources.descriptors import DescriptorMethods
 from citrine.resources.design_space import DesignSpaceCollection
@@ -499,6 +498,7 @@ class Project(Resource['Project']):
         """
         return _async_gemd_batch_delete(id_list, self.uid, self.session, None,
                                         timeout=timeout, polling_delay=polling_delay)
+
 
 class ProjectCollection(Collection[Project]):
     """
