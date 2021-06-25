@@ -34,12 +34,13 @@ class ChemicalDisplayFormat(BaseEnumeration):
 
 
 def _make_data_source(variable_rep: Union[str, Variable]) -> str:
-    """
+    """Return a string appropriate to use as a data_source.
 
     Parameters
     ----------
     variable_rep: Union[str, Variable]
         Either the name of the variable or the variable itself
+
     """
     if isinstance(variable_rep, str):
         return variable_rep
