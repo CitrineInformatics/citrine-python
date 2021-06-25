@@ -1,12 +1,17 @@
 """Row definitions for GEM Tables."""
-from typing import Type, List, Set
+from typing import Type, List, Set, Union
 from abc import abstractmethod
+from collections.abc import Collection
+from uuid import UUID
 
 from gemd.entity.link_by_uid import LinkByUID
+from gemd.entity.template import MaterialTemplate
 
 from citrine._serialization.serializable import Serializable
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
 from citrine._serialization import properties
+
+from citrine.resources.data_concepts import _make_link_by_uid
 
 
 class Row(PolymorphicSerializable['Row']):
@@ -46,7 +51,7 @@ class MaterialRunByTemplate(Serializable['MaterialRunByTemplate'], Row):
 
     Parameters
     ----------
-    templates: list[LinkByUID]
+    templates: list[Union[UUID, str, LinkByUID, MaterialTemplate]]
         templates of materials to include
     tags: Set[str]
         optional list of tags for filtering. If a terminal material doesn't
@@ -58,11 +63,14 @@ class MaterialRunByTemplate(Serializable['MaterialRunByTemplate'], Row):
     typ = properties.String('type', default="material_run_by_template", deserializable=False)
     tags = properties.Optional(properties.Set(properties.String), "tags")
 
+    template_type = Union[UUID, str, LinkByUID, MaterialTemplate]
+
     def _attrs(self) -> List[str]:
         return ["templates", "typ", "tags"]
 
     def __init__(self, *,
-                 templates: List[LinkByUID],
+                 templates: List[template_type],
                  tags: Set[str] = None):
-        self.templates = templates
+
+        self.templates = [_make_link_by_uid(x) for x in templates]
         self.tags = tags

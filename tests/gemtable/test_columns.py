@@ -2,6 +2,7 @@
 import pytest
 
 from citrine.gemtables.columns import *
+from citrine.gemtables.variables import TerminalMaterialInfo
 
 
 @pytest.fixture(params=[
@@ -41,3 +42,15 @@ def test_invalid_deser():
 
     with pytest.raises(ValueError):
         Column.build({"type": "foo"})
+
+
+def test_data_source_args():
+    terminal_name = "terminal name"
+    var = TerminalMaterialInfo(name=terminal_name,
+                               headers=[terminal_name],
+                               field='NAME'
+                               )
+    IdentityColumn(data_source=terminal_name)
+    IdentityColumn(data_source=var)
+    with pytest.raises(TypeError):
+        IdentityColumn(data_source=IdentityColumn(data_source=terminal_name))
