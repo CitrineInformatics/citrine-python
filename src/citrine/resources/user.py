@@ -67,7 +67,7 @@ class UserCollection(Collection[User]):
 
     def me(self):
         """Get information about the current user."""
-        data = self.session.get_resource('{}/me'.format(self._path_template))
+        data = self.session.get_resource(self._path_template + '/me')
         return self.build(data)
 
     def build(self, data):

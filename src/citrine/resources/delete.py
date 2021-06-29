@@ -6,6 +6,7 @@ from gemd.entity.base_entity import BaseEntity
 from gemd.entity.link_by_uid import LinkByUID
 
 from citrine._session import Session
+from citrine._utils.functions import format_escaped_url
 from citrine.resources.api_error import ApiError
 from citrine.jobs.job import _poll_for_job_completion
 from citrine.resources.data_concepts import _make_link_by_uid
@@ -71,7 +72,9 @@ def _async_gemd_batch_delete(
     if dataset_id is not None:
         body.update({'dataset_id': str(dataset_id)})
 
-    path = '/projects/{project_id}/gemd/async-batch-delete'.format(**{"project_id": project_id})
+    path = format_escaped_url('/projects/{project_id}/gemd/async-batch-delete',
+                              project_id=project_id
+                              )
     response = session.post_resource(path, body)
 
     job_id = response["job_id"]

@@ -7,7 +7,8 @@ from uuid import UUID
 from citrine._rest.collection import Collection
 from citrine._rest.resource import ResourceRef
 from citrine._session import Session
-from citrine._utils.functions import migrate_deprecated_argument, shadow_classes_in_module
+from citrine._utils.functions import migrate_deprecated_argument, shadow_classes_in_module, \
+    format_escaped_url
 from citrine.informatics.executions import PredictorEvaluationExecution
 import citrine.informatics.executions.predictor_evaluation_execution
 from citrine.resources.response import Response
@@ -47,8 +48,11 @@ class PredictorEvaluationExecutionCollection(Collection["PredictorEvaluationExec
                   "predictor evaluation workflow. Use workflow.executions.trigger instead of " \
                   "project.predictor_evaluation_executions.trigger"
             raise RuntimeError(msg)
-        path = '/projects/{project_id}/predictor-evaluation-workflows/{workflow_id}/executions' \
-            .format(project_id=self.project_id, workflow_id=self.workflow_id)
+        path = format_escaped_url(
+            '/projects/{project_id}/predictor-evaluation-workflows/{workflow_id}/executions',
+            project_id=self.project_id,
+            workflow_id=self.workflow_id
+        )
         data = self.session.post_resource(path, ResourceRef(predictor_id).dump())
         self._check_experimental(data)
         return self.build(data)

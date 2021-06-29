@@ -20,7 +20,7 @@ from citrine._serialization.properties import Optional as PropertyOptional
 from citrine._serialization.properties import String, Object, Integer
 from citrine._serialization.serializable import Serializable
 from citrine._session import Session
-from citrine._utils.functions import write_file_locally
+from citrine._utils.functions import write_file_locally, format_escaped_url
 from citrine.jobs.job import JobSubmissionResponse, _poll_for_job_completion
 from citrine.resources.response import Response
 
@@ -391,7 +391,7 @@ class FileCollection(Collection[FileLink]):
             The filename and url of the uploaded object.
 
         """
-        path = self._get_path() + "/uploads/{}/complete".format(uploader.upload_id)
+        path = self._get_path() + format_escaped_url("/uploads/{}/complete", uploader.upload_id)
         complete_response = self.session.put_resource(path=path,
                                                       json={'s3_version': uploader.s3_version})
 
@@ -402,7 +402,7 @@ class FileCollection(Collection[FileLink]):
             raise RuntimeError("Upload completion response is missing some "
                                "fields: {}".format(complete_response))
 
-        url = self._get_path(file_id) + '/versions/{}'.format(version)
+        url = self._get_path(file_id) + format_escaped_url('/versions/{}', version)
         return FileLink(filename=dest_name, url=url)
 
     def download(self, *, file_link: FileLink, local_path: str):

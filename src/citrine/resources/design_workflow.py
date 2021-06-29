@@ -3,7 +3,7 @@ from uuid import UUID
 
 from citrine._rest.collection import Collection
 from citrine._session import Session
-from citrine._utils.functions import migrate_deprecated_argument
+from citrine._utils.functions import migrate_deprecated_argument, format_escaped_url
 from citrine.informatics.workflows import DesignWorkflow
 from citrine.resources.response import Response
 from functools import partial
@@ -40,8 +40,8 @@ class DesignWorkflowCollection(Collection[DesignWorkflow]):
 
         """
         uid = migrate_deprecated_argument(uid, "uid", workflow_id, "workflow_id")
-        url = self._path_template.format(project_id=self.project_id) \
-            + "/{}/archive".format(uid)
+        url = format_escaped_url(self._path_template, project_id=self.project_id) \
+            + format_escaped_url("/{}/archive", uid)
         self.session.put_resource(url, {})
 
     def restore(self, uid: Union[UUID, str] = None, workflow_id: [UUID, str] = None):
@@ -56,8 +56,8 @@ class DesignWorkflowCollection(Collection[DesignWorkflow]):
 
         """
         uid = migrate_deprecated_argument(uid, "uid", workflow_id, "workflow_id")
-        url = self._path_template.format(project_id=self.project_id) \
-            + "/{}/restore".format(uid)
+        url = format_escaped_url(self._path_template, project_id=self.project_id) \
+            + format_escaped_url("/{}/restore", uid)
         self.session.put_resource(url, {})
 
     def delete(self, uid: Union[UUID, str]) -> Response:

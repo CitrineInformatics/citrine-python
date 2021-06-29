@@ -9,6 +9,7 @@ from gemd.entity.link_by_uid import LinkByUID
 from citrine._rest.collection import Collection
 from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
+from citrine._utils.functions import format_escaped_url
 from citrine._session import Session
 from citrine.resources.api_error import ApiError
 from citrine.resources.condition_template import ConditionTemplateCollection
@@ -94,7 +95,7 @@ class Project(Resource['Project']):
         return '<Project {!r}>'.format(self.name)
 
     def _path(self):
-        return '/projects/{project_id}'.format(**{"project_id": self.uid})
+        return format_escaped_url('/projects/{project_id}', project_id=self.uid)
 
     @property
     def modules(self) -> ModuleCollection:
@@ -420,7 +421,7 @@ class Project(Resource['Project']):
             Returns ``True`` if user role successfully updated
 
         """
-        self.session.checked_post(self._path() + "/users/{}".format(user_uid),
+        self.session.checked_post(self._path() + format_escaped_url("/users/{}", user_uid),
                                   {'role': role, 'actions': actions})
         return True
 
@@ -437,7 +438,7 @@ class Project(Resource['Project']):
             Returns ``True`` if user successfully added
 
         """
-        self.session.checked_post(self._path() + "/users/{}".format(user_uid),
+        self.session.checked_post(self._path() + format_escaped_url("/users/{}", user_uid),
                                   {'role': MEMBER, 'actions': []})
         return True
 
@@ -452,7 +453,7 @@ class Project(Resource['Project']):
 
         """
         self.session.checked_delete(
-            self._path() + "/users/{}".format(user_uid)
+            self._path() + format_escaped_url("/users/{}", user_uid)
         )
         return True
 

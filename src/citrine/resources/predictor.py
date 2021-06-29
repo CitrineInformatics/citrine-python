@@ -3,7 +3,7 @@ from uuid import UUID
 from typing import TypeVar, Optional, Union
 
 from citrine._session import Session
-from citrine._utils.functions import migrate_deprecated_argument
+from citrine._utils.functions import migrate_deprecated_argument, format_escaped_url
 from citrine.resources.module import AbstractModuleCollection
 from citrine.informatics.data_sources import DataSource
 from citrine.informatics.predictors import Predictor, GraphPredictor
@@ -62,7 +62,10 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
 
         """
         uid = migrate_deprecated_argument(uid, "uid", predictor_id, "predictor_id")
-        path = "/projects/{}/predictors/{}/check-for-update".format(self.project_id, uid)
+        path = format_escaped_url("/projects/{}/predictors/{}/check-for-update",
+                                  self.project_id,
+                                  uid
+                                  )
         data = self.session.get_resource(path)
         if data["updatable"]:
             enveloped = GraphPredictor.stuff_predictor_into_envelope(data["update"])

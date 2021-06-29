@@ -11,7 +11,8 @@ from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
 from citrine._serialization.properties import UUID
 from citrine._session import Session
-from citrine._utils.functions import rewrite_s3_links_locally, write_file_locally
+from citrine._utils.functions import rewrite_s3_links_locally, write_file_locally, \
+    format_escaped_url
 from citrine.jobs.job import JobSubmissionResponse, _poll_for_job_completion
 from citrine.resources.table_config import TableConfig
 
@@ -73,7 +74,7 @@ class GemTableCollection(Collection[GemTable]):
     def get(self, uid: Union[UUID, str], *, version: Optional[int] = None) -> GemTable:
         """Get a Table's metadata. If no version is specified, get the most recent version."""
         if version is not None:
-            path = self._get_path(uid) + "/versions/{}".format(version)
+            path = self._get_path(uid) + format_escaped_url("/versions/{}", version)
             data = self.session.get_resource(path)
             return self.build(data)
         else:
@@ -131,8 +132,10 @@ class GemTableCollection(Collection[GemTable]):
                            per_page: int) -> Tuple[Iterable[dict], str]:
             path_params = {'table_config_uid_str': str(table_config_uid)}
             path_params.update(self.__dict__)
-            path = 'projects/{project_id}/table-configs/{table_config_uid_str}/gem-tables'\
-                .format(**path_params)
+            path = format_escaped_url(
+                'projects/{project_id}/table-configs/{table_config_uid_str}/gem-tables',
+                **path_params
+            )
             data = self.session.get_resource(
                 path,
                 params=self._page_params(page, per_page))
@@ -187,9 +190,9 @@ class GemTableCollection(Collection[GemTable]):
         job_id = uuid4()
         logger.info('Building table from config {} version {} with job ID {}...'
                     .format(uid, version, job_id))
-        path = 'projects/{}/ara-definitions/{}/versions/{}/build'.format(
-            self.project_id, uid, version
-        )
+        path = format_escaped_url('projects/{}/ara-definitions/{}/versions/{}/build',
+                                  self.project_id, uid, version
+                                  )
         response = self.session.post_resource(
             path=path,
             json={},
