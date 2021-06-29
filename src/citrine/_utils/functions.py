@@ -1,7 +1,7 @@
 import inspect
 import os
 from typing import Any, Optional
-from urllib.parse import urlparse
+from urllib.parse import urlparse, quote_plus
 from warnings import warn
 
 from gemd.entity.link_by_uid import LinkByUID
@@ -179,3 +179,34 @@ def migrate_deprecated_argument(
     elif new_arg is None:
         raise ValueError(f"Please specify \'{new_arg_name}\'")
     return new_arg
+
+
+def format_escaped_url(
+        template: str,
+        *args,
+        **kwargs
+) -> str:
+    """
+    Escape arguments with percent encoding and bind them to a template of a URL.
+
+    This method takes a template string and binds the positional and keyword arguments
+    passing it into a format statement.
+
+    Parameters
+    ----------
+    template: str
+        the `format` template to which the escaped arguments will be bound
+    *args : Iterable[str]
+        Other arguments
+    **kwargs: Dict[str]
+        Keyword arguments
+
+    Returns
+    -------
+    str
+        the formatted URL
+
+    """
+    return template.format(*[quote_plus(str(x)) for x in args],
+                           **{k: quote_plus(str(v)) for (k, v) in kwargs.items()}
+                           )
