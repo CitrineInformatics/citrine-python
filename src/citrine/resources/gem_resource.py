@@ -10,17 +10,17 @@ from citrine.resources.data_concepts import DataConcepts, _make_link_by_uid
 from citrine._rest.collection import Collection
 from citrine._session import Session
 
-GemResourceType = TypeVar('GemResourceType', bound='DataConcepts')
+GEMDResourceType = TypeVar('GEMDResourceType', bound='DataConcepts')
 
 
-class GemResourceCollection(Collection[GemResourceType], ABC):
+class GEMDResourceCollection(Collection[GEMDResourceType], ABC):
     """A collection of GEMD objects/templates of any type."""
 
     _path_template = 'projects/{project_id}/storables'
     _dataset_agnostic_path_template = 'projects/{project_id}/storables'
     _individual_key = None
     _collection_key = None
-    _resource = GemResourceType
+    _resource = GEMDResourceType
 
     def __init__(self, project_id: UUID, dataset_id: UUID, session: Session):
         self.project_id = project_id
@@ -40,13 +40,13 @@ class GemResourceCollection(Collection[GemResourceType], ABC):
 
         Returns
         -------
-        GemResourceType
+        GEMDResourceType
             A data model object built from the dictionary.
 
         """
         return DataConcepts.build(data)
 
-    def get(self, uid: Union[UUID, str, LinkByUID, BaseEntity]) -> GemResourceType:
+    def get(self, uid: Union[UUID, str, LinkByUID, BaseEntity]) -> GEMDResourceType:
         """
         Get a GEMD resource within the project by its id.
 
@@ -57,7 +57,7 @@ class GemResourceCollection(Collection[GemResourceType], ABC):
 
         Returns
         -------
-        GemResourceType
+        GEMDResourceType
             An object with specified scope and uid
 
         """
@@ -68,7 +68,7 @@ class GemResourceCollection(Collection[GemResourceType], ABC):
 
     def list(self, *,
              per_page: Optional[int] = 100,
-             forward: bool = True) -> Iterator[GemResourceType]:
+             forward: bool = True) -> Iterator[GEMDResourceType]:
         """
         Get all visible elements of the collection.
 
@@ -87,7 +87,7 @@ class GemResourceCollection(Collection[GemResourceType], ABC):
 
         Returns
         -------
-        Iterator[GemResourceType]
+        Iterator[GEMDResourceType]
             Every object in this collection.
 
         """
@@ -103,7 +103,7 @@ class GemResourceCollection(Collection[GemResourceType], ABC):
         return (self.build(raw) for raw in raw_objects)
 
     def list_by_name(self, name: str, *, exact: bool = False,
-                     forward: bool = True, per_page: int = 100) -> Iterator[GemResourceType]:
+                     forward: bool = True, per_page: int = 100) -> Iterator[GEMDResourceType]:
         """
         Get all GEMD resources with specified name in this dataset.
 
@@ -123,7 +123,7 @@ class GemResourceCollection(Collection[GemResourceType], ABC):
 
         Returns
         -------
-        Iterator[GemResourceType]
+        Iterator[GEMDResourceType]
             List of every object in this collection whose `name` matches the search term.
 
         """
@@ -139,7 +139,7 @@ class GemResourceCollection(Collection[GemResourceType], ABC):
             params=params)
         return (self.build(raw) for raw in raw_objects)
 
-    def list_by_tag(self, tag: str, *, per_page: int = 100) -> Iterator[GemResourceType]:
+    def list_by_tag(self, tag: str, *, per_page: int = 100) -> Iterator[GEMDResourceType]:
         """
         Get all GEMD resources bearing a tag prefixed with `tag` in the collection.
 
@@ -161,7 +161,7 @@ class GemResourceCollection(Collection[GemResourceType], ABC):
 
         Returns
         -------
-        Iterator[GemResourceType]
+        Iterator[GEMDResourceType]
             Every object in this collection.
 
         """
@@ -175,23 +175,23 @@ class GemResourceCollection(Collection[GemResourceType], ABC):
             params=params)
         return (self.build(raw) for raw in raw_objects)
 
-    def update(self, model: GemResourceType) -> GemResourceType:
+    def update(self, model: GEMDResourceType) -> GEMDResourceType:
         """To update an arbitrary GEMD object, please use dataset.update instead."""
         raise NotImplementedError("To update an arbitary GEMD object,"
                                   " please use dataset.update instead.")
 
-    def delete(self, model: GemResourceType) -> GemResourceType:
+    def delete(self, model: GEMDResourceType) -> GEMDResourceType:
         """To delete an arbitrary GEMD object, please use dataset.delete instead."""
         raise NotImplementedError("To delete an arbitary GEMD object,"
                                   " please use dataset.delete instead.")
 
-    def register(self, model: GemResourceType, *, dry_run=False):
+    def register(self, model: GEMDResourceType, *, dry_run=False):
         """To register an arbitrary GEMD object, please use dataset.register instead."""
         raise NotImplementedError("To register an arbitary GEMD object,"
                                   " please use dataset.register instead.")
 
-    def register_all(self, models: List[GemResourceType], *,
-                     dry_run=False) -> List[GemResourceType]:
+    def register_all(self, models: List[GEMDResourceType], *,
+                     dry_run=False) -> List[GEMDResourceType]:
         """To register a list of GEMD objects, please use dataset.register_all instead."""
         raise NotImplementedError("To register a list of GEMD objects,"
                                   " please use dataset.register_all instead.")

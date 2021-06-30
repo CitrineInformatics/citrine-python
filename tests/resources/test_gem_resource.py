@@ -3,14 +3,12 @@ from uuid import UUID
 
 import pytest
 
-from citrine._session import Session
-from citrine.resources.gem_resource import GemResourceCollection
+from citrine.resources.gem_resource import GEMDResourceCollection
 from citrine.resources.material_run import MaterialRun
 from citrine.resources.material_spec import MaterialSpec
 
 from tests.utils.factories import MaterialRunFactory, MaterialSpecFactory, MaterialTemplateFactory
-from tests.utils.session import FakeSession, FakeCall, make_fake_cursor_request_function, FakeRequestResponseApiError, \
-    FakeRequestResponse
+from tests.utils.session import FakeSession, FakeCall
 
 
 @pytest.fixture
@@ -19,8 +17,8 @@ def session() -> FakeSession:
 
 
 @pytest.fixture
-def collection(session) -> GemResourceCollection:
-    return GemResourceCollection(
+def collection(session) -> GEMDResourceCollection:
+    return GEMDResourceCollection(
         project_id=UUID('6b608f78-e341-422c-8076-35adc8828545'),
         dataset_id=UUID('8da51e93-8b55-4dd3-8489-af8f65d4ad9a'),
         session=session
@@ -112,7 +110,7 @@ def test_list_by_name(collection, session):
     # Invalid input
     with pytest.raises(RuntimeError):
         collection.dataset_id = None
-        collection.list_by_name('unused', per_page=2)
+        collection.list_by_name('foo', per_page=2)
 
 
 def test_list_by_tag(collection, session):
