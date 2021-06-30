@@ -8,6 +8,7 @@ from citrine._rest.paginator import Paginator
 from citrine._rest.resource import Resource
 from citrine._serialization import properties
 from citrine._session import Session
+from citrine._utils.functions import format_escaped_url
 from citrine.informatics.descriptors import Descriptor
 from citrine.informatics.design_candidate import DesignCandidate
 from citrine.informatics.scores import Score
@@ -81,10 +82,12 @@ class DesignExecution(Resource['DesignExecution'], Pageable, AsynchronousObject)
         return '<DesignExecution {!r}>'.format(str(self.uid))
 
     def _path(self):
-        return '/projects/{project_id}/design-workflows/{workflow_id}/executions/{execution_id}' \
-            .format(project_id=self.project_id,
-                    workflow_id=self.workflow_id,
-                    execution_id=self.uid)
+        return format_escaped_url(
+            '/projects/{project_id}/design-workflows/{workflow_id}/executions/{execution_id}',
+            project_id=self.project_id,
+            workflow_id=self.workflow_id,
+            execution_id=self.uid
+        )
 
     @classmethod
     def _build_candidates(cls, subset_collection: Iterable[dict]) -> Iterable[DesignCandidate]:

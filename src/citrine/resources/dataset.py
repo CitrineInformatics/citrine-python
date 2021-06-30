@@ -15,7 +15,7 @@ from citrine._rest.collection import Collection
 from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
 from citrine._session import Session
-from citrine._utils.functions import scrub_none
+from citrine._utils.functions import scrub_none, format_escaped_url
 from citrine.exceptions import NotFound
 from citrine.resources.api_error import ApiError
 from citrine.resources.condition_template import ConditionTemplateCollection
@@ -334,10 +334,10 @@ class Dataset(Resource['Dataset']):
             deleted.
 
         """
-        path = 'projects/{project_id}/datasets/{dataset_uid}/contents'.format(
-            dataset_uid=self.uid,
-            project_id=self.project_id
-        )
+        path = format_escaped_url('projects/{project_id}/datasets/{dataset_uid}/contents',
+                                  dataset_uid=self.uid,
+                                  project_id=self.project_id
+                                  )
 
         response = self.session.delete_resource(path)
         job_id = response["job_id"]

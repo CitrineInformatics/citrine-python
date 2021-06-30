@@ -7,6 +7,7 @@ from uuid import UUID
 from citrine._rest.pageable import Pageable
 from citrine._rest.paginator import Paginator
 from citrine._rest.resource import ResourceRef
+from citrine._utils.functions import format_escaped_url
 from citrine.exceptions import ModuleRegistrationFailedException, NonRetryableException
 from citrine.resources.response import Response
 
@@ -38,11 +39,13 @@ class Collection(Generic[ResourceType], Pageable):
     def _get_path(self, uid: Optional[Union[UUID, str]] = None,
                   ignore_dataset: Optional[bool] = False) -> str:
         """Construct a url from __base_path__ and, optionally, id."""
-        subpath = '/{}'.format(uid) if uid else ''
+        subpath = format_escaped_url('/{}', uid) if uid else ''
         if ignore_dataset:
-            return self._dataset_agnostic_path_template.format(**self.__dict__) + subpath
+            return format_escaped_url(self._dataset_agnostic_path_template + subpath,
+                                      **self.__dict__)
         else:
-            return self._path_template.format(**self.__dict__) + subpath
+            return format_escaped_url(self._path_template + subpath,
+                                      **self.__dict__)
 
     @abstractmethod
     def build(self, data: dict):
