@@ -1,6 +1,6 @@
 """Top-level class for all object template objects and collections thereof."""
 from abc import ABC
-from typing import TypeVar, Union, Iterator
+from typing import TypeVar, Union, Iterator, List, Optional
 from uuid import UUID
 
 from gemd.entity.base_entity import BaseEntity
@@ -11,27 +11,26 @@ from citrine.resources.data_concepts import DataConcepts
 from citrine._rest.collection import Collection
 from citrine._session import Session
 
-GemResourceType = TypeVar('GemResourceType', bound='DataConcepts')
+GemResource = TypeVar('GemResource', bound='DataConcepts')
 
 
-class GemResourceCollection(Collection[GemResourceType], ABC):
+class GemResourceCollection(Collection[GemResource], ABC):
     """A collection of GEMD objects/templates of any kind."""
 
     _path_template = 'projects/{project_id}/storables'
     _dataset_agnostic_path_template = 'projects/{project_id}/storables'
     _individual_key = None
     _collection_key = None
-    _resource = GemResourceType
+    _resource = GemResource
 
     def __init__(self, project_id: UUID, dataset_id: UUID, session: Session):
         self.project_id = project_id
         self.dataset_id = dataset_id
         self.session = session
-        DataConcepts._make_class_dict()
 
     def build(self, data: dict):
         """
-        Build an arbitary GEMD resource from a serialized dictionary.
+        Build an arbitary GEMD object from a serialized dictionary.
 
         This is an internal method, and should not be called directly by users.
 
@@ -42,13 +41,33 @@ class GemResourceCollection(Collection[GemResourceType], ABC):
 
         Returns
         -------
-        GemResourceType
+        GemResource
             A data model object built from the dictionary.
 
         """
         return DataConcepts.build(data)
 
-    def get(self, uid: Union[UUID, str, LinkByUID, BaseEntity]) -> GemResourceType:
+    def update(self, model: GemResource) -> GemResource:
+        """To update an arbitrary GEMD object, please use dataset.update(object) instead."""
+        raise NotImplementedError("To update an arbitary GEMD object,"
+                                  " please use dataset.update(object) instead.")
+
+    def delete(self, model: GemResource) -> GemResource:
+        """To delete an arbitrary GEMD object, please use dataset.delete(object) instead."""
+        raise NotImplementedError("To delete an arbitary GEMD object,"
+                                  " please use dataset.delete(object) instead.")
+
+    def register(self, model: GemResource, *, dry_run=False):
+        """To register an arbitrary GEMD object, please use dataset.register(object) instead."""
+        raise NotImplementedError("To register an arbitary GEMD object,"
+                                  " please use dataset.register(object) instead.")
+
+    def register_all(self, models: List[GemResource], *, dry_run=False) -> List[GemResource]:
+        """To register a list of GEMD objects, please use dataset.register_all(objects) instead."""
+        raise NotImplementedError("To register a list of GEMD objects,"
+                                  " please use dataset.register_all(objects) instead.")
+
+    def get(self, uid: Union[UUID, str, LinkByUID, BaseEntity]) -> GemResource:
         """
         Get a GEMD resource within the project by its id.
 
@@ -59,7 +78,7 @@ class GemResourceCollection(Collection[GemResourceType], ABC):
 
         Returns
         -------
-        ResourceType
+        GemResource
             An object with specified scope and uid
 
         """
@@ -68,8 +87,44 @@ class GemResourceCollection(Collection[GemResourceType], ABC):
         data = self.session.get_resource(path)
         return self.build(data)
 
+    def list(self, *,
+             per_page: Optional[int] = 100,
+             forward: bool = True) -> Iterator[GemResource]:
+        """
+        Get all visible elements of the collection.
+
+        The order of results should not be relied upon, but for now they are sorted by
+        dataset, object type, and creation time (in that order of priority).
+
+        Parameters
+        ---------
+        per_page: int, optional
+            Max number of results to return per page. It is very unlikely that
+            setting this parameter to something other than the default is useful.
+            It exists for rare situations where the client is bandwidth constrained
+            or experiencing latency from large payload sizes.
+        forward: bool
+            Set to False to reverse the order of results (i.e., return in descending order)
+
+        Returns
+        -------
+        Iterator[GemResource]
+            Every object in this collection.
+
+        """
+        params = {}
+        if self.dataset_id is not None:
+            params['dataset_id'] = str(self.dataset_id)
+        raw_objects = self.session.cursor_paged_resource(
+            self.session.get_resource,
+            self._get_path(ignore_dataset=True),
+            forward=forward,
+            per_page=per_page,
+            params=params)
+        return (self.build(raw) for raw in raw_objects)
+
     def list_by_name(self, name: str, *, exact: bool = False,
-                     forward: bool = True, per_page: int = 100) -> Iterator[GemResourceType]:
+                     forward: bool = True, per_page: int = 100) -> Iterator[GemResource]:
         """
         Get all GEMD resources with specified name in this dataset.
 
@@ -89,7 +144,7 @@ class GemResourceCollection(Collection[GemResourceType], ABC):
 
         Returns
         -------
-        Iterator[ResourceType]
+        Iterator[GemResource]
             List of every object in this collection whose `name` matches the search term.
 
         """
@@ -105,7 +160,7 @@ class GemResourceCollection(Collection[GemResourceType], ABC):
             params=params)
         return (self.build(raw) for raw in raw_objects)
 
-    def list_by_tag(self, tag: str, *, per_page: int = 100) -> Iterator[GemResourceType]:
+    def list_by_tag(self, tag: str, *, per_page: int = 100) -> Iterator[GemResource]:
         """
         Get all GEMD resources bearing a tag prefixed with `tag` in the collection.
 
@@ -127,7 +182,7 @@ class GemResourceCollection(Collection[GemResourceType], ABC):
 
         Returns
         -------
-        Iterator[ResourceType]
+        Iterator[GemResource]
             Every object in this collection.
 
         """
