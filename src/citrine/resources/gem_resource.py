@@ -124,7 +124,7 @@ class GEMDResourceCollection(Collection[GEMDResourceType], ABC):
         Returns
         -------
         Iterator[GEMDResourceType]
-            List of every object in this collection whose `name` matches the search term.
+            Every object in this collection whose `name` matches the search term.
 
         """
         if self.dataset_id is None:
@@ -162,7 +162,7 @@ class GEMDResourceCollection(Collection[GEMDResourceType], ABC):
         Returns
         -------
         Iterator[GEMDResourceType]
-            Every object in this collection.
+            Every object in this collection with `tags` matching the search term.
 
         """
         params = {'tags': [tag]}
