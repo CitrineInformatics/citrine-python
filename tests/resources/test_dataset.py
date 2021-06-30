@@ -304,6 +304,10 @@ def test_ingredient_specs_get_project_id(dataset):
     assert dataset.project_id == dataset.ingredient_specs.project_id
 
 
+def test_gem_resource_get_project_id(dataset):
+    assert dataset.project_id == dataset.gemd.project_id
+
+
 def test_files_get_project_id(dataset):
     assert dataset.project_id == dataset.files.project_id
 

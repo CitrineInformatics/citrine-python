@@ -1,4 +1,4 @@
-"""Top-level class for all object template objects and collections thereof."""
+"""Collection class for generic GEMD objects and templates."""
 from abc import ABC
 from typing import TypeVar, Union, Iterator, List, Optional
 from uuid import UUID
@@ -48,22 +48,22 @@ class GemResourceCollection(Collection[GemResource], ABC):
         return DataConcepts.build(data)
 
     def update(self, model: GemResource) -> GemResource:
-        """To update an arbitrary GEMD object, please use dataset.update(object) instead."""
+        """To update an arbitrary GEMD object, please use dataset.update instead."""
         raise NotImplementedError("To update an arbitary GEMD object,"
                                   " please use dataset.update(object) instead.")
 
     def delete(self, model: GemResource) -> GemResource:
-        """To delete an arbitrary GEMD object, please use dataset.delete(object) instead."""
+        """To delete an arbitrary GEMD object, please use dataset.delete instead."""
         raise NotImplementedError("To delete an arbitary GEMD object,"
                                   " please use dataset.delete(object) instead.")
 
     def register(self, model: GemResource, *, dry_run=False):
-        """To register an arbitrary GEMD object, please use dataset.register(object) instead."""
+        """To register an arbitrary GEMD object, please use dataset.register instead."""
         raise NotImplementedError("To register an arbitary GEMD object,"
                                   " please use dataset.register(object) instead.")
 
     def register_all(self, models: List[GemResource], *, dry_run=False) -> List[GemResource]:
-        """To register a list of GEMD objects, please use dataset.register_all(objects) instead."""
+        """To register a list of GEMD objects, please use dataset.register_all instead."""
         raise NotImplementedError("To register a list of GEMD objects,"
                                   " please use dataset.register_all(objects) instead.")
 
