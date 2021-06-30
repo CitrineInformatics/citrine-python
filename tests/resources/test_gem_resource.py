@@ -3,6 +3,7 @@ from uuid import UUID
 
 import pytest
 
+from citrine._session import Session
 from citrine.resources.gem_resource import GemResourceCollection
 from citrine.resources.material_run import MaterialRun
 from citrine.resources.material_spec import MaterialSpec
@@ -33,9 +34,9 @@ def sample_gems(nsamples, **kwargs):
     ]
 
 
-def test_get_gemd(collection, session):
+def test_get(collection, session):
     # Given
-    run = MaterialRunFactory(name='Cake 2')
+    run = MaterialRunFactory(name='foo')
     mr_id = run.uids['id']
     session.set_response(run)
 
@@ -50,10 +51,10 @@ def test_get_gemd(collection, session):
     )
     print(session.last_call)
     assert expected_call == session.last_call
-    assert 'Cake 2' == gem.name
+    assert 'foo' == gem.name
 
 
-def test_list_gemd(collection, session):
+def test_list(collection, session):
     # Given
     samples = sample_gems(20)
     session.set_response({
@@ -81,15 +82,15 @@ def test_list_gemd(collection, session):
         assert samples[i].uids == gems[i].uids
 
 
-def test_list_by_name_gemd(collection, session):
+def test_list_by_name(collection, session):
     # Given
-    samples = sample_gems(20, name='FooBar')
+    samples = sample_gems(20, name='foobar')
     session.set_response({
         'contents': samples
     })
 
     # When
-    gems = list(collection.list_by_name('FooBar', exact=True))
+    gems = list(collection.list_by_name('foobar', exact=True))
 
     # Then
     assert 1 == session.num_calls
@@ -98,7 +99,7 @@ def test_list_by_name_gemd(collection, session):
         path='projects/{}/storables/filter-by-name'.format(collection.project_id),
         params={
             'dataset_id': str(collection.dataset_id),
-            'name': 'FooBar',
+            'name': 'foobar',
             'exact': True,
             'forward': True,
             'ascending': True,
@@ -108,16 +109,21 @@ def test_list_by_name_gemd(collection, session):
     assert expected_call == session.last_call
     assert len(samples) == len(gems)
 
+    # Invalid input
+    with pytest.raises(RuntimeError):
+        collection.dataset_id = None
+        collection.list_by_name('unused', per_page=2)
 
-def test_list_by_tag_gemd(collection, session):
+
+def test_list_by_tag(collection, session):
     # Given
-    samples = sample_gems(20, tags=['Foo::Bar'])
+    samples = sample_gems(20, tags=['foo::bar'])
     session.set_response({
         'contents': samples
     })
 
     # When
-    gems = list(collection.list_by_tag('Foo::Bar'))
+    gems = list(collection.list_by_tag('foo::bar'))
 
     # Then
     assert 1 == session.num_calls
@@ -126,7 +132,7 @@ def test_list_by_tag_gemd(collection, session):
         path='projects/{}/storables'.format(collection.project_id),
         params={
             'dataset_id': str(collection.dataset_id),
-            'tags': ['Foo::Bar'],
+            'tags': ['foo::bar'],
             'forward': True,
             'ascending': True,
             'per_page': 100
