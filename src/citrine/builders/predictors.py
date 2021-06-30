@@ -75,7 +75,9 @@ def build_mean_feature_property_predictors(
               "Set make_all_ingredients_model to True and/or specify labels."
         raise ValueError(msg)
 
-    properties = project.descriptors.from_predictor_responses(featurizer, [input_descriptor])
+    properties = project.descriptors.from_predictor_responses(
+        predictor=featurizer, inputs=[input_descriptor]
+    )
     real_properties = [desc for desc in properties if isinstance(desc, RealDescriptor)]
     if len(real_properties) == 0:
         msg = "Featurizer did not return any real properties to calculate the means of."
@@ -96,7 +98,9 @@ def build_mean_feature_property_predictors(
     all_outputs = [
         output
         for single_model_outputs in [
-            project.descriptors.from_predictor_responses(predictor, [formulation_descriptor])
+            project.descriptors.from_predictor_responses(
+                predictor=predictor, inputs=[formulation_descriptor]
+            )
             for predictor in predictors
         ]
         for output in single_model_outputs

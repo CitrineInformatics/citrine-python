@@ -23,7 +23,6 @@ class IngredientFractionsPredictor(Resource["IngredientFractionsPredictor"],
         descriptor that represents the input formulation
     ingredients: Set[str]
         set of ingredients to featurize.
-        This set should contain all possible ingredients.
         If an unknown ingredient is encountered, an error will be thrown.
 
     """
