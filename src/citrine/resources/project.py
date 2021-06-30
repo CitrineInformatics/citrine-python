@@ -19,7 +19,7 @@ from citrine.resources.descriptors import DescriptorMethods
 from citrine.resources.design_space import DesignSpaceCollection
 from citrine.resources.design_workflow import DesignWorkflowCollection
 from citrine.resources.gemtables import GemTableCollection
-from citrine.resources.gem_resource import GEMDResourceCollection
+from citrine.resources.gemd_resource import GEMDResourceCollection
 from citrine.resources.ingredient_run import IngredientRunCollection
 from citrine.resources.ingredient_spec import IngredientSpecCollection
 from citrine.resources.material_run import MaterialRunCollection

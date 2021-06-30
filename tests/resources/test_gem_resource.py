@@ -3,7 +3,7 @@ from uuid import UUID
 
 import pytest
 
-from citrine.resources.gem_resource import GEMDResourceCollection
+from citrine.resources.gemd_resource import GEMDResourceCollection
 from citrine.resources.material_run import MaterialRun
 from citrine.resources.material_spec import MaterialSpec
 

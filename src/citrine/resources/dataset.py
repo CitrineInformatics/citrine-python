@@ -22,7 +22,7 @@ from citrine.resources.condition_template import ConditionTemplateCollection
 from citrine.resources.data_concepts import _make_link_by_uid
 from citrine.resources.delete import _async_gemd_batch_delete, _poll_for_async_batch_delete_result
 from citrine.resources.file_link import FileCollection
-from citrine.resources.gem_resource import GEMDResourceCollection
+from citrine.resources.gemd_resource import GEMDResourceCollection
 from citrine.resources.ingredient_run import IngredientRunCollection
 from citrine.resources.ingredient_spec import IngredientSpecCollection
 from citrine.resources.material_run import MaterialRunCollection
