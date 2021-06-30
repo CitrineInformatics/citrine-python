@@ -17,7 +17,8 @@ from citrine._serialization.polymorphic_serializable import PolymorphicSerializa
 from citrine._serialization.properties import Property as SerializableProperty
 from citrine._serialization.serializable import Serializable
 from citrine._session import Session
-from citrine._utils.functions import scrub_none, replace_objects_with_links
+from citrine._utils.functions import scrub_none, replace_objects_with_links, \
+    format_escaped_url
 from citrine.exceptions import BadRequest
 from citrine.resources.audit_info import AuditInfo
 from citrine.jobs.job import _poll_for_job_completion
@@ -560,8 +561,8 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
 
         """
         link = _make_link_by_uid(uid, scope)
-        path = self._get_path(ignore_dataset=self.dataset_id is None) + "/{}/{}"\
-            .format(link.scope, link.id)
+        path = self._get_path(ignore_dataset=self.dataset_id is None) \
+            + format_escaped_url("/{}/{}", link.scope, link.id)
         data = self.session.get_resource(path)
         return self.build(data)
 
@@ -682,7 +683,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
 
         """
         link = _make_link_by_uid(uid, scope)
-        path = self._get_path() + "/{}/{}".format(link.scope, link.id)
+        path = self._get_path() + format_escaped_url("/{}/{}", link.scope, link.id)
         params = {'dry_run': dry_run}
         self.session.delete_resource(path, params=params)
         return Response(status_code=200)  # delete succeeded
@@ -723,8 +724,13 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         link = _make_link_by_uid(uid, scope)
         raw_objects = self.session.cursor_paged_resource(
             self.session.get_resource,
-            'projects/{}/{}/{}/{}/{}'.format(self.project_id, relation, link.scope, link.id,
-                                             self._collection_key.replace('_', '-')),
+            format_escaped_url('projects/{}/{}/{}/{}/{}',
+                               self.project_id,
+                               relation,
+                               link.scope,
+                               link.id,
+                               self._collection_key.replace('_', '-')
+                               ),
             forward=forward,
             per_page=per_page,
             params=params,

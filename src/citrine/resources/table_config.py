@@ -12,7 +12,7 @@ from citrine._rest.collection import Collection
 from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
 from citrine._session import Session
-from citrine._utils.functions import migrate_deprecated_argument
+from citrine._utils.functions import migrate_deprecated_argument, format_escaped_url
 from citrine.resources.data_concepts import CITRINE_SCOPE, _make_link_by_uid
 from citrine.resources.process_template import ProcessTemplate
 from citrine.gemtables.columns import Column, MeanColumn, IdentityColumn, OriginalUnitsColumn
@@ -256,7 +256,7 @@ class TableConfigCollection(Collection[TableConfig]):
 
         """
         if version is not None:
-            path = self._get_path(uid) + "/versions/{}".format(version)
+            path = self._get_path(uid) + format_escaped_url("/versions/{}", version)
             data = self.session.get_resource(path)
         else:
             path = self._get_path(uid)
@@ -342,7 +342,7 @@ class TableConfigCollection(Collection[TableConfig]):
             else:  # Not per spec, but be forgiving
                 params['algorithm'] = str(algorithm)
         data = self.session.get_resource(
-            'projects/{}/table-configs/default'.format(self.project_id),
+            format_escaped_url('projects/{}/table-configs/default', self.project_id),
             params=params,
         )
         config = TableConfig.build(data['config'])

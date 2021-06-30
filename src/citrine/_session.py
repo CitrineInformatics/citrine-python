@@ -5,8 +5,10 @@ from datetime import datetime, timedelta
 
 from requests import Response
 from json.decoder import JSONDecodeError
+from urllib.parse import urlunsplit
 from urllib3.util.retry import Retry
 
+from citrine._utils.functions import format_escaped_url
 from citrine.exceptions import (
     NotFound,
     Unauthorized,
@@ -35,7 +37,7 @@ class Session(requests.Session):
                  port: Optional[str] = None):
         super().__init__()
         self.scheme: str = scheme
-        self.authority = ':'.join([host or '', port or ''])
+        self.authority = ':'.join([host] if host else [] + [port] if port else [])
         self.refresh_token: str = refresh_token
         self.access_token: Optional[str] = None
         self.access_token_expiration: datetime = datetime.utcnow()
@@ -73,7 +75,13 @@ class Session(requests.Session):
                            requests.exceptions.ChunkedEncodingError)
 
     def _versioned_base_url(self, version: str = 'v1'):
-        return '{}://{}/api/{}/'.format(self.scheme, self.authority, version)
+        return urlunsplit((
+            self.scheme,
+            self.authority,
+            format_escaped_url('api/{}/', version),
+            '',  # query string
+            ''  # fragment
+        ))
 
     def _is_access_token_expired(self):
         return self.access_token_expiration - EXPIRATION_BUFFER_MILLIS <= datetime.utcnow()

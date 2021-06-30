@@ -9,6 +9,7 @@ from citrine._rest.resource import Resource
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Optional as PropertyOptional
 from citrine._serialization.properties import String, LinkOrElse, Mapping, Object
+from citrine._utils.functions import format_escaped_url
 from citrine.resources.data_concepts import DataConcepts, _make_link_by_uid
 from citrine.resources.material_spec import MaterialSpecCollection
 from citrine.resources.object_runs import ObjectRun, ObjectRunCollection
@@ -136,7 +137,7 @@ class MaterialRunCollection(ObjectRunCollection[MaterialRun]):
         """
         link = _make_link_by_uid(id, scope)
         base_path = os.path.dirname(self._get_path(ignore_dataset=True))
-        path = base_path + "/material-history/{}/{}".format(link.scope, link.id)
+        path = base_path + format_escaped_url("/material-history/{}/{}", link.scope, link.id)
         data = self.session.get_resource(path)
 
         # Add the root to the context and sort by writable order

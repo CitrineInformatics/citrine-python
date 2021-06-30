@@ -7,7 +7,8 @@ from gemd.entity.bounds.real_bounds import RealBounds
 from gemd.entity.link_by_uid import LinkByUID
 
 from citrine._utils.functions import get_object_id, validate_type, object_to_link_by_uid, \
-    rewrite_s3_links_locally, write_file_locally, shadow_classes_in_module, migrate_deprecated_argument
+    rewrite_s3_links_locally, write_file_locally, shadow_classes_in_module, migrate_deprecated_argument, \
+    format_escaped_url
 from gemd.entity.attribute.property import Property
 from citrine.resources.condition_template import ConditionTemplate
 
@@ -119,3 +120,13 @@ def test_migrate_deprecated_argument():
         assert issubclass(caught[0].category, DeprecationWarning)
         msg = str(caught[0].message)
         assert "old name" in msg and "new name" in msg
+
+
+def test_format_escaped_url():
+    url = format_escaped_url('http://base.com/{}/{}/{word1}/{word2}', 1, '&', word1='fine', word2='+/?#')
+    assert 'http://base.com/' in url
+    assert 'fine' in url
+    assert '1' in url
+    for c in '&' + '+?#':
+        assert c not in url
+    assert 6 == sum(c == '/' for c in url)

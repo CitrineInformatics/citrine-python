@@ -6,6 +6,7 @@ from citrine._rest.resource import Resource
 from citrine._rest.asynchronous_object import AsynchronousObject
 from citrine._serialization import properties
 from citrine._session import Session
+from citrine._utils.functions import format_escaped_url
 from citrine.informatics.predictor_evaluation_result import PredictorEvaluationResult
 
 
@@ -57,9 +58,11 @@ class PredictorEvaluationExecution(Resource['PredictorEvaluationExecution'], Asy
         return '<PredictorEvaluationExecution {!r}>'.format(str(self.uid))
 
     def _path(self):
-        return '/projects/{project_id}/predictor-evaluation-executions/{execution_id}' \
-            .format(project_id=self.project_id,
-                    execution_id=self.uid)
+        return format_escaped_url(
+            '/projects/{project_id}/predictor-evaluation-executions/{execution_id}',
+            project_id=self.project_id,
+            execution_id=self.uid
+        )
 
     @lru_cache()
     def results(self, evaluator_name: str) -> PredictorEvaluationResult:
