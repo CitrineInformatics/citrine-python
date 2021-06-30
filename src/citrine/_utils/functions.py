@@ -1,7 +1,7 @@
 import inspect
 import os
 from typing import Any, Optional
-from urllib.parse import urlparse, quote_plus
+from urllib.parse import urlparse, quote
 from warnings import warn
 
 from gemd.entity.link_by_uid import LinkByUID
@@ -207,6 +207,6 @@ def format_escaped_url(
         the formatted URL
 
     """
-    return template.format(*[quote_plus(str(x)) for x in args],
-                           **{k: quote_plus(str(v)) for (k, v) in kwargs.items()}
+    return template.format(*[quote(str(x), safe='') for x in args],
+                           **{k: quote(str(v), safe='') for (k, v) in kwargs.items()}
                            )
