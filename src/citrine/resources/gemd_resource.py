@@ -74,19 +74,19 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
                      timeout: float = 2 * 60,
                      polling_delay: float = 1.0,
                      return_model: bool = False) -> Optional[Union[UUID, DataConcepts]]:
-        """Asynchronous updates are only available through specific GEMD resource collections."""
-        raise NotImplementedError("Asynchronous updates are only available"
-                                  " through specific GEMD resource collections.")
+        """Asynchronous updating is only available on collections of specific GEMD resources."""
+        raise NotImplementedError("Asynchronous updating is only available"
+                                  " on collections of specific GEMD resources.")
 
     def poll_async_update_job(self, job_id: UUID, *, timeout: float = 2 * 60,
                               polling_delay: float = 1.0) -> None:
-        """Asynchronous polling is only available through specific GEMD resource collections."""
-        raise NotImplementedError("Asynchronous polling is only available"
-                                  " through specific GEMD resource collections.")
+        """Polling is only available on collections of specific GEMD resources."""
+        raise NotImplementedError("Polling is only available on collections"
+                                  " of specific GEMD resources.")
 
     def _get_relation(self, relation: str, uid: Union[UUID, str, LinkByUID, BaseEntity],
                       scope: Optional[str] = None, forward: bool = True, per_page: int = 100
                       ) -> Iterator[DataConcepts]:
-        """Relationship searching is only available through specific GEMD resource collections."""
+        """Relationship searching is only available on collections of specific GEMD resources."""
         raise NotImplementedError("Relationship searching is only available"
-                                  " through specific GEMD resource collections.")
+                                  " on collections of specific GEMD resources.")
