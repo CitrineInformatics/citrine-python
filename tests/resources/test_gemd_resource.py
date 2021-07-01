@@ -6,6 +6,7 @@ import pytest
 from citrine.resources.data_concepts import DataConcepts
 from citrine.resources.gemd_resource import GEMDResourceCollection
 from citrine.resources.material_run import MaterialRun
+from citrine.resources.material_spec import MaterialSpec
 
 from tests.utils.factories import MaterialRunDataFactory, MaterialSpecDataFactory
 from tests.utils.session import FakeSession, FakeCall
@@ -72,7 +73,7 @@ def test_not_implemented(collection):
         collection.register(MaterialRun('foo'))
 
     with pytest.raises(NotImplementedError):
-        collection.register_all(MaterialRun('foo'))
+        collection.register_all([MaterialRun('foo'), MaterialSpec('foo')])
 
     with pytest.raises(NotImplementedError):
         collection.async_update(MaterialRun('foo'))
