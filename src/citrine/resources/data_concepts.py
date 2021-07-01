@@ -241,7 +241,7 @@ ResourceType = TypeVar('ResourceType', bound='DataConcepts')
 
 class DataConceptsCollection(Collection[ResourceType], ABC):
     """
-    A collection of one kind of data concepts object.
+    A collection of any kind of data concepts object.
 
     Parameters
     ----------
