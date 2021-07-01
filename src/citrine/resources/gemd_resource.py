@@ -29,7 +29,7 @@ class GEMDResourceCollection(Collection[GEMDResourceType], ABC):
 
     def build(self, data: dict):
         """
-        Build an arbitary GEMD object from a serialized dictionary.
+        Build an arbitary GEMD resource from a serialized dictionary.
 
         This is an internal method, and should not be called directly by users.
 
@@ -70,7 +70,7 @@ class GEMDResourceCollection(Collection[GEMDResourceType], ABC):
              per_page: Optional[int] = 100,
              forward: bool = True) -> Iterator[GEMDResourceType]:
         """
-        Get all visible elements of the collection.
+        Get all visible GEMD resources of the collection.
 
         The order of results should not be relied upon, but for now they are sorted by
         dataset, object type, and creation time (in that order of priority).
@@ -176,22 +176,22 @@ class GEMDResourceCollection(Collection[GEMDResourceType], ABC):
         return (self.build(raw) for raw in raw_objects)
 
     def update(self, model: GEMDResourceType) -> GEMDResourceType:
-        """To update an arbitrary GEMD object, please use dataset.update instead."""
-        raise NotImplementedError("To update an arbitary GEMD object,"
+        """To update an arbitrary GEMD resource, please use dataset.update instead."""
+        raise NotImplementedError("To update an arbitary GEMD resource,"
                                   " please use dataset.update instead.")
 
     def delete(self, model: GEMDResourceType) -> GEMDResourceType:
-        """To delete an arbitrary GEMD object, please use dataset.delete instead."""
-        raise NotImplementedError("To delete an arbitary GEMD object,"
+        """To delete an arbitrary GEMD resource, please use dataset.delete instead."""
+        raise NotImplementedError("To delete an arbitary GEMD resource,"
                                   " please use dataset.delete instead.")
 
     def register(self, model: GEMDResourceType, *, dry_run=False):
-        """To register an arbitrary GEMD object, please use dataset.register instead."""
-        raise NotImplementedError("To register an arbitary GEMD object,"
+        """To register an arbitrary GEMD resource, please use dataset.register instead."""
+        raise NotImplementedError("To register an arbitary GEMD resource,"
                                   " please use dataset.register instead.")
 
     def register_all(self, models: List[GEMDResourceType], *,
                      dry_run=False) -> List[GEMDResourceType]:
-        """To register a list of GEMD objects, please use dataset.register_all instead."""
-        raise NotImplementedError("To register a list of GEMD objects,"
+        """To register a list of GEMD resource, please use dataset.register_all instead."""
+        raise NotImplementedError("To register a list of GEMD resource,"
                                   " please use dataset.register_all instead.")

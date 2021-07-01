@@ -1,5 +1,5 @@
 import random
-from uuid import UUID
+from uuid import uuid4
 
 import pytest
 
@@ -19,17 +19,15 @@ def session() -> FakeSession:
 @pytest.fixture
 def collection(session) -> GEMDResourceCollection:
     return GEMDResourceCollection(
-        project_id=UUID('6b608f78-e341-422c-8076-35adc8828545'),
-        dataset_id=UUID('8da51e93-8b55-4dd3-8489-af8f65d4ad9a'),
+        project_id=uuid4(),
+        dataset_id=uuid4(),
         session=session
     )
 
 
 def sample_gems(nsamples, **kwargs):
     factories = [MaterialRunFactory, MaterialSpecFactory, MaterialTemplateFactory]
-    return [
-        random.choice(factories)(**kwargs) for _ in range(nsamples)
-    ]
+    return [random.choice(factories)(**kwargs) for _ in range(nsamples)]
 
 
 def test_get(collection, session):
@@ -47,7 +45,6 @@ def test_get(collection, session):
         method='GET',
         path='projects/{}/storables/id/{}'.format(collection.project_id, mr_id)
     )
-    print(session.last_call)
     assert expected_call == session.last_call
     assert 'foo' == gem.name
 
