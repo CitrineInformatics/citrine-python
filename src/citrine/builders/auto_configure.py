@@ -1,3 +1,4 @@
+from uuid import UUID
 from typing import Tuple, List, Optional, Union
 
 from gemd.entity.base_entity import BaseEntity
@@ -43,7 +44,7 @@ def material_to_design_space(
     print('Building default predictor from GEM table...')
     formulation = None
     if mode == 'FORMULATION':
-        formulation = FormulationDescriptor(f'Formulation descriptor{suffix}')
+        formulation = FormulationDescriptor('Formulation descriptor')
     data_source = GemTableDataSource(
         table_id=table.uid, table_version=table.version, formulation_descriptor=formulation
     )
@@ -53,7 +54,7 @@ def material_to_design_space(
     )
     predictor.name = f'Default Predictor{suffix}'
     predictor = project.predictors.register(predictor)
-    wait_while_validating(
+    predictor = wait_while_validating(
         collection=project.predictors, module=predictor, print_status_info=print_status_info
     )
 
@@ -61,8 +62,6 @@ def material_to_design_space(
     design_space = project.design_spaces.create_default(predictor_id=predictor.uid)
     design_space.name = f'Default Design Space{suffix}'
     design_space = project.design_spaces.register(design_space)
-    wait_while_validating(
+    design_space = wait_while_validating(
         collection=project.design_spaces, module=design_space, print_status_info=print_status_info
     )
-
-    return design_Space
