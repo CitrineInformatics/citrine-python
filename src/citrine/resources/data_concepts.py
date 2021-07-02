@@ -223,7 +223,7 @@ def _make_link_by_uid(gemd_object_rep: Union[str, UUID, BaseEntity, LinkByUID],
              "object. To specify a custom scope, use a LinkByUID.", DeprecationWarning)
     if isinstance(gemd_object_rep, BaseEntity):
         if not gemd_object_rep.uids:  # an empty dictionary
-            raise ValueError('GEMD resource must have at least one uid to construct a link.')
+            raise ValueError('GEMD object must have at least one uid to construct a link.')
         return LinkByUID.from_entity(gemd_object_rep, name=CITRINE_SCOPE)
     elif isinstance(gemd_object_rep, LinkByUID):
         return gemd_object_rep
