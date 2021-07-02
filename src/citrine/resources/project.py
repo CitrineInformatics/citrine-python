@@ -11,8 +11,6 @@ from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
 from citrine._utils.functions import format_escaped_url
 from citrine._session import Session
-from citrine.informatics.data_sources import GemTableDataSource
-from citrine.informatics.descriptors import FormulationDescriptor
 from citrine.resources.api_error import ApiError
 from citrine.resources.condition_template import ConditionTemplateCollection
 from citrine.resources.dataset import DatasetCollection
@@ -23,7 +21,7 @@ from citrine.resources.design_workflow import DesignWorkflowCollection
 from citrine.resources.gemtables import GemTableCollection
 from citrine.resources.ingredient_run import IngredientRunCollection
 from citrine.resources.ingredient_spec import IngredientSpecCollection
-from citrine.resources.material_run import MaterialRun, MaterialRunCollection
+from citrine.resources.material_run import MaterialRunCollection
 from citrine.resources.material_spec import MaterialSpecCollection
 from citrine.resources.material_template import MaterialTemplateCollection
 from citrine.resources.measurement_run import MeasurementRunCollection
@@ -44,7 +42,7 @@ from citrine.resources.project_member import ProjectMember
 from citrine.resources.project_roles import MEMBER, ROLES, ACTIONS
 from citrine.resources.property_template import PropertyTemplateCollection
 from citrine.resources.response import Response
-from citrine.resources.table_config import TableConfigCollection, TableBuildAlgorithm
+from citrine.resources.table_config import TableConfigCollection
 from citrine.resources.user import User
 
 
@@ -495,62 +493,6 @@ class Project(Resource['Project']):
         """
         return _async_gemd_batch_delete(id_list, self.uid, self.session, None,
                                         timeout=timeout, polling_delay=polling_delay)
-
-    def material_to_design_space(
-            self,
-            material: Union[MaterialRun, LinkByUID, str, UUID],
-            *,
-            mode: str = 'FORMULATION',
-            name: str = ''
-    ):
-        if mode not in {"FORMULATION", "SIMPLE"}:
-            msg = "Called with mode: {}.  Expected 'FORMULATION' or 'SIMPLE'.".format(mode)
-            raise ValueError(msg)
-
-        name = ' - {}'.format(name) if name else ''
-
-        print('Building default GEM table from material history...')
-        table_config_algorithms = {
-            'FORMULATION': TableBuildAlgorithm.FORMULATIONS,
-            'SIMPLE': TableBuildAlgorithm.SINGLE_ROW
-        }
-        table_config, _ = self.table_configs.default_for_material(
-            material=material,
-            name='Default GEM Table' + name,
-            algorithm=table_config_algorithms[mode]
-        )
-        table_config = self.table_configs.register(table_config)
-        table = self.tables.build_from_config(table_config)
-
-        print('Building default predictor from GEM table...')
-        formulation = None
-        if mode == 'FORMULATION':
-            formulation = FormulationDescriptor('Formulation descriptor' + name)
-        data_source = GemTableDataSource(
-            table_id=table.uid,
-            table_version=table.version,
-            formulation_descriptor=formulation
-        )
-
-        predictor_patterns = {
-            'FORMULATION': 'FORMULATION',
-            'SIMPLE': 'PLAIN'
-        }
-        predictor = self.predictors.auto_configure(
-            training_data=data_source,
-            pattern=predictor_patterns[mode]
-        )
-        predictor.name = 'Default Predictor' + name
-        predictor = self.predictors.register(predictor)
-        wait_while_validating(collection=self.predictors, module=predictor)
-
-        print('Building default design space from predictor...')
-        design_space = self.design_spaces.create_default(predictor_id=predictor.uid)
-        design_space = 'Default Design Space' + name
-        design_space = self.design_spaces.register(design_space)
-        wait_while_validating(collection=self.design_spaces, module=design_space)
-
-        return design_space
 
 
 class ProjectCollection(Collection[Project]):
