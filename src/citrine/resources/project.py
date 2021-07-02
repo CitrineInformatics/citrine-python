@@ -21,7 +21,7 @@ from citrine.resources.design_workflow import DesignWorkflowCollection
 from citrine.resources.gemtables import GemTableCollection
 from citrine.resources.ingredient_run import IngredientRunCollection
 from citrine.resources.ingredient_spec import IngredientSpecCollection
-from citrine.resources.material_run import MaterialRunCollection
+from citrine.resources.material_run import MaterialRun, MaterialRunCollection
 from citrine.resources.material_spec import MaterialSpecCollection
 from citrine.resources.material_template import MaterialTemplateCollection
 from citrine.resources.measurement_run import MeasurementRunCollection
@@ -493,6 +493,23 @@ class Project(Resource['Project']):
         """
         return _async_gemd_batch_delete(id_list, self.uid, self.session, None,
                                         timeout=timeout, polling_delay=polling_delay)
+
+    def material_to_design_space(
+            self,
+            material: Union[MaterialRun, LinkByUID, str, UUID],
+            *,
+            mode: str = 'FORMULATION',
+            prefix: str = ''
+    ):
+        if mode not in {"FORMULATION", "SIMPLE"}:
+            msg = "Called with mode: {}.  Expected 'FORMULATION' or 'SIMPLE'.".format(mode)
+            raise ValueError(msg)
+
+        table_config, _ = self.table_configs.default_for_material(
+            material=material
+            name='{} - Default GEM Table'.format(prefix),
+            algorithm=mode
+        )
 
 
 class ProjectCollection(Collection[Project]):
