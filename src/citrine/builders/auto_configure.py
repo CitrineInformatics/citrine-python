@@ -1,7 +1,6 @@
 from uuid import UUID
-from typing import Tuple, List, Optional, Union
+from typing import Union
 
-from gemd.entity.base_entity import BaseEntity
 from gemd.entity.link_by_uid import LinkByUID
 
 from citrine.jobs.waiting import wait_while_validating
