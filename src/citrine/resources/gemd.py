@@ -9,7 +9,7 @@ from citrine.resources.data_concepts import DataConcepts, DataConceptsCollection
 from citrine._session import Session
 
 
-class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
+class GEMDCollection(DataConceptsCollection[DataConcepts]):
     """A collection of any kind of GEMD objects/templates."""
 
     _path_template = 'projects/{project_id}/storables'
@@ -30,7 +30,7 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
 
     def build(self, data: dict) -> DataConcepts:
         """
-        Build an arbitary GEMD resource from a serialized dictionary.
+        Build an arbitary GEMD entity from a serialized dictionary.
 
         This is an internal method, and should not be called directly by users.
 
@@ -48,24 +48,24 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
         return DataConcepts.build(data)
 
     def update(self, model: DataConcepts) -> DataConcepts:
-        """To update an arbitrary GEMD resource, please use dataset.update instead."""
-        raise NotImplementedError("To update an arbitary GEMD resource,"
+        """To update an arbitrary GEMD entity, please use dataset.update instead."""
+        raise NotImplementedError("To update an arbitary GEMD entity,"
                                   " please use dataset.update instead.")
 
     def delete(self, model: DataConcepts) -> DataConcepts:
-        """To delete an arbitrary GEMD resource, please use dataset.delete instead."""
-        raise NotImplementedError("To delete an arbitary GEMD resource,"
+        """To delete an arbitrary GEMD entity, please use dataset.delete instead."""
+        raise NotImplementedError("To delete an arbitary GEMD entity,"
                                   " please use dataset.delete instead.")
 
     def register(self, model: DataConcepts, *, dry_run=False):
-        """To register an arbitrary GEMD resource, please use dataset.register instead."""
-        raise NotImplementedError("To register an arbitary GEMD resource,"
+        """To register an arbitrary GEMD entity, please use dataset.register instead."""
+        raise NotImplementedError("To register an arbitary GEMD entity,"
                                   " please use dataset.register instead.")
 
     def register_all(self, models: List[DataConcepts], *,
                      dry_run=False) -> List[DataConcepts]:
-        """To register a list of GEMD resources, please use dataset.register_all instead."""
-        raise NotImplementedError("To register a list of GEMD resources,"
+        """To register a list of GEMD entities, please use dataset.register_all instead."""
+        raise NotImplementedError("To register a list of GEMD entities,"
                                   " please use dataset.register_all instead.")
 
     def async_update(self, model: DataConcepts, *,
@@ -74,19 +74,13 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
                      timeout: float = 2 * 60,
                      polling_delay: float = 1.0,
                      return_model: bool = False) -> Optional[Union[UUID, DataConcepts]]:
-        """Asynchronous updating is only available on collections of specific GEMD resources."""
+        """Asynchronous updating is only available on collections of specific GEMD entities."""
         raise NotImplementedError("Asynchronous updating is only available"
-                                  " on collections of specific GEMD resources.")
-
-    def poll_async_update_job(self, job_id: UUID, *, timeout: float = 2 * 60,
-                              polling_delay: float = 1.0) -> None:
-        """Polling is only available on collections of specific GEMD resources."""
-        raise NotImplementedError("Polling is only available on collections"
-                                  " of specific GEMD resources.")
+                                  " on collections of specific GEMD entities.")
 
     def _get_relation(self, relation: str, uid: Union[UUID, str, LinkByUID, BaseEntity],
                       scope: Optional[str] = None, forward: bool = True, per_page: int = 100
                       ) -> Iterator[DataConcepts]:
-        """Relationship searching is only available on collections of specific GEMD resources."""
+        """Relationship searching is only available on collections of specific GEMD objects."""
         raise NotImplementedError("Relationship searching is only available"
-                                  " on collections of specific GEMD resources.")
+                                  " on collections of specific GEMD objects.")

@@ -4,9 +4,10 @@ import random
 import pytest
 
 from citrine.resources.data_concepts import DataConcepts
-from citrine.resources.gemd_resource import GEMDResourceCollection
+from citrine.resources.gemd import GEMDCollection
 from citrine.resources.material_run import MaterialRun
 from citrine.resources.material_spec import MaterialSpec
+from citrine._utils.functions import format_escaped_url
 
 from tests.utils.factories import MaterialRunDataFactory, MaterialSpecDataFactory
 from tests.utils.session import FakeSession, FakeCall
@@ -18,8 +19,8 @@ def session() -> FakeSession:
 
 
 @pytest.fixture
-def collection(session) -> GEMDResourceCollection:
-    return GEMDResourceCollection(
+def collection(session) -> GEMDCollection:
+    return GEMDCollection(
         project_id=uuid.uuid4(),
         dataset_id=uuid.uuid4(),
         session=session
@@ -45,7 +46,7 @@ def test_gemd(collection, session):
     assert 1 == session.num_calls
     expected_call = FakeCall(
         method='GET',
-        path='projects/{}/storables'.format(collection.project_id),
+        path=format_escaped_url('projects/{}/storables', collection.project_id),
         params={
             'dataset_id': str(collection.dataset_id),
             'forward': True,
@@ -77,9 +78,6 @@ def test_not_implemented(collection):
 
     with pytest.raises(NotImplementedError):
         collection.async_update(MaterialRun('foo'))
-
-    with pytest.raises(NotImplementedError):
-        collection.poll_async_update_job(uuid.uuid4())
 
     with pytest.raises(NotImplementedError):
         collection._get_relation('ingredient-runs', uuid.uuid4())
