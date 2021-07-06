@@ -57,7 +57,7 @@ class GEMDEntityCollection(DataConceptsCollection[DataConcepts]):
         return self.dataset.update(model)
 
     def delete(self, uid: Union[UUID, str, LinkByUID, DataConcepts], *,
-               dry_run=False) -> DataConcepts:
+               dry_run=False):
         """
         Delete a GEMD entity from the appropriate collection.
 
@@ -78,12 +78,12 @@ class GEMDEntityCollection(DataConceptsCollection[DataConcepts]):
         """Register a GEMD entity to the appropriate collection."""
         if self.dataset is None:
             raise RuntimeError("Must specify a dataset in order to register a GEMD entity.")
-        return self.dataset.register(model)
+        return self.dataset.register(model, dry_run=dry_run)
 
     def register_all(self, models: List[DataConcepts], *,
                      dry_run=False) -> List[DataConcepts]:
         """
-        Register multiple data concepts resources to each of their appropriate collections.
+        Register multiple GEMD entities to each of their appropriate collections.
 
         Does so in an order that is guaranteed to store all linked items before the item that
         references them.
@@ -94,7 +94,7 @@ class GEMDEntityCollection(DataConceptsCollection[DataConcepts]):
         Parameters
         ----------
         models: List[DataConcepts]
-            The GEMD entities to register. Can be different types.
+            The resources to register. Can be different types.
 
         dry_run: bool
             Whether to actually register the item or run a dry run of the register operation.
@@ -116,13 +116,6 @@ class GEMDEntityCollection(DataConceptsCollection[DataConcepts]):
                      timeout: float = 2 * 60,
                      polling_delay: float = 1.0,
                      return_model: bool = False) -> Optional[Union[UUID, DataConcepts]]:
-        """Asynchronous updating is only available on collections of specific GEMD entities."""
+        """Asynchronous updating is only available on specific collections of GEMD entities."""
         raise NotImplementedError("Asynchronous updating is only available"
-                                  " on collections of specific GEMD entities.")
-
-    def _get_relation(self, relation: str, uid: Union[UUID, str, LinkByUID, BaseEntity],
-                      scope: Optional[str] = None, forward: bool = True, per_page: int = 100
-                      ) -> Iterator[DataConcepts]:
-        """Relationship searching is only available on collections of specific GEMD objects."""
-        raise NotImplementedError("Relationship searching is only available"
-                                  " on collections of specific GEMD objects.")
+                                  " on a specific collection of GEMD entities.")

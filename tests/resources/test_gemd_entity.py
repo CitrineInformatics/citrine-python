@@ -65,19 +65,4 @@ def test_gemd(collection, session):
 
 def test_not_implemented(collection):
     with pytest.raises(NotImplementedError):
-        collection.update(MaterialRun('foo'))
-
-    with pytest.raises(NotImplementedError):
-        collection.delete(MaterialRun('foo'))
-
-    with pytest.raises(NotImplementedError):
-        collection.register(MaterialRun('foo'))
-
-    with pytest.raises(NotImplementedError):
-        collection.register_all([MaterialRun('foo'), MaterialSpec('foo')])
-
-    with pytest.raises(NotImplementedError):
         collection.async_update(MaterialRun('foo'))
-
-    with pytest.raises(NotImplementedError):
-        collection._get_relation('ingredient-runs', uuid.uuid4())
