@@ -4,9 +4,7 @@ import random
 import pytest
 
 from citrine.resources.data_concepts import DataConcepts
-from citrine.resources.gemd_resource import GEMDEntityCollection
-from citrine.resources.material_run import MaterialRun
-from citrine.resources.material_spec import MaterialSpec
+from citrine.resources.gemd_resource import GEMDResourceCollection
 from citrine._utils.functions import format_escaped_url
 
 from tests.utils.factories import MaterialRunDataFactory, MaterialSpecDataFactory
@@ -19,8 +17,8 @@ def session() -> FakeSession:
 
 
 @pytest.fixture
-def collection(session) -> GEMDEntityCollection:
-    return GEMDEntityCollection(
+def collection(session) -> GEMDResourceCollection:
+    return GEMDResourceCollection(
         project_id=uuid.uuid4(),
         dataset_id=uuid.uuid4(),
         session=session
@@ -61,8 +59,3 @@ def test_gemd(collection, session):
 
     # Test return type
     assert DataConcepts == collection.get_type()
-
-
-def test_not_implemented(collection):
-    with pytest.raises(NotImplementedError):
-        collection.async_update(MaterialRun('foo'))

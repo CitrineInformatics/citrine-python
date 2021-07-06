@@ -1,15 +1,9 @@
 """Resources that represent both individual and collections of datasets."""
-from collections import defaultdict
-from typing import TypeVar, List, Optional, Union, Tuple, Iterator
+from typing import List, Optional, Union, Tuple, Iterator
 from uuid import UUID
 
 from gemd.entity.base_entity import BaseEntity
 from gemd.entity.link_by_uid import LinkByUID
-from gemd.entity.object import MeasurementSpec, MeasurementRun, MaterialSpec, MaterialRun, \
-    ProcessSpec, ProcessRun, IngredientSpec, IngredientRun
-from gemd.entity.template import PropertyTemplate, MaterialTemplate, MeasurementTemplate, \
-    ParameterTemplate, ProcessTemplate, ConditionTemplate
-from gemd.util import writable_sort_order
 
 from citrine._rest.collection import Collection
 from citrine._rest.resource import Resource, ResourceTypeEnum
@@ -19,7 +13,7 @@ from citrine._utils.functions import scrub_none, format_escaped_url
 from citrine.exceptions import NotFound
 from citrine.resources.api_error import ApiError
 from citrine.resources.condition_template import ConditionTemplateCollection
-from citrine.resources.data_concepts import _make_link_by_uid
+from citrine.resources.data_concepts import DataConcepts
 from citrine.resources.delete import _async_gemd_batch_delete, _poll_for_async_batch_delete_result
 from citrine.resources.file_link import FileCollection
 from citrine.resources.gemd_resource import GEMDResourceCollection
@@ -36,8 +30,6 @@ from citrine.resources.process_run import ProcessRunCollection
 from citrine.resources.process_spec import ProcessSpecCollection
 from citrine.resources.process_template import ProcessTemplateCollection
 from citrine.resources.property_template import PropertyTemplateCollection
-
-ResourceType = TypeVar('ResourceType', bound='DataConcepts')
 
 
 class Dataset(Resource['Dataset']):
@@ -194,56 +186,20 @@ class Dataset(Resource['Dataset']):
     @property
     def gemd(self) -> GEMDResourceCollection:
         """Return a resource representing all GEMD objects/templates in this dataset."""
-        return GEMDResourceCollection(self.project_id, self, self.session)
+        return GEMDResourceCollection(self.project_id, self.uid, self.session)
 
     @property
     def files(self) -> FileCollection:
         """Return a resource representing all files in the dataset."""
         return FileCollection(self.project_id, self.uid, self.session)
 
-    def _collection_for(self, data_concepts_resource):
-        if isinstance(data_concepts_resource, MeasurementTemplate):
-            return self.measurement_templates
-        if isinstance(data_concepts_resource, MeasurementSpec):
-            return self.measurement_specs
-        if isinstance(data_concepts_resource, MeasurementRun):
-            return self.measurement_runs
+    def register(self, model: DataConcepts, *, dry_run=False) -> DataConcepts:
+        """Register a GEMD resource to the appropriate collection."""
+        return self.gemd.register(model, dry_run=dry_run)
 
-        if isinstance(data_concepts_resource, MaterialTemplate):
-            return self.material_templates
-        if isinstance(data_concepts_resource, MaterialSpec):
-            return self.material_specs
-        if isinstance(data_concepts_resource, MaterialRun):
-            return self.material_runs
-
-        if isinstance(data_concepts_resource, ProcessTemplate):
-            return self.process_templates
-        if isinstance(data_concepts_resource, ProcessSpec):
-            return self.process_specs
-        if isinstance(data_concepts_resource, ProcessRun):
-            return self.process_runs
-
-        if isinstance(data_concepts_resource, IngredientSpec):
-            return self.ingredient_specs
-        if isinstance(data_concepts_resource, IngredientRun):
-            return self.ingredient_runs
-
-        if isinstance(data_concepts_resource, PropertyTemplate):
-            return self.property_templates
-        if isinstance(data_concepts_resource, ParameterTemplate):
-            return self.parameter_templates
-        if isinstance(data_concepts_resource, ConditionTemplate):
-            return self.condition_templates
-
-    def register(self, data_concepts_resource: ResourceType, *, dry_run=False) -> ResourceType:
-        """Register a data concepts resource to the appropriate collection."""
-        return self._collection_for(data_concepts_resource)\
-            .register(data_concepts_resource, dry_run=dry_run)
-
-    def register_all(self, data_concepts_resources: List[ResourceType], *,
-                     dry_run=False) -> List[ResourceType]:
+    def register_all(self, models: List[DataConcepts], *, dry_run=False) -> List[DataConcepts]:
         """
-        Register multiple data concepts resources to each of their appropriate collections.
+        Register multiple GEMD resources to each of their appropriate collections.
 
         Does so in an order that is guaranteed to store all linked items before the item that
         references them.
@@ -253,7 +209,7 @@ class Dataset(Resource['Dataset']):
 
         Parameters
         ----------
-        data_concepts_resources: List[ResourceType]
+        models: List[DataConcepts]
             The resources to register. Can be different types.
 
         dry_run: bool
@@ -262,54 +218,30 @@ class Dataset(Resource['Dataset']):
 
         Returns
         -------
-        List[ResourceType]
+        List[DataConcepts]
             The registered versions
 
         """
-        resources = list()
-        by_type = defaultdict(list)
-        for obj in data_concepts_resources:
-            by_type[obj.typ].append(obj)
-        typ_groups = sorted(list(by_type.values()), key=lambda x: writable_sort_order(x[0]))
-        batch_size = 50
-        for typ_group in typ_groups:
-            num_batches = len(typ_group) // batch_size
-            for batch_num in range(num_batches + 1):
-                batch = typ_group[batch_num * batch_size: (batch_num + 1) * batch_size]
-                if batch:  # final batch is empty when batch_size divides len(typ_group)
-                    registered = self._collection_for(batch[0])\
-                        .register_all(batch, dry_run=dry_run)
-                    for prewrite, postwrite in zip(batch, registered):
-                        if isinstance(postwrite, BaseEntity):
-                            prewrite.uids = postwrite.uids
-                    resources.extend(registered)
-        return resources
+        return self.gemd.register_all(models, dry_run=dry_run)
 
-    def update(self, model: ResourceType) -> ResourceType:
-        """Update a data concepts resource using the appropriate collection."""
-        return self._collection_for(model).update(model)
+    def update(self, model: DataConcepts) -> DataConcepts:
+        """Update a GEMD resource using the appropriate collection."""
+        return self.gemd.update(model)
 
-    def delete(self, data_concepts_resource: Union[UUID, str, LinkByUID, ResourceType], *,
-               dry_run=False):
+    def delete(self, uid: Union[UUID, str, LinkByUID, DataConcepts], *, dry_run=False):
         """
-        Delete a data concepts resource from the appropriate collection.
+        Delete a GEMD resource from the appropriate collection.
 
         Parameters
         ----------
-        data_concepts_resource: Union[UUID, str, LinkByUID, ResourceType]
+        uid: Union[UUID, str, LinkByUID, DataConcepts]
             A representation of the resource to delete (Citrine id, LinkByUID, or the object)
         dry_run: bool
             Whether to actually delete the item or run a dry run of the delete operation.
             Dry run is intended to be used for validation. Default: false
 
         """
-        if isinstance(data_concepts_resource, (str, UUID, LinkByUID)):
-            # Must get the actual model object to determine appropriate collection
-            model = self.gemd.get(data_concepts_resource)
-        else:
-            model = data_concepts_resource
-        link = _make_link_by_uid(model)
-        return self._collection_for(model).delete(link.id, dry_run=dry_run)
+        return self.gemd.delete(uid, dry_run=dry_run)
 
     def delete_contents(
         self,
@@ -510,7 +442,7 @@ class DatasetCollection(Collection[Dataset]):
         """
         return super().list(page=page, per_page=per_page)
 
-    def get_by_unique_name(self, unique_name: str) -> ResourceType:
+    def get_by_unique_name(self, unique_name: str) -> Dataset:
         """Get a Dataset with the given unique name."""
         if unique_name is None:
             raise ValueError("You must supply a unique_name")
