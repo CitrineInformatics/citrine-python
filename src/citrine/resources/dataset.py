@@ -22,7 +22,7 @@ from citrine.resources.condition_template import ConditionTemplateCollection
 from citrine.resources.data_concepts import _make_link_by_uid
 from citrine.resources.delete import _async_gemd_batch_delete, _poll_for_async_batch_delete_result
 from citrine.resources.file_link import FileCollection
-from citrine.resources.gemd_entity import GEMDEntityCollection
+from citrine.resources.gemd_resource import GEMDResourceCollection
 from citrine.resources.ingredient_run import IngredientRunCollection
 from citrine.resources.ingredient_spec import IngredientSpecCollection
 from citrine.resources.material_run import MaterialRunCollection
@@ -192,9 +192,9 @@ class Dataset(Resource['Dataset']):
         return IngredientSpecCollection(self.project_id, self.uid, self.session)
 
     @property
-    def gemd(self) -> GEMDEntityCollection:
+    def gemd(self) -> GEMDResourceCollection:
         """Return a resource representing all GEMD objects/templates in this dataset."""
-        return GEMDEntityCollection(self.project_id, self, self.session)
+        return GEMDResourceCollection(self.project_id, self, self.session)
 
     @property
     def files(self) -> FileCollection:
@@ -290,7 +290,7 @@ class Dataset(Resource['Dataset']):
         return self._collection_for(model).update(model)
 
     def delete(self, data_concepts_resource: Union[UUID, str, LinkByUID, ResourceType], *,
-               dry_run=False) -> ResourceType:
+               dry_run=False):
         """
         Delete a data concepts resource from the appropriate collection.
 
@@ -303,9 +303,13 @@ class Dataset(Resource['Dataset']):
             Dry run is intended to be used for validation. Default: false
 
         """
-        link = _make_link_by_uid(data_concepts_resource)
-        return self._collection_for(data_concepts_resource) \
-            .delete(link.id, scope=link.scope, dry_run=dry_run)
+        if isinstance(data_concepts_resource, (str, UUID, LinkByUID)):
+            # Must get the actual model object to determine appropriate collection
+            model = self.gemd.get(data_concepts_resource)
+        else:
+            model = data_concepts_resource
+        link = _make_link_by_uid(model)
+        return self._collection_for(model).delete(link.id, dry_run=dry_run)
 
     def delete_contents(
         self,

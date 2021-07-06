@@ -4,7 +4,7 @@ import random
 import pytest
 
 from citrine.resources.data_concepts import DataConcepts
-from citrine.resources.gemd_entity import GEMDEntityCollection
+from citrine.resources.gemd_resource import GEMDEntityCollection
 from citrine.resources.material_run import MaterialRun
 from citrine.resources.material_spec import MaterialSpec
 from citrine._utils.functions import format_escaped_url
