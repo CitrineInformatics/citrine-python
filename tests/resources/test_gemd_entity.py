@@ -4,7 +4,7 @@ import random
 import pytest
 
 from citrine.resources.data_concepts import DataConcepts
-from citrine.resources.gemd import GEMDCollection
+from citrine.resources.gemd_entity import GEMDEntityCollection
 from citrine.resources.material_run import MaterialRun
 from citrine.resources.material_spec import MaterialSpec
 from citrine._utils.functions import format_escaped_url
@@ -19,8 +19,8 @@ def session() -> FakeSession:
 
 
 @pytest.fixture
-def collection(session) -> GEMDCollection:
-    return GEMDCollection(
+def collection(session) -> GEMDEntityCollection:
+    return GEMDEntityCollection(
         project_id=uuid.uuid4(),
         dataset_id=uuid.uuid4(),
         session=session

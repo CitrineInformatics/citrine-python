@@ -19,7 +19,7 @@ from citrine.resources.descriptors import DescriptorMethods
 from citrine.resources.design_space import DesignSpaceCollection
 from citrine.resources.design_workflow import DesignWorkflowCollection
 from citrine.resources.gemtables import GemTableCollection
-from citrine.resources.gemd import GEMDCollection
+from citrine.resources.gemd_entity import GEMDEntityCollection
 from citrine.resources.ingredient_run import IngredientRunCollection
 from citrine.resources.ingredient_spec import IngredientSpecCollection
 from citrine.resources.material_run import MaterialRunCollection
@@ -219,9 +219,9 @@ class Project(Resource['Project']):
         return IngredientSpecCollection(self.uid, None, self.session)
 
     @property
-    def gemd(self) -> GEMDCollection:
+    def gemd(self) -> GEMDEntityCollection:
         """Return a resource representing all GEMD objects/templates in this dataset."""
-        return GEMDCollection(self.uid, None, self.session)
+        return GEMDEntityCollection(self.uid, None, self.session)
 
     @property
     def table_configs(self) -> TableConfigCollection:
