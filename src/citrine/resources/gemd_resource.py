@@ -6,26 +6,8 @@ from uuid import UUID
 from gemd.util import writable_sort_order
 from gemd.entity.base_entity import BaseEntity
 from gemd.entity.link_by_uid import LinkByUID
-from gemd.entity.object import MeasurementSpec, MeasurementRun, MaterialSpec, MaterialRun, \
-    ProcessSpec, ProcessRun, IngredientSpec, IngredientRun
-from gemd.entity.template import PropertyTemplate, MaterialTemplate, MeasurementTemplate, \
-    ParameterTemplate, ProcessTemplate, ConditionTemplate
 
-from citrine.resources.condition_template import ConditionTemplateCollection
 from citrine.resources.data_concepts import DataConcepts, DataConceptsCollection
-from citrine.resources.ingredient_run import IngredientRunCollection
-from citrine.resources.ingredient_spec import IngredientSpecCollection
-from citrine.resources.material_run import MaterialRunCollection
-from citrine.resources.material_spec import MaterialSpecCollection
-from citrine.resources.material_template import MaterialTemplateCollection
-from citrine.resources.measurement_run import MeasurementRunCollection
-from citrine.resources.measurement_spec import MeasurementSpecCollection
-from citrine.resources.measurement_template import MeasurementTemplateCollection
-from citrine.resources.parameter_template import ParameterTemplateCollection
-from citrine.resources.process_run import ProcessRunCollection
-from citrine.resources.process_spec import ProcessSpecCollection
-from citrine.resources.process_template import ProcessTemplateCollection
-from citrine.resources.property_template import PropertyTemplateCollection
 from citrine._session import Session
 
 
@@ -49,44 +31,18 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
         return DataConcepts
 
     def _collection_for(self, model):
-        if isinstance(model, MeasurementTemplate):
-            return MeasurementTemplateCollection(self.project_id, self.dataset_id, self.session)
-        if isinstance(model, MeasurementSpec):
-            return MeasurementSpecCollection(self.project_id, self.dataset_id, self.session)
-        if isinstance(model, MeasurementRun):
-            return MeasurementRunCollection(self.project_id, self.dataset_id, self.session)
-
-        if isinstance(model, MaterialTemplate):
-            return MaterialTemplateCollection(self.project_id, self.dataset_id, self.session)
-        if isinstance(model, MaterialSpec):
-            return MaterialSpecCollection(self.project_id, self.dataset_id, self.session)
-        if isinstance(model, MaterialRun):
-            return MaterialRunCollection(self.project_id, self.dataset_id, self.session)
-
-        if isinstance(model, ProcessTemplate):
-            return ProcessTemplateCollection(self.project_id, self.dataset_id, self.session)
-        if isinstance(model, ProcessSpec):
-            return ProcessSpecCollection(self.project_id, self.dataset_id, self.session)
-        if isinstance(model, ProcessRun):
-            return ProcessRunCollection(self.project_id, self.dataset_id, self.session)
-
-        if isinstance(model, IngredientSpec):
-            return IngredientSpecCollection(self.project_id, self.dataset_id, self.session)
-        if isinstance(model, IngredientRun):
-            return IngredientRunCollection(self.project_id, self.dataset_id, self.session)
-
-        if isinstance(model, PropertyTemplate):
-            return PropertyTemplateCollection(self.project_id, self.dataset_id, self.session)
-        if isinstance(model, ParameterTemplate):
-            return ParameterTemplateCollection(self.project_id, self.dataset_id, self.session)
-        if isinstance(model, ConditionTemplate):
-            return ConditionTemplateCollection(self.project_id, self.dataset_id, self.session)
+        collection = DataConcepts.get_collection_type(model)
+        return collection(self.project_id, self.dataset_id, self.session)
 
     def _resolve_model(self, uid: Union[UUID, str, LinkByUID, DataConcepts]) -> DataConcepts:
         if isinstance(uid, (UUID, str, LinkByUID)):
+            # If object doesn't exist, delete would 404 regardless
             return self.get(uid)
-        else:
+        elif isinstance(uid, DataConcepts):
             return uid
+        # This is called internally, and should always satisfy one of the type checks
+        raise ValueError('Data model object must be of type:'  # pragma: no cover
+                         ' Union[UUID, str, LinkByUID, DataConcepts]')
 
     def build(self, data: dict) -> DataConcepts:
         """

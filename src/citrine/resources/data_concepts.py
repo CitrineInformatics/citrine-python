@@ -56,6 +56,14 @@ class DataConcepts(PolymorphicSerializable['DataConcepts'], DictSerializable, AB
     Only populated if the :func:`get_type` method is invoked.
     """
 
+    collection_dict = dict()
+    """
+    Dict[str, class]: dictionary from the type key to the associated collection \
+     for every class that extends DataConcepts.
+
+    Only populated if the :func:`get_collection_type` method is invoked.
+    """
+
     json_support = None
     """
     Custom json support object, which knows how to serialize and deserialize DataConcepts classes.
@@ -175,6 +183,33 @@ class DataConcepts(PolymorphicSerializable['DataConcepts'], DictSerializable, AB
             data = data.as_dict()
         return DataConcepts.class_dict[data['type']]
 
+    @classmethod
+    def get_collection_type(cls, data) -> Type[Collection]:
+        """
+        Determine the associated collection type of a serialized object.
+
+        The data dictionary must have a 'type' key whose value corresponds to the individual key
+        of one of the collections that extends :class:`DataConceptsCollection`.
+
+        Parameters
+        ----------
+        data: dict
+            A dictionary corresponding to a serialized data concepts object of unknown type.
+            This method will also work if data is a deserialized GEMD object.
+
+        Returns
+        -------
+        collection
+            The collection type corresponding to data.
+
+        """
+        if len(DataConcepts.collection_dict) == 0:
+            # This branch is intended to populate collection dict on first call
+            DataConcepts._make_collection_dict()
+        if isinstance(data, DictSerializable):
+            data = data.as_dict()
+        return DataConcepts.collection_dict[data['type']]
+
     @staticmethod
     def _make_class_dict():
         """Construct a dictionary from each type key to the class."""
@@ -199,6 +234,33 @@ class DataConcepts(PolymorphicSerializable['DataConcepts'], DictSerializable, AB
         for clazz in _clazz_list:
             DataConcepts.class_dict[clazz._response_key] = clazz
         DataConcepts.class_dict['link_by_uid'] = LinkByUID
+
+    @staticmethod
+    def _make_collection_dict():
+        """Construct a dictionary from each type key to the associated collection."""
+        from citrine.resources.condition_template import ConditionTemplateCollection
+        from citrine.resources.parameter_template import ParameterTemplateCollection
+        from citrine.resources.property_template import PropertyTemplateCollection
+        from citrine.resources.material_template import MaterialTemplateCollection
+        from citrine.resources.measurement_template import MeasurementTemplateCollection
+        from citrine.resources.process_template import ProcessTemplateCollection
+        from citrine.resources.ingredient_spec import IngredientSpecCollection
+        from citrine.resources.material_spec import MaterialSpecCollection
+        from citrine.resources.measurement_spec import MeasurementSpecCollection
+        from citrine.resources.process_spec import ProcessSpecCollection
+        from citrine.resources.ingredient_run import IngredientRunCollection
+        from citrine.resources.material_run import MaterialRunCollection
+        from citrine.resources.measurement_run import MeasurementRunCollection
+        from citrine.resources.process_run import ProcessRunCollection
+        _collection_list = [
+            ConditionTemplateCollection, ParameterTemplateCollection, PropertyTemplateCollection,
+            MaterialTemplateCollection, MeasurementTemplateCollection, ProcessTemplateCollection,
+            IngredientSpecCollection, MaterialSpecCollection, MeasurementSpecCollection,
+            ProcessSpecCollection, IngredientRunCollection, MaterialRunCollection,
+            MeasurementRunCollection, ProcessRunCollection
+        ]
+        for collection in _collection_list:
+            DataConcepts.collection_dict[collection._individual_key] = collection
 
     @classmethod
     def get_json_support(cls):
