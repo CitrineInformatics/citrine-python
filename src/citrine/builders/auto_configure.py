@@ -29,9 +29,12 @@ def extract_descriptor_keys(
     """[ALPHA] Extract names of properties and conditions that appear within
     a provided material history to use as descriptor keys.
 
-    Given a material (or link representation), extracts the names of
+    Given a material (or link representation), extracts the names from
     property and condition templates that appear within process and measurement runs
     throughout the material's history.
+
+    The obtained descriptor keys can be used when constructing
+    objectives for a scoring function in a design workflow.
 
     Parameters
     ----------
@@ -40,7 +43,7 @@ def extract_descriptor_keys(
     material: Union[MaterialRun, LinkByUID, str, UUID]
         Sample material to extract descriptor keys
     mode: str
-        Option in {'SIMPLE', 'FORMULATION'} for formatting descriptor keys
+        Option in {'SIMPLE', 'FORMULATION'} that controls formatting descriptor keys
         Default: 'SIMPLE'
     full_history: bool
         Whether to extract descriptor keys from the full material history,
@@ -54,7 +57,7 @@ def extract_descriptor_keys(
 
     """
     if mode not in {"FORMULATION", "SIMPLE"}:
-        msg = "Called with mode: {}.  Expected 'FORMULATION' or 'SIMPLE'.".format(mode)
+        msg = "Called with mode: {}.  Expected 'SIMPLE' or 'FORMULATION'.".format(mode)
         raise ValueError(msg)
 
     link = _make_link_by_uid(material)
@@ -63,28 +66,26 @@ def extract_descriptor_keys(
     if full_history:
         search_history = flatten(history)
     else:
-        search_history = [msr.template for msr in history.measurements] \
-                         + [history.process.template]
+        # Limit the history to contain the terminal measurement/process
+        search_history = [msr.template for msr in history.measurements]
+        search_history += [history.process.template]
 
     keys = {'properties': [], 'conditions': []}
     for obj in search_history:
         if isinstance(obj, (ProcessTemplate, MeasurementTemplate)):
-            parent_name = obj.name
+            parent_name = f'{obj.name}~' if mode == 'SIMPLE' else ''
             if isinstance(obj, MeasurementTemplate):
                 for prop in obj.properties:
-                    property_name = prop[0].name
-                    property_key = f'{parent_name}~{property_name}' \
-                        if mode == 'SIMPLE' else property_name
+                    property_key = parent_name + prop[0].name
                     keys['properties'].append(property_key)
             for condition in obj.conditions:
-                condition_name = condition[0].name
-                condition_key = f'{parent_name}~{condition_name}' \
-                    if mode == 'SIMPLE' else condition_name
+                condition_key = parent_name + condition[0].name
                 keys['conditions'].append(condition_key)
 
     return keys
 
-def auto_configure_material(
+
+def material_to_candidates(
         *,
         project: Project,
         material: Union[MaterialRun, LinkByUID, str, UUID],
@@ -93,12 +94,36 @@ def auto_configure_material(
         label: str = '',
         print_status_info: bool = False,
 ) -> DesignExecution:
-    """
-    Material --> GEMTable --> Predictor --> Design Space --> Design Workflow --> Execution
+    """[ALPHA]
+
+    Parameters
+    ----------
+    project: Project
+        Project to use when accessing the Citrine Platform
+    material: Union[MaterialRun, LinkByUID, str, UUID]
+        Sample material to extract descriptor keys
+    score: Score
+        Scoring function used to rank candidates during design execution.
+        Must contain objectives/constraints with matching descriptor keys
+        to those found within the provided material history.
+    mode: str
+        Option in {'SIMPLE', 'FORMULATION'} that controls formatting descriptor keys
+        Default: 'SIMPLE'
+    label: str
+        Naming label to affix to auto-configured assets on the Citrine Platform
+        Default: ''
+    print_status_info: bool
+        Whether to print the status of predictor, design space, and design workflow validation
+        Default: False
+
+    Returns
+    -------
+    DesignExecution
+        Triggered design execution given the auto-configured workflow and provided `score`
 
     """
     if mode not in {"FORMULATION", "SIMPLE"}:
-        msg = "Called with mode: {}.  Expected 'FORMULATION' or 'SIMPLE'.".format(mode)
+        msg = "Called with mode: {}.  Expected 'SIMPLE' or 'FORMULATION'.".format(mode)
         raise ValueError(msg)
 
     suffix = ' - {}'.format(label) if label else ''
