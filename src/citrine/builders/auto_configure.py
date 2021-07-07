@@ -1,7 +1,8 @@
 from uuid import UUID
-from typing import Union
+from typing import Union, Dict
 
 from gemd.entity.link_by_uid import LinkByUID
+from gemd.util.impl import flatten
 
 from citrine.jobs.waiting import wait_while_validating
 from citrine.informatics.data_sources import GemTableDataSource
@@ -12,19 +13,44 @@ from citrine.informatics.workflows import DesignWorkflow
 
 from citrine.resources.data_concepts import _make_link_by_uid
 from citrine.resources.material_run import MaterialRun
+from citrine.resources.measurement_template import MeasurementTemplate
+from citrine.resources.process_template import ProcessTemplate
 from citrine.resources.project import Project
 from citrine.resources.table_config import TableBuildAlgorithm
 
 
-def guess_descriptor_keys(
+def extract_descriptor_keys(
         *,
         project: Project,
         material: Union[MaterialRun, LinkByUID, str, UUID],
-        mode: str = 'SIMPLE'
-):
-    """
-    Try to figure out the keys of descriptors that can be used
-    as an objective function for this material history.
+        mode: str = 'SIMPLE',
+        full_history: bool = False
+) -> Dict:
+    """[ALPHA] Extract names of properties and conditions that appear within
+    a provided material history to use as descriptor keys.
+
+    Given a material (or link representation), extracts the names of
+    property and condition templates that appear within process and measurement runs
+    throughout the material's history.
+
+    Parameters
+    ----------
+    project: Project
+        Project to use when accessing the Citrine Platform
+    material: Union[MaterialRun, LinkByUID, str, UUID]
+        Sample material to extract descriptor keys
+    mode: str
+        Option in {'SIMPLE', 'FORMULATION'} for formatting descriptor keys
+        Default: 'SIMPLE'
+    full_history: bool
+        Whether to extract descriptor keys from the full material history,
+        or only the provided (terminal) material
+        Default: True
+
+    Returns
+    -------
+    dict
+        {'conditions': [...], 'properties': [...]} dictionary containing descriptor keys
 
     """
     if mode not in {"FORMULATION", "SIMPLE"}:
@@ -34,13 +60,29 @@ def guess_descriptor_keys(
     link = _make_link_by_uid(material)
     history = project.material_runs.get_history(scope=link.scope, id=link.id)
 
-    keys = []
-    for msr in history.measurements:
-        for prop in msr.properties:
-            descriptor_key = f'{msr.name}~{prop.name}' if mode == 'SIMPLE' else prop.name
-            keys.append(descriptor_key)
+    if full_history:
+        search_history = flatten(history)
+    else:
+        search_history = [msr.template for msr in history.measurements] \
+                         + [history.process.template]
 
-    return  keys
+    keys = {'properties': [], 'conditions': []}
+    for obj in search_history:
+        if isinstance(obj, (ProcessTemplate, MeasurementTemplate)):
+            parent_name = obj.name
+            if isinstance(obj, MeasurementTemplate):
+                for prop in obj.properties:
+                    property_name = prop[0].name
+                    property_key = f'{parent_name}~{property_name}' \
+                        if mode == 'SIMPLE' else property_name
+                    keys['properties'].append(property_key)
+            for condition in obj.conditions:
+                condition_name = condition[0].name
+                condition_key = f'{parent_name}~{condition_name}' \
+                    if mode == 'SIMPLE' else condition_name
+                keys['conditions'].append(condition_key)
+
+    return keys
 
 def auto_configure_material(
         *,
@@ -73,8 +115,7 @@ def auto_configure_material(
         material=material, name=f'Default GEM Table{suffix}', algorithm=table_algorithm
     )
     table_config = project.table_configs.register(table_config)
-    job = project.tables.initiate_build(table_config)
-    table = project.tables.get_by_build_job(job)
+    table = project.tables.build_from_config(table_config)
 
     print('Building default predictor from GEM table...')
     formulation = None
