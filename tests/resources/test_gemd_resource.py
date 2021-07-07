@@ -229,17 +229,15 @@ def test_delete(gemd_collection):
 
     """
     expected = {
-        MaterialTemplateCollection: MaterialTemplate("foo", uids={"foo": "bar"}),
-        MaterialSpecCollection: MaterialSpec("foo", uids={"foo": "bar"}),
-        MaterialRunCollection: MaterialRun("foo", uids={"foo": "bar"}),
-        ProcessTemplateCollection: ProcessTemplate("foo", uids={"foo": "bar"}),
+        MaterialTemplateCollection: MaterialTemplate("foo", uids={"id": str(uuid4())}),
+        MaterialSpecCollection: MaterialSpec("foo", uids={"id": str(uuid4())}),
+        MaterialRunCollection: MaterialRun("foo", uids={"id": str(uuid4())}),
+        ProcessTemplateCollection: ProcessTemplate("foo", uids={"id": str(uuid4())}),
     }
 
     for specific_collection, obj in expected.items():
         gemd_collection.delete(obj)
         assert gemd_collection.session.calls[-1].path.split("/")[-3] == basename(specific_collection._path_template)
-
-    # Check for UUID/data object both working
 
 
 def test_update(gemd_collection):

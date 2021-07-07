@@ -186,7 +186,7 @@ class DataConcepts(PolymorphicSerializable['DataConcepts'], DictSerializable, AB
     @classmethod
     def get_collection_type(cls, data) -> Type[Collection]:
         """
-        Determine the associated collection type of a serialized data object.
+        Determine the associated collection type for a serialized data object.
 
         The data dictionary must have a 'type' key whose value corresponds to the individual key
         of one of the collections that extends :class:`DataConceptsCollection`.
