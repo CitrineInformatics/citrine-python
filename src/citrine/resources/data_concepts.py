@@ -746,7 +746,6 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         """
         link = _make_link_by_uid(uid, scope)
         path = self._get_path() + format_escaped_url("/{}/{}", link.scope, link.id)
-        print(path)
         params = {'dry_run': dry_run}
         self.session.delete_resource(path, params=params)
         return Response(status_code=200)  # delete succeeded

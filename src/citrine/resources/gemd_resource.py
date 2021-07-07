@@ -67,23 +67,23 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
         """Update a data model object using the appropriate collection."""
         return self._collection_for(model).update(model)
 
-    def delete(self, uid: Union[UUID, str, LinkByUID, DataConcepts], *, dry_run=False):
-        """
-        Delete a GEMD resource from the appropriate collection.
-
-        Parameters
-        ----------
-        uid: Union[UUID, str, LinkByUID, DataConcepts]
-            A representation of the resource to delete (Citrine id, LinkByUID, or the object)
-        dry_run: bool
-            Whether to actually delete the item or run a dry run of the delete operation.
-            Dry run is intended to be used for validation. Default: false
-
-        """
-        # Delete works on arbitrary collection/object combos
-        # As long as a dataset ID is provided, even if its the wrong one
-        model = self._resolve_model(uid)
-        return self._collection_for(model).delete(model, dry_run=dry_run)
+    # def delete(self, uid: Union[UUID, str, LinkByUID, DataConcepts], *, dry_run=False):
+    #     """
+    #     Delete a GEMD resource from the appropriate collection.
+    #
+    #     Parameters
+    #     ----------
+    #     uid: Union[UUID, str, LinkByUID, DataConcepts]
+    #         A representation of the resource to delete (Citrine id, LinkByUID, or the object)
+    #     dry_run: bool
+    #         Whether to actually delete the item or run a dry run of the delete operation.
+    #         Dry run is intended to be used for validation. Default: false
+    #
+    #     """
+    #     # Delete works on arbitrary collection/object combos
+    #     # As long as a dataset ID is provided, even if its the wrong one
+    #     model = self._resolve_model(uid)
+    #     return self._collection_for(model).delete(model, dry_run=dry_run)
 
     def register(self, model: DataConcepts, *, dry_run=False) -> DataConcepts:
         """Register a GEMD object to the appropriate collection."""
