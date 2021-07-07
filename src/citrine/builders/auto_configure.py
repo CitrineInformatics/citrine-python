@@ -110,5 +110,5 @@ def auto_configure_material(
     )
 
     print("Executing design workflow using provided score...")
-    execution = design_workflow.design_executions.trigger(score)
+    execution = workflow.design_executions.trigger(score)
     return execution
