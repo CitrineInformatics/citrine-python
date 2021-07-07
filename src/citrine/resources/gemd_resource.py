@@ -90,7 +90,7 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
 
     def build(self, data: dict) -> DataConcepts:
         """
-        Build an arbitary GEMD resource from a serialized dictionary.
+        Build an arbitary GEMD object from a serialized dictionary.
 
         This is an internal method, and should not be called directly by users.
 
@@ -108,7 +108,7 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
         return DataConcepts.build(data)
 
     def update(self, model: DataConcepts) -> DataConcepts:
-        """Update a GEMD resource using the appropriate collection."""
+        """Update a data model object using the appropriate collection."""
         return self._collection_for(model).update(model)
 
     def delete(self, uid: Union[UUID, str, LinkByUID, DataConcepts], *, dry_run=False):
@@ -128,12 +128,12 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
         return self._collection_for(model).delete(model, dry_run=dry_run)
 
     def register(self, model: DataConcepts, *, dry_run=False) -> DataConcepts:
-        """Register a GEMD resource to the appropriate collection."""
+        """Register a GEMD object to the appropriate collection."""
         return self._collection_for(model).register(model, dry_run=dry_run)
 
     def register_all(self, models: List[DataConcepts], *, dry_run=False) -> List[DataConcepts]:
         """
-        Register multiple GEMD resources to each of their appropriate collections.
+        Register multiple GEMD objects to each of their appropriate collections.
 
         Does so in an order that is guaranteed to store all linked items before the item that
         references them.
@@ -144,7 +144,7 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
         Parameters
         ----------
         models: List[DataConcepts]
-            The resources to register. Can be different types.
+            The data model objects to register. Can be different types.
 
         dry_run: bool
             Whether to actually register the item or run a dry run of the register operation.
