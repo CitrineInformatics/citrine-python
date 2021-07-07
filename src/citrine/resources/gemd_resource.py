@@ -80,6 +80,8 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
             Dry run is intended to be used for validation. Default: false
 
         """
+        # Delete works on arbitrary collection/object combos
+        # As long as a dataset ID is provided, even if its the wrong one
         model = self._resolve_model(uid)
         return self._collection_for(model).delete(model, dry_run=dry_run)
 

@@ -5,15 +5,11 @@ from uuid import UUID, uuid4
 import pytest
 from gemd.entity.bounds.integer_bounds import IntegerBounds
 from gemd.entity.link_by_uid import LinkByUID
-from gemd.entity.object.material_spec import MaterialSpec as GemdMaterialSpec
-from gemd.entity.object.process_spec import ProcessSpec as GemdProcessSpec
 
 from citrine.exceptions import PollingTimeoutError, JobFailureError, NotFound
 from citrine.resources.api_error import ApiError, ValidationError
 from citrine.resources.condition_template import ConditionTemplateCollection, ConditionTemplate
 from citrine.resources.dataset import DatasetCollection
-from citrine.resources.ingredient_run import IngredientRun, IngredientRunCollection
-from citrine.resources.ingredient_spec import IngredientSpec, IngredientSpecCollection
 from citrine.resources.material_run import MaterialRunCollection, MaterialRun
 from citrine.resources.material_spec import MaterialSpecCollection, MaterialSpec
 from citrine.resources.material_template import MaterialTemplateCollection, MaterialTemplate
@@ -312,7 +308,7 @@ def test_files_get_project_id(dataset):
     assert dataset.project_id == dataset.files.project_id
 
 
-def test_register_data_concepts(dataset):
+def test_gemd_posts(dataset):
     """Check that register routes to the correct collections"""
     expected = {
         MaterialTemplateCollection: MaterialTemplate("foo"),
@@ -324,14 +320,15 @@ def test_register_data_concepts(dataset):
         MeasurementTemplateCollection: MeasurementTemplate("foo"),
         MeasurementSpecCollection: MeasurementSpec("foo"),
         MeasurementRunCollection: MeasurementRun("foo"),
-        IngredientSpecCollection: IngredientSpec("foo"),
-        IngredientRunCollection: IngredientRun(),
         PropertyTemplateCollection: PropertyTemplate("bar", bounds=IntegerBounds(0, 1)),
         ParameterTemplateCollection: ParameterTemplate("bar", bounds=IntegerBounds(0, 1)),
         ConditionTemplateCollection: ConditionTemplate("bar", bounds=IntegerBounds(0, 1))
     }
 
     for collection, obj in expected.items():
+        obj.name = 'This is my name'
+
+        # Register the objects
         assert len(obj.uids) == 0
         registered = dataset.register(obj)
         assert len(obj.uids) == 1
@@ -340,35 +337,67 @@ def test_register_data_concepts(dataset):
         for pair in obj.uids.items():
             assert pair[1] == registered.uids[pair[0]]
 
-
-def test_update(dataset):
-    """Check that updating a template calls the same path as register, but a warning is thrown."""
-    template = MaterialTemplate("to be updated")
-    template = dataset.register(template)
-    template.description = "updated description"
-    template_updated = dataset.update(template)
-    assert template_updated == template
-    assert dataset.session.calls[0].path == dataset.session.calls[1].path
-
-
-def test_register_data_concepts_no_mutate(dataset):
-    """Check that register routes to the correct collections"""
-    expected = {
-        MaterialTemplateCollection: MaterialTemplate("foo",
-                                                     uids={'scope1': 'A',
-                                                           'scope2': 'B'
-                                                           }
-                                                     ),
-        MaterialSpecCollection: MaterialSpec("foo",
-                                             uids={'id': str(uuid4())}
-                                             ),
-    }
-    for collection, obj in expected.items():
-        len_before = len(obj.uids)
-        registered = dataset.register(obj)
-        assert len(obj.uids) == len_before
+        # Update the objects
+        registered.name = 'Name change!'
+        updated = dataset.update(registered)
+        assert registered.name == updated.name
+        assert len(updated.uids) == 1
         for pair in registered.uids.items():
-            assert pair[1] == obj.uids.get(pair[0], 'No such key')
+            assert pair[1] == updated.uids[pair[0]]
+
+        # Delete them all
+        dataset.delete(updated)
+        assert dataset.session.calls[-1].path.split("/")[-3] == basename(collection._path_template)
+
+    # Register all
+    before = list(expected.values())
+    seen_ids = set()
+    for obj in before:
+        for pair in obj.uids.items():
+            assert pair not in seen_ids  # All ids are different
+            seen_ids.add(pair)
+
+    after = dataset.register_all(before)
+    assert len(before) == len(after)
+    for obj in after:
+        for pair in obj.uids.items():
+            assert pair in seen_ids  # registered items have the same ids
+
+
+def test_async_update_and_no_dataset_id(dataset, session):
+    """Ensure async_update requires a dataset id"""
+
+    obj = ProcessTemplate(
+        "foo",
+        uids={'id': str(uuid4())}
+    )
+
+    dataset.session.set_response(JobSubmissionResponseFactory())
+    dataset.uid = None
+
+    with pytest.raises(RuntimeError):
+        dataset.process_templates.async_update(obj, wait_for_response=False)
+
+
+def test_async_update_timeout(dataset, session):
+    """Ensure the proper exception is thrown on a timeout error"""
+
+    obj = ProcessTemplate(
+        "foo",
+        uids={'id': str(uuid4())}
+    )
+    fake_job_status_resp = {
+        'job_type': 'some_typ',
+        'status': 'Pending',
+        'tasks': [],
+        'output': {}
+    }
+
+    dataset.session.set_responses(JobSubmissionResponseFactory(), fake_job_status_resp)
+
+    with pytest.raises(PollingTimeoutError):
+        dataset.process_templates.async_update(obj, wait_for_response=True,
+                                               timeout=-1.0)
 
 
 def test_async_update_and_wait(dataset, session):
@@ -422,146 +451,6 @@ def test_async_update_with_no_wait(dataset, session):
     dataset.session.set_response(JobSubmissionResponseFactory())
     job_id = dataset.process_templates.async_update(obj, wait_for_response=False)
     assert job_id is not None
-
-
-def test_async_update_and_no_dataset_id(dataset, session):
-    """Ensure async_update requires a dataset id"""
-
-    obj = ProcessTemplate(
-        "foo",
-        uids={'id': str(uuid4())}
-    )
-
-    dataset.session.set_response(JobSubmissionResponseFactory())
-    dataset.uid = None
-
-    with pytest.raises(RuntimeError):
-        dataset.process_templates.async_update(obj, wait_for_response=False)
-
-
-def test_async_update_timeout(dataset, session):
-    """Ensure the proper exception is thrown on a timeout error"""
-
-    obj = ProcessTemplate(
-        "foo",
-        uids={'id': str(uuid4())}
-    )
-    fake_job_status_resp = {
-        'job_type': 'some_typ',
-        'status': 'Pending',
-        'tasks': [],
-        'output': {}
-    }
-
-    dataset.session.set_responses(JobSubmissionResponseFactory(), fake_job_status_resp)
-
-    with pytest.raises(PollingTimeoutError):
-        dataset.process_templates.async_update(obj, wait_for_response=True,
-                                                              timeout=-1.0)
-
-
-def test_register_all_data_concepts(dataset):
-    """Check that register_all registers everything and routes to all collections"""
-    bounds = IntegerBounds(0, 1)
-    property_template = PropertyTemplate("bar", bounds=bounds)
-    parameter_template = ParameterTemplate("bar", bounds=bounds)
-    condition_template = ConditionTemplate("bar", bounds=bounds)
-    foo_process_template = ProcessTemplate("foo",
-                                           conditions=[[condition_template, bounds]],
-                                           parameters=[[parameter_template, bounds]])
-    foo_process_spec = ProcessSpec("foo", template=foo_process_template)
-    foo_process_run = ProcessRun("foo", spec=foo_process_spec)
-    foo_material_template = MaterialTemplate("foo", properties=[[property_template, bounds]])
-    foo_material_spec = MaterialSpec("foo", template=foo_material_template, process=foo_process_spec)
-    foo_material_run = MaterialRun("foo", spec=foo_material_spec, process=foo_process_run)
-    baz_template = MaterialTemplate("baz")
-    foo_measurement_template = MeasurementTemplate("foo",
-                                                   conditions=[[condition_template, bounds]],
-                                                   parameters=[[parameter_template, bounds]],
-                                                   properties=[[property_template, bounds]])
-    foo_measurement_spec = MeasurementSpec("foo", template=foo_measurement_template)
-    foo_measurement_run = MeasurementRun("foo", spec=foo_measurement_spec, material=foo_material_run)
-    foo_ingredient_spec = IngredientSpec("foo", material=foo_material_spec, process=foo_process_spec)
-    foo_ingredient_run = IngredientRun(spec=foo_ingredient_spec, material=foo_material_run, process=foo_process_run)
-    baz_run = MeasurementRun("baz")
-
-    # worst order possible
-    expected = {
-        foo_ingredient_run: IngredientRunCollection,
-        foo_ingredient_spec: IngredientSpecCollection,
-        foo_measurement_run: MeasurementRunCollection,
-        foo_measurement_spec: MeasurementSpecCollection,
-        foo_measurement_template: MeasurementTemplateCollection,
-        foo_material_run: MaterialRunCollection,
-        foo_material_spec: MaterialSpecCollection,
-        foo_material_template: MaterialTemplateCollection,
-        foo_process_run: ProcessRunCollection,
-        foo_process_spec: ProcessSpecCollection,
-        foo_process_template: ProcessTemplateCollection,
-        baz_template: MaterialTemplateCollection,
-        baz_run: MeasurementRunCollection,
-        property_template: PropertyTemplateCollection,
-        parameter_template: ParameterTemplateCollection,
-        condition_template: ConditionTemplateCollection
-    }
-    for obj in expected:
-        assert len(obj.uids) == 0  # All should be without ids
-    registered = dataset.register_all(expected.keys())
-    assert len(registered) == len(expected)
-
-    seen_ids = set()
-    for obj in expected:
-        assert len(obj.uids) == 1  # All should now have exactly 1 id
-        for pair in obj.uids.items():
-            assert pair not in seen_ids  # All ids are different
-            seen_ids.add(pair)
-    for obj in registered:
-        for pair in obj.uids.items():
-            assert pair in seen_ids  # registered items have the same ids
-
-    call_basenames = [call.path.split('/')[-2] for call in dataset.session.calls]
-    collection_basenames = [basename(collection._path_template) for collection in expected.values()]
-    assert set(call_basenames) == set(collection_basenames)
-    assert len(set(call_basenames)) == len(call_basenames)  # calls are batched internally
-
-    # spot check order. Does not check every constraint
-    assert call_basenames.index(basename(IngredientRunCollection._path_template)) > call_basenames.index(basename(IngredientSpecCollection._path_template))
-    assert call_basenames.index(basename(MaterialRunCollection._path_template)) > call_basenames.index(basename(MaterialSpecCollection._path_template))
-    assert call_basenames.index(basename(MeasurementRunCollection._path_template)) > call_basenames.index(basename(MeasurementSpecCollection._path_template))
-    assert call_basenames.index(basename(ProcessRunCollection._path_template)) > call_basenames.index(basename(ProcessSpecCollection._path_template))
-    assert call_basenames.index(basename(MaterialSpecCollection._path_template)) > call_basenames.index(basename(MaterialTemplateCollection._path_template))
-    assert call_basenames.index(basename(MeasurementSpecCollection._path_template)) > call_basenames.index(basename(MeasurementTemplateCollection._path_template))
-    assert call_basenames.index(basename(ProcessSpecCollection._path_template)) > call_basenames.index(basename(ProcessTemplateCollection._path_template))
-    assert call_basenames.index(basename(MaterialSpecCollection._path_template)) > call_basenames.index(basename(ProcessSpecCollection._path_template))
-    assert call_basenames.index(basename(MaterialSpecCollection._path_template)) > call_basenames.index(basename(MeasurementSpecCollection._path_template))
-    assert call_basenames.index(basename(MeasurementTemplateCollection._path_template)) > call_basenames.index(basename(ConditionTemplateCollection._path_template))
-    assert call_basenames.index(basename(MeasurementTemplateCollection._path_template)) > call_basenames.index(basename(ParameterTemplateCollection._path_template))
-    assert call_basenames.index(basename(MaterialTemplateCollection._path_template)) > call_basenames.index(basename(PropertyTemplateCollection._path_template))
-
-
-def test_register_all_object_update(dataset):
-    """Check that uids of gemd-python objects get updated"""
-    process = GemdProcessSpec("process")
-    material = GemdMaterialSpec("material", process=process)
-
-    registered_process, registered_material = dataset.register_all([process, material])
-
-    assert process.uids == registered_process.uids
-    assert material.uids == registered_material.uids
-
-
-def test_delete_data_concepts(dataset):
-    """Check that delete routes to the correct collections"""
-    expected = {
-        MaterialTemplateCollection: MaterialTemplate("foo", uids={"foo": "bar"}),
-        MaterialSpecCollection: MaterialSpec("foo", uids={"foo": "bar"}),
-        MaterialRunCollection: MaterialRun("foo", uids={"foo": "bar"}),
-        ProcessTemplateCollection: ProcessTemplate("foo", uids={"foo": "bar"}),
-    }
-
-    for collection, obj in expected.items():
-        dataset.delete(obj)
-        assert dataset.session.calls[-1].path.split("/")[-3] == basename(collection._path_template)
 
 
 def test_batch_delete(dataset):

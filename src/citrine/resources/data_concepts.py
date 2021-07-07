@@ -186,7 +186,7 @@ class DataConcepts(PolymorphicSerializable['DataConcepts'], DictSerializable, AB
     @classmethod
     def get_collection_type(cls, data) -> Type[Collection]:
         """
-        Determine the associated collection type of a serialized object.
+        Determine the associated collection type of a serialized data object.
 
         The data dictionary must have a 'type' key whose value corresponds to the individual key
         of one of the collections that extends :class:`DataConceptsCollection`.
@@ -746,6 +746,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         """
         link = _make_link_by_uid(uid, scope)
         path = self._get_path() + format_escaped_url("/{}/{}", link.scope, link.id)
+        print(path)
         params = {'dry_run': dry_run}
         self.session.delete_resource(path, params=params)
         return Response(status_code=200)  # delete succeeded
