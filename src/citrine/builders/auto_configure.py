@@ -16,8 +16,6 @@ from citrine.informatics.workflows import DesignWorkflow
 
 from citrine.resources.data_concepts import _make_link_by_uid
 from citrine.resources.material_run import MaterialRun
-from citrine.resources.measurement_template import MeasurementTemplate
-from citrine.resources.process_template import ProcessTemplate
 from citrine.resources.project import Project
 from citrine.resources.table_config import TableBuildAlgorithm
 
@@ -29,8 +27,7 @@ def extract_descriptor_keys(
         mode: str = 'SIMPLE',
         full_history: bool = False
 ) -> Dict:
-    """[ALPHA] Extract names of attributes that appear within
-    a provided material history to use as descriptor keys.
+    """[ALPHA] Extract names of attributes from a provided material history.
 
     Given a material (or link representation), extracts the names from
     property, condition, and parameter templates
@@ -100,7 +97,7 @@ def auto_configure_material(
         label: str = '',
         print_status_info: bool = False,
 ) -> DesignExecution:
-    """[ALPHA]
+    """[ALPHA] Description.
 
     Parameters
     ----------
