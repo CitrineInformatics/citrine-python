@@ -2,6 +2,9 @@ from uuid import UUID
 from typing import Union, Dict
 
 from gemd.entity.link_by_uid import LinkByUID
+from gemd.entity.template.has_property_templates import HasPropertyTemplates
+from gemd.entity.template.has_condition_templates import HasConditionTemplates
+from gemd.entity.template.has_parameter_templates import HasParameterTemplates
 from gemd.util.impl import flatten
 
 from citrine.jobs.waiting import wait_while_validating
@@ -26,11 +29,12 @@ def extract_descriptor_keys(
         mode: str = 'SIMPLE',
         full_history: bool = False
 ) -> Dict:
-    """[ALPHA] Extract names of properties and conditions that appear within
+    """[ALPHA] Extract names of attributes that appear within
     a provided material history to use as descriptor keys.
 
     Given a material (or link representation), extracts the names from
-    property and condition templates that appear within process and measurement runs
+    property, condition, and parameter templates
+    that appear within process and measurement runs
     throughout the material's history.
 
     The obtained descriptor keys can be used when constructing
@@ -53,7 +57,8 @@ def extract_descriptor_keys(
     Returns
     -------
     dict
-        {'conditions': [...], 'properties': [...]} dictionary containing descriptor keys
+        Dictionary of keys of the form
+        {'properties': [...], 'conditions': [...], 'parameters': []}
 
     """
     if mode not in {"FORMULATION", "SIMPLE"}:
@@ -66,26 +71,27 @@ def extract_descriptor_keys(
     if full_history:
         search_history = flatten(history)
     else:
-        # Limit the history to contain the terminal measurement/process
-        search_history = [msr.template for msr in history.measurements]
-        search_history += [history.process.template]
+        # Limit the search to contain the terminal material/process/measurement
+        search_history = [history.spec.template, history.process.template]
+        search_history.extend([msr.template for msr in history.measurements])
 
-    keys = {'properties': [], 'conditions': []}
+    keys = {'properties': [], 'conditions': [], 'parameters': []}
     for obj in search_history:
-        if isinstance(obj, (ProcessTemplate, MeasurementTemplate)):
-            parent_name = f'{obj.name}~' if mode == 'SIMPLE' else ''
-            if isinstance(obj, MeasurementTemplate):
-                for prop in obj.properties:
-                    property_key = parent_name + prop[0].name
-                    keys['properties'].append(property_key)
+        parent_name = f'{obj.name}~' if mode == 'SIMPLE' else ''
+        # Search all attribute template types
+        if isinstance(obj, HasPropertyTemplates):
+            for property in obj.properties:
+                keys['properties'].append(parent_name + property[0].name)
+        if isinstance(obj, HasConditionTemplates):
             for condition in obj.conditions:
-                condition_key = parent_name + condition[0].name
-                keys['conditions'].append(condition_key)
-
+                keys['conditions'].append(parent_name + condition[0].name)
+        if isinstance(obj, HasParameterTemplates):
+            for parameter in obj.parameters:
+                keys['parameters'].append(parent_name + parameter[0].name)
     return keys
 
 
-def material_to_candidates(
+def auto_configure_material(
         *,
         project: Project,
         material: Union[MaterialRun, LinkByUID, str, UUID],
