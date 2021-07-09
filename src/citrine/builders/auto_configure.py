@@ -105,9 +105,8 @@ def auto_configure_material(
         *,
         project: Project,
         material: Union[str, UUID, LinkByUID, MaterialRun],
+        score: Score,
         algorithm: AutoConfigureAlgorithm = AutoConfigureAlgorithm.PLAIN,
-        #objectives: Optional[List[Objective]] = None,
-        score: Optional[Score] = None,
         label: str = '',
         print_status_info: bool = False,
 ) -> DesignExecution:
@@ -129,14 +128,14 @@ def auto_configure_material(
     material: Union[str, UUID, LinkByUID, MaterialRun],
         A representation of the material to a configure a
         default table, predictor, and design space from.
-    algorithm: AutoConfigureAlgorithm
-        The algorithm to be used in the automatic table and predictor configuration.
-        Default: AutoConfigureAlgorithm.PLAIN
-    score: Optional[Score]
+    score: Score
         Scoring function used to rank candidates during design execution.
         Must contain objectives/constraints with matching descriptor keys
         to those appearing within the provided material history.
         Default: None
+    algorithm: AutoConfigureAlgorithm
+        The algorithm to be used in the automatic table and predictor configuration.
+        Default: AutoConfigureAlgorithm.PLAIN
     label: str
         Naming label to affix to auto-configured assets on the Citrine Platform.
         Default: ''
@@ -147,8 +146,7 @@ def auto_configure_material(
     Returns
     -------
     DesignExecution
-        Triggered design execution given the auto-configured workflow
-        and provided `objective` or `score`.
+        Triggered design execution given the auto-configured workflow and provided `score`.
 
     """
     prefix = '{} - '.format(label) if label else ''
@@ -189,13 +187,17 @@ def auto_configure_material(
     )
 
     print("Building design workflow for design space...")
-    workflow = DesignWorkflow(name=f'{prefix}Default Design Workflow', predictor_id=predictor.uid,
-                              design_space_id=design_space.uid, processor_id=None)
+    workflow = DesignWorkflow(
+        name=f'{prefix}Default Design Workflow',
+        predictor_id=predictor.uid,
+        design_space_id=design_space.uid,
+        process_id=None
+    )
     workflow = project.design_workflows.register(workflow)
     workflow = wait_while_validating(
         collection=project.design_workflows, module=workflow, print_status_info=print_status_info
     )
 
-    print("Executing design workflow using provided score/objectives...")
+    print("Executing design workflow using provided score...")
     execution = workflow.design_executions.trigger(score)
     return execution
