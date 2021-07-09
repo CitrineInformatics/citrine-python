@@ -114,12 +114,7 @@ def auto_configure_material(
 
     Given a material run (or ID representation),
     configures and validates a default GEM table, default predictor, and default design space,
-    and then triggers a design execution given the provided `score` or `objectives`.
-
-    One of either a score or a list of objectives must be provided,
-    with objective keys which match to descriptors that appear in the material history.
-    If a list of objectives is provided, an `LIScore` is constructed by default.
-
+    and then triggers a design execution given the provided `score`.
 
     Parameters
     ----------
