@@ -25,7 +25,7 @@ class AutoConfigureAlgorithm(BaseEnumeration):
     """[ALPHA] The algorithm to use in building auto-configured assets.
 
     * PLAIN produces a single-row table and plain predictor
-    * FORMULATION corresponds to a multi-row table and formulations predictor
+    * FORMULATION produces a multi-row table and formulations predictor
     """
 
     PLAIN = "plain"
@@ -78,7 +78,7 @@ def extract_descriptor_keys(
     if full_history:
         search_history = flatten(history)
     else:
-        # Limit the search to contain the terminal material/process/measurement
+        # Limit the search to contain the terminal material/process/measurements
         search_history = [history.spec.template, history.process.template]
         search_history.extend([msr.template for msr in history.measurements])
 
@@ -173,6 +173,9 @@ def auto_configure_material(
         collection=project.predictors, module=predictor, print_status_info=print_status_info
     )
 
+    if predictor.status == 'INVALID':
+        raise RuntimeError('Auto-configured predictor is invalid.')
+
     print('Building default design space from predictor...')
     design_space = project.design_spaces.create_default(predictor_id=predictor.uid)
     design_space.name = f'{prefix}Default Design Space'
@@ -180,6 +183,9 @@ def auto_configure_material(
     design_space = wait_while_validating(
         collection=project.design_spaces, module=design_space, print_status_info=print_status_info
     )
+
+    if design_space.status == 'INVALID':
+        raise RuntimeError('Auto-configured design space is invalid.')
 
     print("Building design workflow for design space...")
     workflow = DesignWorkflow(
@@ -192,6 +198,9 @@ def auto_configure_material(
     workflow = wait_while_validating(
         collection=project.design_workflows, module=workflow, print_status_info=print_status_info
     )
+
+    if workflow.status == 'INVALID':
+        raise RuntimeError('Auto-configured design workflow is invalid.')
 
     print("Executing design workflow using provided score...")
     execution = workflow.design_executions.trigger(score)
