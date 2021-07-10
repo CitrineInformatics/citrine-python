@@ -162,7 +162,7 @@ def auto_configure_material(
     table_config = project.table_configs.register(table_config)
     table = project.tables.build_from_config(table_config)
 
-    print('Building default predictor from GEM table...')
+    print('\nBuilding default predictor from GEM table...')
     data_source = GemTableDataSource(table_id=table.uid, table_version=table.version)
     predictor = project.predictors.auto_configure(
         training_data=data_source, pattern=algorithm.value.upper()  # Uses same string pattern
@@ -176,7 +176,7 @@ def auto_configure_material(
     if predictor.status == 'INVALID':
         raise RuntimeError('Auto-configured predictor is invalid.')
 
-    print('Building default design space from predictor...')
+    print('\nBuilding default design space from predictor...')
     design_space = project.design_spaces.create_default(predictor_id=predictor.uid)
     design_space.name = f'{prefix}Default Design Space'
     design_space = project.design_spaces.register(design_space)
@@ -187,12 +187,12 @@ def auto_configure_material(
     if design_space.status == 'INVALID':
         raise RuntimeError('Auto-configured design space is invalid.')
 
-    print("Building design workflow for design space...")
+    print("\nBuilding design workflow for design space...")
     workflow = DesignWorkflow(
         name=f'{prefix}Default Design Workflow',
         predictor_id=predictor.uid,
         design_space_id=design_space.uid,
-        process_id=None
+        processor_id=None
     )
     workflow = project.design_workflows.register(workflow)
     workflow = wait_while_validating(
@@ -202,6 +202,6 @@ def auto_configure_material(
     if workflow.status == 'INVALID':
         raise RuntimeError('Auto-configured design workflow is invalid.')
 
-    print("Executing design workflow using provided score...")
+    print("\nTriggering design execution using provided score...")
     execution = workflow.design_executions.trigger(score)
     return execution
