@@ -1,13 +1,16 @@
 import random
-from uuid import uuid4
+from uuid import uuid4, UUID
 from os.path import basename
 
 import pytest
 
 from gemd.entity.bounds.integer_bounds import IntegerBounds
+from gemd.entity.link_by_uid import LinkByUID
 from gemd.entity.object.material_spec import MaterialSpec as GemdMaterialSpec
 from gemd.entity.object.process_spec import ProcessSpec as GemdProcessSpec
 
+from citrine.exceptions import PollingTimeoutError, JobFailureError, NotFound
+from citrine.resources.api_error import ApiError, ValidationError
 from citrine.resources.condition_template import ConditionTemplateCollection, ConditionTemplate
 from citrine.resources.data_concepts import DataConcepts
 from citrine.resources.gemd_resource import GEMDResourceCollection
@@ -222,7 +225,7 @@ def test_register_all_object_update(gemd_collection):
     assert material.uids == registered_material.uids
 
 
-def test_delete(gemd_collection):
+def test_delete(gemd_collection, session):
     """
     Check that delete routes to the correct collections
     and works when passed a data object or a UUID representation.
@@ -236,6 +239,7 @@ def test_delete(gemd_collection):
     }
 
     for specific_collection, obj in expected.items():
+        session.set_response(obj.dump())  # Delete calls get, must return object data internally
         gemd_collection.delete(obj)
         assert gemd_collection.session.calls[-1].path.split("/")[-3] == basename(specific_collection._path_template)
 
@@ -250,7 +254,7 @@ def test_update(gemd_collection):
     assert gemd_collection.session.calls[0].path == gemd_collection.session.calls[1].path
 
 
-def test_async_update(gemd_collection):
+def test_async_update(gemd_collection, session):
     """Check that async update returns appropriately returns None on success."""
     obj = ProcessTemplate(
         "foo",
@@ -263,7 +267,192 @@ def test_async_update(gemd_collection):
         'output': {}
     }
 
-    gemd_collection.session.set_responses(JobSubmissionResponseFactory(), fake_job_status_resp)
+    session.set_responses(JobSubmissionResponseFactory(), fake_job_status_resp)
 
     # This returns None on successful update with wait.
     gemd_collection.async_update(obj, wait_for_response=True)
+
+
+def test_async_update_and_no_dataset_id(gemd_collection, session):
+    """Ensure async_update requires a dataset id"""
+
+    obj = ProcessTemplate(
+        "foo",
+        uids={'id': str(uuid4())}
+    )
+
+    session.set_response(JobSubmissionResponseFactory())
+    gemd_collection.dataset_id = None
+
+    with pytest.raises(RuntimeError):
+        gemd_collection.async_update(obj, wait_for_response=False)
+
+
+def test_async_update_timeout(gemd_collection, session):
+    """Ensure the proper exception is thrown on a timeout error"""
+
+    obj = ProcessTemplate(
+        "foo",
+        uids={'id': str(uuid4())}
+    )
+    fake_job_status_resp = {
+        'job_type': 'some_typ',
+        'status': 'Pending',
+        'tasks': [],
+        'output': {}
+    }
+
+    session.set_responses(JobSubmissionResponseFactory(), fake_job_status_resp)
+
+    with pytest.raises(PollingTimeoutError):
+        gemd_collection.async_update(obj, wait_for_response=True,
+                                               timeout=-1.0)
+
+
+def test_async_update_and_wait(gemd_collection, session):
+    """Check that async_update parses the response when waiting"""
+
+    obj = ProcessTemplate(
+        "foo",
+        uids={'id': str(uuid4())}
+    )
+    fake_job_status_resp = {
+        'job_type': 'some_typ',
+        'status': 'Success',
+        'tasks': [],
+        'output': {}
+    }
+
+    session.set_responses(JobSubmissionResponseFactory(), fake_job_status_resp)
+
+    # This returns None on successful update with wait.
+    gemd_collection.async_update(obj, wait_for_response=True)
+
+
+def test_async_update_and_wait_failure(gemd_collection, session):
+    """Check that async_update parses the failure correctly"""
+
+    obj = ProcessTemplate(
+        "foo",
+        uids={'id': str(uuid4())}
+    )
+    fake_job_status_resp = {
+        'job_type': 'some_typ',
+        'status': 'Failure',
+        'tasks': [],
+        'output': {}
+    }
+
+    session.set_responses(JobSubmissionResponseFactory(), fake_job_status_resp)
+
+    with pytest.raises(JobFailureError):
+        gemd_collection.async_update(obj, wait_for_response=True)
+
+
+def test_async_update_with_no_wait(gemd_collection, session):
+    """Check that async_update parses the response when not waiting"""
+
+    obj = ProcessTemplate(
+        "foo",
+        uids={'id': str(uuid4())}
+    )
+
+    session.set_response(JobSubmissionResponseFactory())
+    job_id = gemd_collection.async_update(obj, wait_for_response=False)
+    assert job_id is not None
+
+
+def test_delete_contents(gemd_collection, session):
+    job_resp = {
+        'job_id': '1234'
+    }
+
+    failed_job_resp = {
+        'job_type': 'batch_delete',
+        'status': 'Success',
+        'tasks': [],
+        'output': {
+            # Keep in mind this is a stringified JSON value. Eww.
+            'failures': '[]'
+        }
+    }
+
+    session.set_responses(job_resp, failed_job_resp)
+
+    # When
+    del_resp = gemd_collection.delete_contents()
+
+    # Then
+    assert len(del_resp) == 0
+
+    # Ensure we made the expected delete call
+    expected_call = FakeCall(
+        method='DELETE',
+        path='projects/{}/datasets/{}/contents'.format(gemd_collection.project_id, gemd_collection.dataset_id)
+    )
+    assert len(session.calls) == 2
+    assert session.calls[0] == expected_call
+
+    # Test failure with no dataset
+    gemd_collection.dataset_id = None
+    with pytest.raises(RuntimeError):
+        gemd_collection.delete_contents()
+
+
+def test_batch_delete(gemd_collection, session):
+    job_resp = {
+        'job_id': '1234'
+    }
+
+    import json
+    failures_escaped_json = json.dumps([
+        {
+            "id":{
+                'scope': 'somescope',
+                'id': 'abcd-1234'
+            },
+            'cause': {
+                "code": 400,
+                "message": "",
+                "validation_errors": [
+                    {
+                        "failure_message": "fail msg",
+                        "failure_id": "identifier.coreid.missing"
+                    }
+                ]
+            }
+        }
+    ])
+
+    failed_job_resp = {
+        'job_type': 'batch_delete',
+        'status': 'Success',
+        'tasks': [],
+        'output': {
+            'failures': failures_escaped_json
+        }
+    }
+
+    session.set_responses(job_resp, failed_job_resp)
+
+    # When
+    del_resp = gemd_collection.batch_delete([UUID(
+        '16fd2706-8baf-433b-82eb-8c7fada847da')])
+
+    # Then
+    assert 2 == session.num_calls
+
+    assert len(del_resp) == 1
+    first_failure = del_resp[0]
+
+    expected_api_error = ApiError(400, "",
+                                  validation_errors=[ValidationError(
+                                      failure_message="fail msg",
+                                      failure_id="identifier.coreid.missing")])
+
+    assert first_failure == (LinkByUID('somescope', 'abcd-1234'), expected_api_error)
+
+
+def test_batch_delete_bad_input(gemd_collection):
+    with pytest.raises(TypeError):
+        gemd_collection.batch_delete([False])

@@ -4,10 +4,8 @@ from uuid import UUID, uuid4
 
 import pytest
 from gemd.entity.bounds.integer_bounds import IntegerBounds
-from gemd.entity.link_by_uid import LinkByUID
 
 from citrine.exceptions import PollingTimeoutError, JobFailureError, NotFound
-from citrine.resources.api_error import ApiError, ValidationError
 from citrine.resources.condition_template import ConditionTemplateCollection, ConditionTemplate
 from citrine.resources.dataset import DatasetCollection
 from citrine.resources.material_run import MaterialRunCollection, MaterialRun
@@ -309,7 +307,7 @@ def test_files_get_project_id(dataset):
 
 
 def test_gemd_posts(dataset):
-    """Check that register routes to the correct collections"""
+    """Check that dataset dispatches to GEMDResourceCollection appropriately."""
     expected = {
         MaterialTemplateCollection: MaterialTemplate("foo"),
         MaterialSpecCollection: MaterialSpec("foo"),
@@ -346,6 +344,7 @@ def test_gemd_posts(dataset):
             assert pair[1] == updated.uids[pair[0]]
 
         # Delete them all
+        dataset.session.set_response(updated.dump())
         dataset.delete(updated)
         assert dataset.session.calls[-1].path.split("/")[-3] == basename(collection._path_template)
 
@@ -363,185 +362,13 @@ def test_gemd_posts(dataset):
         for pair in obj.uids.items():
             assert pair in seen_ids  # registered items have the same ids
 
-
-def test_async_update_and_no_dataset_id(dataset, session):
-    """Ensure async_update requires a dataset id"""
-
-    obj = ProcessTemplate(
-        "foo",
-        uids={'id': str(uuid4())}
-    )
-
-    dataset.session.set_response(JobSubmissionResponseFactory())
-    dataset.uid = None
-
-    with pytest.raises(RuntimeError):
-        dataset.process_templates.async_update(obj, wait_for_response=False)
-
-
-def test_async_update_timeout(dataset, session):
-    """Ensure the proper exception is thrown on a timeout error"""
-
-    obj = ProcessTemplate(
-        "foo",
-        uids={'id': str(uuid4())}
-    )
-    fake_job_status_resp = {
-        'job_type': 'some_typ',
-        'status': 'Pending',
-        'tasks': [],
-        'output': {}
-    }
-
-    dataset.session.set_responses(JobSubmissionResponseFactory(), fake_job_status_resp)
-
-    with pytest.raises(PollingTimeoutError):
-        dataset.process_templates.async_update(obj, wait_for_response=True,
-                                               timeout=-1.0)
-
-
-def test_async_update_and_wait(dataset, session):
-    """Check that async_update parses the response when waiting"""
-
-    obj = ProcessTemplate(
-        "foo",
-        uids={'id': str(uuid4())}
-    )
-    fake_job_status_resp = {
-        'job_type': 'some_typ',
-        'status': 'Success',
-        'tasks': [],
-        'output': {}
-    }
-
-    dataset.session.set_responses(JobSubmissionResponseFactory(), fake_job_status_resp)
-
-    # This returns None on successful update with wait.
-    dataset.process_templates.async_update(obj, wait_for_response=True)
-
-
-def test_async_update_and_wait_failure(dataset, session):
-    """Check that async_update parses the failure correctly"""
-
-    obj = ProcessTemplate(
-        "foo",
-        uids={'id': str(uuid4())}
-    )
-    fake_job_status_resp = {
-        'job_type': 'some_typ',
-        'status': 'Failure',
-        'tasks': [],
-        'output': {}
-    }
-
-    dataset.session.set_responses(JobSubmissionResponseFactory(), fake_job_status_resp)
-
-    with pytest.raises(JobFailureError):
-        dataset.process_templates.async_update(obj, wait_for_response=True)
-
-
-def test_async_update_with_no_wait(dataset, session):
-    """Check that async_update parses the response when not waiting"""
-
-    obj = ProcessTemplate(
-        "foo",
-        uids={'id': str(uuid4())}
-    )
-
-    dataset.session.set_response(JobSubmissionResponseFactory())
-    job_id = dataset.process_templates.async_update(obj, wait_for_response=False)
-    assert job_id is not None
-
-
-def test_batch_delete(dataset):
-    job_resp = {
-        'job_id': '1234'
-    }
-
-    import json
-    failures_escaped_json = json.dumps([
-        {
-            "id":{
-                'scope': 'somescope',
-                'id': 'abcd-1234'
-            },
-            'cause': {
-                "code": 400,
-                "message": "",
-                "validation_errors": [
-                    {
-                        "failure_message": "fail msg",
-                        "failure_id": "identifier.coreid.missing"
-                    }
-                ]
-            }
-        }
-    ])
-
-    failed_job_resp = {
-        'job_type': 'batch_delete',
-        'status': 'Success',
-        'tasks': [],
-        'output': {
-            'failures': failures_escaped_json
-        }
-    }
-
-    session = dataset.session
-    session.set_responses(job_resp, failed_job_resp)
-
-    # When
-    del_resp = dataset.gemd_batch_delete([uuid.UUID(
-        '16fd2706-8baf-433b-82eb-8c7fada847da')])
-
-    # Then
-    assert 2 == session.num_calls
-
-    assert len(del_resp) == 1
-    first_failure = del_resp[0]
-
-    expected_api_error = ApiError(400, "",
-                                  validation_errors=[ValidationError(
-                                      failure_message="fail msg",
-                                      failure_id="identifier.coreid.missing")])
-
-    assert first_failure == (LinkByUID('somescope', 'abcd-1234'), expected_api_error)
-
-
-def test_batch_delete_bad_input(dataset):
+def test_gemd_batch_delete(dataset):
+    """Pass through to GEMDResourceCollection working."""
     with pytest.raises(TypeError):
-        dataset.gemd_batch_delete([False])
+        dataset.gemd_batch_delete([7, False])
 
-
-def test_delete_contents_ok(dataset):
-
-    job_resp = {
-        'job_id': '1234'
-    }
-
-    failed_job_resp = {
-        'job_type': 'batch_delete',
-        'status': 'Success',
-        'tasks': [],
-        'output': {
-            # Keep in mind this is a stringified JSON value. Eww.
-            'failures': '[]'
-        }
-    }
-
-    session = dataset.session
-    session.set_responses(job_resp, failed_job_resp)
-
-    # When
-    del_resp = dataset.delete_contents()
-
-    # Then
-    assert len(del_resp) == 0
-
-    # Ensure we made the expected delete call
-    expected_call = FakeCall(
-        method='DELETE',
-        path='projects/{}/datasets/{}/contents'.format(dataset.project_id, dataset.uid)
-    )
-    assert len(session.calls) == 2
-    assert session.calls[0] == expected_call
+def test_gemd_delete_contents(dataset):
+    """Pass through to GEMDResourceCollection working."""
+    dataset.uid = None
+    with pytest.raises(RuntimeError):
+        dataset.delete_contents()

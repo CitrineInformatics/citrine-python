@@ -9,12 +9,11 @@ from citrine._rest.collection import Collection
 from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
 from citrine._session import Session
-from citrine._utils.functions import scrub_none, format_escaped_url
+from citrine._utils.functions import scrub_none
 from citrine.exceptions import NotFound
 from citrine.resources.api_error import ApiError
 from citrine.resources.condition_template import ConditionTemplateCollection
 from citrine.resources.data_concepts import DataConcepts
-from citrine.resources.delete import _async_gemd_batch_delete, _poll_for_async_batch_delete_result
 from citrine.resources.file_link import FileCollection
 from citrine.resources.gemd_resource import GEMDResourceCollection
 from citrine.resources.ingredient_run import IngredientRunCollection
@@ -270,16 +269,7 @@ class Dataset(Resource['Dataset']):
             deleted.
 
         """
-        path = format_escaped_url('projects/{project_id}/datasets/{dataset_uid}/contents',
-                                  dataset_uid=self.uid,
-                                  project_id=self.project_id
-                                  )
-
-        response = self.session.delete_resource(path)
-        job_id = response["job_id"]
-
-        return _poll_for_async_batch_delete_result(self.project_id, self.session, job_id, timeout,
-                                                   polling_delay)
+        return self.gemd.delete_contents(timeout=timeout, polling_delay=polling_delay)
 
     def gemd_batch_delete(
             self,
@@ -322,8 +312,7 @@ class Dataset(Resource['Dataset']):
             deleted.
 
         """
-        return _async_gemd_batch_delete(id_list, self.project_id, self.session,
-                                        self.uid, timeout=timeout, polling_delay=polling_delay)
+        return self.gemd.batch_delete(id_list, timeout=timeout, polling_delay=polling_delay)
 
 
 class DatasetCollection(Collection[Dataset]):

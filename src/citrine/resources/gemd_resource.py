@@ -1,13 +1,16 @@
 """Collection class for generic GEMD objects and templates."""
 from collections import defaultdict
-from typing import Type, Union, Optional, List
+from typing import Type, Union, Optional, List, Tuple
 from uuid import UUID
 
 from gemd.util import writable_sort_order
 from gemd.entity.base_entity import BaseEntity
 from gemd.entity.link_by_uid import LinkByUID
 
+from citrine._utils.functions import format_escaped_url
+from citrine.resources.api_error import ApiError
 from citrine.resources.data_concepts import DataConcepts, DataConceptsCollection
+from citrine.resources.delete import _async_gemd_batch_delete, _poll_for_async_batch_delete_result
 from citrine._session import Session
 
 
@@ -57,7 +60,7 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
         """Update a data model object using the appropriate collection."""
         return self._collection_for(model).update(model)
 
-    def delete(self, model: Union[UUID, str, LinkByUID, DataConcepts], *, dry_run=False):
+    def delete(self, uid: Union[UUID, str, LinkByUID, DataConcepts], *, dry_run=False):
         """
         Delete a GEMD resource from the appropriate collection.
 
@@ -70,6 +73,7 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
             Dry run is intended to be used for validation. Default: false
 
         """
+        model = self.get(uid)  # Get full object for collection lookup
         return self._collection_for(model).delete(model, dry_run=dry_run)
 
     def register(self, model: DataConcepts, *, dry_run=False) -> DataConcepts:
@@ -177,3 +181,88 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
             polling_delay=polling_delay,
             return_model=return_model
         )
+
+    def delete_contents(
+            self,
+            *,
+            timeout: float = 2 * 60,
+            polling_delay: float = 1.0
+    ):
+        """
+        Delete all the GEMD objects from within a single Dataset.
+
+        Parameters
+        ----------
+        timeout: float
+            Amount of time to wait on the job (in seconds) before giving up.
+            Note that this number has no effect on the underlying job itself,
+            which can also time out server-side.
+
+        polling_delay: float
+            How long to delay between each polling retry attempt.
+
+        Returns
+        -------
+        List[Tuple[LinkByUID, ApiError]]
+            A list of (LinkByUID, api_error) for each failure to delete an object.
+            Note that this method doesn't raise an exception if an object fails to be
+            deleted.
+
+        """
+        if self.dataset_id is None:
+            raise RuntimeError("Must specify a dataset to delete contents from.")
+
+        path = format_escaped_url('projects/{project_id}/datasets/{dataset_uid}/contents',
+                                  dataset_uid=self.dataset_id,
+                                  project_id=self.project_id
+                                  )
+
+        response = self.session.delete_resource(path)
+        job_id = response["job_id"]
+
+        return _poll_for_async_batch_delete_result(self.project_id, self.session, job_id, timeout,
+                                                   polling_delay)
+
+    def batch_delete(
+            self,
+            id_list: List[Union[LinkByUID, UUID, str, BaseEntity]],
+            *,
+            timeout: float = 2 * 60,
+            polling_delay: float = 1.0
+    ) -> List[Tuple[LinkByUID, ApiError]]:
+        """
+        Remove a set of GEMD objects.
+
+        You may provide GEMD objects that reference each other, and the objects
+        will be removed in the appropriate order.
+
+        A failure will be returned if the object cannot be deleted due to an external
+        reference.
+
+        All data objects must be associated with this dataset resource. You must also
+        have write access on this dataset.
+
+        If you wish to delete more than 50 objects, queuing of deletes requires that
+        the types of objects be known, and thus you _must_ provide ids in the form
+        of BaseEntities.
+
+        Also note that Attribute Templates cannot be deleted at present.
+
+        Parameters
+        ----------
+        id_list: List[Union[LinkByUID, UUID, str, BaseEntity]]
+            A list of the IDs of data objects to be removed. They can be passed
+            as a LinkByUID tuple, a UUID, a string, or the object itself. A UUID
+            or string is assumed to be a Citrine ID, whereas a LinkByUID or
+            BaseEntity can also be used to provide an external ID.
+
+        Returns
+        -------
+        List[Tuple[LinkByUID, ApiError]]
+            A list of (LinkByUID, api_error) for each failure to delete an object.
+            Note that this method doesn't raise an exception if an object fails to be
+            deleted.
+
+        """
+        return _async_gemd_batch_delete(id_list, self.project_id, self.session, self.dataset_id,
+                                        timeout=timeout, polling_delay=polling_delay)
