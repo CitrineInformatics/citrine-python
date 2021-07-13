@@ -172,7 +172,7 @@ class PlatformVocabulary(Mapping[str, Descriptor]):
         project: Project
             Project to use when accessing the Citrine Platform.
         material: Union[str, UUID, LinkByUID, MaterialRun]
-            A representation of the material to extract descriptor keys from its history.
+            A representation of the material to extract descriptors from.
         mode: AutoConfigureMode
             Formatting option for descriptor keys in the platform vocabulary.
             Option AutoConfigMode.PLAIN includes headers from the parent object,
