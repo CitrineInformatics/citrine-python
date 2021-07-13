@@ -1,5 +1,5 @@
 import warnings
-from typing import TypeVar, Generic, Callable, Optional, Iterable, Any, Tuple
+from typing import TypeVar, Generic, Callable, Optional, Iterable, Any, Tuple, Iterator
 from uuid import uuid4
 
 ResourceType = TypeVar('ResourceType')
@@ -19,7 +19,7 @@ class Paginator(Generic[ResourceType]):
                  page: Optional[int] = None,
                  per_page: int = 100,
                  search_params: Optional[dict] = None,
-                 deduplicate: bool = True) -> Iterable[ResourceType]:
+                 deduplicate: bool = True) -> Iterator[ResourceType]:
         """
         A generic support class to paginate requests into an iterable of a built object.
 
@@ -53,7 +53,7 @@ class Paginator(Generic[ResourceType]):
 
         Returns
         -------
-        Iterable[ResourceType]
+        Iterator[ResourceType]
             Resources in this collection.
 
         """

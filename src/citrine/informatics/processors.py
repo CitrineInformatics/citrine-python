@@ -1,11 +1,8 @@
 """Tools for working with Processors."""
 from typing import Optional, Mapping, Type, List
-from uuid import UUID
-from warnings import warn
 
 from citrine._serialization import properties
 from citrine._rest.resource import ResourceTypeEnum, Resource
-from citrine._session import Session
 from citrine.informatics.modules import Module
 from citrine._rest.ai_resource_metadata import AIResourceMetadata
 
@@ -19,9 +16,6 @@ class Processor(Module):
     Abstract type that returns the proper type given a serialized dict.
 
     """
-
-    _project_id: Optional[UUID] = None
-    _session: Optional[Session] = None
 
     uid = properties.Optional(properties.UUID, 'id', serializable=False)
     """:Optional[UUID]: Citrine Platform unique identifier"""
@@ -87,14 +81,12 @@ class GridProcessor(Resource['GridProcessor'], Processor, AIResourceMetadata):
         return ["name", "description", "grid_sizes", "typ"]
 
     def __init__(self,
-                 name: str,
+                 name: str, *,
                  description: str,
-                 grid_sizes: Mapping[str, int],
-                 session: Optional[Session] = None):
+                 grid_sizes: Mapping[str, int]):
         self.name: str = name
         self.description: str = description
         self.grid_sizes: Mapping[str, int] = grid_sizes
-        self.session: Optional[Session] = session
 
     def _post_dump(self, data: dict) -> dict:
         data['display_name'] = data['config']['name']
@@ -128,24 +120,15 @@ class EnumeratedProcessor(Resource['EnumeratedProcessor'], Processor, AIResource
     module_type = properties.String('module_type', default='PROCESSOR')
 
     def _attrs(self) -> List[str]:
-        return ["name", "description", "max_size", "typ"]
+        return ["name", "description", "max_candidates", "typ"]
 
     def __init__(self,
-                 name: str,
+                 name: str, *,
                  description: str,
-                 max_candidates: Optional[int] = None,
-                 max_size: Optional[int] = None,
-                 session: Optional[Session] = None):
-        if max_candidates is not None and max_size is not None:
-            raise ValueError("Both max_candidates and max_size were specified.  "
-                             "Please only specify max_candidates.")
-        if max_size is not None:
-            warn("The max_size argument is deprecated.  Please use max_candidates instead.",
-                 DeprecationWarning)
+                 max_candidates: Optional[int] = None):
         self.name: str = name
         self.description: str = description
-        self.max_candidates: int = max_candidates or max_size or 1000
-        self.session: Optional[Session] = session
+        self.max_candidates: int = max_candidates or 1000
 
     def _post_dump(self, data: dict) -> dict:
         data['display_name'] = data['config']['name']
@@ -153,13 +136,6 @@ class EnumeratedProcessor(Resource['EnumeratedProcessor'], Processor, AIResource
 
     def __str__(self):
         return '<EnumeratedProcessor {!r}>'.format(self.name)
-
-    @property
-    def max_size(self):
-        """[DEPRECATED] Alias for max_candidates."""
-        warn("EnumeratedProcessor.max_size is deprecated.  Please use max_candidates instead",
-             DeprecationWarning)
-        return self.max_candidates
 
 
 class MonteCarloProcessor(Resource['GridProcessor'], Processor, AIResourceMetadata):
@@ -193,15 +169,13 @@ class MonteCarloProcessor(Resource['GridProcessor'], Processor, AIResourceMetada
         return ["name", "description", "mode", "typ"]
 
     def __init__(self,
-                 name: str,
+                 name: str, *,
                  description: str,
                  max_candidates: Optional[int] = None,
-                 mode: Optional[str] = None,
-                 session: Optional[Session] = None):
+                 mode: Optional[str] = None):
         self.name: str = name
         self.description: str = description
         self.max_candidates: Optional[int] = max_candidates
-        self.session: Optional[Session] = session
         self.mode: Optional[str] = mode
 
     def _post_dump(self, data: dict) -> dict:

@@ -2,7 +2,7 @@
 import pytest
 
 from citrine.gemtables.columns import *
-import citrine.ara.columns as oldcolumns
+from citrine.gemtables.variables import TerminalMaterialInfo
 
 
 @pytest.fixture(params=[
@@ -44,6 +44,13 @@ def test_invalid_deser():
         Column.build({"type": "foo"})
 
 
-def test_renamed_classes_are_the_same():
-    # Mostly make code coverage happy
-    assert oldcolumns.CompositionSortOrder == CompositionSortOrder
+def test_data_source_args():
+    terminal_name = "terminal name"
+    var = TerminalMaterialInfo(name=terminal_name,
+                               headers=[terminal_name],
+                               field='NAME'
+                               )
+    IdentityColumn(data_source=terminal_name)
+    IdentityColumn(data_source=var)
+    with pytest.raises(TypeError):
+        IdentityColumn(data_source=IdentityColumn(data_source=terminal_name))

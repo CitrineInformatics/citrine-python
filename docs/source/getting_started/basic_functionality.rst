@@ -2,7 +2,7 @@
 Managing Resources
 ==================
 
-The Citrine python client can create, read, update, and delete resources.
+The Citrine Python client can create, read, update, and delete resources.
 This document describes those mechanics in general terms, without assuming a knowledge of what the resources are.
 
 In general, for every resource type there is a corresponding collection.
@@ -14,7 +14,7 @@ This pattern is illustrated in the examples below.
 Creating
 --------
 
-To create a local resource, initialize it as you would any other python object. For example,
+To create a local resource, initialize it as you would any other Python object. For example,
 
 .. code-block:: python
 

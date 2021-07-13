@@ -1,12 +1,10 @@
+import pytest
 import uuid
 
-import pytest
-
-from citrine.informatics.modules import ModuleRef
-from citrine.informatics.design_candidate import DesignCandidate
-from citrine.resources.design_execution import DesignExecutionCollection, DesignExecution
-from tests.utils.session import FakeSession, FakeCall
+from citrine.informatics.executions.design_execution import DesignExecution
+from citrine.resources.design_execution import DesignExecutionCollection
 from tests.utils.factories import MLIScoreFactory
+from tests.utils.session import FakeSession, FakeCall
 
 
 @pytest.fixture
@@ -58,13 +56,12 @@ def test_build_new_execution(collection, design_execution_dict):
     assert execution.uid == workflow_execution_id
     assert execution.project_id == collection.project_id
     assert execution.workflow_id == collection.workflow_id
-    assert execution.session == collection.session
+    assert execution._session == collection.session
     assert execution.in_progress() and not execution.succeeded() and not execution.failed()
 
 
 def test_trigger_workflow_execution(collection: DesignExecutionCollection, design_execution_dict, session):
     # Given
-    predictor_id = uuid.uuid4()
     session.set_response(design_execution_dict)
     score = MLIScoreFactory()
 
@@ -89,7 +86,7 @@ def test_workflow_execution_results(workflow_execution: DesignExecution, session
     session.set_response(example_candidates)
 
     # When
-    results = list(workflow_execution.candidates(page=2, per_page=4))
+    list(workflow_execution.candidates(page=2, per_page=4))
 
     # Then
     expected_path = '/projects/{}/design-workflows/{}/executions/{}/candidates'.format(
@@ -102,7 +99,7 @@ def test_workflow_execution_results(workflow_execution: DesignExecution, session
 
 def test_list(collection: DesignExecutionCollection, session):
     session.set_response({"page": 2, "per_page": 4, "next": "foo", "response": []})
-    lst = list(collection.list(2, 4))
+    lst = list(collection.list(page=2, per_page=4))
     assert len(lst) == 0
 
     expected_path = '/projects/{}/design-workflows/{}/executions'.format(collection.project_id, collection.workflow_id)

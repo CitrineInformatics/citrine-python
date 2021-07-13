@@ -23,7 +23,6 @@ class IngredientFractionsPredictor(Resource["IngredientFractionsPredictor"],
         descriptor that represents the input formulation
     ingredients: Set[str]
         set of ingredients to featurize.
-        This set should contain all possible ingredients.
         If an unknown ingredient is encountered, an error will be thrown.
 
     """
@@ -39,15 +38,14 @@ class IngredientFractionsPredictor(Resource["IngredientFractionsPredictor"],
 
     def __init__(self,
                  name: str,
+                 *,
                  description: str,
                  input_descriptor: FormulationDescriptor,
-                 ingredients: Set[str],
-                 archived: bool = False):
+                 ingredients: Set[str]):
         self.name: str = name
         self.description: str = description
         self.input_descriptor: FormulationDescriptor = input_descriptor
         self.ingredients: Set[str] = ingredients
-        self.archived: bool = archived
 
     def _post_dump(self, data: dict) -> dict:
         data['display_name'] = data['config']['name']

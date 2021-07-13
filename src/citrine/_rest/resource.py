@@ -1,5 +1,8 @@
-from typing import TypeVar, Optional
+from typing import TypeVar, Optional, Union
+from uuid import UUID
+
 from citrine._serialization.serializable import Serializable
+from citrine._serialization import properties
 from gemd.enumeration.base_enumeration import BaseEnumeration
 
 
@@ -33,9 +36,19 @@ class Resource(Serializable[Self]):
     _response_key: Optional[str] = None
     _resource_type: ResourceTypeEnum = NotImplemented
 
-    def as_entity_dict(self) -> dict:
-        """Return an access control entity representation of this resource."""
+    def access_control_dict(self) -> dict:
+        """Return an access control entity representation of this resource. Internal use only."""
         return {
             "type": self._resource_type.value,
             "id": str(self.uid)
         }
+
+
+class ResourceRef(Serializable['ResourceRef']):
+    """A reference to a resource by UID."""
+
+    # json key 'module_uid' is a legacy of when this object was only used for modules
+    uid = properties.UUID('module_uid')
+
+    def __init__(self, uid: Union[UUID, str]):
+        self.uid = uid

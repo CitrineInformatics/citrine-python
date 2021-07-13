@@ -1,6 +1,6 @@
 """Resources that represent both individual and collections of datasets."""
 from collections import defaultdict
-from typing import TypeVar, List, Optional, Iterable, Union, Tuple
+from typing import TypeVar, List, Optional, Union, Tuple, Iterator
 from uuid import UUID
 
 from gemd.entity.base_entity import BaseEntity
@@ -15,10 +15,11 @@ from citrine._rest.collection import Collection
 from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
 from citrine._session import Session
-from citrine._utils.functions import scrub_none
+from citrine._utils.functions import scrub_none, format_escaped_url
 from citrine.exceptions import NotFound
 from citrine.resources.api_error import ApiError
 from citrine.resources.condition_template import ConditionTemplateCollection
+from citrine.resources.data_concepts import _make_link_by_uid
 from citrine.resources.delete import _async_gemd_batch_delete, _poll_for_async_batch_delete_result
 from citrine.resources.file_link import FileCollection
 from citrine.resources.ingredient_run import IngredientRunCollection
@@ -97,7 +98,7 @@ class Dataset(Resource['Dataset']):
     delete_time = properties.Optional(properties.Datetime(), 'delete_time')
     public = properties.Optional(properties.Boolean(), 'public')
 
-    def __init__(self, name: str, summary: str,
+    def __init__(self, name: str, *, summary: str,
                  description: str, unique_name: Optional[str] = None):
         self.name: str = name
         self.summary: str = summary
@@ -228,12 +229,12 @@ class Dataset(Resource['Dataset']):
         if isinstance(data_concepts_resource, ConditionTemplate):
             return self.condition_templates
 
-    def register(self, data_concepts_resource: ResourceType, dry_run=False) -> ResourceType:
+    def register(self, data_concepts_resource: ResourceType, *, dry_run=False) -> ResourceType:
         """Register a data concepts resource to the appropriate collection."""
         return self._collection_for(data_concepts_resource)\
             .register(data_concepts_resource, dry_run=dry_run)
 
-    def register_all(self, data_concepts_resources: List[ResourceType],
+    def register_all(self, data_concepts_resources: List[ResourceType], *,
                      dry_run=False) -> List[ResourceType]:
         """
         Register multiple data concepts resources to each of their appropriate collections.
@@ -282,13 +283,23 @@ class Dataset(Resource['Dataset']):
         """Update a data concepts resource using the appropriate collection."""
         return self._collection_for(model).update(model)
 
-    def delete(self, data_concepts_resource: ResourceType, dry_run=False) -> ResourceType:
-        """Delete a data concepts resource to the appropriate collection."""
-        uid = next(iter(data_concepts_resource.uids.items()), None)
-        if uid is None:
-            raise ValueError("Only objects that contain identifiers can be deleted.")
+    def delete(self, data_concepts_resource: Union[UUID, str, LinkByUID, ResourceType], *,
+               dry_run=False) -> ResourceType:
+        """
+        Delete a data concepts resource from the appropriate collection.
+
+        Parameters
+        ----------
+        data_concepts_resource: Union[UUID, str, LinkByUID, ResourceType]
+            A representation of the resource to delete (Citrine id, LinkByUID, or the object)
+        dry_run: bool
+            Whether to actually delete the item or run a dry run of the delete operation.
+            Dry run is intended to be used for validation. Default: false
+
+        """
+        link = _make_link_by_uid(data_concepts_resource)
         return self._collection_for(data_concepts_resource) \
-            .delete(uid[1], scope=uid[0], dry_run=dry_run)
+            .delete(link.id, scope=link.scope, dry_run=dry_run)
 
     def delete_contents(
         self,
@@ -317,10 +328,10 @@ class Dataset(Resource['Dataset']):
             deleted.
 
         """
-        path = 'projects/{project_id}/datasets/{dataset_uid}/contents'.format(
-            dataset_uid=self.uid,
-            project_id=self.project_id
-        )
+        path = format_escaped_url('projects/{project_id}/datasets/{dataset_uid}/contents',
+                                  dataset_uid=self.uid,
+                                  project_id=self.project_id
+                                  )
 
         response = self.session.delete_resource(path)
         job_id = response["job_id"]
@@ -462,9 +473,9 @@ class DatasetCollection(Collection[Dataset]):
         full_model.project_id = self.project_id
         return full_model
 
-    def list(self,
+    def list(self, *,
              page: Optional[int] = None,
-             per_page: int = 1000) -> Iterable[Dataset]:
+             per_page: int = 1000) -> Iterator[Dataset]:
         """
         List datasets using pagination.
 
@@ -483,11 +494,11 @@ class DatasetCollection(Collection[Dataset]):
 
         Returns
         -------
-        Iterable[Dataset]
+        Iterator[Dataset]
             Datasets in this collection.
 
         """
-        return super().list(page, per_page)
+        return super().list(page=page, per_page=per_page)
 
     def get_by_unique_name(self, unique_name: str) -> ResourceType:
         """Get a Dataset with the given unique name."""

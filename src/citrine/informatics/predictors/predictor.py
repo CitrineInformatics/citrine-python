@@ -1,10 +1,6 @@
-from typing import List, Optional, Type, Union
-from uuid import UUID
-from warnings import warn
+from typing import Type
 
 from citrine._serialization import properties
-from citrine._session import Session
-from citrine.informatics.data_sources import DataSource
 from citrine.informatics.modules import Module
 from citrine.resources.report import ReportResource
 
@@ -19,9 +15,6 @@ class Predictor(Module):
     based on the 'type' value of the passed in dict.
 
     """
-
-    _project_id: Optional[UUID] = None
-    _session: Optional[Session] = None
 
     uid = properties.Optional(properties.UUID, 'id', serializable=False)
     """:Optional[UUID]: Citrine Platform unique identifier"""
@@ -41,10 +34,9 @@ class Predictor(Module):
         """Return the subtype."""
         from .simple_ml_predictor import SimpleMLPredictor
         from .graph_predictor import GraphPredictor
-        from .expression_predictor import ExpressionPredictor, DeprecatedExpressionPredictor
+        from .expression_predictor import ExpressionPredictor
         from .molecular_structure_featurizer import MolecularStructureFeaturizer
         from .ingredients_to_formulation_predictor import IngredientsToFormulationPredictor
-        from .generalized_mean_property_predictor import GeneralizedMeanPropertyPredictor
         from .label_fractions_predictor import LabelFractionsPredictor
         from .simple_mixture_predictor import SimpleMixturePredictor
         from .ingredient_fractions_predictor import IngredientFractionsPredictor
@@ -54,11 +46,9 @@ class Predictor(Module):
         type_dict = {
             "Simple": SimpleMLPredictor,
             "Graph": GraphPredictor,
-            "Expression": DeprecatedExpressionPredictor,
             "AnalyticExpression": ExpressionPredictor,
             "MoleculeFeaturizer": MolecularStructureFeaturizer,
             "IngredientsToSimpleMixture": IngredientsToFormulationPredictor,
-            "GeneralizedMeanProperty": GeneralizedMeanPropertyPredictor,
             "MeanProperty": MeanPropertyPredictor,
             "LabelFractions": LabelFractionsPredictor,
             "SimpleMixture": SimpleMixturePredictor,
@@ -75,28 +65,3 @@ class Predictor(Module):
                 '{} is not a valid predictor type. '
                 'Must be in {}.'.format(data['config']['type'], type_dict.keys())
             )
-
-    def _wrap_training_data(self,
-                            training_data: Optional[Union[DataSource, List[DataSource]]]
-                            ) -> List[DataSource]:
-        """Wraps a single training data source in a list.
-
-        Parameters
-        ----------
-        training_data: Optional[Union[DataSource, List[DataSource]]]
-            Either a single data source, list of data sources or ``None``
-
-        Returns
-        -------
-        List[DataSource]
-            A list of data sources
-
-        """
-        if training_data is None:
-            return []
-        if isinstance(training_data, DataSource):
-            warn("Specifying training data as a single data source is deprecated. "
-                 "Please use a list of data sources to create {} instead.".format(self),
-                 DeprecationWarning)
-            return [training_data]
-        return training_data

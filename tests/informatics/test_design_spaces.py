@@ -11,13 +11,13 @@ from citrine.resources.file_link import FileLink
 @pytest.fixture
 def product_design_space() -> ProductDesignSpace:
     """Build a ProductDesignSpace for testing."""
-    alpha = RealDescriptor('alpha', 0, 100, "")
-    beta = RealDescriptor('beta', 0, 100, "")
-    gamma = CategoricalDescriptor('gamma', ['a', 'b', 'c'])
+    alpha = RealDescriptor('alpha', lower_bound=0, upper_bound=100, units="")
+    beta = RealDescriptor('beta', lower_bound=0, upper_bound=100, units="")
+    gamma = CategoricalDescriptor('gamma', categories=['a', 'b', 'c'])
     dimensions = [
-        ContinuousDimension(alpha, 0, 10),
-        ContinuousDimension(beta, 0, 10),
-        EnumeratedDimension(gamma, ['a', 'c'])
+        ContinuousDimension(alpha, lower_bound=0, upper_bound=10),
+        ContinuousDimension(beta, lower_bound=0, upper_bound=10),
+        EnumeratedDimension(gamma, values=['a', 'c'])
     ]
     return ProductDesignSpace(name='my design space', description='does some things', dimensions=dimensions)
 
@@ -26,9 +26,9 @@ def product_design_space() -> ProductDesignSpace:
 def enumerated_design_space() -> EnumeratedDesignSpace:
     """Build an EnumeratedDesignSpace for testing."""
     x = RealDescriptor('x', lower_bound=0.0, upper_bound=1.0, units='')
-    color = CategoricalDescriptor('color', ['r', 'g', 'b'])
+    color = CategoricalDescriptor('color', categories=['r', 'g', 'b'])
     data = [dict(x=0, color='r'), dict(x=1.0, color='b')]
-    return EnumeratedDesignSpace('enumerated', 'desc', descriptors=[x, color], data=data)
+    return EnumeratedDesignSpace('enumerated', description='desc', descriptors=[x, color], data=data)
 
 
 def test_product_initialization(product_design_space):

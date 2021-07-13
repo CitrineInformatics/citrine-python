@@ -32,14 +32,11 @@ class FakeDescriptorMethods(DescriptorMethods):
 
     def from_predictor_responses(self, predictor: Predictor, inputs: List[Descriptor]):
         if isinstance(predictor, (MolecularStructureFeaturizer, ChemicalFormulaFeaturizer)):
-            if isinstance(predictor, MolecularStructureFeaturizer):
-                input_descriptor = predictor.descriptor
-            else:
-                input_descriptor = predictor.input_descriptor
+            input_descriptor = predictor.input_descriptor
             return [
                 RealDescriptor(f"{input_descriptor.key} real property {i}", lower_bound=0, upper_bound=1, units="")
                        for i in range(self.num_properties)
-            ] + [CategoricalDescriptor(f"{input_descriptor.key} categorical property", ["cat1", "cat2"])]
+            ] + [CategoricalDescriptor(f"{input_descriptor.key} categorical property", categories=["cat1", "cat2"])]
 
         elif isinstance(predictor, MeanPropertyPredictor):
             label_str = predictor.label or "all ingredients"
@@ -52,6 +49,7 @@ class FakeDescriptorMethods(DescriptorMethods):
                 )
                 for prop in predictor.properties
             ]
+
 
 class FakeProject(Project):
     def __init__(self, fake_descriptors: FakeDescriptorMethods):

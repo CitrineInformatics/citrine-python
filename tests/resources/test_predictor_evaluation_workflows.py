@@ -58,5 +58,5 @@ def test_create_default(predictor_evaluation_workflow_dict: dict,
         project_id=uuid.uuid4(),
         session=session
     )
-    default_workflow = collection.create_default(uuid.uuid4())
+    default_workflow = collection.create_default(predictor_id=uuid.uuid4())
     assert default_workflow.dump() == workflow.dump()

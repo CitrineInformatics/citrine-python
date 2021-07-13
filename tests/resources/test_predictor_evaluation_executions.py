@@ -2,10 +2,10 @@ import uuid
 
 import pytest
 
-from citrine.informatics.modules import ModuleRef
+from citrine._rest.resource import ResourceRef
+from citrine.informatics.executions.predictor_evaluation_execution import PredictorEvaluationExecution
 from citrine.informatics.predictor_evaluation_result import PredictorEvaluationResult
-from citrine.resources.predictor_evaluation_execution import PredictorEvaluationExecutionCollection, \
-    PredictorEvaluationExecution
+from citrine.resources.predictor_evaluation_execution import PredictorEvaluationExecutionCollection
 from tests.utils.session import FakeSession, FakeCall
 
 
@@ -57,7 +57,7 @@ def test_build_new_execution(collection, predictor_evaluation_execution_dict):
     assert execution.uid == workflow_execution_id
     assert execution.project_id == collection.project_id
     assert execution.workflow_id == collection.workflow_id
-    assert execution.session == collection.session
+    assert execution._session == collection.session
     assert execution.in_progress() and not execution.succeeded() and not execution.failed()
 
 
@@ -94,14 +94,14 @@ def test_trigger_workflow_execution(collection: PredictorEvaluationExecutionColl
     assert session.last_call == FakeCall(
         method='POST',
         path=expected_path,
-        json=ModuleRef(str(predictor_id)).dump()
+        json=ResourceRef(predictor_id).dump()
     )
 
 
 def test_list(collection: PredictorEvaluationExecutionCollection, session):
     session.set_response({"page": 2, "per_page": 4, "next": "foo", "response": []})
     predictor_id = uuid.uuid4()
-    lst = list(collection.list(2, 4, predictor_id=predictor_id))
+    lst = list(collection.list(page=2, per_page=4, predictor_id=predictor_id))
     assert len(lst) == 0
 
     expected_path = '/projects/{}/predictor-evaluation-executions'.format(collection.project_id)

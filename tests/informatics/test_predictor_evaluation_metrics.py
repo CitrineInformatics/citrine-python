@@ -12,7 +12,7 @@ from citrine.informatics.predictor_evaluation_metrics import *
     (PVA(), "predicted_vs_actual", "Predicted vs Actual"),
     (F1(), "f1", "F1 Score"),
     (AreaUnderROC(), "area_under_roc", "Area Under the ROC"),
-    (CoverageProbability(0.123), "coverage_probability_0.123", "Coverage Probability (0.123)")
+    (CoverageProbability(coverage_level=0.123), "coverage_probability_0.123", "Coverage Probability (0.123)")
 ])
 def metric(request):
     return request.param
@@ -40,22 +40,22 @@ def test_to_json(metric):
 
 
 def test_coverage_levels():
-    assert CoverageProbability("0.123")._level_str == "0.123"
-    assert CoverageProbability("0.1234")._level_str == "0.123"
-    assert CoverageProbability(0.123)._level_str == "0.123"
-    assert CoverageProbability(0.1234)._level_str == "0.123"
+    assert CoverageProbability(coverage_level="0.123")._level_str == "0.123"
+    assert CoverageProbability(coverage_level="0.1234")._level_str == "0.123"
+    assert CoverageProbability(coverage_level=0.123)._level_str == "0.123"
+    assert CoverageProbability(coverage_level=0.1234)._level_str == "0.123"
 
     with pytest.raises(TypeError):
-        CoverageProbability(123)
+        CoverageProbability(coverage_level=123)
 
     with pytest.raises(ValueError):
-        CoverageProbability("foo bar")
+        CoverageProbability(coverage_level="foo bar")
 
     with pytest.raises(ValueError):
-        CoverageProbability(123.0)
+        CoverageProbability(coverage_level=123.0)
 
     with pytest.raises(ValueError):
-        CoverageProbability("68.2")
+        CoverageProbability(coverage_level="68.2")
 
     with pytest.warns(UserWarning):
-        CoverageProbability(".1111")
+        CoverageProbability(coverage_level=".1111")

@@ -6,7 +6,7 @@ Summary
 =======
 
 This is a disclaimer on our end to let you know that there are some invalid usage patterns that are not prevented by the API but may corrupt your data and eliminate 
-some of the functionality the api and/or platform would otherwise provide.
+some of the functionality the API and/or Platform would otherwise provide.
 
 Cyclic data patterns
 ====================
@@ -14,7 +14,7 @@ Cyclic data patterns
 Description
 -----------
 
-Data objects should **NOT** be linked in a cyclic pattern. Consider the following example (where the citrine session is created and dataset already defined):
+Data objects should **NOT** be linked in a cyclic pattern. Consider the following example (where the Citrine session is created and dataset already defined):
 
 >>> procsp = dataset.process_specs.register(ProcessSpec(name='test proc'))
 >>> matsp = dataset.material_specs.register(MaterialSpec(name='test mat',process=procsp))
@@ -28,7 +28,7 @@ In this example, the following steps occurred:
 3. An ingredient was assigned the above material and process, which makes it an input to that process belonging to that material.
 
 This is a cyclic pattern because the material is an output to the process, but the ingredient (from the same material) is an input to the same process. 
-In general, an object should not reference any other object in it's history to make a cyclic pattern.
+In general, an object should not reference any other object in its history to make a cyclic pattern.
 It does not make sense for a material to be used as an ingredient in its own history.
 In other words, the data model does not support time traveling materials.
 

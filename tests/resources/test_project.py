@@ -4,6 +4,7 @@ from logging import getLogger
 import pytest
 from dateutil.parser import parse
 from gemd.entity.link_by_uid import LinkByUID
+import warnings
 
 from citrine.informatics.workflows.design_workflow import DesignWorkflow
 from citrine.resources.api_error import ApiError, ValidationError
@@ -12,6 +13,7 @@ from citrine.resources.process_spec import ProcessSpec
 from citrine.resources.project import Project, ProjectCollection
 from citrine.resources.project_member import ProjectMember
 from citrine.resources.project_roles import MEMBER, LEAD, WRITE
+from citrine.resources.dataset import Dataset
 from tests.utils.factories import ProjectDataFactory, UserDataFactory
 from tests.utils.session import FakeSession, FakeCall, FakePaginatedSession
 
@@ -59,7 +61,11 @@ def test_share_post_content(project, session):
     dataset_id = str(uuid.uuid4())
 
     # When
-    project.share(project.uid, 'DATASET', dataset_id)
+    # Share using resource type/id, which is deprecated
+    with warnings.catch_warnings(record=True) as caught:
+        project.share(project_id=project.uid, resource_type='DATASET', resource_id=dataset_id)
+        assert len(caught) == 1
+        assert caught[0].category == DeprecationWarning
 
     # Then
     assert 1 == session.num_calls
@@ -67,11 +73,37 @@ def test_share_post_content(project, session):
         method='POST',
         path='/projects/{}/share'.format(project.uid),
         json={
-            'project_id': project.uid,
+            'project_id': str(project.uid),
             'resource': {'type': 'DATASET', 'id': dataset_id}
         }
     )
     assert expected_call == session.last_call
+
+    # Share by resource
+    # When
+    dataset = Dataset(name="foo", summary="", description="")
+    dataset.uid = str(uuid.uuid4())
+    project.share(resource=dataset, project_id=project.uid)
+
+    # Then
+    assert 2 == session.num_calls
+    expected_call = FakeCall(
+        method='POST',
+        path='/projects/{}/share'.format(project.uid),
+        json={
+            'project_id': str(project.uid),
+            'resource': {'type': 'DATASET', 'id': str(dataset.uid)}
+        }
+    )
+    assert expected_call == session.last_call
+
+    # providing both the resource and the type/id is an error
+    with pytest.raises(ValueError):
+        project.share(resource=dataset, project_id=project.uid, resource_type='DATASET', resource_id=dataset_id)
+
+    # Providing neither the resource nor the type/id is an error
+    with pytest.raises(ValueError):
+        project.share(project_id=project.uid)
 
 
 def test_make_resource_public(project, session):
@@ -125,20 +157,20 @@ def test_transfer_resource(project, session):
         name="dataset to transfer", summary="test", description="test"
     ))
 
-    assert project.transfer_resource(dataset, project.uid)
+    assert project.transfer_resource(resource=dataset, receiving_project_uid=project.uid)
 
     expected_call = FakeCall(
         method='POST',
         path='/projects/{}/transfer-resource'.format(project.uid),
         json={
             'to_project_id': str(project.uid),
-            'resource': dataset.as_entity_dict()
+            'resource': dataset.access_control_dict()
         }
     )
     assert expected_call == session.last_call
 
     with pytest.raises(RuntimeError):
-        project.transfer_resource(ProcessSpec("dummy process"), project.uid)
+        project.transfer_resource(resource=ProcessSpec("dummy process"), receiving_project_uid=project.uid)
 
 
 def test_datasets_get_project_id(project):
@@ -219,10 +251,6 @@ def test_processors_get_project_id(project):
 
 def test_predictors_get_project_id(project):
     assert project.uid == project.predictors.project_id
-
-
-def test_workflows_get_project_id(project):
-    assert project.uid == project.workflows.project_id
 
 
 def test_pe_workflows_get_project_id(project):
@@ -319,7 +347,7 @@ def test_list_projects_filters_non_projects(collection, session):
     # Then
     with pytest.raises(RuntimeError):
         # When
-        projects = list(collection.list())
+        list(collection.list())
 
 
 def test_list_projects_with_page_params(collection, session):
@@ -366,7 +394,7 @@ def test_search_projects_with_pagination(paginated_collection, paginated_session
     common_name = "same name"
 
     same_name_projects_data = ProjectDataFactory.create_batch(35, name=common_name)
-    more_data = ProjectDataFactory.create_batch(35, name="some other name")
+    ProjectDataFactory.create_batch(35, name="some other name")
 
 
     per_page = 10
@@ -402,7 +430,7 @@ def test_delete_project(collection, session):
     uid = '151199ec-e9aa-49a1-ac8e-da722aaf74c4'
 
     # When
-    resp = collection.delete(uid)
+    collection.delete(uid)
 
     # Then
     assert 1 == session.num_calls
@@ -438,7 +466,7 @@ def test_update_user_role(project, session):
     session.set_response({'actions': [], 'role': 'LEAD'})
 
     # When
-    update_user_role_response = project.update_user_role(user["id"], LEAD)
+    update_user_role_response = project.update_user_role(user_uid=user["id"], role=LEAD)
 
     # Then
     assert 1 == session.num_calls
@@ -453,7 +481,7 @@ def test_update_user_actions(project, session):
     session.set_response({'actions': ['READ'], 'role': 'LEAD'})
 
     # When
-    update_user_role_response = project.update_user_role(user["id"], LEAD, [WRITE])
+    update_user_role_response = project.update_user_role(user_uid=user["id"], role=LEAD, actions=[WRITE])
 
     # Then
     assert 1 == session.num_calls
@@ -599,7 +627,7 @@ def test_project_batch_delete(project, session):
 
 def test_batch_delete_bad_input(project, session):
     with pytest.raises(TypeError):
-        project.gemd_batch_delete(['hiya!'])
+        project.gemd_batch_delete([True])
 
 
 def test_project_tables(project):
@@ -667,18 +695,3 @@ def test_owned_table_config_ids(project, session):
     assert expect_call == session.last_call
     assert all(x in id_set for x in ids)
     assert len(ids) == len(id_set)
-
-def test_depricated_worklfows(project):
-    # Given
-    design_worflow = DesignWorkflow(
-        name="Test",
-        design_space_id=str(uuid.uuid4()),
-        processor_id=str(uuid.uuid4()),
-        predictor_id=str(uuid.uuid4()),
-    )
-
-    #Then
-    with pytest.raises(NotImplementedError):
-        project.workflows.register(design_worflow)
-    with pytest.raises(NotImplementedError):
-        project.workflows.update(design_worflow)

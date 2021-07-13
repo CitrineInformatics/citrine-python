@@ -6,12 +6,13 @@ from citrine._rest.resource import Resource
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Optional as PropertyOptional
 from citrine._serialization.properties import String, Object, Mapping, LinkOrElse
-from citrine.resources.data_concepts import DataConcepts, CITRINE_SCOPE
+from citrine.resources.data_concepts import DataConcepts, _make_link_by_uid
 from citrine.resources.object_runs import ObjectRun, ObjectRunCollection
 from gemd.entity.attribute.condition import Condition
 from gemd.entity.attribute.parameter import Parameter
 from gemd.entity.attribute.property import Property
 from gemd.entity.file_link import FileLink
+from gemd.entity.link_by_uid import LinkByUID
 from gemd.entity.object.material_run import MaterialRun as GEMDMaterialRun
 from gemd.entity.object.measurement_run import MeasurementRun as GEMDMeasurementRun
 from gemd.entity.object.measurement_spec import MeasurementSpec as GEMDMeasurementSpec
@@ -111,41 +112,47 @@ class MeasurementRunCollection(ObjectRunCollection[MeasurementRun]):
         return MeasurementRun
 
     def list_by_spec(self,
-                     uid: Union[UUID, str],
-                     scope: str = CITRINE_SCOPE) -> Iterator[MeasurementRun]:
+                     uid: Union[UUID, str, LinkByUID, GEMDMeasurementSpec], *,
+                     scope: Optional[str] = None) -> Iterator[MeasurementRun]:
         """
         [ALPHA] Get the measurement runs using the specified measurement spec.
 
         Parameters
         ----------
-        uid
-            The unique ID of the measurement spec whose measurement run usages are to be located.
-        scope
-            The scope of `uid`.
+        uid: Union[UUID, str, LinkByUID, GEMDMeasurementSpec]
+            A representation of the measurement spec whose measurement run usages are to be located
+        scope: Optional[str]
+            [DEPRECATED] use a LinkByUID to specify a custom scope
+            The scope of the uid, defaults to Citrine scope ("id")
+
         Returns
         -------
         Iterator[MeasurementRun]
             The measurement runs using the specified measurement spec.
 
         """
-        return self._get_relation('measurement-specs', uid=uid, scope=scope)
+        link = _make_link_by_uid(uid, scope)
+        return self._get_relation('measurement-specs', uid=link.id, scope=link.scope)
 
     def list_by_material(self,
-                         uid: Union[UUID, str],
-                         scope: str = CITRINE_SCOPE) -> Iterator[MeasurementRun]:
+                         uid: Union[UUID, str, LinkByUID, GEMDMaterialRun], *,
+                         scope: Optional[str] = None) -> Iterator[MeasurementRun]:
         """
         [ALPHA] Get measurements of the specified material.
 
         Parameters
         ----------
-        uid
-            The unique ID of the material whose measurements are to be queried.
-        scope
-            The scope of `uid`.
+        uid: Union[UUID, str, LinkByUID, GEMDMaterialRun]
+            A representation of the material whose measurements are to be queried.
+        scope: Optional[str]
+            [DEPRECATED] use a LinkByUID to specify a custom scope
+            The scope of the uid, defaults to Citrine scope ("id")
+
         Returns
         -------
         Iterator[MeasurementRun]
             The measurements of the specified material
 
         """
-        return self._get_relation(relation='material-runs', uid=uid, scope=scope)
+        link = _make_link_by_uid(uid, scope)
+        return self._get_relation(relation='material-runs', uid=link.id, scope=link.scope)

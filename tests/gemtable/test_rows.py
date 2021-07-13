@@ -2,7 +2,6 @@
 import pytest
 
 from citrine.gemtables.rows import MaterialRunByTemplate, Row
-import citrine.ara.rows as oldrows
 from gemd.entity.link_by_uid import LinkByUID
 
 
@@ -10,6 +9,13 @@ from gemd.entity.link_by_uid import LinkByUID
     MaterialRunByTemplate(templates=[
         LinkByUID(scope="templates", id="density"), LinkByUID(scope="templates", id="ingredients")
     ]),
+    MaterialRunByTemplate(templates=[
+        LinkByUID(scope="templates", id="density"), LinkByUID(scope="templates", id="ingredients")
+    ],
+        tags=[
+            "foo::bar", "some::tag"
+        ]
+    ),
 ])
 def row(request):
     return request.param
@@ -33,7 +39,3 @@ def test_invalid_deser():
 
     with pytest.raises(ValueError):
         Row.build({"type": "foo"})
-
-def test_renamed_classes_are_the_same():
-    # Mostly make code coverage happy
-    assert oldrows.MaterialRunByTemplate == MaterialRunByTemplate

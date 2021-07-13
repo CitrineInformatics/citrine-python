@@ -2,6 +2,7 @@ from typing import List
 from uuid import UUID
 
 from citrine._session import Session
+from citrine._utils.functions import format_escaped_url
 from citrine.informatics.data_sources import DataSource
 from citrine.informatics.descriptors import Descriptor
 from citrine.informatics.predictors import Predictor
@@ -15,7 +16,7 @@ class DescriptorMethods:
         self.project_id = project_id
         self.session: Session = session
 
-    def from_predictor_responses(self, predictor: Predictor,
+    def from_predictor_responses(self, *, predictor: Predictor,
                                  inputs: List[Descriptor]) -> List[Descriptor]:
         """
         Get responses for a predictor, given an input space.
@@ -35,7 +36,8 @@ class DescriptorMethods:
 
         """
         response = self.session.post_resource(
-            path='/projects/{}/material-descriptors/predictor-responses'.format(self.project_id),
+            path=format_escaped_url('/projects/{}/material-descriptors/predictor-responses',
+                                    self.project_id),
             json={
                 'predictor': predictor.dump()['config'],
                 'inputs': [i.dump() for i in inputs]
@@ -43,7 +45,7 @@ class DescriptorMethods:
         )
         return [Descriptor.build(r) for r in response['responses']]
 
-    def descriptors_from_data_source(self, data_source: DataSource) -> List[Descriptor]:
+    def descriptors_from_data_source(self, *, data_source: DataSource) -> List[Descriptor]:
         """
         Get all descriptors associated with a data source.
 
@@ -59,7 +61,8 @@ class DescriptorMethods:
 
         """
         response = self.session.post_resource(
-            path='/projects/{}/material-descriptors/from-data-source'.format(self.project_id),
+            path=format_escaped_url('/projects/{}/material-descriptors/from-data-source',
+                                    self.project_id),
             json={
                 'data_source': data_source.dump()
             }

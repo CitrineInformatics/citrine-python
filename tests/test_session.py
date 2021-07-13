@@ -16,6 +16,7 @@ import pytz
 import mock
 import requests
 import requests_mock
+from urllib.parse import urlsplit
 from citrine._session import Session
 from citrine.exceptions import UnauthorizedRefreshToken, Unauthorized, NotFound
 from tests.utils.session import make_fake_cursor_request_function
@@ -257,3 +258,27 @@ def test_good_json_response(session: Session):
         m.put('http://citrine-testing.fake/api/v1/bar/something', status_code=200, json=json_to_validate)
         response_json = session.put_resource('bar/something', {"ignored": "true"})
         assert response_json == json_to_validate
+
+
+def test_base_url_assembly():
+    default_base = urlsplit(Session()._versioned_base_url())
+
+    scenarios = [
+        {},
+        {'scheme': 'http', 'host': None},
+        {'scheme': 'https', 'host': 'citrine-testing.fake', 'port': None},
+        {'scheme': 'http', 'host': 'citrine-testing.fake', 'port': ''},
+        {'scheme': 'https', 'host': 'citrine-testing.biz', 'port': '8080'},
+    ]
+
+    for scenario in scenarios:
+        base = urlsplit(Session(**scenario)._versioned_base_url())
+        assert base.scheme == scenario.get('scheme', default_base.scheme)
+        if scenario.get('host', default_base.hostname):
+            assert base.hostname == scenario.get('host', default_base.hostname)
+        else:
+            assert base.hostname is None
+        if scenario.get('port', default_base.port):
+            assert str(base.port) == scenario.get('port', default_base.port)
+        else:
+            assert base.port is None

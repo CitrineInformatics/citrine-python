@@ -6,11 +6,12 @@ from citrine._rest.resource import Resource
 from citrine._serialization.properties import List as PropertyList
 from citrine._serialization.properties import Optional as PropertyOptional
 from citrine._serialization.properties import String, Mapping, Object, LinkOrElse
-from citrine.resources.data_concepts import DataConcepts, CITRINE_SCOPE
+from citrine.resources.data_concepts import DataConcepts, _make_link_by_uid
 from citrine.resources.object_runs import ObjectRun, ObjectRunCollection
 from gemd.entity.attribute.condition import Condition
 from gemd.entity.attribute.parameter import Parameter
 from gemd.entity.file_link import FileLink
+from gemd.entity.link_by_uid import LinkByUID
 from gemd.entity.object.process_run import ProcessRun as GEMDProcessRun
 from gemd.entity.object.process_spec import ProcessSpec as GEMDProcessSpec
 from gemd.entity.source.performed_source import PerformedSource
@@ -109,21 +110,24 @@ class ProcessRunCollection(ObjectRunCollection[ProcessRun]):
         return ProcessRun
 
     def list_by_spec(self,
-                     uid: Union[UUID, str],
-                     scope: str = CITRINE_SCOPE) -> Iterator[ProcessRun]:
+                     uid: Union[UUID, str, LinkByUID, GEMDProcessSpec], *,
+                     scope: Optional[str] = None) -> Iterator[ProcessRun]:
         """
         [ALPHA] Get the process runs using the specified process spec.
 
         Parameters
         ----------
-        uid
-            The unique ID of the process spec whose process run usages are to be located.
-        scope
-            The scope of `uid`.
+        uid: Union[UUID, str, LinkByUID, GEMDProcessSpec]
+            A representation of the process spec whose process run usages are to be located.
+        scope: Optional[str]
+           [DEPRECATED] use a LinkByUID to specify a custom scope
+            The scope of the uid, defaults to Citrine scope ("id")
+
         Returns
         -------
         Iterator[ProcessRun]
             The process runs using the specified process spec.
 
         """
-        return self._get_relation('process-specs', uid=uid, scope=scope)
+        link = _make_link_by_uid(uid, scope)
+        return self._get_relation('process-specs', uid=link.id, scope=link.scope)

@@ -1,12 +1,10 @@
 from copy import copy
-from warnings import warn
 from typing import List, Union, Optional, Tuple
 from uuid import UUID
 
 from deprecation import deprecated
 from gemd.entity.object import MaterialRun
 
-from citrine.resources.job import JobSubmissionResponse, JobStatusResponse
 from gemd.entity.link_by_uid import LinkByUID
 from gemd.enumeration.base_enumeration import BaseEnumeration
 
@@ -14,7 +12,8 @@ from citrine._rest.collection import Collection
 from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
 from citrine._session import Session
-from citrine.resources.data_concepts import CITRINE_SCOPE
+from citrine._utils.functions import migrate_deprecated_argument, format_escaped_url
+from citrine.resources.data_concepts import CITRINE_SCOPE, _make_link_by_uid
 from citrine.resources.process_template import ProcessTemplate
 from citrine.gemtables.columns import Column, MeanColumn, IdentityColumn, OriginalUnitsColumn
 from citrine.gemtables.rows import Row
@@ -65,8 +64,13 @@ class TableConfig(Resource["TableConfig"]):
         return [x for x in lst if lst.count(x) > 1]
 
     config_uid = properties.Optional(properties.UUID(), 'definition_id')
-    version_uid = properties.Optional(properties.UUID(), 'id')
+    """:Optional[UUID]: Unique ID of the table config, independent of its version."""
     version_number = properties.Optional(properties.Integer, 'version_number')
+    """:Optional[int]: The version of the table config, starting from 1.
+    It increases every time the table config is updated."""
+    version_uid = properties.Optional(properties.UUID(), 'id')
+    """:Optional[UUID]: Unique ID that specifies one version of one table config."""
+
     name = properties.String("name")
     description = properties.String("description")
     datasets = properties.List(properties.UUID, "datasets")
@@ -74,42 +78,14 @@ class TableConfig(Resource["TableConfig"]):
     rows = properties.List(properties.Object(Row), "rows")
     columns = properties.List(properties.Object(Column), "columns")
 
-    # Provide some backwards compatible support for definition_uid, redirecting to config_uid
-    @property
-    def definition_uid(self):
-        """[[DEPRECATED]] This is a deprecated alias to config_uid. Please use that instead."""
-        from warnings import warn
-        warn("definition_uid is deprecated and will soon be removed. "
-             "Please use config_uid instead", DeprecationWarning)
-        return self.config_uid
-
-    @definition_uid.setter
-    def definition_uid(self, value):  # pragma: no cover
-        """[[DEPRECATED]] This is a deprecated alias to config_uid. Please use that instead."""
-        from warnings import warn
-        warn("definition_uid is deprecated and will soon be removed. "
-             "Please use config_uid instead", DeprecationWarning)
-        self.config_uid = value
-
-    def __init__(self, *, name: str, description: str, datasets: List[UUID],
-                 variables: List[Variable], rows: List[Row], columns: List[Column],
-                 version_uid: Optional[UUID] = None, version_number: Optional[int] = None,
-                 definition_uid: Optional[UUID] = None, config_uid: Optional[UUID] = None):
+    def __init__(self, name: str, *, description: str, datasets: List[UUID],
+                 variables: List[Variable], rows: List[Row], columns: List[Column]):
         self.name = name
         self.description = description
         self.datasets = datasets
         self.rows = rows
         self.variables = variables
         self.columns = columns
-        self.version_uid = version_uid
-        self.version_number = version_number
-
-        if config_uid is not None:
-            assert definition_uid is None, "Please supply config_uid " \
-                                           "instead of definition_uid, and not both"
-            self.config_uid = config_uid
-        else:
-            self.config_uid = definition_uid
 
         # Note that these validations only apply at construction time. The current intended usage
         # is for this object to be created holistically; if changed, then these will need
@@ -162,18 +138,21 @@ class TableConfig(Resource["TableConfig"]):
             raise ValueError("Column.data_source must be {} but found {}"
                              .format(variable.name, mismatched_data_source))
 
-        return TableConfig(
+        new_config = TableConfig(
             name=name or self.name,
             description=description or self.description,
             datasets=copy(self.datasets),
             rows=copy(self.rows),
             variables=copy(self.variables) + [variable],
-            columns=copy(self.columns) + columns,
-            config_uid=copy(self.config_uid)
+            columns=copy(self.columns) + columns
         )
+        new_config.version_number = copy(self.version_number)
+        new_config.config_uid = copy(self.config_uid)
+        new_config.version_uid = copy(self.version_uid)
+        return new_config
 
     def add_all_ingredients(self, *,
-                            process_template: LinkByUID,
+                            process_template: Union[LinkByUID, ProcessTemplate, str, UUID],
                             project,
                             quantity_dimension: IngredientQuantityDimension,
                             scope: str = CITRINE_SCOPE,
@@ -187,8 +166,8 @@ class TableConfig(Resource["TableConfig"]):
 
         Parameters
         ------------
-        process_template: LinkByUID
-            scope and id of a registered process template
+        process_template: Union[LinkByUID, ProcessTemplate, str, UUID]
+            representation of a registered process template
         project: Project
             a project that has access to the process template
         quantity_dimension: IngredientQuantityDimension
@@ -205,8 +184,8 @@ class TableConfig(Resource["TableConfig"]):
             IngredientQuantityDimension.VOLUME: "volume fraction",
             IngredientQuantityDimension.NUMBER: "number fraction"
         }
-        process: ProcessTemplate = project.process_templates.get(
-            uid=process_template.id, scope=process_template.scope)
+        link = _make_link_by_uid(process_template)
+        process: ProcessTemplate = project.process_templates.get(uid=link.id, scope=link.scope)
         if not process.allowed_names:
             raise RuntimeError(
                 "Cannot add ingredients for process template \'{}\' because it has no defined "
@@ -216,17 +195,17 @@ class TableConfig(Resource["TableConfig"]):
         new_columns = []
         for name in process.allowed_names:
             identifier_variable = IngredientIdentifierByProcessTemplateAndName(
-                name='_'.join([process.name, name, str(hash(process_template.id + name + scope))]),
+                name='_'.join([process.name, name, str(hash(link.id + name + scope))]),
                 headers=[process.name, name, scope],
-                process_template=process_template,
+                process_template=link,
                 ingredient_name=name,
                 scope=scope
             )
             quantity_variable = IngredientQuantityByProcessAndName(
                 name='_'.join([process.name, name, str(hash(
-                    process_template.id + name + dimension_display[quantity_dimension]))]),
+                    link.id + name + dimension_display[quantity_dimension]))]),
                 headers=[process.name, name, dimension_display[quantity_dimension]],
-                process_template=process_template,
+                process_template=link,
                 ingredient_name=name,
                 quantity_dimension=quantity_dimension,
                 unit=unit
@@ -240,15 +219,18 @@ class TableConfig(Resource["TableConfig"]):
             if quantity_dimension == IngredientQuantityDimension.ABSOLUTE:
                 new_columns.append(OriginalUnitsColumn(data_source=quantity_variable.name))
 
-        return TableConfig(
+        new_config = TableConfig(
             name=self.name,
             description=self.description,
             datasets=copy(self.datasets),
             rows=copy(self.rows),
             variables=copy(self.variables) + new_variables,
-            columns=copy(self.columns) + new_columns,
-            config_uid=copy(self.config_uid)
+            columns=copy(self.columns) + new_columns
         )
+        new_config.version_number = copy(self.version_number)
+        new_config.config_uid = copy(self.config_uid)
+        new_config.version_uid = copy(self.version_uid)
+        return new_config
 
 
 class TableConfigCollection(Collection[TableConfig]):
@@ -267,14 +249,14 @@ class TableConfigCollection(Collection[TableConfig]):
         self.project_id = project_id
         self.session: Session = session
 
-    def get(self, uid: Union[UUID, str], version: Optional[int] = None):
+    def get(self, uid: Union[UUID, str], *, version: Optional[int] = None):
         """[ALPHA] Get a table config.
 
         If no version is specified, then the most recent version is returned.
 
         """
         if version is not None:
-            path = self._get_path(uid) + "/versions/{}".format(version)
+            path = self._get_path(uid) + format_escaped_url("/versions/{}", version)
             data = self.session.get_resource(path)
         else:
             path = self._get_path(uid)
@@ -286,7 +268,7 @@ class TableConfigCollection(Collection[TableConfig]):
 
     @deprecated(deprecated_in="0.124.0", removed_in="1.0.0",
                 details="get_with_version() is deprecated in favor of get()")
-    def get_with_version(self, table_config_uid: Union[UUID, str],
+    def get_with_version(self, *, table_config_uid: Union[UUID, str],
                          version_number: int) -> TableConfig:
         """[ALPHA] Get a Table Config at a specific version."""
         return self.get(uid=table_config_uid, version=version_number)  # pragma: no cover
@@ -346,26 +328,10 @@ class TableConfigCollection(Collection[TableConfig]):
 
 
         """
-        if scope is not None:
-            warn("\'scope\' is deprecated in default_for_material() and will soon be removed. "
-                 "To specify a custom scope, use a LinkByUID object.", DeprecationWarning)
-        if isinstance(material, MaterialRun):
-            uid_tup = next(iter(material.uids.items()), None)
-            if uid_tup is None:
-                raise ValueError('Material must have a uid to build default table config.')
-            scope, uid = uid_tup
-        elif isinstance(material, LinkByUID):
-            scope, uid = material.scope, material.id
-        elif isinstance(material, (str, UUID)):
-            uid = str(material)
-            scope = scope or CITRINE_SCOPE
-        else:
-            raise TypeError(  # pragma: no cover
-                'material must be one of MaterialRun, LinkByUID, str, or UUID but was {}'
-                .format(type(material)))
+        link = _make_link_by_uid(material, scope)
         params = {
-            'id': uid,
-            'scope': scope,
+            'id': link.id,
+            'scope': link.scope,
             'name': name,
         }
         if description is not None:
@@ -376,66 +342,36 @@ class TableConfigCollection(Collection[TableConfig]):
             else:  # Not per spec, but be forgiving
                 params['algorithm'] = str(algorithm)
         data = self.session.get_resource(
-            'projects/{}/table-configs/default'.format(self.project_id),
+            format_escaped_url('projects/{}/table-configs/default', self.project_id),
             params=params,
         )
         config = TableConfig.build(data['config'])
         ambiguous = [(Variable.build(v), Column.build(c)) for v, c in data['ambiguous']]
         return config, ambiguous
 
-    @deprecated(details='Please use TableCollection.build_from config or '
-                        'TableCollection.initiate_build')
-    def build_ara_table(self, ara_def: TableConfig) -> JobSubmissionResponse:
-        """[ALPHA] submit a Table construction job.
-
-        This method makes a call out to the job framework to start a new job to build
-        the respective table for a given Table Config.
-
-        Parameters
-        ----------
-        ara_def: TableConfig
-            the Table Config describing the new table
-
-        """
-        from citrine.resources.gemtables import GemTableCollection
-        table_collection = GemTableCollection(self.project_id, self.session)
-        return table_collection.initiate_build(ara_def, None)
-
-    @deprecated(details='Table build job status does not have a stable format. Please use '
-                        'TableCollection.build_from_config or TableCollection.get_by_build_job')
-    def get_job_status(self, job_id: str):
-        """[ALPHA] get status of a running job.
-
-        This method grabs a JobStatusResponse object for the given job_id.
-
-        Parameters
-        ----------
-        job_id: str
-            The job we retrieve the status for
-
-        """
-        url_suffix: str = "/execution/job-status?job_id={job_id}"
-        path: str = 'projects/{project_id}'.format(
-            project_id=self.project_id
-        ) + url_suffix.format(job_id=job_id)
-        response: dict = self.session.get_resource(path=path)
-        return JobStatusResponse.build(response)
-
-    def preview(self, table_config: TableConfig, preview_roots: List[LinkByUID]) -> dict:
+    def preview(self, *,
+                table_config: TableConfig,
+                preview_materials: List[LinkByUID] = None,
+                preview_roots: List[LinkByUID] = None
+                ) -> dict:
         """[ALPHA] Preview a Table Config on an explicit set of terminal materials.
 
         Parameters
         ----------
         table_config: TableConfig
             Table Config to preview
-        preview_roots: List[LinkByUID]
+        preview_materials: List[LinkByUID]
             List of links to the material runs to use as terminal materials in the preview
+        preview_roots: List[LinkByUID]
+            [DEPRECATED] Use preview_materials instead
 
         """
+        preview_materials = migrate_deprecated_argument(preview_materials, "preview_materials",
+                                                        preview_roots, "preview_roots")
         path = self._get_path() + "/preview"
         body = {
             "definition": table_config.dump(),
-            "rows": [x.as_dict() for x in preview_roots]
+            "rows": [x.as_dict() for x in preview_materials]
         }
         return self.session.post_resource(path, body)
 
