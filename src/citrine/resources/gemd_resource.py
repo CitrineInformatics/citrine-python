@@ -18,7 +18,6 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
 
     _path_template = 'projects/{project_id}/storables'
     _dataset_agnostic_path_template = 'projects/{project_id}/storables'
-    _resource = DataConcepts
 
     def __init__(self, project_id: UUID, dataset_id: UUID, session: Session):
         self.project_id = project_id
