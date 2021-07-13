@@ -367,8 +367,35 @@ def test_gemd_batch_delete(dataset):
     with pytest.raises(TypeError):
         dataset.gemd_batch_delete([7, False])
 
-def test_gemd_delete_contents(dataset):
-    """Pass through to GEMDResourceCollection working."""
-    dataset.uid = None
-    with pytest.raises(RuntimeError):
-        dataset.delete_contents()
+def test_delete_contents_ok(dataset):
+
+    job_resp = {
+        'job_id': '1234'
+    }
+
+    failed_job_resp = {
+        'job_type': 'batch_delete',
+        'status': 'Success',
+        'tasks': [],
+        'output': {
+            # Keep in mind this is a stringified JSON value. Eww.
+            'failures': '[]'
+        }
+    }
+
+    session = dataset.session
+    session.set_responses(job_resp, failed_job_resp)
+
+    # When
+    del_resp = dataset.delete_contents()
+
+    # Then
+    assert len(del_resp) == 0
+
+    # Ensure we made the expected delete call
+    expected_call = FakeCall(
+        method='DELETE',
+        path='projects/{}/datasets/{}/contents'.format(dataset.project_id, dataset.uid)
+    )
+    assert len(session.calls) == 2
+    assert session.calls[0] == expected_call

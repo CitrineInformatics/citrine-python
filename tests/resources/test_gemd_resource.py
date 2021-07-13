@@ -362,43 +362,6 @@ def test_async_update_with_no_wait(gemd_collection, session):
     assert job_id is not None
 
 
-def test_delete_contents(gemd_collection, session):
-    job_resp = {
-        'job_id': '1234'
-    }
-
-    failed_job_resp = {
-        'job_type': 'batch_delete',
-        'status': 'Success',
-        'tasks': [],
-        'output': {
-            # Keep in mind this is a stringified JSON value. Eww.
-            'failures': '[]'
-        }
-    }
-
-    session.set_responses(job_resp, failed_job_resp)
-
-    # When
-    del_resp = gemd_collection.delete_contents()
-
-    # Then
-    assert len(del_resp) == 0
-
-    # Ensure we made the expected delete call
-    expected_call = FakeCall(
-        method='DELETE',
-        path='projects/{}/datasets/{}/contents'.format(gemd_collection.project_id, gemd_collection.dataset_id)
-    )
-    assert len(session.calls) == 2
-    assert session.calls[0] == expected_call
-
-    # Test failure with no dataset
-    gemd_collection.dataset_id = None
-    with pytest.raises(RuntimeError):
-        gemd_collection.delete_contents()
-
-
 def test_batch_delete(gemd_collection, session):
     job_resp = {
         'job_id': '1234'

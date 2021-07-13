@@ -7,10 +7,9 @@ from gemd.util import writable_sort_order
 from gemd.entity.base_entity import BaseEntity
 from gemd.entity.link_by_uid import LinkByUID
 
-from citrine._utils.functions import format_escaped_url
 from citrine.resources.api_error import ApiError
 from citrine.resources.data_concepts import DataConcepts, DataConceptsCollection
-from citrine.resources.delete import _async_gemd_batch_delete, _poll_for_async_batch_delete_result
+from citrine.resources.delete import _async_gemd_batch_delete
 from citrine._session import Session
 
 
@@ -19,8 +18,6 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
 
     _path_template = 'projects/{project_id}/storables'
     _dataset_agnostic_path_template = 'projects/{project_id}/storables'
-    _individual_key = None
-    _collection_key = None
     _resource = DataConcepts
 
     def __init__(self, project_id: UUID, dataset_id: UUID, session: Session):
@@ -181,47 +178,6 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
             polling_delay=polling_delay,
             return_model=return_model
         )
-
-    def delete_contents(
-            self,
-            *,
-            timeout: float = 2 * 60,
-            polling_delay: float = 1.0
-    ):
-        """
-        Delete all the GEMD objects from within a single Dataset.
-
-        Parameters
-        ----------
-        timeout: float
-            Amount of time to wait on the job (in seconds) before giving up.
-            Note that this number has no effect on the underlying job itself,
-            which can also time out server-side.
-
-        polling_delay: float
-            How long to delay between each polling retry attempt.
-
-        Returns
-        -------
-        List[Tuple[LinkByUID, ApiError]]
-            A list of (LinkByUID, api_error) for each failure to delete an object.
-            Note that this method doesn't raise an exception if an object fails to be
-            deleted.
-
-        """
-        if self.dataset_id is None:
-            raise RuntimeError("Must specify a dataset to delete contents from.")
-
-        path = format_escaped_url('projects/{project_id}/datasets/{dataset_uid}/contents',
-                                  dataset_uid=self.dataset_id,
-                                  project_id=self.project_id
-                                  )
-
-        response = self.session.delete_resource(path)
-        job_id = response["job_id"]
-
-        return _poll_for_async_batch_delete_result(self.project_id, self.session, job_id, timeout,
-                                                   polling_delay)
 
     def batch_delete(
             self,
