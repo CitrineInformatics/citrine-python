@@ -1,7 +1,6 @@
 from uuid import UUID
 from typing import Union, List, Optional
 
-from gemd.enumeration.base_enumeration import BaseEnumeration
 from gemd.entity.link_by_uid import LinkByUID
 from gemd.entity.template.has_property_templates import HasPropertyTemplates
 from gemd.entity.template.has_condition_templates import HasConditionTemplates
@@ -10,9 +9,8 @@ from gemd.util.impl import flatten
 
 from citrine.jobs.waiting import wait_while_validating
 from citrine.informatics.data_sources import GemTableDataSource
-from citrine.informatics.descriptors import FormulationDescriptor
+from citrine.informatics.design_spaces import DataSourceDesignSpace
 from citrine.informatics.executions.design_execution import DesignExecution
-from citrine.informatics.objectives import Objective
 from citrine.informatics.scores import Score
 from citrine.informatics.workflows import DesignWorkflow
 
@@ -21,92 +19,13 @@ from citrine.resources.project import Project
 from citrine.resources.table_config import TableBuildAlgorithm
 
 
-class AutoConfigureAlgorithm(BaseEnumeration):
-    """[ALPHA] The algorithm to use in building auto-configured assets.
-
-    * PLAIN produces a single-row table and plain predictor
-    * FORMULATION produces a multi-row table and formulations predictor
-    """
-
-    PLAIN = "plain"
-    FORMULATION = "formulation"
-
-
-def extract_descriptor_keys(
-        *,
-        project: Project,
-        material: Union[str, UUID, LinkByUID, MaterialRun],
-        algorithm: AutoConfigureAlgorithm = AutoConfigureAlgorithm.PLAIN,
-        full_history: bool = False
-) -> List[str]:
-    """[ALPHA] Extract names of attributes from a provided material run.
-
-    Given a material run (or ID representation),
-    extracts the names of property, condition, and parameter templates
-    that appear throughout the material's history.
-
-    The obtained descriptor keys can be used when constructing
-    objectives for a scoring function in a design workflow.
-
-    Parameters
-    ----------
-    project: Project
-        Project to use when accessing the Citrine Platform.
-    material: Union[str, UUID, LinkByUID, MaterialRun]
-        A representation of the material to extract descriptor keys from its history.
-    algorithm: AutoConfigureAlgorithm
-        The algorithm to be used in the automatic table and predictor configuration.
-        Controls descriptor key formatting to match the configured table columns.
-        Default: AutoConfigureAlgorithm.PLAIN
-    full_history: bool
-        Whether to extract descriptor keys from the full material history,
-        or only the provided (terminal) material.
-        Default: True
-
-    Returns
-    -------
-    list
-        List of extracted keys from the material history
-
-    """
-    if not isinstance(algorithm, AutoConfigureAlgorithm):
-        raise TypeError('algorithm must be an option from AutoConfigureAlgorithm')
-
-    # Full history not needed when full_history = False
-    # But is convenient to populate templates for terminal material
-    history = project.material_runs.get_history(id=material)
-    if full_history:
-        search_history = flatten(history)
-    else:
-        # Limit the search to contain the terminal material/process/measurements
-        search_history = [history.spec.template, history.process.template]
-        search_history.extend([msr.template for msr in history.measurements])
-
-    properties = []
-    conditions = []
-    parameters = []
-    for obj in search_history:
-        parent_name = f'{obj.name}~' if algorithm.value == 'plain' else ''
-        # Search all attribute template types
-        if isinstance(obj, HasPropertyTemplates):
-            for property in obj.properties:
-                properties.append(parent_name + property[0].name)
-        if isinstance(obj, HasConditionTemplates):
-            for condition in obj.conditions:
-                conditions.append(parent_name + condition[0].name)
-        if isinstance(obj, HasParameterTemplates):
-            for parameter in obj.parameters:
-                parameters.append(parent_name + parameter[0].name)
-
-    return properties + conditions + parameters
-
-
 def auto_configure_material(
         *,
         project: Project,
         material: Union[str, UUID, LinkByUID, MaterialRun],
         score: Score,
-        algorithm: AutoConfigureAlgorithm = AutoConfigureAlgorithm.PLAIN,
+        algorithm: AutoConfigureMode = AutoConfigureMode.PLAIN,
+        design_space: Optional[DataSourceDesignSpace] = None,
         label: str = '',
         print_status_info: bool = False,
 ) -> DesignExecution:
@@ -115,6 +34,10 @@ def auto_configure_material(
     Given a material run (or ID representation),
     configures and validates a default GEM table, default predictor, and default design space,
     and then triggers a design execution given the provided `score`.
+
+    Optionally, a `DataSourceDesignSpace` can be provided by
+    the `design_space` keyword argument to use in place of
+    the default configured design space.
 
     Parameters
     ----------
@@ -128,9 +51,12 @@ def auto_configure_material(
         Must contain objectives/constraints with matching descriptor keys
         to those appearing within the provided material history.
         Default: None
-    algorithm: AutoConfigureAlgorithm
+    mode: AutoConfigureMode
         The algorithm to be used in the automatic table and predictor configuration.
-        Default: AutoConfigureAlgorithm.PLAIN
+        Default: AutoConfigureMode.PLAIN
+    design_space: Optional[DataSourceDesignSpace]
+        A data source design space to use in place of the default design space.
+        Default: None
     label: str
         Naming label to affix to auto-configured assets on the Citrine Platform.
         Default: ''
@@ -146,11 +72,11 @@ def auto_configure_material(
     """
     prefix = '{} - '.format(label) if label else ''
 
-    if not isinstance(algorithm, AutoConfigureAlgorithm):
-        raise TypeError('algorithm must be an option from AutoConfigureAlgorithm')
+    if not isinstance(mode, AutoConfigureMode):
+        raise TypeError('mode must be an option from AutoConfigureMode')
 
     # Map algorithm to appropriate TableBuildAlgorithm
-    if algorithm == AutoConfigureAlgorithm.PLAIN:
+    if mode == AutoConfigureMode.PLAIN:
         table_algorithm = TableBuildAlgorithm.SINGLE_ROW
     else:
         table_algorithm = TableBuildAlgorithm.FORMULATIONS
@@ -176,9 +102,14 @@ def auto_configure_material(
     if predictor.status == 'INVALID':
         raise RuntimeError('Auto-configured predictor is invalid.')
 
-    print('\nBuilding default design space from predictor...')
-    design_space = project.design_spaces.create_default(predictor_id=predictor.uid)
-    design_space.name = f'{prefix}Default Design Space'
+    if design_space is None:
+        print('\nBuilding default design space from predictor...')
+        design_space = project.design_spaces.create_default(predictor_id=predictor.uid)
+        design_space.name = f'{prefix}Default Design Space'
+    else:
+        if not isinstance(design_space, DataSourceDesignSpace):
+            raise TypeError('User provided design space must be a DataSourceDesignSpace.')
+        print('\nRegistering user provided design space...')
     design_space = project.design_spaces.register(design_space)
     design_space = wait_while_validating(
         collection=project.design_spaces, module=design_space, print_status_info=print_status_info

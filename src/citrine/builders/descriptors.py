@@ -1,14 +1,22 @@
 from itertools import chain
-from typing import Iterator, Mapping
+from typing import Iterator, Mapping, Union, List
+from uuid import UUID
 
+from gemd.entity.link_by_uid import LinkByUID
 from gemd.entity.bounds import RealBounds, CategoricalBounds, MolecularStructureBounds, \
     IntegerBounds, CompositionBounds
 from gemd.entity.template.attribute_template import AttributeTemplate
+from gemd.entity.template.has_property_templates import HasPropertyTemplates
+from gemd.entity.template.has_condition_templates import HasConditionTemplates
+from gemd.entity.template.has_parameter_templates import HasParameterTemplates
 from gemd.entity.value import EmpiricalFormula
+from gemd.util import recursive_flatmap, set_uuids
 
+from citrine.builders import AutoConfigureMode
 from citrine.informatics.descriptors import RealDescriptor, CategoricalDescriptor, \
     MolecularStructureDescriptor, Descriptor, ChemicalFormulaDescriptor
 from citrine.resources.data_concepts import DataConceptsCollection
+from citrine.resources.material_run import MaterialRun
 from citrine.resources.project import Project
 
 
@@ -18,7 +26,8 @@ class NoEquivalentDescriptorError(ValueError):
     pass
 
 
-def template_to_descriptor(template: AttributeTemplate) -> Descriptor:
+def template_to_descriptor(template: AttributeTemplate, *,
+                           headers: List[str] = []) -> Descriptor:
     """
     Convert a GEMD attribute template into an AI Engine Descriptor.
 
@@ -30,6 +39,10 @@ def template_to_descriptor(template: AttributeTemplate) -> Descriptor:
     ----------
     template: AttributeTemplate
         Template to convert into a descriptor
+    headers: List[str]
+        Names of parent relationships to includes as prefixes
+        to the template name in the descriptor key
+        Default: []
 
     Returns
     -------
@@ -37,27 +50,29 @@ def template_to_descriptor(template: AttributeTemplate) -> Descriptor:
         Descriptor with a key matching the template name and type corresponding to the bounds
 
     """
+    headers = headers + [template.name]
+    descriptor_key = '~'.join(headers)
     bounds = template.bounds
     if isinstance(bounds, RealBounds):
         return RealDescriptor(
-            key=template.name,
+            key=descriptor_key,
             lower_bound=bounds.lower_bound,
             upper_bound=bounds.upper_bound,
             units=bounds.default_units
         )
     if isinstance(bounds, CategoricalBounds):
         return CategoricalDescriptor(
-            key=template.name,
+            key=descriptor_key,
             categories=bounds.categories
         )
     if isinstance(bounds, MolecularStructureBounds):
         return MolecularStructureDescriptor(
-            key=template.name
+            key=descriptor_key
         )
     if isinstance(bounds, CompositionBounds):
         if set(bounds.components).issubset(EmpiricalFormula.all_elements()):
             return ChemicalFormulaDescriptor(
-                key=template.name
+                key=descriptor_key
             )
         else:
             msg = "Cannot create descriptor for CompositionBounds with non-atomic components"
@@ -76,6 +91,7 @@ class PlatformVocabulary(Mapping[str, Descriptor]):
     entries: Mapping[str, Descriptor]
         Entries in the dictionary, indexed by a convenient name.
         To build from templates, use PlatformVocabulary.from_templates
+        To build from a material, use PlatformVocabulary.from_material
 
     """
 
@@ -127,5 +143,87 @@ class PlatformVocabulary(Mapping[str, Descriptor]):
                 res[k] = desc
             except NoEquivalentDescriptorError:
                 continue
+
+        return PlatformVocabulary(entries=res)
+
+    @staticmethod
+    def from_material(
+            *,
+            project: Project,
+            material: Union[str, UUID, LinkByUID, MaterialRun],
+            mode: AutoConfigureMode = AutoConfigureMode.PLAIN,
+            full_history: bool = False
+    ):
+        """[ALPHA] Build a PlatformVocabulary from templates appearing in a material history.
+
+        All of the attribute templates that appear throughout the material's history
+        are extracted and converted into descriptors.
+
+        Descriptor keys are formatted according to the option set by `mode`.
+        For example, if a condition template with name 'Condition 1'
+        appears in a parent process with name 'Parent Process',
+        the `mode` option produces the following descriptor key:
+
+        mode = AutoConfigMode.PLAIN       --> 'Parent Process~Condition 1'
+        mode = AutoConfigMode.FORMULATION --> 'Condition 1'
+
+        Parameters
+        ----------
+        project: Project
+            Project to use when accessing the Citrine Platform.
+        material: Union[str, UUID, LinkByUID, MaterialRun]
+            A representation of the material to extract descriptor keys from its history.
+        mode: AutoConfigureMode
+            Formatting option for descriptor keys in the platform vocabulary.
+            Option AutoConfigMode.PLAIN includes headers from the parent object,
+            whereas option AutoConfigMode.FORMULATION does not.
+            Default: AutoConfigureMode.PLAIN
+        full_history: bool
+            Whether to extract descriptors from the full material history,
+            or only the provided (terminal) material.
+            Default: True
+
+        Returns
+        -------
+        PlatformVocabulary
+
+        """
+        if not isinstance(mode, AutoConfigureMode):
+            raise TypeError('mode must be an option from AutoConfigureMode')
+
+        # Full history not needed when full_history = False
+        # But is convenient to populate templates for terminal material
+        history = project.material_runs.get_history(id=material)
+        if full_history:
+            search_history = recursive_flatmap(history, lambda x: [x], unidirectional=False)
+            set_uuids(search_history, 'id')
+        else:
+            # Limit the search to contain the terminal material/process/measurements
+            search_history = [history.spec.template, history.process.template]
+            search_history.extend([msr.template for msr in history.measurements])
+
+        # Extract templates and formatted keys
+        res = {}
+        for obj in search_history:
+            # Extract all templates
+            templates = []
+            if isinstance(obj, HasPropertyTemplates):
+                for property in obj.properties:
+                    templates.append(property[0])
+            if isinstance(obj, HasConditionTemplates):
+                for condition in obj.conditions:
+                    templates.append(condition[0])
+            if isinstance(obj, HasParameterTemplates):
+                for parameter in obj.parameters:
+                    templates.append(parameter[0])
+
+            # Assemble to descriptors
+            header = f'{obj.name}' if mode.value == 'plain' else ''
+            for tmpl in templates:
+                try:
+                    desc = template_to_descriptor(tmpl, headers=[header])
+                    res[desc.key] = desc
+                except NoEquivalentDescriptorError:
+                    continue
 
         return PlatformVocabulary(entries=res)
