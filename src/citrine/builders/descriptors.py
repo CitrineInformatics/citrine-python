@@ -218,10 +218,13 @@ class PlatformVocabulary(Mapping[str, Descriptor]):
                     templates.append(parameter[0])
 
             # Assemble to descriptors
-            header = f'{obj.name}' if mode.value == 'plain' else ''
+            headers = []
+            if mode.value == 'plain':
+                headers.append(obj.name)
+
             for tmpl in templates:
                 try:
-                    desc = template_to_descriptor(tmpl, headers=[header])
+                    desc = template_to_descriptor(tmpl, headers=headers)
                     res[desc.key] = desc
                 except NoEquivalentDescriptorError:
                     continue
