@@ -2,6 +2,7 @@ from copy import copy
 from typing import List, Union, Optional, Tuple
 from uuid import UUID
 
+import warnings
 from deprecation import deprecated
 from gemd.entity.object import MaterialRun
 
@@ -63,7 +64,7 @@ class TableConfig(Resource["TableConfig"]):
         # Hmmn, this looks like a potentially costly operation?!
         return [x for x in lst if lst.count(x) > 1]
 
-    config_uid = properties.Optional(properties.UUID(), 'definition_id')
+    uid = properties.Optional(properties.UUID(), 'definition_id')
     """:Optional[UUID]: Unique ID of the table config, independent of its version."""
     version_number = properties.Optional(properties.Integer, 'version_number')
     """:Optional[int]: The version of the table config, starting from 1.
@@ -106,6 +107,13 @@ class TableConfig(Resource["TableConfig"]):
             raise ValueError("The data_source of the columns must match one of the variable names,"
                              " but {} were missing".format(missing_variables))
 
+    @property
+    def config_uid(self) -> UUID:
+        """[DEPRECATED] Unique ID of the table config, independent of its version."""
+        warn("The config_uid attribute is deprecated in favor of the uid attribute.", 
+            DeprecationWarning)
+        return self.uid
+
     def add_columns(self, *,
                     variable: Variable,
                     columns: List[Column],
@@ -147,7 +155,7 @@ class TableConfig(Resource["TableConfig"]):
             columns=copy(self.columns) + columns
         )
         new_config.version_number = copy(self.version_number)
-        new_config.config_uid = copy(self.config_uid)
+        new_config.uid = copy(self.uid)
         new_config.version_uid = copy(self.version_uid)
         return new_config
 
@@ -228,7 +236,7 @@ class TableConfig(Resource["TableConfig"]):
             columns=copy(self.columns) + new_columns
         )
         new_config.version_number = copy(self.version_number)
-        new_config.config_uid = copy(self.config_uid)
+        new_config.uid = copy(self.uid)
         new_config.version_uid = copy(self.version_uid)
         return new_config
 
@@ -279,7 +287,7 @@ class TableConfigCollection(Collection[TableConfig]):
         table_config = TableConfig.build(version_data['ara_definition'])
         table_config.version_number = version_data['version_number']
         table_config.version_uid = version_data['id']
-        table_config.config_uid = data['definition']['id']
+        table_config.uid = data['definition']['id']
         table_config.project_id = self.project_id
         table_config.session = self.session
         return table_config
@@ -395,7 +403,7 @@ class TableConfigCollection(Collection[TableConfig]):
         #  underlying table config JSON blob) into the Table Config's JSON blob ('definition')
         #  - probably not ideal.
         body = {"definition": table_config.dump()}
-        if table_config.config_uid is None:
+        if table_config.uid is None:
             data = self.session.post_resource(self._get_path(), body)
             data = data[self._individual_key] if self._individual_key else data
             return self.build(data)
@@ -404,7 +412,7 @@ class TableConfigCollection(Collection[TableConfig]):
             # 1) The validation requirements are the same for updating and registering an
             #    TableConfig
             # 2) This prevents users from accidentally registering duplicate Table Configs
-            data = self.session.put_resource(self._get_path(table_config.config_uid), body)
+            data = self.session.put_resource(self._get_path(table_config.uid), body)
             data = data[self._individual_key] if self._individual_key else data
             return self.build(data)
 
@@ -415,13 +423,13 @@ class TableConfigCollection(Collection[TableConfig]):
         If the provided Table Config does have a uid, update (replace) the Table Config at that
         uid with the provided TableConfig.
 
-        Raise a ValueError if the provided Table Config does not have a config_uid.
+        Raise a ValueError if the provided Table Config does not have a uid.
 
         :param table_config: The Table Config to updated
         :return: The updated Table Config with updated metadata
         """
-        if table_config.config_uid is None:
-            raise ValueError("Cannot update Table Config without a config_uid."
+        if table_config.uid is None:
+            raise ValueError("Cannot update Table Config without a uid."
                              " Please either use register() to initially register this"
                              " Table Config or retrieve the registered details before calling"
                              " update()")

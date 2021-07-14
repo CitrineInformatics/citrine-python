@@ -52,7 +52,7 @@ def collection(session) -> GemTableCollection:
 def table_config() -> TableConfig:
     table_config = TableConfig(name="name", description="description", datasets=[], rows=[], variables=[], columns=[])
     table_config.version_number = 1
-    table_config.config_uid = UUID('12345678-1234-1234-1234-123456789bbb')
+    table_config.uid = UUID('12345678-1234-1234-1234-123456789bbb')
     return table_config
 
 
