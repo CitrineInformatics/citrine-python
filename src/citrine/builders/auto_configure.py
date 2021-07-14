@@ -325,11 +325,12 @@ class AutoConfigureWorkflow():
             raise ValueError("Predictor is missing uid. Are you using a registered resource?")
 
         if evaluator is None:
+            print("Configuring default predictor evaluation workflow...")
             pew = self.project.predictor_evaluation_workflows.create_default(
                 predictor_id=predictor.uid
             )
         else:
-            print("Configuring predictor evaluation using provided evaluator...")
+            print("Configuring predictor evaluation with user-provided evaluator...")
             pew = PredictorEvaluationWorkflow(
                 name=f'{self._prefix}Predictor Evaluation Workflow',
                 evaluators=[evaluator]

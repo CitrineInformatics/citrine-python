@@ -30,7 +30,7 @@ from citrine.resources.parameter_template import ParameterTemplateCollection
 from citrine.resources.project import Project
 from citrine.resources.property_template import PropertyTemplateCollection
 
-from citrine.builders import AutoConfigureMode
+from citrine.builders.auto_configure import AutoConfigureMode
 
 
 density_desc = RealDescriptor("density", lower_bound=0, upper_bound=100, units="gram / centimeter ** 3")
