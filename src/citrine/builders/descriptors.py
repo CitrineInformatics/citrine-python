@@ -159,10 +159,10 @@ class PlatformVocabulary(Mapping[str, Descriptor]):
         All of the attribute templates that appear throughout the material's history
         are extracted and converted into descriptors.
 
-        Descriptor keys are formatted according to the option set by `mode`.
+        Descriptor keys are formatted according to the option set by mode.
         For example, if a condition template with name 'Condition 1'
         appears in a parent process with name 'Parent',
-        the `mode` option produces the following descriptor key:
+        the mode option produces the following descriptor key:
 
         mode = AutoConfigMode.PLAIN       --> 'Parent~Condition 1'
         mode = AutoConfigMode.FORMULATION --> 'Condition 1'
