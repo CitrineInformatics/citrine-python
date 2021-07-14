@@ -5,7 +5,13 @@ import pytest
 from citrine.resources.project import Project
 from citrine.resources.table_config import TableConfigCollection
 
+from citrine.informatics.objectives import ScalarMaxObjective
+from citrine.informatics.scores import LIScore
+
 from citrine.builders import AutoConfigureMode
+from citrine.builders.auto_configure import auto_configure_candidates
+
+
 @pytest.fixture()
 def fake_project():
     """Fake project that returns auto-configured assets."""
@@ -26,3 +32,21 @@ def fake_project():
             return FakeTableConfigCollection()
 
     return FakeProject()
+
+def test_auto_configure_arguments(fake_project: Project):
+    """Ensure it throws if passed incorrect arguments."""
+    score = LIScore(objectives=[ScalarMaxObjective(descriptor_key='Test')], baselines=[0.0])
+
+    # Need to pass one of (material, table, predictor)
+    with pytest.raises(ValueError):
+        auto_configure_candidates(
+            project=fake_project,
+            score=score,
+            mode=AutoConfigureMode.PLAIN,
+            material=None,
+            table=None,
+            predictor=None,
+        )
+
+    with pytest.raises(ValueError):
+

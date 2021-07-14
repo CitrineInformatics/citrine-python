@@ -12,7 +12,7 @@ from gemd.entity.template.has_parameter_templates import HasParameterTemplates
 from gemd.entity.value import EmpiricalFormula
 from gemd.util import recursive_flatmap, set_uuids
 
-from citrine.builders import AutoConfigureMode
+from citrine.builders.auto_configure import AutoConfigureMode
 from citrine.informatics.descriptors import RealDescriptor, CategoricalDescriptor, \
     MolecularStructureDescriptor, Descriptor, ChemicalFormulaDescriptor
 from citrine.resources.data_concepts import DataConceptsCollection
@@ -161,10 +161,10 @@ class PlatformVocabulary(Mapping[str, Descriptor]):
 
         Descriptor keys are formatted according to the option set by `mode`.
         For example, if a condition template with name 'Condition 1'
-        appears in a parent process with name 'Parent Process',
+        appears in a parent process with name 'Parent',
         the `mode` option produces the following descriptor key:
 
-        mode = AutoConfigMode.PLAIN       --> 'Parent Process~Condition 1'
+        mode = AutoConfigMode.PLAIN       --> 'Parent~Condition 1'
         mode = AutoConfigMode.FORMULATION --> 'Condition 1'
 
         Parameters
