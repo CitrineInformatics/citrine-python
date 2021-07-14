@@ -23,16 +23,6 @@ from citrine.resources.table_config import TableBuildAlgorithm
 from citrine.builders import AutoConfigureMode
 
 
-def _configure_from_material():
-    pass
-
-def _configure_from_table():
-    pass
-
-def _configure_from_predictor():
-    pass
-
-
 def auto_configure_candidates(
         *,
         project: Project,
@@ -45,15 +35,26 @@ def auto_configure_candidates(
         label: str = '',
         print_status_info: bool = False,
 ) -> DesignExecution:
-    """[ALPHA] Auto configures platform assets from GEM table to design execution.
+    """[ALPHA] Auto configure platform assets from GEM table to design execution.
 
-    Configures and validates a default GEM table, default predictor, and default design space,
-    and then triggers a design execution given the provided `score`.
-    Optionally, a `table` or `preditor` can be specified
+    If a `material` is specified as input,
+    a default GEM table, predictor, and design space is configured,
+    and a design execution is triggered given the provided `score`.
+    If a `table` is specified as input,
+    a `material` is not required and creation of the default GEM table is skipped.
+    If a `predictor` is specified as input,
+    neither a `material` or `table` is required,
+    and the creation of both a default GEM table and predictor is skipped.
 
-    Optionally, a `DataSourceDesignSpace` can be provided by
-    the `design_space` keyword argument to use in place of
+    Optionally, a `DataSourceDesignSpace` can be provided in
+    the `design_space` argument to use in place of
     the default configured design space.
+
+    The validation of platform assets is dependent
+    on the validity of any previous steps in the workflow.
+    In the case that asset validation fails at an intermediate step in this workflow,
+    auto-configured assets can still be accessed on the Citrine Platform
+    for further use.
 
     Parameters
     ----------
@@ -97,14 +98,15 @@ def auto_configure_candidates(
     """
     # Make sure we get at least one valid option
     if material is None and table is None and predictor is None:
-        raise ValueError("One of either material, table, or predictor must be provided.")
+        raise ValueError("Must specify either a material, table, or predictor.")
 
+    # We don't use this when the predictor is provided
     if predictor is None and not isinstance(mode, AutoConfigureMode):
-        # We don't use this when the predictor is provided
         raise TypeError("mode must be an option from AutoConfigureMode")
 
     prefix = '{} - '.format(label) if label else ''
 
+    # Build a GemTable from the specified material
     if table is None and predictor is None:
         # Map to appropriate TableBuildAlgorithm
         # TODO: package-wide formatting enum for all auto-config methods
@@ -119,6 +121,8 @@ def auto_configure_candidates(
         )
         table_config = project.table_configs.register(table_config)
         table = project.tables.build_from_config(table_config)
+    elif predictor is None:
+        print("Using user-provided GemTable.")
 
     # Create a default predictor given the table
     if predictor is None:
@@ -129,14 +133,18 @@ def auto_configure_candidates(
         )
         predictor.name = f'{prefix}Default Predictor'
         predictor = project.predictors.register(predictor)
-        predictor = wait_while_validating(
-            collection=project.predictors, module=predictor, print_status_info=print_status_info
-        )
     else:
-        # They gave us a predictor
+        # They gave us a predictor, make sure it's registered
+        print("Using user-provided predictor: {}.".format(predictor.name))
+        if predictor.uid is None:
+            predictor = project.predictors.register(predictor)
 
+    # Wait while validating, regardless of how we got it
+    predictor = wait_while_validating(
+        collection=project.predictors, module=predictor, print_status_info=print_status_info
+    )
     if predictor.status == 'INVALID':
-        raise RuntimeError("Auto-configured predictor is invalid.")
+        raise RuntimeError("Predictor is invalid, cannot proceed to design space.")
 
     if design_space is None:
         print("Building default design space from predictor...")
@@ -150,9 +158,8 @@ def auto_configure_candidates(
     design_space = wait_while_validating(
         collection=project.design_spaces, module=design_space, print_status_info=print_status_info
     )
-
     if design_space.status == 'INVALID':
-        raise RuntimeError("Auto-configured design space is invalid.")
+        raise RuntimeError("Design space is invalid, cannot proceed to design workflow.")
 
     print("Building design workflow for design space...")
     workflow = DesignWorkflow(
@@ -165,9 +172,8 @@ def auto_configure_candidates(
     workflow = wait_while_validating(
         collection=project.design_workflows, module=workflow, print_status_info=print_status_info
     )
-
     if workflow.status == 'FAILED':
-        raise RuntimeError("Auto-configured design workflow is invalid.")
+        raise RuntimeError("Design workflow is invalid, cannot trigger design execution.")
 
     print("Triggering design execution using provided score...")
     execution = workflow.design_executions.trigger(score)

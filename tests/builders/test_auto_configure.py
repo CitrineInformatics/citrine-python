@@ -14,7 +14,8 @@ def fake_project():
         def __init__(self):
             pass
 
-        def default_for_material
+        def default_for_material(self):
+            pass
 
     class FakeProject(Project):
         def __init__(self):
