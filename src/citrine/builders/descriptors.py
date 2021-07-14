@@ -219,7 +219,7 @@ class PlatformVocabulary(Mapping[str, Descriptor]):
 
             # Assemble to descriptors
             headers = []
-            if mode.value == 'plain':
+            if mode == AutoConfigureMode.PLAIN:
                 headers.append(obj.name)
 
             for tmpl in templates:
