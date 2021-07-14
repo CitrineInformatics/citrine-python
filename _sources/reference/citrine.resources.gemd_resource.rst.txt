@@ -1,0 +1,8 @@
+citrine.resources.gemd\_resource module
+=======================================
+
+.. automodule:: citrine.resources.gemd_resource
+   :members:
+   :undoc-members:
+   :inherited-members:
+   :show-inheritance:

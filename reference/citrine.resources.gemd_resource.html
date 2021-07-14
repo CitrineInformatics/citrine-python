@@ -1,0 +1,536 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>citrine.resources.gemd_resource module &mdash; Citrine Python 1.2.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/custom.css" type="text/css" />
+
+  
+  
+    <link rel="shortcut icon" href="../_static/favicon.png"/>
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html">
+          
+
+          
+            
+            <img src="../_static/logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.2.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/index.html">1. Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_entry.html">2. GEMD Data Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_extraction.html">3. [ALPHA] Data Extraction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../workflows/index.html">4. AI Engine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../formulations_example.html">5. Formulations Example</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../FAQ/index.html">6. FAQ</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Citrine Python</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>citrine.resources.gemd_resource module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/reference/citrine.resources.gemd_resource.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <section id="module-citrine.resources.gemd_resource">
+<span id="citrine-resources-gemd-resource-module"></span><h1>citrine.resources.gemd_resource module<a class="headerlink" href="#module-citrine.resources.gemd_resource" title="Permalink to this headline">¶</a></h1>
+<p>Collection class for generic GEMD objects and templates.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="citrine.resources.gemd_resource.GEMDResourceCollection">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">citrine.resources.gemd_resource.</span></span><span class="sig-name descname"><span class="pre">GEMDResourceCollection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project_id</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">uuid.UUID</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset_id</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">uuid.UUID</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">session</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">citrine._session.Session</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.gemd_resource.GEMDResourceCollection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConceptsCollection" title="citrine.resources.data_concepts.DataConceptsCollection"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.resources.data_concepts.DataConceptsCollection</span></code></a>[<a class="reference internal" href="citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConcepts" title="citrine.resources.data_concepts.DataConcepts"><code class="xref py py-class docutils literal notranslate"><span class="pre">citrine.resources.data_concepts.DataConcepts</span></code></a>]</p>
+<p>A collection of any kind of GEMD objects/templates.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.gemd_resource.GEMDResourceCollection.async_update">
+<span class="sig-name descname"><span class="pre">async_update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConcepts" title="citrine.resources.data_concepts.DataConcepts"><span class="pre">citrine.resources.data_concepts.DataConcepts</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dry_run</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wait_for_response</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">120</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">polling_delay</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_model</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">,</span> </span><a class="reference internal" href="citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConcepts" title="citrine.resources.data_concepts.DataConcepts"><span class="pre">citrine.resources.data_concepts.DataConcepts</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#citrine.resources.gemd_resource.GEMDResourceCollection.async_update" title="Permalink to this definition">¶</a></dt>
+<dd><p>[ALPHA] Update a particular element of the collection with data validation.</p>
+<p>Update a particular element of the collection, doing a deeper check to ensure that
+the dependent data objects are still with the (potentially) changed constraints
+of this change. This will allow you to make bounds and allowed named/labels changes
+to templates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<a class="reference internal" href="citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConcepts" title="citrine.resources.data_concepts.DataConcepts"><em>DataConcepts</em></a>) – The DataConcepts object.</p></li>
+<li><p><strong>dry_run</strong> (<em>bool</em>) – Whether to actually update the item or run a dry run of the update operation.
+Dry run is intended to be used for validation. Default: false</p></li>
+<li><p><strong>wait_for_response</strong> (<em>bool</em>) – Whether to poll for the eventual response. This changes the return type (see
+below).</p></li>
+<li><p><strong>timeout</strong> (<em>float</em>) – How long to poll for the result before giving up. This is expressed in
+(fractional) seconds.</p></li>
+<li><p><strong>polling_delay</strong> (<em>float</em>) – How long to delay between each polling retry attempt.</p></li>
+<li><p><strong>return_model</strong> (<em>bool</em>) – Whether or not to return an updated version of the resource
+If wait_for_response is False, then this argument has no effect</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><p>If wait_for_response if True, then this call will poll the backend, waiting
+for the eventual job result. In the case of successful validation/update,
+a return value of None is provided unless return_model is True, in which case
+the updated resource is fetched and returned. In the case of a failure
+validating or processing the update, an exception (JobFailureError) is raised
+and an error message is logged with the underlying reason of the failure.</p>
+<p>If wait_for_response if False, A job ID (of type UUID) is returned that one
+can use to poll for the job completion and result with the
+<code class="xref py py-func docutils literal notranslate"><span class="pre">poll_async_update_job()</span></code>
+method.</p>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Optional[UUID]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.gemd_resource.GEMDResourceCollection.batch_delete">
+<span class="sig-name descname"><span class="pre">batch_delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id_list</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.link_by_uid.html#gemd.entity.link_by_uid.LinkByUID" title="(in GEMD-python)"><span class="pre">gemd.entity.link_by_uid.LinkByUID</span></a><span class="p"><span class="pre">,</span> </span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.base_entity.html#gemd.entity.base_entity.BaseEntity" title="(in GEMD-python)"><span class="pre">gemd.entity.base_entity.BaseEntity</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">120</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">polling_delay</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.link_by_uid.html#gemd.entity.link_by_uid.LinkByUID" title="(in GEMD-python)"><span class="pre">gemd.entity.link_by_uid.LinkByUID</span></a><span class="p"><span class="pre">,</span> </span><a class="reference internal" href="citrine.resources.api_error.html#citrine.resources.api_error.ApiError" title="citrine.resources.api_error.ApiError"><span class="pre">citrine.resources.api_error.ApiError</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#citrine.resources.gemd_resource.GEMDResourceCollection.batch_delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove a set of GEMD objects.</p>
+<p>You may provide GEMD objects that reference each other, and the objects
+will be removed in the appropriate order.</p>
+<p>A failure will be returned if the object cannot be deleted due to an external
+reference.</p>
+<p>All data objects must be associated with this dataset resource. You must also
+have write access on this dataset.</p>
+<p>If you wish to delete more than 50 objects, queuing of deletes requires that
+the types of objects be known, and thus you _must_ provide ids in the form
+of BaseEntities.</p>
+<p>Also note that Attribute Templates cannot be deleted at present.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>id_list</strong> (<em>List</em><em>[</em><em>Union</em><em>[</em><em>LinkByUID</em><em>, </em><em>UUID</em><em>, </em><em>str</em><em>, </em><em>BaseEntity</em><em>]</em><em>]</em>) – A list of the IDs of data objects to be removed. They can be passed
+as a LinkByUID tuple, a UUID, a string, or the object itself. A UUID
+or string is assumed to be a Citrine ID, whereas a LinkByUID or
+BaseEntity can also be used to provide an external ID.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A list of (LinkByUID, api_error) for each failure to delete an object.
+Note that this method doesn’t raise an exception if an object fails to be
+deleted.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>List[Tuple[LinkByUID, <a class="reference internal" href="citrine.resources.api_error.html#citrine.resources.api_error.ApiError" title="citrine.resources.api_error.ApiError">ApiError</a>]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.gemd_resource.GEMDResourceCollection.build">
+<span class="sig-name descname"><span class="pre">build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConcepts" title="citrine.resources.data_concepts.DataConcepts"><span class="pre">citrine.resources.data_concepts.DataConcepts</span></a><a class="headerlink" href="#citrine.resources.gemd_resource.GEMDResourceCollection.build" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build an arbitary GEMD object from a serialized dictionary.</p>
+<p>This is an internal method, and should not be called directly by users.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>dict</em>) – A serialized data model object.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A data model object built from the dictionary.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConcepts" title="citrine.resources.data_concepts.DataConcepts">DataConcepts</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.gemd_resource.GEMDResourceCollection.delete">
+<span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.link_by_uid.html#gemd.entity.link_by_uid.LinkByUID" title="(in GEMD-python)"><span class="pre">gemd.entity.link_by_uid.LinkByUID</span></a><span class="p"><span class="pre">,</span> </span><a class="reference internal" href="citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConcepts" title="citrine.resources.data_concepts.DataConcepts"><span class="pre">citrine.resources.data_concepts.DataConcepts</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dry_run</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.gemd_resource.GEMDResourceCollection.delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete a GEMD resource from the appropriate collection.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>uid</strong> (<em>Union</em><em>[</em><em>UUID</em><em>, </em><em>str</em><em>, </em><em>LinkByUID</em><em>, </em><a class="reference internal" href="citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConcepts" title="citrine.resources.data_concepts.DataConcepts"><em>DataConcepts</em></a><em>]</em>) – A representation of the resource to delete (Citrine id, LinkByUID, or the object)</p></li>
+<li><p><strong>dry_run</strong> (<em>bool</em>) – Whether to actually delete the item or run a dry run of the delete operation.
+Dry run is intended to be used for validation. Default: false</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.gemd_resource.GEMDResourceCollection.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.link_by_uid.html#gemd.entity.link_by_uid.LinkByUID" title="(in GEMD-python)"><span class="pre">gemd.entity.link_by_uid.LinkByUID</span></a><span class="p"><span class="pre">,</span> </span><a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.base_entity.html#gemd.entity.base_entity.BaseEntity" title="(in GEMD-python)"><span class="pre">gemd.entity.base_entity.BaseEntity</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scope</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">ResourceType</span><a class="headerlink" href="#citrine.resources.gemd_resource.GEMDResourceCollection.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get an element of the collection by its id.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>uid</strong> (<em>Union</em><em>[</em><em>UUID</em><em>, </em><em>str</em><em>, </em><em>LinkByUID</em><em>, </em><em>BaseEntity</em><em>]</em>) – A representation of the object (Citrine id, LinkByUID, or the object itself)</p></li>
+<li><p><strong>scope</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – [DEPRECATED] use a LinkByUID to specify a custom scope
+The scope of the uid, defaults to Citrine scope (CITRINE_SCOPE)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>An object with specified scope and uid</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>ResourceType</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.gemd_resource.GEMDResourceCollection.get_type">
+<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">get_type</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">Type</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConcepts" title="citrine.resources.data_concepts.DataConcepts"><span class="pre">citrine.resources.data_concepts.DataConcepts</span></a><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#citrine.resources.gemd_resource.GEMDResourceCollection.get_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the resource type in the collection.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.gemd_resource.GEMDResourceCollection.list">
+<span class="sig-name descname"><span class="pre">list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">per_page</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">forward</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">ResourceType</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#citrine.resources.gemd_resource.GEMDResourceCollection.list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all visible elements of the collection.</p>
+<p>The order of results should not be relied upon, but for now they are sorted by
+dataset, object type, and creation time (in that order of priority).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>page</strong> (<em>int</em><em>, </em><em>optional</em>) – [DEPRECATED][IGNORED] This parameter is ignored. All pages are loaded lazily.</p></li>
+<li><p><strong>per_page</strong> (<em>int</em><em>, </em><em>optional</em>) – Max number of results to return per page. It is very unlikely that
+setting this parameter to something other than the default is useful.
+It exists for rare situations where the client is bandwidth constrained
+or experiencing latency from large payload sizes.</p></li>
+<li><p><strong>forward</strong> (<em>bool</em>) – Set to False to reverse the order of results (i.e., return in descending order)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Every object in this collection.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Iterator[ResourceType]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.gemd_resource.GEMDResourceCollection.list_all">
+<span class="sig-name descname"><span class="pre">list_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">forward</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">per_page</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">ResourceType</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#citrine.resources.gemd_resource.GEMDResourceCollection.list_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all objects in the collection.</p>
+<p>The order of results should not be relied upon, but for now they are sorted by
+dataset, object type, and creation time (in that order of priority).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>forward</strong> (<em>bool</em>) – Set to False to reverse the order of results (i.e., return in descending order).</p></li>
+<li><p><strong>per_page</strong> (<em>int</em>) – Controls the number of results fetched with each http request to the backend.
+Typically, this is set to a sensible default and should not be modified. Consider
+modifying this value only if you find this method is unacceptably latent.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Every object in this collection.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Iterator[ResourceType]</p>
+</dd>
+</dl>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 0.133.0: </span>This will be removed in 1.0.0. Please use list instead of list_all</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.gemd_resource.GEMDResourceCollection.list_by_name">
+<span class="sig-name descname"><span class="pre">list_by_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exact</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">forward</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">per_page</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">ResourceType</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#citrine.resources.gemd_resource.GEMDResourceCollection.list_by_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all objects with specified name in this dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – case-insensitive object name prefix to search.</p></li>
+<li><p><strong>exact</strong> (<em>bool</em>) – Set to True to change prefix search to exact search (but still case-insensitive).
+Default is False.</p></li>
+<li><p><strong>forward</strong> (<em>bool</em>) – Set to False to reverse the order of results (i.e., return in descending order).</p></li>
+<li><p><strong>per_page</strong> (<em>int</em>) – Controls the number of results fetched with each http request to the backend.
+Typically, this is set to a sensible default and should not be modified. Consider
+modifying this value only if you find this method is unacceptably latent.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>List of every object in this collection whose <cite>name</cite> matches the search term.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Iterator[ResourceType]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.gemd_resource.GEMDResourceCollection.list_by_tag">
+<span class="sig-name descname"><span class="pre">list_by_tag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">per_page</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">ResourceType</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#citrine.resources.gemd_resource.GEMDResourceCollection.list_by_tag" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get all objects bearing a tag prefixed with <cite>tag</cite> in the collection.</p>
+<p>The order of results is largely not meaningful. Results from the same dataset will be
+grouped together but no other meaningful ordering can be relied upon. Duplication in
+the result set may (but needn’t) occur when one object has multiple tags matching the
+search tag. For this reason, it is inadvisable to put 2 tags with the same prefix
+(e.g., ‘foo::bar’ and ‘foo::baz’) in the same object when it can be avoided.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tag</strong> (<em>str</em>) – The prefix with which to search. Must fully match up to the first delimiter (ex.
+‘foo’ and ‘foo::b’ both match ‘foo::bar’ but ‘fo’ is insufficient.</p></li>
+<li><p><strong>per_page</strong> (<em>int</em>) – Controls the number of results fetched with each http request to the backend.
+Typically, this is set to a sensible default and should not be modified. Consider
+modifying this value only if you find this method is unacceptably latent.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Every object in this collection.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Iterator[ResourceType]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.gemd_resource.GEMDResourceCollection.poll_async_update_job">
+<span class="sig-name descname"><span class="pre">poll_async_update_job</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">job_id</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">uuid.UUID</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">120</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">polling_delay</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="headerlink" href="#citrine.resources.gemd_resource.GEMDResourceCollection.poll_async_update_job" title="Permalink to this definition">¶</a></dt>
+<dd><p>[ALPHA] Poll for the result of the async_update call.</p>
+<p>This call will poll the backend given the Job ID that came from a call to
+<code class="xref py py-func docutils literal notranslate"><span class="pre">async_update()</span></code>,
+waiting for the eventual job result. In the case of successful validation/update,
+a return value of None is provided which indicates success. In the case of
+a failure validating or processing the update, an exception (JobFailureError)
+is raised and an error message is logged with the underlying reason of the
+failure.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>job_id</strong> (<em>UUID</em>) – The job ID for the asynchronous update job we wish to poll.</p></li>
+<li><p><strong>timeout</strong> – How long to poll for the result before giving up. This is expressed in
+(fractional) seconds.</p></li>
+<li><p><strong>polling_delay</strong> – How long to delay between each polling retry attempt.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>This method will raise an appropriate exception if the job failed, else
+it will return None to indicate the job was successful.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.gemd_resource.GEMDResourceCollection.register">
+<span class="sig-name descname"><span class="pre">register</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConcepts" title="citrine.resources.data_concepts.DataConcepts"><span class="pre">citrine.resources.data_concepts.DataConcepts</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dry_run</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConcepts" title="citrine.resources.data_concepts.DataConcepts"><span class="pre">citrine.resources.data_concepts.DataConcepts</span></a><a class="headerlink" href="#citrine.resources.gemd_resource.GEMDResourceCollection.register" title="Permalink to this definition">¶</a></dt>
+<dd><p>Register a GEMD object to the appropriate collection.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.gemd_resource.GEMDResourceCollection.register_all">
+<span class="sig-name descname"><span class="pre">register_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">models</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConcepts" title="citrine.resources.data_concepts.DataConcepts"><span class="pre">citrine.resources.data_concepts.DataConcepts</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dry_run</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConcepts" title="citrine.resources.data_concepts.DataConcepts"><span class="pre">citrine.resources.data_concepts.DataConcepts</span></a><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#citrine.resources.gemd_resource.GEMDResourceCollection.register_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Register multiple GEMD objects to each of their appropriate collections.</p>
+<p>Does so in an order that is guaranteed to store all linked items before the item that
+references them.</p>
+<p>The uids of the input data concepts resources are updated with their on-platform uids.
+This supports storing an object that has a reference to an object that doesn’t have a uid.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>models</strong> (<em>List</em><em>[</em><a class="reference internal" href="citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConcepts" title="citrine.resources.data_concepts.DataConcepts"><em>DataConcepts</em></a><em>]</em>) – The data model objects to register. Can be different types.</p></li>
+<li><p><strong>dry_run</strong> (<em>bool</em>) – Whether to actually register the item or run a dry run of the register operation.
+Dry run is intended to be used for validation. Default: false</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The registered versions</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>List[<a class="reference internal" href="citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConcepts" title="citrine.resources.data_concepts.DataConcepts">DataConcepts</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.gemd_resource.GEMDResourceCollection.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConcepts" title="citrine.resources.data_concepts.DataConcepts"><span class="pre">citrine.resources.data_concepts.DataConcepts</span></a></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConcepts" title="citrine.resources.data_concepts.DataConcepts"><span class="pre">citrine.resources.data_concepts.DataConcepts</span></a><a class="headerlink" href="#citrine.resources.gemd_resource.GEMDResourceCollection.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update a data model object using the appropriate collection.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2019, Citrine Informatics.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
