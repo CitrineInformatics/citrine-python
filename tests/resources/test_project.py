@@ -233,6 +233,10 @@ def test_ingredient_specs_get_project_id(project):
     assert project.uid == project.ingredient_specs.project_id
 
 
+def test_gemd_resource_get_project_id(project):
+    assert project.uid == project.gemd.project_id
+
+
 def test_design_spaces_get_project_id(project):
     assert project.uid == project.design_spaces.project_id
 
