@@ -1,5 +1,6 @@
 from uuid import UUID
-from typing import Union, Optional
+from typing import Union, Optional, List
+import warnings
 
 from gemd.entity.link_by_uid import LinkByUID
 from gemd.enumeration.base_enumeration import BaseEnumeration
@@ -26,8 +27,35 @@ class AutoConfigureMode(BaseEnumeration):
     * FORMULATION corresponds to a multi-row GEM table and formulations predictor
     """
 
-    PLAIN = "plain"
-    FORMULATION = "formulation"
+    PLAIN = 'PLAIN'
+    FORMULATION = 'FORMULATION'
+
+
+class AutoConfigureStatus(BaseEnumeration):
+    """[ALPHA] The current status of the AutoConfigureWorkflow.
+
+    * START is the initial status before auto-configuration
+    * TABLE_BUILD is the status after creating a default GEM table
+    * PREDICTOR_CREATED is the status after creating a default predictor
+    * PREDICTOR_INVALID is the status if predictor validation fails
+    * PEW_CREATED is the status after creating a predictor evaluation workflow
+    * PEW_FAILED is the status if predictor evaluation workflow validation fails
+    * DESIGN_SPACE_CREATED is the status after design space creation/registration
+    * DESIGN_SPACE_INVALID is the status if design space validation fails
+    * DESIGN_WORKFLOW_CREATED is the status after design workflow creation
+    * DESIGN_WORKFlOW_FAILED is the status if design workflow validation fails
+    """
+
+    START = 'START'
+    TABLE_CREATED = 'TABLE CREATED'
+    PREDICTOR_CREATED = 'PREDICTOR CREATED'
+    PREDICTOR_INVALID = 'PREDICTOR INVALID'
+    PEW_CREATED = 'PREDICTOR EVALUATION WORKFLOW CREATED'
+    PEW_FAILED = 'PREDICTOR EVALUATION WORKFLOW FAILED'
+    DESIGN_SPACE_CREATED = 'DESIGN SPACE CREATED'
+    DESIGN_SPACE_INVALID = 'DESIGN SPACE INVALID'
+    DESIGN_WORKFLOW_CREATED = 'DESIGN WORKFLOW CREATED'
+    DESIGN_WORKFLOW_FAILED = 'DESIGN WORKFLOW FAILED'
 
 
 class AutoConfigureWorkflow():
@@ -49,7 +77,7 @@ class AutoConfigureWorkflow():
 
     auto_config = AutoConfigureWorkflow(project=project, name='Auto Config v1')
 
-    # GEM table -> predictor -> PEW/PEE -> design space -> design workflow -> design execution
+    # GEM table -> Predictor -> PEW/PEE -> Design Space -> Design Workflow -> Design Execution
     auto_config.from_material(
         material=sample_material,
         score=score,
@@ -75,7 +103,10 @@ class AutoConfigureWorkflow():
 
     def __init__(self, *, project: Project, name: str = ''):
         self._project = project
+        self._name = name
         self._prefix = '{} - '.format(name) if name else ''
+        self._status = AutoConfigureStatus.START
+        self._status_info = []
 
         # Blank initialize assets
         self._table_config = None
@@ -91,6 +122,21 @@ class AutoConfigureWorkflow():
     def project(self) -> Project:
         """Get the project used when automatically configuring assets."""
         return self._project
+
+    @property
+    def name(self) -> str:
+        """Get the naming label for assets configured by this object."""
+        return self._name
+
+    @property
+    def status(self) -> str:
+        """Get the most recent status of the auto-configure workflow."""
+        return self._status.value
+
+    @property
+    def status_info(self) -> List[str]:
+        """Get the most recent status info from asset configuration/validation."""
+        return self._status_info
 
     @property
     def table_config(self) -> Optional[TableConfig]:
@@ -142,6 +188,27 @@ class AutoConfigureWorkflow():
         ]
         return [asset for asset in initial_assets if asset is not None]
 
+    def execute(self, *, score: Score) -> DesignExecution:
+        """[ALPHA] Execute a design execution given a provided score.
+
+        A design workflow must be present after auto-configuration to execute the score.
+        This method can be called after modifying auto-configured assets
+        to create a new, custom design execution.
+
+        Parameters
+        ----------
+        score: Score
+            Scoring function used to rank candidates during design execution.
+            Must contain objectives/constraints with matching descriptor keys
+            to those appearing in predictor responses.
+
+        """
+        if self.design_workflow is None:
+            raise ValueError("Design workflow is missing, cannot execute score.")
+        execution = self.design_workflow.design_executions.trigger(score)
+        self._design_execution = execution
+        return self.design_execution
+
     def from_material(
             self,
             *,
@@ -162,6 +229,8 @@ class AutoConfigureWorkflow():
             design_space -> A DataSourceDesignSpace to be used in place of the default
             score        -> Triggers a design execution from the auto-configured design workflow
 
+        Parameters
+        ----------
         material: Union[str, UUID, LinkByUID, MaterialRun]
             A representation of the material to configure a
             default table, predictor, and design space from.
@@ -202,8 +271,10 @@ class AutoConfigureWorkflow():
         )
         table_config = self.project.table_configs.register(table_config)
         table = self.project.tables.build_from_config(table_config)
+
         self._table_config = table_config
         self._table = table
+        self._status = AutoConfigureStatus.TABLE_CREATED
 
         # Finish workflow from table stage
         self.from_table(
@@ -231,6 +302,8 @@ class AutoConfigureWorkflow():
             design_space -> A DataSourceDesignSpace to be used in place of the default
             score        -> Triggers a design execution from the auto-configured design workflow
 
+        Parameters
+        ----------
         table: Table
             A GEM table to configure a default predictor,
             design space, and design workflow from.
@@ -260,7 +333,7 @@ class AutoConfigureWorkflow():
         print("Configuring default predictor from GEM table...")
         data_source = GemTableDataSource(table_id=table.uid, table_version=table.version)
         predictor = self.project.predictors.auto_configure(
-            training_data=data_source, pattern=mode.value.upper()  # Uses same string pattern
+            training_data=data_source, pattern=mode.value  # Uses same string pattern
         )
         predictor.name = f'{self._prefix}Default Predictor'
         predictor = self.project.predictors.register(predictor)
@@ -268,9 +341,13 @@ class AutoConfigureWorkflow():
             collection=self.project.predictors, module=predictor,
             print_status_info=print_status_info
         )
+
         self._predictor = predictor
+        self._status = AutoConfigureStatus.PREDICTOR_CREATED
+        self._status_info = predictor.status_info
 
         if predictor.status == 'INVALID':
+            self._status = AutoConfigureStatus.PREDICTOR_INVALID
             raise RuntimeError("Predictor is invalid,"
                                " cannot proceed to design space configuration.")
 
@@ -299,6 +376,8 @@ class AutoConfigureWorkflow():
             design_space -> A DataSourceDesignSpace to be used in place of the default
             score        -> Triggers a design execution from the auto-configured design workflow
 
+        Parameters
+        ----------
         predictor: Predictor
             A registered predictor to configure a default design space and design workflow from.
         evaluator: Optional[PredictorEvaluator]
@@ -324,25 +403,35 @@ class AutoConfigureWorkflow():
         if predictor.uid is None:
             raise ValueError("Predictor is missing uid. Are you using a registered resource?")
 
-        if evaluator is None:
-            print("Configuring default predictor evaluation workflow...")
-            pew = self.project.predictor_evaluation_workflows.create_default(
-                predictor_id=predictor.uid
-            )
-        else:
-            print("Configuring predictor evaluation with user-provided evaluator...")
+        print("Configuring predictor evaluation workflow/execution...")
+        if evaluator is not None:
+            # We got an evaluator, so make a new PEW for it
             pew = PredictorEvaluationWorkflow(
                 name=f'{self._prefix}Predictor Evaluation Workflow',
                 evaluators=[evaluator]
+            )
+        else:
+            # No evaluator, so create a default PEW
+            pew = self.project.predictor_evaluation_workflows.create_default(
+                predictor_id=predictor.uid
             )
         pew = self.project.predictor_evaluation_workflows.register(pew)
         pew = wait_while_validating(
             collection=self.project.predictor_evaluation_workflows, module=pew,
             print_status_info=print_status_info
         )
-        pee = pew.executions.trigger(predictor.uid)  # Not a blocker, can move on
+
         self._predictor_evaluation_workflow = pew
-        self._predictor_evaluation_execution = pee
+        self._status = AutoConfigureStatus.PEW_CREATED
+        self._status_info = pew.status_info
+
+        if pew.status == 'FAILED':
+            # Do not raise error, but also do not trigger PEE
+            self._status = AutoConfigureStatus.PEW_FAILED
+            warnings.warn("Predictor evaluation workflow failed -- not triggering execution.")
+        else:
+            pee = pew.executions.trigger(predictor.uid)
+            self._predictor_evaluation_execution = pee
 
         if design_space is None:
             print("Configuring default design space from predictor...")
@@ -357,9 +446,13 @@ class AutoConfigureWorkflow():
             collection=self.project.design_spaces, module=design_space,
             print_status_info=print_status_info
         )
+
         self._design_space = design_space
+        self._status = AutoConfigureStatus.DESIGN_SPACE_CREATED
+        self._status_info = design_space.status_info
 
         if design_space.status == 'INVALID':
+            self._status = AutoConfigureStatus.DESIGN_SPACE_INVALID
             raise RuntimeError("Design space is invalid,"
                                " cannot proceed to design workflow configuration.")
 
@@ -375,15 +468,19 @@ class AutoConfigureWorkflow():
             collection=self.project.design_workflows, module=workflow,
             print_status_info=print_status_info
         )
+
         self._desing_workflow = workflow
+        self._status = AutoConfigureStatus.DESIGN_WORKFLOW_CREATED
+        self._status_info = workflow.status_info
 
-        if score is None:
-            print("No score provided to trigger design execution - finished.")
-        else:
-            if workflow.status == 'FAILED':
-                raise RuntimeError("Design workflow is invalid,"
+        # TODO: Option to provide objective OR score, extract baseline from training data
+        if workflow.status == 'FAILED':
+            self._status = AutoConfigureStatus.DESIGN_WORKFLOW_FAILED
+            if score is None:
+                print("No score provided to trigger design execution -- finished.")
+            else:
+                raise RuntimeError("Design workflow validation failed,"
                                    " cannot trigger design execution.")
-
+        elif score is not None:
             print("Triggering design execution using provided score...")
-            execution = workflow.design_executions.trigger(score)
-            self._design_execution = execution
+            self.execute(score=score)
