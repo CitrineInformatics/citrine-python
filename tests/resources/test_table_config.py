@@ -1,7 +1,5 @@
 from uuid import UUID, uuid4
 import pytest
-import warnings
-from deprecation import DeprecatedWarning
 
 from gemd.entity.link_by_uid import LinkByUID
 from citrine.gemtables.columns import MeanColumn, OriginalUnitsColumn, StdDevColumn, IdentityColumn
@@ -70,7 +68,7 @@ def test_get_table_config(collection, session):
         path="projects/{}/ara-definitions/{}/versions/{}".format(project_id, defn_id, ver_number)
     )
     assert session.last_call == expect_call
-    assert str(retrieved_table_config.uid) == defn_id
+    assert str(retrieved_table_config.config_uid) == defn_id
     assert retrieved_table_config.version_number == ver_number
 
     # Given
@@ -89,24 +87,22 @@ def test_get_table_config(collection, session):
         path="projects/{}/ara-definitions/{}".format(project_id, defn_id)
     )
     assert session.last_call == expect_call
-    assert str(retrieved_table_config.uid) == defn_id
+    assert str(retrieved_table_config.config_uid) == defn_id
     assert retrieved_table_config.version_number == version_number
 
 
 def test_init_table_config():
     table_config = TableConfig(name="foo", description="bar", rows=[], columns=[], variables=[], datasets=[])
-    assert table_config.uid is None
+    assert table_config.config_uid is None
     assert table_config.version_number is None
 
 
-def test_config_uid_deprecation_warning():
-    """Test that config_uid throws a deprecation warning and returns uid attribute"""
-    table_config = TableConfig(name="name", description="description", datasets=[], rows=[], variables=[], columns=[])
-    table_config.uid = uuid4()
-    with warnings.catch_warnings(record=True) as caught:
-        assert table_config.config_uid == table_config.uid
-        assert len(caught) == 1
-        assert caught[0].category == DeprecatedWarning
+def test_uid_aliases_config_uid():
+    """Test that uid returns config_uid attribute"""
+    table_config = TableConfig(name="name", description="description", datasets=[], rows=[], variables=[], 
+        columns=[])
+    table_config.config_uid = uuid4()
+    assert table_config.uid == table_config.config_uid
 
 
 def test_dup_names():
@@ -261,7 +257,7 @@ def test_default_for_material_failure(collection: TableConfigCollection):
 def test_add_columns():
     """Test the behavior of AraDefinition.add_columns"""
     empty = empty_defn()
-    empty.uid = uuid4()
+    empty.config_uid = uuid4()
 
     # Check the mismatched name error
     with pytest.raises(ValueError) as excinfo:
@@ -278,7 +274,7 @@ def test_add_columns():
     )
     assert with_name_col.variables == [TerminalMaterialInfo(name="name", headers=["bar"], field="name")]
     assert with_name_col.columns == [IdentityColumn(data_source="name")]
-    assert with_name_col.uid == empty.uid
+    assert with_name_col.config_uid == empty.config_uid
 
     # Check duplicate variable name error
     with pytest.raises(ValueError) as excinfo:
@@ -304,7 +300,7 @@ def test_add_all_ingredients(session, project):
     empty = empty_defn()
     def1 = empty.add_all_ingredients(process_template=process_link, project=project,
                                             quantity_dimension=IngredientQuantityDimension.VOLUME)
-    def1.uid = uuid4()
+    def1.config_uid = uuid4()
 
     # THEN there should be 2 variables and columns for each name, one for id and one for quantity
     assert len(def1.variables) == len(allowed_names) * 2
@@ -329,7 +325,7 @@ def test_add_all_ingredients(session, project):
     new_columns = def2.columns[len(def1.columns):]
     assert len(new_variables) == len(allowed_names)
     assert len(new_columns) == len(allowed_names) * 2
-    assert def2.uid == def1.uid
+    assert def2.config_uid == def1.config_uid
     for name in allowed_names:
         assert next((var for var in new_variables if name in var.headers
                      and isinstance(var, IngredientQuantityByProcessAndName)), None) is not None
@@ -368,7 +364,7 @@ def test_register_new(collection, session):
     registered = collection.register(table_config)
 
     # Then
-    assert registered.uid == UUID(defn_uid)
+    assert registered.config_uid == UUID(defn_uid)
     assert registered.version_uid == UUID(ver_uid)
     assert session.num_calls == 1
 
@@ -382,10 +378,10 @@ def test_register_existing(collection, session):
     # Given
     project_id = '6b608f78-e341-422c-8076-35adc8828545'
     # table_config = TableConfigResponseDataFactory()
-    # uid = table_config["definition_id"]
+    # config_uid = table_config["definition_id"]
 
     table_config = TableConfig(name="name", description="description", datasets=[], rows=[], variables=[], columns=[])
-    table_config.uid = uuid4()
+    table_config.config_uid = uuid4()
 
     table_config_response = TableConfigResponseDataFactory()
     defn_uid = table_config_response["definition"]["id"]
@@ -395,13 +391,13 @@ def test_register_existing(collection, session):
     # When
     registered = collection.register(table_config)
 
-    assert registered.uid == UUID(defn_uid)
+    assert registered.config_uid == UUID(defn_uid)
     assert registered.version_uid == UUID(ver_uid)
     assert session.num_calls == 1
 
     # Ensure we PUT if we were called with a table config id
     assert session.last_call.method == "PUT"
-    assert session.last_call.path == "projects/{}/ara-definitions/{}".format(project_id, table_config.uid)
+    assert session.last_call.path == "projects/{}/ara-definitions/{}".format(project_id, table_config.config_uid)
 
 
 def test_update(collection, session):
@@ -409,7 +405,7 @@ def test_update(collection, session):
     # Given
     project_id = '6b608f78-e341-422c-8076-35adc8828545'
     table_config = TableConfig(name="name", description="description", datasets=[], rows=[], variables=[], columns=[])
-    table_config.uid = uuid4()
+    table_config.config_uid = uuid4()
 
     table_config_response = TableConfigResponseDataFactory()
     defn_uid = table_config_response["definition"]["id"]
@@ -420,13 +416,13 @@ def test_update(collection, session):
     registered = collection.update(table_config)
 
     # Then
-    assert registered.uid == UUID(defn_uid)
+    assert registered.config_uid == UUID(defn_uid)
     assert registered.version_uid == UUID(ver_uid)
     assert session.num_calls == 1
 
     # Ensure we POST if we weren't created with a table config id
     assert session.last_call.method == "PUT"
-    assert session.last_call.path == "projects/{}/ara-definitions/{}".format(project_id, table_config.uid)
+    assert session.last_call.path == "projects/{}/ara-definitions/{}".format(project_id, table_config.config_uid)
 
 
 def test_update_unregistered_fail(collection, session):
@@ -437,10 +433,10 @@ def test_update_unregistered_fail(collection, session):
     table_config = TableConfig(name="name", description="description", datasets=[], rows=[], variables=[], columns=[])
 
     # When
-    with pytest.raises(ValueError, match="Cannot update Table Config without a uid."):
+    with pytest.raises(ValueError, match="Cannot update Table Config without a config_uid."):
         collection.update(table_config)
 
 
 def test_delete(collection):
     with pytest.raises(NotImplementedError):
-        collection.delete(empty_defn().uid)
+        collection.delete(empty_defn().config_uid)
