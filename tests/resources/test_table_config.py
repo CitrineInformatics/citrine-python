@@ -1,6 +1,7 @@
 from uuid import UUID, uuid4
 import pytest
 import warnings
+from deprecation import DeprecatedWarning
 
 from gemd.entity.link_by_uid import LinkByUID
 from citrine.gemtables.columns import MeanColumn, OriginalUnitsColumn, StdDevColumn, IdentityColumn
@@ -105,7 +106,7 @@ def test_config_uid_deprecation_warning():
     with warnings.catch_warnings(record=True) as caught:
         assert table_config.config_uid == table_config.uid
         assert len(caught) == 1
-        assert caught[0].category == DeprecationWarning
+        assert caught[0].category == DeprecatedWarning
 
 
 def test_dup_names():

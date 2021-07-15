@@ -2,7 +2,6 @@ from copy import copy
 from typing import List, Union, Optional, Tuple
 from uuid import UUID
 
-import warnings
 from deprecation import deprecated
 from gemd.entity.object import MaterialRun
 
@@ -108,10 +107,10 @@ class TableConfig(Resource["TableConfig"]):
                              " but {} were missing".format(missing_variables))
 
     @property
+    @deprecated(deprecated_in="1.3.0", removed_in="2.0.0",
+                details="The config_uid attribute is deprecated in favor of the uid attribute.")
     def config_uid(self) -> UUID:
         """[DEPRECATED] Unique ID of the table config, independent of its version."""
-        warnings.warn("The config_uid attribute is deprecated in favor of the uid attribute.", 
-            DeprecationWarning)
         return self.uid
 
     def add_columns(self, *,
