@@ -97,6 +97,14 @@ def test_init_table_config():
     assert table_config.version_number is None
 
 
+def test_uid_aliases_config_uid():
+    """Test that uid returns config_uid attribute"""
+    table_config = TableConfig(name="name", description="description", datasets=[], rows=[], variables=[], 
+        columns=[])
+    table_config.config_uid = uuid4()
+    assert table_config.uid == table_config.config_uid
+
+
 def test_dup_names():
     """Make sure that variable name and headers are unique across a table config"""
     with pytest.raises(ValueError) as excinfo:

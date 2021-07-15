@@ -123,7 +123,7 @@ class GemTableCollection(Collection[GemTable]):
         This is a paginated collection, similar to a .list() call.
 
 
-        :param uid: The Table Config UID.
+        :param table_config_uid: The Table Config UID.
         :param page: The page number to display (eg: 1)
         :param per_page: The number of items to fetch per-page.
         :return: An iterable of the versions of the Tables (as Table objects).
@@ -178,10 +178,10 @@ class GemTableCollection(Collection[GemTable]):
             if config.version_number is None:
                 raise ValueError('Cannot build table from config which has no version. '
                                  'Try registering the config before building.')
-            if config.config_uid is None:
+            if config.uid is None:
                 raise ValueError('Cannot build table from config which has no uid. '
                                  'Try registering the config before building.')
-            uid = config.config_uid
+            uid = config.uid
             version = config.version_number
         else:
             if version is None:
