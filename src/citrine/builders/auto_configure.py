@@ -401,7 +401,6 @@ class AutoConfigureWorkflow():
             mode: AutoConfigureMode
     ):
         """Create a default GEM table from a material."""
-
         # TODO: package-wide formatting enum for method
         table_algorithm_map = {
             'PLAIN': TableBuildAlgorithm.SINGLE_ROW,
@@ -429,7 +428,6 @@ class AutoConfigureWorkflow():
             print_status_info: bool
     ):
         """Create a default predictor from a GEM table."""
-
         print("Configuring default predictor from GEM table...")
         data_source = GemTableDataSource(table_id=table.uid, table_version=table.version)
         predictor = self.project.predictors.auto_configure(
