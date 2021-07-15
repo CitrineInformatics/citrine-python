@@ -110,7 +110,7 @@ class TableConfig(Resource["TableConfig"]):
     @property
     def config_uid(self) -> UUID:
         """[DEPRECATED] Unique ID of the table config, independent of its version."""
-        warn("The config_uid attribute is deprecated in favor of the uid attribute.", 
+        warnings.warn("The config_uid attribute is deprecated in favor of the uid attribute.", 
             DeprecationWarning)
         return self.uid
 
