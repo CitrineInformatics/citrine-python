@@ -51,7 +51,7 @@ class FakeCollection(Collection):
         pass
 
     def register(self, asset):
-        asset.uid = uuid4()
+        # Fake no-op for testing
         return asset
 
 
@@ -80,6 +80,7 @@ class FakePredictorCollection(FakeCollection, PredictorCollection):
 
     def auto_configure(self, **kwargs) -> Predictor:
         predictor = FakePredictor()
+        predictor.uid = uuid4()
         return predictor
 
 
@@ -233,6 +234,7 @@ def test_auto_configure_public_raises(fake_config: AutoConfigureWorkflow, fake_p
         )
 
     # Raises on no predictor UID
+    fake_predictor.uid = None
     with pytest.raises(ValueError):
         fake_config.from_predictor(
             predictor=fake_predictor
