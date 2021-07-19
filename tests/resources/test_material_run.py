@@ -80,6 +80,8 @@ def test_nomutate_gemd(collection, session):
     # Then
     assert before == after
     assert "<Material run 'Test MR mutation'>" == str(registered)
+    assert after.uids.get("id") is None
+    assert registered.uid is not None
 
 
 def test_get_history(collection, session):
