@@ -8,7 +8,7 @@ from gemd.enumeration.base_enumeration import BaseEnumeration
 from citrine.jobs.waiting import wait_while_validating
 from citrine.informatics.data_sources import GemTableDataSource
 from citrine.informatics.executions import DesignExecution, PredictorEvaluationExecution
-from citrine.informatics.design_spaces import DesignSpace, DataSourceDesignSpace
+from citrine.informatics.design_spaces import DesignSpace
 from citrine.informatics.predictor_evaluator import PredictorEvaluator
 from citrine.informatics.scores import Score
 from citrine.informatics.workflows import DesignWorkflow, PredictorEvaluationWorkflow
@@ -118,7 +118,7 @@ class AutoConfigureWorkflow():
         self._predictor_evaluation_workflow = None
         self._predictor_evaluation_execution = None
         self._design_space = None
-        self._desing_workflow = None
+        self._design_workflow = None
         self._design_execution = None
 
     @property
@@ -174,7 +174,7 @@ class AutoConfigureWorkflow():
     @property
     def design_workflow(self) -> Optional[DesignWorkflow]:
         """Get the default design workflow, if it was created by this object."""
-        return self._desing_workflow
+        return self._design_workflow
 
     @property
     def design_execution(self) -> Optional[DesignExecution]:
@@ -183,7 +183,7 @@ class AutoConfigureWorkflow():
 
     @property
     def assets(self):
-        """Get all assets created by this object."""
+        """Get all assets  by this object."""
         initial_assets = [
             self.table_config, self.table, self.predictor,
             self.predictor_evaluation_workflow, self.predictor_evaluation_execution,
@@ -217,7 +217,7 @@ class AutoConfigureWorkflow():
             *,
             material: Union[str, UUID, LinkByUID, MaterialRun],
             evaluator: Optional[PredictorEvaluator] = None,
-            design_space: Optional[DataSourceDesignSpace] = None,
+            design_space: Optional[DesignSpace] = None,
             score: Optional[Score] = None,
             mode: AutoConfigureMode = AutoConfigureMode.PLAIN,
             print_status_info: bool = False,
@@ -229,7 +229,7 @@ class AutoConfigureWorkflow():
 
         An optional evaluator, design_space, and score can be provided:
             evaluator    -> A PredictorEvaluator to be used in place of the default
-            design_space -> A DataSourceDesignSpace to be used in place of the default
+            design_space -> A DesignSpace to be used in place of the default
             score        -> Triggers a design execution from the auto-configured design workflow
 
         Parameters
@@ -241,8 +241,9 @@ class AutoConfigureWorkflow():
             A PredictorEvaluator to use in place of the default.
             Must contain responses matching outputs of the default predictor.
             Default: None
-        design_space: Optional[DataSourceDesignSpace]
-            A DataSourceDesignSpace to use in place of the default.
+        design_space: Optional[DesignSpace]
+            A DesignSpace object to use in place of the default.
+            If not registered already, will be registered during configuration.
             Default: None
         score: Optional[Score]
             Scoring function used to rank candidates during design execution.
@@ -274,7 +275,7 @@ class AutoConfigureWorkflow():
             *,
             table: GemTable,
             evaluator: Optional[PredictorEvaluator] = None,
-            design_space: Optional[DataSourceDesignSpace] = None,
+            design_space: Optional[DesignSpace] = None,
             score: Optional[Score] = None,
             mode: AutoConfigureMode = AutoConfigureMode.PLAIN,
             print_status_info: bool = False,
@@ -282,11 +283,11 @@ class AutoConfigureWorkflow():
         """[ALPHA] Auto configure platform assets from GEM table to design workflow.
 
         Given a GEM table on the Citrine Platform,
-        creates a defaul predictor, design space, and design workflow.
+        creates a default predictor, design space, and design workflow.
 
         An optional evaluator, design_space, and score can be provided:
             evaluator    -> A PredictorEvaluator to be used in place of the default
-            design_space -> A DataSourceDesignSpace to be used in place of the default
+            design_space -> A DesignSpace to be used in place of the default
             score        -> Triggers a design execution from the auto-configured design workflow
 
         Parameters
@@ -298,8 +299,9 @@ class AutoConfigureWorkflow():
             A PredictorEvaluator to use in place of the default.
             Must contain responses matching outputs of the default predictor.
             Default: None
-        design_space: Optional[DataSourceDesignSpace]
-            A DataSourceDesignSpace to use in place of the default.
+        design_space: Optional[DesignSpace]
+            A DesignSpace object to use in place of the default.
+            If not registered already, will be registered during configuration.
             Default: None
         score: Optional[Score]
             Scoring function used to rank candidates during design execution.
@@ -331,7 +333,7 @@ class AutoConfigureWorkflow():
             *,
             predictor: Predictor,
             evaluator: Optional[PredictorEvaluator] = None,
-            design_space: Optional[DataSourceDesignSpace] = None,
+            design_space: Optional[DesignSpace] = None,
             score: Optional[Score] = None,
             print_status_info: bool = False
     ):
@@ -342,7 +344,7 @@ class AutoConfigureWorkflow():
 
         An optional evaluator, design_space, and score can be provided:
             evaluator    -> A PredictorEvaluator to be used in place of the default
-            design_space -> A DataSourceDesignSpace to be used in place of the default
+            design_space -> A custom DesignSpace to be used in place of the default
             score        -> Triggers a design execution from the auto-configured design workflow
 
         Parameters
@@ -353,17 +355,15 @@ class AutoConfigureWorkflow():
             A PredictorEvaluator to use in place of the default.
             Must contain responses matching outputs of the default predictor.
             Default: None
-        design_space: Optional[DataSourceDesignSpace]
-            A DataSourceDesignSpace to use in place of the default.
+        design_space: Optional[DesignSpace]
+            A DesignSpace object to use in place of the default.
+            If not registered already, will be registered during configuration.
             Default: None
         score: Optional[Score]
             Scoring function used to rank candidates during design execution.
             Must contain objectives/constraints with matching descriptor keys
             to those appearing within the provided material history.
             Default: None
-        mode: AutoConfigureMode
-            The method to be used in the automatic table and predictor configuration.
-            Default: AutoConfigureMode.PLAIN
         print_status_info: bool
             Whether to print the status info during validation of assets.
             Default: False
@@ -458,18 +458,18 @@ class AutoConfigureWorkflow():
     ):
         """Evaluate the predictor with the specified evaluator, or create a default workflow."""
         print("Configuring predictor evaluation workflow/execution...")
-        if evaluator is not None:
-            # We got an evaluator, so make a new PEW for it
+        if evaluator is None:
+            # No evaluator, so create a default PEW for the predictor
+            pew = self.project.predictor_evaluation_workflows.create_default(
+                predictor_id=predictor.uid
+            )
+        else:
+            # We got an evaluator, so make a new PEW and register it manually
             pew = PredictorEvaluationWorkflow(
                 name=f'{self._prefix}Predictor Evaluation Workflow',
                 evaluators=[evaluator]
             )
-        else:
-            # No evaluator, so create a default PEW
-            pew = self.project.predictor_evaluation_workflows.create_default(
-                predictor_id=predictor.uid
-            )
-        pew = self.project.predictor_evaluation_workflows.register(pew)
+            pew = self.project.predictor_evaluation_workflows.register(pew)
         pew = wait_while_validating(
             collection=self.project.predictor_evaluation_workflows, module=pew,
             print_status_info=print_status_info
@@ -480,18 +480,22 @@ class AutoConfigureWorkflow():
         self._status_info = pew.status_info
 
         if pew.status == 'FAILED':
-            # Can proceed without raising error, but do not trigger PEE
+            # Can proceed without raising error, but can't get PEE
             self._status = AutoConfigureStatus.PEW_FAILED
-            warnings.warn("Predictor evaluation workflow failed -- not triggering execution.")
+            warnings.warn("Predictor evaluation workflow failed -- unable to configure execution.")
         else:
-            pee = pew.executions.trigger(predictor.uid)
-            self._predictor_evaluation_execution = pee
+            if evaluator is None:
+                # Get execution from default
+                self._predictor_evaluation_execution = next(pew.executions.list(), None)
+            else:
+                # Manually trigger execution
+                self._predictor_evaluation_execution = pew.executions.trigger(predictor.uid)
 
     def _design_space_build_stage(
             self,
             *,
             predictor: Predictor,
-            design_space: Optional[DataSourceDesignSpace],
+            design_space: Optional[DesignSpace],
             print_status_info: bool
     ):
         """Create a design space from a specified predictor, or use the provided one."""
@@ -500,11 +504,11 @@ class AutoConfigureWorkflow():
             design_space = self.project.design_spaces.create_default(predictor_id=predictor.uid)
             design_space.name = f'{self._prefix}Default Design Space'
         else:
-            ds_source = 'data source'
-            if not isinstance(design_space, DataSourceDesignSpace):
-                raise TypeError("User-provided design space must be a DataSourceDesignSpace.")
-        print("Configuring design space from {}".format(ds_source))
-        design_space = self.project.design_spaces.register(design_space)
+            ds_source = 'user input'
+
+        print("Configuring design space from {}...".format(ds_source))
+        if design_space.uid is None:
+            design_space = self.project.design_spaces.register(design_space)
         design_space = wait_while_validating(
             collection=self.project.design_spaces, module=design_space,
             print_status_info=print_status_info
@@ -541,7 +545,7 @@ class AutoConfigureWorkflow():
             print_status_info=print_status_info
         )
 
-        self._desing_workflow = workflow
+        self._design_workflow = workflow
         self._status = AutoConfigureStatus.DESIGN_WORKFLOW_CREATED
         self._status_info = workflow.status_info
 

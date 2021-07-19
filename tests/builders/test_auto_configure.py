@@ -99,6 +99,9 @@ class FakePredictorEvaluationExecutionCollection(FakeCollection, PredictorEvalua
     def trigger(self, *args):
         return FakePredictorEvaluationExecution()
 
+    def list(self):
+        return iter([FakePredictorEvaluationExecution()])
+
 
 class FakeDesignSpaceCollection(FakeCollection, DesignSpaceCollection):
     def __init__(self):
@@ -244,7 +247,7 @@ def test_auto_configure_public_raises(fake_config: AutoConfigureWorkflow, fake_p
 @mock.patch('citrine.builders.auto_configure.wait_while_validating', wait_while_ready)
 @mock.patch('citrine.builders.auto_configure.PredictorEvaluationWorkflow', FakePredictorEvaluationWorkflow)
 @mock.patch('citrine.builders.auto_configure.DesignWorkflow', FakeDesignWorkflow)
-def test_auto_configure_public_interface(fake_config: AutoConfigureWorkflow, fake_project: Project):
+def test_auto_configure_public_interface(fake_config: AutoConfigureWorkflow):
     fake_mr = MaterialRun(name='Fake Material')
     score = LIScore(objectives=[ScalarMaxObjective(descriptor_key='Test Key')], baselines=[0.0])
 
@@ -264,7 +267,7 @@ def test_auto_configure_public_interface(fake_config: AutoConfigureWorkflow, fak
     assert(fake_config.status_info[0] == 'Something went very right.')
 
 
-def test_auto_configure_table_build_stage(fake_config: AutoConfigureWorkflow, fake_project: Project):
+def test_auto_configure_table_build_stage(fake_config: AutoConfigureWorkflow):
     fake_mr = MaterialRun(name='Fake Material')
 
     assert(fake_config.status == AutoConfigureStatus.START.value)
@@ -352,13 +355,12 @@ def test_auto_configure_design_space_build_stage(fake_config: AutoConfigureWorkf
         assert(len(fake_config.assets) == 1)
         assert(fake_config.status == AutoConfigureStatus.DESIGN_SPACE_CREATED.value)
 
-        # Only accepts data source design space
-        with pytest.raises(TypeError):
-            fake_config._design_space_build_stage(
-                predictor=fake_predictor,
-                design_space=design_space,
-                print_status_info=False
-            )
+        # Test when providing a design space
+        fake_config._design_space_build_stage(
+            predictor=fake_predictor,
+            design_space=design_space,
+            print_status_info=False
+        )
 
     # When design space is invalid
     with mock.patch('citrine.builders.auto_configure.wait_while_validating', wait_while_invalid):
