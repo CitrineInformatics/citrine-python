@@ -183,7 +183,7 @@ class AutoConfigureWorkflow():
 
     @property
     def assets(self):
-        """Get all assets  by this object."""
+        """Get all assets configured by this object."""
         initial_assets = [
             self.table_config, self.table, self.predictor,
             self.predictor_evaluation_workflow, self.predictor_evaluation_execution,
@@ -344,7 +344,7 @@ class AutoConfigureWorkflow():
 
         An optional evaluator, design_space, and score can be provided:
             evaluator    -> A PredictorEvaluator to be used in place of the default
-            design_space -> A custom DesignSpace to be used in place of the default
+            design_space -> A DesignSpace to be used in place of the default
             score        -> Triggers a design execution from the auto-configured design workflow
 
         Parameters
