@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>citrine.builders.descriptors module &mdash; Citrine Python 1.2.0 documentation</title>
+  <title>citrine.builders.descriptors module &mdash; Citrine Python 1.5.0 documentation</title>
   
 
   
@@ -71,7 +71,7 @@
             
             
               <div class="version">
-                1.2.0
+                1.5.0
               </div>
             
           
@@ -199,9 +199,45 @@ set self.__traceback__ to tb and return self.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>entries</strong> (<em>Mapping</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.Descriptor" title="citrine.informatics.descriptors.Descriptor"><em>Descriptor</em></a><em>]</em>) – Entries in the dictionary, indexed by a convenient name.
-To build from templates, use PlatformVocabulary.from_templates</p>
+To build from templates, use PlatformVocabulary.from_templates
+To build from a material, use PlatformVocabulary.from_material</p>
 </dd>
 </dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.builders.descriptors.PlatformVocabulary.from_material">
+<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">from_material</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">*,</span> <span class="pre">project:</span> <span class="pre">citrine.resources.project.Project,</span> <span class="pre">material:</span> <span class="pre">Union[str,</span> <span class="pre">uuid.UUID,</span> <span class="pre">gemd.entity.link_by_uid.LinkByUID,</span> <span class="pre">citrine.resources.material_run.MaterialRun],</span> <span class="pre">mode:</span> <span class="pre">citrine.builders.auto_configure.AutoConfigureMode</span> <span class="pre">=</span> <span class="pre">&lt;AutoConfigureMode.PLAIN:</span> <span class="pre">'PLAIN'&gt;,</span> <span class="pre">full_history:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.builders.descriptors.PlatformVocabulary.from_material" title="Permalink to this definition">¶</a></dt>
+<dd><p>[ALPHA] Build a PlatformVocabulary from templates appearing in a material history.</p>
+<p>All of the attribute templates that appear throughout the material’s history
+are extracted and converted into descriptors.</p>
+<p>Descriptor keys are formatted according to the option set by mode.
+For example, if a condition template with name ‘Condition 1’
+appears in a parent process with name ‘Parent’,
+the mode option produces the following descriptor key:</p>
+<p>mode = AutoConfigMode.PLAIN       –&gt; ‘Parent~Condition 1’
+mode = AutoConfigMode.FORMULATION –&gt; ‘Condition 1’</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>project</strong> (<a class="reference internal" href="citrine.resources.project.html#citrine.resources.project.Project" title="citrine.resources.project.Project"><em>Project</em></a>) – Project to use when accessing the Citrine Platform.</p></li>
+<li><p><strong>material</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>UUID</em><em>, </em><em>LinkByUID</em><em>, </em><a class="reference internal" href="citrine.resources.material_run.html#citrine.resources.material_run.MaterialRun" title="citrine.resources.material_run.MaterialRun"><em>MaterialRun</em></a><em>]</em>) – A representation of the material to extract descriptors from.</p></li>
+<li><p><strong>mode</strong> (<a class="reference internal" href="citrine.builders.auto_configure.html#citrine.builders.auto_configure.AutoConfigureMode" title="citrine.builders.auto_configure.AutoConfigureMode"><em>AutoConfigureMode</em></a>) – Formatting option for descriptor keys in the platform vocabulary.
+Option AutoConfigMode.PLAIN includes headers from the parent object,
+whereas option AutoConfigMode.FORMULATION does not.
+Default: AutoConfigureMode.PLAIN</p></li>
+<li><p><strong>full_history</strong> (<em>bool</em>) – Whether to extract descriptors from the full material history,
+or only the provided (terminal) material.
+Default: True</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#citrine.builders.descriptors.PlatformVocabulary" title="citrine.builders.descriptors.PlatformVocabulary">PlatformVocabulary</a></p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.builders.descriptors.PlatformVocabulary.from_templates">
 <em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">from_templates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">project</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="citrine.resources.project.html#citrine.resources.project.Project" title="citrine.resources.project.Project"><span class="pre">citrine.resources.project.Project</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">scope</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.builders.descriptors.PlatformVocabulary.from_templates" title="Permalink to this definition">¶</a></dt>
@@ -250,14 +286,19 @@ uids={“my_templates”: “density”} would be indexed into the dictionary as
 
 <dl class="py function">
 <dt class="sig sig-object py" id="citrine.builders.descriptors.template_to_descriptor">
-<span class="sig-prename descclassname"><span class="pre">citrine.builders.descriptors.</span></span><span class="sig-name descname"><span class="pre">template_to_descriptor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">template</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.template.attribute_template.html#gemd.entity.template.attribute_template.AttributeTemplate" title="(in GEMD-python)"><span class="pre">gemd.entity.template.attribute_template.AttributeTemplate</span></a></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.Descriptor" title="citrine.informatics.descriptors.Descriptor"><span class="pre">citrine.informatics.descriptors.Descriptor</span></a><a class="headerlink" href="#citrine.builders.descriptors.template_to_descriptor" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">citrine.builders.descriptors.</span></span><span class="sig-name descname"><span class="pre">template_to_descriptor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">template</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.template.attribute_template.html#gemd.entity.template.attribute_template.AttributeTemplate" title="(in GEMD-python)"><span class="pre">gemd.entity.template.attribute_template.AttributeTemplate</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">headers</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">[]</span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="citrine.informatics.descriptors.html#citrine.informatics.descriptors.Descriptor" title="citrine.informatics.descriptors.Descriptor"><span class="pre">citrine.informatics.descriptors.Descriptor</span></a><a class="headerlink" href="#citrine.builders.descriptors.template_to_descriptor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert a GEMD attribute template into an AI Engine Descriptor.</p>
 <p>IntBounds cannot be converted because they have no matching descriptor type.
 CompositionBounds can only be converted when every component is an element, in which case
 they are converted to ChemicalFormulaDescriptors.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>template</strong> (<a class="reference internal" href="citrine.resources.attribute_templates.html#citrine.resources.attribute_templates.AttributeTemplate" title="citrine.resources.attribute_templates.AttributeTemplate"><em>AttributeTemplate</em></a>) – Template to convert into a descriptor</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>template</strong> (<a class="reference internal" href="citrine.resources.attribute_templates.html#citrine.resources.attribute_templates.AttributeTemplate" title="citrine.resources.attribute_templates.AttributeTemplate"><em>AttributeTemplate</em></a>) – Template to convert into a descriptor</p></li>
+<li><p><strong>headers</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – Names of parent relationships to includes as prefixes
+to the template name in the descriptor key
+Default: []</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>Descriptor with a key matching the template name and type corresponding to the bounds</p>

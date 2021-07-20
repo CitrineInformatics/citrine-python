@@ -7,6 +7,7 @@ Submodules
 .. toctree::
    :maxdepth: 4
 
+   citrine.builders.auto_configure
    citrine.builders.descriptors
    citrine.builders.design_spaces
    citrine.builders.predictors

@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>citrine.resources.material_run module &mdash; Citrine Python 1.2.0 documentation</title>
+  <title>citrine.resources.material_run module &mdash; Citrine Python 1.5.0 documentation</title>
   
 
   
@@ -71,7 +71,7 @@
             
             
               <div class="version">
-                1.2.0
+                1.5.0
               </div>
             
           
@@ -431,6 +431,12 @@ This method will also work if data is a deserialized GEMD object.</p>
 <span class="sig-name descname"><span class="pre">typ</span></span><em class="property"> <span class="pre">=</span> <span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.material_run.MaterialRun.typ" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
+<dl class="py property">
+<dt class="sig sig-object py" id="citrine.resources.material_run.MaterialRun.uid">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">uid</span></span><em class="property"><span class="pre">:</span> <span class="pre">Optional[uuid.UUID]</span></em><a class="headerlink" href="#citrine.resources.material_run.MaterialRun.uid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the Citrine Identifier (scope = “id”), or None if not registered.</p>
+</dd></dl>
+
 <dl class="py attribute">
 <dt class="sig sig-object py" id="citrine.resources.material_run.MaterialRun.uids">
 <span class="sig-name descname"><span class="pre">uids</span></span><em class="property"> <span class="pre">=</span> <span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.material_run.MaterialRun.uids" title="Permalink to this definition">¶</a></dt>
@@ -597,7 +603,7 @@ The scope of the uid, defaults to Citrine scope (“id”)</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.resources.material_run.MaterialRunCollection.get_history">
-<span class="sig-name descname"><span class="pre">get_history</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scope</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">,</span> </span><a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.link_by_uid.html#gemd.entity.link_by_uid.LinkByUID" title="(in GEMD-python)"><span class="pre">gemd.entity.link_by_uid.LinkByUID</span></a><span class="p"><span class="pre">,</span> </span><a class="reference internal" href="#citrine.resources.material_run.MaterialRun" title="citrine.resources.material_run.MaterialRun"><span class="pre">citrine.resources.material_run.MaterialRun</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Type</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#citrine.resources.material_run.MaterialRun" title="citrine.resources.material_run.MaterialRun"><span class="pre">citrine.resources.material_run.MaterialRun</span></a><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#citrine.resources.material_run.MaterialRunCollection.get_history" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_history</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">uuid.UUID</span><span class="p"><span class="pre">,</span> </span><a class="reference external" href="https://citrineinformatics.github.io/gemd-python/reference/gemd.entity.link_by_uid.html#gemd.entity.link_by_uid.LinkByUID" title="(in GEMD-python)"><span class="pre">gemd.entity.link_by_uid.LinkByUID</span></a><span class="p"><span class="pre">,</span> </span><a class="reference internal" href="#citrine.resources.material_run.MaterialRun" title="citrine.resources.material_run.MaterialRun"><span class="pre">citrine.resources.material_run.MaterialRun</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scope</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Type</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#citrine.resources.material_run.MaterialRun" title="citrine.resources.material_run.MaterialRun"><span class="pre">citrine.resources.material_run.MaterialRun</span></a><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#citrine.resources.material_run.MaterialRunCollection.get_history" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the history associated with a terminal material.</p>
 <p>The history contains every single every process, ingredient and material that went into
 the terminal material as well as the measurements that were performed on all of those
@@ -605,10 +611,10 @@ materials. The returned object is a material run with all of its fields fully po
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
+<li><p><strong>id</strong> (<em>Union</em><em>[</em><em>UUID</em><em>, </em><em>str</em><em>, </em><em>LinkByUID</em><em>, </em><a class="reference internal" href="#citrine.resources.material_run.MaterialRun" title="citrine.resources.material_run.MaterialRun"><em>MaterialRun</em></a><em>]</em>) – A representation of the material whose history is to be retrieved</p></li>
 <li><p><strong>scope</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – [DEPRECATED] use a LinkByUID to specify a custom scope
 The scope of the uid. The lookup will be most efficient if you use the Citrine ID
 of the material, which is the default if scope=None.</p></li>
-<li><p><strong>id</strong> (<em>Union</em><em>[</em><em>UUID</em><em>, </em><em>str</em><em>, </em><em>LinkByUID</em><em>, </em><a class="reference internal" href="#citrine.resources.material_run.MaterialRun" title="citrine.resources.material_run.MaterialRun"><em>MaterialRun</em></a><em>]</em>) – A representation of the material whose history is to be retrieved</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
