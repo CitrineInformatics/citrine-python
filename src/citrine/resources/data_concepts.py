@@ -91,6 +91,11 @@ class DataConcepts(PolymorphicSerializable['DataConcepts'], DictSerializable, AB
         return self._audit_info
 
     @property
+    def uid(self) -> Optional[UUID]:
+        """Get the Citrine Identifier (scope = "id"), or None if not registered."""
+        return self.uids.get(CITRINE_SCOPE)
+
+    @property
     def dataset(self) -> Optional[UUID]:
         """[ALPHA] Get the dataset of this object, if it was returned by the backend."""
         return self._dataset
