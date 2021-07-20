@@ -1,6 +1,7 @@
 from uuid import UUID
 from typing import Union, Optional, List
 import warnings
+import time
 
 from gemd.entity.link_by_uid import LinkByUID
 from gemd.enumeration.base_enumeration import BaseEnumeration
@@ -470,6 +471,7 @@ class AutoConfigureWorkflow():
                 evaluators=[evaluator]
             )
             pew = self.project.predictor_evaluation_workflows.register(pew)
+
         pew = wait_while_validating(
             collection=self.project.predictor_evaluation_workflows, module=pew,
             print_status_info=print_status_info
@@ -486,6 +488,8 @@ class AutoConfigureWorkflow():
         else:
             if evaluator is None:
                 # Get execution from default
+                # PEE creation occurs soon after validation, short wait for safety
+                time.sleep(5)
                 self._predictor_evaluation_execution = next(pew.executions.list(), None)
             else:
                 # Manually trigger execution
