@@ -18,7 +18,8 @@ from citrine.resources.process_template import ProcessTemplate
 from citrine.gemtables.columns import Column, MeanColumn, IdentityColumn, OriginalUnitsColumn
 from citrine.gemtables.rows import Row
 from citrine.gemtables.variables import Variable, IngredientIdentifierByProcessTemplateAndName, \
-    IngredientQuantityByProcessAndName, IngredientQuantityDimension
+    IngredientQuantityByProcessAndName, IngredientQuantityDimension, \
+    IngredientIdentifierInOutput, IngredientQuantityInOutput
 
 
 class TableBuildAlgorithm(BaseEnumeration):
@@ -211,6 +212,94 @@ class TableConfig(Resource["TableConfig"]):
                     link.id + name + dimension_display[quantity_dimension]))]),
                 headers=[process.name, name, dimension_display[quantity_dimension]],
                 process_template=link,
+                ingredient_name=name,
+                quantity_dimension=quantity_dimension,
+                unit=unit
+            )
+
+            if identifier_variable.name not in [var.name for var in self.variables]:
+                new_variables.append(identifier_variable)
+                new_columns.append(IdentityColumn(data_source=identifier_variable.name))
+            new_variables.append(quantity_variable)
+            new_columns.append(MeanColumn(data_source=quantity_variable.name))
+            if quantity_dimension == IngredientQuantityDimension.ABSOLUTE:
+                new_columns.append(OriginalUnitsColumn(data_source=quantity_variable.name))
+
+        new_config = TableConfig(
+            name=self.name,
+            description=self.description,
+            datasets=copy(self.datasets),
+            rows=copy(self.rows),
+            variables=copy(self.variables) + new_variables,
+            columns=copy(self.columns) + new_columns
+        )
+        new_config.version_number = copy(self.version_number)
+        new_config.config_uid = copy(self.config_uid)
+        new_config.version_uid = copy(self.version_uid)
+        return new_config
+
+    def add_all_ingredients_in_output(self, *,
+                                      process_templates: List[LinkByUID],
+                                      project,
+                                      quantity_dimension: IngredientQuantityDimension,
+                                      scope: str = CITRINE_SCOPE,
+                                      unit: Optional[str] = None
+                                      ):
+        """[ALPHA] Add variables and columns for all of the possible ingredients in a list of
+        processes.
+
+        For each allowed ingredient name in the union of all passed process templates there is a
+        column for the id of the ingredient and a column for the quantity of the ingredient.
+        Columns are filled with the "InOutput" method halting at any of the passed process
+        templates. If the quantities are given in absolute amounts then there is also a column for
+        units.
+
+        Parameters
+        ------------
+        process_templates: List[LinkByUID]
+            registered process templates from which to pull allowed ingredeintes and at which to
+            halt searching
+        project: Project
+            a project that has access to the process template
+        quantity_dimension: IngredientQuantityDimension
+            the dimension in which to report ingredient quantities
+        scope: Optional[str]
+            the scope for which to get ingredient ids (default is Citrine scope, 'id')
+        unit: Optional[str]
+            the units for the quantity, if selecting Absolute Quantity
+
+        """
+        dimension_display = {
+            IngredientQuantityDimension.ABSOLUTE: "absolute quantity",
+            IngredientQuantityDimension.MASS: "mass fraction",
+            IngredientQuantityDimension.VOLUME: "volume fraction",
+            IngredientQuantityDimension.NUMBER: "number fraction"
+        }
+        union_allowed_names = []
+        for process_template_link in process_templates:
+            process: ProcessTemplate = project.process_templates.get(process_template_link)
+            if not process.allowed_names:
+                raise RuntimeError(
+                    "Cannot add ingredients for process template \'{}\' because it has no defined "
+                    "ingredients (allowed_names is not defined).".format(process.name))
+            for name in process.allowed_names:
+                if name not in union_allowed_names:
+                    union_allowed_names.append(name)
+
+        new_variables = []
+        new_columns = []
+        for name in union_allowed_names:
+            identifier_variable = IngredientIdentifierInOutput(
+                name='_'.join([name, str(hash(name + scope))]),
+                headers=[name, scope],
+                process_templates=process_templates,
+                ingredient_name=name,
+                scope=scope
+            )
+            quantity_variable = IngredientQuantityInOutput(
+                name='_'.join([name, str(hash(name + dimension_display[quantity_dimension]))]),
+                headers=[name, dimension_display[quantity_dimension]],
+                process_templates=process_templates,
                 ingredient_name=name,
                 quantity_dimension=quantity_dimension,
                 unit=unit
