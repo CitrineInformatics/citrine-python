@@ -299,7 +299,7 @@ def test_add_all_ingredients(session, project):
     # WHEN we add all ingredients in a volume basis
     empty = empty_defn()
     def1 = empty.add_all_ingredients(process_template=process_link, project=project,
-                                            quantity_dimension=IngredientQuantityDimension.VOLUME)
+                                     quantity_dimension=IngredientQuantityDimension.VOLUME)
     def1.config_uid = uuid4()
 
     # THEN there should be 2 variables and columns for each name, one for id and one for quantity
