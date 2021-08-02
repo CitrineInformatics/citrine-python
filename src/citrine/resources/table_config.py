@@ -282,9 +282,8 @@ class TableConfig(Resource["TableConfig"]):
                 raise RuntimeError(
                     "Cannot add ingredients for process template \'{}\' because it has no defined "
                     "ingredients (allowed_names is not defined).".format(process.name))
-            for name in process.allowed_names:
-                if name not in union_allowed_names:
-                    union_allowed_names.append(name)
+            else:
+                union_allowed_names = list(set(union_allowed_names) | set(process.allowed_names))
 
         new_variables = []
         new_columns = []
