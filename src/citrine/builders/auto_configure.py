@@ -132,6 +132,12 @@ class AutoConfigureWorkflow():
         """Get the naming label for assets configured by this object."""
         return self._name
 
+    @name.setter
+    def name(self, value: str):
+        """Set the naming label for assets configured by this object."""
+        self._prefix = '{} - '.format(value) if value else ''
+        self._name = value
+
     @property
     def status(self) -> str:
         """Get the most recent status of the auto-configure workflow."""
@@ -191,6 +197,12 @@ class AutoConfigureWorkflow():
             self.design_space, self.design_workflow, self.design_execution
         ]
         return [asset for asset in initial_assets if asset is not None]
+
+    def find_assets(self):
+        pass
+
+    def update_status(self):
+        pass
 
     def execute(self, *, score: Score) -> DesignExecution:
         """[ALPHA] Execute a design execution given a provided score.
