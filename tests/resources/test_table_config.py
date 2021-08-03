@@ -363,43 +363,54 @@ def test_add_all_ingredients_in_output(session, project):
     allowed_names2 = ["methanol", "acetone", "ethanol", "water"]
     process2_link = LinkByUID('id', process2_id)
 
+    union_allowed_names = list(set(allowed_names1) | set(allowed_names2))
+
     session.set_responses(
         ProcessTemplate(
             process1_name,
-            uids={'id': process1_id}, allowed_names=allowed_names1
+            uids={'id': process1_id},
+            allowed_names=allowed_names1
         ).dump(),
         ProcessTemplate(
             process2_name,
-            uids={'id': process2_id}, allowed_names=allowed_names2
+            uids={'id': process2_id},
+            allowed_names=allowed_names2
         ).dump()
     )
 
     # WHEN we add all ingredients in a volume basis
     empty = empty_defn()
     def1 = empty.add_all_ingredients_in_output(
-        process_templates=[process1_link],
+        process_templates=[process1_link, process2_link],
         project=project,
         quantity_dimension=IngredientQuantityDimension.VOLUME
     )
     def1.config_uid = uuid4()
 
     # THEN there should be 2 variables and columns for each name, one for id and one for quantity
-    assert len(def1.variables) == len(allowed_names1) * 2
+    assert len(def1.variables) == len(union_allowed_names) * 2
     assert len(def1.columns) == len(def1.variables)
-    for name in allowed_names1:
+    for name in union_allowed_names:
         assert next((var for var in def1.variables if name in var.headers
                      and isinstance(var, IngredientQuantityInOutput)), None) is not None
         assert next((var for var in def1.variables if name in var.headers
                      and isinstance(var, IngredientIdentifierInOutput)), None) is not None
 
-    session.set_response(
+    session.set_responses(
         ProcessTemplate(
-            process1_name, uids={'id': process1_id}, allowed_names=allowed_names1
+            process1_name,
+            uids={'id': process1_id},
+            allowed_names=allowed_names1
+        ).dump(),
+        ProcessTemplate(
+            process2_name,
+            uids={'id': process2_id},
+            allowed_names=allowed_names2
         ).dump()
     )
     # WHEN we add all ingredients to the same Table Config as absolute quantities
     def2 = def1.add_all_ingredients_in_output(
-        process_templates=[process1_link],
+        process_templates=[process1_link, process2_link],
         project=project,
         quantity_dimension=IngredientQuantityDimension.ABSOLUTE,
         unit='kg'
@@ -409,32 +420,48 @@ def test_add_all_ingredients_in_output(session, project):
     #   There should be 2 new columns for each name, one for the quantity and one for the units
     new_variables = def2.variables[len(def1.variables):]
     new_columns = def2.columns[len(def1.columns):]
-    assert len(new_variables) == len(allowed_names1)
-    assert len(new_columns) == len(allowed_names1) * 2
+    assert len(new_variables) == len(union_allowed_names)
+    assert len(new_columns) == len(union_allowed_names) * 2
     assert def2.config_uid == def1.config_uid
-    for name in allowed_names1:
+    for name in union_allowed_names:
         assert next((var for var in new_variables if name in var.headers
                      and isinstance(var, IngredientQuantityInOutput)), None) is not None
 
-    session.set_response(
-        ProcessTemplate(process1_name, uids={'id': process1_id}, allowed_names=allowed_names1).dump()
+    session.set_responses(
+        ProcessTemplate(
+            process1_name,
+            uids={'id': process1_id},
+            allowed_names=allowed_names1
+        ).dump(),
+        ProcessTemplate(
+            process2_name,
+            uids={'id': process2_id},
+            allowed_names=allowed_names2
+        ).dump()
     )
     # WHEN we add all ingredients to the same Table Config in a volume basis
     # THEN it raises an exception because these variables and columns already exist
     with pytest.raises(ValueError):
         def2.add_all_ingredients_in_output(
-            process_templates=[process1_link],
+            process_templates=[process1_link, process2_link],
             project=project,
             quantity_dimension=IngredientQuantityDimension.VOLUME
         )
 
     # If the process template has an empty allowed_names list then an error should be raised
-    session.set_response(
-        ProcessTemplate(process1_name, uids={'id': process1_id}).dump()
+    session.set_responses(
+        ProcessTemplate(
+            process1_name,
+            uids={'id': process1_id},
+        ).dump(),
+        ProcessTemplate(
+            process2_name,
+            uids={'id': process2_id},
+        ).dump()
     )
     with pytest.raises(RuntimeError):
         empty_defn().add_all_ingredients_in_output(
-            process_templates=[process1_link],
+            process_templates=[process1_link, process2_link],
             project=project,
             quantity_dimension=IngredientQuantityDimension.VOLUME
         )
