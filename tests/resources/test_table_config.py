@@ -106,7 +106,7 @@ def test_uid_aliases_config_uid():
 
     # Test setter method
     new_uid = uuid4()
-    table_config.config_uid = new_uid
+    table_config.uid = new_uid
     assert table_config.config_uid == new_uid
 
 
