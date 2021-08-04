@@ -104,6 +104,11 @@ def test_uid_aliases_config_uid():
     table_config.config_uid = uuid4()
     assert table_config.uid == table_config.config_uid
 
+    # Test setter method
+    new_uid = uuid4()
+    table_config.config_uid = new_uid
+    assert table_config.config_uid == new_uid
+
 
 def test_dup_names():
     """Make sure that variable name and headers are unique across a table config"""
