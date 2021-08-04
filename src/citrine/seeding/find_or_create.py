@@ -74,10 +74,11 @@ def find_or_create_project(*, project_collection, project_name, raise_error=Fals
     if raise_error:
         project = get_by_name_or_raise_error(collection=project_collection, name=project_name)
     else:
-        def default_provider():
-            return project_collection.register(project_name)
-        project = get_by_name_or_create(collection=project_collection,
-                                        name=project_name, default_provider=default_provider)
+        project = get_by_name_or_create(
+            collection=project_collection,
+            name=project_name,
+            default_provider=lambda: project_collection.register(project_name)
+        )
     return project
 
 
@@ -90,11 +91,13 @@ def find_or_create_dataset(*, dataset_collection, dataset_name, raise_error=Fals
     if raise_error:
         dataset = get_by_name_or_raise_error(collection=dataset_collection, name=dataset_name)
     else:
-        def default_provider():
-            return dataset_collection.register(
-                Dataset(dataset_name, summary="seed summ.", description="seed desc."))
-        dataset = get_by_name_or_create(collection=dataset_collection,
-                                        name=dataset_name, default_provider=default_provider)
+        dataset = get_by_name_or_create(
+            collection=dataset_collection,
+            name=dataset_name,
+            default_provider=lambda: dataset_collection.register(
+                Dataset(dataset_name, summary="seed summ.", description="seed desc.")
+            )
+        )
     return dataset
 
 
