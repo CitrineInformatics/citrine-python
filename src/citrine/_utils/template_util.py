@@ -1,12 +1,21 @@
 import pandas as pd
-from gemd.entity.object import *
+from gemd.entity.object import (
+    ProcessSpec,
+    ProcessRun,
+    MaterialSpec,
+    MeasurementSpec,
+    MeasurementRun,
+)
 from gemd.entity.attribute import PropertyAndConditions
+
 
 def make_attribute_table(gems: list):
     """[ALPHA] the current status of make_attribute_table
 
-    Given a list of GEMD Objects, this method returns a Pandas DataFrame where each row represents an attribute-containing
-    Object and each column represent a unique Attribute Type + Name pair. The values within the cells are the various GEMD Value Types.
+    Given a list of GEMD Objects, this method returns a Pandas DataFrame
+    where each row represents an attribute-containing
+    Object and each column represent a unique Attribute Type + Name pair.
+    The values within the cells are the various GEMD Value Types.
 
     """
     types_with_attributes = (
@@ -14,15 +23,12 @@ def make_attribute_table(gems: list):
         ProcessRun,
         MaterialSpec,
         MeasurementSpec,
-        MeasurementRun
+        MeasurementRun,
     )
     all_rows = []
     gems = [x for x in gems if isinstance(x, types_with_attributes)]
     for gem in gems:
-        row_dict = {
-            "object" : gem,
-            "object_type": type(gem).__name__
-        }
+        row_dict = {"object": gem, "object_type": type(gem).__name__}
         if hasattr(gem, "conditions"):
             for cond in gem.conditions:
                 row_dict[f"CONDITION: {cond.name}"] = cond.value
