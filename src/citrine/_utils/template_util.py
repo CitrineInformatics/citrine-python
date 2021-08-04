@@ -10,7 +10,7 @@ from gemd.entity.attribute import PropertyAndConditions
 
 
 def make_attribute_table(gems: list):
-    """[ALPHA] the current status of make_attribute_table
+    """[ALPHA] the current status of make_attribute_table.
 
     Given a list of GEMD Objects, this method returns a Pandas DataFrame
     where each row represents an attribute-containing
