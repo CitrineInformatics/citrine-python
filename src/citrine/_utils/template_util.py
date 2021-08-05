@@ -15,9 +15,9 @@ def make_attribute_table(gems: list):
     Given a list of GEMD Objects, this method returns a list of dictionaries
     where in each dictionary there are keys of "object", "object_type" and keys for each
     unique Attribute Type + Name pair found within those Objects.
-    Each value contains the associated Object, Object Type, or BaseValue. 
+    Each value contains the associated Object, Object Type, or BaseValue.
     This dictionary can easily be converted into a Pandas DataFrame where there is a
-    row for each Object, and the values within the cells are that Object's type or 
+    row for each Object, and the values within the cells are that Object's type or
     the various GEMD Value Types.
 
     This function will help users identify attribute usage across their Objects,
