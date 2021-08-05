@@ -1,4 +1,4 @@
-import pandas as pd
+from gemd.util.impl import recursive_flatmap
 from gemd.entity.object import (
     ProcessSpec,
     ProcessRun,
@@ -12,12 +12,22 @@ from gemd.entity.attribute import PropertyAndConditions
 def make_attribute_table(gems: list):
     """[ALPHA] the current status of make_attribute_table.
 
-    Given a list of GEMD Objects, this method returns a Pandas DataFrame
-    where each row represents an attribute-containing
-    Object and each column represent a unique Attribute Type + Name pair.
-    The values within the cells are the various GEMD Value Types.
+    Given a list of GEMD Objects, this method returns a Dictionary
+    where there are keys of "object", "object_type" and keys for each
+    unique Attribute Type + Name pair found within those Objects.
+    Each value is a list of equal length containing the associated
+    Object, Object Type, or BaseValue. This dictionary can easily be 
+    converted into a Pandas DataFrame where there is a row for each Object, and
+    the values within the cells are that Object's type or the various GEMD Value Types.
+
+    This function will help users identify attribute usage across their Objects,
+    and get a sense of the consistency of the data found in their GEMD objects.
+    With the returned dictionary, one can easily do further analysis on both
+    attribute values and value type consistency to assist in data cleaning and
+    Attribute Template creation.
 
     """
+    flattened_gems = recursive_flatmap(obj=gems, func = lambda x: [x], unidirectional=False)
     types_with_attributes = (
         ProcessSpec,
         ProcessRun,
@@ -26,8 +36,8 @@ def make_attribute_table(gems: list):
         MeasurementRun,
     )
     all_rows = []
-    gems = [x for x in gems if isinstance(x, types_with_attributes)]
-    for gem in gems:
+    attributed_gems = [x for x in flattened_gems if isinstance(x, types_with_attributes)]
+    for gem in attributed_gems:
         row_dict = {"object": gem, "object_type": type(gem).__name__}
         if hasattr(gem, "conditions"):
             for cond in gem.conditions:
@@ -44,4 +54,4 @@ def make_attribute_table(gems: list):
                 else:
                     row_dict[f"PROPERTY: {prop.name}"] = prop.value
         all_rows.append(row_dict)
-    return pd.DataFrame(all_rows)
+    return all_rows
