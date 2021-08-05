@@ -280,8 +280,8 @@ class TableConfig(Resource["TableConfig"]):
             process: ProcessTemplate = project.process_templates.get(process_template_link)
             if not process.allowed_names:
                 raise RuntimeError(
-                    "Cannot add ingredients for process template \'{}\' because it has no defined "
-                    "ingredients (allowed_names is not defined).".format(process.name))
+                    f"Cannot add ingredients for process template '{process.name}' "
+                    "because it has no defined ingredients (allowed_names is not defined)"
             else:
                 union_allowed_names = list(set(union_allowed_names) | set(process.allowed_names))
 
