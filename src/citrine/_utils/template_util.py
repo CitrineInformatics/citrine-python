@@ -16,7 +16,7 @@ def make_attribute_table(gems: list):
     where there are keys of "object", "object_type" and keys for each
     unique Attribute Type + Name pair found within those Objects.
     Each value is a list of equal length containing the associated
-    Object, Object Type, or BaseValue. This dictionary can easily be 
+    Object, Object Type, or BaseValue. This dictionary can easily be
     converted into a Pandas DataFrame where there is a row for each Object, and
     the values within the cells are that Object's type or the various GEMD Value Types.
 
@@ -27,7 +27,9 @@ def make_attribute_table(gems: list):
     Attribute Template creation.
 
     """
-    flattened_gems = recursive_flatmap(obj=gems, func = lambda x: [x], unidirectional=False)
+    flattened_gems = recursive_flatmap(
+        obj=gems, func=lambda x: [x], unidirectional=False
+    )
     types_with_attributes = (
         ProcessSpec,
         ProcessRun,
@@ -36,7 +38,9 @@ def make_attribute_table(gems: list):
         MeasurementRun,
     )
     all_rows = []
-    attributed_gems = [x for x in flattened_gems if isinstance(x, types_with_attributes)]
+    attributed_gems = [
+        x for x in flattened_gems if isinstance(x, types_with_attributes)
+    ]
     for gem in attributed_gems:
         row_dict = {"object": gem, "object_type": type(gem).__name__}
         if hasattr(gem, "conditions"):
