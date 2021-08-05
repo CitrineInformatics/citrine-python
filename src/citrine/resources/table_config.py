@@ -245,8 +245,7 @@ class TableConfig(Resource["TableConfig"]):
                                       scope: str = CITRINE_SCOPE,
                                       unit: Optional[str] = None
                                       ):
-        """[ALPHA] Add variables and columns for all of the possible ingredients in a list of
-        processes.
+        """[ALPHA] Add variables and columns for all possible ingredients in a list of processes.
 
         For each allowed ingredient name in the union of all passed process templates there is a
         column for the id of the ingredient and a column for the quantity of the ingredient.
@@ -282,6 +281,7 @@ class TableConfig(Resource["TableConfig"]):
                 raise RuntimeError(
                     f"Cannot add ingredients for process template '{process.name}' "
                     "because it has no defined ingredients (allowed_names is not defined)"
+                )
             else:
                 union_allowed_names = list(set(union_allowed_names) | set(process.allowed_names))
 
