@@ -15,11 +15,13 @@ from citrine._session import Session
 from citrine._utils.functions import migrate_deprecated_argument, format_escaped_url
 from citrine.resources.data_concepts import CITRINE_SCOPE, _make_link_by_uid
 from citrine.resources.process_template import ProcessTemplate
-from citrine.gemtables.columns import Column, MeanColumn, IdentityColumn, OriginalUnitsColumn
+from citrine.gemtables.columns import Column, MeanColumn, IdentityColumn, OriginalUnitsColumn, \
+    ConcatColumn
 from citrine.gemtables.rows import Row
 from citrine.gemtables.variables import Variable, IngredientIdentifierByProcessTemplateAndName, \
     IngredientQuantityByProcessAndName, IngredientQuantityDimension, \
-    IngredientIdentifierInOutput, IngredientQuantityInOutput
+    IngredientIdentifierInOutput, IngredientQuantityInOutput, \
+    IngredientLabelsSetByProcessAndName, IngredientLabelsSetInOutput
 
 
 class TableBuildAlgorithm(BaseEnumeration):
@@ -216,6 +218,13 @@ class TableConfig(Resource["TableConfig"]):
                 quantity_dimension=quantity_dimension,
                 unit=unit
             )
+            label_variable = IngredientLabelsSetByProcessAndName(
+                name='_'.join([process.name, name, str(hash(
+                    link.id + name + 'Labels'))]),
+                headers=[process.name, name, 'Labels'],
+                process_template=link,
+                ingredient_name=name,
+            )
 
             if identifier_variable.name not in [var.name for var in self.variables]:
                 new_variables.append(identifier_variable)
@@ -224,6 +233,14 @@ class TableConfig(Resource["TableConfig"]):
             new_columns.append(MeanColumn(data_source=quantity_variable.name))
             if quantity_dimension == IngredientQuantityDimension.ABSOLUTE:
                 new_columns.append(OriginalUnitsColumn(data_source=quantity_variable.name))
+            if label_variable.name not in [var.name for var in self.variables]:
+                new_variables.append(label_variable)
+                new_columns.append(
+                    ConcatColumn(
+                        data_source=label_variable.name,
+                        subcolumn=IdentityColumn(data_source=label_variable.name)
+                    )
+                )
 
         new_config = TableConfig(
             name=self.name,
@@ -303,6 +320,12 @@ class TableConfig(Resource["TableConfig"]):
                 quantity_dimension=quantity_dimension,
                 unit=unit
             )
+            label_variable = IngredientLabelsSetInOutput(
+                name='_'.join([name, str(hash(name + 'Labels'))]),
+                headers=[name, 'Labels'],
+                process_templates=process_templates,
+                ingredient_name=name,
+            )
 
             if identifier_variable.name not in [var.name for var in self.variables]:
                 new_variables.append(identifier_variable)
@@ -311,6 +334,14 @@ class TableConfig(Resource["TableConfig"]):
             new_columns.append(MeanColumn(data_source=quantity_variable.name))
             if quantity_dimension == IngredientQuantityDimension.ABSOLUTE:
                 new_columns.append(OriginalUnitsColumn(data_source=quantity_variable.name))
+            if label_variable.name not in [var.name for var in self.variables]:
+                new_variables.append(label_variable)
+                new_columns.append(
+                    ConcatColumn(
+                        data_source=label_variable.name,
+                        subcolumn=IdentityColumn(data_source=label_variable.name)
+                    )
+                )
 
         new_config = TableConfig(
             name=self.name,
