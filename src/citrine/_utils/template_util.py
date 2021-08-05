@@ -12,13 +12,13 @@ from gemd.entity.attribute import PropertyAndConditions
 def make_attribute_table(gems: list):
     """[ALPHA] the current status of make_attribute_table.
 
-    Given a list of GEMD Objects, this method returns a Dictionary
-    where there are keys of "object", "object_type" and keys for each
+    Given a list of GEMD Objects, this method returns a list of dictionaries
+    where in each dictionary there are keys of "object", "object_type" and keys for each
     unique Attribute Type + Name pair found within those Objects.
-    Each value is a list of equal length containing the associated
-    Object, Object Type, or BaseValue. This dictionary can easily be
-    converted into a Pandas DataFrame where there is a row for each Object, and
-    the values within the cells are that Object's type or the various GEMD Value Types.
+    Each value contains the associated Object, Object Type, or BaseValue. 
+    This dictionary can easily be converted into a Pandas DataFrame where there is a
+    row for each Object, and the values within the cells are that Object's type or 
+    the various GEMD Value Types.
 
     This function will help users identify attribute usage across their Objects,
     and get a sense of the consistency of the data found in their GEMD objects.

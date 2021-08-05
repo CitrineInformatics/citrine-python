@@ -1,3 +1,4 @@
+from numpy.lib.arraysetops import isin
 from citrine._utils.template_util import make_attribute_table
 from gemd.entity.object import *
 from gemd.entity.attribute import *
@@ -37,7 +38,15 @@ def _make_list_of_gems():
         ),
         ProcessRun(
             name = "process 1",
-            spec = LinkByUID(scope = "faux", id = "id"),
+            spec = ProcessSpec(
+                name = "nestled Spec",
+                conditions=[
+                    Condition(
+                        name = "cond 1",
+                        value = NormalReal(mean=6, std=0.3, units="")
+                    ),
+                ]
+            ),
             parameters = [
                 Parameter(
                     name = "param 1",
@@ -120,10 +129,13 @@ def _make_list_of_gems():
     return faux_gems
 
 def test_attribute_alignment():
-    df = make_attribute_table(_make_list_of_gems())
+    info_dict = make_attribute_table(_make_list_of_gems())
+    assert(isinstance(info_dict, list))
+    assert(isinstance(info_dict[0], dict))
+    df = pd.DataFrame(info_dict)
     assert isinstance(df.iloc[0,3], NominalReal)
     assert isinstance(df.iloc[1,3], NormalReal)
-    assert isinstance(df.iloc[3,3], NominalReal)
+    assert isinstance(df.iloc[4,3], NominalReal)
     assert isinstance(df.iloc[0,5], InChI)
     assert pd.isnull(df.iloc[1,5])
-    assert df.shape == (5,12)
+    assert df.shape == (6,12)
