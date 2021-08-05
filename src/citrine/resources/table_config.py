@@ -114,6 +114,11 @@ class TableConfig(Resource["TableConfig"]):
         """Unique ID of the table config, independent of its version."""
         return self.config_uid
 
+    @uid.setter
+    def uid(self, new_uid: Union[str, UUID]) -> None:
+        """Set the unique ID of the table config, independent of its version."""
+        self.config_uid = new_uid
+
     def add_columns(self, *,
                     variable: Variable,
                     columns: List[Column],
