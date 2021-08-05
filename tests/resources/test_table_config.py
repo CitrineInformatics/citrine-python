@@ -7,7 +7,8 @@ from citrine.gemtables.rows import MaterialRunByTemplate
 from citrine.gemtables.variables import AttributeByTemplate, TerminalMaterialInfo, \
     IngredientQuantityDimension, IngredientQuantityByProcessAndName, \
     IngredientIdentifierByProcessTemplateAndName, TerminalMaterialIdentifier, \
-    IngredientQuantityInOutput, IngredientIdentifierInOutput
+    IngredientQuantityInOutput, IngredientIdentifierInOutput, \
+    IngredientLabelsSetByProcessAndName, IngredientLabelsSetInOutput
 from citrine.resources.table_config import TableConfig, TableConfigCollection, TableBuildAlgorithm
 from citrine.resources.data_concepts import CITRINE_SCOPE
 from citrine.resources.material_run import MaterialRun
@@ -304,14 +305,16 @@ def test_add_all_ingredients(session, project):
                                      quantity_dimension=IngredientQuantityDimension.VOLUME)
     def1.config_uid = uuid4()
 
-    # THEN there should be 2 variables and columns for each name, one for id and one for quantity
-    assert len(def1.variables) == len(allowed_names) * 2
+    # THEN there should be 3 variables and columns for each name, one for id, quantity, and labels
+    assert len(def1.variables) == len(allowed_names) * 3
     assert len(def1.columns) == len(def1.variables)
     for name in allowed_names:
         assert next((var for var in def1.variables if name in var.headers
                      and isinstance(var, IngredientQuantityByProcessAndName)), None) is not None
         assert next((var for var in def1.variables if name in var.headers
                      and isinstance(var, IngredientIdentifierByProcessTemplateAndName)), None) is not None
+        assert next((var for var in def1.variables if name in var.headers
+                     and isinstance(var, IngredientLabelsSetByProcessAndName)), None) is not None
 
     session.set_response(
         ProcessTemplate(process_name, uids={'id': process_id}, allowed_names=allowed_names).dump()
@@ -321,7 +324,7 @@ def test_add_all_ingredients(session, project):
                                     quantity_dimension=IngredientQuantityDimension.ABSOLUTE,
                                     unit='kg')
     # THEN there should be 1 new variable for each name, corresponding to the quantity
-    #   There is already a variable for id
+    #   There is already a variable for id and labels
     #   There should be 2 new columns for each name, one for the quantity and one for the units
     new_variables = def2.variables[len(def1.variables):]
     new_columns = def2.columns[len(def1.columns):]
@@ -387,14 +390,16 @@ def test_add_all_ingredients_in_output(session, project):
     )
     def1.config_uid = uuid4()
 
-    # THEN there should be 2 variables and columns for each name, one for id and one for quantity
-    assert len(def1.variables) == len(union_allowed_names) * 2
+    # THEN there should be 3 variables and columns for each name, one for id, quantity, and labels
+    assert len(def1.variables) == len(union_allowed_names) * 3
     assert len(def1.columns) == len(def1.variables)
     for name in union_allowed_names:
         assert next((var for var in def1.variables if name in var.headers
                      and isinstance(var, IngredientQuantityInOutput)), None) is not None
         assert next((var for var in def1.variables if name in var.headers
                      and isinstance(var, IngredientIdentifierInOutput)), None) is not None
+        assert next((var for var in def1.variables if name in var.headers
+                     and isinstance(var, IngredientLabelsSetInOutput)), None) is not None
 
     session.set_responses(
         ProcessTemplate(
@@ -416,7 +421,7 @@ def test_add_all_ingredients_in_output(session, project):
         unit='kg'
     )
     # THEN there should be 1 new variable for each name, corresponding to the quantity
-    #   There is already a variable for id
+    #   There is already a variable for id and labels
     #   There should be 2 new columns for each name, one for the quantity and one for the units
     new_variables = def2.variables[len(def1.variables):]
     new_columns = def2.columns[len(def1.columns):]
