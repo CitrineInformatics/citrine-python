@@ -106,6 +106,16 @@ class TableConfig(Resource["TableConfig"]):
             raise ValueError("The data_source of the columns must match one of the variable names,"
                              " but {} were missing".format(missing_variables))
 
+    @property
+    def uid(self) -> UUID:
+        """Unique ID of the table config, independent of its version."""
+        return self.config_uid
+
+    @uid.setter
+    def uid(self, new_uid: Union[str, UUID]) -> None:
+        """Set the unique ID of the table config, independent of its version."""
+        self.config_uid = new_uid
+
     def add_columns(self, *,
                     variable: Variable,
                     columns: List[Column],

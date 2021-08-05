@@ -11,6 +11,7 @@ from citrine.resources.data_concepts import CITRINE_SCOPE
 from citrine.resources.material_run import MaterialRun
 from citrine.resources.project import Project
 from citrine.resources.process_template import ProcessTemplate
+from citrine.seeding.find_or_create import create_or_update
 from tests.utils.factories import TableConfigResponseDataFactory, ListTableConfigResponseDataFactory
 from tests.utils.session import FakeSession, FakeCall
 
@@ -95,6 +96,44 @@ def test_init_table_config():
     table_config = TableConfig(name="foo", description="bar", rows=[], columns=[], variables=[], datasets=[])
     assert table_config.config_uid is None
     assert table_config.version_number is None
+
+
+def test_uid_aliases_config_uid():
+    """Test that uid returns config_uid attribute"""
+    table_config = TableConfig(name="name", description="description", datasets=[], rows=[], variables=[], 
+        columns=[])
+    table_config.config_uid = uuid4()
+    assert table_config.uid == table_config.config_uid
+
+    # Test setter method
+    new_uid = uuid4()
+    table_config.uid = new_uid
+    assert table_config.config_uid == new_uid
+
+def test_create_or_update_config(collection, session):
+    initial_config = TableConfig(
+        name="Test Config", description="description", datasets=[], rows=[], variables=[], columns=[]
+    )
+
+    # Fake table config data response
+    retrieved_config_response = TableConfigResponseDataFactory()
+    retrieved_config_response["definition"]["name"] = "Test Config"
+    retrieved_id = retrieved_config_response["definition"]["id"]
+    retrieved_version = retrieved_config_response["version"]["version_number"]
+    session.set_responses(
+        {'definitions': [retrieved_config_response]},
+        retrieved_config_response
+    )
+
+    # Create or update with mocked list, return just fake response
+    updated_table_config = create_or_update(
+        collection=collection,
+        resource=initial_config
+    )
+
+    # Updated config should have UID set from response data
+    assert 2 == session.num_calls
+    assert str(updated_table_config.uid) == retrieved_id
 
 
 def test_dup_names():

@@ -98,19 +98,19 @@ class GemTableCollection(Collection[GemTable]):
         :param per_page: The number of items to fetch per-page.
         :return: An iterable of the versions of the Tables (as Table objects).
         """
-        def fetch_versions(page: Optional[int],
-                           per_page: int) -> Tuple[Iterable[dict], str]:
+        def _fetch_versions(page: Optional[int],
+                            per_page: int) -> Tuple[Iterable[dict], str]:
             data = self.session.get_resource(self._get_path(uid),
                                              params=self._page_params(page, per_page))
-            return (data[self._collection_key], data.get('next', ""))
+            return data[self._collection_key], data.get('next', "")
 
-        def build_versions(collection: Iterable[dict]) -> Iterable[GemTable]:
+        def _build_versions(collection: Iterable[dict]) -> Iterable[GemTable]:
             for item in collection:
                 yield self.build(item)
 
         return self._paginator.paginate(
             # Don't deduplicate on uid since uids are shared between versions
-            fetch_versions, build_versions, page, per_page, deduplicate=False)
+            _fetch_versions, _build_versions, page, per_page, deduplicate=False)
 
     def list_by_config(self,
                        table_config_uid: UUID,
@@ -123,13 +123,13 @@ class GemTableCollection(Collection[GemTable]):
         This is a paginated collection, similar to a .list() call.
 
 
-        :param uid: The Table Config UID.
+        :param table_config_uid: The Table Config UID.
         :param page: The page number to display (eg: 1)
         :param per_page: The number of items to fetch per-page.
         :return: An iterable of the versions of the Tables (as Table objects).
         """
-        def fetch_versions(page: Optional[int],
-                           per_page: int) -> Tuple[Iterable[dict], str]:
+        def _fetch_versions(page: Optional[int],
+                            per_page: int) -> Tuple[Iterable[dict], str]:
             path_params = {'table_config_uid_str': str(table_config_uid)}
             path_params.update(self.__dict__)
             path = format_escaped_url(
@@ -141,13 +141,13 @@ class GemTableCollection(Collection[GemTable]):
                 params=self._page_params(page, per_page))
             return data[self._collection_key], data.get('next', "")
 
-        def build_versions(collection: Iterable[dict]) -> Iterable[GemTable]:
+        def _build_versions(collection: Iterable[dict]) -> Iterable[GemTable]:
             for item in collection:
                 yield self.build(item)
 
         return self._paginator.paginate(
             # Don't deduplicate on uid since uids are shared between versions
-            fetch_versions, build_versions, page, per_page, deduplicate=False)
+            _fetch_versions, _build_versions, page, per_page, deduplicate=False)
 
     def initiate_build(self, config: Union[TableConfig, str, UUID], *,
                        version: Union[str, UUID] = None) -> JobSubmissionResponse:
@@ -178,10 +178,10 @@ class GemTableCollection(Collection[GemTable]):
             if config.version_number is None:
                 raise ValueError('Cannot build table from config which has no version. '
                                  'Try registering the config before building.')
-            if config.config_uid is None:
+            if config.uid is None:
                 raise ValueError('Cannot build table from config which has no uid. '
                                  'Try registering the config before building.')
-            uid = config.config_uid
+            uid = config.uid
             version = config.version_number
         else:
             if version is None:

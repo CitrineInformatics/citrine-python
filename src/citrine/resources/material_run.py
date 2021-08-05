@@ -109,8 +109,8 @@ class MaterialRunCollection(ObjectRunCollection[MaterialRun]):
         """Return the resource type in the collection."""
         return MaterialRun
 
-    def get_history(self, *, scope: Optional[str],
-                    id: Union[str, UUID, LinkByUID, MaterialRun]) -> Type[MaterialRun]:
+    def get_history(self, *, id: Union[str, UUID, LinkByUID, MaterialRun],
+                    scope: Optional[str] = None) -> Type[MaterialRun]:
         """
         Get the history associated with a terminal material.
 
@@ -120,12 +120,12 @@ class MaterialRunCollection(ObjectRunCollection[MaterialRun]):
 
         Parameters
         ----------
+        id: Union[UUID, str, LinkByUID, MaterialRun]
+            A representation of the material whose history is to be retrieved
         scope: Optional[str]
             [DEPRECATED] use a LinkByUID to specify a custom scope
             The scope of the uid. The lookup will be most efficient if you use the Citrine ID
             of the material, which is the default if scope=None.
-        id: Union[UUID, str, LinkByUID, MaterialRun]
-            A representation of the material whose history is to be retrieved
 
         Returns
         -------
