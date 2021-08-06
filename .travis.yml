@@ -11,6 +11,7 @@ script:
 - pytest --cov=src/ --cov-report term-missing --cov-report term:skip-covered --cov-config=tox.ini
   --cov-fail-under=100 -s -r .
 - flake8 src
+- derp src src/citrine/__version__.py
 - cd docs; make html; cd ..;
 - touch ./docs/_build/html/.nojekyll
 # only run the validate-version-bump.sh script on PR builds against master, since those have access to a "master" reference to git show the version
