@@ -111,6 +111,11 @@ class TableConfig(Resource["TableConfig"]):
         """Unique ID of the table config, independent of its version."""
         return self.config_uid
 
+    @uid.setter
+    def uid(self, new_uid: Union[str, UUID]) -> None:
+        """Set the unique ID of the table config, independent of its version."""
+        self.config_uid = new_uid
+
     def add_columns(self, *,
                     variable: Variable,
                     columns: List[Column],
@@ -271,7 +276,7 @@ class TableConfigCollection(Collection[TableConfig]):
             data['version'] = data['versions'][index]
         return self.build(data)
 
-    @deprecated(deprecated_in="0.124.0", removed_in="1.0.0",
+    @deprecated(deprecated_in="0.124.0", removed_in="2.0.0",
                 details="get_with_version() is deprecated in favor of get()")
     def get_with_version(self, *, table_config_uid: Union[UUID, str],
                          version_number: int) -> TableConfig:
