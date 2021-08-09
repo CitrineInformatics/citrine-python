@@ -7,7 +7,8 @@ import sys
 import time
 
 from citrine.informatics.executions.design_execution import DesignExecution
-from citrine.informatics.executions.predictor_evaluation_execution import PredictorEvaluationExecution
+from citrine.informatics.executions.predictor_evaluation_execution import (
+    PredictorEvaluationExecution)
 from citrine.jobs.waiting import (
     wait_for_asynchronous_object,
     wait_while_executing,
@@ -66,7 +67,8 @@ def test_wait_while_executing(sleep_mock):
     workflow_execution.in_progress = in_progress
     collection.get.return_value = workflow_execution
 
-    wait_while_executing(collection=collection, execution=workflow_execution, print_status_info=True)
+    wait_while_executing(collection=collection,
+        execution=workflow_execution, print_status_info=True)
 
     assert("SUCCEEDED" in captured_output.getvalue())
 
