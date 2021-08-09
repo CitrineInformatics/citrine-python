@@ -32,7 +32,7 @@ DataObjectResourceType = TypeVar("DataObjectResourceType", bound="DataObject")
 class DataObjectCollection(DataConceptsCollection[DataObjectResourceType], ABC):
     """A collection of one kind of data object object."""
 
-    @deprecated(deprecated_in="0.130.0", removed_in="1.0.0",
+    @deprecated(deprecated_in="0.130.0", removed_in="2.0.0",
                 details="For performance reasons, please use list_by_attribute_bounds instead")
     def filter_by_attribute_bounds(
             self,
