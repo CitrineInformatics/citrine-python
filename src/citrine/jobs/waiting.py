@@ -11,6 +11,7 @@ from citrine.informatics.modules import Module
 
 class ConditionTimeoutError(RuntimeError):
     """Error that is raised when timeout is reached but the checked condition is still False."""
+
     pass
 
 
@@ -72,9 +73,10 @@ def wait_for_asynchronous_object(
     while not is_finished() and (time.time() - start < timeout):
         time.sleep(interval)
     if not is_finished():
-        raise ConditionTimeoutError("Timeout of {timeout_length} seconds "
-        "reached, but task {uid} is still in progress".format(
-            timeout_length=timeout, uid=resource.uid)
+        raise ConditionTimeoutError(
+            "Timeout of {timeout_length} seconds "
+            "reached, but task {uid} is still in progress".format(
+                timeout_length=timeout, uid=resource.uid)
         )
 
     current_resource = collection.get(resource.uid)
