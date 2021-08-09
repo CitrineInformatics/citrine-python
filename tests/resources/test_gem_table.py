@@ -244,6 +244,20 @@ def test_get_and_read_table_from_collection(mock_write_files_locally, table, ses
         assert mock_write_files_locally.call_count == 1
         assert mock_write_files_locally.call_args == call(b'stuff', "table4.csv")
 
+
+def test_read_table_into_memory_from_collection(table, session, collection):
+    with requests_mock.mock() as mock_get:
+        # Given
+        remote_url = "http://otherhost:4572/anywhere"
+        content = "stuff"
+        retrieved_table = table(remote_url)
+        session.set_response(retrieved_table.dump())
+        mock_get.get(remote_url, text=content)
+        returned = collection.read_to_memory(retrieved_table)
+        assert mock_get.call_count == 1
+        assert returned == content
+
+
 def test_gem_table_entity_dict():
     table = GemTable.build(GemTableDataFactory())
     entity = table.access_control_dict()

@@ -2,6 +2,7 @@ import json
 from logging import getLogger
 from typing import Union, Iterable, Optional, Any, Tuple
 from uuid import uuid4
+from warnings import warn
 
 import requests
 
@@ -290,9 +291,40 @@ class GemTableCollection(Collection[GemTable]):
         """Tables cannot be deleted at this time."""
         raise NotImplementedError("Tables cannot be deleted at this time.")
 
-    def read(self, *, table: Union[GemTable, Tuple[str, int]], local_path: str):
+    table_type = Union[GemTable, UUID, str]
+    obsolete_table_type = Union[table_type, Tuple[Union[str, UUID], Union[str, int]]]
+
+    def read_to_memory(self, table: table_type) -> str:
         """
-        Read the Table file from S3.
+        Read the Table file from S3 into local memory.
+
+        If a Table object is not provided, retrieve it using the provided table and version ids.
+
+
+        Parameters
+        ----------
+        table:
+            The persisted table config from which to build a table (or its ID and version number).
+
+        Returns
+        -------
+        str
+            The contents of the file from S3, which is expected to be formatted as a CSV
+
+        """
+        from tempfile import TemporaryDirectory
+        from os.path import join
+
+        with TemporaryDirectory() as dirname:
+            filename = join(dirname, "table.tmp")
+            self.read(table=table, local_path=filename)
+            with open(filename) as f:
+                content = f.read()
+        return content
+
+    def read(self, *, table: obsolete_table_type, local_path: str):
+        """
+        Read the Table file from S3 to your local system.
 
         If a Table object is not provided, retrieve it using the provided table and version ids.
 
@@ -307,8 +339,16 @@ class GemTableCollection(Collection[GemTable]):
         """
         # NOTE: this uses the pre-signed S3 download url. If we need to download larger files,
         # we have other options available (using multi-part downloads in parallel , for example).
-        if isinstance(table, Tuple):
-            table = self.get(uid=table[0], version=table[1])
+        from typing import Iterable
+        if isinstance(table, Iterable) and not isinstance(table, str):
+            warn("A tuple as a means of referring to a GEM Table is deprecated.  "
+                 "Please pass a GemTable object.", DeprecationWarning)
+            table = GemTable.build({"uid": table[0], "version": table[1]})
+
+        if not isinstance(table, GemTable):
+            table = self.get(uid=table)
+        elif table.download_url is None:
+            table = self.get(uid=table.uid, version=table.version)
 
         data_location = table.download_url
         data_location = rewrite_s3_links_locally(data_location, self.session.s3_endpoint_url)
