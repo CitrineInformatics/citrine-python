@@ -6,7 +6,7 @@ import time
 from gemd.entity.link_by_uid import LinkByUID
 from gemd.enumeration.base_enumeration import BaseEnumeration
 
-from citrine.seeding.find_or_create import find_collection
+from citrine.seeding.find_or_create import find_collection, create_or_update
 from citrine.jobs.waiting import wait_while_validating
 from citrine.informatics.data_sources import GemTableDataSource
 from citrine.informatics.executions import DesignExecution, PredictorEvaluationExecution
@@ -122,6 +122,13 @@ class AutoConfigureWorkflow():
         self._design_workflow = None
         self._design_execution = None
 
+        # Search project for current status
+        self.update()
+
+    def _make_name(self, asset_name):
+        separator = ": " if self.name else ""
+        return f"{self.name}{separator}{asset_name}"
+
     @property
     def project(self) -> Project:
         """Get the project used when automatically configuring assets."""
@@ -197,69 +204,140 @@ class AutoConfigureWorkflow():
         ]
         return [asset for asset in initial_assets if asset is not None]
 
-    def _make_name(self, asset_name):
-        separator = ": " if self.name else ""
-        return f"{self.name}{separator}{asset_name}"
+    def update(self):
+        """Search for existing assets matching the workflow name and update its status."""
+        self._update_assets()
+        self._update_status()
 
-    def find_assets(self):
+    def _update_assets(self):
         """Find and store all assets on the platform matching the workflow name."""
+        def _print_found(collection) -> None:
+            print("Found existing: {}".format(collection))
+
         # Table config
-        config_name = self._make_name("Default GEM Table")
-        try:
-            self._table_config = find_collection(
-                collection=self.project.table_configs, name=config_name
-            )
-        except ValueError:
-            warnings.warn(f"Multiple table configs found with name {config_name} -- skipping.")
+        if self.table_config is None:
+            config_name = self._make_name("Auto Configure GEM Table")
+            try:
+                self._table_config = find_collection(
+                    collection=self.project.table_configs, name=config_name
+                )
+            except ValueError:
+                warnings.warn(
+                    f"Multiple table configs found with name '{config_name}' -- skipping."
+                )
+        else:
+            self._table_config = self.project.table_configs.get(self.table_config.uid)
+            _print_found(self.table_config)
 
         # Table
-        if self.table_config is not None:
-            self._table = next(self.project.tables.list_by_config(self.table_config.uid), None)
-            if self.table is not None:
-                print(f"Found existing: {self.table}")
+        if self.table is None:
+            if self.table_config is not None:
+                self._table = next(self.project.tables.list_by_config(self.table_config.uid), None)
+                if self.table is not None:
+                    print("Found existing: {}".format(self.table))
+        else:
+            self._table = self.project.tables.get(self.table.uid)
+            _print_found(self.table)
 
         # Predictor
-        predictor_name = self._make_name("Default Predictor")
-        try:
-            self._predictor = find_collection(
-                collection=self.project.predictors, name=predictor_name
-            )
-        except ValueError:
-            warnings.warn(f"Multiple predictors found with name {predictor_name} -- skipping.")
+        if self.predictor is None:
+            predictor_name = self._make_name("Auto Configure Predictor")
+            try:
+                self._predictor = find_collection(
+                    collection=self.project.predictors, name=predictor_name
+                )
+            except ValueError:
+                warnings.warn(
+                    f"Multiple predictors found with name '{predictor_name}' -- skipping."
+                )
+        else:
+            self._predictor = self.project.predictors.get(self.predictor.uid)
+            _print_found(self.predictor)
 
         # PEW
-        pew_name = self._make_name("Predictor Evaluation Workflow")
-        try:
-            self._predictor_evaluation_workflow = find_collection(
-                collection=self.project.predictor_evaluation_workflows, name=pew_name
+        if self.predictor_evaluation_workflow is None:
+            pew_name = self._make_name("Auto Configure PEW")
+            try:
+                self._predictor_evaluation_workflow = find_collection(
+                    collection=self.project.predictor_evaluation_workflows, name=pew_name
+                )
+            except ValueError:
+                warnings.warn("Multiple predictor evaluation workflows found "
+                              f"with name '{pew_name}' -- skipping.")
+        else:
+            self._predictor_evaluation_workflow = self.project.predictor_evaluation_workflows.get(
+                self.predictor_evaluation_workflow.uid
             )
-        except ValueError:
-            warnings.warn("Multiple predictor evaluation workflows found "
-                          f"with name {pew_name} -- skipping.")
+            _print_found(self.predictor_evaluation_workflow)
 
         # Design space
-        ds_name = self._make_name("Default Design Space")
-        try:
-            self._design_space = find_collection(
-                collection=self.project.design_spaces, name=ds_name
-            )
-        except ValueError:
-            warnings.warn(f"Multiple design spaces found with name {ds_name} -- skipping.")
+        if self.design_space is None:
+            ds_name = self._make_name("Auto Configure Design Space")
+            try:
+                self._design_space = find_collection(
+                    collection=self.project.design_spaces, name=ds_name
+                )
+            except ValueError:
+                warnings.warn(f"Multiple design spaces found with name '{ds_name}' -- skipping.")
+        else:
+            self._design_space = self.project.design_spaces.get(self.design_space.uid)
+            _print_found(self.design_space)
 
         # Design workflow
-        dw_name = self._make_name("Default Design Workflow")
-        try:
-            self._design_workflow = find_collection(
-                collection=self.project.design_workflows, name=dw_name
-            )
-        except ValueError:
-            warnings.warn(f"Multiple design workflows found with name {dw_name} -- skipping.")
+        if self.design_workflow is None:
+            dw_name = self._make_name("Auto Configure Design Workflow")
+            try:
+                self._design_workflow = find_collection(
+                    collection=self.project.design_workflows, name=dw_name
+                )
+            except ValueError:
+                warnings.warn(
+                    f"Multiple design workflows found with name '{dw_name}' -- skipping."
+                )
+        else:
+            self._design_workflow = self.project.design_workflows.get(self.design_workflow.uid)
+            _print_found(self.design_workflow)
 
-    def next_step(self):
-        pass
+    def _update_status(self):
+        """Update status info based on currently stored assets."""
+        # Work backwards from end of workflow, return early when possible
+        if self.design_workflow is not None:
+            self._status_info = self.design_workflow.status_info
+            if self.design_workflow.status == "FAILED":
+                self._status = AutoConfigureStatus.DESIGN_WORKFLOW_FAILED
+            else:
+                self._status = AutoConfigureStatus.DESIGN_WORKFLOW_CREATED
+            return
 
-    def update_status(self):
-        pass
+        if self.design_space is not None:
+            self._status_info = self.design_space.status_info
+            if self.design_space.status == "INVALID":
+                self._status = AutoConfigureStatus.DESIGN_SPACE_INVALID
+            else:
+                self._status = AutoConfigureStatus.DESIGN_SPACE_CREATED
+            return
+
+        if self.predictor_evaluation_workflow is not None:
+            self._status_info = self.predictor_evaluation_workflow
+            if self.predictor_evaluation_workflow.status == "FAILED":
+                self._status = AutoConfigureStatus.PEW_FAILED
+            else:
+                self._status = AutoConfigureStatus.PEW_CREATED
+            return
+
+        if self.predictor is not None:
+            self._status_info = self.predictor.status_info
+            if self.predictor.status == "INVALID":
+                self._status = AutoConfigureStatus.PREDICTOR_INVALID
+            else:
+                self._status = AutoConfigureStatus.PREDICTOR_CREATED
+            return
+
+        if self.table is not None:
+            self._status = AutoConfigureStatus.TABLE_CREATED
+            return
+
+        self._status = AutoConfigureStatus.START
 
     def execute(self, *, score: Score) -> DesignExecution:
         """[ALPHA] Execute a design execution given a provided score.
@@ -389,12 +467,16 @@ class AutoConfigureWorkflow():
         if not isinstance(mode, AutoConfigureMode):
             raise TypeError('mode must be an option from AutoConfigureMode')
 
-        # Run predictor build stage
-        self._predictor_build_stage(table=table, mode=mode, print_status_info=print_status_info)
+        # Get default predictor, pass to next stage for registration
+        data_source = GemTableDataSource(table_id=table.uid, table_version=table.version)
+        predictor = self.project.predictors.auto_configure(
+            training_data=data_source, pattern=mode.value  # Uses same string pattern
+        )
+        predictor.name = self._make_name("Auto Configure Predictor")
 
         # Finish workflow from predictor stage
         self.from_predictor(
-            predictor=self.predictor, score=score, evaluator=evaluator,
+            predictor=predictor, score=score, evaluator=evaluator,
             design_space=design_space, print_status_info=print_status_info
         )
 
@@ -439,26 +521,29 @@ class AutoConfigureWorkflow():
             Default: False
 
         """
-        if predictor.uid is None:
-            raise ValueError("Predictor has uid=None. Are you using a registered resource?")
+        # Run the predictor registration stage
+        self._predictor_registration_stage(
+            predictor=predictor,
+            print_status_info=print_status_info
+        )
 
         # Run the predictor evaluation stage
         self._predictor_evaluation_stage(
-            predictor=predictor,
+            predictor=self.predictor,
             evaluator=evaluator,
             print_status_info=print_status_info
         )
 
         # Run the design space stage
         self._design_space_build_stage(
-            predictor=predictor,
+            predictor=self.predictor,
             design_space=design_space,
             print_status_info=print_status_info
         )
 
         # Run the design workflow build stage, trigger score if provided
         self._design_workflow_build_stage(
-            predictor=predictor,
+            predictor=self.predictor,
             design_space=self.design_space,  # Use the object from previous stage
             score=score,
             print_status_info=print_status_info
@@ -478,33 +563,30 @@ class AutoConfigureWorkflow():
         }
         table_algorithm = table_algorithm_map[mode.value]
 
-        print("Configuring default GEM table from material history...")
         table_config, _ = self.project.table_configs.default_for_material(
-            material=material, name=self._make_name("Default GEM Table"),
+            material=material,
+            name=self._make_name("Auto Configure GEM Table"),
             algorithm=table_algorithm
         )
-        table_config = self.project.table_configs.register(table_config)
-        table = self.project.tables.build_from_config(table_config)
+        table_config = create_or_update(
+            collection=self.project.table_configs, resource=table_config
+        )
 
         self._table_config = table_config
-        self._table = table
+        self._table = self.project.tables.build_from_config(self.table_config)
         self._status = AutoConfigureStatus.TABLE_CREATED
 
-    def _predictor_build_stage(
+    def _predictor_registration_stage(
             self,
             *,
-            table: GemTable,
-            mode: AutoConfigureMode,
+            predictor: Predictor,
             print_status_info: bool
     ):
-        """Create a default predictor from a GEM table."""
-        print("Configuring default predictor from GEM table...")
-        data_source = GemTableDataSource(table_id=table.uid, table_version=table.version)
-        predictor = self.project.predictors.auto_configure(
-            training_data=data_source, pattern=mode.value  # Uses same string pattern
+        """Register and validate a provided predictor."""
+        predictor = create_or_update(
+            collection=self.project.predictors,
+            resource=predictor
         )
-        predictor.name = self._make_name("Default Predictor")
-        predictor = self.project.predictors.register(predictor)
         predictor = wait_while_validating(
             collection=self.project.predictors, module=predictor,
             print_status_info=print_status_info
@@ -536,10 +618,13 @@ class AutoConfigureWorkflow():
         else:
             # We got an evaluator, so make a new PEW and register it manually
             pew = PredictorEvaluationWorkflow(
-                name=self._make_name("Predictor Evaluation Workflow"),
+                name=self._make_name("Auto Configure PEW"),
                 evaluators=[evaluator]
             )
-            pew = self.project.predictor_evaluation_workflows.register(pew)
+            pew = create_or_update(
+                collection=self.project.predictor_evaluation_workflows,
+                resource=pew
+            )
 
         pew = wait_while_validating(
             collection=self.project.predictor_evaluation_workflows, module=pew,
@@ -573,15 +658,13 @@ class AutoConfigureWorkflow():
     ):
         """Create a design space from a specified predictor, or use the provided one."""
         if design_space is None:
-            ds_source = 'predictor'
             design_space = self.project.design_spaces.create_default(predictor_id=predictor.uid)
-            design_space.name = self._make_name("Default Design Space")
-        else:
-            ds_source = 'user input'
 
-        print("Configuring design space from {}...".format(ds_source))
-        if design_space.uid is None:
-            design_space = self.project.design_spaces.register(design_space)
+        design_space.name = self._make_name("Auto Configure Design Space")
+        design_space = create_or_update(
+            collection=self.project.design_spaces,
+            resource=design_space
+        )
         design_space = wait_while_validating(
             collection=self.project.design_spaces, module=design_space,
             print_status_info=print_status_info
@@ -607,12 +690,15 @@ class AutoConfigureWorkflow():
         """Create a design workflow, and optionally trigger a design execution."""
         print("Configuring design workflow for design space...")
         workflow = DesignWorkflow(
-            name=self._make_name("Default Design Workflow"),
+            name=self._make_name("Auto Configure Design Workflow"),
             predictor_id=predictor.uid,
             design_space_id=design_space.uid,
             processor_id=None
         )
-        workflow = self.project.design_workflows.register(workflow)
+        workflow = create_or_update(
+            collection=self.project.design_workflows,
+            resource=workflow
+        )
         workflow = wait_while_validating(
             collection=self.project.design_workflows, module=workflow,
             print_status_info=print_status_info
