@@ -211,7 +211,7 @@ class AutoConfigureWorkflow():
 
     def _update_assets(self):
         """Find and store all assets on the platform matching the workflow name."""
-        def _print_found(collection) -> None:
+        def _print_found(collection) :
             print("Found existing: {}".format(collection))
 
         # Table config
@@ -472,7 +472,6 @@ class AutoConfigureWorkflow():
         predictor = self.project.predictors.auto_configure(
             training_data=data_source, pattern=mode.value  # Uses same string pattern
         )
-        predictor.name = self._make_name("Auto Configure Predictor")
 
         # Finish workflow from predictor stage
         self.from_predictor(
@@ -583,6 +582,8 @@ class AutoConfigureWorkflow():
             print_status_info: bool
     ):
         """Register and validate a provided predictor."""
+        predictor.name = self._make_name("Auto Configure Predictor")
+
         predictor = create_or_update(
             collection=self.project.predictors,
             resource=predictor
