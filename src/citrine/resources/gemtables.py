@@ -294,6 +294,33 @@ class GemTableCollection(Collection[GemTable]):
     table_type = Union[GemTable, UUID, str]
     obsolete_table_type = Union[table_type, Tuple[Union[str, UUID], Union[str, int]]]
 
+    def _read_raw(self, table: table_type) -> requests.Response:
+        """
+        Read the Table file from S3 into local memory.
+
+        If a Table object is not provided, retrieve it using the provided table and version ids.
+
+
+        Parameters
+        ----------
+        table:
+            The persisted table config from which to build a table (or its ID and version number).
+
+        Returns
+        -------
+        requests.Response
+            The server response
+
+        """
+        if not isinstance(table, GemTable):
+            table = self.get(uid=table)
+        elif table.download_url is None:
+            table = self.get(uid=table.uid, version=table.version)
+
+        data_location = table.download_url
+        data_location = rewrite_s3_links_locally(data_location, self.session.s3_endpoint_url)
+        return requests.get(data_location)
+
     def read_to_memory(self, table: table_type) -> str:
         """
         Read the Table file from S3 into local memory.
@@ -312,15 +339,7 @@ class GemTableCollection(Collection[GemTable]):
             The contents of the file from S3, which is expected to be formatted as a CSV
 
         """
-        from tempfile import TemporaryDirectory
-        from os.path import join
-
-        with TemporaryDirectory() as dirname:
-            filename = join(dirname, "table.tmp")
-            self.read(table=table, local_path=filename)
-            with open(filename) as f:
-                content = f.read()
-        return content
+        return self._read_raw(table).text
 
     def read(self, *, table: obsolete_table_type, local_path: str):
         """
@@ -345,12 +364,5 @@ class GemTableCollection(Collection[GemTable]):
                  "Please pass a GemTable object.", DeprecationWarning)
             table = GemTable.build({"uid": table[0], "version": table[1]})
 
-        if not isinstance(table, GemTable):
-            table = self.get(uid=table)
-        elif table.download_url is None:
-            table = self.get(uid=table.uid, version=table.version)
-
-        data_location = table.download_url
-        data_location = rewrite_s3_links_locally(data_location, self.session.s3_endpoint_url)
-        response = requests.get(data_location)
+        response = self._read_raw(table)
         write_file_locally(response.content, local_path)
