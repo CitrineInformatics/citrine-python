@@ -230,8 +230,22 @@ def test_read_table_from_collection(mock_write_files_locally, collection, table)
         assert mock_write_files_locally.call_count == 3
         assert mock_write_files_locally.call_args == call(b'stuff', "table3.pdf")
 
+    with requests_mock.mock() as mock_get:
+        # When
+        localstack_url = "http://localstack:4572/anywhere"
+        override_url = "https://fakestack:1337"
+        collection.session.s3_endpoint_url = override_url
+        mock_get.get(override_url + "/anywhere", text='stuff')
+        this_table = table(localstack_url)
+        collection.session.set_response({"tables": [this_table.dump()]})
+        collection.read(table=this_table.uid, local_path="table4.pdf")
+        assert mock_get.call_count == 1
+        assert mock_write_files_locally.call_count == 4
+        assert mock_write_files_locally.call_args == call(b'stuff', "table4.pdf")
+
 
 @patch("citrine.resources.gemtables.write_file_locally")
+@pytest.mark.filterwarnings("ignore:A tuple*:DeprecationWarning")
 def test_get_and_read_table_from_collection(mock_write_files_locally, table, session, collection):
     with requests_mock.mock() as mock_get:
         # Given
