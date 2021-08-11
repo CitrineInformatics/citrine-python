@@ -12,7 +12,8 @@ from citrine.informatics.data_sources import GemTableDataSource
 from citrine.informatics.executions import DesignExecution, PredictorEvaluationExecution
 from citrine.informatics.design_spaces import DesignSpace
 from citrine.informatics.predictor_evaluator import PredictorEvaluator
-from citrine.informatics.scores import Score
+from citrine.informatics.objectives import Objective, ScalarMinObjective, ScalarMaxObjective
+from citrine.informatics.scores import Score, LIScore
 from citrine.informatics.workflows import DesignWorkflow, PredictorEvaluationWorkflow
 
 from citrine.resources.gemtables import GemTable
@@ -102,11 +103,12 @@ class AutoConfigureWorkflow():
         Project to use when accessing the Citrine Platform.
     name: str
         Name to affix to auto-configured assets on the Citrine Platform.
-        Default: ''
+        This name is used as an identifier for finding and re-using
+        assets related to a given workflow.
 
     """
 
-    def __init__(self, *, project: Project, name: str = ''):
+    def __init__(self, *, project: Project, name: str):
         self._project = project
         self._name = name
         self._status = AutoConfigureStatus.START
@@ -117,17 +119,24 @@ class AutoConfigureWorkflow():
         self._table = None
         self._predictor = None
         self._predictor_evaluation_workflow = None
-        self._predictor_evaluation_execution = None
         self._design_space = None
         self._design_workflow = None
-        self._design_execution = None
+
+        separator = ": " if self.name else ""
+        self._default_asset_names = {
+            "TABLE_CONFIG": f"{self.name}{separator}Auto Configure GEM Table",
+            "PREDICTOR": f"{self.name}{separator}Auto Configure Predictor",
+            "PEW": f"{self.name}{separator}Auto Configure PEW",
+            "DESIGN_SPACE": f"{self.name}{separator}Auto Configure Design Space",
+            "DESIGN_WORKFLOW": f"{self.name}{separator}Auto Configure Design Workflow"
+        }
 
         # Search project for current status
         self.update()
 
-    def _make_name(self, asset_name):
-        separator = ": " if self.name else ""
-        return f"{self.name}{separator}{asset_name}"
+    @staticmethod
+    def _print_status(msg: str, prefix: str = "\n"):
+        print(f"{prefix}AutoConfigureWorkflow: {msg}")
 
     @property
     def project(self) -> Project:
@@ -138,11 +147,6 @@ class AutoConfigureWorkflow():
     def name(self) -> str:
         """Get the naming label for assets configured by this object."""
         return self._name
-
-    @name.setter
-    def name(self, value: str):
-        """Set the naming label for assets configured by this object."""
-        self._name = value
 
     @property
     def status(self) -> str:
@@ -175,11 +179,6 @@ class AutoConfigureWorkflow():
         return self._predictor_evaluation_workflow
 
     @property
-    def predictor_evaluation_execution(self) -> Optional[PredictorEvaluationExecution]:
-        """Get the predictor evaluation execution, if it was created by this object."""
-        return self._predictor_evaluation_execution
-
-    @property
     def design_space(self) -> Optional[DesignSpace]:
         """Get the design space used during the auto configuration steps."""
         return self._design_space
@@ -190,17 +189,29 @@ class AutoConfigureWorkflow():
         return self._design_workflow
 
     @property
-    def design_execution(self) -> Optional[DesignExecution]:
+    def predictor_evaluation_executions(self) -> List[PredictorEvaluationExecution]:
+        """Get the predictor evaluation execution, if it was created by this object."""
+        pew = self.predictor_evaluation_workflow
+        return list(pew.executions.list()) if pew is not None else []
+
+    @property
+    def design_executions(self) -> List[DesignExecution]:
         """Get the design execution, if it was created by this object."""
-        return self._design_execution
+        dw = self.design_workflow
+        return list(dw.design_executions.list()) if dw is not None else []
+
+    @property
+    def scores(self) -> List[Score]:
+        """Get the score, if it was created by this object."""
+        return [de.score for de in self.design_executions]
 
     @property
     def assets(self):
         """Get all assets configured by this object."""
         initial_assets = [
             self.table_config, self.table, self.predictor,
-            self.predictor_evaluation_workflow, self.predictor_evaluation_execution,
-            self.design_space, self.design_workflow, self.design_execution
+            self.predictor_evaluation_workflow,
+            self.design_space, self.design_workflow,
         ]
         return [asset for asset in initial_assets if asset is not None]
 
@@ -211,23 +222,15 @@ class AutoConfigureWorkflow():
 
     def _update_assets(self):
         """Find and store all assets on the platform matching the workflow name."""
-        def _print_found(collection) :
-            print("Found existing: {}".format(collection))
-
         # Table config
         if self.table_config is None:
-            config_name = self._make_name("Auto Configure GEM Table")
-            try:
-                self._table_config = find_collection(
-                    collection=self.project.table_configs, name=config_name
-                )
-            except ValueError:
-                warnings.warn(
-                    f"Multiple table configs found with name '{config_name}' -- skipping."
-                )
+            self._table_config = find_collection(
+                collection=self.project.table_configs,
+                name=self._default_asset_names["TABLE_CONFIG"]
+            )
         else:
             self._table_config = self.project.table_configs.get(self.table_config.uid)
-            _print_found(self.table_config)
+            print("Found existing: {}".format(self.table_config))
 
         # Table
         if self.table is None:
@@ -237,66 +240,49 @@ class AutoConfigureWorkflow():
                     print("Found existing: {}".format(self.table))
         else:
             self._table = self.project.tables.get(self.table.uid)
-            _print_found(self.table)
+            print("Found existing: {}".format(self.table))
 
         # Predictor
         if self.predictor is None:
-            predictor_name = self._make_name("Auto Configure Predictor")
-            try:
-                self._predictor = find_collection(
-                    collection=self.project.predictors, name=predictor_name
-                )
-            except ValueError:
-                warnings.warn(
-                    f"Multiple predictors found with name '{predictor_name}' -- skipping."
-                )
+            self._predictor = find_collection(
+                collection=self.project.predictors,
+                name=self._default_asset_names["PREDICTOR"]
+            )
         else:
             self._predictor = self.project.predictors.get(self.predictor.uid)
-            _print_found(self.predictor)
+            print("Found existing: {}".format(self.predictor))
 
         # PEW
         if self.predictor_evaluation_workflow is None:
-            pew_name = self._make_name("Auto Configure PEW")
-            try:
-                self._predictor_evaluation_workflow = find_collection(
-                    collection=self.project.predictor_evaluation_workflows, name=pew_name
-                )
-            except ValueError:
-                warnings.warn("Multiple predictor evaluation workflows found "
-                              f"with name '{pew_name}' -- skipping.")
+            self._predictor_evaluation_workflow = find_collection(
+                collection=self.project.predictor_evaluation_workflows,
+                name=self._default_asset_names["PEW"]
+            )
         else:
             self._predictor_evaluation_workflow = self.project.predictor_evaluation_workflows.get(
                 self.predictor_evaluation_workflow.uid
             )
-            _print_found(self.predictor_evaluation_workflow)
+            print("Found existing: {}".format(self.predictor_evaluation_workflow))
 
         # Design space
         if self.design_space is None:
-            ds_name = self._make_name("Auto Configure Design Space")
-            try:
-                self._design_space = find_collection(
-                    collection=self.project.design_spaces, name=ds_name
-                )
-            except ValueError:
-                warnings.warn(f"Multiple design spaces found with name '{ds_name}' -- skipping.")
+            self._design_space = find_collection(
+                collection=self.project.design_spaces,
+                name=self._default_asset_names["DESIGN_SPACE"]
+            )
         else:
             self._design_space = self.project.design_spaces.get(self.design_space.uid)
-            _print_found(self.design_space)
+            print("Found existing: {}".format(self.design_space))
 
         # Design workflow
         if self.design_workflow is None:
-            dw_name = self._make_name("Auto Configure Design Workflow")
-            try:
-                self._design_workflow = find_collection(
-                    collection=self.project.design_workflows, name=dw_name
-                )
-            except ValueError:
-                warnings.warn(
-                    f"Multiple design workflows found with name '{dw_name}' -- skipping."
-                )
+            self._design_workflow = find_collection(
+                collection=self.project.design_workflows,
+                name=self._default_asset_names["DESIGN_WORKFLOW"]
+            )
         else:
             self._design_workflow = self.project.design_workflows.get(self.design_workflow.uid)
-            _print_found(self.design_workflow)
+            print("Found existing: {}".format(self.design_workflow))
 
     def _update_status(self):
         """Update status info based on currently stored assets."""
@@ -339,7 +325,7 @@ class AutoConfigureWorkflow():
 
         self._status = AutoConfigureStatus.START
 
-    def execute(self, *, score: Score) -> DesignExecution:
+    def execute(self, *, score: Union[Score, Objective]) -> DesignExecution:
         """[ALPHA] Execute a design execution given a provided score.
 
         A design workflow must be present after auto-configuration to execute the score.
@@ -356,9 +342,9 @@ class AutoConfigureWorkflow():
         """
         if self.design_workflow is None:
             raise ValueError("Design workflow is missing, cannot execute score.")
-        execution = self.design_workflow.design_executions.trigger(score)
-        self._design_execution = execution
-        return self.design_execution
+        if isinstance(score, Objective):
+            score = self._build_default_score(objective=score)
+        return self.design_workflow.design_executions.trigger(score)
 
     def from_material(
             self,
@@ -467,6 +453,8 @@ class AutoConfigureWorkflow():
         if not isinstance(mode, AutoConfigureMode):
             raise TypeError('mode must be an option from AutoConfigureMode')
 
+        self._table = table  # Save here, but cannot force rename w/o config
+
         # Get default predictor, pass to next stage for registration
         data_source = GemTableDataSource(table_id=table.uid, table_version=table.version)
         predictor = self.project.predictors.auto_configure(
@@ -555,6 +543,8 @@ class AutoConfigureWorkflow():
             mode: AutoConfigureMode
     ):
         """Create a default GEM table from a material."""
+        self._print_status("Configuring GEM table...", prefix="")
+
         # TODO: package-wide formatting enum for method
         table_algorithm_map = {
             'PLAIN': TableBuildAlgorithm.SINGLE_ROW,
@@ -564,11 +554,12 @@ class AutoConfigureWorkflow():
 
         table_config, _ = self.project.table_configs.default_for_material(
             material=material,
-            name=self._make_name("Auto Configure GEM Table"),
+            name=self._default_asset_names["TABLE_CONFIG"],
             algorithm=table_algorithm
         )
         table_config = create_or_update(
-            collection=self.project.table_configs, resource=table_config
+            collection=self.project.table_configs,
+            resource=table_config
         )
 
         self._table_config = table_config
@@ -582,14 +573,16 @@ class AutoConfigureWorkflow():
             print_status_info: bool
     ):
         """Register and validate a provided predictor."""
-        predictor.name = self._make_name("Auto Configure Predictor")
+        self._print_status("Configuring predictor...")
 
+        predictor.name = self._default_asset_names["PREDICTOR"]
         predictor = create_or_update(
             collection=self.project.predictors,
             resource=predictor
         )
         predictor = wait_while_validating(
-            collection=self.project.predictors, module=predictor,
+            collection=self.project.predictors,
+            module=predictor,
             print_status_info=print_status_info
         )
 
@@ -610,7 +603,8 @@ class AutoConfigureWorkflow():
             print_status_info: bool
     ):
         """Evaluate the predictor with the specified evaluator, or create a default workflow."""
-        print("Configuring predictor evaluation workflow/execution...")
+        self._print_status("Configuring predictor evaluation...")
+
         if evaluator is None:
             # No evaluator, so create a default PEW for the predictor
             pew = self.project.predictor_evaluation_workflows.create_default(
@@ -619,7 +613,7 @@ class AutoConfigureWorkflow():
         else:
             # We got an evaluator, so make a new PEW and register it manually
             pew = PredictorEvaluationWorkflow(
-                name=self._make_name("Auto Configure PEW"),
+                name=self._default_asset_names["PEW"],
                 evaluators=[evaluator]
             )
             pew = create_or_update(
@@ -628,7 +622,8 @@ class AutoConfigureWorkflow():
             )
 
         pew = wait_while_validating(
-            collection=self.project.predictor_evaluation_workflows, module=pew,
+            collection=self.project.predictor_evaluation_workflows,
+            module=pew,
             print_status_info=print_status_info
         )
 
@@ -640,15 +635,9 @@ class AutoConfigureWorkflow():
             # Can proceed without raising error, but can't get PEE
             self._status = AutoConfigureStatus.PEW_FAILED
             warnings.warn("Predictor evaluation workflow failed -- unable to configure execution.")
-        else:
-            if evaluator is None:
-                # Get execution from default
-                # PEE creation occurs soon after validation, short wait for safety
-                time.sleep(5)
-                self._predictor_evaluation_execution = next(pew.executions.list(), None)
-            else:
-                # Manually trigger execution
-                self._predictor_evaluation_execution = pew.executions.trigger(predictor.uid)
+        elif evaluator is not None:
+            # Manually trigger execution
+            pew.executions.trigger(predictor.uid)
 
     def _design_space_build_stage(
             self,
@@ -658,10 +647,12 @@ class AutoConfigureWorkflow():
             print_status_info: bool
     ):
         """Create a design space from a specified predictor, or use the provided one."""
+        self._print_status("Configuring design space...")
+
         if design_space is None:
             design_space = self.project.design_spaces.create_default(predictor_id=predictor.uid)
 
-        design_space.name = self._make_name("Auto Configure Design Space")
+        design_space.name = self._default_asset_names["DESIGN_SPACE"]
         design_space = create_or_update(
             collection=self.project.design_spaces,
             resource=design_space
@@ -685,16 +676,18 @@ class AutoConfigureWorkflow():
             *,
             predictor: Predictor,
             design_space: DesignSpace,
-            score: Optional[Score],
+            score: Optional[Union[Score, Objective]],
             print_status_info: bool
     ):
         """Create a design workflow, and optionally trigger a design execution."""
-        print("Configuring design workflow for design space...")
+        self._print_status("Configuring design workflow...")
+
+        processor_id = self.design_workflow.processor_id if self.design_workflow else None
         workflow = DesignWorkflow(
-            name=self._make_name("Auto Configure Design Workflow"),
+            name=self._default_asset_names["DESIGN_WORKFLOW"],
             predictor_id=predictor.uid,
             design_space_id=design_space.uid,
-            processor_id=None
+            processor_id=processor_id
         )
         workflow = create_or_update(
             collection=self.project.design_workflows,
@@ -718,5 +711,32 @@ class AutoConfigureWorkflow():
                 raise RuntimeError("Design workflow validation failed,"
                                    " cannot trigger design execution.")
         elif score is not None:
-            print("Triggering design execution using provided score...")
-            self.execute(score=score)
+            print("Triggering design execution...")
+            return self.execute(score=score)
+
+
+    def _build_default_score(self, *, objective: Objective) -> Score:
+        """Create a default score from an objective by parsing table data for baselines."""
+        import os
+        import csv
+        import tempfile
+
+        key = objective.descriptor_key
+        with tempfile.TemporaryDirectory() as td:
+            fname = os.path.join(td, "table.csv")
+            self.project.tables.read(table=self.table, local_path=fname)
+
+            with open(fname, "r") as f:
+                reader = csv.DictReader(f, delimiter=",")
+
+                full_key = next(filter(lambda col: key in col, reader.fieldnames), None)
+                if full_key is None:
+                    raise ValueError("Objective key not found in GEM table definition.")
+
+                objective_values = [float(row[full_key]) for row in reader]
+
+        comparator = max if isinstance(objective, ScalarMaxObjective) else min
+        baseline = comparator(objective_values)
+
+        score = LIScore(objectives=[objective], baselines=[baseline])
+        return score
