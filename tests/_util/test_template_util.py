@@ -129,6 +129,9 @@ def _make_list_of_gems():
     return faux_gems
 
 def test_attribute_alignment():
+    """Tests the make_attribute_table() method on a list of GEMD objects
+    including nestled objects, confirming the expected values are being returned in the correct locations
+    """
     info_dict = make_attribute_table(_make_list_of_gems())
     assert(isinstance(info_dict, list))
     assert(isinstance(info_dict[0], dict))
@@ -138,4 +141,6 @@ def test_attribute_alignment():
     assert isinstance(df.iloc[4,3], NominalReal)
     assert isinstance(df.iloc[0,5], InChI)
     assert pd.isnull(df.iloc[1,5])
+    # Shape asserts that nestled objects are being flattened and 
+    # "like" attributes are being put into the same column
     assert df.shape == (6,12)
