@@ -38,8 +38,8 @@ def make_attribute_table(gems: List[DataConcepts]) -> List[Mapping[str, BaseValu
     -------
     List[Mapping[str, BaseValue]]
         A list of dictionaries where each dictionary represents an object and its attributes.
-    """
 
+    """
     flattened_gems = recursive_flatmap(
         obj=gems, func=lambda x: [x], unidirectional=False
     )
