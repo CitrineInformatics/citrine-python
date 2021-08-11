@@ -1,4 +1,4 @@
-from gemd.util.impl import flatten
+from gemd.util.impl import recursive_flatmap
 from gemd.entity.object import (
     ProcessSpec,
     ProcessRun,
@@ -40,7 +40,7 @@ def make_attribute_table(gems: List[DataConcepts]) -> List[Mapping[str, BaseValu
         A list of dictionaries where each dictionary represents an object and its attributes.
     """
 
-    flattened_gems = flatten(
+    flattened_gems = recursive_flatmap(
         obj=gems, func=lambda x: [x], unidirectional=False
     )
     types_with_attributes = (
