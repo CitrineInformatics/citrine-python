@@ -1,4 +1,4 @@
-from gemd.util.impl import recursive_flatmap
+from gemd.util.impl import flatten
 from gemd.entity.object import (
     ProcessSpec,
     ProcessRun,
@@ -6,6 +6,9 @@ from gemd.entity.object import (
     MeasurementSpec,
     MeasurementRun,
 )
+from citrine.resources.data_concepts import DataConcepts
+from gemd.entity.value.base_value import BaseValue
+from typing import Mapping, List
 from gemd.entity.attribute import PropertyAndConditions
 
 
@@ -26,8 +29,18 @@ def make_attribute_table(gems: List[DataConcepts]) -> List[Mapping[str, BaseValu
     attribute values and value type consistency to assist in data cleaning and
     Attribute Template creation.
 
+    Parameters
+    ----------
+    gems : List[DataConcepts]
+        List of GEMD objects whose attributes you would like to compare.
+
+    Returns
+    -------
+    List[Mapping[str, BaseValue]]
+        A list of dictionaries where each dictionary represents an object and its attributes.
     """
-    flattened_gems = recursive_flatmap(
+
+    flattened_gems = flatten(
         obj=gems, func=lambda x: [x], unidirectional=False
     )
     types_with_attributes = (
