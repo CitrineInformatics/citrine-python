@@ -1,7 +1,6 @@
 from uuid import UUID
 from typing import Union, Optional, List
 import warnings
-import time
 
 from gemd.entity.link_by_uid import LinkByUID
 from gemd.enumeration.base_enumeration import BaseEnumeration
@@ -12,7 +11,7 @@ from citrine.informatics.data_sources import GemTableDataSource
 from citrine.informatics.executions import DesignExecution, PredictorEvaluationExecution
 from citrine.informatics.design_spaces import DesignSpace
 from citrine.informatics.predictor_evaluator import PredictorEvaluator
-from citrine.informatics.objectives import Objective, ScalarMinObjective, ScalarMaxObjective
+from citrine.informatics.objectives import Objective, ScalarMinObjective
 from citrine.informatics.scores import Score, LIScore
 from citrine.informatics.workflows import DesignWorkflow, PredictorEvaluationWorkflow
 
@@ -334,10 +333,11 @@ class AutoConfigureWorkflow():
 
         Parameters
         ----------
-        score: Score
-            Scoring function used to rank candidates during design execution.
-            Must contain objectives/constraints with matching descriptor keys
-            to those appearing in predictor responses.
+        score: Union[Score, Objective]
+            A score or objective used to rank candidates during design execution.
+            If an objective is passed, a default `LIScore` is constructed
+            by reading the GEM table associated with this workflow
+            to extract baseline scoring information.
 
         """
         if self.design_workflow is None:
@@ -352,7 +352,7 @@ class AutoConfigureWorkflow():
             material: Union[str, UUID, LinkByUID, MaterialRun],
             evaluator: Optional[PredictorEvaluator] = None,
             design_space: Optional[DesignSpace] = None,
-            score: Optional[Score] = None,
+            score: Optional[Union[Score, Objective]] = None,
             mode: AutoConfigureMode = AutoConfigureMode.PLAIN,
             print_status_info: bool = False,
     ):
@@ -379,10 +379,11 @@ class AutoConfigureWorkflow():
             A DesignSpace object to use in place of the default.
             If not registered already, will be registered during configuration.
             Default: None
-        score: Optional[Score]
-            Scoring function used to rank candidates during design execution.
-            Must contain objectives/constraints with matching descriptor keys
-            to those appearing within the provided material history.
+        score: Optional[Union[Score, Objective]]
+            A score or objective used to rank candidates during design execution.
+            If only an objective is passed, a default `LIScore` is constructed
+            by reading the GEM table associated with this workflow
+            to extract baseline scoring information.
             Default: None
         mode: AutoConfigureMode
             The method to be used in the automatic table and predictor configuration.
@@ -410,7 +411,7 @@ class AutoConfigureWorkflow():
             table: GemTable,
             evaluator: Optional[PredictorEvaluator] = None,
             design_space: Optional[DesignSpace] = None,
-            score: Optional[Score] = None,
+            score: Optional[Union[Score, Objective]] = None,
             mode: AutoConfigureMode = AutoConfigureMode.PLAIN,
             print_status_info: bool = False,
     ):
@@ -437,10 +438,11 @@ class AutoConfigureWorkflow():
             A DesignSpace object to use in place of the default.
             If not registered already, will be registered during configuration.
             Default: None
-        score: Optional[Score]
-            Scoring function used to rank candidates during design execution.
-            Must contain objectives/constraints with matching descriptor keys
-            to those appearing within the provided material history.
+        score: Optional[Union[Score, Objective]]
+            A score or objective used to rank candidates during design execution.
+            If only an objective is passed, a default `LIScore` is constructed
+            by reading the GEM table associated with this workflow
+            to extract baseline scoring information.
             Default: None
         mode: AutoConfigureMode
             The method to be used in the automatic predictor configuration.
@@ -473,7 +475,7 @@ class AutoConfigureWorkflow():
             predictor: Predictor,
             evaluator: Optional[PredictorEvaluator] = None,
             design_space: Optional[DesignSpace] = None,
-            score: Optional[Score] = None,
+            score: Optional[Union[Score, Objective]] = None,
             print_status_info: bool = False
     ):
         """[ALPHA] Auto configure platform assets from predictor to design workflow.
@@ -498,10 +500,11 @@ class AutoConfigureWorkflow():
             A DesignSpace object to use in place of the default.
             If not registered already, will be registered during configuration.
             Default: None
-        score: Optional[Score]
-            Scoring function used to rank candidates during design execution.
-            Must contain objectives/constraints with matching descriptor keys
-            to those appearing within the provided material history.
+        score: Optional[Union[Score, Objective]]
+            A score or objective used to rank candidates during design execution.
+            If only an objective is passed, a default `LIScore` is constructed
+            by reading the GEM table associated with this workflow
+            to extract baseline scoring information.
             Default: None
         print_status_info: bool
             Whether to print the status info during validation of assets.
@@ -714,7 +717,6 @@ class AutoConfigureWorkflow():
             print("Triggering design execution...")
             return self.execute(score=score)
 
-
     def _build_default_score(self, *, objective: Objective) -> Score:
         """Create a default score from an objective by parsing table data for baselines."""
         import os
@@ -735,7 +737,7 @@ class AutoConfigureWorkflow():
 
                 objective_values = [float(row[full_key]) for row in reader]
 
-        comparator = max if isinstance(objective, ScalarMaxObjective) else min
+        comparator = min if isinstance(objective, ScalarMinObjective) else max
         baseline = comparator(objective_values)
 
         score = LIScore(objectives=[objective], baselines=[baseline])
