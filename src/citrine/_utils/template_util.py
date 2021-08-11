@@ -9,7 +9,7 @@ from gemd.entity.object import (
 from gemd.entity.attribute import PropertyAndConditions
 
 
-def make_attribute_table(gems: list):
+def make_attribute_table(gems: List[DataConcepts]) -> List[Mapping[str, BaseValue]]:
     """[ALPHA] the current status of make_attribute_table.
 
     Given a list of GEMD Objects, this method returns a list of dictionaries
