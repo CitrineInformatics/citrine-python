@@ -331,7 +331,7 @@ class GemTableCollection(Collection[GemTable]):
         Parameters
         ----------
         table:
-            The persisted table config from which to build a table (or its ID and version number).
+            The Table object to read from the S3 server
 
         Returns
         -------
