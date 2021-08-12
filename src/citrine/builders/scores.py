@@ -36,12 +36,12 @@ def create_default_score(
     ----------
     Score
         The default constructed score.
-        Currently, this is a LIScore containing an objective and baseline for each provided.
+        Currently, this is a LIScore containing containing all provided objectives.
 
     """
     table_data = project.tables.read_to_memory(table)
     data_io = StringIO(table_data)
-    reader = csv.DictReader(data_io, delimiter=",")
+    reader = csv.DictReader(data_io, delimiter=",")  # Much nicer w/ pandas
 
     objectives = objectives if isinstance(objectives, Iterable) else [objectives]
 
@@ -54,7 +54,7 @@ def create_default_score(
         # Descriptor key has to be mapped inexactly to fieldnames of table data
         full_key = next(filter(lambda col: key in col, reader.fieldnames), None)
         if full_key is None:
-            raise ValueError(f"Key '{key}' not found in GEM table header.")
+            raise ValueError(f"Key '{key}' not found in GEM table headers.")
         header_map[key] = full_key
 
     # Iterate table data to extract baseline info

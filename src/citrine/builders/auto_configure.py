@@ -1,5 +1,5 @@
 from uuid import UUID
-from typing import Union, Optional, List
+from typing import Union, Optional, List, Iterable
 import warnings
 
 from gemd.entity.link_by_uid import LinkByUID
@@ -9,6 +9,7 @@ from citrine.seeding.find_or_create import find_collection, create_or_update
 from citrine.jobs.waiting import wait_while_validating
 from citrine.informatics.data_sources import GemTableDataSource
 from citrine.informatics.executions import DesignExecution, PredictorEvaluationExecution
+from citrine.informatics.design_candidate import DesignCandidate
 from citrine.informatics.design_spaces import DesignSpace
 from citrine.informatics.predictor_evaluator import PredictorEvaluator
 from citrine.informatics.objectives import Objective
@@ -129,6 +130,7 @@ class AutoConfigureWorkflow():
         self._predictor_evaluation_workflow = None
         self._design_space = None
         self._design_workflow = None
+        self._design_execution = None
 
         separator = ": " if self.name else ""
         self._default_asset_names = {
@@ -143,8 +145,8 @@ class AutoConfigureWorkflow():
         self.update()
 
     @staticmethod
-    def _print_status(msg: str, prefix: str = "\n"):
-        print(f"{prefix}AutoConfigureWorkflow: {msg}")
+    def _print_status(msg: str):
+        print(f"AutoConfigureWorkflow: {msg}")
 
     @property
     def project(self) -> Project:
@@ -197,21 +199,21 @@ class AutoConfigureWorkflow():
         return self._design_workflow
 
     @property
-    def predictor_evaluation_executions(self) -> List[PredictorEvaluationExecution]:
-        """Get the predictor evaluation executions associated with this predictor evaluation."""
-        pew = self.predictor_evaluation_workflow
-        return list(pew.executions.list()) if pew is not None else []
+    def design_execution(self) -> Optional[DesignExecution]:
+        """Get the most recent design execution from this workflow."""
+        return self._design_execution
 
     @property
-    def design_executions(self) -> List[DesignExecution]:
-        """Get the design executions associated with this design workflow."""
-        dw = self.design_workflow
-        return list(dw.design_executions.list()) if dw is not None else []
+    def score(self) -> Optional[Score]:
+        """Get the most recent score executed by this workflow."""
+        de = self.design_execution
+        return de.score if de is not None else None
 
     @property
-    def scores(self) -> List[Score]:
-        """Get the scores used in any associated design executions."""
-        return [de.score for de in self.design_executions]
+    def candidates(self) -> Optional[Iterable[DesignCandidate]]:
+        """Get the candidate list from the most recent design execution."""
+        de = self.design_execution
+        return de.candidates() if de is not None else None
 
     @property
     def assets(self):
@@ -222,6 +224,18 @@ class AutoConfigureWorkflow():
             self.design_space, self.design_workflow,
         ]
         return [asset for asset in initial_assets if asset is not None]
+
+    @property
+    def predictor_evaluation_executions(self) -> List[PredictorEvaluationExecution]:
+        """Get the predictor evaluation executions associated with this predictor evaluation."""
+        pew = self.predictor_evaluation_workflow
+        return list(pew.executions.list()) if pew is not None else []
+
+    @property
+    def design_executions(self) -> List[DesignExecution]:
+        """Get the design executions associated with this design workflow."""
+        dw = self.design_workflow
+        return list(dw.design_executions.list()) if dw is not None else []
 
     def update(self):
         """Search for existing assets matching the workflow name and update its status."""
@@ -356,9 +370,12 @@ class AutoConfigureWorkflow():
         """
         if self.design_workflow is None:
             raise ValueError("Design workflow is missing, cannot execute score.")
+
         if isinstance(score, Objective):
-            score = create_default_score(objective=score, project=self.project, table=self.table)
-        return self.design_workflow.design_executions.trigger(score)
+            score = create_default_score(objectives=score, project=self.project, table=self.table)
+
+        self._design_execution = self.design_workflow.design_executions.trigger(score)
+        return self.design_execution
 
     def from_material(
             self,
@@ -560,7 +577,7 @@ class AutoConfigureWorkflow():
             mode: AutoConfigureMode
     ):
         """Create a default GEM table from a material."""
-        self._print_status("Configuring GEM table...", prefix="")
+        self._print_status("Configuring GEM table...")
 
         # TODO: package-wide formatting enum for method
         table_algorithm_map = {
@@ -627,6 +644,10 @@ class AutoConfigureWorkflow():
             pew = self.project.predictor_evaluation_workflows.create_default(
                 predictor_id=predictor.uid
             )
+
+            self._predictor_evaluation_workflow = pew
+            self._status = AutoConfigureStatus.PEW_CREATED
+            self._status_info = pew.status_info
         else:
             # We got an evaluator, so make a new PEW and register it manually
             pew = PredictorEvaluationWorkflow(
@@ -637,24 +658,25 @@ class AutoConfigureWorkflow():
                 collection=self.project.predictor_evaluation_workflows,
                 resource=pew
             )
+            pew = wait_while_validating(
+                collection=self.project.predictor_evaluation_workflows,
+                module=pew,
+                print_status_info=print_status_info
+            )
 
-        pew = wait_while_validating(
-            collection=self.project.predictor_evaluation_workflows,
-            module=pew,
-            print_status_info=print_status_info
-        )
+            self._predictor_evaluation_workflow = pew
+            self._status = AutoConfigureStatus.PEW_CREATED
+            self._status_info = pew.status_info
 
-        self._predictor_evaluation_workflow = pew
-        self._status = AutoConfigureStatus.PEW_CREATED
-        self._status_info = pew.status_info
-
-        if pew.status == 'FAILED':
-            # Can proceed without raising error, but can't get PEE
-            self._status = AutoConfigureStatus.PEW_FAILED
-            warnings.warn("Predictor evaluation workflow failed -- unable to configure execution.")
-        elif evaluator is not None:
-            # Manually trigger execution
-            pew.executions.trigger(predictor.uid)
+            if pew.status == 'FAILED':
+                # Can proceed without raising error, but can't get PEE
+                self._status = AutoConfigureStatus.PEW_FAILED
+                warnings.warn(
+                    "Predictor evaluation workflow failed -- unable to configure execution."
+                )
+            elif evaluator is not None:
+                # Manually trigger execution
+                pew.executions.trigger(predictor.uid)
 
     def _design_space_build_stage(
             self,
@@ -723,10 +745,10 @@ class AutoConfigureWorkflow():
         if workflow.status == 'FAILED':
             self._status = AutoConfigureStatus.DESIGN_WORKFLOW_FAILED
             if score is None:
-                print("No score provided to trigger design execution -- finished.")
+                self._print_status("No score provided to trigger design execution -- finished.")
             else:
                 raise RuntimeError("Design workflow validation failed,"
                                    " cannot trigger design execution.")
         elif score is not None:
-            print("Triggering design execution...")
+            self._print_status("Triggering design execution...")
             return self.execute(score=score)

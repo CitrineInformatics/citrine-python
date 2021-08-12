@@ -45,6 +45,10 @@ def wait_while_failed(*, module, **kwargs):
     return module
 
 
+def fake_create_or_update(*, collection, resource):
+    return resource
+
+
 # Define a fake collection/module interface for testing our fake project
 class FakeCollection(Collection):
     def __init__(self):
