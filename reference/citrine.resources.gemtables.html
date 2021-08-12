@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>citrine.resources.gemtables module &mdash; Citrine Python 1.5.0 documentation</title>
+  <title>citrine.resources.gemtables module &mdash; Citrine Python 1.6.0 documentation</title>
   
 
   
@@ -71,7 +71,7 @@
             
             
               <div class="version">
-                1.5.0
+                1.6.0
               </div>
             
           
@@ -394,8 +394,8 @@ Use list() to force evaluation of all results into an in-memory list.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.resources.gemtables.GemTableCollection.read">
-<span class="sig-name descname"><span class="pre">read</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#citrine.resources.gemtables.GemTable" title="citrine.resources.gemtables.GemTable"><span class="pre">citrine.resources.gemtables.GemTable</span></a><span class="p"><span class="pre">,</span> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_path</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.gemtables.GemTableCollection.read" title="Permalink to this definition">¶</a></dt>
-<dd><p>Read the Table file from S3.</p>
+<span class="sig-name descname"><span class="pre">read</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#citrine.resources.gemtables.GemTable" title="citrine.resources.gemtables.GemTable"><span class="pre">citrine.resources.gemtables.GemTable</span></a><span class="p"><span class="pre">,</span> </span><span class="pre">citrine._serialization.properties.UUID</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">citrine._serialization.properties.UUID</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_path</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.gemtables.GemTableCollection.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read the Table file from S3 to your local system.</p>
 <p>If a Table object is not provided, retrieve it using the provided table and version ids.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -403,6 +403,24 @@ Use list() to force evaluation of all results into an in-memory list.</p>
 <li><p><strong>table</strong> – The persisted table config from which to build a table (or its ID and version number).</p></li>
 <li><p><strong>local_path</strong> – The path to the local location to save the file</p></li>
 </ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.resources.gemtables.GemTableCollection.read_to_memory">
+<span class="sig-name descname"><span class="pre">read_to_memory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#citrine.resources.gemtables.GemTable" title="citrine.resources.gemtables.GemTable"><span class="pre">citrine.resources.gemtables.GemTable</span></a><span class="p"><span class="pre">,</span> </span><span class="pre">citrine._serialization.properties.UUID</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">str</span><a class="headerlink" href="#citrine.resources.gemtables.GemTableCollection.read_to_memory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read the Table file from S3 into local memory.</p>
+<p>If a Table object is not provided, retrieve it using the provided table and version ids.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>table</strong> – The Table object to read from the S3 server</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The contents of the file from S3, which is expected to be formatted as a CSV</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
 </dd>
 </dl>
 </dd></dl>
@@ -418,6 +436,16 @@ Use list() to force evaluation of all results into an in-memory list.</p>
 <span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#citrine.resources.gemtables.GemTable" title="citrine.resources.gemtables.GemTable"><span class="pre">citrine.resources.gemtables.GemTable</span></a></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#citrine.resources.gemtables.GemTable" title="citrine.resources.gemtables.GemTable"><span class="pre">citrine.resources.gemtables.GemTable</span></a><a class="headerlink" href="#citrine.resources.gemtables.GemTableCollection.update" title="Permalink to this definition">¶</a></dt>
 <dd><p>Tables cannot be updated.</p>
 </dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.gemtables.GemTableCollection.obsolete_table_type">
+<span class="sig-name descname"><span class="pre">obsolete_table_type</span></span><em class="property"> <span class="pre">=</span> <span class="pre">typing.Union[citrine.resources.gemtables.GemTable,</span> <span class="pre">citrine._serialization.properties.UUID,</span> <span class="pre">str,</span> <span class="pre">typing.Tuple[typing.Union[str,</span> <span class="pre">citrine._serialization.properties.UUID],</span> <span class="pre">typing.Union[str,</span> <span class="pre">int]]]</span></em><a class="headerlink" href="#citrine.resources.gemtables.GemTableCollection.obsolete_table_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="citrine.resources.gemtables.GemTableCollection.table_type">
+<span class="sig-name descname"><span class="pre">table_type</span></span><em class="property"> <span class="pre">=</span> <span class="pre">typing.Union[citrine.resources.gemtables.GemTable,</span> <span class="pre">citrine._serialization.properties.UUID,</span> <span class="pre">str]</span></em><a class="headerlink" href="#citrine.resources.gemtables.GemTableCollection.table_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 

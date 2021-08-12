@@ -225,7 +225,7 @@ The following example demonstrates how to use a :class:`~citrine.informatics.pre
     featurizer = MolecularStructureFeaturizer(
         name='Molecular Featurizer',
         description="Featurize the Solvent's molecular structure using the default features.",
-        descriptor=input_desc,
+        input_descriptor=input_desc,
         features=['standard'],
     )
 
@@ -304,7 +304,7 @@ The following example demonstrates how to use a :class:`~citrine.informatics.pre
     featurizer = ChemicalFormulaFeaturizer(
         name='ChemicalFeaturizer',
         description="Featurize the Alloy's chemical formula using the default features and a 2-mean.",
-        descriptor=input_desc,
+        input_descriptor=input_desc,
         features=['standard'],
         powers=[2]
     )
