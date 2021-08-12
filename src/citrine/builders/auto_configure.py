@@ -11,8 +11,8 @@ from citrine.informatics.data_sources import GemTableDataSource
 from citrine.informatics.executions import DesignExecution, PredictorEvaluationExecution
 from citrine.informatics.design_spaces import DesignSpace
 from citrine.informatics.predictor_evaluator import PredictorEvaluator
-from citrine.informatics.objectives import Objective, ScalarMinObjective
-from citrine.informatics.scores import Score, LIScore
+from citrine.informatics.objectives import Objective
+from citrine.informatics.scores import Score
 from citrine.informatics.workflows import DesignWorkflow, PredictorEvaluationWorkflow
 
 from citrine.resources.gemtables import GemTable
@@ -20,6 +20,8 @@ from citrine.resources.material_run import MaterialRun
 from citrine.resources.predictor import Predictor
 from citrine.resources.project import Project
 from citrine.resources.table_config import TableConfig, TableBuildAlgorithm
+
+from citrine.builders.scores import create_default_score
 
 
 class AutoConfigureMode(BaseEnumeration):
@@ -64,20 +66,26 @@ class AutoConfigureWorkflow():
     """[ALPHA] Helper class for configuring and storing default assets on the Citrine Platform.
 
     Defines methods for creating a default GEM table, predictor, predictor evaluations,
-    design space, design workflow, and design execution in a linear fashion,
+    design space, and design workflow in a linear fashion,
     starting from a provided material/table/predictor.
 
     All assets that are registered to the Citrine Platform
     during the auto configuration steps are stored as members of this class.
     In case this method fails during asset validation,
     the previously configured items are accessible
-    locally and on the Citrine Platform for later use or modification.
+    locally and on the Citrine Platform.
+
+    Initializing an AutoConfigureWorkflow will search for assets
+    on the Citrine Platform based on the specified name,
+    and re-use/update these modules during subsequent configurations.
+    Currently, assets are searched for by name and type,
+    and duplicatly named assets will result in an error being thrown.
 
     Example usage:
     ```
     # Initialize score and workflow
     score = LIScore(objectives=[ScalarMaxObjective(descriptor_key='Desc 1'), baselines=[1.0])
-    auto_config = AutoConfigureWorkflow(project=project, name='Auto Config v1')
+    auto_config = AutoConfigureWorkflow(project=project, name='My Project Name')
 
     # GEM table -> Predictor -> PEW/PEE -> Design Space -> Design Workflow -> Design Execution
     auto_config.from_material(
@@ -93,7 +101,8 @@ class AutoConfigureWorkflow():
     # Retrieve some of the results
     table = auto_config.table
     predictor = auto_config.predictor
-    execution = auto_config.design_execution
+    design_space = auto_config.design_space
+    workflow = auto_config.design_workflow
     ```
 
     Parameters
@@ -159,49 +168,49 @@ class AutoConfigureWorkflow():
 
     @property
     def table_config(self) -> Optional[TableConfig]:
-        """Get the default table config, if it was created by this object."""
+        """Get the table config associated with this workflow."""
         return self._table_config
 
     @property
     def table(self) -> Optional[GemTable]:
-        """Get the default GEM table, if it was created by this object."""
+        """Get the GEM table associated with this workflow."""
         return self._table
 
     @property
     def predictor(self) -> Optional[Predictor]:
-        """Get the default predictor, if it was created by this object."""
+        """Get the predictor associated with this workflow."""
         return self._predictor
 
     @property
     def predictor_evaluation_workflow(self) -> Optional[PredictorEvaluationWorkflow]:
-        """Get the predictor evaluation workflow, if it was created by this object."""
+        """Get the predictor evaluation workflow associated with this workflow."""
         return self._predictor_evaluation_workflow
 
     @property
     def design_space(self) -> Optional[DesignSpace]:
-        """Get the design space used during the auto configuration steps."""
+        """Get the design space associated with this workflow."""
         return self._design_space
 
     @property
     def design_workflow(self) -> Optional[DesignWorkflow]:
-        """Get the default design workflow, if it was created by this object."""
+        """Get the design workflow associated with this workflow."""
         return self._design_workflow
 
     @property
     def predictor_evaluation_executions(self) -> List[PredictorEvaluationExecution]:
-        """Get the predictor evaluation execution, if it was created by this object."""
+        """Get the predictor evaluation executions associated with this predictor evaluation."""
         pew = self.predictor_evaluation_workflow
         return list(pew.executions.list()) if pew is not None else []
 
     @property
     def design_executions(self) -> List[DesignExecution]:
-        """Get the design execution, if it was created by this object."""
+        """Get the design executions associated with this design workflow."""
         dw = self.design_workflow
         return list(dw.design_executions.list()) if dw is not None else []
 
     @property
     def scores(self) -> List[Score]:
-        """Get the score, if it was created by this object."""
+        """Get the scores used in any associated design executions."""
         return [de.score for de in self.design_executions]
 
     @property
@@ -325,7 +334,7 @@ class AutoConfigureWorkflow():
         self._status = AutoConfigureStatus.START
 
     def execute(self, *, score: Union[Score, Objective]) -> DesignExecution:
-        """[ALPHA] Execute a design execution given a provided score.
+        """[ALPHA] Execute a design execution using the provided score/objective.
 
         A design workflow must be present after auto-configuration to execute the score.
         This method can be called after modifying auto-configured assets
@@ -335,15 +344,20 @@ class AutoConfigureWorkflow():
         ----------
         score: Union[Score, Objective]
             A score or objective used to rank candidates during design execution.
-            If an objective is passed, a default `LIScore` is constructed
+            If an objective is passed, a default score is constructed
             by reading the GEM table associated with this workflow
-            to extract baseline scoring information.
+            to extract baseline information.
+
+        Returns
+        ----------
+        DesignExecution
+            The design execution triggered with the provided score/objective.
 
         """
         if self.design_workflow is None:
             raise ValueError("Design workflow is missing, cannot execute score.")
         if isinstance(score, Objective):
-            score = self._build_default_score(objective=score)
+            score = create_default_score(objective=score, project=self.project, table=self.table)
         return self.design_workflow.design_executions.trigger(score)
 
     def from_material(
@@ -716,29 +730,3 @@ class AutoConfigureWorkflow():
         elif score is not None:
             print("Triggering design execution...")
             return self.execute(score=score)
-
-    def _build_default_score(self, *, objective: Objective) -> Score:
-        """Create a default score from an objective by parsing table data for baselines."""
-        import os
-        import csv
-        import tempfile
-
-        key = objective.descriptor_key
-        with tempfile.TemporaryDirectory() as td:
-            fname = os.path.join(td, "table.csv")
-            self.project.tables.read(table=self.table, local_path=fname)
-
-            with open(fname, "r") as f:
-                reader = csv.DictReader(f, delimiter=",")
-
-                full_key = next(filter(lambda col: key in col, reader.fieldnames), None)
-                if full_key is None:
-                    raise ValueError("Objective key not found in GEM table definition.")
-
-                objective_values = [float(row[full_key]) for row in reader]
-
-        comparator = min if isinstance(objective, ScalarMinObjective) else max
-        baseline = comparator(objective_values)
-
-        score = LIScore(objectives=[objective], baselines=[baseline])
-        return score
