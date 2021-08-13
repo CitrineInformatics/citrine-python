@@ -249,7 +249,7 @@ class Dataset(Resource['Dataset']):
             *,
             timeout: float = 2 * 60,
             polling_delay: float = 1.0,
-            prompt_to_confirm: bool = True,
+            prompt_to_confirm: bool = False,
     ):
         """
         Delete all the GEMD objects from within a single Dataset.
@@ -262,6 +262,8 @@ class Dataset(Resource['Dataset']):
             which can also time out server-side.
         polling_delay: float
             How long to delay between each polling retry attempt.
+        prompt_to_confirm: bool
+            If True, prompt for user confirmation before triggering delete.
         Returns
         -------
         List[Tuple[LinkByUID, ApiError]]
