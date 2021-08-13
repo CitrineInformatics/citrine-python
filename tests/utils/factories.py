@@ -56,22 +56,91 @@ class TableConfigJSONDataFactory(factory.DictFactory):
     variables = []
     datasets = []
 
+
 class TableConfigVersionJSONDataFactory(factory.DictFactory):
     ara_definition = factory.SubFactory(TableConfigJSONDataFactory)
     id = factory.Faker('uuid4')
     version_number = randrange(10)
 
+
+class TableDataSourceDataFactory(factory.DictFactory):
+    type = "hosted_table_data_source"
+    table_id = factory.Faker("uuid4")
+    table_version = randrange(10)
+    formulation_descriptor = None
+
+
+class PredictorConfigDataFactory(factory.DictFactory):
+    name = factory.Faker("company")
+    description = factory.Faker("catch_phrase")
+    predictors = []
+    training_data = factory.List([factory.SubFactory(TableDataSourceDataFactory)])
+    type = "Graph"
+
+
+class PredictorDataFactory(factory.DictFactory):
+    config = factory.SubFactory(PredictorConfigDataFactory)
+    name = factory.Faker("company")
+    archived = False
+    module_type = "PREDICTOR"
+    status = "READY"
+    status_info = []
+
+
+class PredictorEvaluationWorkflowDataFactory(factory.DictFactory):
+    name = factory.Faker("company")
+    description = factory.Faker("catch_phrase")
+    archived = False
+    evaluators = []
+    type = "PredictorEvaluationWorkflow"
+    status = "SUCCEEDED"
+    status_description = "READY"
+    status_info = []
+
+
+class DesignSpaceConfigDataFactory(factory.DictFactory):
+    name = factory.Faker("company")
+    descriptor = factory.Faker("catch_phrase")
+    subspaces = []
+    dimensions = []
+    type = "ProductDesignSpace"
+
+
+class DesignSpaceDataFactory(factory.DictFactory):
+    config = factory.SubFactory(DesignSpaceConfigDataFactory)
+    display_name = factory.Faker("company")
+    archived = False
+    module_type = "DESIGN_SPACE"
+    status = "READY"
+    status_info = []
+
+
+class DesignWorkflowDataFactory(factory.DictFactory):
+    name = factory.Faker("company")
+    description = factory.Faker("catch_phrase")
+    archived = False
+    design_space_id = factory.Faker("uuid4")
+    processor_id = factory.Faker("uuid4")
+    predictor_id = factory.Faker("uuid4")
+    status = "SUCCEEDED"
+    status_description = "READY"
+    status_info = []
+
+
 class WithIdDataFactory(factory.DictFactory):
     id = factory.Faker('uuid4')
 
+
 class JobSubmissionResponseFactory(factory.DictFactory):
     job_id = factory.Faker('uuid4')
+
 
 class TableConfigResponseDataFactory(factory.DictFactory):
     """This is the TableConfig object that encapsulates both version and definition info from the server"""
 
     definition = factory.SubFactory(WithIdDataFactory)
     version = factory.SubFactory(TableConfigVersionJSONDataFactory)
+
 
 class ListTableConfigResponseDataFactory(factory.DictFactory):
     """This encapsulates all of the versions of a table config object."""
@@ -81,6 +150,7 @@ class ListTableConfigResponseDataFactory(factory.DictFactory):
     versions[0]['version_number'] = 1
     versions[1]['version_number'] = 4
     versions[2]['version_number'] = 2
+
 
 class DatasetDataFactory(factory.DictFactory):
     id = factory.Faker('uuid4')
