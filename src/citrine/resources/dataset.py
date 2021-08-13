@@ -248,7 +248,8 @@ class Dataset(Resource['Dataset']):
             self,
             *,
             timeout: float = 2 * 60,
-            polling_delay: float = 1.0
+            polling_delay: float = 1.0,
+            prompt_to_confirm: bool = True,
     ):
         """
         Delete all the GEMD objects from within a single Dataset.
@@ -273,6 +274,18 @@ class Dataset(Resource['Dataset']):
                                   dataset_uid=self.uid,
                                   project_id=self.project_id
                                   )
+        if prompt_to_confirm:
+            print(f"Do you really want to delete the contents of dataset {self.uid}? [Y/N]")
+            user_response = None
+            while user_response not in {'Y', 'N'}:
+                user_response = input()
+            if user_response == 'Y':
+                pass
+            elif user_response == 'N':
+                print(f'Aborting deletion of dataset {self.uid} contents')
+                return None
+            else:
+                raise ValueError(f'Expected user response of Y or N. Got {user_response}')
 
         response = self.session.delete_resource(path)
         job_id = response["job_id"]
