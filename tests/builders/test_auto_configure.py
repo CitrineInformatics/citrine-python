@@ -26,105 +26,10 @@ from citrine._rest.collection import Collection
 from citrine.builders.auto_configure import AutoConfigureWorkflow, AutoConfigureMode, AutoConfigureStatus
 
 
-# Define a fake collection/module interface for testing our fake project
-class FakeCollection(Collection):
-    def __init__(self):
-        pass
-
-    def register(self, asset):
-        # Fake no-op for testing
-        return asset
-
-
-class FakeTableConfigCollection(FakeCollection, TableConfigCollection):
-    def __init__(self, project_id, session):
-        self.project_id = project_id
-        self.session = session
-
-    def default_for_material(self, **kwargs):
-        return FakeTableConfig(), []
-
-
-    def get(self, uid):
-        config = FakeTableConfig()
-
-
-class FakeGemTableCollection(FakeCollection, GemTableCollection):
-    def __init__(self, project_id, session):
-        self.project_id = project_id
-        self.session = session
-
-    def build_from_config(self, *args, **kwargs) -> GemTable:
-        table = FakeGemTable()
-        table.version = 1
-        table.uid = uuid4()  # Returns a registered object for real
-        return table
-
-    def list_by_config(self, table_config_uid):
-        yield self.build_from_config()
-
-
-class FakePredictorCollection(FakeCollection, PredictorCollection):
-    def __init__(self, project_id, session):
-        self.project_id = project_id
-        self.session = session
-
-    def auto_configure(self, **kwargs) -> Predictor:
-        predictor = FakePredictor()
-        predictor.uid = uuid4()
-        return predictor
-
-
-class FakePredictorEvaluationWorkflowCollection(FakeCollection, PredictorEvaluationWorkflowCollection):
-    def __init__(self, project_id, session):
-        self.project_id = project_id
-        self.session = session
-
-    def create_default(self, **kwargs) -> PredictorEvaluationWorkflow:
-        return FakePredictorEvaluationWorkflow()
-
-
-class FakePredictorEvaluationExecutionCollection(FakeCollection, PredictorEvaluationExecutionCollection):
-    def __init__(self, project_id, session):
-        self.project_id = project_id
-        self.session = session
-
-    def trigger(self, *args):
-        return FakePredictorEvaluationExecution()
-
-    def list(self):
-        yield FakePredictorEvaluationExecution()
-
-
-class FakeDesignSpaceCollection(FakeCollection, DesignSpaceCollection):
-    def __init__(self, project_id, session):
-        self.project_id = project_id
-        self.session = session
-
-    def create_default(self, **kwargs) -> DesignSpace:
-        return FakeDesignSpace()
-
-
-class FakeDesignWorkflowCollection(FakeCollection, DesignWorkflowCollection):
-    def __init__(self, project_id, session):
-        self.project_id = project_id
-        self.session = session
-
-class FakeDesignExecutionCollection(FakeCollection, DesignExecutionCollection):
-    def __init__(self, project_id, session):
-        self.project_id = project_id
-        self.session = session
-
-    def trigger(self, *args):
-        return FakeDesignExecution()
-
-    def list(self):
-        yield FakeDesignExecution()
-
 # Resources
 class FakeTableConfig(TableConfig):
-    def __init__(self):
-        pass
+    def __init__(self, name: str):
+        self.name = name
 
 
 class FakeGemTable(GemTable):
@@ -133,16 +38,20 @@ class FakeGemTable(GemTable):
 
 
 class FakePredictor(Predictor):
-    def __init__(self):
-        pass
+    def __init__(self, name: str, *, status: str = "VALID"):
+        self.name = name
+        self.status = status
+        self.status_info = []
 
 
 class FakePredictorEvaluationWorkflow(PredictorEvaluationWorkflow):
-    def __init__(self, *args, **kwargs):
-        self.name = kwargs.get('name', '')
+    def __init__(self, name: str, *, status: str = "SUCCEEDED"):
+        self.name = name
+        self.status = status
+        self.status_info = []
 
     @property
-    def executions(self) -> PredictorEvaluationExecutionCollection:
+    def executions(self):
         return FakePredictorEvaluationExecutionCollection()
 
 
@@ -152,16 +61,20 @@ class FakePredictorEvaluationExecution(PredictorEvaluationExecution):
 
 
 class FakeDesignSpace(DesignSpace):
-    def __init__(self):
-        pass
+    def __init__(self, name: str, *, status: str = "VALID"):
+        self.name = name
+        self.status = status
+        self.status_info = []
 
 
 class FakeDesignWorkflow(DesignWorkflow):
-    def __init__(self, **kwargs):
-        pass
+    def __init__(self, name: str, *, status: str = "SUCCEEDED"):
+        self.name = name
+        self.status = status
+        self.status_info = []
 
     @property
-    def design_executions(self) -> DesignExecutionCollection:
+    def design_executions(self):
         return FakeDesignExecutionCollection()
 
 
@@ -173,52 +86,145 @@ class FakeDesignExecution(DesignExecution):
         return []
 
 
-@pytest.fixture
-def session() -> FakeSession:
-    return FakeSession()
+# Define a fake collection/module interface for testing our fake project
+class FakeTableConfigCollection:
+    def __init__(self):
+        pass
+
+    def default_for_material(self, **kwargs):
+        return FakeTableConfig(), []
+
+    def get(self, uid):
+        config = FakeTableConfig("Test: Auto Configure GEM Table")
+        config.uid = uuid4()
+        config.version = 1
+        return config
+
+
+class FakeGemTableCollection:
+    def __init__(self):
+        pass
+
+    def build_from_config(self, config):
+        table = FakeGemTable()
+        table.version = 1
+        table.uid = uuid4()  # Returns a registered object for real
+        return table
+
+    def list_by_config(self, config):
+        yield self.build_from_config(config)
+
+
+class FakePredictorCollection:
+    def __init__(self):
+        pass
+
+    def auto_configure(self, *, training_data, pattern):
+        predictor = FakePredictor()
+        predictor.uid = uuid4()
+        return predictor
+
+
+class FakePredictorEvaluationWorkflowCollection:
+    def __init__(self):
+        pass
+
+    def create_default(self, *, predictor_id):
+        return FakePredictorEvaluationWorkflow()
+
+
+class FakePredictorEvaluationExecutionCollection:
+    def __init__(self):
+        pass
+
+    def trigger(self, *args):
+        return FakePredictorEvaluationExecution()
+
+    def list(self):
+        yield FakePredictorEvaluationExecution()
+
+
+class FakeDesignSpaceCollection:
+    def __init__(self):
+        pass
+
+    def create_default(self, **kwargs) -> DesignSpace:
+        return FakeDesignSpace()
+
+
+class FakeDesignWorkflowCollection:
+    def __init__(self):
+        pass
+
+
+class FakeDesignExecutionCollection:
+    def __init__(self):
+        pass
+
+    def trigger(self, *args):
+        return FakeDesignExecution()
+
+    def list(self):
+        yield FakeDesignExecution()
 
 
 @pytest.fixture()
-def project(session):
-    """Fake project that returns auto-configured assets."""
-
+def project():
+    """Fake project that binds to fake collections."""
     class FakeProject(Project):
-        def __init__(self, *, session):
-            self.session = session
-            self.uid = UUID('6b608f78-e341-422c-8076-35adc8828545')
+        def __init__(self):
+            pass
 
         @property
-        def table_configs(self) -> TableConfigCollection:
-            return FakeTableConfigCollection(self.uid, self.session)
+        def table_configs(self):
+            return FakeTableConfigCollection()
 
         @property
-        def tables(self) -> GemTableCollection:
-            return FakeGemTableCollection(self.uid, self.session)
+        def tables(self):
+            return FakeGemTableCollection()
 
         @property
-        def predictors(self) -> PredictorCollection:
-            return FakePredictorCollection(self.uid, self.session)
+        def predictors(self):
+            return FakePredictorCollection()
 
         @property
-        def predictor_evaluation_workflows(self) -> PredictorEvaluationWorkflowCollection:
-            return FakePredictorEvaluationWorkflowCollection(self.uid, self.session)
+        def predictor_evaluation_workflows(self):
+            return FakePredictorEvaluationWorkflowCollection()
 
         @property
-        def design_spaces(self) -> DesignSpaceCollection:
-            return FakeDesignSpaceCollection(self.uid, self.session)
+        def design_spaces(self):
+            return FakeDesignSpaceCollection()
 
         @property
-        def design_workflows(self) -> DesignWorkflowCollection:
-            return FakeDesignWorkflowCollection(self.uid, self.session)
+        def design_workflows(self):
+            return FakeDesignWorkflowCollection()
 
-    return FakeProject(session=session)
+    return FakeProject()
 
 
-@pytest.fixture()
-def auto_config(project):
-    with mock.patch('citrine.builders.auto_configure.find_collection', fake_find_collection):
-        config = AutoConfigureWorkflow(project=project, name='Test')
-        yield config
+@pytest.fixture
+def resources():
+    """A resource holder to pull find_collection results from."""
+    class ResourceHolder:
+        def __init__(self):
+            self.resources = []
+
+        def register(self, model):
+            self.resources.append(model)
+
+        def find(self, name: str):
+            for model in self.resources:
+                if model.name == name:
+                    return model
+            return None
+
+        def pop(self):
+            return self.resources.pop()
+
+        def clear(self):
+            self.resources.clear()
+
+    return ResourceHolder()
 
 
 def wait_while_ready(*, module, **kwargs):
@@ -242,31 +248,106 @@ def wait_while_failed(*, module, **kwargs):
     return module
 
 
-def fake_find_collection(*, collection, name):
-    """Return predefined resources given the naming conventions."""
-    assets = {
-        "Test: Auto Configure GEM Table": FakeGemTable(),
-        "Test: Auto Configure Predictor": FakePredictor(),
-        "Test: Auto Configure PEW": FakePredictorEvaluationWorkflow(),
-        "Test: Auto Configure Design Space": FakeDesignSpace(),
-        "Test: Auto Configure Design Workflow": FakeDesignWorkflow(),
-    }
-    return assets[name]
+def test_auto_configure_update_stages(project, resources):
+    """Test updating assets and state works as intended."""
 
+    def mock_find_collection(*, collection, name):
+        return resources.find(name)
 
-def fake_create_or_update(*, collection, resource):
-    return fake_find_collection(collection=collection, name=resource.name)
+    with mock.patch("citrine.builders.auto_configure.find_collection", mock_find_collection):
+        # Finds nothing, blank slate
+        auto_config = AutoConfigureWorkflow(project=project, name="Test")
+        assert len(auto_config.assets) == 0
+        assert auto_config.status == "START"
 
+        # Finds only a table and table config
+        resources.register(FakeTableConfig("Test: Auto Configure GEM Table"))
+        auto_config = AutoConfigureWorkflow(project=project, name="Test")
+        assert len(auto_config.assets) == 2
+        assert auto_config.status == "TABLE CREATED"
+        resources.clear()
 
-def test_auto_configure_update(auto_config, session):
-    # Initialization searches via fake_find_collection
-    assert auto_config.name == "Test"
-    assert len(auto_config.assets) == 6
+        # Finds up to predictor with VALID status
+        resources.register(FakePredictor("Test: Auto Configure Predictor"))
+        auto_config = AutoConfigureWorkflow(project=project, name="Test")
+        assert len(auto_config.assets) == 1
+        assert auto_config.status == "PREDICTOR CREATED"
+        resources.clear()
 
-    # Set response for get calls during update
-    session.set_responses([None, None, None, None, None, None])
+        # Finds up to predictor with INVALID status
+        resources.register(FakePredictor("Test: Auto Configure Predictor", status="INVALID"))
+        auto_config = AutoConfigureWorkflow(project=project, name="Test")
+        assert len(auto_config.assets) == 1
+        assert auto_config.status == "PREDICTOR INVALID"
+        resources.clear()
 
-    auto_config.update()
+        # Finds a PEW with SUCCEEDED status
+        resources.register(FakePredictorEvaluationWorkflow("Test: Auto Configure PEW"))
+        auto_config = AutoConfigureWorkflow(project=project, name="Test")
+        assert len(auto_config.assets) == 1
+        assert auto_config.status == "PREDICTOR EVALUATION WORKFLOW CREATED"
+        resources.clear()
+
+        # Finds a PEW with FAILED status
+        resources.register(FakePredictorEvaluationWorkflow("Test: Auto Configure PEW", status="FAILED"))
+        auto_config = AutoConfigureWorkflow(project=project, name="Test")
+        assert len(auto_config.assets) == 1
+        assert auto_config.status == "PREDICTOR EVALUATION WORKFLOW FAILED"
+        resources.clear()
+
+        # Finds a design space with VALID status
+        resources.register(FakeDesignSpace("Test: Auto Configure Design Space", status="VALID"))
+        auto_config = AutoConfigureWorkflow(project=project, name="Test")
+        assert len(auto_config.assets) == 1
+        assert auto_config.status == "DESIGN SPACE CREATED"
+        resources.clear()
+
+        # Finds a design space with INVALID status
+        resources.register(FakeDesignSpace("Test: Auto Configure Design Space", status="INVALID"))
+        auto_config = AutoConfigureWorkflow(project=project, name="Test")
+        assert len(auto_config.assets) == 1
+        assert auto_config.status == "DESIGN SPACE INVALID"
+        resources.clear()
+
+        # Finds a design workflow with SUCCEEDED status
+        resources.register(FakeDesignWorkflow("Test: Auto Configure Design Workflow"))
+        auto_config = AutoConfigureWorkflow(project=project, name="Test")
+        assert len(auto_config.assets) == 1
+        assert auto_config.status == "DESIGN WORKFLOW CREATED"
+        resources.clear()
+
+        # Finds a design workflow with FAILED status
+        resources.register(FakeDesignWorkflow("Test: Auto Configure Design Workflow", status="FAILED"))
+        auto_config = AutoConfigureWorkflow(project=project, name="Test")
+        assert len(auto_config.assets) == 1
+        assert auto_config.status == "DESIGN WORKFLOW FAILED"
+        resources.clear()
+
+def test_auto_configure_update_get(project, resources):
+    """Test updating assets and state works as intended."""
+
+    def mock_find_collection(*, collection, name):
+        return resources.find(name)
+
+    # Create a full workflow with all assets found
+    all_resources = [
+        FakeTableConfig("Test: Auto Configure GEM Table"),
+        FakePredictor("Test: Auto Configure Predictor"),
+        FakePredictorEvaluationWorkflow("Test: Auto Configure PEW"),
+        FakeDesignSpace("Test: Auto Configure Design Space"),
+        FakeDesignWorkflow("Test: Auto Configure Design Workflow")
+    ]
+    for model in all_resources:
+        resources.register(model)
+
+    with mock.patch("citrine.builders.auto_configure.find_collection", mock_find_collection):
+        auto_config = AutoConfigureWorkflow(project=project, name="Test")
+        assert len(auto_config.assets) == 6
+        assert auto_config.status == "DESIGN WORKFLOW CREATED"
+
+        auto_config.update()
+        assert len(auto_config.assets) == 6
+
 
 
 # def test_auto_configure_mode_raises(auto_config, fake_project):
