@@ -80,6 +80,7 @@ class PredictorConfigDataFactory(factory.DictFactory):
 
 class PredictorDataFactory(factory.DictFactory):
     config = factory.SubFactory(PredictorConfigDataFactory)
+    id = factory.Faker('uuid4')
     name = factory.Faker("company")
     archived = False
     module_type = "PREDICTOR"
@@ -88,6 +89,7 @@ class PredictorDataFactory(factory.DictFactory):
 
 
 class PredictorEvaluationWorkflowDataFactory(factory.DictFactory):
+    id = factory.Faker('uuid4')
     name = factory.Faker("company")
     description = factory.Faker("catch_phrase")
     archived = False
@@ -99,6 +101,7 @@ class PredictorEvaluationWorkflowDataFactory(factory.DictFactory):
 
 
 class DesignSpaceConfigDataFactory(factory.DictFactory):
+    id = factory.Faker('uuid4')
     name = factory.Faker("company")
     descriptor = factory.Faker("catch_phrase")
     subspaces = []
@@ -108,6 +111,7 @@ class DesignSpaceConfigDataFactory(factory.DictFactory):
 
 class DesignSpaceDataFactory(factory.DictFactory):
     config = factory.SubFactory(DesignSpaceConfigDataFactory)
+    id = factory.Faker('uuid4')
     display_name = factory.Faker("company")
     archived = False
     module_type = "DESIGN_SPACE"
@@ -116,6 +120,7 @@ class DesignSpaceDataFactory(factory.DictFactory):
 
 
 class DesignWorkflowDataFactory(factory.DictFactory):
+    id = factory.Faker('uuid4')
     name = factory.Faker("company")
     description = factory.Faker("catch_phrase")
     archived = False

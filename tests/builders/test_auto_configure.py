@@ -260,11 +260,17 @@ def project(session) -> Project:
 
 
 @pytest.fixture
-def table_config_data():
+def table_config_response_data():
     data = TableConfigResponseDataFactory()
     data["version"]["ara_definition"]["name"] = "Test: Auto Configure GEM Table"
     return data
 
+
+@pytest.fixture
+def table_config_list_data():
+    data = ListTableConfigResponseDataFactory()
+    data["versions"][0]["ara_definition"]["name"] = "Test: Auto Configure GEM Table"
+    return data
 
 @pytest.fixture
 def table_data():
@@ -300,7 +306,8 @@ def design_workflow_data():
 
 @pytest.fixture
 def data_holder(
-    table_config_data,
+    table_config_response_data,
+    table_config_list_data,
     table_data,
     predictor_data,
     pew_data,
@@ -308,7 +315,8 @@ def data_holder(
     design_workflow_data
 ):
     class DataHolder:
-        table_config = table_config_data
+        table_config_response = table_config_response_data
+        table_config_list = table_config_list_data
         table = table_data
         predictor = predictor_data
         pew = pew_data
@@ -317,9 +325,9 @@ def data_holder(
     return DataHolder
 
 
-def test_list(project, session, data_holder):
+def test_auto_config_retrieval(project, session, data_holder):
     session.set_responses(
-        {"definitions": [data_holder.table_config]},
+        {"definitions": [data_holder.table_config_response]},
         {"tables": [data_holder.table]},
         {"entries": [data_holder.predictor]},
         {"response": [data_holder.pew]},
@@ -327,17 +335,28 @@ def test_list(project, session, data_holder):
         {"response": [data_holder.design_workflow]}
     )
 
-    # Test initial update, find all
+    # Test initial update, find all by find_collection
     auto_config = AutoConfigureWorkflow(project=project, name="Test")
     assert len(auto_config.assets) == 6
     assert auto_config.status == "DESIGN WORKFLOW CREATED"
 
-    # Reset data for update run
-    session.set_responses(
-        {"versions": [data_holder.table_config]},
-    )
+    print(auto_config.predictor.uid)
 
+    # Reset data for update run, find all by get calls
+    session.set_responses(
+        data_holder.table_config_list,
+        {"tables": [data_holder.table]},
+        data_holder.predictor,
+        data_holder.pew,
+        data_holder.design_space,
+        data_holder.design_workflow
+    )
     auto_config.update()
+    assert len(auto_config.assets) == 6
+    assert auto_config.status == "DESIGN WORKFLOW CREATED"
+
+
+def test_auto_config_update_status(project, session, factory):
 
 
 
