@@ -1,12 +1,6 @@
-import json
-from uuid import UUID, uuid4
-
 import pytest
-import requests_mock
-from mock import patch, call
 
 from tests.utils.factories import GemTableDataFactory
-from tests.utils.session import FakeSession
 
 from citrine.resources.gemtables import GemTableCollection, GemTable
 from citrine.resources.project import Project
@@ -32,12 +26,7 @@ def table():
 
 
 @pytest.fixture
-def session() -> FakeSession:
-    return FakeSession()
-
-
-@pytest.fixture
-def project(session, table_data):
+def project(table_data):
     """Fake project for table collection"""
     class FakeGemTableCollection(GemTableCollection):
         def __init__(self):
