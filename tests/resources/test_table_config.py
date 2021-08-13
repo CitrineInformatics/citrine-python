@@ -93,7 +93,7 @@ def test_get_table_config(collection, session):
 
 
 def test_get_table_config_raises(collection):
-    """Test that we throw an error when uid=None when retrieving a table config."""
+    """Test that we throw an error when uid=None on get calls."""
     with pytest.raises(ValueError):
         collection.get(uid=None)
 
