@@ -92,6 +92,12 @@ def test_get_table_config(collection, session):
     assert retrieved_table_config.version_number == version_number
 
 
+def test_get_table_config_raises(collection):
+    """Test that we throw an error when uid=None when retrieving a table config."""
+    with pytest.raises(ValueError):
+        collection.get(uid=None)
+
+
 def test_init_table_config():
     table_config = TableConfig(name="foo", description="bar", rows=[], columns=[], variables=[], datasets=[])
     assert table_config.config_uid is None
