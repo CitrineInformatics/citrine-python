@@ -1,4 +1,4 @@
-# Getting Started
+# Getting Started!
 `citrine-python` is the Python library for the Citrine Platform. To get started, install `citrine-python`:
 
 ```bash
