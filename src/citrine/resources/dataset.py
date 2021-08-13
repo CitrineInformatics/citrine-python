@@ -285,7 +285,7 @@ class Dataset(Resource['Dataset']):
                 pass
             elif user_response == 'N':
                 print(f'Aborting deletion of dataset {self.uid} contents')
-                return None
+                return []
             else:
                 raise ValueError(f'Expected user response of Y or N. Got {user_response}')
 
