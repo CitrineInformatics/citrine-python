@@ -3,6 +3,7 @@ from os.path import basename
 from uuid import UUID, uuid4
 
 import pytest
+import mock
 from gemd.entity.bounds.integer_bounds import IntegerBounds
 
 from citrine.exceptions import PollingTimeoutError, JobFailureError, NotFound
@@ -367,7 +368,7 @@ def test_gemd_batch_delete(dataset):
     with pytest.raises(TypeError):
         dataset.gemd_batch_delete([7, False])
 
-def test_delete_contents_ok(dataset):
+def test_delete_contents_ok(dataset,monkeypatch):
 
     job_resp = {
         'job_id': '1234'
@@ -386,8 +387,11 @@ def test_delete_contents_ok(dataset):
     session = dataset.session
     session.set_responses(job_resp, failed_job_resp)
 
+    user_responses = iter(['bad user response', 'Y'])
+    monkeypatch.setattr('builtins.input', lambda : next(user_responses))
+
     # When
-    del_resp = dataset.delete_contents()
+    del_resp = dataset.delete_contents(prompt_to_confirm=True)
 
     # Then
     assert len(del_resp) == 0
@@ -399,3 +403,9 @@ def test_delete_contents_ok(dataset):
     )
     assert len(session.calls) == 2
     assert session.calls[0] == expected_call
+
+def test_delete_contents_abort(dataset,monkeypatch):
+    user_responses = iter(['N'])
+    monkeypatch.setattr('builtins.input', lambda : next(user_responses))
+    with pytest.raises(RuntimeError):
+        dataset.delete_contents(prompt_to_confirm=True)
