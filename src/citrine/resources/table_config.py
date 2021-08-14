@@ -265,6 +265,8 @@ class TableConfigCollection(Collection[TableConfig]):
         If no version is specified, then the most recent version is returned.
 
         """
+        if uid is None:
+            raise ValueError("Cannot get when uid=None.  Are you using a registered resource?")
         if version is not None:
             path = self._get_path(uid) + format_escaped_url("/versions/{}", version)
             data = self.session.get_resource(path)
