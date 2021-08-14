@@ -78,7 +78,7 @@ class AutoConfigureWorkflow():
 
     Initializing an AutoConfigureWorkflow will search for assets
     on the Citrine Platform based on the specified name,
-    and re-use/update these modules during subsequent configurations.
+    and re-use/update these items during subsequent runs.
     Currently, assets are searched for by name and type,
     and duplicatly named assets will result in an error being thrown.
 
@@ -726,7 +726,6 @@ class AutoConfigureWorkflow():
         self._status = AutoConfigureStatus.DESIGN_WORKFLOW_CREATED
         self._status_info = workflow.status_info
 
-        # TODO: Allow user to provide objective or score
         if workflow.status == 'FAILED':
             self._status = AutoConfigureStatus.DESIGN_WORKFLOW_FAILED
             if score is None:

@@ -23,37 +23,35 @@ from citrine.builders.auto_configure import AutoConfigureWorkflow, AutoConfigure
 @pytest.fixture
 def response_holder():
     """Holder for easy access to factory generated data."""
-    # Generate data from factories
-    config_response_data = TableConfigResponseDataFactory()
-    config_response_data["version"]["ara_definition"]["name"] = "Test: Auto Configure GEM Table"
-
-    config_list_data = ListTableConfigResponseDataFactory()
-    config_list_data["versions"][0]["ara_definition"]["name"] = "Test: Auto Configure GEM Table"
-
-    table_data = GemTableDataFactory()
-
-    predictor_data = PredictorDataFactory()
-    predictor_data["config"]["name"] = "Test: Auto Configure Predictor"
-
-    pew_data = PredictorEvaluationWorkflowDataFactory()
-    pew_data["name"] = "Test: Auto Configure PEW"
-
-    ds_data = DesignSpaceDataFactory()
-    ds_data["config"]["name"] = "Test: Auto Configure Design Space"
-
-    dw_data = DesignWorkflowDataFactory()
-    dw_data["name"] = "Test: Auto Configure Design Workflow"
-
     class ResponseHolder:
-        table_config_response = config_response_data
-        table_config_list = config_list_data
-        table = table_data
-        predictor = predictor_data
-        pew = pew_data
-        design_space = ds_data
-        design_workflow = dw_data
+        def __init__(self, *, name: str):
+            self.table_config_response = TableConfigResponseDataFactory()
+            self.table_config_list = ListTableConfigResponseDataFactory()
+            self.table = GemTableDataFactory()
+            self.predictor = PredictorDataFactory()
+            self.pew = PredictorEvaluationWorkflowDataFactory()
+            self.design_space = DesignSpaceDataFactory()
+            self.design_workflow = DesignWorkflowDataFactory()
 
-    return ResponseHolder
+            self._name = ""
+            self.name = name
+
+        @property
+        def name(self):
+            return self._name
+
+        @name.setter
+        def name(self, value):
+            # So we can dynamically change the name of response assets
+            self._name = value
+            self.table_config_response["version"]["ara_definition"]["name"] = f"{value}: Auto Configure GEM Table"
+            self.table_config_list["versions"][0]["ara_definition"]["name"] = f"{value}: Auto Configure GEM Table"
+            self.predictor["config"]["name"] = f"{value}: Auto Configure Predictor"
+            self.pew["name"] = f"{value}: Auto Configure PEW"
+            self.design_space["config"]["name"] = f"{value}: Auto Configure Design Space"
+            self.design_workflow["name"] = f"{value}: Auto Configure Design Workflow"
+
+    return ResponseHolder(name="Test")
 
 
 @pytest.fixture
@@ -151,7 +149,9 @@ def wait_while_failed(*, module, **kwargs):
 
 def test_auto_config_mode_raises(project):
     """Test that we raise errors on bad mode choices."""
-    auto_config = AutoConfigureWorkflow(project=project, name="Test")
+    config_name = "Test"
+    response_holder.name = config_name
+    auto_config = AutoConfigureWorkflow(project=project, name=config_name)
 
     with pytest.raises(TypeError):
         auto_config.from_material(
@@ -168,7 +168,9 @@ def test_auto_config_mode_raises(project):
 
 def test_auto_configure_properties(project, response_holder):
     """Test the property access on the auto config workflow."""
-    auto_config = AutoConfigureWorkflow(project=project, name="Test")
+    config_name = "Test"
+    response_holder.name = config_name
+    auto_config = AutoConfigureWorkflow(project=project, name=config_name)
 
     assert auto_config.design_execution is None
     assert auto_config.score is None
@@ -178,7 +180,10 @@ def test_auto_configure_properties(project, response_holder):
 def test_auto_config_init(project, session, response_holder):
     """Test that the update calls during initialization find appropriate assets."""
     # Test initial update, find all by find_collection
-    auto_config = AutoConfigureWorkflow(project=project, name="Test")
+    config_name = "Test"
+    response_holder.name = config_name
+    auto_config = AutoConfigureWorkflow(project=project, name=config_name)
+
     assert len(auto_config.assets) == 6
     assert auto_config.status == "DESIGN WORKFLOW CREATED"
 
@@ -201,6 +206,8 @@ def test_auto_config_init(project, session, response_holder):
 @mock.patch("citrine.resources.design_execution.DesignExecutionCollection.trigger", fake_de_trigger)
 def test_auto_config_execute(project, session, response_holder):
     """Test the score execution on auto config workflow."""
+    config_name = "Test"
+    response_holder.name = config_name
     session.set_responses(
         {"definitions": [response_holder.table_config_response]},
         {"tables": [response_holder.table]},
@@ -209,7 +216,8 @@ def test_auto_config_execute(project, session, response_holder):
         {"entries": [response_holder.design_space]},
         {"response": []}
     )
-    auto_config = AutoConfigureWorkflow(project=project, name="Test")
+    
+    auto_config = AutoConfigureWorkflow(project=project, name=config_name)
     assert auto_config.design_workflow is None
 
     # Inputs for execute
@@ -227,7 +235,7 @@ def test_auto_config_execute(project, session, response_holder):
         {"entries": [response_holder.design_space]},
         {"response": [response_holder.design_workflow]}
     )
-    auto_config = AutoConfigureWorkflow(project=project, name="Test")
+    auto_config = AutoConfigureWorkflow(project=project, name=config_name)
     assert auto_config.status == "DESIGN WORKFLOW CREATED"
 
     auto_config.execute(score=objective)
@@ -237,6 +245,8 @@ def test_auto_config_execute(project, session, response_holder):
 def test_auto_config_status(project, session, response_holder):
     """Test that the status matches the found assets."""
     # Find up to table config/table
+    config_name = "Test"
+    response_holder.name = config_name
     session.set_responses(
         {"definitions": [response_holder.table_config_response]},
         {"tables": [response_holder.table]},
@@ -245,7 +255,8 @@ def test_auto_config_status(project, session, response_holder):
         {"entries": []},
         {"response": []}
     )
-    auto_config = AutoConfigureWorkflow(project=project, name="Test")
+
+    auto_config = AutoConfigureWorkflow(project=project, name=config_name)
     assert len(auto_config.assets) == 2
     assert auto_config.status == "TABLE CREATED"
 
@@ -258,7 +269,7 @@ def test_auto_config_status(project, session, response_holder):
         {"entries": []},
         {"response": []}
     )
-    auto_config = AutoConfigureWorkflow(project=project, name="Test")
+    auto_config = AutoConfigureWorkflow(project=project, name=config_name)
     assert len(auto_config.assets) == 3
     assert auto_config.status == "PREDICTOR CREATED"
 
@@ -272,7 +283,7 @@ def test_auto_config_status(project, session, response_holder):
         {"entries": []},
         {"response": []}
     )
-    auto_config = AutoConfigureWorkflow(project=project, name="Test")
+    auto_config = AutoConfigureWorkflow(project=project, name=config_name)
     assert len(auto_config.assets) == 3
     assert auto_config.status == "PREDICTOR INVALID"
 
@@ -285,7 +296,7 @@ def test_auto_config_status(project, session, response_holder):
         {"entries": []},
         {"response": []}
     )
-    auto_config = AutoConfigureWorkflow(project=project, name="Test")
+    auto_config = AutoConfigureWorkflow(project=project, name=config_name)
     assert len(auto_config.assets) == 4
     assert auto_config.status == "PREDICTOR EVALUATION WORKFLOW CREATED"
 
@@ -299,7 +310,7 @@ def test_auto_config_status(project, session, response_holder):
         {"entries": []},
         {"response": []}
     )
-    auto_config = AutoConfigureWorkflow(project=project, name="Test")
+    auto_config = AutoConfigureWorkflow(project=project, name=config_name)
     assert len(auto_config.assets) == 4
     assert auto_config.status == "PREDICTOR EVALUATION WORKFLOW FAILED"
 
@@ -312,7 +323,7 @@ def test_auto_config_status(project, session, response_holder):
         {"entries": [response_holder.design_space]},
         {"response": []}
     )
-    auto_config = AutoConfigureWorkflow(project=project, name="Test")
+    auto_config = AutoConfigureWorkflow(project=project, name=config_name)
     assert len(auto_config.assets) == 5
     assert auto_config.status == "DESIGN SPACE CREATED"
 
@@ -326,7 +337,7 @@ def test_auto_config_status(project, session, response_holder):
         {"entries": [response_holder.design_space]},
         {"response": []}
     )
-    auto_config = AutoConfigureWorkflow(project=project, name="Test")
+    auto_config = AutoConfigureWorkflow(project=project, name=config_name)
     assert len(auto_config.assets) == 5
     assert auto_config.status == "DESIGN SPACE INVALID"
 
@@ -339,7 +350,7 @@ def test_auto_config_status(project, session, response_holder):
         {"entries": [response_holder.design_space]},
         {"response": [response_holder.design_workflow]}
     )
-    auto_config = AutoConfigureWorkflow(project=project, name="Test")
+    auto_config = AutoConfigureWorkflow(project=project, name=config_name)
     assert len(auto_config.assets) == 6
     assert auto_config.status == "DESIGN WORKFLOW CREATED"
 
@@ -353,7 +364,7 @@ def test_auto_config_status(project, session, response_holder):
         {"entries": [response_holder.design_space]},
         {"response": [response_holder.design_workflow]}
     )
-    auto_config = AutoConfigureWorkflow(project=project, name="Test")
+    auto_config = AutoConfigureWorkflow(project=project, name=config_name)
     assert len(auto_config.assets) == 6
     assert auto_config.status == "DESIGN WORKFLOW FAILED"
 
@@ -362,6 +373,8 @@ def test_auto_config_status(project, session, response_holder):
 @mock.patch("citrine.resources.gemtables.GemTableCollection.build_from_config", fake_build_from_config)
 def test_auto_config_table_build(project, session, response_holder):
     """Test the table build stage of auto configure."""
+    config_name = "Test"
+    response_holder.name = config_name
     session.set_responses(
         {"definitions": []},
         {"entries": []},
@@ -369,7 +382,8 @@ def test_auto_config_table_build(project, session, response_holder):
         {"entries": []},
         {"response": []}
     )
-    auto_config = AutoConfigureWorkflow(project=project, name="Test")
+
+    auto_config = AutoConfigureWorkflow(project=project, name=config_name)
     assert len(auto_config.assets) == 0
 
     # Call the table build stage with mocked default calls
@@ -387,6 +401,8 @@ def test_auto_config_table_build(project, session, response_holder):
 def test_auto_configure_predictor_registration(project, session, response_holder):
     """Test the predictor registration stage of auto configure."""
     # Start from having a table config and table
+    config_name = "Test"
+    response_holder.name = config_name
     session.set_responses(
         {"definitions": [response_holder.table_config_response]},
         {"tables": [response_holder.table]},
@@ -395,7 +411,8 @@ def test_auto_configure_predictor_registration(project, session, response_holder
         {"entries": []},
         {"response": []}
     )
-    auto_config = AutoConfigureWorkflow(project=project, name="Test")
+
+    auto_config = AutoConfigureWorkflow(project=project, name=config_name)
     assert len(auto_config.assets) == 2
     assert auto_config.status == "TABLE CREATED"
 
@@ -432,6 +449,9 @@ def test_auto_configure_predictor_registration(project, session, response_holder
 @mock.patch("citrine.resources.predictor_evaluation_workflow.PredictorEvaluationWorkflowCollection.create_default", fake_default_pew)
 def test_auto_configure_predictor_evaluation(project, session, response_holder):
     """Test the predictor evaluation stage of auto configure."""
+    config_name = "Test"
+    response_holder.name = config_name
+
     # Start from up to predictor
     session.set_responses(
         {"definitions": [response_holder.table_config_response]},
@@ -441,7 +461,8 @@ def test_auto_configure_predictor_evaluation(project, session, response_holder):
         {"entries": []},
         {"response": []}
     )
-    auto_config = AutoConfigureWorkflow(project=project, name="Test")
+
+    auto_config = AutoConfigureWorkflow(project=project, name=config_name)
     assert len(auto_config.assets) == 3
     assert auto_config.status == "PREDICTOR CREATED"
 
@@ -500,6 +521,9 @@ def test_auto_configure_predictor_evaluation(project, session, response_holder):
 @mock.patch("citrine.resources.design_space.DesignSpaceCollection.create_default", fake_default_design_space)
 def test_auto_configure_design_space_build(project, session, response_holder):
     """Test the design space build stage of auto configure."""
+    config_name = "Test"
+    response_holder.name = config_name
+
     # Start from up to PEW
     session.set_responses(
         {"definitions": [response_holder.table_config_response]},
@@ -509,7 +533,8 @@ def test_auto_configure_design_space_build(project, session, response_holder):
         {"entries": []},
         {"response": []}
     )
-    auto_config = AutoConfigureWorkflow(project=project, name="Test")
+
+    auto_config = AutoConfigureWorkflow(project=project, name=config_name)
     assert len(auto_config.assets) == 4
     assert auto_config.status == "PREDICTOR EVALUATION WORKFLOW CREATED"
 
@@ -547,6 +572,9 @@ def test_auto_configure_design_space_build(project, session, response_holder):
 @mock.patch("citrine.builders.auto_configure.AutoConfigureWorkflow.execute", fake_execute_score)
 def test_auto_configure_design_workflow_build(project, session, response_holder):
     """Test the design workflow build stage of auto configure."""
+    config_name = "Test"
+    response_holder.name = config_name
+
     # Start from up to design space
     session.set_responses(
         {"definitions": [response_holder.table_config_response]},
@@ -556,7 +584,8 @@ def test_auto_configure_design_workflow_build(project, session, response_holder)
         {"entries": [response_holder.design_space]},
         {"response": []}
     )
-    auto_config = AutoConfigureWorkflow(project=project, name="Test")
+
+    auto_config = AutoConfigureWorkflow(project=project, name=config_name)
     assert len(auto_config.assets) == 5
     assert auto_config.status == "DESIGN SPACE CREATED"
 
@@ -618,6 +647,10 @@ def test_auto_configure_design_workflow_build(project, session, response_holder)
 @mock.patch("citrine.resources.predictor_evaluation_workflow.PredictorEvaluationWorkflowCollection.create_default", fake_default_pew)
 @mock.patch("citrine.resources.design_space.DesignSpaceCollection.create_default", fake_default_design_space)
 def test_auto_configure_full_run(project, session, response_holder):
+    """Test the full chain of public methods, from_material -> from_table -> from_predictor."""
+    config_name = "Test"
+    response_holder.name = config_name
+
     # Start from empty
     session.set_responses(
         {"definitions": []},
@@ -626,7 +659,8 @@ def test_auto_configure_full_run(project, session, response_holder):
         {"entries": []},
         {"response": []}
     )
-    auto_config = AutoConfigureWorkflow(project=project, name="Test")
+
+    auto_config = AutoConfigureWorkflow(project=project, name=config_name)
     assert len(auto_config.assets) == 0
     assert auto_config.status == "START"
 
