@@ -210,10 +210,10 @@ class AutoConfigureWorkflow():
         return de.score if de is not None else None
 
     @property
-    def candidates(self) -> Optional[Iterable[DesignCandidate]]:
+    def candidates(self) -> List[DesignCandidate]:
         """Get the candidate list from the most recent design execution."""
         de = self.design_execution
-        return de.candidates() if de is not None else None
+        return list(de.candidates()) if de is not None else []
 
     @property
     def assets(self):
@@ -224,18 +224,6 @@ class AutoConfigureWorkflow():
             self.design_space, self.design_workflow,
         ]
         return [asset for asset in initial_assets if asset is not None]
-
-    @property
-    def predictor_evaluation_executions(self) -> List[PredictorEvaluationExecution]:
-        """Get the predictor evaluation executions associated with this predictor evaluation."""
-        pew = self.predictor_evaluation_workflow
-        return list(pew.executions.list()) if pew is not None else []
-
-    @property
-    def design_executions(self) -> List[DesignExecution]:
-        """Get the design executions associated with this design workflow."""
-        dw = self.design_workflow
-        return list(dw.design_executions.list()) if dw is not None else []
 
     def update(self):
         """Search for existing assets matching the workflow name and update its status."""
@@ -644,10 +632,6 @@ class AutoConfigureWorkflow():
             pew = self.project.predictor_evaluation_workflows.create_default(
                 predictor_id=predictor.uid
             )
-
-            self._predictor_evaluation_workflow = pew
-            self._status = AutoConfigureStatus.PEW_CREATED
-            self._status_info = pew.status_info
         else:
             # We got an evaluator, so make a new PEW and register it manually
             pew = PredictorEvaluationWorkflow(
@@ -658,25 +642,26 @@ class AutoConfigureWorkflow():
                 collection=self.project.predictor_evaluation_workflows,
                 resource=pew
             )
-            pew = wait_while_validating(
-                collection=self.project.predictor_evaluation_workflows,
-                module=pew,
-                print_status_info=print_status_info
+
+        pew = wait_while_validating(
+            collection=self.project.predictor_evaluation_workflows,
+            module=pew,
+            print_status_info=print_status_info
+        )
+
+        self._predictor_evaluation_workflow = pew
+        self._status = AutoConfigureStatus.PEW_CREATED
+        self._status_info = pew.status_info
+
+        if pew.status == 'FAILED':
+            # Can proceed without raising error, but can't get PEE
+            self._status = AutoConfigureStatus.PEW_FAILED
+            warnings.warn(
+                "Predictor evaluation workflow failed -- unable to configure execution."
             )
-
-            self._predictor_evaluation_workflow = pew
-            self._status = AutoConfigureStatus.PEW_CREATED
-            self._status_info = pew.status_info
-
-            if pew.status == 'FAILED':
-                # Can proceed without raising error, but can't get PEE
-                self._status = AutoConfigureStatus.PEW_FAILED
-                warnings.warn(
-                    "Predictor evaluation workflow failed -- unable to configure execution."
-                )
-            elif evaluator is not None:
-                # Manually trigger execution
-                pew.executions.trigger(predictor.uid)
+        elif evaluator is not None:
+            # Manually trigger execution
+            pew.executions.trigger(predictor.uid)
 
     def _design_space_build_stage(
             self,

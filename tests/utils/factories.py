@@ -17,6 +17,10 @@ from citrine.resources.process_template import ProcessTemplate
 from gemd.entity.link_by_uid import LinkByUID
 
 
+class WithIdDataFactory(factory.DictFactory):
+    id = factory.Faker('uuid4')
+
+
 class ProjectDataFactory(factory.DictFactory):
     id = factory.Faker('uuid4')
     name = factory.Faker('company')
@@ -61,6 +65,22 @@ class TableConfigVersionJSONDataFactory(factory.DictFactory):
     ara_definition = factory.SubFactory(TableConfigJSONDataFactory)
     id = factory.Faker('uuid4')
     version_number = randrange(10)
+
+
+class TableConfigResponseDataFactory(factory.DictFactory):
+    """This is the TableConfig object that encapsulates both version and definition info from the server"""
+    definition = factory.SubFactory(WithIdDataFactory)
+    version = factory.SubFactory(TableConfigVersionJSONDataFactory)
+
+
+class ListTableConfigResponseDataFactory(factory.DictFactory):
+    """This encapsulates all of the versions of a table config object."""
+    definition = factory.SubFactory(WithIdDataFactory)
+    versions = [TableConfigVersionJSONDataFactory(), TableConfigVersionJSONDataFactory(), TableConfigVersionJSONDataFactory()]
+    # Explicitly set version numbers so that they are distinct
+    versions[0]['version_number'] = 1
+    versions[1]['version_number'] = 4
+    versions[2]['version_number'] = 2
 
 
 class TableDataSourceDataFactory(factory.DictFactory):
@@ -132,29 +152,8 @@ class DesignWorkflowDataFactory(factory.DictFactory):
     status_info = []
 
 
-class WithIdDataFactory(factory.DictFactory):
-    id = factory.Faker('uuid4')
-
-
 class JobSubmissionResponseFactory(factory.DictFactory):
     job_id = factory.Faker('uuid4')
-
-
-class TableConfigResponseDataFactory(factory.DictFactory):
-    """This is the TableConfig object that encapsulates both version and definition info from the server"""
-
-    definition = factory.SubFactory(WithIdDataFactory)
-    version = factory.SubFactory(TableConfigVersionJSONDataFactory)
-
-
-class ListTableConfigResponseDataFactory(factory.DictFactory):
-    """This encapsulates all of the versions of a table config object."""
-    definition = factory.SubFactory(WithIdDataFactory)
-    versions = [TableConfigVersionJSONDataFactory(), TableConfigVersionJSONDataFactory(), TableConfigVersionJSONDataFactory()]
-    # Explicitly set version numbers so that they are distinct
-    versions[0]['version_number'] = 1
-    versions[1]['version_number'] = 4
-    versions[2]['version_number'] = 2
 
 
 class DatasetDataFactory(factory.DictFactory):
