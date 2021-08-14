@@ -1,5 +1,5 @@
 from uuid import UUID
-from typing import Union, Optional, List, Iterable
+from typing import Union, Optional, List
 import warnings
 
 from gemd.entity.link_by_uid import LinkByUID
@@ -8,7 +8,7 @@ from gemd.enumeration.base_enumeration import BaseEnumeration
 from citrine.seeding.find_or_create import find_collection, create_or_update
 from citrine.jobs.waiting import wait_while_validating
 from citrine.informatics.data_sources import GemTableDataSource
-from citrine.informatics.executions import DesignExecution, PredictorEvaluationExecution
+from citrine.informatics.executions import DesignExecution
 from citrine.informatics.design_candidate import DesignCandidate
 from citrine.informatics.design_spaces import DesignSpace
 from citrine.informatics.predictor_evaluator import PredictorEvaluator
