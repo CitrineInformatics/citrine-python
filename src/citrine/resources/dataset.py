@@ -276,18 +276,15 @@ class Dataset(Resource['Dataset']):
                                   dataset_uid=self.uid,
                                   project_id=self.project_id
                                   )
-        if prompt_to_confirm:
-            print(f"Do you really want to delete the contents of dataset {self.uid}? [Y/N]")
-            user_response = None
-            while user_response not in {'Y', 'N'}:
-                user_response = input()
-            if user_response == 'Y':
-                pass
-            elif user_response == 'N':
-                print(f'Aborting deletion of dataset {self.uid} contents')
-                return []
+        while(prompt_to_confirm):
+            print(f"Confirm you want to delete the contents of {self.uid} [Y/N]")
+            user_response = input()
+            if user_response.lower() in {'y', 'yes'}:
+                break  # return to main flow
+            elif user_response.lower() in {'n', 'no'}:
+                raise RuntimeError("delete_contents was invoked unintentionally")
             else:
-                raise ValueError(f'Expected user response of Y or N. Got {user_response}')
+                print(f'"{user_response}" is not a valid response')
 
         response = self.session.delete_resource(path)
         job_id = response["job_id"]
