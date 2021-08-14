@@ -3,7 +3,6 @@ from os.path import basename
 from uuid import UUID, uuid4
 
 import pytest
-import mock
 from gemd.entity.bounds.integer_bounds import IntegerBounds
 
 from citrine.exceptions import PollingTimeoutError, JobFailureError, NotFound
