@@ -426,7 +426,7 @@ def test_delete_contents_ok(dataset, monkeypatch):
     session.set_responses(job_resp, failed_job_resp)
 
     user_responses = iter(['bad user response', 'Y'])
-    monkeypatch.setattr('builtins.input', lambda : next(user_responses))
+    monkeypatch.setattr('builtins.input', lambda: next(user_responses))
 
     # When
     del_resp = dataset.delete_contents(prompt_to_confirm=True)
