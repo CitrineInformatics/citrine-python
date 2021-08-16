@@ -152,7 +152,7 @@ class PlatformVocabulary(Mapping[str, Descriptor]):
             project: Project,
             material: Union[str, UUID, LinkByUID, MaterialRun],
             mode: AutoConfigureMode = AutoConfigureMode.PLAIN,
-            full_history: bool = False
+            full_history: bool = True
     ):
         """[ALPHA] Build a PlatformVocabulary from templates appearing in a material history.
 
@@ -201,6 +201,7 @@ class PlatformVocabulary(Mapping[str, Descriptor]):
             # Limit the search to contain the terminal material/process/measurements
             search_history = [history.spec.template, history.process.template]
             search_history.extend([msr.template for msr in history.measurements])
+            search_history = [x for x in search_history if x is not None]  # Edge case safety
 
         # Extract templates and formatted keys
         res = {}
