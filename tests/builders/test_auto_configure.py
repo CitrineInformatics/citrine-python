@@ -2,26 +2,128 @@ from uuid import uuid4
 import pytest
 import mock
 
+from tests.utils.factories import *
+from tests.utils.session import FakeSession
+
 from citrine.informatics.design_spaces import EnumeratedDesignSpace
 from citrine.informatics.predictor_evaluator import CrossValidationEvaluator
 from citrine.informatics.objectives import ScalarMaxObjective
 from citrine.informatics.scores import LIScore
 
-from citrine.resources.design_execution import DesignExecution, DesignExecutionCollection
-from citrine.resources.design_space import DesignSpace, DesignSpaceCollection
-from citrine.resources.design_workflow import DesignWorkflow, DesignWorkflowCollection
-from citrine.resources.gemtables import GemTable, GemTableCollection
+from citrine.resources.design_execution import DesignExecution
+from citrine.resources.gemtables import GemTable
 from citrine.resources.material_run import MaterialRun
-from citrine.resources.predictor import Predictor, GraphPredictor, PredictorCollection
-from citrine.resources.predictor_evaluation_workflow import PredictorEvaluationWorkflow
-from citrine.resources.predictor_evaluation_workflow import PredictorEvaluationWorkflowCollection
+from citrine.resources.predictor import GraphPredictor
 from citrine.resources.predictor_evaluation_execution import PredictorEvaluationExecution
-from citrine.resources.predictor_evaluation_execution import PredictorEvaluationExecutionCollection
 from citrine.resources.project import Project
-from citrine.resources.table_config import TableConfig, TableConfigCollection, TableBuildAlgorithm
-from citrine._rest.collection import Collection
 
-from citrine.builders.auto_configure import AutoConfigureWorkflow, AutoConfigureMode, AutoConfigureStatus
+from citrine.builders.auto_configure import AutoConfigureWorkflow, AutoConfigureMode
+
+
+@pytest.fixture
+def response_holder():
+    """Holder for easy access to factory generated data."""
+    class ResponseHolder:
+        def __init__(self, *, name: str):
+            self.table_config_response = TableConfigResponseDataFactory()
+            self.table_config_list = ListTableConfigResponseDataFactory()
+            self.table = GemTableDataFactory()
+            self.predictor = PredictorDataFactory()
+            self.pew = PredictorEvaluationWorkflowDataFactory()
+            self.design_space = DesignSpaceDataFactory()
+            self.design_workflow = DesignWorkflowDataFactory()
+
+            self._name = ""
+            self.name = name
+
+        @property
+        def name(self):
+            return self._name
+
+        @name.setter
+        def name(self, value):
+            # So we can dynamically change the name of response assets
+            self._name = value
+            self.table_config_response["version"]["ara_definition"]["name"] = f"{value}: Auto Configure GEM Table"
+            self.table_config_list["versions"][0]["ara_definition"]["name"] = f"{value}: Auto Configure GEM Table"
+            self.predictor["config"]["name"] = f"{value}: Auto Configure Predictor"
+            self.pew["name"] = f"{value}: Auto Configure PEW"
+            self.design_space["config"]["name"] = f"{value}: Auto Configure Design Space"
+            self.design_workflow["name"] = f"{value}: Auto Configure Design Workflow"
+
+    return ResponseHolder(name="Test")
+
+
+@pytest.fixture
+def session(response_holder) -> FakeSession:
+    """Preload fake session with all initialization responses."""
+    session = FakeSession()
+    session.set_responses(
+        {"definitions": [response_holder.table_config_response]},
+        {"tables": [response_holder.table]},
+        {"entries": [response_holder.predictor]},
+        {"response": [response_holder.pew]},
+        {"entries": [response_holder.design_space]},
+        {"response": [response_holder.design_workflow]}
+    )
+    return session
+
+
+@pytest.fixture
+def project(session):
+    project = Project(name="Test Project", session=session)
+    project.uid = uuid4()
+    return project
+
+
+def fake_default_config(*args, **kwargs):
+    """For mocking table_config.default_for_material calls."""
+    project = Project("temp")
+    return project.table_configs.build(TableConfigResponseDataFactory()), []
+
+
+def fake_build_from_config(*args, **kwargs):
+    """For mocking tables.build_from_config calls."""
+    project = Project("temp")
+    return project.tables.build(GemTableDataFactory())
+
+
+def fake_default_pew(*args, **kwargs):
+    """For mocking pew.create_default calls."""
+    project = Project("temp")
+    return project.predictor_evaluation_workflows.build(PredictorEvaluationWorkflowDataFactory())
+
+
+def fake_default_design_space(*args, **kwargs):
+    """For mocking design_spaces.create_default calls."""
+    project = Project("temp")
+    return project.design_spaces.build(DesignSpaceDataFactory())
+
+
+def fake_predictor_auto_configure(*args, **kwargs):
+    """For mocking predictors.auto_configure calls."""
+    project = Project("temp")
+    return project.predictors.build(PredictorDataFactory())
+
+
+def fake_pee_trigger(*args, **kwargs):
+    """For mocking pew.executions.trigger calls."""
+    return PredictorEvaluationExecution()
+
+
+def fake_de_trigger(*args, **kwargs):
+    """For mocking design_workflow.executions.trigger calls."""
+    return DesignExecution()
+
+
+def fake_execute_score(*args, **kwargs):
+    """For mocking auto_config.execute calls."""
+    return DesignExecution()
+
+
+def fake_default_score(*args, **kwargs):
+    """For mocking builders.scores.create_default_score calls."""
+    return LIScore(objectives=[], baselines=[])
 
 
 def wait_while_ready(*, module, **kwargs):
@@ -45,370 +147,547 @@ def wait_while_failed(*, module, **kwargs):
     return module
 
 
-# Define a fake collection/module interface for testing our fake project
-class FakeCollection(Collection):
-    def __init__(self):
-        pass
+def test_auto_config_mode_raises(project):
+    """Test that we raise errors on bad mode choices."""
+    config_name = "Test"
+    response_holder.name = config_name
+    auto_config = AutoConfigureWorkflow(project=project, name=config_name)
 
-    def register(self, asset):
-        # Fake no-op for testing
-        return asset
-
-
-class FakeTableConfigCollection(FakeCollection, TableConfigCollection):
-    def __init__(self):
-        pass
-
-    def default_for_material(self, **kwargs):
-        return FakeTableConfig(), []
-
-
-class FakeGemTableCollection(FakeCollection, GemTableCollection):
-    def __init__(self):
-        pass
-
-    def build_from_config(self, *args, **kwargs) -> GemTable:
-        table = FakeGemTable()
-        table.version = 1
-        table.uid = uuid4()  # Returns a registered object for real
-        return table
-
-
-class FakePredictorCollection(FakeCollection, PredictorCollection):
-    def __init__(self):
-        pass
-
-    def auto_configure(self, **kwargs) -> Predictor:
-        predictor = FakePredictor()
-        predictor.uid = uuid4()
-        return predictor
-
-
-class FakePredictorEvaluationWorkflowCollection(FakeCollection, PredictorEvaluationWorkflowCollection):
-    def __init__(self):
-        pass
-
-    def create_default(self, **kwargs) -> PredictorEvaluationWorkflow:
-        return FakePredictorEvaluationWorkflow()
-
-
-class FakePredictorEvaluationExecutionCollection(FakeCollection, PredictorEvaluationExecutionCollection):
-    def __init__(self):
-        pass
-
-    def trigger(self, *args):
-        return FakePredictorEvaluationExecution()
-
-    def list(self):
-        return iter([FakePredictorEvaluationExecution()])
-
-
-class FakeDesignSpaceCollection(FakeCollection, DesignSpaceCollection):
-    def __init__(self):
-        pass
-
-    def create_default(self, **kwargs) -> DesignSpace:
-        return FakeDesignSpace()
-
-
-class FakeDesignWorkflowCollection(FakeCollection, DesignWorkflowCollection):
-    def __init__(self):
-        pass
-
-
-class FakeDesignExecutionCollection(FakeCollection, DesignExecutionCollection):
-    def __init__(self):
-        pass
-
-    def trigger(self, *args):
-        return FakeDesignExecution()
-
-
-# Resources
-class FakeTableConfig(TableConfig):
-    def __init__(self):
-        pass
-
-
-class FakeGemTable(GemTable):
-    def __init__(self):
-        pass
-
-
-class FakePredictor(Predictor):
-    def __init__(self):
-        pass
-
-
-class FakePredictorEvaluationWorkflow(PredictorEvaluationWorkflow):
-    def __init__(self, *args, **kwargs):
-        self.name = kwargs.get('name', '')
-
-    @property
-    def executions(self) -> PredictorEvaluationExecutionCollection:
-        return FakePredictorEvaluationExecutionCollection()
-
-
-class FakePredictorEvaluationExecution(PredictorEvaluationExecution):
-    def __init__(self):
-        pass
-
-
-class FakeDesignSpace(DesignSpace):
-    def __init__(self):
-        pass
-
-
-class FakeDesignWorkflow(DesignWorkflow):
-    def __init__(self, **kwargs):
-        pass
-
-    @property
-    def design_executions(self) -> DesignExecutionCollection:
-        return FakeDesignExecutionCollection()
-
-
-class FakeDesignExecution(DesignExecution):
-    def __init__(self):
-        pass
-
-
-@pytest.fixture()
-def fake_project():
-    """Fake project that returns auto-configured assets."""
-
-    class FakeProject(Project):
-
-        def __init__(self):
-            pass
-
-        @property
-        def table_configs(self) -> TableConfigCollection:
-            return FakeTableConfigCollection()
-
-        @property
-        def tables(self) -> GemTableCollection:
-            return FakeGemTableCollection()
-
-        @property
-        def predictors(self) -> PredictorCollection:
-            return FakePredictorCollection()
-
-        @property
-        def predictor_evaluation_workflows(self) -> PredictorEvaluationWorkflowCollection:
-            return FakePredictorEvaluationWorkflowCollection()
-
-        @property
-        def predictor_evaluation_executions(self) -> PredictorEvaluationExecutionCollection:
-            return FakePredictorEvaluationExecutionCollection()
-
-        @property
-        def design_spaces(self) -> DesignSpaceCollection:
-            return FakeDesignSpaceCollection()
-
-        @property
-        def design_workflows(self) -> DesignWorkflowCollection:
-            return FakeDesignWorkflowCollection()
-
-    return FakeProject()
-
-
-@pytest.fixture()
-def fake_config(fake_project: Project):
-    return AutoConfigureWorkflow(project=fake_project, name='Fake v1')
-
-
-def test_auto_configure_public_raises(fake_config: AutoConfigureWorkflow, fake_project: Project):
-    fake_mr = MaterialRun(name='Fake Material')
-    fake_table = fake_project.tables.build_from_config()
-    fake_predictor = fake_project.predictors.auto_configure()
-
-    # Raises on bad mode
     with pytest.raises(TypeError):
-        fake_config.from_material(
-            material=fake_mr,
-            mode='BAD MODE TYPE'
+        auto_config.from_material(
+            material=MaterialRun(name="Fake"),
+            mode="BAD CHOICE"
         )
 
     with pytest.raises(TypeError):
-        fake_config.from_table(
-            table=fake_table,
-            mode='BAD MODE TYPE'
-        )
-
-    # Raises on no predictor UID
-    fake_predictor.uid = None
-    with pytest.raises(ValueError):
-        fake_config.from_predictor(
-            predictor=fake_predictor
+        auto_config.from_table(
+            table=GemTable(),
+            mode="BAD CHOICE"
         )
 
 
-@mock.patch('citrine.builders.auto_configure.wait_while_validating', wait_while_ready)
-@mock.patch('citrine.builders.auto_configure.PredictorEvaluationWorkflow', FakePredictorEvaluationWorkflow)
-@mock.patch('citrine.builders.auto_configure.DesignWorkflow', FakeDesignWorkflow)
-def test_auto_configure_public_interface(fake_config: AutoConfigureWorkflow):
-    fake_mr = MaterialRun(name='Fake Material')
-    score = LIScore(objectives=[ScalarMaxObjective(descriptor_key='Test Key')], baselines=[0.0])
+def test_auto_configure_properties(project, response_holder):
+    """Test the property access on the auto config workflow."""
+    config_name = "Test"
+    response_holder.name = config_name
+    auto_config = AutoConfigureWorkflow(project=project, name=config_name)
 
-    # Basic properties
-    assert(fake_config.name == 'Fake v1')
-    assert(fake_config.status_info == [])
+    assert auto_config.design_execution is None
+    assert auto_config.score is None
+    assert len(auto_config.candidates) == 0
 
-    # Cannot execute design until you run the auto-config
+
+def test_auto_config_init(project, session, response_holder):
+    """Test that the update calls during initialization find appropriate assets."""
+    # Test initial update, find all by find_collection
+    config_name = "Test"
+    response_holder.name = config_name
+    auto_config = AutoConfigureWorkflow(project=project, name=config_name)
+
+    assert len(auto_config.assets) == 6
+    assert auto_config.status == "DESIGN WORKFLOW CREATED"
+
+    # Reset data for update run, find all by get calls
+    session.set_responses(
+        response_holder.table_config_list,
+        {"tables": [response_holder.table]},
+        response_holder.predictor,
+        response_holder.pew,
+        response_holder.design_space,
+        response_holder.design_workflow
+    )
+    auto_config.update()
+    assert len(auto_config.assets) == 6
+    assert auto_config.status == "DESIGN WORKFLOW CREATED"
+    assert auto_config.status_info == []  # Not specified in fake data source
+
+
+@mock.patch("citrine.builders.auto_configure.create_default_score", fake_default_score)
+@mock.patch("citrine.resources.design_execution.DesignExecutionCollection.trigger", fake_de_trigger)
+def test_auto_config_execute(project, session, response_holder):
+    """Test the score execution on auto config workflow."""
+    config_name = "Test"
+    response_holder.name = config_name
+    session.set_responses(
+        {"definitions": [response_holder.table_config_response]},
+        {"tables": [response_holder.table]},
+        {"entries": [response_holder.predictor]},
+        {"response": [response_holder.pew]},
+        {"entries": [response_holder.design_space]},
+        {"response": []}
+    )
+    
+    auto_config = AutoConfigureWorkflow(project=project, name=config_name)
+    assert auto_config.design_workflow is None
+
+    # Inputs for execute
+    objective = ScalarMaxObjective(descriptor_key="Fake Target")
+
     with pytest.raises(ValueError):
-        fake_config.execute(score=score)
+        auto_config.execute(score=objective)
 
-    # Run through the entire workflow, creating all assets
-    assert(fake_config.status == AutoConfigureStatus.START.value)
-    fake_config.from_material(material=fake_mr, mode=AutoConfigureMode.PLAIN, score=score)
-    assert(len(fake_config.assets) == 8)
-    assert(fake_config.status == AutoConfigureStatus.DESIGN_WORKFLOW_CREATED.value)
-    assert(fake_config.status_info[0] == 'Something went very right.')
+    # Now create a config with a working design workflow
+    session.set_responses(
+        {"definitions": [response_holder.table_config_response]},
+        {"tables": [response_holder.table]},
+        {"entries": [response_holder.predictor]},
+        {"response": [response_holder.pew]},
+        {"entries": [response_holder.design_space]},
+        {"response": [response_holder.design_workflow]}
+    )
+    auto_config = AutoConfigureWorkflow(project=project, name=config_name)
+    assert auto_config.status == "DESIGN WORKFLOW CREATED"
 
-
-def test_auto_configure_table_build_stage(fake_config: AutoConfigureWorkflow):
-    fake_mr = MaterialRun(name='Fake Material')
-
-    assert(fake_config.status == AutoConfigureStatus.START.value)
-    fake_config._table_build_stage(material=fake_mr, mode=AutoConfigureMode.PLAIN)
-
-    assert(fake_config.status == AutoConfigureStatus.TABLE_CREATED.value)
-    assert(fake_config.table_config is not None)
-    assert(fake_config.table is not None)
-    assert(len(fake_config.assets) == 2)
+    auto_config.execute(score=objective)
+    assert auto_config.design_execution is not None
 
 
-def test_auto_configure_predictor_build_stage(fake_config: AutoConfigureWorkflow, fake_project: Project):
-    fake_table = fake_project.tables.build_from_config()
+def test_auto_config_status(project, session, response_holder):
+    """Test that the status matches the found assets."""
+    # Find up to table config/table
+    config_name = "Test"
+    response_holder.name = config_name
+    session.set_responses(
+        {"definitions": [response_holder.table_config_response]},
+        {"tables": [response_holder.table]},
+        {"entries": []},
+        {"response": []},
+        {"entries": []},
+        {"response": []}
+    )
 
-    # When predictor is valid
-    with mock.patch('citrine.builders.auto_configure.wait_while_validating', wait_while_ready):
-        assert(len(fake_config.assets) == 0)
-        fake_config._predictor_build_stage(
-            table=fake_table,
-            mode=AutoConfigureMode.PLAIN,
+    auto_config = AutoConfigureWorkflow(project=project, name=config_name)
+    assert len(auto_config.assets) == 2
+    assert auto_config.status == "TABLE CREATED"
+
+    # Find up to valid predictor
+    session.set_responses(
+        {"definitions": [response_holder.table_config_response]},
+        {"tables": [response_holder.table]},
+        {"entries": [response_holder.predictor]},
+        {"response": []},
+        {"entries": []},
+        {"response": []}
+    )
+    auto_config = AutoConfigureWorkflow(project=project, name=config_name)
+    assert len(auto_config.assets) == 3
+    assert auto_config.status == "PREDICTOR CREATED"
+
+    # Find up to invalid predictor
+    response_holder.predictor["status"] = "INVALID"
+    session.set_responses(
+        {"definitions": [response_holder.table_config_response]},
+        {"tables": [response_holder.table]},
+        {"entries": [response_holder.predictor]},
+        {"response": []},
+        {"entries": []},
+        {"response": []}
+    )
+    auto_config = AutoConfigureWorkflow(project=project, name=config_name)
+    assert len(auto_config.assets) == 3
+    assert auto_config.status == "PREDICTOR INVALID"
+
+    # Find up to successful PEW
+    session.set_responses(
+        {"definitions": [response_holder.table_config_response]},
+        {"tables": [response_holder.table]},
+        {"entries": [response_holder.predictor]},
+        {"response": [response_holder.pew]},
+        {"entries": []},
+        {"response": []}
+    )
+    auto_config = AutoConfigureWorkflow(project=project, name=config_name)
+    assert len(auto_config.assets) == 4
+    assert auto_config.status == "PREDICTOR EVALUATION WORKFLOW CREATED"
+
+    # Find up to failed PEW
+    response_holder.pew["status"] = "FAILED"
+    session.set_responses(
+        {"definitions": [response_holder.table_config_response]},
+        {"tables": [response_holder.table]},
+        {"entries": [response_holder.predictor]},
+        {"response": [response_holder.pew]},
+        {"entries": []},
+        {"response": []}
+    )
+    auto_config = AutoConfigureWorkflow(project=project, name=config_name)
+    assert len(auto_config.assets) == 4
+    assert auto_config.status == "PREDICTOR EVALUATION WORKFLOW FAILED"
+
+    # Find up to design space
+    session.set_responses(
+        {"definitions": [response_holder.table_config_response]},
+        {"tables": [response_holder.table]},
+        {"entries": [response_holder.predictor]},
+        {"response": [response_holder.pew]},
+        {"entries": [response_holder.design_space]},
+        {"response": []}
+    )
+    auto_config = AutoConfigureWorkflow(project=project, name=config_name)
+    assert len(auto_config.assets) == 5
+    assert auto_config.status == "DESIGN SPACE CREATED"
+
+    # Find up to invalid design space
+    response_holder.design_space["status"] = "INVALID"
+    session.set_responses(
+        {"definitions": [response_holder.table_config_response]},
+        {"tables": [response_holder.table]},
+        {"entries": [response_holder.predictor]},
+        {"response": [response_holder.pew]},
+        {"entries": [response_holder.design_space]},
+        {"response": []}
+    )
+    auto_config = AutoConfigureWorkflow(project=project, name=config_name)
+    assert len(auto_config.assets) == 5
+    assert auto_config.status == "DESIGN SPACE INVALID"
+
+    # Find up to design workflow
+    session.set_responses(
+        {"definitions": [response_holder.table_config_response]},
+        {"tables": [response_holder.table]},
+        {"entries": [response_holder.predictor]},
+        {"response": [response_holder.pew]},
+        {"entries": [response_holder.design_space]},
+        {"response": [response_holder.design_workflow]}
+    )
+    auto_config = AutoConfigureWorkflow(project=project, name=config_name)
+    assert len(auto_config.assets) == 6
+    assert auto_config.status == "DESIGN WORKFLOW CREATED"
+
+    # Find up to failed design workflow
+    response_holder.design_workflow["status"] = "FAILED"
+    session.set_responses(
+        {"definitions": [response_holder.table_config_response]},
+        {"tables": [response_holder.table]},
+        {"entries": [response_holder.predictor]},
+        {"response": [response_holder.pew]},
+        {"entries": [response_holder.design_space]},
+        {"response": [response_holder.design_workflow]}
+    )
+    auto_config = AutoConfigureWorkflow(project=project, name=config_name)
+    assert len(auto_config.assets) == 6
+    assert auto_config.status == "DESIGN WORKFLOW FAILED"
+
+
+@mock.patch("citrine.resources.table_config.TableConfigCollection.default_for_material", fake_default_config)
+@mock.patch("citrine.resources.gemtables.GemTableCollection.build_from_config", fake_build_from_config)
+def test_auto_config_table_build(project, session, response_holder):
+    """Test the table build stage of auto configure."""
+    config_name = "Test"
+    response_holder.name = config_name
+    session.set_responses(
+        {"definitions": []},
+        {"entries": []},
+        {"response": []},
+        {"entries": []},
+        {"response": []}
+    )
+
+    auto_config = AutoConfigureWorkflow(project=project, name=config_name)
+    assert len(auto_config.assets) == 0
+
+    # Call the table build stage with mocked default calls
+    session.set_responses(
+        {"definitions": [response_holder.table_config_response]},
+        response_holder.table_config_response,
+    )
+    auto_config._table_build_stage(
+        material="Fake Material",
+        mode=AutoConfigureMode.PLAIN
+    )
+    assert len(auto_config.assets) == 2
+
+
+def test_auto_configure_predictor_registration(project, session, response_holder):
+    """Test the predictor registration stage of auto configure."""
+    # Start from having a table config and table
+    config_name = "Test"
+    response_holder.name = config_name
+    session.set_responses(
+        {"definitions": [response_holder.table_config_response]},
+        {"tables": [response_holder.table]},
+        {"entries": []},
+        {"response": []},
+        {"entries": []},
+        {"response": []}
+    )
+
+    auto_config = AutoConfigureWorkflow(project=project, name=config_name)
+    assert len(auto_config.assets) == 2
+    assert auto_config.status == "TABLE CREATED"
+
+    # Inputs to pass to method
+    predictor = GraphPredictor(name="Input", description="", predictors=[])
+
+    # Mock a valid predictor response
+    with mock.patch("citrine.builders.auto_configure.wait_while_validating", wait_while_ready):
+        session.set_responses(
+            {"entries": [response_holder.predictor]},
+        )
+        auto_config._predictor_registration_stage(
+            predictor=predictor,
             print_status_info=False
         )
-        assert(fake_config.predictor is not None)
-        assert(len(fake_config.assets) == 1)
-        assert(fake_config.status == AutoConfigureStatus.PREDICTOR_CREATED.value)
+        assert len(auto_config.assets) == 3
+        assert auto_config.status == "PREDICTOR CREATED"
 
-    # When predictor is invalid
-    with mock.patch('citrine.builders.auto_configure.wait_while_validating', wait_while_invalid):
+    # Mock an invalid predictor response
+    with mock.patch("citrine.builders.auto_configure.wait_while_validating", wait_while_invalid):
+        session.set_responses(
+            {"entries": [response_holder.predictor]},
+        )
         with pytest.raises(RuntimeError):
-            fake_config._predictor_build_stage(
-                table=fake_table,
-                mode=AutoConfigureMode.PLAIN,
+            auto_config._predictor_registration_stage(
+                predictor=predictor,
                 print_status_info=False
             )
-        assert(fake_config.status == AutoConfigureStatus.PREDICTOR_INVALID.value)
+        assert len(auto_config.assets) == 3
+        assert auto_config.status == "PREDICTOR INVALID"
 
 
-@mock.patch('citrine.builders.auto_configure.PredictorEvaluationWorkflow', FakePredictorEvaluationWorkflow)
-def test_auto_configure_predictor_evaluation_stage(fake_config: AutoConfigureWorkflow, fake_project: Project):
-    fake_predictor = fake_project.predictors.auto_configure()
-    evaluator = CrossValidationEvaluator(name='Test Evaluator', responses={'Test Key'})
+@mock.patch("citrine.resources.predictor_evaluation_execution.PredictorEvaluationExecutionCollection.trigger", fake_pee_trigger)
+@mock.patch("citrine.resources.predictor_evaluation_workflow.PredictorEvaluationWorkflowCollection.create_default", fake_default_pew)
+def test_auto_configure_predictor_evaluation(project, session, response_holder):
+    """Test the predictor evaluation stage of auto configure."""
+    config_name = "Test"
+    response_holder.name = config_name
 
-    # When PEW is valid
-    with mock.patch('citrine.builders.auto_configure.wait_while_validating', wait_while_ready):
-        fake_config._predictor_evaluation_stage(
-            predictor=fake_predictor,
+    # Start from up to predictor
+    session.set_responses(
+        {"definitions": [response_holder.table_config_response]},
+        {"tables": [response_holder.table]},
+        {"entries": [response_holder.predictor]},
+        {"response": []},
+        {"entries": []},
+        {"response": []}
+    )
+
+    auto_config = AutoConfigureWorkflow(project=project, name=config_name)
+    assert len(auto_config.assets) == 3
+    assert auto_config.status == "PREDICTOR CREATED"
+
+    # Inputs to pass to method
+    predictor = GraphPredictor(name="Input", description="", predictors=[])
+    evaluator = CrossValidationEvaluator(name="Eval", description="", responses=set())
+
+    # Create default w/ a valid response
+    with mock.patch("citrine.builders.auto_configure.wait_while_validating", wait_while_ready):
+        auto_config._predictor_evaluation_stage(
+            predictor=predictor,
             evaluator=None,
             print_status_info=False
         )
-        assert(len(fake_config.assets) == 2)
-        assert(fake_config.predictor_evaluation_workflow is not None)
-        assert(fake_config.predictor_evaluation_execution is not None)
-        assert(fake_config.status == AutoConfigureStatus.PEW_CREATED.value)
+        assert len(auto_config.assets) == 4
+        assert auto_config.status == "PREDICTOR EVALUATION WORKFLOW CREATED"
 
-        # Mock creation of real one inside
-        fake_config._predictor_evaluation_stage(
-            predictor=fake_predictor,
+    # Create default w/ an invalid response
+    with mock.patch("citrine.builders.auto_configure.wait_while_validating", wait_while_failed):
+        auto_config._predictor_evaluation_stage(
+            predictor=predictor,
+            evaluator=None,
+            print_status_info=False
+        )
+        assert len(auto_config.assets) == 4
+        assert auto_config.status == "PREDICTOR EVALUATION WORKFLOW FAILED"
+
+    # Create manual w/ a valid response
+    with mock.patch("citrine.builders.auto_configure.wait_while_validating", wait_while_ready):
+        session.set_responses(
+            {"response": [response_holder.pew]},
+            response_holder.pew
+        )
+        auto_config._predictor_evaluation_stage(
+            predictor=predictor,
             evaluator=evaluator,
             print_status_info=False
         )
-        assert(fake_config.predictor_evaluation_workflow.name == 'Fake v1 - Predictor Evaluation Workflow')
+        assert len(auto_config.assets) == 4
+        assert auto_config.status == "PREDICTOR EVALUATION WORKFLOW CREATED"
 
-    # When PEW fails
-    with mock.patch('citrine.builders.auto_configure.wait_while_validating', wait_while_failed):
-        fake_config._predictor_evaluation_stage(
-            predictor=fake_predictor,
-            evaluator=None,
+    # Create manual w/ a failed response
+    with mock.patch("citrine.builders.auto_configure.wait_while_validating", wait_while_failed):
+        session.set_responses(
+            {"response": [response_holder.pew]},
+            response_holder.pew
+        )
+        auto_config._predictor_evaluation_stage(
+            predictor=predictor,
+            evaluator=evaluator,
             print_status_info=False
         )
-        assert(fake_config.status == AutoConfigureStatus.PEW_FAILED.value)
+        assert len(auto_config.assets) == 4
+        assert auto_config.status == "PREDICTOR EVALUATION WORKFLOW FAILED"
 
+@mock.patch("citrine.resources.design_space.DesignSpaceCollection.create_default", fake_default_design_space)
+def test_auto_configure_design_space_build(project, session, response_holder):
+    """Test the design space build stage of auto configure."""
+    config_name = "Test"
+    response_holder.name = config_name
 
-def test_auto_configure_design_space_build_stage(fake_config: AutoConfigureWorkflow, fake_project: Project):
-    fake_predictor = fake_project.predictors.auto_configure()
-    design_space = EnumeratedDesignSpace(name='Test DS', description = '', descriptors=[], data=[])
+    # Start from up to PEW
+    session.set_responses(
+        {"definitions": [response_holder.table_config_response]},
+        {"tables": [response_holder.table]},
+        {"entries": [response_holder.predictor]},
+        {"response": [response_holder.pew]},
+        {"entries": []},
+        {"response": []}
+    )
 
-    # When design space is valid
-    with mock.patch('citrine.builders.auto_configure.wait_while_validating', wait_while_ready):
-        fake_config._design_space_build_stage(
-            predictor=fake_predictor,
-            design_space=None,
-            print_status_info=False
+    auto_config = AutoConfigureWorkflow(project=project, name=config_name)
+    assert len(auto_config.assets) == 4
+    assert auto_config.status == "PREDICTOR EVALUATION WORKFLOW CREATED"
+
+    # Inputs to pass to method
+    predictor = GraphPredictor(name="Input", description="", predictors=[])
+    design_space = EnumeratedDesignSpace(name="DS", description="", descriptors=[], data=[])
+
+    # When validation succeeds
+    with mock.patch("citrine.builders.auto_configure.wait_while_validating", wait_while_ready):
+        session.set_responses(
+            {"entries": [response_holder.design_space]}
         )
-        assert(fake_config.design_space is not None)
-        assert(len(fake_config.assets) == 1)
-        assert(fake_config.status == AutoConfigureStatus.DESIGN_SPACE_CREATED.value)
-
-        # Test when providing a design space
-        fake_config._design_space_build_stage(
-            predictor=fake_predictor,
+        auto_config._design_space_build_stage(
+            predictor=predictor,
             design_space=design_space,
             print_status_info=False
         )
+        assert len(auto_config.assets) == 5
+        assert auto_config.status == "DESIGN SPACE CREATED"
 
-    # When design space is invalid
-    with mock.patch('citrine.builders.auto_configure.wait_while_validating', wait_while_invalid):
+    # When validation fails
+    with mock.patch("citrine.builders.auto_configure.wait_while_validating", wait_while_invalid):
+        session.set_responses(
+            {"entries": [response_holder.design_space]}
+        )
         with pytest.raises(RuntimeError):
-            fake_config._design_space_build_stage(
-                predictor=fake_predictor,
-                design_space=None,
+            auto_config._design_space_build_stage(
+                predictor=predictor,
+                design_space=design_space,
                 print_status_info=False
             )
+        assert auto_config.status == "DESIGN SPACE INVALID"
 
 
-@mock.patch('citrine.builders.auto_configure.DesignWorkflow', FakeDesignWorkflow)
-def test_auto_configure_design_workflow_build_stage(fake_config: AutoConfigureWorkflow, fake_project: Project):
-    fake_predictor = fake_project.predictors.auto_configure()
-    fake_design_space = fake_project.design_spaces.create_default()
-    score = LIScore(objectives=[ScalarMaxObjective(descriptor_key='Test Key')], baselines=[0.0])
+@mock.patch("citrine.builders.auto_configure.AutoConfigureWorkflow.execute", fake_execute_score)
+def test_auto_configure_design_workflow_build(project, session, response_holder):
+    """Test the design workflow build stage of auto configure."""
+    config_name = "Test"
+    response_holder.name = config_name
 
-    # When design space is valid
-    with mock.patch('citrine.builders.auto_configure.wait_while_validating', wait_while_ready):
-        # First with no score provided
-        fake_config._design_workflow_build_stage(
-            predictor=fake_predictor, design_space=fake_design_space,
-            score=None, print_status_info=False
+    # Start from up to design space
+    session.set_responses(
+        {"definitions": [response_holder.table_config_response]},
+        {"tables": [response_holder.table]},
+        {"entries": [response_holder.predictor]},
+        {"response": [response_holder.pew]},
+        {"entries": [response_holder.design_space]},
+        {"response": []}
+    )
+
+    auto_config = AutoConfigureWorkflow(project=project, name=config_name)
+    assert len(auto_config.assets) == 5
+    assert auto_config.status == "DESIGN SPACE CREATED"
+
+    # Inputs to pass to method
+    predictor = GraphPredictor(name="Input", description="", predictors=[])
+    design_space = EnumeratedDesignSpace(name="DS", description="", descriptors=[], data=[])
+    score = LIScore(objectives=[], baselines=[])
+    predictor.uid = uuid4()
+    design_space.uid = uuid4()
+
+    # When validation succeeds
+    with mock.patch("citrine.builders.auto_configure.wait_while_validating", wait_while_ready):
+        session.set_responses(
+            {"response": [response_holder.design_workflow]},
+            response_holder.design_workflow
         )
-        assert(fake_config.design_workflow is not None)
-        assert(fake_config.design_execution is None)
-        assert(len(fake_config.assets) == 1)
-        assert(fake_config.status == AutoConfigureStatus.DESIGN_WORKFLOW_CREATED.value)
-
-        # And now with a score
-        fake_config._design_workflow_build_stage(
-            predictor=fake_predictor, design_space=fake_design_space,
-            score=score, print_status_info=False
+        auto_config._design_workflow_build_stage(
+            predictor=predictor,
+            design_space=design_space,
+            score=score,
+            print_status_info=False
         )
-        assert(fake_config.design_execution is not None)
-        assert(len(fake_config.assets) == 2)
+        assert len(auto_config.assets) == 6
+        assert auto_config.status == "DESIGN WORKFLOW CREATED"
 
-    # When design space is invalid
-    with mock.patch('citrine.builders.auto_configure.wait_while_validating', wait_while_failed):
+    # When validation fails
+    with mock.patch("citrine.builders.auto_configure.wait_while_validating", wait_while_failed):
+        session.set_responses(
+            {"response": [response_holder.design_workflow]},
+            response_holder.design_workflow
+        )
         with pytest.raises(RuntimeError):
-            fake_config._design_workflow_build_stage(
-                predictor=fake_predictor, design_space=fake_design_space,
-                score=score, print_status_info=False
+            auto_config._design_workflow_build_stage(
+                predictor=predictor,
+                design_space=design_space,
+                score=score,
+                print_status_info=False
             )
-        # With no score, no error, despite DW failing
-        # Check status to show it failed
-        fake_config._design_workflow_build_stage(
-            predictor=fake_predictor, design_space=fake_design_space,
-            score=None, print_status_info=False
+        assert len(auto_config.assets) == 6
+        assert auto_config.status == "DESIGN WORKFLOW FAILED"
+
+        # With no score passed, should not raise error
+        session.set_responses(
+            {"response": [response_holder.design_workflow]},
+            response_holder.design_workflow
         )
-        assert(fake_config.status == AutoConfigureStatus.DESIGN_WORKFLOW_FAILED.value)
+        auto_config._design_workflow_build_stage(
+            predictor=predictor,
+            design_space=design_space,
+            score=None,
+            print_status_info=False
+        )
+        assert auto_config.status == "DESIGN WORKFLOW FAILED"
+
+
+@mock.patch("citrine.resources.table_config.TableConfigCollection.default_for_material", fake_default_config)
+@mock.patch("citrine.resources.predictor.PredictorCollection.auto_configure", fake_predictor_auto_configure)
+@mock.patch("citrine.resources.gemtables.GemTableCollection.build_from_config", fake_build_from_config)
+@mock.patch("citrine.resources.predictor_evaluation_workflow.PredictorEvaluationWorkflowCollection.create_default", fake_default_pew)
+@mock.patch("citrine.resources.design_space.DesignSpaceCollection.create_default", fake_default_design_space)
+def test_auto_configure_full_run(project, session, response_holder):
+    """Test the full chain of public methods, from_material -> from_table -> from_predictor."""
+    config_name = "Test"
+    response_holder.name = config_name
+
+    # Start from empty
+    session.set_responses(
+        {"definitions": []},
+        {"entries": []},
+        {"response": []},
+        {"entries": []},
+        {"response": []}
+    )
+
+    auto_config = AutoConfigureWorkflow(project=project, name=config_name)
+    assert len(auto_config.assets) == 0
+    assert auto_config.status == "START"
+
+    # Create input material
+    material = MaterialRun(name="I am fake.")
+
+    # Set up the many responses needs to make it all the way through
+    # Each time create_or_update is called, we require two responses
+    #   One response for the find_collection call
+    #   and a second response for the update call
+    session.set_responses(
+        {"definitions": [response_holder.table_config_response]},  # Table build
+        response_holder.table_config_response,                     # Table build
+        {"entries": [response_holder.predictor]},                  # Predictor registration
+        response_holder.predictor,                                 # Predictor registration
+        {"entries": [response_holder.design_space]},               # Design space build
+        response_holder.design_space,                              # Design space build
+        {"response": [response_holder.design_workflow]},           # Design workflow build
+        response_holder.design_workflow                            # Design workflow build
+    )
+
+    with mock.patch("citrine.builders.auto_configure.wait_while_validating", wait_while_ready):
+        auto_config.from_material(
+            material=material,
+            mode=AutoConfigureMode.PLAIN,
+            print_status_info=False
+        )
+        assert len(auto_config.assets) == 6
+        assert auto_config.status == "DESIGN WORKFLOW CREATED"
+
