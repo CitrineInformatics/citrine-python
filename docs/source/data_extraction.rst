@@ -151,6 +151,7 @@ or even wrap it in a method that displays multi-row headers:
         from io import StringIO
         import pandas as pd
         import numpy as np
+        
         if resp["warnings"]:
             warnings.warn("\n\n".join(resp["warnings"]))
 
