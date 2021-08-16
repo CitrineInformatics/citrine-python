@@ -11,9 +11,10 @@ from citrine.builders.scores import create_default_score
 
 @pytest.fixture
 def table_data() -> str:
-    header = "x,y,z\n"
-    row1 = "1.0,0.0,dog\n"
-    row2 = "0.0,1.0,cat"
+    """Fake table data with mean/std columns, units, and non-numerical data types."""
+    header = "x~Mean (lbs),y~Mean (lbs),z~Mean (lbs),z~Std (lbs), pets~Mean\n"
+    row1 = "1.0,0.0,10.0,1.0,dog\n"
+    row2 = "0.0,1.0,5.0,0.5,cat"
     return header + row1 + row2
 
 
@@ -48,10 +49,11 @@ def project(table_data):
 
 def test_create_default_score(project, table):
     """Test reading a table to create a default score for some objectives."""
-    o1 = ScalarMinObjective(descriptor_key="x")
-    o2 = ScalarMaxObjective(descriptor_key="y")
-    o3 = ScalarMaxObjective(descriptor_key="z")
-    o4 = ScalarMaxObjective(descriptor_key="bad")
+    o1 = ScalarMinObjective(descriptor_key="x")     # Valid numerical with mean
+    o2 = ScalarMaxObjective(descriptor_key="y")     # Valid numerical with mean
+    o3 = ScalarMaxObjective(descriptor_key="z")     # Has both a Mean and Std column
+    o4 = ScalarMaxObjective(descriptor_key="pets")  # Non-numeric
+    o5 = ScalarMaxObjective(descriptor_key="bad")   # Not found in the table
 
     s1 = create_default_score(objectives=o1, project=project, table=table)
     assert s1.baselines[0] == 0.0
@@ -63,11 +65,14 @@ def test_create_default_score(project, table):
     assert s3.baselines[0] == 0.0
     assert s3.baselines[1] == 1.0
 
+    s4 = create_default_score(objectives=[o3], project=project, table=table)
+    assert s4.baselines[0] == 10.0  # Make sure we get the mean column, not std column
+
     # Check errors for poor descriptor choices
     with pytest.raises(ValueError):
-        # Non numeric data
-        create_default_score(objectives=o3, project=project, table=table)
+        # Cannot convert data to numeric
+        create_default_score(objectives=o4, project=project, table=table)
 
     with pytest.raises(ValueError):
         # Not found in header
-        create_default_score(objectives=o4, project=project, table=table)
+        create_default_score(objectives=o5, project=project, table=table)

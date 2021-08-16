@@ -79,8 +79,8 @@ class AutoConfigureWorkflow():
     Initializing an AutoConfigureWorkflow will search for assets
     on the Citrine Platform based on the specified name,
     and re-use/update these items during subsequent runs.
-    Currently, assets are searched for by name and type,
-    and duplicatly named assets will result in an error being thrown.
+    Currently, assets are searched for by name and type in the project,
+    and duplicately named assets will result in an error being thrown.
 
     Example usage:
     ```

@@ -41,7 +41,7 @@ def create_default_score(
     """
     table_data = project.tables.read_to_memory(table)
     data_io = StringIO(table_data)
-    reader = csv.DictReader(data_io, delimiter=",")  # Much nicer w/ pandas
+    reader = csv.DictReader(data_io, delimiter=",")
 
     objectives = objectives if isinstance(objectives, Iterable) else [objectives]
 
@@ -51,8 +51,9 @@ def create_default_score(
         key = objective.descriptor_key
         objective_values[key] = []
 
-        # Descriptor key has to be mapped inexactly to fieldnames of table data
-        full_key = next(filter(lambda col: key in col, reader.fieldnames), None)
+        # Descriptor key has to be mapped to fieldnames of table data
+        # Search for mean column, avoid matching on std columns
+        full_key = next(filter(lambda col: f"{key}~Mean" in col, reader.fieldnames), None)
         if full_key is None:
             raise ValueError(f"Key '{key}' not found in GEM table headers.")
         header_map[key] = full_key
