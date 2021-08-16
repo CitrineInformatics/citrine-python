@@ -1,11 +1,11 @@
-import uuid
 from os.path import basename
 from uuid import UUID, uuid4
+from warnings import catch_warnings
 
 import pytest
 from gemd.entity.bounds.integer_bounds import IntegerBounds
 
-from citrine.exceptions import PollingTimeoutError, JobFailureError, NotFound
+from citrine.exceptions import NotFound
 from citrine.resources.condition_template import ConditionTemplateCollection, ConditionTemplate
 from citrine.resources.dataset import DatasetCollection
 from citrine.resources.material_run import MaterialRunCollection, MaterialRun
@@ -21,7 +21,6 @@ from citrine.resources.process_spec import ProcessSpecCollection, ProcessSpec
 from citrine.resources.process_template import ProcessTemplateCollection, ProcessTemplate
 from citrine.resources.property_template import PropertyTemplateCollection, PropertyTemplate
 from tests.utils.factories import DatasetDataFactory, DatasetFactory
-from tests.utils.factories import JobSubmissionResponseFactory
 from tests.utils.session import FakeSession, FakePaginatedSession, FakeCall
 
 
@@ -362,12 +361,14 @@ def test_gemd_posts(dataset):
         for pair in obj.uids.items():
             assert pair in seen_ids  # registered items have the same ids
 
+
 def test_gemd_batch_delete(dataset):
     """Pass through to GEMDResourceCollection working."""
     with pytest.raises(TypeError):
         dataset.gemd_batch_delete([7, False])
 
-def test_delete_contents_ok(dataset):
+
+def test_deprecated_delete_contents(dataset):
 
     job_resp = {
         'job_id': '1234'
@@ -386,8 +387,49 @@ def test_delete_contents_ok(dataset):
     session = dataset.session
     session.set_responses(job_resp, failed_job_resp)
 
+    with catch_warnings(record=True) as caught:
+        # When
+        del_resp = dataset.delete_contents()
+
+        # Then
+        assert len(del_resp) == 0
+
+        # Ensure we made the expected delete call
+        expected_call = FakeCall(
+            method='DELETE',
+            path='projects/{}/datasets/{}/contents'.format(dataset.project_id, dataset.uid)
+        )
+        assert len(session.calls) == 2
+        assert session.calls[0] == expected_call
+
+        assert len(caught) == 1
+        assert caught[0].category == DeprecationWarning
+
+
+def test_delete_contents_ok(dataset, monkeypatch):
+
+    job_resp = {
+        'job_id': '1234'
+    }
+
+    failed_job_resp = {
+        'job_type': 'batch_delete',
+        'status': 'Success',
+        'tasks': [],
+        'output': {
+            # Keep in mind this is a stringified JSON value. Eww.
+            'failures': '[]'
+        }
+    }
+
+    session = dataset.session
+    session.set_responses(job_resp, failed_job_resp)
+
+    user_responses = iter(['bad user response', 'Y'])
+    monkeypatch.setattr('builtins.input', lambda: next(user_responses))
+
     # When
-    del_resp = dataset.delete_contents()
+    del_resp = dataset.delete_contents(prompt_to_confirm=True)
 
     # Then
     assert len(del_resp) == 0
@@ -399,3 +441,10 @@ def test_delete_contents_ok(dataset):
     )
     assert len(session.calls) == 2
     assert session.calls[0] == expected_call
+
+
+def test_delete_contents_abort(dataset, monkeypatch):
+    user_responses = iter(['N'])
+    monkeypatch.setattr('builtins.input', lambda : next(user_responses))
+    with pytest.raises(RuntimeError):
+        dataset.delete_contents(prompt_to_confirm=True)

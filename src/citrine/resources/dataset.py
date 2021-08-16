@@ -1,6 +1,7 @@
 """Resources that represent both individual and collections of datasets."""
 from typing import List, Optional, Union, Tuple, Iterator
 from uuid import UUID
+import warnings
 
 from gemd.entity.base_entity import BaseEntity
 from gemd.entity.link_by_uid import LinkByUID
@@ -248,7 +249,8 @@ class Dataset(Resource['Dataset']):
             self,
             *,
             timeout: float = 2 * 60,
-            polling_delay: float = 1.0
+            polling_delay: float = 1.0,
+            prompt_to_confirm: bool = None,
     ):
         """
         Delete all the GEMD objects from within a single Dataset.
@@ -261,6 +263,8 @@ class Dataset(Resource['Dataset']):
             which can also time out server-side.
         polling_delay: float
             How long to delay between each polling retry attempt.
+        prompt_to_confirm: bool
+            If True, prompt for user confirmation before triggering delete.
         Returns
         -------
         List[Tuple[LinkByUID, ApiError]]
@@ -273,6 +277,19 @@ class Dataset(Resource['Dataset']):
                                   dataset_uid=self.uid,
                                   project_id=self.project_id
                                   )
+        if prompt_to_confirm is None:
+            warnings.warn("Calling delete_contents without the prompt_to_confirm argument is"
+                          "deprecated.  Please explicitly pass True or False", DeprecationWarning)
+
+        while prompt_to_confirm:
+            print(f"Confirm you want to delete the contents of {self.uid} [Y/N]")
+            user_response = input()
+            if user_response.lower() in {'y', 'yes'}:
+                break  # return to main flow
+            elif user_response.lower() in {'n', 'no'}:
+                raise RuntimeError("delete_contents was invoked unintentionally")
+            else:
+                print(f'"{user_response}" is not a valid response')
 
         response = self.session.delete_resource(path)
         job_id = response["job_id"]
