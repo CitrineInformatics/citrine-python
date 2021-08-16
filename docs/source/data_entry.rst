@@ -68,9 +68,9 @@ These results can be further constrained by dataset:
     dataset.process_templates.list()
 
 The
-:meth:`~citrine.resources.data_concepts.DataConceptsCollection.filter_by_tags`,
-:meth:`~citrine.resources.data_objects.DataObjectCollection.filter_by_attribute_bounds`,
-and :meth:`~citrine.resources.data_concepts.DataConceptsCollection.filter_by_name`
+:meth:`~citrine.resources.data_concepts.DataConceptsCollection.list_by_tag`,
+:meth:`~citrine.resources.data_objects.DataObjectCollection.list_by_attribute_bounds`,
+and :meth:`~citrine.resources.data_concepts.DataConceptsCollection.list_by_name`
 methods can help refine the listing to make the target object easier to find.
 
 There also exist methods for locating data objects by its reference to another object:
