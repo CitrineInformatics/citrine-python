@@ -7,7 +7,8 @@ from citrine.resources.design_space import DesignSpaceCollection
 
 
 class FakeDesignSpaceCollection(DesignSpaceCollection):
-    def __init__(self):
+    def __init__(self, project_id, session):
+        DesignSpaceCollection.__init__(self, project_id, session)
         self.data = {}
         self.in_use = {}
 

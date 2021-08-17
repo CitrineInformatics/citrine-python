@@ -1,9 +1,11 @@
 from typing import Optional
+from uuid import uuid4
 
 from citrine.exceptions import NotFound
 from citrine.resources.descriptors import DescriptorMethods
 from citrine.resources.design_space import DesignSpaceCollection
 from citrine.resources.project import Project, ProjectCollection
+from tests.utils.fakes import FakeDatasetCollection, FakePredictorCollection
 from tests.utils.fakes.fake_descriptor_methods import FakeDescriptorMethods
 from tests.utils.fakes.fake_design_space_collection import FakeDesignSpaceCollection
 from tests.utils.session import FakeSession
@@ -57,13 +59,24 @@ class FakeProject(Project):
 
     def __init__(self, name="foo", description="bar", num_properties=3, session=FakeSession()):
         Project.__init__(self, name=name, description=description, session=session)
-        self._design_spaces = FakeDesignSpaceCollection()
+        self.uid = uuid4()
+        self._design_spaces = FakeDesignSpaceCollection(self.uid, self.session)
         self._descriptor_methods = FakeDescriptorMethods(num_properties)
+        self._datasets = FakeDatasetCollection(self.uid, self.session)
+        self._predictors = FakePredictorCollection(self.uid, self.session)
 
     @property
-    def design_spaces(self) -> DesignSpaceCollection:
+    def datasets(self) -> FakeDatasetCollection:
+        return self._datasets
+
+    @property
+    def design_spaces(self) -> FakeDesignSpaceCollection:
         return self._design_spaces
 
     @property
     def descriptors(self) -> FakeDescriptorMethods:
         return self._descriptor_methods
+
+    @property
+    def predictors(self) -> FakePredictorCollection:
+        return self._predictors
