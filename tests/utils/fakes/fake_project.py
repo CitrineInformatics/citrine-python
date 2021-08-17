@@ -1,8 +1,10 @@
 from typing import Optional
 
 from citrine.exceptions import NotFound
+from citrine.resources.descriptors import DescriptorMethods
 from citrine.resources.design_space import DesignSpaceCollection
 from citrine.resources.project import Project, ProjectCollection
+from tests.utils.fakes.fake_descriptor_methods import FakeDescriptorMethods
 from tests.utils.fakes.fake_design_space_collection import FakeDesignSpaceCollection
 from tests.utils.session import FakeSession
 
@@ -53,10 +55,15 @@ class FakeProjectCollection(ProjectCollection):
 
 class FakeProject(Project):
 
-    def __init__(self, **kwargs):
-        Project.__init__(self, **kwargs)
+    def __init__(self, name="foo", description="bar", num_properties=3, session=FakeSession()):
+        Project.__init__(self, name=name, description=description, session=session)
         self._design_spaces = FakeDesignSpaceCollection()
+        self._descriptor_methods = FakeDescriptorMethods(num_properties)
 
     @property
     def design_spaces(self) -> DesignSpaceCollection:
         return self._design_spaces
+
+    @property
+    def descriptors(self) -> FakeDescriptorMethods:
+        return self._descriptor_methods
