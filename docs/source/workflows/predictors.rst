@@ -21,6 +21,11 @@ The output is the property that you would like the model to predict.
 There must be at least one input and only one output.
 Unlike the `SimpleMLPredictor <#simple-ml-predictor>`__, only one model is trained from inputs to the output.
 
+AutoMLPredictors support both regression and classification.
+If the output descriptor is a :class:`~citrine.informatics.descriptors.RealDescriptor`, regression is performed.
+If the output descriptor is a :class:`~citrine.informatics.descriptors.CategoricalDescriptor`, classification is performed.
+Both binary and multi-class classification are supported automatically based on the number of categories in the data.
+
 Models are trained using data provided by a :class:`~citrine.informatics.data_sources.DataSource` specified when creating a predictor.
 The inputs and outputs are descriptors, which must correspond precisely to descriptors that exist in the training data or are produced by other predictors in the graphical model.
 There are two important helper methods in this regard.
