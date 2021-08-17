@@ -7,8 +7,8 @@ from citrine.informatics.descriptors import RealDescriptor, CategoricalDescripto
 from citrine.informatics.design_spaces import EnumeratedDesignSpace
 from citrine.builders.design_spaces import enumerate_cartesian_product, \
     enumerate_formulation_grid, cartesian_join_design_spaces, enumerated_to_data_source, migrate_enumerated_design_space
-from tests.utils.fakes.fake_dataset import FakeDataset
-from tests.utils.fakes.fake_project import FakeProject
+from tests.utils.fakes.fake_dataset_collection import FakeDataset
+from tests.utils.fakes.fake_project_collection import FakeProject
 
 
 @pytest.fixture(scope="module")

@@ -12,9 +12,9 @@ from citrine.resources.project import ProjectCollection, Project
 from citrine.seeding.find_or_create import (find_collection, get_by_name_or_create, get_by_name_or_raise_error,
                                             find_or_create_project, find_or_create_dataset,
                                             create_or_update)
-from tests.utils.fakes.fake_dataset import FakeDatasetCollection
-from tests.utils.fakes.fake_predictor import FakePredictorCollection
-from tests.utils.fakes.fake_project import FakeProjectCollection
+from tests.utils.fakes.fake_dataset_collection import FakeDatasetCollection
+from tests.utils.fakes.fake_predictor_collection import FakePredictorCollection
+from tests.utils.fakes.fake_project_collection import FakeProjectCollection
 
 from tests.utils.session import FakeSession
 

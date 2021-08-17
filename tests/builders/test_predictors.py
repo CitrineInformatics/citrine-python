@@ -11,7 +11,7 @@ from citrine.informatics.predictors import (
     LabelFractionsPredictor,
 )
 from citrine.builders.predictors import build_mean_feature_property_predictors
-from tests.utils.fakes.fake_project import FakeProject
+from tests.utils.fakes import FakeProject
 
 
 def test_mean_feature_properties():
