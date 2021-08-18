@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>citrine.resources.dataset module &mdash; Citrine Python 1.6.0 documentation</title>
+  <title>citrine.resources.dataset module &mdash; Citrine Python 1.8.1 documentation</title>
   
 
   
@@ -71,7 +71,7 @@
             
             
               <div class="version">
-                1.6.0
+                1.8.1
               </div>
             
           
@@ -319,7 +319,7 @@ Dry run is intended to be used for validation. Default: false</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.resources.dataset.Dataset.delete_contents">
-<span class="sig-name descname"><span class="pre">delete_contents</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">120</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">polling_delay</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.dataset.Dataset.delete_contents" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">delete_contents</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">120</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">polling_delay</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prompt_to_confirm</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.resources.dataset.Dataset.delete_contents" title="Permalink to this definition">¶</a></dt>
 <dd><p>Delete all the GEMD objects from within a single Dataset.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -328,6 +328,7 @@ Dry run is intended to be used for validation. Default: false</p></li>
 Note that this number has no effect on the underlying job itself,
 which can also time out server-side.</p></li>
 <li><p><strong>polling_delay</strong> (<em>float</em>) – How long to delay between each polling retry attempt.</p></li>
+<li><p><strong>prompt_to_confirm</strong> (<em>bool</em>) – If True, prompt for user confirmation before triggering delete.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>

@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>citrine.builders.auto_configure module &mdash; Citrine Python 1.6.0 documentation</title>
+  <title>citrine.builders.auto_configure module &mdash; Citrine Python 1.8.1 documentation</title>
   
 
   
@@ -71,7 +71,7 @@
             
             
               <div class="version">
-                1.6.0
+                1.8.1
               </div>
             
           
@@ -264,22 +264,27 @@
 
 <dl class="py class">
 <dt class="sig sig-object py" id="citrine.builders.auto_configure.AutoConfigureWorkflow">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">citrine.builders.auto_configure.</span></span><span class="sig-name descname"><span class="pre">AutoConfigureWorkflow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">project</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="citrine.resources.project.html#citrine.resources.project.Project" title="citrine.resources.project.Project"><span class="pre">citrine.resources.project.Project</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.builders.auto_configure.AutoConfigureWorkflow" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">citrine.builders.auto_configure.</span></span><span class="sig-name descname"><span class="pre">AutoConfigureWorkflow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">project</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="citrine.resources.project.html#citrine.resources.project.Project" title="citrine.resources.project.Project"><span class="pre">citrine.resources.project.Project</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.builders.auto_configure.AutoConfigureWorkflow" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>[ALPHA] Helper class for configuring and storing default assets on the Citrine Platform.</p>
 <p>Defines methods for creating a default GEM table, predictor, predictor evaluations,
-design space, design workflow, and design execution in a linear fashion,
+design space, and design workflow in a linear fashion,
 starting from a provided material/table/predictor.</p>
 <p>All assets that are registered to the Citrine Platform
 during the auto configuration steps are stored as members of this class.
 In case this method fails during asset validation,
 the previously configured items are accessible
-locally and on the Citrine Platform for later use or modification.</p>
+locally and on the Citrine Platform.</p>
+<p>Initializing an AutoConfigureWorkflow will search for assets
+on the Citrine Platform based on the specified name,
+and re-use/update these items during subsequent runs.
+Currently, assets are searched for by name and type in the project,
+and duplicately named assets will result in an error being thrown.</p>
 <p>Example usage:
 <a href="#id1"><span class="problematic" id="id2">``</span></a>`
 # Initialize score and workflow
 score = LIScore(objectives=[ScalarMaxObjective(descriptor_key=’Desc 1’), baselines=[1.0])
-auto_config = AutoConfigureWorkflow(project=project, name=’Auto Config v1’)</p>
+auto_config = AutoConfigureWorkflow(project=project, name=’My Project Name’)</p>
 <p># GEM table -&gt; Predictor -&gt; PEW/PEE -&gt; Design Space -&gt; Design Workflow -&gt; Design Execution
 auto_config.from_material(</p>
 <blockquote>
@@ -294,36 +299,45 @@ print(f”Workflow ended with status: {auto_config.status}”)</p>
 <p># Retrieve some of the results
 table = auto_config.table
 predictor = auto_config.predictor
-execution = auto_config.design_execution
+design_space = auto_config.design_space
+workflow = auto_config.design_workflow
 <a href="#id3"><span class="problematic" id="id4">``</span></a><a href="#id5"><span class="problematic" id="id6">`</span></a></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>project</strong> (<a class="reference internal" href="citrine.resources.project.html#citrine.resources.project.Project" title="citrine.resources.project.Project"><em>Project</em></a>) – Project to use when accessing the Citrine Platform.</p></li>
 <li><p><strong>name</strong> (<em>str</em>) – Name to affix to auto-configured assets on the Citrine Platform.
-Default: ‘’</p></li>
+This name is used as an identifier for finding and re-using
+assets related to a given workflow.</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.builders.auto_configure.AutoConfigureWorkflow.execute">
-<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">score</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="citrine.informatics.scores.html#citrine.informatics.scores.Score" title="citrine.informatics.scores.Score"><span class="pre">citrine.informatics.scores.Score</span></a></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="citrine.informatics.executions.design_execution.html#citrine.informatics.executions.design_execution.DesignExecution" title="citrine.informatics.executions.design_execution.DesignExecution"><span class="pre">citrine.informatics.executions.design_execution.DesignExecution</span></a><a class="headerlink" href="#citrine.builders.auto_configure.AutoConfigureWorkflow.execute" title="Permalink to this definition">¶</a></dt>
-<dd><p>[ALPHA] Execute a design execution given a provided score.</p>
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">score</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="citrine.informatics.scores.html#citrine.informatics.scores.Score" title="citrine.informatics.scores.Score"><span class="pre">citrine.informatics.scores.Score</span></a><span class="p"><span class="pre">,</span> </span><a class="reference internal" href="citrine.informatics.objectives.html#citrine.informatics.objectives.Objective" title="citrine.informatics.objectives.Objective"><span class="pre">citrine.informatics.objectives.Objective</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="citrine.informatics.executions.design_execution.html#citrine.informatics.executions.design_execution.DesignExecution" title="citrine.informatics.executions.design_execution.DesignExecution"><span class="pre">citrine.informatics.executions.design_execution.DesignExecution</span></a><a class="headerlink" href="#citrine.builders.auto_configure.AutoConfigureWorkflow.execute" title="Permalink to this definition">¶</a></dt>
+<dd><p>[ALPHA] Execute a design execution using the provided score/objective.</p>
 <p>A design workflow must be present after auto-configuration to execute the score.
 This method can be called after modifying auto-configured assets
 to create a new, custom design execution.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>score</strong> (<a class="reference internal" href="citrine.informatics.scores.html#citrine.informatics.scores.Score" title="citrine.informatics.scores.Score"><em>Score</em></a>) – Scoring function used to rank candidates during design execution.
-Must contain objectives/constraints with matching descriptor keys
-to those appearing in predictor responses.</p>
+<dd class="field-odd"><p><strong>score</strong> (<em>Union</em><em>[</em><a class="reference internal" href="citrine.informatics.scores.html#citrine.informatics.scores.Score" title="citrine.informatics.scores.Score"><em>Score</em></a><em>, </em><a class="reference internal" href="citrine.informatics.objectives.html#citrine.informatics.objectives.Objective" title="citrine.informatics.objectives.Objective"><em>Objective</em></a><em>]</em>) – A score or objective used to rank candidates during design execution.
+If an objective is passed, a default score is constructed
+by reading the GEM table associated with this workflow
+to extract baseline information.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The design execution triggered with the provided score/objective.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="citrine.informatics.executions.design_execution.html#citrine.informatics.executions.design_execution.DesignExecution" title="citrine.informatics.executions.design_execution.DesignExecution">DesignExecution</a></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.builders.auto_configure.AutoConfigureWorkflow.from_material">
-<span class="sig-name descname"><span class="pre">from_material</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">*,</span> <span class="pre">material:</span> <span class="pre">Union[str,</span> <span class="pre">uuid.UUID,</span> <span class="pre">gemd.entity.link_by_uid.LinkByUID,</span> <span class="pre">citrine.resources.material_run.MaterialRun],</span> <span class="pre">evaluator:</span> <span class="pre">Optional[citrine.informatics.predictor_evaluator.PredictorEvaluator]</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">design_space:</span> <span class="pre">Optional[citrine.informatics.design_spaces.design_space.DesignSpace]</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">score:</span> <span class="pre">Optional[citrine.informatics.scores.Score]</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">mode:</span> <span class="pre">citrine.builders.auto_configure.AutoConfigureMode</span> <span class="pre">=</span> <span class="pre">&lt;AutoConfigureMode.PLAIN:</span> <span class="pre">'PLAIN'&gt;,</span> <span class="pre">print_status_info:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.builders.auto_configure.AutoConfigureWorkflow.from_material" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">from_material</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">*,</span> <span class="pre">material:</span> <span class="pre">Union[str,</span> <span class="pre">uuid.UUID,</span> <span class="pre">gemd.entity.link_by_uid.LinkByUID,</span> <span class="pre">citrine.resources.material_run.MaterialRun],</span> <span class="pre">evaluator:</span> <span class="pre">Optional[citrine.informatics.predictor_evaluator.PredictorEvaluator]</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">design_space:</span> <span class="pre">Optional[citrine.informatics.design_spaces.design_space.DesignSpace]</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">score:</span> <span class="pre">Optional[Union[citrine.informatics.scores.Score,</span> <span class="pre">citrine.informatics.objectives.Objective]]</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">mode:</span> <span class="pre">citrine.builders.auto_configure.AutoConfigureMode</span> <span class="pre">=</span> <span class="pre">&lt;AutoConfigureMode.PLAIN:</span> <span class="pre">'PLAIN'&gt;,</span> <span class="pre">print_status_info:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.builders.auto_configure.AutoConfigureWorkflow.from_material" title="Permalink to this definition">¶</a></dt>
 <dd><p>[ALPHA] Auto configure platform assets from material history to design workflow.</p>
 <p>Given a material on the Citrine Platform,
 configures a default GEM table, predictor, design space, and design workflow.</p>
@@ -344,9 +358,10 @@ Default: None</p></li>
 <li><p><strong>design_space</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="citrine.informatics.design_spaces.design_space.html#citrine.informatics.design_spaces.design_space.DesignSpace" title="citrine.informatics.design_spaces.design_space.DesignSpace"><em>DesignSpace</em></a><em>]</em>) – A DesignSpace object to use in place of the default.
 If not registered already, will be registered during configuration.
 Default: None</p></li>
-<li><p><strong>score</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="citrine.informatics.scores.html#citrine.informatics.scores.Score" title="citrine.informatics.scores.Score"><em>Score</em></a><em>]</em>) – Scoring function used to rank candidates during design execution.
-Must contain objectives/constraints with matching descriptor keys
-to those appearing within the provided material history.
+<li><p><strong>score</strong> (<em>Optional</em><em>[</em><em>Union</em><em>[</em><a class="reference internal" href="citrine.informatics.scores.html#citrine.informatics.scores.Score" title="citrine.informatics.scores.Score"><em>Score</em></a><em>, </em><a class="reference internal" href="citrine.informatics.objectives.html#citrine.informatics.objectives.Objective" title="citrine.informatics.objectives.Objective"><em>Objective</em></a><em>]</em><em>]</em>) – A score or objective used to rank candidates during design execution.
+If only an objective is passed, a default <cite>LIScore</cite> is constructed
+by reading the GEM table associated with this workflow
+to extract baseline scoring information.
 Default: None</p></li>
 <li><p><strong>mode</strong> (<a class="reference internal" href="#citrine.builders.auto_configure.AutoConfigureMode" title="citrine.builders.auto_configure.AutoConfigureMode"><em>AutoConfigureMode</em></a>) – The method to be used in the automatic table and predictor configuration.
 Default: AutoConfigureMode.PLAIN</p></li>
@@ -359,7 +374,7 @@ Default: False</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.builders.auto_configure.AutoConfigureWorkflow.from_predictor">
-<span class="sig-name descname"><span class="pre">from_predictor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">predictor</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="citrine.informatics.predictors.predictor.html#citrine.informatics.predictors.predictor.Predictor" title="citrine.informatics.predictors.predictor.Predictor"><span class="pre">citrine.informatics.predictors.predictor.Predictor</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">evaluator</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="citrine.informatics.predictor_evaluator.html#citrine.informatics.predictor_evaluator.PredictorEvaluator" title="citrine.informatics.predictor_evaluator.PredictorEvaluator"><span class="pre">citrine.informatics.predictor_evaluator.PredictorEvaluator</span></a><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">design_space</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="citrine.informatics.design_spaces.design_space.html#citrine.informatics.design_spaces.design_space.DesignSpace" title="citrine.informatics.design_spaces.design_space.DesignSpace"><span class="pre">citrine.informatics.design_spaces.design_space.DesignSpace</span></a><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">score</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="citrine.informatics.scores.html#citrine.informatics.scores.Score" title="citrine.informatics.scores.Score"><span class="pre">citrine.informatics.scores.Score</span></a><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_status_info</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.builders.auto_configure.AutoConfigureWorkflow.from_predictor" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">from_predictor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">predictor</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="citrine.informatics.predictors.predictor.html#citrine.informatics.predictors.predictor.Predictor" title="citrine.informatics.predictors.predictor.Predictor"><span class="pre">citrine.informatics.predictors.predictor.Predictor</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">evaluator</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="citrine.informatics.predictor_evaluator.html#citrine.informatics.predictor_evaluator.PredictorEvaluator" title="citrine.informatics.predictor_evaluator.PredictorEvaluator"><span class="pre">citrine.informatics.predictor_evaluator.PredictorEvaluator</span></a><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">design_space</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="citrine.informatics.design_spaces.design_space.html#citrine.informatics.design_spaces.design_space.DesignSpace" title="citrine.informatics.design_spaces.design_space.DesignSpace"><span class="pre">citrine.informatics.design_spaces.design_space.DesignSpace</span></a><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">score</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="citrine.informatics.scores.html#citrine.informatics.scores.Score" title="citrine.informatics.scores.Score"><span class="pre">citrine.informatics.scores.Score</span></a><span class="p"><span class="pre">,</span> </span><a class="reference internal" href="citrine.informatics.objectives.html#citrine.informatics.objectives.Objective" title="citrine.informatics.objectives.Objective"><span class="pre">citrine.informatics.objectives.Objective</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">print_status_info</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.builders.auto_configure.AutoConfigureWorkflow.from_predictor" title="Permalink to this definition">¶</a></dt>
 <dd><p>[ALPHA] Auto configure platform assets from predictor to design workflow.</p>
 <p>Given a predictor on the Citrine Platform,
 creates a default design space and design workflow.</p>
@@ -379,9 +394,10 @@ Default: None</p></li>
 <li><p><strong>design_space</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="citrine.informatics.design_spaces.design_space.html#citrine.informatics.design_spaces.design_space.DesignSpace" title="citrine.informatics.design_spaces.design_space.DesignSpace"><em>DesignSpace</em></a><em>]</em>) – A DesignSpace object to use in place of the default.
 If not registered already, will be registered during configuration.
 Default: None</p></li>
-<li><p><strong>score</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="citrine.informatics.scores.html#citrine.informatics.scores.Score" title="citrine.informatics.scores.Score"><em>Score</em></a><em>]</em>) – Scoring function used to rank candidates during design execution.
-Must contain objectives/constraints with matching descriptor keys
-to those appearing within the provided material history.
+<li><p><strong>score</strong> (<em>Optional</em><em>[</em><em>Union</em><em>[</em><a class="reference internal" href="citrine.informatics.scores.html#citrine.informatics.scores.Score" title="citrine.informatics.scores.Score"><em>Score</em></a><em>, </em><a class="reference internal" href="citrine.informatics.objectives.html#citrine.informatics.objectives.Objective" title="citrine.informatics.objectives.Objective"><em>Objective</em></a><em>]</em><em>]</em>) – A score or objective used to rank candidates during design execution.
+If only an objective is passed, a default <cite>LIScore</cite> is constructed
+by reading the GEM table associated with this workflow
+to extract baseline scoring information.
 Default: None</p></li>
 <li><p><strong>print_status_info</strong> (<em>bool</em>) – Whether to print the status info during validation of assets.
 Default: False</p></li>
@@ -392,7 +408,7 @@ Default: False</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="citrine.builders.auto_configure.AutoConfigureWorkflow.from_table">
-<span class="sig-name descname"><span class="pre">from_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">*</span></em>, <em class="sig-param"><span class="pre">table:</span> <span class="pre">citrine.resources.gemtables.GemTable</span></em>, <em class="sig-param"><span class="pre">evaluator:</span> <span class="pre">Optional[citrine.informatics.predictor_evaluator.PredictorEvaluator]</span> <span class="pre">=</span> <span class="pre">None</span></em>, <em class="sig-param"><span class="pre">design_space:</span> <span class="pre">Optional[citrine.informatics.design_spaces.design_space.DesignSpace]</span> <span class="pre">=</span> <span class="pre">None</span></em>, <em class="sig-param"><span class="pre">score:</span> <span class="pre">Optional[citrine.informatics.scores.Score]</span> <span class="pre">=</span> <span class="pre">None</span></em>, <em class="sig-param"><span class="pre">mode:</span> <span class="pre">citrine.builders.auto_configure.AutoConfigureMode</span> <span class="pre">=</span> <span class="pre">&lt;AutoConfigureMode.PLAIN:</span> <span class="pre">'PLAIN'&gt;</span></em>, <em class="sig-param"><span class="pre">print_status_info:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.builders.auto_configure.AutoConfigureWorkflow.from_table" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">from_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">*</span></em>, <em class="sig-param"><span class="pre">table:</span> <span class="pre">citrine.resources.gemtables.GemTable</span></em>, <em class="sig-param"><span class="pre">evaluator:</span> <span class="pre">Optional[citrine.informatics.predictor_evaluator.PredictorEvaluator]</span> <span class="pre">=</span> <span class="pre">None</span></em>, <em class="sig-param"><span class="pre">design_space:</span> <span class="pre">Optional[citrine.informatics.design_spaces.design_space.DesignSpace]</span> <span class="pre">=</span> <span class="pre">None</span></em>, <em class="sig-param"><span class="pre">score:</span> <span class="pre">Optional[Union[citrine.informatics.scores.Score</span></em>, <em class="sig-param"><span class="pre">citrine.informatics.objectives.Objective]]</span> <span class="pre">=</span> <span class="pre">None</span></em>, <em class="sig-param"><span class="pre">mode:</span> <span class="pre">citrine.builders.auto_configure.AutoConfigureMode</span> <span class="pre">=</span> <span class="pre">&lt;AutoConfigureMode.PLAIN:</span> <span class="pre">'PLAIN'&gt;</span></em>, <em class="sig-param"><span class="pre">print_status_info:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#citrine.builders.auto_configure.AutoConfigureWorkflow.from_table" title="Permalink to this definition">¶</a></dt>
 <dd><p>[ALPHA] Auto configure platform assets from GEM table to design workflow.</p>
 <p>Given a GEM table on the Citrine Platform,
 creates a default predictor, design space, and design workflow.</p>
@@ -413,9 +429,10 @@ Default: None</p></li>
 <li><p><strong>design_space</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="citrine.informatics.design_spaces.design_space.html#citrine.informatics.design_spaces.design_space.DesignSpace" title="citrine.informatics.design_spaces.design_space.DesignSpace"><em>DesignSpace</em></a><em>]</em>) – A DesignSpace object to use in place of the default.
 If not registered already, will be registered during configuration.
 Default: None</p></li>
-<li><p><strong>score</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="citrine.informatics.scores.html#citrine.informatics.scores.Score" title="citrine.informatics.scores.Score"><em>Score</em></a><em>]</em>) – Scoring function used to rank candidates during design execution.
-Must contain objectives/constraints with matching descriptor keys
-to those appearing within the provided material history.
+<li><p><strong>score</strong> (<em>Optional</em><em>[</em><em>Union</em><em>[</em><a class="reference internal" href="citrine.informatics.scores.html#citrine.informatics.scores.Score" title="citrine.informatics.scores.Score"><em>Score</em></a><em>, </em><a class="reference internal" href="citrine.informatics.objectives.html#citrine.informatics.objectives.Objective" title="citrine.informatics.objectives.Objective"><em>Objective</em></a><em>]</em><em>]</em>) – A score or objective used to rank candidates during design execution.
+If only an objective is passed, a default <cite>LIScore</cite> is constructed
+by reading the GEM table associated with this workflow
+to extract baseline scoring information.
 Default: None</p></li>
 <li><p><strong>mode</strong> (<a class="reference internal" href="#citrine.builders.auto_configure.AutoConfigureMode" title="citrine.builders.auto_configure.AutoConfigureMode"><em>AutoConfigureMode</em></a>) – The method to be used in the automatic predictor configuration.
 Default: AutoConfigureMode.PLAIN</p></li>
@@ -426,6 +443,12 @@ Default: False</p></li>
 </dl>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="citrine.builders.auto_configure.AutoConfigureWorkflow.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#citrine.builders.auto_configure.AutoConfigureWorkflow.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Search for existing assets matching the workflow name and update its status.</p>
+</dd></dl>
+
 <dl class="py property">
 <dt class="sig sig-object py" id="citrine.builders.auto_configure.AutoConfigureWorkflow.assets">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">assets</span></span><a class="headerlink" href="#citrine.builders.auto_configure.AutoConfigureWorkflow.assets" title="Permalink to this definition">¶</a></dt>
@@ -433,21 +456,27 @@ Default: False</p></li>
 </dd></dl>
 
 <dl class="py property">
+<dt class="sig sig-object py" id="citrine.builders.auto_configure.AutoConfigureWorkflow.candidates">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">candidates</span></span><em class="property"><span class="pre">:</span> <span class="pre">List[citrine.informatics.design_candidate.DesignCandidate]</span></em><a class="headerlink" href="#citrine.builders.auto_configure.AutoConfigureWorkflow.candidates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the candidate list from the most recent design execution.</p>
+</dd></dl>
+
+<dl class="py property">
 <dt class="sig sig-object py" id="citrine.builders.auto_configure.AutoConfigureWorkflow.design_execution">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">design_execution</span></span><em class="property"><span class="pre">:</span> <span class="pre">Optional[citrine.informatics.executions.design_execution.DesignExecution]</span></em><a class="headerlink" href="#citrine.builders.auto_configure.AutoConfigureWorkflow.design_execution" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the design execution, if it was created by this object.</p>
+<dd><p>Get the most recent design execution from this workflow.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="citrine.builders.auto_configure.AutoConfigureWorkflow.design_space">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">design_space</span></span><em class="property"><span class="pre">:</span> <span class="pre">Optional[citrine.informatics.design_spaces.design_space.DesignSpace]</span></em><a class="headerlink" href="#citrine.builders.auto_configure.AutoConfigureWorkflow.design_space" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the design space used during the auto configuration steps.</p>
+<dd><p>Get the design space associated with this workflow.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="citrine.builders.auto_configure.AutoConfigureWorkflow.design_workflow">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">design_workflow</span></span><em class="property"><span class="pre">:</span> <span class="pre">Optional[citrine.informatics.workflows.design_workflow.DesignWorkflow]</span></em><a class="headerlink" href="#citrine.builders.auto_configure.AutoConfigureWorkflow.design_workflow" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the default design workflow, if it was created by this object.</p>
+<dd><p>Get the design workflow associated with this workflow.</p>
 </dd></dl>
 
 <dl class="py property">
@@ -459,25 +488,25 @@ Default: False</p></li>
 <dl class="py property">
 <dt class="sig sig-object py" id="citrine.builders.auto_configure.AutoConfigureWorkflow.predictor">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">predictor</span></span><em class="property"><span class="pre">:</span> <span class="pre">Optional[citrine.informatics.predictors.predictor.Predictor]</span></em><a class="headerlink" href="#citrine.builders.auto_configure.AutoConfigureWorkflow.predictor" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the default predictor, if it was created by this object.</p>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="citrine.builders.auto_configure.AutoConfigureWorkflow.predictor_evaluation_execution">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">predictor_evaluation_execution</span></span><em class="property"><span class="pre">:</span> <span class="pre">Optional[citrine.informatics.executions.predictor_evaluation_execution.PredictorEvaluationExecution]</span></em><a class="headerlink" href="#citrine.builders.auto_configure.AutoConfigureWorkflow.predictor_evaluation_execution" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the predictor evaluation execution, if it was created by this object.</p>
+<dd><p>Get the predictor associated with this workflow.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="citrine.builders.auto_configure.AutoConfigureWorkflow.predictor_evaluation_workflow">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">predictor_evaluation_workflow</span></span><em class="property"><span class="pre">:</span> <span class="pre">Optional[citrine.informatics.workflows.predictor_evaluation_workflow.PredictorEvaluationWorkflow]</span></em><a class="headerlink" href="#citrine.builders.auto_configure.AutoConfigureWorkflow.predictor_evaluation_workflow" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the predictor evaluation workflow, if it was created by this object.</p>
+<dd><p>Get the predictor evaluation workflow associated with this workflow.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="citrine.builders.auto_configure.AutoConfigureWorkflow.project">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">project</span></span><em class="property"><span class="pre">:</span> <span class="pre">citrine.resources.project.Project</span></em><a class="headerlink" href="#citrine.builders.auto_configure.AutoConfigureWorkflow.project" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the project used when automatically configuring assets.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="citrine.builders.auto_configure.AutoConfigureWorkflow.score">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">score</span></span><em class="property"><span class="pre">:</span> <span class="pre">Optional[citrine.informatics.scores.Score]</span></em><a class="headerlink" href="#citrine.builders.auto_configure.AutoConfigureWorkflow.score" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the most recent score executed by this workflow.</p>
 </dd></dl>
 
 <dl class="py property">
@@ -495,13 +524,13 @@ Default: False</p></li>
 <dl class="py property">
 <dt class="sig sig-object py" id="citrine.builders.auto_configure.AutoConfigureWorkflow.table">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">table</span></span><em class="property"><span class="pre">:</span> <span class="pre">Optional[citrine.resources.gemtables.GemTable]</span></em><a class="headerlink" href="#citrine.builders.auto_configure.AutoConfigureWorkflow.table" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the default GEM table, if it was created by this object.</p>
+<dd><p>Get the GEM table associated with this workflow.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="citrine.builders.auto_configure.AutoConfigureWorkflow.table_config">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">table_config</span></span><em class="property"><span class="pre">:</span> <span class="pre">Optional[citrine.resources.table_config.TableConfig]</span></em><a class="headerlink" href="#citrine.builders.auto_configure.AutoConfigureWorkflow.table_config" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the default table config, if it was created by this object.</p>
+<dd><p>Get the table config associated with this workflow.</p>
 </dd></dl>
 
 </dd></dl>

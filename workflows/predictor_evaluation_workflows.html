@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>4.11. Predictor Evaluation Workflows &mdash; Citrine Python 1.6.0 documentation</title>
+  <title>4.11. Predictor Evaluation Workflows &mdash; Citrine Python 1.8.1 documentation</title>
   
 
   
@@ -73,7 +73,7 @@
             
             
               <div class="version">
-                1.6.0
+                1.8.1
               </div>
             
           
@@ -279,7 +279,7 @@ If the coverage probability is greater than the coverage level then the model is
 While standard residual is weighted towards the outside of the residual distribution (because it looks like a 2-norm), coverage probability gives information about the center of the residual distribution.</p></li>
 </ul>
 </div></blockquote>
-<p>For categorical responses, performance metrics include either the area under the receiver operating characteristic (ROC) curve (if there are 2 categories) or the F1 score (if there are &gt; 2 categories).</p>
+<p>For categorical responses, performance metrics include the area under the receiver operating characteristic (ROC) curve (if there are 2 categories) and the F1 score.</p>
 <ul class="simple">
 <li><p>Area under the ROC curve (<a class="reference internal" href="../reference/citrine.informatics.predictor_evaluation_metrics.html#citrine.informatics.predictor_evaluation_metrics.AreaUnderROC" title="citrine.informatics.predictor_evaluation_metrics.AreaUnderROC"><code class="xref py py-class docutils literal notranslate"><span class="pre">AreaUnderROC</span></code></a>) represents the ability of the model to correctly distinguish samples between two categories.
 If AUC == 1.0, all samples are classified correctly.

@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>citrine.informatics.predictors package &mdash; Citrine Python 1.8.1 documentation</title>
+  <title>citrine.builders.scores module &mdash; Citrine Python 1.8.1 documentation</title>
   
 
   
@@ -151,13 +151,13 @@
     
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
         
-      <li>citrine.informatics.predictors package</li>
+      <li>citrine.builders.scores module</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="../_sources/reference/citrine.informatics.predictors.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/reference/citrine.builders.scores.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -170,31 +170,37 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <section id="citrine-informatics-predictors-package">
-<h1>citrine.informatics.predictors package<a class="headerlink" href="#citrine-informatics-predictors-package" title="Permalink to this headline">¶</a></h1>
-<section id="submodules">
-<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="citrine.informatics.predictors.auto_ml_predictor.html">citrine.informatics.predictors.auto_ml_predictor module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="citrine.informatics.predictors.chemical_formula_featurizer.html">citrine.informatics.predictors.chemical_formula_featurizer module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="citrine.informatics.predictors.expression_predictor.html">citrine.informatics.predictors.expression_predictor module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="citrine.informatics.predictors.graph_predictor.html">citrine.informatics.predictors.graph_predictor module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="citrine.informatics.predictors.ingredient_fractions_predictor.html">citrine.informatics.predictors.ingredient_fractions_predictor module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="citrine.informatics.predictors.ingredients_to_formulation_predictor.html">citrine.informatics.predictors.ingredients_to_formulation_predictor module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="citrine.informatics.predictors.ingredients_to_simple_mixture_predictor.html">citrine.informatics.predictors.ingredients_to_simple_mixture_predictor module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="citrine.informatics.predictors.label_fractions_predictor.html">citrine.informatics.predictors.label_fractions_predictor module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="citrine.informatics.predictors.mean_property_predictor.html">citrine.informatics.predictors.mean_property_predictor module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="citrine.informatics.predictors.molecular_structure_featurizer.html">citrine.informatics.predictors.molecular_structure_featurizer module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="citrine.informatics.predictors.predictor.html">citrine.informatics.predictors.predictor module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="citrine.informatics.predictors.simple_mixture_predictor.html">citrine.informatics.predictors.simple_mixture_predictor module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="citrine.informatics.predictors.simple_ml_predictor.html">citrine.informatics.predictors.simple_ml_predictor module</a></li>
+  <section id="module-citrine.builders.scores">
+<span id="citrine-builders-scores-module"></span><h1>citrine.builders.scores module<a class="headerlink" href="#module-citrine.builders.scores" title="Permalink to this headline">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="citrine.builders.scores.create_default_score">
+<span class="sig-prename descclassname"><span class="pre">citrine.builders.scores.</span></span><span class="sig-name descname"><span class="pre">create_default_score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">objectives</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="citrine.informatics.objectives.html#citrine.informatics.objectives.Objective" title="citrine.informatics.objectives.Objective"><span class="pre">citrine.informatics.objectives.Objective</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">project</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="citrine.resources.project.html#citrine.resources.project.Project" title="citrine.resources.project.Project"><span class="pre">citrine.resources.project.Project</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="citrine.resources.gemtables.html#citrine.resources.gemtables.GemTable" title="citrine.resources.gemtables.GemTable"><span class="pre">citrine.resources.gemtables.GemTable</span></a></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="citrine.informatics.scores.html#citrine.informatics.scores.Score" title="citrine.informatics.scores.Score"><span class="pre">citrine.informatics.scores.Score</span></a><a class="headerlink" href="#citrine.builders.scores.create_default_score" title="Permalink to this definition">¶</a></dt>
+<dd><p>[ALPHA] Create a default score from the provided objectives.</p>
+<p>Reads the provided table from S3 storage,
+and parses the columns corresponding to each objective’s descriptor key
+to extract relevant baseline values.</p>
+<p>The baselines are determined as the min/max of the column data,
+depending on whether the objective is a ScalarMinObjective or ScalarMaxObjective.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>objectives</strong> (<em>List</em><em>[</em><a class="reference internal" href="citrine.informatics.objectives.html#citrine.informatics.objectives.Objective" title="citrine.informatics.objectives.Objective"><em>Objective</em></a><em>]</em>) – List of objectives to include in a score.</p></li>
+<li><p><strong>project</strong> (<a class="reference internal" href="citrine.resources.project.html#citrine.resources.project.Project" title="citrine.resources.project.Project"><em>Project</em></a>) – Project to use when accessing the Citrine Platform.</p></li>
+<li><p><strong>table</strong> (<a class="reference internal" href="citrine.resources.gemtables.html#citrine.resources.gemtables.GemTable" title="citrine.resources.gemtables.GemTable"><em>GemTable</em></a>) – Table to read baseline data from.
+Must contain column definitions matching the descriptor keys
+found in each objective.</p></li>
 </ul>
-</div>
-</section>
-<section id="module-citrine.informatics.predictors">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-citrine.informatics.predictors" title="Permalink to this headline">¶</a></h2>
-</section>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The default constructed score.
+Currently, this is a LIScore containing containing all provided objectives.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="citrine.informatics.scores.html#citrine.informatics.scores.Score" title="citrine.informatics.scores.Score">Score</a></p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 
 

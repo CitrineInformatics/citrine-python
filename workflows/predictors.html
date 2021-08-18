@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>4.4. Predictors &mdash; Citrine Python 1.6.0 documentation</title>
+  <title>4.4. Predictors &mdash; Citrine Python 1.8.1 documentation</title>
   
 
   
@@ -74,7 +74,7 @@
             
             
               <div class="version">
-                1.6.0
+                1.8.1
               </div>
             
           
@@ -219,6 +219,10 @@ Inputs are used as input features to the machine learning model.
 The output is the property that you would like the model to predict.
 There must be at least one input and only one output.
 Unlike the <a class="reference external" href="#simple-ml-predictor">SimpleMLPredictor</a>, only one model is trained from inputs to the output.</p>
+<p>AutoMLPredictors support both regression and classification.
+If the output descriptor is a <a class="reference internal" href="../reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.RealDescriptor" title="citrine.informatics.descriptors.RealDescriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">RealDescriptor</span></code></a>, regression is performed.
+If the output descriptor is a <a class="reference internal" href="../reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.CategoricalDescriptor" title="citrine.informatics.descriptors.CategoricalDescriptor"><code class="xref py py-class docutils literal notranslate"><span class="pre">CategoricalDescriptor</span></code></a>, classification is performed.
+Both binary and multi-class classification are supported automatically based on the number of categories in the data.</p>
 <p>Models are trained using data provided by a <a class="reference internal" href="../reference/citrine.informatics.data_sources.html#citrine.informatics.data_sources.DataSource" title="citrine.informatics.data_sources.DataSource"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataSource</span></code></a> specified when creating a predictor.
 The inputs and outputs are descriptors, which must correspond precisely to descriptors that exist in the training data or are produced by other predictors in the graphical model.
 There are two important helper methods in this regard.

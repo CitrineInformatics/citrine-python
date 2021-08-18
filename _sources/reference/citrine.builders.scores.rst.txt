@@ -1,0 +1,8 @@
+citrine.builders.scores module
+==============================
+
+.. automodule:: citrine.builders.scores
+   :members:
+   :undoc-members:
+   :inherited-members:
+   :show-inheritance:

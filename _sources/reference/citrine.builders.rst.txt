@@ -11,6 +11,7 @@ Submodules
    citrine.builders.descriptors
    citrine.builders.design_spaces
    citrine.builders.predictors
+   citrine.builders.scores
 
 Module contents
 ---------------

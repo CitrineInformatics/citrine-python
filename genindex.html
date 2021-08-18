@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Index &mdash; Citrine Python 1.6.0 documentation</title>
+  <title>Index &mdash; Citrine Python 1.8.1 documentation</title>
   
 
   
@@ -70,7 +70,7 @@
             
             
               <div class="version">
-                1.6.0
+                1.8.1
               </div>
             
           
@@ -317,6 +317,8 @@
 </li>
       </ul></li>
       <li><a href="reference/citrine.resources.table_config.html#citrine.resources.table_config.TableConfig.add_all_ingredients">add_all_ingredients() (citrine.resources.table_config.TableConfig method)</a>
+</li>
+      <li><a href="reference/citrine.resources.table_config.html#citrine.resources.table_config.TableConfig.add_all_ingredients_in_output">add_all_ingredients_in_output() (citrine.resources.table_config.TableConfig method)</a>
 </li>
       <li><a href="reference/citrine.resources.table_config.html#citrine.resources.table_config.TableConfig.add_columns">add_columns() (citrine.resources.table_config.TableConfig method)</a>
 </li>
@@ -1162,6 +1164,8 @@
 <h2 id="C">C</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/citrine.builders.auto_configure.html#citrine.builders.auto_configure.AutoConfigureWorkflow.candidates">candidates (citrine.builders.auto_configure.AutoConfigureWorkflow property)</a>
+</li>
       <li><a href="reference/citrine.informatics.executions.design_execution.html#citrine.informatics.executions.design_execution.DesignExecution.candidates">candidates() (citrine.informatics.executions.design_execution.DesignExecution method)</a>
 </li>
       <li><a href="reference/citrine.builders.design_spaces.html#citrine.builders.design_spaces.cartesian_join_design_spaces">cartesian_join_design_spaces() (in module citrine.builders.design_spaces)</a>
@@ -1224,6 +1228,13 @@
 
       <ul>
         <li><a href="reference/citrine.builders.predictors.html#module-citrine.builders.predictors">module</a>
+</li>
+      </ul></li>
+      <li>
+    citrine.builders.scores
+
+      <ul>
+        <li><a href="reference/citrine.builders.scores.html#module-citrine.builders.scores">module</a>
 </li>
       </ul></li>
       <li>
@@ -1821,6 +1832,8 @@
         <li><a href="reference/citrine.resources.object_templates.html#module-citrine.resources.object_templates">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     citrine.resources.parameter_template
 
@@ -1828,8 +1841,6 @@
         <li><a href="reference/citrine.resources.parameter_template.html#module-citrine.resources.parameter_template">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     citrine.resources.predictor
 
@@ -2182,6 +2193,8 @@
         <li><a href="reference/citrine.resources.predictor_evaluation_workflow.html#citrine.resources.predictor_evaluation_workflow.PredictorEvaluationWorkflowCollection.create_default">(citrine.resources.predictor_evaluation_workflow.PredictorEvaluationWorkflowCollection method)</a>
 </li>
       </ul></li>
+      <li><a href="reference/citrine.builders.scores.html#citrine.builders.scores.create_default_score">create_default_score() (in module citrine.builders.scores)</a>
+</li>
       <li><a href="reference/citrine.seeding.find_or_create.html#citrine.seeding.find_or_create.create_or_update">create_or_update() (in module citrine.seeding.find_or_create)</a>
 </li>
       <li><a href="reference/citrine.informatics.design_spaces.data_source_design_space.html#citrine.informatics.design_spaces.data_source_design_space.DataSourceDesignSpace.create_time">create_time (citrine.informatics.design_spaces.data_source_design_space.DataSourceDesignSpace attribute)</a>
@@ -4682,6 +4695,8 @@
 </li>
         <li><a href="reference/citrine.builders.predictors.html#module-citrine.builders.predictors">citrine.builders.predictors</a>
 </li>
+        <li><a href="reference/citrine.builders.scores.html#module-citrine.builders.scores">citrine.builders.scores</a>
+</li>
         <li><a href="reference/citrine.citrine.html#module-citrine.citrine">citrine.citrine</a>
 </li>
         <li><a href="reference/citrine.exceptions.html#module-citrine.exceptions">citrine.exceptions</a>
@@ -5351,8 +5366,6 @@
 </li>
       <li><a href="reference/citrine.builders.auto_configure.html#citrine.builders.auto_configure.AutoConfigureStatus.PREDICTOR_CREATED">PREDICTOR_CREATED (citrine.builders.auto_configure.AutoConfigureStatus attribute)</a>
 </li>
-      <li><a href="reference/citrine.builders.auto_configure.html#citrine.builders.auto_configure.AutoConfigureWorkflow.predictor_evaluation_execution">predictor_evaluation_execution (citrine.builders.auto_configure.AutoConfigureWorkflow property)</a>
-</li>
       <li><a href="reference/citrine.resources.project.html#citrine.resources.project.Project.predictor_evaluation_executions">predictor_evaluation_executions (citrine.resources.project.Project property)</a>
 </li>
       <li><a href="reference/citrine.builders.auto_configure.html#citrine.builders.auto_configure.AutoConfigureWorkflow.predictor_evaluation_workflow">predictor_evaluation_workflow (citrine.builders.auto_configure.AutoConfigureWorkflow property)</a>
@@ -5821,8 +5834,12 @@
         <li><a href="reference/citrine.gemtables.variables.html#citrine.gemtables.variables.TerminalMaterialIdentifier.scope">(citrine.gemtables.variables.TerminalMaterialIdentifier attribute)</a>
 </li>
       </ul></li>
-      <li><a href="reference/citrine.informatics.executions.design_execution.html#citrine.informatics.executions.design_execution.DesignExecution.score">score (citrine.informatics.executions.design_execution.DesignExecution attribute)</a>
+      <li><a href="reference/citrine.builders.auto_configure.html#citrine.builders.auto_configure.AutoConfigureWorkflow.score">score (citrine.builders.auto_configure.AutoConfigureWorkflow property)</a>
+
+      <ul>
+        <li><a href="reference/citrine.informatics.executions.design_execution.html#citrine.informatics.executions.design_execution.DesignExecution.score">(citrine.informatics.executions.design_execution.DesignExecution attribute)</a>
 </li>
+      </ul></li>
       <li><a href="reference/citrine.informatics.scores.html#citrine.informatics.scores.Score">Score (class in citrine.informatics.scores)</a>
 </li>
       <li><a href="reference/citrine.resources.user.html#citrine.resources.user.User.screen_name">screen_name (citrine.resources.user.User attribute)</a>
@@ -6645,9 +6662,11 @@
       </ul></li>
       <li><a href="reference/citrine.informatics.descriptors.html#citrine.informatics.descriptors.RealDescriptor.units">units (citrine.informatics.descriptors.RealDescriptor attribute)</a>
 </li>
-      <li><a href="reference/citrine.resources.attribute_templates.html#citrine.resources.attribute_templates.AttributeTemplateCollection.update">update() (citrine.resources.attribute_templates.AttributeTemplateCollection method)</a>
+      <li><a href="reference/citrine.builders.auto_configure.html#citrine.builders.auto_configure.AutoConfigureWorkflow.update">update() (citrine.builders.auto_configure.AutoConfigureWorkflow method)</a>
 
       <ul>
+        <li><a href="reference/citrine.resources.attribute_templates.html#citrine.resources.attribute_templates.AttributeTemplateCollection.update">(citrine.resources.attribute_templates.AttributeTemplateCollection method)</a>
+</li>
         <li><a href="reference/citrine.resources.condition_template.html#citrine.resources.condition_template.ConditionTemplateCollection.update">(citrine.resources.condition_template.ConditionTemplateCollection method)</a>
 </li>
         <li><a href="reference/citrine.resources.data_concepts.html#citrine.resources.data_concepts.DataConceptsCollection.update">(citrine.resources.data_concepts.DataConceptsCollection method)</a>
