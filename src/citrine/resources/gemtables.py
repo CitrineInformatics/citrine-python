@@ -362,7 +362,7 @@ class GemTableCollection(Collection[GemTable]):
         if isinstance(table, Iterable) and not isinstance(table, str):
             warn("A tuple as a means of referring to a GEM Table is deprecated.  "
                  "Please pass a GemTable object.", DeprecationWarning)
-            table = GemTable.build({"uid": table[0], "version": table[1]})
+            table = GemTable.build({"id": str(table[0]), "version": table[1]})
 
         response = self._read_raw(table)
         write_file_locally(response.content, local_path)
