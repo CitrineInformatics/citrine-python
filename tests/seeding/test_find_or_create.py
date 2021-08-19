@@ -3,17 +3,16 @@ from uuid import UUID
 
 import pytest
 from citrine._rest.collection import Collection
-from citrine.exceptions import NotFound
 from citrine.resources.dataset import Dataset, DatasetCollection
 from citrine.resources.process_spec import ProcessSpecCollection, ProcessSpec
 from citrine.resources.predictor import PredictorCollection
 from citrine.informatics.predictors import SimpleMLPredictor
-from citrine.resources.project import ProjectCollection, Project
+from citrine.resources.project import ProjectCollection
 from citrine.seeding.find_or_create import (find_collection, get_by_name_or_create, get_by_name_or_raise_error,
                                             find_or_create_project, find_or_create_dataset,
                                             create_or_update)
 from tests.utils.fakes.fake_dataset_collection import FakeDatasetCollection
-from tests.utils.fakes.fake_predictor_collection import FakePredictorCollection
+from tests.utils.fakes import FakePredictorCollection
 from tests.utils.fakes.fake_project_collection import FakeProjectCollection
 
 from tests.utils.session import FakeSession
@@ -280,7 +279,6 @@ def test_create_or_update_unique_found(predictor_collection):
                             latent_variables = [])
     #verify that the returned object is updated
     returned_pred = create_or_update(collection=predictor_collection, resource=pred)
-    assert returned_pred.uid == pred.uid
     assert returned_pred.name == pred.name
     assert returned_pred.description == pred.description
     #verify that the collection is also updated

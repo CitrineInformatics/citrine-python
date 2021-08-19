@@ -2,12 +2,9 @@ from typing import Optional
 from uuid import uuid4
 
 from citrine.exceptions import NotFound
-from citrine.resources.descriptors import DescriptorMethods
-from citrine.resources.design_space import DesignSpaceCollection
 from citrine.resources.project import Project, ProjectCollection
-from tests.utils.fakes import FakeDatasetCollection, FakePredictorCollection
+from tests.utils.fakes import FakeDatasetCollection, FakePredictorCollection, FakeDesignSpaceCollection
 from tests.utils.fakes.fake_descriptor_methods import FakeDescriptorMethods
-from tests.utils.fakes.fake_design_space_collection import FakeDesignSpaceCollection
 from tests.utils.session import FakeSession
 
 
