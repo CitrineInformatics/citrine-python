@@ -3,15 +3,17 @@ from uuid import UUID
 
 import pytest
 from citrine._rest.collection import Collection
-from citrine.exceptions import NotFound
 from citrine.resources.dataset import Dataset, DatasetCollection
 from citrine.resources.process_spec import ProcessSpecCollection, ProcessSpec
 from citrine.resources.predictor import PredictorCollection
 from citrine.informatics.predictors import SimpleMLPredictor
-from citrine.resources.project import ProjectCollection, Project
+from citrine.resources.project import ProjectCollection
 from citrine.seeding.find_or_create import (find_collection, get_by_name_or_create, get_by_name_or_raise_error,
                                             find_or_create_project, find_or_create_dataset,
                                             create_or_update)
+from tests.utils.fakes.fake_dataset_collection import FakeDatasetCollection
+from tests.utils.fakes import FakePredictorCollection
+from tests.utils.fakes.fake_project_collection import FakeProjectCollection
 
 from tests.utils.session import FakeSession
 
@@ -53,51 +55,9 @@ def session() -> FakeSession:
 
 @pytest.fixture
 def project_collection() -> Callable[[bool], ProjectCollection]:
-    class SeedingTestProjectCollection(ProjectCollection):
-        projects = []
-
-        def __init__(self, search_implemented: bool = True):
-            ProjectCollection.__init__(self, session=FakeSession)
-            self.search_implemented = search_implemented
-
-        def register(self, name: str, description: Optional[str] = None) -> Project:
-            project = Project(name=name)
-            self.projects.append(project)
-            return project
-
-        def list(self, page: Optional[int] = None, per_page: int = 100):
-            if page is None:
-                return self.projects
-            else:
-                return self.projects[(page - 1)*per_page:page*per_page]
-
-        def search(self, search_params: Optional[dict] = None, per_page: int = 100):
-            if not self.search_implemented:
-                raise NotFound("search")
-
-            ans = self.projects
-            if search_params.get("name"):
-                method = search_params["name"]["search_method"]
-                value = search_params["name"]["value"]
-                if method == "EXACT":
-                    ans = [x for x in ans if x.name == value]
-                elif method == "SUBSTRING":
-                    ans = [x for x in ans if value in x.name]
-            if search_params.get("description"):
-                method = search_params["description"]["search_method"]
-                value = search_params["description"]["value"]
-                if method == "EXACT":
-                    ans = [x for x in ans if x.description == value]
-                elif method == "SUBSTRING":
-                    ans = [x for x in ans if value in x.description]
-
-            return ans
-
-        def delete(self, uuid):
-            raise NotImplementedError
 
     def _make_project(search_implemented: bool = True):
-        projects = SeedingTestProjectCollection(search_implemented)
+        projects = FakeProjectCollection(search_implemented)
         for i in range(0, 5):
             projects.register("project " + str(i))
         for i in range(0, 2):
@@ -109,20 +69,7 @@ def project_collection() -> Callable[[bool], ProjectCollection]:
 
 @pytest.fixture
 def dataset_collection() -> DatasetCollection:
-    class SeedingTestDatasetCollection(DatasetCollection):
-        datasets = []
-
-        def register(self, model: Dataset) -> Dataset:
-            self.datasets.append(model)
-            return model
-
-        def list(self, page: Optional[int] = None, per_page: int = 100):
-            if page is None:
-                return self.datasets
-            else:
-                return self.datasets[(page - 1)*per_page:page*per_page]
-
-    datasets = SeedingTestDatasetCollection(UUID('6b608f78-e341-422c-8076-35adc8828545'), session)
+    datasets = FakeDatasetCollection(UUID('6b608f78-e341-422c-8076-35adc8828545'), session)
     for i in range(0, 5):
         num_string = str(i)
         datasets.register(Dataset("dataset " + num_string, summary="summ " + num_string, description="desc " + num_string))
@@ -132,24 +79,7 @@ def dataset_collection() -> DatasetCollection:
 
 @pytest.fixture
 def predictor_collection() -> PredictorCollection:
-    class SeedingTestPredictorCollection(PredictorCollection):
-        predictors = []
-
-        def register(self, model: SimpleMLPredictor) -> SimpleMLPredictor:
-            self.predictors.append(model)
-            return model
-        
-        def update(self, model):
-            self.predictors = [r for r in self.predictors if r.uid != model.uid]
-            return self.register(model)
-
-        def list(self, page: Optional[int] = None, per_page: int = 100):
-            if page is None:
-                return self.predictors
-            else:
-                return self.predictors[(page - 1)*per_page:page*per_page]
-
-    predictors = SeedingTestPredictorCollection(UUID('6b608f78-e341-422c-8076-35adc8828545'),
+    predictors = FakePredictorCollection(UUID('6b608f78-e341-422c-8076-35adc8828545'),
                                 session)
 
     #Adding a few predictors in the collection to have something to update
@@ -349,7 +279,6 @@ def test_create_or_update_unique_found(predictor_collection):
                             latent_variables = [])
     #verify that the returned object is updated
     returned_pred = create_or_update(collection=predictor_collection, resource=pred)
-    assert returned_pred.uid == pred.uid
     assert returned_pred.name == pred.name
     assert returned_pred.description == pred.description
     #verify that the collection is also updated

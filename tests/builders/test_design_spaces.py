@@ -1,20 +1,14 @@
 """Tests for citrine.builders.design_spaces."""
-from typing import Union
-from uuid import UUID, uuid4
-
 import pytest
 import warnings
 import numpy as np
 
-from citrine.exceptions import BadRequest
 from citrine.informatics.descriptors import RealDescriptor, CategoricalDescriptor
-from citrine.informatics.design_spaces import EnumeratedDesignSpace, DesignSpace
+from citrine.informatics.design_spaces import EnumeratedDesignSpace
 from citrine.builders.design_spaces import enumerate_cartesian_product, \
     enumerate_formulation_grid, cartesian_join_design_spaces, enumerated_to_data_source, migrate_enumerated_design_space
-from citrine.resources.dataset import Dataset
-from citrine.resources.design_space import DesignSpaceCollection
-from citrine.resources.file_link import FileCollection, FileLink
-from citrine.resources.project import Project
+from tests.utils.fakes.fake_dataset_collection import FakeDataset
+from tests.utils.fakes.fake_project_collection import FakeProject
 
 
 @pytest.fixture(scope="module")
@@ -308,60 +302,6 @@ def test_joined_oversize_warnings(large_joint_design_space):
             )
 
 
-# todo: collect fake collections in testing utils package
-class FakeFileCollection(FileCollection):
-
-    def __init__(self):
-        self.files = []
-
-    def upload(self, file_path: str, dest_name: str = None) -> FileLink:
-        self.files.append(file_path)
-        return FileLink(url=file_path, filename=file_path)
-
-
-# todo: collect fake collections in testing utils package
-class FakeDataset(Dataset):
-
-    def __init__(self):
-        pass
-
-    @property
-    def files(self) -> FileCollection:
-        return FakeFileCollection()
-
-
-# todo: collect fake collections in testing utils package
-class FakeDesignSpaces(DesignSpaceCollection):
-    def __init__(self):
-        self.data = {}
-        self.in_use = {}
-
-    def register(self, model: DesignSpace) -> DesignSpace:
-        model.uid = uuid4()
-        self.data[model.uid] = model
-        self.in_use[model.uid] = False
-        return model
-
-    def update(self, model: DesignSpace) -> DesignSpace:
-        if self.in_use[model.uid]:
-            raise BadRequest("design_spaces/{}".format(model.uid))
-        self.data[model.uid] = model
-        return model
-
-    def get(self, uid: Union[UUID, str]) -> DesignSpace:
-        return self.data[uid]
-
-
-# todo: collect fake collections in testing utils package
-class FakeProject(Project):
-    def __init__(self):
-        self.design_space_collection = FakeDesignSpaces()
-
-    @property
-    def design_spaces(self) -> DesignSpaceCollection:
-        return self.design_space_collection
-
-
 def test_enumerated_to_data_source(basic_cartesian_space, to_clean):
     """Test enumerated_to_data_source conversion"""
     expected_fname = basic_cartesian_space.name.replace(" ", "_") + "_source_data.csv"
@@ -383,7 +323,7 @@ def test_migrate_enumerated(basic_cartesian_space, to_clean):
     fname = "foo.csv"  # not to conflict with the above test
     to_clean.append(fname)
 
-    project = FakeProject()
+    project = FakeProject(name="foo", description="bar")
     dataset = FakeDataset()
     old = project.design_spaces.register(basic_cartesian_space)
 
