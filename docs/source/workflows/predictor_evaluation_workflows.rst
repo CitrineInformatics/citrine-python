@@ -85,7 +85,7 @@ For numeric responses, the following metrics are available:
     If the coverage probability is greater than the coverage level then the model is under-confident, and if the coverage probability is less than the coverage level then the model is over-confident.
     While standard residual is weighted towards the outside of the residual distribution (because it looks like a 2-norm), coverage probability gives information about the center of the residual distribution.
 
-For categorical responses, performance metrics include either the area under the receiver operating characteristic (ROC) curve (if there are 2 categories) or the F1 score (if there are > 2 categories).
+For categorical responses, performance metrics include the area under the receiver operating characteristic (ROC) curve (if there are 2 categories) and the F1 score.
 
 -  Area under the ROC curve (:class:`~citrine.informatics.predictor_evaluation_metrics.AreaUnderROC`) represents the ability of the model to correctly distinguish samples between two categories.
    If AUC == 1.0, all samples are classified correctly.
