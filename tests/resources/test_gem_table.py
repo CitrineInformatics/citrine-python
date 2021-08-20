@@ -251,7 +251,6 @@ def test_get_and_read_table_from_collection(mock_write_files_locally, table, ses
         # Given
         remote_url = "http://otherhost:4572/anywhere"
         retrieved_table = table(remote_url)
-        print(retrieved_table.dump())
         session.set_response(retrieved_table.dump())
         mock_get.get(remote_url, text='stuff')
         collection.read(table=(retrieved_table.uid, retrieved_table.version), local_path="table4.csv")
