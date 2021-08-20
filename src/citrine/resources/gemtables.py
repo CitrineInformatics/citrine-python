@@ -32,13 +32,13 @@ class GemTable(Resource['Table']):
     _response_key = 'table'
     _resource_type = ResourceTypeEnum.TABLE
 
-    uid = properties.Optional(properties.UUID(), 'id')
-    """:Optional[UUID]: unique Citrine id of this GEM Table"""
-    version = properties.Optional(properties.Integer, 'version')
-    """:Optional[int]: Version number of the GEM Table.
+    uid = properties.UUID('id')
+    """:UUID: unique Citrine id of this GEM Table"""
+    version = properties.Integer('version')
+    """:int: Version number of the GEM Table.
     The first table built from a given config is version 1."""
-    download_url = properties.Optional(properties.String, 'signed_download_url')
-    """:Optional[str]: Url pointing to the location of the GEM Table's contents.
+    download_url = properties.String('signed_download_url')
+    """:str: URL pointing to the location of the GEM Table's contents.
     This is an expiring download link and is not unique."""
 
     def __init__(self):
@@ -314,8 +314,6 @@ class GemTableCollection(Collection[GemTable]):
         """
         if not isinstance(table, GemTable):
             table = self.get(uid=table)
-        elif table.download_url is None:
-            table = self.get(uid=table.uid, version=table.version)
 
         data_location = table.download_url
         data_location = rewrite_s3_links_locally(data_location, self.session.s3_endpoint_url)
@@ -358,11 +356,10 @@ class GemTableCollection(Collection[GemTable]):
         """
         # NOTE: this uses the pre-signed S3 download url. If we need to download larger files,
         # we have other options available (using multi-part downloads in parallel , for example).
-        from typing import Iterable
-        if isinstance(table, Iterable) and not isinstance(table, str):
+        if isinstance(table, (Tuple, list)):
             warn("A tuple as a means of referring to a GEM Table is deprecated.  "
                  "Please pass a GemTable object.", DeprecationWarning)
-            table = GemTable.build({"id": str(table[0]), "version": table[1]})
+            table = self.get(uid=table[0], version=table[1])
 
         response = self._read_raw(table)
         write_file_locally(response.content, local_path)
