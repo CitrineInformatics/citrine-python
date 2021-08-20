@@ -33,12 +33,12 @@ class GemTable(Resource['Table']):
     _resource_type = ResourceTypeEnum.TABLE
 
     uid = properties.UUID('id')
-    """:Optional[UUID]: unique Citrine id of this GEM Table"""
+    """:UUID: unique Citrine id of this GEM Table"""
     version = properties.Integer('version')
-    """:Optional[int]: Version number of the GEM Table.
+    """:int: Version number of the GEM Table.
     The first table built from a given config is version 1."""
     download_url = properties.String('signed_download_url')
-    """:Optional[str]: Url pointing to the location of the GEM Table's contents.
+    """:str: URL pointing to the location of the GEM Table's contents.
     This is an expiring download link and is not unique."""
 
     def __init__(self):
