@@ -329,9 +329,8 @@ def migrate_enumerated_design_space(*,
 
     if cleanup:
         # archive the old enumerated design space
-        enumerated_ds.archived = True
         try:
-            project.design_spaces.update(enumerated_ds)
+            project.design_spaces.archive(enumerated_ds.uid)
         except BadRequest as err:
             warn("Unable to archive design space with uid {}, received the following response: {}"
                  .format(uid, err.response_text))

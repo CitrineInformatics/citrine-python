@@ -1,13 +1,6 @@
-from typing import List
-from uuid import uuid4
 import pytest
 
-from citrine.resources.project import Project
-from citrine.resources.descriptors import DescriptorMethods
 from citrine.informatics.descriptors import (
-    Descriptor,
-    RealDescriptor,
-    CategoricalDescriptor,
     MolecularStructureDescriptor,
     ChemicalFormulaDescriptor,
     FormulationDescriptor
@@ -15,54 +8,15 @@ from citrine.informatics.descriptors import (
 from citrine.informatics.predictors import (
     MolecularStructureFeaturizer,
     ChemicalFormulaFeaturizer,
-    MeanPropertyPredictor,
     LabelFractionsPredictor,
-    Predictor
 )
 from citrine.builders.predictors import build_mean_feature_property_predictors
-
-from tests.utils.session import FakeSession
-
-
-class FakeDescriptorMethods(DescriptorMethods):
-    def __init__(self, num_properties):
-        self.project_id = uuid4()
-        self.session = FakeSession()
-        self.num_properties = num_properties
-
-    def from_predictor_responses(self, predictor: Predictor, inputs: List[Descriptor]):
-        if isinstance(predictor, (MolecularStructureFeaturizer, ChemicalFormulaFeaturizer)):
-            input_descriptor = predictor.input_descriptor
-            return [
-                RealDescriptor(f"{input_descriptor.key} real property {i}", lower_bound=0, upper_bound=1, units="")
-                       for i in range(self.num_properties)
-            ] + [CategoricalDescriptor(f"{input_descriptor.key} categorical property", categories=["cat1", "cat2"])]
-
-        elif isinstance(predictor, MeanPropertyPredictor):
-            label_str = predictor.label or "all ingredients"
-            return [
-                RealDescriptor(
-                    f"mean of {prop.key} for {label_str} in {predictor.input_descriptor.key}",
-                    lower_bound=0,
-                    upper_bound=1,
-                    units=""
-                )
-                for prop in predictor.properties
-            ]
-
-
-class FakeProject(Project):
-    def __init__(self, fake_descriptors: FakeDescriptorMethods):
-        self.fake_descriptors = fake_descriptors
-
-    @property
-    def descriptors(self) -> DescriptorMethods:
-        return self.fake_descriptors
+from tests.utils.fakes import FakeProject
 
 
 def test_mean_feature_properties():
     num_properties = 3
-    project = FakeProject(FakeDescriptorMethods(num_properties=num_properties))
+    project = FakeProject(num_properties=num_properties)
     smiles = MolecularStructureDescriptor("smiles")
     chem = ChemicalFormulaDescriptor("formula")
     formulation = FormulationDescriptor("formulation")
@@ -117,7 +71,7 @@ def test_mean_feature_properties():
         )
 
     # expect an error if the featurizer model returns no real properties
-    no_props_project = FakeProject(FakeDescriptorMethods(num_properties=0))
+    no_props_project = FakeProject(num_properties = 0)
     with pytest.raises(RuntimeError):
         build_mean_feature_property_predictors(
             project=no_props_project,
