@@ -8,7 +8,7 @@ from tests.utils.fakes import FakeDesignSpaceCollection, FakeDesignWorkflowColle
 from tests.utils.fakes import FakeGemTableCollection, FakeTableConfigCollection
 from tests.utils.fakes import FakePredictorCollection, FakePredictorEvaluationWorkflowCollection
 from tests.utils.fakes import FakePredictorEvaluationExecutionCollection
-from tests.utils.fakes.fake_descriptor_methods import FakeDescriptorMethods
+from tests.utils.fakes import FakeDescriptorMethods
 from tests.utils.session import FakeSession
 
 
