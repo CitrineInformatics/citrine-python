@@ -43,19 +43,19 @@ class FakeModuleCollection(AbstractModuleCollection[ModuleType]):
 
     def list(self, page: Optional[int] = None, per_page: int = 100):
         if page is None:
-            return self._modules.values()
+            return iter(list(self._modules.values()))
         else:
-            return list(self._modules.values())[(page - 1)*per_page:page*per_page]
+            return iter(list(self._modules.values())[(page - 1)*per_page:page*per_page])
 
     def get(self, uid: Union[UUID, str]) -> ModuleType:
         if _norm(uid) not in self._modules:
-            raise NotFound(f"Cannot find module with uid={uid}")
+            raise NotFound("")
         return self._modules[_norm(uid)]
 
     def archive(self, uid: Union[UUID, str] = None,
                 module_id: Union[UUID, str] = None) -> ModuleType:
         if self.in_use.get(_norm(uid), False):
-            raise BadRequest("Cannot archive a module that is in use")
+            raise BadRequest("")
         return AbstractModuleCollection.archive(self, uid, module_id)
 
 
@@ -77,7 +77,11 @@ class FakeDesignWorkflowCollection(FakeModuleCollection[DesignWorkflow], DesignW
 class FakePredictorCollection(FakeModuleCollection[Predictor], PredictorCollection):
 
     def auto_configure(self, *, training_data: DataSource, pattern="PLAIN") -> Predictor:
-        pass
+        return GraphPredictor(
+            name=f"Default {pattern.lower()} predictor.",
+            description="",
+            predictors=[]
+        )
 
 
 class FakePredictorEvaluationWorkflowCollection(

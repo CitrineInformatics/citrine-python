@@ -1,5 +1,4 @@
-import sys
-from typing import Optional, Union, Iterator
+from typing import Optional
 from uuid import UUID
 
 from citrine._session import Session
@@ -16,7 +15,10 @@ class FakeDesignExecutionCollection(DesignExecutionCollection):
         super().__init__(project_id, session, workflow_id)
 
     def trigger(self, execution_input: Score) -> DesignExecution:
-        pass
+        execution = DesignExecution()
+        execution.score = execution_input
+        execution.descriptors = []
+        return execution
 
 
 class FakePredictorEvaluationExecutionCollection(PredictorEvaluationExecutionCollection):
@@ -25,4 +27,4 @@ class FakePredictorEvaluationExecutionCollection(PredictorEvaluationExecutionCol
         super().__init__(project_id, session, workflow_id)
 
     def trigger(self, predictor_id: UUID) -> PredictorEvaluationExecution:
-        pass
+        return PredictorEvaluationExecution()
