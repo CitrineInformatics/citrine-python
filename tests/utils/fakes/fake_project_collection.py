@@ -59,7 +59,7 @@ class FakeProjectCollection(ProjectCollection):
 class FakeProject(Project):
 
     def __init__(self, name="foo", description="bar", num_properties=3, session=FakeSession()):
-        super().__init__(name=name, description=description, session=session)
+        Project.__init__(self, name=name, description=description, session=session)
         self.uid = uuid4()
         self._design_spaces = FakeDesignSpaceCollection(self.uid, self.session)
         self._design_workflows = FakeDesignWorkflowCollection(self.uid, self.session)
@@ -106,4 +106,3 @@ class FakeProject(Project):
     @property
     def table_configs(self) -> FakeTableConfigCollection:
         return self._table_configs
-

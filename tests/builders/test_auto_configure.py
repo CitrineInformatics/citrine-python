@@ -1,4 +1,6 @@
 from uuid import uuid4
+
+import citrine.builders.auto_configure
 import pytest
 import mock
 
@@ -6,7 +8,6 @@ from citrine.builders.auto_configure import AutoConfigureWorkflow, AutoConfigure
 
 from citrine.informatics.design_spaces import EnumeratedDesignSpace
 from citrine.informatics.predictors import GraphPredictor
-from citrine.informatics.workflows import PredictorEvaluationWorkflow
 from citrine.informatics.predictor_evaluator import CrossValidationEvaluator
 from citrine.informatics.objectives import ScalarMaxObjective
 from citrine.informatics.scores import LIScore
@@ -18,7 +19,7 @@ from citrine.resources.project import Project
 from citrine.resources.table_config import TableConfig
 
 from tests.utils.session import FakeSession
-from tests.utils.fakes import FakeDesignWorkflow
+from tests.utils.fakes import FakeDesignWorkflow, FakePredictorEvaluationWorkflow
 from tests.utils.fakes import FakeProject
 from tests.utils.wait import wait_while_ready, wait_while_succeeded, wait_while_failed, wait_while_invalid
 
@@ -41,7 +42,7 @@ def default_resources(name):
     predictor = GraphPredictor(
         name=f"{name}: Auto Configure Predictor", description="", predictors=[]
     )
-    pew = PredictorEvaluationWorkflow(
+    pew = FakePredictorEvaluationWorkflow(
         name=f"{name}: Auto Configure PEW", description="", evaluators=[]
     )
     design_space = EnumeratedDesignSpace(
@@ -283,6 +284,7 @@ def test_auto_configure_predictor_registration(project):
         assert auto_config.status == "PREDICTOR INVALID"
 
 
+@mock.patch("citrine.builders.auto_configure.PredictorEvaluationWorkflow", FakePredictorEvaluationWorkflow)
 def test_auto_configure_predictor_evaluation(project):
     """Test the predictor evaluation stage of auto configure."""
     config_name = "Test"
@@ -378,7 +380,7 @@ def test_auto_configure_design_space_build(project):
         assert auto_config.status == "DESIGN SPACE INVALID"
 
 
-@mock.patch("citrine.builders.auto_configure.AutoConfigureWorkflow.execute", lambda *args, **kwargs: None)
+@mock.patch.object(AutoConfigureWorkflow, "execute", lambda *args, **kwargs: None)
 def test_auto_configure_design_workflow_build(project):
     """Test the design workflow build stage of auto configure."""
     config_name = "Test"

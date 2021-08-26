@@ -1,17 +1,12 @@
-from typing import TypeVar, Optional, Union
 from uuid import uuid4, UUID
+from typing import TypeVar, Optional, Union, Iterable
 
 from citrine._rest.collection import Collection
 from citrine.exceptions import NotFound
 
+from tests.utils.functions import normalize_uid
+
 ResourceType = TypeVar('ResourceType', bound='Resource')
-
-
-def _norm(uid: Union[UUID, str]) -> UUID:
-    if isinstance(uid, str):
-        return UUID(uid)
-    else:
-        return uid
 
 
 class FakeCollection(Collection[ResourceType]):
@@ -25,17 +20,17 @@ class FakeCollection(Collection[ResourceType]):
         self._resources[resource.uid] = resource
         return resource
     
-    def update(self, resource):
+    def update(self, resource: ResourceType):
         self._resources.pop(resource.uid, None)
         return self.register(resource)
     
-    def list(self, page: Optional[int] = None, per_page: int = 100):
+    def list(self, page: Optional[int] = None, per_page: int = 100) -> Iterable[ResourceType]:
         if page is None:
             return iter(list(self._resources.values()))
         else:
             return iter(list(self._resources.values())[(page - 1)*per_page:page*per_page])
     
     def get(self, uid: Union[UUID, str]) -> ResourceType:
-        if _norm(uid) not in self._resources:
+        if normalize_uid(uid) not in self._resources:
             raise NotFound("")
-        return self._resources[_norm(uid)]
+        return self._resources[normalize_uid(uid)]

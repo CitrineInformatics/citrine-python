@@ -1,5 +1,6 @@
 from time import time, sleep
 from citrine.informatics.modules import Module
+from citrine.informatics.workflows import Workflow
 
 
 def wait_until(condition, timeout=30, interval=0.5):
@@ -21,7 +22,7 @@ def wait_while_ready(*, module: Module, **kwargs) -> Module:
     return module
 
 
-def wait_while_succeeded(*, module: Module, **kwargs) -> Module:
+def wait_while_succeeded(*, module: Workflow, **kwargs) -> Workflow:
     """Mock mutations of a successful workflow validation."""
     module.status = 'SUCCEEDED'
     module.status_info = ['Something went very right.']
@@ -35,7 +36,7 @@ def wait_while_invalid(*, module: Module, **kwargs) -> Module:
     return module
 
 
-def wait_while_failed(*, module: Module, **kwargs) -> Module:
+def wait_while_failed(*, module: Workflow, **kwargs) -> Workflow:
     """Mock mutations of a failed workflow validation."""
     module.status = 'FAILED'
     module.status_info = ['Something went very wrong.']
