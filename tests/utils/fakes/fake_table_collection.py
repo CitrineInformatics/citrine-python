@@ -1,6 +1,6 @@
 from uuid import uuid4, UUID
 from typing import List, Tuple, Optional, Union, Iterable
-from collections import OrderedDict
+import copy
 
 from gemd.entity.link_by_uid import LinkByUID
 
@@ -25,12 +25,12 @@ class VersionedResourceStorage:
         return self._resources
 
     def register(self, resource: Union[TableConfig, GemTable], *, version: int):
-        versions = self.resources.setdefault(str(resource.uid), OrderedDict())
+        versions = self.resources.setdefault(str(resource.uid), {})
         versions[version] = resource
 
     def _get_latest(self, uid: Union[str, UUID]):
         versions = self.resources[str(uid)]
-        latest_version = max(versions, key=versions.get)
+        latest_version = max(versions.keys())
         return versions[latest_version]
 
     def get(self, uid: Union[str, UUID], *, version: Optional[int] = None):
@@ -42,9 +42,17 @@ class VersionedResourceStorage:
             versions = self.resources[str(uid)]
             return versions.get(version, None)
 
+    def latest_version_number(self, uid: Union[str, UUID]):
+        if str(uid) not in self.resources:
+            return None
+        else:
+            versions = self.resources[str(uid)]
+            return max(versions.keys())
+
     def list_by_uid(self, uid: Union[str, UUID]):
         versions = self.resources.get(str(uid), {})
-        return list(versions.values())
+        sorted_versions = sorted(versions.keys())
+        return [versions[v] for v in sorted_versions]
 
     def list_latest(self):
         return [self._get_latest(uid) for uid in self.resources.keys()]
@@ -93,7 +101,7 @@ class FakeTableConfigCollection(TableConfigCollection):
         scope: str = None
     ) -> Tuple[TableConfig, List[Tuple[Variable, Column]]]:
         table_config = TableConfig(
-            name=name, description=description, datasets=[],
+            name=name, description="", datasets=[],
             rows=[], variables=[], columns=[]
         )
         return table_config, []
@@ -114,16 +122,19 @@ class FakeGemTableCollection(GemTableCollection):
         else:
             config_uid = str(config)
 
+        # Find existing table matching UID
         table_id = self._config_map.setdefault(config_uid, uuid4())
-        table = self._table_storage.get(table_id)
-        if table is None:
-            table = GemTable()
-            table.uid = uuid4()
-            table.version = 1
-            table.download_url = "https://citrine-platform-fake.com"
-        else:
-            table.version += 1
+        latest_version = self._table_storage.latest_version_number(table_id)
+        if latest_version is None:
+            latest_version = 0
+
+        # Create new table w/ incremented version
+        table = GemTable()
+        table.uid = table_id
+        table.version = latest_version + 1
+        table.download_url = "https://citrine-platform-fake.com"
         self._table_storage.register(table, version=table.version)
+
         return table
 
     def list_by_config(self, table_config_uid: UUID,
