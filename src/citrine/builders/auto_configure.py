@@ -299,7 +299,7 @@ class AutoConfigureWorkflow():
         # Work backwards from end of workflow, return early when possible
         if self.design_workflow is not None:
             self._status_info = self.design_workflow.status_info
-            if self.design_workflow.status == "FAILED":
+            if self.design_workflow.failed():
                 self._status = AutoConfigureStatus.DESIGN_WORKFLOW_FAILED
             else:
                 self._status = AutoConfigureStatus.DESIGN_WORKFLOW_CREATED
@@ -307,7 +307,7 @@ class AutoConfigureWorkflow():
 
         if self.design_space is not None:
             self._status_info = self.design_space.status_info
-            if self.design_space.status == "INVALID":
+            if self.design_space.failed():
                 self._status = AutoConfigureStatus.DESIGN_SPACE_INVALID
             else:
                 self._status = AutoConfigureStatus.DESIGN_SPACE_CREATED
@@ -315,7 +315,7 @@ class AutoConfigureWorkflow():
 
         if self.predictor_evaluation_workflow is not None:
             self._status_info = self.predictor_evaluation_workflow
-            if self.predictor_evaluation_workflow.status == "FAILED":
+            if self.predictor_evaluation_workflow.failed():
                 self._status = AutoConfigureStatus.PEW_FAILED
             else:
                 self._status = AutoConfigureStatus.PEW_CREATED
@@ -323,7 +323,7 @@ class AutoConfigureWorkflow():
 
         if self.predictor is not None:
             self._status_info = self.predictor.status_info
-            if self.predictor.status == "INVALID":
+            if self.predictor.failed():
                 self._status = AutoConfigureStatus.PREDICTOR_INVALID
             else:
                 self._status = AutoConfigureStatus.PREDICTOR_CREATED
@@ -612,7 +612,7 @@ class AutoConfigureWorkflow():
         self._status = AutoConfigureStatus.PREDICTOR_CREATED
         self._status_info = predictor.status_info
 
-        if predictor.status == 'INVALID':
+        if predictor.failed():
             self._status = AutoConfigureStatus.PREDICTOR_INVALID
             raise RuntimeError("Predictor is invalid,"
                                " cannot proceed to design space configuration.")
@@ -653,7 +653,7 @@ class AutoConfigureWorkflow():
         self._status = AutoConfigureStatus.PEW_CREATED
         self._status_info = pew.status_info
 
-        if pew.status == 'FAILED':
+        if pew.failed():
             # Can proceed without raising error, but can't get PEE
             self._status = AutoConfigureStatus.PEW_FAILED
             warnings.warn(
@@ -690,7 +690,7 @@ class AutoConfigureWorkflow():
         self._status = AutoConfigureStatus.DESIGN_SPACE_CREATED
         self._status_info = design_space.status_info
 
-        if design_space.status == 'INVALID':
+        if design_space.failed():
             self._status = AutoConfigureStatus.DESIGN_SPACE_INVALID
             raise RuntimeError("Design space is invalid,"
                                " cannot proceed to design workflow configuration.")
@@ -726,7 +726,7 @@ class AutoConfigureWorkflow():
         self._status = AutoConfigureStatus.DESIGN_WORKFLOW_CREATED
         self._status_info = workflow.status_info
 
-        if workflow.status == 'FAILED':
+        if workflow.failed():
             self._status = AutoConfigureStatus.DESIGN_WORKFLOW_FAILED
             if score is None:
                 self._print_status("No score provided to trigger design execution -- finished.")
