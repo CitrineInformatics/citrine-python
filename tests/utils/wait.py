@@ -1,6 +1,5 @@
 from time import time, sleep
-from citrine.informatics.modules import Module
-from citrine.informatics.workflows import Workflow
+from typing import List, Optional, Callable
 
 
 def wait_until(condition, timeout=30, interval=0.5):
@@ -15,29 +14,22 @@ def wait_until(condition, timeout=30, interval=0.5):
     return result
 
 
-def wait_while_ready(*, module: Module, **kwargs) -> Module:
-    """Mock mutations of a successful module validation."""
-    module.status = 'READY'
-    module.status_info = ['Something went very right.']
-    return module
+def generate_fake_wait_while(*, status: str, status_info: Optional[List[str]] = None) -> Callable:
+    """Generate a wait_while function that mutates a resource with the specified status info."""
+    if status_info is None:
+        status_info = []
 
+    def _wait_while_status(**kwargs):
+        # We need either a `module` or `execution` argument
+        if "module" in kwargs:
+            module = kwargs["module"]
+            module.status = status
+            module.status_info = status_info
+            return module
+        elif "execution" in kwargs:
+            execution = kwargs["execution"]
+            execution.status = status
+            execution.status_info = status
+            return execution
 
-def wait_while_succeeded(*, module: Workflow, **kwargs) -> Workflow:
-    """Mock mutations of a successful workflow validation."""
-    module.status = 'SUCCEEDED'
-    module.status_info = ['Something went very right.']
-    return module
-
-
-def wait_while_invalid(*, module: Module, **kwargs) -> Module:
-    """Mock mutations of a failed module validation."""
-    module.status = 'INVALID'
-    module.status_info = ['Something went very wrong.']
-    return module
-
-
-def wait_while_failed(*, module: Workflow, **kwargs) -> Workflow:
-    """Mock mutations of a failed workflow validation."""
-    module.status = 'FAILED'
-    module.status_info = ['Something went very wrong.']
-    return module
+    return _wait_while_status

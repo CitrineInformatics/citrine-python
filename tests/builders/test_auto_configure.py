@@ -1,6 +1,5 @@
 from uuid import uuid4
 
-import citrine.builders.auto_configure
 import pytest
 import mock
 
@@ -21,7 +20,13 @@ from citrine.resources.table_config import TableConfig
 from tests.utils.session import FakeSession
 from tests.utils.fakes import FakeDesignWorkflow, FakePredictorEvaluationWorkflow
 from tests.utils.fakes import FakeProject
-from tests.utils.wait import wait_while_ready, wait_while_succeeded, wait_while_failed, wait_while_invalid
+from tests.utils.wait import generate_fake_wait_while
+
+# Return functions that mock wait_while_validating with specified status
+fake_wait_while_ready = generate_fake_wait_while(status="READY")
+fake_wait_while_succeeded = generate_fake_wait_while(status="SUCCEEDED")
+fake_wait_while_invalid = generate_fake_wait_while(status="INVALID")
+fake_wait_while_failed = generate_fake_wait_while(status="FAILED")
 
 
 @pytest.fixture
@@ -156,7 +161,7 @@ def test_auto_config_update_status(project):
     assert len(auto_config.assets) == 2
     assert auto_config.status == "TABLE CREATED"
 
-    # Give it predictors, check status
+    # Give it predictor, check status
     project.predictors.register(predictor)
     auto_config.update()
     assert len(auto_config.assets) == 3
@@ -228,6 +233,7 @@ def test_auto_config_execute(project):
     auto_config = AutoConfigureWorkflow(project=project, name=config_name)
     assert auto_config.status == "DESIGN WORKFLOW CREATED"
 
+    # Mock function to bypass create_default_score call internally
     def _default_score(*args, **kwargs):
         return LIScore(objectives=[], baselines=[])
 
@@ -265,7 +271,7 @@ def test_auto_configure_predictor_registration(project):
     predictor = resources["predictor"]
 
     # Mock a valid predictor response
-    with mock.patch("citrine.builders.auto_configure.wait_while_validating", wait_while_ready):
+    with mock.patch("citrine.builders.auto_configure.wait_while_validating", fake_wait_while_ready):
         auto_config._predictor_registration_stage(
             predictor=predictor,
             print_status_info=False
@@ -274,7 +280,7 @@ def test_auto_configure_predictor_registration(project):
         assert auto_config.status == "PREDICTOR CREATED"
 
     # Mock an invalid predictor response
-    with mock.patch("citrine.builders.auto_configure.wait_while_validating", wait_while_invalid):
+    with mock.patch("citrine.builders.auto_configure.wait_while_validating", fake_wait_while_invalid):
         with pytest.raises(RuntimeError):
             auto_config._predictor_registration_stage(
                 predictor=predictor,
@@ -302,7 +308,7 @@ def test_auto_configure_predictor_evaluation(project):
     evaluator = CrossValidationEvaluator(name="Eval", description="", responses=set())
 
     # Create default w/ a valid response
-    with mock.patch("citrine.builders.auto_configure.wait_while_validating", wait_while_succeeded):
+    with mock.patch("citrine.builders.auto_configure.wait_while_validating", fake_wait_while_succeeded):
         auto_config._predictor_evaluation_stage(
             predictor=predictor,
             evaluator=None,
@@ -312,7 +318,7 @@ def test_auto_configure_predictor_evaluation(project):
         assert auto_config.status == "PREDICTOR EVALUATION WORKFLOW CREATED"
 
     # Create default w/ an invalid response
-    with mock.patch("citrine.builders.auto_configure.wait_while_validating", wait_while_failed):
+    with mock.patch("citrine.builders.auto_configure.wait_while_validating", fake_wait_while_failed):
         auto_config._predictor_evaluation_stage(
             predictor=predictor,
             evaluator=None,
@@ -322,7 +328,7 @@ def test_auto_configure_predictor_evaluation(project):
         assert auto_config.status == "PREDICTOR EVALUATION WORKFLOW FAILED"
 
     # Create manual w/ a valid response
-    with mock.patch("citrine.builders.auto_configure.wait_while_validating", wait_while_succeeded):
+    with mock.patch("citrine.builders.auto_configure.wait_while_validating", fake_wait_while_succeeded):
         auto_config._predictor_evaluation_stage(
             predictor=predictor,
             evaluator=evaluator,
@@ -332,7 +338,7 @@ def test_auto_configure_predictor_evaluation(project):
         assert auto_config.status == "PREDICTOR EVALUATION WORKFLOW CREATED"
 
     # Create manual w/ a failed response
-    with mock.patch("citrine.builders.auto_configure.wait_while_validating", wait_while_failed):
+    with mock.patch("citrine.builders.auto_configure.wait_while_validating", fake_wait_while_failed):
         auto_config._predictor_evaluation_stage(
             predictor=predictor,
             evaluator=evaluator,
@@ -360,7 +366,7 @@ def test_auto_configure_design_space_build(project):
     design_space = resources["design_space"]
 
     # When validation succeeds
-    with mock.patch("citrine.builders.auto_configure.wait_while_validating", wait_while_ready):
+    with mock.patch("citrine.builders.auto_configure.wait_while_validating", fake_wait_while_ready):
         auto_config._design_space_build_stage(
             predictor=predictor,
             design_space=design_space,
@@ -370,7 +376,7 @@ def test_auto_configure_design_space_build(project):
         assert auto_config.status == "DESIGN SPACE CREATED"
 
     # When validation fails
-    with mock.patch("citrine.builders.auto_configure.wait_while_validating", wait_while_invalid):
+    with mock.patch("citrine.builders.auto_configure.wait_while_validating", fake_wait_while_invalid):
         with pytest.raises(RuntimeError):
             auto_config._design_space_build_stage(
                 predictor=predictor,
@@ -401,7 +407,7 @@ def test_auto_configure_design_workflow_build(project):
     score = LIScore(objectives=[], baselines=[])
 
     # When validation succeeds
-    with mock.patch("citrine.builders.auto_configure.wait_while_validating", wait_while_succeeded):
+    with mock.patch("citrine.builders.auto_configure.wait_while_validating", fake_wait_while_succeeded):
         auto_config._design_workflow_build_stage(
             predictor=predictor,
             design_space=design_space,
@@ -412,7 +418,7 @@ def test_auto_configure_design_workflow_build(project):
         assert auto_config.status == "DESIGN WORKFLOW CREATED"
 
     # When validation fails
-    with mock.patch("citrine.builders.auto_configure.wait_while_validating", wait_while_failed):
+    with mock.patch("citrine.builders.auto_configure.wait_while_validating", fake_wait_while_failed):
         with pytest.raises(RuntimeError):
             auto_config._design_workflow_build_stage(
                 predictor=predictor,
@@ -443,7 +449,7 @@ def test_auto_configure_full_run(project):
     # Create input material
     material = MaterialRun(name="I am fake.")
 
-    with mock.patch("citrine.builders.auto_configure.wait_while_validating", wait_while_ready):
+    with mock.patch("citrine.builders.auto_configure.wait_while_validating", fake_wait_while_ready):
         auto_config.from_material(
             material=material,
             mode=AutoConfigureMode.PLAIN,
