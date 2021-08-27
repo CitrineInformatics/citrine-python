@@ -15,7 +15,7 @@ from citrine._session import Session
 from citrine._utils.functions import rewrite_s3_links_locally, write_file_locally, \
     format_escaped_url
 from citrine.jobs.job import JobSubmissionResponse, _poll_for_job_completion
-from citrine.resources.table_config import TableConfig
+from citrine.resources.table_config import TableConfig, TableConfigCollection
 
 logger = getLogger(__name__)
 
@@ -42,10 +42,16 @@ class GemTable(Resource['Table']):
     This is an expiring download link and is not unique."""
 
     def __init__(self):
-        pass  # pragma: no cover
+        self._project_id = None
+        self._session = None
 
     def __str__(self):
         return '<GEM Table {!r}, version {}>'.format(self.uid, self.version)
+
+    def config(self):
+        path = GemTableCollection(self._project_id, self._session)._get_path(self.uid) + format_escaped_url("/versions/{}/definition", self.version)
+        data = self._session.get_resource(path)
+        return TableConfigCollection(self._project_id, self._session).build(data)
 
 
 class GemTableVersionPaginator(Paginator[GemTable]):
@@ -272,8 +278,8 @@ class GemTableCollection(Collection[GemTable]):
     def build(self, data: dict) -> GemTable:
         """Build an individual Table from a dictionary."""
         table = GemTable.build(data)
-        table.project_id = self.project_id
-        table.session = self.session
+        table._project_id = self.project_id
+        table._session = self.session
         return table
 
     def register(self, model: GemTable) -> GemTable:

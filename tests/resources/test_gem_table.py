@@ -223,7 +223,7 @@ def test_read_table_from_collection(mock_write_files_locally, collection, table)
         # When
         localstack_url = "http://localstack:4572/anywhere"
         override_url = "https://fakestack:1337"
-        collection.session.s3_endpoint_url = override_url
+        collection._session.s3_endpoint_url = override_url
         mock_get.get(override_url + "/anywhere", text='stuff')
         collection.read(table=table(localstack_url), local_path="table3.pdf")
         assert mock_get.call_count == 1
@@ -234,10 +234,10 @@ def test_read_table_from_collection(mock_write_files_locally, collection, table)
         # When
         localstack_url = "http://localstack:4572/anywhere"
         override_url = "https://fakestack:1337"
-        collection.session.s3_endpoint_url = override_url
+        collection._session.s3_endpoint_url = override_url
         mock_get.get(override_url + "/anywhere", text='stuff')
         this_table = table(localstack_url)
-        collection.session.set_response({"tables": [this_table.dump()]})
+        collection._session.set_response({"tables": [this_table.dump()]})
         collection.read(table=this_table.uid, local_path="table4.pdf")
         assert mock_get.call_count == 1
         assert mock_write_files_locally.call_count == 4
