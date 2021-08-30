@@ -397,6 +397,12 @@ class TableConfigCollection(Collection[TableConfig]):
             data['version'] = data['versions'][index]
         return self.build(data)
 
+    def get_for_table(self, table: "GemTable") -> TableConfig:
+        path = 'projects/{project_id}/display-tables/{uid}/versions/{version}/definition'.format(
+            project_id=self.project_id, uid=table.uid, version=table.version)
+        data = self.session.get_resource(path)
+        return self.build(data)
+
     @deprecated(deprecated_in="0.124.0", removed_in="2.0.0",
                 details="get_with_version() is deprecated in favor of get()")
     def get_with_version(self, *, table_config_uid: Union[UUID, str],

@@ -41,17 +41,35 @@ class GemTable(Resource['Table']):
     """:str: URL pointing to the location of the GEM Table's contents.
     This is an expiring download link and is not unique."""
 
+    _config = properties.Optional(properties.Object(TableConfig), "config")
+    _name = properties.Optional(properties.String, "name")
+    _description = properties.Optional(properties.String, "description")
+
     def __init__(self):
         self._project_id = None
         self._session = None
+        self._config: Optional[TableConfig] = None
 
     def __str__(self):
         return '<GEM Table {!r}, version {}>'.format(self.uid, self.version)
 
-    def config(self):
-        path = GemTableCollection(self._project_id, self._session)._get_path(self.uid) + format_escaped_url("/versions/{}/definition", self.version)
-        data = self._session.get_resource(path)
-        return TableConfigCollection(self._project_id, self._session).build(data)
+    @property
+    def config(self) -> TableConfig:
+        if self._config is None:
+            self._config = TableConfigCollection(self._project_id, self._session).get_for_table(self)
+        return self._config
+
+    @property
+    def name(self) -> str:
+        if self._name is None:
+            self._name = self.config.name
+        return self._name
+
+    @property
+    def description(self) -> str:
+        if self._description is None:
+            self._description = self.config.description
+        return self._description
 
 
 class GemTableVersionPaginator(Paginator[GemTable]):
@@ -280,6 +298,7 @@ class GemTableCollection(Collection[GemTable]):
         table = GemTable.build(data)
         table._project_id = self.project_id
         table._session = self.session
+        table._config = None
         return table
 
     def register(self, model: GemTable) -> GemTable:
