@@ -48,7 +48,6 @@ class GemTable(Resource['Table']):
     def __init__(self):
         self._project_id = None
         self._session = None
-        self._config: Optional[TableConfig] = None
 
     def __str__(self):
         return '<GEM Table {!r}, version {}>'.format(self.uid, self.version)
@@ -298,7 +297,6 @@ class GemTableCollection(Collection[GemTable]):
         table = GemTable.build(data)
         table._project_id = self.project_id
         table._session = self.session
-        table._config = None
         return table
 
     def register(self, model: GemTable) -> GemTable:
