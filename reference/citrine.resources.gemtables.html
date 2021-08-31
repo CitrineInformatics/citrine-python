@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>citrine.resources.gemtables module &mdash; Citrine Python 1.8.3 documentation</title>
+  <title>citrine.resources.gemtables module &mdash; Citrine Python 1.9.0 documentation</title>
   
 
   
@@ -71,7 +71,7 @@
             
             
               <div class="version">
-                1.8.3
+                1.9.0
               </div>
             
           
@@ -199,16 +199,34 @@ can be used to ‘flatten’ data objects into useful projections.</p>
 <dd><p>Dump this instance.</p>
 </dd></dl>
 
+<dl class="py property">
+<dt class="sig sig-object py" id="citrine.resources.gemtables.GemTable.config">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">config</span></span><em class="property"><span class="pre">:</span> <span class="pre">citrine.resources.table_config.TableConfig</span></em><a class="headerlink" href="#citrine.resources.gemtables.GemTable.config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Configuration used to build the table.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="citrine.resources.gemtables.GemTable.description">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">description</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><a class="headerlink" href="#citrine.resources.gemtables.GemTable.description" title="Permalink to this definition">¶</a></dt>
+<dd><p>Description of the table (inherited from the config).</p>
+</dd></dl>
+
 <dl class="py attribute">
 <dt class="sig sig-object py" id="citrine.resources.gemtables.GemTable.download_url">
 <span class="sig-name descname"><span class="pre">download_url</span></span><em class="property"> <span class="pre">=</span> <span class="pre">None</span></em><a class="headerlink" href="#citrine.resources.gemtables.GemTable.download_url" title="Permalink to this definition">¶</a></dt>
-<dd><p>Url pointing to the location of the GEM Table’s contents.
+<dd><p>URL pointing to the location of the GEM Table’s contents.
 This is an expiring download link and is not unique.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>Optional[str]</p>
+<dd class="field-odd"><p>str</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="citrine.resources.gemtables.GemTable.name">
+<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><a class="headerlink" href="#citrine.resources.gemtables.GemTable.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Name of the table (inherited from the config).</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -217,7 +235,7 @@ This is an expiring download link and is not unique.</p>
 <dd><p>unique Citrine id of this GEM Table</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>Optional[UUID]</p>
+<dd class="field-odd"><p>UUID</p>
 </dd>
 </dl>
 </dd></dl>
@@ -229,7 +247,7 @@ This is an expiring download link and is not unique.</p>
 The first table built from a given config is version 1.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>Optional[int]</p>
+<dd class="field-odd"><p>int</p>
 </dd>
 </dl>
 </dd></dl>
