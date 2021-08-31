@@ -397,7 +397,22 @@ class TableConfigCollection(Collection[TableConfig]):
             data['version'] = data['versions'][index]
         return self.build(data)
 
-    def get_for_table(self, table: "GemTable") -> TableConfig:
+    def get_for_table(self, table: "GemTable") -> TableConfig:  # noqa: F821
+        """
+        Get the TableConfig used to build the given table.
+
+        Parameters
+        ----------
+        table: GemTable
+            Table for which to get the config.
+
+        Returns
+        -------
+        TableConfig
+            The table config used to produce the given table.
+
+        """
+        # the route to fetch the config is built off the display table route tree
         path = 'projects/{project_id}/display-tables/{uid}/versions/{version}/definition'.format(
             project_id=self.project_id, uid=table.uid, version=table.version)
         data = self.session.get_resource(path)

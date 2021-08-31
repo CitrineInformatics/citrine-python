@@ -64,6 +64,27 @@ def test_get_table_metadata(collection, session):
     # Then
     assert retrieved_table.version == version_number
 
+    # Given
+    config = TableConfig(name="foo", description="bar", datasets=[], variables=[], rows=[], columns=[])
+    session.set_response({
+        "version": {
+            "ara_definition": config.dump(),
+            "version_number": config.version_number,
+            "id": config.config_uid,
+        },
+        "definition": {"id": uuid4()}
+    })
+
+    # Then
+    assert retrieved_table.config.name == config.name
+    assert retrieved_table.name == config.name
+    assert retrieved_table.description == config.description
+    expect_call = FakeCall(
+        method="GET",
+        path="projects/{}/display-tables/{}/versions/{}/definition".format(project_id, retrieved_table.uid, retrieved_table.version)
+    )
+    assert session.last_call == expect_call
+
 
 def test_list_tables(collection, session):
     # Given
@@ -223,7 +244,7 @@ def test_read_table_from_collection(mock_write_files_locally, collection, table)
         # When
         localstack_url = "http://localstack:4572/anywhere"
         override_url = "https://fakestack:1337"
-        collection._session.s3_endpoint_url = override_url
+        collection.session.s3_endpoint_url = override_url
         mock_get.get(override_url + "/anywhere", text='stuff')
         collection.read(table=table(localstack_url), local_path="table3.pdf")
         assert mock_get.call_count == 1
@@ -234,10 +255,10 @@ def test_read_table_from_collection(mock_write_files_locally, collection, table)
         # When
         localstack_url = "http://localstack:4572/anywhere"
         override_url = "https://fakestack:1337"
-        collection._session.s3_endpoint_url = override_url
+        collection.session.s3_endpoint_url = override_url
         mock_get.get(override_url + "/anywhere", text='stuff')
         this_table = table(localstack_url)
-        collection._session.set_response({"tables": [this_table.dump()]})
+        collection.session.set_response({"tables": [this_table.dump()]})
         collection.read(table=this_table.uid, local_path="table4.pdf")
         assert mock_get.call_count == 1
         assert mock_write_files_locally.call_count == 4

@@ -41,9 +41,9 @@ class GemTable(Resource['Table']):
     """:str: URL pointing to the location of the GEM Table's contents.
     This is an expiring download link and is not unique."""
 
-    _config = properties.Optional(properties.Object(TableConfig), "config")
-    _name = properties.Optional(properties.String, "name")
-    _description = properties.Optional(properties.String, "description")
+    _config = properties.Optional(properties.Object(TableConfig), "config", serializable=False)
+    _name = properties.Optional(properties.String, "name", serializable=False)
+    _description = properties.Optional(properties.String, "description", serializable=False)
 
     def __init__(self):
         self._project_id = None
@@ -54,18 +54,22 @@ class GemTable(Resource['Table']):
 
     @property
     def config(self) -> TableConfig:
+        """Configuration used to build the table."""
         if self._config is None:
-            self._config = TableConfigCollection(self._project_id, self._session).get_for_table(self)
+            config_collection = TableConfigCollection(self._project_id, self._session)
+            self._config = config_collection.get_for_table(self)
         return self._config
 
     @property
     def name(self) -> str:
+        """Name of the table (inherited from the config)."""
         if self._name is None:
             self._name = self.config.name
         return self._name
 
     @property
     def description(self) -> str:
+        """Description of the table (inherited from the config)."""
         if self._description is None:
             self._description = self.config.description
         return self._description
