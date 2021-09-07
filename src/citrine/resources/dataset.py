@@ -282,7 +282,8 @@ class Dataset(Resource['Dataset']):
                           "deprecated.  Please explicitly pass True or False", DeprecationWarning)
 
         while prompt_to_confirm:
-            print(f"Confirm you want to delete the contents of Dataset {self.name} {self.uid} [Y/N]")
+            print(f"Confirm you want to delete the contents of "
+                  f"Dataset {self.name} {self.uid} [Y/N]")
             user_response = input()
             if user_response.lower() in {'y', 'yes'}:
                 break  # return to main flow
