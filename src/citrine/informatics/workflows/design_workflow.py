@@ -24,7 +24,8 @@ class DesignWorkflow(Resource['DesignWorkflow'], Workflow, AIResourceMetadata):
         if none is provided, one matching your design space will be automatically generated
     predictor_id: UUID
         the UUID corresponding to the predictor to use
-
+    description: Optional[str]
+        a description of the workflow
     """
 
     design_space_id = properties.UUID('design_space_id')
