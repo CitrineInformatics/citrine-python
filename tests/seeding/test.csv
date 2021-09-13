@@ -1,0 +1,6 @@
+IDENTIFIER: name,CLASSIFICATION: component type,PREPARATION STEP NAME,PREPARATION STEP DETAIL: Temperature (degC),PROPERTY: Pretty,PROPERTY: Phase,SUBSYSTEM 0 IDENTIFIER: name,SUBSYSTEM 0 ACTUAL QUANTITY (mass),SUBSYSTEM 1 IDENTIFIER: name,SUBSYSTEM 1 ACTUAL QUANTITY (mass),noncolumn,PROPERTY:Empty,PROPERTY:Flag,PROPERTY:Negative
+Rust,Product,Redox,20,Yes,Solid,Iron,70,Oxygen,30,,,1,-1
+Water,Product,Combustion,2000,No,Liquid,Hydrogen,11,Oxygen,88,,,1,-10
+Hydrogen,Reductant,Procurement,,,Gas,,,,,,,0,-0.1
+Oxygen,Oxidizer,Procurement,,,Gas,,,,,,,0,
+Iron,Reductant,Procurement,,,Solid,,,,,,,0,

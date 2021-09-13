@@ -20,6 +20,15 @@ setup(name='citrine',
       author='Citrine Informatics',
       package_dir={'': 'src'},
       packages=find_packages(where='src'),
+      package_data={
+          "tests": [
+              "seeding/bad_column.csv",
+              "seeding/empty_column.csv",
+              "seeding/failed_tests.csv",
+              "seeding/object_collision.csv",
+              "seeding/test.csv",
+          ]
+      },
       install_requires=[
           "requests>=2.25.1,<3",
           "pyjwt>=1.7.1,<2",
