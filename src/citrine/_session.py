@@ -44,9 +44,10 @@ class Session(requests.Session):
         self.access_token_expiration: datetime = datetime.utcnow()
 
         # Following scheme:[//authority]path[?query][#fragment] (https://en.wikipedia.org/wiki/URL)
+        agent = "python-requests/{} citrine-python/{}".format(requests.__version__, cp_version)
         self.headers.update({
             "Content-Type": "application/json",
-            "X-Citrine-Python-Version": cp_version})
+            "User-Agent": agent})
 
         # Default parameters for S3 connectivity. Can be changed by tests.
         self.s3_endpoint_url = None
