@@ -9,6 +9,7 @@ from urllib.parse import urlunsplit
 from urllib3.util.retry import Retry
 
 from citrine._utils.functions import format_escaped_url
+from citrine import __version__ as cp_version
 from citrine.exceptions import (
     NotFound,
     Unauthorized,
@@ -43,7 +44,9 @@ class Session(requests.Session):
         self.access_token_expiration: datetime = datetime.utcnow()
 
         # Following scheme:[//authority]path[?query][#fragment] (https://en.wikipedia.org/wiki/URL)
-        self.headers.update({"Content-Type": "application/json"})
+        self.headers.update({
+            "Content-Type": "application/json",
+            "X-Citrine-Python-Version": cp_version})
 
         # Default parameters for S3 connectivity. Can be changed by tests.
         self.s3_endpoint_url = None
