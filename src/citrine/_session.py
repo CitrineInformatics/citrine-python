@@ -1,4 +1,5 @@
 from os import environ
+import platform
 from typing import Optional, Callable, Iterator
 from logging import getLogger
 from datetime import datetime, timedelta
@@ -43,8 +44,11 @@ class Session(requests.Session):
         self.access_token: Optional[str] = None
         self.access_token_expiration: datetime = datetime.utcnow()
 
+        agent = "python-requests/{} {}/{} citrine-python/{}".format(
+            requests.__version__, platform.python_implementation(), platform.python_version(),
+            cp_version)
+
         # Following scheme:[//authority]path[?query][#fragment] (https://en.wikipedia.org/wiki/URL)
-        agent = "python-requests/{} citrine-python/{}".format(requests.__version__, cp_version)
         self.headers.update({
             "Content-Type": "application/json",
             "User-Agent": agent})
