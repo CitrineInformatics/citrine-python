@@ -44,8 +44,10 @@ class Session(requests.Session):
         self.access_token: Optional[str] = None
         self.access_token_expiration: datetime = datetime.utcnow()
 
-        agent = "python-requests/{} {}/{} citrine-python/{}".format(
-            requests.__version__, platform.python_implementation(), platform.python_version(),
+        agent = "{}/{} python-requests/{} citrine-python/{}".format(
+            platform.python_implementation(), 
+            platform.python_version(),
+            requests.__version__,
             cp_version)
 
         # Following scheme:[//authority]path[?query][#fragment] (https://en.wikipedia.org/wiki/URL)
