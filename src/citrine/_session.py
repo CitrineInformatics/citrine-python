@@ -9,8 +9,8 @@ from json.decoder import JSONDecodeError
 from urllib.parse import urlunsplit
 from urllib3.util.retry import Retry
 
+import citrine
 from citrine._utils.functions import format_escaped_url
-from citrine import __version__ as cp_version
 from citrine.exceptions import (
     NotFound,
     Unauthorized,
@@ -48,7 +48,7 @@ class Session(requests.Session):
             platform.python_implementation(),
             platform.python_version(),
             requests.__version__,
-            cp_version)
+            citrine.__version__)
 
         # Following scheme:[//authority]path[?query][#fragment] (https://en.wikipedia.org/wiki/URL)
         self.headers.update({
