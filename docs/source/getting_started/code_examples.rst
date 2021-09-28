@@ -145,7 +145,7 @@ The following statements are true:
     toluene_history.measurements == [refractive_index_run]
     toluene_history.measurements[0].spec == refractive_index_spec
     toluene_history.process == buy_toluene_run
-    toluene_history.process.spec == toluene_history.spec.process == buy_toluene
+    toluene_history.process.spec == toluene_history.spec.process == buy_toluene_spec
 
 Note that the material history does *not* include a reference to the ingredients derived from
 the material. Traversal "forward in time" is not possible.
