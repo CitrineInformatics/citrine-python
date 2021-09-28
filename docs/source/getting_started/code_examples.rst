@@ -88,6 +88,7 @@ a parameter template ``wavelength_template``, and a property template ``refracti
 .. code-block:: python
 
     from gemd.entity.attribute import Condition, Parameter, Property
+    from gemd.entity.value.nominal_real import NominalReal
     from citrine.resources.ingredient_run import IngredientRun
     from citrine.resources.ingredient_spec import IngredientSpec
     from citrine.resources.material_run import MaterialRun
@@ -121,7 +122,7 @@ a parameter template ``wavelength_template``, and a property template ``refracti
     reaction_run = solvents_dataset.process_runs.register(
         ProcessRun("A chemical reaction", spec=reaction_spec))
     toluene_ingredient = solvents_dataset.ingredient_runs.register(
-        IngredientRun("Toluene solvent", spec=toluene_ingredient_spec,
+        IngredientRun(spec=toluene_ingredient_spec,
         material=toluene, process=reaction_run, absolute_quantity=NominalReal(40, 'mL'), notes="I poured too much!"))
 
 Getting a material history
