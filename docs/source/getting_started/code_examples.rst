@@ -69,7 +69,7 @@ The example below searches for a process template with the tag "Oven_17" and ass
 
 .. code-block:: python
 
-    firing_templates = template_project.process_templates.filter_by_tags(tags=["Oven_17"])
+    firing_templates = list(band_gaps_project.process_templates.list_by_tag(tag="Oven_17"))
     assert len(firing_templates) == 1
     firing_template_17 = firing_templates[0]
 
