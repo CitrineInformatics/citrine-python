@@ -124,4 +124,4 @@ A user's role in a Project can be updated. The method
     project = citrine.projects.register(name="Your Project")
 
     # Make the user a member with write access
-    project.update_user_role(user_uid=user_uid, role=MEMBER, actions=[WRITE])
+    project.update_user_role(user_uid=user_id, role=MEMBER, actions=[WRITE])
