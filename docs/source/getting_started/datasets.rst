@@ -182,9 +182,13 @@ It then downloads the file back to your computer at ``/Users/me/Downloads/settin
 .. code-block:: python
 
     file_link = dataset.files.upload(
-        "/Users/me/status_20190913.csv", "microscope_status_20190913.csv")
-    dataset.files.download(file_link,
-        "/Users/me/Downloads/settings.csv")
+        file_path="/Users/me/status_20190913.csv",
+        dest_name="microscope_status_20190913.csv"
+    )
+    dataset.files.download(
+        file_link=file_link,
+        local_path="/Users/me/Downloads/settings.csv"
+    )
 
 Deleting Files
 ^^^^^^^^^^^^^^
