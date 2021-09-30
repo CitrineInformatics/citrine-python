@@ -473,14 +473,23 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
 
         objects = [replace_objects_with_links(scrub_none(model.dump())) for model in models]
 
-        recursive_foreach(models, lambda x: x.uids.pop(temp_scope, None))  # Strip temp uids
+        batch_size = 50
+        resources = []
+        num_batches = 1 + (len(models) - 1) // batch_size
+        for batch_num in range(num_batches):
+            batch = objects[batch_num * batch_size: (batch_num + 1) * batch_size]
+            response_data = self.session.put_resource(
+                path + '/batch',
+                json={'objects': batch},
+                params=params
+            )
+            registered = [self.build(obj) for obj in response_data['objects']]
+            resources.extend(registered)
 
-        response_data = self.session.put_resource(
-            path + '/batch',
-            json={'objects': objects},
-            params=params
-        )
-        return [self.build(obj) for obj in response_data['objects']]
+        # Strip temp uids
+        recursive_foreach(models + resources, lambda x: x.uids.pop(temp_scope, None))
+
+        return resources
 
     def update(self, model: ResourceType) -> ResourceType:
         """Update a data object model."""

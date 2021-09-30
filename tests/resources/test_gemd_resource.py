@@ -107,7 +107,9 @@ def test_register(gemd_collection):
 
     for specific_collection, obj in expected.items():
         assert len(obj.uids) == 0
-        registered = gemd_collection.register(obj)
+        gemd_collection.register(obj, dry_run=True)
+        assert len(obj.uids) == 0
+        registered = gemd_collection.register(obj, dry_run=False)
         assert len(obj.uids) == 1
         assert len(registered.uids) == 1
         assert basename(gemd_collection.session.calls[-1].path) == basename(specific_collection._path_template)
@@ -179,6 +181,13 @@ def test_register_all(gemd_collection):
         parameter_template: ParameterTemplateCollection,
         condition_template: ConditionTemplateCollection
     }
+
+    for obj in expected:
+        assert len(obj.uids) == 0  # All should be without ids
+
+    # dry_run should pass for all objects and shouldn't mutate the objects
+    gemd_collection.register_all(expected.keys(), dry_run=True)
+
     for obj in expected:
         assert len(obj.uids) == 0  # All should be without ids
     registered = gemd_collection.register_all(expected.keys())
@@ -197,7 +206,7 @@ def test_register_all(gemd_collection):
     call_basenames = [call.path.split('/')[-2] for call in gemd_collection.session.calls]
     collection_basenames = [basename(specific_collection._path_template) for specific_collection in expected.values()]
     assert set(call_basenames) == set(collection_basenames)
-    assert len(set(call_basenames)) == len(call_basenames)  # calls are batched internally
+    assert len(set(call_basenames)) * 2 == len(call_basenames)  # calls are batched internally
 
     # spot check order. Does not check every constraint
     assert call_basenames.index(basename(IngredientRunCollection._path_template)) > call_basenames.index(basename(IngredientSpecCollection._path_template))
@@ -239,9 +248,10 @@ def test_delete(gemd_collection, session):
     }
 
     for specific_collection, obj in expected.items():
-        session.set_response(obj.dump())  # Delete calls get, must return object data internally
-        gemd_collection.delete(obj)
-        assert gemd_collection.session.calls[-1].path.split("/")[-3] == basename(specific_collection._path_template)
+        for dry_run in True, False:
+            session.set_response(obj.dump())  # Delete calls get, must return object data internally
+            gemd_collection.delete(obj, dry_run=dry_run)
+            assert gemd_collection.session.calls[-1].path.split("/")[-3] == basename(specific_collection._path_template)
 
 
 def test_update(gemd_collection):
