@@ -436,7 +436,11 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         data = self.session.post_resource(path, dumped_data, params=params)
         return self.build(data)
 
-    def register_all(self, models: List[ResourceType], *, dry_run=False) -> List[ResourceType]:
+    def register_all(self,
+                     models: List[ResourceType],
+                     *,
+                     dry_run=False,
+                     status=False) -> List[ResourceType]:
         """
         [ALPHA] Create or update each model in models.
 
@@ -453,6 +457,9 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         dry_run: bool
             Whether to actually register the objects or run a dry run of the register operation.
             Dry run is intended to be used for validation. Default: false
+        status: bool
+            Whether to display a status bar using the tqdm module to track progress in
+            registration. Requires installing the optional tqdm module. Default: false
 
         Returns
         -------
@@ -476,7 +483,18 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         batch_size = 50
         resources = []
         num_batches = 1 + (len(models) - 1) // batch_size
-        for batch_num in range(num_batches):
+
+        if status:
+            try:
+                from tqdm.auto import tqdm
+            except ImportError:  # pragma: no cover
+                raise ValueError('Display of a status bar requires '
+                                 'installation of the tqdm module')
+            iterator = tqdm(range(num_batches), leave=False)
+        else:
+            iterator = range(num_batches)
+
+        for batch_num in iterator:
             batch = objects[batch_num * batch_size: (batch_num + 1) * batch_size]
             response_data = self.session.put_resource(
                 path + '/batch',

@@ -76,7 +76,11 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
         """Register a GEMD object to the appropriate collection."""
         return self._collection_for(model).register(model, dry_run=dry_run)
 
-    def register_all(self, models: List[DataConcepts], *, dry_run=False) -> List[DataConcepts]:
+    def register_all(self,
+                     models: List[DataConcepts],
+                     *,
+                     dry_run=False,
+                     status=False) -> List[DataConcepts]:
         """
         Register multiple GEMD objects to each of their appropriate collections.
 
@@ -95,6 +99,10 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
             Whether to actually register the item or run a dry run of the register operation.
             Dry run is intended to be used for validation. Default: false
 
+        status: bool
+            Whether to display a status bar using the tqdm module to track progress in
+            registration. Requires installing the optional tqdm module. Default: false
+
         Returns
         -------
         List[DataConcepts]
@@ -106,9 +114,20 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
         for obj in models:
             by_type[obj.typ].append(obj)
         typ_groups = sorted(list(by_type.values()), key=lambda x: writable_sort_order(x[0]))
-        for typ_group in typ_groups:
+
+        if status:
+            try:
+                from tqdm.auto import tqdm
+            except ImportError:  # pragma: no cover
+                raise ValueError('Display of a status bar requires '
+                                 'installation of the tqdm module')
+            iterator = tqdm(typ_groups, leave=False)
+        else:
+            iterator = typ_groups
+
+        for typ_group in iterator:
             registered = self._collection_for(typ_group[0]). \
-                register_all(typ_group, dry_run=dry_run)
+                register_all(typ_group, dry_run=dry_run, status=status)
             resources.extend(registered)
         return resources
 

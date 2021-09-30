@@ -223,6 +223,36 @@ def test_register_all(gemd_collection):
     assert call_basenames.index(basename(MaterialTemplateCollection._path_template)) > call_basenames.index(basename(PropertyTemplateCollection._path_template))
 
 
+def test_register_all_status(gemd_collection):
+    """Check that register_all functions with a status bar; subset of test_register_all tests"""
+    bounds = IntegerBounds(0, 1)
+    parameter_template = ParameterTemplate("bar", bounds=bounds)
+    condition_template = ConditionTemplate("bar", bounds=bounds)
+    foo_process_template = ProcessTemplate("foo",
+                                           conditions=[[condition_template, bounds]],
+                                           parameters=[[parameter_template, bounds]])
+    foo_process_spec = ProcessSpec("foo", template=foo_process_template)
+    foo_process_run = ProcessRun("foo", spec=foo_process_spec)
+
+    # worst order possible
+    expected = {
+        foo_process_run: ProcessRunCollection,
+        foo_process_spec: ProcessSpecCollection,
+        foo_process_template: ProcessTemplateCollection,
+        parameter_template: ParameterTemplateCollection,
+        condition_template: ConditionTemplateCollection
+    }
+
+    for obj in expected:
+        assert len(obj.uids) == 0  # All should be without ids
+
+    registered = gemd_collection.register_all(expected.keys(), status=True)
+    assert len(registered) == len(expected)
+
+    for obj in expected:
+        assert len(obj.uids) == 1  # All should now have exactly 1 id
+
+
 def test_register_all_object_update(gemd_collection):
     """Check that uids of gemd-python objects get updated"""
     process = GemdProcessSpec("process")
