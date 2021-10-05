@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>1.5. Datasets &mdash; Citrine Python 1.9.0 documentation</title>
+  <title>1.5. Datasets &mdash; Citrine Python 1.9.5 documentation</title>
   
 
   
@@ -73,7 +73,7 @@
             
             
               <div class="version">
-                1.9.0
+                1.9.5
               </div>
             
           
@@ -357,9 +357,13 @@ is not deleted, but at the moment you can only download the latest version of a 
 on your computer. The code below uploads the file and gives it the filename <code class="docutils literal notranslate"><span class="pre">microscope_status_20190913.csv</span></code>.
 It then downloads the file back to your computer at <code class="docutils literal notranslate"><span class="pre">/Users/me/Downloads/settings.csv</span></code>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">file_link</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">upload</span><span class="p">(</span>
-    <span class="s2">&quot;/Users/me/status_20190913.csv&quot;</span><span class="p">,</span> <span class="s2">&quot;microscope_status_20190913.csv&quot;</span><span class="p">)</span>
-<span class="n">dataset</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">download</span><span class="p">(</span><span class="n">file_link</span><span class="p">,</span>
-    <span class="s2">&quot;/Users/me/Downloads/settings.csv&quot;</span><span class="p">)</span>
+    <span class="n">file_path</span><span class="o">=</span><span class="s2">&quot;/Users/me/status_20190913.csv&quot;</span><span class="p">,</span>
+    <span class="n">dest_name</span><span class="o">=</span><span class="s2">&quot;microscope_status_20190913.csv&quot;</span>
+<span class="p">)</span>
+<span class="n">dataset</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">download</span><span class="p">(</span>
+    <span class="n">file_link</span><span class="o">=</span><span class="n">file_link</span><span class="p">,</span>
+    <span class="n">local_path</span><span class="o">=</span><span class="s2">&quot;/Users/me/Downloads/settings.csv&quot;</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 </section>

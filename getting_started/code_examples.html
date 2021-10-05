@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>1.8. Code Examples &mdash; Citrine Python 1.9.0 documentation</title>
+  <title>1.8. Code Examples &mdash; Citrine Python 1.9.5 documentation</title>
   
 
   
@@ -73,7 +73,7 @@
             
             
               <div class="version">
-                1.9.0
+                1.9.5
               </div>
             
           
@@ -250,7 +250,7 @@ For more information on retrieving resources, see <a class="reference internal" 
 <p>Templates provide a controlled vocabulary for organizing your data, and should be established before uploading other data.
 Generally you will work with existing templates.
 The example below searches for a process template with the tag “Oven_17” and asserts that one result is returned.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">firing_templates</span> <span class="o">=</span> <span class="n">template_project</span><span class="o">.</span><span class="n">process_templates</span><span class="o">.</span><span class="n">filter_by_tags</span><span class="p">(</span><span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Oven_17&quot;</span><span class="p">])</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">firing_templates</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">band_gaps_project</span><span class="o">.</span><span class="n">process_templates</span><span class="o">.</span><span class="n">list_by_tag</span><span class="p">(</span><span class="n">tag</span><span class="o">=</span><span class="s2">&quot;Oven_17&quot;</span><span class="p">))</span>
 <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">firing_templates</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
 <span class="n">firing_template_17</span> <span class="o">=</span> <span class="n">firing_templates</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 </pre></div>
@@ -267,6 +267,7 @@ a process template <code class="docutils literal notranslate"><span class="pre">
 a process template <code class="docutils literal notranslate"><span class="pre">reaction_template</span></code>, a condition template <code class="docutils literal notranslate"><span class="pre">temperature_template</span></code>,
 a parameter template <code class="docutils literal notranslate"><span class="pre">wavelength_template</span></code>, and a property template <code class="docutils literal notranslate"><span class="pre">refractive_index_template</span></code>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">gemd.entity.attribute</span> <span class="kn">import</span> <span class="n">Condition</span><span class="p">,</span> <span class="n">Parameter</span><span class="p">,</span> <span class="n">Property</span>
+<span class="kn">from</span> <span class="nn">gemd.entity.value.nominal_real</span> <span class="kn">import</span> <span class="n">NominalReal</span>
 <span class="kn">from</span> <span class="nn">citrine.resources.ingredient_run</span> <span class="kn">import</span> <span class="n">IngredientRun</span>
 <span class="kn">from</span> <span class="nn">citrine.resources.ingredient_spec</span> <span class="kn">import</span> <span class="n">IngredientSpec</span>
 <span class="kn">from</span> <span class="nn">citrine.resources.material_run</span> <span class="kn">import</span> <span class="n">MaterialRun</span>
@@ -300,7 +301,7 @@ a parameter template <code class="docutils literal notranslate"><span class="pre
 <span class="n">reaction_run</span> <span class="o">=</span> <span class="n">solvents_dataset</span><span class="o">.</span><span class="n">process_runs</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
     <span class="n">ProcessRun</span><span class="p">(</span><span class="s2">&quot;A chemical reaction&quot;</span><span class="p">,</span> <span class="n">spec</span><span class="o">=</span><span class="n">reaction_spec</span><span class="p">))</span>
 <span class="n">toluene_ingredient</span> <span class="o">=</span> <span class="n">solvents_dataset</span><span class="o">.</span><span class="n">ingredient_runs</span><span class="o">.</span><span class="n">register</span><span class="p">(</span>
-    <span class="n">IngredientRun</span><span class="p">(</span><span class="s2">&quot;Toluene solvent&quot;</span><span class="p">,</span> <span class="n">spec</span><span class="o">=</span><span class="n">toluene_ingredient_spec</span><span class="p">,</span>
+    <span class="n">IngredientRun</span><span class="p">(</span><span class="n">spec</span><span class="o">=</span><span class="n">toluene_ingredient_spec</span><span class="p">,</span>
     <span class="n">material</span><span class="o">=</span><span class="n">toluene</span><span class="p">,</span> <span class="n">process</span><span class="o">=</span><span class="n">reaction_run</span><span class="p">,</span> <span class="n">absolute_quantity</span><span class="o">=</span><span class="n">NominalReal</span><span class="p">(</span><span class="mi">40</span><span class="p">,</span> <span class="s1">&#39;mL&#39;</span><span class="p">),</span> <span class="n">notes</span><span class="o">=</span><span class="s2">&quot;I poured too much!&quot;</span><span class="p">))</span>
 </pre></div>
 </div>
@@ -319,7 +320,7 @@ The following statements are true:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">toluene_history</span><span class="o">.</span><span class="n">measurements</span> <span class="o">==</span> <span class="p">[</span><span class="n">refractive_index_run</span><span class="p">]</span>
 <span class="n">toluene_history</span><span class="o">.</span><span class="n">measurements</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">spec</span> <span class="o">==</span> <span class="n">refractive_index_spec</span>
 <span class="n">toluene_history</span><span class="o">.</span><span class="n">process</span> <span class="o">==</span> <span class="n">buy_toluene_run</span>
-<span class="n">toluene_history</span><span class="o">.</span><span class="n">process</span><span class="o">.</span><span class="n">spec</span> <span class="o">==</span> <span class="n">toluene_history</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">process</span> <span class="o">==</span> <span class="n">buy_toluene</span>
+<span class="n">toluene_history</span><span class="o">.</span><span class="n">process</span><span class="o">.</span><span class="n">spec</span> <span class="o">==</span> <span class="n">toluene_history</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">process</span> <span class="o">==</span> <span class="n">buy_toluene_spec</span>
 </pre></div>
 </div>
 <p>Note that the material history does <em>not</em> include a reference to the ingredients derived from

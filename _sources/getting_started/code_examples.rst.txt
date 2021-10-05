@@ -69,7 +69,7 @@ The example below searches for a process template with the tag "Oven_17" and ass
 
 .. code-block:: python
 
-    firing_templates = template_project.process_templates.filter_by_tags(tags=["Oven_17"])
+    firing_templates = list(band_gaps_project.process_templates.list_by_tag(tag="Oven_17"))
     assert len(firing_templates) == 1
     firing_template_17 = firing_templates[0]
 
@@ -88,6 +88,7 @@ a parameter template ``wavelength_template``, and a property template ``refracti
 .. code-block:: python
 
     from gemd.entity.attribute import Condition, Parameter, Property
+    from gemd.entity.value.nominal_real import NominalReal
     from citrine.resources.ingredient_run import IngredientRun
     from citrine.resources.ingredient_spec import IngredientSpec
     from citrine.resources.material_run import MaterialRun
@@ -121,7 +122,7 @@ a parameter template ``wavelength_template``, and a property template ``refracti
     reaction_run = solvents_dataset.process_runs.register(
         ProcessRun("A chemical reaction", spec=reaction_spec))
     toluene_ingredient = solvents_dataset.ingredient_runs.register(
-        IngredientRun("Toluene solvent", spec=toluene_ingredient_spec,
+        IngredientRun(spec=toluene_ingredient_spec,
         material=toluene, process=reaction_run, absolute_quantity=NominalReal(40, 'mL'), notes="I poured too much!"))
 
 Getting a material history
@@ -144,7 +145,7 @@ The following statements are true:
     toluene_history.measurements == [refractive_index_run]
     toluene_history.measurements[0].spec == refractive_index_spec
     toluene_history.process == buy_toluene_run
-    toluene_history.process.spec == toluene_history.spec.process == buy_toluene
+    toluene_history.process.spec == toluene_history.spec.process == buy_toluene_spec
 
 Note that the material history does *not* include a reference to the ingredients derived from
 the material. Traversal "forward in time" is not possible.
