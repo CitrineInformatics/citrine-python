@@ -192,6 +192,8 @@ def test_register_all(gemd_collection):
         assert len(obj.uids) == 0  # All should be without ids
     registered = gemd_collection.register_all(expected.keys())
     assert len(registered) == len(expected)
+    for x in expected:
+        assert x in registered
 
     seen_ids = set()
     for obj in expected:
