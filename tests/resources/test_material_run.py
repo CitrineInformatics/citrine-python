@@ -434,3 +434,42 @@ def test_list_by_template(collection, session):
     # Then
     assert 3 == session.num_calls
     assert runs == [collection.build(run) for run in [sample_run1_1, sample_run1_2, sample_run2_1, sample_run2_2]]
+
+
+def test_equals():
+    """Test basic equality.  Complex relationships are tested in test_material_run.test_deep_equals()."""
+    from citrine.resources.material_run import MaterialRun as CitrineMaterialRun
+    from gemd.entity.object import MaterialRun as GEMDMaterialRun
+
+    gemd_obj = GEMDMaterialRun(
+        name="My Name",
+        notes="I have notes",
+        tags=["tag!"]
+    )
+    citrine_obj = CitrineMaterialRun(
+        name="My Name",
+        notes="I have notes",
+        tags=["tag!"]
+    )
+    assert gemd_obj == citrine_obj, "GEMD/Citrine equivalence"
+    citrine_obj.notes = "Something else"
+    assert gemd_obj != citrine_obj, "GEMD/Citrine detects difference"
+
+
+def test_deep_equals(collection):
+    from citrine.resources.material_run import MaterialRun
+    from gemd.demo.cake import make_cake, change_scope
+    from gemd.util import flatten
+
+    change_scope('test_deep_equals_scope')
+    cake = make_cake()
+    flat_list = flatten(cake)
+    # Note that registered turns them into a flat list of Citrine resources
+    registered = collection.register_all(flat_list)
+    assert len(flat_list) == len(registered), "All objects registered"
+    for x in flat_list:
+        assert x in registered, "All flattened objects were registered"
+    for x in registered:
+        assert x in flat_list, "All registered objects are in the flat list"
+
+    assert cake == MaterialRun.build(cake.dump()), "Equality works in hydrated form"

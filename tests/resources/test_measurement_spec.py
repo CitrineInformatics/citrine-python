@@ -27,3 +27,23 @@ def test_list_by_template(collection: MeasurementSpecCollection):
         collection=collection,
         search_fn=collection.list_by_template,
     )
+
+
+def test_equals():
+    """Test basic equality.  Complex relationships are tested in test_material_run.test_deep_equals()."""
+    from citrine.resources.measurement_spec import MeasurementSpec as CitrineMeasurementSpec
+    from gemd.entity.object import MeasurementSpec as GEMDMeasurementSpec
+
+    gemd_obj = GEMDMeasurementSpec(
+        name="My Name",
+        notes="I have notes",
+        tags=["tag!"]
+    )
+    citrine_obj = CitrineMeasurementSpec(
+        name="My Name",
+        notes="I have notes",
+        tags=["tag!"]
+    )
+    assert gemd_obj == citrine_obj, "GEMD/Citrine equivalence"
+    citrine_obj.notes = "Something else"
+    assert gemd_obj != citrine_obj, "GEMD/Citrine detects difference"
