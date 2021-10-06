@@ -290,9 +290,6 @@ class DataConcepts(PolymorphicSerializable['DataConcepts'], DictSerializable, AB
         """
         result = self.dump()
         for field in result:
-            if field in self.skip:
-                result.pop(field, None)
-        for field in result:
             result[field] = getattr(self, field, result[field])
         return result
 
@@ -817,3 +814,13 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
             params=params,
             version='v1')
         return (self.build(raw) for raw in raw_objects)
+
+
+if __name__ == '__main__':
+    from gemd.demo.cake import make_cake, change_scope
+    from citrine.resources.material_run import MaterialRun
+
+    change_scope('test_deep_equals_scope')
+    cake = make_cake()
+    lemon = MaterialRun.build(cake.dump())
+    assert cake == lemon, "Equality works in hydrated form"
