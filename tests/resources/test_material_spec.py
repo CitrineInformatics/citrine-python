@@ -60,3 +60,22 @@ def test_repeat_serialization_gemd(collection, session):
 
     # Then
     assert "<Material spec 'Test gemd mutation'>" == str(registered)
+
+
+def test_equals():
+    from citrine.resources.material_spec import MaterialSpec as CitrineMaterialSpec
+    from gemd.entity.object import MaterialSpec as GEMDMaterialSpec
+
+    gemd_obj = GEMDMaterialSpec(
+        name="My Name",
+        notes="I have notes",
+        tags=["tag!"]
+    )
+    citrine_obj = CitrineMaterialSpec(
+        name="My Name",
+        notes="I have notes",
+        tags=["tag!"]
+    )
+    assert gemd_obj == citrine_obj, "GEMD/Citrine equivalence"
+    citrine_obj.notes = "Something else"
+    assert gemd_obj != citrine_obj, "GEMD/Citrine detects difference"

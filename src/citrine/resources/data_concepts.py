@@ -279,8 +279,22 @@ class DataConcepts(PolymorphicSerializable['DataConcepts'], DictSerializable, AB
         return cls.json_support
 
     def as_dict(self) -> dict:
-        """Dump to a dictionary (useful for interoperability with gemd)."""
-        return self.dump()
+        """
+        Dump to a dictionary (useful for interoperability with gemd).
+
+        Note that we need to replicate the logic in gemd.entity.dict_serializable here because
+        something in the serialization stack changes the result df __dict__ dramatically between
+        gemd.entity.dict_serializable and this class.  At the same time, the local dump method
+        strips necessary type information allowing LinkByUIDs to be equal to the objects they
+        reference.
+        """
+        result = self.dump()
+        for field in result:
+            if field in self.skip:
+                result.pop(field, None)
+        for field in result:
+            result[field] = getattr(self, field, result[field])
+        return result
 
 
 def _make_link_by_uid(gemd_object_rep: Union[str, UUID, BaseEntity, LinkByUID],
