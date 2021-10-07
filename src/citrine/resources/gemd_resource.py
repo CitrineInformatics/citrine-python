@@ -1,9 +1,7 @@
 """Collection class for generic GEMD objects and templates."""
-from collections import defaultdict
 from typing import Type, Union, Optional, List, Tuple
 from uuid import UUID
 
-from gemd.util import writable_sort_order
 from gemd.entity.base_entity import BaseEntity
 from gemd.entity.link_by_uid import LinkByUID
 
@@ -101,16 +99,8 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
             The registered versions
 
         """
-        resources = list()
-        by_type = defaultdict(list)
-        for obj in models:
-            by_type[obj.typ].append(obj)
-        typ_groups = sorted(list(by_type.values()), key=lambda x: writable_sort_order(x[0]))
-        for typ_group in typ_groups:
-            registered = self._collection_for(typ_group[0]). \
-                register_all(typ_group, dry_run=dry_run)
-            resources.extend(registered)
-        return resources
+        # Endpoints are polymorphic now, so it doesn't matter which we hit
+        return self._collection_for(list(models)[0]).register_all(models, dry_run=dry_run)
 
     def async_update(self, model: DataConcepts, *,
                      dry_run: bool = False,

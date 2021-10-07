@@ -194,6 +194,8 @@ def test_register_all(gemd_collection):
     assert len(registered) == len(expected)
     for x in expected:
         assert x in registered
+    for x in registered:
+        assert x in expected
 
     seen_ids = set()
     for obj in expected:
@@ -204,25 +206,6 @@ def test_register_all(gemd_collection):
     for obj in registered:
         for pair in obj.uids.items():
             assert pair in seen_ids  # registered items have the same ids
-
-    call_basenames = [call.path.split('/')[-2] for call in gemd_collection.session.calls]
-    collection_basenames = [basename(specific_collection._path_template) for specific_collection in expected.values()]
-    assert set(call_basenames) == set(collection_basenames)
-    assert len(set(call_basenames)) * 2 == len(call_basenames)  # calls are batched internally
-
-    # spot check order. Does not check every constraint
-    assert call_basenames.index(basename(IngredientRunCollection._path_template)) > call_basenames.index(basename(IngredientSpecCollection._path_template))
-    assert call_basenames.index(basename(MaterialRunCollection._path_template)) > call_basenames.index(basename(MaterialSpecCollection._path_template))
-    assert call_basenames.index(basename(MeasurementRunCollection._path_template)) > call_basenames.index(basename(MeasurementSpecCollection._path_template))
-    assert call_basenames.index(basename(ProcessRunCollection._path_template)) > call_basenames.index(basename(ProcessSpecCollection._path_template))
-    assert call_basenames.index(basename(MaterialSpecCollection._path_template)) > call_basenames.index(basename(MaterialTemplateCollection._path_template))
-    assert call_basenames.index(basename(MeasurementSpecCollection._path_template)) > call_basenames.index(basename(MeasurementTemplateCollection._path_template))
-    assert call_basenames.index(basename(ProcessSpecCollection._path_template)) > call_basenames.index(basename(ProcessTemplateCollection._path_template))
-    assert call_basenames.index(basename(MaterialSpecCollection._path_template)) > call_basenames.index(basename(ProcessSpecCollection._path_template))
-    assert call_basenames.index(basename(MaterialSpecCollection._path_template)) > call_basenames.index(basename(MeasurementSpecCollection._path_template))
-    assert call_basenames.index(basename(MeasurementTemplateCollection._path_template)) > call_basenames.index(basename(ConditionTemplateCollection._path_template))
-    assert call_basenames.index(basename(MeasurementTemplateCollection._path_template)) > call_basenames.index(basename(ParameterTemplateCollection._path_template))
-    assert call_basenames.index(basename(MaterialTemplateCollection._path_template)) > call_basenames.index(basename(PropertyTemplateCollection._path_template))
 
 
 def test_register_all_object_update(gemd_collection):

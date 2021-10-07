@@ -1,5 +1,6 @@
 """Top-level class for all data concepts objects and collections thereof."""
 from abc import abstractmethod, ABC
+from collections import defaultdict
 from warnings import warn
 from typing import TypeVar, Type, List, Union, Optional, Iterator
 from uuid import UUID, uuid4
@@ -9,7 +10,7 @@ from gemd.entity.dict_serializable import DictSerializable
 from gemd.entity.base_entity import BaseEntity
 from gemd.entity.link_by_uid import LinkByUID
 from gemd.json import GEMDJson
-from gemd.util import recursive_foreach
+from gemd.util import recursive_foreach, writable_sort_order
 
 from citrine._rest.collection import Collection
 from citrine._serialization import properties
@@ -27,7 +28,7 @@ from citrine.resources.response import Response
 CITRINE_SCOPE = 'id'
 
 
-class DataConcepts(PolymorphicSerializable['DataConcepts'], DictSerializable, ABC):
+class DataConcepts(DictSerializable, PolymorphicSerializable['DataConcepts'], ABC):
     """
     An abstract data concepts object.
 
@@ -482,24 +483,47 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         json = GEMDJson(scope=scope)
         [json.dumps(x) for x in models]  # This apparent no-op populates uids
 
-        objects = [replace_objects_with_links(scrub_none(model.dump())) for model in models]
+        def _batch_by_type(objects, batch_size):
+            batches = list()
+            by_type = defaultdict(list)
+            for obj in objects:
+                by_type[obj.typ].append(obj)
+            typ_groups = sorted(list(by_type.values()), key=lambda x: writable_sort_order(x[0]))
+            for typ_group in typ_groups:
+                num_batches = len(typ_group) // batch_size
+                for batch_num in range(num_batches + 1):
+                    batch = typ_group[batch_num * batch_size: (batch_num + 1) * batch_size]
+                    batches.append(batch)
 
+            return batches
+
+        def _batch_by_dependency(objects, batch_size):
+            return [objects]
+
+        resources = list()
         batch_size = 50
-        resources = []
-        num_batches = 1 + (len(models) - 1) // batch_size
-        for batch_num in range(num_batches):
-            batch = objects[batch_num * batch_size: (batch_num + 1) * batch_size]
+        if dry_run:
+            batcher = _batch_by_dependency
+        else:
+            batcher = _batch_by_type
+
+        for batch in batcher(models, batch_size):
+            objects = [replace_objects_with_links(scrub_none(model.dump())) for model in batch]
             response_data = self.session.put_resource(
                 path + '/batch',
-                json={'objects': batch},
+                json={'objects': objects},
                 params=params
             )
             registered = [self.build(obj) for obj in response_data['objects']]
+
+            # Platform may add a CITRINE_SCOPE uid
+            if not dry_run:
+                for prewrite, postwrite in zip(batch, registered):
+                    prewrite.uids = postwrite.uids
             resources.extend(registered)
+        resources = models
 
-        # Strip temp uids
-        recursive_foreach(models + resources, lambda x: x.uids.pop(temp_scope, None))
-
+        recursive_foreach(list(models), lambda x: x.uids.pop(temp_scope, None))  # Strip temp uids
         return resources
 
     def update(self, model: ResourceType) -> ResourceType:
