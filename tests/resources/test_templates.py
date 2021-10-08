@@ -70,3 +70,117 @@ def test_automatic_async_update():
     # Last call should get the resource
     assert session.last_call.method == "GET"
     assert session.last_call.path == f"projects/{collection.project_id}/datasets/{collection.dataset_id}/property-templates/id/{this_id}"
+
+
+def test_process_template_equals():
+    """Test basic equality.  Complex relationships are tested in test_material_run.test_deep_equals()."""
+    from citrine.resources.process_template import ProcessTemplate as CitrineProcessTemplate
+    from gemd.entity.template import ProcessTemplate as GEMDProcessTemplate
+
+    gemd_obj = GEMDProcessTemplate(
+        name="My Name",
+        tags=["tag!"]
+    )
+    citrine_obj = CitrineProcessTemplate(
+        name="My Name",
+        tags=["tag!"]
+    )
+    assert gemd_obj == citrine_obj, "GEMD/Citrine equivalence"
+    citrine_obj.name = "Something else"
+    assert gemd_obj != citrine_obj, "GEMD/Citrine detects difference"
+
+
+def test_material_template_equals():
+    """Test basic equality.  Complex relationships are tested in test_material_run.test_deep_equals()."""
+    from citrine.resources.material_template import MaterialTemplate as CitrineMaterialTemplate
+    from gemd.entity.template import MaterialTemplate as GEMDMaterialTemplate
+
+    gemd_obj = GEMDMaterialTemplate(
+        name="My Name",
+        tags=["tag!"]
+    )
+    citrine_obj = CitrineMaterialTemplate(
+        name="My Name",
+        tags=["tag!"]
+    )
+    assert gemd_obj == citrine_obj, "GEMD/Citrine equivalence"
+    citrine_obj.name = "Something else"
+    assert gemd_obj != citrine_obj, "GEMD/Citrine detects difference"
+
+
+def test_measurement_template_equals():
+    """Test basic equality.  Complex relationships are tested in test_material_run.test_deep_equals()."""
+    from citrine.resources.measurement_template import MeasurementTemplate as CitrineMeasurementTemplate
+    from gemd.entity.template import MeasurementTemplate as GEMDMeasurementTemplate
+
+    gemd_obj = GEMDMeasurementTemplate(
+        name="My Name",
+        tags=["tag!"]
+    )
+    citrine_obj = CitrineMeasurementTemplate(
+        name="My Name",
+        tags=["tag!"]
+    )
+    assert gemd_obj == citrine_obj, "GEMD/Citrine equivalence"
+    citrine_obj.name = "Something else"
+    assert gemd_obj != citrine_obj, "GEMD/Citrine detects difference"
+
+
+def test_condition_template_equals():
+    """Test basic equality.  Complex relationships are tested in test_material_run.test_deep_equals()."""
+    from citrine.resources.condition_template import ConditionTemplate as CitrineConditionTemplate
+    from gemd.entity.template import ConditionTemplate as GEMDConditionTemplate
+
+    gemd_obj = GEMDConditionTemplate(
+        name="My Name",
+        bounds=CategoricalBounds(categories=["1"]),
+        tags=["tag!"]
+    )
+    citrine_obj = CitrineConditionTemplate(
+        name="My Name",
+        bounds=CategoricalBounds(categories=["1"]),
+        tags=["tag!"]
+    )
+    assert gemd_obj == citrine_obj, "GEMD/Citrine equivalence"
+    citrine_obj.name = "Something else"
+    assert gemd_obj != citrine_obj, "GEMD/Citrine detects difference"
+
+
+def test_parameter_template_equals():
+    """Test basic equality.  Complex relationships are tested in test_material_run.test_deep_equals()."""
+    from citrine.resources.parameter_template import ParameterTemplate as CitrineParameterTemplate
+    from gemd.entity.template import ParameterTemplate as GEMDParameterTemplate
+
+    gemd_obj = GEMDParameterTemplate(
+        name="My Name",
+        bounds=CategoricalBounds(categories=["1"]),
+        tags=["tag!"]
+    )
+    citrine_obj = CitrineParameterTemplate(
+        name="My Name",
+        bounds=CategoricalBounds(categories=["1"]),
+        tags=["tag!"]
+    )
+    assert gemd_obj == citrine_obj, "GEMD/Citrine equivalence"
+    citrine_obj.name = "Something else"
+    assert gemd_obj != citrine_obj, "GEMD/Citrine detects difference"
+
+
+def test_property_template_equals():
+    """Test basic equality.  Complex relationships are tested in test_material_run.test_deep_equals()."""
+    from citrine.resources.property_template import PropertyTemplate as CitrinePropertyTemplate
+    from gemd.entity.template import PropertyTemplate as GEMDPropertyTemplate
+
+    gemd_obj = GEMDPropertyTemplate(
+        name="My Name",
+        bounds=CategoricalBounds(categories=["1"]),
+        tags=["tag!"]
+    )
+    citrine_obj = CitrinePropertyTemplate(
+        name="My Name",
+        bounds=CategoricalBounds(categories=["1"]),
+        tags=["tag!"]
+    )
+    assert gemd_obj == citrine_obj, "GEMD/Citrine equivalence"
+    citrine_obj.name = "Something else"
+    assert gemd_obj != citrine_obj, "GEMD/Citrine detects difference"
