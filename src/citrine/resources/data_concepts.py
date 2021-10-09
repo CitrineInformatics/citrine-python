@@ -484,6 +484,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         [json.dumps(x) for x in models]  # This apparent no-op populates uids
 
         def _batch_by_type(objects, batch_size):
+            """Collect object batches by type, following an order that will satisfy prereqs."""
             batches = list()
             by_type = defaultdict(list)
             for obj in objects:
@@ -498,7 +499,115 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
             return batches
 
         def _batch_by_dependency(objects, batch_size):
-            return [objects]
+            """Collect object batches that are internally consistent for dry_run object tests."""
+            from gemd.entity.object.has_parameters import HasParameters
+            from gemd.entity.object.has_conditions import HasConditions
+            from gemd.entity.object.has_properties import HasProperties
+            from gemd.entity.object.has_template import HasTemplate
+            from gemd.entity.template.has_parameter_templates import HasParameterTemplates
+            from gemd.entity.template.has_condition_templates import HasConditionTemplates
+            from gemd.entity.template.has_property_templates import HasPropertyTemplates
+
+            from gemd.entity.object import IngredientRun, MaterialRun, MeasurementRun, ProcessRun
+            from gemd.entity.object import IngredientSpec, MaterialSpec  # no ProcessSpec
+
+            # Collect shallow dependences, UID references, and type-based clusters
+            depends = defaultdict(list)
+            derefs = dict()
+            by_type = defaultdict(list)
+            for obj in objects:
+                derefs[obj] = obj  # no-op to skip conditional later
+                # Index LinkByUIDs
+                for this_scope in obj.uids:
+                    derefs[LinkByUID.from_entity(obj, scope=this_scope)] = obj
+
+                # Index attribute templates from attributes
+                if isinstance(obj, HasParameters):
+                    for attr in obj.parameters:
+                        if attr.template is not None:
+                            depends[obj].append(attr.template)
+                if isinstance(obj, HasConditions):
+                    for attr in obj.conditions:
+                        if attr.template is not None:
+                            depends[obj].append(attr.template)
+                if isinstance(obj, HasProperties):
+                    for attr in obj.properties:
+                        if attr.template is not None:
+                            depends[obj].append(attr.template)
+                if isinstance(obj, MaterialSpec):
+                    for attr in obj.properties:
+                        if attr.property.template is not None:
+                            depends[obj].append(attr.property.template)
+                        for condition in attr.conditions:
+                            if condition.template is not None:
+                                depends[obj].append(condition.template)
+
+                # Index direct attribute template dependencies
+                if isinstance(obj, HasPropertyTemplates):
+                    for attr in obj.properties:
+                        depends[obj].append(attr[0])
+                if isinstance(obj, HasConditionTemplates):
+                    for attr in obj.conditions:
+                        depends[obj].append(attr[0])
+                if isinstance(obj, HasParameterTemplates):
+                    for attr in obj.parameters:
+                        depends[obj].append(attr[0])
+
+                if isinstance(obj, HasTemplate):
+                    if obj.template is not None:
+                        depends[obj].append(obj.template)
+                if isinstance(obj, (IngredientRun, MaterialRun, MeasurementRun, ProcessRun)):
+                    if obj.spec is not None:
+                        depends[obj].append(obj.spec)
+                if isinstance(obj, (IngredientRun, IngredientSpec, MeasurementRun)):
+                    if obj.material is not None:
+                        depends[obj].append(obj.material)
+                if isinstance(obj, (IngredientRun, IngredientSpec, MaterialRun, MaterialSpec)):
+                    if obj.process is not None:
+                        depends[obj].append(obj.process)
+
+                by_type[obj.typ].append(obj)
+
+            # Deep dependencies w/ objects only, build inverse index
+            # This takes a second loop because we need to build up all derefs first
+            supported_by = defaultdict(list)
+            type_groups = sorted(list(by_type.values()), key=lambda x: writable_sort_order(x[0]))
+            for type_group in type_groups:
+                for obj in type_group:
+                    local_set = {derefs[x] for x in depends[obj] if x in derefs}
+                    full_set = set(local_set)
+                    for subobj in local_set:
+                        full_set.update(depends[subobj])
+                    depends[obj] = sorted(list(full_set),
+                                          key=lambda x: writable_sort_order(x))
+                    for dependant in reversed(depends[obj]):
+                        supported_by[dependant].append(obj)
+
+            # Build self-consistent clusters
+            queued = set()
+            clusters = list()
+            for type_group in reversed(type_groups):
+                for obj in type_group:
+                    if obj in queued:
+                        continue  # It's already in a cluster
+                    to_be_checked = depends[obj]
+                    cluster = {obj} | set(depends[obj])
+                    while to_be_checked:
+                        parent = to_be_checked.pop()
+                        for candidate in reversed(supported_by[parent]):
+                            if candidate in queued or candidate in cluster:
+                                continue  # It's already in a cluster
+                            candidate_set = {candidate} | set(depends[candidate])
+                            if len(cluster | candidate_set) > batch_size:
+                                continue  # It wouldn't fit
+
+                            to_be_checked.extend(candidate_set - cluster)
+                            cluster |= candidate_set
+
+                    clusters.append(cluster)
+                    queued.update(cluster)
+
+            return clusters
 
         resources = list()
         batch_size = 50
@@ -506,8 +615,8 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
             batcher = _batch_by_dependency
         else:
             batcher = _batch_by_type
-
         for batch in batcher(models, batch_size):
+            print('Here')
             objects = [replace_objects_with_links(scrub_none(model.dump())) for model in batch]
             response_data = self.session.put_resource(
                 path + '/batch',

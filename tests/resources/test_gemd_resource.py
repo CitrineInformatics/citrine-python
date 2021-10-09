@@ -208,6 +208,38 @@ def test_register_all(gemd_collection):
             assert pair in seen_ids  # registered items have the same ids
 
 
+def test_register_all_dry_run(gemd_collection):
+    """Verify expected behavior around batching.  Note we cannot actually test dependencies."""
+    from gemd.demo.cake import make_cake_templates, make_cake_spec, make_cake, change_scope
+    from gemd.util import flatten
+
+    change_scope("pr-688")
+    tmpl = make_cake_templates()
+    spec = make_cake_spec(tmpl=tmpl)
+    lst = [make_cake(tmpl=tmpl, cake_spec=spec) for _ in range(1)]
+
+    all_of_em = flatten(lst)
+
+    objects = []
+    templates = []
+    for x in all_of_em:
+        if "pr-688-template" in x.uids:
+            if x not in templates:
+                templates.append(x)
+        else:
+            if x not in objects:
+                objects.append(x)
+
+    result_all = gemd_collection.register_all(all_of_em, dry_run=True)
+    for x in all_of_em:
+        assert x in result_all
+    result_obj = gemd_collection.register_all(objects, dry_run=True)
+    for x in templates:
+        assert x not in result_obj
+    for x in objects:
+        assert x in result_obj
+
+
 def test_register_all_object_update(gemd_collection):
     """Check that uids of gemd-python objects get updated"""
     process = GemdProcessSpec("process")
