@@ -616,7 +616,6 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         else:
             batcher = _batch_by_type
         for batch in batcher(models, batch_size):
-            print('Here')
             objects = [replace_objects_with_links(scrub_none(model.dump())) for model in batch]
             response_data = self.session.put_resource(
                 path + '/batch',
