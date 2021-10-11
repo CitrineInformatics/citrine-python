@@ -88,8 +88,8 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
             The data to configure the predictor to model.
         pattern: str
             The predictor pattern to use, either "PLAIN", "FORMULATION", or "INFER".
-            The "INFER" pattern auto-detects whether the `DataSource` is formulations data or not.
-            If it is, then a formulation predictor is created.
+            The "INFER" pattern auto-detects whether the `DataSource` contains formulations data or not.
+            If it does, then a formulation predictor is created.
             If not, then a plain predictor is created.
 
         Returns
