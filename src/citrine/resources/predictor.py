@@ -87,7 +87,7 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
         training_data: DataSource
             The data to configure the predictor to model.
         pattern: str
-            The predictor pattern to use, either "PLAIN" or "FORMULATION"
+            The predictor pattern to use, either "PLAIN", "FORMULATION", or "INFER"
 
         Returns
         -------
@@ -95,8 +95,8 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
             Automatically configured predictor for the training data
 
         """
-        if pattern not in {"FORMULATION", "PLAIN"}:
-            msg = "Called with pattern: {}.  Expected 'FORMULATION' or 'PLAIN'.".format(pattern)
+        if pattern not in {"FORMULATION", "PLAIN", "INFER"}:
+            msg = "Called with pattern: {}.  Expected 'FORMULATION', 'PLAIN' or 'INFER'.".format(pattern)
             raise ValueError(msg)
         path = f'projects/{self.project_id}/predictors/default-predictor'
         body = {"data_source": training_data.dump(), "pattern": pattern}
