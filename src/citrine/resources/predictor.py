@@ -104,3 +104,11 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
         if 'instance' in data:
             data['config'] = data.pop('instance')
         return self.build(data)
+
+    def get_summary(self):
+        """Gets a single report keyed on the predictor_id.
+        """
+        path = format_escaped_url("predictors/{}/summary", self.uid)
+        summary = self.session.get_resource(path)
+        self.summary = summary
+        return summary
