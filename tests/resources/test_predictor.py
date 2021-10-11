@@ -11,7 +11,8 @@ from citrine.informatics.predictors import (
     GraphPredictor,
     SimpleMLPredictor,
     ExpressionPredictor,
-    AutoMLPredictor
+    AutoMLPredictor,
+    LabelFractionsPredictor
 )
 from citrine.resources.predictor import PredictorCollection
 from tests.utils.session import FakeSession, FakeCall
@@ -303,7 +304,7 @@ def test_returned_inferred_plain_predictor(valid_graph_predictor_data):
 
 def test_returned_plain_predictor(valid_simple_ml_predictor_data):
     """
-    Check that auto_configure returns a SimpleMLPredictor when DataSource contains no FormulationDescriptor
+    Check that auto_configure returns a SimpleMLPredictor when the data contains no FormulationDescriptor
     and pattern=PLAIN.
     """
     # Given
@@ -318,3 +319,21 @@ def test_returned_plain_predictor(valid_simple_ml_predictor_data):
     # Then
     assert result.name == valid_simple_ml_predictor_data["display_name"]
     assert isinstance(result, SimpleMLPredictor)
+
+def test_returned_formulation_predictor(valid_label_fractions_predictor_data):
+    """
+    Check that auto_configure returns a LabelFractionsPredictor when the data contains a FormulationDescriptor
+    and pattern=FORMULATION.
+    """
+    # Given
+    session = FakeSession()
+    response = deepcopy(valid_label_fractions_predictor_data)
+    session.set_response(response)
+    pc = PredictorCollection(uuid.uuid4(), session)
+
+    # When
+    result = pc.auto_configure(training_data=GemTableDataSource(table_id=uuid.uuid4(), table_version=0), pattern="FORMULATION")
+
+    # Then
+    assert result.name == valid_label_fractions_predictor_data["display_name"]
+    assert isinstance(result, LabelFractionsPredictor)
