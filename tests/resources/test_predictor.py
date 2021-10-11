@@ -278,7 +278,7 @@ def test_unexpected_pattern():
         pc.auto_configure(training_data=GemTableDataSource(table_id=uuid.uuid4(), table_version=0), pattern="yogurt")
 
 
-def test_returned_inferred_plain_predictor(valid_graph_predictor_data):
+def test_returned_predictor(valid_graph_predictor_data):
     """Check that auto_configure works on the happy path."""
     # Given
     session = FakeSession()
@@ -292,7 +292,7 @@ def test_returned_inferred_plain_predictor(valid_graph_predictor_data):
     pc = PredictorCollection(uuid.uuid4(), session)
 
     # When
-    result = pc.auto_configure(training_data=GemTableDataSource(table_id=uuid.uuid4(), table_version=0), pattern="INFER")
+    result = pc.auto_configure(training_data=GemTableDataSource(table_id=uuid.uuid4(), table_version=0), pattern="PLAIN")
 
     # Then the response is parsed in a predictor
     assert result.name == valid_graph_predictor_data["display_name"]
@@ -301,39 +301,3 @@ def test_returned_inferred_plain_predictor(valid_graph_predictor_data):
     assert len(result.predictors) == 2
     assert isinstance(result.predictors[0], uuid.UUID)
     assert isinstance(result.predictors[1], ExpressionPredictor)
-
-def test_returned_plain_predictor(valid_simple_ml_predictor_data):
-    """
-    Check that auto_configure returns a SimpleMLPredictor when the data contains no FormulationDescriptor
-    and pattern=PLAIN.
-    """
-    # Given
-    session = FakeSession()
-    response = deepcopy(valid_simple_ml_predictor_data)
-    session.set_response(response)
-    pc = PredictorCollection(uuid.uuid4(), session)
-
-    # When
-    result = pc.auto_configure(training_data=GemTableDataSource(table_id=uuid.uuid4(), table_version=0), pattern="PLAIN")
-
-    # Then
-    assert result.name == valid_simple_ml_predictor_data["display_name"]
-    assert isinstance(result, SimpleMLPredictor)
-
-def test_returned_formulation_predictor(valid_label_fractions_predictor_data):
-    """
-    Check that auto_configure returns a LabelFractionsPredictor when the data contains a FormulationDescriptor
-    and pattern=FORMULATION.
-    """
-    # Given
-    session = FakeSession()
-    response = deepcopy(valid_label_fractions_predictor_data)
-    session.set_response(response)
-    pc = PredictorCollection(uuid.uuid4(), session)
-
-    # When
-    result = pc.auto_configure(training_data=GemTableDataSource(table_id=uuid.uuid4(), table_version=0), pattern="FORMULATION")
-
-    # Then
-    assert result.name == valid_label_fractions_predictor_data["display_name"]
-    assert isinstance(result, LabelFractionsPredictor)
