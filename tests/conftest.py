@@ -800,3 +800,15 @@ def design_workflow_dict(generic_entity):
         "predictor_id": str(uuid.uuid4()),
     })
     return ret
+
+@pytest.fixture
+def example_predictor_summary():
+    return {
+      "name": "ML Predictor",
+      "description": "Predicts z from input x and latent variable y",
+      "status": "CREATED",
+      "predictors_count": 0,
+      "created_by": "8119f279-db44-4b8c-be42-7bfb6acf2a5c",
+      "create_time": 1606761324000,
+      "update_time": 1609353324000
+    }
