@@ -89,7 +89,8 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
         pattern: str
             The predictor pattern to use, either "PLAIN", "FORMULATION", or "INFER".
             The "INFER" pattern auto-detects whether the `DataSource` is formulations data or not.
-            If it is, then a formulation predictor is created. If not, then a plain predictor is created.
+            If it is, then a formulation predictor is created.
+            If not, then a plain predictor is created.
 
         Returns
         -------
@@ -98,7 +99,8 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
 
         """
         if pattern not in {"FORMULATION", "PLAIN", "INFER"}:
-            msg = "Called with pattern: {}.  Expected 'FORMULATION', 'PLAIN' or 'INFER'.".format(pattern)
+            msg = "Called with pattern: {}. Expected 'FORMULATION', 'PLAIN' or 'INFER'."\
+                .format(pattern)
             raise ValueError(msg)
         path = f'projects/{self.project_id}/predictors/default-predictor'
         body = {"data_source": training_data.dump(), "pattern": pattern}
