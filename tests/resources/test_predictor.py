@@ -277,7 +277,7 @@ def test_unexpected_pattern():
         pc.auto_configure(training_data=GemTableDataSource(table_id=uuid.uuid4(), table_version=0), pattern="yogurt")
 
 
-def test_returned_predictor(valid_graph_predictor_data):
+def test_returned_inferred_plain_predictor(valid_graph_predictor_data):
     """Check that auto_configure works on the happy path."""
     # Given
     session = FakeSession()
@@ -301,27 +301,20 @@ def test_returned_predictor(valid_graph_predictor_data):
     assert isinstance(result.predictors[0], uuid.UUID)
     assert isinstance(result.predictors[1], ExpressionPredictor)
 
-def test_returned_predictor(valid_graph_predictor_data):
-    """Check that auto_configure still returns the expected GraphPredictor when we override pattern to PLAIN."""
+def test_returned_plain_predictor(valid_simple_ml_predictor_data):
+    """
+    Check that auto_configure returns a SimpleMLPredictor when DataSource contains no FormulationDescriptor
+    and pattern=PLAIN.
+    """
     # Given
     session = FakeSession()
-
-    # Setup a response that includes instance instead of config
-    response = deepcopy(valid_graph_predictor_data)
-    response["instance"] = response["config"]
-    del response["config"]
-
+    response = deepcopy(valid_simple_ml_predictor_data)
     session.set_response(response)
     pc = PredictorCollection(uuid.uuid4(), session)
 
     # When
     result = pc.auto_configure(training_data=GemTableDataSource(table_id=uuid.uuid4(), table_version=0), pattern="PLAIN")
 
-    # Then the response is parsed in a predictor
-    assert result.name == valid_graph_predictor_data["display_name"]
-    assert isinstance(result, GraphPredictor)
-    # including nested predictors
-    assert len(result.predictors) == 2
-    assert isinstance(result.predictors[0], uuid.UUID)
-    assert isinstance(result.predictors[1], ExpressionPredictor)
-
+    # Then
+    assert result.name == valid_simple_ml_predictor_data["display_name"]
+    assert isinstance(result, SimpleMLPredictor)
