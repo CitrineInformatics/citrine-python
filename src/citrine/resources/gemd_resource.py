@@ -74,7 +74,11 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
         """Register a GEMD object to the appropriate collection."""
         return self._collection_for(model).register(model, dry_run=dry_run)
 
-    def register_all(self, models: List[DataConcepts], *, dry_run=False) -> List[DataConcepts]:
+    def register_all(self,
+                     models: List[DataConcepts],
+                     *,
+                     dry_run=False,
+                     status_bar=False) -> List[DataConcepts]:
         """
         Register multiple GEMD objects to each of their appropriate collections.
 
@@ -93,6 +97,10 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
             Whether to actually register the item or run a dry run of the register operation.
             Dry run is intended to be used for validation. Default: false
 
+        status_bar: bool
+            Whether to display a status bar using the tqdm module to track progress in
+            registration. Requires installing the optional tqdm module. Default: false
+
         Returns
         -------
         List[DataConcepts]
@@ -100,7 +108,7 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
 
         """
         # Endpoints are polymorphic now, so it doesn't matter which we hit
-        return self._collection_for(list(models)[0]).register_all(models, dry_run=dry_run)
+        return self._collection_for(list(models)[0]).register_all(models, dry_run=dry_run, status_bar=status_bar)
 
     def async_update(self, model: DataConcepts, *,
                      dry_run: bool = False,

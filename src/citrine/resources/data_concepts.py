@@ -448,7 +448,11 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         data = self.session.post_resource(path, dumped_data, params=params)
         return self.build(data)
 
-    def register_all(self, models: List[ResourceType], *, dry_run=False) -> List[ResourceType]:
+    def register_all(self,
+                     models: List[ResourceType],
+                     *,
+                     dry_run=False,
+                     status_bar=False) -> List[ResourceType]:
         """
         [ALPHA] Create or update each model in models.
 
@@ -462,9 +466,14 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         ----------
         models: List[ResourceType]
             The objects to be written.
+
         dry_run: bool
             Whether to actually register the objects or run a dry run of the register operation.
             Dry run is intended to be used for validation. Default: false
+
+        status_bar: bool
+            Whether to display a status bar using the tqdm module to track progress in
+            registration. Requires installing the optional tqdm module. Default: false
 
         Returns
         -------
@@ -615,7 +624,18 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
             batcher = _batch_by_dependency
         else:
             batcher = _batch_by_type
-        for batch in batcher(models, batch_size):
+
+        if status_bar:
+            try:
+                from tqdm.auto import tqdm
+            except ImportError:  # pragma: no cover
+                raise ValueError('Display of a status bar requires '
+                                 'installation of the tqdm module')
+            iterator = tqdm(batcher(models, batch_size), leave=False)
+        else:
+            iterator = batcher(models, batch_size)
+
+        for batch in iterator:
             objects = [replace_objects_with_links(scrub_none(model.dump())) for model in batch]
             response_data = self.session.put_resource(
                 path + '/batch',

@@ -355,7 +355,7 @@ def test_gemd_posts(dataset):
             assert pair not in seen_ids  # All ids are different
             seen_ids.add(pair)
 
-    after = dataset.register_all(before)
+    after = dataset.register_all(before, status_bar=True)  # Exercise the status_bar path
     assert len(before) == len(after)
     for obj in after:
         for pair in obj.uids.items():
