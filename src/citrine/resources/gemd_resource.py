@@ -108,7 +108,8 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
 
         """
         # Endpoints are polymorphic now, so it doesn't matter which we hit
-        return self._collection_for(list(models)[0]).register_all(models, dry_run=dry_run, status_bar=status_bar)
+        collection = self._collection_for(list(models)[0])
+        return collection.register_all(models, dry_run=dry_run, status_bar=status_bar)
 
     def async_update(self, model: DataConcepts, *,
                      dry_run: bool = False,
