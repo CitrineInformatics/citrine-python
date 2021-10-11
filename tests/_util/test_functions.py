@@ -101,6 +101,10 @@ def test_shadow_classes_in_module():
     assert issubclass(copied_class, source_mod.ExampleClass)
     assert issubclass(source_mod.ExampleClass, copied_class)
 
+    # Reset target_mod status
+    for attr in dir(target_mod):
+        delattr(target_mod, attr)
+
 
 def test_migrate_deprecated_argument():
     with pytest.raises(ValueError):
