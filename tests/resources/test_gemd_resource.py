@@ -146,51 +146,74 @@ def test_register_all(gemd_collection):
     foo_process_template = ProcessTemplate("foo",
                                            conditions=[[condition_template, bounds]],
                                            parameters=[[parameter_template, bounds]])
+
     foo_process_spec = ProcessSpec("foo", template=foo_process_template)
     foo_process_run = ProcessRun("foo", spec=foo_process_spec)
     foo_material_template = MaterialTemplate("foo", properties=[[property_template, bounds]])
     foo_material_spec = MaterialSpec("foo", template=foo_material_template, process=foo_process_spec)
     foo_material_run = MaterialRun("foo", spec=foo_material_spec, process=foo_process_run)
-    baz_template = MaterialTemplate("baz")
     foo_measurement_template = MeasurementTemplate("foo",
                                                    conditions=[[condition_template, bounds]],
                                                    parameters=[[parameter_template, bounds]],
                                                    properties=[[property_template, bounds]])
     foo_measurement_spec = MeasurementSpec("foo", template=foo_measurement_template)
     foo_measurement_run = MeasurementRun("foo", spec=foo_measurement_spec, material=foo_material_run)
-    foo_ingredient_spec = IngredientSpec("foo", material=foo_material_spec, process=foo_process_spec)
-    foo_ingredient_run = IngredientRun(spec=foo_ingredient_spec, material=foo_material_run, process=foo_process_run)
-    baz_run = MeasurementRun("baz")
 
-    # worst order possible
-    expected = {
-        foo_ingredient_run: IngredientRunCollection,
-        foo_ingredient_spec: IngredientSpecCollection,
-        foo_measurement_run: MeasurementRunCollection,
-        foo_measurement_spec: MeasurementSpecCollection,
-        foo_measurement_template: MeasurementTemplateCollection,
-        foo_material_run: MaterialRunCollection,
-        foo_material_spec: MaterialSpecCollection,
-        foo_material_template: MaterialTemplateCollection,
-        foo_process_run: ProcessRunCollection,
-        foo_process_spec: ProcessSpecCollection,
-        foo_process_template: ProcessTemplateCollection,
-        baz_template: MaterialTemplateCollection,
-        baz_run: MeasurementRunCollection,
-        property_template: PropertyTemplateCollection,
-        parameter_template: ParameterTemplateCollection,
-        condition_template: ConditionTemplateCollection
-    }
+    baz_process_template = ProcessTemplate("baz",
+                                           conditions=[[condition_template, bounds]],
+                                           parameters=[[parameter_template, bounds]])
+    baz_process_spec = ProcessSpec("baz", template=baz_process_template)
+    baz_process_run = ProcessRun("baz", spec=baz_process_spec)
+    baz_material_template = MaterialTemplate("baz", properties=[[property_template, bounds]])
+    baz_material_spec = MaterialSpec("baz", template=baz_material_template, process=baz_process_spec)
+    baz_material_run = MaterialRun("baz", spec=baz_material_spec, process=baz_process_run)
+    baz_measurement_template = MeasurementTemplate("baz",
+                                                   conditions=[[condition_template, bounds]],
+                                                   parameters=[[parameter_template, bounds]],
+                                                   properties=[[property_template, bounds]])
+    baz_measurement_spec = MeasurementSpec("baz", template=baz_measurement_template)
+    baz_measurement_run = MeasurementRun("baz", spec=baz_measurement_spec, material=baz_material_run)
+
+    foo_baz_ingredient_spec = IngredientSpec("foo", material=foo_material_spec, process=baz_process_spec)
+    foo_baz_ingredient_run = IngredientRun(spec=foo_baz_ingredient_spec, material=foo_material_run, process=baz_process_run)
+
+    expected = [
+        foo_baz_ingredient_run,
+        foo_baz_ingredient_spec,
+        foo_measurement_run,
+        foo_measurement_spec,
+        foo_measurement_template,
+        foo_material_run,
+        foo_material_spec,
+        foo_material_template,
+        foo_process_run,
+        foo_process_spec,
+        foo_process_template,
+
+        baz_measurement_run,
+        baz_measurement_spec,
+        baz_measurement_template,
+        baz_material_run,
+        baz_material_spec,
+        baz_material_template,
+        baz_process_run,
+        baz_process_spec,
+        baz_process_template,
+
+        property_template,
+        parameter_template,
+        condition_template
+    ]
 
     for obj in expected:
         assert len(obj.uids) == 0  # All should be without ids
 
     # dry_run should pass for all objects and shouldn't mutate the objects
-    gemd_collection.register_all(expected.keys(), dry_run=True)
+    gemd_collection.register_all(expected, dry_run=True)
 
     for obj in expected:
         assert len(obj.uids) == 0  # All should be without ids
-    registered = gemd_collection.register_all(expected.keys())
+    registered = gemd_collection.register_all(expected)
     assert len(registered) == len(expected)
     for x in expected:
         assert x in registered

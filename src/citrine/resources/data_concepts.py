@@ -624,12 +624,12 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
             )
             registered = [self.build(obj) for obj in response_data['objects']]
 
-            # Platform may add a CITRINE_SCOPE uid
+            # Platform may add a CITRINE_SCOPE uid and citr_auto tags
             if not dry_run:
                 for prewrite, postwrite in zip(batch, registered):
                     prewrite.uids = postwrite.uids
+                    prewrite.tags = postwrite.tags
             resources.extend(registered)
-        resources = models
 
         recursive_foreach(list(models), lambda x: x.uids.pop(temp_scope, None))  # Strip temp uids
         return resources
