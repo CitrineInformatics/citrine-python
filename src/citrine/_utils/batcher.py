@@ -10,6 +10,7 @@ from gemd.entity.link_by_uid import LinkByUID
 
 class Batcher(ABC):
     """Base class for Data Concepts batching routines."""
+
     @abstractmethod
     def batch(self, objects: List[DataConcepts], batch_size) -> List[List[DataConcepts]]:
         """Collect a list of DataConcepts into batches according to some batching algorithm."""
@@ -26,6 +27,8 @@ class Batcher(ABC):
 
 
 class BatchByType(Batcher):
+    """Batching by object type."""
+
     def batch(self, objects, batch_size):
         """Collect object batches by type, following an order that will satisfy prereqs."""
         batches = list()
@@ -43,6 +46,8 @@ class BatchByType(Batcher):
 
 
 class BatchByDependency(Batcher):
+    """Batching by clusters where nothing references anything outside the cluster."""
+
     def batch(self, objects, batch_size):
         """Collect object batches that are internally consistent for dry_run object tests."""
         from gemd.entity.object.has_parameters import HasParameters
