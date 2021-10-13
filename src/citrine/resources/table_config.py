@@ -278,7 +278,7 @@ class TableConfig(Resource["TableConfig"]):
         Parameters
         ------------
         process_templates: List[LinkByUID]
-            registered process templates from which to pull allowed ingredeintes and at which to
+            registered process templates from which to pull allowed ingredients and at which to
             halt searching
         project: Project
             a project that has access to the process template
