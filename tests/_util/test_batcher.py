@@ -108,3 +108,16 @@ def test_by_dependency():
 
     with pytest.raises(ValueError):
         batcher.batch(flatten(cake), batch_size=1)  # Errors out if impossible
+
+
+def test__all_dependencies():
+    cake = make_cake()
+
+    msr = cake.measurements[0]
+    dependencies = Batcher.by_dependency()._all_dependencies(msr)
+    assert msr not in dependencies
+    assert cake in dependencies
+    assert cake.process not in dependencies
+    assert msr.spec in dependencies
+    assert msr.template not in dependencies
+    assert msr.properties[0].template in dependencies
