@@ -18,22 +18,11 @@ from citrine.informatics.workflows import DesignWorkflow, PredictorEvaluationWor
 
 from citrine.resources.gemtables import GemTable
 from citrine.resources.material_run import MaterialRun
-from citrine.resources.predictor import Predictor
+from citrine.resources.predictor import Predictor, AutoConfigureMode
 from citrine.resources.project import Project
 from citrine.resources.table_config import TableConfig, TableBuildAlgorithm
 
 from citrine.builders.scores import create_default_score
-
-
-class AutoConfigureMode(BaseEnumeration):
-    """[ALPHA] The format to use in building auto-configured assets.
-
-    * PLAIN corresponds to a single-row GEM table and plain predictor
-    * FORMULATION corresponds to a multi-row GEM table and formulations predictor
-    """
-
-    PLAIN = 'PLAIN'
-    FORMULATION = 'FORMULATION'
 
 
 class AutoConfigureStatus(BaseEnumeration):
