@@ -3,7 +3,7 @@ from uuid import uuid4
 import pytest
 import mock
 
-from citrine.builders.auto_configure import AutoConfigureWorkflow, AutoConfigureMode
+from citrine.builders.auto_configure import AutoConfigureWorkflow
 
 from citrine.informatics.design_spaces import EnumeratedDesignSpace
 from citrine.informatics.predictors import GraphPredictor
@@ -14,6 +14,7 @@ from citrine.informatics.scores import LIScore
 from citrine._session import Session
 from citrine.resources.gemtables import GemTable
 from citrine.resources.material_run import MaterialRun
+from citrine.resources.predictor import AutoConfigureMode
 from citrine.resources.project import Project
 from citrine.resources.table_config import TableConfig
 
@@ -144,7 +145,7 @@ def test_auto_config_update_status(project):
     config_name = "Test"
     resources = default_resources(config_name)
     table_config = resources["table_config"]
-    predictor= resources["predictor"]
+    predictor = resources["predictor"]
     pew = resources["pew"]
     design_space = resources["design_space"]
     design_workflow = resources["design_workflow"]
@@ -457,4 +458,3 @@ def test_auto_configure_full_run(project):
         )
         assert len(auto_config.assets) == 6
         assert auto_config.status == "DESIGN WORKFLOW CREATED"
-

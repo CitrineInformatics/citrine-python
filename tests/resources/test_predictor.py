@@ -11,9 +11,10 @@ from citrine.informatics.predictors import (
     GraphPredictor,
     SimpleMLPredictor,
     ExpressionPredictor,
-    AutoMLPredictor
+    AutoMLPredictor,
+    LabelFractionsPredictor
 )
-from citrine.resources.predictor import PredictorCollection
+from citrine.resources.predictor import PredictorCollection, AutoConfigureMode
 from tests.utils.session import FakeSession, FakeCall
 from tests.utils.session import FakeRequestResponse
 
@@ -277,6 +278,26 @@ def test_unexpected_pattern():
         pc.auto_configure(training_data=GemTableDataSource(table_id=uuid.uuid4(), table_version=0), pattern="yogurt")
 
 
+def test_auto_configure_mode_pattern(valid_graph_predictor_data):
+    """Check that using AutoConfigureMode doesn't result in an error"""
+    # Given
+
+    session = FakeSession()
+    # Setup a response that includes instance instead of config
+    response = deepcopy(valid_graph_predictor_data)
+    response["instance"] = response["config"]
+    del response["config"]
+    session.set_response(response)
+
+    pc = PredictorCollection(uuid.uuid4(), session)
+
+    # When
+    pc.auto_configure(training_data=GemTableDataSource(table_id=uuid.uuid4(), table_version=0), pattern=AutoConfigureMode.INFER)
+
+    # Then
+    assert (session.calls[0].json['pattern'] == "INFER")
+
+
 def test_returned_predictor(valid_graph_predictor_data):
     """Check that auto_configure works on the happy path."""
     # Given
@@ -300,3 +321,4 @@ def test_returned_predictor(valid_graph_predictor_data):
     assert len(result.predictors) == 2
     assert isinstance(result.predictors[0], uuid.UUID)
     assert isinstance(result.predictors[1], ExpressionPredictor)
+
