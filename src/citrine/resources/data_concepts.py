@@ -27,7 +27,7 @@ from citrine.resources.response import Response
 CITRINE_SCOPE = 'id'
 
 
-class DataConcepts(PolymorphicSerializable['DataConcepts'], DictSerializable, ABC):
+class DataConcepts(DictSerializable, PolymorphicSerializable['DataConcepts'], ABC):
     """
     An abstract data concepts object.
 
@@ -472,6 +472,8 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
             is guaranteed to be the same as originally specified.
 
         """
+        from citrine._utils.batcher import Batcher
+
         if self.dataset_id is None:
             raise RuntimeError("Must specify a dataset in order to register a data model object.")
         path = self._get_path()
@@ -482,16 +484,30 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         json = GEMDJson(scope=scope)
         [json.dumps(x) for x in models]  # This apparent no-op populates uids
 
-        objects = [replace_objects_with_links(scrub_none(model.dump())) for model in models]
+        resources = list()
+        batch_size = 50
+        if dry_run:
+            batcher = Batcher.by_dependency()
+        else:
+            batcher = Batcher.by_type()
+        for batch in batcher.batch(models, batch_size):
+            objects = [replace_objects_with_links(scrub_none(model.dump())) for model in batch]
+            response_data = self.session.put_resource(
+                path + '/batch',
+                json={'objects': objects},
+                params=params
+            )
+            registered = [self.build(obj) for obj in response_data['objects']]
 
-        recursive_foreach(models, lambda x: x.uids.pop(temp_scope, None))  # Strip temp uids
+            # Platform may add a CITRINE_SCOPE uid and citr_auto tags
+            if not dry_run:
+                for prewrite, postwrite in zip(batch, registered):
+                    prewrite.uids = postwrite.uids
+                    prewrite.tags = postwrite.tags
+            resources.extend(registered)
 
-        response_data = self.session.put_resource(
-            path + '/batch',
-            json={'objects': objects},
-            params=params
-        )
-        return [self.build(obj) for obj in response_data['objects']]
+        recursive_foreach(list(models), lambda x: x.uids.pop(temp_scope, None))  # Strip temp uids
+        return resources
 
     def update(self, model: ResourceType) -> ResourceType:
         """Update a data object model."""
