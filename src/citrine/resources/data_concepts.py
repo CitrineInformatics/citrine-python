@@ -1,6 +1,7 @@
 """Top-level class for all data concepts objects and collections thereof."""
 from abc import abstractmethod, ABC
 from warnings import warn
+from tqdm.auto import tqdm
 from typing import TypeVar, Type, List, Union, Optional, Iterator
 from uuid import UUID, uuid4
 import deprecation
@@ -501,11 +502,6 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
             batcher = Batcher.by_type()
 
         if status_bar:
-            try:
-                from tqdm.auto import tqdm
-            except ImportError:  # pragma: no cover
-                raise ValueError('Display of a status bar requires '
-                                 'installation of the tqdm module')
             iterator = tqdm(batcher.batch(models, batch_size), leave=False)
         else:
             iterator = batcher.batch(models, batch_size)
