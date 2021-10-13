@@ -18,6 +18,7 @@ class AutoConfigureMode(BaseEnumeration):
 
     * PLAIN corresponds to a single-row GEM table and plain predictor
     * FORMULATION corresponds to a multi-row GEM table and formulations predictor
+    * INFER auto-detects the GEM table and predictor type
     """
 
     PLAIN = 'PLAIN'
