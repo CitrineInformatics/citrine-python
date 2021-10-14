@@ -502,7 +502,8 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
             batcher = Batcher.by_type()
 
         if status_bar:
-            iterator = tqdm(batcher.batch(models, batch_size), leave=False)
+            desc = "Verifying GEMDs" if dry_run else "Registering GEMDs"
+            iterator = tqdm(batcher.batch(models, batch_size), leave=False, desc=desc)
         else:
             iterator = batcher.batch(models, batch_size)
 
