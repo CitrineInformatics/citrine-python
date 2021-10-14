@@ -9,7 +9,7 @@ from citrine.exceptions import (
     WorkflowConflictException,
     WorkflowNotReadyException,
     RetryableException,
-    BadRequest)
+    BadRequest, CitrineException)
 
 from datetime import datetime, timedelta
 import pytz
@@ -50,6 +50,7 @@ def test_get_refreshes_token(session: Session):
     token_refresh_response = refresh_token(datetime(2019, 3, 14, tzinfo=pytz.utc))
 
     with requests_mock.Mocker() as m:
+        m.get('http://citrine-testing.fake/api/v1/utils/runtime-config', json=dict())
         m.post('http://citrine-testing.fake/api/v1/tokens/refresh', json=token_refresh_response)
         m.get('http://citrine-testing.fake/api/v1/foo', json={'foo': 'bar'})
 
@@ -58,11 +59,21 @@ def test_get_refreshes_token(session: Session):
     assert {'foo': 'bar'} == resp
     assert datetime(2019, 3, 14) == session.access_token_expiration
 
+def test_get_runtime_config_failure(session: Session):
+    session.access_token_expiration = datetime.utcnow() - timedelta(minutes=1)
+
+    with requests_mock.Mocker() as m:
+        m.get('http://citrine-testing.fake/api/v1/utils/runtime-config', status_code=400)
+
+        with pytest.raises(CitrineException):
+            session.get_resource('/foo')
+
 
 def test_get_refresh_token_failure(session: Session):
     session.access_token_expiration = datetime.utcnow() - timedelta(minutes=1)
 
     with requests_mock.Mocker() as m:
+        m.get('http://citrine-testing.fake/api/v1/utils/runtime-config', json=dict())
         m.post('http://citrine-testing.fake/api/v1/tokens/refresh', status_code=401)
 
         with pytest.raises(UnauthorizedRefreshToken):
@@ -178,6 +189,7 @@ def test_post_refreshes_token_when_denied(session: Session):
     token_refresh_response = refresh_token(datetime(2019, 3, 14, tzinfo=pytz.utc))
 
     with requests_mock.Mocker() as m:
+        m.get('http://citrine-testing.fake/api/v1/utils/runtime-config', json=dict())
         m.post('http://citrine-testing.fake/api/v1/tokens/refresh', json=token_refresh_response)
         m.register_uri('POST', 'http://citrine-testing.fake/api/v1/foo', [
             {'status_code': 401, 'json': {'reason': 'invalid-token'}},
