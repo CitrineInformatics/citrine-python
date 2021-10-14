@@ -1,6 +1,7 @@
 """Top-level class for all data concepts objects and collections thereof."""
 from abc import abstractmethod, ABC
 from warnings import warn
+from tqdm.auto import tqdm
 from typing import TypeVar, Type, List, Union, Optional, Iterator
 from uuid import UUID, uuid4
 import deprecation
@@ -447,7 +448,11 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         data = self.session.post_resource(path, dumped_data, params=params)
         return self.build(data)
 
-    def register_all(self, models: List[ResourceType], *, dry_run=False) -> List[ResourceType]:
+    def register_all(self,
+                     models: List[ResourceType],
+                     *,
+                     dry_run=False,
+                     status_bar=False) -> List[ResourceType]:
         """
         [ALPHA] Create or update each model in models.
 
@@ -461,9 +466,14 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         ----------
         models: List[ResourceType]
             The objects to be written.
+
         dry_run: bool
             Whether to actually register the objects or run a dry run of the register operation.
             Dry run is intended to be used for validation. Default: false
+
+        status_bar: bool
+            Whether to display a status bar using the tqdm module to track progress in
+            registration. Requires installing the optional tqdm module. Default: false
 
         Returns
         -------
@@ -490,7 +500,14 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
             batcher = Batcher.by_dependency()
         else:
             batcher = Batcher.by_type()
-        for batch in batcher.batch(models, batch_size):
+
+        if status_bar:
+            desc = "Verifying GEMDs" if dry_run else "Registering GEMDs"
+            iterator = tqdm(batcher.batch(models, batch_size), leave=False, desc=desc)
+        else:
+            iterator = batcher.batch(models, batch_size)
+
+        for batch in iterator:
             objects = [replace_objects_with_links(scrub_none(model.dump())) for model in batch]
             response_data = self.session.put_resource(
                 path + '/batch',
