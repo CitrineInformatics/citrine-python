@@ -59,10 +59,13 @@ def test_get_refreshes_token(session: Session):
     assert {'foo': 'bar'} == resp
     assert datetime(2019, 3, 14) == session.access_token_expiration
 
+
 def test_get_runtime_config_failure(session: Session):
     session.access_token_expiration = datetime.utcnow() - timedelta(minutes=1)
+    token_refresh_response = refresh_token(datetime(2019, 3, 14, tzinfo=pytz.utc))
 
     with requests_mock.Mocker() as m:
+        m.post('http://citrine-testing.fake/api/v1/tokens/refresh', json=token_refresh_response)
         m.get('http://citrine-testing.fake/api/v1/utils/runtime-config', status_code=400)
 
         with pytest.raises(CitrineException):
@@ -73,8 +76,8 @@ def test_get_refresh_token_failure(session: Session):
     session.access_token_expiration = datetime.utcnow() - timedelta(minutes=1)
 
     with requests_mock.Mocker() as m:
-        m.get('http://citrine-testing.fake/api/v1/utils/runtime-config', json=dict())
         m.post('http://citrine-testing.fake/api/v1/tokens/refresh', status_code=401)
+        # m.get('http://citrine-testing.fake/api/v1/utils/runtime-config', json=dict())
 
         with pytest.raises(UnauthorizedRefreshToken):
             session.get_resource('/foo')
