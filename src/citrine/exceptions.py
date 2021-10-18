@@ -131,3 +131,8 @@ class ModuleRegistrationFailedException(NonRetryableException):
         err = 'The "{0}" failed to register. {1}: {2}'.format(
             moduleType, exc.__class__.__name__, str(exc))
         super().__init__(err)
+
+
+class AccountsV3Exception(CitrineException):
+    """ Something wrong related to Accounts V3."""
+    pass

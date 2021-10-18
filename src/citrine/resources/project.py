@@ -11,6 +11,7 @@ from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
 from citrine._utils.functions import format_escaped_url
 from citrine._session import Session
+from citrine.exceptions import AccountsV3Exception
 from citrine.resources.api_error import ApiError
 from citrine.resources.condition_template import ConditionTemplateCollection
 from citrine.resources.dataset import DatasetCollection
@@ -539,7 +540,7 @@ class ProjectCollection(Collection[Project]):
         project.session = self.session
         return project
 
-    def register(self, name: str, *, description: Optional[str] = None) -> Project:
+    def register(self, name: str, *, description: Optional[str] = None, team_id: Optional[UUID] = None) -> Project:
         """
         Create and upload new project.
 
@@ -549,9 +550,19 @@ class ProjectCollection(Collection[Project]):
             Name of the project to be created.
         description: str
             Long-form description of the project to be created.
+        team_id: uuid
+            ID of the team the project will be part of. Required for Accounts V3
 
         """
-        return super().register(Project(name, description=description))
+        if self.session._accounts_service_v3:
+            if team_id is None:
+                raise AccountsV3Exception("Must provide team id")
+        #      TODO register with team id
+        else:
+            if team_id is not None:
+                # todo should this just warn?
+                raise AccountsV3Exception("Can't provide team id")
+            return super().register(Project(name, description=description))
 
     def list(self, *,
              page: Optional[int] = None,
