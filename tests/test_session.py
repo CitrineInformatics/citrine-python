@@ -77,7 +77,6 @@ def test_get_refresh_token_failure(session: Session):
 
     with requests_mock.Mocker() as m:
         m.post('http://citrine-testing.fake/api/v1/tokens/refresh', status_code=401)
-        # m.get('http://citrine-testing.fake/api/v1/utils/runtime-config', json=dict())
 
         with pytest.raises(UnauthorizedRefreshToken):
             session.get_resource('/foo')
