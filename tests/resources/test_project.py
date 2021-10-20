@@ -1,4 +1,5 @@
 import uuid
+import warnings
 from logging import getLogger
 
 import pytest
@@ -6,12 +7,12 @@ from dateutil.parser import parse
 from gemd.entity.link_by_uid import LinkByUID
 
 from citrine.resources.api_error import ApiError, ValidationError
+from citrine.resources.dataset import Dataset
 from citrine.resources.gemtables import GemTableCollection
 from citrine.resources.process_spec import ProcessSpec
 from citrine.resources.project import Project, ProjectCollection
 from citrine.resources.project_member import ProjectMember
 from citrine.resources.project_roles import MEMBER, LEAD, WRITE
-from citrine.resources.dataset import Dataset
 from tests.utils.factories import ProjectDataFactory, UserDataFactory
 from tests.utils.session import FakeSession, FakeCall, FakePaginatedSession
 
@@ -19,8 +20,15 @@ logger = getLogger(__name__)
 
 
 @pytest.fixture
-def session() -> FakeSession:
+def session_v1() -> FakeSession:
     return FakeSession()
+
+
+@pytest.fixture
+def session() -> FakeSession:
+    sess = FakeSession()
+    sess._accounts_service_v3 = True
+    return sess
 
 
 @pytest.fixture
@@ -273,7 +281,7 @@ def test_ara_definitions_get_project_id(project):
     assert project.uid == project.table_configs.project_id
 
 
-def test_project_registration(collection, session):
+def test_project_registration(collection: ProjectCollection, session):
     # Given
     create_time = parse('2019-09-10T00:00:00+00:00')
     project_data = ProjectDataFactory(
@@ -284,7 +292,7 @@ def test_project_registration(collection, session):
     session.set_response({'project': project_data})
 
     # When
-    created_project = collection.register('testing')
+    created_project = collection.register('testing', team_id=uuid.uuid4())
 
     # Then
     assert 1 == session.num_calls
@@ -306,7 +314,7 @@ def test_project_registration(collection, session):
     assert create_time == created_project.created_at
 
 
-def test_get_project(collection, session):
+def test_get_project(collection: ProjectCollection, session):
     # Given
     project_data = ProjectDataFactory(name='single project')
     session.set_response({'project': project_data})
@@ -365,7 +373,7 @@ def test_list_projects_with_page_params(collection, session):
     assert expected_call == session.last_call
 
 
-def test_search_projects(collection, session):
+def test_search_projects(collection: ProjectCollection, session):
     # Given
     projects_data = ProjectDataFactory.create_batch(2)
 
@@ -385,27 +393,25 @@ def test_search_projects(collection, session):
     # Then
     assert 1 == session.num_calls
     expected_call = FakeCall(method='POST', path='/projects/search', 
-                                        params={'per_page': 1000}, json={'search_params': search_params})
+                             params={'per_page': 1000}, json={'search_params': search_params})
     assert expected_call == session.last_call
     assert len(expected_response) == len(projects)
 
 
-def test_search_projects_with_pagination(paginated_collection, paginated_session):
+def test_search_projects_with_pagination(paginated_collection: ProjectCollection, paginated_session):
     # Given
     common_name = "same name"
 
     same_name_projects_data = ProjectDataFactory.create_batch(35, name=common_name)
     ProjectDataFactory.create_batch(35, name="some other name")
 
-
     per_page = 10
 
-    paginated_session.set_response({ 'projects': same_name_projects_data })
+    paginated_session.set_response({'projects': same_name_projects_data})
 
     search_params = {'status': {
         'value': common_name,
         'search_method': 'EXACT'}}
-
 
     # When
     projects = list(paginated_collection.search(per_page=per_page, search_params=search_params))
@@ -413,9 +419,9 @@ def test_search_projects_with_pagination(paginated_collection, paginated_session
     # Then
     assert 4 == paginated_session.num_calls
     expected_first_call = FakeCall(method='POST', path='/projects/search', 
-                                        params={'per_page': per_page}, json={'search_params': search_params} )
+                                   params={'per_page': per_page}, json={'search_params': search_params})
     expected_last_call = FakeCall(method='POST', path='/projects/search', 
-                                        params={'page': 4, 'per_page': per_page}, json={'search_params': search_params})
+                                  params={'page': 4, 'per_page': per_page}, json={'search_params': search_params})
 
     assert expected_first_call == paginated_session.calls[0]
     assert expected_last_call == paginated_session.last_call
@@ -439,7 +445,7 @@ def test_delete_project(collection, session):
     assert expected_call == session.last_call
 
 
-def test_update_project(collection, project):
+def test_update_project(collection: ProjectCollection, project):
     project.name = "updated name"
     with pytest.raises(NotImplementedError):
         collection.update(project)
@@ -475,6 +481,7 @@ def test_update_user_role(project, session):
                            json={'role': LEAD, 'actions': []})
     assert expect_call == session.last_call
     assert update_user_role_response is True
+
 
 def test_update_user_actions(project, session):
     # Given
@@ -571,7 +578,7 @@ def test_project_batch_delete(project, session):
     import json
     failures_escaped_json = json.dumps([
         {
-            "id":{
+            "id": {
                 'scope': 'somescope',
                 'id': 'abcd-1234'
             },
@@ -614,19 +621,18 @@ def test_project_batch_delete(project, session):
                                       failure_message="fail msg",
                                       failure_id="identifier.coreid.missing")])
 
-
     assert first_failure == (LinkByUID('somescope', 'abcd-1234'), expected_api_error)
 
     # And again with tuples of (scope, id)
     del_resp = project.gemd_batch_delete([LinkByUID('id',
-                                            '16fd2706-8baf-433b-82eb-8c7fada847da')])
+                                                    '16fd2706-8baf-433b-82eb-8c7fada847da')])
     assert len(del_resp) == 1
     first_failure = del_resp[0]
 
     assert first_failure == (LinkByUID('somescope', 'abcd-1234'), expected_api_error)
 
 
-def test_batch_delete_bad_input(project, session):
+def test_batch_delete_bad_input(project):
     with pytest.raises(TypeError):
         project.gemd_batch_delete([True])
 

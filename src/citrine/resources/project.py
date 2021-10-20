@@ -81,7 +81,7 @@ class Project(Resource['Project']):
     name = properties.String('name')
     description = properties.Optional(properties.String(), 'description')
     uid = properties.Optional(properties.UUID(), 'id')
-    status = properties.Optional(properties.String(), 'status')
+    status = properties.Optional(properties.String(), 'status')  # TODO Is this right??
     created_at = properties.Optional(properties.Datetime(), 'created_at')
 
     def __init__(self,
@@ -92,6 +92,7 @@ class Project(Resource['Project']):
         self.name: str = name
         self.description: Optional[str] = description
         self.session: Session = session
+        self.team_id: Optional[UUID] = None  # TODO implement and document
 
     def __str__(self):
         return '<Project {!r}>'.format(self.name)
@@ -229,6 +230,21 @@ class Project(Resource['Project']):
         """Return a resource representing all Table Configs in the project."""
         return TableConfigCollection(self.uid, self.session)
 
+    def publish(self, *, resource: Resource):
+        if not self.session._accounts_service_v3:
+            raise AccountsV3Exception("Not available, use project.make_public")  # TODO is this right?
+        raise NotImplementedError()
+
+    def un_publish(self, *, resource: Resource):
+        if not self.session._accounts_service_v3:
+            raise AccountsV3Exception("Not available, use project.make_private")  # TODO is this right?
+        raise NotImplementedError()
+
+    def pull_in_resource(self, *, resource: Resource):
+        if self.session._accounts_service_v3:
+            raise AccountsV3Exception("Not available")  # TODO is this right?
+        raise NotImplementedError()
+
     def share(self, *,
               resource: Optional[Resource] = None,
               project_id: Optional[Union[str, UUID]] = None,
@@ -252,6 +268,8 @@ class Project(Resource['Project']):
             The id of the resource to share
 
         """
+        if self.session._accounts_service_v3:
+            raise AccountsV3Exception("Not available, use project.publish")  # TODO is this right?
         resource_dict = None
         if resource is not None:
             resource_dict = resource.access_control_dict()
@@ -291,6 +309,9 @@ class Project(Resource['Project']):
             Returns ``True`` upon successful resource transfer.
 
         """
+
+        if self.session._accounts_service_v3:
+            raise AccountsV3Exception("Not available, use project.publish")  # TODO is this right?
         try:
             self.session.checked_post(self._path() + "/transfer-resource", {
                 "to_project_id": str(receiving_project_uid),
@@ -316,6 +337,9 @@ class Project(Resource['Project']):
             ``True`` if the action was performed successfully
 
         """
+
+        if self.session._accounts_service_v3:
+            raise AccountsV3Exception("Not available, use project.publish")  # TODO is this right?
         try:
             self.session.checked_post(self._path() + "/make-public", {
                 "resource": resource.access_control_dict()
@@ -340,6 +364,8 @@ class Project(Resource['Project']):
             ``True`` if the action was performed successfully
 
         """
+        if self.session._accounts_service_v3:
+            raise AccountsV3Exception("Not available, use project.publish")  # TODO is this right?
         try:
             self.session.checked_post(self._path() + "/make-private", {
                 "resource": resource.access_control_dict()
@@ -359,6 +385,9 @@ class Project(Resource['Project']):
             The email of the creator of this resource.
 
         """
+
+        if self.session._accounts_service_v3:
+            raise AccountsV3Exception("Not available")  # TODO is this right?
         email = self.session.get_resource(self._path() + "/creator")["email"]
         return email
 
@@ -411,6 +440,9 @@ class Project(Resource['Project']):
             The members of the current project
 
         """
+        if self.session._accounts_service_v3:
+            pass
+            # TODO this is now a teams action
         members = self.session.get_resource(self._path() + "/users")["users"]
         return [ProjectMember(user=User.build(m), project=self, role=m["role"]) for m in members]
 
@@ -445,6 +477,8 @@ class Project(Resource['Project']):
             Returns ``True`` if user successfully added
 
         """
+        if self.session._accounts_service_v3:
+            raise AccountsV3Exception("Not available, use team.add_user")  # TODO is this right?
         self.session.checked_post(self._path() + format_escaped_url("/users/{}", user_uid),
                                   {'role': MEMBER, 'actions': []})
         return True
@@ -459,6 +493,8 @@ class Project(Resource['Project']):
             Returns ``True`` if user successfully removed
 
         """
+        if self.session._accounts_service_v3:
+            raise AccountsV3Exception("Not available, use team.add_user")  # TODO is this right?
         self.session.checked_delete(
             self._path() + format_escaped_url("/users/{}", user_uid)
         )
@@ -489,6 +525,12 @@ class Project(Resource['Project']):
             as a LinkByUID tuple, a UUID, a string, or the object itself. A UUID
             or string is assumed to be a Citrine ID, whereas a LinkByUID or
             BaseEntity can also be used to provide an external ID.
+        timeout: float
+            Amount of time to wait on the job (in seconds) before giving up. Defaults
+            to 2 minutes. Note that this number has no effect on the underlying job
+            itself, which can also time out server-side.
+        polling_delay: float
+            How long to delay between each polling retry attempt.
 
         Returns
         -------
@@ -540,6 +582,11 @@ class ProjectCollection(Collection[Project]):
         project.session = self.session
         return project
 
+    def _register_in_team(self):
+        # TODO implement
+        path = "api / v3 / teams / {teamId} / projects"
+        pass
+
     def register(self, name: str, *, description: Optional[str] = None, team_id: Optional[UUID] = None) -> Project:
         """
         Create and upload new project.
@@ -589,7 +636,11 @@ class ProjectCollection(Collection[Project]):
             Projects in this collection.
 
         """
-        return super().list(page=page, per_page=per_page)
+        if self.session._accounts_service_v3:
+            # TODO search by team id
+            pass
+        else:
+            return super().list(page=page, per_page=per_page)
 
     def search(self, *, search_params: Optional[dict] = None,
                per_page: int = 1000) -> Iterable[Project]:
@@ -646,6 +697,8 @@ class ProjectCollection(Collection[Project]):
             Projects in this collection.
 
         """
+        if self.session._accounts_service_v3:
+            raise NotImplementedError("Searching not available.")
         # To avoid setting default to {} -> reduce mutation risk, and to make more extensible
         search_params = {} if search_params is None else search_params
 
@@ -662,11 +715,18 @@ class ProjectCollection(Collection[Project]):
         If the project is not empty, then the Response will contain a list of all of the project's
         resources. These must be deleted before the project can be deleted.
         """
+        if self.session._accounts_service_v3:
+            raise NotImplementedError("Searching not available.")
+
         return super().delete(uid)  # pragma: no cover
 
     def update(self, model: Project) -> Project:
         """Projects cannot be updated."""
-        raise NotImplementedError("Project update is not supported at this time.")
+        if not self.session._accounts_service_v3:
+            raise NotImplementedError("Project update is not supported at this time.")
+        else:
+            # Todo we can edit projects now
+            pass
 
     def _fetch_page_search(self, page: Optional[int] = None,
                            per_page: Optional[int] = None,
