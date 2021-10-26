@@ -62,10 +62,10 @@ class BatchByDependency(Batcher):
         """Collect object batches that are internally consistent for dry_run object tests."""
         # Collect shallow dependences, UID references, and type-based clusters
         depends = dict()
+        obj_set = set(objects)
         index = make_index(objects)
         by_type = defaultdict(list)
         for obj in objects:
-            index[obj] = obj  # short circuit to skip conditional later
             depends[obj] = self._all_dependencies(obj)
             by_type[obj.typ].append(obj)
 
@@ -75,7 +75,9 @@ class BatchByDependency(Batcher):
         type_groups = sorted(list(by_type.values()), key=lambda x: writable_sort_order(x[0]))
         for type_group in type_groups:
             for obj in type_group:
-                local_set = {index[x] for x in depends[obj] if x in index}
+                # Collect objects of interest that we are supposed to load
+                # Note depends contains both objects & links; obj_set is everything in the call
+                local_set = {index.get(x, x) for x in depends[obj] if index.get(x, x) in obj_set}
                 full_set = set(local_set)
                 if len(full_set) > batch_size:
                     raise ValueError(f"Object {obj.name} has more than {batch_size} dependencies.")

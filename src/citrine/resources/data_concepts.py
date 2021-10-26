@@ -301,9 +301,7 @@ def _make_link_by_uid(gemd_object_rep: Union[str, UUID, BaseEntity, LinkByUID],
         warn("\'scope\' as a separate argument is deprecated when creating a link to a GEMD"
              "object. To specify a custom scope, use a LinkByUID.", DeprecationWarning)
     if isinstance(gemd_object_rep, BaseEntity):
-        if not gemd_object_rep.uids:  # an empty dictionary
-            raise ValueError('GEMD object must have at least one uid to construct a link.')
-        return LinkByUID.from_entity(gemd_object_rep, name=CITRINE_SCOPE)
+        return gemd_object_rep.to_link(CITRINE_SCOPE, allow_fallback=True)
     elif isinstance(gemd_object_rep, LinkByUID):
         return gemd_object_rep
     elif isinstance(gemd_object_rep, (str, UUID)):
