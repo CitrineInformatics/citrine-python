@@ -4,8 +4,8 @@ from typing import List
 
 from citrine.resources.data_concepts import DataConcepts
 
-from gemd.util import writable_sort_order
-from gemd.entity.link_by_uid import LinkByUID
+from gemd.util import make_index, writable_sort_order
+
 from gemd.entity.object.has_parameters import HasParameters
 from gemd.entity.object.has_conditions import HasConditions
 from gemd.entity.object.has_properties import HasProperties
@@ -62,13 +62,10 @@ class BatchByDependency(Batcher):
         """Collect object batches that are internally consistent for dry_run object tests."""
         # Collect shallow dependences, UID references, and type-based clusters
         depends = dict()
-        derefs = dict()
+        index = make_index(objects)
         by_type = defaultdict(list)
         for obj in objects:
-            derefs[obj] = obj  # no-op to skip conditional later
-            # Index LinkByUIDs
-            for this_scope in obj.uids:
-                derefs[LinkByUID.from_entity(obj, scope=this_scope)] = obj
+            index[obj] = obj  # short circuit to skip conditional later
             depends[obj] = self._all_dependencies(obj)
             by_type[obj.typ].append(obj)
 
@@ -78,7 +75,7 @@ class BatchByDependency(Batcher):
         type_groups = sorted(list(by_type.values()), key=lambda x: writable_sort_order(x[0]))
         for type_group in type_groups:
             for obj in type_group:
-                local_set = {derefs[x] for x in depends[obj] if x in derefs}
+                local_set = {index[x] for x in depends[obj] if x in index}
                 full_set = set(local_set)
                 if len(full_set) > batch_size:
                     raise ValueError(f"Object {obj.name} has more than {batch_size} dependencies.")

@@ -237,6 +237,7 @@ def test_delete_material_run(collection, session):
     )
     assert expected_call == session.last_call
 
+
 def test_dry_run_delete_material_run(collection, session):
     # Given
     material_run_uid = '2d3a782f-aee7-41db-853c-36bf4bff0626'
@@ -473,3 +474,23 @@ def test_deep_equals(collection):
         assert x in flat_list, "All registered objects are in the flat list"
 
     assert cake == MaterialRun.build(cake.dump()), "Equality works in hydrated form"
+
+
+def test_nonmutating_dry_run(collection):
+    from gemd.demo.cake import make_cake, change_scope
+    from gemd.util import flatten
+
+    change_scope('test_deep_equals_scope')
+    cake = make_cake()
+    uid_stash = cake.uids.copy()
+
+    flat_list = flatten(cake)
+    # Note that registered turns them into a flat list of Citrine resources
+    tested = collection.register_all(flat_list, dry_run=True)
+    assert uid_stash == cake.uids  # No mutation
+
+    # Note that the lists are different lengths because of how dry_run batching works
+    for x in flat_list:
+        assert x in tested, "All flattened objects were tested"
+    for x in tested:
+        assert x in flat_list, "All tested objects are in the flat list"
