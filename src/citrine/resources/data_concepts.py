@@ -10,7 +10,7 @@ from gemd.entity.dict_serializable import DictSerializable
 from gemd.entity.base_entity import BaseEntity
 from gemd.entity.link_by_uid import LinkByUID
 from gemd.json import GEMDJson
-from gemd.util import recursive_foreach
+from gemd.util import recursive_foreach, make_index, substitute_objects
 
 from citrine._rest.collection import Collection
 from citrine._serialization import properties
@@ -301,9 +301,7 @@ def _make_link_by_uid(gemd_object_rep: Union[str, UUID, BaseEntity, LinkByUID],
         warn("\'scope\' as a separate argument is deprecated when creating a link to a GEMD"
              "object. To specify a custom scope, use a LinkByUID.", DeprecationWarning)
     if isinstance(gemd_object_rep, BaseEntity):
-        if not gemd_object_rep.uids:  # an empty dictionary
-            raise ValueError('GEMD object must have at least one uid to construct a link.')
-        return LinkByUID.from_entity(gemd_object_rep, name=CITRINE_SCOPE)
+        return gemd_object_rep.to_link(CITRINE_SCOPE, allow_fallback=True)
     elif isinstance(gemd_object_rep, LinkByUID):
         return gemd_object_rep
     elif isinstance(gemd_object_rep, (str, UUID)):
@@ -496,6 +494,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
 
         resources = list()
         batch_size = 50
+        result_index = dict()
         if dry_run:
             batcher = Batcher.by_dependency()
         else:
@@ -515,15 +514,22 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
                 params=params
             )
             registered = [self.build(obj) for obj in response_data['objects']]
+            result_index.update(make_index(registered))
+            substitute_objects(registered, result_index)
 
             # Platform may add a CITRINE_SCOPE uid and citr_auto tags
             if not dry_run:
                 for prewrite, postwrite in zip(batch, registered):
                     prewrite.uids = postwrite.uids
                     prewrite.tags = postwrite.tags
+            else:
+                for prewrite, postwrite in zip(batch, registered):
+                    postwrite.uids = prewrite.uids
+                    postwrite.tags = prewrite.tags
             resources.extend(registered)
 
-        recursive_foreach(list(models), lambda x: x.uids.pop(temp_scope, None))  # Strip temp uids
+        recursive_foreach(list(models) + list(resources),
+                          lambda x: x.uids.pop(temp_scope, None))  # Strip temp uids
         return resources
 
     def update(self, model: ResourceType) -> ResourceType:

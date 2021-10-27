@@ -6,8 +6,14 @@ from citrine._utils.functions import scrub_none
 from citrine.exceptions import BadRequest
 from citrine.resources.api_error import ValidationError
 from citrine.resources.material_run import MaterialRunCollection
+from citrine.resources.material_run import MaterialRun as CitrineRun
+
+from gemd.demo.cake import make_cake, change_scope
 from gemd.entity.bounds.integer_bounds import IntegerBounds
 from gemd.entity.object.material_run import MaterialRun as GEMDRun
+from gemd.entity.object.material_spec import MaterialSpec as GEMDSpec
+from gemd.json import GEMDJson
+from gemd.util import flatten
 
 from tests.resources.test_data_concepts import run_noop_gemd_relation_search_test
 from tests.utils.factories import MaterialRunFactory, MaterialRunDataFactory, LinkByUIDFactory, MaterialSpecFactory, \
@@ -237,6 +243,7 @@ def test_delete_material_run(collection, session):
     )
     assert expected_call == session.last_call
 
+
 def test_dry_run_delete_material_run(collection, session):
     # Given
     material_run_uid = '2d3a782f-aee7-41db-853c-36bf4bff0626'
@@ -457,19 +464,51 @@ def test_equals():
 
 
 def test_deep_equals(collection):
-    from citrine.resources.material_run import MaterialRun
-    from gemd.demo.cake import make_cake, change_scope
-    from gemd.util import flatten
-
     change_scope('test_deep_equals_scope')
     cake = make_cake()
     flat_list = flatten(cake)
     # Note that registered turns them into a flat list of Citrine resources
-    registered = collection.register_all(flat_list)
+    registered = set(collection.register_all(flat_list))
     assert len(flat_list) == len(registered), "All objects registered"
-    for x in flat_list:
-        assert x in registered, "All flattened objects were registered"
-    for x in registered:
-        assert x in flat_list, "All registered objects are in the flat list"
+    while flat_list:
+        before = flat_list.pop()
+        afters = [x for x in registered if x == before]
+        assert len(afters) >= 1, "All flattened objects were registered"
+        for x in afters:
+            registered.remove(x)
+    assert len(registered) == 0, "All registered objects are in the flat list"
 
-    assert cake == MaterialRun.build(cake.dump()), "Equality works in hydrated form"
+    assert cake == CitrineRun.build(cake.dump()), "Equality works in hydrated form"
+
+
+def test_nonmutating_dry_run(collection):
+    change_scope('test_deep_equals_scope')
+    cake = make_cake()
+    uid_stash = cake.uids.copy()
+
+    flat_list = flatten(cake)
+    # Note that registered turns them into a flat list of Citrine resources
+    tested = set(collection.register_all(flat_list, dry_run=True))
+    assert uid_stash == cake.uids  # No mutation
+
+    # Note that the lists are different lengths because of how dry_run batching works
+    while flat_list:
+        before = flat_list.pop()
+        afters = [x for x in tested if x == before]
+        assert len(afters) >= 1, "All flattened objects were registered"
+        for x in afters:
+            tested.remove(x)
+    assert len(tested) == 0, "All registered objects are in the flat list"
+
+
+def test_args_only(collection):
+    """"Test that only arguments to register_all get registered/tested/returned."""
+    obj = GEMDRun("name", spec=GEMDSpec("name"))
+    GEMDJson(scope='test_args_only').dumps(obj)  # no-op to populate ids
+    dry = collection.register_all([obj], dry_run=True)
+    assert obj in dry
+    assert obj.spec not in dry
+
+    not_dry = collection.register_all([obj], dry_run=False)
+    assert obj in not_dry
+    assert obj.spec not in not_dry
