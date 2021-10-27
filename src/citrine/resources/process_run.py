@@ -130,4 +130,4 @@ class ProcessRunCollection(ObjectRunCollection[ProcessRun]):
 
         """
         link = _make_link_by_uid(uid, scope)
-        return self._get_relation('process-specs', uid=link.id, scope=link.scope)
+        return self._get_relation('process-specs', uid=link)

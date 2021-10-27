@@ -50,14 +50,14 @@ def test_delete(collection):
 
 def test_list_archived(workflow, collection: DesignWorkflowCollection):
     collection.session.set_response({"response": []})
-    lst = list(collection.list_archived(page=1, per_page=10))
+    lst = list(collection.list_archived(per_page=10))
     assert len(lst) == 0
 
     expected_path = '/projects/{}/design-workflows'.format(collection.project_id)
     assert collection.session.last_call == FakeCall(
         method='GET',
         path=expected_path,
-        params={'page': 1, 'per_page': 10, 'filter': "archived eq 'true'"},
+        params={'per_page': 10, 'filter': "archived eq 'true'"},
         json=None
     )
 

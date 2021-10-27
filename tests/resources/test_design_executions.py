@@ -86,7 +86,8 @@ def test_workflow_execution_results(workflow_execution: DesignExecution, session
     session.set_response(example_candidates)
 
     # When
-    list(workflow_execution.candidates(page=2, per_page=4))
+    with pytest.warns(DeprecationWarning):
+        list(workflow_execution.candidates(page=2, per_page=4))
 
     # Then
     expected_path = '/projects/{}/design-workflows/{}/executions/{}/candidates'.format(
@@ -99,7 +100,8 @@ def test_workflow_execution_results(workflow_execution: DesignExecution, session
 
 def test_list(collection: DesignExecutionCollection, session):
     session.set_response({"page": 2, "per_page": 4, "next": "foo", "response": []})
-    lst = list(collection.list(page=2, per_page=4))
+    with pytest.warns(DeprecationWarning):
+        lst = list(collection.list(page=2, per_page=4))
     assert len(lst) == 0
 
     expected_path = '/projects/{}/design-workflows/{}/executions'.format(collection.project_id, collection.workflow_id)

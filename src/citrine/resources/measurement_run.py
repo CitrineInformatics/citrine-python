@@ -132,7 +132,7 @@ class MeasurementRunCollection(ObjectRunCollection[MeasurementRun]):
 
         """
         link = _make_link_by_uid(uid, scope)
-        return self._get_relation('measurement-specs', uid=link.id, scope=link.scope)
+        return self._get_relation('measurement-specs', uid=link)
 
     def list_by_material(self,
                          uid: Union[UUID, str, LinkByUID, GEMDMaterialRun], *,
@@ -155,4 +155,4 @@ class MeasurementRunCollection(ObjectRunCollection[MeasurementRun]):
 
         """
         link = _make_link_by_uid(uid, scope)
-        return self._get_relation(relation='material-runs', uid=link.id, scope=link.scope)
+        return self._get_relation(relation='material-runs', uid=link)
