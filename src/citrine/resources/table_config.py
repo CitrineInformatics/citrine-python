@@ -198,7 +198,7 @@ class TableConfig(Resource["TableConfig"]):
             IngredientQuantityDimension.NUMBER: "number fraction"
         }
         link = _make_link_by_uid(process_template)
-        process: ProcessTemplate = project.process_templates.get(uid=link.id, scope=link.scope)
+        process: ProcessTemplate = project.process_templates.get(uid=link)
         if not process.allowed_names:
             raise RuntimeError(
                 "Cannot add ingredients for process template \'{}\' because it has no defined "

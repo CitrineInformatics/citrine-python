@@ -115,4 +115,4 @@ class MeasurementSpecCollection(ObjectSpecCollection[MeasurementSpec]):
 
         """
         link = _make_link_by_uid(uid, scope)
-        return self._get_relation('measurement-templates', uid=link.id, scope=link.scope)
+        return self._get_relation('measurement-templates', uid=link)

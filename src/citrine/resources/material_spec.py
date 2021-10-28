@@ -118,7 +118,7 @@ class MaterialSpecCollection(ObjectSpecCollection[MaterialSpec]):
 
         """
         link = _make_link_by_uid(uid, scope)
-        return self._get_relation('material-templates', uid=link.id, scope=link.scope)
+        return self._get_relation('material-templates', uid=link)
 
     def get_by_process(self,
                        uid: Union[UUID, str, LinkByUID, GEMDProcessSpec], *,
@@ -144,8 +144,7 @@ class MaterialSpecCollection(ObjectSpecCollection[MaterialSpec]):
         return next(
             self._get_relation(
                 relation='process-specs',
-                uid=link.id,
-                scope=link.scope,
+                uid=link,
                 per_page=1
             ),
             None

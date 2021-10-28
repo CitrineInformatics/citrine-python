@@ -41,9 +41,11 @@ def test_to_json(metric):
 
 def test_coverage_levels():
     assert CoverageProbability(coverage_level="0.123")._level_str == "0.123"
-    assert CoverageProbability(coverage_level="0.1234")._level_str == "0.123"
+    with pytest.warns(UserWarning):
+        assert CoverageProbability(coverage_level="0.1234")._level_str == "0.123"
     assert CoverageProbability(coverage_level=0.123)._level_str == "0.123"
-    assert CoverageProbability(coverage_level=0.1234)._level_str == "0.123"
+    with pytest.warns(UserWarning):
+        assert CoverageProbability(coverage_level=0.1234)._level_str == "0.123"
 
     with pytest.raises(TypeError):
         CoverageProbability(coverage_level=123)

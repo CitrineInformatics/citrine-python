@@ -63,10 +63,12 @@ def test_quantity_dimension_serializes_to_string():
 
 
 def test_deprecated_variables():
-    variable = RootInfo(name="name", headers=["headers"], field="foo")
+    with pytest.warns(DeprecationWarning):
+        variable = RootInfo(name="name", headers=["headers"], field="foo")
     assert isinstance(variable, TerminalMaterialInfo)
     assert variable.name == "name"
-    variable = RootIdentifier(name="name", headers=["headers"], scope="scope")
+    with pytest.warns(DeprecationWarning):
+        variable = RootIdentifier(name="name", headers=["headers"], scope="scope")
     assert isinstance(variable, TerminalMaterialIdentifier)
     assert variable.name == "name"
 

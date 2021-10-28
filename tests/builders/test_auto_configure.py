@@ -320,13 +320,14 @@ def test_auto_configure_predictor_evaluation(project):
 
     # Create default w/ an invalid response
     with mock.patch("citrine.builders.auto_configure.wait_while_validating", fake_wait_while_failed):
-        auto_config._predictor_evaluation_stage(
-            predictor=predictor,
-            evaluator=None,
-            print_status_info=False
-        )
-        assert len(auto_config.assets) == 4
-        assert auto_config.status == "PREDICTOR EVALUATION WORKFLOW FAILED"
+        with pytest.warns(UserWarning):
+            auto_config._predictor_evaluation_stage(
+                predictor=predictor,
+                evaluator=None,
+                print_status_info=False
+            )
+            assert len(auto_config.assets) == 4
+            assert auto_config.status == "PREDICTOR EVALUATION WORKFLOW FAILED"
 
     # Create manual w/ a valid response
     with mock.patch("citrine.builders.auto_configure.wait_while_validating", fake_wait_while_succeeded):
@@ -340,11 +341,12 @@ def test_auto_configure_predictor_evaluation(project):
 
     # Create manual w/ a failed response
     with mock.patch("citrine.builders.auto_configure.wait_while_validating", fake_wait_while_failed):
-        auto_config._predictor_evaluation_stage(
-            predictor=predictor,
-            evaluator=evaluator,
-            print_status_info=False
-        )
+        with pytest.warns(UserWarning):
+            auto_config._predictor_evaluation_stage(
+                predictor=predictor,
+                evaluator=evaluator,
+                print_status_info=False
+            )
         assert len(auto_config.assets) == 4
         assert auto_config.status == "PREDICTOR EVALUATION WORKFLOW FAILED"
 

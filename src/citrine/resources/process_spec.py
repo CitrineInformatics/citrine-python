@@ -125,4 +125,4 @@ class ProcessSpecCollection(ObjectSpecCollection[ProcessSpec]):
 
         """
         link = _make_link_by_uid(uid, scope)
-        return self._get_relation('process-templates', uid=link.id, scope=link.scope)
+        return self._get_relation('process-templates', uid=link)

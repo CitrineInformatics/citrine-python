@@ -10,13 +10,14 @@ from citrine.resources.material_run import MaterialRun as CitrineRun
 
 from gemd.demo.cake import make_cake, change_scope
 from gemd.entity.bounds.integer_bounds import IntegerBounds
+from gemd.entity.link_by_uid import LinkByUID
 from gemd.entity.object.material_run import MaterialRun as GEMDRun
 from gemd.entity.object.material_spec import MaterialSpec as GEMDSpec
 from gemd.json import GEMDJson
 from gemd.util import flatten
 
 from tests.resources.test_data_concepts import run_noop_gemd_relation_search_test
-from tests.utils.factories import MaterialRunFactory, MaterialRunDataFactory, LinkByUIDFactory, MaterialSpecFactory, \
+from tests.utils.factories import MaterialRunFactory, MaterialRunDataFactory, LinkByUIDFactory, \
     MaterialTemplateFactory, MaterialSpecDataFactory, ProcessTemplateFactory
 from tests.utils.session import FakeSession, FakeCall, make_fake_cursor_request_function, FakeRequestResponseApiError, \
     FakeRequestResponse
@@ -98,7 +99,7 @@ def test_get_history(collection, session):
     })
 
     # When
-    run = collection.get_history(scope='id', id='1234')
+    run = collection.get_history(id=LinkByUID(scope='id', id='1234'))
 
     # Then
     assert 1 == session.num_calls
@@ -198,7 +199,8 @@ def test_filter_by_attribute_bounds(collection, session):
     bounds = {link: IntegerBounds(1, 5)}
 
     # When
-    runs = collection.filter_by_attribute_bounds(bounds, page=1, per_page=10)
+    with pytest.warns(DeprecationWarning):
+        runs = collection.filter_by_attribute_bounds(bounds, page=1, per_page=10)
 
     # Then
     assert 1 == session.num_calls

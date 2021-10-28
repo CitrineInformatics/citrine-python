@@ -252,8 +252,6 @@ class MLIScoreFactory(factory.Factory):
     class Meta:
         model = LIScore
 
-    name = factory.Faker('bs')
-    description = factory.Faker('catch_phrase')
     baselines = []
     objectives = []
     constraints = []

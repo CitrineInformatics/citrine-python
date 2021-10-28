@@ -294,8 +294,7 @@ def test_mean_property_initialization(mean_property_predictor):
 
 def test_deprecated_ingredients_to_simple_mixture():
     """make sure deprecation warnings are issued."""
-    with warnings.catch_warnings(record=True) as caught:
-        warnings.simplefilter("always")
+    with pytest.warns(DeprecationWarning):
         i2sm = IngredientsToSimpleMixturePredictor(
             name="deprecated",
             description="",
@@ -305,9 +304,6 @@ def test_deprecated_ingredients_to_simple_mixture():
         )
         assert i2sm.name == "deprecated"
         assert i2sm.labels == {"label": {"foo"}}
-        assert len(caught) == 1
-        w = caught[0]
-        assert issubclass(w.category, DeprecationWarning)
 
 
 def test_label_fractions_property_initialization(label_fractions_predictor):
