@@ -86,8 +86,7 @@ def test_workflow_execution_results(workflow_execution: DesignExecution, session
     session.set_response(example_candidates)
 
     # When
-    with pytest.warns(DeprecationWarning):
-        list(workflow_execution.candidates(page=2, per_page=4))
+    list(workflow_execution.candidates(per_page=4))
 
     # Then
     expected_path = '/projects/{}/design-workflows/{}/executions/{}/candidates'.format(
@@ -95,20 +94,19 @@ def test_workflow_execution_results(workflow_execution: DesignExecution, session
         workflow_execution.workflow_id,
         workflow_execution.uid,
     )
-    assert session.last_call == FakeCall(method='GET', path=expected_path, params={"page": 2, "per_page": 4})
+    assert session.last_call == FakeCall(method='GET', path=expected_path, params={"per_page": 4})
 
 
 def test_list(collection: DesignExecutionCollection, session):
-    session.set_response({"page": 2, "per_page": 4, "next": "foo", "response": []})
-    with pytest.warns(DeprecationWarning):
-        lst = list(collection.list(page=2, per_page=4))
+    session.set_response({"per_page": 4, "next": "", "response": []})
+    lst = list(collection.list(per_page=4))
     assert len(lst) == 0
 
     expected_path = '/projects/{}/design-workflows/{}/executions'.format(collection.project_id, collection.workflow_id)
     assert session.last_call == FakeCall(
         method='GET',
         path=expected_path,
-        params={"page": 2, "per_page": 4}
+        params={"per_page": 4}
     )
 
 

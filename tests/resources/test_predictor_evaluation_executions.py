@@ -99,17 +99,16 @@ def test_trigger_workflow_execution(collection: PredictorEvaluationExecutionColl
 
 
 def test_list(collection: PredictorEvaluationExecutionCollection, session):
-    session.set_response({"page": 2, "per_page": 4, "next": "foo", "response": []})
+    session.set_response({"page": 1, "per_page": 4, "next": "", "response": []})
     predictor_id = uuid.uuid4()
-    with pytest.warns(DeprecationWarning):
-        lst = list(collection.list(page=2, per_page=4, predictor_id=predictor_id))
+    lst = list(collection.list(per_page=4, predictor_id=predictor_id))
     assert len(lst) == 0
 
     expected_path = '/projects/{}/predictor-evaluation-executions'.format(collection.project_id)
     assert session.last_call == FakeCall(
         method='GET',
         path=expected_path,
-        params={"page": 2, "per_page": 4, "predictor_id": str(predictor_id), "workflow_id": str(collection.workflow_id)}
+        params={"per_page": 4, "predictor_id": str(predictor_id), "workflow_id": str(collection.workflow_id)}
     )
 
 

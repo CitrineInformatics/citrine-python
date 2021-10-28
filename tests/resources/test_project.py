@@ -357,12 +357,11 @@ def test_list_projects_with_page_params(collection, session):
     session.set_response({'projects': [project_data]})
 
     # When
-    with pytest.warns(DeprecationWarning):
-        list(collection.list(page=3, per_page=10))
+    list(collection.list(per_page=10))
 
     # Then
     assert 1 == session.num_calls
-    expected_call = FakeCall(method='GET', path='/projects', params={'page': 3, 'per_page': 10})
+    expected_call = FakeCall(method='GET', path='/projects', params={'per_page': 10})
     assert expected_call == session.last_call
 
 
