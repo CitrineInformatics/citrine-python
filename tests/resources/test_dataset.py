@@ -342,7 +342,7 @@ def test_gemd_posts(dataset):
         for pair in registered.uids.items():
             assert pair[1] == updated.uids[pair[0]]
 
-            # Delete them all
+        # Delete them all
         dataset.session.set_response(updated.dump())
         dataset.delete(updated)
         assert dataset.session.calls[-1].path.split("/")[-3] == basename(collection._path_template)
