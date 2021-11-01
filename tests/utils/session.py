@@ -187,7 +187,7 @@ class FakeS3Client:
 class FakeRequestResponse:
     """A fake version of a requests.request() response."""
 
-    def __init__(self, status_code, content=None, text="", reason = 'BadRequest'):
+    def __init__(self, status_code, content=None, text="", reason='BadRequest'):
         self.content = content
         self.text = text
         self.status_code = status_code
@@ -200,11 +200,11 @@ class FakeRequestResponse:
 
 class FakeRequestResponseApiError:
     """A fake version of a requests.request() response that has an ApiError"""
-    def __init__(self, code: int, message: str, validation_errors: List[
-        ValidationError], reason: str = 'BadRequest'):
+    def __init__(self, code: int, message: str, validation_errors: List[ValidationError],
+                 reason: str = 'BadRequest'):
         self.api_error_json = {"code": code,
                                "message": message,
-                               "validation_errors":[ve.as_dict() for ve in validation_errors]}
+                               "validation_errors": [ve.as_dict() for ve in validation_errors]}
         self.text = message
         self.status_code = code
         self.reason = reason
@@ -213,9 +213,11 @@ class FakeRequestResponseApiError:
     def json(self):
         return self.api_error_json
 
+
 class FakeRequest:
     def __init__(self):
         self.method = "PATCH"
+
 
 def make_fake_cursor_request_function(all_results: list):
     """

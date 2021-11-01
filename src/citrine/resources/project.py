@@ -11,7 +11,7 @@ from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
 from citrine._utils.functions import format_escaped_url
 from citrine._session import Session
-from citrine.exceptions import AccountsV3Exception
+from citrine.exceptions import AccountsV3Exception, NonRetryableException, ModuleRegistrationFailedException
 from citrine.resources.api_error import ApiError
 from citrine.resources.condition_template import ConditionTemplateCollection
 from citrine.resources.dataset import DatasetCollection
@@ -52,8 +52,8 @@ class Project(Resource['Project']):
     """
     A Citrine Project.
 
-    A project is a collection of datasets, some of which belong directly to the project
-    and some of which have been shared with the project.
+    A project is a collection of datasets and AI assets, some of which belong directly
+    to the project, and some of which have been shared with the project.
 
     Parameters
     ----------
@@ -81,7 +81,7 @@ class Project(Resource['Project']):
     name = properties.String('name')
     description = properties.Optional(properties.String(), 'description')
     uid = properties.Optional(properties.UUID(), 'id')
-    status = properties.Optional(properties.String(), 'status')  # TODO Is this right??
+    status = properties.Optional(properties.String(), 'status')
     created_at = properties.Optional(properties.Datetime(), 'created_at')
 
     def __init__(self,
@@ -92,7 +92,7 @@ class Project(Resource['Project']):
         self.name: str = name
         self.description: Optional[str] = description
         self.session: Session = session
-        self.team_id: Optional[UUID] = None  # TODO implement and document
+        self.team_id: Optional[UUID] = None
 
     def __str__(self):
         return '<Project {!r}>'.format(self.name)
@@ -582,10 +582,17 @@ class ProjectCollection(Collection[Project]):
         project.session = self.session
         return project
 
-    def _register_in_team(self):
-        # TODO implement
-        path = "api / v3 / teams / {teamId} / projects"
-        pass
+    def _register_in_team(self, name: str, *, description: Optional[str] = None, team_id: Optional[UUID] = None):
+        path = f'teams/{team_id}/projects'
+        project = Project(name, description=description)
+        try:
+            # TODO is this how we pass version along??
+            data = self.session.post_resource(path, project.dump(), version="v3")
+            data = data[self._individual_key] if self._individual_key else data
+            self._check_experimental(data)
+            return self.build(data)
+        except NonRetryableException as e:
+            raise ModuleRegistrationFailedException(project.__class__.__name__, e)
 
     def register(self, name: str, *, description: Optional[str] = None, team_id: Optional[UUID] = None) -> Project:
         """
@@ -599,21 +606,20 @@ class ProjectCollection(Collection[Project]):
             Long-form description of the project to be created.
         team_id: uuid
             ID of the team the project will be part of. Required for Accounts V3
-
         """
         if self.session._accounts_service_v3:
             if team_id is None:
                 raise AccountsV3Exception("Must provide team id")
-        #      TODO register with team id
+            return self._register_in_team(name, description=description, team_id=team_id)
         else:
             if team_id is not None:
-                # todo should this just warn?
-                raise AccountsV3Exception("Can't provide team id")
+                warn("Teams are currently unavailable. The team_id has been ignored.", UserWarning)
             return super().register(Project(name, description=description))
 
     def list(self, *,
              page: Optional[int] = None,
-             per_page: int = 1000) -> Iterator[Project]:
+             per_page: int = 1000,
+             team_id: Optional[UUID] = None) -> Iterator[Project]:
         """
         List projects using pagination.
 
@@ -637,10 +643,61 @@ class ProjectCollection(Collection[Project]):
 
         """
         if self.session._accounts_service_v3:
-            # TODO search by team id
-            pass
+            if team_id is None:
+                raise AccountsV3Exception("Must provide team id")
+            self._list_v3(per_page=per_page, team_id=team_id)
         else:
+            if team_id is not None:
+                warn("Teams are currently unavailable. The team_id has been ignored.", UserWarning)
             return super().list(page=page, per_page=per_page)
+
+    def _list_v3(self, *,
+             per_page: int = 1000,
+             team_id: Optional[UUID] = None) -> Iterator[Project]:
+        return self._paginator.paginate(page_fetcher=self._fetch_page_list_v3_creator,
+                                        collection_builder=self._build_collection_elements,
+                                        per_page=per_page)
+
+    def _fetch_page_list_v3(self, page: Optional[int] = None,
+                           per_page: Optional[int] = None,
+                           search_params: Optional[dict] = None) -> Tuple[Iterable[dict], str]:
+        """
+        Fetch resources that match the supplied search parameters.
+
+        Fetches resources that match the supplied ``search_params``, by calling ``_fetch_page``
+        with ``checked_post``, the path to the POST resource-type/search endpoint, any pagination
+        parameters, and the request body to the search endpoint.
+
+        Parameters
+        ---------
+        page: int, optional
+            The "page" of results to list. Default is the first page, which is 1.
+        per_page: int, optional
+            Max number of results to return. Default is 20.
+        search_params: dict, optional
+            A ``dict`` representing a request body that could be sent to a POST request. The "json"
+            field should be passed as the key for the outermost ``dict``, with its value the
+            request body, so that we can easily unpack the keyword argument when it gets passed to
+            ``fetch_func``, e.g., ``{'name': {'value': 'Project', 'search_method': 'SUBSTRING'} }``
+
+        Returns
+        -------
+        Iterable[dict]
+            Elements in this collection.
+        str
+            The next uri if one is available, empty string otherwise
+
+        """
+        # Making 'json' the key of the outermost dict, so that search_params can be passed
+        # directly to the function making the request with keyword expansion
+        json_body = {} if search_params is None else {'json': {'search_params': search_params}}
+
+        path = self._get_path() + "/search"
+
+        return self._fetch_page(path=path, fetch_func=self.session.post_resource,
+                                page=page, per_page=per_page,
+                                json_body=json_body)
+
 
     def search(self, *, search_params: Optional[dict] = None,
                per_page: int = 1000) -> Iterable[Project]:

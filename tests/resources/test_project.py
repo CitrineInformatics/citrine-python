@@ -1,11 +1,11 @@
 import uuid
-import warnings
 from logging import getLogger
 
 import pytest
 from dateutil.parser import parse
 from gemd.entity.link_by_uid import LinkByUID
 
+from citrine.exceptions import AccountsV3Exception
 from citrine.resources.api_error import ApiError, ValidationError
 from citrine.resources.dataset import Dataset
 from citrine.resources.gemtables import GemTableCollection
@@ -20,20 +20,23 @@ logger = getLogger(__name__)
 
 
 @pytest.fixture
-def session_v1() -> FakeSession:
+def session() -> FakeSession:
     return FakeSession()
 
 
 @pytest.fixture
-def session() -> FakeSession:
-    sess = FakeSession()
-    sess._accounts_service_v3 = True
-    return sess
+def session_v3() -> FakeSession:
+    return FakeSession(accounts_v3=True)
 
 
 @pytest.fixture
 def paginated_session() -> FakePaginatedSession:
     return FakePaginatedSession()
+
+
+@pytest.fixture
+def paginated_session_accounts_v3() -> FakeSession:
+    return FakePaginatedSession(accounts_v3=True)
 
 
 @pytest.fixture
@@ -56,6 +59,11 @@ def project(session) -> Project:
 @pytest.fixture
 def collection(session) -> ProjectCollection:
     return ProjectCollection(session)
+
+
+@pytest.fixture
+def collection_v3(session_v3) -> ProjectCollection:
+    return ProjectCollection(session_v3)
 
 
 def test_string_representation(project):
@@ -292,7 +300,7 @@ def test_project_registration(collection: ProjectCollection, session):
     session.set_response({'project': project_data})
 
     # When
-    created_project = collection.register('testing', team_id=uuid.uuid4())
+    created_project = collection.register('testing')
 
     # Then
     assert 1 == session.num_calls
@@ -308,6 +316,56 @@ def test_project_registration(collection: ProjectCollection, session):
         }
     )
     assert expected_call == session.last_call
+
+    assert 'A sample project' == created_project.description
+    assert 'CREATED' == created_project.status
+    assert create_time == created_project.created_at
+
+def test_project_registration_warn(collection: ProjectCollection, session):
+    # Given
+    create_time = parse('2019-09-10T00:00:00+00:00')
+    project_data = ProjectDataFactory(
+        name='testing',
+        description='A sample project',
+        created_at=int(create_time.timestamp() * 1000)  # The lib expects ms since epoch, which is really odd
+    )
+    session.set_response({'project': project_data})
+
+    # When
+    with pytest.warns(UserWarning):
+        created_project = collection.register('testing', team_id=uuid.uuid4())
+
+
+def test_project_registration_v3(collection_v3: ProjectCollection, session_v3):
+    # Given
+    create_time = parse('2019-09-10T00:00:00+00:00')
+    project_data = ProjectDataFactory(
+        name='testing',
+        description='A sample project',
+        created_at=int(create_time.timestamp() * 1000)  # The lib expects ms since epoch, which is really odd
+    )
+    session_v3.set_response({'project': project_data})
+    team_id = uuid.uuid4()
+
+    # When
+    with pytest.raises(AccountsV3Exception):
+        collection_v3.register('testing')
+    created_project = collection_v3.register('testing', team_id=team_id)
+
+    # Then
+    assert 1 == session_v3.num_calls
+    expected_call = FakeCall(
+        method='POST',
+        path=f'teams/{team_id}/projects',
+        json={
+            'name': 'testing',
+            'description': None,
+            'id': None,
+            'status': None,
+            'created_at': None,
+        }
+    )
+    assert expected_call == session_v3.last_call
 
     assert 'A sample project' == created_project.description
     assert 'CREATED' == created_project.status
