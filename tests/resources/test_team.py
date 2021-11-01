@@ -61,7 +61,7 @@ def test_team_registration(collection: TeamCollection, session):
     create_time = parse('2019-09-10T00:00:00+00:00')
     team_data = TeamDataFactory(
         name='testing',
-        description='A sample project',
+        description='A sample team',
         created_at=int(create_time.timestamp() * 1000)  # The lib expects ms since epoch, which is really odd
     )
     session.set_response({'team': team_data})
@@ -78,18 +78,16 @@ def test_team_registration(collection: TeamCollection, session):
             'name': 'testing',
             'description': None,
             'id': None,
-            'status': None,
             'created_at': None,
         }
     )
     assert expected_call == session.last_call
 
     assert 'A sample team' == created_team.description
-    assert 'CREATED' == created_team.status
     assert create_time == created_team.created_at
 
 
-def test_get_project(collection: TeamCollection, session):
+def test_get_team(collection: TeamCollection, session):
     # Given
     team_data = TeamDataFactory(name='single team')
     session.set_response({'team': team_data})
@@ -109,7 +107,7 @@ def test_get_project(collection: TeamCollection, session):
 
 def test_list_teams(collection, session):
     # Given
-    teams_data = TeamDataFactory.create_batch(5)  # TODO create Teams Factory
+    teams_data = TeamDataFactory.create_batch(5)
     session.set_response({'teams': teams_data})
 
     # When
@@ -117,41 +115,15 @@ def test_list_teams(collection, session):
 
     # Then
     assert 1 == session.num_calls
-    expected_call = FakeCall(method='GET', path='/teams', params={'per_page': 1000})
+    expected_call = FakeCall(method='GET', path='/teams', params={'per_page': 100})
     assert expected_call == session.last_call
     assert 5 == len(teams)
 
 
-def test_list_teams_filters_non_projects(collection, session):
-    # Given
-    teams_data = TeamDataFactory.create_batch(5)
-    teams_data.append({'foo': 'not a team'})
-    session.set_response({'teams': teams_data})
-
-    # Then
-    with pytest.raises(RuntimeError):
-        # When
-        list(collection.list())
-
-
-def test_list_teams_with_page_params(collection, session):
-    # Given
-    team_data = TeamDataFactory()
-    session.set_response({'teams': [team_data]})
-
-    # When
-    list(collection.list(page=3, per_page=10))
-
-    # Then
-    assert 1 == session.num_calls
-    expected_call = FakeCall(method='GET', path='/teams', params={'page': 3, 'per_page': 10})
-    assert expected_call == session.last_call
-
-
-def test_update_team(collection: TeamCollection, team):
+def test_update_team(collection: TeamCollection, team, session):
     team.name = "updated name"
-    with pytest.raises(NotImplementedError):
-        collection.update(team)
+    session.set_response({'team': team.dump()})
+    collection.update(team)
 
 
 def test_list_members(team, session):
@@ -161,62 +133,84 @@ def test_list_members(team, session):
     session.set_response({'users': [user]})
 
     # When
-    members = team.list_members()
+    with pytest.raises(NotImplementedError):
+        members = team.list_members()
 
     # Then
-    assert 1 == session.num_calls
-    expect_call = FakeCall(method='GET', path='/teams/{}/users'.format(team.uid))
-    assert expect_call == session.last_call
+    # assert 1 == session.num_calls
+    # expect_call = FakeCall(method='GET', path='/teams/{}/users'.format(team.uid))
+    # assert expect_call == session.last_call
     # assert isinstance(members[0], ProjectMember)
-#     TODO assertt something else
+#     TODO assert something else
 
 
-def test_update_user_actions(project, session):
+def test_update_user_actions(team, session):
     # Given
     user = UserDataFactory()
     session.set_response({'actions': ['READ']})
 
     # When
-    update_user_role_response = team.update_user_action(user_uid=user["id"], actions=[WRITE])
+    with pytest.raises(NotImplementedError):
+        update_user_role_response = team.update_user_action(user_id=user["id"], actions=[WRITE])
 
     # Then
-    assert 1 == session.num_calls
-    expect_call = FakeCall(method="POST", path="/teams/{}/users".format(team.uid),
-                           json={'id': user["id"], 'actions': [WRITE]})
-    assert expect_call == session.last_call
-    assert update_user_role_response is True
+    # assert 1 == session.num_calls
+    # expect_call = FakeCall(method="POST", path="/teams/{}/users".format(team.uid),
+    #                        json={'id': user["id"], 'actions': [WRITE]})
+    # assert expect_call == session.last_call
+    # assert update_user_role_response is True
 
 
-def test_add_user(project, session):
+def test_add_user(team, session):
     # Given
     user = UserDataFactory()
     session.set_response({'actions': [], 'role': 'MEMBER'})
 
     # When
-    add_user_response = project.add_user(user["id"])
+    with pytest.raises(NotImplementedError):
+        add_user_response = team.add_user(user["id"])
 
     # Then
-    assert 1 == session.num_calls
-    expect_call = FakeCall(method="POST", path='/projects/{}/users/{}'.format(project.uid, user["id"]), json={
-        "role": "MEMBER",
-        "actions": []
-    })
-    assert expect_call == session.last_call
-    assert add_user_response is True
+    # assert 1 == session.num_calls
+    # expect_call = FakeCall(method="POST", path='/projects/{}/users/{}'.format(team.uid, user["id"]), json={
+    #     "role": "MEMBER",
+    #     "actions": []
+    # })
+    # assert expect_call == session.last_call
+    # assert add_user_response is True
 
 
-def test_remove_user(project, session):
+def test_remove_user(team, session):
     # Given
     user = UserDataFactory()
 
     # When
-    remove_user_response = project.remove_user(user["id"])
+    with pytest.raises(NotImplementedError):
+        remove_user_response = team.remove_user(user["id"])
 
     # Then
-    assert 1 == session.num_calls
-    expect_call = FakeCall(
-        method="DELETE",
-        path="/projects/{}/users/{}".format(project.uid, user["id"])
-    )
-    assert expect_call == session.last_call
-    assert remove_user_response is True
+    # assert 1 == session.num_calls
+    # expect_call = FakeCall(
+    #     method="DELETE",
+    #     path="/projects/{}/users/{}".format(team.uid, user["id"])
+    # )
+    # assert expect_call == session.last_call
+    # assert remove_user_response is True
+
+
+def test_share(team, session):
+    # Given
+    user = UserDataFactory()
+
+    # When
+    with pytest.raises(NotImplementedError):
+        share_response = team.share(user["id"], uuid.uuid4())
+
+    # Then
+    # assert 1 == session.num_calls
+    # expect_call = FakeCall(
+    #     method="DELETE",
+    #     path="/projects/{}/users/{}".format(team.uid, user["id"])
+    # )
+    # assert expect_call == session.last_call
+    # assert remove_user_response is True

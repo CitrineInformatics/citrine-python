@@ -2,7 +2,9 @@ from typing import Optional
 from os import environ
 
 from citrine._session import Session
+from citrine.exceptions import AccountsV3Exception
 from citrine.resources.project import ProjectCollection
+from citrine.resources.team import TeamCollection
 from citrine.resources.user import UserCollection
 
 
@@ -38,3 +40,8 @@ class Citrine:
     def users(self) -> UserCollection:
         """Return the collection of all users."""
         return UserCollection(self.session)
+
+    @property
+    def teams(self) -> TeamCollection:
+        """Returns a resource representing all visible teams."""
+        return TeamCollection(self.session)

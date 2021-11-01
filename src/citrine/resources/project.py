@@ -446,7 +446,7 @@ class Project(Resource['Project']):
         """
         self.session.checked_post(self._path() + format_escaped_url("/users/{}", user_uid),
                                   {'role': MEMBER, 'actions': []})
-        return True
+        return True  # TODO oooooh boy
 
     def remove_user(self, user_uid: Union[str, UUID]) -> bool:
         """

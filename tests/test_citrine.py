@@ -1,5 +1,9 @@
 import platform
+
+import pytest
+
 from citrine import Citrine
+from citrine.exceptions import AccountsV3Exception
 
 
 def test_citrine_creation():
@@ -14,6 +18,12 @@ def test_citrine_project_session():
 def test_citrine_user_session():
     citrine = Citrine(api_key='foo', host='bar')
     assert citrine.session == citrine.users.session
+
+
+def test_citrine_team_session():
+    citrine = Citrine(api_key='foo', host='bar')
+    assert citrine.session == citrine.teams.session
+
 
 def test_citrine_user_agent():
     citrine = Citrine(api_key='foo', host='bar')

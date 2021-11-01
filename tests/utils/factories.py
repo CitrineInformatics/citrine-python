@@ -25,7 +25,6 @@ class TeamDataFactory(factory.DictFactory):
     id = factory.Faker('uuid4')
     name = factory.Faker('company')
     description = factory.Faker('catch_phrase')
-    status = 'CREATED'
     created_at = None
 
 
