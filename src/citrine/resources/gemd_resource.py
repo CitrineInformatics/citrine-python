@@ -1,9 +1,7 @@
 """Collection class for generic GEMD objects and templates."""
-from collections import defaultdict
 from typing import Type, Union, Optional, List, Tuple
 from uuid import UUID
 
-from gemd.util import writable_sort_order
 from gemd.entity.base_entity import BaseEntity
 from gemd.entity.link_by_uid import LinkByUID
 
@@ -76,7 +74,11 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
         """Register a GEMD object to the appropriate collection."""
         return self._collection_for(model).register(model, dry_run=dry_run)
 
-    def register_all(self, models: List[DataConcepts], *, dry_run=False) -> List[DataConcepts]:
+    def register_all(self,
+                     models: List[DataConcepts],
+                     *,
+                     dry_run=False,
+                     status_bar=False) -> List[DataConcepts]:
         """
         Register multiple GEMD objects to each of their appropriate collections.
 
@@ -95,30 +97,19 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
             Whether to actually register the item or run a dry run of the register operation.
             Dry run is intended to be used for validation. Default: false
 
+        status_bar: bool
+            Whether to display a status bar using the tqdm module to track progress in
+            registration. Requires installing the optional tqdm module. Default: false
+
         Returns
         -------
         List[DataConcepts]
             The registered versions
 
         """
-        resources = list()
-        by_type = defaultdict(list)
-        for obj in models:
-            by_type[obj.typ].append(obj)
-        typ_groups = sorted(list(by_type.values()), key=lambda x: writable_sort_order(x[0]))
-        batch_size = 50
-        for typ_group in typ_groups:
-            num_batches = len(typ_group) // batch_size
-            for batch_num in range(num_batches + 1):
-                batch = typ_group[batch_num * batch_size: (batch_num + 1) * batch_size]
-                if batch:  # final batch is empty when batch_size divides len(typ_group)
-                    registered = self._collection_for(batch[0]) \
-                        .register_all(batch, dry_run=dry_run)
-                    for prewrite, postwrite in zip(batch, registered):
-                        if isinstance(postwrite, BaseEntity):
-                            prewrite.uids = postwrite.uids
-                    resources.extend(registered)
-        return resources
+        # Endpoints are polymorphic now, so it doesn't matter which we hit
+        collection = self._collection_for(list(models)[0])
+        return collection.register_all(models, dry_run=dry_run, status_bar=status_bar)
 
     def async_update(self, model: DataConcepts, *,
                      dry_run: bool = False,

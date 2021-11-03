@@ -265,13 +265,14 @@ def test_default_for_material(collection: TableConfigCollection, session):
     # We allowed for the more forgiving call structure, so test it.
     session.calls.clear()
     session.responses.append(dummy_resp)
-    collection.default_for_material(
-        material=MaterialRun('foo', uids={'scope': 'id'}),
-        scope='ignored',
-        algorithm=TableBuildAlgorithm.FORMULATIONS.value,
-        name='my_name',
-        description='my_description',
-    )
+    with pytest.warns(DeprecationWarning):
+        collection.default_for_material(
+            material=MaterialRun('foo', uids={'scope': 'id'}),
+            scope='ignored',
+            algorithm=TableBuildAlgorithm.FORMULATIONS.value,
+            name='my_name',
+            description='my_description',
+        )
     assert 1 == session.num_calls
     assert session.last_call == FakeCall(
         method="GET",

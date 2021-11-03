@@ -2,6 +2,7 @@
 from uuid import uuid4
 
 from mock import Mock
+import pytest
 
 from citrine._rest.paginator import Paginator
 
@@ -63,3 +64,10 @@ def mocked_fetcher(*args):
     args_in_lists.append(([], ""))
     mock_fetcher.side_effect = list(args_in_lists)
     return mock_fetcher
+
+
+def test_deprecated_page_number():
+    """Verify deprecated route emits warning."""
+    result = Paginator().paginate(mocked_fetcher(a, b), lambda x: x, per_page=1, page=2)
+    with pytest.warns(DeprecationWarning):
+        assert list(result) == [a]

@@ -177,7 +177,7 @@ class MaterialRunCollection(ObjectRunCollection[MaterialRun]):
         """
         link = _make_link_by_uid(uid, scope)
         return next(
-            self._get_relation(relation='process-runs', uid=link.id, scope=link.scope, per_page=1),
+            self._get_relation(relation='process-runs', uid=link, per_page=1),
             None
         )
 
@@ -202,7 +202,7 @@ class MaterialRunCollection(ObjectRunCollection[MaterialRun]):
 
         """
         link = _make_link_by_uid(uid, scope)
-        return self._get_relation('material-specs', uid=link.id, scope=link.scope)
+        return self._get_relation('material-specs', uid=link)
 
     def list_by_template(self, uid: Union[UUID, str, LinkByUID, GEMDMaterialTemplate], *,
                          scope: Optional[str] = None) -> Iterator[MaterialRun]:

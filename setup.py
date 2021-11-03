@@ -24,11 +24,12 @@ setup(name='citrine',
           "requests>=2.25.1,<3",
           "pyjwt>=1.7.1,<2",
           "arrow>=0.15.4,<0.16",
-          "gemd>=1.2.0,<2",
+          "gemd>=1.3.0,<2",
           "boto3>=1.17.93,<2",
           "botocore>=1.20.95,<2",
           "deprecation>=2.0.7,<3",
-          "urllib3>=1.26.5,<2"
+          "urllib3>=1.26.5,<2",
+          "tqdm>=4.62.3,<5"
       ],
       extras_require={
           "builders": [

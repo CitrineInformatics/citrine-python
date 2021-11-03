@@ -3,7 +3,7 @@ from uuid import uuid4
 import pytest
 import mock
 
-from citrine.builders.auto_configure import AutoConfigureWorkflow, AutoConfigureMode
+from citrine.builders.auto_configure import AutoConfigureWorkflow
 
 from citrine.informatics.design_spaces import EnumeratedDesignSpace
 from citrine.informatics.predictors import GraphPredictor
@@ -14,6 +14,7 @@ from citrine.informatics.scores import LIScore
 from citrine._session import Session
 from citrine.resources.gemtables import GemTable
 from citrine.resources.material_run import MaterialRun
+from citrine.resources.predictor import AutoConfigureMode
 from citrine.resources.project import Project
 from citrine.resources.table_config import TableConfig
 
@@ -144,7 +145,7 @@ def test_auto_config_update_status(project):
     config_name = "Test"
     resources = default_resources(config_name)
     table_config = resources["table_config"]
-    predictor= resources["predictor"]
+    predictor = resources["predictor"]
     pew = resources["pew"]
     design_space = resources["design_space"]
     design_workflow = resources["design_workflow"]
@@ -319,13 +320,14 @@ def test_auto_configure_predictor_evaluation(project):
 
     # Create default w/ an invalid response
     with mock.patch("citrine.builders.auto_configure.wait_while_validating", fake_wait_while_failed):
-        auto_config._predictor_evaluation_stage(
-            predictor=predictor,
-            evaluator=None,
-            print_status_info=False
-        )
-        assert len(auto_config.assets) == 4
-        assert auto_config.status == "PREDICTOR EVALUATION WORKFLOW FAILED"
+        with pytest.warns(UserWarning):
+            auto_config._predictor_evaluation_stage(
+                predictor=predictor,
+                evaluator=None,
+                print_status_info=False
+            )
+            assert len(auto_config.assets) == 4
+            assert auto_config.status == "PREDICTOR EVALUATION WORKFLOW FAILED"
 
     # Create manual w/ a valid response
     with mock.patch("citrine.builders.auto_configure.wait_while_validating", fake_wait_while_succeeded):
@@ -339,11 +341,12 @@ def test_auto_configure_predictor_evaluation(project):
 
     # Create manual w/ a failed response
     with mock.patch("citrine.builders.auto_configure.wait_while_validating", fake_wait_while_failed):
-        auto_config._predictor_evaluation_stage(
-            predictor=predictor,
-            evaluator=evaluator,
-            print_status_info=False
-        )
+        with pytest.warns(UserWarning):
+            auto_config._predictor_evaluation_stage(
+                predictor=predictor,
+                evaluator=evaluator,
+                print_status_info=False
+            )
         assert len(auto_config.assets) == 4
         assert auto_config.status == "PREDICTOR EVALUATION WORKFLOW FAILED"
 
@@ -457,4 +460,3 @@ def test_auto_configure_full_run(project):
         )
         assert len(auto_config.assets) == 6
         assert auto_config.status == "DESIGN WORKFLOW CREATED"
-

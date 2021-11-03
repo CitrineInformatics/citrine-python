@@ -4,9 +4,7 @@ from logging import getLogger
 import pytest
 from dateutil.parser import parse
 from gemd.entity.link_by_uid import LinkByUID
-import warnings
 
-from citrine.informatics.workflows.design_workflow import DesignWorkflow
 from citrine.resources.api_error import ApiError, ValidationError
 from citrine.resources.gemtables import GemTableCollection
 from citrine.resources.process_spec import ProcessSpec
@@ -62,10 +60,8 @@ def test_share_post_content(project, session):
 
     # When
     # Share using resource type/id, which is deprecated
-    with warnings.catch_warnings(record=True) as caught:
+    with pytest.warns(DeprecationWarning):
         project.share(project_id=project.uid, resource_type='DATASET', resource_id=dataset_id)
-        assert len(caught) == 1
-        assert caught[0].category == DeprecationWarning
 
     # Then
     assert 1 == session.num_calls
@@ -98,8 +94,9 @@ def test_share_post_content(project, session):
     assert expected_call == session.last_call
 
     # providing both the resource and the type/id is an error
-    with pytest.raises(ValueError):
-        project.share(resource=dataset, project_id=project.uid, resource_type='DATASET', resource_id=dataset_id)
+    with pytest.warns(DeprecationWarning):
+        with pytest.raises(ValueError):
+            project.share(resource=dataset, project_id=project.uid, resource_type='DATASET', resource_id=dataset_id)
 
     # Providing neither the resource nor the type/id is an error
     with pytest.raises(ValueError):
@@ -360,11 +357,11 @@ def test_list_projects_with_page_params(collection, session):
     session.set_response({'projects': [project_data]})
 
     # When
-    list(collection.list(page=3, per_page=10))
+    list(collection.list(per_page=10))
 
     # Then
     assert 1 == session.num_calls
-    expected_call = FakeCall(method='GET', path='/projects', params={'page': 3, 'per_page': 10})
+    expected_call = FakeCall(method='GET', path='/projects', params={'per_page': 10})
     assert expected_call == session.last_call
 
 

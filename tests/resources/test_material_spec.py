@@ -4,9 +4,8 @@ import pytest
 from citrine.resources.material_spec import MaterialSpecCollection
 from tests.resources.test_data_concepts import run_noop_gemd_relation_search_test
 
-from tests.utils.factories import MaterialTemplateFactory, \
-    MaterialSpecDataFactory
-from tests.utils.session import FakeCall, FakeSession
+from tests.utils.factories import MaterialSpecDataFactory
+from tests.utils.session import FakeSession
 
 
 @pytest.fixture

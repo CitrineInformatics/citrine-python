@@ -33,7 +33,7 @@ def test_from_predictor_responses():
     featurizer = MolecularStructureFeaturizer(
         name="Molecule featurizer",
         description="description",
-        descriptor=MolecularStructureDescriptor(col),
+        input_descriptor=MolecularStructureDescriptor(col),
         features=["all"],
         excludes=["standard"]
     )

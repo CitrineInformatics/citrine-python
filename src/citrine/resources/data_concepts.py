@@ -1,6 +1,7 @@
 """Top-level class for all data concepts objects and collections thereof."""
 from abc import abstractmethod, ABC
 from warnings import warn
+from tqdm.auto import tqdm
 from typing import TypeVar, Type, List, Union, Optional, Iterator
 from uuid import UUID, uuid4
 import deprecation
@@ -9,7 +10,7 @@ from gemd.entity.dict_serializable import DictSerializable
 from gemd.entity.base_entity import BaseEntity
 from gemd.entity.link_by_uid import LinkByUID
 from gemd.json import GEMDJson
-from gemd.util import recursive_foreach
+from gemd.util import recursive_foreach, make_index, substitute_objects
 
 from citrine._rest.collection import Collection
 from citrine._serialization import properties
@@ -27,7 +28,7 @@ from citrine.resources.response import Response
 CITRINE_SCOPE = 'id'
 
 
-class DataConcepts(PolymorphicSerializable['DataConcepts'], DictSerializable, ABC):
+class DataConcepts(DictSerializable, PolymorphicSerializable['DataConcepts'], ABC):
     """
     An abstract data concepts object.
 
@@ -300,9 +301,7 @@ def _make_link_by_uid(gemd_object_rep: Union[str, UUID, BaseEntity, LinkByUID],
         warn("\'scope\' as a separate argument is deprecated when creating a link to a GEMD"
              "object. To specify a custom scope, use a LinkByUID.", DeprecationWarning)
     if isinstance(gemd_object_rep, BaseEntity):
-        if not gemd_object_rep.uids:  # an empty dictionary
-            raise ValueError('GEMD object must have at least one uid to construct a link.')
-        return LinkByUID.from_entity(gemd_object_rep, name=CITRINE_SCOPE)
+        return gemd_object_rep.to_link(CITRINE_SCOPE, allow_fallback=True)
     elif isinstance(gemd_object_rep, LinkByUID):
         return gemd_object_rep
     elif isinstance(gemd_object_rep, (str, UUID)):
@@ -447,7 +446,11 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         data = self.session.post_resource(path, dumped_data, params=params)
         return self.build(data)
 
-    def register_all(self, models: List[ResourceType], *, dry_run=False) -> List[ResourceType]:
+    def register_all(self,
+                     models: List[ResourceType],
+                     *,
+                     dry_run=False,
+                     status_bar=False) -> List[ResourceType]:
         """
         [ALPHA] Create or update each model in models.
 
@@ -461,9 +464,14 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         ----------
         models: List[ResourceType]
             The objects to be written.
+
         dry_run: bool
             Whether to actually register the objects or run a dry run of the register operation.
             Dry run is intended to be used for validation. Default: false
+
+        status_bar: bool
+            Whether to display a status bar using the tqdm module to track progress in
+            registration. Requires installing the optional tqdm module. Default: false
 
         Returns
         -------
@@ -472,6 +480,8 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
             is guaranteed to be the same as originally specified.
 
         """
+        from citrine._utils.batcher import Batcher
+
         if self.dataset_id is None:
             raise RuntimeError("Must specify a dataset in order to register a data model object.")
         path = self._get_path()
@@ -482,16 +492,45 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
         json = GEMDJson(scope=scope)
         [json.dumps(x) for x in models]  # This apparent no-op populates uids
 
-        objects = [replace_objects_with_links(scrub_none(model.dump())) for model in models]
+        resources = list()
+        batch_size = 50
+        result_index = dict()
+        if dry_run:
+            batcher = Batcher.by_dependency()
+        else:
+            batcher = Batcher.by_type()
 
-        recursive_foreach(models, lambda x: x.uids.pop(temp_scope, None))  # Strip temp uids
+        if status_bar:
+            desc = "Verifying GEMDs" if dry_run else "Registering GEMDs"
+            iterator = tqdm(batcher.batch(models, batch_size), leave=False, desc=desc)
+        else:
+            iterator = batcher.batch(models, batch_size)
 
-        response_data = self.session.put_resource(
-            path + '/batch',
-            json={'objects': objects},
-            params=params
-        )
-        return [self.build(obj) for obj in response_data['objects']]
+        for batch in iterator:
+            objects = [replace_objects_with_links(scrub_none(model.dump())) for model in batch]
+            response_data = self.session.put_resource(
+                path + '/batch',
+                json={'objects': objects},
+                params=params
+            )
+            registered = [self.build(obj) for obj in response_data['objects']]
+            result_index.update(make_index(registered))
+            substitute_objects(registered, result_index)
+
+            # Platform may add a CITRINE_SCOPE uid and citr_auto tags
+            if not dry_run:
+                for prewrite, postwrite in zip(batch, registered):
+                    prewrite.uids = postwrite.uids
+                    prewrite.tags = postwrite.tags
+            else:
+                for prewrite, postwrite in zip(batch, registered):
+                    postwrite.uids = prewrite.uids
+                    postwrite.tags = prewrite.tags
+            resources.extend(registered)
+
+        recursive_foreach(list(models) + list(resources),
+                          lambda x: x.uids.pop(temp_scope, None))  # Strip temp uids
+        return resources
 
     def update(self, model: ResourceType) -> ResourceType:
         """Update a data object model."""

@@ -101,23 +101,27 @@ def test_shadow_classes_in_module():
     assert issubclass(copied_class, source_mod.ExampleClass)
     assert issubclass(source_mod.ExampleClass, copied_class)
 
+    # Reset target_mod status
+    for attr in dir(target_mod):
+        delattr(target_mod, attr)
+
 
 def test_migrate_deprecated_argument():
     with pytest.raises(ValueError):
         # ValueError if neither argument is specified
         migrate_deprecated_argument(None, "new name", None, "old name")
 
-    with pytest.raises(ValueError):
-        # ValueError if both arguments are specified
-        migrate_deprecated_argument("something", "new name", "something else", "old name")
+    with pytest.warns(DeprecationWarning):
+        with pytest.raises(ValueError):
+            # ValueError if both arguments are specified
+            migrate_deprecated_argument("something", "new name", "something else", "old name")
 
     # Return the value if the new argument is specified
     assert migrate_deprecated_argument(14, "new name", None, "old name") == 14
 
-    with warnings.catch_warnings(record=True) as caught:
+    with pytest.warns(DeprecationWarning) as caught:
         # If the old argument is specified, return the value and throw a deprecation warning
         assert migrate_deprecated_argument(None, "new name", 15, "old name") == 15
-        assert issubclass(caught[0].category, DeprecationWarning)
         msg = str(caught[0].message)
         assert "old name" in msg and "new name" in msg
 
