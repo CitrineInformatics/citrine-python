@@ -35,8 +35,7 @@ class TeamMember:
         self.actions: ACTIONS = actions
 
     def __str__(self):
-        return '<ProjectMember {!r} is {!s} of {!r}>'\
-            .format(self.id, self.screen_name, self.email, self.is_admin, self.actions, self.team.name)
+        return f'<ProjectMember {self.id} {self.screen_name}>'
 
 
 class Team(Resource['Team']):
@@ -94,16 +93,16 @@ class Team(Resource['Team']):
 
     def remove_user(self, user_id: Union[str, UUID]) -> Response:
         return self.session.checked_post(self._path() + "/users/batch-remove",
-                                         json={"ids": list(user_id)}, version=self._api_version)
+                                         json={"ids": [user_id]}, version=self._api_version)
 
     def add_user(self, user_id: Union[str, UUID], actions: ACTIONS = None) -> Response:
         if actions is None:
             actions = [READ]
         return self.update_user_action(user_id, actions)
 
-    def update_user_action(self, user_id: Union[str, UUID], actions: ACTIONS) -> Response:
+    def update_user_action(self, user_id: Union[str, UUID], actions: List[ACTIONS]) -> Response:
         return self.session.checked_put(self._path() + "/users", version=self._api_version,
-                                        json={'id': list(user_id), "actions": actions})
+                                        json={'id': user_id, "actions": actions})
 
     def share(self, resource_type,  resource_id: Union[str, UUID], target_team_id) -> Response:
         payload = {
