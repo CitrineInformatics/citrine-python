@@ -21,13 +21,13 @@ class TeamMember:
 
     def __init__(self,
                  *,
-                 uid: UUID,
+                 id: UUID,
                  screen_name: str,
                  email: str,
                  is_admin: bool,
                  team: 'Team',  # noqa: F821
                  actions: ACTIONS):
-        self.uid = uid
+        self.id = id
         self.screen_name = screen_name
         self.email = email
         self.is_admin = is_admin
@@ -36,7 +36,7 @@ class TeamMember:
 
     def __str__(self):
         return '<ProjectMember {!r} is {!s} of {!r}>'\
-            .format(self.uid, self.screen_name, self.email, self.is_admin, self.actions, self.team.name)
+            .format(self.id, self.screen_name, self.email, self.is_admin, self.actions, self.team.name)
 
 
 class Team(Resource['Team']):
@@ -89,16 +89,17 @@ class Team(Resource['Team']):
 
     def list_members(self) -> List[TeamMember]:
         members = self.session.get_resource(self._path() + "/users", version=self._api_version)["users"]
-        return [TeamMember(uid=m["uid"], screen_name=m["screen_name"], email=m["email"],
+        return [TeamMember(id=m["id"], screen_name=m["screen_name"], email=m["email"],
                 is_admin=m["is_admin"], team=self, actions=m["actions"]) for m in members]
 
     def remove_user(self, user_id: Union[str, UUID]) -> Response:
         return self.session.checked_post(self._path() + "/users/batch-remove",
                                          json={"ids": list(user_id)}, version=self._api_version)
 
-    def add_user(self, user_id: Union[str, UUID]) -> Response:
-        return self.session.checked_put(self._path() + "/users", version=self._api_version,
-                                        json={'id': list(user_id)})
+    def add_user(self, user_id: Union[str, UUID], actions: ACTIONS = None) -> Response:
+        if actions is None:
+            actions = [READ]
+        return self.update_user_action(user_id, actions)
 
     def update_user_action(self, user_id: Union[str, UUID], actions: ACTIONS) -> Response:
         return self.session.checked_put(self._path() + "/users", version=self._api_version,
