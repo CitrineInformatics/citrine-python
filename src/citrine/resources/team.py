@@ -2,12 +2,36 @@
 from typing import Optional, Union, List
 from uuid import UUID
 
+from requests import Response
+
 from citrine._rest.collection import Collection
 from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
 from citrine._session import Session
 from citrine._utils.functions import format_escaped_url
 from citrine.resources.user import User
+
+WRITE = "WRITE"
+READ = "READ"
+SHARE = "SHARE"
+ACTIONS = Union[WRITE, READ, SHARE]
+
+
+class TeamMember:
+    """A Member of a Team."""
+
+    def __init__(self,
+                 *,
+                 user: User,
+                 team: 'Team',  # noqa: F821
+                 actions: ACTIONS):
+        self.user: User = user
+        self.team: 'Team' = team  # noqa: F821
+        self.actions: ACTIONS = actions
+
+    def __str__(self):
+        return '<ProjectMember {!r} is {!s} of {!r}>'\
+            .format(self.user.screen_name, self.actions, self.team.name)
 
 
 class Team(Resource['Team']):
@@ -36,6 +60,7 @@ class Team(Resource['Team']):
 
     _response_key = 'team'
     _resource_type = ResourceTypeEnum.TEAM
+    _api_version = "v3"
 
     name = properties.String('name')
     description = properties.String('description')
@@ -57,20 +82,37 @@ class Team(Resource['Team']):
     def _path(self):
         return format_escaped_url('/teams/{team_id}', team_id=self.uid)
 
-    def list_members(self) -> List[User]:
-        raise NotImplementedError("TODO")
+    def list_members(self) -> List[TeamMember]:
+        members = self.session.get_resource(self._path() + "/users", version=self._api_version)["users"]
+        return [TeamMember(user=User.build(m), team=self, actions=m["actions"]) for m in members]
 
-    def remove_user(self, user_id: Union[str, UUID]) -> List[User]:
-        raise NotImplementedError("TODO")
+    def remove_user(self, user_id: Union[str, UUID]) -> Response:
+        return self.session.checked_post(self._path() + "/users/batch-remove",
+                                         json={"ids": list(user_id)}, version=self._api_version)
 
-    def add_user(self, user_id: Union[str, UUID]) -> List[User]:
-        raise NotImplementedError("TODO")
+    def add_user(self, user_id: Union[str, UUID]) -> Response:
+        return self.session.checked_put(self._path() + "/users", version=self._api_version,
+                                        json={'id': user_id})
 
-    def update_user_action(self, user_id: Union[str, UUID], actions) -> List[User]:
-        raise NotImplementedError("TODO")
+    def update_user_action(self, user_id: Union[str, UUID], actions: ACTIONS) -> Response:
+        return self.session.checked_post(self._path() + "/users/batch-remove", version=self._api_version,
+                                         json={'ids': list(user_id)})
 
-    def share(self, asset_id: Union[str, UUID], team_id) -> List[User]:
-        raise NotImplementedError("TODO")
+    def share(self, resource_type,  resource_id: Union[str, UUID], target_team_id) -> Response:
+        payload = {
+            "resource_type": resource_type,
+            "resource_id": resource_id,
+            "target_team_id": target_team_id
+        }
+        return self.session.checked_post(self._path() + "/shared-resources", version=self._api_version,
+                                         json=payload)
+
+    def un_share(self, resource_type,  resource_id: Union[str, UUID], target_team_id) -> Response:
+        return self.session.checked_delete(
+            self._path() + f"/shared-resources/{resource_type}/{resource_id}",
+            version=self._api_version,
+            json={"target_team_id": target_team_id}
+        )
 
 
 class TeamCollection(Collection[Team]):
