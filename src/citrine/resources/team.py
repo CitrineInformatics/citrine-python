@@ -9,7 +9,6 @@ from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
 from citrine._session import Session
 from citrine._utils.functions import format_escaped_url
-from citrine.resources.user import User
 
 WRITE = "WRITE"
 READ = "READ"
@@ -22,16 +21,22 @@ class TeamMember:
 
     def __init__(self,
                  *,
-                 user: User,
+                 uid: UUID,
+                 screen_name: str,
+                 email: str,
+                 is_admin: bool,
                  team: 'Team',  # noqa: F821
                  actions: ACTIONS):
-        self.user: User = user
+        self.uid = uid
+        self.screen_name = screen_name
+        self.email = email
+        self.is_admin = is_admin
         self.team: 'Team' = team  # noqa: F821
         self.actions: ACTIONS = actions
 
     def __str__(self):
         return '<ProjectMember {!r} is {!s} of {!r}>'\
-            .format(self.user.screen_name, self.actions, self.team.name)
+            .format(self.uid, self.screen_name, self.email, self.is_admin, self.actions, self.team.name)
 
 
 class Team(Resource['Team']):
@@ -63,7 +68,7 @@ class Team(Resource['Team']):
     _api_version = "v3"
 
     name = properties.String('name')
-    description = properties.String('description')
+    description = properties.Optional(properties.String(), 'description')
     uid = properties.Optional(properties.UUID(), 'id')
     created_at = properties.Optional(properties.Datetime(), 'created_at')
 
@@ -84,7 +89,8 @@ class Team(Resource['Team']):
 
     def list_members(self) -> List[TeamMember]:
         members = self.session.get_resource(self._path() + "/users", version=self._api_version)["users"]
-        return [TeamMember(user=User.build(m), team=self, actions=m["actions"]) for m in members]
+        return [TeamMember(uid=m["uid"], screen_name=m["screen_name"], email=m["email"],
+                is_admin=m["is_admin"], team=self, actions=m["actions"]) for m in members]
 
     def remove_user(self, user_id: Union[str, UUID]) -> Response:
         return self.session.checked_post(self._path() + "/users/batch-remove",
@@ -92,11 +98,11 @@ class Team(Resource['Team']):
 
     def add_user(self, user_id: Union[str, UUID]) -> Response:
         return self.session.checked_put(self._path() + "/users", version=self._api_version,
-                                        json={'id': user_id})
+                                        json={'id': list(user_id)})
 
     def update_user_action(self, user_id: Union[str, UUID], actions: ACTIONS) -> Response:
-        return self.session.checked_post(self._path() + "/users/batch-remove", version=self._api_version,
-                                         json={'ids': list(user_id)})
+        return self.session.checked_put(self._path() + "/users", version=self._api_version,
+                                        json={'id': list(user_id), "actions": actions})
 
     def share(self, resource_type,  resource_id: Union[str, UUID], target_team_id) -> Response:
         payload = {
