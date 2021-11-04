@@ -1,5 +1,5 @@
 """Resources that represent both individual and collections of teams."""
-from typing import Optional, Union, List, Iterable, Tuple
+from typing import Optional, Union, List
 from uuid import UUID
 
 from citrine._rest.collection import Collection
@@ -111,6 +111,16 @@ class TeamCollection(Collection[Team]):
         team = Team.build(data)
         team.session = self.session
         return team
+
+    def update(self, team: Team) -> Team:
+        """
+        Update a particular team.
+
+        You can only update the name and/or description."""
+        url = self._get_path(team.uid)
+        updated = self.session.patch_resource(url, team.dump(), version=self._api_version)
+        data = updated[self._individual_key]
+        return self.build(data)
 
     def register(self, name: str, *, description: Optional[str] = None) -> Team:
         """
