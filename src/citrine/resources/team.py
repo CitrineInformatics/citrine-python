@@ -38,17 +38,17 @@ class Team(Resource['Team']):
     _resource_type = ResourceTypeEnum.TEAM
 
     name = properties.String('name')
-    description = properties.Optional(properties.String(), 'description')
+    description = properties.String('description')
     uid = properties.Optional(properties.UUID(), 'id')
-    created_at = properties.Optional(properties.Datetime(), 'created_at')  # TODO does a team have this??
+    created_at = properties.Optional(properties.Datetime(), 'created_at')
 
     def __init__(self,
                  name: str,
                  *,
-                 description: Optional[str] = None,
+                 description: str = "",
                  session: Optional[Session] = None):
         self.name: str = name
-        self.description: Optional[str] = description
+        self.description: str = description
         self.session: Session = session
 
     def __str__(self):
@@ -122,7 +122,7 @@ class TeamCollection(Collection[Team]):
         data = updated[self._individual_key]
         return self.build(data)
 
-    def register(self, name: str, *, description: Optional[str] = None) -> Team:
+    def register(self, name: str, *, description: str = "") -> Team:
         """
         Create and upload new team.
 
