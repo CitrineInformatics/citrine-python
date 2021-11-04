@@ -1,5 +1,5 @@
 """Resources that represent both individual and collections of teams."""
-from typing import Optional, Union, Iterable, Tuple, Iterator, List
+from typing import Optional, Union, List, Iterable, Tuple
 from uuid import UUID
 
 from citrine._rest.collection import Collection
@@ -7,8 +7,6 @@ from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
 from citrine._session import Session
 from citrine._utils.functions import format_escaped_url
-from citrine.exceptions import NonRetryableException, ModuleRegistrationFailedException
-from citrine.resources.response import Response
 from citrine.resources.user import User
 
 
@@ -31,8 +29,6 @@ class Team(Resource['Team']):
     ----------
     uid: UUID
         Unique uuid4 identifier of this team.
-    status: str
-        Status of the team.
     created_at: int
         Time the team was created, in seconds since epoch.
 
