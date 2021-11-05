@@ -13,6 +13,11 @@ from citrine.informatics.predictors import Predictor, GraphPredictor
 CreationType = TypeVar('CreationType', bound=Predictor)
 
 
+class PredictorSummary(Serializable['PredictorSummary']):
+    """Holds basic information about the predictor"""
+
+    pass
+
 class AutoConfigureMode(BaseEnumeration):
     """[ALPHA] The format to use in building auto-configured assets.
 
@@ -127,10 +132,15 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
             data['config'] = data.pop('instance')
         return self.build(data)
 
-    def get_summary(self):
+    def _build_summary(self,):
+        """Takes in json and converts it into a PredictorSummary object."""
+        pass
+
+    def get_summary(self, predictor_id: UUID):
         """Gets a single report keyed on the predictor_id.
         """
-        path = format_escaped_url("predictors/{}/summary", self.uid)
-        summary = self.session.get_resource(path)
-        self.summary = summary
-        return summary
+        if predictor_id is None:
+            raise ValueError("Please provide a specific predictor uid.")
+        path = format_escaped_url("projects/{}/predictors/{}/summary", self.project_id, predictor_id)
+        data = self.session.get_resource(path)
+        return self._build_summary(data)
