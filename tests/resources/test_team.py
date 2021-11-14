@@ -40,6 +40,18 @@ def collection(session) -> TeamCollection:
     return TeamCollection(session)
 
 
+def test_team_member_string_representation(team):
+    team_member = TeamMember(
+        id=uuid.uuid4(),
+        screen_name="test member",
+        email="abc@xyz.io",
+        is_admin=False,
+        team=team,
+        actions=[READ]
+    )
+    assert team_member.__str__() == f'<TeamMember {team_member.screen_name} is MEMBER of {team_member.team.name}>'
+
+
 def test_string_representation(team):
     assert "<Team 'Test Team'>" == str(team)
 
@@ -201,6 +213,28 @@ def test_share(team, session):
         json={
             "resource_type": "DATASET",
             "resource_id": str(dataset.uid),
+            "target_team_id": str(target_team_id)
+        }
+    )
+    assert expect_call == session.last_call
+    assert share_response is True
+
+
+def test_un_share(team, session):
+    # Given
+    target_team_id = uuid.uuid4()
+    dataset = Dataset(name="foo", summary="", description="")
+    dataset.uid = str(uuid.uuid4())
+
+    # When
+    share_response = team.un_share(resource=dataset, target_team_id=target_team_id)
+
+    # Then
+    assert 1 == session.num_calls
+    expect_call = FakeCall(
+        method="DELETE",
+        path="/teams/{}/shared-resources/{}/{}".format(team.uid, "DATASET", str(dataset.uid)),
+        json={
             "target_team_id": str(target_team_id)
         }
     )

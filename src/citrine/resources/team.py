@@ -33,7 +33,7 @@ class TeamMember:
         self.actions: ACTIONS = actions
 
     def __str__(self):
-        return f'<ProjectMember {self.id} {self.screen_name}>'
+        return f'<TeamMember {self.screen_name} is MEMBER of {self.team.name}>'
 
 
 class Team(Resource['Team']):
@@ -118,11 +118,13 @@ class Team(Resource['Team']):
                                   version=self._api_version, json=payload)
         return True
 
-    def un_share(self, resource_type, resource_id: Union[str, UUID], target_team_id) -> bool:
+    def un_share(self, resource: Resource, target_team_id: Union[str, UUID]) -> bool:
+        resource_type = resource.access_control_dict()["type"]
+        resource_id = resource.access_control_dict()["id"]
         self.session.checked_delete(
             self._path() + f"/shared-resources/{resource_type}/{resource_id}",
             version=self._api_version,
-            json={"target_team_id": target_team_id}
+            json={"target_team_id": str(target_team_id)}
         )
         return True
 

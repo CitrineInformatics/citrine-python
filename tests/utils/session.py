@@ -91,7 +91,10 @@ class FakeSession:
         return self._get_response(default_response=json)
 
     def checked_delete(self, path: str, **kwargs) -> dict:
-        self.calls.append(FakeCall('DELETE', path, params=kwargs.get('params')))
+        if 'json' in kwargs:
+            self.calls.append(FakeCall('DELETE', path, kwargs.get('json'), params=kwargs.get('params')))
+        else:
+            self.calls.append(FakeCall('DELETE', path, params=kwargs.get('params')))
         return self._get_response()
 
     def _get_response(self, default_response: dict = None):
