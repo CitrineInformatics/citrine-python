@@ -1,8 +1,7 @@
-from typing import Optional
 from os import environ
+from typing import Optional
 
 from citrine._session import Session
-from citrine.exceptions import AccountsV3Exception
 from citrine.resources.project import ProjectCollection
 from citrine.resources.team import TeamCollection
 from citrine.resources.user import UserCollection

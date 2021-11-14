@@ -116,7 +116,7 @@ class PollingTimeoutError(NonRetryableException):
 
 
 class AccountsV3Exception(CitrineException):
-    """ Something wrong related to Accounts V3."""
+    """Something went wrong related to Accounts V3."""
 
     pass
 

@@ -2,8 +2,6 @@
 from typing import Optional, Union, List
 from uuid import UUID
 
-from requests import Response
-
 from citrine._rest.collection import Collection
 from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
@@ -87,13 +85,14 @@ class Team(Resource['Team']):
         return format_escaped_url('/teams/{team_id}', team_id=self.uid)
 
     def list_members(self) -> List[TeamMember]:
-        members = self.session.get_resource(self._path() + "/users", version=self._api_version)["users"]
+        members = self.session.get_resource(self._path() + "/users",
+                                            version=self._api_version)["users"]
         return [TeamMember(id=m["id"], screen_name=m["screen_name"], email=m["email"],
                 is_admin=m["is_admin"], team=self, actions=m["actions"]) for m in members]
 
     def remove_user(self, user_id: Union[str, UUID]) -> bool:
         self.session.checked_post(self._path() + "/users/batch-remove",
-                                         json={"ids": [str(user_id)]}, version=self._api_version)
+                                  json={"ids": [str(user_id)]}, version=self._api_version)
         return True  # TODO fix this and project instances of this
 
     def add_user(self, user_id: Union[str, UUID], actions: ACTIONS = None) -> bool:
@@ -115,10 +114,11 @@ class Team(Resource['Team']):
             "resource_id": resource_access["id"],
             "target_team_id": str(target_team_id)
         }
-        self.session.checked_post(self._path() + "/shared-resources", version=self._api_version, json=payload)
+        self.session.checked_post(self._path() + "/shared-resources",
+                                  version=self._api_version, json=payload)
         return True
 
-    def un_share(self, resource_type,  resource_id: Union[str, UUID], target_team_id) -> bool:
+    def un_share(self, resource_type, resource_id: Union[str, UUID], target_team_id) -> bool:
         self.session.checked_delete(
             self._path() + f"/shared-resources/{resource_type}/{resource_id}",
             version=self._api_version,
@@ -170,7 +170,8 @@ class TeamCollection(Collection[Team]):
         """
         Update a particular team.
 
-        You can only update the name and/or description."""
+        You can only update the name and/or description.
+        """
         url = self._get_path(team.uid)
         updated = self.session.patch_resource(url, team.dump(), version=self._api_version)
         data = updated[self._individual_key]
