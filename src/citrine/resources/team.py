@@ -91,34 +91,40 @@ class Team(Resource['Team']):
         return [TeamMember(id=m["id"], screen_name=m["screen_name"], email=m["email"],
                 is_admin=m["is_admin"], team=self, actions=m["actions"]) for m in members]
 
-    def remove_user(self, user_id: Union[str, UUID]) -> Response:
-        return self.session.checked_post(self._path() + "/users/batch-remove",
-                                         json={"ids": [user_id]}, version=self._api_version)
+    def remove_user(self, user_id: Union[str, UUID]) -> bool:
+        self.session.checked_post(self._path() + "/users/batch-remove",
+                                         json={"ids": [str(user_id)]}, version=self._api_version)
+        return True  # TODO fix this and project instances of this
 
-    def add_user(self, user_id: Union[str, UUID], actions: ACTIONS = None) -> Response:
+    def add_user(self, user_id: Union[str, UUID], actions: ACTIONS = None) -> bool:
         if actions is None:
             actions = [READ]
         return self.update_user_action(user_id, actions)
 
-    def update_user_action(self, user_id: Union[str, UUID], actions: List[ACTIONS]) -> Response:
-        return self.session.checked_put(self._path() + "/users", version=self._api_version,
-                                        json={'id': user_id, "actions": actions})
+    def update_user_action(self, user_id: Union[str, UUID], actions: List[ACTIONS]) -> bool:
+        self.session.checked_put(self._path() + "/users", version=self._api_version,
+                                 json={'id': str(user_id), "actions": actions})
+        return True
 
-    def share(self, resource_type,  resource_id: Union[str, UUID], target_team_id) -> Response:
+    def share(self, *,
+              resource: Resource,
+              target_team_id: Union[str, UUID]) -> bool:
+        resource_access = resource.access_control_dict()
         payload = {
-            "resource_type": resource_type,
-            "resource_id": resource_id,
-            "target_team_id": target_team_id
+            "resource_type": resource_access["type"],
+            "resource_id": resource_access["id"],
+            "target_team_id": str(target_team_id)
         }
-        return self.session.checked_post(self._path() + "/shared-resources", version=self._api_version,
-                                         json=payload)
+        self.session.checked_post(self._path() + "/shared-resources", version=self._api_version, json=payload)
+        return True
 
-    def un_share(self, resource_type,  resource_id: Union[str, UUID], target_team_id) -> Response:
-        return self.session.checked_delete(
+    def un_share(self, resource_type,  resource_id: Union[str, UUID], target_team_id) -> bool:
+        self.session.checked_delete(
             self._path() + f"/shared-resources/{resource_type}/{resource_id}",
             version=self._api_version,
             json={"target_team_id": target_team_id}
         )
+        return True
 
 
 class TeamCollection(Collection[Team]):

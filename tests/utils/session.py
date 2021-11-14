@@ -68,6 +68,9 @@ class FakeSession:
     def put_resource(self, path: str, json: dict, **kwargs) -> dict:
         return self.checked_put(path, json, **kwargs)
 
+    def patch_resource(self, path: str, json: dict, **kwargs) -> dict:
+        return self.checked_patch(path, json, **kwargs)
+
     def delete_resource(self, path: str, **kwargs) -> dict:
         return self.checked_delete(path, **kwargs)
 
@@ -81,6 +84,10 @@ class FakeSession:
 
     def checked_put(self, path: str, json: dict, **kwargs) -> dict:
         self.calls.append(FakeCall('PUT', path, json, params=kwargs.get('params')))
+        return self._get_response(default_response=json)
+
+    def checked_patch(self, path: str, json: dict, **kwargs) -> dict:
+        self.calls.append(FakeCall('PATCH', path, json, params=kwargs.get('params')))
         return self._get_response(default_response=json)
 
     def checked_delete(self, path: str, **kwargs) -> dict:

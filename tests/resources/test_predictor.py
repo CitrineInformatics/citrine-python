@@ -48,7 +48,7 @@ def test_archive_and_restore(valid_label_fractions_predictor_data):
     pc = PredictorCollection(uuid.uuid4(), session)
     session.get_resource.return_value = valid_label_fractions_predictor_data
 
-    def _mock_put_resource(url, data):
+    def _mock_put_resource(url, data, version):
         """Assume that update returns the serialized predictor data."""
         return data
     session.put_resource.side_effect = _mock_put_resource

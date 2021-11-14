@@ -4,18 +4,13 @@ from logging import getLogger
 import pytest
 from dateutil.parser import parse
 
-from citrine.resources.project import ProjectCollection
-from citrine.resources.project_roles import MEMBER, WRITE
-from citrine.resources.team import Team, TeamCollection
+from citrine._rest.resource import ResourceTypeEnum
+from citrine.resources.dataset import Dataset
+from citrine.resources.team import Team, TeamCollection, SHARE, READ, WRITE, TeamMember
 from tests.utils.factories import UserDataFactory, TeamDataFactory
 from tests.utils.session import FakeSession, FakeCall, FakePaginatedSession
 
 logger = getLogger(__name__)
-
-
-@pytest.fixture
-def session_v1() -> FakeSession:
-    return FakeSession()
 
 
 @pytest.fixture
@@ -28,13 +23,6 @@ def session() -> FakeSession:
 @pytest.fixture
 def paginated_session() -> FakePaginatedSession:
     return FakePaginatedSession()
-
-
-@pytest.fixture
-def paginated_collection(paginated_session) -> ProjectCollection:
-    return ProjectCollection(
-        session=paginated_session
-    )
 
 
 @pytest.fixture
@@ -76,7 +64,7 @@ def test_team_registration(collection: TeamCollection, session):
         path='/teams',
         json={
             'name': 'testing',
-            'description': None,
+            'description': '',
             'id': None,
             'created_at': None,
         }
@@ -123,94 +111,98 @@ def test_list_teams(collection, session):
 def test_update_team(collection: TeamCollection, team, session):
     team.name = "updated name"
     session.set_response({'team': team.dump()})
-    collection.update(team)
+    result = collection.update(team)
+    assert result.name == team.name
 
 
 def test_list_members(team, session):
     # Given
     user = UserDataFactory()
-    user["role"] = MEMBER
+    user["actions"] = READ
     session.set_response({'users': [user]})
 
     # When
-    with pytest.raises(NotImplementedError):
-        members = team.list_members()
+    members = team.list_members()
 
     # Then
-    # assert 1 == session.num_calls
-    # expect_call = FakeCall(method='GET', path='/teams/{}/users'.format(team.uid))
-    # assert expect_call == session.last_call
-    # assert isinstance(members[0], ProjectMember)
-#     TODO assert something else
+    assert 1 == session.num_calls
+    expect_call = FakeCall(method='GET', path='/teams/{}/users'.format(team.uid))
+    assert expect_call == session.last_call
+    assert isinstance(members[0], TeamMember)
 
 
 def test_update_user_actions(team, session):
     # Given
     user = UserDataFactory()
-    session.set_response({'actions': ['READ']})
+    session.set_response({'id': user['id'], 'actions': ['READ']})
 
     # When
-    with pytest.raises(NotImplementedError):
-        update_user_role_response = team.update_user_action(user_id=user["id"], actions=[WRITE])
+    update_user_role_response = team.update_user_action(user_id=user["id"], actions=[WRITE, SHARE])
 
     # Then
-    # assert 1 == session.num_calls
-    # expect_call = FakeCall(method="POST", path="/teams/{}/users".format(team.uid),
-    #                        json={'id': user["id"], 'actions': [WRITE]})
-    # assert expect_call == session.last_call
-    # assert update_user_role_response is True
+    assert 1 == session.num_calls
+    expect_call = FakeCall(method="PUT", path="/teams/{}/users".format(team.uid),
+                           json={'id': user["id"], 'actions': [WRITE, SHARE]})
+    assert expect_call == session.last_call
+    assert update_user_role_response is True
 
 
 def test_add_user(team, session):
     # Given
     user = UserDataFactory()
-    session.set_response({'actions': [], 'role': 'MEMBER'})
+    session.set_response({'id': user["id"], 'actions': 'READ'})
 
     # When
-    with pytest.raises(NotImplementedError):
-        add_user_response = team.add_user(user["id"])
+    add_user_response = team.add_user(user["id"])
 
     # Then
-    # assert 1 == session.num_calls
-    # expect_call = FakeCall(method="POST", path='/projects/{}/users/{}'.format(team.uid, user["id"]), json={
-    #     "role": "MEMBER",
-    #     "actions": []
-    # })
-    # assert expect_call == session.last_call
-    # assert add_user_response is True
+    assert 1 == session.num_calls
+    expect_call = FakeCall(method="PUT", path='/teams/{}/users'.format(team.uid), json={
+        "id": user["id"],
+        "actions": ["READ"]
+    })
+    assert expect_call == session.last_call
+    assert add_user_response is True
 
 
 def test_remove_user(team, session):
     # Given
     user = UserDataFactory()
+    session.set_response({'ids': [user["id"]]})
 
     # When
-    with pytest.raises(NotImplementedError):
-        remove_user_response = team.remove_user(user["id"])
+    remove_user_response = team.remove_user(user["id"])
 
     # Then
-    # assert 1 == session.num_calls
-    # expect_call = FakeCall(
-    #     method="DELETE",
-    #     path="/projects/{}/users/{}".format(team.uid, user["id"])
-    # )
-    # assert expect_call == session.last_call
-    # assert remove_user_response is True
+    assert 1 == session.num_calls
+    expect_call = FakeCall(
+        method="POST",
+        path="/teams/{}/users/batch-remove".format(team.uid),
+        json={"ids": [user["id"]]}
+    )
+    assert expect_call == session.last_call
+    assert remove_user_response is True
 
 
 def test_share(team, session):
     # Given
-    user = UserDataFactory()
+    target_team_id = uuid.uuid4()
+    dataset = Dataset(name="foo", summary="", description="")
+    dataset.uid = str(uuid.uuid4())
 
     # When
-    with pytest.raises(NotImplementedError):
-        share_response = team.share(user["id"], uuid.uuid4())
+    share_response = team.share(resource=dataset, target_team_id=target_team_id)
 
     # Then
-    # assert 1 == session.num_calls
-    # expect_call = FakeCall(
-    #     method="DELETE",
-    #     path="/projects/{}/users/{}".format(team.uid, user["id"])
-    # )
-    # assert expect_call == session.last_call
-    # assert remove_user_response is True
+    assert 1 == session.num_calls
+    expect_call = FakeCall(
+        method="POST",
+        path="/teams/{}/shared-resources".format(team.uid),
+        json={
+            "resource_type": "DATASET",
+            "resource_id": str(dataset.uid),
+            "target_team_id": str(target_team_id)
+        }
+    )
+    assert expect_call == session.last_call
+    assert share_response is True
