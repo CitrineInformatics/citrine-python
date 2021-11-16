@@ -4,6 +4,7 @@ import pytest
 
 from citrine import Citrine
 from citrine.exceptions import AccountsV3Exception
+from tests.utils.session import FakeSession
 
 
 def test_citrine_creation():
@@ -22,6 +23,14 @@ def test_citrine_user_session():
 
 def test_citrine_team_session():
     citrine = Citrine(api_key='foo', host='bar')
+    citrine.session = FakeSession(accounts_v3=False)  # use a fake session
+    with pytest.raises(AccountsV3Exception):
+        citrine.teams
+
+
+def test_citrine_team_session_v3():
+    citrine = Citrine(api_key='foo', host='bar')
+    citrine.session = FakeSession(accounts_v3=True)  # use the fake v3 session
     assert citrine.session == citrine.teams.session
 
 
