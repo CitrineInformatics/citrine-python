@@ -12,7 +12,7 @@ from citrine.resources.user import User
 WRITE = "WRITE"
 READ = "READ"
 SHARE = "SHARE"
-ACTIONS = Union[WRITE, READ, SHARE]
+TEAM_ACTIONS = Union[WRITE, READ, SHARE]
 
 
 class TeamMember:
@@ -22,10 +22,10 @@ class TeamMember:
                  *,
                  user: User,
                  team: 'Team',  # noqa: F821
-                 actions: ACTIONS):
+                 actions: TEAM_ACTIONS):
         self.user = user
         self.team: 'Team' = team  # noqa: F821
-        self.actions: ACTIONS = actions
+        self.actions: TEAM_ACTIONS = actions
 
     def __str__(self):
         return '<TeamMember {!r} can {!s} of {!r}>' \
@@ -53,6 +53,10 @@ class Team(Resource['Team']):
         Unique uuid4 identifier of this team.
     created_at: int
         Time the team was created, in seconds since epoch.
+    name: str
+        Name of the Team
+    description: str
+        Description of the Team
 
     """
 
@@ -81,25 +85,82 @@ class Team(Resource['Team']):
         return format_escaped_url('/teams/{team_id}', team_id=self.uid)
 
     def list_members(self) -> List[TeamMember]:
-        """List the Team Members."""
+        """
+        List all of the members in the current team.
+
+        Returns
+        -------
+        List[TeamMember]
+            The members of the current team
+
+        """
         members = self.session.get_resource(self._path() + "/users",
                                             version=self._api_version)["users"]
         return [TeamMember(user=User.build(m), team=self, actions=m["actions"]) for m in members]
 
     def remove_user(self, user_id: Union[str, UUID]) -> bool:
-        """Remove a user from the team."""
+        """
+        Remove a User from a Team.
+
+        Parameters
+        ----------
+        user_id: str or uuid
+            The id of the user to remove from the team
+
+        Returns
+        -------
+        bool
+            Returns ``True`` if user successfully removed
+
+        """
         self.session.checked_post(self._path() + "/users/batch-remove",
                                   json={"ids": [str(user_id)]}, version=self._api_version)
-        return True  # TODO fix this and project instances of this
+        return True  # note: only get here if checked_post doesn't raise error
 
-    def add_user(self, user_id: Union[str, UUID], actions: ACTIONS = None) -> bool:
-        """Add a user to a team."""
+    def add_user(self, user_id: Union[str, UUID], actions: TEAM_ACTIONS = None) -> bool:
+        """
+        Add a User to a Team.
+
+        Adds User with ``READ`` action to the Team.
+        Use the ``update_user_action`` method to change a User's actions.
+
+        Parameters
+        ----------
+        user_id: str or uuid
+            The id of the user to add to the team
+        actions: list of TEAM_ACTIONS
+            The actions to give the new user in this team
+            The options are: WRITE, READ, SHARE
+            defaults to READ
+
+        Returns
+        -------
+        bool
+            Returns ``True`` if user successfully added
+
+        """
         if actions is None:
             actions = [READ]
         return self.update_user_action(user_id, actions)
 
-    def update_user_action(self, user_id: Union[str, UUID], actions: List[ACTIONS]) -> bool:
-        """Update the action permissions of a particular user."""
+    def update_user_action(self, user_id: Union[str, UUID], actions: List[TEAM_ACTIONS]) -> bool:
+        """
+        Update a User's action permissions in the Team.
+
+        Parameters
+        ----------
+        user_id: str or uuid
+            The id of the user to add to the team
+        actions: list of TEAM_ACTIONS
+            The actions to give the new user in this team
+            The options are: WRITE, READ, SHARE
+
+        Returns
+        -------
+        bool
+            Returns ``True`` if user successfully added
+
+        """
         self.session.checked_put(self._path() + "/users", version=self._api_version,
                                  json={'id': str(user_id), "actions": actions})
         return True
@@ -107,7 +168,22 @@ class Team(Resource['Team']):
     def share(self, *,
               resource: Resource,
               target_team_id: Union[str, UUID]) -> bool:
-        """Share of a particular resource to a secondary team."""
+        """
+        Share a resource with another team.
+
+        Parameters
+        ----------
+        resource: Resource
+            The resource owned by this team, which will be shared
+        target_team_id: Union[str, UUID]
+            The id of the team with which to share the resource
+
+        Returns
+        -------
+        bool
+            Returns ``True`` if resource successfully shared
+
+        """
         resource_access = resource.access_control_dict()
         payload = {
             "resource_type": resource_access["type"],
@@ -119,7 +195,22 @@ class Team(Resource['Team']):
         return True
 
     def un_share(self, resource: Resource, target_team_id: Union[str, UUID]) -> bool:
-        """Revoke the share of a particular resource to a secondary team."""
+        """
+        Revoke the share of a particular resource to a secondary team.
+
+        Parameters
+        ----------
+        resource: Resource
+            The resource owned by this team, which will be un-shared
+        target_team_id: Union[str, UUID]
+            The id of the team which should not have access to the resource
+
+        Returns
+        -------
+        bool
+            Returns ``True`` if resource successfully un-shared
+
+        """
         resource_type = resource.access_control_dict()["type"]
         resource_id = resource.access_control_dict()["id"]
         self.session.checked_delete(
@@ -174,6 +265,11 @@ class TeamCollection(Collection[Team]):
         Update a particular team.
 
         You can only update the name and/or description.
+        Parameters
+        ----------
+        team: Team
+            The Team Resource to be updated
+
         """
         url = self._get_path(team.uid)
         updated = self.session.patch_resource(url, team.dump(), version=self._api_version)
