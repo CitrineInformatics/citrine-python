@@ -7,6 +7,7 @@ from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
 from citrine._session import Session
 from citrine._utils.functions import format_escaped_url
+from citrine.resources.user import User
 
 WRITE = "WRITE"
 READ = "READ"
@@ -19,21 +20,16 @@ class TeamMember:
 
     def __init__(self,
                  *,
-                 id: UUID,
-                 screen_name: str,
-                 email: str,
-                 is_admin: bool,
+                 user: User,
                  team: 'Team',  # noqa: F821
                  actions: ACTIONS):
-        self.id = id
-        self.screen_name = screen_name
-        self.email = email
-        self.is_admin = is_admin
+        self.user = user
         self.team: 'Team' = team  # noqa: F821
         self.actions: ACTIONS = actions
 
     def __str__(self):
-        return f'<TeamMember {self.screen_name} is MEMBER of {self.team.name}>'
+        return '<TeamMember {!r} can {!s} of {!r}>' \
+            .format(self.user.screen_name, self.actions, self.team.name)
 
 
 class Team(Resource['Team']):
@@ -88,8 +84,7 @@ class Team(Resource['Team']):
         """List the Team Members."""
         members = self.session.get_resource(self._path() + "/users",
                                             version=self._api_version)["users"]
-        return [TeamMember(id=m["id"], screen_name=m["screen_name"], email=m["email"],
-                is_admin=m["is_admin"], team=self, actions=m["actions"]) for m in members]
+        return [TeamMember(user=User.build(m), team=self, actions=m["actions"]) for m in members]
 
     def remove_user(self, user_id: Union[str, UUID]) -> bool:
         """Remove a user from the team."""

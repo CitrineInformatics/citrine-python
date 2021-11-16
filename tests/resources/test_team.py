@@ -7,6 +7,7 @@ from dateutil.parser import parse
 from citrine._rest.resource import ResourceTypeEnum
 from citrine.resources.dataset import Dataset
 from citrine.resources.team import Team, TeamCollection, SHARE, READ, WRITE, TeamMember
+from citrine.resources.user import User
 from tests.utils.factories import UserDataFactory, TeamDataFactory
 from tests.utils.session import FakeSession, FakeCall, FakePaginatedSession
 
@@ -41,15 +42,13 @@ def collection(session) -> TeamCollection:
 
 
 def test_team_member_string_representation(team):
+    user = User.build(UserDataFactory())
     team_member = TeamMember(
-        id=uuid.uuid4(),
-        screen_name="test member",
-        email="abc@xyz.io",
-        is_admin=False,
+        user=user,
         team=team,
         actions=[READ]
     )
-    assert team_member.__str__() == f'<TeamMember {team_member.screen_name} is MEMBER of {team_member.team.name}>'
+    assert team_member.__str__() == '<TeamMember {!r} can {!s} of {!r}>'.format(user.screen_name, team_member.actions, team.name)
 
 
 def test_string_representation(team):
