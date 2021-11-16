@@ -477,6 +477,8 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
             # Platform may add a CITRINE_SCOPE uid and citr_auto tags; update locals
             model.uids.update({k: v for k, v in registered.uids.items()})
             if registered.tags is not None:
+                if model.tags is None:  # This is somehow hit by nextgen-devkit tests
+                    model.tags = list()  # pragma: no cover
                 model.tags.extend([tag for tag in registered.tags
                                    if re.match(f"^{CITRINE_TAG_PREFIX}::", tag)])
         else:
@@ -488,7 +490,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
                 todo = [tag for tag in registered.tags
                         if re.match(f"^{CITRINE_TAG_PREFIX}::", tag)]
                 for tag in todo:  # Covering this block would require dark art
-                    if tag not in model.tags:  # pragma: no cover
+                    if tag not in model.tags:
                         registered.tags.remove(tag)
         return registered
 
@@ -580,7 +582,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
                         todo = [tag for tag in result.tags
                                 if re.match(f"^{CITRINE_TAG_PREFIX}::", tag)]
                         for tag in todo:  # Covering this block would require dark art
-                            if tag not in obj.tags:  # pragma: no cover
+                            if tag not in obj.tags:
                                 result.tags.remove(tag)
 
             substitute_objects(registered, result_index, inplace=True)
