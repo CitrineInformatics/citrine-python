@@ -130,6 +130,7 @@ def test_list_members(team, session):
     # Given
     user = UserDataFactory()
     user["actions"] = READ
+    user.pop("position")
     session.set_response({'users': [user]})
 
     # When
