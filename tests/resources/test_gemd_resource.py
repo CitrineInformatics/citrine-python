@@ -5,12 +5,15 @@ from os.path import basename
 import pytest
 
 from gemd.entity.bounds.integer_bounds import IntegerBounds
+from gemd.entity.attribute import Condition
+from gemd.entity.value import NominalInteger
 from gemd.entity.link_by_uid import LinkByUID
 from gemd.entity.object.material_spec import MaterialSpec as GemdMaterialSpec
 from gemd.entity.object.process_spec import ProcessSpec as GemdProcessSpec
 
-from citrine.exceptions import PollingTimeoutError, JobFailureError, NotFound
+from citrine.exceptions import PollingTimeoutError, JobFailureError
 from citrine.resources.api_error import ApiError, ValidationError
+from citrine.resources.audit_info import AuditInfo
 from citrine.resources.condition_template import ConditionTemplateCollection, ConditionTemplate
 from citrine.resources.data_concepts import DataConcepts
 from citrine.resources.gemd_resource import GEMDResourceCollection
@@ -469,3 +472,70 @@ def test_batch_delete(gemd_collection, session):
 def test_batch_delete_bad_input(gemd_collection):
     with pytest.raises(TypeError):
         gemd_collection.batch_delete([False])
+
+
+def test_type_passthrough(gemd_collection, session):
+    # Generate some metadata
+    metadata = {
+        'dataset': str(uuid4()),
+        'audit_info': AuditInfo.build({"created_by": str(uuid4()),
+                                       "created_at": 1559933807392
+                                       })
+    }
+    # Set up the Condition Templates
+    low_tmpl, high_tmpl = [
+        ConditionTemplate('condition low', uids={"id": str(uuid4())}, bounds=IntegerBounds(1, 10)),
+        ConditionTemplate('condition high', uids={"id": str(uuid4())}, bounds=IntegerBounds(11, 20)),
+    ]
+    session.set_response({"objects": [dict(low_tmpl.dump(), **metadata),
+                                      dict(high_tmpl.dump(), **metadata),
+                                      ]})
+    low_tmpl, high_tmpl = gemd_collection.register_all([low_tmpl, high_tmpl])
+    assert low_tmpl.dataset is not None
+    assert low_tmpl.audit_info is not None
+    assert high_tmpl.dataset is not None
+    assert high_tmpl.audit_info is not None
+
+    ptempl = ProcessTemplate(
+        'my template',
+        uids={"id": str(uuid4())},
+        conditions=[(low_tmpl, IntegerBounds(2, 4)), (high_tmpl, IntegerBounds(12, 15))],
+
+    )
+    session.set_response(dict(ptempl.dump(), **metadata))
+    ptempl = gemd_collection.register(ptempl)
+    assert ptempl.dataset is not None
+    assert ptempl.audit_info is not None
+
+    arr = [
+        ProcessSpec(
+            'foo',
+            uids={"id": str(uuid4())},
+            template=ptempl,
+            conditions=[
+                Condition(name='low', value=NominalInteger(3), template=low_tmpl),
+                Condition(name='high', value=NominalInteger(13), template=high_tmpl),
+            ]
+        ),
+        ProcessSpec(
+            'bar',
+            uids={"id": str(uuid4())},
+            template=ptempl,
+            conditions=[
+                Condition(name='high', value=NominalInteger(14), template=high_tmpl),
+            ]
+        ),
+        ProcessSpec('baz', uids={"id": str(uuid4())}),
+    ]
+    session.set_response({"objects": [dict(x.dump(), **metadata) for x in arr]})
+    pspecs = gemd_collection.register_all(arr)
+    assert([s.name for s in pspecs] == ['foo', 'bar', 'baz'])
+
+
+if __name__ == '__main__':
+    session = FakeSession()
+    gemd_collection = ProcessSpecCollection(
+        project_id=UUID('6b608f78-e341-422c-8076-35adc8828545'),
+        dataset_id=UUID('8da51e93-8b55-4dd3-8489-af8f65d4ad9a'),
+        session=session)
+    test_type_passthrough(gemd_collection, session)

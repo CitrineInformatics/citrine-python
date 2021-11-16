@@ -1,5 +1,6 @@
 """Top-level class for all data concepts objects and collections thereof."""
 from abc import abstractmethod, ABC
+import re
 from warnings import warn
 from tqdm.auto import tqdm
 from typing import TypeVar, Type, List, Union, Optional, Iterator
@@ -10,12 +11,12 @@ from gemd.entity.dict_serializable import DictSerializable
 from gemd.entity.base_entity import BaseEntity
 from gemd.entity.link_by_uid import LinkByUID
 from gemd.json import GEMDJson
-from gemd.util import recursive_foreach, make_index, substitute_objects
+from gemd.util import recursive_foreach, make_index, substitute_objects, set_uuids
 
 from citrine._rest.collection import Collection
-from citrine._serialization import properties
 from citrine._serialization.polymorphic_serializable import PolymorphicSerializable
 from citrine._serialization.properties import Property as SerializableProperty
+from citrine._serialization.properties import UUID as PropertyUUID
 from citrine._serialization.serializable import Serializable
 from citrine._session import Session
 from citrine._utils.functions import scrub_none, replace_objects_with_links, \
@@ -26,6 +27,7 @@ from citrine.jobs.job import _poll_for_job_completion
 from citrine.resources.response import Response
 
 CITRINE_SCOPE = 'id'
+CITRINE_TAG_PREFIX = 'citr_auto'
 
 
 class DataConcepts(DictSerializable, PolymorphicSerializable['DataConcepts'], ABC):
@@ -72,7 +74,7 @@ class DataConcepts(DictSerializable, PolymorphicSerializable['DataConcepts'], AB
 
     client_specific_fields = {
         "audit_info": AuditInfo,
-        "dataset": properties.UUID,
+        "dataset": PropertyUUID,
     }
     """
     Fields that are added to the gemd data objects when they are used in this client
@@ -279,6 +281,25 @@ class DataConcepts(DictSerializable, PolymorphicSerializable['DataConcepts'], AB
             )
         return cls.json_support
 
+    def dump(self) -> dict:
+        """Overload dump to include the client-specific fields."""
+        result = super().dump()
+        for field, clazz in self.client_specific_fields.items():
+            value = getattr(self, f"_{field}", None)
+            if value is None:
+                serialized = None
+            elif isinstance(value, DictSerializable):
+                serialized = value.as_dict()
+            elif issubclass(clazz, SerializableProperty):
+                # deserialize handles type checking already
+                serialized = clazz(clazz).serialize(value)
+            else:  # pragma: no cover
+                raise NotImplementedError("No serialization strategy reported for client "
+                                          "field type {} for field {}.".format(clazz, field))
+            if serialized is not None:
+                result[field] = serialized
+        return result
+
     def as_dict(self) -> dict:
         """
         Dump to a dictionary (useful for interoperability with gemd).
@@ -290,9 +311,16 @@ class DataConcepts(DictSerializable, PolymorphicSerializable['DataConcepts'], AB
         reference.
         """
         result = self.dump()
-        for field in result:
-            result[field] = getattr(self, field, result[field])
         return result
+
+    def _dict_for_compare(self):
+        """Which fields should be ignored in equality comparison."""
+        base = super()._dict_for_compare()
+        for field in base:
+            base[field] = getattr(self, field, base[field])
+        base.pop("audit_info", None)
+        base.pop("dataset", None)
+        return base
 
 
 def _make_link_by_uid(gemd_object_rep: Union[str, UUID, BaseEntity, LinkByUID],
@@ -361,8 +389,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
             A data model object built from the dictionary.
 
         """
-        data_concepts_object = self.get_type().build(data)
-        return data_concepts_object
+        return self.get_type().build(data)
 
     def list(self, *,
              page: Optional[int] = None,
@@ -439,12 +466,31 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
 
         temp_scope = str(uuid4())
         scope = temp_scope if dry_run else CITRINE_SCOPE
-        GEMDJson(scope=scope).dumps(model)  # This apparent no-op populates uids
+        set_uuids(model, scope=scope)
         dumped_data = replace_objects_with_links(scrub_none(model.dump()))
-        recursive_foreach(model, lambda x: x.uids.pop(temp_scope, None))  # Strip temp uids
 
         data = self.session.post_resource(path, dumped_data, params=params)
-        return self.build(data)
+        registered = self.build(data)
+
+        recursive_foreach(model, lambda x: x.uids.pop(temp_scope, None))  # Strip temp uids
+        if not dry_run:
+            # Platform may add a CITRINE_SCOPE uid and citr_auto tags; update locals
+            model.uids.update({k: v for k, v in registered.uids.items()})
+            if registered.tags is not None:
+                model.tags.extend([tag for tag in registered.tags
+                                   if re.match(f"^{CITRINE_TAG_PREFIX}::", tag)])
+        else:
+            # Remove of the tags/uids the platform spuriously added
+            # this might leave objects with just the temp ids, which we want to strip later
+            if CITRINE_SCOPE not in model.uids:
+                registered.uids.pop(CITRINE_SCOPE, None)
+            if registered.tags is not None:
+                todo = [tag for tag in registered.tags
+                        if re.match(f"^{CITRINE_TAG_PREFIX}::", tag)]
+                for tag in todo:  # Covering this block would require dark art
+                    if tag not in model.tags:  # pragma: no cover
+                        registered.tags.remove(tag)
+        return registered
 
     def register_all(self,
                      models: List[ResourceType],
@@ -489,8 +535,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
 
         temp_scope = str(uuid4())
         scope = temp_scope if dry_run else CITRINE_SCOPE
-        json = GEMDJson(scope=scope)
-        [json.dumps(x) for x in models]  # This apparent no-op populates uids
+        set_uuids(models, scope=scope)
 
         resources = list()
         batch_size = 50
@@ -515,21 +560,35 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
             )
             registered = [self.build(obj) for obj in response_data['objects']]
             result_index.update(make_index(registered))
-            substitute_objects(registered, result_index)
 
-            # Platform may add a CITRINE_SCOPE uid and citr_auto tags
             if not dry_run:
-                for prewrite, postwrite in zip(batch, registered):
-                    prewrite.uids = postwrite.uids
-                    prewrite.tags = postwrite.tags
+                # Platform may add a CITRINE_SCOPE uid and citr_auto tags; update locals
+                for obj in batch:
+                    result = result_index[obj.to_link()]
+                    obj.uids.update({k: v for k, v in result.uids.items()})
+                    if result.tags is not None:
+                        obj.tags = list(result.tags)
             else:
-                for prewrite, postwrite in zip(batch, registered):
-                    postwrite.uids = prewrite.uids
-                    postwrite.tags = prewrite.tags
+                # Remove of the tags/uids the platform spuriously added
+                # this might leave objects with just the temp ids, which we want to strip later
+                for obj in batch:
+                    result = result_index[obj.to_link()]
+                    if CITRINE_SCOPE not in obj.uids:
+                        citr_id = result.uids.pop(CITRINE_SCOPE, None)
+                        result_index.pop(LinkByUID(scope=CITRINE_SCOPE, id=citr_id), None)
+                    if result.tags is not None:
+                        todo = [tag for tag in result.tags
+                                if re.match(f"^{CITRINE_TAG_PREFIX}::", tag)]
+                        for tag in todo:  # Covering this block would require dark art
+                            if tag not in obj.tags:  # pragma: no cover
+                                result.tags.remove(tag)
+
+            substitute_objects(registered, result_index, inplace=True)
             resources.extend(registered)
 
-        recursive_foreach(list(models) + list(resources),
-                          lambda x: x.uids.pop(temp_scope, None))  # Strip temp uids
+        if dry_run:  # No-op if not dry-run
+            recursive_foreach(list(models) + list(resources),
+                              lambda x: x.uids.pop(temp_scope, None))  # Strip temp uids
         return resources
 
     def update(self, model: ResourceType) -> ResourceType:
