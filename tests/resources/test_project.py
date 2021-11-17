@@ -81,6 +81,15 @@ def test_string_representation(project):
     assert "<Project 'Test Project'>" == str(project)
 
 
+def test_share_post_content_v3(project_v3):
+    # Given
+    dataset_id = str(uuid.uuid4())
+    other_team_id = uuid.uuid4()
+
+    with pytest.raises(AccountsV3Exception):
+        project_v3.share(project_id=other_team_id, resource_type='DATASET', resource_id=dataset_id)
+
+
 def test_share_post_content(project, session):
     # Given
     dataset_id = str(uuid.uuid4())
@@ -129,7 +138,19 @@ def test_share_post_content(project, session):
     with pytest.raises(ValueError):
         project.share(project_id=project.uid)
 
-def test_publish_resource(project_v3, session_v3):
+
+def test_publish_resource(project, session):
+    dataset_id = str(uuid.uuid4())
+    dataset = project.datasets.build(dict(
+        id=dataset_id,
+        name="public dataset", summary="test", description="test"
+    ))
+
+    with pytest.raises(AccountsV3Exception):
+        project.publish(resource=dataset)
+
+
+def test_publish_resource_v3(project_v3, session_v3):
     dataset_id = str(uuid.uuid4())
     dataset = project_v3.datasets.build(dict(
         id=dataset_id,
@@ -146,6 +167,78 @@ def test_publish_resource(project_v3, session_v3):
         }
     )
     assert expected_call == session_v3.last_call
+
+
+def test_pull_in_resource(project, session):
+    dataset_id = str(uuid.uuid4())
+    dataset = project.datasets.build(dict(
+        id=dataset_id,
+        name="public dataset", summary="test", description="test"
+    ))
+
+    with pytest.raises(AccountsV3Exception):
+        project.pull_in_resource(resource=dataset)
+
+
+def test_pull_in_resource_v3(project_v3, session_v3):
+    dataset_id = str(uuid.uuid4())
+    dataset = project_v3.datasets.build(dict(
+        id=dataset_id,
+        name="public dataset", summary="test", description="test"
+    ))
+    assert project_v3.pull_in_resource(resource=dataset)
+
+    assert 1 == session_v3.num_calls
+    expected_call = FakeCall(
+        method='POST',
+        path='/teams/{}/projects/{}/outside-resources/{}/batch-pull-in'.format(project_v3.team_id, project_v3.uid, 'DATASET'),
+        json={
+            'ids': [dataset_id]
+        }
+    )
+    assert expected_call == session_v3.last_call
+
+
+
+def test_un_publish_resource(project, session):
+    dataset_id = str(uuid.uuid4())
+    dataset = project.datasets.build(dict(
+        id=dataset_id,
+        name="public dataset", summary="test", description="test"
+    ))
+
+    with pytest.raises(AccountsV3Exception):
+        project.un_publish(resource=dataset)
+
+
+def test_un_publish_resource_v3(project_v3, session_v3):
+    dataset_id = str(uuid.uuid4())
+    dataset = project_v3.datasets.build(dict(
+        id=dataset_id,
+        name="public dataset", summary="test", description="test"
+    ))
+    assert project_v3.un_publish(resource=dataset)
+
+    assert 1 == session_v3.num_calls
+    expected_call = FakeCall(
+        method='POST',
+        path='/projects/{}/published-resources/{}/batch-un-publish'.format(project_v3.uid, 'DATASET'),
+        json={
+            'ids': [dataset_id]
+        }
+    )
+    assert expected_call == session_v3.last_call
+
+
+def test_make_resource_public_v3(project_v3):
+    dataset_id = str(uuid.uuid4())
+    dataset = project_v3.datasets.build(dict(
+        id=dataset_id,
+        name="public dataset", summary="test", description="test"
+    ))
+
+    with pytest.raises(AccountsV3Exception):
+        project_v3.make_public(dataset)
 
 
 def test_make_resource_public(project, session):
@@ -170,6 +263,16 @@ def test_make_resource_public(project, session):
         project.make_public(ProcessSpec("dummy process"))
 
 
+def test_make_resource_private_v3(project_v3):
+    dataset_id = str(uuid.uuid4())
+    dataset = project_v3.datasets.build(dict(
+        id=dataset_id,
+        name="private dataset", summary="test", description="test"
+    ))
+    with pytest.raises(AccountsV3Exception):
+        project_v3.make_private(dataset)
+
+
 def test_make_resource_private(project, session):
     dataset_id = str(uuid.uuid4())
     dataset = project.datasets.build(dict(
@@ -189,6 +292,19 @@ def test_make_resource_private(project, session):
 
     with pytest.raises(RuntimeError):
         project.make_private(ProcessSpec("dummy process"))
+
+
+def test_transfer_resource_v3(project_v3):
+
+    dataset_id = str(uuid.uuid4())
+    other_project_id = uuid.uuid4()
+    dataset = project_v3.datasets.build(dict(
+        id=dataset_id,
+        name="dataset to transfer", summary="test", description="test"
+    ))
+
+    with pytest.raises(AccountsV3Exception):
+        project_v3.transfer_resource(resource=dataset, receiving_project_uid=other_project_id)
 
 
 def test_transfer_resource(project, session):
@@ -539,6 +655,11 @@ def test_update_project(collection: ProjectCollection, project):
         collection.update(project)
 
 
+def test_list_members_v3(project_v3):
+    with pytest.raises(AccountsV3Exception):
+        project_v3.list_members()
+
+
 def test_list_members(project, session):
     # Given
     user = UserDataFactory()
@@ -553,6 +674,15 @@ def test_list_members(project, session):
     expect_call = FakeCall(method='GET', path='/projects/{}/users'.format(project.uid))
     assert expect_call == session.last_call
     assert isinstance(members[0], ProjectMember)
+
+
+def test_update_user_role_v3(project_v3):
+    # Given
+    user_id = uuid.uuid4()
+
+    # Then
+    with pytest.raises(AccountsV3Exception):
+        project_v3.update_user_role(user_uid=user_id, role=LEAD)
 
 
 def test_update_user_role(project, session):
@@ -587,6 +717,15 @@ def test_update_user_actions(project, session):
     assert update_user_role_response is True
 
 
+def test_add_user_v3(project_v3):
+    # Given
+    user_id = uuid.uuid4()
+
+    # Then
+    with pytest.raises(AccountsV3Exception):
+        project_v3.add_user(user_id)
+
+
 def test_add_user(project, session):
     # Given
     user = UserDataFactory()
@@ -603,6 +742,15 @@ def test_add_user(project, session):
     })
     assert expect_call == session.last_call
     assert add_user_response is True
+
+
+def test_remove_user_v3(project_v3):
+    # Given
+    user_id = uuid.uuid4()
+
+    # Then
+    with pytest.raises(AccountsV3Exception):
+        project_v3.remove_user(user_id)
 
 
 def test_remove_user(project, session):
@@ -729,6 +877,11 @@ def test_project_tables(project):
     assert isinstance(project.tables, GemTableCollection)
 
 
+def test_creator_v3(project_v3):
+    with pytest.raises(AccountsV3Exception):
+        project_v3.creator()
+
+
 def test_creator(project, session):
     # Given
     email = 'CaTiO3@perovskite.com'
@@ -790,3 +943,17 @@ def test_owned_table_config_ids(project, session):
     assert expect_call == session.last_call
     assert all(x in id_set for x in ids)
     assert len(ids) == len(id_set)
+
+def test_owned_dataset_ids_v3(project_v3):
+    with pytest.raises(AccountsV3Exception):
+        project_v3.owned_dataset_ids()
+
+
+def test_owned_table_ids_v3(project_v3):
+    with pytest.raises(AccountsV3Exception):
+        project_v3.owned_table_ids()
+
+
+def test_owned_table_config_ids_v3(project_v3):
+    with pytest.raises(AccountsV3Exception):
+        project_v3.owned_table_config_ids()

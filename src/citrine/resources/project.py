@@ -9,9 +9,13 @@ from gemd.entity.link_by_uid import LinkByUID
 from citrine._rest.collection import Collection
 from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
-from citrine._utils.functions import format_escaped_url
 from citrine._session import Session
-from citrine.exceptions import AccountsV3Exception, NonRetryableException, ModuleRegistrationFailedException
+from citrine._utils.functions import format_escaped_url
+from citrine.exceptions import (
+    AccountsV3Exception,
+    NonRetryableException,
+    ModuleRegistrationFailedException
+)
 from citrine.resources.api_error import ApiError
 from citrine.resources.condition_template import ConditionTemplateCollection
 from citrine.resources.dataset import DatasetCollection
@@ -19,8 +23,8 @@ from citrine.resources.delete import _async_gemd_batch_delete
 from citrine.resources.descriptors import DescriptorMethods
 from citrine.resources.design_space import DesignSpaceCollection
 from citrine.resources.design_workflow import DesignWorkflowCollection
-from citrine.resources.gemtables import GemTableCollection
 from citrine.resources.gemd_resource import GEMDResourceCollection
+from citrine.resources.gemtables import GemTableCollection
 from citrine.resources.ingredient_run import IngredientRunCollection
 from citrine.resources.ingredient_spec import IngredientSpecCollection
 from citrine.resources.material_run import MaterialRunCollection
@@ -45,7 +49,6 @@ from citrine.resources.project_roles import MEMBER, ROLES, ACTIONS
 from citrine.resources.property_template import PropertyTemplateCollection
 from citrine.resources.response import Response
 from citrine.resources.table_config import TableConfigCollection
-from citrine.resources.team import Team
 from citrine.resources.user import User
 
 
@@ -237,6 +240,10 @@ class Project(Resource['Project']):
         """
         Publish a resource from a project to its encompassing team.
 
+        In order to use the Resource in a different project,
+        you should use project.pull_in_resource() to pull that resource
+        into the other project.
+
         Parameters
         ----------
         resource: Resource
@@ -284,9 +291,30 @@ class Project(Resource['Project']):
         return True
 
     def pull_in_resource(self, *, resource: Resource):
-        if self.session._accounts_service_v3:
-            raise AccountsV3Exception("Not available")
-        raise NotImplementedError()
+        """
+        Pull in a public resource from this project's team.
+
+        Parameters
+        ----------
+        resource: Resource
+            The resource owned by the encompassing team, which will be pulled in
+
+        Returns
+        -------
+        bool
+            Returns ``True`` if resource successfully pulled in
+
+        """
+        if not self.session._accounts_service_v3:
+            raise AccountsV3Exception("Not available, you may be looking for project.make_public")
+
+        resource_access = resource.access_control_dict()
+        resource_type = resource_access["type"]
+        base_url = f'/teams/{self.team_id}' + self._path()
+        self.session.checked_post(
+            base_url + f'/outside-resources/{resource_type}/batch-pull-in',
+            version='v3', json={'ids': [resource_access["id"]]})
+        return True
 
     def share(self, *,
               resource: Optional[Resource] = None,
@@ -352,7 +380,6 @@ class Project(Resource['Project']):
             Returns ``True`` upon successful resource transfer.
 
         """
-
         if self.session._accounts_service_v3:
             raise AccountsV3Exception("Not available, you may be looking for project.publish")
         try:
@@ -380,7 +407,6 @@ class Project(Resource['Project']):
             ``True`` if the action was performed successfully
 
         """
-
         if self.session._accounts_service_v3:
             raise AccountsV3Exception("Not available, you may be looking for project.publish")
         try:
@@ -408,7 +434,7 @@ class Project(Resource['Project']):
 
         """
         if self.session._accounts_service_v3:
-            raise AccountsV3Exception("Not available, you may be looking for project.publish")
+            raise AccountsV3Exception("Not available, you may be looking for project.un_publish")
         try:
             self.session.checked_post(self._path() + "/make-private", {
                 "resource": resource.access_control_dict()
@@ -428,7 +454,6 @@ class Project(Resource['Project']):
             The email of the creator of this resource.
 
         """
-
         if self.session._accounts_service_v3:
             raise AccountsV3Exception("Not available")
         email = self.session.get_resource(self._path() + "/creator")["email"]
@@ -490,8 +515,7 @@ class Project(Resource['Project']):
 
         """
         if self.session._accounts_service_v3:
-            pass
-            # TODO this is now a teams action
+            raise AccountsV3Exception("Not available, please use team.list_members")
         members = self.session.get_resource(self._path() + "/users")["users"]
         return [ProjectMember(user=User.build(m), project=self, role=m["role"]) for m in members]
 
@@ -510,7 +534,7 @@ class Project(Resource['Project']):
 
         """
         if self.session._accounts_service_v3:
-            raise AccountsV3Exception("Not available, use teams to change user actions")
+            raise AccountsV3Exception("Not available, please use team.update_user_action")
         self.session.checked_post(self._path() + format_escaped_url("/users/{}", user_uid),
                                   {'role': role, 'actions': actions})
         return True
@@ -529,7 +553,7 @@ class Project(Resource['Project']):
 
         """
         if self.session._accounts_service_v3:
-            raise AccountsV3Exception("Not available, add user to the team")
+            raise AccountsV3Exception("Not available, please use team.add_user")
         self.session.checked_post(self._path() + format_escaped_url("/users/{}", user_uid),
                                   {'role': MEMBER, 'actions': []})
         return True
@@ -545,7 +569,7 @@ class Project(Resource['Project']):
 
         """
         if self.session._accounts_service_v3:
-            raise AccountsV3Exception("Not available, remove user from the team")  # TODO is this right?
+            raise AccountsV3Exception("Not available, please use team.remove_user")
         self.session.checked_delete(
             self._path() + format_escaped_url("/users/{}", user_uid)
         )
@@ -748,7 +772,6 @@ class ProjectCollection(Collection[Project]):
         return self._fetch_page(path=path, fetch_func=self.session.post_resource,
                                 page=page, per_page=per_page,
                                 json_body=json_body)
-
 
     def search(self, *, search_params: Optional[dict] = None,
                per_page: int = 1000) -> Iterable[Project]:
