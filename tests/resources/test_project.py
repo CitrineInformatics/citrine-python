@@ -57,6 +57,17 @@ def project(session) -> Project:
 
 
 @pytest.fixture
+def project_v3(session_v3) -> Project:
+    project = Project(
+        name='Test Project',
+        session=session_v3,
+        team_id=uuid.UUID('11111111-8baf-433b-82eb-8c7fada847da')
+    )
+    project.uid = uuid.UUID('16fd2706-8baf-433b-82eb-8c7fada847da')
+    return project
+
+
+@pytest.fixture
 def collection(session) -> ProjectCollection:
     return ProjectCollection(session)
 
@@ -117,6 +128,24 @@ def test_share_post_content(project, session):
     # Providing neither the resource nor the type/id is an error
     with pytest.raises(ValueError):
         project.share(project_id=project.uid)
+
+def test_publish_resource(project_v3, session_v3):
+    dataset_id = str(uuid.uuid4())
+    dataset = project_v3.datasets.build(dict(
+        id=dataset_id,
+        name="public dataset", summary="test", description="test"
+    ))
+    assert project_v3.publish(resource=dataset)
+
+    assert 1 == session_v3.num_calls
+    expected_call = FakeCall(
+        method='POST',
+        path='/projects/{}/published-resources/{}/batch-publish'.format(project_v3.uid, 'DATASET'),
+        json={
+            'ids': [dataset_id]
+        }
+    )
+    assert expected_call == session_v3.last_call
 
 
 def test_make_resource_public(project, session):
@@ -321,6 +350,7 @@ def test_project_registration(collection: ProjectCollection, session):
     assert 'CREATED' == created_project.status
     assert create_time == created_project.created_at
 
+
 def test_project_registration_warn(collection: ProjectCollection, session):
     # Given
     create_time = parse('2019-09-10T00:00:00+00:00')
@@ -333,7 +363,7 @@ def test_project_registration_warn(collection: ProjectCollection, session):
 
     # When
     with pytest.warns(UserWarning):
-        created_project = collection.register('testing', team_id=uuid.uuid4())
+        collection.register('testing', team_id=uuid.uuid4())
 
 
 def test_project_registration_v3(collection_v3: ProjectCollection, session_v3):

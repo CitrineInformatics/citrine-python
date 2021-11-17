@@ -45,6 +45,7 @@ from citrine.resources.project_roles import MEMBER, ROLES, ACTIONS
 from citrine.resources.property_template import PropertyTemplateCollection
 from citrine.resources.response import Response
 from citrine.resources.table_config import TableConfigCollection
+from citrine.resources.team import Team
 from citrine.resources.user import User
 
 
@@ -83,16 +84,18 @@ class Project(Resource['Project']):
     uid = properties.Optional(properties.UUID(), 'id')
     status = properties.Optional(properties.String(), 'status')
     created_at = properties.Optional(properties.Datetime(), 'created_at')
+    team_id = properties.Optional(properties.UUID, "team.id", serializable=False)
 
     def __init__(self,
                  name: str,
                  *,
                  description: Optional[str] = None,
-                 session: Optional[Session] = None):
+                 session: Optional[Session] = None,
+                 team_id: Optional[UUID] = None):
         self.name: str = name
         self.description: Optional[str] = description
         self.session: Session = session
-        self.team_id: Optional[UUID] = None
+        self.team_id: Optional[UUID] = team_id
 
     def __str__(self):
         return '<Project {!r}>'.format(self.name)
@@ -231,18 +234,58 @@ class Project(Resource['Project']):
         return TableConfigCollection(self.uid, self.session)
 
     def publish(self, *, resource: Resource):
+        """
+        Publish a resource from a project to its encompassing team.
+
+        Parameters
+        ----------
+        resource: Resource
+            The resource owned by this project, which will be published
+
+        Returns
+        -------
+        bool
+            Returns ``True`` if resource successfully published
+
+        """
         if not self.session._accounts_service_v3:
-            raise AccountsV3Exception("Not available, use project.make_public")  # TODO is this right?
-        raise NotImplementedError()
+            raise AccountsV3Exception("Not available, you may be looking for project.make_public")
+
+        resource_access = resource.access_control_dict()
+        resource_type = resource_access["type"]
+        self.session.checked_post(
+            self._path() + f"/published-resources/{resource_type}/batch-publish",
+            version='v3', json={'ids': [resource_access["id"]]})
+        return True
 
     def un_publish(self, *, resource: Resource):
+        """
+        Un-publish a resource from a project from its encompassing team.
+
+        Parameters
+        ----------
+        resource: Resource
+            The resource owned by this project, which will be un-published
+
+        Returns
+        -------
+        bool
+            Returns ``True`` if resource successfully un-published
+
+        """
         if not self.session._accounts_service_v3:
-            raise AccountsV3Exception("Not available, use project.make_private")  # TODO is this right?
-        raise NotImplementedError()
+            raise AccountsV3Exception("Not available, you may be looking for project.make_private")
+
+        resource_access = resource.access_control_dict()
+        resource_type = resource_access["type"]
+        self.session.checked_post(
+            self._path() + f"/published-resources/{resource_type}/batch-un-publish",
+            version='v3', json={'ids': [resource_access["id"]]})
+        return True
 
     def pull_in_resource(self, *, resource: Resource):
         if self.session._accounts_service_v3:
-            raise AccountsV3Exception("Not available")  # TODO is this right?
+            raise AccountsV3Exception("Not available")
         raise NotImplementedError()
 
     def share(self, *,
@@ -269,7 +312,7 @@ class Project(Resource['Project']):
 
         """
         if self.session._accounts_service_v3:
-            raise AccountsV3Exception("Not available, use project.publish")  # TODO is this right?
+            raise AccountsV3Exception("Not available, you may be looking for project.publish")
         resource_dict = None
         if resource is not None:
             resource_dict = resource.access_control_dict()
@@ -311,7 +354,7 @@ class Project(Resource['Project']):
         """
 
         if self.session._accounts_service_v3:
-            raise AccountsV3Exception("Not available, use project.publish")  # TODO is this right?
+            raise AccountsV3Exception("Not available, you may be looking for project.publish")
         try:
             self.session.checked_post(self._path() + "/transfer-resource", {
                 "to_project_id": str(receiving_project_uid),
@@ -339,7 +382,7 @@ class Project(Resource['Project']):
         """
 
         if self.session._accounts_service_v3:
-            raise AccountsV3Exception("Not available, use project.publish")  # TODO is this right?
+            raise AccountsV3Exception("Not available, you may be looking for project.publish")
         try:
             self.session.checked_post(self._path() + "/make-public", {
                 "resource": resource.access_control_dict()
@@ -365,7 +408,7 @@ class Project(Resource['Project']):
 
         """
         if self.session._accounts_service_v3:
-            raise AccountsV3Exception("Not available, use project.publish")  # TODO is this right?
+            raise AccountsV3Exception("Not available, you may be looking for project.publish")
         try:
             self.session.checked_post(self._path() + "/make-private", {
                 "resource": resource.access_control_dict()
@@ -387,7 +430,7 @@ class Project(Resource['Project']):
         """
 
         if self.session._accounts_service_v3:
-            raise AccountsV3Exception("Not available")  # TODO is this right?
+            raise AccountsV3Exception("Not available")
         email = self.session.get_resource(self._path() + "/creator")["email"]
         return email
 
@@ -401,6 +444,8 @@ class Project(Resource['Project']):
             The ids of the modules owned by current project
 
         """
+        if self.session._accounts_service_v3:
+            raise AccountsV3Exception("Not available")
         dataset_ids = self.session.get_resource(self._path() + "/dataset_ids")["dataset_ids"]
         return dataset_ids
 
@@ -414,6 +459,8 @@ class Project(Resource['Project']):
             The ids of the tables owned by current project
 
         """
+        if self.session._accounts_service_v3:
+            raise AccountsV3Exception("Not available")
         table_ids = self.session.get_resource(self._path() + "/table_ids")["table_ids"]
         return table_ids
 
@@ -427,6 +474,8 @@ class Project(Resource['Project']):
             The ids of the table configs owned by current project
 
         """
+        if self.session._accounts_service_v3:
+            raise AccountsV3Exception("Not available")
         result = self.session.get_resource(self._path() + "/table_definition_ids")
         return result["table_definition_ids"]
 
@@ -460,6 +509,8 @@ class Project(Resource['Project']):
             Returns ``True`` if user role successfully updated
 
         """
+        if self.session._accounts_service_v3:
+            raise AccountsV3Exception("Not available, use teams to change user actions")
         self.session.checked_post(self._path() + format_escaped_url("/users/{}", user_uid),
                                   {'role': role, 'actions': actions})
         return True
@@ -478,7 +529,7 @@ class Project(Resource['Project']):
 
         """
         if self.session._accounts_service_v3:
-            raise AccountsV3Exception("Not available, use team.add_user")  # TODO is this right?
+            raise AccountsV3Exception("Not available, add user to the team")
         self.session.checked_post(self._path() + format_escaped_url("/users/{}", user_uid),
                                   {'role': MEMBER, 'actions': []})
         return True
@@ -494,7 +545,7 @@ class Project(Resource['Project']):
 
         """
         if self.session._accounts_service_v3:
-            raise AccountsV3Exception("Not available, use team.add_user")  # TODO is this right?
+            raise AccountsV3Exception("Not available, remove user from the team")  # TODO is this right?
         self.session.checked_delete(
             self._path() + format_escaped_url("/users/{}", user_uid)
         )
