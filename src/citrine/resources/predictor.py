@@ -16,7 +16,24 @@ CreationType = TypeVar('CreationType', bound=Predictor)
 class PredictorSummary(Serializable['PredictorSummary']):
     """Holds basic information about the predictor"""
 
-    pass
+    def __init__(
+        self,
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        status: Boolean,
+        predictors_count: Int,
+        created_by: Optional[str] = None,
+        create_time: str
+        update_time: str):
+
+        self.name = name
+        self.description = description
+        self.status = status
+        self.predictors_count = predictors_count
+        self.created_by = created_by
+        self.create_time = create_time
+        self.update_time = update_time
+
 
 class AutoConfigureMode(BaseEnumeration):
     """[ALPHA] The format to use in building auto-configured assets.
@@ -132,8 +149,12 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
             data['config'] = data.pop('instance')
         return self.build(data)
 
-    def _build_summary(self,):
-        """Takes in json and converts it into a PredictorSummary object."""
+    def _build_summary(self, summary_response):
+        """Takes in json and converts it into a PredictorSummary object.
+
+
+        """
+        # I think there is an option here to convert the parsed Java `instant` strings into Python datetime objects.
         pass
 
     def get_summary(self, predictor_id: UUID):
