@@ -304,13 +304,19 @@ class DataConcepts(DictSerializable, PolymorphicSerializable['DataConcepts'], AB
         """
         Dump to a dictionary (useful for interoperability with gemd).
 
+        Note that something in the serialization stack changes the result df __dict__ dramatically
+        between gemd.entity.dict_serializable and this class.
         Note that we need to replicate the logic in gemd.entity.dict_serializable here because
-        something in the serialization stack changes the result df __dict__ dramatically between
-        gemd.entity.dict_serializable and this class.  At the same time, the local dump method
+        something   At the same time, the local dump method
         strips necessary type information allowing LinkByUIDs to be equal to the objects they
         reference.
         """
-        result = self.dump()
+        from citrine._serialization import properties as serial_properties
+
+        result = dict()
+        for property_name in serial_properties.Object(type(self)).fields:
+            result[property_name] = getattr(self, property_name, None)
+        result["type"] = result.pop("typ")
         return result
 
     def _dict_for_compare(self):
@@ -562,6 +568,7 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
             )
             registered = [self.build(obj) for obj in response_data['objects']]
             result_index.update(make_index(registered))
+            substitute_objects(registered, result_index, inplace=True)
 
             if not dry_run:
                 # Platform may add a CITRINE_SCOPE uid and citr_auto tags; update locals
@@ -585,7 +592,6 @@ class DataConceptsCollection(Collection[ResourceType], ABC):
                             if tag not in obj.tags:
                                 result.tags.remove(tag)
 
-            substitute_objects(registered, result_index, inplace=True)
             resources.extend(registered)
 
         if dry_run:  # No-op if not dry-run
