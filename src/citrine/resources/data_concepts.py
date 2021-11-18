@@ -305,11 +305,8 @@ class DataConcepts(DictSerializable, PolymorphicSerializable['DataConcepts'], AB
         Dump to a dictionary (useful for interoperability with gemd).
 
         Note that something in the serialization stack changes the result df __dict__ dramatically
-        between gemd.entity.dict_serializable and this class.
-        Note that we need to replicate the logic in gemd.entity.dict_serializable here because
-        something   At the same time, the local dump method
-        strips necessary type information allowing LinkByUIDs to be equal to the objects they
-        reference.
+        between gemd.entity.dict_serializable and this class.  This means we can't just use gemd's
+        as_dict, and so we'll trust citrine._serialization.properties to get us the list.
         """
         from citrine._serialization import properties as serial_properties
 
