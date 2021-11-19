@@ -475,6 +475,7 @@ def test_batch_delete_bad_input(gemd_collection):
 
 
 def test_type_passthrough(gemd_collection, session):
+    """Verify objects that are not directly referenced by objects (e.g., a tuple of Templates) don't get type information stripped."""
     # Generate some metadata
     metadata = {
         'dataset': str(uuid4()),

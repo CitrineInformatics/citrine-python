@@ -157,7 +157,7 @@ class PropertyCollection(Property[DeserializedType, SerializedType]):
 
         if base_class is not None and self.override:
             prop = getattr(base_class, self.serialization_path)
-            if prop.fset is not None:
+            if prop.fset is not None:  # It's a property with a setter
                 prop.fset(obj, value_to_set)
             else:  # It's a read-only property
                 setattr(obj, self._key, value_to_set)
