@@ -9,6 +9,8 @@ from citrine._utils.functions import migrate_deprecated_argument, format_escaped
 from citrine.resources.module import AbstractModuleCollection
 from citrine.informatics.data_sources import DataSource
 from citrine.informatics.predictors import Predictor, GraphPredictor
+from citrine._serialization import properties
+from citrine._serialization.serializable import Serializable
 
 CreationType = TypeVar('CreationType', bound=Predictor)
 
@@ -16,24 +18,16 @@ CreationType = TypeVar('CreationType', bound=Predictor)
 class PredictorSummary(Serializable['PredictorSummary']):
     """Holds basic information about the predictor"""
 
-    def __init__(
-        self,
-        name: Optional[str] = None,
-        description: Optional[str] = None,
-        status: Boolean,
-        predictors_count: Int,
-        created_by: Optional[str] = None,
-        create_time: str
-        update_time: str):
+    name = properties.String('name')
+    description = properties.Optional(properties.String(), 'description')
+    status = properties.Optional(properties.String(), 'status')
+    predictors_count = properties.Integer('predictors_count')
+    created_by = properties.Optional(properties.String(), 'created_by')
+    created_time = properties.Optional(properties.Datetime(), 'create_time')
+    update_time = properties.Optional(properties.Datetime(), 'update_time')
 
-        self.name = name
-        self.description = description
-        self.status = status
-        self.predictors_count = predictors_count
-        self.created_by = created_by
-        self.create_time = create_time
-        self.update_time = update_time
-
+    def __init__(self):
+        pass
 
 class AutoConfigureMode(BaseEnumeration):
     """[ALPHA] The format to use in building auto-configured assets.
@@ -149,13 +143,12 @@ class PredictorCollection(AbstractModuleCollection[Predictor]):
             data['config'] = data.pop('instance')
         return self.build(data)
 
-    def _build_summary(self, summary_response):
+    def _build_summary(self, summary):
         """Takes in json and converts it into a PredictorSummary object.
 
-
+        summary: json response from summary endpoint
         """
-        # I think there is an option here to convert the parsed Java `instant` strings into Python datetime objects.
-        pass
+        return PredictorSummary.build(summary)
 
     def get_summary(self, predictor_id: UUID):
         """Gets a single report keyed on the predictor_id.
