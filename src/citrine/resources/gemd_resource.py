@@ -48,7 +48,7 @@ class GEMDResourceCollection(DataConceptsCollection[DataConcepts]):
             A data model object built from the dictionary.
 
         """
-        return DataConcepts.build(data)
+        return super().build(data)
 
     def update(self, model: DataConcepts) -> DataConcepts:
         """Update a data model object using the appropriate collection."""

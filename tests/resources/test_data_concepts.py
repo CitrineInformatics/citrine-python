@@ -3,7 +3,10 @@ from collections.abc import Iterator
 import pytest
 from uuid import uuid4
 
+from gemd.entity.dict_serializable import DictSerializable
+from gemd.entity.template import ProcessTemplate as GEMDTemplate
 from gemd.entity.link_by_uid import LinkByUID
+
 from citrine.resources.audit_info import AuditInfo
 from citrine.resources.data_concepts import DataConcepts, _make_link_by_uid, CITRINE_SCOPE
 from citrine.resources.process_run import ProcessRun

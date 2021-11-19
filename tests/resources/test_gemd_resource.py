@@ -5,14 +5,17 @@ from os.path import basename
 import pytest
 
 from gemd.entity.bounds.integer_bounds import IntegerBounds
+from gemd.entity.attribute import Condition
+from gemd.entity.value import NominalInteger
 from gemd.entity.link_by_uid import LinkByUID
 from gemd.entity.object.material_spec import MaterialSpec as GemdMaterialSpec
 from gemd.entity.object.process_spec import ProcessSpec as GemdProcessSpec
 
-from citrine.exceptions import PollingTimeoutError, JobFailureError, NotFound
+from citrine.exceptions import PollingTimeoutError, JobFailureError
 from citrine.resources.api_error import ApiError, ValidationError
+from citrine.resources.audit_info import AuditInfo
 from citrine.resources.condition_template import ConditionTemplateCollection, ConditionTemplate
-from citrine.resources.data_concepts import DataConcepts
+from citrine.resources.data_concepts import DataConcepts, CITRINE_SCOPE, CITRINE_TAG_PREFIX
 from citrine.resources.gemd_resource import GEMDResourceCollection
 from citrine.resources.ingredient_run import IngredientRun, IngredientRunCollection
 from citrine.resources.ingredient_spec import IngredientSpec, IngredientSpecCollection
@@ -281,10 +284,10 @@ def test_delete(gemd_collection, session):
 
     """
     expected = {
-        MaterialTemplateCollection: MaterialTemplate("foo", uids={"id": str(uuid4())}),
-        MaterialSpecCollection: MaterialSpec("foo", uids={"id": str(uuid4())}),
-        MaterialRunCollection: MaterialRun("foo", uids={"id": str(uuid4())}),
-        ProcessTemplateCollection: ProcessTemplate("foo", uids={"id": str(uuid4())}),
+        MaterialTemplateCollection: MaterialTemplate("foo", uids={CITRINE_SCOPE: str(uuid4())}),
+        MaterialSpecCollection: MaterialSpec("foo", uids={CITRINE_SCOPE: str(uuid4())}),
+        MaterialRunCollection: MaterialRun("foo", uids={CITRINE_SCOPE: str(uuid4())}),
+        ProcessTemplateCollection: ProcessTemplate("foo", uids={CITRINE_SCOPE: str(uuid4())}),
     }
 
     for specific_collection, obj in expected.items():
@@ -469,3 +472,97 @@ def test_batch_delete(gemd_collection, session):
 def test_batch_delete_bad_input(gemd_collection):
     with pytest.raises(TypeError):
         gemd_collection.batch_delete([False])
+
+
+def test_type_passthrough(gemd_collection, session):
+    """Verify objects that are not directly referenced by objects (e.g., a tuple of Templates) don't get type information stripped."""
+    # Generate some metadata
+    metadata = {
+        'dataset': str(uuid4()),
+        'audit_info': AuditInfo.build({"created_by": str(uuid4()),
+                                       "created_at": 1559933807392
+                                       }),
+        "tags": [f"{CITRINE_TAG_PREFIX}::added"]
+    }
+    # Set up the Condition Templates
+    low_tmpl, high_tmpl = [
+        ConditionTemplate('condition low', uids={CITRINE_SCOPE: str(uuid4())}, bounds=IntegerBounds(1, 10)),
+        ConditionTemplate('condition high', uids={CITRINE_SCOPE: str(uuid4())}, bounds=IntegerBounds(11, 20)),
+    ]
+    session.set_response({"objects": [dict(low_tmpl.dump(), **metadata),
+                                      dict(high_tmpl.dump(), **metadata),
+                                      ]})
+    low_tmpl, high_tmpl = gemd_collection.register_all([low_tmpl, high_tmpl])
+    assert low_tmpl.dataset is not None
+    assert low_tmpl.audit_info is not None
+    assert high_tmpl.dataset is not None
+    assert high_tmpl.audit_info is not None
+
+    ptempl = ProcessTemplate(
+        'my template',
+        uids={CITRINE_SCOPE: str(uuid4())},
+        conditions=[(low_tmpl, IntegerBounds(2, 4)), (high_tmpl, IntegerBounds(12, 15))],
+
+    )
+    session.set_response(dict(ptempl.dump(), **metadata))
+    ptempl = gemd_collection.register(ptempl)
+    assert ptempl.dataset is not None
+    assert ptempl.audit_info is not None
+
+    arr = [
+        ProcessSpec(
+            'foo',
+            uids={CITRINE_SCOPE: str(uuid4())},
+            template=ptempl,
+            conditions=[
+                Condition(name='low', value=NominalInteger(3), template=low_tmpl),
+                Condition(name='high', value=NominalInteger(13), template=high_tmpl),
+            ]
+        ),
+        ProcessSpec(
+            'bar',
+            uids={CITRINE_SCOPE: str(uuid4())},
+            template=ptempl,
+            conditions=[
+                Condition(name='high', value=NominalInteger(14), template=high_tmpl),
+            ]
+        ),
+        ProcessSpec('baz', uids={CITRINE_SCOPE: str(uuid4())}),
+    ]
+    session.set_response({"objects": [dict(x.dump(), **metadata) for x in arr]})
+    pspecs = gemd_collection.register_all(arr)
+    assert([s.name for s in pspecs] == ['foo', 'bar', 'baz'])
+    assert pspecs == arr
+
+
+def test_tag_magic(gemd_collection, session):
+    auto_tag = f"{CITRINE_TAG_PREFIX}::added"
+    additions = {"tags": ["tag", auto_tag],
+                 "uids": {CITRINE_SCOPE: str(uuid4()),
+                          "original": "id"
+                          }
+                 }
+
+    obj1 = ProcessSpec("one", tags=["tag"], uids={"original": "id"})
+    session.set_response(dict(obj1.dump(), **additions))
+    res1 = gemd_collection.register(obj1)
+    assert obj1 == res1
+    assert auto_tag in obj1.tags
+
+    obj2 = ProcessSpec("two", tags=["tag"], uids={"original": "id"})
+    session.set_response({"objects": [dict(obj2.dump(), **additions)]})
+    res2 = gemd_collection.register_all([obj2])
+    assert obj2 == res2[0]
+    assert auto_tag in obj2.tags
+
+    obj3 = ProcessSpec("one", tags=["tag"], uids={"original": "id"})
+    session.set_response(dict(obj3.dump(), **additions))
+    res3 = gemd_collection.register(obj3, dry_run=True)
+    assert obj3 == res3
+    assert auto_tag not in obj3.tags
+
+    obj4 = ProcessSpec("two", tags=["tag"], uids={"original": "id"})
+    session.set_response({"objects": [dict(obj4.dump(), **additions)]})
+    res4 = gemd_collection.register_all([obj4], dry_run=True)
+    assert obj4 == res4[0]
+    assert auto_tag not in obj4.tags
