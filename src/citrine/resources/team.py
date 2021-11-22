@@ -7,6 +7,7 @@ from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
 from citrine._session import Session
 from citrine._utils.functions import format_escaped_url
+from citrine.resources import ProjectCollection
 from citrine.resources.user import User
 
 WRITE = "WRITE"
@@ -221,6 +222,11 @@ class Team(Resource['Team']):
             json={"target_team_id": str(target_team_id)}
         )
         return True
+
+    @property
+    def projects(self) -> ProjectCollection:
+        """Return a resource representing all visible projects in this team."""
+        return ProjectCollection(self.session, team_id=self.uid)
 
 
 class TeamCollection(Collection[Team]):

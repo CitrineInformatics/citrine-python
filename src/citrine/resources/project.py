@@ -100,6 +100,14 @@ class Project(Resource['Project']):
         self.session: Session = session
         self.team_id: Optional[UUID] = team_id
 
+    def _post_dump(self, data: dict) -> dict:
+        non_empty_data = {}
+        for key, value in data.items():
+            if value is not None:
+                non_empty_data[key] = value
+
+        return non_empty_data
+
     def __str__(self):
         return '<Project {!r}>'.format(self.name)
 
@@ -635,8 +643,16 @@ class ProjectCollection(Collection[Project]):
     _collection_key = 'projects'
     _resource = Project
 
-    def __init__(self, session: Session):
+    @property
+    def _api_version(self):
+        if self.session._accounts_service_v3:
+            return 'v3'
+        else:
+            return 'v1'
+
+    def __init__(self, session: Session, team_id: Optional[UUID] = None):
         self.session = session
+        self.team_id = team_id
 
     def build(self, data) -> Project:
         """
@@ -655,21 +671,23 @@ class ProjectCollection(Collection[Project]):
         """
         project = Project.build(data)
         project.session = self.session
+        if self.team_id is not None:
+            project.team_id = self.team_id
         return project
 
-    def _register_in_team(self, name: str, *, description: Optional[str] = None, team_id: Optional[UUID] = None):
-        path = f'teams/{team_id}/projects'
+    def _register_in_team(self, name: str, *, description: Optional[str] = None):
+        if self.team_id is None:
+            raise AccountsV3Exception("Please use team.projects")
+        path = f'teams/{self.team_id}/projects'
         project = Project(name, description=description)
         try:
-            # TODO is this how we pass version along??
-            data = self.session.post_resource(path, project.dump(), version="v3")
-            data = data[self._individual_key] if self._individual_key else data
-            self._check_experimental(data)
+            data = self.session.post_resource(path, project.dump(), version=self._api_version)
+            data = data[self._individual_key]
             return self.build(data)
         except NonRetryableException as e:
             raise ModuleRegistrationFailedException(project.__class__.__name__, e)
 
-    def register(self, name: str, *, description: Optional[str] = None, team_id: Optional[UUID] = None) -> Project:
+    def register(self, name: str, *, description: Optional[str] = None) -> Project:
         """
         Create and upload new project.
 
@@ -679,22 +697,15 @@ class ProjectCollection(Collection[Project]):
             Name of the project to be created.
         description: str
             Long-form description of the project to be created.
-        team_id: uuid
-            ID of the team the project will be part of. Required for Accounts V3
         """
         if self.session._accounts_service_v3:
-            if team_id is None:
-                raise AccountsV3Exception("Must provide team id")
-            return self._register_in_team(name, description=description, team_id=team_id)
+            return self._register_in_team(name, description=description)
         else:
-            if team_id is not None:
-                warn("Teams are currently unavailable. The team_id has been ignored.", UserWarning)
             return super().register(Project(name, description=description))
 
     def list(self, *,
              page: Optional[int] = None,
-             per_page: int = 1000,
-             team_id: Optional[UUID] = None) -> Iterator[Project]:
+             per_page: int = 1000) -> Iterator[Project]:
         """
         List projects using pagination.
 
@@ -718,17 +729,14 @@ class ProjectCollection(Collection[Project]):
 
         """
         if self.session._accounts_service_v3:
-            if team_id is None:
-                raise AccountsV3Exception("Must provide team id")
-            self._list_v3(per_page=per_page, team_id=team_id)
+            self._list_v3(per_page=per_page)
         else:
-            if team_id is not None:
-                warn("Teams are currently unavailable. The team_id has been ignored.", UserWarning)
             return super().list(page=page, per_page=per_page)
 
-    def _list_v3(self, *,
-             per_page: int = 1000,
-             team_id: Optional[UUID] = None) -> Iterator[Project]:
+    def _list_v3(self, *, per_page: int = 1000) -> Iterator[Project]:
+        # TODO this isn't right
+        if self.team_id is None:
+            raise AccountsV3Exception("Please use team.projects")
         return self._paginator.paginate(page_fetcher=self._fetch_page_list_v3_creator,
                                         collection_builder=self._build_collection_elements,
                                         per_page=per_page)
@@ -846,18 +854,11 @@ class ProjectCollection(Collection[Project]):
         If the project is not empty, then the Response will contain a list of all of the project's
         resources. These must be deleted before the project can be deleted.
         """
-        if self.session._accounts_service_v3:
-            raise NotImplementedError("Searching not available.")
-
         return super().delete(uid)  # pragma: no cover
 
     def update(self, model: Project) -> Project:
         """Projects cannot be updated."""
-        if not self.session._accounts_service_v3:
-            raise NotImplementedError("Project update is not supported at this time.")
-        else:
-            # Todo we can edit projects now
-            pass
+        raise NotImplementedError("Project update is not supported at this time.")
 
     def _fetch_page_search(self, page: Optional[int] = None,
                            per_page: Optional[int] = None,

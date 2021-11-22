@@ -12,18 +12,21 @@ def find_collection(*, collection, name):
     Returns it, or if not found, returns None
     """
     if isinstance(collection, ProjectCollection):
-        try:
-            # try to use search if it is available
-            # call list() to collapse the iterator, otherwise the NotFound
-            # won't show up until collection_list is used
-            collection_list = list(collection.search(search_params={
-                "name": {
-                    "value": name,
-                    "search_method": "EXACT"
-                }
-            }))
-        except NotFound:
-            # Search must not be available yet
+        if not collection.session._accounts_service_v3:
+            try:
+                # try to use search if it is available
+                # call list() to collapse the iterator, otherwise the NotFound
+                # won't show up until collection_list is used
+                collection_list = list(collection.search(search_params={
+                    "name": {
+                        "value": name,
+                        "search_method": "EXACT"
+                    }
+                }))
+            except NotFound:
+                # Search must not be available yet
+                collection_list = collection.list()
+        else:
             collection_list = collection.list()
     else:
         collection_list = collection.list()

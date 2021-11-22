@@ -434,6 +434,40 @@ def test_ara_definitions_get_project_id(project):
     assert project.uid == project.table_configs.project_id
 
 
+def test_project_registration_v3(collection: ProjectCollection, session):
+    # Given
+    create_time = parse('2019-09-10T00:00:00+00:00')
+
+    project_data = ProjectDataFactory(
+        name='testing',
+        description='A sample project',
+        created_at=int(create_time.timestamp() * 1000)  # The lib expects ms since epoch, which is really odd
+    )
+    session.set_response({'project': project_data})
+
+    # When
+    created_project = collection.register('testing')
+
+    # Then
+    assert 1 == session.num_calls
+    expected_call = FakeCall(
+        method='POST',
+        path='/projects',
+        json={
+            'name': 'testing',
+            'description': None,
+            'id': None,
+            'status': None,
+            'created_at': None,
+        }
+    )
+    assert expected_call == session.last_call
+
+    assert 'A sample project' == created_project.description
+    assert 'CREATED' == created_project.status
+    assert create_time == created_project.created_at
+
+
 def test_project_registration(collection: ProjectCollection, session):
     # Given
     create_time = parse('2019-09-10T00:00:00+00:00')
@@ -575,6 +609,17 @@ def test_list_projects_with_page_params(collection, session):
     assert 1 == session.num_calls
     expected_call = FakeCall(method='GET', path='/projects', params={'per_page': 10})
     assert expected_call == session.last_call
+
+
+def test_search_projects_v3(collection_v3: ProjectCollection):
+    # Given
+    search_params = {'name': {
+        'value': 'Some Name',
+        'search_method': 'EXACT'}}
+
+    # Then
+    with pytest.raises(NotImplementedError):
+        list(collection_v3.search(search_params=search_params))
 
 
 def test_search_projects(collection: ProjectCollection, session):

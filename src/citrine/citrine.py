@@ -33,6 +33,8 @@ class Citrine:
     @property
     def projects(self) -> ProjectCollection:
         """Return a resource representing all visible projects."""
+        if self.session._accounts_service_v3:
+            UserWarning("You might want to use citrine.teams to find a team specific project")
         return ProjectCollection(self.session)
 
     @property
