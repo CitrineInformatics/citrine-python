@@ -115,12 +115,6 @@ class PollingTimeoutError(NonRetryableException):
     pass
 
 
-class AccountsV3Exception(CitrineException):
-    """Something went wrong related to Accounts V3."""
-
-    pass
-
-
 class JobFailureError(NonRetryableException):
     """The asynchronous job completed with the given failure message."""
 

@@ -22,10 +22,10 @@ class TeamMember:
                  *,
                  user: User,
                  team: 'Team',  # noqa: F821
-                 actions: TEAM_ACTIONS):
+                 actions: List[TEAM_ACTIONS]):
         self.user = user
         self.team: 'Team' = team  # noqa: F821
-        self.actions: TEAM_ACTIONS = actions
+        self.actions: List[TEAM_ACTIONS] = actions
 
     def __str__(self):
         return '<TeamMember {!r} can {!s} of {!r}>' \
@@ -117,7 +117,8 @@ class Team(Resource['Team']):
                                   json={"ids": [str(user_id)]}, version=self._api_version)
         return True  # note: only get here if checked_post doesn't raise error
 
-    def add_user(self, user_id: Union[str, UUID], actions: TEAM_ACTIONS = None) -> bool:
+    def add_user(self, user_id: Union[str, UUID], *,
+                 actions: Optional[List[TEAM_ACTIONS]] = None) -> bool:
         """
         Add a User to a Team.
 
@@ -141,9 +142,10 @@ class Team(Resource['Team']):
         """
         if actions is None:
             actions = [READ]
-        return self.update_user_action(user_id, actions)
+        return self.update_user_action(user_id, actions=actions)
 
-    def update_user_action(self, user_id: Union[str, UUID], actions: List[TEAM_ACTIONS]) -> bool:
+    def update_user_action(self, user_id: Union[str, UUID], *,
+                           actions: List[TEAM_ACTIONS]) -> bool:
         """
         Update a User's action permissions in the Team.
 
@@ -194,7 +196,7 @@ class Team(Resource['Team']):
                                   version=self._api_version, json=payload)
         return True
 
-    def un_share(self, resource: Resource, target_team_id: Union[str, UUID]) -> bool:
+    def un_share(self, *, resource: Resource, target_team_id: Union[str, UUID]) -> bool:
         """
         Revoke the share of a particular resource to a secondary team.
 

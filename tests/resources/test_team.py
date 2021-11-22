@@ -162,7 +162,7 @@ def test_update_user_actions(team, session):
 def test_add_user(team, session):
     # Given
     user = UserDataFactory()
-    session.set_response({'id': user["id"], 'actions': 'READ'})
+    session.set_response({'id': user["id"], 'actions': ['READ']})
 
     # When
     add_user_response = team.add_user(user["id"])
@@ -172,6 +172,24 @@ def test_add_user(team, session):
     expect_call = FakeCall(method="PUT", path='/teams/{}/users'.format(team.uid), json={
         "id": user["id"],
         "actions": ["READ"]
+    })
+    assert expect_call == session.last_call
+    assert add_user_response is True
+
+
+def test_add_user_with_actions(team, session):
+    # Given
+    user = UserDataFactory()
+    session.set_response({'id': user["id"], 'actions': ['READ', 'WRITE']})
+
+    # When
+    add_user_response = team.add_user(user["id"], actions=['READ', 'WRITE'])
+
+    # Then
+    assert 1 == session.num_calls
+    expect_call = FakeCall(method="PUT", path='/teams/{}/users'.format(team.uid), json={
+        "id": user["id"],
+        "actions": ["READ", "WRITE"]
     })
     assert expect_call == session.last_call
     assert add_user_response is True

@@ -2,7 +2,6 @@ from os import environ
 from typing import Optional
 
 from citrine._session import Session
-from citrine.exceptions import AccountsV3Exception
 from citrine.resources.project import ProjectCollection
 from citrine.resources.team import TeamCollection
 from citrine.resources.user import UserCollection
@@ -47,4 +46,4 @@ class Citrine:
         if self.session._accounts_service_v3:
             return TeamCollection(self.session)
         else:
-            raise AccountsV3Exception("Teams are not available, please continue using projects")
+            raise NotImplementedError("Teams are not available, please continue using projects")
