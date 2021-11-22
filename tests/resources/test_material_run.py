@@ -5,6 +5,7 @@ from citrine._session import Session
 from citrine._utils.functions import scrub_none
 from citrine.exceptions import BadRequest
 from citrine.resources.api_error import ValidationError
+from citrine.resources.data_concepts import CITRINE_SCOPE
 from citrine.resources.material_run import MaterialRunCollection
 from citrine.resources.material_run import MaterialRun as CitrineRun
 
@@ -79,15 +80,15 @@ def test_nomutate_gemd(collection, session):
     """When registering a GEMD object, the object should not change (aside from auto ids)"""
     # Given
     session.set_response(MaterialRunDataFactory(name='Test MR mutation'))
-    before, after = (GEMDRun(name='Main', uids={'nomutate': 'please'}) for i in range(2))
+    before, after = (GEMDRun(name='Main', uids={'nomutate': 'please'}) for _ in range(2))
 
     # When
     registered = collection.register(after)
 
     # Then
+    assert after.uids.pop(CITRINE_SCOPE) is not None
     assert before == after
     assert "<Material run 'Test MR mutation'>" == str(registered)
-    assert after.uids.get("id") is None
     assert registered.uid is not None
 
 

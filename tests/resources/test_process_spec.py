@@ -3,6 +3,7 @@ from uuid import UUID
 import pytest
 
 from citrine.resources.process_spec import ProcessSpecCollection
+
 from tests.resources.test_data_concepts import run_noop_gemd_relation_search_test
 from tests.utils.session import FakeSession
 
