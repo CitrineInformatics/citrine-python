@@ -23,8 +23,8 @@ def find_collection(*, collection, name):
                     "search_method": "EXACT"
                 }
             }))
-        except NotFound:
-            # Search must not be available yet
+        except (NotFound, NotImplementedError):
+            # Search must not be available yet or any more
             collection_list = collection.list()
     else:
         collection_list = collection.list()
@@ -81,6 +81,23 @@ def find_or_create_project(*, project_collection, project_name, raise_error=Fals
             default_provider=lambda: project_collection.register(project_name)
         )
     return project
+
+
+def find_or_create_team(*, team_collection, team_name, raise_error=False):
+    """
+    Tries to find a team by name (returns first hit).
+
+    If not found, creates a new team with the given name
+    """
+    if raise_error:
+        team = get_by_name_or_raise_error(collection=team_collection, name=team_name)
+    else:
+        team = get_by_name_or_create(
+            collection=team_collection,
+            name=team_name,
+            default_provider=lambda: team_collection.register(team_name)
+        )
+    return team
 
 
 def find_or_create_dataset(*, dataset_collection, dataset_name, raise_error=False):

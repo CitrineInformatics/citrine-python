@@ -1,4 +1,5 @@
 """Resources that represent both individual and collections of projects."""
+from functools import partial
 from typing import Optional, Dict, List, Union, Iterable, Tuple, Iterator
 from uuid import UUID
 from warnings import warn
@@ -725,15 +726,18 @@ class ProjectCollection(Collection[Project]):
 
         """
         if self.session._accounts_service_v3:
-            self._list_v3(per_page=per_page)
+            return self._list_v3(per_page=per_page)
         else:
             return super().list(page=page, per_page=per_page)
 
     def _list_v3(self, *, per_page: int = 1000) -> Iterator[Project]:
-        # TODO this isn't right
         if self.team_id is None:
             raise NotImplementedError("Please use team.projects")
-        return self._paginator.paginate(page_fetcher=self._fetch_page_list_v3_creator,
+
+        path = format_escaped_url('/teams/{team_id}/projects', team_id=self.team_id)
+
+        fetcher = partial(self._fetch_page, path=path)
+        return self._paginator.paginate(page_fetcher=fetcher,
                                         collection_builder=self._build_collection_elements,
                                         per_page=per_page)
 
