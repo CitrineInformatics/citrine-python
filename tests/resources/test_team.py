@@ -55,6 +55,10 @@ def test_string_representation(team):
     assert "<Team 'Test Team'>" == str(team)
 
 
+def test_team_project_session(team):
+    assert team.session == team.projects.session
+
+
 def test_team_registration(collection: TeamCollection, session):
     # Given
     create_time = parse('2019-09-10T00:00:00+00:00')

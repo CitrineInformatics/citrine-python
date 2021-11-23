@@ -20,6 +20,13 @@ def test_citrine_user_session():
     assert citrine.session == citrine.users.session
 
 
+def test_citrine_project_session_warn():
+    citrine = Citrine(api_key='foo', host='bar')
+    citrine.session._accounts_service_v3 = True
+    with pytest.warns(UserWarning):
+        citrine.projects
+
+
 def test_citrine_team_session():
     citrine = Citrine(api_key='foo', host='bar')
     citrine.session = FakeSession(accounts_v3=False)  # use a fake session

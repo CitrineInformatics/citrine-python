@@ -123,7 +123,8 @@ class Team(Resource['Team']):
         """
         Add a User to a Team.
 
-        Adds User with ``READ`` action to the Team.
+        If not actions are specified, adds User with ``READ`` action to the Team.
+
         Use the ``update_user_action`` method to change a User's actions.
 
         Parameters

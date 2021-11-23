@@ -1,3 +1,4 @@
+from warnings import warn
 from os import environ
 from typing import Optional
 
@@ -34,7 +35,8 @@ class Citrine:
     def projects(self) -> ProjectCollection:
         """Return a resource representing all visible projects."""
         if self.session._accounts_service_v3:
-            UserWarning("You might want to use citrine.teams to find a team specific project")
+            warn("Your Citrine Platform deployment has migrated to the CP2 release of the"
+                 " Citrine Platform Web Interface. See our FAQ for details.", UserWarning)
         return ProjectCollection(self.session)
 
     @property
@@ -48,4 +50,6 @@ class Citrine:
         if self.session._accounts_service_v3:
             return TeamCollection(self.session)
         else:
-            raise NotImplementedError("Teams are not available, please continue using projects")
+            raise NotImplementedError("This method is inoperable until your Citrine Platform "
+                                      "deployment has migrated to the CP2 release of the Citrine "
+                                      "Platform Web Interface. See our FAQ for details.")

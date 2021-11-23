@@ -8,12 +8,15 @@ from citrine.resources.process_spec import ProcessSpecCollection, ProcessSpec
 from citrine.resources.predictor import PredictorCollection
 from citrine.informatics.predictors import SimpleMLPredictor
 from citrine.resources.project import ProjectCollection
-from citrine.seeding.find_or_create import (find_collection, get_by_name_or_create, get_by_name_or_raise_error,
+from citrine.resources.team import TeamCollection
+from citrine.seeding.find_or_create import (find_collection, get_by_name_or_create,
+                                            get_by_name_or_raise_error,
                                             find_or_create_project, find_or_create_dataset,
-                                            create_or_update)
+                                            create_or_update, find_or_create_team)
 from tests.utils.fakes.fake_dataset_collection import FakeDatasetCollection
 from tests.utils.fakes import FakePredictorCollection
 from tests.utils.fakes.fake_project_collection import FakeProjectCollection
+from tests.utils.fakes.fake_team_collection import FakeTeamCollection
 
 from tests.utils.session import FakeSession
 
@@ -65,6 +68,20 @@ def project_collection() -> Callable[[bool], ProjectCollection]:
         return projects
 
     return _make_project
+
+
+@pytest.fixture
+def team_collection() -> Callable[[bool], TeamCollection]:
+
+    def _make_team(search_implemented: bool = True):
+        teams = FakeTeamCollection(search_implemented)
+        for i in range(0, 5):
+            teams.register("team " + str(i))
+        for i in range(0, 2):
+            teams.register(duplicate_name)
+        return teams
+
+    return _make_team
 
 
 @pytest.fixture
@@ -150,6 +167,32 @@ def test_get_by_name_or_raise_error_exist(fake_collection):
     # test when name exists
     result = get_by_name_or_raise_error(collection=fake_collection, name="resource 2")
     assert result.name == "resource 2"
+
+
+def test_find_or_create_team_no_exist(team_collection):
+    # test when team doesn't exist
+    collection = team_collection()
+    old_team_count = len(list(collection.list()))
+    result = find_or_create_team(team_collection=collection, team_name=absent_name)
+    new_team_count = len(list(collection.list()))
+    assert result.name == absent_name
+    assert new_team_count == old_team_count + 1
+
+
+def test_find_or_create_team_exist(team_collection):
+    # test when team exists
+    collection = team_collection()
+    old_team_count = len(list(collection.list()))
+    result = find_or_create_team(team_collection=collection, team_name="team 2")
+    new_team_count = len(list(collection.list()))
+    assert result.name == "team 2"
+    assert new_team_count == old_team_count
+
+
+def test_find_or_create_raise_error_team_no_exist(team_collection):
+    # test when tea, doesn't exist and raise_error flag is on
+    with pytest.raises(ValueError):
+        find_or_create_team(team_collection=team_collection(), team_name=absent_name, raise_error=True)
 
 
 def test_find_or_create_project_no_exist(project_collection):

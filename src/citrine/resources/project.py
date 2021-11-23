@@ -105,6 +105,16 @@ class Project(Resource['Project']):
 
         return non_empty_data
 
+    # def _post_dump(self, data: dict) -> dict:
+    #     if self.session._accounts_service_v3:
+    #         non_empty_data = {}
+    #         for key, value in data.items():
+    #             if value is not None:
+    #                 non_empty_data[key] = value
+    #         return non_empty_data
+    #     else:
+    #         return data
+
     def __str__(self):
         return '<Project {!r}>'.format(self.name)
 
@@ -694,6 +704,7 @@ class ProjectCollection(Collection[Project]):
             Name of the project to be created.
         description: str
             Long-form description of the project to be created.
+
         """
         if self.session._accounts_service_v3:
             return self._register_in_team(name, description=description)
@@ -726,11 +737,11 @@ class ProjectCollection(Collection[Project]):
 
         """
         if self.session._accounts_service_v3:
-            return self._list_v3(per_page=per_page)
+            return self._list_v3(page=page, per_page=per_page)
         else:
             return super().list(page=page, per_page=per_page)
 
-    def _list_v3(self, *, per_page: int = 1000) -> Iterator[Project]:
+    def _list_v3(self, *, page: Optional[int] = None, per_page: int = 1000) -> Iterator[Project]:
         if self.team_id is None:
             raise NotImplementedError("Please use team.projects")
 
@@ -739,47 +750,8 @@ class ProjectCollection(Collection[Project]):
         fetcher = partial(self._fetch_page, path=path)
         return self._paginator.paginate(page_fetcher=fetcher,
                                         collection_builder=self._build_collection_elements,
+                                        page=page,
                                         per_page=per_page)
-
-    def _fetch_page_list_v3(self, page: Optional[int] = None,
-                           per_page: Optional[int] = None,
-                           search_params: Optional[dict] = None) -> Tuple[Iterable[dict], str]:
-        """
-        Fetch resources that match the supplied search parameters.
-
-        Fetches resources that match the supplied ``search_params``, by calling ``_fetch_page``
-        with ``checked_post``, the path to the POST resource-type/search endpoint, any pagination
-        parameters, and the request body to the search endpoint.
-
-        Parameters
-        ---------
-        page: int, optional
-            The "page" of results to list. Default is the first page, which is 1.
-        per_page: int, optional
-            Max number of results to return. Default is 20.
-        search_params: dict, optional
-            A ``dict`` representing a request body that could be sent to a POST request. The "json"
-            field should be passed as the key for the outermost ``dict``, with its value the
-            request body, so that we can easily unpack the keyword argument when it gets passed to
-            ``fetch_func``, e.g., ``{'name': {'value': 'Project', 'search_method': 'SUBSTRING'} }``
-
-        Returns
-        -------
-        Iterable[dict]
-            Elements in this collection.
-        str
-            The next uri if one is available, empty string otherwise
-
-        """
-        # Making 'json' the key of the outermost dict, so that search_params can be passed
-        # directly to the function making the request with keyword expansion
-        json_body = {} if search_params is None else {'json': {'search_params': search_params}}
-
-        path = self._get_path() + "/search"
-
-        return self._fetch_page(path=path, fetch_func=self.session.post_resource,
-                                page=page, per_page=per_page,
-                                json_body=json_body)
 
     def search(self, *, search_params: Optional[dict] = None,
                per_page: int = 1000) -> Iterable[Project]:

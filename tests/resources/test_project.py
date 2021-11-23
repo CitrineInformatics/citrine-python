@@ -1,10 +1,12 @@
 import uuid
 from logging import getLogger
+from unittest import mock
 
 import pytest
 from dateutil.parser import parse
 from gemd.entity.link_by_uid import LinkByUID
 
+from citrine.exceptions import NotFound, ModuleRegistrationFailedException
 from citrine.resources.api_error import ApiError, ValidationError
 from citrine.resources.dataset import Dataset
 from citrine.resources.gemtables import GemTableCollection
@@ -13,7 +15,7 @@ from citrine.resources.project import Project, ProjectCollection
 from citrine.resources.project_member import ProjectMember
 from citrine.resources.project_roles import MEMBER, LEAD, WRITE
 from tests.utils.factories import ProjectDataFactory, UserDataFactory
-from tests.utils.session import FakeSession, FakeCall, FakePaginatedSession
+from tests.utils.session import FakeSession, FakeCall, FakePaginatedSession, FakeRequestResponse
 
 logger = getLogger(__name__)
 
@@ -467,6 +469,24 @@ def test_project_registration_v3(collection: ProjectCollection, session):
     assert create_time == created_project.created_at
 
 
+def test_failed_register_v3():
+    team_id = uuid.uuid4()
+    session = mock.Mock()
+    session.post_resource.side_effect = NotFound(f'/teams/{team_id}/projects',
+                                                 FakeRequestResponse(400))
+    project_collection = ProjectCollection(session=session, team_id=team_id)
+    with pytest.raises(ModuleRegistrationFailedException) as e:
+        project_collection.register("Project")
+    assert 'The "Project" failed to register.' in str(e.value)
+    assert f'/teams/{team_id}/projects' in str(e.value)
+
+
+def test_failed_register_v3_no_team(session_v3):
+    project_collection = ProjectCollection(session=session_v3)
+    with pytest.raises(NotImplementedError):
+        project_collection.register("Project")
+
+
 def test_project_registration(collection: ProjectCollection, session):
     # Given
     create_time = parse('2019-09-10T00:00:00+00:00')
@@ -565,6 +585,27 @@ def test_list_projects(collection, session):
     expected_call = FakeCall(method='GET', path='/projects', params={'per_page': 1000})
     assert expected_call == session.last_call
     assert 5 == len(projects)
+
+
+def test_list_projects_v3(collection_v3, session_v3):
+    # Given
+    projects_data = ProjectDataFactory.create_batch(5)
+    session_v3.set_response({'projects': projects_data})
+
+    # When
+    projects = list(collection_v3.list())
+
+    # Then
+    assert 1 == session_v3.num_calls
+    expected_call = FakeCall(method='GET', path=f'/teams/{collection_v3.team_id}/projects', params={'per_page': 1000})
+    assert expected_call == session_v3.last_call
+    assert 5 == len(projects)
+
+
+def test_failed_list_v3_no_team(session_v3):
+    project_collection = ProjectCollection(session=session_v3)
+    with pytest.raises(NotImplementedError):
+        project_collection.list()
 
 
 def test_list_projects_filters_non_projects(collection, session):
