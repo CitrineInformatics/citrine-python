@@ -11,11 +11,7 @@ from citrine._rest.resource import Resource, ResourceTypeEnum
 from citrine._serialization import properties
 from citrine._session import Session
 from citrine._utils.functions import format_escaped_url
-from citrine.exceptions import (
-    AccountsV3Exception,
-    NonRetryableException,
-    ModuleRegistrationFailedException
-)
+from citrine.exceptions import NonRetryableException, ModuleRegistrationFailedException
 from citrine.resources.api_error import ApiError
 from citrine.resources.condition_template import ConditionTemplateCollection
 from citrine.resources.dataset import DatasetCollection
@@ -264,7 +260,7 @@ class Project(Resource['Project']):
 
         """
         if not self.session._accounts_service_v3:
-            raise AccountsV3Exception("Not available, you may be looking for project.make_public")
+            raise NotImplementedError("Not available, you may be looking for project.make_public")
 
         resource_access = resource.access_control_dict()
         resource_type = resource_access["type"]
@@ -289,7 +285,7 @@ class Project(Resource['Project']):
 
         """
         if not self.session._accounts_service_v3:
-            raise AccountsV3Exception("Not available, you may be looking for project.make_private")
+            raise NotImplementedError("Not available, you may be looking for project.make_private")
 
         resource_access = resource.access_control_dict()
         resource_type = resource_access["type"]
@@ -314,7 +310,7 @@ class Project(Resource['Project']):
 
         """
         if not self.session._accounts_service_v3:
-            raise AccountsV3Exception("Not available, you may be looking for project.make_public")
+            raise NotImplementedError("Not available, you may be looking for project.make_public")
 
         resource_access = resource.access_control_dict()
         resource_type = resource_access["type"]
@@ -348,7 +344,7 @@ class Project(Resource['Project']):
 
         """
         if self.session._accounts_service_v3:
-            raise AccountsV3Exception("Not available, you may be looking for project.publish")
+            raise NotImplementedError("Not available, you may be looking for project.publish")
         resource_dict = None
         if resource is not None:
             resource_dict = resource.access_control_dict()
@@ -389,7 +385,7 @@ class Project(Resource['Project']):
 
         """
         if self.session._accounts_service_v3:
-            raise AccountsV3Exception("Not available, you may be looking for project.publish")
+            raise NotImplementedError("Not available, you may be looking for project.publish")
         try:
             self.session.checked_post(self._path() + "/transfer-resource", {
                 "to_project_id": str(receiving_project_uid),
@@ -416,7 +412,7 @@ class Project(Resource['Project']):
 
         """
         if self.session._accounts_service_v3:
-            raise AccountsV3Exception("Not available, you may be looking for project.publish")
+            raise NotImplementedError("Not available, you may be looking for project.publish")
         try:
             self.session.checked_post(self._path() + "/make-public", {
                 "resource": resource.access_control_dict()
@@ -442,7 +438,7 @@ class Project(Resource['Project']):
 
         """
         if self.session._accounts_service_v3:
-            raise AccountsV3Exception("Not available, you may be looking for project.un_publish")
+            raise NotImplementedError("Not available, you may be looking for project.un_publish")
         try:
             self.session.checked_post(self._path() + "/make-private", {
                 "resource": resource.access_control_dict()
@@ -463,7 +459,7 @@ class Project(Resource['Project']):
 
         """
         if self.session._accounts_service_v3:
-            raise AccountsV3Exception("Not available")
+            raise NotImplementedError("Not available")
         email = self.session.get_resource(self._path() + "/creator")["email"]
         return email
 
@@ -478,7 +474,7 @@ class Project(Resource['Project']):
 
         """
         if self.session._accounts_service_v3:
-            raise AccountsV3Exception("Not available")
+            raise NotImplementedError("Not available")
         dataset_ids = self.session.get_resource(self._path() + "/dataset_ids")["dataset_ids"]
         return dataset_ids
 
@@ -493,7 +489,7 @@ class Project(Resource['Project']):
 
         """
         if self.session._accounts_service_v3:
-            raise AccountsV3Exception("Not available")
+            raise NotImplementedError("Not available")
         table_ids = self.session.get_resource(self._path() + "/table_ids")["table_ids"]
         return table_ids
 
@@ -508,7 +504,7 @@ class Project(Resource['Project']):
 
         """
         if self.session._accounts_service_v3:
-            raise AccountsV3Exception("Not available")
+            raise NotImplementedError("Not available")
         result = self.session.get_resource(self._path() + "/table_definition_ids")
         return result["table_definition_ids"]
 
@@ -523,7 +519,7 @@ class Project(Resource['Project']):
 
         """
         if self.session._accounts_service_v3:
-            raise AccountsV3Exception("Not available, please use team.list_members")
+            raise NotImplementedError("Not available, please use team.list_members")
         members = self.session.get_resource(self._path() + "/users")["users"]
         return [ProjectMember(user=User.build(m), project=self, role=m["role"]) for m in members]
 
@@ -542,7 +538,7 @@ class Project(Resource['Project']):
 
         """
         if self.session._accounts_service_v3:
-            raise AccountsV3Exception("Not available, please use team.update_user_action")
+            raise NotImplementedError("Not available, please use team.update_user_action")
         self.session.checked_post(self._path() + format_escaped_url("/users/{}", user_uid),
                                   {'role': role, 'actions': actions})
         return True
@@ -561,7 +557,7 @@ class Project(Resource['Project']):
 
         """
         if self.session._accounts_service_v3:
-            raise AccountsV3Exception("Not available, please use team.add_user")
+            raise NotImplementedError("Not available, please use team.add_user")
         self.session.checked_post(self._path() + format_escaped_url("/users/{}", user_uid),
                                   {'role': MEMBER, 'actions': []})
         return True
@@ -577,7 +573,7 @@ class Project(Resource['Project']):
 
         """
         if self.session._accounts_service_v3:
-            raise AccountsV3Exception("Not available, please use team.remove_user")
+            raise NotImplementedError("Not available, please use team.remove_user")
         self.session.checked_delete(
             self._path() + format_escaped_url("/users/{}", user_uid)
         )
@@ -650,7 +646,7 @@ class ProjectCollection(Collection[Project]):
         else:
             return 'v1'
 
-    def __init__(self, session: Session, team_id: Optional[UUID] = None):
+    def __init__(self, session: Session, *, team_id: Optional[UUID] = None):
         self.session = session
         self.team_id = team_id
 
@@ -677,7 +673,7 @@ class ProjectCollection(Collection[Project]):
 
     def _register_in_team(self, name: str, *, description: Optional[str] = None):
         if self.team_id is None:
-            raise AccountsV3Exception("Please use team.projects")
+            raise NotImplementedError("Please use team.projects")
         path = f'teams/{self.team_id}/projects'
         project = Project(name, description=description)
         try:
@@ -736,7 +732,7 @@ class ProjectCollection(Collection[Project]):
     def _list_v3(self, *, per_page: int = 1000) -> Iterator[Project]:
         # TODO this isn't right
         if self.team_id is None:
-            raise AccountsV3Exception("Please use team.projects")
+            raise NotImplementedError("Please use team.projects")
         return self._paginator.paginate(page_fetcher=self._fetch_page_list_v3_creator,
                                         collection_builder=self._build_collection_elements,
                                         per_page=per_page)

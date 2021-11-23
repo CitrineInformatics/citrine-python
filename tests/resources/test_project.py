@@ -5,7 +5,6 @@ import pytest
 from dateutil.parser import parse
 from gemd.entity.link_by_uid import LinkByUID
 
-from citrine.exceptions import AccountsV3Exception
 from citrine.resources.api_error import ApiError, ValidationError
 from citrine.resources.dataset import Dataset
 from citrine.resources.gemtables import GemTableCollection
@@ -73,8 +72,8 @@ def collection(session) -> ProjectCollection:
 
 
 @pytest.fixture
-def collection_v3(session_v3) -> ProjectCollection:
-    return ProjectCollection(session_v3)
+def collection_v3(session_v3,) -> ProjectCollection:
+    return ProjectCollection(session_v3, team_id=uuid.uuid4())
 
 
 def test_string_representation(project):
@@ -86,7 +85,7 @@ def test_share_post_content_v3(project_v3):
     dataset_id = str(uuid.uuid4())
     other_team_id = uuid.uuid4()
 
-    with pytest.raises(AccountsV3Exception):
+    with pytest.raises(NotImplementedError):
         project_v3.share(project_id=other_team_id, resource_type='DATASET', resource_id=dataset_id)
 
 
@@ -146,7 +145,7 @@ def test_publish_resource(project, session):
         name="public dataset", summary="test", description="test"
     ))
 
-    with pytest.raises(AccountsV3Exception):
+    with pytest.raises(NotImplementedError):
         project.publish(resource=dataset)
 
 
@@ -176,7 +175,7 @@ def test_pull_in_resource(project, session):
         name="public dataset", summary="test", description="test"
     ))
 
-    with pytest.raises(AccountsV3Exception):
+    with pytest.raises(NotImplementedError):
         project.pull_in_resource(resource=dataset)
 
 
@@ -207,7 +206,7 @@ def test_un_publish_resource(project, session):
         name="public dataset", summary="test", description="test"
     ))
 
-    with pytest.raises(AccountsV3Exception):
+    with pytest.raises(NotImplementedError):
         project.un_publish(resource=dataset)
 
 
@@ -237,7 +236,7 @@ def test_make_resource_public_v3(project_v3):
         name="public dataset", summary="test", description="test"
     ))
 
-    with pytest.raises(AccountsV3Exception):
+    with pytest.raises(NotImplementedError):
         project_v3.make_public(dataset)
 
 
@@ -269,7 +268,7 @@ def test_make_resource_private_v3(project_v3):
         id=dataset_id,
         name="private dataset", summary="test", description="test"
     ))
-    with pytest.raises(AccountsV3Exception):
+    with pytest.raises(NotImplementedError):
         project_v3.make_private(dataset)
 
 
@@ -303,7 +302,7 @@ def test_transfer_resource_v3(project_v3):
         name="dataset to transfer", summary="test", description="test"
     ))
 
-    with pytest.raises(AccountsV3Exception):
+    with pytest.raises(NotImplementedError):
         project_v3.transfer_resource(resource=dataset, receiving_project_uid=other_project_id)
 
 
@@ -501,21 +500,6 @@ def test_project_registration(collection: ProjectCollection, session):
     assert create_time == created_project.created_at
 
 
-def test_project_registration_warn(collection: ProjectCollection, session):
-    # Given
-    create_time = parse('2019-09-10T00:00:00+00:00')
-    project_data = ProjectDataFactory(
-        name='testing',
-        description='A sample project',
-        created_at=int(create_time.timestamp() * 1000)  # The lib expects ms since epoch, which is really odd
-    )
-    session.set_response({'project': project_data})
-
-    # When
-    with pytest.warns(UserWarning):
-        collection.register('testing', team_id=uuid.uuid4())
-
-
 def test_project_registration_v3(collection_v3: ProjectCollection, session_v3):
     # Given
     create_time = parse('2019-09-10T00:00:00+00:00')
@@ -528,9 +512,7 @@ def test_project_registration_v3(collection_v3: ProjectCollection, session_v3):
     team_id = uuid.uuid4()
 
     # When
-    with pytest.raises(AccountsV3Exception):
-        collection_v3.register('testing')
-    created_project = collection_v3.register('testing', team_id=team_id)
+    created_project = collection_v3.register('testing')
 
     # Then
     assert 1 == session_v3.num_calls
@@ -701,7 +683,7 @@ def test_update_project(collection: ProjectCollection, project):
 
 
 def test_list_members_v3(project_v3):
-    with pytest.raises(AccountsV3Exception):
+    with pytest.raises(NotImplementedError):
         project_v3.list_members()
 
 
@@ -726,7 +708,7 @@ def test_update_user_role_v3(project_v3):
     user_id = uuid.uuid4()
 
     # Then
-    with pytest.raises(AccountsV3Exception):
+    with pytest.raises(NotImplementedError):
         project_v3.update_user_role(user_uid=user_id, role=LEAD)
 
 
@@ -767,7 +749,7 @@ def test_add_user_v3(project_v3):
     user_id = uuid.uuid4()
 
     # Then
-    with pytest.raises(AccountsV3Exception):
+    with pytest.raises(NotImplementedError):
         project_v3.add_user(user_id)
 
 
@@ -794,7 +776,7 @@ def test_remove_user_v3(project_v3):
     user_id = uuid.uuid4()
 
     # Then
-    with pytest.raises(AccountsV3Exception):
+    with pytest.raises(NotImplementedError):
         project_v3.remove_user(user_id)
 
 
@@ -923,7 +905,7 @@ def test_project_tables(project):
 
 
 def test_creator_v3(project_v3):
-    with pytest.raises(AccountsV3Exception):
+    with pytest.raises(NotImplementedError):
         project_v3.creator()
 
 
@@ -990,15 +972,15 @@ def test_owned_table_config_ids(project, session):
     assert len(ids) == len(id_set)
 
 def test_owned_dataset_ids_v3(project_v3):
-    with pytest.raises(AccountsV3Exception):
+    with pytest.raises(NotImplementedError):
         project_v3.owned_dataset_ids()
 
 
 def test_owned_table_ids_v3(project_v3):
-    with pytest.raises(AccountsV3Exception):
+    with pytest.raises(NotImplementedError):
         project_v3.owned_table_ids()
 
 
 def test_owned_table_config_ids_v3(project_v3):
-    with pytest.raises(AccountsV3Exception):
+    with pytest.raises(NotImplementedError):
         project_v3.owned_table_config_ids()
