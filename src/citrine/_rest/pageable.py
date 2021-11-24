@@ -10,6 +10,7 @@ class Pageable():
     """Class that allows paging."""
 
     _collection_key: str = NotImplemented
+    _api_version: str = "v1"
 
     def _get_path(self, uid: Optional[Union[UUID, str]] = None,
                   ignore_dataset: Optional[bool] = False) -> str:
@@ -74,7 +75,7 @@ class Pageable():
         params = self._page_params(page, per_page, module_type)
         params.update(additional_params or {})
 
-        data = fetch_func(path, params=params, **json_body)
+        data = fetch_func(path, params=params, version=self._api_version, **json_body)
 
         try:
             next_uri = data.get('next', "")

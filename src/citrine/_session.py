@@ -227,6 +227,11 @@ class Session(requests.Session):
         response = self.checked_put(path, json=json, **kwargs)
         return self._extract_response_json(path, response)
 
+    def patch_resource(self, path: str, json: dict, **kwargs) -> dict:
+        """PATCH data given by some JSON at a particular resource."""
+        response = self.checked_patch(path, json=json, **kwargs)
+        return self._extract_response_json(path, response)
+
     def delete_resource(self, path: str, **kwargs) -> dict:
         """DELETE a particular resource as JSON."""
         response = self.checked_delete(path, **kwargs)
@@ -275,6 +280,10 @@ class Session(requests.Session):
     def checked_put(self, path: str, json: dict, **kwargs) -> Response:
         """Execute a PUT request to a URL and utilize error filtering on the response."""
         return self.checked_request('PUT', path, json=json, **kwargs)
+
+    def checked_patch(self, path: str, json: dict, **kwargs) -> Response:
+        """Execute a PATCH request to a URL and utilize error filtering on the response."""
+        return self.checked_request('PATCH', path, json=json, **kwargs)
 
     def checked_delete(self, path: str, **kwargs) -> Response:
         """Execute a DELETE request to a URL and utilize error filtering on the response."""

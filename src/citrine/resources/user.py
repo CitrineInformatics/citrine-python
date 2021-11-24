@@ -31,7 +31,7 @@ class User(Resource['User']):
 
     uid = properties.Optional(properties.UUID, 'id')
     screen_name = properties.String('screen_name')
-    position = properties.String('position')
+    position = properties.Optional(properties.String(), 'position')
     email = properties.String('email')
     is_admin = properties.Boolean('is_admin')
 
@@ -39,10 +39,10 @@ class User(Resource['User']):
                  *,
                  screen_name: str,
                  email: str,
-                 position: str,
+                 position: Optional[str],
                  is_admin: bool):
         self.email: str = email
-        self.position: str = position
+        self.position: Optional[str] = position
         self.screen_name: str = screen_name
         self.is_admin: bool = is_admin
 

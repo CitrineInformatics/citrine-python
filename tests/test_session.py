@@ -274,6 +274,14 @@ def test_good_json_response(session: Session):
         assert response_json == json_to_validate
 
 
+def test_patch(session: Session):
+    with requests_mock.Mocker() as m:
+        json_to_validate = {"bar": "something"}
+        m.patch('http://citrine-testing.fake/api/v1/bar/something', status_code=200, json=json_to_validate)
+        response_json = session.patch_resource('bar/something', {"ignored": "true"})
+        assert response_json == json_to_validate
+
+
 def test_base_url_assembly():
     default_base = urlsplit(Session()._versioned_base_url())
 

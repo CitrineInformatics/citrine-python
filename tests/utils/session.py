@@ -37,13 +37,14 @@ class FakeCall:
 
 class FakeSession:
     """Fake version of Session used to test API interaction."""
-    def __init__(self):
+    def __init__(self, *, accounts_v3=False):
         self.calls = []
         self.responses = []
         self.s3_endpoint_url = None
         self.s3_use_ssl = True
         self.s3_addressing_style = 'auto'
         self.use_idempotent_dataset_put = False
+        self._accounts_service_v3 = accounts_v3
 
     def set_response(self, resp):
         self.responses = [resp]
@@ -68,6 +69,9 @@ class FakeSession:
     def put_resource(self, path: str, json: dict, **kwargs) -> dict:
         return self.checked_put(path, json, **kwargs)
 
+    def patch_resource(self, path: str, json: dict, **kwargs) -> dict:
+        return self.checked_patch(path, json, **kwargs)
+
     def delete_resource(self, path: str, **kwargs) -> dict:
         return self.checked_delete(path, **kwargs)
 
@@ -83,8 +87,15 @@ class FakeSession:
         self.calls.append(FakeCall('PUT', path, json, params=kwargs.get('params')))
         return self._get_response(default_response=json)
 
+    def checked_patch(self, path: str, json: dict, **kwargs) -> dict:
+        self.calls.append(FakeCall('PATCH', path, json, params=kwargs.get('params')))
+        return self._get_response(default_response=json)
+
     def checked_delete(self, path: str, **kwargs) -> dict:
-        self.calls.append(FakeCall('DELETE', path, params=kwargs.get('params')))
+        if 'json' in kwargs:
+            self.calls.append(FakeCall('DELETE', path, kwargs.get('json'), params=kwargs.get('params')))
+        else:
+            self.calls.append(FakeCall('DELETE', path, params=kwargs.get('params')))
         return self._get_response()
 
     def _get_response(self, default_response: dict = None):

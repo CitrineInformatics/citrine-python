@@ -1,5 +1,9 @@
 import platform
+
+import pytest
+
 from citrine import Citrine
+from tests.utils.session import FakeSession
 
 
 def test_citrine_creation():
@@ -14,6 +18,20 @@ def test_citrine_project_session():
 def test_citrine_user_session():
     citrine = Citrine(api_key='foo', host='bar')
     assert citrine.session == citrine.users.session
+
+
+def test_citrine_team_session():
+    citrine = Citrine(api_key='foo', host='bar')
+    citrine.session = FakeSession(accounts_v3=False)  # use a fake session
+    with pytest.raises(NotImplementedError):
+        citrine.teams
+
+
+def test_citrine_team_session_v3():
+    citrine = Citrine(api_key='foo', host='bar')
+    citrine.session = FakeSession(accounts_v3=True)  # use the fake v3 session
+    assert citrine.session == citrine.teams.session
+
 
 def test_citrine_user_agent():
     citrine = Citrine(api_key='foo', host='bar')
