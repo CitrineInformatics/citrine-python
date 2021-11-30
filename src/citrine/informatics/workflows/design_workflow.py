@@ -32,6 +32,8 @@ class DesignWorkflow(Resource['DesignWorkflow'], Workflow, AIResourceMetadata):
     design_space_id = properties.UUID('design_space_id')
     processor_id = properties.Optional(properties.UUID, 'processor_id')
     predictor_id = properties.UUID('predictor_id')
+    branch_id: Optional[UUID] = properties.Optional(properties.UUID, 'branch_id')
+    """:Optional[UUID]: Unique ID of the branch that contains this workflow."""
 
     status_description = properties.String('status_description', serializable=False)
     """:str: more detailed description of the workflow's status"""

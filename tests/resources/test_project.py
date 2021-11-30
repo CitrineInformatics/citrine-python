@@ -430,6 +430,14 @@ def test_design_workflows_get_project_id(project):
     assert project.uid == project.design_workflows.project_id
 
 
+def test_design_workflows_get_branch_id(project):
+    assert None is project.design_workflows.branch_id
+
+
+def test_branches_get_project_id(project):
+    assert project.uid == project.branches.project_id
+
+
 def test_ara_definitions_get_project_id(project):
     assert project.uid == project.table_configs.project_id
 
