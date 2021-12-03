@@ -506,11 +506,7 @@ def test_project_registration(collection: ProjectCollection, session):
         method='POST',
         path='/projects',
         json={
-            'name': 'testing',
-            'description': None,
-            'id': None,
-            'status': None,
-            'created_at': None,
+            'name': 'testing'
         }
     )
     assert expected_call == session.last_call
@@ -529,7 +525,7 @@ def test_project_registration_v3(collection_v3: ProjectCollection, session_v3):
         created_at=int(create_time.timestamp() * 1000)  # The lib expects ms since epoch, which is really odd
     )
     session_v3.set_response({'project': project_data})
-    team_id = uuid.uuid4()
+    team_id = collection_v3.team_id
 
     # When
     created_project = collection_v3.register('testing')
@@ -540,11 +536,7 @@ def test_project_registration_v3(collection_v3: ProjectCollection, session_v3):
         method='POST',
         path=f'teams/{team_id}/projects',
         json={
-            'name': 'testing',
-            'description': None,
-            'id': None,
-            'status': None,
-            'created_at': None,
+            'name': 'testing'
         }
     )
     assert expected_call == session_v3.last_call

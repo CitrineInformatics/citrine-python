@@ -48,7 +48,7 @@ def test_team_member_string_representation(team):
         team=team,
         actions=[READ]
     )
-    assert team_member.__str__() == '<TeamMember {!r} can {!s} of {!r}>'.format(user.screen_name, team_member.actions, team.name)
+    assert team_member.__str__() == '<TeamMember {!r} can {!s} in {!r}>'.format(user.screen_name, team_member.actions, team.name)
 
 
 def test_string_representation(team):
@@ -67,14 +67,20 @@ def test_team_registration(collection: TeamCollection, session):
         description='A sample team',
         created_at=int(create_time.timestamp() * 1000)  # The lib expects ms since epoch, which is really odd
     )
-    session.set_response({'team': team_data})
+    user = UserDataFactory()
+
+    session.set_responses(
+        {'team': team_data},
+        user,
+        {'id': user['id'], 'actions': ['READ','WRITE', 'SHARE']}
+    )
 
     # When
     created_team = collection.register('testing')
 
     # Then
-    assert 1 == session.num_calls
-    expected_call = FakeCall(
+    assert 3 == session.num_calls
+    expected_call_1 = FakeCall(
         method='POST',
         path='/teams',
         json={
@@ -84,7 +90,15 @@ def test_team_registration(collection: TeamCollection, session):
             'created_at': None,
         }
     )
-    assert expected_call == session.last_call
+    expected_call_2 = FakeCall(
+        method="GET",
+        path='/users/me'
+    )
+    expected_call_3 = FakeCall(method="PUT", path="/teams/{}/users".format(created_team.uid),
+                               json={'id': user["id"], 'actions': [READ, WRITE, SHARE]})
+    assert expected_call_1 == session.calls[0]
+    assert expected_call_2 == session.calls[1]
+    assert expected_call_3 == session.calls[2]
 
     assert 'A sample team' == created_team.description
     assert create_time == created_team.created_at

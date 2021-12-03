@@ -32,11 +32,15 @@ def refresh_token(expiration: datetime = None) -> dict:
 
 @pytest.fixture
 def session():
-    session = Session(
-        refresh_token='12345',
-        scheme='http',
-        host='citrine-testing.fake'
-    )
+    token_refresh_response = refresh_token(datetime(2019, 3, 14, tzinfo=pytz.utc))
+    with requests_mock.Mocker() as m:
+        m.get('http://citrine-testing.fake/api/v1/utils/runtime-config', json=dict())
+        m.post('http://citrine-testing.fake/api/v1/tokens/refresh', json=token_refresh_response)
+        session = Session(
+            refresh_token='12345',
+            scheme='http',
+            host='citrine-testing.fake'
+        )
     # Default behavior is to *not* require a refresh - those tests can clear this out
     # As rule of thumb, we should be using freezegun or similar to never rely on the system clock
     # for these scenarios, but I thought this is light enough to postpone that for the time being
@@ -98,9 +102,10 @@ def test_get_not_found(session: Session):
 
 
 class SessionTests(unittest.TestCase):
+    @mock.patch.object(Session, '_check_accounts_version')
     @mock.patch.object(Session, '_refresh_access_token')
     @mock.patch.object(requests.Session, 'request')
-    def test_status_code_409(self, mock_request, _):
+    def test_status_code_409(self, mock_request, *_):
         resp = mock.Mock()
         resp.status_code = 409
         mock_request.return_value = resp
@@ -109,9 +114,10 @@ class SessionTests(unittest.TestCase):
         with pytest.raises(WorkflowConflictException):
             Session().checked_request('method', 'path')
 
+    @mock.patch.object(Session, '_check_accounts_version')
     @mock.patch.object(Session, '_refresh_access_token')
     @mock.patch.object(requests.Session, 'request')
-    def test_status_code_425(self, mock_request, _):
+    def test_status_code_425(self, mock_request, *_):
         resp = mock.Mock()
         resp.status_code = 425
         mock_request.return_value = resp
@@ -120,9 +126,10 @@ class SessionTests(unittest.TestCase):
         with pytest.raises(WorkflowNotReadyException):
             Session().checked_request('method', 'path')
 
+    @mock.patch.object(Session, '_check_accounts_version')
     @mock.patch.object(Session, '_refresh_access_token')
     @mock.patch.object(requests.Session, 'request')
-    def test_status_code_400(self, mock_request, _):
+    def test_status_code_400(self, mock_request, *_):
         resp = mock.Mock()
         resp.status_code = 400
         resp_json = {
@@ -142,9 +149,10 @@ class SessionTests(unittest.TestCase):
         assert einfo.value.api_error.validation_errors[0].failure_message \
             == resp_json['validation_errors'][0]['failure_message']
 
+    @mock.patch.object(Session, '_check_accounts_version')
     @mock.patch.object(Session, '_refresh_access_token')
     @mock.patch.object(requests.Session, 'request')
-    def test_status_code_401(self, mock_request, _):
+    def test_status_code_401(self, mock_request, *_):
         resp = mock.Mock()
         resp.status_code = 401
         resp.text = 'Some response text'
@@ -154,9 +162,10 @@ class SessionTests(unittest.TestCase):
         with pytest.raises(Unauthorized):
             Session().checked_request('method', 'path')
 
+    @mock.patch.object(Session, '_check_accounts_version')
     @mock.patch.object(Session, '_refresh_access_token')
     @mock.patch.object(requests.Session, 'request')
-    def test_status_code_404(self, mock_request, _):
+    def test_status_code_404(self, mock_request, *_):
         resp = mock.Mock()
         resp.status_code = 404
         resp.text = 'Some response text'
@@ -164,9 +173,10 @@ class SessionTests(unittest.TestCase):
         with pytest.raises(NonRetryableException):
             Session().checked_request('method', 'path')
 
+    @mock.patch.object(Session, '_check_accounts_version')
     @mock.patch.object(Session, '_refresh_access_token')
     @mock.patch.object(requests.Session, 'request')
-    def test_connection_error(self, mock_request, _):
+    def test_connection_error(self, mock_request, *_):
 
         data = {'stuff': 'not_used'}
         call_count = 0
@@ -282,7 +292,9 @@ def test_patch(session: Session):
         assert response_json == json_to_validate
 
 
-def test_base_url_assembly():
+@mock.patch.object(Session, '_check_accounts_version')
+@mock.patch.object(Session, '_refresh_access_token')
+def test_base_url_assembly(*_):
     default_base = urlsplit(Session()._versioned_base_url())
 
     scenarios = [
@@ -294,7 +306,8 @@ def test_base_url_assembly():
     ]
 
     for scenario in scenarios:
-        base = urlsplit(Session(**scenario)._versioned_base_url())
+        session = Session(**scenario)
+        base = urlsplit(session._versioned_base_url())
         assert base.scheme == scenario.get('scheme', default_base.scheme)
         if scenario.get('host', default_base.hostname):
             assert base.hostname == scenario.get('host', default_base.hostname)

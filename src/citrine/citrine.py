@@ -34,6 +34,8 @@ class Citrine:
     @property
     def projects(self) -> ProjectCollection:
         """Return a resource representing all visible projects."""
+        # Fetch the version of accounts
+
         if self.session._accounts_service_v3:
             warn("Your Citrine Platform deployment has migrated to the CP2 release of the"
                  " Citrine Platform Web Interface. See our FAQ for details.", UserWarning)
@@ -47,6 +49,7 @@ class Citrine:
     @property
     def teams(self) -> TeamCollection:
         """Returns a resource representing all visible teams."""
+        # Fetch the version of accounts
         if self.session._accounts_service_v3:
             return TeamCollection(self.session)
         else:
